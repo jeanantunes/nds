@@ -13,12 +13,9 @@ import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 
 public interface FixacaoReparteService {
 	
-	public List<FixacaoReparteDTO>obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO
-			filtroConsultaFixacaoProdutoDTO);
+	public List<FixacaoReparteDTO>obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO filtroConsultaFixacaoProdutoDTO);
 	
-	
-	public List<FixacaoReparteDTO>obterFixacoesRepartePorCota(FiltroConsultaFixacaoCotaDTO
-			filtroConsultaFixacaoCotaDTO);
+	public List<FixacaoReparteDTO>obterFixacoesRepartePorCota(FiltroConsultaFixacaoCotaDTO filtroConsultaFixacaoCotaDTO);
 	
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorProduto(FiltroConsultaFixacaoProdutoDTO produto);
 	

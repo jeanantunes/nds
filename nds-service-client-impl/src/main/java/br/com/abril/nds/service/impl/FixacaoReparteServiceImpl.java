@@ -93,7 +93,16 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		Produto produto = produtoService.obterProdutoPorCodigo(filtroConsultaFixacaoProdutoDTO.getCodigoProduto());
         filtroConsultaFixacaoProdutoDTO.setCodigoProduto(produto.getCodigoICD());
 
-        return fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
+        List<FixacaoReparteDTO> fixacoesPorProduto = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
+        
+        for (FixacaoReparteDTO fixacao : fixacoesPorProduto) {
+        	
+        	fixacao.setEdicoesAtendidas(fixacaoReparteRepository.historicoDeEdicoesParaCalcularEdicoesAtendidas(fixacao.getIdLancamento(), fixacao.getCodigoProduto(), 
+        								fixacao.getQtdeEdicoes() != null ? fixacao.getQtdeEdicoes() : 6).size());
+        	
+		}
+        
+        return fixacoesPorProduto;
 	}
 
 	@Transactional
@@ -111,8 +120,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 
 	@Override
 	@Transactional
-	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorProduto(
-			FiltroConsultaFixacaoProdutoDTO filtroProduto) {
+	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorProduto(FiltroConsultaFixacaoProdutoDTO filtroProduto) {
 		List<FixacaoReparteDTO> resultado = null;
 		if(filtroProduto != null && filtroProduto.getCodigoProduto()!=null){
 			Produto produto = produtoService.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
@@ -154,7 +162,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		return fixacaoReparte;
 	}
-
+	
+	@Transactional
 	private void fixarTudoNoPDVPrincipal(FixacaoReparte fixacaoReparte) {
 		List<PDV> pdvs = fixacaoReparte.getCotaFixada().getPdvs();
 		
@@ -203,11 +212,18 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparteRepository.remover(fixacaoReparte);
 	}
 	
+	@Transactional
 	private FixacaoReparte getFixacaoRepartePorDTO(FixacaoReparteDTO fixacaoReparteDTO) {
+		
 		FixacaoReparte fixacaoReparte;
+		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
+		
 		Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
-        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.obterPorClassificacao(fixacaoReparteDTO.getClassificacaoProduto());
+        
+		TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.obterPorClassificacao(fixacaoReparteDTO.getClassificacaoProduto());
+		
+		
 
         // Esta validação nao faz mais sentido como está... talvez varrer todas
         // as possiveis edições involvidas?
@@ -227,8 +243,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
 		fixacaoReparte.setQtdeExemplares(fixacaoReparteDTO.getQtdeExemplares());
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
-		fixacaoReparte.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial());
+		fixacaoReparte.setEdicaoInicial((Integer) (fixacaoReparteDTO.getEdicaoInicial() != null ? fixacaoReparteDTO.getEdicaoInicial() : fixacaoReparteDTO.getEdicao()));
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal());
+		fixacaoReparte.setLancamentoId(fixacaoReparteDTO.getIdLancamento());
         
         if (classificacaoProduto != null) 
             fixacaoReparte.setClassificacaoProdutoEdicao(classificacaoProduto);        
