@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+   <local-tx-datasource>
+      <jndi-name>jdbc/nds</jndi-name>
+      <connection-url>jdbc:oracle:thin:@dscserver4:1521</connection-url>
+      <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+      <user-name>pce_adm</user-name>
+      <password>pce_adm</password>
+      <min-pool-size>5</min-pool-size>
+      <max-pool-size>20</max-pool-size>
+      <idle-timeout-minutes>0</idle-timeout-minutes>
+      <track-statements/>
+      <metadata>
+         <type-mapping>Oracle10g</type-mapping>
+      </metadata>
+   </local-tx-datasource>
+</datasources>
