@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractRepositoryImpl {
 
-	//@Autowired
+	@Autowired
 	protected SessionFactory sf;
 
 	public Session getCurrentSession() {
