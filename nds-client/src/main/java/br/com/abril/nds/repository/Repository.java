@@ -1,0 +1,23 @@
+package br.com.abril.nds.repository;
+
+import java.io.Serializable;
+
+/**
+ * Interface com operações básicas de repositório
+ * 
+ * @author francisco.garcia
+ *
+ * @param <T> tipo em manipulação pelo repositório 
+ * @param <K> tipo do identificador do repositório
+ */
+public interface Repository<T, K extends Serializable> {
+	
+	void adicionar(T entity);
+	
+	void remover(T entity);
+	
+	void buscarPorId(K id);
+	
+	void alterar(T entity);
+
+}
