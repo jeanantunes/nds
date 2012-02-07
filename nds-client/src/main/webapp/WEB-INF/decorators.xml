@@ -3,8 +3,8 @@
 <decorators defaultdir="/WEB-INF/jsp/decorators">
 
     <excludes> 
-        <pattern>/imagens/*</pattern> 
-        <pattern>/jscript/*</pattern> 
+        <pattern>/images/*</pattern> 
+        <pattern>/scripts/*</pattern> 
         <pattern>/css/*</pattern>
         <pattern>/upload/*</pattern>
     </excludes>

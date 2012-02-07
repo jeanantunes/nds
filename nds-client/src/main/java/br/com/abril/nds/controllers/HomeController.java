@@ -12,7 +12,7 @@ import br.com.caelum.vraptor.Result;
 
 @Resource
 @Path("/index")
-public class IndexController {
+public class HomeController {
 
 	
 	@Autowired
