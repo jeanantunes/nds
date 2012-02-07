@@ -1,56 +1,218 @@
+<head>
+<script language="javascript" type="text/javascript">
+function popup() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-novo" ).dialog({
+			resizable: false,
+			height:350,
+			width:655,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+					$(".grids").show();
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
+	
+	function popup_alterar() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-novo" ).dialog({
+			resizable: false,
+			height:350,
+			width:655,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").hide("highlight", {}, 1000, callback);
+					$( "#abaPdv" ).show( );
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});	
+		      
+	};
+	
+	function popup_excluir() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-excluir" ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
+	
+</script>
+<style>
+label {
+	vertical-align: super;
+}
+</style>
+</head>
+
 <body>
-<div id="dialog-excluir" title="Excluir Banco">
-	<p>Confirma a exclusão deste Banco?</p>
-</div>
 
-<div id="dialog-novo" title="Incluir Novo Banco">
-     
-	<label><strong>Dados de Bancos</strong></label>
-    
-    <table width="626" border="0" cellpadding="2" cellspacing="1">
-            <tr>
-              <td width="111">Número Banco:</td>
-              <td width="216"><input type="text" name="textfield31" id="textfield32" style="width:150px;"/></td>
-                <td width="73">Nome:</td>
-              <td width="205"><input type="text" name="textfield29" id="textfield30" style="width:177px;"/></td>
-            </tr>
-            <tr>
-              <td>Código Cedente:</td>
-              <td><input type="text" name="textfield30" id="textfield31" style="width:150px;"/></td>
-              <td>Agência:</td>
-              <td><input type="text" name="textfield32" id="textfield33" style="width:177px;"/></td>
-            </tr>
-            <tr>
-              <td>Conta / Digito:</td>
-              <td><input type="text" name="textfield28" id="textfield28" style="width:97px;"/>
--
-  <input type="text" name="textfield28" id="textfield29" style="width:37px;"/></td>
-              <td>Moeda:</td>
-              <td><input type="text" name="textfield15" id="textfield15" style="width:80px;"/></td>
-            </tr>
-            <tr>
-              <td>Carteira:</td>
-              <td><input type="text" name="textfield33" id="textfield34" style="width:150px;"/></td>
-              <td>Juros %:</td>
-              <td><input type="text" name="textfield16" id="textfield16" style="width:80px;"/></td>
-            </tr>
-            <tr>
-              <td>Status:</td>
-              <td><input name="statusBco" type="checkbox" value="" checked="checked" id="statusBco" /><label for="statusBco">Ativo</label></td>
-              <td>Multa %:</td>
-              <td><input type="text" name="textfield17" id="textfield17" style="width:80px;"/></td>
-            </tr>
-            <tr>
-              <td>Instruções:</td>
-              <td colspan="3"><textarea name="textfield18" id="textfield18" style="width:477px;"></textarea></td>
-            </tr>
-          </table>
-    </div>
+	<div id="dialog-excluir" title="Excluir Banco">
+		<p>Confirma a exclusão deste Banco?</p>
+	</div>
 
 
 
 
-<script>
+
+	<div id="dialog-novo" title="Incluir Novo Banco">
+
+		<label><strong>Dados de Bancos</strong>
+		</label>
+
+		<table width="626" border="0" cellpadding="2" cellspacing="1">
+			<tr>
+				<td width="111">Número Banco:</td>
+				<td width="216"><input type="text" name="textfield31"
+					id="textfield32" style="width: 150px;" />
+				</td>
+				<td width="73">Nome:</td>
+				<td width="205"><input type="text" name="textfield29"
+					id="textfield30" style="width: 177px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Código Cedente:</td>
+				<td><input type="text" name="textfield30" id="textfield31"
+					style="width: 150px;" />
+				</td>
+				<td>Agência:</td>
+				<td><input type="text" name="textfield32" id="textfield33"
+					style="width: 177px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Conta / Digito:</td>
+				<td><input type="text" name="textfield28" id="textfield28"
+					style="width: 97px;" /> - <input type="text" name="textfield28"
+					id="textfield29" style="width: 37px;" />
+				</td>
+				<td>Moeda:</td>
+				<td><input type="text" name="textfield15" id="textfield15"
+					style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Carteira:</td>
+				<td><input type="text" name="textfield33" id="textfield34"
+					style="width: 150px;" />
+				</td>
+				<td>Juros %:</td>
+				<td><input type="text" name="textfield16" id="textfield16"
+					style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Status:</td>
+				<td><input name="statusBco" type="checkbox" value=""
+					checked="checked" id="statusBco" /><label for="statusBco">Ativo</label>
+				</td>
+				<td>Multa %:</td>
+				<td><input type="text" name="textfield17" id="textfield17"
+					style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Instruções:</td>
+				<td colspan="3"><textarea name="textfield18" id="textfield18"
+						style="width: 477px;"></textarea>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+
+
+
+
+
+
+	<div id="effect" style="padding: 0 .7em;"
+		class="ui-state-highlight ui-corner-all">
+		<p>
+			<span style="float: left; margin-right: .3em;"
+				class="ui-icon ui-icon-info"></span> <b>Banco < evento > com <
+				status >.</b>
+		</p>
+	</div>
+
+	<fieldset class="classFieldset">
+		<legend> Pesquisar Bancos</legend>
+		<table width="950" border="0" cellpadding="2" cellspacing="1"
+			class="filtro">
+			<tr>
+				<td width="42">Nome:</td>
+				<td colspan="3"><input type="text" name="textfield2"
+					id="textfield2" style="width: 180px;" />
+				</td>
+				<td width="55">Número:</td>
+				<td width="146"><input type="text" name="textfield"
+					id="textfield" style="width: 130px;" />
+				</td>
+				<td width="57">Cedente:</td>
+				<td width="163"><input type="text" name="textfield"
+					id="textfield" style="width: 150px;" />
+				</td>
+				<td width="158"><input name="status" type="checkbox"
+					id="status" style="float: left;" value="" checked="checked" /><label
+					for="status">Ativo</label>
+				</td>
+				<td width="108"><span class="bt_pesquisar"><a
+						href="javascript:;" onclick="mostrar();">Pesquisar</a>
+				</span>
+				</td>
+			</tr>
+		</table>
+
+	</fieldset>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="classFieldset">
+		<legend>Bancos Cadastrados</legend>
+		<div class="grids" style="display: none;">
+			<table class="bancosGrid"></table>
+		</div>
+
+		<span class="bt_novo"><a href="javascript:;" onclick="popup();">Novo</a>
+		</span>
+
+	</fieldset>
+	<div class="linha_separa_fields">&nbsp;</div>
+
+
+
+
+
+	</div>
+	</div>
+	<script>
 	$(".bancosGrid").flexigrid({
 			url : '../xml/bancos-xml.xml',
 			dataType : 'xml',
