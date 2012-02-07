@@ -1,0 +1,156 @@
+// JavaScript Document
+$(document).ready(function(){
+	$("#nav-one li").hover(
+		function(){ $("ul", this).fadeIn("fast"); }, 
+		function() { } 
+	);
+	if (document.all) {
+		$("#nav-one li").hoverClass ("sfHover");
+	}
+});
+
+$.fn.hoverClass = function(c) {
+	return this.each(function(){
+		$(this).hover( 
+			function() { $(this).addClass(c);  },
+			function() { $(this).removeClass(c); }
+		);
+	});
+};
+
+var sURL = unescape(window.location.pathname);
+
+function doLoad()
+{
+	setTimeout( "refresh()", 2*1000 );
+}
+
+function refresh()
+{
+	window.location.href = sURL;
+}
+
+<!--
+function refresh()
+{
+	window.location.replace( sURL );
+}
+//-->
+function refresh()
+{
+
+	window.location.reload( false );
+}
+//valor = true -> mostra do div
+function mostra_div(p, valor) {
+ for (var x in p) {
+ var e = document.getElementById(p[x]);
+  e.style.display = valor ? "block" : "none";
+ }
+}
+
+
+function checkAll()
+{
+	if(document.form1.Todos.checked == false) {
+		for (i=0; i < document.form1.checkgroup.length; i++){
+			if(document.form1.checkgroup[i].checked == true){
+			document.form1.checkgroup[i].checked = false;
+				}
+			}
+	}		
+else{										
+	for (i=0; i < document.form1.checkgroup.length; i++){
+		if(document.form1.checkgroup[i].checked == false){
+		document.form1.checkgroup[i].checked = true;
+				}
+			}
+	}
+}
+
+function verifyCheck()
+{
+	document.form1.Todos.checked = false;
+/*	if(document.form1.Todos.checked == true) {
+		
+
+	for (i=0; i < document.form1.checkgroup.length; i++){
+
+	document.form1.checkgroup[i].click();
+
+		}
+	}*/
+}
+
+
+		
+
+	
+	//callback function to bring a hidden box back
+		function callback() {
+			setTimeout(function() {
+				$( "#effect:visible").removeAttr( "style" ).fadeOut();
+
+			}, 1000 );
+		};
+		function mostrar(){
+			$(".grids").show();
+		}
+		function mostrar_luminoso(){
+			$(".luminoso").show();
+		}
+		function mostrar_materialPromo(){
+			$(".materialPromocional").show();
+		}
+		
+		function mostrar_nfe(){
+			$(".nfes").show();
+			$("#bt_pesquisar").hide();
+			
+		}
+		function mostrarTabPF(){
+			$(".exPF").show();
+			$(".exPJ").hide();
+			$("#tabs").show();
+			
+		}
+		function mostrarTabPJ(){
+			$(".exPF").hide();
+			$(".exPJ").show();
+			$("#tabs").show();
+		}
+		
+		function mostrarTabFiadorPF(){
+			$(".fiadorPF").show();
+			$(".fiadorPJ").hide();
+			
+		}
+		function mostrarTabFiadorPJ(){
+			$(".fiadorPF").hide();
+			$(".fiadorPJ").show();
+		}
+		
+		function confirmar(){
+		$(".dados").show();
+		}
+		function pesqEncalhe(){
+			$(".dadosFiltro").show();
+			$(".grids").show();
+		}
+		
+		function diaSemana(){
+			
+			var mydate=new Date()
+			var year=mydate.getYear()
+			if (year<2000)
+			year += (year < 1900) ? 1900 : 0
+			var day=mydate.getDay()
+			var month=mydate.getMonth()
+			var daym=mydate.getDate()
+			if (daym<10)
+			daym="0"+daym
+			var dayarray=new Array("Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado")
+			var montharray=new Array(" /01/ "," /02/ "," /03/ ","/04/ ","/05/ ","/06/","/07/","/08/","/09/"," /10/ "," /11/ "," /12/ ")
+			document.write("   "+dayarray[day]+", "+daym+" "+montharray[month]+year+" ")	
+			
+			}

@@ -19,7 +19,8 @@ import javax.persistence.Table;
 public abstract class Pessoa {
 	
 	@Id 
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pessoa_seq")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
 	private Long id;
 
 	private String email;

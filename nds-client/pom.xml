@@ -83,5 +83,15 @@
 		<artifactId>persistence-api</artifactId>
 	</dependency>
 		
+	<dependency>
+		<groupId>com.thoughtworks.xstream</groupId>
+		<artifactId>xstream</artifactId>
+	</dependency>
+	
+	<dependency>	
+	    <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+	</dependency>
+	        
   </dependencies>
 </project>
