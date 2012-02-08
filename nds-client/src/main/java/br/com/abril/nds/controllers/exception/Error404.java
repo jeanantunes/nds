@@ -37,6 +37,6 @@ public class Error404 extends DefaultResourceNotFoundHandler  {
     private void tryMovePermanentlyTo(RequestInfo requestInfo, String newUri) { 
         router.parse(newUri, HttpMethod.of(requestInfo.getRequest()),
             requestInfo.getRequest()); 
-        result.use(Results.http()).movedPermanentlyTo(newUri); 
+        result.use(Results.status()).movedPermanentlyTo(newUri); 
     } 
 }
