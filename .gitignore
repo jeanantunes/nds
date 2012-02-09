@@ -4,5 +4,5 @@
 .metadata
 bin
 target
-
+.svn*
 /NDS_replica.eap
