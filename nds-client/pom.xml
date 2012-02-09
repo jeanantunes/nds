@@ -1,19 +1,21 @@
 <?xml version="1.0"?>
+
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<artifactId>nds</artifactId>
 		<groupId>br.com.abril</groupId>
 		<version>1.0</version>
 	</parent>
+	
 	<artifactId>nds-client</artifactId>
 	<packaging>war</packaging>
 	<name>NDS - DClient</name>
-	<build>
-		<finalName>nds-client</finalName>
-	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>br.com.abril</groupId>
@@ -93,4 +95,8 @@
 			<groupId>dom4j</groupId>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<finalName>nds-client</finalName>
+	</build>
 </project>
