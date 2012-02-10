@@ -3,15 +3,15 @@
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<artifactId>nds</artifactId>
 		<groupId>br.com.abril</groupId>
 		<version>1.0</version>
 	</parent>
-	
+
 	<artifactId>nds-client</artifactId>
 	<packaging>war</packaging>
 	<name>NDS - DClient</name>
@@ -95,8 +95,20 @@
 			<groupId>dom4j</groupId>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>nds-client</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<configuration>
+					<server>tomcat-server</server>
+					<url>http://localhost:8080/manager/text</url>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+
 </project>
