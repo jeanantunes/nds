@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.List;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -7,9 +9,6 @@ package br.com.abril.nds.model.cadastro;
  */
 public class Produto {
 
-	/**
-	 * Dias
-	 */
 	private int periodicidade;
 	private String nome;
 	private String descricao;

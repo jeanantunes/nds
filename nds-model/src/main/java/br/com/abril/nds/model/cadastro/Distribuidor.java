@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.Date;
+
 /**
  * @author T30541
  * @version 1.0
@@ -8,8 +10,8 @@ package br.com.abril.nds.model.cadastro;
 public class Distribuidor {
 
 	private Long id;
-	private int dataOperacao;
-	public Juridica juridica;
+	private Date dataOperacao;
+	public PessoaJuridica juridica;
 
 	public Distribuidor(){
 

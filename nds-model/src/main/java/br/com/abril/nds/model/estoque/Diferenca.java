@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.estoque;
-import br.com.abril.nds.model.seguranca.Usuario;
+import java.math.BigDecimal;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia

@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.List;
+
 /**
  * @author francisco.garcia
  * @version 1.0

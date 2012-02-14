@@ -1,4 +1,6 @@
 package br.com.abril.nds.model.planejamento;
+import java.util.Date;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 /**
@@ -11,7 +13,7 @@ public class Lancamento {
 	private Long id;
 	private int reparte;
 	/**
-	 * Data do lançamento em banca
+	 * Data do lanï¿½amento em banca
 	 */
 	private Date dataLancamentoPrevista;
 	/**

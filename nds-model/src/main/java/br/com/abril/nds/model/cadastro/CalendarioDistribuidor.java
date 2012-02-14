@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.Date;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -8,7 +10,7 @@ package br.com.abril.nds.model.cadastro;
 public class CalendarioDistribuidor {
 
 	private Long id;
-	private java.util.Date data;
+	private Date data;
 	private String descricao;
 
 	public CalendarioDistribuidor(){

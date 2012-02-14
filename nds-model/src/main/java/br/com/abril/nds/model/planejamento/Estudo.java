@@ -1,4 +1,6 @@
 package br.com.abril.nds.model.planejamento;
+import java.util.Date;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 /**

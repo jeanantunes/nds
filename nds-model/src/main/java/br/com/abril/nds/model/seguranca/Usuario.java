@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.seguranca;
 
+import java.util.List;
+
 /**
  * @author T30541
  * @version 1.0

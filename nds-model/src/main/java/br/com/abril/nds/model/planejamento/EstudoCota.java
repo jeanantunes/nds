@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.Cota;
  */
 public class EstudoCota {
 
-	private Log id;
+	private Long id;
 	private double qtdePrevista;
 	private double qtdeEfetiva;
 	public Estudo estudo;

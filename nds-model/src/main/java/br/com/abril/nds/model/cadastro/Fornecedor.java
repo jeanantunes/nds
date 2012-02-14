@@ -7,9 +7,10 @@ package br.com.abril.nds.model.cadastro;
  */
 public class Fornecedor {
 
+	private Long id;
 	private String tipoContrato;
 	private boolean permiteBalanceamento;
-	public Juridica juridica;
+	public PessoaJuridica juridica;
 	public SituacaoCadastro situacaoCadastro;
 
 	public Fornecedor(){

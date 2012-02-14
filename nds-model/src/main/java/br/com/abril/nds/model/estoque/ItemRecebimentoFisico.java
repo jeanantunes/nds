@@ -1,4 +1,6 @@
 package br.com.abril.nds.model.estoque;
+import java.math.BigDecimal;
+
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 
 /**

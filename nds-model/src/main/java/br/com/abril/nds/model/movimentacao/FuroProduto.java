@@ -1,7 +1,10 @@
 package br.com.abril.nds.model.movimentacao;
+import java.util.Date;
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia

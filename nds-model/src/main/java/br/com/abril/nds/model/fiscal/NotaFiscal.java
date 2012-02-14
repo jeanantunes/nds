@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.fiscal;
+import java.util.Date;
+
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.model.cadastro.Juridica;
 
 /**
  * @author francisco.garcia
@@ -19,7 +21,7 @@ public abstract class NotaFiscal {
 	public Usuario usuario;
 	public CFOP cFOP;
 	public OrigemNota origemNota;
-	public Juridica juridica;
+	public PessoaJuridica juridica;
 	public TipoNotaFiscal tipoNotaFiscal;
 
 	public NotaFiscal(){
