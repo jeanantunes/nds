@@ -1,29 +1,56 @@
-package br.com.abril.nds.model;
+package br.com.abril.nds.model.cadastro;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * @author francisco.garcia
+ * @version 1.0
+ * @created 14-fev-2012 11:35:32
+ */
 @Entity
-@DiscriminatorValue("J")
+@DiscriminatorValue(value = "J")
 public class PessoaJuridica extends Pessoa {
-	
+
 	private String razaoSocial;
+	private String nomeFantasia;
 	private String cnpj;
-	
+	private String inscricaoEstadual;
+
+	public PessoaJuridica(){
+
+	}
+
 	public String getRazaoSocial() {
 		return razaoSocial;
 	}
-	
+
 	public void setRazaoSocial(String razaoSocial) {
 		this.razaoSocial = razaoSocial;
 	}
-	
+
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
 	public String getCnpj() {
 		return cnpj;
 	}
-	
+
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
+	}
+
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
 	}
 
 	@Override
@@ -51,4 +78,8 @@ public class PessoaJuridica extends Pessoa {
 		return true;
 	}
 	
+	
+	
+	
+
 }

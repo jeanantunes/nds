@@ -5,7 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.Pessoa;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.repository.PessoaRepository;
 
 
