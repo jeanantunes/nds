@@ -17,10 +17,6 @@ public class PessoaJuridica extends Pessoa {
 	private String cnpj;
 	private String inscricaoEstadual;
 
-	public PessoaJuridica(){
-
-	}
-
 	public String getRazaoSocial() {
 		return razaoSocial;
 	}
@@ -77,9 +73,5 @@ public class PessoaJuridica extends Pessoa {
 			return false;
 		return true;
 	}
-	
-	
-	
-	
 
 }

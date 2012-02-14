@@ -44,10 +44,6 @@ public abstract class Pessoa {
 	@JoinColumn(name = "PESSOA_ID")
 	public List<Telefone> telefones = new ArrayList<Telefone>();
 
-	public Pessoa(){
-
-	}
-
 	public Long getId() {
 		return id;
 	}
