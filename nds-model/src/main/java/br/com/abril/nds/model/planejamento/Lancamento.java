@@ -4,8 +4,10 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -17,14 +19,16 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  */
 @Entity
 @Table(name = "LANCAMENTO")
+@SequenceGenerator(name="LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Lancamento {
 
 	@Id
+	@GeneratedValue(generator = "LANCAMENTO_SEQ")
 	private Long id;
 	private int reparte;
 	private Date dataLancamentoPrevista;
 	private Date dataLancamentoDistribuidor;
-	private Date dataRecolhimentoPrervista;
+	private Date dataRecolhimentoPrevista;
 	private Date dataRecolhimentoDistribuidor;
 	private Date dataExpedicao;
 	@ManyToOne
@@ -64,12 +68,12 @@ public class Lancamento {
 		this.dataLancamentoDistribuidor = dataLancamentoDistribuidor;
 	}
 	
-	public Date getDataRecolhimentoPrervista() {
-		return dataRecolhimentoPrervista;
+	public Date getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
 	}
 	
-	public void setDataRecolhimentoPrervista(Date dataRecolhimentoPrervista) {
-		this.dataRecolhimentoPrervista = dataRecolhimentoPrervista;
+	public void setDataRecolhimentoPrevista(Date dataRecolhimentoPrervista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrervista;
 	}
 	
 	public Date getDataRecolhimentoDistribuidor() {

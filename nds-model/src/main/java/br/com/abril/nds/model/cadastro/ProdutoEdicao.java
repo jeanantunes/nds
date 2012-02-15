@@ -3,8 +3,10 @@ package br.com.abril.nds.model.cadastro;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -14,9 +16,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PRODUTO_EDICAO")
+@SequenceGenerator(name="PROD_ED_SEQ", initialValue = 1, allocationSize = 1)
 public class ProdutoEdicao {
 
 	@Id
+	@GeneratedValue(generator = "PROD_ED_SEQ")
 	private Long id;
 	private BigDecimal precoVenda;
 	private BigDecimal desconto;

@@ -1,11 +1,15 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -15,15 +19,17 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PRODUTO")
+@SequenceGenerator(name="PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Produto {
 
 	@Id
+	@GeneratedValue(generator = "PRODUTO_SEQ")
 	private Long id;
 	private int periodicidade;
 	private String nome;
 	private String descricao;
 	@ManyToMany
-	private List<Fornecedor> fornecedores;
+	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	@OneToOne
 	private TipoProduto tipoProduto;
 	
@@ -59,11 +65,11 @@ public class Produto {
 		this.descricao = descricao;
 	}
 	
-	public List<Fornecedor> getFornecedores() {
+	public Set<Fornecedor> getFornecedores() {
 		return fornecedores;
 	}
 	
-	public void setFornecedores(List<Fornecedor> fornecedores) {
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
 		this.fornecedores = fornecedores;
 	}
 	
