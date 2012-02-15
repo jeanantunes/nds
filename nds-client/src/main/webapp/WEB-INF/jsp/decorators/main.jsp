@@ -43,6 +43,9 @@
 	src="scripts/utils.js"></script>
 <script language="javascript" type="text/javascript"
 	src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
+	
+<script language="javascript" type="text/javascript"
+	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 
 <script language="javascript" type="text/javascript">
 $(function() {
@@ -198,7 +201,7 @@ fieldset label {
 							<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
 									Reparte Cota</a>
 							</li>
-							<li><a href="Lancamento/furo_publicacao.htm">Furo de
+							<li><a href="lancamento/furoProduto">Furo de
 									Produto</a>
 							</li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>
