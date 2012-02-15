@@ -40,6 +40,8 @@
 <script language="javascript" type="text/javascript"
 	src="scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
+	src="scripts/utils.js"></script>
+<script language="javascript" type="text/javascript"
 	src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 
 <script language="javascript" type="text/javascript">
