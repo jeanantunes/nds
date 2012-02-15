@@ -1,0 +1,78 @@
+package br.com.abril.nds.model.cadastro;
+
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+/**
+ * @author francisco.garcia
+ * @version 1.0
+ * @created 14-fev-2012 11:35:32
+ */
+@Entity
+@Table(name = "PRODUTO")
+public class Produto {
+
+	@Id
+	private Long id;
+	private int periodicidade;
+	private String nome;
+	private String descricao;
+	@ManyToMany
+	private List<Fornecedor> fornecedores;
+	@OneToOne
+	private TipoProduto tipoProduto;
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public int getPeriodicidade() {
+		return periodicidade;
+	}
+	
+	public void setPeriodicidade(int periodicidade) {
+		this.periodicidade = periodicidade;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	public String getDescricao() {
+		return descricao;
+	}
+	
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+	
+	public List<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+	
+	public void setFornecedores(List<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
+	}
+	
+	public TipoProduto getTipoProduto() {
+		return tipoProduto;
+	}
+	
+	public void setTipoProduto(TipoProduto tipoProduto) {
+		this.tipoProduto = tipoProduto;
+	}
+	
+}
