@@ -22,6 +22,7 @@ public class ProdutoEdicao {
 	@Id
 	@GeneratedValue(generator = "PROD_ED_SEQ")
 	private Long id;
+	private Long numeroEdicao;
 	private BigDecimal precoVenda;
 	private BigDecimal desconto;
 	private int pacotePadrao;
@@ -37,6 +38,14 @@ public class ProdutoEdicao {
 	
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+	
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
 	
 	public BigDecimal getPrecoVenda() {
