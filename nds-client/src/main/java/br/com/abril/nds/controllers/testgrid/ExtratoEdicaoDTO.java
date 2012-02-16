@@ -1,21 +1,23 @@
 package br.com.abril.nds.controllers.testgrid;
 
+import java.util.Date;
+
 public class ExtratoEdicaoDTO {
 
 	private int idExtratoEdicaoDTO;
-	private String data;
+	private Date data;
 	private String movimento;
-	private String entrada;
+	private Long entrada;
 	private String saida;
 	private String principal;
 	private String parcial;
 	
 	
-	public String getData() {
+	public Date getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 
@@ -35,11 +37,11 @@ public class ExtratoEdicaoDTO {
 		this.movimento = movimento;
 	}
 
-	public String getEntrada() {
+	public Long getEntrada() {
 		return entrada;
 	}
 
-	public void setEntrada(String entrada) {
+	public void setEntrada(Long entrada) {
 		this.entrada = entrada;
 	}
 
