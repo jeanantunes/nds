@@ -5,8 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.DTO.FuroProdutoDTO;
-import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.Util;
+import br.com.abril.nds.controllers.ItemAutoComplete;
+import br.com.abril.nds.controllers.Util;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -35,6 +36,7 @@ public class FuroProdutoController {
 		
 		if (this.validarDadosEntrada(codigo, edicao, dataLancamento)){
 		
+			//TODO chamar service
 			FuroProdutoDTO furoProdutoDTO = 
 					new FuroProdutoDTO(
 							1L,
@@ -44,7 +46,11 @@ public class FuroProdutoController {
 							new Date(),
 							"capas/Auto_1.jpg");
 			
-			result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
+			//if (furoProdutoDTO != null){
+				result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
+			//} else {
+			//	result.use(Results.json()).from("Nenhum registro encontrado.", "mensagens").serialize();
+			//}
 			
 			result.forwardTo(FuroProdutoController.class).index();
 		}
@@ -53,12 +59,13 @@ public class FuroProdutoController {
 	@Post
 	public void pesquisarPorNomeProduto(String produto){
 		
-		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-		listaProdutos.add(new ItemAutoComplete("Produto 1", new FuroProdutoDTO(1L, null, null, null, null, null)));
-		listaProdutos.add(new ItemAutoComplete("Produto 2", new FuroProdutoDTO(8L, null, null, null, null, null)));
+		//TODO chamar service
+		List<ProdutoEdicao> listaProdutoEdicao = new ArrayList<ProdutoEdicao>();
 		
-		//listaProdutos.add(new ItemAutoComplete("Produto 1 - 1", 1));
-		//listaProdutos.add(new ItemAutoComplete("Produto 2 - 8", 1));
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
+			listaProdutos.add(new ItemAutoComplete(produtoEdicao.getProduto().getNome(), new FuroProdutoDTO(produtoEdicao.getId(), null, null, null, null, null)));
+		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		
@@ -104,6 +111,13 @@ public class FuroProdutoController {
 		System.out.println("Edicao: " + edicao);
 		System.out.println("dataLancamento: " + dataLancamento);
 		System.out.println("novaData: " + novaData);
+		
+		//TODO chamar service
+		try {
+			
+		} catch (Exception e){
+			result.use(Results.json()).from("Erro ao confirmar furo do produto: " + e.getMessage(), "mensagens").serialize();
+		}
 		
 		result.forwardTo(FuroProdutoController.class).index();
 	}
