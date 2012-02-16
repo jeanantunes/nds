@@ -27,13 +27,13 @@
 		$(function() {
 			$("#dataLancamento").datepicker({
 				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			$("#novaData").datepicker({
 				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
@@ -66,7 +66,7 @@
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
 			$("#novaData").attr("value", result.novaDataString);
-			$("#imagem").attr("scr", result.pathImagem);
+			$("#imagem").attr("src", "${pageContext.request.contextPath}/" + result.pathImagem);
 			
 			$("#codigoHidden").val($("#codigo").val());
 			$("#edicaoHidden").val($("#edicao").val());
@@ -79,7 +79,7 @@
 		function pesquisarPorNomeProduto(){
 			$.ajax({
 				type: "POST",
-				url: '<c:url value="lancamento/furoProduto/pesquisarPorNomeProduto"/>',
+				url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
 				data: "produto=" + $("#produto").val(),
 				success: function(json){
 					if (json.mensagens){
@@ -111,7 +111,7 @@
 		function confirmar(){
 			$.ajax({
 				type: "POST",
-				url: '<c:url value="lancamento/furoProduto/confirmarFuro"/>',
+				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
 				data: "codigo=" + $("#codigoHidden").val() +
 					  "&edicao=" + $("#edicaoHidden").val() +
 					  "&dataLancamento=" + $("#dataLancamentoHidden").val() +
@@ -183,7 +183,7 @@
 			  	<fieldset class="grids classFieldset" id="resultado">
 			  		<legend>Furo do Produto</legend>
 			  			<div class="imgProduto">
-			  				<img src="capas/Auto_1.jpg" alt="Autosport" id="imagem"/>
+			  				<img src="" alt="Autosport" id="imagem"/>
 			  			</div>
 			  			
 			  		<div class="dadosProduto">	
