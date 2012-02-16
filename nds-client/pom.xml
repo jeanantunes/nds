@@ -94,6 +94,10 @@
 			<artifactId>dom4j</artifactId>
 			<groupId>dom4j</groupId>
 		</dependency>
+		<dependency>
+			<groupId>aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
