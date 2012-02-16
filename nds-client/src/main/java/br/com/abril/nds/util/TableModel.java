@@ -18,8 +18,8 @@ public class TableModel<T> {
 	private CellModel<T>[] rows;
 
 	/**
-	 * Obtém page
-	 *
+	 * ObtÃ©m a page.
+	 * 
 	 * @return int
 	 */
 	public int getPage() {
@@ -27,7 +27,7 @@ public class TableModel<T> {
 	}
 
 	/**
-	 * Atribuí page
+	 * AtribuÃ­ a page
 	 * @param page 
 	 */
 	public void setPage(int page) {
@@ -35,8 +35,8 @@ public class TableModel<T> {
 	}
 
 	/**
-	 * Obtém total
-	 *
+	 * ObtÃ©m o total
+	 * 
 	 * @return int
 	 */
 	public int getTotal() {
@@ -44,7 +44,7 @@ public class TableModel<T> {
 	}
 
 	/**
-	 * Atribuí total
+	 * AtribuÃ­ o total
 	 * @param total 
 	 */
 	public void setTotal(int total) {
@@ -52,7 +52,7 @@ public class TableModel<T> {
 	}
 
 	/**
-	 * Obtém rows
+	 * Obtem cellModel
 	 *
 	 * @return CellModel<T>[]
 	 */
@@ -61,7 +61,7 @@ public class TableModel<T> {
 	}
 
 	/**
-	 * Atribuí rows
+	 * Atribui rows
 	 * @param rows 
 	 */
 	public void setRows(CellModel<T>[] rows) {

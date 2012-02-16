@@ -1,12 +1,13 @@
 package br.com.abril.nds.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Classe que abstrai um modelo genÈrico, sua serializaÁ„o contempla a estrutura
+ * Classe que abstrai um modelo gen√©rico, sua serializa√ß√£o contempla a estrutura
  * esperada pelo plugin flexiGrid.
  * 
  * @author michel.jader
@@ -16,51 +17,57 @@ import java.util.List;
 public class CellModel<T> {
 
 	private transient T t;
-	private transient Method idColumnMethod;
 	private transient List<Method> otherColumnsMethods;
 
-	private static final String PREFIXO__METODO_GETTER = "get";
+	private transient static final String PREFIXO_METODO_GETTER = "get";
+	
+	private transient static final String PREFIXO_METODO_INEXISTENTE = "_";
 	
 	private int id;
 	
 	private String[] cell;
 	
+	
 	/**
-	 * Construtor que recebe como par‚metros o modelo a ser adequado,
-	 * o nome da variavel de inst‚ncia deste modelo que representa sua chave,
+	 * Construtor que recebe como par√¢metros o modelo a ser adequado,
+	 * o VALOR da variavel de inst√¢ncia deste modelo que representa sua chave,
 	 * e um varargs com o nome dos campos a serem apresentados no flexigrid.
-	 * A ordem destes campos È importante. 
-	 * 
-	 * Se a flag generateValuesWithColumnsName for false os valores n„o ser„o
-	 * gerados automaticamente.
+	 * A ordem destes campos √© importante.  Se o nome do campo iniciar com 
+	 * "_" o valor deste sera 'settado' com uma string vazia.
 	 * 
 	 * 
 	 * @param t
-	 * @param idColumnName
+	 * @param idColumnValue
 	 * @param includeCommomColumnNames
 	 * @throws Exception
 	 */
-	public CellModel(T t, String idColumnName, String... includeCommomColumnNames) throws Exception {
+	public CellModel(T t, int idColumnValue, String... includeCommomColumnNames ) throws Exception {
 		
 		this.t = t;
-
-		this.idColumnMethod = this.t.getClass().getMethod(getMethodNameFromField(idColumnName), null);
-
+		
+		this.id = idColumnValue;
+		
 		otherColumnsMethods = new LinkedList<Method>();
 		
 		for (String columnName : includeCommomColumnNames) {
 			
-			Method m = this.t.getClass().getMethod(getMethodNameFromField(columnName), null);
-
-			otherColumnsMethods.add(m);
+			if(columnName.startsWith(PREFIXO_METODO_INEXISTENTE)) {
+				
+				otherColumnsMethods.add(null);
+				
+			} else {
+				
+				Method m = getMethodFromFieldName(t, columnName);
+				
+				otherColumnsMethods.add(m);
+				
+			}
 			
 		}
-
-		configureId();
 		
 		configureCell();
-		
 	}
+	
 	
 	/**
 	 * Construtor default.
@@ -68,32 +75,28 @@ public class CellModel<T> {
 	public CellModel(){}
 
 	/**
-	 * Utilit·rio que retorna o nome do getter a partir do nome do campo.
+	 * Utilit√°rio que retorna Method a partir do nome do campo.
 	 * 
 	 * @param fieldName
-	 * @return String
+	 * @param T t
+	 * @return Method
+	 * @throws NoSuchMethodException 
+	 * @throws SecurityException 
+	 * @throws NoSuchFieldException 
 	 */
-	private String getMethodNameFromField(String fieldName) {
-		String methodName =  (PREFIXO__METODO_GETTER + ( (""+fieldName.charAt(0)).toUpperCase()) +  fieldName.substring(1));
-		return methodName;
+	private Method getMethodFromFieldName(T t, String fieldName) throws SecurityException, NoSuchMethodException, NoSuchFieldException {
+		
+		Field field = t.getClass().getDeclaredField(fieldName);
+		
+		String methodName =  (PREFIXO_METODO_GETTER + ( (""+field.getName().charAt(0)).toUpperCase()) +  field.getName().substring(1));
+		
+		return t.getClass().getMethod(methodName, null);
+		
 	}
 	
-	/**
-	 * MÈtodo que 'setta' o id deste objeto.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 */
-	public void configureId() throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
-		this.id = (Integer) t.getClass().getMethod(idColumnMethod.getName(), null).invoke(t, null);
-	}
 
 	/**
-	 * MÈtodo que seta os campos a serem apresentados no flexigrid.
+	 * M√©todo que seta os campos a serem apresentados no flexigrid.
 	 * 
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
@@ -105,20 +108,27 @@ public class CellModel<T> {
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
 
-		String[] cellValues = new String[otherColumnsMethods.size()+1];
+		String[] cellValues = new String[otherColumnsMethods.size()];
 		
-		cellValues[0] = ""+getId();
-		
-		int contador = 1;
+		int contador = 0;
 		
 		for (Method m : otherColumnsMethods) {
-
-			Object valor = t.getClass().getMethod(m.getName(), null).invoke(t, null);
-
-			if (valor == null) {
+			
+			if(m == null) {
+				
 				cellValues[contador] = "";
+				
 			} else {
-				cellValues[contador] = valor.toString();
+
+				Object valor = t.getClass().getMethod(m.getName(), null).invoke(t, null);
+
+				if (valor == null) {
+					cellValues[contador] = "";
+				} else {
+					cellValues[contador] = valor.toString();
+				}
+
+				
 			}
 			
 			contador++;
@@ -130,8 +140,8 @@ public class CellModel<T> {
 	
 	
 	/**
-	 * ObtÈm o id.
-	 * 
+	 * Obt√©m o id
+	 *  
 	 * @return int
 	 */
 	public int getId() {
@@ -140,7 +150,7 @@ public class CellModel<T> {
 
 	
 	/**
-	 * ObtÈm o cell com os valores da linha da grid.
+	 * Obt√©m com os valores da linha da grid.
 	 * 
 	 * @return
 	 */
@@ -149,7 +159,7 @@ public class CellModel<T> {
 	}
 
 	/**
-	 * AtribuÌ id
+	 * Atribui o id.
 	 * @param id 
 	 */
 	public void setId(int id) {
@@ -157,8 +167,8 @@ public class CellModel<T> {
 	}
 
 	/**
-	 * AtribuÌ cell
-	 * @param cell 
+	 * Atribui o cell
+	 * * @param cell 
 	 */
 	public void setCell(String[] cell) {
 		this.cell = cell;
