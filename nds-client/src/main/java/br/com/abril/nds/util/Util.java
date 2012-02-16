@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers;
+package br.com.abril.nds.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;

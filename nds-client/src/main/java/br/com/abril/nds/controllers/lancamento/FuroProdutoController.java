@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.DTO.FuroProdutoDTO;
-import br.com.abril.nds.controllers.ItemAutoComplete;
-import br.com.abril.nds.controllers.Util;
+import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;

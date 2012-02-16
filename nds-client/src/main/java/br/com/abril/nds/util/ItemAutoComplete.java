@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers;
+package br.com.abril.nds.util;
 
 public class ItemAutoComplete {
 
