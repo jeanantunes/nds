@@ -7,27 +7,33 @@
 			
 				<legend>Lançamento Faltas e Sobras</legend>
 				
-				<table width="950" border="0" cellpadding="2" cellspacing="1"
-					class="filtro">
-					<tr>
-						<td width="111">Data Movimento:</td>
-						<td width="124">
-							<input type="text" 
-								   name="datepickerDe" 
-								   id="datepickerDe" 
-								   style="width: 70px; float: left; margin-right: 5px;" />
-						</td>
-						<td width="115">Tipo de Diferença:</td>
-						<td width="294">
-							<select name="select" id="select" style="width: 220px;"></select>
-						</td>
-						<td width="280">
-							<span class="bt_pesquisar">
-								<a href="javascript:;" onclick="mostrar_1();">Pesquisar</a>
-							</span>
-						</td>
-					</tr>
-				</table>
+				<form name="pesquisaForm" action="estoque/diferenca/lancamento/pesquisa">
+					<table width="950" border="0" cellpadding="2" cellspacing="1"
+						class="filtro">
+						<tr>
+							<td width="111">Data Movimento:</td>
+							<td width="124">
+								<input type="text" 
+									   name="datepickerDe" 
+									   id="datepickerDe" 
+									   style="width: 70px; float: left; margin-right: 5px;" />
+							</td>
+							<td width="115">Tipo de Diferença:</td>
+							<td width="294">
+								<select id="tipoDiferenca" name="tipoDiferenca" style="width: 220px;">
+									<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
+										<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
+									</c:forEach>
+								</select>
+							</td>
+							<td width="280">
+								<span class="bt_pesquisar">
+									<a href="javascript:;" onclick="mostrar_1();">Pesquisar</a>
+								</span>
+							</td>
+						</tr>
+					</table>
+				</form>
 			</fieldset>
 			
 			<div class="linha_separa_fields">&nbsp;</div>
