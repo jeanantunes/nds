@@ -195,7 +195,7 @@ fieldset label {
 					<li><span class="classLancamento">&nbsp;</span><a
 						href="javascript:;">Lançamento</a>
 						<ul>
-							<li><a href="Lancamento/balanceamento_da_matriz.htm">Balanceamento
+							<li><a href="matrizLancamento">Balanceamento
 									da Matriz</a>
 							</li>
 							<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
