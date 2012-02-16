@@ -12,7 +12,6 @@ public class DiferencaEstoqueController {
 	private Result result;
 	
 	public DiferencaEstoqueController(Result result) {
-		
 		this.result = result;
 	}
 	
