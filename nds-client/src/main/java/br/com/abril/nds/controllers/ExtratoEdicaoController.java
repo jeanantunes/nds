@@ -3,9 +3,9 @@ package br.com.abril.nds.controllers;
 import java.util.LinkedList;
 import java.util.List;
 
-import br.com.abril.nds.controllers.testgrid.CellModel;
 import br.com.abril.nds.controllers.testgrid.ExtratoEdicaoDTO;
-import br.com.abril.nds.controllers.testgrid.TableModel;
+import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -39,17 +39,22 @@ public class ExtratoEdicaoController {
 			extratoEdicao = new ExtratoEdicaoDTO();
 			
 			extratoEdicao.setIdExtratoEdicaoDTO(contador);
-			extratoEdicao.setNome("nome_"+contador);
-			extratoEdicao.setEmail("email_"+contador);
+			extratoEdicao.setData("data_"+contador);
+			extratoEdicao.setMovimento("movimento_"+contador);
+			extratoEdicao.setEntrada("entrada_"+contador);
+			extratoEdicao.setSaida("saida_"+contador);
+			extratoEdicao.setParcial("parcial_"+contador);
 			
-			listaCelula.add(new CellModel<ExtratoEdicaoDTO>(extratoEdicao));
+			listaCelula.add(new CellModel<ExtratoEdicaoDTO>(extratoEdicao, "idExtratoEdicaoDTO", "movimento", "movimento"));
 			
 		}
 		
-		TableModel tm = new TableModel();
+		TableModel<ExtratoEdicaoDTO> tm = new TableModel<ExtratoEdicaoDTO>();
 		
 		tm.setPage(1);
+		
 		tm.setTotal(listaCelula.size());
+		
 		tm.setRows(listaCelula.toArray(new CellModel[listaCelula.size()]));
 		
 		result.use(Results.json()).withoutRoot().from(tm).recursive().serialize();

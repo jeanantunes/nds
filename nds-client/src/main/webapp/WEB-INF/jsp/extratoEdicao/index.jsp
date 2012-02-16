@@ -14,6 +14,7 @@ $(function() {
             url: '<c:url value="/extratoEdicao/toJSon"/>',
             dataType: 'json',
             colModel : [
+                    {display: 'Id', name : 'id', width : 40, sortable : true, align: 'left'},
                     {display: 'Data', name : 'data', width : 40, sortable : true, align: 'left'},
                     {display: 'Movimento', name : 'movimento', width : 150, sortable : true, align: 'left'},
                     {display: 'Entrada', name : 'entrada', width : 150, sortable : true, align: 'left'},
@@ -29,7 +30,7 @@ $(function() {
                     {display: 'First Name', name : 'nome'},
                     {display: 'Surname', name : 'email', isdefault: true}
             ],
-            sortname: "data",
+            sortname: "id",
             sortorder: "asc",
             usepager: true,
             title: "Staff",
