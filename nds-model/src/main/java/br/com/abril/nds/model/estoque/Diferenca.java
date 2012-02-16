@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -32,6 +33,8 @@ public class Diferenca {
 	private ProdutoEdicao produtoEdicao;
 	@Enumerated(EnumType.STRING)
 	private TipoDiferenca tipoDiferenca;
+	@Enumerated(EnumType.STRING)
+	private StatusConfirmacao statusConfirmacao;
 	
 	public Long getId() {
 		return id;
@@ -79,6 +82,14 @@ public class Diferenca {
 	
 	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
 		this.tipoDiferenca = tipoDiferenca;
+	}
+
+	public StatusConfirmacao getStatusConfirmacao() {
+		return statusConfirmacao;
+	}
+
+	public void setStatusConfirmacao(StatusConfirmacao statusConfirmacao) {
+		this.statusConfirmacao = statusConfirmacao;
 	}
 
 }

@@ -21,4 +21,11 @@ public class DiferencaEstoqueController {
 		
 	}
 	
+	@Get
+	@Path("/lancamento/pesquisa")
+	public void pesquisarLancamentos() {
+	
+		result.forwardTo(DiferencaEstoqueController.class).lancamento();
+	}
+	
 }
