@@ -30,12 +30,12 @@ function refresh()
 	window.location.href = sURL;
 }
 
-<!--
+/*
 function refresh()
 {
 	window.location.replace( sURL );
 }
-//-->
+*/
 function refresh()
 {
 
