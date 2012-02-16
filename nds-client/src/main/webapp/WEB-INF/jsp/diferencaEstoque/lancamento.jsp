@@ -5,7 +5,7 @@
 
 			<fieldset class="classFieldset">
 			
-				<legend>Lançamento Faltas e Sobras</legend>
+				<legend>LanÃ§amento Faltas e Sobras</legend>
 				
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
 					class="filtro">
@@ -17,7 +17,7 @@
 								   id="datepickerDe" 
 								   style="width: 70px; float: left; margin-right: 5px;" />
 						</td>
-						<td width="115">Tipo de Diferença:</td>
+						<td width="115">Tipo de DiferenÃ§a:</td>
 						<td width="294">
 							<select name="select" id="select" style="width: 220px;"></select>
 						</td>
@@ -34,17 +34,17 @@
 
 			<fieldset class="classFieldset">
 			
-				<legend>Lançamento Faltas e Sobras</legend>
+				<legend>LanÃ§amento Faltas e Sobras</legend>
 				
 				<div class="grids" style="display: none;">
-					<table class="lanctoFaltasSobrasGrid"></table>
+					<table class="gridLancamentos"></table>
 				</div>
 				
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 						<td width="282">
 							<span class="bt_novo">
-								<a href="javascript:;" onclick="popup_novoProduto();">Novo</a>
+								<a href="javascript:;" onclick="popupNovasDiferencas();">Novo</a>
 							</span>
 							<span class="total bt_confirmar">
 								<a href="javascript:;" onclick="popup();">Confirmar</a>
@@ -62,12 +62,16 @@
 		</div>
 	</div>
 	
+	<jsp:include page="novo.jsp" />
+	
+	<jsp:include page="rateio.jsp" />
+	
 	<script>
-		$(".lanctoFaltasSobrasGrid").flexigrid({
+		$(".gridLancamentos").flexigrid({
 			url : '../xml/lancamento_faltas_sobras-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -79,19 +83,19 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'EdiÃ§Ã£o',
 				name : 'edicao',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Preço R$',
+				display : 'PreÃ§o R$',
 				name : 'preco',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Pacote Padrão',
+				display : 'Pacote PadrÃ£o',
 				name : 'pacote',
 				width : 110,
 				sortable : true,
@@ -103,13 +107,13 @@
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Tipo de Diferença',
+				display : 'Tipo de DiferenÃ§a',
 				name : 'tipoDiferenca',
 				width : 130,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 60,
 				sortable : true,
@@ -124,70 +128,26 @@
 			width : 960,
 			height : 180
 		});
-		
-		
-		$(".lanctoFaltasSobras_1Grid").flexigrid({
-			url : '../xml/lancto_faltas_sobras-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 265,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Quantidade',
-				name : 'quantidade',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 400,
-			height : 180
-		});
-		
-		$(".lanctoFaltasSobras_2Grid").flexigrid({
-			url : '../xml/lancto_faltas_sobras_1-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Produto',
-				name : 'produto',
-				width : 190,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Edição',
-				name : 'edicao',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Preço R$',
-				name : 'preco',
-				width : 60,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde',
-				name : 'qtde',
-				width : 55,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 570,
-			height : 220
-		});
+
+		function popupExclusaoDiferenca() {
+
+			$("#dialog-excluir" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						$("#effect").hide("highlight", {}, 1000, callback);
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});	     
+		};
+
 	</script>
 </body>
