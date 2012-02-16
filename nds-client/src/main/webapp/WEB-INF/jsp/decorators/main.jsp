@@ -318,6 +318,14 @@ fieldset label {
 			
 			<div id="notify" style="display: none;"></div>
 			<%@include file="../components/error.jsp"%>
+			
+			<div id="idMensagem" class="ui-state-highlight ui-corner-all" style="display: none;">
+				<p>
+					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+					<b id="idTextoMensagem"></b>
+				</p>
+			</div>
+			
 			<!-- DECORATOR BODY -->
 			<decorator:body />
 			<!-- DECORATOR BODY -->
