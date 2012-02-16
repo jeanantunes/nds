@@ -13,39 +13,39 @@
 
 <base href="<c:url value="/"/>" />
 
-<link rel="stylesheet" type="text/css" href="css/NDS.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
 <link rel="stylesheet"
-	href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
 <link rel="stylesheet" type="text/css"
-	href="scripts/flexigrid-1.1/css/flexigrid.pack.css" />
+	href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" />
 
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.core.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.core.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.core.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.core.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.highlight.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.highlight.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.widget.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.widget.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.position.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.position.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.accordion.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.accordion.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.tabs.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.tabs.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/NDS.js"></script>
+	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/utils.js"></script>
+	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 <script language="javascript" type="text/javascript"
-	src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 	
 <script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 
 <script language="javascript" type="text/javascript">
 $(function() {
@@ -74,7 +74,7 @@ fieldset label {
 		<div class="header">
 			<div class="sub-header">
 				<div class="logo">
-					<img src="images/logo_sistema.png" width="109" height="67"
+					<img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="109" height="67"
 						alt="Picking Eletrônico" />
 				</div>
 
@@ -86,7 +86,7 @@ fieldset label {
 				</div>
 
 				<div class="usuario">
-					<a href="index.htm"><img src="images/bt_sair.jpg"
+					<a href="index.htm"><img src="${pageContext.request.contextPath}/images/bt_sair.jpg"
 						alt="Sair do Sistema" title="Sair do Sistema" width="63"
 						height="27" border="0" align="right" />
 					</a> <br clear="all" /> <span>Usuário: Junior Fonseca</span> <span>
