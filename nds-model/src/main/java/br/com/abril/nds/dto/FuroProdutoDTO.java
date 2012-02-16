@@ -1,4 +1,4 @@
-package br.com.abril.nds.DTO;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

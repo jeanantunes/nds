@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.DTO.FuroProdutoDTO;
+import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
