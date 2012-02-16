@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers;
+package br.com.abril.nds.controllers.estoque;
 
 import java.util.LinkedList;
 import java.util.List;
