@@ -27,4 +27,9 @@ public class DiferencaEstoqueController {
 		result.forwardTo(DiferencaEstoqueController.class).lancamento();
 	}
 	
+	@Get
+	public void consulta() {
+		
+	}
+	
 }
