@@ -24,3 +24,30 @@ $(document).ready(function(){
 	    }
 	});
 });
+
+function exibirMensagem(tipoMensagem, mensagens) {
+
+	var campoTexto = $("#idTextoMensagem");
+
+	campoTexto.html('');
+
+	$.each(mensagens, function(index, value) {
+		campoTexto.append(value + '</br>');
+	});
+
+	$('#idMensagem').show("highlight", {}, 5000, esconde("idMensagem"));
+	
+	/*
+	if (tipoMensagem == "sucess") {
+		$("#idMensagem").removeClass("msg-error");
+	} else {
+		$("#idMensagem").addClass('msg-error');
+	}
+	*/
+}
+
+function esconde(idDiv) {
+	setTimeout(function() {
+		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
+	}, 3000);
+}

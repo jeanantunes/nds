@@ -3,21 +3,23 @@
 		function popup() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
-			$( "#dialog-novo" ).dialog({
+			$("#dialog-novo").dialog({
 				resizable: false,
 				height:'auto',
 				width:250,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
+						$(this).dialog("close");
+						confirmar();
 					},
 					"Cancelar": function() {
-						$( this ).dialog( "close" );
+						$(this).dialog("close");
 					}
-				}
+				},
+				close : function(){
+						$("#linkConfirmar").focus();
+					}
 			});
 		};
 		
@@ -26,37 +28,105 @@
 			$("#dataLancamento").datepicker({
 				showOn: "button",
 				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
 			});
-			$("#datepickerAte").datepicker({
+			$("#novaData").datepicker({
 				showOn: "button",
 				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
 			});
-			
 		});
 		
 		function pesquisar(){
 			$.ajax({
 				type: "POST",
-				url: "lancamento/furoProduto/pesquisar",
+				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
 				data: "codigo=" + $("#codigo").val() +
 					  "&produto=" + $("#produto").val() +
 					  "&edicao=" + $("#edicao").val() +
 					  "&dataLancamento=" + $("#dataLancamento").val(),
 				success: function(json){
-					exibirProduto(json.result);
+					if (json.mensagens){
+						exibirMensagem("erro", json.mensagens);
+					} else {
+						exibirProduto(json.result);
+					}
 				},
-				error: function(){
-					alert("no donuts for ya");
+				error: function(error, type, msg){
+					alert("no donuts for ya - " + msg);
 				}
 			});
 		}
 		
 		function exibirProduto(result){
 			//TODO tratar retorno pesquisa
-			alert(result);
+			$("#txtProduto").text(result.nomeProduto);
+			$("#txtEdicao").text(result.edicao);
+			$("#txtQtdExemplares").text(result.quantidadeExemplares);
+			$("#novaData").attr("value", result.novaDataString);
+			$("#imagem").attr("scr", result.pathImagem);
+			
+			$("#codigoHidden").val($("#codigo").val());
+			$("#edicaoHidden").val($("#edicao").val());
+			$("#dataLancamentoHidden").val($("#dataLancamento").val());
+			
 			$("#resultado").show();
+			$("#novaData").focus();
+		}
+		
+		function pesquisarPorNomeProduto(){
+			$.ajax({
+				type: "POST",
+				url: '<c:url value="lancamento/furoProduto/pesquisarPorNomeProduto"/>',
+				data: "produto=" + $("#produto").val(),
+				success: function(json){
+					if (json.mensagens){
+						exibirMensagem("erro", json.mensagens);
+					} else {
+						exibirAutoComplete(json.result);
+					}
+				},
+				error: function(error, type, msg){
+					alert("no donuts for ya - " + msg);
+				}
+			});
+		}
+		
+		function exibirAutoComplete(result){
+			//TODO tratar retorno pesquisa
+			$("#produto").autocomplete({
+				source: result,
+				select: function(event, ui){
+					completarPesquisa(ui.item.chave);
+				}
+			});
+		}
+		
+		function completarPesquisa(chave){
+			$("#codigo").val(chave.idProduto);
+		}
+		
+		function confirmar(){
+			$.ajax({
+				type: "POST",
+				url: '<c:url value="lancamento/furoProduto/confirmarFuro"/>',
+				data: "codigo=" + $("#codigoHidden").val() +
+					  "&edicao=" + $("#edicaoHidden").val() +
+					  "&dataLancamento=" + $("#dataLancamentoHidden").val() +
+					  "&novaData=" + $("#novaData").val(),
+				success: function(json){
+					if (json.mensagens){
+						exibirMensagem("erro", json.mensagens);
+					} else {
+						$("#effect").hide("highlight", {}, 5000, callback);
+					}
+				},
+				error: function(error, type, msg){
+					alert("no donuts for ya - " + msg);
+				}
+			});
 		}
 	</script>
 	<style type="text/css">
@@ -75,7 +145,7 @@
 		    	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 		    		<p>
 		    			<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b>Furo de Produto < evento > com < status >.</b>
+						<b>Furo de Produto efetuado com sucesso.</b>
 					</p>
 				</div>
 			
@@ -85,23 +155,23 @@
 			        	<tr>
 			        		<td width="45" align="right">Código:</td>
 			        		<td width="79">
-			        			<input type="text" style="width:70px;" name="codigo" id="codigo" />
+			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="20"/>
 			        		</td>
 							<td width="64" align="right">Produto:</td>
 							<td width="196">
-								<input type="text" name="produto" id="produto" style="width:150px;" />
+								<input type="text" name="produto" id="produto" style="width:150px;" maxlength="255" onkeyup="pesquisarPorNomeProduto();"/>
 							</td>
 							<td width="50" align="right">Edição:</td>
 							<td width="90">
-								<input type="text" style="width:70px;" name="edicao" id="edicao"/>
+								<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"/>
 							</td>
 							<td width="150" align="right">Data Lançamento:</td>
 							<td width="146">
-								<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;" />
+								<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;" maxlength="10"/>
 							</td>
 							<td width="258">
 								<span style="cursor: pointer;" class="bt_pesquisar" onclick="pesquisar();">
-									<a>Pesquisar</a>
+									<a href="javascript:;" id="linkPesquisar">Pesquisar</a>
 								</span>
 							</td>
 			  			</tr>
@@ -113,25 +183,32 @@
 			  	<fieldset class="grids classFieldset" id="resultado">
 			  		<legend>Furo do Produto</legend>
 			  			<div class="imgProduto">
-			  				<img src="capas/Auto_1.jpg" alt="Autosport" />
+			  				<img src="capas/Auto_1.jpg" alt="Autosport" id="imagem"/>
 			  			</div>
 			  			
 			  		<div class="dadosProduto">	
-			  			<strong>Auto Motor Sport</strong><br />
+			  			<strong id="txtProduto">Auto Motor Sport</strong>
 			  			<br />
-			            <strong>Edição</strong>: 6556<br />
+			  			<br />
+			            <strong>Edição</strong>: <span id="txtEdicao">6556</span>
 			            <br />
-			            <strong>Qtde Exemplares</strong>: 900
+			            <br />
+			            <strong>Qtde Exemplares</strong>: <span id="txtQtdExemplares">900</span>
 			            <br />
 			            <br />
 			            <p>
 			            	<strong>Nova Data:</strong>
-			            	<input type="text" name="datepickerAte" id="datepickerAte" style="width:70px; margin-left:5px;" />
+			            	<input type="text" name="novaData" id="novaData" style="width:70px; margin-left:5px;" maxlength="10"/>
 			            </p>
 			            <br />
 			            
-			            <span class="bt_confirmar"><a href="javascript:;" onclick="popup();">Confirmar</a></span>
+			            <span style="cursor: pointer;" class="bt_confirmar" onclick="popup();">
+			            	<a href="javascript:;" id="linkConfirmar">Confirmar</a>
+			            </span>
 					</div>
+					<input type="hidden" id="codigoHidden"/>
+					<input type="hidden" id="edicaoHidden"/>
+					<input type="hidden" id="dataLancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>
