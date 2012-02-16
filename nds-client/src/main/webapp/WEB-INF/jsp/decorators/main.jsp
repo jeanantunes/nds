@@ -47,6 +47,10 @@
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 
+<script language="javascript" type="text/javascript"
+	src="scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>	
+	
+
 <script language="javascript" type="text/javascript">
 $(function() {
 			$( "#tabs-cadastros" ).tabs();
