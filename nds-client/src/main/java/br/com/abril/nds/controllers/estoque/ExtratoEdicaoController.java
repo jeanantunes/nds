@@ -1,14 +1,10 @@
 package br.com.abril.nds.controllers.estoque;
 
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.controllers.testgrid.ExtratoEdicaoDTO;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
@@ -22,9 +18,6 @@ public class ExtratoEdicaoController {
 	
 	private Result result;
 	
-	@Autowired
-	private MovimentoEstoqueRepository movimentoEstoqueRepository;
-	
 	public ExtratoEdicaoController(Result result) {
 		this.result = result;
 	}
@@ -33,48 +26,65 @@ public class ExtratoEdicaoController {
 		
 	}
 	
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public void pesquisaExtratoEdicao() throws Exception {
+	private List<ExtratoEdicaoDTO> getListaFromBD() {
 		
+		List<ExtratoEdicaoDTO> listaExtrato = new LinkedList<ExtratoEdicaoDTO>();
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		int contador = 0;
 		
-		List<MovimentoEstoque> movimentos =  movimentoEstoqueRepository.obterListaMovimentoEstoque();
+		ExtratoEdicaoDTO extratoEdicao = null;
 		
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-		
-		for(MovimentoEstoque movimento : movimentos) {
+		while(contador++<10) {
 			
-			CellModel modeloGenerico = new CellModel( 
-					movimento.getId().intValue(), 
-					"", 
-					"", 
-					"", 
-					"", 
-					"");
+			extratoEdicao = new ExtratoEdicaoDTO();
 			
-			modeloGenerico.getCell()[0] = sdf.format(movimento.getDataInclusao());		
-			modeloGenerico.getCell()[1] = sdf.format(movimento.getTipoMovimento().getDescricao());		
-			modeloGenerico.getCell()[2] = "a";		
-			modeloGenerico.getCell()[3] = "b";		
-			modeloGenerico.getCell()[4] = "c";		
+			extratoEdicao.setIdExtratoEdicaoDTO(contador);
+			extratoEdicao.setData(new Date());
+			extratoEdicao.setMovimento("movimento_"+contador);
+			extratoEdicao.setEntrada(5L);
+			extratoEdicao.setSaida("saida_"+contador);
+			extratoEdicao.setParcial("parcial_"+contador);
 			
-			modeloGenerico.setId(0);
-			
-			listaModeloGenerico.add(modeloGenerico);
+			listaExtrato.add(extratoEdicao);
 			
 		}
 		
-		TableModel<MovimentoEstoque> tm = new TableModel<MovimentoEstoque>();
+		return listaExtrato;
+		
+	}
+		
+	public void toJSon() throws Exception{
+		
+
+		List<ExtratoEdicaoDTO> listaDoBD = getListaFromBD();
+		
+		List<CellModel<ExtratoEdicaoDTO>> listaCelula = new LinkedList<CellModel<ExtratoEdicaoDTO>>();
+		
+		
+		//ITERANDO A LISTA QUE VEM DO BANCO.
+		for(ExtratoEdicaoDTO extrato : listaDoBD) {
+			
+			CellModel<ExtratoEdicaoDTO> modeloGenerico = new CellModel<ExtratoEdicaoDTO>( extrato, 0, "_data", "movimento", "entrada", "saida", "parcial");
+			
+			modeloGenerico.getCell()[0] = "01-01-2012";//getDataFromMyDateObj(extrat.getData)		
+			
+
+			//CellModel<ExtratoEdicaoDTO> modeloGenerico = new CellModel<ExtratoEdicaoDTO>(extrato);
+
+			modeloGenerico.setId(0);
+			
+			listaCelula.add(modeloGenerico);
+			
+		}
+		
+		TableModel<ExtratoEdicaoDTO> tm = new TableModel<ExtratoEdicaoDTO>();
 		
 		tm.setPage(1);
-		tm.setTotal(listaModeloGenerico.size());
-		tm.setRows(listaModeloGenerico.toArray(new CellModel[listaModeloGenerico.size()]));
+		tm.setTotal(listaCelula.size());
+		tm.setRows(listaCelula.toArray(new CellModel[listaCelula.size()]));
 		
 		result.use(Results.json()).withoutRoot().from(tm).recursive().serialize();
+		
 		
 	}
 	

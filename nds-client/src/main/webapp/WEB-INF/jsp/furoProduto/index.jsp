@@ -67,7 +67,7 @@
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
 			if (result.pathImagem){
-				$("#imagem").attr("src", "${pageContext.request.contextPath}/" + result.pathImagem);
+				$("#imagem").attr("src", "${pageContext.request.contextPath}/capas/" + result.pathImagem);
 			} else {
 				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
 			}
@@ -75,8 +75,7 @@
 			
 			$("#codigoHidden").val($("#codigo").val());
 			$("#edicaoHidden").val($("#edicao").val());
-			$("#dataLancamentoHidden").val($("#dataLancamento").val());
-			
+						
 			$("#resultado").show();
 			$("#novaData").focus();
 		}
@@ -121,7 +120,6 @@
 				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
 				data: "codigo=" + $("#codigoHidden").val() +
 					  "&edicao=" + $("#edicaoHidden").val() +
-					  "&dataLancamento=" + $("#dataLancamentoHidden").val() +
 					  "&novaData=" + $("#novaData").val(),
 				success: function(json){
 					if (json.mensagens){
@@ -215,7 +213,6 @@
 					</div>
 					<input type="hidden" id="codigoHidden"/>
 					<input type="hidden" id="edicaoHidden"/>
-					<input type="hidden" id="dataLancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>
