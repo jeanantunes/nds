@@ -15,7 +15,7 @@ public class TableModel<T> {
 	
 	private int total;
 	
-	private CellModel<T>[] rows;
+	private CellModel[] rows;
 
 	/**
 	 * Obtém a page.
@@ -56,7 +56,7 @@ public class TableModel<T> {
 	 *
 	 * @return CellModel<T>[]
 	 */
-	public CellModel<T>[] getRows() {
+	public CellModel[] getRows() {
 		return rows;
 	}
 
@@ -64,7 +64,7 @@ public class TableModel<T> {
 	 * Atribui rows
 	 * @param rows 
 	 */
-	public void setRows(CellModel<T>[] rows) {
+	public void setRows(CellModel[] rows) {
 		this.rows = rows;
 	}
 

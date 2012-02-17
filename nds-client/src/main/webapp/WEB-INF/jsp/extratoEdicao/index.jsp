@@ -13,7 +13,7 @@
 function pesquisarExtratoEdicao(){
 	
 	$(".extratoEdicaoGrid").flexigrid({
-		url : '<c:url value="/estoque/extratoEdicao/toJSon"/>',
+		url : '<c:url value="/estoque/extratoEdicao/pesquisaExtratoEdicao"/>',
 		dataType : 'json',
 		colModel : [ {
 			display : 'Data',
