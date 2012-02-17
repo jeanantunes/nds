@@ -110,7 +110,7 @@ public class FuroProdutoController {
 				listaProdutos.add(
 						new ItemAutoComplete(
 								produtoEdicao.getProduto().getNome(), 
-								produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(),
+								null,
 								new FuroProdutoDTO(
 										produtoEdicao.getProduto().getCodigo(), 
 										null, 
@@ -129,10 +129,9 @@ public class FuroProdutoController {
 		if (this.validarDadosEntradaConfirmarFuro(codigo, edicao, novaData)){
 			try {
 				this.furoProdutoService.efetuarFuroProduto(codigo, edicao, novaData);
+				result.use(Results.json()).from(new String[]{"Furo efetuado com sucesso."}, "mensagens").serialize();
 			} catch (Exception e){
 				result.use(Results.json()).from(new String[]{"Erro ao confirmar furo do produto: " + e.getMessage()}, "mensagens").serialize();
-				result.forwardTo(FuroProdutoController.class).index();
-				return;
 			}
 		}
 		

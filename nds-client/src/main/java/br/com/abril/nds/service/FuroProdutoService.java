@@ -1,0 +1,8 @@
+package br.com.abril.nds.service;
+
+import java.util.Date;
+
+public interface FuroProdutoService {
+
+	void efetuarFuroProduto(String codigo, Long edicao, Date novaData);
+}
