@@ -7,6 +7,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.repository.impl.FornecedorRepositoryImpl;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 
@@ -23,8 +24,10 @@ public class RecebimentoFisicoController {
 		this.fornecedorRepository = fornecedorRepository;
 	}
 	
-	public void obterFornecedoresAtivos(){		
+	@Post 
+	public List<Fornecedor> obterFornecedoresAtivos(){		
 		List<Fornecedor> listaFornecedores = fornecedorRepository.obterFornecedoresAtivos();
+		return listaFornecedores;
 	}
 	
 	@Get
