@@ -266,10 +266,6 @@ $(document).ready(function() {
 	
 	jQuery.extend({
 		
-	    postJSON: function(url, data, callback) {
-	    	
-	        return jQuery.post(url, data, callback, 'json');
-	    },
 	    putJSON: function(url, data, callback) {
 	    	
 	        return jQuery.put_(url, data, callback, 'json');
