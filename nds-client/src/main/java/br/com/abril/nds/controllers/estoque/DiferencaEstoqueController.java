@@ -39,7 +39,7 @@ public class DiferencaEstoqueController {
 	public void consulta() {
 		
 	}
-	
+
 	/**
 	 * Método responsável por carregar todos os combos.
 	 */

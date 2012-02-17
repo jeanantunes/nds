@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<context:component-scan base-package="br.com.abril.nds.model" />
+	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<util:properties id="properties" location="classpath:/nds-client.properties" />
 
