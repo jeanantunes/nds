@@ -3,6 +3,9 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -87,6 +90,23 @@ public class Fixture {
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
 		return lancamento;
+	}
+	
+	public static Distribuidor distribuidor(PessoaJuridica juridica, Date dataOperacao) {
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setDataOperacao(dataOperacao);
+		distribuidor.setJuridica(juridica);
+		return distribuidor;
+	}
+	
+	public static DistribuicaoFornecedor distribuicaoFornecedor(
+			Distribuidor distribuidor, Fornecedor fornecedor, DiaSemana diaSemana) {
+		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
+		df.setDistribuidor(distribuidor);
+		df.setFornecedor(fornecedor);
+		df.setDiaSemana(diaSemana);
+		distribuidor.getDiasDistribuicao().add(df);
+		return df;
 	}
 
 }

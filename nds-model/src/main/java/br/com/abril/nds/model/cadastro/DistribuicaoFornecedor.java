@@ -3,18 +3,22 @@ package br.com.abril.nds.model.cadastro;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.DiaSemana;
 
 @Entity
 @Table(name = "DISTRIBUICAO_FORNECEDOR")
+@SequenceGenerator(name="DIST_FORN_SEQ", initialValue = 1, allocationSize = 1)
 public class DistribuicaoFornecedor {
 	
 	@Id
+	@GeneratedValue(generator = "DIST_FORN_SEQ")
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name = "distribuidor_id")
