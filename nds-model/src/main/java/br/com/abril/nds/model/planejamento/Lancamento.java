@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -25,10 +27,14 @@ public class Lancamento {
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_SEQ")
 	private Long id;
-	private int reparte;
+	private Long reparte;
+	@Temporal(value=TemporalType.DATE)
 	private Date dataLancamentoPrevista;
+	@Temporal(value=TemporalType.DATE)
 	private Date dataLancamentoDistribuidor;
+	@Temporal(value=TemporalType.DATE)
 	private Date dataRecolhimentoPrevista;
+	@Temporal(value=TemporalType.DATE)
 	private Date dataRecolhimentoDistribuidor;
 	private Date dataExpedicao;
 	@ManyToOne
@@ -44,11 +50,11 @@ public class Lancamento {
 		this.id = id;
 	}
 	
-	public int getReparte() {
+	public Long getReparte() {
 		return reparte;
 	}
 	
-	public void setReparte(int reparte) {
+	public void setReparte(Long reparte) {
 		this.reparte = reparte;
 	}
 	
