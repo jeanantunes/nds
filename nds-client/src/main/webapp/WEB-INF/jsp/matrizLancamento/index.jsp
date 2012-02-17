@@ -164,16 +164,15 @@ function popup() {
    	      <tr>
    	        <td width="68">Fornecedor:</td>
    	        <td width="221">
-            <a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
+            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
               <div class="menu_fornecedor" style="display:none;">
-                	 <span class="bt_sellAll"><input type="checkbox" id="sel" name="Todos" onclick="checkAll_fornecedor();" style="float:left;"/><label for="sel">Selecionar Todos</label></span>
-                    <br clear="all" />
-
-                    <input id="dinap" name="checkgroup_menu" onclick="verifyCheck_1()" type="checkbox"/>
-                    <label for="dinap">Dinap</label>
-                    <br clear="all" />
-                    <input name="checkgroup_menu" onclick="verifyCheck_1()" id="fc" type="checkbox"/>
-                    <label for="fc">FC</label>
+                 <span class="bt_sellAll"><input type="checkbox" id="sel" name="Todos" onclick="checkAll_fornecedor();" style="float:left;"/><label for="sel">Selecionar Todos</label></span>
+                   <br clear="all" />
+                   <c:forEach items="${fornecedores}" var="fornecedor">
+                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck_1()" type="checkbox"/>
+                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
+                      <br clear="all" />
+                   </c:forEach> 
               </div>
            </td>
    	        <td colspan="3">Período de Lançamento Matriz/Distribuidor:</td>

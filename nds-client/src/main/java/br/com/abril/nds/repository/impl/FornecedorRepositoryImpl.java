@@ -53,4 +53,20 @@ public class FornecedorRepositoryImpl extends AbstractRepository<Fornecedor, Lon
 
 		return query.list();
 	}
+
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedores(boolean permiteBalanceamento,
+			SituacaoCadastro... situacoes) {
+		StringBuilder hql = new StringBuilder("from Fornecedor fornecedor ");
+		hql.append("join fetch fornecedor.juridica ");
+		hql.append("where fornecedor.permiteBalanceamento = :permiteBalanceamento ");
+		hql.append("and fornecedor.situacaoCadastro in (:situacoes) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("permiteBalanceamento", permiteBalanceamento);
+		query.setParameterList("situacoes", situacoes);
+		return query.list();
+	}
 }

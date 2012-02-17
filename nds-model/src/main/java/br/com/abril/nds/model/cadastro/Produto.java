@@ -1,10 +1,10 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -25,7 +25,8 @@ public class Produto {
 	@Id
 	@GeneratedValue(generator = "PRODUTO_SEQ")
 	private Long id;
-	private int periodicidade;
+	@Enumerated
+	private PeriodicidadeProduto periodicidade;
 	private String nome;
 	private String descricao;
 	@ManyToMany
@@ -41,11 +42,11 @@ public class Produto {
 		this.id = id;
 	}
 	
-	public int getPeriodicidade() {
+	public PeriodicidadeProduto getPeriodicidade() {
 		return periodicidade;
 	}
 	
-	public void setPeriodicidade(int periodicidade) {
+	public void setPeriodicidade(PeriodicidadeProduto periodicidade) {
 		this.periodicidade = periodicidade;
 	}
 	
