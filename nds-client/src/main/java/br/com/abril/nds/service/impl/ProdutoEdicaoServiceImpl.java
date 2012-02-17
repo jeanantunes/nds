@@ -29,10 +29,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
 		
-		FuroProdutoDTO furoProdutoDTO = produtoEdicaoRepository.
+		if (codigo == null || codigo.isEmpty()){
+			throw new IllegalArgumentException("Código é obrigatório.");
+		}
+		
+		if (edicao == null){
+			throw new IllegalArgumentException("Edição é obrigatório.");
+		}
+		
+		if (dataLancamento == null){
+			throw new IllegalArgumentException("Data Lançamento é obrigatório.");
+		}
+		
+		return produtoEdicaoRepository.
 				obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 						codigo, nomeProduto, edicao, dataLancamento);
-		
-		return furoProdutoDTO;
 	}
 }

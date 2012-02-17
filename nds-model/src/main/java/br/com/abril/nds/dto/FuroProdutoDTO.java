@@ -33,7 +33,7 @@ public class FuroProdutoDTO implements Serializable {
 	}
 	
 	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares){
-		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, null);
+		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, codigoProduto + edicao + ".jpg");
 	}
 	
 	public String getCodigoProduto() {

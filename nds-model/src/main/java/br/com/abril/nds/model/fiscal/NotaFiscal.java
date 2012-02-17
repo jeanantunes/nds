@@ -2,8 +2,6 @@ package br.com.abril.nds.model.fiscal;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -32,7 +30,6 @@ public abstract class NotaFiscal {
 	private Usuario usuario;
 	@ManyToOne
 	private CFOP cfop;
-	@Enumerated(EnumType.STRING)
 	private OrigemNota origemNota;
 	@ManyToOne
 	private PessoaJuridica juridica;

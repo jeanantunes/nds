@@ -49,7 +49,9 @@
 
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>	
-	
+
+<link rel="stylesheet" type="text/css" 
+	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
 
 <script language="javascript" type="text/javascript">
 $(function() {
