@@ -31,15 +31,13 @@ public class DiferencaEstoqueController {
 	@Get
 	@Path("/lancamento/pesquisa")
 	public void pesquisarLancamentos(Date dataMovimento, String tipoDiferenca) {
-		
-		
-		
+
 		result.forwardTo(DiferencaEstoqueController.class).lancamento();
 	}
 	
-
 	@Get
 	public void consulta() {
+		
 	}
 
 	/**
