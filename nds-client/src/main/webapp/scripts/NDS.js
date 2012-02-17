@@ -207,3 +207,80 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
   eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
   if (restore) selObj.selectedIndex=0;
 }
+
+/*
+ * Função responsável por efetuar uma chamada Ajax via JQuery.
+ * 
+ * A função delega o retorno à função de callback passada por parâmetro e
+ * também efetua o tratamento de erros padrão.
+ *
+ * O método chamado deve sempre retornar um objeto JSON com nome 'result' e a
+ * função de Callback deve sempre receber este objeto.
+ *
+ * @param type - tipo da chamada (GET/POST...)
+ * @param url - url do destino
+ * @param sucessCallBackFunction - função de callback para retorno
+ * @param data - dados a serem enviados no formato 'dado1=x&dado2=y'
+ */
+function ajaxRequest(url, data, sucessCallBackFunction, dataType, method) {
+
+	$.ajax({
+		type: method,
+		url: url,
+		data: data,
+		dataType: dataType, 
+		success: function(json) {
+			if (json.mensagens) {
+				exibirMensagem("erro", json.mensagens);
+			} else {
+				sucessCallBackFunction(json.result);
+			}
+		},
+		error: function(error, type, msg) {
+			alert("Erro: " + msg);
+		}
+	});		
+}
+
+$(document).ready(function() {
+	
+	jQuery.extend({
+		
+	    put_: function(url, data, callback, type) {
+	    	
+	        return ajaxRequest(url, data, callback, type, 'PUT');
+	    },
+	    delete_: function(url, data, callback, type) {
+	    	
+	    	return ajaxRequest(url, data, callback, type, 'DELETE');
+	    },
+	    post_: function(url, data, callback, type) {
+	    	
+	    	return ajaxRequest(url, data, callback, type, 'POST');
+	    },
+	    get_: function(url, data, callback, type) {
+	    	
+	    	return ajaxRequest(url, data, callback, type, 'GET');
+	    }
+	});
+	
+	jQuery.extend({
+		
+	    putJSON: function(url, data, callback) {
+	    	
+	        return jQuery.put_(url, data, callback, 'json');
+	    },
+	    deleteJSON: function(url, data, callback) {
+	    	
+	        return jQuery.delete_(url, data, callback, 'json');
+	    },
+	    postJSON: function(url, data, callback) {
+	    	
+	        return jQuery.post_(url, data, callback, 'json');
+	    },
+	    getJSON: function(url, data, callback) {
+	    	
+	        return jQuery.get_(url, data, callback, 'json');
+	    }
+	});
+});

@@ -40,6 +40,7 @@
 		});
 		
 		function pesquisar(){
+			$("#resultado").hide();
 			$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
@@ -65,8 +66,12 @@
 			$("#txtProduto").text(result.nomeProduto);
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
-			$("#novaData").attr("value", result.novaDataString);
-			$("#imagem").attr("src", "${pageContext.request.contextPath}/" + result.pathImagem);
+			if (result.pathImagem){
+				$("#imagem").attr("src", "${pageContext.request.contextPath}/" + result.pathImagem);
+			} else {
+				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
+			}
+			$("#imagem").attr("alt", result.nomeProduto);
 			
 			$("#codigoHidden").val($("#codigo").val());
 			$("#edicaoHidden").val($("#edicao").val());
@@ -105,7 +110,9 @@
 		}
 		
 		function completarPesquisa(chave){
-			$("#codigo").val(chave.idProduto);
+			$("#codigo").val(chave.codigoProduto);
+			$("#edicao").val(chave.edicao);
+			$("#dataLancamento").focus();
 		}
 		
 		function confirmar(){
@@ -155,7 +162,7 @@
 			        	<tr>
 			        		<td width="45" align="right">Código:</td>
 			        		<td width="79">
-			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="20"/>
+			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255"/>
 			        		</td>
 							<td width="64" align="right">Produto:</td>
 							<td width="196">
@@ -183,7 +190,7 @@
 			  	<fieldset class="grids classFieldset" id="resultado">
 			  		<legend>Furo do Produto</legend>
 			  			<div class="imgProduto">
-			  				<img src="" alt="Autosport" id="imagem"/>
+			  				<img src="" alt="" id="imagem"/>
 			  			</div>
 			  			
 			  		<div class="dadosProduto">	

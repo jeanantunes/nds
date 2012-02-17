@@ -10,7 +10,6 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -38,25 +37,19 @@ public class FuroProdutoController {
 	}
 	
 	@Post
-	public void pesquisar(String codigo, String produto, String edicao, String dataLancamento){
+	public void pesquisar(String codigo, String produto, Long edicao, Date dataLancamento){
 		
 		if (this.validarDadosEntrada(codigo, edicao, dataLancamento)){
 		
-			//TODO chamar service
 			FuroProdutoDTO furoProdutoDTO = 
-					new FuroProdutoDTO(
-							1L,
-							"produto", 
-							(long)(Math.random() * 100), 
-							(long)(Math.random() * 100), 
-							new Date(),
-							"capas/Auto_1.jpg");
+					produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
+							codigo, produto, edicao, dataLancamento);
 			
-			//if (furoProdutoDTO != null){
+			if (furoProdutoDTO != null){
 				result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
-			//} else {
-			//	result.use(Results.json()).from("Nenhum registro encontrado.", "mensagens").serialize();
-			//}
+			} else {
+				result.use(Results.json()).from(new String[]{"Nenhum registro encontrado."}, "mensagens").serialize();
+			}
 			
 			result.forwardTo(FuroProdutoController.class).index();
 		}
@@ -69,7 +62,13 @@ public class FuroProdutoController {
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
-			listaProdutos.add(new ItemAutoComplete(produtoEdicao.getProduto().getNome(), new FuroProdutoDTO(produtoEdicao.getId(), null, null, null, null, null)));
+			listaProdutos.add(
+					new ItemAutoComplete(
+							produtoEdicao.getProduto().getNome(), 
+							new FuroProdutoDTO(
+									produtoEdicao.getProduto().getCodigo(), 
+									null, 
+									produtoEdicao.getNumeroEdicao(), null, null, null)));
 		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
@@ -77,7 +76,7 @@ public class FuroProdutoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	private boolean validarDadosEntrada(String codigo, String edicao, String dataLancamento) {
+	private boolean validarDadosEntrada(String codigo, Long edicao, Date dataLancamento) {
 		
 		boolean valido = true;
 		List<String> listaMensagemValidacao = new ArrayList<String>();
@@ -85,22 +84,16 @@ public class FuroProdutoController {
 		if (codigo == null || codigo.isEmpty()){
 			valido = false;
 			listaMensagemValidacao.add("Código é obrigatório.");
-		} else if (!Util.isValidNumber(codigo)){
-			listaMensagemValidacao.add("Valor inválido informado para Código.");
 		}
 		
-		if (edicao == null || edicao.isEmpty()){
+		if (edicao == null){
 			valido = false;
 			listaMensagemValidacao.add("Edição é obrigatório.");
-		} else if (!Util.isValidNumber(edicao)){
-			listaMensagemValidacao.add("Valor inválido informado para Edição.");
 		}
 		
-		if (dataLancamento == null || dataLancamento.isEmpty()){
+		if (dataLancamento == null){
 			valido = false;
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
-		} else if (!Util.isValidDate(dataLancamento, null)){
-			listaMensagemValidacao.add("Valor inválido informado para Data Lançamento.");
 		}
 		
 		if (!listaMensagemValidacao.isEmpty()){
@@ -121,7 +114,7 @@ public class FuroProdutoController {
 		try {
 			
 		} catch (Exception e){
-			result.use(Results.json()).from("Erro ao confirmar furo do produto: " + e.getMessage(), "mensagens").serialize();
+			result.use(Results.json()).from(new String[]{"Erro ao confirmar furo do produto: " + e.getMessage()}, "mensagens").serialize();
 		}
 		
 		result.forwardTo(FuroProdutoController.class).index();
