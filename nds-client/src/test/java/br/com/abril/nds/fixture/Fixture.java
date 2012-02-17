@@ -5,6 +5,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -29,6 +30,7 @@ public class Fixture {
 			String cnpj, String ie, String email) {
 		PessoaJuridica juridica = new PessoaJuridica();
 		juridica.setRazaoSocial(razaoSocial);
+		juridica.setNomeFantasia(razaoSocial);
 		juridica.setCnpj(cnpj);
 		juridica.setInscricaoEstadual(ie);
 		juridica.setEmail(email);
@@ -58,7 +60,7 @@ public class Fixture {
 		Produto produto = new Produto();
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
-		produto.setPeriodicidade(periodicidade);
+		produto.setPeriodicidade(PeriodicidadeProduto.SEMANAL);
 		produto.setTipoProduto(tipo);
 		return produto;
 	}

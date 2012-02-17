@@ -30,12 +30,12 @@ function refresh()
 	window.location.href = sURL;
 }
 
-/*
+<!--
 function refresh()
 {
 	window.location.replace( sURL );
 }
-*/
+//-->
 function refresh()
 {
 
@@ -67,6 +67,38 @@ else{
 			}
 	}
 }
+function checkAll_fornecedor()
+{
+	if(document.form1.Todos.checked == false) {
+		for (i=0; i < document.form1.checkgroup_menu.length; i++){
+			if(document.form1.checkgroup_menu[i].checked == true){
+			document.form1.checkgroup_menu[i].checked = false;
+				}
+			}
+	}		
+else{										
+	for (i=0; i < document.form1.checkgroup_menu.length; i++){
+		if(document.form1.checkgroup_menu[i].checked == false){
+		document.form1.checkgroup_menu[i].checked = true;
+				}
+			}
+	}
+}
+
+
+function verifyCheck_1()
+{
+	document.form1.Todos.checked = false;
+/*	if(document.form1.Todos.checked == true) {
+		
+
+	for (i=0; i < document.form1.checkgroup.length; i++){
+
+	document.form1.checkgroup[i].click();
+
+		}
+	}*/
+}
 
 function verifyCheck()
 {
@@ -87,6 +119,21 @@ function verifyCheck()
 
 	
 	//callback function to bring a hidden box back
+	
+$(document).ready(function(){	
+	$("#selFornecedor").click(function() {
+		$(".menu_fornecedor").show().fadeIn("fast");
+	})
+
+	$(".menu_fornecedor").mouseleave(function() {
+		$(".menu_fornecedor").hide();
+	});
+	
+})
+	
+	
+	
+	
 		function callback() {
 			setTimeout(function() {
 				$( "#effect:visible").removeAttr( "style" ).fadeOut();
@@ -154,3 +201,9 @@ function verifyCheck()
 			document.write("   "+dayarray[day]+", "+daym+" "+montharray[month]+year+" ")	
 			
 			}
+			
+			
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
