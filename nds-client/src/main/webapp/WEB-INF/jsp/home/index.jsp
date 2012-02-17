@@ -57,7 +57,7 @@
         <fieldset>
         	<legend><img src="images/bt_lancamento.png" alt="Lançamento" width="15" height="15" /> Lançamento</legend>
             <ul>
-                <li><a href="Lancamento/balanceamento_da_matriz.htm">Balanceamento da Matriz</a></li>
+                <li><a href="matrizLancamento">Balanceamento da Matriz</a></li>
                 <li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta Reparte Cota</a></li>
                 <li><a href="Lancamento/furo_publicacao.htm">Furo de Produto</a></li>
                 <li><a href="Lancamento/help_lancamento.htm">Help</a></li>

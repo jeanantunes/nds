@@ -48,19 +48,32 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
-		PessoaJuridica juridica = Fixture.pessoaJuridica("Acme",
+		PessoaJuridica juridicaAcme = Fixture.pessoaJuridica("Acme",
 				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
-		session.save(juridica);
-		Fornecedor fornecedor = Fixture.fornecedor(juridica,
+		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
+				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
+		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
+				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
+		session.save(juridicaAcme);
+		session.save(juridicaDinap);
+		session.save(juridicaFc);
+		
+		Fornecedor fornecedorAcme = Fixture.fornecedor(juridicaAcme,
+				SituacaoCadastro.ATIVO, false);
+		Fornecedor fornecedorDinap = Fixture.fornecedor(juridicaDinap,
 				SituacaoCadastro.ATIVO, true);
-		session.save(fornecedor);
+		Fornecedor fornecedorFc = Fixture.fornecedor(juridicaFc,
+				SituacaoCadastro.ATIVO, true);
+		session.save(fornecedorAcme);
+		session.save(fornecedorDinap);
+		session.save(fornecedorFc);
 
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista",
 				GrupoProduto.REVISTA, "99000642");
 		session.save(tipoProduto);
 		Produto produto = Fixture.produto("Revista Veja", "Veja", 7,
 				tipoProduto);
-		produto.getFornecedores().add(fornecedor);
+		produto.getFornecedores().add(fornecedorAcme);
 		session.save(produto);
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
