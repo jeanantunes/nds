@@ -93,7 +93,7 @@
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'C�digo',
+				display : 'Código',
 				name : 'codigo',
 				width : 70,
 				sortable : true,
@@ -105,13 +105,13 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edi��o',
+				display : 'Edição',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Tipo de Diferen�a',
+				display : 'Tipo de Diferença',
 				name : 'tipoDiferenca',
 				width : 180,
 				sortable : true,
