@@ -41,7 +41,12 @@
 		
 		function pesquisar(){
 			$("#resultado").hide();
-			$.ajax({
+			var data = "codigo=" + $("#codigo").val() +
+			  "&produto=" + $("#produto").val() +
+			  "&edicao=" + $("#edicao").val() +
+			  "&dataLancamento=" + $("#dataLancamento").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisar'/>", data, exibirProduto);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
 				data: "codigo=" + $("#codigo").val() +
@@ -58,7 +63,7 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
 		}
 		
 		function exibirProduto(result){
@@ -81,7 +86,8 @@
 		}
 		
 		function pesquisarPorNomeProduto(){
-			$.ajax({
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "produto=" + $("#produto").val(), exibirAutoComplete);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
 				data: "produto=" + $("#produto").val(),
@@ -95,7 +101,7 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
 		}
 		
 		function exibirAutoComplete(result){
@@ -115,7 +121,11 @@
 		}
 		
 		function confirmar(){
-			$.ajax({
+			var data = "codigo=" + $("#codigoHidden").val() +
+			  "&edicao=" + $("#edicaoHidden").val() +
+			  "&novaData=" + $("#novaData").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
 				data: "codigo=" + $("#codigoHidden").val() +
@@ -131,7 +141,11 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
+		}
+		
+		function msg(result){
+			$("#effect").hide("highlight", {}, 5000, callback);
 		}
 	</script>
 	<style type="text/css">
