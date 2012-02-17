@@ -5,10 +5,12 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -18,11 +20,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "COTA")
+@SequenceGenerator(name="COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class Cota {
 
 	@Id
+	@GeneratedValue(generator = "COTA_SEQ")
 	private Long id;
-	private int cota;
+	private Integer numeroCota;
 	@ManyToOne
 	private Pessoa pessoa;
 	@OneToMany
@@ -37,14 +41,6 @@ public class Cota {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public int getCota() {
-		return cota;
-	}
-	
-	public void setCota(int cota) {
-		this.cota = cota;
 	}
 	
 	public Pessoa getPessoa() {
@@ -69,6 +65,14 @@ public class Cota {
 	
 	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 
 }
