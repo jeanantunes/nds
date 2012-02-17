@@ -177,9 +177,10 @@ function popup() {
            </td>
    	        <td colspan="3">Período de Lançamento Matriz/Distribuidor:</td>
    	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" /></td>
-   	        <td width="47" align="center">&nbsp;</td>
-   	        <td width="112">&nbsp;</td>
+   	        <td width="47" align="center">Até</td>
+   	        <td width="112"><input type="text" name="datepickerAte" id="datepickerAte" style="width:80px;" /></td>
    	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+
           </tr>
         </table>
       </fieldset>
