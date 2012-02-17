@@ -207,3 +207,36 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
   eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
   if (restore) selObj.selectedIndex=0;
 }
+
+/*
+ * Função responsável por efetuar uma chamada Ajax via JQuery.
+ * 
+ * A função delega o retorno à função de callback passada por parâmetro e
+ * também efetua o tratamento de erros padrão.
+ *
+ * O método chamado deve semrpe retornar um objeto JSON com nome 'result' e a
+ * função de Callback deve sempre receber este objeto.
+ *
+ * @param type - tipo da chamada (GET/POST...)
+ * @param url - url do destino
+ * @param sucessCallBackFunction - função de callback para retorno
+ * @param data - dados a serem enviados no formato 'dado1=x&dado2=y'
+ */
+function makeAjaxCall(type, url, sucessCallBackFunction, data) {
+
+	$.ajax({
+		type: type,
+		url: url,
+		data: data,
+		success: function(json) {
+			if (json.mensagens) {
+				exibirMensagem("erro", json.mensagens);
+			} else {
+				sucessCallBackFunction(json.result);
+			}
+		},
+		error: function(error, type, msg) {
+			alert("Erro: " + msg);
+		}
+	});		
+}
