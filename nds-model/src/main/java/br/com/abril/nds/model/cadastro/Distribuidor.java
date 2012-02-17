@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -17,9 +19,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "DISTRIBUIDOR")
+@SequenceGenerator(name="DISTRIB_SEQ", initialValue = 1, allocationSize = 1)
 public class Distribuidor {
 
 	@Id
+	@GeneratedValue(generator = "DISTRIB_SEQ")
 	private Long id;
 	private Date dataOperacao;
 	@OneToOne

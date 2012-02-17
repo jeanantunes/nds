@@ -3,9 +3,14 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -87,6 +92,37 @@ public class Fixture {
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
 		return lancamento;
+	}
+	
+
+	public static Distribuidor distribuidor(PessoaJuridica juridica, Date dataOperacao) {
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setDataOperacao(dataOperacao);
+		distribuidor.setJuridica(juridica);
+		return distribuidor;
+	}
+	
+	public static DistribuicaoFornecedor distribuicaoFornecedor(
+			Distribuidor distribuidor, Fornecedor fornecedor, DiaSemana diaSemana) {
+		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
+		df.setDistribuidor(distribuidor);
+		df.setFornecedor(fornecedor);
+		df.setDiaSemana(diaSemana);
+		distribuidor.getDiasDistribuicao().add(df);
+		return df;
+	}
+	
+	public static Cota cota(Integer numeroCota, Pessoa pessoa, SituacaoCadastro situacaoCadastro) {
+		
+		Cota cota = new Cota();
+		
+		cota.setNumeroCota(numeroCota);
+		
+		cota.setPessoa(pessoa);
+		
+		cota.setSituacaoCadastro(situacaoCadastro);
+		
+		return cota;
 	}
 
 }

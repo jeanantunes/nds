@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -46,6 +47,12 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 	
 	public void buscarPorId(K id) {
 		getSession().get(clazz, id);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<T> buscarTodos() {
+		
+		return getSession().createCriteria(this.clazz).list();
 	}
 
 }

@@ -25,6 +25,7 @@ public class Produto {
 	@Id
 	@GeneratedValue(generator = "PRODUTO_SEQ")
 	private Long id;
+	private String codigo;
 	@Enumerated
 	private PeriodicidadeProduto periodicidade;
 	private String nome;
@@ -40,6 +41,14 @@ public class Produto {
 	
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 	
 	public PeriodicidadeProduto getPeriodicidade() {

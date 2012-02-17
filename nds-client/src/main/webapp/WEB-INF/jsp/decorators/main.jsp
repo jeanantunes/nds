@@ -181,7 +181,7 @@ fieldset label {
 							<li><a href="Estoque/consulta_notas_sem_fisico.htm">Consulta
 									de Notas</a>
 							</li>
-							<li><a href="Estoque/consulta_faltas_sobras.htm">Consulta
+							<li><a href="estoque/diferenca/consulta">Consulta
 									Faltas e Sobras</a>
 							</li>
 							<li><a href="Estoque/extrato_edicao.htm">Extrato de
