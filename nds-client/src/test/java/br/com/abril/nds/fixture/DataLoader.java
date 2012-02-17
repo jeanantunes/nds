@@ -90,7 +90,7 @@ public class DataLoader {
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista",
 				GrupoProduto.REVISTA, "99000642");
 		session.save(tipoProduto);
-		Produto produto = Fixture.produto("Revista Veja", "Veja", 7,
+		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", 7,
 				tipoProduto);
 		produto.getFornecedores().add(fornecedorAcme);
 		session.save(produto);

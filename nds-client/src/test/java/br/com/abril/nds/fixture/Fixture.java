@@ -60,9 +60,10 @@ public class Fixture {
 		return tipoProduto;
 	}
 
-	public static Produto produto(String descricao, String nome,
+	public static Produto produto(String codigo, String descricao, String nome,
 			int periodicidade, TipoProduto tipo) {
 		Produto produto = new Produto();
+		produto.setCodigo(codigo);
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(PeriodicidadeProduto.SEMANAL);
