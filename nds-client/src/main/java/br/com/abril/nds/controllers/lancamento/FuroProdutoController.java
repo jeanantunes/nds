@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -19,6 +22,9 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/lancamento/furoProduto")
 public class FuroProdutoController {
 
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
 	private Result result;
 	
 	public FuroProdutoController(Result result){
@@ -59,8 +65,7 @@ public class FuroProdutoController {
 	@Post
 	public void pesquisarPorNomeProduto(String produto){
 		
-		//TODO chamar service
-		List<ProdutoEdicao> listaProdutoEdicao = new ArrayList<ProdutoEdicao>();
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorNomeProduto(produto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
