@@ -10,6 +10,9 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto);
 	
+	List<ProdutoEdicao> obterProdutoEdicaoPorCodigo(String codigoProduto);
+	
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento);
+	
 }

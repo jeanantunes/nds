@@ -41,7 +41,12 @@
 		
 		function pesquisar(){
 			$("#resultado").hide();
-			$.ajax({
+			var data = "codigo=" + $("#codigo").val() +
+			  "&produto=" + $("#produto").val() +
+			  "&edicao=" + $("#edicao").val() +
+			  "&dataLancamento=" + $("#dataLancamento").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisar'/>", data, exibirProduto);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
 				data: "codigo=" + $("#codigo").val() +
@@ -58,7 +63,7 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
 		}
 		
 		function exibirProduto(result){
@@ -67,7 +72,7 @@
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
 			if (result.pathImagem){
-				$("#imagem").attr("src", "${pageContext.request.contextPath}/" + result.pathImagem);
+				$("#imagem").attr("src", "${pageContext.request.contextPath}/capas/" + result.pathImagem);
 			} else {
 				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
 			}
@@ -75,14 +80,14 @@
 			
 			$("#codigoHidden").val($("#codigo").val());
 			$("#edicaoHidden").val($("#edicao").val());
-			$("#dataLancamentoHidden").val($("#dataLancamento").val());
-			
+						
 			$("#resultado").show();
 			$("#novaData").focus();
 		}
 		
 		function pesquisarPorNomeProduto(){
-			$.ajax({
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "produto=" + $("#produto").val(), exibirAutoComplete);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
 				data: "produto=" + $("#produto").val(),
@@ -96,7 +101,7 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
 		}
 		
 		function exibirAutoComplete(result){
@@ -116,12 +121,15 @@
 		}
 		
 		function confirmar(){
-			$.ajax({
+			var data = "codigo=" + $("#codigoHidden").val() +
+			  "&edicao=" + $("#edicaoHidden").val() +
+			  "&novaData=" + $("#novaData").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
 				data: "codigo=" + $("#codigoHidden").val() +
 					  "&edicao=" + $("#edicaoHidden").val() +
-					  "&dataLancamento=" + $("#dataLancamentoHidden").val() +
 					  "&novaData=" + $("#novaData").val(),
 				success: function(json){
 					if (json.mensagens){
@@ -133,7 +141,11 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
+		}
+		
+		function msg(result){
+			$("#effect").hide("highlight", {}, 5000, callback);
 		}
 	</script>
 	<style type="text/css">
@@ -215,7 +227,6 @@
 					</div>
 					<input type="hidden" id="codigoHidden"/>
 					<input type="hidden" id="edicaoHidden"/>
-					<input type="hidden" id="dataLancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>

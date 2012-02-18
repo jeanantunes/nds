@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Get;
@@ -24,6 +25,9 @@ public class FuroProdutoController {
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
+	@Autowired
+	private FuroProdutoService furoProdutoService;
+	
 	private Result result;
 	
 	public FuroProdutoController(Result result){
@@ -39,44 +43,29 @@ public class FuroProdutoController {
 	@Post
 	public void pesquisar(String codigo, String produto, Long edicao, Date dataLancamento){
 		
-		if (this.validarDadosEntrada(codigo, edicao, dataLancamento)){
+		if (this.validarDadosEntradaPesquisa(codigo, edicao, dataLancamento)){
 		
-			FuroProdutoDTO furoProdutoDTO = 
-					produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
-							codigo, produto, edicao, dataLancamento);
+			FuroProdutoDTO furoProdutoDTO = null;
+			try {
+				furoProdutoDTO = produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
+						codigo, produto, edicao, dataLancamento);
+			} catch (Exception e) {
+				result.use(Results.json()).from(new String[]{"Erro ao pesquisar produto: " + e.getMessage()}, "mensagens").serialize();
+				result.forwardTo(FuroProdutoController.class).index();
+				return;
+			}
 			
 			if (furoProdutoDTO != null){
 				result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
 			} else {
 				result.use(Results.json()).from(new String[]{"Nenhum registro encontrado."}, "mensagens").serialize();
 			}
-			
-			result.forwardTo(FuroProdutoController.class).index();
 		}
-	}
-	
-	@Post
-	public void pesquisarPorNomeProduto(String produto){
-		
-		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorNomeProduto(produto);
-		
-		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
-			listaProdutos.add(
-					new ItemAutoComplete(
-							produtoEdicao.getProduto().getNome(), 
-							new FuroProdutoDTO(
-									produtoEdicao.getProduto().getCodigo(), 
-									null, 
-									produtoEdicao.getNumeroEdicao(), null, null, null)));
-		}
-		
-		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	private boolean validarDadosEntrada(String codigo, Long edicao, Date dataLancamento) {
+	private boolean validarDadosEntradaPesquisa(String codigo, Long edicao, Date dataLancamento) {
 		
 		boolean valido = true;
 		List<String> listaMensagemValidacao = new ArrayList<String>();
@@ -102,21 +91,77 @@ public class FuroProdutoController {
 		
 		return valido;
 	}
-
+	
 	@Post
-	public void confirmarFuro(Long codigo, Long edicao, Date dataLancamento, Date novaData){
-		System.out.println("Código: " + codigo);
-		System.out.println("Edicao: " + edicao);
-		System.out.println("dataLancamento: " + dataLancamento);
-		System.out.println("novaData: " + novaData);
+	public void pesquisarPorNomeProduto(String produto){
 		
-		//TODO chamar service
+		List<ProdutoEdicao> listaProdutoEdicao = null;
 		try {
+			listaProdutoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorNomeProduto(produto);
+		} catch (Exception e) {
+			result.use(Results.json()).from(new String[]{"Erro ao pesquisar produto: " + e.getMessage()}, "mensagens").serialize();
+			result.forwardTo(FuroProdutoController.class).index();
+			return;
+		}
+		
+		if (listaProdutoEdicao != null){
+			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
+				listaProdutos.add(
+						new ItemAutoComplete(
+								produtoEdicao.getProduto().getNome(), 
+								null,
+								new FuroProdutoDTO(
+										produtoEdicao.getProduto().getCodigo(), 
+										null, 
+										produtoEdicao.getNumeroEdicao(), null, null, null)));
+			}
 			
-		} catch (Exception e){
-			result.use(Results.json()).from(new String[]{"Erro ao confirmar furo do produto: " + e.getMessage()}, "mensagens").serialize();
+			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		}
 		
 		result.forwardTo(FuroProdutoController.class).index();
+	}
+
+	@Post
+	public void confirmarFuro(String codigo, Long edicao, Date novaData){
+		
+		if (this.validarDadosEntradaConfirmarFuro(codigo, edicao, novaData)){
+			try {
+				this.furoProdutoService.efetuarFuroProduto(codigo, edicao, novaData);
+				result.use(Results.json()).from(new String[]{"Furo efetuado com sucesso."}, "mensagens").serialize();
+			} catch (Exception e){
+				result.use(Results.json()).from(new String[]{"Erro ao confirmar furo do produto: " + e.getMessage()}, "mensagens").serialize();
+			}
+		}
+		
+		result.forwardTo(FuroProdutoController.class).index();
+	}
+	
+	private boolean validarDadosEntradaConfirmarFuro(String codigo, Long edicao, Date novaData) {
+		
+		boolean valido = true;
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (codigo == null || codigo.isEmpty()){
+			valido = false;
+			listaMensagemValidacao.add("Código é obrigatório.");
+		}
+		
+		if (edicao == null){
+			valido = false;
+			listaMensagemValidacao.add("Edição é obrigatório.");
+		}
+		
+		if (novaData == null){
+			valido = false;
+			listaMensagemValidacao.add("Nova Data é obrigatório.");
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()){
+			result.use(Results.json()).from(listaMensagemValidacao, "mensagens").serialize();
+		}
+		
+		return valido;
 	}
 }
