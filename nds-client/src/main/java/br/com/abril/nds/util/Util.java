@@ -3,6 +3,7 @@ package br.com.abril.nds.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public abstract class Util {
 
@@ -29,5 +30,9 @@ public abstract class Util {
 		}
 		
 		return true;
+	}
+	
+	public static String formatarData(Date data, String formato) {
+		return new SimpleDateFormat(formato).format(data);
 	}
 }

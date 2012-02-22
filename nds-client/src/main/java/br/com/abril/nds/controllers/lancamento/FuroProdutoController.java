@@ -132,9 +132,7 @@ public class FuroProdutoController {
 								produto.getNome(), 
 								null,
 								new FuroProdutoDTO(
-										produto.getCodigo(), 
-										null, 
-										null, null, null, null)));
+										produto.getCodigo())));
 			}
 			
 			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
@@ -144,11 +142,11 @@ public class FuroProdutoController {
 	}
 
 	@Post
-	public void confirmarFuro(String codigo, Long edicao, Date novaData){
+	public void confirmarFuro(String codigo, Long edicao, Date novaData, Long idLancamento){
 		
-		if (this.validarDadosEntradaConfirmarFuro(codigo, edicao, novaData)){
+		if (this.validarDadosEntradaConfirmarFuro(codigo, edicao, novaData, idLancamento)){
 			try {
-				this.furoProdutoService.efetuarFuroProduto(codigo, edicao, novaData);
+				this.furoProdutoService.efetuarFuroProduto(codigo, edicao, idLancamento, novaData);
 				result.use(Results.json()).from(new String[]{"Furo efetuado com sucesso."}, "mensagens").serialize();
 			} catch (Exception e){
 				result.use(Results.json()).from(new String[]{"Erro ao confirmar furo do produto: " + e.getMessage()}, "mensagens").serialize();
@@ -158,7 +156,7 @@ public class FuroProdutoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	private boolean validarDadosEntradaConfirmarFuro(String codigo, Long edicao, Date novaData) {
+	private boolean validarDadosEntradaConfirmarFuro(String codigo, Long edicao, Date novaData, Long idLancamento) {
 		
 		boolean valido = true;
 		List<String> listaMensagemValidacao = new ArrayList<String>();
@@ -171,6 +169,11 @@ public class FuroProdutoController {
 		if (edicao == null){
 			valido = false;
 			listaMensagemValidacao.add("Edição é obrigatório.");
+		}
+		
+		if (idLancamento == null){
+			valido = false;
+			listaMensagemValidacao.add("Lançamento é obrigatório");
 		}
 		
 		if (novaData == null){

@@ -40,7 +40,12 @@
 		});
 		
 		function pesquisar(){
+			
 			$("#resultado").hide();
+			
+			$("#codigoHidden").val($("#codigo").val());
+			$("#edicaoHidden").val($("#edicao").val());
+			
 			var data = "codigo=" + $("#codigo").val() +
 			  "&produto=" + $("#produto").val() +
 			  "&edicao=" + $("#edicao").val() +
@@ -78,8 +83,7 @@
 			}
 			$("#imagem").attr("alt", result.nomeProduto);
 			
-			$("#codigoHidden").val($("#codigo").val());
-			$("#edicaoHidden").val($("#edicao").val());
+			$("#lancamentoHidden").val(result.idLancamento);
 						
 			$("#resultado").show();
 			$("#novaData").focus();
@@ -126,7 +130,8 @@
 		function confirmar(){
 			var data = "codigo=" + $("#codigoHidden").val() +
 			  "&edicao=" + $("#edicaoHidden").val() +
-			  "&novaData=" + $("#novaData").val();
+			  "&novaData=" + $("#novaData").val() +
+			  "&idLancamento=" + $("#lancamentoHidden").val();
 			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
 			/*$.ajax({
 				type: "POST",
@@ -149,6 +154,12 @@
 		
 		function msg(result){
 			$("#effect").hide("highlight", {}, 5000, callback);
+			$("#resultado").hide();
+			$("#codigo").val("");
+			$("#produto").val("");
+			$("#edicao").val("");
+			$("#dataLancamento").val("");
+			$("#codigo").focus();
 		}
 	</script>
 	<style type="text/css">
@@ -230,6 +241,7 @@
 					</div>
 					<input type="hidden" id="codigoHidden"/>
 					<input type="hidden" id="edicaoHidden"/>
+					<input type="hidden" id="lancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>

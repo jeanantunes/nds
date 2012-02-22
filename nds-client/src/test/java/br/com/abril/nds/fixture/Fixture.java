@@ -1,12 +1,13 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -17,10 +18,78 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class Fixture {
+	
+	public static PessoaJuridica juridicaFC() {
+		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
+				"fc@mail.com");
+	}
+	
+	public static PessoaJuridica juridicaDinap() {
+		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
+				"dinap@mail.com");
+	}
+	
+	public static Fornecedor fornecedorFC() {
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true);
+	}
+	
+	public static Fornecedor fornecedorDinap() {
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true);
+	}
+	
+	public static Produto produtoVeja(TipoProduto tipoProduto) {
+		return produto("1", "Veja", "Veja",
+				PeriodicidadeProduto.SEMANAL, tipoProduto);
+	}
+	
+	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
+		return produto("2", "Quatro Rodas", "Quatro Rodas",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
+		return produto("3", "Info Exame", "Info Exame",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoCapricho(TipoProduto tipoProduto) {
+		return produto("4", "Capricho", "Capricho",
+				PeriodicidadeProduto.QUINZENAL, tipoProduto);
+	}
+	
+	public static TipoProduto tipoRevista() {
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642");
+	}
+	
+	
+	public static Date criarData(int dia, int mes, int ano) {
+		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
+		return data.getTime();
+	}
+
+	public static Date criarData(int dia, int mes, int ano, int hora, int minuto) {
+		Calendar data = criarCalendar(dia, mes, ano, hora, minuto, 0);
+		return data.getTime();
+	}
+
+	private static Calendar criarCalendar(int dia, int mes, int ano, int hora,
+			int minuto, int segundo) {
+		Calendar data = Calendar.getInstance();
+		data.set(Calendar.DAY_OF_MONTH, dia);
+		data.set(Calendar.MONTH, mes);
+		data.set(Calendar.YEAR, ano);
+		data.set(Calendar.HOUR_OF_DAY, hora);
+		data.set(Calendar.MINUTE, minuto);
+		data.set(Calendar.SECOND, segundo);
+		data.clear(Calendar.MILLISECOND);
+		return data;
+	}
+	
 
 	public static PessoaFisica pessoaFisica(String cpf, String email,
 			String nome) {
@@ -61,26 +130,28 @@ public class Fixture {
 	}
 
 	public static Produto produto(String codigo, String descricao, String nome,
-			int periodicidade, TipoProduto tipo) {
+			PeriodicidadeProduto periodicidade, TipoProduto tipo) {
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
-		produto.setPeriodicidade(PeriodicidadeProduto.SEMANAL);
+		produto.setPeriodicidade(periodicidade);
 		produto.setTipoProduto(tipo);
 		return produto;
 	}
 
-	public static ProdutoEdicao produtoEdicao(int pacotePadrao, int peb,
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao, int pacotePadrao, int peb,
 			BigDecimal peso, BigDecimal precoCusto, BigDecimal precoVenda,
 			Produto produto) {
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
 		produtoEdicao.setPeb(peb);
 		produtoEdicao.setPeso(peso);
 		produtoEdicao.setPrecoCusto(precoCusto);
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		return produtoEdicao;
 	}
 	
@@ -124,6 +195,21 @@ public class Fixture {
 		cota.setSituacaoCadastro(situacaoCadastro);
 		
 		return cota;
+	}
+	
+	public static Estudo estudo(Double qtdReparte, Date data, Lancamento lancamento, ProdutoEdicao produtoEdicao) {
+		
+		Estudo estudo = new Estudo();
+		
+		estudo.setQtdeReparte(qtdReparte);
+		
+		estudo.setData(data);
+		
+		estudo.setLancamento(lancamento);
+		
+		estudo.setProdutoEdicao(produtoEdicao);
+		
+		return estudo;
 	}
 
 }
