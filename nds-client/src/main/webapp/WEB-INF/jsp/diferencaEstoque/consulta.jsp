@@ -1,3 +1,20 @@
+<head>
+	<script language="javascript" type="text/javascript">
+		function mostrarGridConsulta() {			
+			var data = null;
+			
+			$.postJSON("<c:url value='/estoque/diferenca/consultarFaltasSobras' />",
+					   data, exibirFaltasSobras);
+			
+			$(".grids").show();
+		};
+		
+		function exibirFaltasSobras(result) {
+			alert(result);
+		};
+	</script>
+</head>
+
 <body>
 	<div id="effect" style="padding: 0 .7em;"
 		class="ui-state-highlight ui-corner-all">
@@ -50,7 +67,7 @@
 					</select>
 				</td>
 				<td width="137"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="mostrar();">Pesquisar</a> </span></td>
+						href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a> </span></td>
 			</tr>
 		</table>
 	</fieldset>
@@ -72,6 +89,7 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<script>
+	
 		$(".consultaFaltasSobrasGrid").flexigrid({
 			url : '../xml/consulta_faltas_sobras-xml.xml',
 			dataType : 'xml',

@@ -156,7 +156,8 @@ public class Fixture {
 		return produtoEdicao;
 	}
 	
-	public static Lancamento lancamento(TipoLancamento tipoLancamento, ProdutoEdicao produtoEdicao, Date dlp, Date drp) {
+	public static Lancamento lancamento(TipoLancamento tipoLancamento,
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Long reparte) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setTipoLancamento(tipoLancamento);
 		lancamento.setProdutoEdicao(produtoEdicao);
@@ -164,6 +165,7 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.setReparte(reparte);
 		return lancamento;
 	}
 	
