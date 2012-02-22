@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -68,7 +69,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		getSession().save(tipoProduto);
 		
-		Produto produto = Fixture.produto("1", "teste", "teste", 2, tipoProduto);
+		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		
 		getSession().save(produto);
 		

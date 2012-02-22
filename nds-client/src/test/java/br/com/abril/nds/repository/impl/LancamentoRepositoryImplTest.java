@@ -45,11 +45,11 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Produto capricho = Fixture.produtoCapricho(tipoRevista);
 		capricho.addFornecedor(fornecedorFC);
 						
-		ProdutoEdicao veja001 = Fixture.produtoEdicao(10, 7,
+		ProdutoEdicao veja001 = Fixture.produtoEdicao(1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, veja);
 		
-		ProdutoEdicao quatroRoda001 = Fixture.produtoEdicao(10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, veja);
+		ProdutoEdicao quatroRoda001 = Fixture.produtoEdicao(1L, 10, 7,
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, quatroRodas);
 		
 		lancamento1 = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja001,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),

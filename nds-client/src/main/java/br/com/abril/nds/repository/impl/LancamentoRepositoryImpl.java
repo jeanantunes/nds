@@ -1,10 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -43,7 +40,6 @@ public class LancamentoRepositoryImpl extends
 		if (filtraFornecedores) {
 			query.setParameterList("idsFornecedores", idsFornecedores);
 		}
-		
 		return query.list();
 	}
 

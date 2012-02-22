@@ -142,7 +142,7 @@ public class Fixture {
 
 	public static ProdutoEdicao produtoEdicao(Long numeroEdicao, int pacotePadrao, int peb,
 			BigDecimal peso, BigDecimal precoCusto, BigDecimal precoVenda,
-			Produto produto, Long numeroEdicao) {
+			Produto produto) {
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
