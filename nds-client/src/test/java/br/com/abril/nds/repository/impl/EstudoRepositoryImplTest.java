@@ -84,7 +84,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Lancamento criarLancamento(ProdutoEdicao produtoEdicao, Date dataReferencia) {
 		
 		Lancamento lancamento = 
-			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataReferencia, dataReferencia);
+			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataReferencia, dataReferencia, 10L);
 		
 		getSession().save(lancamento);
 		

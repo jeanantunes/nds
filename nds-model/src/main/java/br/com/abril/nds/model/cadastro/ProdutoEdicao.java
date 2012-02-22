@@ -103,5 +103,45 @@ public class ProdutoEdicao {
 	public void setProduto(Produto produto) {
 		this.produto = produto;
 	}
+	
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoEdicao other = (ProdutoEdicao) obj;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		if (produto == null) {
+			if (other.produto != null)
+				return false;
+		} else if (!produto.equals(other.produto))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder(produto.toString()).append("-")
+				.append(numeroEdicao).toString();
+	}
 
 }
