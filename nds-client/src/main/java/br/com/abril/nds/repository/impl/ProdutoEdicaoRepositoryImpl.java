@@ -34,20 +34,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigo(String codigoProduto) {
-		String hql = "from ProdutoEdicao produtoEdicao " 
-				   + " join fetch produtoEdicao.produto " 
-				   + " where produtoEdicao.produto.codigo = :codigoProduto";
-		
-		Query query = super.getSession().createQuery(hql);
-
-		query.setParameter("codigoProduto", codigoProduto);
-		
-		return query.list();
-	}
-
 	@Override
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
