@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -61,11 +61,11 @@ public class Fixture {
 	}
 
 	public static Produto produto(String descricao, String nome,
-			int periodicidade, TipoProduto tipo) {
+			PeriodicidadeProduto periodicidade, TipoProduto tipo) {
 		Produto produto = new Produto();
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
-		produto.setPeriodicidade(PeriodicidadeProduto.SEMANAL);
+		produto.setPeriodicidade(periodicidade);
 		produto.setTipoProduto(tipo);
 		return produto;
 	}

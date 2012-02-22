@@ -28,5 +28,11 @@ public abstract class AbstractRepositoryImplTest {
 	protected Session getSession() {
 		return sf.getCurrentSession();
 	}
+	
+	protected void save(Object... entidades) {
+		for (Object entidade : entidades) {
+			getSession().save(entidade);
+		}
+	}
 
 }
