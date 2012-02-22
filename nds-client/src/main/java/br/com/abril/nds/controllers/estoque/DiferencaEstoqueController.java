@@ -1,15 +1,16 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/diferenca")
@@ -28,11 +29,15 @@ public class DiferencaEstoqueController {
 		this.carregarCombos();
 	}
 	
-	@Get
+	@Post
 	@Path("/lancamento/pesquisa")
-	public void pesquisarLancamentos(Date dataMovimento, String tipoDiferenca) {
+	public void pesquisarLancamentos(String dataMovimento, String tipoDiferenca) {
 		
-		result.forwardTo(DiferencaEstoqueController.class).lancamento();
+		System.out.println(dataMovimento);
+		
+		System.out.println(tipoDiferenca);
+		
+		result.use(Results.json()).from("teste", "result").serialize();
 	}
 	
 	@Get
