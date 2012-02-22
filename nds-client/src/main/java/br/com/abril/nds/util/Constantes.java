@@ -9,5 +9,9 @@ package br.com.abril.nds.util;
 public abstract class Constantes {
 	
 	public static final String DATE_PATTERN_PT_BR = "dd/MM/yyyy";
+	public static final String[] EXTENSOES_IMAGENS = new String[]{".jpg", ".jpeg", ".png", ".bmp"};
 
 }
+
+
+

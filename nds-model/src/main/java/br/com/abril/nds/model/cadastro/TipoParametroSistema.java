@@ -7,4 +7,5 @@ package br.com.abril.nds.model.cadastro;
  */
 public enum TipoParametroSistema {
 
+	PATH_IMAGENS_CAPA
 }
