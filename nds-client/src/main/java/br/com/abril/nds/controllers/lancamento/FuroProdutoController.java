@@ -7,9 +7,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -27,6 +28,9 @@ public class FuroProdutoController {
 	
 	@Autowired
 	private FuroProdutoService furoProdutoService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	private Result result;
 	
@@ -93,11 +97,11 @@ public class FuroProdutoController {
 	}
 	
 	@Post
-	public void pesquisarPorNomeProduto(String produto){
+	public void pesquisarPorNomeProduto(String nomeProduto){
 		
-		List<ProdutoEdicao> listaProdutoEdicao = null;
+		List<Produto> listaProdutoEdicao = null;
 		try {
-			listaProdutoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorNomeProduto(produto);
+			listaProdutoEdicao = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		} catch (Exception e) {
 			result.use(Results.json()).from(new String[]{"Erro ao pesquisar produto: " + e.getMessage()}, "mensagens").serialize();
 			result.forwardTo(FuroProdutoController.class).index();
@@ -106,15 +110,15 @@ public class FuroProdutoController {
 		
 		if (listaProdutoEdicao != null){
 			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
+			for (Produto produto : listaProdutoEdicao){
 				listaProdutos.add(
 						new ItemAutoComplete(
-								produtoEdicao.getProduto().getNome(), 
+								produto.getNome(), 
 								null,
 								new FuroProdutoDTO(
-										produtoEdicao.getProduto().getCodigo(), 
+										produto.getCodigo(), 
 										null, 
-										produtoEdicao.getNumeroEdicao(), null, null, null)));
+										null, null, null, null)));
 			}
 			
 			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
