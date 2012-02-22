@@ -51,6 +51,12 @@ public class DiferencaEstoqueController {
 	public void consulta() {
 		this.carregarCombosConsulta();
 	}
+	
+	@Post
+	@Path("/consultarFaltasSobras")
+	public void consultarFaltasSobras() {
+		result.use(Results.json()).from("Retorno", "result").serialize();
+	}
 
 	/**
 	 * Método responsável por carregar todos os combos da tela de consulta.
@@ -102,12 +108,12 @@ public class DiferencaEstoqueController {
 
 		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedores();
 		
-		List<ItemDTO<Fornecedor, String>> listaFornecedoresCombo =
-			new ArrayList<ItemDTO<Fornecedor,String>>();
+		List<ItemDTO<Long, String>> listaFornecedoresCombo =
+			new ArrayList<ItemDTO<Long,String>>();
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
 			listaFornecedoresCombo.add(
-				new ItemDTO<Fornecedor, String>(fornecedor, fornecedor.getJuridica().getNomeFantasia())
+				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia())
 			);
 		}
 		
