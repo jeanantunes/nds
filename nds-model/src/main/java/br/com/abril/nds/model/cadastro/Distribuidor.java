@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * @author T30541
@@ -25,6 +27,7 @@ public class Distribuidor {
 	@Id
 	@GeneratedValue(generator = "DISTRIB_SEQ")
 	private Long id;
+	@Temporal(TemporalType.DATE)
 	private Date dataOperacao;
 	@OneToOne
 	private PessoaJuridica juridica;
