@@ -86,22 +86,26 @@
 		}
 		
 		function pesquisarPorNomeProduto(){
-			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "produto=" + $("#produto").val(), exibirAutoComplete);
-			/*$.ajax({
-				type: "POST",
-				url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
-				data: "produto=" + $("#produto").val(),
-				success: function(json){
-					if (json.mensagens){
-						exibirMensagem("erro", json.mensagens);
-					} else {
-						exibirAutoComplete(json.result);
+			var produto = $("#produto").val();
+			
+			if (produto && produto.length > 0){
+				$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, exibirAutoComplete);
+				/*$.ajax({
+					type: "POST",
+					url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
+					data: "produto=" + $("#produto").val(),
+					success: function(json){
+						if (json.mensagens){
+							exibirMensagem("erro", json.mensagens);
+						} else {
+							exibirAutoComplete(json.result);
+						}
+					},
+					error: function(error, type, msg){
+						alert("no donuts for ya - " + msg);
 					}
-				},
-				error: function(error, type, msg){
-					alert("no donuts for ya - " + msg);
-				}
-			});*/
+				});*/
+			}
 		}
 		
 		function exibirAutoComplete(result){
@@ -116,8 +120,7 @@
 		
 		function completarPesquisa(chave){
 			$("#codigo").val(chave.codigoProduto);
-			$("#edicao").val(chave.edicao);
-			$("#dataLancamento").focus();
+			$("#edicao").focus();
 		}
 		
 		function confirmar(){
