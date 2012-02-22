@@ -19,7 +19,7 @@ public abstract class Util {
 	
 	public static boolean isValidDate(String valor, String pattern){
 		if (pattern == null || pattern.trim().isEmpty()){
-			pattern = "dd/MM/yyyy";
+			pattern = Constantes.DATE_PATTERN_PT_BR;
 		}
 		try {
 			DateFormat f = new SimpleDateFormat(pattern);
