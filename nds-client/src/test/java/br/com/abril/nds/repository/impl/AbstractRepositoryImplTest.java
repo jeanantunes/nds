@@ -33,6 +33,8 @@ public abstract class AbstractRepositoryImplTest {
 		for (Object entidade : entidades) {
 			getSession().save(entidade);
 		}
+		getSession().flush();
+		getSession().clear();
 	}
 
 }

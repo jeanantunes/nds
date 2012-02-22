@@ -79,6 +79,10 @@ public class Produto {
 		return fornecedores;
 	}
 	
+	public void addFornecedor(Fornecedor fornecedor) {
+		getFornecedores().add(fornecedor);
+	}
+	
 	public void setFornecedores(Set<Fornecedor> fornecedores) {
 		this.fornecedores = fornecedores;
 	}

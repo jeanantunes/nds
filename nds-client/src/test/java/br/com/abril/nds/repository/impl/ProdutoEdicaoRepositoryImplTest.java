@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -41,7 +42,7 @@ public class ProdutoEdicaoRepositoryImplTest {
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		getSession().save(tipoProduto);
 		
-		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", 7, tipoProduto);
+		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		getSession().save(produto);
 
 		ProdutoEdicao produtoEdicao =
