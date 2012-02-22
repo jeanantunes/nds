@@ -1,7 +1,9 @@
 package br.com.abril.nds.model.planejamento;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -13,9 +15,11 @@ import br.com.abril.nds.model.cadastro.Cota;
  */
 @Entity
 @Table(name = "ESTUDO_COTA")
+@SequenceGenerator(name="ESTUDO_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstudoCota {
 
 	@Id
+	@GeneratedValue(generator = "ESTUDO_COTA_SEQ")
 	private Long id;
 	private double qtdePrevista;
 	private double qtdeEfetiva;

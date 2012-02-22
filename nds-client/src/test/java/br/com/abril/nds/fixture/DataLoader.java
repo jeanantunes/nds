@@ -97,7 +97,7 @@ public class DataLoader {
 				tipoProduto);
 		produto.getFornecedores().add(fornecedorAcme);
 		session.save(produto);
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(10, 14,
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produto);
 		session.save(produtoEdicao);
