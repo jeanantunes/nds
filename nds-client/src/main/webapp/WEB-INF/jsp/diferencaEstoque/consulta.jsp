@@ -18,21 +18,17 @@
 					id="textfield9"
 					style="width: 80px; float: left; margin-right: 5px;" /><span
 					class="classPesquisar" title="Pesquisar Produto"><a
-						href="javascript:;">&nbsp;</a>
-				</span>
-				</td>
+						href="javascript:;">&nbsp;</a> </span></td>
 				<td width="60">Produto:</td>
 				<td width="293"><input type="text" name="textfield8"
-					id="textfield8" style="width: 272px;" />
-				</td>
+					id="textfield8" style="width: 272px;" /></td>
 				<td width="73">Fornecedor:</td>
-				<td width="312" colspan="2"><select name="select8"
-					id="select13" style="width: 280px;">
-						<option selected="selected"></option>
-						<option>Todos</option>
-						<option>Dinap</option>
-						<option>FC</option>
-				</select>
+				<td width="312" colspan="2">
+					<select name="select8" id="select13" style="width: 280px;">
+						<c:forEach var="fornecedor" items="${listaFornecedores}">
+							<option value="${fornecedor.key}">${fornecedor.value}</option>
+						</c:forEach>
+					</select>
 				</td>
 			</tr>
 		</table>
@@ -41,26 +37,20 @@
 			<tr>
 				<td width="178">Período de Data Lançamento:</td>
 				<td width="108"><input type="text" name="datepickerDe"
-					id="datepickerDe" style="width: 80px;" />
-				</td>
+					id="datepickerDe" style="width: 80px;" /></td>
 				<td width="33" align="center">Até</td>
 				<td width="147"><input type="text" name="datepickerAte"
-					id="datepickerAte" style="width: 80px;" />
-				</td>
+					id="datepickerAte" style="width: 80px;" /></td>
 				<td width="134" align="right">Tipo de Difernça:</td>
-				<td width="169"><select name="select9" id="select14"
-					style="width: 120px;">
-						<option selected="selected"></option>
-						<option>Falta de</option>
-						<option>Sobra de</option>
-						<option>Falta em</option>
-						<option>Sobra em</option>
-				</select>
+				<td width="169">
+					<select name="select9" id="select14" style="width: 120px;">
+						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
+							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
+						</c:forEach>
+					</select>
 				</td>
 				<td width="137"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="mostrar();">Pesquisar</a>
-				</span>
-				</td>
+						href="javascript:;" onclick="mostrar();">Pesquisar</a> </span></td>
 			</tr>
 		</table>
 	</fieldset>
@@ -72,11 +62,10 @@
 			<table class="consultaFaltasSobrasGrid"></table>
 			<span class="bt_novos" title="Gerar Arquivo"><a
 				href="javascript:;"><img src="../images/ico_excel.png"
-					hspace="5" border="0" />Arquivo</a>
-			</span> <span class="bt_novos" title="Imprimir"><a
-				href="javascript:;"><img src="../images/ico_impressora.gif"
-					alt="Imprimir" hspace="5" border="0" />Imprimir</a>
-			</span>
+					hspace="5" border="0" />Arquivo</a> </span> <span class="bt_novos"
+				title="Imprimir"><a href="javascript:;"><img
+					src="../images/ico_impressora.gif" alt="Imprimir" hspace="5"
+					border="0" />Imprimir</a> </span>
 		</div>
 
 	</fieldset>
