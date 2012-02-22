@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class FuroProdutoDTO implements Serializable {
@@ -11,7 +10,7 @@ public class FuroProdutoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -580201558784688016L;
 	
-	private Long idProduto;
+	private String codigoProduto;
 	
 	private String nomeProduto;
 	
@@ -21,30 +20,28 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Date novaData;
 	
-	private String novaDataString;
-	
 	private String pathImagem;
 	
-	public FuroProdutoDTO(Long idProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, 
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, 
 			Date novaData, String pathImagem){
-		this.idProduto = idProduto;
+		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
 		this.quantidadeExemplares = quantidadeExemplares;
 		this.novaData = novaData;
 		this.pathImagem = pathImagem;
-		
-		if (this.novaData != null){
-			this.novaDataString = new SimpleDateFormat("dd/MM/yyyy").format(this.novaData);
-		}
 	}
 	
-	public Long getIdProduto() {
-		return idProduto;
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares){
+		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, codigoProduto + edicao + ".jpg");
+	}
+	
+	public String getCodigoProduto() {
+		return codigoProduto;
 	}
 
-	public void setIdProduto(Long idProduto) {
-		this.idProduto = idProduto;
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 
 	public String getNomeProduto() {
@@ -89,13 +86,5 @@ public class FuroProdutoDTO implements Serializable {
 
 	public void setPathImagem(String pathImagem) {
 		this.pathImagem = pathImagem;
-	}
-
-	public String getNovaDataString() {
-		return novaDataString;
-	}
-
-	public void setNovaDataString(String novaDataString) {
-		this.novaDataString = novaDataString;
 	}
 }

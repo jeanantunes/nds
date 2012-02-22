@@ -40,7 +40,13 @@
 		});
 		
 		function pesquisar(){
-			$.ajax({
+			$("#resultado").hide();
+			var data = "codigo=" + $("#codigo").val() +
+			  "&produto=" + $("#produto").val() +
+			  "&edicao=" + $("#edicao").val() +
+			  "&dataLancamento=" + $("#dataLancamento").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisar'/>", data, exibirProduto);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
 				data: "codigo=" + $("#codigo").val() +
@@ -57,7 +63,7 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
 		}
 		
 		function exibirProduto(result){
@@ -65,33 +71,41 @@
 			$("#txtProduto").text(result.nomeProduto);
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
-			$("#novaData").attr("value", result.novaDataString);
-			$("#imagem").attr("src", "${pageContext.request.contextPath}/" + result.pathImagem);
+			if (result.pathImagem){
+				$("#imagem").attr("src", "${pageContext.request.contextPath}/capas/" + result.pathImagem);
+			} else {
+				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
+			}
+			$("#imagem").attr("alt", result.nomeProduto);
 			
 			$("#codigoHidden").val($("#codigo").val());
 			$("#edicaoHidden").val($("#edicao").val());
-			$("#dataLancamentoHidden").val($("#dataLancamento").val());
-			
+						
 			$("#resultado").show();
 			$("#novaData").focus();
 		}
 		
 		function pesquisarPorNomeProduto(){
-			$.ajax({
-				type: "POST",
-				url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
-				data: "produto=" + $("#produto").val(),
-				success: function(json){
-					if (json.mensagens){
-						exibirMensagem("erro", json.mensagens);
-					} else {
-						exibirAutoComplete(json.result);
+			var produto = $("#produto").val();
+			
+			if (produto && produto.length > 0){
+				$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, exibirAutoComplete);
+				/*$.ajax({
+					type: "POST",
+					url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
+					data: "produto=" + $("#produto").val(),
+					success: function(json){
+						if (json.mensagens){
+							exibirMensagem("erro", json.mensagens);
+						} else {
+							exibirAutoComplete(json.result);
+						}
+					},
+					error: function(error, type, msg){
+						alert("no donuts for ya - " + msg);
 					}
-				},
-				error: function(error, type, msg){
-					alert("no donuts for ya - " + msg);
-				}
-			});
+				});*/
+			}
 		}
 		
 		function exibirAutoComplete(result){
@@ -105,16 +119,20 @@
 		}
 		
 		function completarPesquisa(chave){
-			$("#codigo").val(chave.idProduto);
+			$("#codigo").val(chave.codigoProduto);
+			$("#edicao").focus();
 		}
 		
 		function confirmar(){
-			$.ajax({
+			var data = "codigo=" + $("#codigoHidden").val() +
+			  "&edicao=" + $("#edicaoHidden").val() +
+			  "&novaData=" + $("#novaData").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
+			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
 				data: "codigo=" + $("#codigoHidden").val() +
 					  "&edicao=" + $("#edicaoHidden").val() +
-					  "&dataLancamento=" + $("#dataLancamentoHidden").val() +
 					  "&novaData=" + $("#novaData").val(),
 				success: function(json){
 					if (json.mensagens){
@@ -126,7 +144,11 @@
 				error: function(error, type, msg){
 					alert("no donuts for ya - " + msg);
 				}
-			});
+			});*/
+		}
+		
+		function msg(result){
+			$("#effect").hide("highlight", {}, 5000, callback);
 		}
 	</script>
 	<style type="text/css">
@@ -155,7 +177,7 @@
 			        	<tr>
 			        		<td width="45" align="right">Código:</td>
 			        		<td width="79">
-			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="20"/>
+			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255"/>
 			        		</td>
 							<td width="64" align="right">Produto:</td>
 							<td width="196">
@@ -183,7 +205,7 @@
 			  	<fieldset class="grids classFieldset" id="resultado">
 			  		<legend>Furo do Produto</legend>
 			  			<div class="imgProduto">
-			  				<img src="" alt="Autosport" id="imagem"/>
+			  				<img src="" alt="" id="imagem"/>
 			  			</div>
 			  			
 			  		<div class="dadosProduto">	
@@ -208,7 +230,6 @@
 					</div>
 					<input type="hidden" id="codigoHidden"/>
 					<input type="hidden" id="edicaoHidden"/>
-					<input type="hidden" id="dataLancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>

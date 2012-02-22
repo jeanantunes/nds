@@ -1,11 +1,13 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -22,4 +24,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto(nomeProduto);
 	}
 
+	@Override
+	@Transactional
+	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
+			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
+		
+		if (codigo == null || codigo.isEmpty()){
+			throw new IllegalArgumentException("Código é obrigatório.");
+		}
+		
+		if (edicao == null){
+			throw new IllegalArgumentException("Edição é obrigatório.");
+		}
+		
+		if (dataLancamento == null){
+			throw new IllegalArgumentException("Data Lançamento é obrigatório.");
+		}
+		
+		return produtoEdicaoRepository.
+				obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
+						codigo, nomeProduto, edicao, dataLancamento);
+	}
 }

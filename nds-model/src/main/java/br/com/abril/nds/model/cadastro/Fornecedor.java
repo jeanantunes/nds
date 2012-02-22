@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,8 +19,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "FORNECEDOR")
 @SequenceGenerator(name="FORNECEDOR_SEQ", initialValue = 1, allocationSize = 1)
-public class Fornecedor {
+public class Fornecedor implements Serializable {
 
+	private static final long serialVersionUID = -1534481069627822217L;
+	
 	@Id
 	@GeneratedValue(generator = "FORNECEDOR_SEQ")
 	private Long id;

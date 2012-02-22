@@ -1,0 +1,30 @@
+package br.com.abril.nds.repository.impl;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.repository.ProdutoRepository;
+
+@Repository
+public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> implements ProdutoRepository {
+
+	public ProdutoRepositoryImpl() {
+		super(Produto.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Produto> obterProdutoPorNomeProduto(String nome) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.nome) like upper(:nome)";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("nome", nome + "%");
+		
+		return query.list();
+	}
+}

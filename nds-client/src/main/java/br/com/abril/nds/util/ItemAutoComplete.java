@@ -2,12 +2,15 @@ package br.com.abril.nds.util;
 
 public class ItemAutoComplete {
 
-	public ItemAutoComplete(String value, Object chave){
+	public ItemAutoComplete(String value, String label, Object chave){
 		this.value = value;
+		this.label = label;
 		this.chave = chave;
 	}
 	
 	private String value;
+	
+	private String label;
 	
 	private Object chave;
 
@@ -17,6 +20,14 @@ public class ItemAutoComplete {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public Object getChave() {

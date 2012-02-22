@@ -49,7 +49,9 @@
 
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>	
-	
+
+<link rel="stylesheet" type="text/css" 
+	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
 
 <script language="javascript" type="text/javascript">
 $(function() {
@@ -181,7 +183,7 @@ fieldset label {
 							<li><a href="Estoque/consulta_notas_sem_fisico.htm">Consulta
 									de Notas</a>
 							</li>
-							<li><a href="Estoque/consulta_faltas_sobras.htm">Consulta
+							<li><a href="estoque/diferenca/consulta">Consulta
 									Faltas e Sobras</a>
 							</li>
 							<li><a href="Estoque/extrato_edicao.htm">Extrato de
