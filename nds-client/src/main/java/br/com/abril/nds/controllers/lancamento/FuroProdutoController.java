@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.lancamento;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,12 +12,14 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.ioc.spring.VRaptorRequestHolder;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -60,6 +63,19 @@ public class FuroProdutoController {
 			}
 			
 			if (furoProdutoDTO != null){
+				
+				String path = furoProdutoDTO.getPathImagem();
+				furoProdutoDTO.setPathImagem(null);
+				File imagem = null;
+				for (String ext : Constantes.EXTENSOES_IMAGENS){
+					imagem = new File(path + ext);
+					
+					if (imagem.exists()){
+						furoProdutoDTO.setPathImagem(path.substring(
+										path.indexOf(VRaptorRequestHolder.currentRequest().getRequest().getContextPath())) + ext);
+						break;
+					}
+				}
 				result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
 			} else {
 				result.use(Results.json()).from(new String[]{"Nenhum registro encontrado."}, "mensagens").serialize();
