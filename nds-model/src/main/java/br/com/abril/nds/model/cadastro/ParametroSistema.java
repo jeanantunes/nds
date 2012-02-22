@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,6 +18,7 @@ public class ParametroSistema {
 	@Id
 	private Long id;
 	private String valor;
+	@Enumerated(EnumType.STRING)
 	private TipoParametroSistema tipoParametroSistema;
 	
 	public Long getId() {

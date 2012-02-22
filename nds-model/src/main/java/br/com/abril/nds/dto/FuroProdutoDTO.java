@@ -32,8 +32,8 @@ public class FuroProdutoDTO implements Serializable {
 		this.pathImagem = pathImagem;
 	}
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares){
-		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, codigoProduto + edicao + ".jpg");
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, String pathCapas){
+		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, pathCapas + codigoProduto + edicao);
 	}
 	
 	public String getCodigoProduto() {

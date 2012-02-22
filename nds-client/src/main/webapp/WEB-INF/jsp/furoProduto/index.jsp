@@ -72,7 +72,7 @@
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
 			if (result.pathImagem){
-				$("#imagem").attr("src", "${pageContext.request.contextPath}/capas/" + result.pathImagem);
+				$("#imagem").attr("src", result.pathImagem);
 			} else {
 				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
 			}
