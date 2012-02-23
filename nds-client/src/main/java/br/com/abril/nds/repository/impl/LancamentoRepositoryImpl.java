@@ -32,7 +32,7 @@ public class LancamentoRepositoryImpl extends
 		if (filtraFornecedores) {
 			hql.append("and fornecedor.id in (:idsFornecedores) ");
 		}
-		hql.append("order by produto.periodicidade asc desc");
+		hql.append("order by produto.periodicidade asc");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("inicio", inicio);
 		query.setParameter("fim", fim);
