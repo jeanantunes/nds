@@ -25,7 +25,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	
 	@Transactional
 	@Override
-	public void efetuarFuroProduto(Long idProdutoEdicao, Long idLancamento, Date novaData) {		
+	public void efetuarFuroProduto(Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
 		if (idProdutoEdicao == null){
 			throw new IllegalArgumentException("Id produto edição é obrigatório.");
 		}
@@ -38,6 +38,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new IllegalArgumentException("Data Lançamento é obrigatório.");
 		}
 		
+		if (idUsuario == null){
+			throw new IllegalArgumentException("Id usuário é obrigatório.");
+		}
+		
 		//TODO tem q ter registro aqui mesmo?
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
@@ -48,7 +52,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		produtoEdicao.setId(idProdutoEdicao);
 		furoProduto.setProdutoEdicao(produtoEdicao);
 		Usuario usuario = new Usuario();
-		usuario.setId(1L);
+		usuario.setId(idUsuario);
 		furoProduto.setUsuario(usuario);
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
