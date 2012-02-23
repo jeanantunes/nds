@@ -41,7 +41,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
-		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, lancamento.reparte, parametroSistema.valor, lancamento.id) ")
+		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, ")
+		   .append("   lancamento.reparte, parametroSistema.valor, lancamento.id, produtoEdicao.id)")
 		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, Lancamento lancamento, ParametroSistema parametroSistema ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")

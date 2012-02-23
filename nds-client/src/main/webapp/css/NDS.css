@@ -480,6 +480,14 @@ select, input{font-size: 12px; height: 21px;}
 .infosPainel div ul li img{float:left; padding-top:2px; }
 .infosPainel div ul li div{margin-bottom:5px; width:143px; margin-left:0px!important;}
 
+.msg-error{
+	background-color: red;
+}
 
+.msg-warning{
+	background-color: yellow;
+}
 
-
+.msg-success{
+	background-color: green;
+}
