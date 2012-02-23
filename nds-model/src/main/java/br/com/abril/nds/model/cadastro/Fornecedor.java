@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -29,6 +31,7 @@ public class Fornecedor implements Serializable {
 	private String tipoContrato;
 	private boolean permiteBalanceamento;
 	@ManyToOne
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	private PessoaJuridica juridica;
 	@Enumerated(EnumType.STRING)
 	private SituacaoCadastro situacaoCadastro;

@@ -2,9 +2,11 @@ package br.com.abril.nds.model.planejamento;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -16,9 +18,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  */
 @Entity
 @Table(name = "ESTUDO")
+@SequenceGenerator(name="ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
 public class Estudo {
 
 	@Id
+	@GeneratedValue(generator = "ESTUDO_SEQ")
 	private Long id;
 	private double qtdeReparte;
 	private Date data;

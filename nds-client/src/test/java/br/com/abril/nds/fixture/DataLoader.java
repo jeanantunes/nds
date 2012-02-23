@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -90,11 +91,13 @@ public class DataLoader {
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista",
 				GrupoProduto.REVISTA, "99000642");
 		session.save(tipoProduto);
-		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", 7,
+
+		Produto produto = Fixture.produto("1", 
+				"Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL,
 				tipoProduto);
 		produto.getFornecedores().add(fornecedorAcme);
 		session.save(produto);
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(10, 14,
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produto);
 		session.save(produtoEdicao);

@@ -7,10 +7,8 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
-
-	List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto);
 	
-	List<ProdutoEdicao> obterProdutoEdicaoPorCodigo(String codigoProduto);
+	List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto);
 	
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento);

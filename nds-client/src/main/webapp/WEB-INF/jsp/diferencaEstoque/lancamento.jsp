@@ -1,3 +1,27 @@
+<head>
+	<script language="javascript" type="text/javascript">
+	
+		function pesquisar() {
+
+			var data = "dataMovimento=" + $("#dataMovimento").val() +
+	  		   		   "&tipoDiferenca=" + $("#tipoDiferenca").val();
+
+			$.postJSON("<c:url value='/estoque/diferenca/lancamento/pesquisa' />", data, exibirLancamentos);
+		}
+
+		function exibirLancamentos(result) {
+
+			if (!result || result == null) {
+
+				//TODO: Mensagem de nenhum item encontrado
+				return;
+			}
+
+			alert(result);	
+		}
+	</script>
+</head>
+
 <body>
 	<div class="corpo">
 	
@@ -7,15 +31,15 @@
 			
 				<legend>Lançamento Faltas e Sobras</legend>
 				
-				<form name="pesquisaForm" action="estoque/diferenca/lancamento/pesquisa">
+				<form name="pesquisaForm" action="estoque/diferenca/lancamento/pesquisa" method="post">
 					<table width="950" border="0" cellpadding="2" cellspacing="1"
 						class="filtro">
 						<tr>
 							<td width="111">Data Movimento:</td>
 							<td width="124">
 								<input type="text" 
-									   name="datepickerDe" 
-									   id="datepickerDe" 
+									   name="dataMovimento" 
+									   id="dataMovimento" 
 									   style="width: 70px; float: left; margin-right: 5px;" />
 							</td>
 							<td width="115">Tipo de Diferença:</td>
@@ -28,7 +52,7 @@
 							</td>
 							<td width="280">
 								<span class="bt_pesquisar">
-									<a href="javascript:;" onclick="mostrar_1();">Pesquisar</a>
+									<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 								</span>
 							</td>
 						</tr>

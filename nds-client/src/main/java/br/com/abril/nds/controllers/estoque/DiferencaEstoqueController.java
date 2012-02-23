@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,10 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/diferenca")
@@ -35,16 +36,26 @@ public class DiferencaEstoqueController {
 		this.carregarCombosLancamento();
 	}
 	
-	@Get
+	@Post
 	@Path("/lancamento/pesquisa")
-	public void pesquisarLancamentos(Date dataMovimento, String tipoDiferenca) {
+	public void pesquisarLancamentos(String dataMovimento, String tipoDiferenca) {
 		
-		result.forwardTo(DiferencaEstoqueController.class).lancamento();
+		System.out.println(dataMovimento);
+		
+		System.out.println(tipoDiferenca);
+		
+		result.use(Results.json()).from("teste", "result").serialize();
 	}
 	
 	@Get
 	public void consulta() {
 		this.carregarCombosConsulta();
+	}
+	
+	@Post
+	@Path("/consultarFaltasSobras")
+	public void consultarFaltasSobras() {
+		result.use(Results.json()).from("Retorno", "result").serialize();
 	}
 
 	/**
@@ -97,12 +108,12 @@ public class DiferencaEstoqueController {
 
 		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedores();
 		
-		List<ItemDTO<Fornecedor, String>> listaFornecedoresCombo =
-			new ArrayList<ItemDTO<Fornecedor,String>>();
+		List<ItemDTO<Long, String>> listaFornecedoresCombo =
+			new ArrayList<ItemDTO<Long,String>>();
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
 			listaFornecedoresCombo.add(
-				new ItemDTO<Fornecedor, String>(fornecedor, fornecedor.getJuridica().getNomeFantasia())
+				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia())
 			);
 		}
 		
