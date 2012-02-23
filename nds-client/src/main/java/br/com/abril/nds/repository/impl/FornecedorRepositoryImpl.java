@@ -10,15 +10,15 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
+ * Classe de implementação referente ao acesso a dados da entidade
  * {@link br.com.abril.nds.model.cadastro.Fornecedor}
  * 
  * @author william.machado
- *
+ * 
  */
 @Repository
-public class FornecedorRepositoryImpl extends AbstractRepository<Fornecedor, Long> 
-									  implements FornecedorRepository {
+public class FornecedorRepositoryImpl extends
+		AbstractRepository<Fornecedor, Long> implements FornecedorRepository {
 
 	/**
 	 * Construtor padrão.
@@ -31,29 +31,40 @@ public class FornecedorRepositoryImpl extends AbstractRepository<Fornecedor, Lon
 	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterFornecedoresAtivos() {
 
-		String hql = "from Fornecedor fornecedor " 
-				   + " join fetch fornecedor.juridica " 
-				   + " where fornecedor.situacaoCadastro = :situacaoCadastro";
-		
+		String hql = "from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica "
+				+ " where fornecedor.situacaoCadastro = :situacaoCadastro";
+
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
-		
+
 		return query.list();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterFornecedores() {
 
-		String hql = "from Fornecedor fornecedor " 
-				   + " join fetch fornecedor.juridica ";
-		
-		Query query = super.getSession().createQuery(hql);
+		String hql = "from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica ";
 
+		Query query = super.getSession().createQuery(hql);
 		return query.list();
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedores(String cnpj) {
+		String hql = "from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica "
+				+ "where fornecedor.juridica.cnpj like :cnpj ";
+
+		Query query = getSession().createQuery(hql);
+		query.setParameter("cnpj", cnpj+"%");
+
+		return query.list();
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -63,7 +74,7 @@ public class FornecedorRepositoryImpl extends AbstractRepository<Fornecedor, Lon
 		hql.append("join fetch fornecedor.juridica ");
 		hql.append("where fornecedor.permiteBalanceamento = :permiteBalanceamento ");
 		hql.append("and fornecedor.situacaoCadastro in (:situacoes) ");
-		
+
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("permiteBalanceamento", permiteBalanceamento);
 		query.setParameterList("situacoes", situacoes);
