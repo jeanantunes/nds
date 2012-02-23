@@ -31,6 +31,15 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 		query.setParameter("nome",  nome + "%");
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> buscarPorCnpj(String cnpj) {
+		String hql = "from Pessoa where upper(cnpj) like upper(:cnpj)";
+		Query query = getSession().createQuery(hql);
+		query.setParameter("cnpj",  cnpj + "%");
+		return query.list();
+	}
 
 	
 }
