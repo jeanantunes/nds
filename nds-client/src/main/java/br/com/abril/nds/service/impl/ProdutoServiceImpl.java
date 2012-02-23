@@ -25,4 +25,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return produtoRepository.obterProdutoPorNomeProduto(nome);
 	}
+	
+	@Transactional
+	@Override
+	public Produto obterProdutoPorCodigo(String codigoProduto) {
+		return produtoRepository.obterProdutoPorCodigo(codigoProduto);
+	}
+	
 }
