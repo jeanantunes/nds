@@ -53,7 +53,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		   .append(" and   lancamento.dataLancamentoPrevista     = :dataLancamento ")
 		   .append(" and   parametroSistema.tipoParametroSistema = :pathCapas ");
 		
-		if (nomeProduto != null){
+		if (nomeProduto != null && !nomeProduto.isEmpty()){
 			hql.append(" and produto.nome = :nomeProduto ");
 		}
 		
@@ -63,7 +63,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setParameter("dataLancamento", dataLancamento);
 		query.setParameter("pathCapas", TipoParametroSistema.PATH_IMAGENS_CAPA);
 		
-		if (nomeProduto != null){
+		if (nomeProduto != null && !nomeProduto.isEmpty()){
 			query.setParameter("nomeProduto", nomeProduto);
 		}
 		
