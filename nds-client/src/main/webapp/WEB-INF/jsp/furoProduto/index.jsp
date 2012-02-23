@@ -43,9 +43,6 @@
 			
 			$("#resultado").hide();
 			
-			$("#codigoHidden").val($("#codigo").val());
-			$("#edicaoHidden").val($("#edicao").val());
-			
 			var data = "codigo=" + $("#codigo").val() +
 			  "&produto=" + $("#produto").val() +
 			  "&edicao=" + $("#edicao").val() +
@@ -72,7 +69,6 @@
 		}
 		
 		function exibirProduto(result){
-			//TODO tratar retorno pesquisa
 			$("#txtProduto").text(result.nomeProduto);
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
@@ -84,6 +80,7 @@
 			$("#imagem").attr("alt", result.nomeProduto);
 			
 			$("#lancamentoHidden").val(result.idLancamento);
+			$("#produtoEdicaoHidden").val(result.idProdutoEdicao);
 						
 			$("#resultado").show();
 			$("#novaData").focus();
@@ -128,11 +125,10 @@
 		}
 		
 		function confirmar(){
-			var data = "codigo=" + $("#codigoHidden").val() +
-			  "&edicao=" + $("#edicaoHidden").val() +
+			var data = "idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
 			  "&novaData=" + $("#novaData").val() +
 			  "&idLancamento=" + $("#lancamentoHidden").val();
-			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
+			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, limparCampos);
 			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
@@ -152,13 +148,13 @@
 			});*/
 		}
 		
-		function msg(result){
-			$("#effect").hide("highlight", {}, 5000, callback);
+		function limparCampos(){
 			$("#resultado").hide();
 			$("#codigo").val("");
 			$("#produto").val("");
 			$("#edicao").val("");
 			$("#dataLancamento").val("");
+			$("#novaData").val("");
 			$("#codigo").focus();
 		}
 	</script>
@@ -239,8 +235,7 @@
 			            	<a href="javascript:;" id="linkConfirmar">Confirmar</a>
 			            </span>
 					</div>
-					<input type="hidden" id="codigoHidden"/>
-					<input type="hidden" id="edicaoHidden"/>
+					<input type="hidden" id="produtoEdicaoHidden"/>
 					<input type="hidden" id="lancamentoHidden"/>
 				</fieldset>
 		    </div>
