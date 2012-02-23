@@ -27,7 +27,6 @@ public class Lancamento {
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_SEQ")
 	private Long id;
-	private Long reparte;
 	@Temporal(value=TemporalType.DATE)
 	private Date dataLancamentoPrevista;
 	@Temporal(value=TemporalType.DATE)
@@ -48,14 +47,6 @@ public class Lancamento {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public Long getReparte() {
-		return reparte;
-	}
-	
-	public void setReparte(Long reparte) {
-		this.reparte = reparte;
 	}
 	
 	public Date getDataLancamentoPrevista() {
