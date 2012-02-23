@@ -4,5 +4,5 @@ import java.util.Date;
 
 public interface FuroProdutoService {
 
-	void efetuarFuroProduto(String codigo, Long edicao, Date novaData);
+	void efetuarFuroProduto(String codigo, Long edicao, Long idLancamento, Date novaData);
 }
