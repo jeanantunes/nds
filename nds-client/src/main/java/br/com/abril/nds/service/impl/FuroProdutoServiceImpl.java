@@ -12,7 +12,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 
 	@Transactional
 	@Override
-	public void efetuarFuroProduto(String codigo, Long edicao, Date novaData) {
+	public void efetuarFuroProduto(String codigo, Long edicao, Long idLancamento, Date novaData) {
 		if (codigo == null || codigo.isEmpty()){
 			throw new IllegalArgumentException("Código é obrigatório.");
 		}
@@ -21,9 +21,14 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new IllegalArgumentException("Edição é obrigatório.");
 		}
 		
+		if (idLancamento == null){
+			throw new IllegalArgumentException("Lançamento é obrigatório.");
+		}
+		
 		if (novaData == null){
 			throw new IllegalArgumentException("Data Lançamento é obrigatório.");
 		}
+		
 	}
 
 }
