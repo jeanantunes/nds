@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 
@@ -155,7 +156,8 @@ public class Fixture {
 		return produtoEdicao;
 	}
 	
-	public static Lancamento lancamento(TipoLancamento tipoLancamento, ProdutoEdicao produtoEdicao, Date dlp, Date drp) {
+	public static Lancamento lancamento(TipoLancamento tipoLancamento,
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setTipoLancamento(tipoLancamento);
 		lancamento.setProdutoEdicao(produtoEdicao);
@@ -210,6 +212,21 @@ public class Fixture {
 		estudo.setProdutoEdicao(produtoEdicao);
 		
 		return estudo;
+	}
+	
+	public static EstudoCota estudoCota(Double qtdePrevista, Double qtdeEfetiva, Estudo estudo, Cota cota) {
+		
+		EstudoCota estudoCota = new EstudoCota();
+		
+		estudoCota.setQtdePrevista(qtdePrevista);
+		
+		estudoCota.setQtdeEfetiva(qtdeEfetiva);
+		
+		estudoCota.setEstudo(estudo);
+		
+		estudoCota.setCota(cota);
+		
+		return estudoCota;
 	}
 
 }

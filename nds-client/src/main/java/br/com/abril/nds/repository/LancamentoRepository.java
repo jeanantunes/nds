@@ -10,4 +10,5 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterLancamentosBalanceamentoMartriz(Date inicio,
 			Date fim, Long... idsFornecedores);
 
+	void atualizarLancamento(Long idLancamento, Date novaDataLancamentoPrevista);
 }

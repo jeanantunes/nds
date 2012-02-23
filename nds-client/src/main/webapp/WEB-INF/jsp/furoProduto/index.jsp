@@ -40,7 +40,9 @@
 		});
 		
 		function pesquisar(){
+			
 			$("#resultado").hide();
+			
 			var data = "codigo=" + $("#codigo").val() +
 			  "&produto=" + $("#produto").val() +
 			  "&edicao=" + $("#edicao").val() +
@@ -67,19 +69,18 @@
 		}
 		
 		function exibirProduto(result){
-			//TODO tratar retorno pesquisa
 			$("#txtProduto").text(result.nomeProduto);
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
 			if (result.pathImagem){
-				$("#imagem").attr("src", "${pageContext.request.contextPath}/capas/" + result.pathImagem);
+				$("#imagem").attr("src", result.pathImagem);
 			} else {
 				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
 			}
 			$("#imagem").attr("alt", result.nomeProduto);
 			
-			$("#codigoHidden").val($("#codigo").val());
-			$("#edicaoHidden").val($("#edicao").val());
+			$("#lancamentoHidden").val(result.idLancamento);
+			$("#produtoEdicaoHidden").val(result.idProdutoEdicao);
 						
 			$("#resultado").show();
 			$("#novaData").focus();
@@ -124,10 +125,10 @@
 		}
 		
 		function confirmar(){
-			var data = "codigo=" + $("#codigoHidden").val() +
-			  "&edicao=" + $("#edicaoHidden").val() +
-			  "&novaData=" + $("#novaData").val();
-			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
+			var data = "idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
+			  "&novaData=" + $("#novaData").val() +
+			  "&idLancamento=" + $("#lancamentoHidden").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, limparCampos);
 			/*$.ajax({
 				type: "POST",
 				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
@@ -147,8 +148,14 @@
 			});*/
 		}
 		
-		function msg(result){
-			$("#effect").hide("highlight", {}, 5000, callback);
+		function limparCampos(){
+			$("#resultado").hide();
+			$("#codigo").val("");
+			$("#produto").val("");
+			$("#edicao").val("");
+			$("#dataLancamento").val("");
+			$("#novaData").val("");
+			$("#codigo").focus();
 		}
 	</script>
 	<style type="text/css">
@@ -228,8 +235,8 @@
 			            	<a href="javascript:;" id="linkConfirmar">Confirmar</a>
 			            </span>
 					</div>
-					<input type="hidden" id="codigoHidden"/>
-					<input type="hidden" id="edicaoHidden"/>
+					<input type="hidden" id="produtoEdicaoHidden"/>
+					<input type="hidden" id="lancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>

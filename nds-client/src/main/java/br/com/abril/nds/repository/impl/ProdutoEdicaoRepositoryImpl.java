@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 
 @Repository
@@ -34,33 +35,21 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigo(String codigoProduto) {
-		String hql = "from ProdutoEdicao produtoEdicao " 
-				   + " join fetch produtoEdicao.produto " 
-				   + " where produtoEdicao.produto.codigo = :codigoProduto";
-		
-		Query query = super.getSession().createQuery(hql);
-
-		query.setParameter("codigoProduto", codigoProduto);
-		
-		return query.list();
-	}
-
 	@Override
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
-		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, lancamento.reparte) ")
-		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, Lancamento lancamento ")
-		   .append(" where produtoEdicao.produto.id          = produto.id ")
-		   .append(" and   produtoEdicao.id                  = lancamento.produtoEdicao.id ")
-		   .append(" and   produto.codigo                    = :codigo ")
-		   .append(" and   produtoEdicao.numeroEdicao        = :edicao")
-		   .append(" and   lancamento.dataLancamentoPrevista = :dataLancamento ");
+		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, ")
+		   .append("   lancamento.reparte, parametroSistema.valor, lancamento.id, produtoEdicao.id)")
+		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, Lancamento lancamento, ParametroSistema parametroSistema ")
+		   .append(" where produtoEdicao.produto.id              = produto.id ")
+		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
+		   .append(" and   produto.codigo                        = :codigo ")
+		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
+		   .append(" and   lancamento.dataLancamentoPrevista     = :dataLancamento ")
+		   .append(" and   parametroSistema.tipoParametroSistema = :pathCapas ");
 		
 		if (nomeProduto != null){
 			hql.append(" and produto.nome = :nomeProduto ");
@@ -70,6 +59,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("pathCapas", TipoParametroSistema.PATH_IMAGENS_CAPA);
 		
 		if (nomeProduto != null){
 			query.setParameter("nomeProduto", nomeProduto);

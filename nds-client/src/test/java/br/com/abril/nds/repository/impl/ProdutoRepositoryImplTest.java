@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -19,51 +18,50 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-
-
+import br.com.abril.nds.repository.ProdutoRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager")
 @Transactional
-public class ProdutoEdicaoRepositoryImplTest {
-	
+public class ProdutoRepositoryImplTest {
+
 	@Autowired
 	private SessionFactory sf;
 	
 	@Autowired
-	private ProdutoEdicaoRepositoryImpl produtoEdicaoRepository;
-
+	private ProdutoRepository produtoRepository;
+	
 	@Before
 	public void setUp() {
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
+		TipoProduto tipoProduto =
+			Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		getSession().save(tipoProduto);
 		
-		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		Produto produto =
+			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		getSession().save(produto);
-
-		ProdutoEdicao produtoEdicao =
-				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
-		getSession().save(produtoEdicao);
 	}
 	
 	@Test
-	public void obterProdutoEdicaoPorNomeProduto() {
-		List<ProdutoEdicao> listaProdutoEdicao = 
-			produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto("Veja");
+	public void obterProdutoPorCodigo() {
+		Produto produto = 
+				produtoRepository.obterProdutoPorCodigo("1");
 		
-		Assert.assertTrue(!listaProdutoEdicao.isEmpty());
+		Assert.assertTrue(produto != null);
 	}
-
-	protected void flushClear() {
-		getSession().flush();
-		getSession().clear();
+	
+	@Test
+	public void obterProdutoPorNomeProduto() {
+		List<Produto> listaProduto = 
+			produtoRepository.obterProdutoPorNomeProduto("Veja");
+		
+		Assert.assertTrue(!listaProduto.isEmpty());
 	}
 	
 	private Session getSession() {
 		return sf.getCurrentSession();
 	}
-
+	
 }

@@ -1,3 +1,57 @@
+<head>
+	<script language="javascript" type="text/javascript">
+		function pesquisarPorCodigoProduto() {
+			var codigoProduto = $("#codigo").val();
+			
+			if (codigoProduto && codigoProduto.length > 0) {
+				$.postJSON("<c:url value='/estoque/diferenca/pesquisarPorCodigoProduto'/>",
+						   "codigoProduto=" + codigoProduto, exibirNomeProduto);
+			}
+		}
+		
+		function exibirNomeProduto(result) {
+			$("#produto").val(result.nome);
+		}
+		
+		function pesquisarPorNomeProduto() {
+			var produto = $("#produto").val();
+			
+			if (produto && produto.length > 0) {
+				$.postJSON("<c:url value='/estoque/diferenca/pesquisarPorNomeProduto'/>",
+						   "nomeProduto=" + produto, exibirAutoComplete);
+			}
+		}
+		
+		function exibirAutoComplete(result) {
+			//TODO tratar retorno pesquisa
+			$("#produto").autocomplete({
+				source: result,
+				select: function(event, ui) {
+					completarPesquisa(ui.item.chave);
+				}
+			});
+		}
+		
+		function completarPesquisa(chave){
+			$("#codigo").val(chave.codigo);
+			$("#edicao").focus();
+		}
+	
+		function mostrarGridConsulta() {
+			var data = null;
+			
+			$.postJSON("<c:url value='/estoque/diferenca/consultarFaltasSobras' />",
+					   data, exibirFaltasSobras);
+			
+			$(".grids").show();
+		}
+		
+		function exibirFaltasSobras(result) {
+			alert(result);
+		}
+	</script>
+</head>
+
 <body>
 	<div id="effect" style="padding: 0 .7em;"
 		class="ui-state-highlight ui-corner-all">
@@ -14,14 +68,17 @@
 			class="filtro">
 			<tr>
 				<td width="59">Código:</td>
-				<td colspan="3"><input type="text" name="textfield9"
-					id="textfield9"
-					style="width: 80px; float: left; margin-right: 5px;" /><span
-					class="classPesquisar" title="Pesquisar Produto"><a
-						href="javascript:;">&nbsp;</a> </span></td>
+				<td colspan="3">
+					<input type="text" name="codigo" id="codigo" style="width: 80px; float: left; margin-right: 5px;" />
+					<span class="classPesquisar" title="Pesquisar Produto">
+						<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+					</span>
+				</td>
 				<td width="60">Produto:</td>
-				<td width="293"><input type="text" name="textfield8"
-					id="textfield8" style="width: 272px;" /></td>
+				<td width="293">
+					<input type="text" name="produto" id="produto" style="width: 272px;"
+					       onkeyup="pesquisarPorNomeProduto();" />
+				</td>
 				<td width="73">Fornecedor:</td>
 				<td width="312" colspan="2">
 					<select name="select8" id="select13" style="width: 280px;">
@@ -50,7 +107,7 @@
 					</select>
 				</td>
 				<td width="137"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="mostrar();">Pesquisar</a> </span></td>
+						href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a> </span></td>
 			</tr>
 		</table>
 	</fieldset>
@@ -72,6 +129,7 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<script>
+	
 		$(".consultaFaltasSobrasGrid").flexigrid({
 			url : '../xml/consulta_faltas_sobras-xml.xml',
 			dataType : 'xml',
