@@ -15,12 +15,113 @@ public class PaginacaoVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -1143885478818801313L;
 	
-	private Integer posicaoInicial;
+	private Integer paginaAtual; 
 	
-	private Integer qtdeMaximaResultados;
+	private Integer qtdResultadosPorPagina;
 	
+	private Ordenacao ordenacao;
 	
+	/**
+	 * Construtor padrão.
+	 */
+	public PaginacaoVO() {
+		
+	}
 	
+	/**
+	 * Construtor.
+	 * 
+	 * @param page - página atual
+	 * @param rp - quantidade de resultados por página
+	 * @param sortOrder - tipo de ordenação
+	 */
+	public PaginacaoVO(Integer page, Integer rp, String sortorder) {
+		
+		this.paginaAtual = page;
+		
+		this.qtdResultadosPorPagina = rp;
+		
+		this.ordenacao = Ordenacao.valueOf(sortorder);
+	}
 	
+	public enum Ordenacao {
+		
+		ASC("asc"),
+		DESC("desc");
+		
+		private String ordenacao;
+		
+		private Ordenacao(String ordenacao) {
+			this.ordenacao = ordenacao;
+		}
+		
+		@Override
+		public String toString() {
+			return this.ordenacao;
+		}
 
+		/**
+		 * @param ordenacao the ordenacao to set
+		 */
+		public void setOrdenacao(String ordenacao) {
+			
+			this.ordenacao = ordenacao;
+		}
+	}
+	
+	/**
+	 * @return posição inicial
+	 */
+	public Integer getPosicaoInicial() {
+		
+		if (this.qtdResultadosPorPagina == null
+				|| this.paginaAtual == null) {
+			
+			return null;
+		}
+		
+		return ((this.qtdResultadosPorPagina * this.paginaAtual) - this.qtdResultadosPorPagina) + 1;
+	}
+
+	/**
+	 * @return the paginaAtual
+	 */
+	public Integer getPaginaAtual() {
+		return paginaAtual;
+	}
+
+	/**
+	 * @param paginaAtual the paginaAtual to set
+	 */
+	public void setPaginaAtual(Integer paginaAtual) {
+		this.paginaAtual = paginaAtual;
+	}
+
+	/**
+	 * @return the qtdResultadosPorPagina
+	 */
+	public Integer getQtdResultadosPorPagina() {
+		return qtdResultadosPorPagina;
+	}
+
+	/**
+	 * @param qtdResultadosPorPagina the qtdResultadosPorPagina to set
+	 */
+	public void setQtdResultadosPorPagina(Integer qtdResultadosPorPagina) {
+		this.qtdResultadosPorPagina = qtdResultadosPorPagina;
+	}
+
+	/**
+	 * @return the ordenacao
+	 */
+	public Ordenacao getOrdenacao() {
+		return ordenacao;
+	}
+
+	/**
+	 * @param ordenacao the ordenacao to set
+	 */
+	public void setOrdenacao(Ordenacao ordenacao) {
+		this.ordenacao = ordenacao;
+	}
 }
