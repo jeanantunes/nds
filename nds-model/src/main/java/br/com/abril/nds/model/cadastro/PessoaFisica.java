@@ -2,8 +2,13 @@ package br.com.abril.nds.model.cadastro;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * @author francisco.garcia
@@ -14,13 +19,23 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value = "F")
 public class PessoaFisica extends Pessoa {
 
+	@Column(name = "NOME")
 	private String nome;
+	@Column(name = "CPF")
 	private String cpf;
+	@Column(name = "RG")
 	private String rg;
+	@Column(name = "ORGAO_EMISSOR")
 	private String orgaoEmissor;
+	@Column(name = "DATA_NASCIMENTO")
+	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
-	public EstadoCivil estadoCivil;
-	public Sexo sexo;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ESTADO_CIVIL")
+	private EstadoCivil estadoCivil;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "SEXO")
+	private Sexo sexo;
 
 	public String getNome() {
 		return nome;

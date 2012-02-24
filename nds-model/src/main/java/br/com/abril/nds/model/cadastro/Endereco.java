@@ -1,7 +1,10 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -11,22 +14,29 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ENDERECO")
+@SequenceGenerator(name="ENDERECO_SEQ", initialValue = 1, allocationSize = 1)
 public class Endereco {
 
 	@Id
+	@GeneratedValue(generator = "ENDERECO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "BAIRRO")
 	private String bairro;
+	@Column(name = "CEP")
 	private String cep;
+	@Column(name = "CIDADE")
 	private String cidade;
+	@Column(name = "COMPLEMENTO")
 	private String complemento;
+	@Column(name = "LOGRADOURO")
 	private String logradouro;
+	@Column(name = "NUMERO")
 	private int numero;
+	@Column(name = "UF")
 	private String uf;
-	public TipoEndereco tipoEndereco;
-
-	public Endereco(){
-
-	}
+	@Column(name = "TIPO_ENDERECO")
+	private TipoEndereco tipoEndereco;
 
 	public Long getId() {
 		return id;

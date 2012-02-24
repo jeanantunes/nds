@@ -1,19 +1,26 @@
 package br.com.abril.nds.model.planejamento;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 
 /**
  * @author T30541
@@ -27,32 +34,55 @@ public class Lancamento {
 
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_SEQ")
+	@Column(name = "ID")
 	private Long id;
 	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_CRIACAO", nullable = false)
+	private Date dataCriacao;
+	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_LCTO_PREVISTA", nullable = false)
 	private Date dataLancamentoPrevista;
 	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_LCTO_DISTRIBUIDOR", nullable = false)
 	private Date dataLancamentoDistribuidor;
 	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_REC_PREVISTA", nullable = false)
 	private Date dataRecolhimentoPrevista;
 	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_REC_DISTRIB", nullable = false)
 	private Date dataRecolhimentoDistribuidor;
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_LANCAMENTO", nullable = false)
 	private TipoLancamento tipoLancamento;
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_STATUS", nullable = false)
 	private Date dataStatus;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS", nullable = false)
 	private StatusLancamento status;
-	@OneToOne(mappedBy = "lancamento")
-	private Estudo estudo;
-	
+	@Column(name = "REPARTE", nullable = false)
+	private BigDecimal reparte;
+	@OneToMany
+	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
+	@OneToMany(mappedBy = "lancamento")
+	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
+
 	public Long getId() {
 		return id;
 	}
 	
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+	
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 	
 	public Date getDataLancamentoPrevista() {
@@ -119,12 +149,28 @@ public class Lancamento {
 		this.tipoLancamento = tipoLancamento;
 	}
 	
-	public Estudo getEstudo() {
-		return estudo;
+	public BigDecimal getReparte() {
+		return reparte;
 	}
 	
-	public void setEstudo(Estudo estudo) {
-		this.estudo = estudo;
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte;
+	}
+	
+	public Set<ItemRecebimentoFisico> getRecebimentos() {
+		return recebimentos;
+	}
+	
+	public void setRecebimentos(Set<ItemRecebimentoFisico> recebimentos) {
+		this.recebimentos = recebimentos;
+	}
+	
+	public List<HistoricoLancamento> getHistoricos() {
+		return historicos;
+	}
+	
+	public void setHistoricos(List<HistoricoLancamento> historicos) {
+		this.historicos = historicos;
 	}
 
 }

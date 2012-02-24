@@ -2,8 +2,9 @@ package br.com.abril.nds.model.planejamento;
 
 public enum StatusLancamento {
 	
-	CRIADO, 
-	BALANCEADO, 
+	RECEBIDO, 
+	BALANCEADO,
+	ESTUDO_FECHADO,
 	PENDENTE, 
 	EXPEDIDO;
 }

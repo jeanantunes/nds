@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,14 +20,16 @@ public class DistribuicaoFornecedor {
 	
 	@Id
 	@GeneratedValue(generator = "DIST_FORN_SEQ")
+	@Column(name = "ID")
 	private Long id;
-	@ManyToOne
-	@JoinColumn(name = "distribuidor_id")
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	@ManyToOne
-	@JoinColumn(name = "fornecedor_id")
+	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "DIA_SEMANA")
 	private DiaSemana diaSemana;
 	
 	public Long getId() {
