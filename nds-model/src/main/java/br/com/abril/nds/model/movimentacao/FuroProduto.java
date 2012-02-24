@@ -2,8 +2,10 @@ package br.com.abril.nds.model.movimentacao;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -17,9 +19,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "FURO_PRODUTO")
+@SequenceGenerator(name="FURO_PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
 public class FuroProduto {
 
 	@Id
+	@GeneratedValue(generator = "FURO_PRODUTO_SEQ")
 	private Long id;
 	private Date data;
     @ManyToOne

@@ -37,6 +37,10 @@
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
+			$("#produto").autocomplete({source: ""});
+			
+			$("#dataLancamento").mask('99/99/9999');
+			$("#edicao").mask("?99999999999999999999", {placeholder:""});
 		});
 		
 		function pesquisar(){
@@ -48,24 +52,6 @@
 			  "&edicao=" + $("#edicao").val() +
 			  "&dataLancamento=" + $("#dataLancamento").val();
 			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisar'/>", data, exibirProduto);
-			/*$.ajax({
-				type: "POST",
-				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
-				data: "codigo=" + $("#codigo").val() +
-					  "&produto=" + $("#produto").val() +
-					  "&edicao=" + $("#edicao").val() +
-					  "&dataLancamento=" + $("#dataLancamento").val(),
-				success: function(json){
-					if (json.mensagens){
-						exibirMensagem("erro", json.mensagens);
-					} else {
-						exibirProduto(json.result);
-					}
-				},
-				error: function(error, type, msg){
-					alert("no donuts for ya - " + msg);
-				}
-			});*/
 		}
 		
 		function exibirProduto(result){
@@ -91,26 +77,10 @@
 			
 			if (produto && produto.length > 0){
 				$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, exibirAutoComplete);
-				/*$.ajax({
-					type: "POST",
-					url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
-					data: "produto=" + $("#produto").val(),
-					success: function(json){
-						if (json.mensagens){
-							exibirMensagem("erro", json.mensagens);
-						} else {
-							exibirAutoComplete(json.result);
-						}
-					},
-					error: function(error, type, msg){
-						alert("no donuts for ya - " + msg);
-					}
-				});*/
 			}
 		}
 		
 		function exibirAutoComplete(result){
-			//TODO tratar retorno pesquisa
 			$("#produto").autocomplete({
 				source: result,
 				select: function(event, ui){
@@ -129,23 +99,6 @@
 			  "&novaData=" + $("#novaData").val() +
 			  "&idLancamento=" + $("#lancamentoHidden").val();
 			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, limparCampos);
-			/*$.ajax({
-				type: "POST",
-				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
-				data: "codigo=" + $("#codigoHidden").val() +
-					  "&edicao=" + $("#edicaoHidden").val() +
-					  "&novaData=" + $("#novaData").val(),
-				success: function(json){
-					if (json.mensagens){
-						exibirMensagem("erro", json.mensagens);
-					} else {
-						$("#effect").hide("highlight", {}, 5000, callback);
-					}
-				},
-				error: function(error, type, msg){
-					alert("no donuts for ya - " + msg);
-				}
-			});*/
 		}
 		
 		function limparCampos(){
@@ -171,14 +124,7 @@
 	
 		<div class="corpo">
 		    <div class="container">
-		    	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-		    		<p>
-		    			<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b>Furo de Produto efetuado com sucesso.</b>
-					</p>
-				</div>
-			
-				<fieldset class="classFieldset">
+		    	<fieldset class="classFieldset">
 					<legend> Furo de Produto</legend>
 			        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			        	<tr>

@@ -1,13 +1,13 @@
 package br.com.abril.nds.util;
 
+import java.util.List;
+
 /**
  * Classe que abstrai o modelo utilizado pelo
  * plugin flexigrid com dados da pagina, total de registros
  * e os valores a serem apresentados.
  * 
  * @author michel.jader
- *
- * @param <T>
  */
 public class TableModel<T> {
 
@@ -15,7 +15,7 @@ public class TableModel<T> {
 	
 	private int total;
 	
-	private CellModel[] rows;
+	private List<T> rows;
 
 	/**
 	 * Obtém a page.
@@ -52,23 +52,20 @@ public class TableModel<T> {
 	}
 
 	/**
-	 * Obtem cellModel
+	 * Obtém rows
 	 *
-	 * @return CellModel<T>[]
+	 * @return List<CellModel>
 	 */
-	public CellModel[] getRows() {
+	public List<T> getRows() {
 		return rows;
 	}
 
 	/**
-	 * Atribui rows
+	 * Atribuí rows
 	 * @param rows 
 	 */
-	public void setRows(CellModel[] rows) {
+	public void setRows(List<T> rows) {
 		this.rows = rows;
 	}
-
-	
-	
 	
 }

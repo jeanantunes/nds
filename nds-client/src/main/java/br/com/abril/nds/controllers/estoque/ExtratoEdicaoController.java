@@ -1,36 +1,29 @@
 package br.com.abril.nds.controllers.estoque;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
+import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.model.fiscal.OrigemNota;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
-import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.TableModelKeyValue;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -42,6 +35,9 @@ public class ExtratoEdicaoController {
 	private Result result;
 	
 	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	public ExtratoEdicaoController(Result result) {
@@ -50,6 +46,36 @@ public class ExtratoEdicaoController {
 	
 	public void index(){
 		
+	}
+	
+	@Post
+	public void pesquisarPorNomeProduto(String nomeProduto){
+		
+		List<Produto> listaProdutoEdicao = null;
+		try {
+			listaProdutoEdicao = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+		} catch (Exception e) {
+			result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
+					"Erro ao pesquisar produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
+			result.forwardTo(FuroProdutoController.class).index();
+			return;
+		}
+		
+		if (listaProdutoEdicao != null){
+			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+			for (Produto produto : listaProdutoEdicao){
+				listaProdutos.add(
+						new ItemAutoComplete(
+								produto.getNome(), 
+								null,
+								new FuroProdutoDTO(
+										produto.getCodigo())));
+			}
+			
+			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+		}
+		
+		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
 	
@@ -81,83 +107,28 @@ public class ExtratoEdicaoController {
 	}
 	
 	
-	private void massaDadosParaTeste() {
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	public void pesquisaExtratoEdicao(Long codigoProduto, String descProduto, Long idProdutoEdicao) throws Exception {
 		
-		CFOP cfop = new CFOP();
-		cfop.setCodigo("010101");
-		cfop.setDescricao("default");
-		cfop.setId(1L);
+		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		TipoMovimento tipoMovimento = new TipoMovimento();
-		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("ssddgggg");
-		tipoMovimento.setId(1L);
-		tipoMovimento.setIncideDivida(true);
-		tipoMovimento.setTipoMovimentoEstoque(TipoMovimentoEstoque.FALTA_EM);
+		for(MovimentoEstoque movimento :  getFromBDTeste()) {
+			listaModeloGenerico.add(new CellModel(0, "teste", "ola", "sdfasfd", "sdfsa"));
+		}
 		
+		TableModel<CellModel> tm = new TableModel<CellModel>();
 		
-		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
-		itemNotaFiscal.setId(1L);
-		itemNotaFiscal.setOrigemNota(OrigemNota.MANUAL);
-		//itemNotaFiscal.setProdutoEdicao(produtoEdicao);
-		itemNotaFiscal.setQuantidade(new BigDecimal(1.0));
-		//itemNotaFiscal.setUsuario(usuario);
+		tm.setPage(1);
 		
-		PessoaJuridica pessoaJuridica = new PessoaJuridica();
+		tm.setTotal(listaModeloGenerico.size());
+		
+		tm.setRows(listaModeloGenerico);
 
-		pessoaJuridica.setId(1L);
-		pessoaJuridica.setCnpj("654644464");
-		pessoaJuridica.setEmail("aaa@yahoo.com");
-		pessoaJuridica.setInscricaoEstadual("3333333");
-		pessoaJuridica.setNomeFantasia("NOME FANTASIA");
-		pessoaJuridica.setRazaoSocial("RAZAO SOCIAL");
-
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
-		tipoNotaFiscal.setDescricao("TIPO NOTA");
-		tipoNotaFiscal.setId(1L);
-		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		
-		NotaFiscalFornecedor notaFiscalFornecedor = new NotaFiscalFornecedor();
-		
-		notaFiscalFornecedor.setId(1L);
-		notaFiscalFornecedor.setCfop(cfop);
-		notaFiscalFornecedor.setChaveAcesso("11111");
-		notaFiscalFornecedor.setDataEmissao(new Date());
-		notaFiscalFornecedor.setDataExpedicao(new Date());
-		notaFiscalFornecedor.setJuridica(pessoaJuridica);
-		notaFiscalFornecedor.setNumero("2344242");
-		notaFiscalFornecedor.setOrigemNota(OrigemNota.INTERFACE);
-		notaFiscalFornecedor.setSerie("345353543");
-		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE);
-		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
-		//notaFiscalFornecedor.setUsuario(usuario);
-		
-		RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
-		recebimentoFisico.setData(new Date());
-		recebimentoFisico.setDataConfirmacao(new Date());
-		recebimentoFisico.setId(1L);
-		recebimentoFisico.setNotaFiscal(notaFiscalFornecedor);
-		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
-		//recebimentoFisico.setUsuario(usuario);
-		
-		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-		itemRecebimentoFisico.setId(1L);
-		itemRecebimentoFisico.setItemNotaFiscal(itemNotaFiscal);
-		itemRecebimentoFisico.setQtdeFisico(new BigDecimal(1.0));
-		itemRecebimentoFisico.setRecebimentoFisico(recebimentoFisico);
-		
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-
-		movimentoEstoque.setId(1L);
-		
-		movimentoEstoque.setDataInclusao(new Date());
-		movimentoEstoque.setDiferenca(null);
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
-		//movimentoEstoque.setProdutoEdicao(produtoEdicao);
-		movimentoEstoque.setQtde(new BigDecimal(1.0));
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
-		//movimentoEstoque.setUsuario(usuario);
-		
+		result.use(Results.json()).withoutRoot().from(tm).recursive().serialize();
 		
 	}
 	
@@ -165,7 +136,7 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao() throws Exception {
+	public void pesquisaExtratoEdicaoModo2() throws Exception {
 		
 		List<CellModelKeyValue<MovimentoEstoque>> listaModeloGenerico = new LinkedList<CellModelKeyValue<MovimentoEstoque>>();
 		
@@ -174,7 +145,7 @@ public class ExtratoEdicaoController {
 			listaModeloGenerico.add(new CellModelKeyValue<MovimentoEstoque>(0, movimento));
 		}
 		
-		TableModelKeyValue<CellModelKeyValue<MovimentoEstoque>> tm = new TableModelKeyValue<CellModelKeyValue<MovimentoEstoque>>();
+		TableModel<CellModelKeyValue<MovimentoEstoque>> tm = new TableModel<CellModelKeyValue<MovimentoEstoque>>();
 		
 		tm.setPage(1);
 		
@@ -182,7 +153,8 @@ public class ExtratoEdicaoController {
 		
 		tm.setRows(listaModeloGenerico);
 		
-		result.use(Results.json()).withoutRoot().from(tm).include("rows").exclude("diferenca").serialize();
+		
+		result.use(Results.json()).withoutRoot().from(tm).recursive().serialize();
 		
 	}
 	
