@@ -37,37 +37,21 @@
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
+			$("#produto").autocomplete({source: ""});
 		});
 		
 		function pesquisar(){
+			
 			$("#resultado").hide();
+			
 			var data = "codigo=" + $("#codigo").val() +
 			  "&produto=" + $("#produto").val() +
 			  "&edicao=" + $("#edicao").val() +
 			  "&dataLancamento=" + $("#dataLancamento").val();
 			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisar'/>", data, exibirProduto);
-			/*$.ajax({
-				type: "POST",
-				url: '<c:url value="/lancamento/furoProduto/pesquisar"/>',
-				data: "codigo=" + $("#codigo").val() +
-					  "&produto=" + $("#produto").val() +
-					  "&edicao=" + $("#edicao").val() +
-					  "&dataLancamento=" + $("#dataLancamento").val(),
-				success: function(json){
-					if (json.mensagens){
-						exibirMensagem("erro", json.mensagens);
-					} else {
-						exibirProduto(json.result);
-					}
-				},
-				error: function(error, type, msg){
-					alert("no donuts for ya - " + msg);
-				}
-			});*/
 		}
 		
 		function exibirProduto(result){
-			//TODO tratar retorno pesquisa
 			$("#txtProduto").text(result.nomeProduto);
 			$("#txtEdicao").text(result.edicao);
 			$("#txtQtdExemplares").text(result.quantidadeExemplares);
@@ -78,8 +62,8 @@
 			}
 			$("#imagem").attr("alt", result.nomeProduto);
 			
-			$("#codigoHidden").val($("#codigo").val());
-			$("#edicaoHidden").val($("#edicao").val());
+			$("#lancamentoHidden").val(result.idLancamento);
+			$("#produtoEdicaoHidden").val(result.idProdutoEdicao);
 						
 			$("#resultado").show();
 			$("#novaData").focus();
@@ -90,26 +74,10 @@
 			
 			if (produto && produto.length > 0){
 				$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, exibirAutoComplete);
-				/*$.ajax({
-					type: "POST",
-					url: '<c:url value="/lancamento/furoProduto/pesquisarPorNomeProduto"/>',
-					data: "produto=" + $("#produto").val(),
-					success: function(json){
-						if (json.mensagens){
-							exibirMensagem("erro", json.mensagens);
-						} else {
-							exibirAutoComplete(json.result);
-						}
-					},
-					error: function(error, type, msg){
-						alert("no donuts for ya - " + msg);
-					}
-				});*/
 			}
 		}
 		
 		function exibirAutoComplete(result){
-			//TODO tratar retorno pesquisa
 			$("#produto").autocomplete({
 				source: result,
 				select: function(event, ui){
@@ -124,31 +92,20 @@
 		}
 		
 		function confirmar(){
-			var data = "codigo=" + $("#codigoHidden").val() +
-			  "&edicao=" + $("#edicaoHidden").val() +
-			  "&novaData=" + $("#novaData").val();
-			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, msg);
-			/*$.ajax({
-				type: "POST",
-				url: '<c:url value="/lancamento/furoProduto/confirmarFuro"/>',
-				data: "codigo=" + $("#codigoHidden").val() +
-					  "&edicao=" + $("#edicaoHidden").val() +
-					  "&novaData=" + $("#novaData").val(),
-				success: function(json){
-					if (json.mensagens){
-						exibirMensagem("erro", json.mensagens);
-					} else {
-						$("#effect").hide("highlight", {}, 5000, callback);
-					}
-				},
-				error: function(error, type, msg){
-					alert("no donuts for ya - " + msg);
-				}
-			});*/
+			var data = "idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
+			  "&novaData=" + $("#novaData").val() +
+			  "&idLancamento=" + $("#lancamentoHidden").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, limparCampos);
 		}
 		
-		function msg(result){
-			$("#effect").hide("highlight", {}, 5000, callback);
+		function limparCampos(){
+			$("#resultado").hide();
+			$("#codigo").val("");
+			$("#produto").val("");
+			$("#edicao").val("");
+			$("#dataLancamento").val("");
+			$("#novaData").val("");
+			$("#codigo").focus();
 		}
 	</script>
 	<style type="text/css">
@@ -228,8 +185,8 @@
 			            	<a href="javascript:;" id="linkConfirmar">Confirmar</a>
 			            </span>
 					</div>
-					<input type="hidden" id="codigoHidden"/>
-					<input type="hidden" id="edicaoHidden"/>
+					<input type="hidden" id="produtoEdicaoHidden"/>
+					<input type="hidden" id="lancamentoHidden"/>
 				</fieldset>
 		    </div>
 		</div>

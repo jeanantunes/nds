@@ -69,19 +69,19 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		lancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja001,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 100L);
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda001,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(22, Calendar.MARCH, 2012), 25L);
+				Fixture.criarData(22, Calendar.MARCH, 2012));
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame001,
 				Fixture.criarData(24, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(23, Calendar.MARCH, 2012), 40L);
+				Fixture.criarData(23, Calendar.MARCH, 2012));
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho001,
 				Fixture.criarData(27, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(12, Calendar.MARCH, 2012), 15L);
+				Fixture.criarData(12, Calendar.MARCH, 2012));
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame, lancamentoCapricho);
 	}
 

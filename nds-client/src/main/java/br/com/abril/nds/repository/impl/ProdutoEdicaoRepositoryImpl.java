@@ -41,16 +41,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
-		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, lancamento.reparte, parametroSistema.valor) ")
-		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, Lancamento lancamento, ParametroSistema parametroSistema ")
+		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, ")
+		   .append("   estudo.qtdeReparte, parametroSistema.valor, lancamento.id, produtoEdicao.id)")
+		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, Lancamento lancamento, ParametroSistema parametroSistema, ")
+		   .append("      Estudo estudo ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
+		   .append(" and   estudo.lancamento.id                  = lancamento.id ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoPrevista     = :dataLancamento ")
 		   .append(" and   parametroSistema.tipoParametroSistema = :pathCapas ");
 		
-		if (nomeProduto != null){
+		if (nomeProduto != null && !nomeProduto.isEmpty()){
 			hql.append(" and produto.nome = :nomeProduto ");
 		}
 		
@@ -60,7 +63,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setParameter("dataLancamento", dataLancamento);
 		query.setParameter("pathCapas", TipoParametroSistema.PATH_IMAGENS_CAPA);
 		
-		if (nomeProduto != null){
+		if (nomeProduto != null && !nomeProduto.isEmpty()){
 			query.setParameter("nomeProduto", nomeProduto);
 		}
 		

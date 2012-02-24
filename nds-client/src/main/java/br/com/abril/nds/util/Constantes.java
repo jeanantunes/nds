@@ -10,6 +10,14 @@ public abstract class Constantes {
 	
 	public static final String DATE_PATTERN_PT_BR = "dd/MM/yyyy";
 	public static final String[] EXTENSOES_IMAGENS = new String[]{".jpg", ".jpeg", ".png", ".bmp"};
+	
+	public static final String PARAM_MSGS = "mensagens";
+	
+	public static final String TIPO_MSG_SUCCESS = "success";
+	
+	public static final String TIPO_MSG_WARNING = "warning";
+	
+	public static final String TIPO_MSG_ERROR = "error";
 }
 
 

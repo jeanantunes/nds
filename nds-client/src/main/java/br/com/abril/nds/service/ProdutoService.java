@@ -7,4 +7,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 public interface ProdutoService {
 
 	List<Produto> obterProdutoPorNomeProduto(String nome);
+	
+	Produto obterProdutoPorCodigo(String codigoProduto);
+	
 }
