@@ -20,17 +20,19 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -213,24 +215,22 @@ public class Fixture {
 		return cota;
 	}
 
-	public static Estudo estudo(Double qtdReparte, Date data,
-			Lancamento lancamento, ProdutoEdicao produtoEdicao) {
+	public static Estudo estudo(BigDecimal qtdReparte, Date data,
+			ProdutoEdicao produtoEdicao) {
 
 		Estudo estudo = new Estudo();
 
 		estudo.setQtdeReparte(qtdReparte);
 
-		estudo.setData(data);
-
-		estudo.setLancamento(lancamento);
+		estudo.setDataLancamento(data);
 
 		estudo.setProdutoEdicao(produtoEdicao);
 
 		return estudo;
 	}
 
-	public static EstudoCota estudoCota(Double qtdePrevista,
-			Double qtdeEfetiva, Estudo estudo, Cota cota) {
+	public static EstudoCota estudoCota(BigDecimal qtdePrevista,
+			BigDecimal qtdeEfetiva, Estudo estudo, Cota cota) {
 
 		EstudoCota estudoCota = new EstudoCota();
 
@@ -245,110 +245,114 @@ public class Fixture {
 		return estudoCota;
 	}
 
-	public static Usuario usuario() {
-
+	public static Usuario usuarioJoao() {
 		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setLogin("usuario");
-		usuario.setSenha("123");
-
+		usuario.setNome("João");
+		usuario.setLogin("joao");
+		usuario.setSenha("ABC123");
 		return usuario;
-
 	}
 
-	public static CFOP cfop() {
+	public static CFOP cfop5102() {
 		CFOP cfop = new CFOP();
-		cfop.setCodigo("010101");
-		cfop.setDescricao("default");
-		cfop.setId(1L);
+		cfop.setCodigo("5102");
+		cfop.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros");
 		return cfop;
 	}
 
-	public static TipoMovimento tipoMovimento() {
+	public static TipoMovimento tipoMovimentoFaltaEm() {
 		TipoMovimento tipoMovimento = new TipoMovimento();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("ssddgggg");
-		tipoMovimento.setId(1L);
-		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setDescricao("Falta EM");
+		tipoMovimento.setIncideDivida(false);
 		tipoMovimento.setTipoMovimentoEstoque(TipoMovimentoEstoque.FALTA_EM);
 		return tipoMovimento;
 	}
 
 	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
-			Usuario usuario) {
+			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento) {
 		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
-		itemNotaFiscal.setId(1L);
 		itemNotaFiscal.setOrigem(Origem.MANUAL);
 		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
-		itemNotaFiscal.setQuantidade(new BigDecimal(1.0));
+		itemNotaFiscal.setQtde(new BigDecimal(1.0));
 		itemNotaFiscal.setUsuario(usuario);
+		itemNotaFiscal.setNotaFiscal(notaFiscal);
+		itemNotaFiscal.setDataLancamento(dataLancamento);
 		return itemNotaFiscal;
 	}
 
-	public static TipoNotaFiscal tipoNotaFiscal() {
+	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
-		tipoNotaFiscal.setDescricao("TIPO NOTA");
-		tipoNotaFiscal.setId(1L);
-		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
+		tipoNotaFiscal.setDescricao("RECEBIMENTO");
+		tipoNotaFiscal.setTipoOperacao(br.com.abril.nds.model.fiscal.TipoOperacao.ENTRADA);
 		return tipoNotaFiscal;
 	}
 
 	public static NotaFiscalFornecedor notaFiscalFornecedor(CFOP cfop,
-			PessoaJuridica juridicaAcme, TipoNotaFiscal tipoNotaFiscal,
+			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario) {
 		NotaFiscalFornecedor notaFiscalFornecedor = new NotaFiscalFornecedor();
-		notaFiscalFornecedor.setId(1L);
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
 		notaFiscalFornecedor.setDataEmissao(new Date());
 		notaFiscalFornecedor.setDataExpedicao(new Date());
-		notaFiscalFornecedor.setJuridica(juridicaAcme);
+		notaFiscalFornecedor.setEmitente(emitente);
 		notaFiscalFornecedor.setNumero("2344242");
 		notaFiscalFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalFornecedor.setSerie("345353543");
 		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE);
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
+		notaFiscalFornecedor.setFornecedor(fornecedor);
 		return notaFiscalFornecedor;
 	}
 
 	public static RecebimentoFisico recebimentoFisico(
 			NotaFiscalFornecedor notaFiscalFornecedor, Usuario usuario) {
 		RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
-		recebimentoFisico.setData(new Date());
+		recebimentoFisico.setDataRecebimento(new Date());
 		recebimentoFisico.setDataConfirmacao(new Date());
-		recebimentoFisico.setId(1L);
 		recebimentoFisico.setNotaFiscal(notaFiscalFornecedor);
 		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
-		recebimentoFisico.setUsuario(usuario);
+		recebimentoFisico.setRecebedor(usuario);
 		return recebimentoFisico;
 	}
 
 	public static ItemRecebimentoFisico itemRecebimentoFisico(
 			ItemNotaFiscal itemNotaFiscal, RecebimentoFisico recebimentoFisico) {
-
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-		itemRecebimentoFisico.setId(1L);
 		itemRecebimentoFisico.setItemNotaFiscal(itemNotaFiscal);
 		itemRecebimentoFisico.setQtdeFisico(new BigDecimal(1.0));
 		itemRecebimentoFisico.setRecebimentoFisico(recebimentoFisico);
 		return itemRecebimentoFisico;
 	}
+	
+	public static EstoqueProduto estoqueProduto(ProdutoEdicao produtoEdicao) {
+		EstoqueProduto estoqueProduto = new EstoqueProduto();
+		estoqueProduto.setProdutoEdicao(produtoEdicao);
+		estoqueProduto.setQtde(BigDecimal.ZERO);
+		return estoqueProduto;
+	}
 
 	public static MovimentoEstoque movimentoEstoque(
 			ItemRecebimentoFisico itemRecebimentoFisico,
 			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
-			Usuario usuario) {
+			Usuario usuario, EstoqueProduto estoqueProduto) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setId(1L);
 		movimentoEstoque.setDataInclusao(new Date());
-		movimentoEstoque.setDiferenca(null);
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(new BigDecimal(1.0));
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
+		if (tipoMovimento.getTipoOperacao() == TipoOperacao.ENTRADA) {
+			estoqueProduto.setQtde(estoqueProduto.getQtde().add(movimentoEstoque.getQtde()));
+		} else {
+			estoqueProduto.setQtde(estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde()));
+		}
+		estoqueProduto.getMovimentos().add(movimentoEstoque);
+		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		return movimentoEstoque;
 	}
 

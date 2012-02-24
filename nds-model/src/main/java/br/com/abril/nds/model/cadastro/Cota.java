@@ -1,7 +1,9 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,14 +27,17 @@ public class Cota {
 
 	@Id
 	@GeneratedValue(generator = "COTA_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Pessoa pessoa;
 	@OneToMany
 	@JoinColumn(name = "COTA_ID")
-	private List<PDV> pdvs;
+	private List<PDV> pdvs = new ArrayList<PDV>();
 	@Enumerated(EnumType.STRING)
+	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
 	
 	public Long getId() {

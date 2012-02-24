@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,13 +28,17 @@ public class Fornecedor implements Serializable {
 	
 	@Id
 	@GeneratedValue(generator = "FORNECEDOR_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "TIPO_CONTRATO")
 	private String tipoContrato;
+	@Column(name = "PERMITE_BALANCEAMENTO", nullable = false)
 	private boolean permiteBalanceamento;
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	private PessoaJuridica juridica;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
 	
 	public Long getId() {
