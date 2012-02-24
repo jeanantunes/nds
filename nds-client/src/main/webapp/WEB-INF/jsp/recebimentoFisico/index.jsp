@@ -239,8 +239,13 @@ $(function() {
     <td><input type="text" name="textfield15" id="textfield15" style="width:80px;"/></td>
   </tr>
   <tr>
-    <td>Lançamento:</td>
-    <td><input type="text" name="textfield4" id="textfield4" style="width:200px;"/></td>
+    <td>Lançamento:
+    <select name="tipoLancamento" id="tipoLancamento" style="width: 250px;">
+    		<option value=""></option>
+			<c:forEach var="tipoLancamento" items="${listaTipoLancamento}">				
+				<option value="${tipoLancamento}">${tipoLancamento}</option>
+			</c:forEach>
+		</select></td> 
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -317,7 +322,7 @@ $(function() {
     <td width="123"><input type="text" style="width:100px;" onblur="popup_nota();"/></td>
     <td width="33">Série:</td>
     <td width="43"><input type="text" style="width:30px;"/></td>
-    <td width="110"><span class="bt_pesquisar" title="Pesquisar Recebimento"><a href="<c:url value="/pesquisa"/>" onclick="mostrar();">Pesquisar</a></span></td>
+    <td width="110"><span class="bt_pesquisar" title="Pesquisar Recebimento"><a href="<c:url value="/recebimentoFisico/pesquisa"/>" onclick="mostrar();">Pesquisar</a></span></td>
   </tr>
   <tr>
     <td height="26"><label for="eNF">É uma NF-e?</label></td>
