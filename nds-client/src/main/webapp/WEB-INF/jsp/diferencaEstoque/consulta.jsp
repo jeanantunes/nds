@@ -1,5 +1,15 @@
 <head>
 	<script language="javascript" type="text/javascript">
+	
+		$(function() {
+			$('input[id^="dataLancamento"]').datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+		});
+	
 		function pesquisarPorCodigoProduto() {
 			var codigoProduto = $("#codigo").val();
 			
@@ -11,6 +21,7 @@
 		
 		function exibirNomeProduto(result) {
 			$("#produto").val(result.nome);
+			$("#edicao").focus();
 		}
 		
 		function pesquisarPorNomeProduto() {
@@ -36,7 +47,20 @@
 			$("#codigo").val(chave.codigo);
 			$("#edicao").focus();
 		}
-	
+		
+		function validarNumEdicao() {
+			var data = "codigoProduto=" + $("#codigo").val() +
+	           		   "&numeroEdicao=" + $("#edicao").val();
+
+			$.postJSON("<c:url value='/estoque/diferenca/validarNumeroEdicao'/>",
+					   data, null, retornoValidacaoErro);
+		}
+		
+		function retornoValidacaoErro() {
+			$("#edicao").val("");
+			$("#edicao").focus();
+		}
+		
 		function mostrarGridConsulta() {
 			var data = null;
 			
@@ -64,8 +88,7 @@
 
 	<fieldset class="classFieldset">
 		<legend>Pesquisar Faltas e Sobras</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro">
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="59">Código:</td>
 				<td colspan="3">
@@ -75,13 +98,20 @@
 					</span>
 				</td>
 				<td width="60">Produto:</td>
-				<td width="293">
-					<input type="text" name="produto" id="produto" style="width: 272px;"
+				<td width="220">
+					<input type="text" name="produto" id="produto" style="width: 200px;"
 					       onkeyup="pesquisarPorNomeProduto();" />
 				</td>
+				
+				<td width="50" align="right">Edição:</td>
+				<td width="90">
+					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+						   onchange="validarNumEdicao();"/>
+				</td>
+				
 				<td width="73">Fornecedor:</td>
-				<td width="312" colspan="2">
-					<select name="select8" id="select13" style="width: 280px;">
+				<td width="230" colspan="2">
+					<select name="select8" id="select13" style="width: 200px;">
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
 						</c:forEach>
@@ -93,12 +123,14 @@
 			class="filtro">
 			<tr>
 				<td width="178">Período de Data Lançamento:</td>
-				<td width="108"><input type="text" name="datepickerDe"
-					id="datepickerDe" style="width: 80px;" /></td>
+				<td width="108">
+					<input type="text" name="dataLancamentoDe" id="dataLancamentoDe" style="width: 80px;" />
+				</td>
 				<td width="33" align="center">Até</td>
-				<td width="147"><input type="text" name="datepickerAte"
-					id="datepickerAte" style="width: 80px;" /></td>
-				<td width="134" align="right">Tipo de Difernça:</td>
+				<td width="147">
+					<input type="text" name="dataLancamentoAte" id="dataLancamentoAte" style="width: 80px;" />
+				</td>
+				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
 					<select name="select9" id="select14" style="width: 120px;">
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
