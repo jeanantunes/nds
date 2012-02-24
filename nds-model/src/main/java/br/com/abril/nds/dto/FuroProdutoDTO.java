@@ -16,7 +16,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long edicao;
 	
-	private Long quantidadeExemplares;
+	private Double quantidadeExemplares;
 	
 	private Date novaData;
 	
@@ -26,7 +26,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long idProdutoEdicao;
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, 
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Double quantidadeExemplares, 
 			Date novaData, String pathImagem, Long idLancamento, Long idProdutoEdicao){
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -38,7 +38,7 @@ public class FuroProdutoDTO implements Serializable {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, 
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Double quantidadeExemplares, 
 			String pathCapas, Long idLancamento, Long idProdutoEdicao){
 		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, 
 				pathCapas + codigoProduto + edicao, idLancamento, idProdutoEdicao);
@@ -72,11 +72,11 @@ public class FuroProdutoDTO implements Serializable {
 		this.edicao = edicao;
 	}
 
-	public Long getQuantidadeExemplares() {
+	public Double getQuantidadeExemplares() {
 		return quantidadeExemplares;
 	}
 
-	public void setQuantidadeExemplares(Long quantidadeExemplares) {
+	public void setQuantidadeExemplares(Double quantidadeExemplares) {
 		this.quantidadeExemplares = quantidadeExemplares;
 	}
 

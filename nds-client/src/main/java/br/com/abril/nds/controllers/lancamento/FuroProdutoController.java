@@ -159,7 +159,7 @@ public class FuroProdutoController {
 		
 		if (this.validarDadosEntradaConfirmarFuro(idProdutoEdicao, novaData, idLancamento)){
 			try {
-				this.furoProdutoService.efetuarFuroProduto(idProdutoEdicao, idLancamento, novaData);
+				this.furoProdutoService.efetuarFuroProduto(idProdutoEdicao, idLancamento, novaData, this.getIdUsuario());
 				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_SUCCESS, 
 						"Furo efetuado com sucesso."}, Constantes.PARAM_MSGS).serialize();
 			} catch (Exception e){
@@ -171,6 +171,11 @@ public class FuroProdutoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
+	private Long getIdUsuario() {
+		// TODO pendente
+		return 1L;
+	}
+
 	private boolean validarDadosEntradaConfirmarFuro(Long idProdutoEdicao, Date novaData, Long idLancamento) {
 		
 		boolean valido = true;
