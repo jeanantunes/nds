@@ -10,6 +10,8 @@ function pesquisarPorCodigoProduto() {
 function exibirNomeProduto(result) {
 	$("#produto").val(result.nome);
 	$("#edicao").focus();
+	
+	chamarFuncaoCallBack();
 }
 
 function pesquisarPorNomeProduto() {
@@ -34,6 +36,8 @@ function exibirAutoComplete(result) {
 function completarPesquisa(chave){
 	$("#codigo").val(chave.codigo);
 	$("#edicao").focus();
+	
+	chamarFuncaoCallBack();
 }
 
 function validarNumEdicao() {
@@ -41,10 +45,16 @@ function validarNumEdicao() {
        		   "&numeroEdicao=" + $("#edicao").val();
 
 	$.postJSON(contextPath + "/produto/validarNumeroEdicao",
-			   data, null, retornoValidacaoErro);
+			   data, null, tratarErroValidacao);
 }
 
-function retornoValidacaoErro() {
+function tratarErroValidacao() {
 	$("#edicao").val("");
 	$("#edicao").focus();
+}
+
+function chamarFuncaoCallBack() {
+	if (typeof pesquisarProdutoCallBack == 'function') {
+		pesquisarProdutoCallBack();
+	}
 }
