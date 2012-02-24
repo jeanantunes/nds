@@ -1,7 +1,6 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.hibernate.Session;
@@ -20,8 +19,15 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public class DataLoader {
 
@@ -104,10 +110,34 @@ public class DataLoader {
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produto);
 		session.save(produtoEdicao);
+
+		Usuario usuario = Fixture.usuario();
+		session.save(usuario);
+
+		CFOP cfop = Fixture.cfop();
+		session.save(cfop);
 		
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
-				new Date(),	new Date());
-		session.save(lancamento);
+		TipoMovimento tipoMovimento = Fixture.tipoMovimento();
+		session.save(tipoMovimento);
+		
+		ItemNotaFiscal itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario);
+		session.save(itemNotaFiscal);
+		
+
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscal();
+		session.save(tipoNotaFiscal);
+		
+		NotaFiscalFornecedor notaFiscalFornecedor = Fixture.notaFiscalFornecedor(cfop, juridicaAcme, tipoNotaFiscal, usuario);
+		session.save(notaFiscalFornecedor);
+		
+		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscalFornecedor, usuario);
+		session.save(recebimentoFisico);
+		
+		ItemRecebimentoFisico itemRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico);
+		session.save(itemRecebimentoFisico);
+		
+		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario);
+		session.save(movimentoEstoque);
 	}
 	
 	private static void save(Session session, Object... entidades) {

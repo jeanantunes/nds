@@ -20,7 +20,7 @@
 	href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" />
 
 <script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.core.js"></script>
 <script language="javascript" type="text/javascript"
@@ -48,16 +48,22 @@
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 
 <script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>	
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>
+
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.maskmoney.js"></script>
+
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.maskedinput.js"></script>
 
 <link rel="stylesheet" type="text/css" 
 	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
 
 <script language="javascript" type="text/javascript">
-$(function() {
-			$( "#tabs-cadastros" ).tabs();
-			$( "#tabs-pessoas" ).tabs();
-		});
+	$(function() {
+		$( "#tabs-cadastros" ).tabs();
+		$( "#tabs-pessoas" ).tabs();
+	});
 </script>
 
 
@@ -321,7 +327,7 @@ fieldset label {
 			<div id="notify" style="display: none;"></div>
 			<%@include file="../components/error.jsp"%>
 			
-			<div id="idMensagem" class="ui-state-highlight ui-corner-all" style="display: none;">
+			<div id="effect" class="ui-state-highlight ui-corner-all" style="display: none; position: absolute;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextoMensagem"></b>
