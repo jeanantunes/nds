@@ -220,9 +220,10 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
  * @param type - tipo da chamada (GET/POST...)
  * @param url - url do destino
  * @param sucessCallBackFunction - função de callback para retorno
+ * @param errorCallBackFunction - função de callback para retorno em caso de erro
  * @param data - dados a serem enviados no formato 'dado1=x&dado2=y'
  */
-function ajaxRequest(url, data, sucessCallBackFunction, dataType, method) {
+function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, dataType, method) {
 
 	$.ajax({
 		type: method,
@@ -234,12 +235,21 @@ function ajaxRequest(url, data, sucessCallBackFunction, dataType, method) {
 				
 				if (json.mensagens[0] == "success"){
 					exibirMensagem(json.mensagens[0], json.mensagens);
-					sucessCallBackFunction(json.result);
+					
+					if (sucessCallBackFunction) {
+						sucessCallBackFunction(json.result);
+					}
 				} else {
 					exibirMensagem(json.mensagens[0], json.mensagens);
+					
+					if (errorCallBackFunction) {
+						errorCallBackFunction();
+					}
 				}
 			} else {
-				sucessCallBackFunction(json.result);
+				if (sucessCallBackFunction) {
+					sucessCallBackFunction(json.result);
+				}
 			}
 		},
 		error: function(error, type, msg) {
@@ -252,41 +262,41 @@ $(document).ready(function() {
 	
 	jQuery.extend({
 		
-	    put_: function(url, data, callback, type) {
+	    put_: function(url, data, callback, errorCallback, type) {
 	    	
-	        return ajaxRequest(url, data, callback, type, 'PUT');
+	        return ajaxRequest(url, data, callback, errorCallback, type, 'PUT');
 	    },
-	    delete_: function(url, data, callback, type) {
+	    delete_: function(url, data, callback, errorCallback, type) {
 	    	
-	    	return ajaxRequest(url, data, callback, type, 'DELETE');
+	    	return ajaxRequest(url, data, callback, errorCallback, type, 'DELETE');
 	    },
-	    post_: function(url, data, callback, type) {
+	    post_: function(url, data, callback, errorCallback, type) {
 	    	
-	    	return ajaxRequest(url, data, callback, type, 'POST');
+	    	return ajaxRequest(url, data, callback, errorCallback, type, 'POST');
 	    },
-	    get_: function(url, data, callback, type) {
+	    get_: function(url, data, callback, errorCallback, type) {
 	    	
-	    	return ajaxRequest(url, data, callback, type, 'GET');
+	    	return ajaxRequest(url, data, callback, errorCallback, type, 'GET');
 	    }
 	});
 	
 	jQuery.extend({
 		
-	    putJSON: function(url, data, callback) {
+	    putJSON: function(url, data, callback, errorCallback) {
 	    	
-	        return jQuery.put_(url, data, callback, 'json');
+	        return jQuery.put_(url, data, callback, errorCallback, 'json');
 	    },
-	    deleteJSON: function(url, data, callback) {
+	    deleteJSON: function(url, data, callback, errorCallback) {
 	    	
-	        return jQuery.delete_(url, data, callback, 'json');
+	        return jQuery.delete_(url, data, callback, errorCallback, 'json');
 	    },
-	    postJSON: function(url, data, callback) {
+	    postJSON: function(url, data, callback, errorCallback) {
 	    	
-	        return jQuery.post_(url, data, callback, 'json');
+	        return jQuery.post_(url, data, callback, errorCallback, 'json');
 	    },
-	    getJSON: function(url, data, callback) {
+	    getJSON: function(url, data, callback, errorCallback) {
 	    	
-	        return jQuery.get_(url, data, callback, 'json');
+	        return jQuery.get_(url, data, callback, errorCallback, 'json');
 	    }
 	});
 });
