@@ -1,6 +1,7 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.hibernate.Session;
@@ -19,6 +20,8 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class DataLoader {
 
@@ -101,6 +104,10 @@ public class DataLoader {
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produto);
 		session.save(produtoEdicao);
+		
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+				new Date(),	new Date());
+		session.save(lancamento);
 	}
 	
 	private static void save(Session session, Object... entidades) {

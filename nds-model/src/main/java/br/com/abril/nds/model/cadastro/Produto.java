@@ -97,6 +97,13 @@ public class Produto {
 		this.tipoProduto = tipoProduto;
 	}
 	
+	public Fornecedor getFornecedorUnico() {
+		if (fornecedores.size() > 1) {
+			throw new IllegalStateException("Produto possui mais de 1 fornecedor!");
+		}
+		return fornecedores.iterator().next();
+	}
+	
 	@Override
 	public String toString() {
 		return new StringBuilder(codigo).append("-").append(nome).toString();

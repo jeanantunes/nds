@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -35,11 +36,16 @@ public class Lancamento {
 	private Date dataRecolhimentoPrevista;
 	@Temporal(value=TemporalType.DATE)
 	private Date dataRecolhimentoDistribuidor;
-	private Date dataExpedicao;
 	@ManyToOne
 	private ProdutoEdicao produtoEdicao;
 	@Enumerated(EnumType.STRING)
 	private TipoLancamento tipoLancamento;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataStatus;
+	@Enumerated(EnumType.STRING)
+	private StatusLancamento status;
+	@OneToOne(mappedBy = "lancamento")
+	private Estudo estudo;
 	
 	public Long getId() {
 		return id;
@@ -81,12 +87,20 @@ public class Lancamento {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
 	
-	public Date getDataExpedicao() {
-		return dataExpedicao;
+	public Date getDataStatus() {
+		return dataStatus;
 	}
 	
-	public void setDataExpedicao(Date dataExpedicao) {
-		this.dataExpedicao = dataExpedicao;
+	public void setDataStatus(Date dataStatus) {
+		this.dataStatus = dataStatus;
+	}
+	
+	public StatusLancamento getStatus() {
+		return status;
+	}
+	
+	public void setStatus(StatusLancamento status) {
+		this.status = status;
 	}
 	
 	public ProdutoEdicao getProdutoEdicao() {
@@ -103,6 +117,14 @@ public class Lancamento {
 	
 	public void setTipoLancamento(TipoLancamento tipoLancamento) {
 		this.tipoLancamento = tipoLancamento;
+	}
+	
+	public Estudo getEstudo() {
+		return estudo;
+	}
+	
+	public void setEstudo(Estudo estudo) {
+		this.estudo = estudo;
 	}
 
 }
