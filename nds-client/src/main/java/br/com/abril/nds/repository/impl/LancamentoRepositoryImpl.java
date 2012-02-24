@@ -32,7 +32,7 @@ public class LancamentoRepositoryImpl extends
 		if (filtraFornecedores) {
 			hql.append("and fornecedor.id in (:idsFornecedores) ");
 		}
-		hql.append("order by produto.periodicidade asc, lancamento.reparte desc");
+		hql.append("order by produto.periodicidade asc");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("inicio", inicio);
 		query.setParameter("fim", fim);
@@ -42,6 +42,22 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		return query.list();
+	}
+
+	@Override
+	public void atualizarLancamento(Long idLancamento, Date novaDataLancamentoPrevista) {
+		StringBuilder hql = new StringBuilder("update Lancamento set ");
+		hql.append(" dataLancamentoPrevista = :novaDataLancamentoPrevista, ")
+		   .append(" reparte = 0 ")
+		   .append(" where id = :id");
+		
+		Query query = 
+				this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("novaDataLancamentoPrevista", novaDataLancamentoPrevista);
+		query.setParameter("id", idLancamento);
+		
+		query.executeUpdate();
 	}
 
 }

@@ -57,7 +57,8 @@ public class FuroProdutoController {
 				furoProdutoDTO = produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 						codigo, produto, edicao, dataLancamento);
 			} catch (Exception e) {
-				result.use(Results.json()).from(new String[]{"Erro ao pesquisar produto: " + e.getMessage()}, "mensagens").serialize();
+				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
+						"Erro ao pesquisar produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
 				result.forwardTo(FuroProdutoController.class).index();
 				return;
 			}
@@ -78,7 +79,7 @@ public class FuroProdutoController {
 				}
 				result.use(Results.json()).from(furoProdutoDTO, "result").serialize();
 			} else {
-				result.use(Results.json()).from(new String[]{"Nenhum registro encontrado."}, "mensagens").serialize();
+				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."}, Constantes.PARAM_MSGS).serialize();
 			}
 		}
 		
@@ -92,21 +93,32 @@ public class FuroProdutoController {
 		
 		if (codigo == null || codigo.isEmpty()){
 			valido = false;
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
 			listaMensagemValidacao.add("Código é obrigatório.");
 		}
 		
 		if (edicao == null){
 			valido = false;
+			
+			if (listaMensagemValidacao.isEmpty()){
+				listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			}
+			
 			listaMensagemValidacao.add("Edição é obrigatório.");
 		}
 		
 		if (dataLancamento == null){
 			valido = false;
+			
+			if (listaMensagemValidacao.isEmpty()){
+				listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			}
+			
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
 		}
 		
 		if (!listaMensagemValidacao.isEmpty()){
-			result.use(Results.json()).from(listaMensagemValidacao, "mensagens").serialize();
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
 		}
 		
 		return valido;
@@ -119,7 +131,8 @@ public class FuroProdutoController {
 		try {
 			listaProdutoEdicao = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		} catch (Exception e) {
-			result.use(Results.json()).from(new String[]{"Erro ao pesquisar produto: " + e.getMessage()}, "mensagens").serialize();
+			result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
+					"Erro ao pesquisar produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
 			result.forwardTo(FuroProdutoController.class).index();
 			return;
 		}
@@ -132,9 +145,7 @@ public class FuroProdutoController {
 								produto.getNome(), 
 								null,
 								new FuroProdutoDTO(
-										produto.getCodigo(), 
-										null, 
-										null, null, null, null)));
+										produto.getCodigo())));
 			}
 			
 			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
@@ -144,42 +155,60 @@ public class FuroProdutoController {
 	}
 
 	@Post
-	public void confirmarFuro(String codigo, Long edicao, Date novaData){
+	public void confirmarFuro(Long idProdutoEdicao, Date novaData, Long idLancamento){
 		
-		if (this.validarDadosEntradaConfirmarFuro(codigo, edicao, novaData)){
+		if (this.validarDadosEntradaConfirmarFuro(idProdutoEdicao, novaData, idLancamento)){
 			try {
-				this.furoProdutoService.efetuarFuroProduto(codigo, edicao, novaData);
-				result.use(Results.json()).from(new String[]{"Furo efetuado com sucesso."}, "mensagens").serialize();
+				this.furoProdutoService.efetuarFuroProduto(idProdutoEdicao, idLancamento, novaData, this.getIdUsuario());
+				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_SUCCESS, 
+						"Furo efetuado com sucesso."}, Constantes.PARAM_MSGS).serialize();
 			} catch (Exception e){
-				result.use(Results.json()).from(new String[]{"Erro ao confirmar furo do produto: " + e.getMessage()}, "mensagens").serialize();
+				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
+						"Erro ao confirmar furo do produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
 			}
 		}
 		
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	private boolean validarDadosEntradaConfirmarFuro(String codigo, Long edicao, Date novaData) {
+	private Long getIdUsuario() {
+		// TODO pendente
+		return 1L;
+	}
+
+	private boolean validarDadosEntradaConfirmarFuro(Long idProdutoEdicao, Date novaData, Long idLancamento) {
 		
 		boolean valido = true;
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
-		if (codigo == null || codigo.isEmpty()){
+		if (idProdutoEdicao == null){
 			valido = false;
-			listaMensagemValidacao.add("Código é obrigatório.");
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			listaMensagemValidacao.add("Id produto edição é obrigatório.");
 		}
 		
-		if (edicao == null){
+		if (idLancamento == null){
 			valido = false;
-			listaMensagemValidacao.add("Edição é obrigatório.");
+			
+			if (listaMensagemValidacao.isEmpty()){
+				listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			}
+			
+			listaMensagemValidacao.add("Lançamento é obrigatório");
 		}
 		
 		if (novaData == null){
 			valido = false;
+			
+			if (listaMensagemValidacao.isEmpty()){
+				listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			}
+			
 			listaMensagemValidacao.add("Nova Data é obrigatório.");
 		}
 		
 		if (!listaMensagemValidacao.isEmpty()){
-			result.use(Results.json()).from(listaMensagemValidacao, "mensagens").serialize();
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
 		}
 		
 		return valido;

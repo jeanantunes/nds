@@ -19,7 +19,7 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 	@Override
 	public List<Produto> obterProdutoPorNomeProduto(String nome) {
 		String hql = "from Produto produto "
-				   + " where upper(produto.nome) like upper(:nome)";
+				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
 		
 		Query query = super.getSession().createQuery(hql);
 

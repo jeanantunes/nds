@@ -30,7 +30,7 @@ function refresh()
 	window.location.href = sURL;
 }
 
-<!--
+//<!--
 function refresh()
 {
 	window.location.replace( sURL );
@@ -231,7 +231,13 @@ function ajaxRequest(url, data, sucessCallBackFunction, dataType, method) {
 		dataType: dataType, 
 		success: function(json) {
 			if (json.mensagens) {
-				exibirMensagem("erro", json.mensagens);
+				
+				if (json.mensagens[0] == "success"){
+					exibirMensagem(json.mensagens[0], json.mensagens);
+					sucessCallBackFunction(json.result);
+				} else {
+					exibirMensagem(json.mensagens[0], json.mensagens);
+				}
 			} else {
 				sucessCallBackFunction(json.result);
 			}

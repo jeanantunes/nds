@@ -16,24 +16,36 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long edicao;
 	
-	private Long quantidadeExemplares;
+	private Double quantidadeExemplares;
 	
 	private Date novaData;
 	
 	private String pathImagem;
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, 
-			Date novaData, String pathImagem){
+	private Long idLancamento;
+	
+	private Long idProdutoEdicao;
+	
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Double quantidadeExemplares, 
+			Date novaData, String pathImagem, Long idLancamento, Long idProdutoEdicao){
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
 		this.quantidadeExemplares = quantidadeExemplares;
 		this.novaData = novaData;
 		this.pathImagem = pathImagem;
+		this.idLancamento = idLancamento;
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Long quantidadeExemplares, String pathCapas){
-		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, pathCapas + codigoProduto + edicao);
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Double quantidadeExemplares, 
+			String pathCapas, Long idLancamento, Long idProdutoEdicao){
+		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, 
+				pathCapas + codigoProduto + edicao, idLancamento, idProdutoEdicao);
+	}
+	
+	public FuroProdutoDTO(String codigoProduto){
+		this(codigoProduto, null, null, null, null, null, null);
 	}
 	
 	public String getCodigoProduto() {
@@ -60,11 +72,11 @@ public class FuroProdutoDTO implements Serializable {
 		this.edicao = edicao;
 	}
 
-	public Long getQuantidadeExemplares() {
+	public Double getQuantidadeExemplares() {
 		return quantidadeExemplares;
 	}
 
-	public void setQuantidadeExemplares(Long quantidadeExemplares) {
+	public void setQuantidadeExemplares(Double quantidadeExemplares) {
 		this.quantidadeExemplares = quantidadeExemplares;
 	}
 
@@ -86,5 +98,21 @@ public class FuroProdutoDTO implements Serializable {
 
 	public void setPathImagem(String pathImagem) {
 		this.pathImagem = pathImagem;
+	}
+
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 }

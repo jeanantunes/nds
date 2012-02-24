@@ -12,7 +12,8 @@ public enum TipoMovimentoEstoque  {
 	SOBRA_DE(TipoOperacao.ENTRADA), 
 	SOBRA_EM(TipoOperacao.ENTRADA), 
 	FALTA_DE(TipoOperacao.SAIDA), 
-	FALTA_EM(TipoOperacao.SAIDA);
+	FALTA_EM(TipoOperacao.SAIDA),
+	FURO(TipoOperacao.ENTRADA);
 	
 	private TipoOperacao tipoOperacao;
 	

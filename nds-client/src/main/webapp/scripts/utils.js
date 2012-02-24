@@ -32,18 +32,24 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	campoTexto.html('');
 
 	$.each(mensagens, function(index, value) {
-		campoTexto.append(value + '</br>');
+		if (index != 0){
+			campoTexto.append(value + '</br>');
+		}
 	});
 
-	$('#idMensagem').show("highlight", {}, 5000, esconde("idMensagem"));
+	$('#idMensagem').show(1000, esconde("idMensagem"));
 	
-	/*
-	if (tipoMensagem == "sucess") {
-		$("#idMensagem").removeClass("msg-error");
-	} else {
-		$("#idMensagem").addClass('msg-error');
+	$("#idMensagem").removeClass("ui-state-error");
+	$("#idMensagem").removeClass("ui-state-highlight");
+	$("#idMensagem").removeClass("ui-state-default");
+	
+	if (tipoMensagem == "success") {
+		$("#idMensagem").addClass("ui-state-default");
+	} else if (tipoMensagem == "warning"){
+		$("#idMensagem").addClass("ui-state-highlight");
+	} else if (tipoMensagem == "error"){
+		$("#idMensagem").addClass("ui-state-error");
 	}
-	*/
 }
 
 function esconde(idDiv) {
