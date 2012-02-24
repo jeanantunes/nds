@@ -56,6 +56,14 @@ public class ProdutoEdicaoRepositoryImplTest {
 		
 		Assert.assertTrue(!listaProdutoEdicao.isEmpty());
 	}
+	
+	@Test
+	public void obterProdutoEdicaoPorCodProdutoNumEdicao() {
+		ProdutoEdicao produtoEdicao = 
+			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao("1", 1L);
+		
+		Assert.assertTrue(produtoEdicao != null);
+	}
 
 	protected void flushClear() {
 		getSession().flush();

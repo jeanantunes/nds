@@ -102,16 +102,38 @@ public class DataLoader {
 				GrupoProduto.REVISTA, "99000642");
 		session.save(tipoProduto);
 
-		Produto produto = Fixture.produto("1", 
+		Produto revistaVeja = Fixture.produto("1", 
 				"Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL,
 				tipoProduto);
-		produto.getFornecedores().add(fornecedorAcme);
-		session.save(produto);
+		revistaVeja.getFornecedores().add(fornecedorAcme);
+		session.save(revistaVeja);
+		
+		Produto revistaSuper = Fixture.produto("2", 
+				"Revista Superinteressante", "Superinteressante", PeriodicidadeProduto.MENSAL,
+				tipoProduto);
+		revistaSuper.getFornecedores().add(fornecedorAcme);
+		session.save(revistaSuper);
+		
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produto);
+				revistaVeja);
 		session.save(produtoEdicao);
-
+		
+		produtoEdicao = Fixture.produtoEdicao(2L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				revistaVeja);
+		session.save(produtoEdicao);
+		
+		produtoEdicao = Fixture.produtoEdicao(3L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				revistaVeja);
+		session.save(produtoEdicao);
+		
+		ProdutoEdicao produtoEdSuper = Fixture.produtoEdicao(1L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				revistaSuper);
+		session.save(produtoEdSuper);
+		
 		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 
@@ -146,6 +168,7 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto);
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
+
 	}
 	
 	private static void save(Session session, Object... entidades) {

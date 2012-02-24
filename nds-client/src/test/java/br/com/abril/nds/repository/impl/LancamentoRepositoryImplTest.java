@@ -103,6 +103,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosPeriodo() {
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterLancamentosBalanceamentoMartriz(
@@ -114,6 +115,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosFornecedor() {
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterLancamentosBalanceamentoMartriz(

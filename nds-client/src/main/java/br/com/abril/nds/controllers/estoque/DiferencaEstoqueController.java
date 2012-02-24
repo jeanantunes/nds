@@ -5,12 +5,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -30,6 +33,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private ProdutoService produtoService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 
 	public DiferencaEstoqueController(Result result) {
 		
@@ -161,6 +167,31 @@ public class DiferencaEstoqueController {
 		//TODO: tratar retorno da consulta
 		
 		result.use(Results.json()).from(produto, "result").serialize();
+	}
+	
+	@Get
+	@Path("/")
+	public void index(){
+		
+	}
+	
+	@Post
+	public void validarNumeroEdicao(String codigoProduto, Long numeroEdicao) {
+		
+		boolean numEdicaoValida =
+			produtoEdicaoService.validarNumeroEdicao(codigoProduto, numeroEdicao);
+		
+		if (!numEdicaoValida) {
+			List<String> listaMensagemValidacao = new ArrayList<String>();
+			
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			listaMensagemValidacao.add("Edição não encontrada para o produto.");
+
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+		} else {
+			//TODO: retorno ajax quando não precisar de result
+			result.use(Results.json()).from("", "result").serialize();
+		}
 	}
 	
 }
