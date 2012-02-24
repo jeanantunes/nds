@@ -112,7 +112,7 @@ public class ConsultaNotasController {
 		TableModel<NotaFiscal> tableModel = new TableModel<NotaFiscal>();
 		tableModel.setPage(1);
 		tableModel.setTotal(100);
-		tableModel.setRows(listaCellModels.toArray(new CellModel[listaCellModels.size()]));
+		tableModel.setRows(listaNotasFiscais);
 
 		return tableModel;
 	}
