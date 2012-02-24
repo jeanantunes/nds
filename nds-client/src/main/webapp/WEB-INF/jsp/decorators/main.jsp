@@ -64,6 +64,8 @@
 		$( "#tabs-cadastros" ).tabs();
 		$( "#tabs-pessoas" ).tabs();
 	});
+	
+	var contextPath = "${pageContext.request.contextPath}";
 </script>
 
 

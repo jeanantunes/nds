@@ -1,4 +1,7 @@
 <head>
+	<script language="javascript" type="text/javascript"
+			src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+
 	<script language="javascript" type="text/javascript">
 	
 		$(function() {
@@ -9,70 +12,20 @@
 				dateFormat: "dd/mm/yy"
 			});
 		});
-	
-		function pesquisarPorCodigoProduto() {
-			var codigoProduto = $("#codigo").val();
-			
-			if (codigoProduto && codigoProduto.length > 0) {
-				$.postJSON("<c:url value='/estoque/diferenca/pesquisarPorCodigoProduto'/>",
-						   "codigoProduto=" + codigoProduto, exibirNomeProduto);
-			}
-		}
-		
-		function exibirNomeProduto(result) {
-			$("#produto").val(result.nome);
-			$("#edicao").focus();
-		}
-		
-		function pesquisarPorNomeProduto() {
-			var produto = $("#produto").val();
-			
-			if (produto && produto.length > 0) {
-				$.postJSON("<c:url value='/estoque/diferenca/pesquisarPorNomeProduto'/>",
-						   "nomeProduto=" + produto, exibirAutoComplete);
-			}
-		}
-		
-		function exibirAutoComplete(result) {
-			//TODO tratar retorno pesquisa
-			$("#produto").autocomplete({
-				source: result,
-				select: function(event, ui) {
-					completarPesquisa(ui.item.chave);
-				}
-			});
-		}
-		
-		function completarPesquisa(chave){
-			$("#codigo").val(chave.codigo);
-			$("#edicao").focus();
-		}
-		
-		function validarNumEdicao() {
-			var data = "codigoProduto=" + $("#codigo").val() +
-	           		   "&numeroEdicao=" + $("#edicao").val();
-
-			$.postJSON("<c:url value='/estoque/diferenca/validarNumeroEdicao'/>",
-					   data, null, retornoValidacaoErro);
-		}
-		
-		function retornoValidacaoErro() {
-			$("#edicao").val("");
-			$("#edicao").focus();
-		}
 		
 		function mostrarGridConsulta() {
 			var data = null;
 			
 			$.postJSON("<c:url value='/estoque/diferenca/consultarFaltasSobras' />",
 					   data, exibirFaltasSobras);
-			
-			$(".grids").show();
 		}
 		
 		function exibirFaltasSobras(result) {
+			$(".grids").show();
+			
 			alert(result);
 		}
+		
 	</script>
 </head>
 
