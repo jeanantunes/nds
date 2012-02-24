@@ -20,7 +20,7 @@
 	href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" />
 
 <script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.core.js"></script>
 <script language="javascript" type="text/javascript"

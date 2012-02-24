@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -33,7 +34,7 @@ public abstract class NotaFiscal {
 	@ManyToOne
 	private CFOP cfop;
 	@Enumerated(EnumType.STRING)
-	private OrigemNota origemNota;
+	private Origem origem;
 	@ManyToOne
 	private PessoaJuridica juridica;
 	@ManyToOne
@@ -110,13 +111,13 @@ public abstract class NotaFiscal {
 	public void setCfop(CFOP cfop) {
 		this.cfop = cfop;
 	}
-   
-	public OrigemNota getOrigemNota() {
-		return origemNota;
+
+	public Origem getOrigem() {
+		return origem;
 	}
 
-	public void setOrigemNota(OrigemNota origemNota) {
-		this.origemNota = origemNota;
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
 	}
 
 	public PessoaJuridica getJuridica() {
