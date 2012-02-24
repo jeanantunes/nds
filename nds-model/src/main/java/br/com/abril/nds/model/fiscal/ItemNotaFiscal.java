@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -34,7 +35,7 @@ public class ItemNotaFiscal {
 	@ManyToOne
 	private Usuario usuario;
 	@Enumerated(EnumType.STRING)
-	private OrigemNota origemNota;
+	private Origem origem;
 
 	public Long getId() {
 		return id;
@@ -76,12 +77,15 @@ public class ItemNotaFiscal {
 		this.usuario = usuario;
 	}
 	
-	public OrigemNota getOrigemNota() {
-		return origemNota;
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
 	}
 	
-	public void setOrigemNota(OrigemNota origemNota) {
-		this.origemNota = origemNota;
-	}
+	
+
 
 }
