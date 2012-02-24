@@ -2,9 +2,17 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 
 /**
@@ -23,16 +31,60 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		super(RecebimentoFisico.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<RecebimentoFisico> obterRecebimentoFisico() {
-		return null;
+	@Transactional
+	public List<RecebimentoFisicoDTO> obterRecebimentoFisico(String cnpj, String numeroNota, String serieNota ) {
+		//nao mostrar Diferenca negativa na Tela
+		
+		String hql =  "select new "+ RecebimentoFisicoDTO.class.getCanonicalName()+ 
+				" ( p.id, p.nome, pe.numeroEdicao, pe.precoVenda, l.reparte, ir.qtdeFisico, d.qtde) from Produto p, ProdutoEdicao pe, Diferenca d," +
+				"Lancamento l, ItemRecebimentoFisico ir, ItemNotaFiscal in,NotaFiscal nf " +
+				"where nf.juridica.cnpj = :cnpj and " +
+				"nf.numero = :numeroNota and " +
+				"nf.serie = :serieNota and " +
+				"pe.produto.id = p.id and " +
+				"d.produtoEdicao.id = pe.id and " +
+				"l.produtoEdicao.id = pe.id and " +
+				"in.produtoEdicao.id = pe.id and " +
+				"in.notaFiscal.id = nf.id and " +
+				"in.itemRecebimentoFisico.id = ir.id";  
+		
+		Query query = getSession().createQuery(hql);
+		query.setString("cnpj",cnpj);
+		query.setString("numeroNota",numeroNota);
+		query.setString("serieNota",serieNota);		
+		return query.list();
+				
 		
 	}
 	@Override
-	public void adicionarRecebimentoFisico(RecebimentoFisico recebimentoFisico){
-		this.adicionar(recebimentoFisico);
+	public void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
+			ItemRecebimentoFisico itemRecebimentoFisico){
+		//pegando todas as quantidades Fisicas e altera ou salva na tabela ItemRecebimentoFisico
+		for(RecebimentoFisicoDTO dto : listaRecebimentoFisicoDTO){
+			itemRecebimentoFisico.setQtdeFisico(dto.getQtdFisico());
+			this.alterarOrSaveItemRecebimento(itemRecebimentoFisico);
+		}		
 	}
 	
+	private void alterarOrSaveItemRecebimento(ItemRecebimentoFisico itemrecebimentoFisico){
+		getSession().saveOrUpdate(itemrecebimentoFisico);
+	}
+	
+	public void salvarProdutoRecebimentoFisico(ProdutoEdicao produtoEdicao, Lancamento lancamento, NotaFiscalFornecedor notaFiscal,
+			ItemNotaFiscal itemNotaFiscal){
+		ProdutoEdicaoRepositoryImpl prod = new ProdutoEdicaoRepositoryImpl();
+		prod.adicionar(produtoEdicao);
+		
+		LancamentoRepositoryImpl lancamentoRepository = new LancamentoRepositoryImpl();
+		lancamentoRepository.adicionar(lancamento);
+		
+		ItemNotaFiscalRepositoryImpl itemNotaFiscalRepository = new ItemNotaFiscalRepositoryImpl();
+		itemNotaFiscalRepository.adicionar(itemNotaFiscal);
+		
+	
+	}
 	
 }
 	
