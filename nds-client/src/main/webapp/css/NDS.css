@@ -433,7 +433,7 @@ select, input{font-size: 12px; height: 21px;}
 .formsFiltroHome{line-height:21px!important; float:left; padding:2px; height:auto; margin-right:5px;}
 
 
-#effect { display: none; margin: 0px; width:980px;  position: absolute; }
+#effect { display: none; margin: 0px; width:975px;  position: absolute; }
  #effect_1 { display: none; margin: 0px; width:800px;  position: absolute; }
 
 #dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco{display:none; font-size:12px;}
