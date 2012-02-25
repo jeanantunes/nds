@@ -6,7 +6,19 @@ package br.com.abril.nds.model.planejamento;
  * @created 14-fev-2012 11:35:33
  */
 public enum TipoLancamento {
-	LANCAMENTO,
-	SUPLEMENTAR,
-	RELANCAMENTO
+	
+	LANCAMENTO("Lançamento"),
+	SUPLEMENTAR("Suplementar"),
+	RELANCAMENTO("Relançamento");
+	
+	private String descricao;
+	
+	private TipoLancamento(String descricao) {
+		this.descricao = descricao;
+	}
+	
+	public String getDescricao() {
+		return descricao;
+	}
+	
 }

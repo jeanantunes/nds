@@ -107,7 +107,7 @@ public class ConsultaNotasController {
 						simpleDateFormat.format(notaFiscal.getDataEmissao()), 
 						simpleDateFormat.format(notaFiscal.getDataExpedicao()), 
 						notaFiscal.getTipoNotaFiscal().getDescricao(), 
-						notaFiscal.getJuridica().getRazaoSocial(), 
+						notaFiscal.getEmitente().getRazaoSocial(), 
 						StatusNotaFiscal.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " " );
 
 			listaCellModels.add(cellModel);
@@ -138,7 +138,7 @@ public class ConsultaNotasController {
 		notaFiscal.setDataExpedicao(new Date());
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setJuridica(juridica);
+		notaFiscal.setEmitente(juridica);
 		listaNotaFiscais.add(notaFiscal);
 		
 		notaFiscal = new NotaFiscalCota();
@@ -149,7 +149,7 @@ public class ConsultaNotasController {
 		notaFiscal.setDataExpedicao(new Date());
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setJuridica(juridica);
+		notaFiscal.setEmitente(juridica);
 		listaNotaFiscais.add(notaFiscal);
 		
 		notaFiscal = new NotaFiscalCota();
@@ -160,7 +160,7 @@ public class ConsultaNotasController {
 		notaFiscal.setDataExpedicao(new Date());
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setJuridica(juridica);
+		notaFiscal.setEmitente(juridica);
 		listaNotaFiscais.add(notaFiscal);
 		
 		notaFiscal = new NotaFiscalCota();
@@ -171,7 +171,7 @@ public class ConsultaNotasController {
 		notaFiscal.setDataExpedicao(new Date());
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setJuridica(juridica);
+		notaFiscal.setEmitente(juridica);
 		listaNotaFiscais.add(notaFiscal);
 		
 		notaFiscal = new NotaFiscalCota();
@@ -182,7 +182,7 @@ public class ConsultaNotasController {
 		notaFiscal.setDataExpedicao(new Date());
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setJuridica(juridica);
+		notaFiscal.setEmitente(juridica);
 		listaNotaFiscais.add(notaFiscal);
 		
 		return listaNotaFiscais;

@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.movimentacao;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,11 +25,13 @@ public class FuroProduto {
 
 	@Id
 	@GeneratedValue(generator = "FURO_PRODUTO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "DATA", nullable = false)
 	private Date data;
-    @ManyToOne
+    @ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
-	@ManyToOne
+	@ManyToOne(optional = false)
     private Usuario usuario;
     @ManyToOne
 	private Lancamento lancamento;

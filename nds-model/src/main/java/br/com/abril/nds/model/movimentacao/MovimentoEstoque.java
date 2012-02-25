@@ -2,14 +2,19 @@ package br.com.abril.nds.model.movimentacao;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -20,22 +25,34 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE")
+@SequenceGenerator(name="MOVIMENTO_ESTOQUE_SEQ", initialValue = 1, allocationSize = 1)
 public class MovimentoEstoque {
 
 	@Id
+	@GeneratedValue(generator = "MOVIMENTO_ESTOQUE_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "DATA_INCLUSAO", nullable = false)
 	private Date dataInclusao;
+	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
-	@ManyToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
 	@ManyToOne
+	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	@OneToOne
 	private Diferenca diferenca;
-	@ManyToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
-	@OneToOne
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private ItemRecebimentoFisico itemRecebimentoFisico;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ESTOQUE_PRODUTO_ID")
+	private EstoqueProduto estoqueProduto;
 	
 	public Long getId() {
 		return id;
@@ -99,6 +116,14 @@ public class MovimentoEstoque {
 	
 	public void setItemRecebimentoFisico(ItemRecebimentoFisico itemRecebimentoFisico) {
 		this.itemRecebimentoFisico = itemRecebimentoFisico;
+	}
+	
+	public EstoqueProduto getEstoqueProduto() {
+		return estoqueProduto;
+	}
+	
+	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
+		this.estoqueProduto = estoqueProduto;
 	}
 
 }

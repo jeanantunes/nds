@@ -7,11 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -27,9 +24,6 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
-	
-	@Autowired
-	private ProdutoService produtoService;
 
 	public DiferencaEstoqueController(Result result) {
 		
@@ -126,41 +120,6 @@ public class DiferencaEstoqueController {
 		}
 		
 		result.include("listaFornecedores", listaFornecedoresCombo);
-	}
-	
-	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
-		
-		//TODO: tratar retorno da consulta
-		
-		if (listaProduto != null && !listaProduto.isEmpty()){
-			
-			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-			
-			Produto produtoAutoComplete = null;
-			
-			for (Produto produto : listaProduto){
-				produtoAutoComplete = new Produto();
-				produtoAutoComplete.setCodigo(produto.getCodigo());
-				
-				ItemAutoComplete itemAutoComplete =
-					new ItemAutoComplete(produto.getNome(), null, produtoAutoComplete);
-				
-				listaProdutos.add(itemAutoComplete);
-			}
-			
-			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
-		}
-	}
-	
-	@Post
-	public void pesquisarPorCodigoProduto(String codigoProduto) {
-		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-		
-		//TODO: tratar retorno da consulta
-		
-		result.use(Results.json()).from(produto, "result").serialize();
 	}
 	
 }
