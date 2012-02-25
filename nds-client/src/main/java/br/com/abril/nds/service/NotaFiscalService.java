@@ -7,6 +7,8 @@ import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO;
 
 public interface NotaFiscalService {
 
+	Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal);
+
 	List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal);
 	
 }

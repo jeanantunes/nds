@@ -7,6 +7,8 @@ import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO;
 
 public interface NotaFiscalDAO extends Repository<NotaFiscal, Long> {
 
+	Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal);
+		
 	List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal);
 	
 }

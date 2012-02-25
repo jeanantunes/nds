@@ -46,7 +46,7 @@
 					sortable : true,
 					align : 'center'
 				}],
-				sortname : "codigo",
+				sortname : "numero",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -96,9 +96,20 @@
 	</script>
 
 <style type="text/css">
-fieldset label {
+fieldset label 
+{
 	width: auto;
 	margin-bottom: 0px !important;
+}
+
+.ui-datepicker 
+{
+	z-index: 1000 !important;		
+}
+
+.ui-state-default ui-state-highlight
+{
+	display:block !important;
 }
 </style>
 
@@ -127,7 +138,7 @@ fieldset label {
 					<tr>
 						<td>Fornecedor:</td>
 						<td>
-							<select name="selectFornecedores" id="selectFornecedores" style="width: 250px;">
+							<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
 								<option selected="selected" value="-1">Todos</option>
 								<c:forEach items="${fornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -138,18 +149,18 @@ fieldset label {
 						<td>Período</td>
 						<td width="46">de:</td>
 						<td width="120">
-							<input name="dataInicio" type="text" id="datepickerDe"
+							<input name="filtroConsultaNotaFiscal.periodo.dataInicial" type="text" id="datepickerDe"
 								   style="width: 80px; float: left; margin-right: 5px;" /></td>
 						<td align="center">Até</td>
 						<td>
-							<input name="dataFim" type="text" id="datepickerAte"
+							<input name="filtroConsultaNotaFiscal.periodo.dataFinal" type="text" id="datepickerAte"
 							 	   style="width: 80px; float: left; margin-right: 5px;" />
 						</td>
 					</tr>
 					<tr>
 						<td width="107">Tipo de Nota:</td>
 						<td width="293">
-						<select name="idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
+						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
 							<option selected="selected"></option>
 							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>

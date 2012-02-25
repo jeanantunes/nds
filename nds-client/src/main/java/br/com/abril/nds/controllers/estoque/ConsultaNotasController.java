@@ -19,6 +19,7 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO;
 import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO.ColunaOrdenacao;
@@ -65,9 +66,9 @@ public class ConsultaNotasController {
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
-
-		filtroConsultaNotaFiscal.setColunaOrdenacao(ColunaOrdenacao.valueOf(sortname));
 		
+		filtroConsultaNotaFiscal.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
+
 		List<NotaFiscal> listaNotasFiscais =
 			notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 
@@ -75,7 +76,10 @@ public class ConsultaNotasController {
 			filtroConsultaNotaFiscal.setNotaRecebida(isNotaRecebida == NOTA_RECEBIDA);
 		}
 
-		TableModel<NotaFiscal> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
+		Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
+
+		TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
+		tableModel.setTotal(quantidadeRegistros);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
@@ -90,14 +94,14 @@ public class ConsultaNotasController {
 		result.include("tiposNotaFiscal", tiposNotaFiscal);		
 	}
 	
-	private TableModel<NotaFiscal> getTableModelNotasFiscais(List<NotaFiscal> listaNotasFiscais) {
+	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscal> listaNotasFiscais) {
 
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 		for (NotaFiscal notaFiscal : listaNotasFiscais) {
-
+			
 			CellModel cellModel = 
 					new CellModel(notaFiscal.getId().intValue(), notaFiscal.getNumero(), 
 						simpleDateFormat.format(notaFiscal.getDataEmissao()), 
@@ -108,11 +112,10 @@ public class ConsultaNotasController {
 
 			listaCellModels.add(cellModel);
 		}
-
-		TableModel<NotaFiscal> tableModel = new TableModel<NotaFiscal>();
+		
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		tableModel.setPage(1);
-		tableModel.setTotal(100);
-		tableModel.setRows(listaNotasFiscais);
+		tableModel.setRows(listaCellModels);
 
 		return tableModel;
 	}

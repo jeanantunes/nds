@@ -19,6 +19,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Override
 	@Transactional
+	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal) {
+		return notaFiscalDAO.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
+	}
+	
+	@Override
+	@Transactional
 	public List<NotaFiscal> obterNotasFiscaisCadastradas(
 			FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal) {
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);

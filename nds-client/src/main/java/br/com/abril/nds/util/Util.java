@@ -35,4 +35,17 @@ public abstract class Util {
 	public static String formatarData(Date data, String formato) {
 		return new SimpleDateFormat(formato).format(data);
 	}
+
+	public static <E extends Enum<E>> E getEnumByStringValue(E[] values, String stringValue) {
+
+		for (E enumConstant : values) {
+
+			if (enumConstant.toString().equals(stringValue)) {
+
+				return enumConstant;
+			}
+		}
+
+		return null;
+	}
 }
