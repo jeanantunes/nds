@@ -45,17 +45,16 @@ public abstract class NotaFiscal {
 	private String serie;
 	@Column(name = "CHAVE_ACESSO")
 	private String chaveAcesso;
-<<<<<<< .merge_file_a00872
-
+	@Column(name = "VALOR_BRUTO")
 	private Long valorBruto;
+	@Column(name = "VALOR_LIQUIDO")
 	private Long valorLiquido;
+	@Column(name = "VALOR_DESCONTO")
 	private Long valorDesconto;
 
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
 
-=======
-	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
->>>>>>> .merge_file_a05964
+
 	private StatusNotaFiscal statusNotaFiscal;
 	@ManyToOne
 	private Usuario usuario;
