@@ -8,10 +8,8 @@ import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO;
 public interface NotaFiscalService {
 
 	List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal);
-<<<<<<< .merge_file_a01056
+
 	void inserirNotaFiscal(NotaFiscal notaFiscal);
 
-=======
-	
->>>>>>> .merge_file_a00256
+
 }
