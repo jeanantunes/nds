@@ -103,10 +103,10 @@
 		<div class="grids" style="display: none;">
 			<table class="consultaFaltasSobrasGrid"></table>
 			<span class="bt_novos" title="Gerar Arquivo"><a
-				href="javascript:;"><img src="../images/ico_excel.png"
+				href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 					hspace="5" border="0" />Arquivo</a> </span> <span class="bt_novos"
 				title="Imprimir"><a href="javascript:;"><img
-					src="../images/ico_impressora.gif" alt="Imprimir" hspace="5"
+					src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5"
 					border="0" />Imprimir</a> </span>
 		</div>
 
@@ -116,7 +116,7 @@
 	<script>
 	
 		$(".consultaFaltasSobrasGrid").flexigrid({
-			url : '../xml/consulta_faltas_sobras-xml.xml',
+			//url : '../xml/consulta_faltas_sobras-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
 				display : 'Data',
