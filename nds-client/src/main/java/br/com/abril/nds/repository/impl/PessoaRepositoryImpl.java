@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.PessoaRepository;
 
 
@@ -32,12 +33,14 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 		return query.list();
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Pessoa> buscarPorCnpj(String cnpj) {
-		String hql = "from Pessoa where upper(cnpj) like upper(:cnpj)";
+	public List<PessoaJuridica> buscarPorCnpj(String cnpj) {
+		cnpj = "345";
+		String hql = "from PessoaJuridica";
 		Query query = getSession().createQuery(hql);
-		query.setParameter("cnpj",  cnpj + "%");
+		//query.setParameter("cnpj", cnpj);
 		return query.list();
 	}
 
