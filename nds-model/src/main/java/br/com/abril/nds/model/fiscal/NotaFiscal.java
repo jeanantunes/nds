@@ -27,6 +27,9 @@ public abstract class NotaFiscal {
 	private String numero;
 	private String serie;
 	private String chaveAcesso;
+	private Long valorBruto;
+	private Long valorLiquido;
+	private Long valorDesconto;
 	private StatusNotaFiscal statusNotaFiscal;
 	@ManyToOne
 	private Usuario usuario;
@@ -133,6 +136,30 @@ public abstract class NotaFiscal {
 
 	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
+	}
+	
+	public Long getValorBruto() {
+		return valorBruto;
+	}
+
+	public void setValorBruto(Long valorBruto) {
+		this.valorBruto = valorBruto;
+	}
+
+	public Long getValorLiquido() {
+		return valorLiquido;
+	}
+
+	public void setValorLiquido(Long valorLiquido) {
+		this.valorLiquido = valorLiquido;
+	}
+
+	public Long getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(Long valorDesconto) {
+		this.valorDesconto = valorDesconto;
 	}
 
 
