@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -12,9 +13,13 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value = "J")
 public class PessoaJuridica extends Pessoa {
 
+	@Column(name = "RAZAO_SOCIAL", nullable = false)
 	private String razaoSocial;
+	@Column(name = "NOME_FANTASIA")
 	private String nomeFantasia;
+	@Column(name = "CNPJ")
 	private String cnpj;
+	@Column(name = "INSC_ESTADUAL")
 	private String inscricaoEstadual;
 
 	public String getRazaoSocial() {

@@ -37,18 +37,18 @@ function exibirMensagem(tipoMensagem, mensagens) {
 		}
 	});
 
-	$('#idMensagem').show(1000, esconde("idMensagem"));
+	$('#effect').show(1000, esconde("effect"));
 	
-	$("#idMensagem").removeClass("ui-state-error");
-	$("#idMensagem").removeClass("ui-state-highlight");
-	$("#idMensagem").removeClass("ui-state-default");
+	$("#effect").removeClass("ui-state-error");
+	$("#effect").removeClass("ui-state-highlight");
+	$("#effect").removeClass("ui-state-default");
 	
 	if (tipoMensagem == "success") {
-		$("#idMensagem").addClass("ui-state-default");
+		$("#effect").addClass("ui-state-default");
 	} else if (tipoMensagem == "warning"){
-		$("#idMensagem").addClass("ui-state-highlight");
+		$("#effect").addClass("ui-state-highlight");
 	} else if (tipoMensagem == "error"){
-		$("#idMensagem").addClass("ui-state-error");
+		$("#effect").addClass("ui-state-error");
 	}
 }
 

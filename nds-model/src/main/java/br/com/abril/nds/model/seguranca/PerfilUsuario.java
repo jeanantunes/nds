@@ -1,7 +1,10 @@
 package br.com.abril.nds.model.seguranca;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -11,10 +14,14 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PERFIL_USUARIO")
+@SequenceGenerator(name="PERFIL_USUARIO_SEQ", initialValue = 1, allocationSize = 1)
 public class PerfilUsuario {
 
 	@Id
+	@GeneratedValue(generator = "PERFIL_USUARIO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 	
 	public Long getId() {

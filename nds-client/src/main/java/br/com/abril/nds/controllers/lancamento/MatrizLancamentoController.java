@@ -9,6 +9,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -27,6 +28,9 @@ public class MatrizLancamentoController {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private MatrizLancamentoService matrizLancamentoService;
+	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 
 	@Path("/matrizLancamento")
@@ -41,7 +45,8 @@ public class MatrizLancamentoController {
 	
 	
 	@Post
-	public void matrizLancamento(Long[] fornecedores, String dataInicio, String dataFim) {
+	public void matrizLancamento(Long[] fornecedores, String dataInicio,
+			String dataFim) {
 	}
 
 }
