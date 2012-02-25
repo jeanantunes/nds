@@ -1,6 +1,28 @@
 <head>
 <script language="javascript" type="text/javascript">
 
+//funcoes que implementao o autocomplete
+function pesquisarPorCnpjFuncionario() {
+	
+	
+	var cnpj = $("#cnpj").val();
+	
+	if (cnpj && cnpj.length > 0) {
+		
+		
+		$.postJSON("<c:url value='recebimentoFisico/buscaCnpj'/>",
+				   "cnpj=" + cnpj, exibirNomeFornecedor);
+		
+		
+	}
+}
+
+function exibirNomeFornecedor(result) {
+	$("#fornecedor").val(result.id);
+}
+
+//fim das funcoes que implementam autocomplete
+
 $( "#busca" ).puts("Busca produtos por nome"); 
 function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -283,41 +305,15 @@ $(function() {
   <tr>
     <td width="86">Fornecedor:</td>
     <td width="254">
-    	<select name="select8" id="select13" style="width: 250px;">
+    	<select name="fornecedor" id="fornecedor" style="width: 250px;">
     		<option value=""></option>
 			<c:forEach var="fornecedor" items="${listafornecedores}">				
-				<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+				<option value="${fornecedor.juridica.id}">${fornecedor.juridica.nomeFantasia}</option>
 			</c:forEach>
 		</select>
 	</td>
     <td width="43" align="right">CNPJ:</td>
-    <td width="136">
-    
-	    <form action="<c:url value="/recebimentoFisico/buscaCnpj.json"/>">
-			<input id="busca" name="cnpj" style="width:130px;"/>
-		</form>
-		<script type="text/javascript">  
-		$(document).ready(function(){
-			jQuery("#busca").puts("Busca produtos por nome");  
-			
-		    $("#busca").autocomplete("/nds-client/recebimentoFisico/buscaCnpj.json", {  
-		        dataType : "json",  
-		        parse: function(json){ 
-		            return $.map(json.list, function(fornecedor){  
-		                return {  
-		                    data : fornecedor,  
-		                    value : fornecedor.juridica.cnpj,  
-		                    result : fornecedor.juridica.cnpj  
-		                };  
-		            });  
-		        },  
-		        formatItem : function(fornecedor) {  
-		            return fornecedor.juridica.cnpj + " (" + fornecedor.cnpj.nomeFantasia + ")";  
-		        }  
-		    });	   
-		});    	
-    </script>
-    </td>
+    <td width="136"><input id="cnpj" onblur="pesquisarPorCnpjFuncionario();" name="cnpj" style="width:130px;"/></td>
     <td width="76">Nota Fiscal:</td>
     <td width="123"><input type="text" style="width:100px;" onblur="popup_nota();"/></td>
     <td width="33">Série:</td>
