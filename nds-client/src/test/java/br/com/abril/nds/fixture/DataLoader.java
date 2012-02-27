@@ -168,7 +168,6 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto);
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
-
 	}
 	
 	private static void save(Session session, Object... entidades) {
