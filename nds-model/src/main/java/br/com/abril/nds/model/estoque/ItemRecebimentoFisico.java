@@ -1,10 +1,14 @@
 package br.com.abril.nds.model.estoque;
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
@@ -16,15 +20,22 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
  */
 @Entity
 @Table(name = "ITEM_RECEB_FISICO")
+@SequenceGenerator(name="ITEM_REC_FISICO_SEQ", initialValue = 1, allocationSize = 1)
 public class ItemRecebimentoFisico {
 
 	@Id
+	@GeneratedValue(generator = "ITEM_REC_FISICO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "QTDE_FISICO", nullable = false)
 	private BigDecimal qtdeFisico;
-	@ManyToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")
 	private RecebimentoFisico recebimentoFisico;
-	@OneToOne
+	@OneToOne(optional = false)
+	@JoinColumn(name = "ITEM_NF_ID")
 	private ItemNotaFiscal itemNotaFiscal;
+
 	
 	public Long getId() {
 		return id;

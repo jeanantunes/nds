@@ -5,13 +5,17 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.Origem;
 
 /**
  * @author francisco.garcia
@@ -25,17 +29,25 @@ public class Produto {
 
 	@Id
 	@GeneratedValue(generator = "PRODUTO_SEQ")
+	@Column(name = "ID")
 	private Long id;
-	@Column(unique = true)
+	@Column(name = "CODIGO", unique = true)
 	private String codigo;
 	@Enumerated
+	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
+	@Column(name = "NOME", nullable = false)
 	private String nome;
+	@Column(name = "DESCRICAO")
 	private String descricao;
 	@ManyToMany
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-	@OneToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORIGEM")
+	private Origem origem;
 	
 	public Long getId() {
 		return id;
@@ -97,6 +109,14 @@ public class Produto {
 		this.tipoProduto = tipoProduto;
 	}
 	
+	public Origem getOrigem() {
+		return origem;
+	}
+	
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
+	}
+	
 	@Override
 	public String toString() {
 		return new StringBuilder(codigo).append("-").append(nome).toString();
@@ -126,7 +146,5 @@ public class Produto {
 			return false;
 		return true;
 	}
-	
-	
 	
 }

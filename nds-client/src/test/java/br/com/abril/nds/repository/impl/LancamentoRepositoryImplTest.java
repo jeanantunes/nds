@@ -7,6 +7,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -86,6 +87,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
+	@Ignore
 	public void obterLancamentosBalanceamentoMatriz() {
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterLancamentosBalanceamentoMartriz(
@@ -101,6 +103,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosPeriodo() {
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterLancamentosBalanceamentoMartriz(
@@ -112,6 +115,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosFornecedor() {
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterLancamentosBalanceamentoMartriz(

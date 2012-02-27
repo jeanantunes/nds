@@ -103,5 +103,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 			return null;
 		}
 	}
+	
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto,
+																  Long numeroEdicao) {
+		
+		String hql = "from ProdutoEdicao produtoEdicao " 
+				   + " join fetch produtoEdicao.produto " 
+				   + " where produtoEdicao.produto.codigo = :codigoProduto "
+				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return (ProdutoEdicao) query.uniqueResult();
+	}
 
 }

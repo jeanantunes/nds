@@ -2,9 +2,11 @@ package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -21,15 +23,24 @@ public class ProdutoEdicao {
 
 	@Id
 	@GeneratedValue(generator = "PROD_ED_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	private Long numeroEdicao;
+	@Column(name = "PRECO_VENDA", nullable = false)
 	private BigDecimal precoVenda;
+	@Column(name = "DESCONTO")
 	private BigDecimal desconto;
+	@Column(name = "PACOTE_PADRAO", nullable = false)
 	private int pacotePadrao;
+	@Column(name = "PEB", nullable = false)
 	private int peb;
+	@Column(name = "PRECO_CUSTO")
 	private BigDecimal precoCusto;
+	@Column(name = "PESO", nullable = false)
 	private BigDecimal peso;
-	@ManyToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
 	
 	public Long getId() {
@@ -103,8 +114,6 @@ public class ProdutoEdicao {
 	public void setProduto(Produto produto) {
 		this.produto = produto;
 	}
-	
-	
 	
 	@Override
 	public int hashCode() {

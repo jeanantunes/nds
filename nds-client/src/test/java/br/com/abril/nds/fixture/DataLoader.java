@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -101,44 +102,73 @@ public class DataLoader {
 				GrupoProduto.REVISTA, "99000642");
 		session.save(tipoProduto);
 
-		Produto produto = Fixture.produto("1", 
+		Produto revistaVeja = Fixture.produto("1", 
 				"Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL,
 				tipoProduto);
-		produto.getFornecedores().add(fornecedorAcme);
-		session.save(produto);
+		revistaVeja.getFornecedores().add(fornecedorAcme);
+		session.save(revistaVeja);
+		
+		Produto revistaSuper = Fixture.produto("2", 
+				"Revista Superinteressante", "Superinteressante", PeriodicidadeProduto.MENSAL,
+				tipoProduto);
+		revistaSuper.getFornecedores().add(fornecedorAcme);
+		session.save(revistaSuper);
+		
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produto);
+				revistaVeja);
 		session.save(produtoEdicao);
 		
-		Usuario usuario = Fixture.usuario();
+		produtoEdicao = Fixture.produtoEdicao(2L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				revistaVeja);
+		session.save(produtoEdicao);
+		
+		produtoEdicao = Fixture.produtoEdicao(3L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				revistaVeja);
+		session.save(produtoEdicao);
+		
+		ProdutoEdicao produtoEdSuper = Fixture.produtoEdicao(1L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				revistaSuper);
+		session.save(produtoEdSuper);
+		
+		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 
-		CFOP cfop = Fixture.cfop();
+		CFOP cfop = Fixture.cfop5102();
 		session.save(cfop);
 		
-		TipoMovimento tipoMovimento = Fixture.tipoMovimento();
+		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaEm();
 		session.save(tipoMovimento);
-		
-		ItemNotaFiscal itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario);
-		session.save(itemNotaFiscal);
-		
 
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscal();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		session.save(tipoNotaFiscal);
-		
-		NotaFiscalFornecedor notaFiscalFornecedor = Fixture.notaFiscalFornecedor(cfop, juridicaAcme, tipoNotaFiscal, usuario);
+
+		NotaFiscalFornecedor notaFiscalFornecedor = Fixture
+				.notaFiscalFornecedor(cfop, juridicaAcme, fornecedorAcme, tipoNotaFiscal,
+						usuario);
 		session.save(notaFiscalFornecedor);
-		
+
+		ItemNotaFiscal itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao,
+				usuario, notaFiscalFornecedor, new Date());
+		session.save(itemNotaFiscal);
+
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscalFornecedor, usuario);
 		session.save(recebimentoFisico);
 		
-		ItemRecebimentoFisico itemRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico);
+		ItemRecebimentoFisico itemRecebimentoFisico = Fixture
+				.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico);
 		session.save(itemRecebimentoFisico);
 		
-		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario);
+		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao);
+		session.save(estoqueProduto);
+		
+		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto);
 		session.save(movimentoEstoque);
-				
+		session.update(estoqueProduto);
+
 	}
 	
 	private static void save(Session session, Object... entidades) {

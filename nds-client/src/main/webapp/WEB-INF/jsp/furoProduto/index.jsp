@@ -38,6 +38,9 @@
 				dateFormat: "dd/mm/yy"
 			});
 			$("#produto").autocomplete({source: ""});
+			
+			$("#dataLancamento").mask("99/99/9999");
+			$("#edicao").mask("?99999999999999999999", {placeholder:""});
 		});
 		
 		function pesquisar(){
@@ -121,14 +124,7 @@
 	
 		<div class="corpo">
 		    <div class="container">
-		    	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-		    		<p>
-		    			<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b>Furo de Produto efetuado com sucesso.</b>
-					</p>
-				</div>
-			
-				<fieldset class="classFieldset">
+		    	<fieldset class="classFieldset">
 					<legend> Furo de Produto</legend>
 			        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			        	<tr>

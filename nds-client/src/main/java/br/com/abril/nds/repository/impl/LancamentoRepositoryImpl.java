@@ -28,7 +28,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append("where lancamento.dataLancamentoPrevista between :inicio and :fim ");
 		hql.append("and fornecedor.permiteBalanceamento = :permiteBalanceamento ");
 	
-		boolean filtraFornecedores = idsFornecedores.length > 0;
+		boolean filtraFornecedores = idsFornecedores != null
+				&& idsFornecedores.length > 0;
 		if (filtraFornecedores) {
 			hql.append("and fornecedor.id in (:idsFornecedores) ");
 		}

@@ -1,12 +1,16 @@
 package br.com.abril.nds.model.estoque;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -20,17 +24,26 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "RECEBIMENTO_FISICO")
+@SequenceGenerator(name="REC_FISICO_SEQ", initialValue = 1, allocationSize = 1)
 public class RecebimentoFisico {
 
 	@Id
+	@GeneratedValue(generator = "REC_FISICO_SEQ")
+	@Column(name = "ID")
 	private Long id;
-	private Date data;
+	@Column(name = "DATA_RECEBIMENTO", nullable = false)
+	private Date dataRecebimento;
+	@Column(name = "DATA_CONFIRMACAO")
 	private Date dataConfirmacao;
-	@OneToOne
+	@OneToOne(optional = false)
+	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscal notaFiscal;
+	@ManyToOne(optional = false)
+	private Usuario recebedor;
 	@ManyToOne
-	private Usuario usuario;
+	private Usuario conferente;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_COFNIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
 	
 	public Long getId() {
@@ -41,12 +54,12 @@ public class RecebimentoFisico {
 		this.id = id;
 	}
 	
-	public Date getData() {
-		return data;
+	public Date getDataRecebimento() {
+		return dataRecebimento;
 	}
-	
-	public void setData(Date data) {
-		this.data = data;
+
+	public void setDataRecebimento(Date dataRecebimento) {
+		this.dataRecebimento = dataRecebimento;
 	}
 	
 	public Date getDataConfirmacao() {
@@ -65,12 +78,20 @@ public class RecebimentoFisico {
 		this.notaFiscal = notaFiscal;
 	}
 	
-	public Usuario getUsuario() {
-		return usuario;
+	public Usuario getRecebedor() {
+		return recebedor;
 	}
 	
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setRecebedor(Usuario recebedor) {
+		this.recebedor = recebedor;
+	}
+	
+	public Usuario getConferente() {
+		return conferente;
+	}
+
+	public void setConferente(Usuario conferente) {
+		this.conferente = conferente;
 	}
 	
 	public StatusConfirmacao getStatusConfirmacao() {

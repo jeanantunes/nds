@@ -1,9 +1,12 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -13,11 +16,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PDV")
+@SequenceGenerator(name="PDV_SEQ", initialValue = 1, allocationSize = 1)
 public class PDV {
 
 	@Id
+	@GeneratedValue(generator = "PDV_SEQ")
+	@Column(name = "ID")
 	private Long id;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_PDV", nullable = false)
 	private TipoPDV tipoPDV;
 	
 	public Long getId() {
