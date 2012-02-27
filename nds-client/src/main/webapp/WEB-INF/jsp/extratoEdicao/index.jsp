@@ -10,21 +10,70 @@
 
 <script type="text/javascript">
 
-	function fazerTratamento(data) {
+
+
+var jsExtratoEdicao = {
+
+	pesquisarExtratoEdicao : function() {
+
 		
-		alert(data);
+		var codigoProduto = jQuery("#edicao").attr('value');
+		var descProduto = jQuery("#edicao").attr('value');
+		var idProdutoEdicao = jQuery("#edicao").attr('value');
 		
+		$(".extratoEdicaoGrid").flexOptions({
+			
+			url: '<c:url value="/estoque/extratoEdicao/pesquisaExtratoEdicao"/>',
+			
+			params:[{name:'param1', value: paramBuscaExtatoEdicao1},
+				    {name:'param2', value: paramBuscaExtatoEdicao2},
+				    {name:'param3', value: paramBuscaExtatoEdicao3}],
+		});
+		
+		$(".extratoEdicaoGrid").flexReload();
+		
+		$(".grids").show();
+	},	
+		
+	fazerTratamento : function(data) {
+		
+		//TODO usar se necessario...
 		return data;
-	}
+	},
 
-	function pesquisarExtratoEdicao() {
-
+	pesquisarPorNomeProduto : function(){
+		
+		var produto = $("#produto").val();
+		
+		if (produto && produto.length > 0){
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, jsExtratoEdicao.exibirAutoComplete);
+		}
+	},
+	
+	exibirAutoComplete : function (result){
+		
+		$("#produto").autocomplete({
+			source: result,
+			select: function(event, ui){
+				jsExtratoEdicao.completarPesquisa(ui.item.chave);
+			}
+		});
+		
+	},
+	
+	completarPesquisa : function(chave){
+		$("#codigo").val(chave.codigoProduto);
+		$("#edicao").focus();
+	},
+	
+	
+	
+	carregarExtratoEdicaoGrid: function() {
+		
 		$(".extratoEdicaoGrid")
 				.flexigrid(
 						{
-							url : '<c:url value="/estoque/extratoEdicao/pesquisaExtratoEdicao"/>',
 							dataType : 'json',
-							preProcess: fazerTratamento,
 							colModel : [ 
 							    {
 								display : 'ID',
@@ -66,10 +115,22 @@
 							width : 960,
 							height : 180
 						});
-
-		$(".grids").show();
+		
 
 	}
+	
+};
+
+$(function() {
+	
+	$("#produto").autocomplete({
+		source: ''
+	});
+	
+	jsExtratoEdicao.carregarExtratoEdicaoGrid();
+	
+});
+
 </script>
 
 </head>
@@ -88,27 +149,68 @@
 		</div>
 
 		<fieldset class="classFieldset">
+		
 			<legend> Extrato de Edição </legend>
-			<table width="950" border="0" cellpadding="2" cellspacing="1"
-				class="filtro">
+			
+			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+				
 				<tr>
-					<td width="96">Código:</td>
-					<td width="123"><input type="text" name="cota" id="cota"
-						style="width: 70px; float: left; margin-right: 5px;" /><span
-						class="classPesquisar"><a href="javascript:;">&nbsp;</a>
-					</span>
+					<td width="96">
+						Código:
 					</td>
-					<td width="85">Produto:</td>
-					<td width="236"><input type="text" name="lstProduto"
-						id="lstProduto"
-						style="width: 220px; float: left; margin-right: 5px;" />
+					
+					<td width="123">
+					
+						<input 	type="text" 
+								name="codigoProduto" 
+								id="codigoProduto"
+								maxlength="5"
+								style="width: 70px; 
+								float: left; 
+								margin-right: 5px;" />
+
+						<span class="classPesquisar">
+							<a href="javascript:;">&nbsp;</a>
+						</span>
+					
 					</td>
-					<td width="60">Edição:</td>
-					<td width="186"><select name="select" id="select"
-						style="width: 100px;">
-					</select>
+					
+					<td width="85">
+						Produto:
 					</td>
+					
+					<td width="236">
+
+						<input 	type="text" 
+								name="nomeProduto" 
+								id="nomeProduto" 
+								style="width: 220px;" 
+								maxlength="255" 
+								onkeyup="jsExtratoEdicao.pesquisarPorNomeProduto();"/>
+					
+					</td>
+					
+					<td width="60">
+						Edição:
+					</td>
+					
+					<td width="186">
+					
+						<select name="selectEdicoes" id="selectEdicoes" style="width: 250px;">
+						
+							<option selected="selected">Todos</option>
+							
+							<c:forEach items="${edicoes}" var="edicao">
+								<option value="${edicao.id}">${edicao.juridica.razaoSocial}</option>
+							</c:forEach>
+							
+						</select>
+
+								
+					</td>
+					
 					<td width="128">&nbsp;</td>
+				
 				</tr>
 				<tr>
 					<td>Preço da Capa:</td>
@@ -123,7 +225,7 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td><span class="bt_pesquisar"><a href="javascript:;"
-							onclick="pesquisarExtratoEdicao();">Pesquisar</a>
+							onclick="jsExtratoEdicao.pesquisarExtratoEdicao();">Pesquisar</a>
 					</span>
 					</td>
 				</tr>

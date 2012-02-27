@@ -47,7 +47,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		   .append("      Estudo estudo ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
-		   .append(" and   estudo.lancamento.id                  = lancamento.id ")
+		   .append(" and   estudo.dataLancamento                 = lancamento.dataLancamentoPrevista ")
+		   .append(" and   estudo.produtoEdicao                  = lancamento.produtoEdicao ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoPrevista     = :dataLancamento ")
@@ -74,6 +75,23 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto,
+																  Long numeroEdicao) {
+		
+		String hql = "from ProdutoEdicao produtoEdicao " 
+				   + " join fetch produtoEdicao.produto " 
+				   + " where produtoEdicao.produto.codigo = :codigoProduto "
+				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return (ProdutoEdicao) query.uniqueResult();
 	}
 
 }

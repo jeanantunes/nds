@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -29,16 +30,15 @@ public abstract class Pessoa {
 
 	@Id
 	@GeneratedValue(generator = "PESSOA_SEQ")
+	@Column(name = "ID")
 	private Long id;
-	
+	@Column(name = "EMAIL")
 	private String email;
-	
 	@OneToMany
-	@JoinColumn(name = "pessoa_id")
+	@JoinColumn(name = "PESSOA_ID")
 	public List<Endereco> enderecos = new ArrayList<Endereco>();
-	
 	@OneToMany
-	@JoinColumn(name = "pessoa_id")
+	@JoinColumn(name = "PESSOA_ID")
 	public List<Telefone> telefones = new ArrayList<Telefone>();
 
 	public Long getId() {
@@ -72,7 +72,5 @@ public abstract class Pessoa {
 	public void setTelefones(List<Telefone> telefones) {
 		this.telefones = telefones;
 	}
-	
-	
 
 }

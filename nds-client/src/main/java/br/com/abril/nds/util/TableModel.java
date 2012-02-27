@@ -1,5 +1,6 @@
 package br.com.abril.nds.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,9 @@ import java.util.List;
  * 
  * @author michel.jader
  */
-public class TableModel<T> {
+public class TableModel<T> implements Serializable {
+
+	private static final long serialVersionUID = 2984213137565719068L;
 
 	private int page;
 	

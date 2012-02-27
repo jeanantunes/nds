@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,10 +27,12 @@ public class Distribuidor {
 
 	@Id
 	@GeneratedValue(generator = "DISTRIB_SEQ")
+	@Column(name = "ID")
 	private Long id;
 	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
-	@OneToOne
+	@OneToOne(optional = false)
 	private PessoaJuridica juridica;
 	@OneToMany(mappedBy = "distribuidor")
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();

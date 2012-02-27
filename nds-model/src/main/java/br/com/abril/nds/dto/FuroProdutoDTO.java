@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class FuroProdutoDTO implements Serializable {
@@ -16,7 +17,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long edicao;
 	
-	private Double quantidadeExemplares;
+	private BigDecimal quantidadeExemplares;
 	
 	private Date novaData;
 	
@@ -26,7 +27,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long idProdutoEdicao;
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Double quantidadeExemplares, 
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, BigDecimal quantidadeExemplares, 
 			Date novaData, String pathImagem, Long idLancamento, Long idProdutoEdicao){
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -38,7 +39,7 @@ public class FuroProdutoDTO implements Serializable {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, Double quantidadeExemplares, 
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, BigDecimal quantidadeExemplares, 
 			String pathCapas, Long idLancamento, Long idProdutoEdicao){
 		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, 
 				pathCapas + codigoProduto + edicao, idLancamento, idProdutoEdicao);
@@ -72,11 +73,11 @@ public class FuroProdutoDTO implements Serializable {
 		this.edicao = edicao;
 	}
 
-	public Double getQuantidadeExemplares() {
+	public BigDecimal getQuantidadeExemplares() {
 		return quantidadeExemplares;
 	}
 
-	public void setQuantidadeExemplares(Double quantidadeExemplares) {
+	public void setQuantidadeExemplares(BigDecimal quantidadeExemplares) {
 		this.quantidadeExemplares = quantidadeExemplares;
 	}
 
