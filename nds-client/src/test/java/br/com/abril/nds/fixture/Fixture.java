@@ -12,6 +12,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -359,6 +361,15 @@ public class Fixture {
 		estoqueProduto.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		return movimentoEstoque;
+	}
+	
+	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor){
+		ParametroSistema parametroSistema = new ParametroSistema();
+		parametroSistema.setId(id);
+		parametroSistema.setTipoParametroSistema(tipoParametroSistema);
+		parametroSistema.setValor(valor);
+		
+		return parametroSistema;
 	}
 
 }
