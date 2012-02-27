@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
@@ -31,8 +32,11 @@ public class EstoqueProduto {
 	private ProdutoEdicao produtoEdicao;
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
-	@OneToMany
+	@OneToMany(mappedBy = "estoqueProduto")
 	List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
+	@Version
+	@Column(name = "VERSAO")
+	private Long versao;
 	
 	public Long getId() {
 		return id;
@@ -64,6 +68,14 @@ public class EstoqueProduto {
 	
 	public void setMovimentos(List<MovimentoEstoque> movimentos) {
 		this.movimentos = movimentos;
+	}
+	
+	public Long getVersao() {
+		return versao;
+	}
+	
+	public void setVersao(Long versao) {
+		this.versao = versao;
 	}
 
 }

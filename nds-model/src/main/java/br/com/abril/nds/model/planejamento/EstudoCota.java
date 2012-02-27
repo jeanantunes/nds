@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -34,8 +35,10 @@ public class EstudoCota {
 	@Column(name = "QTDE_EFETIVA", nullable = false)
 	private BigDecimal qtdeEfetiva;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "ESTUDO_ID")
 	private Estudo estudo;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
