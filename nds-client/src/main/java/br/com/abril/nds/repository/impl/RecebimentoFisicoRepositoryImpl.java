@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -34,30 +35,30 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public List<RecebimentoFisicoDTO> obterRecebimentoFisico(String cnpj, String numeroNota, String serieNota ) {
-		//nao mostrar Diferenca negativa na Tela
-		
+	public List<RecebimentoFisicoDTO>  obterItemNotaPorCnpjNota(String cnpj, String numeroNota, String serieNota ) {
+		//nao mostrar Diferenca negativa na Tela		
 		String hql =  "select new "+ RecebimentoFisicoDTO.class.getCanonicalName()+ 
-				" ( p.id, p.nome, pe.numeroEdicao, pe.precoVenda, l.reparte, ir.qtdeFisico, d.qtde) from Produto p, ProdutoEdicao pe, Diferenca d," +
-				"Lancamento l, ItemRecebimentoFisico ir, ItemNotaFiscal in,NotaFiscal nf " +
-				"where nf.juridica.cnpj = :cnpj and " +
-				"nf.numero = :numeroNota and " +
-				"nf.serie = :serieNota and " +
-				"pe.produto.id = p.id and " +
-				"d.produtoEdicao.id = pe.id and " +
-				"l.produtoEdicao.id = pe.id and " +
-				"in.produtoEdicao.id = pe.id and " +
-				"in.notaFiscal.id = nf.id and " +
-				"in.itemRecebimentoFisico.id = ir.id";  
-		
+				" ( ir.itemNotaFiscal.produtoEdicao.produto.id,  " +//codigo
+				"ir.itemNotaFiscal.produtoEdicao.produto.nome,  " +//nomeProduto
+				"ir.itemNotaFiscal.produtoEdicao.numeroEdicao,  " +//edicao
+				"ir.itemNotaFiscal.produtoEdicao.precoVenda, " +//precocapa
+				"ir.itemNotaFiscal.qtde, " +//reparteprevisto
+				"ir.qtdeFisico, " +//qtefisico
+				"ir.itemNotaFiscal.produtoEdicao.) " +//diferença
+				"from ItemRecebimentoFisico ir, Diferenca d  " +
+				"where ir.itemNotaFiscal.notaFiscal.emitente.cnpj = :cnpj and " +
+				"ir.itemNotaFiscal.notaFiscal.numero = :numeroNota and " +
+				"ir.itemNotaFiscal.notaFiscal.numero.serie = :serieNota";
+		//RecebimentoFisicoDTO(Long codigo, String nomeProduto, Long edicao, BigDecimal precoCapa, Long repartePrevisto, BigDecimal qtdFisico, BigDecimal diferenca){
 		Query query = getSession().createQuery(hql);
 		query.setString("cnpj",cnpj);
 		query.setString("numeroNota",numeroNota);
 		query.setString("serieNota",serieNota);		
 		return query.list();
-				
 		
 	}
+		
+	
 	@Override
 	public void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
 			ItemRecebimentoFisico itemRecebimentoFisico){
