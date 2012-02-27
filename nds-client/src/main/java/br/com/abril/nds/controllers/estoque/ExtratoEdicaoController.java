@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
@@ -41,8 +43,11 @@ public class ExtratoEdicaoController {
 	@Autowired
 	private ExtratoEdicaoService extratoEdicaoService;
 	
-	public ExtratoEdicaoController(Result result) {
+	private HttpServletRequest request;
+	
+	public ExtratoEdicaoController(Result result, HttpServletRequest request) {
 		this.result = result;
+		this.request = request;
 	}
 	
 	public void index(){
@@ -95,16 +100,30 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(Long codigoProduto, String descProduto, Long idProdutoEdicao) throws Exception {
+	public void pesquisaExtratoEdicao(Long numeroEdicao) throws Exception {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 		
-		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(1L);
+		TableModel<CellModel> tm = new TableModel<CellModel>();
+		
+		Map resultado = new HashMap();
+		
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(numeroEdicao);
+		
 		
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
 			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
+			
+			resultado.put("TblModelListaExtratoEdicao", tm);
+			
+			resultado.put("saldoTotalExtratoEdicao", new Double(0.0));
+
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+			
 			return;
+			
+			
 		}
 		
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
@@ -127,15 +146,11 @@ public class ExtratoEdicaoController {
 			
 		}
 		
-		TableModel<CellModel> tm = new TableModel<CellModel>();
-		
 		tm.setPage(1);
 		
 		tm.setTotal(listaModeloGenerico.size());
 		
 		tm.setRows(listaModeloGenerico);
-
-		Map resultado = new HashMap();
 		
 		resultado.put("TblModelListaExtratoEdicao", tm);
 		

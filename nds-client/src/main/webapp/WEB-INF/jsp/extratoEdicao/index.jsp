@@ -15,19 +15,14 @@
 var jsExtratoEdicao = {
 
 	pesquisarExtratoEdicao : function() {
-
 		
-		var codigoProduto = jQuery("#edicao").attr('value');
-		var descProduto = jQuery("#edicao").attr('value');
-		var idProdutoEdicao = jQuery("#edicao").attr('value');
+		var numeroEdicao = jQuery("#edicao").attr('value');
 		
 		$(".extratoEdicaoGrid").flexOptions({
-			
-			url: '<c:url value="/estoque/extratoEdicao/pesquisaExtratoEdicao"/>',
-			
-			params:[{name:'codigoProduto', value: codigoProduto},
-				    {name:'descProduto', value: descProduto},
-				    {name:'idProdutoEdicao', value: idProdutoEdicao}],
+			url: '<c:url value="/"/>estoque/extratoEdicao/pesquisaExtratoEdicao',
+			preProcess: jsExtratoEdicao.getDataFromResult,
+			dataType : 'json',
+			params:[{name:'numeroEdicao', value: numeroEdicao}],
 		});
 		
 		$(".extratoEdicaoGrid").flexReload();
@@ -92,38 +87,34 @@ var jsExtratoEdicao = {
 								display : 'Data',
 								name : 'dataInclusao',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}, {
 								display : 'Movimento',
 								name : 'movimento',
 								width : 370,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							}, {
 								display : 'Entrada',
 								name : 'entrada',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}, {
 								display : 'Saída',
 								name : 'saida',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}, {
 								display : 'Parcial',
 								name : 'parcial',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							} ],
-							sortname : "codigo",
-							sortorder : "asc",
-							usepager : true,
-							useRp : true,
-							rp : 15,
+
 							showTableToggleBtn : true,
 							width : 960,
 							height : 180
@@ -209,16 +200,12 @@ $(function() {
 					
 					<td width="186">
 					
-						<select name="selectEdicoes" id="selectEdicoes" style="width: 250px;">
-						
-							<option selected="selected">Todos</option>
-							
-							<c:forEach items="${edicoes}" var="edicao">
-								<option value="${edicao.id}">${edicao.juridica.razaoSocial}</option>
-							</c:forEach>
-							
-						</select>
-
+						<input 	type="text" 
+								name="edicao" 
+								id="edicao" 
+								style="width: 220px;" 
+								maxlength="255" 
+								onkeyup="jsExtratoEdicao.pesquisarPorNomeProduto();"/>
 								
 					</td>
 					
