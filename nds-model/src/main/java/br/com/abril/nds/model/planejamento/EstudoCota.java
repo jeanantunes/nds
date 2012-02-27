@@ -1,12 +1,20 @@
 package br.com.abril.nds.model.planejamento;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.RateioDiferenca;
 
 /**
  * @author francisco.garcia
@@ -20,13 +28,20 @@ public class EstudoCota {
 
 	@Id
 	@GeneratedValue(generator = "ESTUDO_COTA_SEQ")
+	@Column(name = "ID")
 	private Long id;
-	private double qtdePrevista;
-	private double qtdeEfetiva;
-	@ManyToOne
+	@Column(name = "QTDE_PREVISTA", nullable = false)
+	private BigDecimal qtdePrevista;
+	@Column(name = "QTDE_EFETIVA", nullable = false)
+	private BigDecimal qtdeEfetiva;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ESTUDO_ID")
 	private Estudo estudo;
-	@ManyToOne
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	@OneToMany(mappedBy = "estudoCota")
+	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
 	public Long getId() {
 		return id;
@@ -36,19 +51,19 @@ public class EstudoCota {
 		this.id = id;
 	}
 	
-	public double getQtdePrevista() {
+	public BigDecimal getQtdePrevista() {
 		return qtdePrevista;
 	}
 	
-	public void setQtdePrevista(double qtdePrevista) {
+	public void setQtdePrevista(BigDecimal qtdePrevista) {
 		this.qtdePrevista = qtdePrevista;
 	}
 	
-	public double getQtdeEfetiva() {
+	public BigDecimal getQtdeEfetiva() {
 		return qtdeEfetiva;
 	}
 	
-	public void setQtdeEfetiva(double qtdeEfetiva) {
+	public void setQtdeEfetiva(BigDecimal qtdeEfetiva) {
 		this.qtdeEfetiva = qtdeEfetiva;
 	}
 	
@@ -66,6 +81,14 @@ public class EstudoCota {
 	
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+	
+	public Set<RateioDiferenca> getRateiosDiferenca() {
+		return rateiosDiferenca;
+	}
+	
+	public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
+		this.rateiosDiferenca = rateiosDiferenca;
 	}
 
 }

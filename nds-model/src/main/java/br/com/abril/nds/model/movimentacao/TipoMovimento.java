@@ -1,9 +1,12 @@
 package br.com.abril.nds.model.movimentacao;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -13,15 +16,25 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "TIPO_MOVIMENTO")
+@SequenceGenerator(name="TP_MOVIMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class TipoMovimento {
 
 	@Id
+	@GeneratedValue(generator = "TP_MOVIMENTO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
+	@Column(name = "APROVACAO_AUTOMATICA", nullable = false)
 	private boolean aprovacaoAutomatica;
+	@Column(name = "INCIDE_DIVIDA", nullable = false)
 	private boolean incideDivida;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_MOVIMENTO_ESTOQUE", nullable = false)
 	private TipoMovimentoEstoque tipoMovimentoEstoque;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_OPERACAO", nullable = false)
+	private TipoOperacao tipoOperacao;
 	
 	public Long getId() {
 		return id;
@@ -61,5 +74,10 @@ public class TipoMovimento {
 	
 	public void setTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimentoEstoque) {
 		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
+		this.tipoOperacao = tipoMovimentoEstoque.getTipoOperacao();
+	}
+	
+	public TipoOperacao getTipoOperacao() {
+		return tipoOperacao;
 	}
 }

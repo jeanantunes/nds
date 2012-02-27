@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,10 +21,14 @@ public class TipoProduto {
 
 	@Id
 	@GeneratedValue(generator = "TP_PRODUTO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
+	@Column(name  = "NCM", nullable = false)
 	private String ncm;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "GRUPO_PRODUTO", nullable = false)
 	private GrupoProduto grupoProduto;
 	
 	public Long getId() {

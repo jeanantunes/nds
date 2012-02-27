@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -15,12 +16,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 
 
@@ -47,6 +52,11 @@ public class ProdutoEdicaoRepositoryImplTest {
 		ProdutoEdicao produtoEdicao =
 				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
 		getSession().save(produtoEdicao);
+		
+		Lancamento lancamento = 
+				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, 
+						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.PENDENTE);
+		getSession().save(lancamento);
 	}
 	
 	@Test
@@ -55,6 +65,22 @@ public class ProdutoEdicaoRepositoryImplTest {
 			produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto("Veja");
 		
 		Assert.assertTrue(!listaProdutoEdicao.isEmpty());
+	}
+	
+	@Test
+	public void obterProdutoEdicaoPorCodProdutoNumEdicao() {
+		ProdutoEdicao produtoEdicao = 
+			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao("1", 1L);
+		
+		Assert.assertTrue(produtoEdicao != null);
+	}
+	
+	@Test
+	public void obterProdutoEdicaoPorCodigoEdicaoDataLancamento(){
+		FuroProdutoDTO furoProdutoDTO = 
+				produtoEdicaoRepository.obterProdutoEdicaoPorCodigoEdicaoDataLancamento("1", null, 1L, new Date());
+		
+		Assert.assertTrue(furoProdutoDTO != null);
 	}
 
 	protected void flushClear() {
