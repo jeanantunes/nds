@@ -22,7 +22,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "DIFERENCA")
-@SequenceGenerator(name = "DIFERENCA_SEQ", initialValue = 1, allocationSize = 1)
+
 public class Diferenca {
 
 	@Id
