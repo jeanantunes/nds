@@ -22,7 +22,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "DIFERENCA")
-
 public class Diferenca {
 
 	@Id
