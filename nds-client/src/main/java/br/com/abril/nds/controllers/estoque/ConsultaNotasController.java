@@ -17,6 +17,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -26,8 +27,6 @@ import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -56,12 +55,6 @@ public class ConsultaNotasController {
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 	
-	private Validator validator;
-	
-	public ConsultaNotasController(Validator validator) {
-		this.validator = validator;
-	}
-	
 	@Path("/consultaNotas")
 	public void index() {
 		preencherCombos();
@@ -81,35 +74,38 @@ public class ConsultaNotasController {
 			filtroConsultaNotaFiscal.setNotaRecebida(isNotaRecebida == NOTA_RECEBIDA);
 		}
 
-		List<NotaFiscal> listaNotasFiscais = null;
-		
 		try {
 
-			listaNotasFiscais =
+			List<NotaFiscal> listaNotasFiscais =
 				notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
-		
+
+			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
+	
+			TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
+			tableModel.setTotal(quantidadeRegistros);
+			tableModel.setPage(page);
+	
+			if (listaNotasFiscais == null) {
+
+				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."}, 
+												Constantes.PARAM_MSGS).serialize();
+			} else {
+
+				result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+			}
+
 		} catch (IllegalArgumentException e) {
 
-			validator.add(new ValidationMessage(e.getMessage(), "erro"));
-		}
-
-		Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
-
-		TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
-		tableModel.setTotal(quantidadeRegistros);
-		tableModel.setPage(page);
-
-		if (listaNotasFiscais == null) {
-			result.nothing();
-		} else {
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+			result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
+											"Erro ao pesquisar nota fiscal: " + e.getMessage()}, 
+											Constantes.PARAM_MSGS).serialize();
 		}
 	}
 
 	public void pesquisarDetalhesNotaFiscal(Long idNota) {
 
-		List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal = getDetalhesNotaFiscal();
-				//this.notaFiscalService.obterDetalhesNotaFical(idNota);
+		List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal = //getDetalhesNotaFiscal();
+				this.notaFiscalService.obterDetalhesNotaFical(idNota);
 		
 		TableModel<CellModel> tableModelDetalhesNota = getTableModelDetalhesNotaFiscal(listaDetalhesNotaFiscal);
 		tableModelDetalhesNota.setPage(1);
