@@ -13,6 +13,7 @@ import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -116,7 +117,7 @@ public class FuroProdutoController {
 			}
 			
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
-		} else if (!Util.isValidDate(dataLancamento, null)){
+		} else if (!DateUtil.isValidDate(dataLancamento, null)){
 			valido = false;
 			
 			if (listaMensagemValidacao.isEmpty()){
@@ -214,7 +215,7 @@ public class FuroProdutoController {
 			}
 			
 			listaMensagemValidacao.add("Nova Data é obrigatório.");
-		} else if (!Util.isValidDate(novaData, null)){
+		} else if (!DateUtil.isValidDate(novaData, null)){
 			valido = false;
 			
 			if (listaMensagemValidacao.isEmpty()){

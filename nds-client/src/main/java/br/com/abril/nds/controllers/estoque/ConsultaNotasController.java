@@ -26,6 +26,8 @@ import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -54,6 +56,12 @@ public class ConsultaNotasController {
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 	
+	private Validator validator;
+	
+	public ConsultaNotasController(Validator validator) {
+		this.validator = validator;
+	}
+	
 	@Path("/consultaNotas")
 	public void index() {
 		preencherCombos();
@@ -73,8 +81,17 @@ public class ConsultaNotasController {
 			filtroConsultaNotaFiscal.setNotaRecebida(isNotaRecebida == NOTA_RECEBIDA);
 		}
 
-		List<NotaFiscal> listaNotasFiscais =
-			notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+		List<NotaFiscal> listaNotasFiscais = null;
+		
+		try {
+
+			listaNotasFiscais =
+				notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+		
+		} catch (IllegalArgumentException e) {
+
+			validator.add(new ValidationMessage(e.getMessage(), "erro"));
+		}
 
 		Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 
@@ -82,7 +99,11 @@ public class ConsultaNotasController {
 		tableModel.setTotal(quantidadeRegistros);
 		tableModel.setPage(page);
 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		if (listaNotasFiscais == null) {
+			result.nothing();
+		} else {
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}
 	}
 
 	public void pesquisarDetalhesNotaFiscal(Long idNota) {
