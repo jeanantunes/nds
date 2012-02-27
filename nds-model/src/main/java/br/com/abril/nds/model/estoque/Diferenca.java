@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -22,21 +23,25 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "DIFERENCA")
+@SequenceGenerator(name="DIFERENCA_SEQ", initialValue = 1, allocationSize = 1)
 public class Diferenca {
 
 	@Id
 	@GeneratedValue(generator = "DIFERENCA_SEQ")
 	private Long id;
+	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Usuario responsavel;
-	@OneToOne
+	@OneToOne(optional = false)
 	private ItemRecebimentoFisico itemRecebimentoFisico;
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_DIFERENCA", nullable = false)
 	private TipoDiferenca tipoDiferenca;
 	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
 	
 	public Long getId() {

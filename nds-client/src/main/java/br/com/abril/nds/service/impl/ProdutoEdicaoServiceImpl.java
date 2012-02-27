@@ -45,4 +45,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 						codigo, nomeProduto, edicao, dataLancamento);
 	}
+	
+	@Override
+	@Transactional
+	public boolean validarNumeroEdicao(String codigoProduto, Long numeroEdicao) {
+		
+		ProdutoEdicao produtoEdicao = 
+			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,
+																			 numeroEdicao);
+		
+		return (produtoEdicao != null) ? true : false;
+	}
 }

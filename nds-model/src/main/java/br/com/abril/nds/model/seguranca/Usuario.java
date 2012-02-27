@@ -1,10 +1,14 @@
 package br.com.abril.nds.model.seguranca;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -14,16 +18,22 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "USUARIO")
+@SequenceGenerator(name="USUARIO_SEQ", initialValue = 1, allocationSize = 1)
 public class Usuario {
 
 	@Id
+	@GeneratedValue(generator = "USUARIO_SEQ")
+	@Column(name = "ID")
 	private Long id;
+	@Column(name = "NOME", nullable = false)
 	private String nome;
+	@Column(name = "LOGIN", nullable = false)
 	private String login;
+	@Column(name = "SENHA", nullable = false)
 	private String senha;
 	
 	@OneToMany
-	private List<PerfilUsuario> perfilUsuario;
+	private List<PerfilUsuario> perfilUsuario = new ArrayList<PerfilUsuario>();
 	
 	public Long getId() {
 		return id;
