@@ -81,15 +81,67 @@ public class RecebimentoFisicoController {
 
 	}
 
-	// metodo para gerar uma lista com sugestao
+	// metodo para prrencher combo fornecedor com o cnpj informado
 	@Post
-	public void buscaCnpj(String cnpj) {
+	public void buscaCnpj(String cnpj) throws ParseException {
 		
 		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarPorCnpj(cnpj);
 		 if(validarCnpj(pessoaJuridica, cnpj)){
-			 result.use(Results.json()).from(pessoaJuridica, "result").serialize();
+			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
 		 }
-						
+	
+			result.redirectTo("/recebimentoFisico");
+		
+	}
+	
+	// metodo para prrencher combo fornecedor com o cnpj informado
+		@Post
+		public void buscaCnpjPorFornecedor(String nomeFantasia) throws ParseException {
+			
+			PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
+			 if(validarNomeFantasia(pessoaJuridica, nomeFantasia)){
+				result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
+			 }
+		
+			result.redirectTo("/recebimentoFisico");			
+		}
+	
+
+	
+	private boolean validarNomeFantasia(PessoaJuridica pessoaJuridica,
+			String nomeFantasia) {
+		boolean isValido = true;
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (nomeFantasia == null || "".equals(nomeFantasia)){
+			isValido = false;
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			listaMensagemValidacao.add("É necessário selecionar um Fornecedor!");
+		}else if(pessoaJuridica == null){
+			isValido = false;
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			listaMensagemValidacao.add("CNPJ não encontrado!");
+		}
+		if(isValido == false){
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+		}	
+		
+		return isValido;		
+	}
+
+	// metodo para gerar uma lista com sugestao
+	@Post
+	public void verificarExisteNota(String numero) throws ParseException {
+		
+		NotaFiscal notaFiscal = notaFiscalService.obterNotaFiscalPorNumero(numero);
+		if(notaFiscal == null){
+			//chamar um pop up
+			result.use(Results.json()).from(notaFiscal, "result").serialize();		
+		}else{
+			
+			result.redirectTo("/recebimentoFisico");
+		}
+		
 	}
 	private boolean validarCnpj(PessoaJuridica pessoaJuridica, String cnpj){
 		boolean isValido = true;
@@ -103,9 +155,29 @@ public class RecebimentoFisicoController {
 			isValido = false;
 			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
 			listaMensagemValidacao.add("CNPJ não encontrado!");
-		}else{
-			result.use(Results.json()).from(pessoaJuridica, Constantes.PARAM_MSGS).serialize();
 		}
+		if(isValido == false){
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+		}	
+					
+		
+		return isValido;
+	}
+	
+	private boolean validarExisteNota(NotaFiscal notaFiscal){
+		boolean isValido = true;
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (notaFiscal == null){
+			isValido = false;
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_WARNING);
+			listaMensagemValidacao.add("Cadastrar Nota! Nota não encontrada!");
+		}
+		if(isValido == false){
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+		}	
+					
+		
 		return isValido;
 	}
 	
