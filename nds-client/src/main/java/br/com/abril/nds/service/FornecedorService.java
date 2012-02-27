@@ -9,6 +9,10 @@ public interface FornecedorService {
 
 	List<Fornecedor> obterFornecedores();
 	
+	List<Fornecedor> obterFornecedoresAtivos();
+	
+	List<Fornecedor> obterFornecedores(String cnpj);
+	
 	/**
 	 * Busca os fornecedores de acordo com a permissão
 	 * de balanceamento de matriz de lançamento e a situação do fornecedor

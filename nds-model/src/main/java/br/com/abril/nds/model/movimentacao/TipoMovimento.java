@@ -29,12 +29,13 @@ public class TipoMovimento {
 	private boolean aprovacaoAutomatica;
 	@Column(name = "INCIDE_DIVIDA", nullable = false)
 	private boolean incideDivida;
-	@Column(name = "TIPO_MOVIMENTO_ESTOQUE", nullable = false)
+	
 	@Enumerated(EnumType.STRING)
 	private TipoMovimentoEstoque tipoMovimentoEstoque;
-	@Column(name = "TIPO_OPERACAO", nullable = false)
+	
 	@Enumerated(EnumType.STRING)
 	private TipoOperacao tipoOperacao;
+	
 
 	public Long getId() {
 		return id;
@@ -72,14 +73,24 @@ public class TipoMovimento {
 		return tipoMovimentoEstoque;
 	}
 
-	public void setTipoMovimentoEstoque(
-			TipoMovimentoEstoque tipoMovimentoEstoque) {
+	
+	public void setTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
+		if(tipoMovimentoEstoque != null){
+			this.tipoOperacao = tipoMovimentoEstoque.getTipoOperacao();
+		}
+		
 		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
-		this.tipoOperacao = tipoMovimentoEstoque.getTipoOperacao();
+		
 	}
 
 	public TipoOperacao getTipoOperacao() {
-		return tipoOperacao;
-	}
+		
+		if(this.tipoMovimentoEstoque == null){
+			return null;
+		}
+		
+		return tipoMovimentoEstoque.getTipoOperacao();
+	}	
 
 }

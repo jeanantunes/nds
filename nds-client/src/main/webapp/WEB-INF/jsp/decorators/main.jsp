@@ -200,7 +200,7 @@ fieldset label {
 							<li><a href="Estoque/lancamento_faltas_sobras.htm">Lançamento
 									de Faltas e Sobras</a>
 							</li>
-							<li><a href="<c:url value="estoque/recebimentoFisico"/>">Recebimento
+							<li><a href="<c:url value="recebimentoFisico"/>">Recebimento
 									Fisico</a>
 							</li>
 							<li><a href="Estoque/help_estoque.htm">Help</a>

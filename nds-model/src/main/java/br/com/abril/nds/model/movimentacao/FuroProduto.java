@@ -32,15 +32,13 @@ public class FuroProduto {
 	@Column(name = "DATA", nullable = false)
 	private Date data;
     
-	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
 	
-	@JoinColumn(name = "USUARIO_ID")
 	@ManyToOne(optional = false)
     private Usuario usuario;
     
-	@JoinColumn(name = "LANCAMENTO_ID")
+
 	@ManyToOne
 	private Lancamento lancamento;
 	
