@@ -19,4 +19,9 @@ public class PessoaJuridicaServiceImpl implements PessoaJuridicaService {
 		return pessoaJuridicaRepository.buscarPorCnpj(cnpj);
 	}
 	
+	@Transactional
+	public PessoaJuridica buscarCnpjPorFornecedor(String nomeFantasia){
+		return pessoaJuridicaRepository.buscarCnpjPorFornecedor(nomeFantasia);
+	}
+	
 }
