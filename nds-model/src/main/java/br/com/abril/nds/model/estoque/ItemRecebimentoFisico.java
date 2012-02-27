@@ -29,44 +29,72 @@ public class ItemRecebimentoFisico {
 	private Long id;
 	@Column(name = "QTDE_FISICO", nullable = false)
 	private BigDecimal qtdeFisico;
+	@OneToOne
+	private Diferenca diferenca;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")
 	private RecebimentoFisico recebimentoFisico;
 	@OneToOne(optional = false)
 	@JoinColumn(name = "ITEM_NF_ID")
 	private ItemNotaFiscal itemNotaFiscal;
-
-	
+	/**
+	 * @return the id
+	 */
 	public Long getId() {
 		return id;
 	}
-
+	/**
+	 * @param id the id to set
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+	/**
+	 * @return the qtdeFisico
+	 */
 	public BigDecimal getQtdeFisico() {
 		return qtdeFisico;
 	}
-	
+	/**
+	 * @param qtdeFisico the qtdeFisico to set
+	 */
 	public void setQtdeFisico(BigDecimal qtdeFisico) {
 		this.qtdeFisico = qtdeFisico;
 	}
-	
+	/**
+	 * @return the diferenca
+	 */
+	public Diferenca getDiferenca() {
+		return diferenca;
+	}
+	/**
+	 * @param diferenca the diferenca to set
+	 */
+	public void setDiferenca(Diferenca diferenca) {
+		this.diferenca = diferenca;
+	}
+	/**
+	 * @return the recebimentoFisico
+	 */
 	public RecebimentoFisico getRecebimentoFisico() {
 		return recebimentoFisico;
 	}
-	
+	/**
+	 * @param recebimentoFisico the recebimentoFisico to set
+	 */
 	public void setRecebimentoFisico(RecebimentoFisico recebimentoFisico) {
 		this.recebimentoFisico = recebimentoFisico;
 	}
-	
+	/**
+	 * @return the itemNotaFiscal
+	 */
 	public ItemNotaFiscal getItemNotaFiscal() {
 		return itemNotaFiscal;
 	}
-	
+	/**
+	 * @param itemNotaFiscal the itemNotaFiscal to set
+	 */
 	public void setItemNotaFiscal(ItemNotaFiscal itemNotaFiscal) {
 		this.itemNotaFiscal = itemNotaFiscal;
 	}
-	
 }

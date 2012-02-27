@@ -7,6 +7,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -154,21 +155,30 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 	@SuppressWarnings("unchecked")
 	public List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal) {
 
-		String hql = " select "
-				   + " itemNotaFiscal.id as codigoItem, itemNotaFiscal.produtoEdicao.produto.nome as nomeProduto, " 
+		String hql = 
+				" select "
+				   + " itemNotaFiscal.id as codigoItem, " 
+				   + " itemNotaFiscal.produtoEdicao.produto.nome as nomeProduto, " 
 				   + " itemNotaFiscal.produtoEdicao.numeroEdicao as numeroEdicao, "
-				   + " itemNotaFiscal.qtde as quantidadeExemplares, diferenca.qtde as sobrasFaltas, diferenca.tipoDiferenca as tipoDiferenca" 
-				   + " from ItemNotaFiscal itemNotaFiscal, ItemRecebimentoFisico diferenca ";
-//				   + " where (diferenca.produtoEdicao.id = itemNotaFiscal.produtoEdicao.id or diferenca is null) "
-//				   + " and itemNotaFiscal.notaFiscal.id = :idNotaFiscal ";
+				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
+//				   + " ,null, null "
+				   + " itemNotaFiscal.recebimentoFisico.diferenca.qtde as sobrasFaltas, " 
+				   + " itemNotaFiscal.recebimentoFisico.diferenca.tipoDiferenca as tipoDiferenca " 
+				   + " from ItemNotaFiscal itemNotaFiscal "
+				   + " left join itemNotaFiscal.recebimentoFisico "
+				   + " left join itemNotaFiscal.recebimentoFisico.diferenca ";
+//				   + " left join itemNotaFiscal.produtoEdicao ";
+//				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal ";
 
 		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(DetalheNotaFiscalVO.class); 
 
 		Query query = getSession().createQuery(hql);
 
-		query.setResultTransformer(resultTransformer);
+//		query.setResultTransformer(resultTransformer);
 //		query.setParameter("idNotaFiscal", idNotaFiscal);
 
+		List<ItemNotaFiscal> listaItemNotaFiscal = query.list();
+		
 		return query.list();
 	}
 }
