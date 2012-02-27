@@ -13,4 +13,10 @@ public interface NotaFiscalService {
 	List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 	
 	List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal);
+
+	void inserirNotaFiscal(NotaFiscal notaFiscal);
+	
+	NotaFiscal obterNotaFiscalPorNumero(String numero);
+
+
 }

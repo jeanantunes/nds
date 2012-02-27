@@ -1,6 +1,7 @@
 function pesquisarPorCodigoProduto() {
 	var codigoProduto = $("#codigo").val();
 	
+<<<<<<< HEAD
 	if (!isNumeric(codigoProduto)) {
 		//TODO: mostrar msg
 		
@@ -18,11 +19,19 @@ function pesquisarPorCodigoProduto() {
 		
 		$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
 				   "codigoProduto=" + codigoProduto, exibirNomeProduto, null);
+=======
+	if (codigoProduto && codigoProduto.length > 0) {
+		$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+				   "codigoProduto=" + codigoProduto, exibirNomeProduto);
+>>>>>>> EMS0009
 	}
 }
 
 function exibirNomeProduto(result) {
+<<<<<<< HEAD
 	$("#edicao").removeAttr("disabled");
+=======
+>>>>>>> EMS0009
 	$("#produto").val(result.nome);
 	$("#edicao").focus();
 	
@@ -39,6 +48,10 @@ function pesquisarPorNomeProduto() {
 }
 
 function exibirAutoComplete(result) {
+<<<<<<< HEAD
+=======
+	//TODO tratar retorno pesquisa
+>>>>>>> EMS0009
 	$("#produto").autocomplete({
 		source: result,
 		select: function(event, ui) {
@@ -48,8 +61,11 @@ function exibirAutoComplete(result) {
 }
 
 function completarPesquisa(chave){
+<<<<<<< HEAD
 	$("#edicao").removeAttr("disabled");
 	$("#edicao").val("");
+=======
+>>>>>>> EMS0009
 	$("#codigo").val(chave.codigo);
 	$("#edicao").focus();
 	
@@ -57,6 +73,7 @@ function completarPesquisa(chave){
 }
 
 function validarNumEdicao() {
+<<<<<<< HEAD
 	var codigoProduto = $("#codigo").val();
 	var numeroEdicao = $("#edicao").val();
 	
@@ -77,6 +94,13 @@ function validarNumEdicao() {
 		$.postJSON(contextPath + "/produto/validarNumeroEdicao",
 				   data, null, tratarErroValidacao);
 	}
+=======
+	var data = "codigoProduto=" + $("#codigo").val() +
+       		   "&numeroEdicao=" + $("#edicao").val();
+
+	$.postJSON(contextPath + "/produto/validarNumeroEdicao",
+			   data, null, tratarErroValidacao);
+>>>>>>> EMS0009
 }
 
 function tratarErroValidacao() {

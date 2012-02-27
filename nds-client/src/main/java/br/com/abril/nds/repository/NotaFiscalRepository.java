@@ -13,4 +13,8 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long> {
 	List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 	
 	List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal);
+
+	void inserirNotaFiscal(NotaFiscal notaFiscal);
+	NotaFiscal obterNotaFiscalPorNumero(String numero);
+	
 }

@@ -49,6 +49,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	@Transactional
 	public boolean validarNumeroEdicao(String codigoProduto, Long numeroEdicao) {
+
 		if (codigoProduto == null || codigoProduto.isEmpty()){
 			throw new IllegalArgumentException("Código é obrigatório.");
 		}
@@ -56,6 +57,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (numeroEdicao == null){
 			throw new IllegalArgumentException("Número edição é obrigatório.");
 		}
+
 		
 		ProdutoEdicao produtoEdicao = 
 			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,
