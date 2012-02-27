@@ -37,6 +37,10 @@ public class ExtratoEdicaoController {
 	
 	private Result result;
 	
+	private static final String TBL_MODEL_LISTA_EXTRATO_EDICAO = "TblModelListaExtratoEdicao";
+	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
+	
+	
 	@Autowired
 	private ProdutoService produtoService;
 	
@@ -102,9 +106,7 @@ public class ExtratoEdicaoController {
 	 */
 	public void pesquisaExtratoEdicao(Long numeroEdicao) throws Exception {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-		
-		TableModel<CellModel> tm = new TableModel<CellModel>();
+		TableModel<CellModel> tm = null;
 		
 		Map resultado = new HashMap();
 		
@@ -115,48 +117,51 @@ public class ExtratoEdicaoController {
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
 			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
 			
-			resultado.put("TblModelListaExtratoEdicao", tm);
+			tm = new TableModel<CellModel>();
 			
-			resultado.put("saldoTotalExtratoEdicao", new Double(0.0));
+			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."};
+			
+			resultado.put(Constantes.PARAM_MSGS, msgErro);
 
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 			
 			return;
 			
-			
 		}
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+		tm = obterTableModelParaListaExtratoEdicao(infoGeralExtratoEdicao.getListaExtratoEdicao());
+		
+		resultado.put(TBL_MODEL_LISTA_EXTRATO_EDICAO, tm);
+		resultado.put(SALDO_TOTAL_EXTRATO_EDICAO, infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
+		
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModel> obterTableModelParaListaExtratoEdicao(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		
+		TableModel<CellModel> tm = new TableModel<CellModel>();
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
 		for(ExtratoEdicaoDTO extrato : listaExtratoEdicao) {
 			
 			String dataMovimento 		= sdf.format(extrato.getDataMovimento());
-			
 			String descTipoMovimento 	= extrato.getDescMovimento();
-			
 			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
-			
 			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();
-			
 			String qtdParcial 			= extrato.getQtdParcial().doubleValue() < 0.0D ? "-" : extrato.getQtdParcial().toString();
-			
 			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial));
 			
 		}
 		
 		tm.setPage(1);
-		
 		tm.setTotal(listaModeloGenerico.size());
-		
 		tm.setRows(listaModeloGenerico);
 		
-		resultado.put("TblModelListaExtratoEdicao", tm);
-		
-		resultado.put("saldoTotalExtratoEdicao", infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
-		
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		return tm;
 		
 	}
 	

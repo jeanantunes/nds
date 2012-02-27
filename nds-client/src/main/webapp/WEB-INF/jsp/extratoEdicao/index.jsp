@@ -1,16 +1,10 @@
-<!-- 
-
-	VIEW REFERENTE A EMS0081
-	
- -->
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meuConteudo</title>
 
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/produto.js'></script>
+
 <script type="text/javascript">
-
-
 
 var jsExtratoEdicao = {
 
@@ -26,38 +20,15 @@ var jsExtratoEdicao = {
 		});
 		
 		$(".extratoEdicaoGrid").flexReload();
-		
-		$(".grids").show();
-	},	
-	
 
-	pesquisarPorNomeProduto : function(){
-		
-		var produto = $("#produto").val();
-		
-		if (produto && produto.length > 0){
-			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, jsExtratoEdicao.exibirAutoComplete);
-		}
-	},
-	
-	exibirAutoComplete : function (result){
-		
-		$("#produto").autocomplete({
-			source: result,
-			select: function(event, ui){
-				jsExtratoEdicao.completarPesquisa(ui.item.chave);
-			}
-		});
-		
-	},
-	
-	completarPesquisa : function(chave){
-		$("#codigo").val(chave.codigoProduto);
-		$("#edicao").focus();
-	},
+	},	
 	
 	
 	getDataFromResult : function(data) {
+		
+		jsExtratoEdicao.dadosPesquisa = {page: 0, total: 0};
+		jsExtratoEdicao.saldoTotalExtratoEdicao = 0.0;
+		jsExtratoEdicao.mensagens = undefined;
 		
 		$.each(data, function(index, value) {
 			
@@ -65,9 +36,18 @@ var jsExtratoEdicao = {
 				  jsExtratoEdicao.dadosPesquisa = value[1];
 			  } else if(value[0] == "saldoTotalExtratoEdicao") {
 				  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
+			  } else if(value[0] == "mensagens") {
+				  jsExtratoEdicao.mensagens = value[1];
 			  }
 			  
 		});
+		
+		if(typeof jsExtratoEdicao.mensagens == "object") {
+			$(".grids").hide();
+			exibirMensagem(jsExtratoEdicao.mensagens[0], jsExtratoEdicao.mensagens);
+		} else {
+			$(".grids").show();
+		}
 		
 		$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
 		
@@ -143,15 +123,6 @@ $(function() {
 
 	<div class="container">
 
-		<div id="effect" style="padding: 0 .7em;"
-			class="ui-state-highlight ui-corner-all">
-			<p>
-				<span style="float: left; margin-right: .3em;"
-					class="ui-icon ui-icon-info"></span> <b>Chamadão < evento > com
-					< status >.</b>
-			</p>
-		</div>
-
 		<fieldset class="classFieldset">
 		
 			<legend> Extrato de Edição </legend>
@@ -166,15 +137,15 @@ $(function() {
 					<td width="123">
 					
 						<input 	type="text" 
-								name="codigoProduto" 
-								id="codigoProduto"
+								name="codigo" 
+								id="codigo"
 								maxlength="5"
 								style="width: 70px; 
 								float: left; 
 								margin-right: 5px;" />
 
 						<span class="classPesquisar">
-							<a href="javascript:;">&nbsp;</a>
+							<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
 						</span>
 					
 					</td>
@@ -185,12 +156,10 @@ $(function() {
 					
 					<td width="236">
 
-						<input 	type="text" 
-								name="nomeProduto" 
-								id="nomeProduto" 
-								style="width: 220px;" 
-								maxlength="255" 
-								onkeyup="jsExtratoEdicao.pesquisarPorNomeProduto();"/>
+						<input type="text" name="produto" id="produto" style="width: 220px;"
+					       onkeyup="pesquisarPorNomeProduto();" />
+
+						
 					
 					</td>
 					
@@ -200,12 +169,8 @@ $(function() {
 					
 					<td width="186">
 					
-						<input 	type="text" 
-								name="edicao" 
-								id="edicao" 
-								style="width: 220px;" 
-								maxlength="255" 
-								onkeyup="jsExtratoEdicao.pesquisarPorNomeProduto();"/>
+					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+						   onchange="validarNumEdicao();"/>
 								
 					</td>
 					
