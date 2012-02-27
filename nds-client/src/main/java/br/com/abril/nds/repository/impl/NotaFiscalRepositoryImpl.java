@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -25,6 +26,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		this.adicionar(notaFiscal);
 		
 	}
-
-	
+	@Override	
+	public NotaFiscal obterNotaFiscalPorNumero(String numero){
+		String hql = "from NotaFiscal nf where nf.numero = :numero ";
+		Query query = super.getSession().createQuery(hql);
+		query.setParameter("numero", numero);
+		return (NotaFiscal) query.uniqueResult();
+	}	
 }
