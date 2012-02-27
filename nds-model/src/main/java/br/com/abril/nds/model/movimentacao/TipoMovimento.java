@@ -16,11 +16,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "TIPO_MOVIMENTO")
-@SequenceGenerator(name = "TP_MOVIMENTO_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "TIPO_MOVIMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class TipoMovimento {
 
 	@Id
-	@GeneratedValue(generator = "TP_MOVIMENTO_SEQ")
+	@GeneratedValue(generator = "TIPO_MOVIMENTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "DESCRICAO", nullable = false)

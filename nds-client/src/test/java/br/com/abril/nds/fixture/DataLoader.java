@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -161,14 +162,17 @@ public class DataLoader {
 				usuario, notaFiscalFornecedor, new Date());
 		session.save(itemNotaFiscal);
 
-		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscalFornecedor, usuario);
+		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+			notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+		
 		session.save(recebimentoFisico);
 		
-		ItemRecebimentoFisico itemRecebimentoFisico = Fixture
-				.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico);
+		ItemRecebimentoFisico itemRecebimentoFisico = 
+			Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal("1.0"));
+		
 		session.save(itemRecebimentoFisico);
 		
-		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao);
+		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigDecimal.TEN);
 		session.save(estoqueProduto);
 		
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto);
