@@ -12,5 +12,6 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 public interface NotaFiscalRepository extends Repository<NotaFiscal, Long> {
 
 	void inserirNotaFiscal(NotaFiscal notaFiscal);
+	NotaFiscal obterNotaFiscalPorNumero(String numero);
 	
 }
