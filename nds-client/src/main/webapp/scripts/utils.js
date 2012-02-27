@@ -52,6 +52,10 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	}
 }
 
+function isNumeric(a){
+	return !isNaN(parseFloat(a))&&isFinite(a);
+}
+
 function esconde(idDiv) {
 	setTimeout(function() {
 		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
