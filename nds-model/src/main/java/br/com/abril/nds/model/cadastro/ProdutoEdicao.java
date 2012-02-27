@@ -47,8 +47,8 @@ public class ProdutoEdicao {
 	@Column(name = "PESO", nullable = false)
 	private BigDecimal peso;
 	
-	@JoinColumn(name = "PRODUTO")
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
 	
 	public Long getId() {

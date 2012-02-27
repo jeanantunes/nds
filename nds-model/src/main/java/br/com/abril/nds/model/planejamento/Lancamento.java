@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -29,8 +30,9 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
  * @created 14-fev-2012 11:35:32
  */
 @Entity
-@Table(name = "LANCAMENTO")
-@SequenceGenerator(name="LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "LANCAMENTO", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" })})
+@SequenceGenerator(name = "LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Lancamento {
 
 	@Id
@@ -58,8 +60,8 @@ public class Lancamento {
 	@Column(name = "DATA_REC_DISTRIB", nullable = false)
 	private Date dataRecolhimentoDistribuidor;
 	
-	@JoinColumn(name = "PRODUTO_EDICAO")
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	
 	@Enumerated(EnumType.STRING)
@@ -78,6 +80,7 @@ public class Lancamento {
 	private BigDecimal reparte;
 	
 	@OneToMany
+	@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	
 	@OneToMany(mappedBy = "lancamento")

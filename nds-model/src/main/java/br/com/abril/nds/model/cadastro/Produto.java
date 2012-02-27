@@ -47,9 +47,9 @@ public class Produto {
 	
 	@ManyToMany
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-	
+
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_PRODUTO")
+	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
 	@Enumerated(EnumType.STRING)
