@@ -70,6 +70,9 @@ public class RecebimentoFisicoController {
 
 		preencherCombos();
 		preencherDataEmissao();
+		
+		//List<RecebimentoFisicoDTO> listDTO = recebimentoFisicoService.obterItemNotaPorCnpjNota("11.111.111/0001-11", "2344242", "345353543");
+		//System.out.println(listDTO);
 	}
 
 	private void preencherDataEmissao() {
@@ -237,7 +240,7 @@ public class RecebimentoFisicoController {
 
 	@Path("recebimentoFisico/pesquisa")
 	public List<RecebimentoFisicoDTO> pesquisaRecebimentoFisico(Fornecedor fornecedor, NotaFiscal notaFiscal) throws Exception {
-		return recebimentoFisicoService.obterRecebimentoFisico(fornecedor.getJuridica().getCnpj(), notaFiscal.getNumero(), notaFiscal.getSerie());		
+		return recebimentoFisicoService.obterItemNotaPorCnpjNota(fornecedor.getJuridica().getCnpj(), notaFiscal.getNumero(), notaFiscal.getSerie());		
 		
 	}
 
