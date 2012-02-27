@@ -187,7 +187,6 @@ public class DataLoader {
 		ParametroSistema parametroSistema = 
 				Fixture.parametroSistema(1L, TipoParametroSistema.PATH_IMAGENS_CAPA, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 		session.save(parametroSistema);
-
 	}
 	
 	private static void save(Session session, Object... entidades) {
