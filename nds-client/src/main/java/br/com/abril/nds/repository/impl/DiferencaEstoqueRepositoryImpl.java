@@ -32,20 +32,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	@SuppressWarnings("unchecked")
 	public List<DiferencaDTO> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
 		
-		String hql = " select new " + DiferencaDTO.class.getCanonicalName() + "( "
-				   + " produtoEdicao, movimentoEstoque) "
-				   + " from ProdutoEdicao produtoEdicao, MovimentoEstoque movimentoEstoque "
-				   + " where movimentoEstoque.produtoEdicao.id = produtoEdicao.id ";
-		
-		if (filtro.getDataMovimento() != null) {
-			
-			hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
-		}
-		
-		if (filtro.getTipoDiferenca() != null) {
-			
-			hql += " and movimentoEstoque.diferenca.tipoDiferenca = :tipoDiferenca ";
-		}
+		String hql = this.gerarQueryDiferencasLancamento(filtro, false);
 		
 		if (filtro.getOrdenacaoColuna() != null) {
 			
@@ -109,8 +96,65 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		return query.list();
 	}
+	
+	public Long obterTotalDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
+		
+		String hql = this.gerarQueryDiferencasLancamento(filtro, true);
+		
+		Query query = getSession().createQuery(hql);
+		
+		if (filtro.getDataMovimento() != null) {
+			
+			query.setParameter("dataMovimento", filtro.getDataMovimento());
+		}
+		
+		if (filtro.getTipoDiferenca() != null) {
+		
+			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+		}
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	/*
+	 * Gera a query de busca de diferenças para lançamento.
+	 *   
+	 * @param filtro - filtro da pesquisa
+	 * @param ehParaQuantidadeTotal - flag para contagem de total
+	 * 
+	 * @return Query
+	 */
+	private String gerarQueryDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro, 
+												  boolean ehParaQuantidadeTotal) {
+		
+		String hql;
+		
+		if (ehParaQuantidadeTotal) {
+			
+			hql = "select count(movimentoEstoque) ";
+			
+		} else {
+			
+			hql = " select new " + DiferencaDTO.class.getCanonicalName() + "( "
+				+ " produtoEdicao, movimentoEstoque) ";
+		}
+					
+		hql += " from ProdutoEdicao produtoEdicao, MovimentoEstoque movimentoEstoque "
+			+  " where movimentoEstoque.produtoEdicao.id = produtoEdicao.id ";
+		
+		if (filtro.getDataMovimento() != null) {
+			
+			hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
+		}
+		
+		if (filtro.getTipoDiferenca() != null) {
+			
+			hql += " and movimentoEstoque.diferenca.tipoDiferenca = :tipoDiferenca ";
+		}
+		
+		return hql;
+	}
 
-	@Override
 	public List<DiferencaDTO> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
 		return null;

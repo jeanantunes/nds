@@ -30,6 +30,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		return this.diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
 	}
+	
+	@Transactional(readOnly = true)
+	public Long obterTotalDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
+		
+		return this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+	}
 
 	@Transactional(readOnly = true)
 	public List<DiferencaDTO> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
