@@ -59,7 +59,9 @@
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+
 						   onchange="validarNumEdicao();"/>
+
 				</td>
 				
 				<td width="73">Fornecedor:</td>

@@ -29,6 +29,10 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Transactional
 	@Override
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
+		if (codigoProduto == null || codigoProduto.isEmpty()){
+			throw new IllegalArgumentException("Código é obrigatório.");
+		}
+		
 		return produtoRepository.obterProdutoPorCodigo(codigoProduto);
 	}
 	

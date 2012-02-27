@@ -22,9 +22,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -314,30 +316,43 @@ public class Fixture {
 		return notaFiscalFornecedor;
 	}
 
-	public static RecebimentoFisico recebimentoFisico(
-			NotaFiscalFornecedor notaFiscalFornecedor, Usuario usuario) {
+	public static RecebimentoFisico recebimentoFisico(NotaFiscalFornecedor notaFiscalFornecedor, 
+													  Usuario usuario,
+													  Date dataRecebimento,
+													  Date dataConfirmacao,
+													  StatusConfirmacao statusConfirmacao) {
+		
 		RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
-		recebimentoFisico.setDataRecebimento(new Date());
-		recebimentoFisico.setDataConfirmacao(new Date());
+		
+		recebimentoFisico.setDataRecebimento(dataRecebimento);
+		recebimentoFisico.setDataConfirmacao(dataConfirmacao);
 		recebimentoFisico.setNotaFiscal(notaFiscalFornecedor);
-		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+		recebimentoFisico.setStatusConfirmacao(statusConfirmacao);
 		recebimentoFisico.setRecebedor(usuario);
+		
 		return recebimentoFisico;
 	}
 
-	public static ItemRecebimentoFisico itemRecebimentoFisico(
-			ItemNotaFiscal itemNotaFiscal, RecebimentoFisico recebimentoFisico) {
+	public static ItemRecebimentoFisico itemRecebimentoFisico(ItemNotaFiscal itemNotaFiscal, 
+															  RecebimentoFisico recebimentoFisico,
+															  BigDecimal qtdeFisico) {
+		
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
+		
 		itemRecebimentoFisico.setItemNotaFiscal(itemNotaFiscal);
-		itemRecebimentoFisico.setQtdeFisico(new BigDecimal(1.0));
+		itemRecebimentoFisico.setQtdeFisico(qtdeFisico);
 		itemRecebimentoFisico.setRecebimentoFisico(recebimentoFisico);
+		
 		return itemRecebimentoFisico;
 	}
 	
-	public static EstoqueProduto estoqueProduto(ProdutoEdicao produtoEdicao) {
+	public static EstoqueProduto estoqueProduto(ProdutoEdicao produtoEdicao, BigDecimal qtde) {
+		
 		EstoqueProduto estoqueProduto = new EstoqueProduto();
+		
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
-		estoqueProduto.setQtde(BigDecimal.ZERO);
+		estoqueProduto.setQtde(qtde);
+		
 		return estoqueProduto;
 	}
 
@@ -363,6 +378,29 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 	
+	public static MovimentoEstoque movimentoEstoque(ItemRecebimentoFisico itemRecebimentoFisico,
+													ProdutoEdicao produtoEdicao, 
+													TipoMovimento tipoMovimento,
+													Usuario usuario, 
+													EstoqueProduto estoqueProduto,
+													Diferenca diferenca,
+													Date dataInclusao,
+													BigDecimal qtde) {
+
+		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+		
+		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
+		movimentoEstoque.setProdutoEdicao(produtoEdicao);
+		movimentoEstoque.setQtde(qtde);
+		movimentoEstoque.setTipoMovimento(tipoMovimento);
+		movimentoEstoque.setUsuario(usuario);
+		movimentoEstoque.setEstoqueProduto(estoqueProduto);
+		movimentoEstoque.setDiferenca(diferenca);
+		
+		return movimentoEstoque;
+	}
+	
 	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor){
 		ParametroSistema parametroSistema = new ParametroSistema();
 		parametroSistema.setId(id);
@@ -370,6 +408,23 @@ public class Fixture {
 		parametroSistema.setValor(valor);
 		
 		return parametroSistema;
+	}
+	
+	public static Diferenca diferenca(BigDecimal qtde,
+									  Usuario usuarioResponsavel,
+									  ProdutoEdicao produtoEdicao,
+									  TipoDiferenca tipoDiferenca,
+									  StatusConfirmacao statusConfirmacao) {
+		
+		Diferenca diferenca = new Diferenca();
+		
+		diferenca.setQtde(qtde);
+		diferenca.setResponsavel(usuarioResponsavel);
+		diferenca.setProdutoEdicao(produtoEdicao);
+		diferenca.setTipoDiferenca(tipoDiferenca);
+		diferenca.setStatusConfirmacao(statusConfirmacao);
+		
+		return diferenca;
 	}
 
 }

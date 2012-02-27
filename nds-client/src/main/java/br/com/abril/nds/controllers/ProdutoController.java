@@ -36,7 +36,15 @@ public class ProdutoController {
 	public void pesquisarPorCodigoProduto(String codigoProduto) {
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
-		//TODO: tratar retorno da consulta
+
+		if (produto == null) {
+			List<String> listaMensagemValidacao = new ArrayList<String>();
+			
+			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+			listaMensagemValidacao.add("Produto não encontrado.");
+
+			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+		}
 		
 		result.use(Results.json()).from(produto, "result").serialize();
 	}
@@ -45,12 +53,14 @@ public class ProdutoController {
 	public void pesquisarPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		
+
 		//TODO: tratar retorno da consulta
 		
 		if (listaProduto != null && !listaProduto.isEmpty()) {
 			
 			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 			
+
 			Produto produtoAutoComplete = null;
 			
 			for (Produto produto : listaProduto){
@@ -62,9 +72,11 @@ public class ProdutoController {
 				
 				listaProdutos.add(itemAutoComplete);
 			}
+
 			
 			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		}
+
 	}
 	
 	@Post

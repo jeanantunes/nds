@@ -16,6 +16,8 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 
 	List<Fornecedor> obterFornecedoresAtivos();
 	
+	List<Fornecedor> obterFornecedores(String cnpj);
+	
 	List<Fornecedor> obterFornecedores();
 	
 	/**

@@ -21,7 +21,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.MovimentoCota;
 
 @Entity
+
 @Table(name = "	ESTOQUE_COTA")
+
 @SequenceGenerator(name="ESTOQUE_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstoqueProdutoCota {
 	

@@ -21,7 +21,7 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	private CotaRepository cotaRepository;
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
 		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);

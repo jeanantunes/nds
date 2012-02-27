@@ -2,11 +2,30 @@
 <title>Consulta de Notas</title>
 <script language="javascript" type="text/javascript">
 
+		function adicionarAction(data) {
+
+			var i;
+
+			for (i = 0 ; i < data.rows.length; i++) {
+
+				var lastIndex = data.rows[i].cell.length - 1;
+
+				data.rows[i].cell[lastIndex-1] = 
+					'<a href="javascript:;" onclick="popup()" style="cursor:pointer" style="border:none">' +
+					'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png"/>' +
+					'<input type="hidden" name="idNota" value="' + data.rows[i].cell[lastIndex] + '"/>' +
+					'</a>';
+			}
+
+			return data;
+		} 
+
 		function pesquisarNotas() { 
 
 			var formData = $('#formPesquisaNotas').serializeArray();
 			
 			$("#notasSemFisicoGrid").flexigrid({
+				preProcess: adicionarAction,
 				url : '<c:url value="/consultaNotas/pesquisarNotas" />',
 				dataType : 'json',
 				colModel : [ {
@@ -18,7 +37,7 @@
 				}, {
 					display : 'Data Emissao',
 					name : 'dataEmissao',
-					width : 370,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -45,8 +64,14 @@
 					width : 120,
 					sortable : true,
 					align : 'center'
+				}, {
+					display : "Ação",
+					name : 'acao',
+					width : 120,
+					sortable : true,
+					align : 'center'
 				}],
-				sortname : "codigo",
+				sortname : "numero",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -54,15 +79,80 @@
 				params: formData,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 180,
+				singleSelect: true
+			});
+
+			if ($(".grids").css('display') != 'none') {
+
+				formData = $('#formPesquisaNotas').serializeArray();
+				
+				$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/consultaNotas/pesquisarNotas" />', params: formData});
+				
+				$("#notasSemFisicoGrid").flexReload();
+			} else {
+				
+				$(".grids").show();
+			}
+		}
+		
+		function pesquisarDetalhesNota() {
+			
+			var idNota = $('input[name="idNota"]').val();
+
+			$("#notasSemFisicoDetalheGrid").flexigrid({
+				url : '<c:url value="/consultaNotas/pesquisarDetalhesNotaFiscal" />',
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoItem',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 70,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'numeroEdicao',
+					width : 50,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Exemplares',
+					name : 'quantidadeExemplares',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Sobras / Faltas',
+					name : 'sobrasFaltas',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}],
+				width : 385,
+				height : 180,
+				params: [{ name: 'idNota', value: idNota }],
+				resizable:false
 			});
 			
-			$(".grids").show();
+			if ($(".dialog-novo").css('display') != 'none') {
+
+				$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
+															params: [{ name: 'idNota', value: idNota }]});
+				
+				$("#notasSemFisicoDetalheGrid").flexReload();
+			}
+
+			$("#dialog-novo").show();
 		}
 		
 		function popup() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+
 			$("#dialog-novo").dialog({
 				resizable : false,
 				height : 370,
@@ -71,23 +161,24 @@
 				buttons : {
 					"Fechar" : function() {
 						$(this).dialog("close");
-	
 					},
 				}
 			});
+
+			pesquisarDetalhesNota();
 		};
-	
+
 		$(function() {
 			$("#datepickerDe").datepicker({
 				showOn : "button",
-				buttonImage: "../../../images/calendar.gif",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly : true,
 				dateFormat: 'dd/mm/yy',
 				defaultDate: new Date()
 			});
 			$("#datepickerAte").datepicker({
 				showOn : "button",
-				buttonImage: "../../../images/calendar.gif",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly : true,
 				dateFormat: 'dd/mm/yy',
 				defaultDate: new Date()
@@ -96,16 +187,32 @@
 	</script>
 
 <style type="text/css">
-fieldset label {
+fieldset label 
+{
 	width: auto;
 	margin-bottom: 0px !important;
+}
+
+.ui-datepicker 
+{
+	z-index: 1000 !important;		
+}
+
+.ui-datepicker-today a
+{
+	display:block !important;
 }
 </style>
 
 </head>
 
 <body>
-
+	<div id="dialog-novo" title="Detalhes da Nota">
+	     
+	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
+	
+	</div>
+	
 	<div class="container">
 
 		<div id="effect" style="padding: 0 .7em;"
@@ -127,8 +234,8 @@ fieldset label {
 					<tr>
 						<td>Fornecedor:</td>
 						<td>
-							<select name="selectFornecedores" id="selectFornecedores" style="width: 250px;">
-								<option selected="selected" value="-1">Todos</option>
+							<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
+								<option selected="selected">Todos</option>
 								<c:forEach items="${fornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
@@ -138,18 +245,18 @@ fieldset label {
 						<td>Período</td>
 						<td width="46">de:</td>
 						<td width="120">
-							<input name="dataInicio" type="text" id="datepickerDe"
+							<input name="filtroConsultaNotaFiscal.periodo.dataInicial" type="text" id="datepickerDe"
 								   style="width: 80px; float: left; margin-right: 5px;" /></td>
 						<td align="center">Até</td>
 						<td>
-							<input name="dataFim" type="text" id="datepickerAte"
+							<input name="filtroConsultaNotaFiscal.periodo.dataFinal" type="text" id="datepickerAte"
 							 	   style="width: 80px; float: left; margin-right: 5px;" />
 						</td>
 					</tr>
 					<tr>
 						<td width="107">Tipo de Nota:</td>
 						<td width="293">
-						<select name="idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
+						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
 							<option selected="selected"></option>
 							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>

@@ -10,6 +10,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -38,7 +39,7 @@ public class MatrizLancamentoController {
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(
 				true, SituacaoCadastro.ATIVO);
 		Distribuidor distribuidor = distribuidorService.obter();
-		String dataOperacao = Util.formatarData(distribuidor.getDataOperacao(), FORMATO_DATA);
+		String dataOperacao = DateUtil.formatarData(distribuidor.getDataOperacao(), FORMATO_DATA);
 		result.include("dataOperacao", dataOperacao);
 		result.include("fornecedores", fornecedores);
 	}

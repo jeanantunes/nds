@@ -5,10 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.DiferencaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -24,6 +28,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 
 	public DiferencaEstoqueController(Result result) {
 		
@@ -38,11 +45,17 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/lancamento/pesquisa")
-	public void pesquisarLancamentos(String dataMovimento, String tipoDiferenca) {
+	public void pesquisarLancamentos(FiltroLancamentoDiferencaEstoqueDTO filtro, 
+									 String sortorder, String sortname, int page, int rp) {
+
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		
-		System.out.println(dataMovimento);
+		filtro.setPaginacao(paginacao);
 		
-		System.out.println(tipoDiferenca);
+		//filtro.setOrdenacaoColuna();
+		
+		List<DiferencaDTO> listaLancamentoDiferencas = 
+			this.diferencaEstoqueService.obterDiferencasLancamento(filtro);
 		
 		result.use(Results.json()).from("teste", "result").serialize();
 	}
