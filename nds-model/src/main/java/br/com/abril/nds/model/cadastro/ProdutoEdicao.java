@@ -25,20 +25,28 @@ public class ProdutoEdicao {
 	@GeneratedValue(generator = "PROD_ED_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	private Long numeroEdicao;
+	
 	@Column(name = "PRECO_VENDA", nullable = false)
 	private BigDecimal precoVenda;
+	
 	@Column(name = "DESCONTO")
 	private BigDecimal desconto;
+	
 	@Column(name = "PACOTE_PADRAO", nullable = false)
 	private int pacotePadrao;
+	
 	@Column(name = "PEB", nullable = false)
 	private int peb;
+	
 	@Column(name = "PRECO_CUSTO")
 	private BigDecimal precoCusto;
+	
 	@Column(name = "PESO", nullable = false)
 	private BigDecimal peso;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
