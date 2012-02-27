@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -35,6 +36,33 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> obterListaProdutoEdicao(Produto produto, ProdutoEdicao produtoEdicao ) {
+		
+		String codigoProduto = produto.getCodigo();
+		Long numeroEdicao = produtoEdicao.getNumeroEdicao();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select p from ProdutoEdicao p ");
+		
+		hql.append(" where ");
+		
+		hql.append(" p.numeroEdicao = :numeroEdicao and ");
+		
+		hql.append(" p.produto.codigo = :codigoProduto ");
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("codigoProduto",  codigoProduto );
+
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return query.list();
+	}
+	
+	
 	@Override
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
@@ -47,7 +75,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		   .append("      Estudo estudo ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
-		   .append(" and   estudo.lancamento.id                  = lancamento.id ")
+		   .append(" and   estudo.dataLancamento                 = lancamento.dataLancamentoPrevista ")
+		   .append(" and   estudo.produtoEdicao                  = lancamento.produtoEdicao ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoPrevista     = :dataLancamento ")

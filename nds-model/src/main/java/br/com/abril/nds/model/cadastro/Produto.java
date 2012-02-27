@@ -31,20 +31,27 @@ public class Produto {
 	@GeneratedValue(generator = "PRODUTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "CODIGO", unique = true)
 	private String codigo;
+	
 	@Enumerated
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
+	
 	@Column(name = "NOME", nullable = false)
 	private String nome;
+	
 	@Column(name = "DESCRICAO")
 	private String descricao;
+	
 	@ManyToMany
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM")
 	private Origem origem;

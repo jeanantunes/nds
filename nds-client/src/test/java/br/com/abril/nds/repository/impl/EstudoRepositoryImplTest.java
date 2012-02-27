@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.util.Constantes;
@@ -86,7 +87,8 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Lancamento criarLancamento(ProdutoEdicao produtoEdicao, Date dataReferencia) {
 		
 		Lancamento lancamento = 
-			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataReferencia, dataReferencia);
+			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataReferencia, 
+					dataReferencia, new Date(), new Date(), BigDecimal.TEN, StatusLancamento.PENDENTE);
 		
 		getSession().save(lancamento);
 		

@@ -25,21 +25,16 @@ var jsExtratoEdicao = {
 			
 			url: '<c:url value="/estoque/extratoEdicao/pesquisaExtratoEdicao"/>',
 			
-			params:[{name:'param1', value: paramBuscaExtatoEdicao1},
-				    {name:'param2', value: paramBuscaExtatoEdicao2},
-				    {name:'param3', value: paramBuscaExtatoEdicao3}],
+			params:[{name:'codigoProduto', value: codigoProduto},
+				    {name:'descProduto', value: descProduto},
+				    {name:'idProdutoEdicao', value: idProdutoEdicao}],
 		});
 		
 		$(".extratoEdicaoGrid").flexReload();
 		
 		$(".grids").show();
 	},	
-		
-	fazerTratamento : function(data) {
-		
-		//TODO usar se necessario...
-		return data;
-	},
+	
 
 	pesquisarPorNomeProduto : function(){
 		
@@ -67,23 +62,41 @@ var jsExtratoEdicao = {
 	},
 	
 	
+	getDataFromResult : function(data) {
+		
+		$.each(data, function(index, value) {
+			
+			  if(value[0] == "TblModelListaExtratoEdicao") {
+				  jsExtratoEdicao.dadosPesquisa = value[1];
+			  } else if(value[0] == "saldoTotalExtratoEdicao") {
+				  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
+			  }
+			  
+		});
+		
+		$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
+		
+		return jsExtratoEdicao.dadosPesquisa;
+				
+	},
 	
 	carregarExtratoEdicaoGrid: function() {
 		
 		$(".extratoEdicaoGrid")
 				.flexigrid(
-						{
+						{	
+							preProcess: jsExtratoEdicao.getDataFromResult,
 							dataType : 'json',
 							colModel : [ 
 							    {
-								display : 'ID',
-								name : 'id',
+								display : 'Data',
+								name : 'dataInclusao',
 								width : 120,
 								sortable : true,
 								align : 'center'
 							}, {
-								display : 'Data',
-								name : 'dataInclusao',
+								display : 'Movimento',
+								name : 'movimento',
 								width : 370,
 								sortable : true,
 								align : 'left'
@@ -250,7 +263,7 @@ $(function() {
 						</td>
 						<td width="115"><strong>Saldo em Estoque:</strong>
 						</td>
-						<td width="126">0</td>
+						<td width="126"><div id="saldoTotalExtratoEdicao"></div></td>
 					</tr>
 				</table>
 			</div>

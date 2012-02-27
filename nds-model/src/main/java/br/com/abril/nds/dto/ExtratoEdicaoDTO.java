@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ExtratoEdicaoDTO implements Serializable {
@@ -10,15 +11,79 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Date dataMovimento;
+	private Long idMovimento;
+	private Date dataMovimento;
+	private String descMovimento;
+	private BigDecimal qtdEdicaoEntrada ;
+	private BigDecimal qtdEdicaoSaida ;
+	private BigDecimal qtdParcial;
+	
+	public ExtratoEdicaoDTO(Long idMovimento, Date dataMovimento,
+			String descMovimento, BigDecimal qtdEdicaoEntrada, BigDecimal qtdEdicaoSaida) {
+		super();
+		this.idMovimento = idMovimento;
+		this.dataMovimento = dataMovimento;
+		this.descMovimento = descMovimento;
+		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
+		this.qtdEdicaoSaida = qtdEdicaoSaida;
+	}
 
-	public String descMovimento;
+	public ExtratoEdicaoDTO(){
+		
+	}
 	
-	public Long qtdEdicaoEntrada ;
 	
-	public Long qtdEdicaoSaida ;
 	
-	public Long qtdParcial;
+	/**
+	 * Obtém qtdEdicaoEntrada
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getQtdEdicaoEntrada() {
+		return qtdEdicaoEntrada;
+	}
+
+	/**
+	 * Atribuí qtdEdicaoEntrada
+	 * @param qtdEdicaoEntrada 
+	 */
+	public void setQtdEdicaoEntrada(BigDecimal qtdEdicaoEntrada) {
+		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
+	}
+
+	/**
+	 * Obtém qtdEdicaoSaida
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getQtdEdicaoSaida() {
+		return qtdEdicaoSaida;
+	}
+
+	/**
+	 * Atribuí qtdEdicaoSaida
+	 * @param qtdEdicaoSaida 
+	 */
+	public void setQtdEdicaoSaida(BigDecimal qtdEdicaoSaida) {
+		this.qtdEdicaoSaida = qtdEdicaoSaida;
+	}
+
+	/**
+	 * Obtém qtdParcial
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getQtdParcial() {
+		return qtdParcial;
+	}
+
+	/**
+	 * Atribuí qtdParcial
+	 * @param qtdParcial 
+	 */
+	public void setQtdParcial(BigDecimal qtdParcial) {
+		this.qtdParcial = qtdParcial;
+	}
 
 	/**
 	 * Obtém dataMovimento
@@ -53,59 +118,23 @@ public class ExtratoEdicaoDTO implements Serializable {
 	public void setDescMovimento(String descMovimento) {
 		this.descMovimento = descMovimento;
 	}
+	
 
 	/**
-	 * Obtém qtdEdicaoEntrada
+	 * Obtém idMovimento
 	 *
 	 * @return Long
 	 */
-	public Long getQtdEdicaoEntrada() {
-		return qtdEdicaoEntrada;
+	public Long getIdMovimento() {
+		return idMovimento;
 	}
 
 	/**
-	 * Atribuí qtdEdicaoEntrada
-	 * @param qtdEdicaoEntrada 
+	 * Atribuí idMovimento
+	 * @param idMovimento 
 	 */
-	public void setQtdEdicaoEntrada(Long qtdEdicaoEntrada) {
-		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
+	public void setIdMovimento(Long idMovimento) {
+		this.idMovimento = idMovimento;
 	}
-
-	/**
-	 * Obtém qtdEdicaoSaida
-	 *
-	 * @return Long
-	 */
-	public Long getQtdEdicaoSaida() {
-		return qtdEdicaoSaida;
-	}
-
-	/**
-	 * Atribuí qtdEdicaoSaida
-	 * @param qtdEdicaoSaida 
-	 */
-	public void setQtdEdicaoSaida(Long qtdEdicaoSaida) {
-		this.qtdEdicaoSaida = qtdEdicaoSaida;
-	}
-
-	/**
-	 * Obtém qtdParcial
-	 *
-	 * @return Long
-	 */
-	public Long getQtdParcial() {
-		return qtdParcial;
-	}
-
-	/**
-	 * Atribuí qtdParcial
-	 * @param qtdParcial 
-	 */
-	public void setQtdParcial(Long qtdParcial) {
-		this.qtdParcial = qtdParcial;
-	}
-	
-	
-	
 	
 }
