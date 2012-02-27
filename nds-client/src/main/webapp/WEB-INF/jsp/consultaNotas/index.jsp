@@ -91,7 +91,7 @@
 				
 				$("#notasSemFisicoGrid").flexReload();
 			} else {
-
+				
 				$(".grids").show();
 			}
 		}
@@ -136,12 +136,21 @@
 				}],
 				width : 385,
 				height : 180,
-				params: { idNota: idNota },
+				params: [{ name: 'idNota', value: idNota }],
 				resizable:false
 			});
+			
+			if ($(".dialog-novo").css('display') != 'none') {
 
+				$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
+															params: [{ name: 'idNota', value: idNota }]});
+				
+				$("#notasSemFisicoDetalheGrid").flexReload();
+			}
+
+			$("#dialog-novo").show();
 		}
-
+		
 		function popup() {
 
 			$("#dialog-novo").dialog({
