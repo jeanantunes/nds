@@ -43,6 +43,8 @@ public class ProdutoEdicaoRepositoryImplTest {
 
 	@Before
 	public void setUp() {
+		
+		
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		getSession().save(tipoProduto);
 		
@@ -57,6 +59,7 @@ public class ProdutoEdicaoRepositoryImplTest {
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, 
 						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.PENDENTE);
 		getSession().save(lancamento);
+
 	}
 	
 	@Test
@@ -92,4 +95,20 @@ public class ProdutoEdicaoRepositoryImplTest {
 		return sf.getCurrentSession();
 	}
 
+	@Test
+	public void obterListaProdutoEdicao() {
+		
+		Produto produto = new Produto();
+		produto.setId(1L);
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setNumeroEdicao(1L);
+		
+		
+		@SuppressWarnings("unused")
+		List<ProdutoEdicao> listaProdutoEdicao = 
+				produtoEdicaoRepository.obterListaProdutoEdicao(produto, produtoEdicao);
+		
+	}
+	
 }
