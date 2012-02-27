@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -20,9 +22,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "DIFERENCA")
+@SequenceGenerator(name = "DIFERENCA_SEQ", initialValue = 1, allocationSize = 1)
 public class Diferenca {
 
 	@Id
+	@GeneratedValue(generator = "DIFERENCA_SEQ")
 	private Long id;
 	private BigDecimal qtde;
 	@ManyToOne
