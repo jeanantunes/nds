@@ -35,6 +35,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class DataLoader {
@@ -178,6 +179,7 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto);
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
+
 		
 		Lancamento lancamento = 
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, new Date(), new Date(), 
@@ -191,6 +193,7 @@ public class DataLoader {
 		ParametroSistema parametroSistema = 
 				Fixture.parametroSistema(1L, TipoParametroSistema.PATH_IMAGENS_CAPA, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 		session.save(parametroSistema);
+
 	}
 	
 	private static void save(Session session, Object... entidades) {

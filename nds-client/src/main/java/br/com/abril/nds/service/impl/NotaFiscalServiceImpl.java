@@ -26,6 +26,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaFiscalDAO.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 	}
 	
+
+	@Autowired
+	private NotaFiscalRepository notaFiscalRepository;
+
+		
+	@Transactional
+	public void inserirNotaFiscal(NotaFiscal notaFiscal){
+		
+	}
+
+	
+
 	@Override
 	@Transactional
 	public List<NotaFiscal> obterNotasFiscaisCadastradas(
@@ -44,6 +56,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}
 
+
 	@Override
 	@Transactional
 	public List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal) {
@@ -54,4 +67,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return notaFiscalDAO.obterDetalhesNotaFical(idNotaFiscal);
 	}
+	
+	@Override
+	@Transactional
+	public NotaFiscal obterNotaFiscalPorNumero(String numero){
+		return notaFiscalRepository.obterNotaFiscalPorNumero(numero);
+
+	}
 }
+
+
+

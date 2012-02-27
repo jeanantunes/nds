@@ -181,5 +181,18 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		
 		return query.list();
 	}
-}
 
+	
+	@Override	
+	public void inserirNotaFiscal(NotaFiscal notaFiscal){
+		this.adicionar(notaFiscal);
+		
+	}
+	@Override	
+	public NotaFiscal obterNotaFiscalPorNumero(String numero){
+		String hql = "from NotaFiscal nf where nf.numero = :numero ";
+		Query query = super.getSession().createQuery(hql);
+		query.setParameter("numero", numero);
+		return (NotaFiscal) query.uniqueResult();
+	}	
+}
