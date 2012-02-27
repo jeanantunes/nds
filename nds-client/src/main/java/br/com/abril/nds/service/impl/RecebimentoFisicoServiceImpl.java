@@ -24,8 +24,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 	}
 	@Transactional
-	public List<RecebimentoFisicoDTO> obterRecebimentoFisico(String cnpj, String numeroNota, String serieNota ){
-		return recebimentoFisicoRepository.obterRecebimentoFisico(cnpj, numeroNota, serieNota);
+	public List<RecebimentoFisicoDTO> obterItemNotaPorCnpjNota(String cnpj, String numeroNota, String serieNota ){
+		return recebimentoFisicoRepository.obterItemNotaPorCnpjNota(cnpj, numeroNota, serieNota);
 	}
 	@Transactional
 	 public void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
