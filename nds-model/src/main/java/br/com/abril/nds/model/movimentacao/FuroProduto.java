@@ -27,13 +27,17 @@ public class FuroProduto {
 	@GeneratedValue(generator = "FURO_PRODUTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "DATA", nullable = false)
 	private Date data;
-    @ManyToOne(optional = false)
+    
+	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
+	
 	@ManyToOne(optional = false)
     private Usuario usuario;
-    @ManyToOne
+    
+	@ManyToOne
 	private Lancamento lancamento;
 	
     public Long getId() {

@@ -36,6 +36,7 @@ import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -171,8 +172,12 @@ public class Fixture {
 	}
 
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
-			ProdutoEdicao produtoEdicao, Date dlp, Date drp) {
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao, Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento) {
 		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dataCriacao);
+		lancamento.setDataStatus(dataStatus);
+		lancamento.setReparte(reparte);
+		lancamento.setStatus(statusLancamento);
 		lancamento.setTipoLancamento(tipoLancamento);
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataLancamentoPrevista(dlp);

@@ -9,8 +9,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,19 +31,27 @@ public class Produto {
 	@GeneratedValue(generator = "PRODUTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "CODIGO", unique = true)
 	private String codigo;
+	
 	@Enumerated
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
+	
 	@Column(name = "NOME", nullable = false)
 	private String nome;
+	
 	@Column(name = "DESCRICAO")
 	private String descricao;
+	
 	@ManyToMany
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-	@OneToOne(optional = false)
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_PRODUTO")
 	private TipoProduto tipoProduto;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM")
 	private Origem origem;

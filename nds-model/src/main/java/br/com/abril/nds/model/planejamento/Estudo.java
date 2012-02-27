@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -31,6 +32,7 @@ public class Estudo {
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
 	private Date dataLancamento;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO")
 	private ProdutoEdicao produtoEdicao;
 	
 	public Long getId() {

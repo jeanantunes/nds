@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -36,36 +37,49 @@ public class Lancamento {
 	@GeneratedValue(generator = "LANCAMENTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_CRIACAO", nullable = false)
 	private Date dataCriacao;
+	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_LCTO_PREVISTA", nullable = false)
 	private Date dataLancamentoPrevista;
+	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_LCTO_DISTRIBUIDOR", nullable = false)
 	private Date dataLancamentoDistribuidor;
+	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_REC_PREVISTA", nullable = false)
 	private Date dataRecolhimentoPrevista;
+	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_REC_DISTRIB", nullable = false)
 	private Date dataRecolhimentoDistribuidor;
+	
+	@JoinColumn(name = "PRODUTO_EDICAO")
 	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_LANCAMENTO", nullable = false)
 	private TipoLancamento tipoLancamento;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_STATUS", nullable = false)
 	private Date dataStatus;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)
 	private StatusLancamento status;
+	
 	@Column(name = "REPARTE", nullable = false)
 	private BigDecimal reparte;
+	
 	@OneToMany
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
+	
 	@OneToMany(mappedBy = "lancamento")
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
 
