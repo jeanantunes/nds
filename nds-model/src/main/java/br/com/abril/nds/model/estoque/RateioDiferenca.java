@@ -30,8 +30,10 @@ public class RateioDiferenca {
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "DIFERENCA_ID")
 	private Diferenca diferenca;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTUDO_COTA_ID")

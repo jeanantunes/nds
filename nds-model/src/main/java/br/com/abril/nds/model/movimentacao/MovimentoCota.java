@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 
 @Entity
 @Table(name = "MOVIMENTO_COTA")
@@ -26,6 +27,7 @@ public class MovimentoCota {
 	
 	@Id
 	@GeneratedValue(generator = "MOVIMENTO_COTA_SEQ")
+	@Column(name = "ID")
 	private Long id;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_MOVIMENTO", nullable = false)
@@ -41,6 +43,9 @@ public class MovimentoCota {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_MOVIMENTO_COTA", nullable = false)
 	private TipoMovimentoCota tipoMovimentoCota;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
+	private EstoqueProdutoCota estoqueProdutoCota;
 	
 	public Long getId() {
 		return id;
@@ -88,6 +93,14 @@ public class MovimentoCota {
 	
 	public void setTipoMovimentoCota(TipoMovimentoCota tipoMovimentoCota) {
 		this.tipoMovimentoCota = tipoMovimentoCota;
+	}
+	
+	public EstoqueProdutoCota getEstoqueProdutoCota() {
+		return estoqueProdutoCota;
+	}
+	
+	public void setEstoqueProdutoCota(EstoqueProdutoCota estoqueProdutoCota) {
+		this.estoqueProdutoCota = estoqueProdutoCota;
 	}
 
 }

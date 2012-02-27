@@ -6,9 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -18,8 +22,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @created 14-fev-2012 11:35:31
  */
 @Entity
-@Table(name = "ESTUDO")
-@SequenceGenerator(name="ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "ESTUDO", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
+@SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
 public class Estudo {
 
 	@Id
@@ -29,8 +34,10 @@ public class Estudo {
 	@Column(name = "QTDE_REPARTE", nullable = false)
 	private BigDecimal qtdeReparte;
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	
 	public Long getId() {

@@ -1,0 +1,9 @@
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:1", "", "fiscal", "EARoot/EA1/EA1/EA1/EA2/EA3/EA61.html", "175.png", "-1075183524", "0", "", "Logical diagram0","{5A368AEE-168C-46d6-B4AE-A441609A6592}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:2", "", "CFOP", "EARoot/EA1/EA1/EA1/EA2/EA3/EA63.html", "5.png", "1131722797", "0", "", "Class0","{933D4CFD-794D-4d57-9843-DF8FA894BC08}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:3", "", "ItemNotaFiscal", "EARoot/EA1/EA1/EA1/EA2/EA3/EA64.html", "5.png", "-530969384", "0", "", "Class0","{D706116A-D9A5-4245-9E17-66EAAA140238}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:4", "", "NotaFiscal", "EARoot/EA1/EA1/EA1/EA2/EA3/EA65.html", "5.png", "-906469969", "0", "", "Class0","{E94FD92C-054C-4335-85CB-ABB26985C95A}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:5", "", "NotaFiscalCota", "EARoot/EA1/EA1/EA1/EA2/EA3/EA66.html", "5.png", "-1342688990", "0", "", "Class0","{BD542A0B-3EF3-490e-8900-CE70E620CDDD}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:6", "", "NotaFiscalFornecedor", "EARoot/EA1/EA1/EA1/EA2/EA3/EA67.html", "5.png", "-446345795", "0", "", "Class0","{61D64D05-1209-4a3e-9761-63C9B10D03D3}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:7", "", "«enumeration» StatusNotaFiscal", "EARoot/EA1/EA1/EA1/EA2/EA3/EA68.html", "5.png", "-323309436", "0", "", "Class0","{7730B819-9280-4e3f-A9C1-13EB9A18DA48}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:8", "", "TipoNotaFiscal", "EARoot/EA1/EA1/EA1/EA2/EA3/EA69.html", "5.png", "1400493201", "0", "", "Class0","{A0A6F36E-4E44-4553-B8DC-793787CA2519}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.3:9", "", "«enumeration» TipoOperacao", "EARoot/EA1/EA1/EA1/EA2/EA3/EA70.html", "5.png", "1205348736", "0", "", "Class0","{E99D5B89-C077-4503-8206-95C6FFE3F256}");
