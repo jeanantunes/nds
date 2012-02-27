@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,6 +18,7 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -39,8 +41,10 @@ public class ItemNotaFiscal {
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscal notaFiscal;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	@ManyToOne
+	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM")
@@ -48,6 +52,8 @@ public class ItemNotaFiscal {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
 	private Date dataLancamento;
+	@OneToOne(mappedBy = "itemNotaFiscal")
+	private ItemRecebimentoFisico recebimentoFisico;
 
 	public Long getId() {
 		return id;
@@ -103,6 +109,14 @@ public class ItemNotaFiscal {
 	
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+	
+	public ItemRecebimentoFisico getRecebimentoFisico() {
+		return recebimentoFisico;
+	}
+	
+	public void setRecebimentoFisico(ItemRecebimentoFisico recebimentoFisico) {
+		this.recebimentoFisico = recebimentoFisico;
 	}
 
 

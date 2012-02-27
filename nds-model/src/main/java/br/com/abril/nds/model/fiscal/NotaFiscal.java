@@ -45,16 +45,7 @@ public abstract class NotaFiscal {
 	private String serie;
 	@Column(name = "CHAVE_ACESSO")
 	private String chaveAcesso;
-	@Column(name = "VALOR_BRUTO")
-	private Long valorBruto;
-	@Column(name = "VALOR_LIQUIDO")
-	private Long valorLiquido;
-	@Column(name = "VALOR_DESCONTO")
-	private Long valorDesconto;
-
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
-
-
 	private StatusNotaFiscal statusNotaFiscal;
 	@ManyToOne
 	private Usuario usuario;
@@ -162,30 +153,6 @@ public abstract class NotaFiscal {
 
 	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
-	}
-	
-	public Long getValorBruto() {
-		return valorBruto;
-	}
-
-	public void setValorBruto(Long valorBruto) {
-		this.valorBruto = valorBruto;
-	}
-
-	public Long getValorLiquido() {
-		return valorLiquido;
-	}
-
-	public void setValorLiquido(Long valorLiquido) {
-		this.valorLiquido = valorLiquido;
-	}
-
-	public Long getValorDesconto() {
-		return valorDesconto;
-	}
-
-	public void setValorDesconto(Long valorDesconto) {
-		this.valorDesconto = valorDesconto;
 	}
 
 

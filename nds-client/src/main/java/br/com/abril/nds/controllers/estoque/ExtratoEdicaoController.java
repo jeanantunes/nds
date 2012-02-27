@@ -2,23 +2,24 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
+import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.service.ExtratoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
@@ -38,7 +39,7 @@ public class ExtratoEdicaoController {
 	private ProdutoService produtoService;
 	
 	@Autowired
-	private MovimentoEstoqueRepository movimentoEstoqueRepository;
+	private ExtratoEdicaoService extratoEdicaoService;
 	
 	public ExtratoEdicaoController(Result result) {
 		this.result = result;
@@ -78,34 +79,17 @@ public class ExtratoEdicaoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	
-	private List<MovimentoEstoque> getFromBDTeste() {
-	
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-		List<MovimentoEstoque> listaModeloGenerico = new LinkedList<MovimentoEstoque>();
-		long contador = 0;
-
-		while(contador++<10) {
-			
-			Usuario usuario = new Usuario();
-			usuario.setId(contador);
-			usuario.setNome("nome_"+contador);
-			
-			Diferenca d = new Diferenca();
-			d.setId(contador);
-			d.setResponsavel(usuario);
-			
-			MovimentoEstoque m = new MovimentoEstoque();
-			m.setId(contador);
-			m.setDataInclusao(new Date());
-			m.setDiferenca(d);
-			listaModeloGenerico.add(m);
-		}
+	public void obterFornecedorDeProduto(String codigoProduto){
 		
-		return listaModeloGenerico;
+		Fornecedor fornecedor = extratoEdicaoService.obterFornecedorDeProduto(codigoProduto);
 		
 	}
 	
+	public void obterProdutoEdicao(String codigoProduto, Long numeroEdicao) {
+		
+		ProdutoEdicao produtoEdicao = extratoEdicaoService.obterProdutoEdicao(codigoProduto, numeroEdicao);
+		
+	}
 	
 	/**
 	 * 
@@ -113,10 +97,34 @@ public class ExtratoEdicaoController {
 	 */
 	public void pesquisaExtratoEdicao(Long codigoProduto, String descProduto, Long idProdutoEdicao) throws Exception {
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(1L);
+		
+		if(	infoGeralExtratoEdicao == null || 
+			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
+			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
+			return;
+		}
+		
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		for(MovimentoEstoque movimento :  getFromBDTeste()) {
-			listaModeloGenerico.add(new CellModel(0, "teste", "ola", "sdfasfd", "sdfsa"));
+		for(ExtratoEdicaoDTO extrato : listaExtratoEdicao) {
+			
+			String dataMovimento 		= sdf.format(extrato.getDataMovimento());
+			
+			String descTipoMovimento 	= extrato.getDescMovimento();
+			
+			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
+			
+			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();
+			
+			String qtdParcial 			= extrato.getQtdParcial().doubleValue() < 0.0D ? "-" : extrato.getQtdParcial().toString();
+			
+			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial));
+			
 		}
 		
 		TableModel<CellModel> tm = new TableModel<CellModel>();
@@ -127,36 +135,14 @@ public class ExtratoEdicaoController {
 		
 		tm.setRows(listaModeloGenerico);
 
+		Map resultado = new HashMap();
 		
-		result.use(Results.json()).withoutRoot().from(tm).recursive().serialize();
+		resultado.put("TblModelListaExtratoEdicao", tm);
 		
-	}
-	
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public void pesquisaExtratoEdicaoModo2() throws Exception {
+		resultado.put("saldoTotalExtratoEdicao", infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
 		
-		List<CellModelKeyValue<MovimentoEstoque>> listaModeloGenerico = new LinkedList<CellModelKeyValue<MovimentoEstoque>>();
-		
-		
-		for(MovimentoEstoque movimento :  getFromBDTeste()) {
-			listaModeloGenerico.add(new CellModelKeyValue<MovimentoEstoque>(0, movimento));
-		}
-		
-		TableModel<CellModelKeyValue<MovimentoEstoque>> tm = new TableModel<CellModelKeyValue<MovimentoEstoque>>();
-		
-		tm.setPage(1);
-		
-		tm.setTotal(listaModeloGenerico.size());
-		
-		tm.setRows(listaModeloGenerico);
-		
-		
-		result.use(Results.json()).withoutRoot().from(tm).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		
 	}
-	
 	
 }

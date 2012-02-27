@@ -29,5 +29,15 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 */
 	List<Fornecedor> obterFornecedores(boolean permiteBalanceamento,
 			SituacaoCadastro... situacoes);
+
+	
+	/**
+	 * Obtém a lista de fornecedores relativos a um produto.
+	 * 
+	 * @param codigoProduto
+	 * 
+	 * @return List - Fornecedor.
+	 */
+	List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto);
 	
 }

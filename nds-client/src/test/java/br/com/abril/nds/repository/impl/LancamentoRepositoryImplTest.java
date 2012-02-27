@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -17,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -70,19 +72,35 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		lancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja001,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new Date(),
+				new Date(),
+				BigDecimal.TEN,
+				StatusLancamento.PENDENTE);
 		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda001,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(22, Calendar.MARCH, 2012));
+				Fixture.criarData(22, Calendar.MARCH, 2012),
+				new Date(),
+				new Date(),
+				BigDecimal.TEN,
+				StatusLancamento.PENDENTE);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame001,
 				Fixture.criarData(24, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(23, Calendar.MARCH, 2012));
+				Fixture.criarData(23, Calendar.MARCH, 2012), 
+				new Date(),
+				new Date(),
+				BigDecimal.TEN,
+				StatusLancamento.PENDENTE);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho001,
 				Fixture.criarData(27, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(12, Calendar.MARCH, 2012));
+				Fixture.criarData(12, Calendar.MARCH, 2012),
+				new Date(),
+				new Date(),
+				BigDecimal.TEN,
+				StatusLancamento.PENDENTE);
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame, lancamentoCapricho);
 	}
 

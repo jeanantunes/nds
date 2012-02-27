@@ -33,12 +33,21 @@ public class ProdutoController {
 	}
 	
 	@Post
+	public void pesquisarPorCodigoProduto(String codigoProduto) {
+		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+		
+		//TODO: tratar retorno da consulta
+		
+		result.use(Results.json()).from(produto, "result").serialize();
+	}
+	
+	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		
 		//TODO: tratar retorno da consulta
 		
-		if (listaProduto != null && !listaProduto.isEmpty()){
+		if (listaProduto != null && !listaProduto.isEmpty()) {
 			
 			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 			
@@ -56,15 +65,6 @@ public class ProdutoController {
 			
 			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		}
-	}
-	
-	@Post
-	public void pesquisarPorCodigoProduto(String codigoProduto) {
-		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-		
-		//TODO: tratar retorno da consulta
-		
-		result.use(Results.json()).from(produto, "result").serialize();
 	}
 	
 	@Post

@@ -1,0 +1,5 @@
+tocTab[tocTab.length] = new Array("0.1.1.1.1:1", "", "dto", "EARoot/EA1/EA1/EA1/EA1/EA7.html", "175.png", "1496493115", "0", "", "Logical diagram0","{A71CF70A-AB56-4443-AF6B-514DD748231E}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:2", "", "ExtratoEdicaoDTO", "EARoot/EA1/EA1/EA1/EA1/EA9.html", "5.png", "1550141536", "0", "", "Class0","{756E24EC-E2E5-4b5b-AD3E-A526E16DCD39}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:3", "", "FuroProdutoDTO", "EARoot/EA1/EA1/EA1/EA1/EA10.html", "5.png", "1207882174", "0", "", "Class0","{945E60DB-CE43-4bc7-B97F-730E3320A430}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:4", "", "ItemDTO", "EARoot/EA1/EA1/EA1/EA1/EA11.html", "5.png", "-976073295", "0", "", "Class0","{499D63E1-72E9-42bb-B3FA-35BC9A8E817F}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:5", "", "LancamentoDTO", "EARoot/EA1/EA1/EA1/EA1/EA12.html", "5.png", "-169245920", "0", "", "Class0","{BFDDBF7D-D576-462c-9B5E-665E05047F22}");

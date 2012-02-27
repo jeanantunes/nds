@@ -33,6 +33,7 @@ public class ItemRecebimentoFisico {
 	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")
 	private RecebimentoFisico recebimentoFisico;
 	@OneToOne(optional = false)
+	@JoinColumn(name = "ITEM_NF_ID")
 	private ItemNotaFiscal itemNotaFiscal;
 
 	

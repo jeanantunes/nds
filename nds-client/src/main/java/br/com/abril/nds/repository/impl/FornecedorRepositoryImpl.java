@@ -80,4 +80,25 @@ public class FornecedorRepositoryImpl extends
 		query.setParameterList("situacoes", situacoes);
 		return query.list();
 	}
+	
+	@Override
+	public List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select p.fornecedores from Produto p ");
+		
+		hql.append(" where ");
+		
+		hql.append(" p.codigo = :codigoProduto ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		return query.list();
+		
+	}
+	
+	
 }
