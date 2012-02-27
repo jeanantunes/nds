@@ -23,7 +23,7 @@ public class EstudoCotaServiceImpl implements EstudoCotaService {
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	public EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia) {
 		
 		return this.estudoCotaRepository.obterEstudoCota(numeroCota, dataReferencia);
