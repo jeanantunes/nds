@@ -20,8 +20,12 @@ public class TipoMovimento {
 	private String descricao;
 	private boolean aprovacaoAutomatica;
 	private boolean incideDivida;
+	
 	@Enumerated(EnumType.STRING)
 	private TipoMovimentoEstoque tipoMovimentoEstoque;
+	
+	@Enumerated(EnumType.STRING)
+	private TipoOperacao tipoOperacao;
 	
 	public Long getId() {
 		return id;
@@ -60,6 +64,23 @@ public class TipoMovimento {
 	}
 	
 	public void setTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
+		if(tipoMovimentoEstoque != null){
+			this.tipoOperacao = tipoMovimentoEstoque.getTipoOperacao();
+		}
+		
 		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
+		
 	}
+
+	public TipoOperacao getTipoOperacao() {
+		
+		if(this.tipoMovimentoEstoque == null){
+			return null;
+		}
+		
+		return tipoMovimentoEstoque.getTipoOperacao();
+	}
+
+	
 }
