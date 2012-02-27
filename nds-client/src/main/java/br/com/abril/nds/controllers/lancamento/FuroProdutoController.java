@@ -67,14 +67,16 @@ public class FuroProdutoController {
 			if (furoProdutoDTO != null){
 				
 				String path = furoProdutoDTO.getPathImagem();
+				path = path.replace("\\", "/");
 				furoProdutoDTO.setPathImagem(null);
 				File imagem = null;
 				for (String ext : Constantes.EXTENSOES_IMAGENS){
 					imagem = new File(path + ext);
 					
+					String raizApp = VRaptorRequestHolder.currentRequest().getRequest().getContextPath();
 					if (imagem.exists()){
 						furoProdutoDTO.setPathImagem(path.substring(
-										path.indexOf(VRaptorRequestHolder.currentRequest().getRequest().getContextPath())) + ext);
+										path.indexOf(raizApp)) + ext);
 						break;
 					}
 				}
