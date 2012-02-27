@@ -1,10 +1,9 @@
 <head>
 <script language="javascript" type="text/javascript">
 
-//funcoes que implementao o autocomplete
-function pesquisarPorCnpjFuncionario() {
-	
-	
+//funcoes que pesquisa fornecedor por Cnpj
+function pesquisarPorCnpjFornecedor() {
+		
 	var cnpj = $("#cnpj").val();
 	
 	if (cnpj && cnpj.length > 0) {
@@ -12,18 +11,60 @@ function pesquisarPorCnpjFuncionario() {
 		
 		$.postJSON("<c:url value='recebimentoFisico/buscaCnpj'/>",
 				   "cnpj=" + cnpj, exibirNomeFornecedor);
+			
+	}
+}
+
+//funcoes que pesquisa cnpj por fornecedor
+function pesquisarCnpjPorFornecedor() {
+		
+	var fornecedor = $("#fornecedor").val();
+		
+	if (fornecedor && fornecedor.length > 0) {
 		
 		
+		$.postJSON("<c:url value='recebimentoFisico/buscaCnpjPorFornecedor'/>",
+				   "nomeFantasia=" + fornecedor, exibirCnpj);
+			
+	}
+}
+
+function isnull(){
+	forn = document.getElementById('fornecedor').value;
+	if(forn == ""){
+		document.getElementById('cnpj').value="";
 	}
 }
 
 function exibirNomeFornecedor(result) {
-	$("#fornecedor").val(result.id);
+	$("#fornecedor").val(result.nomeFantasia);
 }
 
-//fim das funcoes que implementam autocomplete
+function exibirCnpj(result) {
+	$("#cnpj").val(result.cnpj);
+}
 
-$( "#busca" ).puts("Busca produtos por nome"); 
+//funcoes que verifica se existe Nota para Fornecedor
+function pesquisarExisteNotaFornecedor() {
+	alert("entrou aqui");
+	var notaFiscal = $("#notaFiscal").val();
+		
+	if (notaFiscal && notaFiscal.length > 0) {
+		
+		
+		$.postJSON("<c:url value='recebimentoFisico/verificarExisteNota'/>",
+				   "numero=" + notaFiscal, exibirFormularioDigitacao);
+			
+	}
+}
+
+function exibirFormularioDigitacao(result) {
+	alert("popup");
+	//popup_nota();	
+}
+
+
+
 function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -168,9 +209,16 @@ $(function() {
 	
 
 	function mostrar_nfes(){
-
-		$(".nfes").show();
-		$(".bt_1").hide();
+		checkBox = document.getElementById('eNF');
+		
+		if(checkBox.checked){
+			$(".nfes").show();
+			
+		}else{
+			document.getElementById('nfes').style.display = "none";
+			document.getElementById('chaveAcesso').value="";
+		}
+		//$(".bt_1").hide();
 
 	};
 </script>
@@ -271,7 +319,7 @@ $(function() {
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td><span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="popup();"><img src="images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />Incluir Novo</a></span></td>
+    <td><span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="popup();"><img src="images/ico_add_novo.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />Incluir Novo</a></span></td>
   </tr>
 </table>
     
@@ -303,29 +351,29 @@ $(function() {
         
         
   <tr>
-    <td width="86">Fornecedor:</td>
+    <td width="43" align="right">CNPJ:</td>
+    <td width="136"><input id="cnpj" onblur="pesquisarPorCnpjFornecedor();" name="cnpj" style="width:130px;"/></td>
+     <td width="86">Fornecedor:</td>
     <td width="254">
-    	<select name="fornecedor" id="fornecedor" style="width: 250px;">
+    	<select name="fornecedor"  onchange="pesquisarCnpjPorFornecedor(),isnull();" onblur="pesquisarCnpjPorFornecedor(),isnull();"   id="fornecedor" style="width: 250px;">
     		<option value=""></option>
 			<c:forEach var="fornecedor" items="${listafornecedores}">				
-				<option value="${fornecedor.juridica.id}">${fornecedor.juridica.nomeFantasia}</option>
+				<option value="${fornecedor.juridica.nomeFantasia}">${fornecedor.juridica.nomeFantasia}</option>
 			</c:forEach>
 		</select>
 	</td>
-    <td width="43" align="right">CNPJ:</td>
-    <td width="136"><input id="cnpj" onblur="pesquisarPorCnpjFuncionario();" name="cnpj" style="width:130px;"/></td>
     <td width="76">Nota Fiscal:</td>
-    <td width="123"><input type="text" style="width:100px;" onblur="popup_nota();"/></td>
+    <td width="123"><input type="text" id=notaFiscal style="width:100px;" onblur="pesquisarExisteNotaFornecedor();"/></td>
     <td width="33">Série:</td>
-    <td width="43"><input type="text" style="width:30px;"/></td>
+    <td width="43"><input id="serie" type="text" style="width:30px;"/></td>
     <td width="110"><span class="bt_pesquisar" title="Pesquisar Recebimento"><a href="<c:url value="/recebimentoFisico/pesquisa"/>" onclick="mostrar();">Pesquisar</a></span></td>
   </tr>
   <tr>
-    <td height="26"><label for="eNF">É uma NF-e?</label></td>
-    <td colspan="5">
+    <td colspan="4" height="26"><label for="eNF">É uma NF-e?</label>
+    
       <input type="checkbox" name="checkbox8" id="eNF" onchange="mostrar_nfes();" style="float:left; margin-right:10px;" />
-     <span class="nfes"> Chave de Acesso:
-      <input type="text" name="textfield11" id="textfield11" style="width:120px; margin-left:10px;" onblur="popup_nota();" /></span>
+     <span id="nfes" class="nfes"> Chave de Acesso:
+      <input type="text" name="textfield11" id="chaveAcesso" style="width:120px; margin-left:10px;" onblur="popup_nota();" /></span>
      </td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
