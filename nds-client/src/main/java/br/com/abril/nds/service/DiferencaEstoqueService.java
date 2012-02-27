@@ -34,5 +34,14 @@ public interface DiferencaEstoqueService {
 	 * @return {@link List<DiferencaDTO>}
 	 */
 	List<DiferencaDTO> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
+	
+	/**
+	 * Obtém a quantidade total de registros de diferenças para lançamento.
+	 * 
+	 * @param filtro - filtro de pesquisa
+	 * 
+	 * @return Quantidade total de registros de diferenças para lançamento
+	 */
+	Long obterTotalDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro);
 
 }

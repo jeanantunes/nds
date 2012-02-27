@@ -39,7 +39,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	private TipoDiferenca tipoDiferenca;
 	
-	private int qtdeMovimentos;
+	private long qtdeMovimentos;
 	
 	private int qtdResultadoPorPagina;
 	
@@ -50,7 +50,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.quantidadeDiferenca = new BigDecimal("1.0");
 		
-		this.qtdeMovimentos = 15;
+		this.qtdeMovimentos = 30;
 		
 		this.qtdResultadoPorPagina = 15;
 		
@@ -124,6 +124,21 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			Assert.assertEquals(
 				this.tipoDiferenca, diferencaDTO.getMovimentoEstoque().getDiferenca().getTipoDiferenca());
 		}
+	}
+	
+	@Test
+	public void obterTotalDiferencasLancamento() {
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
+		
+		filtro.setDataMovimento(this.dataMovimento);
+		filtro.setTipoDiferenca(this.tipoDiferenca);
+		
+		long quantidadeTotal = this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+		
+		Assert.assertNotNull(quantidadeTotal);
+		
+		Assert.assertEquals(this.qtdeMovimentos, quantidadeTotal);
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {

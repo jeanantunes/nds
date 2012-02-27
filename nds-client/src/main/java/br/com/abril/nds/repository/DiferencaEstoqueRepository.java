@@ -27,6 +27,15 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	List<DiferencaDTO> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro);
 	
 	/**
+	 * Obtém a quantidade total de registros de diferenças para lançamento.
+	 * 
+	 * @param filtro - filtro de pesquisa
+	 * 
+	 * @return Quantidade total de registros de diferenças para lançamento
+	 */
+	Long obterTotalDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro);
+	
+	/**
 	 * Obtém as diferenças de estoque (faltas/sobras) para consulta
 	 * de acordo com o filtro.
 	 * 
