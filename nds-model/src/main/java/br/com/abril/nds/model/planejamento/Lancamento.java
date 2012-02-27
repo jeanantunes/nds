@@ -69,6 +69,7 @@ public class Lancamento {
 	@Column(name = "REPARTE", nullable = false)
 	private BigDecimal reparte;
 	@OneToMany
+	@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	@OneToMany(mappedBy = "lancamento")
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();

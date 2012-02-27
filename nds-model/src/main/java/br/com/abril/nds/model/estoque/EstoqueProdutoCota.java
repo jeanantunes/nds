@@ -39,7 +39,7 @@ public class EstoqueProdutoCota {
 	private BigDecimal qtdeEnviada;
 	@Column(name = "QTDE_DEVEOLVIDA")
 	private BigDecimal qtdeDevolvida;
-	@OneToMany
+	@OneToMany(mappedBy = "estoqueProdutoCota")
 	List<MovimentoCota> movimentos = new ArrayList<MovimentoCota>();
 	@Version
 	@Column(name = "VERSAO")

@@ -32,7 +32,7 @@ public class EstoqueProduto {
 	private ProdutoEdicao produtoEdicao;
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
-	@OneToMany
+	@OneToMany(mappedBy = "estoqueProduto")
 	List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	@Version
 	@Column(name = "VERSAO")
