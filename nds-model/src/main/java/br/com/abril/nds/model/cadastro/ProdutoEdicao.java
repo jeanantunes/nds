@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,6 +40,7 @@ public class ProdutoEdicao {
 	@Column(name = "PESO", nullable = false)
 	private BigDecimal peso;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
 	
 	public Long getId() {
