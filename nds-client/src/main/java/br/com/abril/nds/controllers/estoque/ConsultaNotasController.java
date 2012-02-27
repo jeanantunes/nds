@@ -1,17 +1,16 @@
 package br.com.abril.nds.controllers.estoque;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.service.FornecedorService;
@@ -21,8 +20,9 @@ import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO.ColunaOrdenacao;
+import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
+import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -60,28 +60,41 @@ public class ConsultaNotasController {
 	}
 
 	@Path("/consultaNotas/pesquisarNotas")
-	public void pesquisarNotas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal, int isNotaRecebida,
+	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
 							   String sortorder, String sortname, int page, int rp) {
 
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
-		
+
 		filtroConsultaNotaFiscal.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
+
+		if (isNotaRecebida >= 0) {
+			filtroConsultaNotaFiscal.setNotaRecebida(isNotaRecebida == NOTA_RECEBIDA);
+		}
 
 		List<NotaFiscal> listaNotasFiscais =
 			notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
-
-		if (isNotaRecebida > 0) {
-			filtroConsultaNotaFiscal.setNotaRecebida(isNotaRecebida == NOTA_RECEBIDA);
-		}
 
 		Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 
 		TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
 		tableModel.setTotal(quantidadeRegistros);
+		tableModel.setPage(page);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	public void pesquisarDetalhesNotaFiscal(Long idNota) {
+
+		List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal = getDetalhesNotaFiscal();
+				//this.notaFiscalService.obterDetalhesNotaFical(idNota);
+		
+		TableModel<CellModel> tableModelDetalhesNota = getTableModelDetalhesNotaFiscal(listaDetalhesNotaFiscal);
+		tableModelDetalhesNota.setPage(1);
+		tableModelDetalhesNota.setTotal(listaDetalhesNotaFiscal.size());
+
+		this.result.use(Results.json()).withoutRoot().from(tableModelDetalhesNota).recursive().serialize();
 	}
 
 	private void preencherCombos() {
@@ -104,87 +117,100 @@ public class ConsultaNotasController {
 			
 			CellModel cellModel = 
 					new CellModel(notaFiscal.getId().intValue(), notaFiscal.getNumero(), 
-						simpleDateFormat.format(notaFiscal.getDataEmissao()), 
-						simpleDateFormat.format(notaFiscal.getDataExpedicao()), 
-						notaFiscal.getTipoNotaFiscal().getDescricao(), 
-						notaFiscal.getEmitente().getRazaoSocial(), 
-						StatusNotaFiscal.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " " );
+								  simpleDateFormat.format(notaFiscal.getDataEmissao()), 
+								  simpleDateFormat.format(notaFiscal.getDataExpedicao()), 
+								  notaFiscal.getTipoNotaFiscal().getDescricao(), 
+								  notaFiscal.getEmitente().getRazaoSocial(), 
+								  StatusNotaFiscal.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ", 
+								  " ", String.valueOf(notaFiscal.getId()));
 
 			listaCellModels.add(cellModel);
 		}
 		
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-		tableModel.setPage(1);
 		tableModel.setRows(listaCellModels);
 
 		return tableModel;
 	}
 	
-	public List<NotaFiscal> getNotasFiscais() {
+	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal) {
 		
-		List<NotaFiscal> listaNotaFiscais = new ArrayList<NotaFiscal>();
+		List<CellModel> listaCellModels = new LinkedList<CellModel>();
+
+		for (DetalheNotaFiscalVO detalheNotaFiscalVO : listaDetalhesNotaFiscal) {
+			
+			String sobrasFaltas = TipoDiferenca.FALTA_DE.equals(detalheNotaFiscalVO.getTipoDiferenca()) || 
+								  TipoDiferenca.FALTA_EM.equals(detalheNotaFiscalVO.getTipoDiferenca()) ?
+										  "-" + detalheNotaFiscalVO.getSobrasFaltas() :
+											  "" + detalheNotaFiscalVO.getSobrasFaltas();
+
+			CellModel cellModel = 
+					new CellModel(detalheNotaFiscalVO.getCodigoItem().intValue(), 
+								  String.valueOf(detalheNotaFiscalVO.getNomeProduto()),
+								  String.valueOf(detalheNotaFiscalVO.getNumeroEdicao()), 
+								  String.valueOf(detalheNotaFiscalVO.getQuantidadeExemplares()),
+								  sobrasFaltas);
+
+			listaCellModels.add(cellModel);
+		}
 		
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
-		tipoNotaFiscal.setDescricao("descricao");
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+		tableModel.setRows(listaCellModels);
+
+		return tableModel;
+	}
+	
+	private List<DetalheNotaFiscalVO> getDetalhesNotaFiscal() {
 		
-		PessoaJuridica juridica = new PessoaJuridica();
-		juridica.setRazaoSocial("razaoSocial");
+		List<DetalheNotaFiscalVO> listaDetalheNotaFiscal = new ArrayList<DetalheNotaFiscalVO>();
 		
-		NotaFiscalCota notaFiscal = new NotaFiscalCota();
-		notaFiscal.setId(1L);
-		notaFiscal.setChaveAcesso("1231231231");
-		notaFiscal.setNumero("333549887");
-		notaFiscal.setDataEmissao(new Date());
-		notaFiscal.setDataExpedicao(new Date());
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setEmitente(juridica);
-		listaNotaFiscais.add(notaFiscal);
+		DetalheNotaFiscalVO detalheNotaFiscalVO = new DetalheNotaFiscalVO();
+		detalheNotaFiscalVO.setCodigoItem(1L);
+		detalheNotaFiscalVO.setNomeProduto("VEJA");
+		detalheNotaFiscalVO.setNumeroEdicao(5L);
+		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
+		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
+		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.FALTA_DE);
+		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
 		
-		notaFiscal = new NotaFiscalCota();
-		notaFiscal.setId(2L);
-		notaFiscal.setChaveAcesso("1231231231");
-		notaFiscal.setNumero("333549887");
-		notaFiscal.setDataEmissao(new Date());
-		notaFiscal.setDataExpedicao(new Date());
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setEmitente(juridica);
-		listaNotaFiscais.add(notaFiscal);
+		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
+		detalheNotaFiscalVO.setCodigoItem(2L);
+		detalheNotaFiscalVO.setNomeProduto("VEJA");
+		detalheNotaFiscalVO.setNumeroEdicao(5L);
+		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
+		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
+		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
 		
-		notaFiscal = new NotaFiscalCota();
-		notaFiscal.setId(3L);
-		notaFiscal.setChaveAcesso("1231231231");
-		notaFiscal.setNumero("333549887");
-		notaFiscal.setDataEmissao(new Date());
-		notaFiscal.setDataExpedicao(new Date());
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setEmitente(juridica);
-		listaNotaFiscais.add(notaFiscal);
+		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
+		detalheNotaFiscalVO.setCodigoItem(3L);
+		detalheNotaFiscalVO.setNomeProduto("VEJA");
+		detalheNotaFiscalVO.setNumeroEdicao(5L);
+		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
+		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
+		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
+		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
 		
-		notaFiscal = new NotaFiscalCota();
-		notaFiscal.setId(4L);
-		notaFiscal.setChaveAcesso("1231231231");
-		notaFiscal.setNumero("333549887");
-		notaFiscal.setDataEmissao(new Date());
-		notaFiscal.setDataExpedicao(new Date());
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setEmitente(juridica);
-		listaNotaFiscais.add(notaFiscal);
 		
-		notaFiscal = new NotaFiscalCota();
-		notaFiscal.setId(5L);
-		notaFiscal.setChaveAcesso("1231231231");
-		notaFiscal.setNumero("333549887");
-		notaFiscal.setDataEmissao(new Date());
-		notaFiscal.setDataExpedicao(new Date());
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
-		notaFiscal.setEmitente(juridica);
-		listaNotaFiscais.add(notaFiscal);
+		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
+		detalheNotaFiscalVO.setCodigoItem(4L);
+		detalheNotaFiscalVO.setNomeProduto("VEJA");
+		detalheNotaFiscalVO.setNumeroEdicao(5L);
+		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
+		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
+		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
 		
-		return listaNotaFiscais;
+		
+		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
+		detalheNotaFiscalVO.setCodigoItem(5L);
+		detalheNotaFiscalVO.setNomeProduto("VEJA");
+		detalheNotaFiscalVO.setNumeroEdicao(5L);
+		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
+		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
+		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.FALTA_DE);
+		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
+		
+		return listaDetalheNotaFiscal;
 	}
 }

@@ -91,7 +91,7 @@ public class PaginacaoVO implements Serializable {
 			return null;
 		}
 		
-		return ((this.qtdResultadosPorPagina * this.paginaAtual) - this.qtdResultadosPorPagina) + 1;
+		return (this.qtdResultadosPorPagina * this.paginaAtual) - this.qtdResultadosPorPagina;
 	}
 
 	/**

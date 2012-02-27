@@ -7,26 +7,51 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.repository.NotaFiscalDAO;
+import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalVO;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.PeriodoVO;
+import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
+import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
 
 @Service
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
-	private NotaFiscalDAO notaFiscalDAO;
+	private NotaFiscalRepository notaFiscalDAO;
 	
 	@Override
 	@Transactional
-	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal) {
+	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 		return notaFiscalDAO.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 	}
 	
 	@Override
 	@Transactional
 	public List<NotaFiscal> obterNotasFiscaisCadastradas(
-			FiltroConsultaNotaFiscalVO filtroConsultaNotaFiscal) {
+			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+
+		PeriodoVO periodo = filtroConsultaNotaFiscal.getPeriodo(); 
+
+		if (periodo == null || periodo.getDataInicial() == null || periodo.getDataFinal() == null) {
+			throw new IllegalArgumentException("O período deve ser especificado.");
+		}
+
+		if (DateUtil.isDataFinalMaiorDataInicial(periodo)) {
+			throw new IllegalArgumentException("A data inicial deve anteceder a data final.");
+		}
+
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+	}
+
+	@Override
+	@Transactional
+	public List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal) {
+		
+		if (idNotaFiscal == null) {
+			throw new IllegalArgumentException("Erro inesperado. ID da nota fiscal não pode ser nulo.");
+		}
+
+		return notaFiscalDAO.obterDetalhesNotaFical(idNotaFiscal);
 	}
 }

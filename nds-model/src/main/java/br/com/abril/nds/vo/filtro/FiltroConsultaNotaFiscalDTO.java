@@ -10,7 +10,7 @@ import br.com.abril.nds.vo.PeriodoVO;
  * @author Discover Technology
  *
  */
-public class FiltroConsultaNotaFiscalVO implements Serializable {
+public class FiltroConsultaNotaFiscalDTO implements Serializable {
 
 	/**
 	 * Serial Version UID. 
