@@ -12,6 +12,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -36,6 +38,7 @@ import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -171,8 +174,12 @@ public class Fixture {
 	}
 
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
-			ProdutoEdicao produtoEdicao, Date dlp, Date drp) {
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao, Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento) {
 		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dataCriacao);
+		lancamento.setDataStatus(dataStatus);
+		lancamento.setReparte(reparte);
+		lancamento.setStatus(statusLancamento);
 		lancamento.setTipoLancamento(tipoLancamento);
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataLancamentoPrevista(dlp);
@@ -354,6 +361,15 @@ public class Fixture {
 		estoqueProduto.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		return movimentoEstoque;
+	}
+	
+	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor){
+		ParametroSistema parametroSistema = new ParametroSistema();
+		parametroSistema.setId(id);
+		parametroSistema.setTipoParametroSistema(tipoParametroSistema);
+		parametroSistema.setValor(valor);
+		
+		return parametroSistema;
 	}
 
 }
