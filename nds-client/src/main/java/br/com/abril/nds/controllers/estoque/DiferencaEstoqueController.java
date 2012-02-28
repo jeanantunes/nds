@@ -111,7 +111,7 @@ public class DiferencaEstoqueController {
 		listaDiferencaDTO.add(dto);
 		listaDiferencaDTO.add(dto);
 		listaDiferencaDTO.add(dto);
-		
+		listaDiferencaDTO.add(dto);		
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
