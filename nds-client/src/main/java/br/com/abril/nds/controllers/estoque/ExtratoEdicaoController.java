@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
@@ -35,14 +37,21 @@ public class ExtratoEdicaoController {
 	
 	private Result result;
 	
+	private static final String TBL_MODEL_LISTA_EXTRATO_EDICAO = "TblModelListaExtratoEdicao";
+	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
+	
+	
 	@Autowired
 	private ProdutoService produtoService;
 	
 	@Autowired
 	private ExtratoEdicaoService extratoEdicaoService;
 	
-	public ExtratoEdicaoController(Result result) {
+	private HttpServletRequest request;
+	
+	public ExtratoEdicaoController(Result result, HttpServletRequest request) {
 		this.result = result;
+		this.request = request;
 	}
 	
 	public void index(){
@@ -95,53 +104,64 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(Long codigoProduto, String descProduto, Long idProdutoEdicao) throws Exception {
+	public void pesquisaExtratoEdicao(Long numeroEdicao) throws Exception {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		TableModel<CellModel> tm = null;
 		
-		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(1L);
+		Map resultado = new HashMap();
+		
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(numeroEdicao);
+		
 		
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
 			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
+			
+			tm = new TableModel<CellModel>();
+			
+			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."};
+			
+			resultado.put(Constantes.PARAM_MSGS, msgErro);
+
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+			
 			return;
+			
 		}
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+		tm = obterTableModelParaListaExtratoEdicao(infoGeralExtratoEdicao.getListaExtratoEdicao());
+		
+		resultado.put(TBL_MODEL_LISTA_EXTRATO_EDICAO, tm);
+		resultado.put(SALDO_TOTAL_EXTRATO_EDICAO, infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
+		
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModel> obterTableModelParaListaExtratoEdicao(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		
+		TableModel<CellModel> tm = new TableModel<CellModel>();
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
 		for(ExtratoEdicaoDTO extrato : listaExtratoEdicao) {
 			
 			String dataMovimento 		= sdf.format(extrato.getDataMovimento());
-			
 			String descTipoMovimento 	= extrato.getDescMovimento();
-			
 			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
-			
 			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();
-			
 			String qtdParcial 			= extrato.getQtdParcial().doubleValue() < 0.0D ? "-" : extrato.getQtdParcial().toString();
-			
 			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial));
 			
 		}
 		
-		TableModel<CellModel> tm = new TableModel<CellModel>();
-		
 		tm.setPage(1);
-		
 		tm.setTotal(listaModeloGenerico.size());
-		
 		tm.setRows(listaModeloGenerico);
-
-		Map resultado = new HashMap();
 		
-		resultado.put("TblModelListaExtratoEdicao", tm);
-		
-		resultado.put("saldoTotalExtratoEdicao", infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
-		
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		return tm;
 		
 	}
 	
