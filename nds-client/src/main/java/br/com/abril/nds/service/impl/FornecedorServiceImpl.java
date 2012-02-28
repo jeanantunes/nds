@@ -21,6 +21,16 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public List<Fornecedor> obterFornecedores() {
 		return fornecedorRepository.obterFornecedores();
 	}
+	
+	@Transactional
+	public List<Fornecedor> obterFornecedoresAtivos() {
+		return fornecedorRepository.obterFornecedoresAtivos();
+	}
+	
+	@Transactional
+	public List<Fornecedor> obterFornecedores(String cnpj) {
+		return fornecedorRepository.obterFornecedores(cnpj);
+	}
 
 	@Transactional(readOnly = true)
 	public List<Fornecedor> obterFornecedores(boolean permiteBalanceamento,

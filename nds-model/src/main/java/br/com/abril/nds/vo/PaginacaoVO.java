@@ -15,6 +15,10 @@ public class PaginacaoVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -1143885478818801313L;
 	
+	private static final String ASC = "asc";
+
+	private static final String DESC = "desc";
+	
 	private Integer paginaAtual; 
 	
 	private Integer qtdResultadosPorPagina;
@@ -41,31 +45,38 @@ public class PaginacaoVO implements Serializable {
 		
 		this.qtdResultadosPorPagina = rp;
 		
-		this.ordenacao = Ordenacao.valueOf(sortorder);
+		if (Ordenacao.ASC.getOrdenacao().equals(sortorder)) {
+			
+			this.ordenacao = Ordenacao.ASC;
+			
+		} else if (Ordenacao.DESC.getOrdenacao().equals(sortorder)) {
+			
+			this.ordenacao = Ordenacao.DESC;
+		}
 	}
 	
 	public enum Ordenacao {
 		
-		ASC("asc"),
-		DESC("desc");
+		ASC(PaginacaoVO.ASC),
+		DESC(PaginacaoVO.DESC);
 		
 		private String ordenacao;
 		
 		private Ordenacao(String ordenacao) {
+			
 			this.ordenacao = ordenacao;
+		}
+		
+		/**
+		 * @return the ordenacao
+		 */
+		public String getOrdenacao() {
+			return ordenacao;
 		}
 		
 		@Override
 		public String toString() {
 			return this.ordenacao;
-		}
-
-		/**
-		 * @param ordenacao the ordenacao to set
-		 */
-		public void setOrdenacao(String ordenacao) {
-			
-			this.ordenacao = ordenacao;
 		}
 	}
 	
@@ -80,7 +91,7 @@ public class PaginacaoVO implements Serializable {
 			return null;
 		}
 		
-		return ((this.qtdResultadosPorPagina * this.paginaAtual) - this.qtdResultadosPorPagina) + 1;
+		return (this.qtdResultadosPorPagina * this.paginaAtual) - this.qtdResultadosPorPagina;
 	}
 
 	/**

@@ -33,7 +33,7 @@ public class Diferenca {
 	private BigDecimal qtde;
 	@ManyToOne(optional = false)
 	private Usuario responsavel;
-	@OneToOne
+	@OneToOne(optional = false)
 	private ItemRecebimentoFisico itemRecebimentoFisico;
 	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
