@@ -85,15 +85,21 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 	}
 	
 	@Transactional
-	public Fornecedor obterFornecedorDeProduto(String codigoProduto) {
+	public String obterNomeFornecedorDeProduto(String codigoProduto) {
 		
 		List<Fornecedor> listaFornecedor = fornecedorRepository.obterFornecedoresDeProduto(codigoProduto);
 		
 		if(listaFornecedor != null && listaFornecedor.size() == 1) {
-			return listaFornecedor.get(0);
+			
+			Fornecedor fornecedor = listaFornecedor.get(0);
+			
+			String nomeFornecedor = (fornecedor.getJuridica() != null) ? fornecedor.getJuridica().getNomeFantasia() : "" ;
+			
+			return nomeFornecedor;
+			
 		}
 		
-		return null;
+		return "";
 		
 	}
 

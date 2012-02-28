@@ -2,7 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meuConteudo</title>
 
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/produto.js'></script>
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
 
 <script type="text/javascript">
 
@@ -23,7 +23,31 @@ var jsExtratoEdicao = {
 
 	},	
 	
+	pesquisarNomeFornecedor : function() {
+		
+		var data = "codigo=" + $("#codigo").val();
+		
+		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterFornecedorDeProduto', data, 
+				function(result){
+			
+			$("#nomeFornecedor").attr("value", result);
+			
+		});
+		
+	},
 	
+	
+	pesquisarPrecoCapa : function() {
+		
+		var data = "codigo=" + $("#codigo").val() +
+		  		  "&edicao=" + $("#edicao").val();
+		
+		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
+			$("#precoCapa").attr("value", result);
+		});
+		
+	},
+		
 	getDataFromResult : function(data) {
 		
 		jsExtratoEdicao.dadosPesquisa = {page: 0, total: 0};
@@ -32,7 +56,7 @@ var jsExtratoEdicao = {
 		
 		$.each(data, function(index, value) {
 			
-			  if(value[0] == "TblModelListaExtratoEdicao") {
+			  if(value[0] == "gridResult") {
 				  jsExtratoEdicao.dadosPesquisa = value[1];
 			  } else if(value[0] == "saldoTotalExtratoEdicao") {
 				  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
@@ -137,7 +161,8 @@ $(function() {
 					<td width="123">
 					
 						<input 	type="text" 
-								name="codigo" 
+								name="codigo"
+								onblur="jsExtratoEdicao.pesquisarNomeFornecedor()" 
 								id="codigo"
 								maxlength="5"
 								style="width: 70px; 
@@ -170,6 +195,7 @@ $(function() {
 					<td width="186">
 					
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+						   onblur="jsExtratoEdicao.pesquisarPrecoCapa()"
 						   onchange="validarNumEdicao();"/>
 								
 					</td>
@@ -179,12 +205,12 @@ $(function() {
 				</tr>
 				<tr>
 					<td>Preço da Capa:</td>
-					<td><input type="text" name="datepickerDe3" id="datepickerDe3"
+					<td><input type="text" name="precoCapa" id="precoCapa"
 						style="width: 70px; float: left; margin-right: 5px;"
 						disabled="disabled" />
 					</td>
 					<td>Fornecedor:</td>
-					<td><input type="text" name="textfield" id="textfield"
+					<td><input type="text" name="textfield" id="nomeFornecedor"
 						style="width: 220px;" disabled="disabled" />
 					</td>
 					<td>&nbsp;</td>
