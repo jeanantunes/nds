@@ -16,11 +16,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "TIPO_MOVIMENTO")
-@SequenceGenerator(name = "TIPO_MOVIMENTO_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "TP_MOVIMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class TipoMovimento {
 
 	@Id
-	@GeneratedValue(generator = "TIPO_MOVIMENTO_SEQ")
+	@GeneratedValue(generator = "TP_MOVIMENTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "DESCRICAO", nullable = false)
@@ -29,13 +29,12 @@ public class TipoMovimento {
 	private boolean aprovacaoAutomatica;
 	@Column(name = "INCIDE_DIVIDA", nullable = false)
 	private boolean incideDivida;
-	
+	@Column(name = "TIPO_MOVIMENTO", nullable = false)
 	@Enumerated(EnumType.STRING)
+	private DominioTipoMovimento tipoMovimento;
 	@Column(name = "TIPO_OPERACAO", nullable = false)
-	private TipoMovimentoEstoque tipoMovimentoEstoque;
 	@Enumerated(EnumType.STRING)
 	private TipoOperacao tipoOperacao;
-	
 
 	public Long getId() {
 		return id;
@@ -69,28 +68,18 @@ public class TipoMovimento {
 		this.incideDivida = incideDivida;
 	}
 
-	public TipoMovimentoEstoque getTipoMovimentoEstoque() {
-		return tipoMovimentoEstoque;
+	public DominioTipoMovimento getTipoMovimento() {
+		return tipoMovimento;
 	}
 
-	
-	public void setTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimentoEstoque) {
-		
-		if(tipoMovimentoEstoque != null){
-			this.tipoOperacao = tipoMovimentoEstoque.getTipoOperacao();
-		}
-		
-		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
-		
+	public void setTipoMovimento(
+			DominioTipoMovimento tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
+		this.tipoOperacao = tipoMovimento.getTipoOperacao();
 	}
 
 	public TipoOperacao getTipoOperacao() {
-		
-		if(this.tipoMovimentoEstoque == null){
-			return null;
-		}
-		
-		return tipoMovimentoEstoque.getTipoOperacao();
-	}	
+		return tipoOperacao;
+	}
 
 }

@@ -35,7 +35,7 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
-import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
 import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -274,7 +274,7 @@ public class Fixture {
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Falta EM");
 		tipoMovimento.setIncideDivida(false);
-		tipoMovimento.setTipoMovimentoEstoque(TipoMovimentoEstoque.FALTA_EM);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
 		return tipoMovimento;
 	}
 

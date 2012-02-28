@@ -18,7 +18,7 @@ import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.movimentacao.MovimentoCota;
+import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 
 @Entity
 
@@ -42,7 +42,7 @@ public class EstoqueProdutoCota {
 	@Column(name = "QTDE_DEVEOLVIDA")
 	private BigDecimal qtdeDevolvida;
 	@OneToMany(mappedBy = "estoqueProdutoCota")
-	List<MovimentoCota> movimentos = new ArrayList<MovimentoCota>();
+	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	@Version
 	@Column(name = "VERSAO")
 	private Long versao;
@@ -87,11 +87,11 @@ public class EstoqueProdutoCota {
 		this.qtdeDevolvida = qtdeDevolvida;
 	}
 	
-	public List<MovimentoCota> getMovimentos() {
+	public List<MovimentoEstoqueCota> getMovimentos() {
 		return movimentos;
 	}
 	
-	public void setMovimentos(List<MovimentoCota> movimentos) {
+	public void setMovimentos(List<MovimentoEstoqueCota> movimentos) {
 		this.movimentos = movimentos;
 	}
 	
