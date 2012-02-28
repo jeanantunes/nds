@@ -131,6 +131,8 @@ var jsExtratoEdicao = {
 
 $(function() {
 	
+	$("#edicao").mask("?99999999999999999999", {placeholder:""});
+	
 	$("#produto").autocomplete({
 		source: ''
 	});
