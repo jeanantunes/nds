@@ -5,6 +5,6 @@ public enum StatusLancamento {
 	RECEBIDO, 
 	BALANCEADO,
 	ESTUDO_FECHADO,
-	PENDENTE, 
+	FURO, 
 	EXPEDIDO;
 }
