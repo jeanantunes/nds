@@ -49,7 +49,8 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new IllegalArgumentException("Lançamento não encontrado.");
 		}
 		
-		if (lancamento.getDataLancamentoDistribuidor().after(novaData)){
+		if (novaData.equals(lancamento.getDataLancamentoDistribuidor()) 
+				|| novaData.before(lancamento.getDataLancamentoDistribuidor())){
 			throw new IllegalArgumentException("Nova data deve ser maior que a data de lançamento atual.");
 		}
 		
@@ -58,9 +59,8 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
-		lancamento.setStatus(StatusLancamento.PENDENTE);
+		lancamento.setStatus(StatusLancamento.FURO);
 		
-		//TODO tem q ter registro aqui mesmo?
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
 		furoProduto.setLancamento(lancamento);
