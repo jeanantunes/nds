@@ -37,8 +37,8 @@ public class EstoqueProdutoCota {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
-	@Column(name = "QTDE_ENVIADA")
-	private BigDecimal qtdeEnviada;
+	@Column(name = "QTDE_RECEBIDA")
+	private BigDecimal qtdeRecebida;
 	@Column(name = "QTDE_DEVEOLVIDA")
 	private BigDecimal qtdeDevolvida;
 	@OneToMany(mappedBy = "estoqueProdutoCota")
@@ -71,12 +71,12 @@ public class EstoqueProdutoCota {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	public BigDecimal getQtdeEnviada() {
-		return qtdeEnviada;
+	public BigDecimal getQtdeRecebida() {
+		return qtdeRecebida;
 	}
 	
-	public void setQtdeEnviada(BigDecimal qtdeEnviada) {
-		this.qtdeEnviada = qtdeEnviada;
+	public void setQtdeRecebida(BigDecimal qtdeRecebida) {
+		this.qtdeRecebida = qtdeRecebida;
 	}
 	
 	public BigDecimal getQtdeDevolvida() {

@@ -7,11 +7,13 @@ import java.util.Date;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -24,6 +26,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -33,9 +36,10 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
+import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -176,7 +180,9 @@ public class Fixture {
 	}
 
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
-			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao, Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento) {
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
+			Date dataStatus, BigDecimal reparte,
+			StatusLancamento statusLancamento, ItemRecebimentoFisico recebimento) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -188,6 +194,7 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.addRecebimento(recebimento);
 		return lancamento;
 	}
 
@@ -201,11 +208,12 @@ public class Fixture {
 
 	public static DistribuicaoFornecedor distribuicaoFornecedor(
 			Distribuidor distribuidor, Fornecedor fornecedor,
-			DiaSemana diaSemana) {
+			DiaSemana diaSemana, OperacaoDistribuidor operacaoDistribuidor) {
 		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
 		df.setDistribuidor(distribuidor);
 		df.setFornecedor(fornecedor);
 		df.setDiaSemana(diaSemana);
+		df.setOperacaoDistribuidor(operacaoDistribuidor);
 		distribuidor.getDiasDistribuicao().add(df);
 		return df;
 	}
@@ -271,19 +279,37 @@ public class Fixture {
 
 	public static TipoMovimento tipoMovimentoFaltaEm() {
 		TipoMovimento tipoMovimento = new TipoMovimento();
-		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setAprovacaoAutomatica(false);
 		tipoMovimento.setDescricao("Falta EM");
 		tipoMovimento.setIncideDivida(false);
 		tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimento tipoMovimentoRecebimentoFisico() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento de Mercadoria");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.RECEBIMENTO_FISICO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimento tipoMovimentoRecebimentoReparte() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Reparte");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.RECEBIMENTO_REPARTE);
+		return tipoMovimento;
+	}
 
 	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
-			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento) {
+			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, BigDecimal qtde) {
 		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
 		itemNotaFiscal.setOrigem(Origem.MANUAL);
 		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
-		itemNotaFiscal.setQtde(new BigDecimal(1.0));
+		itemNotaFiscal.setQtde(qtde);
 		itemNotaFiscal.setUsuario(usuario);
 		itemNotaFiscal.setNotaFiscal(notaFiscal);
 		itemNotaFiscal.setDataLancamento(dataLancamento);
@@ -336,30 +362,24 @@ public class Fixture {
 	public static ItemRecebimentoFisico itemRecebimentoFisico(ItemNotaFiscal itemNotaFiscal, 
 															  RecebimentoFisico recebimentoFisico,
 															  BigDecimal qtdeFisico) {
-		
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-		
 		itemRecebimentoFisico.setItemNotaFiscal(itemNotaFiscal);
 		itemRecebimentoFisico.setQtdeFisico(qtdeFisico);
 		itemRecebimentoFisico.setRecebimentoFisico(recebimentoFisico);
-		
 		return itemRecebimentoFisico;
 	}
 	
 	public static EstoqueProduto estoqueProduto(ProdutoEdicao produtoEdicao, BigDecimal qtde) {
-		
 		EstoqueProduto estoqueProduto = new EstoqueProduto();
-		
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
 		estoqueProduto.setQtde(qtde);
-		
 		return estoqueProduto;
 	}
 
 	public static MovimentoEstoque movimentoEstoque(
 			ItemRecebimentoFisico itemRecebimentoFisico,
 			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto) {
+			Usuario usuario, EstoqueProduto estoqueProduto, StatusAprovacao statusAprovacao) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		movimentoEstoque.setDataInclusao(new Date());
@@ -375,6 +395,7 @@ public class Fixture {
 		}
 		estoqueProduto.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
+		movimentoEstoque.setStatus(statusAprovacao);
 		return movimentoEstoque;
 	}
 	
@@ -385,7 +406,8 @@ public class Fixture {
 													EstoqueProduto estoqueProduto,
 													Diferenca diferenca,
 													Date dataInclusao,
-													BigDecimal qtde) {
+													BigDecimal qtde, 
+													StatusAprovacao status) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
@@ -397,7 +419,7 @@ public class Fixture {
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setDiferenca(diferenca);
-		
+		movimentoEstoque.setStatus(status);
 		return movimentoEstoque;
 	}
 	
@@ -425,6 +447,42 @@ public class Fixture {
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		
 		return diferenca;
+	}
+	
+	public static EstoqueProdutoCota estoqueProdutoCota(
+			ProdutoEdicao produtoEdicao, Cota cota, BigDecimal qtdeRecebida,
+			BigDecimal qtdeDevolvida) {
+		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
+		estoqueProdutoCota.setCota(cota);
+		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
+		estoqueProdutoCota.setQtdeRecebida(qtdeRecebida);
+		estoqueProdutoCota.setQtdeDevolvida(qtdeDevolvida);
+		return estoqueProdutoCota;
+	}
+	
+	public static MovimentoEstoqueCota movimentoEstoqueCota(
+			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
+			Usuario usuario, EstoqueProdutoCota estoqueProdutoCota,
+			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao) {
+
+		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
+		movimentoEstoque.setDataInclusao(new Date());
+		movimentoEstoque.setProdutoEdicao(produtoEdicao);
+		movimentoEstoque.setQtde(qtde);
+		movimentoEstoque.setTipoMovimento(tipoMovimento);
+		movimentoEstoque.setUsuario(usuario);
+		if (tipoMovimento.getTipoOperacao() == TipoOperacao.ENTRADA) {
+			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
+					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
+		} else {
+			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
+					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
+		}
+		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
+		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
+		movimentoEstoque.setCota(cota);
+		movimentoEstoque.setStatus(statusAprovacao);
+		return movimentoEstoque;
 	}
 
 }
