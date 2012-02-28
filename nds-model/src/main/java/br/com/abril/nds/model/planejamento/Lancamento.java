@@ -189,5 +189,9 @@ public class Lancamento {
 	public void setHistoricos(List<HistoricoLancamento> historicos) {
 		this.historicos = historicos;
 	}
+	
+	public void addRecebimento(ItemRecebimentoFisico itemRecebimentoFisico) {
+		this.recebimentos.add(itemRecebimentoFisico);
+	}
 
 }

@@ -76,7 +76,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
-				StatusLancamento.RECEBIDO);
+				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda001,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
@@ -84,7 +84,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
-				StatusLancamento.RECEBIDO);
+				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame001,
 				Fixture.criarData(24, Calendar.FEBRUARY, 2012),
@@ -92,7 +92,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
-				StatusLancamento.RECEBIDO);
+				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho001,
 				Fixture.criarData(27, Calendar.FEBRUARY, 2012),
@@ -100,7 +100,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
-				StatusLancamento.RECEBIDO);
+				StatusLancamento.RECEBIDO, null);
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame, lancamentoCapricho);
 	}
 

@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -33,6 +34,7 @@ public class Distribuidor {
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
 	@OneToOne(optional = false)
+	@JoinColumn(name = "PJ_ID")
 	private PessoaJuridica juridica;
 	@OneToMany(mappedBy = "distribuidor")
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();

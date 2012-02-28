@@ -1,5 +1,5 @@
 package br.com.abril.nds.model.estoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
 
 /**
  * @author francisco.garcia
@@ -8,22 +8,22 @@ import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
  */
 public enum TipoDiferenca {
 	
-	FALTA_DE(TipoMovimentoEstoque.FALTA_DE, "Falta de"),
-	FALTA_EM(TipoMovimentoEstoque.FALTA_EM, "Falta em"),
-	SOBRA_DE(TipoMovimentoEstoque.SOBRA_DE, "Sobra de"),
-	SOBRA_EM(TipoMovimentoEstoque.SOBRA_EM, "Sobra em");
+	FALTA_DE(DominioTipoMovimento.FALTA_DE, "Falta de"),
+	FALTA_EM(DominioTipoMovimento.FALTA_EM, "Falta em"),
+	SOBRA_DE(DominioTipoMovimento.SOBRA_DE, "Sobra de"),
+	SOBRA_EM(DominioTipoMovimento.SOBRA_EM, "Sobra em");
 	
-	private TipoMovimentoEstoque tipoMovimentoEstoque;
+	private DominioTipoMovimento tipoMovimentoEstoque;
 	
 	private String descricao;
 	
-	private TipoDiferenca(TipoMovimentoEstoque tipoMovimentoEstoque, String descricao) {
+	private TipoDiferenca(DominioTipoMovimento tipoMovimentoEstoque, String descricao) {
 		
 		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
 		this.descricao = descricao;
 	}
 	
-	public TipoMovimentoEstoque getTipoMovimentoEstoque() {
+	public DominioTipoMovimento getTipoMovimentoEstoque() {
 		
 		return tipoMovimentoEstoque;
 	}

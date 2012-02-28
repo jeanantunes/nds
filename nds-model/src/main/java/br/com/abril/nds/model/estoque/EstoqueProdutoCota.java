@@ -18,7 +18,7 @@ import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.movimentacao.MovimentoCota;
+import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 
 @Entity
 
@@ -37,12 +37,12 @@ public class EstoqueProdutoCota {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
-	@Column(name = "QTDE_ENVIADA")
-	private BigDecimal qtdeEnviada;
+	@Column(name = "QTDE_RECEBIDA")
+	private BigDecimal qtdeRecebida;
 	@Column(name = "QTDE_DEVEOLVIDA")
 	private BigDecimal qtdeDevolvida;
 	@OneToMany(mappedBy = "estoqueProdutoCota")
-	List<MovimentoCota> movimentos = new ArrayList<MovimentoCota>();
+	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	@Version
 	@Column(name = "VERSAO")
 	private Long versao;
@@ -71,12 +71,12 @@ public class EstoqueProdutoCota {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	public BigDecimal getQtdeEnviada() {
-		return qtdeEnviada;
+	public BigDecimal getQtdeRecebida() {
+		return qtdeRecebida;
 	}
 	
-	public void setQtdeEnviada(BigDecimal qtdeEnviada) {
-		this.qtdeEnviada = qtdeEnviada;
+	public void setQtdeRecebida(BigDecimal qtdeRecebida) {
+		this.qtdeRecebida = qtdeRecebida;
 	}
 	
 	public BigDecimal getQtdeDevolvida() {
@@ -87,11 +87,11 @@ public class EstoqueProdutoCota {
 		this.qtdeDevolvida = qtdeDevolvida;
 	}
 	
-	public List<MovimentoCota> getMovimentos() {
+	public List<MovimentoEstoqueCota> getMovimentos() {
 		return movimentos;
 	}
 	
-	public void setMovimentos(List<MovimentoCota> movimentos) {
+	public void setMovimentos(List<MovimentoEstoqueCota> movimentos) {
 		this.movimentos = movimentos;
 	}
 	
