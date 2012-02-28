@@ -70,11 +70,9 @@ public class RecebimentoFisicoController {
 
 		preencherCombos();
 		preencherDataEmissao();
-		
-		//List<RecebimentoFisicoDTO> listDTO = recebimentoFisicoService.obterItemNotaPorCnpjNota("11.111.111/0001-11", "2344242", "345353543");
-		//System.out.println(listDTO);
+	
 	}
-
+	
 	private void preencherDataEmissao() {
 		// RecebimentoFisico recebimento = new RecebimentoFisico();
 		Date data = new Date(System.currentTimeMillis());

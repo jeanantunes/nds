@@ -8,7 +8,6 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 
 public interface RecebimentoFisicoRepository extends Repository<RecebimentoFisico, Long> {
 	
-	List<RecebimentoFisicoDTO>  obterItemNotaPorCnpjNota(String cnpj, String numeroNota, String serieNota );
-	 void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
+		 void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
 				ItemRecebimentoFisico itemRecebimentoFisico);
 }

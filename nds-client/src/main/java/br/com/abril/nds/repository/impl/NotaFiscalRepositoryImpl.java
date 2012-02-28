@@ -23,6 +23,52 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		super(NotaFiscal.class);
 	}
 
+	/**
+	 * Obtém uma lista de notas fiscais de acordo com os seguintes parâmetros:
+	 * 
+	 * Cnpj - da pessoa jurídica relativa a nota.
+	 * Numero da nota.
+	 * Série da nota.
+	 * Chave - caso esta seja um nota fiscal eletrônica.
+	 * 
+	 * @param filtroConsultaNotaFiscal
+	 * @return List<NotaFiscal>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscal> obterListaNotaFiscal(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+			
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("select n from NotaFiscal n ");
+		
+		hql.append(" where  ");
+
+		hql.append(" n.numero = :numero and		");
+		hql.append(" n.serie = :serie 	and		");
+		hql.append(" n.emitente.cnpj = :cnpj 	");
+		
+		
+		if( filtroConsultaNotaFiscal.getChave() == null || "".equals(filtroConsultaNotaFiscal.getChave()) ){
+			hql.append(" and n.chaveAcesso is null ");
+		}else{
+			hql.append(" and n.chaveAcesso = :chaveAcesso ");			
+		}
+		
+		Query query = criarQueryComParametrosObterNotasFiscaisCadastradas(hql.toString(), filtroConsultaNotaFiscal);
+		
+		query.setParameter("cnpj",filtroConsultaNotaFiscal.getCnpj() );
+		query.setParameter("serie",filtroConsultaNotaFiscal.getSerie() );
+		query.setParameter("numero",filtroConsultaNotaFiscal.getNumeroNota() );
+		
+		if( filtroConsultaNotaFiscal.getChave() != null || !"".equals(filtroConsultaNotaFiscal.getChave()) ){
+			query.setParameter("chave", filtroConsultaNotaFiscal.getChave());
+		}
+		
+		return query.list();
+		
+		
+	}
+	
 	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
 		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
@@ -194,5 +240,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		Query query = super.getSession().createQuery(hql);
 		query.setParameter("numero", numero);
 		return (NotaFiscal) query.uniqueResult();
-	}	
+	}
+	
+	
 }
