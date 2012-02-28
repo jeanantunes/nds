@@ -11,6 +11,8 @@ public class DetalheNotaFiscalVO implements Serializable {
 
 	private Long codigoItem;
 	
+	private String codigoProduto;
+
 	private String nomeProduto;
 	
 	private Long numeroEdicao;
@@ -22,16 +24,6 @@ public class DetalheNotaFiscalVO implements Serializable {
 	private TipoDiferenca tipoDiferenca;
 	
 	public DetalheNotaFiscalVO() { }
-
-	public DetalheNotaFiscalVO(Long codigoItem, String nomeProduto, Long numeroEdicao,
-							   BigDecimal quantidadeExemplares, BigDecimal sobrasFaltas, TipoDiferenca tipoDiferenca) {
-		this.codigoItem = codigoItem;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-		this.quantidadeExemplares = quantidadeExemplares;
-		this.sobrasFaltas = sobrasFaltas;
-		this.tipoDiferenca = tipoDiferenca;
-	}
 
 	/**
 	 * @return the codigoItem
@@ -115,5 +107,19 @@ public class DetalheNotaFiscalVO implements Serializable {
 	 */
 	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
 		this.tipoDiferenca = tipoDiferenca;
+	}
+
+	/**
+	 * @return the codigoProduto
+	 */
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 }

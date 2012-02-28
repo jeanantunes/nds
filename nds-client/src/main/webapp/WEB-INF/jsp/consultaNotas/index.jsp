@@ -17,6 +17,11 @@
 					'</a>';
 			}
 
+			if (data.mensagens) {
+				exibirMensagem(data.mensagens[0], data.mensagens);
+				$(".grids").hide();
+			}
+
 			return data;
 		} 
 
