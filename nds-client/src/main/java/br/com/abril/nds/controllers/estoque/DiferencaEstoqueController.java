@@ -1,8 +1,10 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -79,12 +81,67 @@ public class DiferencaEstoqueController {
 	}
 	
 	@Post
-	@Path("/pesquisarFaltasSobras")
-	public void pesquisarFaltasSobras(String codigoProduto, Long numeroEdicao,
-									  Long idFornecedor, String dataLancamentoDe,
-									  String dataLancamentoAte, TipoDiferenca tipoDiferenca) {
-				
-		result.use(Results.json()).from("Retorno", "result").serialize();
+	@Path("/pesquisarDiferencas")
+	public void pesquisarDiferencas(String codigoProduto, Long numeroEdicao,
+									Long idFornecedor, String dataLancamentoDe,
+									String dataLancamentoAte, TipoDiferenca tipoDiferenca,
+									String sortorder, String sortname, int page, int rp) {
+		
+		DiferencaDTO dto = new DiferencaDTO(null, null, null);
+		
+		List<DiferencaDTO> listaDiferencaDTO = new ArrayList<DiferencaDTO>();
+		
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);
+		listaDiferencaDTO.add(dto);		
+		
+		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
+		
+		for (DiferencaDTO diferencaDTO : listaDiferencaDTO) {
+			
+			String data = "a";
+			String codigo = "b";
+			String produto = "c";
+			String edicao = "d";
+			String tipoDiferencao = "e";
+			String nota = "f";
+			String exemplar = "g";
+			String status = "h";
+			
+			listaModeloGenerico.add(new CellModel(1, data, codigo, produto, edicao, tipoDiferencao, nota, exemplar, status));
+		}
+		
+		TableModel<CellModel> tm = new TableModel<CellModel>();
+		
+		//tm.setPage(1);
+		
+		tm.setTotal(listaModeloGenerico.size());
+		
+		tm.setRows(listaModeloGenerico);
+		
+		Map resultado = new HashMap();
+		
+		resultado.put("TblModelListaFaltasSobras", tm);
+		
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	}
 
 	/**

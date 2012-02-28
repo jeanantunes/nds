@@ -159,5 +159,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		return null;
 	}
+	
+	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+		
+		return null;
+	}
 
 }
