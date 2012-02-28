@@ -1,30 +1,24 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
-import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.service.ExtratoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -35,113 +29,127 @@ public class ExtratoEdicaoController {
 	
 	private Result result;
 	
-	@Autowired
-	private ProdutoService produtoService;
+	private static final String GRID_RESULT = "gridResult";
+	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
+	
 	
 	@Autowired
 	private ExtratoEdicaoService extratoEdicaoService;
 	
-	public ExtratoEdicaoController(Result result) {
+	private HttpServletRequest request;
+	
+	public ExtratoEdicaoController(Result result, HttpServletRequest request) {
 		this.result = result;
+		this.request = request;
 	}
 	
 	public void index(){
 		
 	}
 	
-	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto){
+	/**
+	 * Obtem e serializa o nome do fornecedor do produto.
+	 * 
+	 * @param codigo
+	 */
+	public void obterFornecedorDeProduto(String codigo) {
 		
-		List<Produto> listaProdutoEdicao = null;
-		try {
-			listaProdutoEdicao = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
-		} catch (Exception e) {
-			result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
-					"Erro ao pesquisar produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
-			result.forwardTo(FuroProdutoController.class).index();
-			return;
-		}
+		String resultado = "";
 		
-		if (listaProdutoEdicao != null){
-			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-			for (Produto produto : listaProdutoEdicao){
-				listaProdutos.add(
-						new ItemAutoComplete(
-								produto.getNome(), 
-								null,
-								new FuroProdutoDTO(
-										produto.getCodigo())));
+		if(codigo!=null && !codigo.trim().isEmpty()) {
+		
+			resultado = extratoEdicaoService.obterNomeFornecedorDeProduto(codigo);
+			
+		} 
+		
+		result.use(Results.json()).from(resultado, "result").serialize();
+		
+	}
+	
+	public void obterProdutoEdicao(String codigo, Long edicao) {
+		
+		String resultado = "";
+		
+		if(codigo!=null && !codigo.trim().isEmpty() && edicao != null) {
+			
+			ProdutoEdicao produtoEdicao = extratoEdicaoService.obterProdutoEdicao(codigo, edicao);
+		
+			if(produtoEdicao!=null) {
+				
+				resultado = (produtoEdicao.getPrecoVenda()!=null) ? produtoEdicao.getPrecoVenda().toString() : "0.00";
+				
 			}
 			
-			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		}
 		
-		result.forwardTo(FuroProdutoController.class).index();
-	}
-	
-	public void obterFornecedorDeProduto(String codigoProduto){
-		
-		Fornecedor fornecedor = extratoEdicaoService.obterFornecedorDeProduto(codigoProduto);
-		
-	}
-	
-	public void obterProdutoEdicao(String codigoProduto, Long numeroEdicao) {
-		
-		ProdutoEdicao produtoEdicao = extratoEdicaoService.obterProdutoEdicao(codigoProduto, numeroEdicao);
+		result.use(Results.json()).from(resultado, "result").serialize();
 		
 	}
 	
 	/**
+	 * Pesquisa o Extrato da Edição e o serializa.
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(Long codigoProduto, String descProduto, Long idProdutoEdicao) throws Exception {
+	public void pesquisaExtratoEdicao(Long numeroEdicao) throws Exception {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		TableModel<CellModel> tableModel = null;
 		
-		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(1L);
+		Map<String, Object> resultado = new HashMap<String, Object>();
+		
+		if(numeroEdicao == null) {
+			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "O numero da edição deve ser informado."};
+			resultado.put(Constantes.PARAM_MSGS, msgErro);
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+			return;
+		}
+		
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(numeroEdicao);
 		
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
 			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
+			
+			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."};
+			resultado.put(Constantes.PARAM_MSGS, msgErro);
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 			return;
+			
 		}
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+		tableModel = obterTableModelParaListaExtratoEdicao(infoGeralExtratoEdicao.getListaExtratoEdicao());
+		
+		resultado.put(GRID_RESULT, tableModel);
+		resultado.put(SALDO_TOTAL_EXTRATO_EDICAO, infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
+		
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModel> obterTableModelParaListaExtratoEdicao(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+		
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
 		for(ExtratoEdicaoDTO extrato : listaExtratoEdicao) {
 			
 			String dataMovimento 		= sdf.format(extrato.getDataMovimento());
-			
 			String descTipoMovimento 	= extrato.getDescMovimento();
-			
 			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
-			
 			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();
-			
 			String qtdParcial 			= extrato.getQtdParcial().doubleValue() < 0.0D ? "-" : extrato.getQtdParcial().toString();
-			
 			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial));
 			
 		}
 		
-		TableModel<CellModel> tm = new TableModel<CellModel>();
+		tableModel.setPage(1);
+		tableModel.setTotal(listaModeloGenerico.size());
+		tableModel.setRows(listaModeloGenerico);
 		
-		tm.setPage(1);
-		
-		tm.setTotal(listaModeloGenerico.size());
-		
-		tm.setRows(listaModeloGenerico);
-
-		Map resultado = new HashMap();
-		
-		resultado.put("TblModelListaExtratoEdicao", tm);
-		
-		resultado.put("saldoTotalExtratoEdicao", infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
-		
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		return tableModel;
 		
 	}
 	
