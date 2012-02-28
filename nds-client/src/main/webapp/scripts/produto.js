@@ -1,13 +1,18 @@
 function pesquisarPorCodigoProduto() {
 	var codigoProduto = $("#codigo").val();
 	
+	$("#produto").val("");
+	$("#edicao").val("");
+	$("#edicao").attr("disabled", "disabled");
+	
+	if(typeof limparCamposPrePesquisaProduto == "function") {
+		limparCamposPrePesquisaProduto();
+	}
+	
 	if (!isNumeric(codigoProduto)) {
 		//TODO: mostrar msg
 		
 		$("#codigo").val("");
-		$("#produto").val("");
-		$("#edicao").val("");
-		$("#edicao").attr("disabled", "disabled");
 		
 		return;
 	}
@@ -31,6 +36,10 @@ function exibirNomeProduto(result) {
 
 function pesquisarPorNomeProduto() {
 	var produto = $("#produto").val();
+	
+	if(typeof limparCamposPrePesquisaProduto == "function") {
+		limparCamposPrePesquisaProduto();
+	}
 	
 	if (produto && produto.length > 0) {
 		$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto",
@@ -59,6 +68,10 @@ function completarPesquisa(chave){
 function validarNumEdicao() {
 	var codigoProduto = $("#codigo").val();
 	var numeroEdicao = $("#edicao").val();
+	
+	if(typeof limparCamposPrePesquisaEdicao == "function") {
+		limparCamposPrePesquisaEdicao();
+	}
 	
 	if (!isNumeric(numeroEdicao)) {
 		//TODO: mostrar msg
