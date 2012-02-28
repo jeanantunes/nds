@@ -6,6 +6,33 @@
 
 <script type="text/javascript">
 
+
+function pesquisarProdutoCallBack() {
+	
+	jsExtratoEdicao.pesquisarNomeFornecedor();
+	
+}
+
+
+function validarEdicaoCallBack() {
+	
+	jsExtratoEdicao.pesquisarPrecoCapa();
+	
+}
+
+function limparCamposPrePesquisaProduto() {
+
+	$("#nomeFornecedor").attr("value", "");
+	$("#precoCapa").attr("value", "");
+	
+}
+
+function limparCamposPrePesquisaEdicao() {
+
+	$("#precoCapa").attr("value", "");
+	
+}
+
 var jsExtratoEdicao = {
 
 	pesquisarExtratoEdicao : function() {
@@ -164,7 +191,6 @@ $(function() {
 					
 						<input 	type="text" 
 								name="codigo"
-								onblur="jsExtratoEdicao.pesquisarNomeFornecedor()" 
 								id="codigo"
 								maxlength="5"
 								style="width: 70px; 
@@ -197,7 +223,6 @@ $(function() {
 					<td width="186">
 					
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-						   onblur="jsExtratoEdicao.pesquisarPrecoCapa()"
 						   onchange="validarNumEdicao();"/>
 								
 					</td>
