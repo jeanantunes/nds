@@ -66,8 +66,11 @@ public class DiferencaEstoqueController {
 	}
 	
 	@Post
-	@Path("/consultarFaltasSobras")
-	public void consultarFaltasSobras() {
+	@Path("/pesquisarFaltasSobras")
+	public void pesquisarFaltasSobras(String codigoProduto, Long numeroEdicao,
+									  Long idFornecedor, String dataLancamentoDe,
+									  String dataLancamentoAte, TipoDiferenca tipoDiferenca) {
+				
 		result.use(Results.json()).from("Retorno", "result").serialize();
 	}
 

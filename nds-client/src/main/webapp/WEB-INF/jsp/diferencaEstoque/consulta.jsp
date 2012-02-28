@@ -14,9 +14,21 @@
 		});
 		
 		function mostrarGridConsulta() {
-			var data = null;
+			var codigoProduto = $("#codigo").val();
+			var numeroEdicao = $("#edicao").val();
+			var idFornecedor = $("#fornecedor").val();
+			var dataLancamentoDe = $("#dataLancamentoDe").val();
+			var dataLancamentoAte = $("#dataLancamentoAte").val();
+			var tipoDiferenca = $("#tipoDiferenca").val();
 			
-			$.postJSON("<c:url value='/estoque/diferenca/consultarFaltasSobras' />",
+			var data = "codigoProduto=" + codigoProduto +
+					   "&numeroEdicao=" + numeroEdicao +
+					   "&idFornecedor=" + idFornecedor +
+					   "&dataLancamentoDe=" + dataLancamentoDe +
+					   "&dataLancamentoAte=" + dataLancamentoAte +
+					   "&tipoDiferenca=" + tipoDiferenca;
+			
+			$.postJSON("<c:url value='/estoque/diferenca/pesquisarFaltasSobras' />",
 					   data, exibirFaltasSobras);
 		}
 		
@@ -66,7 +78,7 @@
 				
 				<td width="73">Fornecedor:</td>
 				<td width="230" colspan="2">
-					<select name="select8" id="select13" style="width: 200px;">
+					<select name="fornecedor" id="fornecedor" style="width: 200px;">
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
 						</c:forEach>
@@ -87,7 +99,7 @@
 				</td>
 				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
-					<select name="select9" id="select14" style="width: 120px;">
+					<select name="tipoDiferenca" id="tipoDiferenca" style="width: 120px;">
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>
