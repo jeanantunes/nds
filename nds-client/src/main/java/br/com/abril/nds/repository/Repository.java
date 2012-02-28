@@ -17,7 +17,7 @@ public interface Repository<T, K extends Serializable> {
 	
 	void remover(T entity);
 	
-	void buscarPorId(K id);
+	T buscarPorId(K id);
 	
 	List<T> buscarTodos();
 	

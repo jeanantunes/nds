@@ -2,6 +2,8 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class FuroProdutoDTO implements Serializable {
@@ -11,6 +13,8 @@ public class FuroProdutoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -580201558784688016L;
 	
+	private final String MASCARA_DATA = "dd/MM/yyyy";
+	
 	private String codigoProduto;
 	
 	private String nomeProduto;
@@ -19,7 +23,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private BigDecimal quantidadeExemplares;
 	
-	private Date novaData;
+	private String novaData;
 	
 	private String pathImagem;
 	
@@ -33,20 +37,20 @@ public class FuroProdutoDTO implements Serializable {
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
 		this.quantidadeExemplares = quantidadeExemplares;
-		this.novaData = novaData;
-		this.pathImagem = pathImagem;
+		this.pathImagem = pathImagem + codigoProduto + edicao;
 		this.idLancamento = idLancamento;
 		this.idProdutoEdicao = idProdutoEdicao;
-	}
-	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, BigDecimal quantidadeExemplares, 
-			String pathCapas, Long idLancamento, Long idProdutoEdicao){
-		this(codigoProduto, nomeProduto, edicao, quantidadeExemplares, null, 
-				pathCapas + codigoProduto + edicao, idLancamento, idProdutoEdicao);
+		
+		if (novaData != null){
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(novaData);
+			calendar.add(Calendar.DATE, 1);
+			this.novaData = new SimpleDateFormat(MASCARA_DATA).format(calendar.getTime());
+		}
 	}
 	
 	public FuroProdutoDTO(String codigoProduto){
-		this(codigoProduto, null, null, null, null, null, null);
+		this(codigoProduto, null, null, null, null, null, null, null);
 	}
 	
 	public String getCodigoProduto() {
@@ -81,11 +85,11 @@ public class FuroProdutoDTO implements Serializable {
 		this.quantidadeExemplares = quantidadeExemplares;
 	}
 
-	public Date getNovaData() {
+	public String getNovaData() {
 		return novaData;
 	}
 
-	public void setNovaData(Date novaData) {
+	public void setNovaData(String novaData) {
 		this.novaData = novaData;
 	}
 
