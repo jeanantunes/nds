@@ -64,6 +64,7 @@
 				$("#imagem").attr("src", "${pageContext.request.contextPath}/images/logo_sistema.png");
 			}
 			$("#imagem").attr("alt", result.nomeProduto);
+			$("#novaData").val(result.novaData);
 			
 			$("#lancamentoHidden").val(result.idLancamento);
 			$("#produtoEdicaoHidden").val(result.idProdutoEdicao);

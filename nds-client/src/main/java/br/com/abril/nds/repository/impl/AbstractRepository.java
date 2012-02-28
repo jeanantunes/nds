@@ -45,8 +45,9 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 		getSession().update(entity);
 	}
 	
-	public void buscarPorId(K id) {
-		getSession().get(clazz, id);
+	@SuppressWarnings("unchecked")
+	public T buscarPorId(K id) {
+		return (T) getSession().get(clazz, id);
 	}
 	
 	@SuppressWarnings("unchecked")
