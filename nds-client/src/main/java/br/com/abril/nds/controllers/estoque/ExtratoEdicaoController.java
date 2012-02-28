@@ -23,6 +23,12 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+/**
+ * Componente controller do extrato de edição.
+ * 
+ * @author michel.jader
+ *
+ */
 @Resource
 @Path("/estoque/extratoEdicao")
 public class ExtratoEdicaoController {
@@ -49,7 +55,6 @@ public class ExtratoEdicaoController {
 	
 	/**
 	 * Obtem e serializa o nome do fornecedor do produto.
-	 * 
 	 * @param codigo
 	 */
 	public void obterFornecedorDeProduto(String codigo) {
