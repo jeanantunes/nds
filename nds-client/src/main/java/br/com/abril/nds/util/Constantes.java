@@ -18,6 +18,8 @@ public abstract class Constantes {
 	public static final String TIPO_MSG_WARNING = "warning";
 	
 	public static final String TIPO_MSG_ERROR = "error";
+	
+	public static final String CODIGO_MOEDA_BR = "BRL";
 }
 
 

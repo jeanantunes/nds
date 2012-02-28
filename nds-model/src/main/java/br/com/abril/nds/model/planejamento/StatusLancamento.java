@@ -6,6 +6,6 @@ public enum StatusLancamento {
 	BALANCEAMENTO_SUGERIDO,
 	BALANCEADO,
 	ESTUDO_FECHADO,
-	PENDENTE, 
+	FURO, 
 	EXPEDIDO;
 }
