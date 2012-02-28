@@ -36,7 +36,6 @@ public class ProdutoController {
 	public void pesquisarPorCodigoProduto(String codigoProduto) {
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
-
 		if (produto == null) {
 			List<String> listaMensagemValidacao = new ArrayList<String>();
 			
@@ -53,14 +52,9 @@ public class ProdutoController {
 	public void pesquisarPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		
-
-		//TODO: tratar retorno da consulta
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
 		if (listaProduto != null && !listaProduto.isEmpty()) {
-			
-			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-			
-
 			Produto produtoAutoComplete = null;
 			
 			for (Produto produto : listaProduto){
@@ -72,11 +66,9 @@ public class ProdutoController {
 				
 				listaProdutos.add(itemAutoComplete);
 			}
-
-			
-			result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 		}
-
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
 	
 	@Post
