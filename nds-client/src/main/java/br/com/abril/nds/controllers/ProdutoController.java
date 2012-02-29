@@ -37,15 +37,21 @@ public class ProdutoController {
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
+			
 			List<String> listaMensagemValidacao = new ArrayList<String>();
 			
 			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
 			listaMensagemValidacao.add("Produto não encontrado.");
 
 			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+			
+		} else {
+			
+			result.use(Results.json()).from(produto, "result").serialize();
+			
 		}
 		
-		result.use(Results.json()).from(produto, "result").serialize();
+		
 	}
 	
 	@Post
@@ -72,22 +78,37 @@ public class ProdutoController {
 	}
 	
 	@Post
-	public void validarNumeroEdicao(String codigoProduto, Long numeroEdicao) {
+	public void validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
 		
-		boolean numEdicaoValida =
-			produtoEdicaoService.validarNumeroEdicao(codigoProduto, numeroEdicao);
+		boolean numEdicaoValida = false;
 		
-		if (!numEdicaoValida) {
+		try {
+			
+			numEdicaoValida = produtoEdicaoService.validarNumeroEdicao(codigoProduto, numeroEdicao);
+			
+			if (!numEdicaoValida) {
+				List<String> listaMensagemValidacao = new ArrayList<String>();
+				
+				listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
+				listaMensagemValidacao.add("Edição não encontrada para o produto.");
+
+				result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+				
+			} else {
+				result.use(Results.json()).from("", "result").serialize();
+			}
+			
+		} catch (IllegalArgumentException e ) {
+			
 			List<String> listaMensagemValidacao = new ArrayList<String>();
 			
 			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("Edição não encontrada para o produto.");
-
+			
+			listaMensagemValidacao.add(e.getMessage());
+			
 			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
-		} else {
-			//TODO: retorno ajax quando não precisar de result
-			result.use(Results.json()).from("", "result").serialize();
 		}
+		
 	}
 	
 }

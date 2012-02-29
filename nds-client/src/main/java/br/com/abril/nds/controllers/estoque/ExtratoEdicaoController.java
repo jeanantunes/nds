@@ -39,6 +39,7 @@ public class ExtratoEdicaoController {
 	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
 	
 	
+	
 	@Autowired
 	private ExtratoEdicaoService extratoEdicaoService;
 	
@@ -96,20 +97,21 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(Long numeroEdicao) throws Exception {
+	public void pesquisaExtratoEdicao(String codigoProduto, Long numeroEdicao) throws Exception {
 		
 		TableModel<CellModel> tableModel = null;
 		
 		Map<String, Object> resultado = new HashMap<String, Object>();
 		
-		if(numeroEdicao == null) {
-			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "O numero da edição deve ser informado."};
-			resultado.put(Constantes.PARAM_MSGS, msgErro);
+		List<String> listaWarningMsg = validarParametrosPesquisa(codigoProduto, numeroEdicao);
+		
+		if(!listaWarningMsg.isEmpty()) {
+			resultado.put(Constantes.PARAM_MSGS, listaWarningMsg.toArray());
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 			return;
 		}
 		
-		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(numeroEdicao);
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(codigoProduto, numeroEdicao);
 		
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
@@ -131,6 +133,26 @@ public class ExtratoEdicaoController {
 		
 	}
 	
+	private List<String> validarParametrosPesquisa(String codigoProduto, Long numeroEdicao) {
+
+		List<String> msgWarningValidacao = new LinkedList<String>();
+		
+		if(codigoProduto == null || codigoProduto.isEmpty() || numeroEdicao == null) {
+			msgWarningValidacao.add(Constantes.TIPO_MSG_WARNING);
+		}
+		
+		if(codigoProduto == null || codigoProduto.isEmpty() ) {
+			msgWarningValidacao.add("O preenchimento do campo código é obrigatório!.");
+		}
+		
+		if(numeroEdicao == null) {
+			msgWarningValidacao.add("O preenchimento do campo edição é obrigatório!.");
+		}
+		
+		return msgWarningValidacao;
+		
+	}
+
 	private TableModel<CellModel> obterTableModelParaListaExtratoEdicao(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());

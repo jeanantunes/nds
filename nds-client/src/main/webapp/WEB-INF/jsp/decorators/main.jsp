@@ -194,7 +194,7 @@ fieldset label {
 							<li><a href="estoque/diferenca/consulta">Consulta
 									Faltas e Sobras</a>
 							</li>
-							<li><a href="Estoque/extrato_edicao.htm">Extrato de
+							<li><a href='<c:url value="/estoque/extratoEdicao/index"/>'>Extrato de
 									Edição</a>
 							</li>
 							<li><a href="Estoque/lancamento_faltas_sobras.htm">Lançamento
