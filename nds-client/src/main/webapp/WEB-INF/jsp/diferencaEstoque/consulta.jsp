@@ -1,8 +1,8 @@
 <head>
-	<script language="javascript" type="text/javascript"
+	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 	
 		$(function() {
 			$('input[id^="dataLancamento"]').datepicker({
@@ -14,16 +14,43 @@
 		});
 		
 		function mostrarGridConsulta() {
-			var data = null;
+			var codigoProduto = $("#codigo").val();
+			var numeroEdicao = $("#edicao").val();
+			var idFornecedor = $("#fornecedor").val();
+			var dataLancamentoDe = $("#dataLancamentoDe").val();
+			var dataLancamentoAte = $("#dataLancamentoAte").val();
+			var tipoDiferenca = $("#tipoDiferenca").val();
 			
-			$.postJSON("<c:url value='/estoque/diferenca/consultarFaltasSobras' />",
-					   data, exibirFaltasSobras);
+			$(".consultaFaltasSobrasGrid").flexOptions({
+				url: "<c:url value='/estoque/diferenca/pesquisarDiferencas' />",
+				params: [
+				         {name:'codigoProduto', value:codigoProduto},
+				         {name:'numeroEdicao', value:numeroEdicao},
+				         {name:'idFornecedor', value:idFornecedor},
+				         {name:'dataLancamentoDe', value:dataLancamentoDe},
+				         {name:'dataLancamentoAte', value:dataLancamentoAte},
+				         {name:'tipoDiferenca', value:tipoDiferenca}
+				        ] ,
+			});
+			
+			$(".consultaFaltasSobrasGrid").flexReload();
+			
+			$(".grids").show();
 		}
 		
-		function exibirFaltasSobras(result) {
-			$(".grids").show();
+		function getDataFromResult(data) {
 			
-			alert(result);
+			var dadosPesquisa;
+			
+			$.each(data, function(index, value) {
+				
+				  if(value[0] == "TblModelListaFaltasSobras") {
+					  dadosPesquisa = value[1];
+				  }
+				  
+			});
+			
+			return dadosPesquisa;
 		}
 		
 	</script>
@@ -41,6 +68,7 @@
 
 	<fieldset class="classFieldset">
 		<legend>Pesquisar Faltas e Sobras</legend>
+		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="59">Código:</td>
@@ -59,14 +87,12 @@
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-
 						   onchange="validarNumEdicao();"/>
-
 				</td>
 				
 				<td width="73">Fornecedor:</td>
 				<td width="230" colspan="2">
-					<select name="select8" id="select13" style="width: 200px;">
+					<select name="fornecedor" id="fornecedor" style="width: 200px;">
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
 						</c:forEach>
@@ -87,7 +113,7 @@
 				</td>
 				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
-					<select name="select9" id="select14" style="width: 120px;">
+					<select name="tipoDiferenca" id="tipoDiferenca" style="width: 120px;">
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>
@@ -118,8 +144,8 @@
 	<script>
 	
 		$(".consultaFaltasSobrasGrid").flexigrid({
-			//url : '../xml/consulta_faltas_sobras-xml.xml',
-			dataType : 'xml',
+			preProcess: getDataFromResult,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Data',
 				name : 'data',

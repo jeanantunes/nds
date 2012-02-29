@@ -1,78 +1,104 @@
-<!-- 
-
-	VIEW REFERENTE A EMS0081
-	
- -->
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meuConteudo</title>
 
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
+
 <script type="text/javascript">
 
 
+function pesquisarProdutoCallBack() {
+	
+	jsExtratoEdicao.pesquisarNomeFornecedor();
+	
+}
+
+
+function validarEdicaoCallBack() {
+	
+	jsExtratoEdicao.pesquisarPrecoCapa();
+	
+}
+
+function limparCamposPrePesquisaProduto() {
+
+	$("#nomeFornecedor").attr("value", "");
+	$("#precoCapa").attr("value", "");
+	
+}
+
+function limparCamposPrePesquisaEdicao() {
+
+	$("#precoCapa").attr("value", "");
+	
+}
 
 var jsExtratoEdicao = {
 
 	pesquisarExtratoEdicao : function() {
-
 		
-		var codigoProduto = jQuery("#edicao").attr('value');
-		var descProduto = jQuery("#edicao").attr('value');
-		var idProdutoEdicao = jQuery("#edicao").attr('value');
+		var numeroEdicao = jQuery("#edicao").attr('value');
 		
 		$(".extratoEdicaoGrid").flexOptions({
-			
-			url: '<c:url value="/estoque/extratoEdicao/pesquisaExtratoEdicao"/>',
-			
-			params:[{name:'codigoProduto', value: codigoProduto},
-				    {name:'descProduto', value: descProduto},
-				    {name:'idProdutoEdicao', value: idProdutoEdicao}],
+			url: '<c:url value="/"/>estoque/extratoEdicao/pesquisaExtratoEdicao',
+			preProcess: jsExtratoEdicao.getDataFromResult,
+			dataType : 'json',
+			params:[{name:'numeroEdicao', value: numeroEdicao}],
 		});
 		
 		$(".extratoEdicaoGrid").flexReload();
-		
-		$(".grids").show();
+
 	},	
 	
-
-	pesquisarPorNomeProduto : function(){
+	pesquisarNomeFornecedor : function() {
 		
-		var produto = $("#produto").val();
+		var data = "codigo=" + $("#codigo").val();
 		
-		if (produto && produto.length > 0){
-			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, jsExtratoEdicao.exibirAutoComplete);
-		}
-	},
-	
-	exibirAutoComplete : function (result){
-		
-		$("#produto").autocomplete({
-			source: result,
-			select: function(event, ui){
-				jsExtratoEdicao.completarPesquisa(ui.item.chave);
-			}
+		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterFornecedorDeProduto', data, 
+				function(result){
+			
+			$("#nomeFornecedor").attr("value", result);
+			
 		});
 		
 	},
 	
-	completarPesquisa : function(chave){
-		$("#codigo").val(chave.codigoProduto);
-		$("#edicao").focus();
+	
+	pesquisarPrecoCapa : function() {
+		
+		var data = "codigo=" + $("#codigo").val() +
+		  		  "&edicao=" + $("#edicao").val();
+		
+		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
+			$("#precoCapa").attr("value", result);
+		});
+		
 	},
-	
-	
+		
 	getDataFromResult : function(data) {
+		
+		jsExtratoEdicao.dadosPesquisa = {page: 0, total: 0};
+		jsExtratoEdicao.saldoTotalExtratoEdicao = 0.0;
+		jsExtratoEdicao.mensagens = undefined;
 		
 		$.each(data, function(index, value) {
 			
-			  if(value[0] == "TblModelListaExtratoEdicao") {
+			  if(value[0] == "gridResult") {
 				  jsExtratoEdicao.dadosPesquisa = value[1];
 			  } else if(value[0] == "saldoTotalExtratoEdicao") {
 				  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
+			  } else if(value[0] == "mensagens") {
+				  jsExtratoEdicao.mensagens = value[1];
 			  }
 			  
 		});
+		
+		if(typeof jsExtratoEdicao.mensagens == "object") {
+			$(".grids").hide();
+			exibirMensagem(jsExtratoEdicao.mensagens[0], jsExtratoEdicao.mensagens);
+		} else {
+			$(".grids").show();
+		}
 		
 		$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
 		
@@ -92,38 +118,34 @@ var jsExtratoEdicao = {
 								display : 'Data',
 								name : 'dataInclusao',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}, {
 								display : 'Movimento',
 								name : 'movimento',
 								width : 370,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							}, {
 								display : 'Entrada',
 								name : 'entrada',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}, {
 								display : 'Saída',
 								name : 'saida',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}, {
 								display : 'Parcial',
 								name : 'parcial',
 								width : 120,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							} ],
-							sortname : "codigo",
-							sortorder : "asc",
-							usepager : true,
-							useRp : true,
-							rp : 15,
+
 							showTableToggleBtn : true,
 							width : 960,
 							height : 180
@@ -135,6 +157,8 @@ var jsExtratoEdicao = {
 };
 
 $(function() {
+	
+	$("#edicao").mask("?99999999999999999999", {placeholder:""});
 	
 	$("#produto").autocomplete({
 		source: ''
@@ -152,15 +176,6 @@ $(function() {
 
 	<div class="container">
 
-		<div id="effect" style="padding: 0 .7em;"
-			class="ui-state-highlight ui-corner-all">
-			<p>
-				<span style="float: left; margin-right: .3em;"
-					class="ui-icon ui-icon-info"></span> <b>Chamadão < evento > com
-					< status >.</b>
-			</p>
-		</div>
-
 		<fieldset class="classFieldset">
 		
 			<legend> Extrato de Edição </legend>
@@ -175,15 +190,15 @@ $(function() {
 					<td width="123">
 					
 						<input 	type="text" 
-								name="codigoProduto" 
-								id="codigoProduto"
+								name="codigo"
+								id="codigo"
 								maxlength="5"
 								style="width: 70px; 
 								float: left; 
 								margin-right: 5px;" />
 
 						<span class="classPesquisar">
-							<a href="javascript:;">&nbsp;</a>
+							<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
 						</span>
 					
 					</td>
@@ -194,12 +209,10 @@ $(function() {
 					
 					<td width="236">
 
-						<input 	type="text" 
-								name="nomeProduto" 
-								id="nomeProduto" 
-								style="width: 220px;" 
-								maxlength="255" 
-								onkeyup="jsExtratoEdicao.pesquisarPorNomeProduto();"/>
+						<input type="text" name="produto" id="produto" style="width: 220px;"
+					       onkeyup="pesquisarPorNomeProduto();" />
+
+						
 					
 					</td>
 					
@@ -209,16 +222,8 @@ $(function() {
 					
 					<td width="186">
 					
-						<select name="selectEdicoes" id="selectEdicoes" style="width: 250px;">
-						
-							<option selected="selected">Todos</option>
-							
-							<c:forEach items="${edicoes}" var="edicao">
-								<option value="${edicao.id}">${edicao.juridica.razaoSocial}</option>
-							</c:forEach>
-							
-						</select>
-
+					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+						   onchange="validarNumEdicao();"/>
 								
 					</td>
 					
@@ -227,12 +232,12 @@ $(function() {
 				</tr>
 				<tr>
 					<td>Preço da Capa:</td>
-					<td><input type="text" name="datepickerDe3" id="datepickerDe3"
+					<td><input type="text" name="precoCapa" id="precoCapa"
 						style="width: 70px; float: left; margin-right: 5px;"
 						disabled="disabled" />
 					</td>
 					<td>Fornecedor:</td>
-					<td><input type="text" name="textfield" id="textfield"
+					<td><input type="text" name="textfield" id="nomeFornecedor"
 						style="width: 220px;" disabled="disabled" />
 					</td>
 					<td>&nbsp;</td>

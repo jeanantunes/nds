@@ -20,7 +20,10 @@ implements MovimentoEstoqueRepository {
 	public MovimentoEstoqueRepositoryImpl() {
 		super(MovimentoEstoque.class);
 	}
-
+	
+	/**
+	 * Obtém uma lista de extratoEdicao.
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ExtratoEdicaoDTO> obterListaExtratoEdicao(Long numeroEdicao) {

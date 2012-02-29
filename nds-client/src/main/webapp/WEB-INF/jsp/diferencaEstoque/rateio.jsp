@@ -1,4 +1,4 @@
-<div id="dialogRateioDiferencas" title="Lançamento Faltas e Sobras">
+<div id="dialogRateioDiferencas" title="Lançamento Faltas e Sobras" style="display: none;">
 
 	<table class="gridRateioDiferencas"></table>
 	

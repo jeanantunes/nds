@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -42,11 +43,26 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new IllegalArgumentException("Id usuário é obrigatório.");
 		}
 		
-		//TODO tem q ter registro aqui mesmo?
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+		
+		if (lancamento == null){
+			throw new IllegalArgumentException("Lançamento não encontrado.");
+		}
+		
+		if (novaData.equals(lancamento.getDataLancamentoDistribuidor()) 
+				|| novaData.before(lancamento.getDataLancamentoDistribuidor())){
+			throw new IllegalArgumentException("Nova data deve ser maior que a data de lançamento atual.");
+		}
+		
+		if (lancamento.getStatus().equals(StatusLancamento.EXPEDIDO)){
+			throw new IllegalArgumentException("Produto já expedido não pode sofrer furo.");
+		}
+		
+		lancamento.setDataLancamentoDistribuidor(novaData);
+		lancamento.setStatus(StatusLancamento.FURO);
+		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
-		Lancamento lancamento = new Lancamento();
-		lancamento.setId(idLancamento);
 		furoProduto.setLancamento(lancamento);
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(idProdutoEdicao);
@@ -56,10 +72,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		furoProduto.setUsuario(usuario);
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
-		//editar registro na tabela de lançamento com nova data e zerar reparte
-		this.lancamentoRepository.atualizarLancamento(idLancamento, novaData);
-		
-		//TODO criar registro no estoque (movimento_estoque)
+		this.lancamentoRepository.alterar(lancamento);
 	}
 
 }
