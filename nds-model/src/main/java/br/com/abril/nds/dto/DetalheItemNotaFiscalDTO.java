@@ -1,16 +1,18 @@
-package br.com.abril.nds.vo.estoque;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 
-public class DetalheNotaFiscalVO implements Serializable {
+public class DetalheItemNotaFiscalDTO implements Serializable {
 
 	private static final long serialVersionUID = -3303109650463467609L;
 
 	private Long codigoItem;
 	
+	private String codigoProduto;
+
 	private String nomeProduto;
 	
 	private Long numeroEdicao;
@@ -18,20 +20,14 @@ public class DetalheNotaFiscalVO implements Serializable {
 	private BigDecimal quantidadeExemplares;
 	
 	private BigDecimal sobrasFaltas;
+	
+	private BigDecimal precoVenda;
 
 	private TipoDiferenca tipoDiferenca;
 	
-	public DetalheNotaFiscalVO() { }
-
-	public DetalheNotaFiscalVO(Long codigoItem, String nomeProduto, Long numeroEdicao,
-							   BigDecimal quantidadeExemplares, BigDecimal sobrasFaltas, TipoDiferenca tipoDiferenca) {
-		this.codigoItem = codigoItem;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-		this.quantidadeExemplares = quantidadeExemplares;
-		this.sobrasFaltas = sobrasFaltas;
-		this.tipoDiferenca = tipoDiferenca;
-	}
+	private BigDecimal valorTotal;
+	
+	public DetalheItemNotaFiscalDTO() { }
 
 	/**
 	 * @return the codigoItem
@@ -115,5 +111,47 @@ public class DetalheNotaFiscalVO implements Serializable {
 	 */
 	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
 		this.tipoDiferenca = tipoDiferenca;
+	}
+
+	/**
+	 * @return the codigoProduto
+	 */
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	/**
+	 * @return the precoVenda
+	 */
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
+	}
+
+	/**
+	 * @param precoVenda the precoVenda to set
+	 */
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
+	}
+
+	/**
+	 * @return the valorTotal
+	 */
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+
+	/**
+	 * @param valorTotal the valorTotal to set
+	 */
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 }
