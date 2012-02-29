@@ -2,6 +2,7 @@
 <title>Consulta de Notas</title>
 <script language="javascript" type="text/javascript">
 	
+		var reloadFlex = false;
 
 		function processarResultadoConsultaNF(data) {
 
@@ -33,7 +34,7 @@
 		function pesquisarNotas() { 
 
 			var formData = $('#formPesquisaNotas').serializeArray();
-			
+
 			$("#notasSemFisicoGrid").flexigrid({
 				preProcess: processarResultadoConsultaNF,
 				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />',
@@ -93,22 +94,24 @@
 				singleSelect: true
 			});
 
-			if ($(".grids").css('display') != 'none') {
+			if (!reloadFlex) {
+
+				reloadFlex = true;
+
+				$(".grids").show();
+
+			} else {
 
 				formData = $('#formPesquisaNotas').serializeArray();
 				
 				$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData});
 				
 				$("#notasSemFisicoGrid").flexReload();
-
-			} else {
-
-				$(".grids").show();
 			}
 		}
 		
 		function pesquisarDetalhesNota(idNota) {
-			
+
 			$("#notasSemFisicoDetalheGrid").flexigrid({
 				url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />',
 				preProcess: montarGridComRodape,
@@ -162,15 +165,17 @@
 				resizable:false
 			});
 			
-			if ($(".dialog-novo").css('display') != 'none') {
+			if (!reloadFlex) {
 
-				$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
-															params: [{ name: 'idNota', value: idNota }]});
-				
-				$("#notasSemFisicoDetalheGrid").flexReload();
+				reloadFlex = true;
+
+				$("#dialog-novo").show();
 			}
+			
+			$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
+				params: [{ name: 'idNota', value: idNota }]});
 
-			$("#dialog-novo").show();
+			$("#notasSemFisicoDetalheGrid").flexReload();
 		}
 		
 		function montarGridComRodape(data) {
@@ -181,7 +186,7 @@
 
 			$("#totalExemplares").html(result.totalExemplares);
 			$("#totalSumarizado").html("R$ " + result.totalSumarizado);
-			
+
 			return result.tableModel;
 		}
 		
@@ -281,7 +286,7 @@ fieldset label
 						<td>Fornecedor:</td>
 						<td>
 							<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
-								<option selected="selected">Todos</option>
+								<option selected="selected" value="-1">Todos</option>
 								<c:forEach items="${fornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
@@ -303,7 +308,7 @@ fieldset label
 						<td width="107">Tipo de Nota:</td>
 						<td width="293">
 						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
-							<option selected="selected"></option>
+							<option selected="selected" value="-1"></option>
 							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
 							</c:forEach>

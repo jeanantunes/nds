@@ -2,8 +2,6 @@ package br.com.abril.nds.controllers.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.gson.Gson;
-
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -14,32 +12,38 @@ import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.core.InterceptorStack;
+import br.com.caelum.vraptor.interceptor.ExecuteMethodInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.com.caelum.vraptor.serialization.Serializer;
 import br.com.caelum.vraptor.view.Results;
 
+import com.google.gson.Gson;
+
 @RequestScoped
-@Intercepts
+@Intercepts(before=ExecuteMethodInterceptor.class)
 public class ValidacaoInterceptor implements Interceptor {
 
 	private Result result;
 	
 	private HttpServletRequest request;
 	
-	public ValidacaoInterceptor(Result result, HttpServletRequest request) {
+	private Validator validator;
+	
+	public ValidacaoInterceptor(Result result, HttpServletRequest request, Validator validator) {
 		
 		this.result = result;
 		this.request = request;
+		this.validator = validator;
 	}
 	
 	@Override
 	public void intercept(InterceptorStack stack, 
 						  ResourceMethod method,
 						  Object resourceInstance) throws InterceptionException {
-		
+
 		try {
 			
 			stack.next(method, resourceInstance);
@@ -53,6 +57,8 @@ public class ValidacaoInterceptor implements Interceptor {
 				this.tratarExecaoValidacao((ValidacaoException) cause);
 			
 			} else {
+				
+				validator.onErrorRedirectTo(ErrorController.class).showError(cause);
 				
 				this.tratarExecoesGenericas(cause);
 			}
@@ -99,8 +105,6 @@ public class ValidacaoInterceptor implements Interceptor {
 			
 			result.redirectTo(ErrorController.class).showError(throwable);
 		}
-			
-		
 	}
 	
 	@Override
