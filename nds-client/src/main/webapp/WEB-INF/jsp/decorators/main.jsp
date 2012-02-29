@@ -73,6 +73,10 @@
 
 	function verificarMensagens() {
 		
+		if (${empty mensagens}) {
+			return;
+		}
+		
 		var jsonData = jQuery.toJSON(${mensagens});
 
 		var mensagens = jQuery.evalJSON(jsonData);
