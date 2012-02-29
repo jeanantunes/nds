@@ -15,7 +15,6 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -173,10 +172,10 @@ public class FuroProdutoController {
 			try {
 				this.furoProdutoService.efetuarFuroProduto(idProdutoEdicao, idLancamento, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
 				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_SUCCESS, 
-						"Furo efetuado com sucesso."}, Constantes.PARAM_MSGS).serialize();
+						"Operação efetuada com sucesso."}, Constantes.PARAM_MSGS).serialize();
 			} catch (Exception e){
 				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
-						"Erro ao confirmar furo do produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
+						"Erro ao efetuar furo: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
 			}
 		}
 		

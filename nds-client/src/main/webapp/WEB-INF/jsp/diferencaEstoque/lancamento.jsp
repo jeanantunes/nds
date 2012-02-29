@@ -1,25 +1,174 @@
 <head>
 	<script language="javascript" type="text/javascript">
-	
-		function pesquisar() {
 
-			var data = "dataMovimento=" + $("#dataMovimento").val() +
-	  		   		   "&tipoDiferenca=" + $("#tipoDiferenca").val();
+		function executarPreProcessamento(data) {
 
-			$.postJSON("<c:url value='/estoque/diferenca/lancamento/pesquisa' />", data, exibirLancamentos);
-		}
+			if (data.mensagens) {
 
-		function exibirLancamentos(result) {
+				alert(data.mensagens);
 
-			if (!result || result == null) {
+				return data;
+			}
+			
+			var i;
 
-				//TODO: Mensagem de nenhum item encontrado
-				return;
+			for (i = 0 ; i < data.rows.length; i++) {
+
+				var lastIndex = data.rows[i].cell.length - 1;
+
+				data.rows[i].cell[lastIndex-1] = 
+					'<a href="javascript:;" onclick="popupRateioCota();" style="cursor:pointer" style="border:none">' +
+						'<img src="${pageContext.request.contextPath}/images/bt_cadastros.png"/>' +
+						'<input type="hidden" name="idMovimento" value="' + data.rows[i].cell[lastIndex] + '"/>' +
+					'</a>' +
+					'<a href="javascript:;" onclick="popupExclusaoDiferenca();" style="cursor:pointer" style="border:none">' +
+						'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"/>' +
+						'<input type="hidden" name="idMovimento" value="' + data.rows[i].cell[lastIndex] + '"/>' +
+					'</a>';
 			}
 
-			alert(result);	
+			return data;
+		} 
+
+		function pesquisar() { 
+
+			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+
+			$("#gridLancamentos").flexigrid({
+				preProcess: executarPreProcessamento,
+				url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />',
+				dataType : 'json',
+				colModel : [{
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Produto',
+					name : 'descricaoProduto',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'edicaoProduto',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Preço R$',
+					name : 'precoProduto',
+					width : 90,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Pacote Padrão',
+					name : 'pacotePadrao',
+					width : 110,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Exemplares',
+					name : 'exemplares',
+					width : 110,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Tipo de Diferença',
+					name : 'tipoDiferenca',
+					width : 120,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Total R$',
+					name : 'vlrTotal',
+					width : 90,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Ação',
+					name : 'acao',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "descricaoProduto",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				params: formData,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180,
+				singleSelect: true
+			});
+			
+			if ($(".grids").css('display') != 'none') {
+				
+				formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+				
+				$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
+				
+				$("#gridLancamentos").flexReload();
+				
+			} else {
+
+				$(".grids").show();
+			}
 		}
+
+		function popupExclusaoDiferenca() {
+
+			$("#dialog-excluir" ).dialog({
+				
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						$("#effect").hide("highlight", {}, 1000, callback);
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});	     
+		}
+
+		$(function() {
+			
+			$("#datePickerDataMovimento").datepicker({
+				showOn : "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly : true,
+				dateFormat: 'dd/mm/yy',
+				defaultDate: new Date()
+			});
+		});
 	</script>
+	
+	<style type="text/css">
+		fieldset label 
+		{
+			width: auto;
+			margin-bottom: 0px !important;
+		}
+		
+		.ui-datepicker 
+		{
+			z-index: 1000 !important;		
+		}
+		
+		.ui-datepicker-today a
+		{
+			display:block !important;
+		}
+	</style>
 </head>
 
 <body>
@@ -31,20 +180,23 @@
 			
 				<legend>Lançamento Faltas e Sobras</legend>
 				
-				<form name="pesquisaForm" action="estoque/diferenca/lancamento/pesquisa" method="post">
-					<table width="950" border="0" cellpadding="2" cellspacing="1"
-						class="filtro">
+				<form id="pesquisaLancamentoDiferencaForm"
+					  name="pesquisaLancamentoDiferencaForm" 
+					  action="estoque/diferenca/lancamento/pesquisa" 
+					  method="post">
+					  
+					<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 						<tr>
 							<td width="111">Data Movimento:</td>
 							<td width="124">
 								<input type="text" 
-									   name="dataMovimento" 
-									   id="dataMovimento" 
+									   name="filtro.dataMovimento" 
+									   id="datePickerDataMovimento" 
 									   style="width: 70px; float: left; margin-right: 5px;" />
 							</td>
 							<td width="115">Tipo de Diferença:</td>
 							<td width="294">
-								<select id="tipoDiferenca" name="tipoDiferenca" style="width: 220px;">
+								<select id="selectTiposDiferenca" name="filtro.tipoDiferenca" style="width: 220px;">
 									<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 										<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 									</c:forEach>
@@ -67,12 +219,12 @@
 				<legend>Lançamento Faltas e Sobras</legend>
 				
 				<div class="grids" style="display: none;">
-					<table class="gridLancamentos"></table>
+					<table id="gridLancamentos" class="gridLancamentos"></table>
 				</div>
 				
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="282">
+						<td width="459">
 							<span class="bt_novo">
 								<a href="javascript:;" onclick="popupNovasDiferencas();">Novo</a>
 							</span>
@@ -80,10 +232,10 @@
 								<a href="javascript:;" onclick="popup();">Confirmar</a>
 							</span>
 						</td>
-						<td width="102" class="total"><strong>Total Geral:</strong></td>
-						<td width="189" class="total">R$ 999.999,99</td>
-						<td width="144" align="center" class="total">980</td>
-						<td width="198" class="total">&nbsp;</td>
+						<td width="99" class="total"><strong>Total Geral:</strong></td>
+					    <td width="108" class="total">980</td>
+					    <td width="104" align="center" class="total">&nbsp;</td>
+					    <td width="145" class="total">R$ 999.999,99</td>
 					</tr>
 				</table>
 			</fieldset>
@@ -95,89 +247,4 @@
 	<jsp:include page="novo.jsp" />
 	
 	<jsp:include page="rateio.jsp" />
-	
-	<script>
-		$(".gridLancamentos").flexigrid({
-			url : '../xml/lancamento_faltas_sobras-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Produto',
-				name : 'produto',
-				width : 190,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Preço R$',
-				name : 'preco',
-				width : 90,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Pacote Padrão',
-				name : 'pacote',
-				width : 110,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Exemplares',
-				name : 'exemplares',
-				width : 110,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Tipo de Diferença',
-				name : 'tipoDiferenca',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "produto",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
-
-		function popupExclusaoDiferenca() {
-
-			$("#dialog-excluir" ).dialog({
-				resizable: false,
-				height:'auto',
-				width:300,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});	     
-		};
-
-	</script>
 </body>

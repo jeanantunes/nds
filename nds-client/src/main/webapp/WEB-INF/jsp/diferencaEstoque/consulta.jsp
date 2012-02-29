@@ -1,8 +1,8 @@
 <head>
-	<script language="javascript" type="text/javascript"
+	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 	
 		$(function() {
 			$('input[id^="dataLancamento"]').datepicker({
@@ -21,21 +21,36 @@
 			var dataLancamentoAte = $("#dataLancamentoAte").val();
 			var tipoDiferenca = $("#tipoDiferenca").val();
 			
-			var data = "codigoProduto=" + codigoProduto +
-					   "&numeroEdicao=" + numeroEdicao +
-					   "&idFornecedor=" + idFornecedor +
-					   "&dataLancamentoDe=" + dataLancamentoDe +
-					   "&dataLancamentoAte=" + dataLancamentoAte +
-					   "&tipoDiferenca=" + tipoDiferenca;
+			$(".consultaFaltasSobrasGrid").flexOptions({
+				url: "<c:url value='/estoque/diferenca/pesquisarDiferencas' />",
+				params: [
+				         {name:'codigoProduto', value:codigoProduto},
+				         {name:'numeroEdicao', value:numeroEdicao},
+				         {name:'idFornecedor', value:idFornecedor},
+				         {name:'dataLancamentoDe', value:dataLancamentoDe},
+				         {name:'dataLancamentoAte', value:dataLancamentoAte},
+				         {name:'tipoDiferenca', value:tipoDiferenca}
+				        ] ,
+			});
 			
-			$.postJSON("<c:url value='/estoque/diferenca/pesquisarFaltasSobras' />",
-					   data, exibirFaltasSobras);
+			$(".consultaFaltasSobrasGrid").flexReload();
+			
+			$(".grids").show();
 		}
 		
-		function exibirFaltasSobras(result) {
-			$(".grids").show();
+		function getDataFromResult(data) {
 			
-			alert(result);
+			var dadosPesquisa;
+			
+			$.each(data, function(index, value) {
+				
+				  if(value[0] == "TblModelListaFaltasSobras") {
+					  dadosPesquisa = value[1];
+				  }
+				  
+			});
+			
+			return dadosPesquisa;
 		}
 		
 	</script>
@@ -53,6 +68,7 @@
 
 	<fieldset class="classFieldset">
 		<legend>Pesquisar Faltas e Sobras</legend>
+		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="59">Código:</td>
@@ -71,9 +87,7 @@
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-
 						   onchange="validarNumEdicao();"/>
-
 				</td>
 				
 				<td width="73">Fornecedor:</td>
@@ -130,8 +144,8 @@
 	<script>
 	
 		$(".consultaFaltasSobrasGrid").flexigrid({
-			//url : '../xml/consulta_faltas_sobras-xml.xml',
-			dataType : 'xml',
+			preProcess: getDataFromResult,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Data',
 				name : 'data',

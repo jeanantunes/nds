@@ -104,7 +104,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(), 
 				new Date(), 
 				BigDecimal.TEN,
-				StatusLancamento.PENDENTE);
+				StatusLancamento.RECEBIDO, null);
 		
 		getSession().save(lancamento);
 		

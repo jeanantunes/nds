@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value = "J")
 public class PessoaJuridica extends Pessoa {
 
-	@Column(name = "RAZAO_SOCIAL", nullable = false)
+	@Column(name = "RAZAO_SOCIAL")
 	private String razaoSocial;
 	@Column(name = "NOME_FANTASIA")
 	private String nomeFantasia;

@@ -43,13 +43,26 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	 */
 	public enum OrdenacaoColuna {
 		
-		CODIGO_PRODUTO,
-		DESCRICAO_PRODUTO,
-		NUMERO_EDICAO,
-		PRECO_PRODUTO,
-		PACOTE_PADRAO,
-		EXEMPLARES,
-		TIPO_DIFERENCA;
+		CODIGO_PRODUTO("codigoProduto"),
+		DESCRICAO_PRODUTO("descricaoProduto"),
+		NUMERO_EDICAO("edicaoProduto"),
+		PRECO_PRODUTO("precoProduto"),
+		PACOTE_PADRAO("pacotePadrao"),
+		EXEMPLARES("exemplares"),
+		TIPO_DIFERENCA("tipoDiferenca");
+		
+		private String nomeColuna;
+		
+		private OrdenacaoColuna(String nomeColuna) {
+			
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			
+			return this.nomeColuna;
+		}
 	}
 
 	/**

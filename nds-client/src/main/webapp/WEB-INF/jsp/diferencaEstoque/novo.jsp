@@ -1,4 +1,4 @@
-<div id="dialogNovasDiferencas" title="Lançamento < Faltas e Sobras >">
+<div id="dialogNovasDiferencas" title="LanÃ§amento < Faltas e Sobras >" style="display: none;">
 
 	<table class="gridNovasDiferencas"></table>
 	
@@ -15,7 +15,7 @@
 			url : '../xml/lancto_faltas_sobras_1-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigo',
 				width : 70,
 				sortable : true,
@@ -27,13 +27,13 @@
 				sortable : true,
 				align : 'left'
 			},{
-				display : 'Edição',
+				display : 'EdiÃ§Ã£o',
 				name : 'edicao',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Preço R$',
+				display : 'PreÃ§o R$',
 				name : 'preco',
 				width : 60,
 				sortable : true,

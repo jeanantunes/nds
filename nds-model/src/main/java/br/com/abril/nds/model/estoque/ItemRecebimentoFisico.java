@@ -30,6 +30,7 @@ public class ItemRecebimentoFisico {
 	@Column(name = "QTDE_FISICO", nullable = false)
 	private BigDecimal qtdeFisico;
 	@OneToOne
+	@JoinColumn(name = "DIFERENCA_ID")
 	private Diferenca diferenca;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")

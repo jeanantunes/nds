@@ -60,7 +60,7 @@ public class ProdutoEdicaoRepositoryImplTest {
 		
 		Lancamento lancamento = 
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, 
-						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.PENDENTE);
+						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
 		getSession().save(lancamento);
 		
 		Estudo estudo = 

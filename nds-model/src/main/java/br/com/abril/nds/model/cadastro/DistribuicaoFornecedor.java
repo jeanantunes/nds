@@ -25,12 +25,15 @@ public class DistribuicaoFornecedor {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "DIA_SEMANA")
+	@Column(name = "DIA_SEMANA", nullable = false)
 	private DiaSemana diaSemana;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "OPERACAO_DISTRIBUIDOR")
+	private OperacaoDistribuidor operacaoDistribuidor;
 	
 	public Long getId() {
 		return id;
@@ -62,6 +65,15 @@ public class DistribuicaoFornecedor {
 	
 	public void setDiaSemana(DiaSemana diaSemana) {
 		this.diaSemana = diaSemana;
+	}
+	
+	public OperacaoDistribuidor getOperacaoDistribuidor() {
+		return operacaoDistribuidor;
+	}
+	
+	public void setOperacaoDistribuidor(
+			OperacaoDistribuidor operacaoDistribuidor) {
+		this.operacaoDistribuidor = operacaoDistribuidor;
 	}
 	
 }
