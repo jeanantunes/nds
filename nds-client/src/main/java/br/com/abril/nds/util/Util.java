@@ -1,5 +1,7 @@
 package br.com.abril.nds.util;
 
+import javax.servlet.http.HttpServletRequest;
+
 public abstract class Util {
 
 	public static boolean isValidNumber(String valor){
@@ -23,5 +25,15 @@ public abstract class Util {
 		}
 
 		return null;
+	}
+	
+	public static boolean isAjaxRequest(HttpServletRequest request) {
+		
+		if (request == null) {
+		
+			return false;
+		}
+		
+		return "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"));
 	}
 }

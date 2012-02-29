@@ -1,0 +1,115 @@
+package br.com.abril.nds.controllers.interceptor;
+
+import javax.servlet.http.HttpServletRequest;
+
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.ErrorController;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.ExceptionUtil;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.caelum.vraptor.InterceptionException;
+import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.core.InterceptorStack;
+import br.com.caelum.vraptor.interceptor.ExecuteMethodInterceptor;
+import br.com.caelum.vraptor.interceptor.Interceptor;
+import br.com.caelum.vraptor.ioc.RequestScoped;
+import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.view.Results;
+
+import com.google.gson.Gson;
+
+@RequestScoped
+@Intercepts(before=ExecuteMethodInterceptor.class)
+public class ValidacaoInterceptor implements Interceptor {
+
+	private Result result;
+	
+	private HttpServletRequest request;
+	
+	private Validator validator;
+	
+	public ValidacaoInterceptor(Result result, HttpServletRequest request, Validator validator) {
+		
+		this.result = result;
+		this.request = request;
+		this.validator = validator;
+	}
+	
+	@Override
+	public void intercept(InterceptorStack stack, 
+						  ResourceMethod method,
+						  Object resourceInstance) throws InterceptionException {
+
+		try {
+			
+			stack.next(method, resourceInstance);
+			
+		} catch (Throwable throwable ) {
+			
+			Throwable cause = ExceptionUtil.getRootCause(throwable);
+			
+			if (cause instanceof ValidacaoException) {
+
+				this.tratarExecaoValidacao((ValidacaoException) cause);
+			
+			} else {
+				
+				validator.onErrorRedirectTo(ErrorController.class).showError(cause);
+				
+				this.tratarExecoesGenericas(cause);
+			}
+		}
+	}
+
+	/**
+	 * Trata as validações a partir da ValidacaoException lançada
+	 * 
+	 * @param validacaoException
+	 */
+	private void tratarExecaoValidacao(ValidacaoException validacaoException) {
+
+		if (Util.isAjaxRequest(request)) {
+		
+			result.use(Results.json()).from(
+				validacaoException.getValidacao(), Constantes.PARAM_MSGS
+			).recursive().serialize();
+			
+		} else {
+
+			result.include(Constantes.PARAM_MSGS, new Gson().toJson(validacaoException.getValidacao()));
+			
+			result.use(Results.page()).defaultView();
+		}			
+	}
+
+	/**
+	 * Método que trata as exceções genéricas.
+	 * 
+	 * @param throwable
+	 */
+	private void tratarExecoesGenericas(Throwable throwable) {
+
+		if (Util.isAjaxRequest(request)) {
+
+			String message = "Ocorreu um erro inesperado: " + throwable.getMessage();
+
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, message);
+			
+			result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();	
+		
+		} else {
+			
+			result.redirectTo(ErrorController.class).showError(throwable);
+		}
+	}
+	
+	@Override
+	public boolean accepts(ResourceMethod method) {
+
+		return true;
+	}
+}

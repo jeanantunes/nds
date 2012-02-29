@@ -2,9 +2,9 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
 
 public interface NotaFiscalService {
 
@@ -12,7 +12,7 @@ public interface NotaFiscalService {
 
 	List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 	
-	List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal);
+	DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal);
 
 	void inserirNotaFiscal(NotaFiscal notaFiscal);
 	

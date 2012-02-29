@@ -1,8 +1,10 @@
 <head>
 <title>Consulta de Notas</title>
 <script language="javascript" type="text/javascript">
+	
+		var reloadFlex = false;
 
-		function adicionarAction(data) {
+		function processarResultadoConsultaNF(data) {
 
 			var i;
 
@@ -11,10 +13,19 @@
 				var lastIndex = data.rows[i].cell.length - 1;
 
 				data.rows[i].cell[lastIndex-1] = 
-					'<a href="javascript:;" onclick="popup()" style="cursor:pointer" style="border:none">' +
+					'<a href="javascript:;" onclick="popup(' + data.rows[i].cell[lastIndex] + ')" style="cursor:pointer" style="border:none">' +
 					'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png"/>' +
-					'<input type="hidden" name="idNota" value="' + data.rows[i].cell[lastIndex] + '"/>' +
 					'</a>';
+			}
+
+			if (data.mensagens) {
+
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
 			}
 
 			return data;
@@ -23,10 +34,10 @@
 		function pesquisarNotas() { 
 
 			var formData = $('#formPesquisaNotas').serializeArray();
-			
+
 			$("#notasSemFisicoGrid").flexigrid({
-				preProcess: adicionarAction,
-				url : '<c:url value="/consultaNotas/pesquisarNotas" />',
+				preProcess: processarResultadoConsultaNF,
+				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />',
 				dataType : 'json',
 				colModel : [ {
 					display : 'Número',
@@ -83,25 +94,27 @@
 				singleSelect: true
 			});
 
-			if ($(".grids").css('display') != 'none') {
+			if (!reloadFlex) {
+
+				reloadFlex = true;
+
+				$(".grids").show();
+
+			} else {
 
 				formData = $('#formPesquisaNotas').serializeArray();
 				
-				$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/consultaNotas/pesquisarNotas" />', params: formData});
+				$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData});
 				
 				$("#notasSemFisicoGrid").flexReload();
-			} else {
-				
-				$(".grids").show();
 			}
 		}
 		
-		function pesquisarDetalhesNota() {
-			
-			var idNota = $('input[name="idNota"]').val();
+		function pesquisarDetalhesNota(idNota) {
 
 			$("#notasSemFisicoDetalheGrid").flexigrid({
-				url : '<c:url value="/consultaNotas/pesquisarDetalhesNotaFiscal" />',
+				url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />',
+				preProcess: montarGridComRodape,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
@@ -112,15 +125,21 @@
 				},{
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 70,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 50,
+					width : 70,
 					sortable : true,
 					align : 'center'
+				}, {
+					display : 'Preço Capa R$',
+					name : 'precoCapa',
+					width : 80,
+					sortable : true,
+					align : 'right'
 				}, {
 					display : 'Exemplares',
 					name : 'quantidadeExemplares',
@@ -133,30 +152,50 @@
 					width : 80,
 					sortable : true,
 					align : 'center'
+				}, {
+					display : 'Total R$',
+					name : 'total',
+					width : 60,
+					sortable : true,
+					align : 'right'
 				}],
-				width : 385,
-				height : 180,
+				width : 600,
+				height : 200,
 				params: [{ name: 'idNota', value: idNota }],
 				resizable:false
 			});
 			
-			if ($(".dialog-novo").css('display') != 'none') {
+			if (!reloadFlex) {
 
-				$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
-															params: [{ name: 'idNota', value: idNota }]});
-				
-				$("#notasSemFisicoDetalheGrid").flexReload();
+				reloadFlex = true;
+
+				$("#dialog-novo").show();
 			}
+			
+			$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
+				params: [{ name: 'idNota', value: idNota }]});
 
-			$("#dialog-novo").show();
+			$("#notasSemFisicoDetalheGrid").flexReload();
 		}
 		
-		function popup() {
+		function montarGridComRodape(data) {
+
+			var jsonData = jQuery.toJSON(data);
+
+			var result = jQuery.evalJSON(jsonData);
+
+			$("#totalExemplares").html(result.totalExemplares);
+			$("#totalSumarizado").html("R$ " + result.totalSumarizado);
+
+			return result.tableModel;
+		}
+		
+		function popup(idNota) {
 
 			$("#dialog-novo").dialog({
-				resizable : false,
-				height : 370,
-				width : 410,
+				resizable: false,
+				height:370,
+				width:630,
 				modal : true,
 				buttons : {
 					"Fechar" : function() {
@@ -165,7 +204,7 @@
 				}
 			});
 
-			pesquisarDetalhesNota();
+			pesquisarDetalhesNota(idNota);
 		};
 
 		$(function() {
@@ -210,7 +249,19 @@ fieldset label
 	<div id="dialog-novo" title="Detalhes da Nota">
 	     
 	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
-	
+		<br />
+
+		<table width="569" border="0" cellspacing="2" cellpadding="2">
+	      <tr style="font-size:11px;">
+	        <td width="275" align="right"><strong>Total:</strong></td>
+	        <td width="106" align="right">
+	        	<span id="totalExemplares"></span>
+	        </td>
+	        <td width="168" align="right"> 
+	        	<span id="totalSumarizado"></span>
+	        </td>
+	      </tr>
+	    </table>
 	</div>
 	
 	<div class="container">
@@ -235,7 +286,7 @@ fieldset label
 						<td>Fornecedor:</td>
 						<td>
 							<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
-								<option selected="selected">Todos</option>
+								<option selected="selected" value="-1">Todos</option>
 								<c:forEach items="${fornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
@@ -257,7 +308,7 @@ fieldset label
 						<td width="107">Tipo de Nota:</td>
 						<td width="293">
 						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
-							<option selected="selected"></option>
+							<option selected="selected" value="-1"></option>
 							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
 							</c:forEach>

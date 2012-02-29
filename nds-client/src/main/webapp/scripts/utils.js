@@ -32,9 +32,7 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	campoTexto.html('');
 
 	$.each(mensagens, function(index, value) {
-		if (index != 0){
-			campoTexto.append(value + '</br>');
-		}
+		campoTexto.append(value + '</br>');
 	});
 
 	$('#effect').show(1000, esconde("effect"));
@@ -43,11 +41,11 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	$("#effect").removeClass("ui-state-highlight");
 	$("#effect").removeClass("ui-state-default");
 	
-	if (tipoMensagem == "success") {
+	if (tipoMensagem == "SUCCESS") {
 		$("#effect").addClass("ui-state-default");
-	} else if (tipoMensagem == "warning"){
+	} else if (tipoMensagem == "WARNING"){
 		$("#effect").addClass("ui-state-highlight");
-	} else if (tipoMensagem == "error"){
+	} else if (tipoMensagem == "ERROR"){
 		$("#effect").addClass("ui-state-error");
 	}
 }
