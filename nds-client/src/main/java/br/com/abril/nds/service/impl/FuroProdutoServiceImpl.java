@@ -8,10 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
+import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.FuroProdutoRepository;
+import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.FuroProdutoService;
 
@@ -23,6 +25,9 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	
 	@Autowired
 	private FuroProdutoRepository furoProdutoRepository;
+	
+	@Autowired
+	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
 	@Transactional
 	@Override
@@ -70,9 +75,18 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		Usuario usuario = new Usuario();
 		usuario.setId(idUsuario);
 		furoProduto.setUsuario(usuario);
+		
+		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
+		historicoLancamento.setData(new Date());
+		historicoLancamento.setLancamento(lancamento);
+		historicoLancamento.setResponsavel(usuario);
+		historicoLancamento.setStatus(lancamento.getStatus());
+		
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
 		this.lancamentoRepository.alterar(lancamento);
+		
+		this.historicoLancamentoRepository.adicionar(historicoLancamento);
 	}
 
 }
