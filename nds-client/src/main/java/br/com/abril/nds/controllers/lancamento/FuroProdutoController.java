@@ -172,10 +172,10 @@ public class FuroProdutoController {
 			try {
 				this.furoProdutoService.efetuarFuroProduto(idProdutoEdicao, idLancamento, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
 				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_SUCCESS, 
-						"Furo efetuado com sucesso."}, Constantes.PARAM_MSGS).serialize();
+						"Operação efetuada com sucesso."}, Constantes.PARAM_MSGS).serialize();
 			} catch (Exception e){
 				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
-						"Erro ao confirmar furo do produto: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
+						"Erro ao efetuar furo: " + e.getMessage()}, Constantes.PARAM_MSGS).serialize();
 			}
 		}
 		
