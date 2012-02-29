@@ -1,11 +1,18 @@
 package br.com.abril.nds.controllers.estoque;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -17,11 +24,9 @@ import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -34,6 +39,7 @@ import br.com.caelum.vraptor.view.Results;
  *
  */
 @Resource
+@Path("/estoque/consultaNotas")
 public class ConsultaNotasController {
 	
 	/**
@@ -53,12 +59,14 @@ public class ConsultaNotasController {
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 	
-	@Path("/consultaNotas")
+	@Path("/")
 	public void index() {
+		
 		preencherCombos();
+		
+		throw new ValidacaoException(TipoMensagem.ERROR, "fucking test");
 	}
 
-	@Path("/consultaNotas/pesquisarNotas")
 	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
 							   String sortorder, String sortname, int page, int rp) {
 
@@ -85,8 +93,13 @@ public class ConsultaNotasController {
 
 			if (listaNotasFiscais == null || listaNotasFiscais.isEmpty()) {
 
-				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."}, 
-												Constantes.PARAM_MSGS).serialize();
+//				result.use(Results.json()).from(
+//					new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado."),
+//					Constantes.PARAM_MSGS
+//				).recursive().serialize();
+				
+				throw new RuntimeException("fucking test");
+
 			} else {
 
 				result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -94,27 +107,41 @@ public class ConsultaNotasController {
 
 		} catch (IllegalArgumentException e) {
 
-			result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
-											"Erro ao pesquisar nota fiscal: " + e.getMessage()}, 
-											Constantes.PARAM_MSGS).serialize();
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());			
 		}
 	}
 
 	public void pesquisarDetalhesNotaFiscal(Long idNota) {
 
-		List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal = 
-				this.notaFiscalService.obterDetalhesNotaFical(idNota);
-		
-		TableModel<CellModel> tableModelDetalhesNota = getTableModelDetalhesNotaFiscal(listaDetalhesNotaFiscal);
-		tableModelDetalhesNota.setPage(1);
-		tableModelDetalhesNota.setTotal(listaDetalhesNotaFiscal.size());
+		DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota);
 
-		this.result.use(Results.json()).withoutRoot().from(tableModelDetalhesNota).recursive().serialize();
+		if (detalheNotaFiscal == null || detalheNotaFiscal.getItensDetalhados() == null
+									  || detalheNotaFiscal.getItensDetalhados().isEmpty()) {
+
+			result.use(Results.json()).from(
+					new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."}, 
+								 Constantes.PARAM_MSGS).serialize();
+
+			return;
+		}
+		
+		TableModel<CellModel> tableModelDetalhesNota = getTableModelDetalhesNotaFiscal(detalheNotaFiscal.getItensDetalhados());
+		tableModelDetalhesNota.setPage(1);
+		tableModelDetalhesNota.setTotal(detalheNotaFiscal.getItensDetalhados().size());
+
+		DecimalFormat decimalFormat = new DecimalFormat("0.##");
+
+		ResultadoConsultaDetallheNFVO resultadoConsultaDetallheNF = 
+			new ResultadoConsultaDetallheNFVO(
+				tableModelDetalhesNota, decimalFormat.format(detalheNotaFiscal.getTotalExemplares()), 
+					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado()));
+
+		this.result.use(Results.json()).withoutRoot().from(resultadoConsultaDetallheNF).recursive().serialize();
 	}
 
 	private void preencherCombos() {
 
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores();
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
 
 		List<TipoNotaFiscal> tiposNotaFiscal = tipoNotaFiscalService.obterTiposNotasFiscais();
 
@@ -148,11 +175,11 @@ public class ConsultaNotasController {
 		return tableModel;
 	}
 	
-	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal) {
+	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheItemNotaFiscalDTO> listaDetalhesNotaFiscal) {
 		
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
-		for (DetalheNotaFiscalVO detalheNotaFiscalVO : listaDetalhesNotaFiscal) {
+		for (DetalheItemNotaFiscalDTO detalheNotaFiscalVO : listaDetalhesNotaFiscal) {
 			
 			String sobrasFaltas = detalheNotaFiscalVO.getSobrasFaltas() != null ? 
 							((TipoDiferenca.FALTA_DE.equals(detalheNotaFiscalVO.getTipoDiferenca()) || 
@@ -160,14 +187,18 @@ public class ConsultaNotasController {
 												  "-" + detalheNotaFiscalVO.getSobrasFaltas() :
 													  "" + detalheNotaFiscalVO.getSobrasFaltas()) : "-";
 
+		    DecimalFormat decimalFormat = new DecimalFormat("0.##");
+												  
 			CellModel cellModel = 
 					new CellModel(
 							detalheNotaFiscalVO.getCodigoItem().intValue(),
 							String.valueOf(detalheNotaFiscalVO.getCodigoProduto() == null ? "-" : detalheNotaFiscalVO.getCodigoProduto()),
-							String.valueOf(detalheNotaFiscalVO.getNomeProduto() == null ? "-" : detalheNotaFiscalVO.getNomeProduto()),
-							String.valueOf(detalheNotaFiscalVO.getNumeroEdicao() == null ? "-" : detalheNotaFiscalVO.getNumeroEdicao()),
+							String.valueOf(detalheNotaFiscalVO.getNomeProduto() == null   ? "-" : detalheNotaFiscalVO.getNomeProduto()),
+							String.valueOf(detalheNotaFiscalVO.getNumeroEdicao() == null  ? "-" : detalheNotaFiscalVO.getNumeroEdicao()),
+							String.valueOf(detalheNotaFiscalVO.getPrecoVenda() == null    ? "-" : decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
 							String.valueOf(detalheNotaFiscalVO.getQuantidadeExemplares() == null ? "-" : detalheNotaFiscalVO.getQuantidadeExemplares()),
-							sobrasFaltas);
+							sobrasFaltas, 
+							detalheNotaFiscalVO.getValorTotal() == null ? "-" : decimalFormat.format(detalheNotaFiscalVO.getValorTotal()));
 
 			listaCellModels.add(cellModel);
 		}
@@ -177,4 +208,5 @@ public class ConsultaNotasController {
 
 		return tableModel;
 	}
+	
 }

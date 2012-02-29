@@ -1,11 +1,11 @@
-package br.com.abril.nds.vo.estoque;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 
-public class DetalheNotaFiscalVO implements Serializable {
+public class DetalheItemNotaFiscalDTO implements Serializable {
 
 	private static final long serialVersionUID = -3303109650463467609L;
 
@@ -20,10 +20,14 @@ public class DetalheNotaFiscalVO implements Serializable {
 	private BigDecimal quantidadeExemplares;
 	
 	private BigDecimal sobrasFaltas;
+	
+	private BigDecimal precoVenda;
 
 	private TipoDiferenca tipoDiferenca;
 	
-	public DetalheNotaFiscalVO() { }
+	private BigDecimal valorTotal;
+	
+	public DetalheItemNotaFiscalDTO() { }
 
 	/**
 	 * @return the codigoItem
@@ -121,5 +125,33 @@ public class DetalheNotaFiscalVO implements Serializable {
 	 */
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
+	}
+
+	/**
+	 * @return the precoVenda
+	 */
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
+	}
+
+	/**
+	 * @param precoVenda the precoVenda to set
+	 */
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
+	}
+
+	/**
+	 * @return the valorTotal
+	 */
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+
+	/**
+	 * @param valorTotal the valorTotal to set
+	 */
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 }

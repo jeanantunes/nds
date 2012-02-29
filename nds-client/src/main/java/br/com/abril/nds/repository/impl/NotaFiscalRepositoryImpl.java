@@ -7,12 +7,12 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
 
 @Repository
 public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Long> implements
@@ -152,7 +152,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal) {
+	public List<DetalheItemNotaFiscalDTO> obterDetalhesNotaFical(Long idNotaFiscal) {
 
 		String hql = 
 				" select "
@@ -160,14 +160,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 				   + " itemNotaFiscal.produtoEdicao.produto.codigo as codigoProduto,"
 				   + " itemNotaFiscal.produtoEdicao.produto.nome as nomeProduto, " 
 				   + " itemNotaFiscal.produtoEdicao.numeroEdicao as numeroEdicao, "
+				   + " itemNotaFiscal.produtoEdicao.precoVenda as precoVenda, "
 				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
+				   + " (itemNotaFiscal.qtde * itemNotaFiscal.produtoEdicao.precoVenda) as valorTotal, "
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca " 
 				   + " from ItemNotaFiscal itemNotaFiscal "
 				   + " left join itemNotaFiscal.recebimentoFisico.diferenca as diferenca "
 				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal ";
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(DetalheNotaFiscalVO.class); 
+		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
 
 		Query query = getSession().createQuery(hql);
 

@@ -18,6 +18,7 @@ public abstract class Constantes {
 	public static final String TIPO_MSG_WARNING = "warning";
 	
 	public static final String TIPO_MSG_ERROR = "error";
+	
 }
 
 
