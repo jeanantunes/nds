@@ -24,12 +24,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 	}
 
 	/**
-	 * ObtÃ©m uma lista de notas fiscais de acordo com os seguintes parÃ¢metros:
+	 * Obtém uma lista de notas fiscais de acordo com os seguintes parâmetros:
 	 * 
-	 * Cnpj - da pessoa jurÃ­dica relativa a nota.
+	 * Cnpj - da pessoa jurídica relativa a nota.
 	 * Numero da nota.
-	 * SÃ©rie da nota.
-	 * Chave - caso esta seja um nota fiscal eletrÃ´nica.
+	 * Série da nota.
+	 * Chave - caso esta seja um nota fiscal eletrônica.
 	 * 
 	 * @param filtroConsultaNotaFiscal
 	 * @return List<NotaFiscal>

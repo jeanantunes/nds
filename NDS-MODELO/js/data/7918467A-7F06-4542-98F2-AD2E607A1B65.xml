@@ -1,0 +1,10 @@
+tocTab[tocTab.length] = new Array("0.1.1.1.1:1", "", "dto", "EARoot/EA1/EA1/EA1/EA1/EA7.html", "175.png", "-1204540308", "0", "", "Logical diagram0","{E361E3D9-CD2E-4177-A47F-4F2241180598}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:2", "", "DiferencaDTO", "EARoot/EA1/EA1/EA1/EA1/EA9.html", "5.png", "1075107581", "0", "", "Class0","{A52C073C-3B82-4fb4-A17E-500B7C15F90B}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:3", "", "ExtratoEdicaoDTO", "EARoot/EA1/EA1/EA1/EA1/EA10.html", "5.png", "-973932441", "0", "", "Class0","{944F494E-3B10-4f6a-BDDE-603CAAF969E6}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:4", "", "FuroProdutoDTO", "EARoot/EA1/EA1/EA1/EA1/EA12.html", "5.png", "-2092858234", "0", "", "Class0","{F2D90A8C-31DB-4670-BB5A-19DEE9262BF8}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:5", "", "InfoGeralExtratoEdicaoDTO", "EARoot/EA1/EA1/EA1/EA1/EA13.html", "5.png", "-1760140135", "0", "", "Class0","{FD991C2C-811A-47ec-9C4A-D4851E4AF261}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:6", "", "ItemDTO", "EARoot/EA1/EA1/EA1/EA1/EA14.html", "5.png", "-1746494063", "0", "", "Class0","{752C126A-EE15-4637-8B32-432BF321DB16}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:7", "", "LancamentoDTO", "EARoot/EA1/EA1/EA1/EA1/EA15.html", "5.png", "210761344", "0", "", "Class0","{4C2E40F7-BF7D-47f9-8F9B-427D04077C35}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:8", "", "ProdutoRecebimentoFisicoDTO", "EARoot/EA1/EA1/EA1/EA1/EA16.html", "5.png", "1493269522", "0", "", "Class0","{8B1D7EA5-58E1-460c-B53A-C9CBA46AF248}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1:9", "", "RecebimentoFisicoDTO", "EARoot/EA1/EA1/EA1/EA1/EA17.html", "5.png", "-1127823216", "0", "", "Class0","{39796FC4-2C75-4289-911D-0F9876A2349E}");
+tocTab[tocTab.length] = new Array("0.1.1.1.1.1", "1", "filtro", "EARoot/EA1/EA1/EA1/EA1/EA11.html", "4.png", "", "", "{B2B033C5-A839-4a36-9AB8-561B3FAECCFA}", "Package");

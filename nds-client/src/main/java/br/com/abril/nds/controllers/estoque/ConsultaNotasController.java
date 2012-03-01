@@ -1,13 +1,18 @@
 package br.com.abril.nds.controllers.estoque;
 
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -17,13 +22,10 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -36,6 +38,7 @@ import br.com.caelum.vraptor.view.Results;
  *
  */
 @Resource
+@Path("/estoque/consultaNotas")
 public class ConsultaNotasController {
 	
 	/**
@@ -55,16 +58,24 @@ public class ConsultaNotasController {
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 	
-	@Path("/consultaNotas")
+	@Path("/")
 	public void index() {
+		
 		preencherCombos();
 	}
 
-	@Path("/consultaNotas/pesquisarNotas")
 	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
 							   String sortorder, String sortname, int page, int rp) {
 
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+
+		if (filtroConsultaNotaFiscal.getIdFornecedor() == -1L) {
+			filtroConsultaNotaFiscal.setIdFornecedor(null);
+		}
+		
+		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() == -1) {
+			filtroConsultaNotaFiscal.setIdTipoNotaFiscal(null);
+		}
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
 
@@ -84,11 +95,11 @@ public class ConsultaNotasController {
 			TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
 			tableModel.setTotal(quantidadeRegistros);
 			tableModel.setPage(page);
-	
-			if (listaNotasFiscais == null) {
 
-				result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."}, 
-												Constantes.PARAM_MSGS).serialize();
+			if (listaNotasFiscais == null || listaNotasFiscais.isEmpty()) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+
 			} else {
 
 				result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -96,27 +107,37 @@ public class ConsultaNotasController {
 
 		} catch (IllegalArgumentException e) {
 
-			result.use(Results.json()).from(new String[]{Constantes.TIPO_MSG_ERROR, 
-											"Erro ao pesquisar nota fiscal: " + e.getMessage()}, 
-											Constantes.PARAM_MSGS).serialize();
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());			
 		}
 	}
 
 	public void pesquisarDetalhesNotaFiscal(Long idNota) {
 
-		List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal = //getDetalhesNotaFiscal();
-				this.notaFiscalService.obterDetalhesNotaFical(idNota);
-		
-		TableModel<CellModel> tableModelDetalhesNota = getTableModelDetalhesNotaFiscal(listaDetalhesNotaFiscal);
-		tableModelDetalhesNota.setPage(1);
-		tableModelDetalhesNota.setTotal(listaDetalhesNotaFiscal.size());
+		DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota);
 
-		this.result.use(Results.json()).withoutRoot().from(tableModelDetalhesNota).recursive().serialize();
+		if (detalheNotaFiscal == null || detalheNotaFiscal.getItensDetalhados() == null
+									  || detalheNotaFiscal.getItensDetalhados().isEmpty()) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		TableModel<CellModel> tableModelDetalhesNota = getTableModelDetalhesNotaFiscal(detalheNotaFiscal.getItensDetalhados());
+		tableModelDetalhesNota.setPage(1);
+		tableModelDetalhesNota.setTotal(detalheNotaFiscal.getItensDetalhados().size());
+
+		DecimalFormat decimalFormat = new DecimalFormat("0.##");
+
+		ResultadoConsultaDetallheNFVO resultadoConsultaDetallheNF = 
+			new ResultadoConsultaDetallheNFVO(
+				tableModelDetalhesNota, decimalFormat.format(detalheNotaFiscal.getTotalExemplares()), 
+					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado()));
+
+		this.result.use(Results.json()).withoutRoot().from(resultadoConsultaDetallheNF).recursive().serialize();
 	}
 
 	private void preencherCombos() {
 
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores();
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
 
 		List<TipoNotaFiscal> tiposNotaFiscal = tipoNotaFiscalService.obterTiposNotasFiscais();
 
@@ -150,23 +171,31 @@ public class ConsultaNotasController {
 		return tableModel;
 	}
 	
-	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheNotaFiscalVO> listaDetalhesNotaFiscal) {
+	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheItemNotaFiscalDTO> listaDetalhesNotaFiscal) {
 		
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
-		for (DetalheNotaFiscalVO detalheNotaFiscalVO : listaDetalhesNotaFiscal) {
-			
-			String sobrasFaltas = TipoDiferenca.FALTA_DE.equals(detalheNotaFiscalVO.getTipoDiferenca()) || 
-								  TipoDiferenca.FALTA_EM.equals(detalheNotaFiscalVO.getTipoDiferenca()) ?
-										  "-" + detalheNotaFiscalVO.getSobrasFaltas() :
-											  "" + detalheNotaFiscalVO.getSobrasFaltas();
+		for (DetalheItemNotaFiscalDTO detalheNotaFiscalVO : listaDetalhesNotaFiscal) {
+
+			boolean isFalta = 
+					TipoDiferenca.FALTA_DE.equals(detalheNotaFiscalVO.getTipoDiferenca()) || 
+					  TipoDiferenca.FALTA_EM.equals(detalheNotaFiscalVO.getTipoDiferenca());
+
+			String sobrasFaltas = isFalta ? "-" : "";
+			sobrasFaltas += itemExibicaoToString(detalheNotaFiscalVO.getSobrasFaltas());
+
+		    DecimalFormat decimalFormat = new DecimalFormat("0.##");
 
 			CellModel cellModel = 
-					new CellModel(detalheNotaFiscalVO.getCodigoItem().intValue(), 
-								  String.valueOf(detalheNotaFiscalVO.getNomeProduto()),
-								  String.valueOf(detalheNotaFiscalVO.getNumeroEdicao()), 
-								  String.valueOf(detalheNotaFiscalVO.getQuantidadeExemplares()),
-								  sobrasFaltas);
+					new CellModel(
+							detalheNotaFiscalVO.getCodigoItem().intValue(),
+							itemExibicaoToString(detalheNotaFiscalVO.getCodigoProduto()),
+							itemExibicaoToString(detalheNotaFiscalVO.getNomeProduto()),
+							itemExibicaoToString(detalheNotaFiscalVO.getNumeroEdicao()),
+							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
+							itemExibicaoToString(detalheNotaFiscalVO.getQuantidadeExemplares()),
+							sobrasFaltas, 
+							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getValorTotal())));
 
 			listaCellModels.add(cellModel);
 		}
@@ -177,57 +206,8 @@ public class ConsultaNotasController {
 		return tableModel;
 	}
 	
-	private List<DetalheNotaFiscalVO> getDetalhesNotaFiscal() {
+	private String itemExibicaoToString(Object itemExibicao) {
 		
-		List<DetalheNotaFiscalVO> listaDetalheNotaFiscal = new ArrayList<DetalheNotaFiscalVO>();
-		
-		DetalheNotaFiscalVO detalheNotaFiscalVO = new DetalheNotaFiscalVO();
-		detalheNotaFiscalVO.setCodigoItem(1L);
-		detalheNotaFiscalVO.setNomeProduto("VEJA");
-		detalheNotaFiscalVO.setNumeroEdicao(5L);
-		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
-		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
-		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.FALTA_DE);
-		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
-		
-		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
-		detalheNotaFiscalVO.setCodigoItem(2L);
-		detalheNotaFiscalVO.setNomeProduto("VEJA");
-		detalheNotaFiscalVO.setNumeroEdicao(5L);
-		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
-		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
-		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.FALTA_EM);
-		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
-		
-		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
-		detalheNotaFiscalVO.setCodigoItem(3L);
-		detalheNotaFiscalVO.setNomeProduto("VEJA");
-		detalheNotaFiscalVO.setNumeroEdicao(5L);
-		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
-		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
-		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
-		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
-		
-		
-		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
-		detalheNotaFiscalVO.setCodigoItem(4L);
-		detalheNotaFiscalVO.setNomeProduto("VEJA");
-		detalheNotaFiscalVO.setNumeroEdicao(5L);
-		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
-		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
-		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
-		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
-		
-		
-		detalheNotaFiscalVO = new DetalheNotaFiscalVO();
-		detalheNotaFiscalVO.setCodigoItem(5L);
-		detalheNotaFiscalVO.setNomeProduto("VEJA");
-		detalheNotaFiscalVO.setNumeroEdicao(5L);
-		detalheNotaFiscalVO.setQuantidadeExemplares(new BigDecimal("3"));
-		detalheNotaFiscalVO.setSobrasFaltas(new BigDecimal("2"));
-		detalheNotaFiscalVO.setTipoDiferenca(TipoDiferenca.FALTA_DE);
-		listaDetalheNotaFiscal.add(detalheNotaFiscalVO);
-		
-		return listaDetalheNotaFiscal;
+		return String.valueOf(itemExibicao == null ? "-" : itemExibicao);
 	}
 }

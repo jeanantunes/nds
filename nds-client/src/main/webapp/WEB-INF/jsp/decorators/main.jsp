@@ -18,7 +18,6 @@
 	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" />
-
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
 <script language="javascript" type="text/javascript"
@@ -38,15 +37,15 @@
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.tabs.js"></script>
 <script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.json-2.3.min.js"></script>
+<script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 <script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-	
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>	
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
-
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>
 
@@ -66,6 +65,31 @@
 	});
 	
 	var contextPath = "${pageContext.request.contextPath}";
+	
+	$(document).ready(function() {
+		
+		verificarMensagens();
+	});
+
+	function verificarMensagens() {
+		
+		if (${empty mensagens}) {
+			return;
+		}
+		
+		var jsonData = jQuery.toJSON(${mensagens});
+
+		var mensagens = jQuery.evalJSON(jsonData);
+
+		if (mensagens) {
+
+			exibirMensagem(
+				mensagens.tipoMensagem, 
+				mensagens.listaMensagens
+			);
+		}	
+	}
+
 </script>
 
 
