@@ -167,7 +167,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 				   + " diferenca.tipoDiferenca as tipoDiferenca " 
 				   + " from ItemNotaFiscal itemNotaFiscal "
 				   + " left join itemNotaFiscal.recebimentoFisico.diferenca as diferenca "
-				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal ";
+				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal "
+				   + " order by itemNotaFiscal.id ";
 
 		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
 

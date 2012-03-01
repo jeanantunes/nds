@@ -106,7 +106,7 @@
 			$("#resultado").hide();
 			$("#codigo").val("");
 			$("#produto").val("");
-			$("#edicao").val("");
+			$("#edicao").mask("?99999999999999999999", {placeholder:""}).val("");
 			$("#dataLancamento").val("");
 			$("#novaData").val("");
 			$("#codigo").focus();

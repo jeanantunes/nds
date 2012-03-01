@@ -6,6 +6,18 @@
 
 		function processarResultadoConsultaNF(data) {
 
+			if (data.mensagens) {
+
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				$(".grids").hide();
+
+				return;
+			}
+
 			var i;
 
 			for (i = 0 ; i < data.rows.length; i++) {
@@ -13,26 +25,22 @@
 				var lastIndex = data.rows[i].cell.length - 1;
 
 				data.rows[i].cell[lastIndex-1] = 
-					'<a href="javascript:;" onclick="popup(' + data.rows[i].cell[lastIndex] + ')" style="cursor:pointer" style="border:none">' +
+					'<a href="javascript:;" onclick="popup(' + data.rows[i].cell[lastIndex] + ')" ' +
+					' style="cursor:pointer;border:none" title="Visualizar Detalhes">' +
 					'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png"/>' +
 					'</a>';
 			}
 
-			if (data.mensagens) {
-
-				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
-				);
-				
-				$(".grids").hide();
+			if ($(".grids").css('display') == 'none') {
+					
+				$(".grids").show();
 			}
 
 			return data;
 		} 
 
-		function pesquisarNotas() { 
-
+		function pesquisarNotas(event) { 
+			
 			var formData = $('#formPesquisaNotas').serializeArray();
 
 			$("#notasSemFisicoGrid").flexigrid({
@@ -40,25 +48,25 @@
 				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />',
 				dataType : 'json',
 				colModel : [ {
-					display : 'Número',
+					display : 'Número da Nota',
 					name : 'numero',
 					width : 120,
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Data Emissao',
+					display : 'Data de Emissão',
 					name : 'dataEmissao',
 					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Data Expedicao',
+					display : 'Data de Expedição',
 					name : 'dataExpedicao',
 					width : 120,
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Tipo Nota Fiscal',
+					display : 'Tipo',
 					name : 'descricao',
 					width : 120,
 					sortable : true,
@@ -94,20 +102,12 @@
 				singleSelect: true
 			});
 
-			if (!reloadFlex) {
+			formData = $('#formPesquisaNotas').serializeArray();
+			
+			$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData});
+			
+			$("#notasSemFisicoGrid").flexReload();
 
-				reloadFlex = true;
-
-				$(".grids").show();
-
-			} else {
-
-				formData = $('#formPesquisaNotas').serializeArray();
-				
-				$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData});
-				
-				$("#notasSemFisicoGrid").flexReload();
-			}
 		}
 		
 		function pesquisarDetalhesNota(idNota) {
@@ -165,17 +165,15 @@
 				resizable:false
 			});
 			
-			if (!reloadFlex) {
-
-				reloadFlex = true;
-
-				$("#dialog-novo").show();
-			}
-			
 			$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
 				params: [{ name: 'idNota', value: idNota }]});
 
 			$("#notasSemFisicoDetalheGrid").flexReload();
+
+			if ($("#dialog-novo").css('display') == 'none') {
+			
+				$("#dialog-novo").show();
+			}
 		}
 		
 		function montarGridComRodape(data) {
@@ -207,6 +205,24 @@
 			pesquisarDetalhesNota(idNota);
 		};
 
+		$("#btnPesquisar").keyPress(function(event) {
+			
+			var keynum;  
+	          
+	        if(window.event) {   
+	        	
+	            keynum = event.keyCode  
+	        
+	        } else if(event.which) {   
+	            
+	        	keynum = event.which  
+	        }
+	        
+			if (keynum == 13) {
+				pesquisarNotas();
+			}
+		});
+		
 		$(function() {
 			$("#datepickerDe").datepicker({
 				showOn : "button",
@@ -247,7 +263,6 @@ fieldset label
 
 <body>
 	<div id="dialog-novo" title="Detalhes da Nota">
-	     
 	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
 		<br />
 
@@ -325,7 +340,7 @@ fieldset label
 						<td width="31">&nbsp;</td>
 						<td width="222">
 							<span class="bt_pesquisar">
-								<a href="javascript:;" onclick="pesquisarNotas()">Pesquisar</a>
+								<a href="javascript:;" onclick="pesquisarNotas()" id="btnPesquisar">Pesquisar</a>
 							</span>
 						</td>
 					</tr>
