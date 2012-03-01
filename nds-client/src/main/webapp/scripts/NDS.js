@@ -233,14 +233,14 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 		success: function(json) {
 			if (json.mensagens) {
 				
-				if (json.mensagens[0] == "success"){
-					exibirMensagem(json.mensagens[0], json.mensagens);
+				if (json.mensagens.tipoMensagem == "SUCCESS"){
+					exibirMensagem(json.mensagens.tipoMensagem, json.mensagens.listaMensagens);
 					
 					if (sucessCallBackFunction) {
 						sucessCallBackFunction(json.result);
 					}
 				} else {
-					exibirMensagem(json.mensagens[0], json.mensagens);
+					exibirMensagem(json.mensagens.tipoMensagem, json.mensagens.listaMensagens);
 					
 					if (errorCallBackFunction) {
 						errorCallBackFunction();

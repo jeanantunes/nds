@@ -11,6 +11,9 @@
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
+			
+			$('input[id^="dataLancamento"]').mask("99/99/9999");
+			$("#edicao").mask("?99999999999999999999", {placeholder:""});
 		});
 		
 		function mostrarGridConsulta() {
@@ -57,15 +60,6 @@
 </head>
 
 <body>
-	<div id="effect" style="padding: 0 .7em;"
-		class="ui-state-highlight ui-corner-all">
-		<p>
-			<span style="float: left; margin-right: .3em;"
-				class="ui-icon ui-icon-info"></span> <b>Lançamento de Faltas e
-				Sobras < evento > com < status >.</b>
-		</p>
-	</div>
-
 	<fieldset class="classFieldset">
 		<legend>Pesquisar Faltas e Sobras</legend>
 		
@@ -86,7 +80,7 @@
 				
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
-					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
 						   onchange="validarNumEdicao();"/>
 				</td>
 				
@@ -105,11 +99,11 @@
 			<tr>
 				<td width="178">Período de Data Lançamento:</td>
 				<td width="108">
-					<input type="text" name="dataLancamentoDe" id="dataLancamentoDe" style="width: 80px;" />
+					<input type="text" name="dataLancamentoDe" id="dataLancamentoDe" style="width: 80px;" value="${dataAtual}" />
 				</td>
 				<td width="33" align="center">Até</td>
 				<td width="147">
-					<input type="text" name="dataLancamentoAte" id="dataLancamentoAte" style="width: 80px;" />
+					<input type="text" name="dataLancamentoAte" id="dataLancamentoAte" style="width: 80px;" value="${dataAtual}" />
 				</td>
 				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
