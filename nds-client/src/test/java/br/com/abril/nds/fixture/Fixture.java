@@ -438,7 +438,8 @@ public class Fixture {
 									  Usuario usuarioResponsavel,
 									  ProdutoEdicao produtoEdicao,
 									  TipoDiferenca tipoDiferenca,
-									  StatusConfirmacao statusConfirmacao) {
+									  StatusConfirmacao statusConfirmacao,
+									  ItemRecebimentoFisico itemRecebimentoFisico) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -447,6 +448,7 @@ public class Fixture {
 		diferenca.setProdutoEdicao(produtoEdicao);
 		diferenca.setTipoDiferenca(tipoDiferenca);
 		diferenca.setStatusConfirmacao(statusConfirmacao);
+		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		
 		return diferenca;
 	}

@@ -155,14 +155,44 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		return hql;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<DiferencaDTO> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		return null;
+		String hql = " select new " + DiferencaDTO.class.getCanonicalName()
+				   + " (prodEd, mov, nota) "
+				   + " from MovimentoEstoque mov, Produto prod, "
+				   + " ProdutoEdicao prodEd, Diferenca dif "
+				   
+				   + " left join dif.itemRecebimentoFisico itemRec "
+				   + " left join itemRec.itemNotaFiscal itemNota "
+				   + " left join itemNota.notaFiscal nota "
+				   
+				   + " where mov.diferenca.id = dif.id "
+				   + " and dif.produtoEdicao.id = prodEd.id "
+				   + " and prod.id = prodEd.produto.id ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		return query.list();
 	}
 	
 	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		return null;
+		String hql = " select count(dif) "
+				   + " from MovimentoEstoque mov, Produto prod, "
+				   + " ProdutoEdicao prodEd, Diferenca dif "
+				   
+				   + " left join dif.itemRecebimentoFisico itemRec "
+				   + " left join itemRec.itemNotaFiscal itemNota "
+				   + " left join itemNota.notaFiscal nota "
+				   
+				   + " where mov.diferenca.id = dif.id "
+				   + " and dif.produtoEdicao.id = prodEd.id "
+				   + " and prod.id = prodEd.produto.id ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		return (Long) query.uniqueResult();
 	}
 
 }
