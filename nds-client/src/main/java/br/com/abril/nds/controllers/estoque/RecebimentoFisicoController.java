@@ -8,25 +8,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
@@ -37,9 +33,6 @@ import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.Util;
-import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
