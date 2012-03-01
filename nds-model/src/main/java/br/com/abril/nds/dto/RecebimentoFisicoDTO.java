@@ -26,6 +26,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 	private TipoDiferenca tipoDiferenca;
 	
 	private String codigo;
+	
+	private Long idItemNota;
 
 	public RecebimentoFisicoDTO(String codigo, 
 			String nomeProduto, 
@@ -34,7 +36,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 			BigDecimal repartePrevisto, 
 			BigDecimal qtdFisico, 
 			BigDecimal diferenca, 
-			TipoDiferenca tipoDiferenca){
+			TipoDiferenca tipoDiferenca,
+			Long idItemNota){
 		this.codigo = codigo;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
@@ -43,6 +46,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.qtdFisico = qtdFisico;
 		this.diferenca = diferenca;	
 		this.tipoDiferenca = tipoDiferenca;
+		this.idItemNota = idItemNota;
 	}
 
 	public String getNomeProduto() {
@@ -115,6 +119,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	public Long getIdItemNota() {
+		return idItemNota;
+	}
+
+	public void setIdItemNota(Long idItemNota) {
+		this.idItemNota = idItemNota;
 	}
 
 	

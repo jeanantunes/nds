@@ -46,21 +46,33 @@ function exibirCnpj(result) {
 
 //funcoes que verifica se existe Nota para Fornecedor
 function pesquisarExisteNotaFornecedor() {
-	alert("entrou aqui");
+	
 	var notaFiscal = $("#notaFiscal").val();
+	var cnpj = $("#cnpj").val();
+	var serie = $("#cnpj").val();
+	var chaveAcesso = $("#chaveAcesso").val();
+
+	
 		
-	if (notaFiscal && notaFiscal.length > 0) {
-		
-		
-		$.postJSON("<c:url value='recebimentoFisico/verificarExisteNota'/>",
-				   "numero=" + notaFiscal, exibirFormularioDigitacao);
-			
-	}
+	$.postJSON("<c:url value='recebimentoFisico/verificarExisteNota'/>",
+				   "numero=" + notaFiscal,  "cnpj=" + cnpj,
+				   "serie=" + serie,
+				   "chaveAcesso=" + chaveAcesso,
+				   confirmaNotaFiscalEncontrada);
+
 }
 
-function exibirFormularioDigitacao(result) {
-	alert("popup");
-	//popup_nota();	
+function confirmaNotaFiscalEncontrada(result) {
+	
+	alert("entrou no confirma");
+	
+	if(typeof result == "object"){		
+			pesquisarItemNotaGrid();
+	}else{
+		
+		popup_nota();	
+	}
+	
 }
 
 
@@ -197,17 +209,14 @@ $(function() {
 			buttonImageOnly: true
 		});
 	});
+	
 	function confirmar(){
 		$(".dados").show();
 	}
 	function pesqEncalhe(){
-		$(".dadosFiltro").show();
-		
-	}
+		$(".dadosFiltro").show();	}
 	
 	
-	
-
 	function mostrar_nfes(){
 		checkBox = document.getElementById('eNF');
 		
@@ -221,6 +230,132 @@ $(function() {
 		//$(".bt_1").hide();
 
 	};
+	
+	$(function() {
+				
+		carregarItemNotaGrid();
+		
+	});
+
+
+	function carregarItemNotaGrid() {
+		$(".itemNotaGrid")
+		.flexigrid(
+		{
+				preProcess: getDataFromResult,
+				dataType : 'json',
+				colModel : [
+			{
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 200,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 120,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Reparte previsto',
+				name : 'repartePrevisto',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Qtd. Físico',
+				name : 'qtdFisico',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			}, {
+				
+				display : 'Diferença',
+				name : 'diferenca',
+				width : 60,
+				sortable : false,
+				align : 'center'
+				
+			}, {
+				display : 'Valor Total R$',
+				name : 'valorTotal',
+				width : 60,
+				sortable : false,
+				align : 'center'
+				
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}],
+			
+		
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180
+		});
+	}
+
+
+	function pesquisarItemNotaGrid() {
+	
+		$(".itemNotaGrid").flexOptions({
+			url: '<c:url value="/"/>recebimentoFisico/obterListaItemRecebimentoFisico',
+			preProcess: getDataFromResult,
+			dataType : 'json'
+		});
+	
+		$(".itemNotaGrid").flexReload();
+	
+	}
+	
+	
+	function getDataFromResult(data) {
+	
+				
+			var dadosPesquisa = {page: 0, total: 0};
+		
+			var mensagens = undefined;
+		
+			$.each(data, function(index, value) {
+		
+			if(value[0] == "gridResult") {
+				dadosPesquisa = value[1];
+			} else if(value[0] == "mensagens") {
+				mensagens = value[1];
+			}
+	
+		});
+	
+		if(typeof mensagens == "object") {
+			$(".grids").hide();
+			exibirMensagem(mensagens[0], mensagens);
+		} else {
+			$(".grids").show();
+		}
+		
+		
+	return dadosPesquisa;
+
+	}
+//#####################################################
+
+
 </script>
 
 <style type="text/css">
@@ -273,11 +408,11 @@ $(function() {
 <div id="dialog-novo" title="Recebimento Físico">
     <table width="341" border="0" cellspacing="2" cellpadding="2">
   <tr>
-    <td width="125">Código:</td>
+    <td>Código:</td>
     <td width="202"><input type="text" name="textfield6" id="textfield6" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar" title="Pesquisar"><a href="javascript:;">&nbsp;</a></span></td>
   </tr>
   <tr>
-    <td width="125">Produto:</td>
+    <td>Produto:</td>
     <td width="202"><input type="text" name="textfield6" id="textfield6" style="width:200px;"/></td>
   </tr>
   <tr>
@@ -363,10 +498,14 @@ $(function() {
 		</select>
 	</td>
     <td width="76">Nota Fiscal:</td>
-    <td width="123"><input type="text" id=notaFiscal style="width:100px;" onblur="pesquisarExisteNotaFornecedor();"/></td>
+    <td width="123"><input type="text" id=notaFiscal style="width:100px;"/></td>
     <td width="33">Série:</td>
-    <td width="43"><input id="serie" type="text" style="width:30px;"/></td>
-    <td width="110"><span class="bt_pesquisar" title="Pesquisar Recebimento"><a href="<c:url value="/recebimentoFisico/pesquisa"/>" onclick="mostrar();">Pesquisar</a></span></td>
+    <td width="43"><input id="serie" type="text"  style="width:30px;"/></td>
+    <td width="110">
+    	<span class="bt_pesquisar" title="Pesquisar Recebimento">
+        	<a href="javascript:;" onclick="pesquisarExisteNotaFornecedor();">Pesquisar</a>
+        </span></td>
+      
   </tr>
   <tr>
     <td colspan="4" height="26"><label for="eNF">É uma NF-e?</label>
@@ -386,7 +525,7 @@ $(function() {
        <fieldset class="classFieldset">
        	  <legend>Recebimentos  Físico Cadastrados</legend>
         <div class="grids" style="display:none;">
-		  <table class="notasFisicoGrid"></table>
+		 	<table class="itemNotaGrid"></table>		 	
             
             <span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="popup();"><img src="images/ico_add_novo.gif"  border="0" hspace="5" />Novo Produto</a></span>
             
