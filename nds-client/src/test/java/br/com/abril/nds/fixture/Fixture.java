@@ -406,7 +406,6 @@ public class Fixture {
 													TipoMovimento tipoMovimento,
 													Usuario usuario, 
 													EstoqueProduto estoqueProduto,
-													Diferenca diferenca,
 													Date dataInclusao,
 													BigDecimal qtde, 
 													StatusAprovacao status) {
@@ -420,7 +419,6 @@ public class Fixture {
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setDiferenca(diferenca);
 		movimentoEstoque.setStatus(status);
 		return movimentoEstoque;
 	}
@@ -439,7 +437,8 @@ public class Fixture {
 									  ProdutoEdicao produtoEdicao,
 									  TipoDiferenca tipoDiferenca,
 									  StatusConfirmacao statusConfirmacao,
-									  ItemRecebimentoFisico itemRecebimentoFisico) {
+									  ItemRecebimentoFisico itemRecebimentoFisico,
+									  MovimentoEstoque movimentoEstoque) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -449,6 +448,7 @@ public class Fixture {
 		diferenca.setTipoDiferenca(tipoDiferenca);
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+		diferenca.setMovimentoEstoque(movimentoEstoque);
 		
 		return diferenca;
 	}

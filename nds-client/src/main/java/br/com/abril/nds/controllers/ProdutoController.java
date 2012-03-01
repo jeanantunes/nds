@@ -9,7 +9,6 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
