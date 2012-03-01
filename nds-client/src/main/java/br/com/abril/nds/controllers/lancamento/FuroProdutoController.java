@@ -151,14 +151,19 @@ public class FuroProdutoController {
 	}
 
 	@Post
-	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) throws Exception{
+	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
+			Long idLancamento) throws Exception{
 		
 		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 		
 		try {
-			this.furoProdutoService.efetuarFuroProduto(codigoProduto, idProdutoEdicao, idLancamento, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
+			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
+					idProdutoEdicao, idLancamento, 
+					new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
 			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+			result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
+					Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e){
 			if (e instanceof ValidacaoException){
 				throw e;
@@ -170,7 +175,8 @@ public class FuroProdutoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	private void validarDadosEntradaConfirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) {
+	private void validarDadosEntradaConfirmarFuro(String codigoProduto, Long idProdutoEdicao, 
+			String novaData, Long idLancamento) {
 		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
