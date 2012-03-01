@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -18,6 +20,7 @@ import br.com.abril.nds.service.ExtratoEdicaoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -37,6 +40,7 @@ public class ExtratoEdicaoController {
 	
 	private static final String GRID_RESULT = "gridResult";
 	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
+	
 	
 	
 	@Autowired
@@ -96,29 +100,25 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(Long numeroEdicao) throws Exception {
+	public void pesquisaExtratoEdicao(String codigoProduto, Long numeroEdicao) throws ValidacaoException {
 		
 		TableModel<CellModel> tableModel = null;
 		
 		Map<String, Object> resultado = new HashMap<String, Object>();
 		
-		if(numeroEdicao == null) {
-			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "O numero da edição deve ser informado."};
-			resultado.put(Constantes.PARAM_MSGS, msgErro);
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-			return;
+		List<String> listaWarningMsg = validarParametrosPesquisa(codigoProduto, numeroEdicao);
+		
+		if(!listaWarningMsg.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaWarningMsg));
 		}
 		
-		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(numeroEdicao);
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(codigoProduto, numeroEdicao);
 		
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
 			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
-			
-			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."};
-			resultado.put(Constantes.PARAM_MSGS, msgErro);
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-			return;
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		}
 		
@@ -131,6 +131,26 @@ public class ExtratoEdicaoController {
 		
 	}
 	
+	private List<String> validarParametrosPesquisa(String codigoProduto, Long numeroEdicao) {
+
+		List<String> msgWarningValidacao = new LinkedList<String>();
+		
+		if(codigoProduto == null || codigoProduto.isEmpty() || numeroEdicao == null) {
+			msgWarningValidacao.add(TipoMensagem.WARNING.name());
+		}
+		
+		if(codigoProduto == null || codigoProduto.isEmpty() ) {
+			msgWarningValidacao.add("O preenchimento do campo código é obrigatório!.");
+		}
+		
+		if(numeroEdicao == null) {
+			msgWarningValidacao.add("O preenchimento do campo edição é obrigatório!.");
+		}
+		
+		return msgWarningValidacao;
+		
+	}
+
 	private TableModel<CellModel> obterTableModelParaListaExtratoEdicao(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());

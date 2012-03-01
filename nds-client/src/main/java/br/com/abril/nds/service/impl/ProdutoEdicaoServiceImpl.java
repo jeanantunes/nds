@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
@@ -48,20 +49,23 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Override
 	@Transactional
-	public boolean validarNumeroEdicao(String codigoProduto, Long numeroEdicao) {
+	public boolean validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
 
 		if (codigoProduto == null || codigoProduto.isEmpty()){
 			throw new IllegalArgumentException("Código é obrigatório.");
 		}
 		
-		if (numeroEdicao == null){
+		if (numeroEdicao == null || numeroEdicao.isEmpty()){
 			throw new IllegalArgumentException("Número edição é obrigatório.");
 		}
 
+		if(!Util.isValidNumber(numeroEdicao)) {
+			throw new IllegalArgumentException("Número edição é inválido.");
+		}
 		
 		ProdutoEdicao produtoEdicao = 
 			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,
-																			 numeroEdicao);
+																			 Long.parseLong(numeroEdicao));
 		
 		return (produtoEdicao != null) ? true : false;
 	}
