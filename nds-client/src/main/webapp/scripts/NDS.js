@@ -69,7 +69,7 @@ else{
 }
 function checkAll_fornecedor()
 {
-	if(document.form1.Todos.checked == false) {
+	if(document.form1.Todos1.checked == false) {
 		for (i=0; i < document.form1.checkgroup_menu.length; i++){
 			if(document.form1.checkgroup_menu[i].checked == true){
 			document.form1.checkgroup_menu[i].checked = false;
@@ -88,7 +88,7 @@ else{
 
 function verifyCheck_1()
 {
-	document.form1.Todos.checked = false;
+	document.form1.Todos1.checked = false;
 /*	if(document.form1.Todos.checked == true) {
 		
 
@@ -183,6 +183,13 @@ $(document).ready(function(){
 		function pesqEncalhe(){
 			$(".dadosFiltro").show();
 			$(".grids").show();
+		}
+		function pesqTotal(){
+			$(".dados").show();
+			$(".grids").show();
+		}
+		function pesqCota(){
+			$(".dados").show();
 		}
 		
 		function diaSemana(){
@@ -306,3 +313,112 @@ $.fn.clear = function() {
 		$(this).html("");
 	});
 };
+
+function sub_home(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
+function sub_cadastro(){
+	$('#sub_cadastro').show();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
+
+function sub_lancamento(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').show();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
+
+function sub_estoque(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').show();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
+
+function sub_expedicao(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').show();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
+
+function sub_devolucao(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').show();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
+
+function sub_nfe(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').show();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+
+}
+function sub_financeiro(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').show();
+	$('#sub_administracao').hide();
+
+}
+function sub_administracao(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').show();
+}
+
+function sub_help(){
+	$('#sub_cadastro').hide();
+	$('#sub_lancamento').hide();
+	$('#sub_estoque').hide();
+	$('#sub_expedicao').hide();
+	$('#sub_devolucao').hide();
+	$('#sub_nfe').hide();
+	$('#sub_financeiro').hide();
+	$('#sub_administracao').hide();
+}
