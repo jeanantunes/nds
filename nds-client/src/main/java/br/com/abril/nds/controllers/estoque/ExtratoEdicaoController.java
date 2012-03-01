@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -18,6 +20,7 @@ import br.com.abril.nds.service.ExtratoEdicaoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -97,7 +100,7 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(String codigoProduto, Long numeroEdicao) throws Exception {
+	public void pesquisaExtratoEdicao(String codigoProduto, Long numeroEdicao) throws ValidacaoException {
 		
 		TableModel<CellModel> tableModel = null;
 		
@@ -106,9 +109,7 @@ public class ExtratoEdicaoController {
 		List<String> listaWarningMsg = validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
 		if(!listaWarningMsg.isEmpty()) {
-			resultado.put(Constantes.PARAM_MSGS, listaWarningMsg.toArray());
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-			return;
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaWarningMsg));
 		}
 		
 		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(codigoProduto, numeroEdicao);
@@ -116,11 +117,8 @@ public class ExtratoEdicaoController {
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
 			infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty()) {
-			
-			String[] msgErro = new String[]{Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."};
-			resultado.put(Constantes.PARAM_MSGS, msgErro);
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-			return;
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		}
 		
@@ -138,7 +136,7 @@ public class ExtratoEdicaoController {
 		List<String> msgWarningValidacao = new LinkedList<String>();
 		
 		if(codigoProduto == null || codigoProduto.isEmpty() || numeroEdicao == null) {
-			msgWarningValidacao.add(Constantes.TIPO_MSG_WARNING);
+			msgWarningValidacao.add(TipoMensagem.WARNING.name());
 		}
 		
 		if(codigoProduto == null || codigoProduto.isEmpty() ) {

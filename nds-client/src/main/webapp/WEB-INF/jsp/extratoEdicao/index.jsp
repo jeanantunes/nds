@@ -82,26 +82,29 @@ var jsExtratoEdicao = {
 	getDataFromResult : function(data) {
 		
 		jsExtratoEdicao.dadosPesquisa = {page: 0, total: 0};
+		
 		jsExtratoEdicao.saldoTotalExtratoEdicao = 0.0;
-		jsExtratoEdicao.mensagens = undefined;
 		
-		$.each(data, function(index, value) {
-			
-			  if(value[0] == "gridResult") {
-				  jsExtratoEdicao.dadosPesquisa = value[1];
-			  } else if(value[0] == "saldoTotalExtratoEdicao") {
-				  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
-			  } else if(value[0] == "mensagens") {
-				  jsExtratoEdicao.mensagens = value[1];
-			  }
-			  
-		});
+		if(typeof data.mensagens == "object") {
 		
-		if(typeof jsExtratoEdicao.mensagens == "object") {
 			$(".grids").hide();
-			exibirMensagem(jsExtratoEdicao.mensagens[0], jsExtratoEdicao.mensagens);
+			
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		
 		} else {
+			
+			$.each(data, function(index, value) {
+				
+				  if(value[0] == "gridResult") {
+					  jsExtratoEdicao.dadosPesquisa = value[1];
+				  } else if(value[0] == "saldoTotalExtratoEdicao") {
+					  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
+				  } 
+				  
+			});
+			
 			$(".grids").show();
+			
 		}
 		
 		$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 

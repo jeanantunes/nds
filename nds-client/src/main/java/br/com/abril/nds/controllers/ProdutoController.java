@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -33,17 +35,12 @@ public class ProdutoController {
 	}
 	
 	@Post
-	public void pesquisarPorCodigoProduto(String codigoProduto) {
+	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
 			
-			List<String> listaMensagemValidacao = new ArrayList<String>();
-			
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("Produto não encontrado.");
-
-			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado.");
 			
 		} else {
 			
@@ -87,26 +84,19 @@ public class ProdutoController {
 			numEdicaoValida = produtoEdicaoService.validarNumeroEdicao(codigoProduto, numeroEdicao);
 			
 			if (!numEdicaoValida) {
-				List<String> listaMensagemValidacao = new ArrayList<String>();
-				
-				listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-				listaMensagemValidacao.add("Edição não encontrada para o produto.");
 
-				result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
+				throw new ValidacaoException(TipoMensagem.ERROR, "Edição não encontrada para o produto.");
 				
 			} else {
+				
 				result.use(Results.json()).from("", "result").serialize();
+				
 			}
 			
 		} catch (IllegalArgumentException e ) {
 			
-			List<String> listaMensagemValidacao = new ArrayList<String>();
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			
-			listaMensagemValidacao.add(e.getMessage());
-			
-			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
 		}
 		
 	}
