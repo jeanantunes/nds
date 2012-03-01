@@ -28,9 +28,8 @@ public class DistribuicaoFornecedor {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
-	@Enumerated(EnumType.STRING)
 	@Column(name = "DIA_SEMANA", nullable = false)
-	private DiaSemana diaSemana;
+	private Integer codigoDiaSemana;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "OPERACAO_DISTRIBUIDOR")
 	private OperacaoDistribuidor operacaoDistribuidor;
@@ -60,11 +59,11 @@ public class DistribuicaoFornecedor {
 	}
 	
 	public DiaSemana getDiaSemana() {
-		return diaSemana;
+		return DiaSemana.getByCodigoDiaSemana(codigoDiaSemana);
 	}
 	
 	public void setDiaSemana(DiaSemana diaSemana) {
-		this.diaSemana = diaSemana;
+		this.codigoDiaSemana = diaSemana.getCodigoDiaSemana();
 	}
 	
 	public OperacaoDistribuidor getOperacaoDistribuidor() {
