@@ -117,13 +117,17 @@ public class FuroProdutoController {
 	}
 	
 	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto){
+	public void pesquisarPorNomeProduto(String nomeProduto) throws Exception{
 		
 		List<Produto> listaProdutoEdicao = null;
 		try {
 			listaProdutoEdicao = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		} catch (Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
+			if (e instanceof ValidacaoException){
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
+			}
 		}
 		
 		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
@@ -166,11 +170,6 @@ public class FuroProdutoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
-	private Long getIdUsuario() {
-		// TODO pendente
-		return 1L;
-	}
-
 	private void validarDadosEntradaConfirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) {
 		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
@@ -197,5 +196,10 @@ public class FuroProdutoController {
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
+	}
+	
+	private Long getIdUsuario() {
+		// TODO pendente
+		return 1L;
 	}
 }
