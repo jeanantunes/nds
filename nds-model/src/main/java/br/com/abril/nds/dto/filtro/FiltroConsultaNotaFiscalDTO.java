@@ -23,6 +23,14 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idFornecedor;
 
+	private String cnpj;
+	
+	private String numeroNota;
+	
+	private String serie;
+	
+	private String chave;
+	
 	private Boolean isNotaRecebida;
 
 	private PaginacaoVO paginacao;
@@ -133,4 +141,37 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	public String getNumeroNota() {
+		return numeroNota;
+	}
+
+	public void setNumeroNota(String numeroNota) {
+		this.numeroNota = numeroNota;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public String getChave() {
+		return chave;
+	}
+
+	public void setChave(String chave) {
+		this.chave = chave;
+	}
+	
 }

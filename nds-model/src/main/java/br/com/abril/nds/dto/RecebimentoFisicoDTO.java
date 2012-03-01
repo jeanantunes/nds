@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+
 public class RecebimentoFisicoDTO implements Serializable {
 	
 	private static final long serialVersionUID = -580201558784688016L;
@@ -23,15 +25,19 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal valorTotal;
 	
-	public RecebimentoFisicoDTO(
-			String codigo, 
+	private TipoDiferenca tipoDiferenca;
+	
+	private Long idItemNota;
+
+	public RecebimentoFisicoDTO(String codigo, 
 			String nomeProduto, 
-			Long edicao,
+			Long edicao, 
 			BigDecimal precoCapa, 
-			BigDecimal repartePrevisto,
+			BigDecimal repartePrevisto, 
 			BigDecimal qtdFisico, 
-			BigDecimal diferenca) {
-		super();
+			BigDecimal diferenca, 
+			TipoDiferenca tipoDiferenca,
+			Long idItemNota){
 		this.codigo = codigo;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
@@ -39,6 +45,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
 		this.diferenca = diferenca;
+		this.tipoDiferenca = tipoDiferenca;
+		this.idItemNota = idItemNota;		
 	}
 
 	public String getCodigo() {
@@ -104,10 +112,22 @@ public class RecebimentoFisicoDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	
 
-	
-	
+	public TipoDiferenca getTipoDiferenca() {
+		return tipoDiferenca;
+	}
+
+	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
+		this.tipoDiferenca = tipoDiferenca;
+	}
+
+	public Long getIdItemNota() {
+		return idItemNota;
+	}
+
+	public void setIdItemNota(Long idItemNota) {
+		this.idItemNota = idItemNota;
+	}
 	
 
 }

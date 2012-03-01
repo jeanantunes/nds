@@ -22,5 +22,15 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	public void obterListaItemRecebimentoFisico() {
 		List<RecebimentoFisicoDTO> listaItemRecebimento = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(1L);
 	}
+	
+	@Test
+	public void obterItemNotaPorCnpjNota() {
+		
+		//List<RecebimentoFisicoDTO> listDTO = recebimentoFisicoRepository.obterItemNotaPorCnpjNota("11.111.111/0001-11", "2344242", "345353543");
+		
+	
+		//Assert.assertEquals(1, listDTO.size());
+		
+	}
 		
 }

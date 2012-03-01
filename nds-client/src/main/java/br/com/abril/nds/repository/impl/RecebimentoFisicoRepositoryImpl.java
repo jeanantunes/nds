@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -71,6 +70,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 	/**
 	 * TODO:  REMOVER O MÉTODO ABAIXO APÓS REFACTOR UTILIZANDO O MÉTODO "obterListaItemRecebimentoFisico(long)"
 	 */
+	/*
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
@@ -96,7 +96,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		return query.list();
 		
 	}
-		
+		*/
 	
 	@Override
 	public void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
