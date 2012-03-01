@@ -11,7 +11,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.LancamentoDiferencaVO;
 import br.com.abril.nds.client.vo.ResultadoLancamentoDiferencaVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.DiferencaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -21,9 +23,11 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -66,19 +70,21 @@ public class DiferencaEstoqueController {
 									 String sortorder, String sortname, int page, int rp) {
 
 		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname, page, rp);
-
+		
+		this.processarDiferencasLancamentoMock(page);
+		
+		/*
 		List<DiferencaDTO> listaLancamentoDiferencas = 
 			this.diferencaEstoqueService.obterDiferencasLancamento(filtro);
 		
 		if (listaLancamentoDiferencas == null || listaLancamentoDiferencas.isEmpty()) {
 			
-			result.use(Results.json()).from(
-				new String[] {Constantes.TIPO_MSG_WARNING, "Nenhum registro encontrado."}, Constantes.PARAM_MSGS).serialize();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		} else {
 			
 			this.processarDiferencasLancamento(listaLancamentoDiferencas);
-		}
+		}*/
 	}
 
 	@Get
@@ -239,9 +245,7 @@ public class DiferencaEstoqueController {
 			String numeroEdicao = diferencaDTO.getProdutoEdicao().getNumeroEdicao().toString();
 			
 			String precoVenda = 
-				CurrencyUtil.formatarValor(
-					diferencaDTO.getProdutoEdicao().getPrecoVenda().doubleValue(), 
-						this.localization.getLocale());
+				CurrencyUtil.formatarValor(diferencaDTO.getProdutoEdicao().getPrecoVenda());
 			
 			String pacotePadrao = String.valueOf(diferencaDTO.getProdutoEdicao().getPacotePadrao());
 			
@@ -265,7 +269,7 @@ public class DiferencaEstoqueController {
 				pacotePadrao,
 				qtdeDiferencas,
 				tipoDiferenca,
-				valorDiferencas.toString(),
+				CurrencyUtil.formatarValor(valorDiferencas),
 				idMovimentoEstoque
 			);
 			
@@ -282,7 +286,68 @@ public class DiferencaEstoqueController {
 		tableModel.setRows(listaCellModels);
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas.doubleValue(), this.localization.getLocale());
+			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+		
+		/*
+		ResultadoLancamentoDiferencaVO resultadoLancamentoDiferenca = 
+			new ResultadoLancamentoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+
+		result.use(Results.json()).withoutRoot().from(resultadoLancamentoDiferenca).recursive().serialize();
+		*/
+	}
+	
+	/*
+	 * Processa o resulta das diferenças para lançamento.
+	 *  
+	 * @param listaDiferencas - lista de diferenças (DTO)
+	 */
+	private void processarDiferencasLancamentoMock(int page) {
+
+		List<LancamentoDiferencaVO> listaLancamentosDiferenca = new LinkedList<LancamentoDiferencaVO>();
+		
+		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
+		
+		int quantidadeRegistros = 30;
+		
+		for (int i = 0; i < quantidadeRegistros; i++) {
+			
+			LancamentoDiferencaVO lancamentoDiferenca = new LancamentoDiferencaVO();
+			
+			lancamentoDiferenca.setId(i);
+			lancamentoDiferenca.setCodigoProduto(i + "");
+			lancamentoDiferenca.setDescricaoProduto("Descrição Produto " + i);
+			lancamentoDiferenca.setNumeroEdicao(i + "");
+			
+			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(i + 100));
+			
+			lancamentoDiferenca.setPacotePadrao(i + "");
+			lancamentoDiferenca.setQuantidade(i + "");
+			lancamentoDiferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE.getDescricao());
+			
+			BigDecimal valorDiferencas = new BigDecimal(i + 100).multiply(new BigDecimal(i));
+			
+			lancamentoDiferenca.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorDiferencas));
+			
+			listaLancamentosDiferenca.add(lancamentoDiferenca);
+			
+			qtdeTotalDiferencas = 
+				qtdeTotalDiferencas.add(new BigDecimal(i));
+			
+			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
+		}
+		
+		TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel =
+			new TableModel<CellModelKeyValue<LancamentoDiferencaVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosDiferenca));
+		
+		tableModel.setTotal(quantidadeRegistros);
+		
+		tableModel.setPage(page);
+		
+		String valorTotalDiferencasFormatado = 
+			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
 		
 		ResultadoLancamentoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoLancamentoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
