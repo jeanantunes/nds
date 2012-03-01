@@ -3,12 +3,35 @@
 
 		function executarPreProcessamento(data) {
 
-			if (data.mensagens) {
+			var jsonData = jQuery.toJSON(data);
 
-				alert(data.mensagens);
+			var resultado = jQuery.evalJSON(jsonData);
 
-				return data;
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return resultado.tableModel;
 			}
+
+			$("#qtdeTotalDiferencas").html(resultado.totalExemplares);
+			
+			$("#valorTotalDiferencas").html(resultado.totalSumarizado);
+
+			$.each(resultado.tableModel.rows, function(index, row) {
+
+				var linkRateioCota = '<a href="javascript:;" onclick="popupRateioCota();" style="cursor:pointer" style="border:none">' +
+										'<img src="${pageContext.request.contextPath}/images/bt_cadastros.png"/>' +
+										'<input type="hidden" name="idMovimento" value="' + row.cell.idMovimentoEstoque + '"/>' +
+									 '</a>';
+								
+				row.cell.rateioCota = 
+			});
 			
 			var i;
 
@@ -27,7 +50,7 @@
 					'</a>';
 			}
 
-			return data;
+			return resultado.tableModel;
 		} 
 
 		function pesquisar() { 
@@ -233,9 +256,9 @@
 							</span>
 						</td>
 						<td width="99" class="total"><strong>Total Geral:</strong></td>
-					    <td width="108" class="total">980</td>
+					    <td id="qtdeTotalDiferencas" width="108" class="total" />
 					    <td width="104" align="center" class="total">&nbsp;</td>
-					    <td width="145" class="total">R$ 999.999,99</td>
+					    <td id="valorTotalDiferencas" width="145" class="total" />
 					</tr>
 				</table>
 			</fieldset>

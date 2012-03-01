@@ -6,8 +6,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,12 +18,20 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.Ordenacao
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -30,7 +39,6 @@ import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
-@Ignore
 public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
@@ -71,8 +79,59 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		StatusConfirmacao statusConfirmacao = StatusConfirmacao.CONFIRMADO;
 		
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		
+		getSession().save(tipoNotaFiscal);
+		
+		CFOP cfop = Fixture.cfop5102();
+		
+		Criteria criteria = getSession().createCriteria(CFOP.class);
+		
+		criteria.add(Restrictions.eq("codigo", cfop.getCodigo()));
+		
+		CFOP cfopDB = (CFOP) criteria.uniqueResult();
+		
+		if (cfopDB == null) {
+			
+			getSession().save(cfop);
+			
+		} else {
+			
+			cfop = cfopDB;
+		}
+		
+		PessoaJuridica pessoaJuridica = Fixture.juridicaDinap();
+		
+		getSession().save(pessoaJuridica);
+		
+		Fornecedor fornecedor = Fixture.fornecedorDinap();
+		
+		getSession().save(fornecedor);
+		
+		NotaFiscalFornecedor notaFiscalFornecedor = 
+			Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, usuario);
+		
+		getSession().save(notaFiscalFornecedor);
+
+		ItemNotaFiscal itemNotaFiscal = 
+			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), BigDecimal.TEN);
+		
+		getSession().save(itemNotaFiscal);
+
+		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+			notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+		
+		getSession().save(recebimentoFisico);
+		
+		ItemRecebimentoFisico itemRecebimentoFisico =  
+			Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal("1.0"));
+		
+		getSession().save(itemRecebimentoFisico);
+		
 		Diferenca diferenca = 
 			Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao, tipoDiferenca, statusConfirmacao);
+		
+		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		
 		getSession().save(diferenca);
 		
@@ -84,7 +143,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			MovimentoEstoque movimentoEstoque =
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, 
+					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, diferenca, dataMovimento, 
 							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE);
 			
@@ -152,7 +211,20 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		Produto produto = Fixture.produtoVeja(tipoProduto);
 		
-		getSession().save(produto);
+		Criteria criteria = getSession().createCriteria(Produto.class);
+		
+		criteria.add(Restrictions.eq("codigo", produto.getCodigo()));
+		
+		Produto produtoBD = (Produto) criteria.uniqueResult();
+		
+		if (produtoBD == null) {
+		
+			getSession().save(produto);
+			
+		} else {
+			
+			produto = produtoBD;
+		}
 		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
