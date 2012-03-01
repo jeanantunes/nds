@@ -2,8 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,10 +23,7 @@ import br.com.abril.nds.repository.ProdutoRepository;
 @ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager")
 @Transactional
-public class ProdutoRepositoryImplTest {
-
-	@Autowired
-	private SessionFactory sf;
+public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
@@ -58,10 +53,6 @@ public class ProdutoRepositoryImplTest {
 			produtoRepository.obterProdutoPorNomeProduto("Veja");
 		
 		Assert.assertTrue(!listaProduto.isEmpty());
-	}
-	
-	private Session getSession() {
-		return sf.getCurrentSession();
 	}
 	
 }
