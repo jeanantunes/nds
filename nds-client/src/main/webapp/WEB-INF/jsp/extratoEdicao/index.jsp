@@ -3,6 +3,7 @@
 <title>meuConteudo</title>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
 <script type="text/javascript">
 
@@ -22,14 +23,14 @@ function validarEdicaoCallBack() {
 
 function limparCamposPrePesquisaProduto() {
 
-	$("#nomeFornecedor").attr("value", "");
-	$("#precoCapa").attr("value", "");
+	$("#nomeFornecedor").val("");
+	$("#precoCapa").val("");
 	
 }
 
 function limparCamposPrePesquisaEdicao() {
 
-	$("#precoCapa").attr("value", "");
+	$("#precoCapa").val("");
 	
 }
 
@@ -37,13 +38,16 @@ var jsExtratoEdicao = {
 
 	pesquisarExtratoEdicao : function() {
 		
-		var numeroEdicao = jQuery("#edicao").attr('value');
+		var numeroEdicao = jQuery("#edicao").val();
+		var codigoProduto = jQuery("#codigo").val();
 		
 		$(".extratoEdicaoGrid").flexOptions({
 			url: '<c:url value="/"/>estoque/extratoEdicao/pesquisaExtratoEdicao',
 			preProcess: jsExtratoEdicao.getDataFromResult,
 			dataType : 'json',
-			params:[{name:'numeroEdicao', value: numeroEdicao}],
+			params:[
+			        {name:'numeroEdicao', value: numeroEdicao},
+			        {name:'codigoProduto', value: codigoProduto}]
 		});
 		
 		$(".extratoEdicaoGrid").flexReload();
@@ -57,7 +61,7 @@ var jsExtratoEdicao = {
 		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterFornecedorDeProduto', data, 
 				function(result){
 			
-			$("#nomeFornecedor").attr("value", result);
+			$("#nomeFornecedor").val(result);
 			
 		});
 		
@@ -70,7 +74,7 @@ var jsExtratoEdicao = {
 		  		  "&edicao=" + $("#edicao").val();
 		
 		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
-			$("#precoCapa").attr("value", result);
+			$("#precoCapa").val(result);
 		});
 		
 	},
@@ -78,26 +82,29 @@ var jsExtratoEdicao = {
 	getDataFromResult : function(data) {
 		
 		jsExtratoEdicao.dadosPesquisa = {page: 0, total: 0};
+		
 		jsExtratoEdicao.saldoTotalExtratoEdicao = 0.0;
-		jsExtratoEdicao.mensagens = undefined;
 		
-		$.each(data, function(index, value) {
-			
-			  if(value[0] == "gridResult") {
-				  jsExtratoEdicao.dadosPesquisa = value[1];
-			  } else if(value[0] == "saldoTotalExtratoEdicao") {
-				  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
-			  } else if(value[0] == "mensagens") {
-				  jsExtratoEdicao.mensagens = value[1];
-			  }
-			  
-		});
+		if(typeof data.mensagens == "object") {
 		
-		if(typeof jsExtratoEdicao.mensagens == "object") {
 			$(".grids").hide();
-			exibirMensagem(jsExtratoEdicao.mensagens[0], jsExtratoEdicao.mensagens);
+			
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		
 		} else {
+			
+			$.each(data, function(index, value) {
+				
+				  if(value[0] == "gridResult") {
+					  jsExtratoEdicao.dadosPesquisa = value[1];
+				  } else if(value[0] == "saldoTotalExtratoEdicao") {
+					  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
+				  } 
+				  
+			});
+			
 			$(".grids").show();
+			
 		}
 		
 		$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
@@ -158,7 +165,7 @@ var jsExtratoEdicao = {
 
 $(function() {
 	
-	$("#edicao").mask("?99999999999999999999", {placeholder:""});
+	$("#edicao").numeric();
 	
 	$("#produto").autocomplete({
 		source: ''
@@ -192,7 +199,7 @@ $(function() {
 						<input 	type="text" 
 								name="codigo"
 								id="codigo"
-								maxlength="5"
+								maxlength="255"
 								style="width: 70px; 
 								float: left; 
 								margin-right: 5px;" />
@@ -209,7 +216,8 @@ $(function() {
 					
 					<td width="236">
 
-						<input type="text" name="produto" id="produto" style="width: 220px;"
+						<input type="text" name="produto" id="produto" style="width: 220px;" 
+								maxlength="255"
 					       onkeyup="pesquisarPorNomeProduto();" />
 
 						
@@ -223,7 +231,7 @@ $(function() {
 					<td width="186">
 					
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-						   onchange="validarNumEdicao();"/>
+							onblur="validarNumEdicao();"/>
 								
 					</td>
 					

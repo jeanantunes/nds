@@ -1,4 +1,4 @@
-<div id="dialogRateioDiferencas" title="Lançamento Faltas e Sobras" style="display: none;">
+<div id="dialogRateioDiferencas" title="Lanï¿½amento Faltas e Sobras" style="display: none;">
 
 	<table class="gridRateioDiferencas"></table>
 	
@@ -32,7 +32,7 @@
 			height : 180
 		});
 
-		function popupRateioDiferencas() {
+		function popupRateioDiferenca(idMovimentoEstoque) {
 			
 			$("#dialogRateioDiferencas" ).dialog({
 				resizable: false,
