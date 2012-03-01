@@ -59,5 +59,4 @@ public class LancamentoRepositoryImpl extends
 		
 		query.executeUpdate();
 	}
-
 }
