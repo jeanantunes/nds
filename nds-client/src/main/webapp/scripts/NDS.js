@@ -422,6 +422,3 @@ function sub_help(){
 	$('#sub_financeiro').hide();
 	$('#sub_administracao').hide();
 }
-
-
-
