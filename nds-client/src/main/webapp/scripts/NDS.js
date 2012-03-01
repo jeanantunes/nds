@@ -300,3 +300,9 @@ $(document).ready(function() {
 	    }
 	});
 });
+
+$.fn.clear = function() {
+	return this.each(function() {
+		$(this).html("");
+	});
+};

@@ -1,5 +1,6 @@
 package br.com.abril.nds.util;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Currency;
 import java.util.Locale;
@@ -34,5 +35,11 @@ public abstract class CurrencyUtil {
 		return decimalFormat.format(valor);
 	}
 
+	
+	public static String formatarValorMonetario(BigDecimal valor) {
+		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance();
+		df.setMinimumFractionDigits(2);
+		return df.format(valor);
+	}
 	
 }

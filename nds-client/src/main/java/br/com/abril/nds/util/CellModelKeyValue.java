@@ -1,5 +1,8 @@
 package br.com.abril.nds.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Classe que abstrai um modelo genérico, sua serialização contempla a estrutura
  * esperada pelo plugin flexiGrid.
@@ -49,6 +52,25 @@ public class CellModelKeyValue<T> {
 	 */
 	public void setCell(T cell) {
 		this.cell = cell;
+	}
+	
+	/**
+	 * Gera a lista de {@link CellModelKeyValue} a partir da
+	 * lista do tipo encapsulado, gerando um identificador
+	 * interno para cada linha.
+	 * @param rows lista do tipo  encapsulado
+	 * @return lista de {@link CellModelKeyValue} do tipo encapsulado
+	 * 
+	 */
+	public static <T> List<CellModelKeyValue<T>> toCellModelKeyValue(
+			List<T> rows) {
+		List<CellModelKeyValue<T>> cells = new ArrayList<CellModelKeyValue<T>>(
+				rows.size());
+		int i = 0;
+		for (T row : rows) {
+			cells.add(new CellModelKeyValue<T>(++i, row));
+		}
+		return cells;
 	}
 	
 }

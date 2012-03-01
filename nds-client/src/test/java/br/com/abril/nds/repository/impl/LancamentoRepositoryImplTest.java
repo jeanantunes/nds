@@ -8,10 +8,10 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.vo.PeriodoVO;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -75,7 +76,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),
 				new Date(),
-				BigDecimal.TEN,
+				new BigDecimal(100),
 				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda001,
@@ -83,7 +84,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.MARCH, 2012),
 				new Date(),
 				new Date(),
-				BigDecimal.TEN,
+				new BigDecimal(25),
 				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame001,
@@ -91,7 +92,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(23, Calendar.MARCH, 2012), 
 				new Date(),
 				new Date(),
-				BigDecimal.TEN,
+				new BigDecimal(40),
 				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho001,
@@ -102,43 +103,54 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				BigDecimal.TEN,
 				StatusLancamento.RECEBIDO, null);
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame, lancamentoCapricho);
+		getSession().flush();
 	}
 
 	@Test
-	@Ignore
 	public void obterLancamentosBalanceamentoMatriz() {
+		PeriodoVO periodo = new PeriodoVO(Fixture.criarData(21,
+				Calendar.FEBRUARY, 2012), Fixture.criarData(27,
+				Calendar.FEBRUARY, 2012));
+		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO();
+		filtro.setPeriodo(periodo);
 		List<Lancamento> lancamentos = lancamentoRepository
-				.obterLancamentosBalanceamentoMartriz(
-						Fixture.criarData(21, Calendar.FEBRUARY, 2012),
-						Fixture.criarData(27, Calendar.FEBRUARY, 2012));
+				.obterLancamentosBalanceamentoMartriz(filtro);
 		Assert.assertNotNull(lancamentos);
 		Assert.assertEquals(4, lancamentos.size());
-		
+
 		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoCapricho.getId(), lancamentos.get(1).getId());
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(2).getId());
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(3).getId());
+		Assert.assertEquals(lancamentoCapricho.getId(), lancamentos.get(1)
+				.getId());
+		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(2)
+				.getId());
+		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(3)
+				.getId());
 	}
 	
 	@Test
-	@Ignore
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosPeriodo() {
+		PeriodoVO periodo = new PeriodoVO(Fixture.criarData(28,
+				Calendar.FEBRUARY, 2012), Fixture.criarData(29,
+				Calendar.FEBRUARY, 2012));
+		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO();
+		filtro.setPeriodo(periodo);
+		filtro.getIdsFornecedores().add(fornecedorDinap.getId());
 		List<Lancamento> lancamentos = lancamentoRepository
-				.obterLancamentosBalanceamentoMartriz(
-						Fixture.criarData(28, Calendar.FEBRUARY, 2012),
-						Fixture.criarData(29, Calendar.FEBRUARY, 2012),
-						fornecedorFC.getId(), fornecedorDinap.getId());
+				.obterLancamentosBalanceamentoMartriz(filtro);
 		Assert.assertNotNull(lancamentos);
 		Assert.assertTrue(lancamentos.isEmpty());
 	}
 	
 	@Test
-	@Ignore
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosFornecedor() {
+		PeriodoVO periodo = new PeriodoVO(Fixture.criarData(21,
+				Calendar.FEBRUARY, 2012), Fixture.criarData(23,
+				Calendar.FEBRUARY, 2012));
+		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO();
+		filtro.setPeriodo(periodo);
+		filtro.getIdsFornecedores().add(fornecedorDinap.getId());
 		List<Lancamento> lancamentos = lancamentoRepository
-				.obterLancamentosBalanceamentoMartriz(
-						Fixture.criarData(21, Calendar.FEBRUARY, 2012),
-						Fixture.criarData(23, Calendar.FEBRUARY, 2012), fornecedorDinap.getId());
+				.obterLancamentosBalanceamentoMartriz(filtro);
 		Assert.assertNotNull(lancamentos);
 		Assert.assertTrue(lancamentos.isEmpty());
 	}
