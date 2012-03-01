@@ -66,6 +66,7 @@
 			$("#imagem").attr("alt", result.nomeProduto);
 			$("#novaData").val(result.novaData);
 			
+			$("#codigoProdutoHidden").val(result.codigoProduto);
 			$("#lancamentoHidden").val(result.idLancamento);
 			$("#produtoEdicaoHidden").val(result.idProdutoEdicao);
 						
@@ -96,7 +97,7 @@
 		}
 		
 		function confirmar(){
-			var data = "idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
+			var data = "codigoProduto=" + $("#codigoProdutoHidden").val() + "&idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
 			  "&novaData=" + $("#novaData").val() +
 			  "&idLancamento=" + $("#lancamentoHidden").val();
 			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, limparCampos);
@@ -182,6 +183,7 @@
 			            	<a href="javascript:;" id="linkConfirmar">Confirmar</a>
 			            </span>
 					</div>
+					<input type="hidden" id="codigoProdutoHidden">
 					<input type="hidden" id="produtoEdicaoHidden"/>
 					<input type="hidden" id="lancamentoHidden"/>
 				</fieldset>

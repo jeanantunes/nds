@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.DiferencaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -128,13 +128,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		getSession().save(itemRecebimentoFisico);
 		
-		Diferenca diferenca = 
-			Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao, tipoDiferenca, statusConfirmacao);
-		
-		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
-		
-		getSession().save(diferenca);
-		
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, quantidadeDiferenca);
 		
 		getSession().save(estoqueProduto);
@@ -144,10 +137,18 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			MovimentoEstoque movimentoEstoque =
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
-						estoqueProduto, diferenca, dataMovimento, 
+						estoqueProduto, dataMovimento, 
 							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE);
 			
 			getSession().save(movimentoEstoque);
+			
+			Diferenca diferenca = 
+				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
+								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque);
+			
+			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+			
+			getSession().save(diferenca);
 		}		
 	}
 	
@@ -169,7 +170,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		filtro.setPaginacao(paginacao);
 		
-		List<DiferencaDTO> listaDiferencas = 
+		List<Diferenca> listaDiferencas = 
 			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
 		
 		Assert.assertNotNull(listaDiferencas);
@@ -178,13 +179,13 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		for (int i = 0; i < listaDiferencas.size(); i++) {
 			
-			DiferencaDTO diferencaDTO = listaDiferencas.get(i);
+			Diferenca diferenca = listaDiferencas.get(i);
 			
 			Assert.assertEquals(
-				this.dataMovimento, diferencaDTO.getMovimentoEstoque().getDataInclusao());
+				this.dataMovimento, diferenca.getMovimentoEstoque().getDataInclusao());
 			
 			Assert.assertEquals(
-				this.tipoDiferenca, diferencaDTO.getMovimentoEstoque().getDiferenca().getTipoDiferenca());
+				this.tipoDiferenca, diferenca.getTipoDiferenca());
 		}
 	}
 	
@@ -201,6 +202,28 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(quantidadeTotal);
 		
 		Assert.assertEquals(this.qtdeMovimentos, quantidadeTotal);
+	}
+	
+	@Test
+	public void obterDiferencas() {
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro);
+		
+		Assert.assertNotNull(lista);
+		
+		Assert.assertTrue(!lista.isEmpty());
+	}
+	
+	@Test
+	public void obterTotalDiferencas() {
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		
+		Assert.assertNotNull(quantidadeTotal);
+		
+		Assert.assertTrue(quantidadeTotal != 0);
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {

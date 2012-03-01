@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.DiferencaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -30,7 +29,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DiferencaDTO> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
+	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
 		
 		String hql = this.gerarQueryDiferencasLancamento(filtro, false);
 		
@@ -39,25 +38,25 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case CODIGO_PRODUTO:
-					hql += "order by produtoEdicao.produto.codigo ";
+					hql += "order by diferenca.produtoEdicao.produto.codigo ";
 					break;
 				case DESCRICAO_PRODUTO:
-					hql += "order by produtoEdicao.produto.descricao ";
+					hql += "order by diferenca.produtoEdicao.produto.descricao ";
 					break;
 				case EXEMPLARES:
-					hql += "order by movimentoEstoque.diferenca.qtde ";
+					hql += "order by diferenca.qtde ";
 					break;
 				case NUMERO_EDICAO:
-					hql += "order by produtoEdicao.numeroEdicao ";
+					hql += "order by diferenca.produtoEdicao.numeroEdicao ";
 					break;
 				case PACOTE_PADRAO:
-					hql += "order by produtoEdicao.pacotePadrao ";
+					hql += "order by diferenca.produtoEdicao.pacotePadrao ";
 					break;
 				case PRECO_PRODUTO:
-					hql += "order by produtoEdicao.precoCusto ";
+					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
 				case TIPO_DIFERENCA:
-					hql += "order by movimentoEstoque.diferenca.tipoDiferenca ";
+					hql += "order by diferenca.tipoDiferenca ";
 					break;
 				default:
 					break;
@@ -120,49 +119,81 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	 * Gera a query de busca de diferenças para lançamento.
 	 *   
 	 * @param filtro - filtro da pesquisa
-	 * @param ehParaQuantidadeTotal - flag para contagem de total
+	 * @param totalizar - flag para contagem de total
 	 * 
 	 * @return Query
 	 */
 	private String gerarQueryDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro, 
-												  boolean ehParaQuantidadeTotal) {
+												  boolean totalizar) {
 		
 		String hql;
 		
-		if (ehParaQuantidadeTotal) {
+		if (totalizar) {
 			
-			hql = "select count(movimentoEstoque) ";
+			hql = "select count(diferenca) ";
 			
 		} else {
 			
-			hql = " select new " + DiferencaDTO.class.getCanonicalName() + "( "
-				+ " produtoEdicao, movimentoEstoque) ";
+			hql = " select diferenca ";
 		}
 					
-		hql += " from ProdutoEdicao produtoEdicao, MovimentoEstoque movimentoEstoque "
-			+  " where movimentoEstoque.produtoEdicao.id = produtoEdicao.id ";
+		hql += " from Diferenca diferenca "
+			+  " left join diferenca.movimentoEstoque movimentoEstoque ";
+		
+		boolean whereUtilizado = false;
 		
 		if (filtro.getDataMovimento() != null) {
 			
-			hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
+			hql += (!whereUtilizado) ? " where " : " and ";
+						
+			hql += " movimentoEstoque.dataInclusao = :dataMovimento ";
+			
+			whereUtilizado = true;
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
 			
-			hql += " and movimentoEstoque.diferenca.tipoDiferenca = :tipoDiferenca ";
+			hql += (!whereUtilizado) ? " where " : " and ";
+			
+			hql += " diferenca.tipoDiferenca = :tipoDiferenca ";
+			
+			whereUtilizado = true;
 		}
 		
 		return hql;
 	}
 
-	public List<DiferencaDTO> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+	@SuppressWarnings("unchecked")
+	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		return null;
+		String hql = " select diferenca "
+				   + " from Diferenca diferenca "
+				   
+				   + " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
+				   
+				   + " where diferenca.movimentoEstoque is not null ";
+				   
+		/*if (filtro.getClass() != null) {
+			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
+		}*/
+				   
+		Query query = getSession().createQuery(hql);
+		
+		return query.list();
 	}
 	
 	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		return null;
+		String hql = " select count(diferenca) "
+				   + " from Diferenca diferenca "
+				   
+				   + " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
+				   
+				   + " where diferenca.movimentoEstoque is not null ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		return (Long) query.uniqueResult();
 	}
 
 }
