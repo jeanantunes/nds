@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.DiferencaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -129,7 +130,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		getSession().save(itemRecebimentoFisico);
 		
 		Diferenca diferenca = 
-			Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao, tipoDiferenca, statusConfirmacao);
+			Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao, tipoDiferenca, statusConfirmacao, null);
 		
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		
@@ -201,6 +202,28 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(quantidadeTotal);
 		
 		Assert.assertEquals(this.qtdeMovimentos, quantidadeTotal);
+	}
+	
+	@Test
+	public void obterDiferencas() {
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		List<DiferencaDTO> lista = diferencaEstoqueRepository.obterDiferencas(filtro);
+		
+		Assert.assertNotNull(lista);
+		
+		Assert.assertTrue(!lista.isEmpty());
+	}
+	
+	@Test
+	public void obterTotalDiferencas() {
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		
+		Assert.assertNotNull(quantidadeTotal);
+		
+		Assert.assertTrue(quantidadeTotal != 0);
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {
