@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -33,6 +34,7 @@ import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -102,15 +104,17 @@ public class RecebimentoFisicoController {
 
 	// metodo para prrencher combo fornecedor com o cnpj informado
 	@Post
-	public void buscaCnpj(String cnpj) throws ParseException {
+	public void buscaCnpj(String cnpj){
 		
 		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarPorCnpj(cnpj);
-		 if(validarCnpj(pessoaJuridica, cnpj)){
-			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
-		 }
-	
-			result.redirectTo("/recebimentoFisico");
 		
+		if(pessoaJuridica != null){
+			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
+		}else{
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,"CNPJ não encontrado!");
+			
+		}
 	}
 	
 	// metodo para prrencher combo fornecedor com o cnpj informado
@@ -118,35 +122,14 @@ public class RecebimentoFisicoController {
 		public void buscaCnpjPorFornecedor(String nomeFantasia) throws ParseException {
 			
 			PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
-			 if(validarNomeFantasia(pessoaJuridica, nomeFantasia)){
+			if(pessoaJuridica != null){
 				result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
+			 }else{
+				 throw new ValidacaoException(TipoMensagem.ERROR,"Fornecedor não encontrado");
 			 }
 		
-			result.redirectTo("/recebimentoFisico");			
 		}
-	
-
-	
-	private boolean validarNomeFantasia(PessoaJuridica pessoaJuridica,
-			String nomeFantasia) {
-		boolean isValido = true;
-		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
-		if (nomeFantasia == null || "".equals(nomeFantasia)){
-			isValido = false;
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("É necessário selecionar um Fornecedor!");
-		}else if(pessoaJuridica == null){
-			isValido = false;
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("CNPJ não encontrado!");
-		}
-		if(isValido == false){
-			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
-		}	
-		
-		return isValido;		
-	}
 
 	// metodo para gerar uma lista com sugestao
 	
@@ -245,8 +228,8 @@ public class RecebimentoFisicoController {
 			String repartePrevisto 	 = dto.getRepartePrevisto().toString();
 			String qtdeFisica		 = dto.getQtdFisico().toString();
 			String diferenca		 = dto.getDiferenca().toString();
-			//String valorTotal		 = dto.getValorTotal().toString();
-			listaModeloGenerico.add(new CellModel(dto.getIdItemNota().intValue(), codigo, nomeProduto, edicao, precoCapa, repartePrevisto,qtdeFisica,diferenca));
+			String valorTotal		 = dto.getValorTotal().toString();
+			listaModeloGenerico.add(new CellModel(dto.getIdItemNota().intValue(), codigo, nomeProduto, edicao, precoCapa, repartePrevisto,qtdeFisica,diferenca,valorTotal));
 			
 		}
 		
