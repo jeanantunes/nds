@@ -230,63 +230,62 @@ public class DataLoader {
 				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 		session.save(parametroSistema);
 		
+		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
+		
+		MovimentoEstoque movimentoEstoqueDiferenca = Fixture.movimentoEstoque(null, produtoEdicaoVeja1,
+																			  tipoMovimentoRecFisico, usuario,
+																			  estoqueProduto, new Date(),
+																			  new BigDecimal(1), StatusAprovacao.APROVADO);
+		session.save(movimentoEstoqueDiferenca);
+		
+		MovimentoEstoque movimentoEstoqueDiferenca2 = Fixture.movimentoEstoque(null, produtoEdicaoVeja2,
+																			   tipoMovimentoRecFisico, usuario,
+																			   estoqueProduto, new Date(),
+																			   new BigDecimal(2), StatusAprovacao.APROVADO);
+		session.save(movimentoEstoqueDiferenca2);
+		
+		MovimentoEstoque movimentoEstoqueDiferenca3 = Fixture.movimentoEstoque(null, produtoEdicaoVeja3,
+																			   tipoMovimentoRecFisico, usuario,
+																			   estoqueProduto, new Date(),
+																			   new BigDecimal(3), StatusAprovacao.APROVADO);
+		session.save(movimentoEstoqueDiferenca3);
+		
+		MovimentoEstoque movimentoEstoqueDiferenca4 = Fixture.movimentoEstoque(null, produtoEdicaoVeja4,
+																			   tipoMovimentoRecFisico, usuario,
+																			   estoqueProduto, new Date(),
+																			   new BigDecimal(4), StatusAprovacao.APROVADO);
+		session.save(movimentoEstoqueDiferenca4);
+		
+		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
 		// Início dos inserts na tabela DIFERENCA
 		
 		Diferenca diferenca = Fixture.diferenca(new BigDecimal(1), usuario,
 												produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-						  						StatusConfirmacao.CONFIRMADO, null);
+						  						StatusConfirmacao.CONFIRMADO, null,
+						  						movimentoEstoqueDiferenca);
 		session.save(diferenca);
 		
 		Diferenca diferenca2 = Fixture.diferenca(new BigDecimal(2), usuario,
 												produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-												StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico);
+												StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,
+												movimentoEstoqueDiferenca2);
 		session.save(diferenca2);
 		
 		Diferenca diferenca3 = Fixture.diferenca(new BigDecimal(3), usuario,
 												 produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-												 StatusConfirmacao.CONFIRMADO, null);
+												 StatusConfirmacao.CONFIRMADO, null,
+												 movimentoEstoqueDiferenca3);
 		session.save(diferenca3);
 		
 		Diferenca diferenca4 = Fixture.diferenca(new BigDecimal(4), usuario,
 												 produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-												 StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico);
+												 StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,
+												 movimentoEstoqueDiferenca4);
 		session.save(diferenca4);
 		
 		// Fim dos inserts na tabela DIFERENCA
 		
-		
-		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
-		
-		MovimentoEstoque movimentoEstoqueDiferenca = Fixture.movimentoEstoque(null, produtoEdicaoVeja1,
-																			  tipoMovimentoRecFisico, usuario,
-																			  estoqueProduto, diferenca,
-																			  new Date(), new BigDecimal(1),
-																			  StatusAprovacao.APROVADO);
-		session.save(movimentoEstoqueDiferenca);
-		
-		MovimentoEstoque movimentoEstoqueDiferenca2 = Fixture.movimentoEstoque(null, produtoEdicaoVeja2,
-																			   tipoMovimentoRecFisico, usuario,
-																			   estoqueProduto, diferenca2,
-																			   new Date(), new BigDecimal(2),
-																			   StatusAprovacao.APROVADO);
-		session.save(movimentoEstoqueDiferenca2);
-		
-		MovimentoEstoque movimentoEstoqueDiferenca3 = Fixture.movimentoEstoque(null, produtoEdicaoVeja3,
-																			   tipoMovimentoRecFisico, usuario,
-																			   estoqueProduto, diferenca3,
-																			   new Date(), new BigDecimal(3),
-																			   StatusAprovacao.APROVADO);
-		session.save(movimentoEstoqueDiferenca3);
-		
-		MovimentoEstoque movimentoEstoqueDiferenca4 = Fixture.movimentoEstoque(null, produtoEdicaoVeja4,
-																			   tipoMovimentoRecFisico, usuario,
-																			   estoqueProduto, diferenca4,
-																			   new Date(), new BigDecimal(4),
-																			   StatusAprovacao.APROVADO);
-		session.save(movimentoEstoqueDiferenca4);
-		
-		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 	}
 	
 	private static void save(Session session, Object... entidades) {
