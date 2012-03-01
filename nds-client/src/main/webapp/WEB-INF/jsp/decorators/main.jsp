@@ -351,7 +351,7 @@ fieldset label {
 		<div class="container">
 			
 			<div id="notify" style="display: none;"></div>
-			<%@include file="../components/error.jsp"%>
+			<%@include file="../error/showError.jsp"%>
 			
 			<div id="effect" class="ui-state-highlight ui-corner-all" style="display: none; position: absolute;">
 				<p>
