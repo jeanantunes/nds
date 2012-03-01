@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.LancamentoDiferencaVO;
 import br.com.abril.nds.client.vo.ResultadoLancamentoDiferencaVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
-import br.com.abril.nds.dto.DiferencaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColuna;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
@@ -27,7 +27,6 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -101,9 +100,11 @@ public class DiferencaEstoqueController {
 									String dataLancamentoAte, TipoDiferenca tipoDiferenca,
 									String sortorder, String sortname, int page, int rp) {
 		
-		DiferencaDTO dto = new DiferencaDTO(null, null, null);
+		//List<Diferenca> lista = diferencaEstoqueService.obterDiferencas(new FiltroConsultaDiferencaEstoqueDTO());
 		
-		List<DiferencaDTO> listaDiferencaDTO = new ArrayList<DiferencaDTO>();
+		Diferenca dto = new Diferenca();
+		
+		List<Diferenca> listaDiferencaDTO = new ArrayList<Diferenca>();
 		
 		listaDiferencaDTO.add(dto);
 		listaDiferencaDTO.add(dto);
@@ -129,7 +130,7 @@ public class DiferencaEstoqueController {
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		for (DiferencaDTO diferencaDTO : listaDiferencaDTO) {
+		for (Diferenca diferencaDTO : listaDiferencaDTO) {
 			
 			String data = "a";
 			String codigo = "b";
@@ -225,39 +226,39 @@ public class DiferencaEstoqueController {
 	/*
 	 * Processa o resulta das diferenças para lançamento.
 	 *  
-	 * @param listaDiferencas - lista de diferenças (DTO)
+	 * @param listaDiferencas - lista de diferenças
 	 */
-	private void processarDiferencasLancamento(List<DiferencaDTO> listaDiferencas) {
+	private void processarDiferencasLancamento(List<Diferenca> listaDiferencas) {
 
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 		
 		BigDecimal qtdeTotalDiferencas = null;
 		BigDecimal valorTotalDiferencas = null;
 		
-		for (DiferencaDTO diferencaDTO : listaDiferencas) {
+		for (Diferenca diferenca : listaDiferencas) {
 				
-			Integer id = diferencaDTO.getMovimentoEstoque().getId().intValue();
+			Integer id = diferenca.getMovimentoEstoque().getId().intValue();
 			
-			String codigoProduto = diferencaDTO.getProdutoEdicao().getProduto().getCodigo().toString();
+			String codigoProduto = diferenca.getProdutoEdicao().getProduto().getCodigo().toString();
 			
-			String descricaoProduto = diferencaDTO.getProdutoEdicao().getProduto().getDescricao();
+			String descricaoProduto = diferenca.getProdutoEdicao().getProduto().getDescricao();
 			
-			String numeroEdicao = diferencaDTO.getProdutoEdicao().getNumeroEdicao().toString();
+			String numeroEdicao = diferenca.getProdutoEdicao().getNumeroEdicao().toString();
 			
 			String precoVenda = 
-				CurrencyUtil.formatarValor(diferencaDTO.getProdutoEdicao().getPrecoVenda());
+				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda());
 			
-			String pacotePadrao = String.valueOf(diferencaDTO.getProdutoEdicao().getPacotePadrao());
+			String pacotePadrao = String.valueOf(diferenca.getProdutoEdicao().getPacotePadrao());
 			
-			String qtdeDiferencas = diferencaDTO.getMovimentoEstoque().getDiferenca().getQtde().toString();
+			String qtdeDiferencas = diferenca.getQtde().toString();
 			
-			String tipoDiferenca = diferencaDTO.getMovimentoEstoque().getDiferenca().getTipoDiferenca().getDescricao();
+			String tipoDiferenca = diferenca.getTipoDiferenca().getDescricao();
 			
 			BigDecimal valorDiferencas = 
-				diferencaDTO.getProdutoEdicao().getPrecoVenda().multiply(
-					diferencaDTO.getMovimentoEstoque().getDiferenca().getQtde());
+				diferenca.getProdutoEdicao().getPrecoVenda().multiply(
+					diferenca.getQtde());
 			
-			String idMovimentoEstoque = diferencaDTO.getMovimentoEstoque().getId().toString();
+			String idMovimentoEstoque = diferenca.getMovimentoEstoque().getId().toString();
 			
 			CellModel cellModel = new CellModel(
 				
@@ -274,7 +275,7 @@ public class DiferencaEstoqueController {
 			);
 			
 			qtdeTotalDiferencas = 
-				qtdeTotalDiferencas.add(diferencaDTO.getMovimentoEstoque().getDiferenca().getQtde());
+				qtdeTotalDiferencas.add(diferenca.getQtde());
 			
 			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
 			

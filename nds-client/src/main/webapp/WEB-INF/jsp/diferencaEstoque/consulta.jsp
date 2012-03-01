@@ -16,6 +16,70 @@
 			$("#edicao").mask("?99999999999999999999", {placeholder:""});
 		});
 		
+		$(function() {
+			$(".consultaFaltasSobrasGrid").flexigrid({
+				preProcess: getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Data',
+					name : 'data',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Código',
+					name : 'codigo',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Produto',
+					name : 'produto',
+					width : 170,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'edicao',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Tipo de Diferença',
+					name : 'tipoDiferenca',
+					width : 180,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nota',
+					name : 'nota',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Exemplar',
+					name : 'exemplar',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Status',
+					name : 'status',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				} ],
+				sortname : "data",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180
+			});
+		});
+		
 		function mostrarGridConsulta() {
 			var codigoProduto = $("#codigo").val();
 			var numeroEdicao = $("#edicao").val();
@@ -134,69 +198,4 @@
 
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
-
-	<script>
-	
-		$(".consultaFaltasSobrasGrid").flexigrid({
-			preProcess: getDataFromResult,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Data',
-				name : 'data',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Código',
-				name : 'codigo',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 170,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Tipo de Diferença',
-				name : 'tipoDiferenca',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nota',
-				name : 'nota',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Exemplar',
-				name : 'exemplar',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			} ],
-			sortname : "data",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
-	</script>
 </body>
