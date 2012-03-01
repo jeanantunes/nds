@@ -1,7 +1,9 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +84,8 @@ public class DiferencaEstoqueController {
 	@Get
 	public void consulta() {
 		this.carregarCombosConsulta();
+		
+		result.include("dataAtual", new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(new Date()));
 	}
 	
 	@Post

@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class LancamentoDTO  implements Serializable {
 
@@ -11,15 +10,16 @@ public class LancamentoDTO  implements Serializable {
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numEdicao;
-	private BigDecimal preco;
+	private String preco;
 	private int pacotePadrao;
-	private Long reparte;
+	private String reparte;
 	private String lancamento;
 	private String dataRecolhimento;
 	private Long idFornecedor;
-	private String fornecedor;
+	private String nomeFornecedor;
 	private String dataPrevisto;
 	private String dataMatrizDistrib;
+	private String total;
 	
 	public Long getId() {
 		return id;
@@ -53,11 +53,11 @@ public class LancamentoDTO  implements Serializable {
 		this.numEdicao = numEdicao;
 	}
 	
-	public BigDecimal getPreco() {
+	public String getPreco() {
 		return preco;
 	}
 	
-	public void setPreco(BigDecimal preco) {
+	public void setPreco(String preco) {
 		this.preco = preco;
 	}
 	
@@ -69,11 +69,11 @@ public class LancamentoDTO  implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 	
-	public Long getReparte() {
+	public String getReparte() {
 		return reparte;
 	}
 	
-	public void setReparte(Long reparte) {
+	public void setReparte(String reparte) {
 		this.reparte = reparte;
 	}
 	
@@ -101,12 +101,12 @@ public class LancamentoDTO  implements Serializable {
 		this.idFornecedor = idFornecedor;
 	}
 	
-	public String getFornecedor() {
-		return fornecedor;
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
 	}
 	
-	public void setFornecedor(String fornecedor) {
-		this.fornecedor = fornecedor;
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
 	}
 	
 	public String getDataPrevisto() {
@@ -124,6 +124,14 @@ public class LancamentoDTO  implements Serializable {
 	public void setDataMatrizDistrib(String dataMatrizDistrib) {
 		this.dataMatrizDistrib = dataMatrizDistrib;
 	}
+	
+	public String getTotal() {
+		return total;
+	}
+	
+	public void setTotal(String total) {
+		this.total = total;
+	}	
 
 	@Override
 	public int hashCode() {

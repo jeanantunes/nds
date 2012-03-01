@@ -129,13 +129,13 @@ public class DataLoader {
 
 		Produto revistaVeja = Fixture.produto("1", "Revista Veja", "Veja",
 				PeriodicidadeProduto.SEMANAL, tipoProduto);
-		revistaVeja.addFornecedor(fornecedorAcme);
+		revistaVeja.addFornecedor(fornecedorDinap);
 		session.save(revistaVeja);
 		
 		Produto revistaSuper = Fixture.produto("2",
 				"Revista Superinteressante", "Superinteressante",
 				PeriodicidadeProduto.MENSAL, tipoProduto);
-		revistaSuper.addFornecedor(fornecedorAcme);
+		revistaSuper.addFornecedor(fornecedorDinap);
 		session.save(revistaSuper);
 		
 		ProdutoEdicao revistaVeja1 = Fixture.produtoEdicao(1L, 10, 14,

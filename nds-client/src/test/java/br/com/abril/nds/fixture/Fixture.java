@@ -194,7 +194,9 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
-		lancamento.addRecebimento(recebimento);
+		if (recebimento != null) {
+			lancamento.addRecebimento(recebimento);
+		}
 		return lancamento;
 	}
 

@@ -45,7 +45,7 @@ public class EstoqueProdutoCota {
 	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	@Version
 	@Column(name = "VERSAO")
-	private Long versao;
+	private Long versao = 0L;
 	
 	public Long getId() {
 		return id;
