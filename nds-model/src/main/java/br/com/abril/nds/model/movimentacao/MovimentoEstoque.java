@@ -9,7 +9,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 
@@ -24,9 +23,6 @@ public class MovimentoEstoque extends Movimento {
 
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
-	@OneToOne(optional = true)
-	@JoinColumn(name = "DIFERENCA_ID")
-	private Diferenca diferenca;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -43,14 +39,6 @@ public class MovimentoEstoque extends Movimento {
 	
 	public void setQtde(BigDecimal qtde) {
 		this.qtde = qtde;
-	}
-	
-	public Diferenca getDiferenca() {
-		return diferenca;
-	}
-	
-	public void setDiferenca(Diferenca diferenca) {
-		this.diferenca = diferenca;
 	}
 	
 	public ProdutoEdicao getProdutoEdicao() {

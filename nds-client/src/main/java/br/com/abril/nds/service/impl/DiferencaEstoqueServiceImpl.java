@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.DiferencaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 
@@ -26,7 +26,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
 	
 	@Transactional(readOnly = true)
-	public List<DiferencaDTO> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
+	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
 		
 		return this.diferencaEstoqueRepository.obterDiferencasLancamento(filtro);
 	}
@@ -38,7 +38,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<DiferencaDTO> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
 		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
 	}

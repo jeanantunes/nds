@@ -36,7 +36,7 @@ public class EstoqueProduto {
 	List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	@Version
 	@Column(name = "VERSAO")
-	private Long versao;
+	private Long versao = 0L;
 	
 	public Long getId() {
 		return id;

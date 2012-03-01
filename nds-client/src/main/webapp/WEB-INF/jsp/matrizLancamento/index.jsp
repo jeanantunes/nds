@@ -2,8 +2,9 @@
 <head>
 
 <script type="text/javascript">
-function mostrar(){
+function pesquisar(){
 	$(".grids").show();
+	$("#lancamentosProgramadosGrid").flexReload();
 	$("#resumoPeriodo").show();
 }
 
@@ -108,12 +109,6 @@ function popup() {
 			buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
 			buttonImageOnly: true
 		});
-		$( "#datepickerAte" ).datepicker({
-			dateFormat: "dd/mm/yy",
-			showOn: "button",
-			buttonImage: "<c:url value = 'scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
-			buttonImageOnly: true
-		});
 		$( "#datepickerDe_1" ).datepicker({
 			dateFormat: "dd/mm/yy",
 			showOn: "button",
@@ -179,10 +174,10 @@ function popup() {
               </div>
            </td>
    	        <td colspan="3">Período de Lançamento Matriz/Distribuidor:</td>
-   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${dataOperacao}" /></td>
-   	        <td width="47" align="center">Até</td>
-   	        <td width="112"><input type="text" name="datepickerAte" id="datepickerAte" style="width:80px;" /></td>
-   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
+   	        <td width="47" align="center">&nbsp;</td>
+   	        <td width="112">&nbsp;</td>
+   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
 
           </tr>
         </table>
@@ -193,7 +188,7 @@ function popup() {
         <div class="grids" style="display:none;">
         	<span class="bt_configura_inicial"><a href="javascript:;"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
            <br clear="all" />
-       	   <table class="lancamentosProgramadosGrid"></table>
+       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
           <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="<c:url value='images/ico_excel.png'/>" hspace="5" border="0" />Arquivo</a></span>
           <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="<c:url value='images/ico_impressora.gif'/>" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
           <span class="bt_novos" title="Reprogramar"><a href="javascript:;" onclick="popup_reprogramar();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a></span>
@@ -201,98 +196,51 @@ function popup() {
         </div>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>      
-      <fieldset class="classFieldset" id="resumoPeriodo" style="display:none;" >
-      	<legend>Resumo do Período</legend>
+      <fieldset class="classFieldset" id="resumoPeriodo"; style="display:none;" >
+        <legend>Resumo do Período</legend>
         <table width="100%" border="0" cellspacing="2" cellpadding="2">
-          <tr>
-            <td>
-            	<div class="box_resumo">
-                	<label>01/12/2011</label>
-                    <span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-                    <span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-                    <span class="span_1">Peso Total:</span><span class="span_2">60,00</span>
-                    <span class="span_1">Valor Total:</span><span class="span_2">250.000,00</span>
-                </div>
-            </td>
-            <td>
-            	<div class="box_resumo">
-                	<label>02/12/2011</label>
-                    <span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-                    <span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-                    <span class="span_1">Peso Total:</span><span class="span_2">60,00</span>
-                    <span class="span_1">Valor Total:</span><span class="span_2">250.000,00</span>
-                
-                </div>
-            </td>
-            <td>
-            	<div class="box_resumo">
-                	<label>03/12/2011</label>
-                    <span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-                    <span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-                    <span class="span_1">Peso Total:</span><span class="span_2">60,00</span>
-                    <span class="span_1">Valor Total:</span><span class="span_2">250.000,00</span>
-                
-                </div>
-            </td>
-            <td>
-            	<div class="box_resumo">
-                	<label>04/12/2011</label>
-                    <span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-                    <span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-                    <span class="span_1">Peso Total:</span><span class="span_2">60,00</span>
-                    <span class="span_1">Valor Total:</span><span class="span_2">250.000,00</span>
-                </div>
-            </td>
-            <td>
-            	<div class="box_resumo">
-                	<label>05/12/2011</label>
-                    <span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-                    <span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-                   <span class="span_1">Peso Total:</span><span class="span_2">60,00</span>
-                    <span class="span_1">Valor Total:</span><span class="span_2">250.000,00</span>
-                
-                </div>
-            </td>
-            <td>
-            	<div class="box_resumo">
-                	<label>06/12/2011</label>
-                    <span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-                    <span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-                   <span class="span_1">Peso Total:</span><span class="span_2">60,00</span>
-                   <span class="span_1">Valor Total:</span><span class="span_2">250.000,00</span>
-                </div>
-            </td>
-          </tr>
+          
         </table>
       </fieldset>
-    </div>
+     </div>
 </div>
 </form>
 <script>
-	$(".lancamentosProgramadosGrid").flexigrid({
+	$("#lancamentosProgramadosGrid").flexigrid({
 			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
 			dataType : 'json',
-			preProcess : processaColunasLancamentos,
+			autoload: true,
+			onSuccess: buscarResumoPeriodo,
+			preProcess : processarColunasLancamentos,
+			onSubmit : function(){
+				var idsFornecedores = new Array();
+				$("input[name='checkgroup_menu']:checked").each(function(i) {
+					idsFornecedores.push($(this).val());
+				});
+				$("#lancamentosProgramadosGrid").flexOptions({params: [{name:'data', value: $("#datepickerDe").val()}, 
+		                                      {name:'idsFornecedores', value: idsFornecedores}]});
+		        return true;
+		    },
 			colModel : [  {
 				display : 'Código',
-				name : 'codigo	',
+				name : 'codigoProduto',
 				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
-				width : 40,
+				name : 'numEdicao',
+				width : 30,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Preço R$',
+				display : 'Preço Capa R$',
 				name : 'preco',
 				width : 50,
 				sortable : true,
@@ -300,45 +248,51 @@ function popup() {
 			}, {
 				display : 'Pcte Padrão',
 				name : 'pacotePadrao',
-				width : 65,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 50,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Lançamento',
 				name : 'lancamento',
-				width : 70,
+				width : 60,
 				sortable : true,
-				align : 'center'
+				align : 'left'
 			}, {
 				display : 'Recolhimento',
-				name : 'recolhimento',
+				name : 'dataRecolhimento',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Fornecedor',
-				name : 'fornecedor',
-				width : 80,
+				name : 'nomeFornecedor',
+				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Previsto',
-				name : 'previsto',
+				name : 'dataPrevisto',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Matriz/Distrib.',
-				name : 'matrizDistrib',
+				name : 'dataMatrizDistrib',
 				width : 105,
 				sortable : true,
 				align : 'center'
+			},{
+				display : 'Total R$',
+				name : 'total',
+				width : 40,
+				sortable : true,
+				align : 'right'
 			},{
 				display : 'Reprogramar',
 				name : 'reprogramar',
@@ -384,15 +338,61 @@ function popup() {
 				sortable : true,
 				align : 'center'
 			}],
+
 			width : 360,
 			height : 180
 		});
 		
-		function processaColunasLancamentos(data) {
+		function processarColunasLancamentos(data) {
 			$.each(data.rows, function(i, row){
-				//processa celula especifica
+				var inputDataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
+				inputDataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
+				inputDataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
+				row.cell.dataMatrizDistrib = inputDataDistrib;
+				row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck()" />'
 			});
 			return data;
+		}
+		
+		function buscarResumoPeriodo() {
+			var idsFornecedores = new Array();
+			$("input[name='checkgroup_menu']:checked").each(function(i) {
+				idsFornecedores.push($(this).val());
+			});
+			var dataInicial = $("#datepickerDe").val(); 
+			var data = 'dataInicial='+ dataInicial + '&idsFornecedores=' + idsFornecedores;
+			$.ajax({
+				type:"GET",
+				url:'<c:url value="/matrizLancamento/resumoPeriodo"/>',
+				data: data,
+				cache: false,
+				dataType: "json",
+				success: function(data) {
+					popularResumoPeriodo(data);
+				}
+			});
+		}
+		
+		function popularResumoPeriodo(data) {
+			var rows='<tr>';
+			$.each(data, function(index, resumo){
+				  rows+='<td>';
+				  rows+='<div class="box_resumo">';
+				  rows+='<label>'+ resumo.data +'</label>';
+				  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
+				  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';	
+				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
+				  rows+='<span class="span_2">'+ resumo.qtdeExemplares +'</span>';	
+				  rows+='<span class="span_1">Peso Total:</span>';
+				  rows+='<span class="span_2">'+ resumo.pesoTotal +'</span>';
+				  rows+='<span class="span_2">'+ resumo.pesoTotal +'</span>';
+				  rows+='<span class="span_1">Valor Total:</span>';
+				  rows+='<span class="span_2">'+ resumo.valorTotal +'</span>'
+				  rows+='</div>';
+				  rows+='</td>';					  
+		    });	
+		    rows+="</tr>";
+		    $("#resumoPeriodo").clear().append(rows);
 		}
 		
 </script>
