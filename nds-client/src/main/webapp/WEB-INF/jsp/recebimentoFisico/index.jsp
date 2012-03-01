@@ -4,29 +4,20 @@
 //funcoes que pesquisa fornecedor por Cnpj
 function pesquisarPorCnpjFornecedor() {
 		
-	var cnpj = $("#cnpj").val();
-	
-	if (cnpj && cnpj.length > 0) {
-		
+	var cnpj = $("#cnpj").val();	
 		
 		$.postJSON("<c:url value='recebimentoFisico/buscaCnpj'/>",
-				   "cnpj=" + cnpj, exibirNomeFornecedor);
-			
+				   "cnpj=" + cnpj, exibirNomeFornecedor);	
 	}
-}
 
 //funcoes que pesquisa cnpj por fornecedor
 function pesquisarCnpjPorFornecedor() {
 		
-	var fornecedor = $("#fornecedor").val();
-		
-	if (fornecedor && fornecedor.length > 0) {
-		
-		
+	var fornecedor = $("#fornecedor").val();		
 		$.postJSON("<c:url value='recebimentoFisico/buscaCnpjPorFornecedor'/>",
 				   "nomeFantasia=" + fornecedor, exibirCnpj);
 			
-	}
+	
 }
 
 function isnull(){
@@ -36,7 +27,7 @@ function isnull(){
 	}
 }
 
-function exibirNomeFornecedor(result) {
+function exibirNomeFornecedor(result) {	
 	$("#fornecedor").val(result.nomeFantasia);
 }
 
@@ -63,8 +54,6 @@ function pesquisarExisteNotaFornecedor() {
 }
 
 function confirmaNotaFiscalEncontrada(result) {
-	
-	alert("entrou no confirma");
 	
 	if(typeof result == "object"){		
 			pesquisarItemNotaGrid();
@@ -490,7 +479,7 @@ $(function() {
     <td width="136"><input id="cnpj" onblur="pesquisarPorCnpjFornecedor();" name="cnpj" style="width:130px;"/></td>
      <td width="86">Fornecedor:</td>
     <td width="254">
-    	<select name="fornecedor"  onchange="pesquisarCnpjPorFornecedor(),isnull();" onblur="pesquisarCnpjPorFornecedor(),isnull();"   id="fornecedor" style="width: 250px;">
+    	<select id="fornecedor" name="fornecedor"  onchange="pesquisarCnpjPorFornecedor(),isnull();" onblur="pesquisarCnpjPorFornecedor(),isnull();" style="width: 250px;">
     		<option value=""></option>
 			<c:forEach var="fornecedor" items="${listafornecedores}">				
 				<option value="${fornecedor.juridica.nomeFantasia}">${fornecedor.juridica.nomeFantasia}</option>
