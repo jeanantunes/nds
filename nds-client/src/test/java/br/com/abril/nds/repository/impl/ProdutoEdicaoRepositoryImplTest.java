@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,10 +34,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 @ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager")
 @Transactional
-public class ProdutoEdicaoRepositoryImplTest {
-	
-	@Autowired
-	private SessionFactory sf;
+public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private ProdutoEdicaoRepositoryImpl produtoEdicaoRepository;
@@ -101,10 +96,6 @@ public class ProdutoEdicaoRepositoryImplTest {
 		getSession().clear();
 	}
 	
-	private Session getSession() {
-		return sf.getCurrentSession();
-	}
-
 	@Test
 	public void obterListaProdutoEdicao() {
 		
