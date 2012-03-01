@@ -2,7 +2,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.abril</groupId>
 	<artifactId>nds</artifactId>
@@ -192,9 +192,14 @@
 				<artifactId>mysql-connector-java</artifactId>
 				<version>5.1.18</version>
 			</dependency>
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>1.7.1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -217,7 +222,7 @@
 			<groupId>log4j</groupId>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -239,14 +244,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<modules>
 		<module>nds-model</module>
-		
-		<!-- DESABILITADO até início de atividades neste módulo 
-		<module>nds-server</module>
-		 -->
-		 
+
+		<!-- DESABILITADO até início de atividades neste módulo <module>nds-server</module> -->
+
 		<module>nds-client</module>
 	</modules>
 
@@ -259,5 +262,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	
+
 </project>

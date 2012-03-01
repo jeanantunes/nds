@@ -1,18 +1,20 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PeriodoVO;
-import br.com.abril.nds.vo.estoque.DetalheNotaFiscalVO;
-import br.com.abril.nds.vo.filtro.FiltroConsultaNotaFiscalDTO;
 
 @Service
 public class NotaFiscalServiceImpl implements NotaFiscalService {
@@ -36,8 +38,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 	}
 
-	
-
 	@Override
 	@Transactional
 	public List<NotaFiscal> obterNotasFiscaisCadastradas(
@@ -59,13 +59,33 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	@Transactional
-	public List<DetalheNotaFiscalVO> obterDetalhesNotaFical(Long idNotaFiscal) {
+	public DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal) {
 		
 		if (idNotaFiscal == null) {
 			throw new IllegalArgumentException("Erro inesperado. ID da nota fiscal não pode ser nulo.");
 		}
 
-		return notaFiscalDAO.obterDetalhesNotaFical(idNotaFiscal);
+		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalDAO.obterDetalhesNotaFical(idNotaFiscal);
+
+		DetalheNotaFiscalDTO detalheNotaFiscalDTO = new DetalheNotaFiscalDTO();
+		
+		detalheNotaFiscalDTO.setItensDetalhados(itensDetalhados);
+		
+		double totalExemplares = 0.0;
+		double totalSumarizado = 0.0;
+		
+		for (DetalheItemNotaFiscalDTO item : itensDetalhados) {
+			
+			totalExemplares += 
+					item.getQuantidadeExemplares() == null ? 0.0 : item.getQuantidadeExemplares().doubleValue();
+			totalSumarizado += 
+					item.getPrecoVenda() == null ? 0.0 : item.getPrecoVenda().doubleValue();
+		}
+
+		detalheNotaFiscalDTO.setTotalExemplares(new BigDecimal(totalExemplares));
+		detalheNotaFiscalDTO.setValorTotalSumarizado(new BigDecimal(totalSumarizado));
+		
+		return detalheNotaFiscalDTO;
 	}
 	
 	@Override
