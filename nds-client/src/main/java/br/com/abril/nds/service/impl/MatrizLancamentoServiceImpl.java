@@ -62,10 +62,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dto.setNomeProduto(produto.getNome());
 		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
 		dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
-		dto.setPreco(CurrencyUtil.formatarValorMonetario(produtoEdicao.getPrecoVenda()));
+		dto.setPreco(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
 		dto.setReparte(lancamento.getReparte().toString());
 		BigDecimal total = produtoEdicao.getPrecoVenda().multiply(lancamento.getReparte());
-		dto.setTotal(CurrencyUtil.formatarValorMonetario(total));
+		dto.setTotal(CurrencyUtil.formatarValor(total));
 		return dto;
 	}
 
