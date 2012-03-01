@@ -11,4 +11,16 @@ public interface RecebimentoFisicoRepository extends Repository<RecebimentoFisic
 	List<RecebimentoFisicoDTO>  obterItemNotaPorCnpjNota(String cnpj, String numeroNota, String serieNota );
 	 void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
 				ItemRecebimentoFisico itemRecebimentoFisico);
+	
+   /**
+	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
+	* 
+	* @param idNotaFiscal
+	* 
+	* @return List - RecebimentoFisicoDTO
+	* 
+	*/
+	List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal);
+
+	 
 }
