@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 
 public class MovimentoEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -14,7 +15,7 @@ public class MovimentoEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	@Test
 	public void testarChamada() {
-		List<ExtratoEdicaoDTO> lista = movimentoEstoqueRepositoryImpl.obterListaExtratoEdicao(1L);
+		List<ExtratoEdicaoDTO> lista = movimentoEstoqueRepositoryImpl.obterListaExtratoEdicao("1", 1L, StatusAprovacao.APROVADO);
 	}
 
 }
