@@ -13,5 +13,5 @@ public interface ProdutoEdicaoService {
 	FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento);
 	
-	boolean validarNumeroEdicao(String codigoProduto, Long numeroEdicao);
+	boolean validarNumeroEdicao(String codigoProduto, String numeroEdicao);
 }

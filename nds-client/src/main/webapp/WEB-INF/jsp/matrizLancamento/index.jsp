@@ -182,7 +182,7 @@ function popup() {
             
             </td>
    	        <td colspan="3">Data de Lançamento Matriz/Distribuidor:</td>
-   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" /></td>
+   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
    	        <td width="47" align="center">&nbsp;</td>
    	        <td width="112">&nbsp;</td>
    	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
