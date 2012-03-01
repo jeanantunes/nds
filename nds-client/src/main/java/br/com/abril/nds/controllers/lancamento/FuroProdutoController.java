@@ -52,7 +52,7 @@ public class FuroProdutoController {
 	}
 	
 	@Post
-	public void pesquisar(String codigo, String produto, Long edicao, String dataLancamento){
+	public void pesquisar(String codigo, String produto, Long edicao, String dataLancamento) throws Exception{
 		
 		this.validarDadosEntradaPesquisa(codigo, edicao, dataLancamento);
 		
@@ -62,8 +62,8 @@ public class FuroProdutoController {
 					codigo, produto, edicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento));
 		} catch (Exception e) {
 			
-			if (e instanceof IllegalArgumentException){
-				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+			if (e instanceof ValidacaoException){
+				throw e;
 			} else {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
 			}
@@ -147,16 +147,20 @@ public class FuroProdutoController {
 	}
 
 	@Post
-	public void confirmarFuro(Long idProdutoEdicao, String novaData, Long idLancamento){
+	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) throws Exception{
 		
-		validarDadosEntradaConfirmarFuro(idProdutoEdicao, novaData, idLancamento);
+		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 		
 		try {
-			this.furoProdutoService.efetuarFuroProduto(idProdutoEdicao, idLancamento, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
+			this.furoProdutoService.efetuarFuroProduto(codigoProduto, idProdutoEdicao, idLancamento, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), this.getIdUsuario());
 			
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao efetuar furo: " + e.getMessage());
+			if (e instanceof ValidacaoException){
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao efetuar furo: " + e.getMessage());
+			}
 		}
 		
 		result.forwardTo(FuroProdutoController.class).index();
@@ -167,9 +171,13 @@ public class FuroProdutoController {
 		return 1L;
 	}
 
-	private void validarDadosEntradaConfirmarFuro(Long idProdutoEdicao, String novaData, Long idLancamento) {
+	private void validarDadosEntradaConfirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) {
 		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (codigoProduto == null || codigoProduto.isEmpty()){
+			listaMensagemValidacao.add("Código produto é obrigatório.");
+		}
 		
 		if (idProdutoEdicao == null){
 			listaMensagemValidacao.add("Id produto edição é obrigatório.");
