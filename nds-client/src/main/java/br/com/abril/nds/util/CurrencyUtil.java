@@ -21,7 +21,7 @@ public abstract class CurrencyUtil {
 	 * 
 	 * @return Valor formatado
 	 */
-	public static String formatarValor(Double valor, Locale locale) {
+	public static String formatarValor(Number valor, Locale locale) {
 		
 		if (valor == null) {
 			
@@ -34,6 +34,7 @@ public abstract class CurrencyUtil {
 		
 		return decimalFormat.format(valor);
 	}
+
 	
 	public static String formatarValorMonetario(BigDecimal valor) {
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance();
