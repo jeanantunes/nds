@@ -35,4 +35,21 @@ public class DateUtil {
 		
 		return dataInicial.compareTo(dataFinal) > 0;
 	}
+	
+	public static Date parseData(String data, String formato) {
+		
+		try {
+			
+			DateFormat f = new SimpleDateFormat(formato);
+			
+			f.setLenient(false);
+			
+			Date parsedData = f.parse(data);
+			
+			return parsedData;
+		
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 }
