@@ -45,6 +45,7 @@ public abstract class NotaFiscal {
 	private String serie;
 	@Column(name = "CHAVE_ACESSO")
 	private String chaveAcesso;
+	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
 	private StatusNotaFiscal statusNotaFiscal;
 	@ManyToOne
