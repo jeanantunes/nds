@@ -49,7 +49,7 @@ public class MatrizLancamentoController {
 	
 	
 	@Post
-	public void matrizLancamento(Date data, Long[] idsFornecedores ) {
+	public void matrizLancamento(Date data, String[] idsFornecedores) {
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO();
 		PeriodoVO periodo = new PeriodoVO(new Date(), new Date());
 		filtro.setPeriodo(periodo);
@@ -65,17 +65,13 @@ public class MatrizLancamentoController {
 	}
 	
 	@Get
-	public void resumoPeriodo(Date data) {
-		List<ResumoPeriodoLancamentoDTO> dtos = new ArrayList<ResumoPeriodoLancamentoDTO>();
-		for (int i = 0; i < 6; i++) {
-			ResumoPeriodoLancamentoDTO dto = new ResumoPeriodoLancamentoDTO();
-			dto.setData(DateUtil.formatarData(data, FORMATO_DATA));
-			dto.setPesoTotal("100");
-			dto.setQtdeExemplares("1000");
-			dto.setQtdeTitulos(5L);
-			dto.setValorTotal("10.000,00");
-			dtos.add(dto);
+	public void resumoPeriodo(Date dataInicial, String[] idsFornecedores) {
+		List<Long> fornecedores = new ArrayList<Long>(idsFornecedores.length);
+		for (String id : idsFornecedores) {
+			fornecedores.add(Long.valueOf(id));
 		}
+		List<ResumoPeriodoLancamentoDTO> dtos = matrizLancamentoService
+				.obterResumoPeriodo(dataInicial, fornecedores);
 		result.use(Results.json()).withoutRoot().from(dtos).serialize();
 	}
 	
