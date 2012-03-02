@@ -3,6 +3,7 @@ package br.com.abril.nds.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.vo.PeriodoVO;
@@ -34,6 +35,25 @@ public class DateUtil {
 		Date dataFinal = periodo.getDataFinal();
 		
 		return dataInicial.compareTo(dataFinal) > 0;
+	}
+
+	/**
+	 * Avança o número de dias a data
+	 * 
+	 * @param data
+	 *            data para adição de dias
+	 * @param numDias
+	 *            número de dias para adicionar
+	 * @return data com o número de dias adicionados
+	 */
+	public static Date adicionarDias(Date data, int numDias) {
+		if (data == null) {
+			return null;
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		cal.add(Calendar.DAY_OF_MONTH, numDias);
+		return cal.getTime();
 	}
 	
 	public static Date parseData(String data, String formato) {

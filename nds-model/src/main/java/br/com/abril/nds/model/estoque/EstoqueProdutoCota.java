@@ -21,14 +21,12 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 
 @Entity
-
-@Table(name = "	ESTOQUE_COTA")
-
-@SequenceGenerator(name="ESTOQUE_COTA_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "	ESTOQUE_PRODUTO_COTA")
+@SequenceGenerator(name="ESTOQUE_PROD_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstoqueProdutoCota {
 	
 	@Id
-	@GeneratedValue(generator = "ESTOQUE_COTA_SEQ")	
+	@GeneratedValue(generator = "ESTOQUE_PROD_COTA_SEQ")	
 	@Column(name = "ID")
 	private Long id;
 	@ManyToOne(optional = false)
@@ -39,7 +37,7 @@ public class EstoqueProdutoCota {
 	private ProdutoEdicao produtoEdicao;
 	@Column(name = "QTDE_RECEBIDA")
 	private BigDecimal qtdeRecebida;
-	@Column(name = "QTDE_DEVEOLVIDA")
+	@Column(name = "QTDE_DEVOLVIDA")
 	private BigDecimal qtdeDevolvida;
 	@OneToMany(mappedBy = "estoqueProdutoCota")
 	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();

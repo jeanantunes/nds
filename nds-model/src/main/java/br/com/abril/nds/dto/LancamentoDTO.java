@@ -20,6 +20,8 @@ public class LancamentoDTO  implements Serializable {
 	private String dataPrevisto;
 	private String dataMatrizDistrib;
 	private String total;
+	private String fisico;
+	private String estudoGerado;
 	
 	public Long getId() {
 		return id;
@@ -131,7 +133,23 @@ public class LancamentoDTO  implements Serializable {
 	
 	public void setTotal(String total) {
 		this.total = total;
-	}	
+	}
+	
+	public String getFisico() {
+		return fisico;
+	}
+	
+	public void setFisico(String fisico) {
+		this.fisico = fisico;
+	}
+	
+	public String getEstudoGerado() {
+		return estudoGerado;
+	}
+	
+	public void setEstudoGerado(String estudoGerado) {
+		this.estudoGerado = estudoGerado;
+	}
 
 	@Override
 	public int hashCode() {

@@ -38,6 +38,8 @@ public class Distribuidor {
 	private PessoaJuridica juridica;
 	@OneToMany(mappedBy = "distribuidor")
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();
+	@Column(name = "CAPACIDADE_DISTRIBUICAO")
+	private Long capacidadeDistribuicao;
 
 	public Long getId() {
 		return id;
@@ -69,6 +71,14 @@ public class Distribuidor {
 	
 	public void setDiasDistribuicao(Set<DistribuicaoFornecedor> diasDistribuicao) {
 		this.diasDistribuicao = diasDistribuicao;
+	}
+	
+	public Long getCapacidadeDistribuicao() {
+		return capacidadeDistribuicao;
+	}
+	
+	public void setCapacidadeDistribuicao(Long capacidadeDistribuicao) {
+		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
 }
