@@ -7,5 +7,7 @@ package br.com.abril.nds.model.cadastro;
  */
 public enum TipoParametroSistema {
 
-	PATH_IMAGENS_CAPA
+	PATH_IMAGENS_CAPA, 
+	
+	NUMERO_TENTATIVAS_REPROGRAMACAO;
 }

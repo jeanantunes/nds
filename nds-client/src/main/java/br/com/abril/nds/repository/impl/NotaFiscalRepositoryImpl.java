@@ -180,7 +180,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		return (NotaFiscal) query.uniqueResult();
 	}
 	/**
-	 * Método para buscar nota com numero,serie, cnpj e chaveDeAcesso 
+	 * Metodo para buscar nota com numero,serie, cnpj e chaveDeAcesso 
 	 * @param filtroConsultaNotaFiscal
 	 * @return
 	 */

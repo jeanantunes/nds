@@ -1,6 +1,7 @@
 package br.com.abril.nds.model;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public enum DiaSemana {
 	
@@ -31,5 +32,12 @@ public enum DiaSemana {
 		}
 		
 		return null;
+	}
+	
+	public static DiaSemana getByDate(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int codigoDiaSemana = calendar.get(Calendar.DAY_OF_WEEK);
+		return getByCodigoDiaSemana(codigoDiaSemana);
 	}
 }

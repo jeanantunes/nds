@@ -2,17 +2,25 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -24,7 +32,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private static final String FORMATO_DATA_LANCAMENTO = "dd/MM/yyyy";
 	
 	@Autowired
-	private LancamentoRepository lancamentoRepository;
+	protected LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	protected DistribuidorRepository distribuidorRepository;
 
 	@Override
 	@Transactional
@@ -39,6 +50,38 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			dtos.add(dto);
 		}
 		return dtos;
+	}
+
+	
+	@Override
+	public List<ResumoPeriodoLancamentoDTO> obterResumoPeriodo(
+			Date dataInicial, List<Long> fornecedores) {
+		// TODO: Definir periodo
+		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
+		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
+				.buscarDiasDistribuicao(fornecedores);
+		Set<DiaSemana> diasDistribuicao = EnumSet.noneOf(DiaSemana.class);
+		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
+			diasDistribuicao.add(distribuicao.getDiaSemana());
+		}
+		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
+				dataInicial, dataFinal, diasDistribuicao);
+		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
+				.buscarResumosPeriodo(periodoDistribuicao, fornecedores);
+		return resumos;
+	}
+
+	private List<Date> filtrarPeriodoDistribuicao (Date dataInicial,
+			Date dataFinal, Collection<DiaSemana> diasDistribuicao) {
+		List<Date> datas = new ArrayList<Date>();
+		while (dataInicial.before(dataFinal) || dataInicial.equals(dataFinal)) {
+			DiaSemana ds = DiaSemana.getByDate(dataInicial);
+			if (diasDistribuicao.contains(ds)) {
+				datas.add(dataInicial);
+			}
+			dataInicial = DateUtil.adicionarDias(dataInicial, 1);
+		}
+		return datas;
 	}
 
 	private LancamentoDTO montarDTO(Lancamento lancamento) {
@@ -66,6 +109,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dto.setReparte(lancamento.getReparte().toString());
 		BigDecimal total = produtoEdicao.getPrecoVenda().multiply(lancamento.getReparte());
 		dto.setTotal(CurrencyUtil.formatarValor(total));
+		//TODO: Definir valores corretos
+		dto.setFisico("10");
+		dto.setEstudoGerado("123");
 		return dto;
 	}
 

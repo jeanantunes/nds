@@ -35,8 +35,6 @@ function exibirMensagem(tipoMensagem, mensagens) {
 		campoTexto.append(value + '</br>');
 	});
 
-	$('#effect').show(1000, esconde("effect"));
-	
 	$("#effect").removeClass("ui-state-error");
 	$("#effect").removeClass("ui-state-highlight");
 	$("#effect").removeClass("ui-state-default");
@@ -48,6 +46,8 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	} else if (tipoMensagem == "ERROR"){
 		$("#effect").addClass("ui-state-error");
 	}
+	
+	$('#effect').show(1000, esconde("effect"));
 }
 
 function isNumeric(a){

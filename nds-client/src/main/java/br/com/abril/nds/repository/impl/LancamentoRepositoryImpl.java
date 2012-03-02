@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -58,5 +59,13 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("id", idLancamento);
 		
 		query.executeUpdate();
+	}
+
+	@Override
+	public List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
+			List<Date> periodoDistribuicao, List<Long> fornecedores) {
+		StringBuilder hql = new StringBuilder("");
+		
+		return null;
 	}
 }
