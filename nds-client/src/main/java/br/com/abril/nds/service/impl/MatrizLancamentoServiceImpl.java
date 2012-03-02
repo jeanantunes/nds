@@ -19,6 +19,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -42,7 +43,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	public List<LancamentoDTO> buscarLancamentosBalanceamento(
 			FiltroLancamentoDTO filtro) {
 		List<Lancamento> lancamentos = lancamentoRepository
-				.obterLancamentosBalanceamentoMartriz(filtro);
+				.obterBalanceamentoMatrizLancamentos(filtro);
 		List<LancamentoDTO> dtos = new ArrayList<LancamentoDTO>(
 				lancamentos.size());
 		for (Lancamento lancamento : lancamentos) {
@@ -52,8 +53,16 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return dtos;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public long totalBalanceamentoMatrizLancamentos(Date data,
+			List<Long> idsFornecedores) {
+		return lancamentoRepository.totalBalanceamentoMatrizLancamentos(data,
+				idsFornecedores);
+	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<ResumoPeriodoLancamentoDTO> obterResumoPeriodo(
 			Date dataInicial, List<Long> fornecedores) {
 		// TODO: Definir periodo
@@ -109,10 +118,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dto.setReparte(lancamento.getReparte().toString());
 		BigDecimal total = produtoEdicao.getPrecoVenda().multiply(lancamento.getReparte());
 		dto.setTotal(CurrencyUtil.formatarValor(total));
-		//TODO: Definir valores corretos
-		dto.setFisico("10");
-		dto.setEstudoGerado("123");
+		dto.setFisico(lancamento.getTotalRecebimentoFisico().toString());
+		Estudo estudo = lancamento.getEstudo();
+		if (estudo != null) {
+			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
+		}
 		return dto;
 	}
+
+
 
 }
