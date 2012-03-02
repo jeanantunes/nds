@@ -239,7 +239,7 @@ fieldset label {
 							<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
 									Reparte Cota</a>
 							</li>
-							<li><a href="lancamento/furoProduto">Furo de
+							<li><a href="<c:url value='/lancamento/furoProduto'/>">Furo de
 									Produto</a>
 							</li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>
