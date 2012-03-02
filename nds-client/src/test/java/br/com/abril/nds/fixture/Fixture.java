@@ -160,7 +160,7 @@ public class Fixture {
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
-		produto.setTipoProduto(tipo);
+//		produto.setTipoProduto(tipo);
 		return produto;
 	}
 
