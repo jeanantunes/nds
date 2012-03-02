@@ -85,6 +85,9 @@ public class Lancamento {
 	
 	@OneToMany(mappedBy = "lancamento")
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
+	
+	@Column(name = "NUMERO_REPROGRAMACOES")
+	private int numeroReprogramacoes;
 
 	public Long getId() {
 		return id;
@@ -192,6 +195,14 @@ public class Lancamento {
 	
 	public void addRecebimento(ItemRecebimentoFisico itemRecebimentoFisico) {
 		this.recebimentos.add(itemRecebimentoFisico);
+	}
+	
+	public int getNumeroReprogramacoes() {
+		return numeroReprogramacoes;
+	}
+	
+	public void setNumeroReprogramacoes(int numeroReprogramacoes) {
+		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 
 }

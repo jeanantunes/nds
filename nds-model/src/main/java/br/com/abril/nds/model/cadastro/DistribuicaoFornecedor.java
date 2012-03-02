@@ -103,7 +103,7 @@ public class DistribuicaoFornecedor {
 	@Override
 	public String toString() {
 		return new StringBuilder(fornecedor.getJuridica().getNomeFantasia())
-				.append("-").append(diaSemana).append("-")
+				.append("-").append(getDiaSemana()).append("-")
 				.append(operacaoDistribuidor).toString();
 	}
 	
