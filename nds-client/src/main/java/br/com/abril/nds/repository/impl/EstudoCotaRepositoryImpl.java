@@ -31,7 +31,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Lon
 		
 		String hql = " from EstudoCota estudoCota"
 				   + " where estudoCota.cota.numeroCota = :numeroCota"
-				   + " and estudoCota.estudo.lancamento.dataLancamentoDistribuidor >= :dataReferencia";
+				   + " and estudoCota.estudo.dataLancamento >= :dataReferencia";
 		
 		Query query = super.getSession().createQuery(hql);
 
