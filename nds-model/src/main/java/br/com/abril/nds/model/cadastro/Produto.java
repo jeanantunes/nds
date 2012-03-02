@@ -48,10 +48,6 @@ public class Produto {
 	@ManyToMany
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_PRODUTO_ID")
-	private TipoProduto tipoProduto;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM")
 	private Origem origem;
@@ -106,14 +102,6 @@ public class Produto {
 	
 	public void setFornecedores(Set<Fornecedor> fornecedores) {
 		this.fornecedores = fornecedores;
-	}
-	
-	public TipoProduto getTipoProduto() {
-		return tipoProduto;
-	}
-	
-	public void setTipoProduto(TipoProduto tipoProduto) {
-		this.tipoProduto = tipoProduto;
 	}
 	
 	public Origem getOrigem() {
