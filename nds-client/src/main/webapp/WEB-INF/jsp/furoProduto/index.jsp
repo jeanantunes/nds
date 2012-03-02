@@ -40,6 +40,7 @@
 			$("#produto").autocomplete({source: ""});
 			
 			$("#dataLancamento").mask("99/99/9999");
+			$("#novaData").mask("99/99/9999");
 			$("#edicao").mask("?99999999999999999999", {placeholder:""});
 		});
 		
@@ -66,6 +67,7 @@
 			$("#imagem").attr("alt", result.nomeProduto);
 			$("#novaData").val(result.novaData);
 			
+			$("#codigoProdutoHidden").val(result.codigoProduto);
 			$("#lancamentoHidden").val(result.idLancamento);
 			$("#produtoEdicaoHidden").val(result.idProdutoEdicao);
 						
@@ -96,7 +98,7 @@
 		}
 		
 		function confirmar(){
-			var data = "idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
+			var data = "codigoProduto=" + $("#codigoProdutoHidden").val() + "&idProdutoEdicao=" + $("#produtoEdicaoHidden").val() +
 			  "&novaData=" + $("#novaData").val() +
 			  "&idLancamento=" + $("#lancamentoHidden").val();
 			$.postJSON("<c:url value='/lancamento/furoProduto/confirmarFuro'/>", data, limparCampos);
@@ -106,7 +108,7 @@
 			$("#resultado").hide();
 			$("#codigo").val("");
 			$("#produto").val("");
-			$("#edicao").val("");
+			$("#edicao").mask("?99999999999999999999", {placeholder:""}).val("");
 			$("#dataLancamento").val("");
 			$("#novaData").val("");
 			$("#codigo").focus();
@@ -182,6 +184,7 @@
 			            	<a href="javascript:;" id="linkConfirmar">Confirmar</a>
 			            </span>
 					</div>
+					<input type="hidden" id="codigoProdutoHidden">
 					<input type="hidden" id="produtoEdicaoHidden"/>
 					<input type="hidden" id="lancamentoHidden"/>
 				</fieldset>

@@ -124,6 +124,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaFiscalRepository.obterNotaFiscalPorNumero(numero);
 
 	}
+	
+	@Override
+	@Transactional
+	public List<NotaFiscal> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+		if(filtroConsultaNotaFiscal.getNumeroNota() == null || filtroConsultaNotaFiscal.getSerie() == null || filtroConsultaNotaFiscal.getCnpj() == null){
+			throw new IllegalArgumentException("Todos os dados são obrigatórios");
+		}
+		return notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtroConsultaNotaFiscal);
+	}
 }
 
 

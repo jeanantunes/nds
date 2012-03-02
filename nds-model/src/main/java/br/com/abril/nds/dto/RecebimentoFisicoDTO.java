@@ -3,32 +3,58 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+
 public class RecebimentoFisicoDTO implements Serializable {
 	
 	private static final long serialVersionUID = -580201558784688016L;
 
+	private String codigo;
+	
 	private String nomeProduto;
 	
 	private Long edicao;
 	
 	private BigDecimal precoCapa;
 	
-	private Long repartePrevisto;
+	private BigDecimal repartePrevisto;
 	
 	private BigDecimal qtdFisico;
 	
 	private BigDecimal diferenca;
 	
-	private Long codigo;
+	private BigDecimal valorTotal;
+	
+	private TipoDiferenca tipoDiferenca;
+	
+	private Long idItemNota;
 
-	public RecebimentoFisicoDTO(Long codigo, String nomeProduto, Long edicao, BigDecimal precoCapa, Long repartePrevisto, BigDecimal qtdFisico, BigDecimal diferenca){
+	public RecebimentoFisicoDTO(String codigo, 
+			String nomeProduto, 
+			Long edicao, 
+			BigDecimal precoCapa, 
+			BigDecimal repartePrevisto, 
+			BigDecimal qtdFisico, 
+			BigDecimal diferenca, 
+			TipoDiferenca tipoDiferenca,
+			Long idItemNota){
 		this.codigo = codigo;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
 		this.precoCapa = precoCapa;
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
-		this.diferenca = diferenca;		
+		this.diferenca = diferenca;
+		this.tipoDiferenca = tipoDiferenca;
+		this.idItemNota = idItemNota;		
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getNomeProduto() {
@@ -55,11 +81,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 	}
 
-	public Long getRepartePrevisto() {
+	public BigDecimal getRepartePrevisto() {
 		return repartePrevisto;
 	}
 
-	public void setRepartePrevisto(Long repartePrevisto) {
+	public void setRepartePrevisto(BigDecimal repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
 
@@ -79,15 +105,29 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.diferenca = diferenca;
 	}
 
-	public Long getCodigo() {
-		return codigo;
+	public BigDecimal getValorTotal() {
+		return valorTotal;
 	}
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
 	}
-	
-	
+
+	public TipoDiferenca getTipoDiferenca() {
+		return tipoDiferenca;
+	}
+
+	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
+		this.tipoDiferenca = tipoDiferenca;
+	}
+
+	public Long getIdItemNota() {
+		return idItemNota;
+	}
+
+	public void setIdItemNota(Long idItemNota) {
+		this.idItemNota = idItemNota;
+	}
 	
 
 }

@@ -11,6 +11,73 @@
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
+			
+			$('input[id^="dataLancamento"]').mask("99/99/9999");
+			$("#edicao").mask("?99999999999999999999", {placeholder:""});
+		});
+		
+		$(function() {
+			$(".consultaFaltasSobrasGrid").flexigrid({
+				preProcess: getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Data',
+					name : 'data',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Código',
+					name : 'codigo',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Produto',
+					name : 'produto',
+					width : 170,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'edicao',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Tipo de Diferença',
+					name : 'tipoDiferenca',
+					width : 180,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nota',
+					name : 'nota',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Exemplar',
+					name : 'exemplar',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Status',
+					name : 'status',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				} ],
+				sortname : "data",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180
+			});
 		});
 		
 		function mostrarGridConsulta() {
@@ -57,15 +124,6 @@
 </head>
 
 <body>
-	<div id="effect" style="padding: 0 .7em;"
-		class="ui-state-highlight ui-corner-all">
-		<p>
-			<span style="float: left; margin-right: .3em;"
-				class="ui-icon ui-icon-info"></span> <b>Lançamento de Faltas e
-				Sobras < evento > com < status >.</b>
-		</p>
-	</div>
-
 	<fieldset class="classFieldset">
 		<legend>Pesquisar Faltas e Sobras</legend>
 		
@@ -86,7 +144,7 @@
 				
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
-					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
+					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
 						   onchange="validarNumEdicao();"/>
 				</td>
 				
@@ -105,11 +163,11 @@
 			<tr>
 				<td width="178">Período de Data Lançamento:</td>
 				<td width="108">
-					<input type="text" name="dataLancamentoDe" id="dataLancamentoDe" style="width: 80px;" />
+					<input type="text" name="dataLancamentoDe" id="dataLancamentoDe" style="width: 80px;" value="${dataAtual}" />
 				</td>
 				<td width="33" align="center">Até</td>
 				<td width="147">
-					<input type="text" name="dataLancamentoAte" id="dataLancamentoAte" style="width: 80px;" />
+					<input type="text" name="dataLancamentoAte" id="dataLancamentoAte" style="width: 80px;" value="${dataAtual}" />
 				</td>
 				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
@@ -140,69 +198,4 @@
 
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
-
-	<script>
-	
-		$(".consultaFaltasSobrasGrid").flexigrid({
-			preProcess: getDataFromResult,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Data',
-				name : 'data',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Código',
-				name : 'codigo',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 170,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Tipo de Diferença',
-				name : 'tipoDiferenca',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nota',
-				name : 'nota',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Exemplar',
-				name : 'exemplar',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			} ],
-			sortname : "data",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
-	</script>
 </body>

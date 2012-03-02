@@ -9,9 +9,11 @@ public interface ExtratoEdicaoService {
 	 * Obtem um dto com uma lista de ExtratoEdicao e o saldoTotal referente a esta.
 	 * 
 	 * @param numeroEdicao
+	 * @param codigoProduto
+	 * 
 	 * @return InfoGeralExtratoEdicaoDTO
 	 */
-	public InfoGeralExtratoEdicaoDTO obterInfoGeralExtratoEdicao(Long numeroEdicao);
+	public InfoGeralExtratoEdicaoDTO obterInfoGeralExtratoEdicao(String codigoProduto, Long numeroEdicao);
 
 	/**
 	 * Obtém produtoEdicao.

@@ -18,6 +18,8 @@ public interface NotaFiscalService {
 	void inserirNotaFiscal(NotaFiscal notaFiscal);
 	
 	NotaFiscal obterNotaFiscalPorNumero(String numero);
+	
+	List<NotaFiscal> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 
 
 }

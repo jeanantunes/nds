@@ -194,7 +194,9 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
-		lancamento.addRecebimento(recebimento);
+		if (recebimento != null) {
+			lancamento.addRecebimento(recebimento);
+		}
 		return lancamento;
 	}
 
@@ -404,7 +406,6 @@ public class Fixture {
 													TipoMovimento tipoMovimento,
 													Usuario usuario, 
 													EstoqueProduto estoqueProduto,
-													Diferenca diferenca,
 													Date dataInclusao,
 													BigDecimal qtde, 
 													StatusAprovacao status) {
@@ -418,7 +419,6 @@ public class Fixture {
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setDiferenca(diferenca);
 		movimentoEstoque.setStatus(status);
 		return movimentoEstoque;
 	}
@@ -436,7 +436,9 @@ public class Fixture {
 									  Usuario usuarioResponsavel,
 									  ProdutoEdicao produtoEdicao,
 									  TipoDiferenca tipoDiferenca,
-									  StatusConfirmacao statusConfirmacao) {
+									  StatusConfirmacao statusConfirmacao,
+									  ItemRecebimentoFisico itemRecebimentoFisico,
+									  MovimentoEstoque movimentoEstoque) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -445,6 +447,8 @@ public class Fixture {
 		diferenca.setProdutoEdicao(produtoEdicao);
 		diferenca.setTipoDiferenca(tipoDiferenca);
 		diferenca.setStatusConfirmacao(statusConfirmacao);
+		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+		diferenca.setMovimentoEstoque(movimentoEstoque);
 		
 		return diferenca;
 	}

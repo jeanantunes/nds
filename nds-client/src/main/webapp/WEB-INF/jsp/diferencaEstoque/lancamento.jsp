@@ -1,11 +1,7 @@
 <head>
 	<script language="javascript" type="text/javascript">
 
-		function executarPreProcessamento(data) {
-
-			var jsonData = jQuery.toJSON(data);
-
-			var resultado = jQuery.evalJSON(jsonData);
+		function executarPreProcessamento(resultado) {
 
 			if (resultado.mensagens) {
 
@@ -15,39 +11,34 @@
 				);
 				
 				$(".grids").hide();
+				$("#btnConfirmar").hide();
+				$("#labelTotalGeral").hide();
 
 				return resultado.tableModel;
 			}
 
-			$("#qtdeTotalDiferencas").html(resultado.totalExemplares);
+			$("#qtdeTotalDiferencas").html(resultado.qtdeTotalDiferencas);
 			
-			$("#valorTotalDiferencas").html(resultado.totalSumarizado);
+			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
 
 			$.each(resultado.tableModel.rows, function(index, row) {
 
-				var linkRateioCota = '<a href="javascript:;" onclick="popupRateioCota();" style="cursor:pointer" style="border:none">' +
-										'<img src="${pageContext.request.contextPath}/images/bt_cadastros.png"/>' +
-										'<input type="hidden" name="idMovimento" value="' + row.cell.idMovimentoEstoque + '"/>' +
-									 '</a>';
+				var linkRateioDiferenca = '<a href="javascript:;" onclick="popupRateioDiferenca(' + row.cell.idMovimentoEstoque + ');" style="cursor:pointer" style="border:none">' +
+											 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" />' +
+										  '</a>';
+
+				var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.idMovimentoEstoque + ');" style="cursor:pointer" style="border:none">' +
+												'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" />' +
+											'</a>';
 								
-				row.cell.rateioCota = 
+				row.cell.acao = linkRateioDiferenca + linkExclusaoDiferenca;
 			});
-			
-			var i;
 
-			for (i = 0 ; i < data.rows.length; i++) {
+			if ($(".grids").css('display') == 'none') {	
 
-				var lastIndex = data.rows[i].cell.length - 1;
-
-				data.rows[i].cell[lastIndex-1] = 
-					'<a href="javascript:;" onclick="popupRateioCota();" style="cursor:pointer" style="border:none">' +
-						'<img src="${pageContext.request.contextPath}/images/bt_cadastros.png"/>' +
-						'<input type="hidden" name="idMovimento" value="' + data.rows[i].cell[lastIndex] + '"/>' +
-					'</a>' +
-					'<a href="javascript:;" onclick="popupExclusaoDiferenca();" style="cursor:pointer" style="border:none">' +
-						'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"/>' +
-						'<input type="hidden" name="idMovimento" value="' + data.rows[i].cell[lastIndex] + '"/>' +
-					'</a>';
+				$(".grids").show();
+				$("#btnConfirmar").show();
+				$("#labelTotalGeral").show();
 			}
 
 			return resultado.tableModel;
@@ -75,13 +66,13 @@
 					align : 'left'
 				}, {
 					display : 'Edição',
-					name : 'edicaoProduto',
+					name : 'numeroEdicao',
 					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Preço R$',
-					name : 'precoProduto',
+					display : 'Preço Venda R$',
+					name : 'precoVenda',
 					width : 90,
 					sortable : true,
 					align : 'right'
@@ -93,7 +84,7 @@
 					align : 'center'
 				}, {
 					display : 'Exemplares',
-					name : 'exemplares',
+					name : 'quantidade',
 					width : 110,
 					sortable : true,
 					align : 'center'
@@ -105,7 +96,7 @@
 					align : 'left'
 				}, {
 					display : 'Total R$',
-					name : 'vlrTotal',
+					name : 'valorTotalDiferenca',
 					width : 90,
 					sortable : true,
 					align : 'right'
@@ -127,22 +118,15 @@
 				height : 180,
 				singleSelect: true
 			});
-			
-			if ($(".grids").css('display') != 'none') {
-				
-				formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
-				
-				$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
-				
-				$("#gridLancamentos").flexReload();
-				
-			} else {
 
-				$(".grids").show();
-			}
+			formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+			
+			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
+			
+			$("#gridLancamentos").flexReload();
 		}
 
-		function popupExclusaoDiferenca() {
+		function popupExclusaoDiferenca(idMovimentoEstoque) {
 
 			$("#dialog-excluir" ).dialog({
 				
@@ -251,14 +235,16 @@
 							<span class="bt_novo">
 								<a href="javascript:;" onclick="popupNovasDiferencas();">Novo</a>
 							</span>
-							<span class="total bt_confirmar">
+							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
 								<a href="javascript:;" onclick="popup();">Confirmar</a>
 							</span>
 						</td>
-						<td width="99" class="total"><strong>Total Geral:</strong></td>
-					    <td id="qtdeTotalDiferencas" width="108" class="total" />
+						<td id="labelTotalGeral" width="99" class="total" style="display: none">
+							<strong>Total Geral:</strong>
+						</td>
+					    <td id="qtdeTotalDiferencas" width="108" class="total"></td>
 					    <td width="104" align="center" class="total">&nbsp;</td>
-					    <td id="valorTotalDiferencas" width="145" class="total" />
+					    <td id="valorTotalDiferencas" width="145" class="total"></td>
 					</tr>
 				</table>
 			</fieldset>

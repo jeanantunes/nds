@@ -3,7 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 
 public class ResultadoLancamentoDiferencaVO implements Serializable {
@@ -13,7 +13,7 @@ public class ResultadoLancamentoDiferencaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 5231724345676942233L;
 	
-	private TableModel<CellModel> tableModel;
+	private TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel;
 	
 	private BigDecimal qtdeTotalDiferencas;
 	
@@ -34,7 +34,7 @@ public class ResultadoLancamentoDiferencaVO implements Serializable {
 	 * @param qtdeTotalDiferencas - quantidade do total de diferenças
 	 * @param valorTotalDiferencas - valor total das diferenças
 	 */
-	public ResultadoLancamentoDiferencaVO(TableModel<CellModel> tableModel,
+	public ResultadoLancamentoDiferencaVO(TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel,
 										  BigDecimal qtdeTotalDiferencas,
 										  String valorTotalDiferencas) {
 		
@@ -46,14 +46,14 @@ public class ResultadoLancamentoDiferencaVO implements Serializable {
 	/**
 	 * @return the tableModel
 	 */
-	public TableModel<CellModel> getTableModel() {
+	public TableModel<CellModelKeyValue<LancamentoDiferencaVO>> getTableModel() {
 		return tableModel;
 	}
 
 	/**
 	 * @param tableModel the tableModel to set
 	 */
-	public void setTableModel(TableModel<CellModel> tableModel) {
+	public void setTableModel(TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel) {
 		this.tableModel = tableModel;
 	}
 

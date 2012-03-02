@@ -1,5 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -7,16 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 	
 	@Override
 	@Transactional
@@ -30,38 +40,80 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
 		
 		if (codigo == null || codigo.isEmpty()){
-			throw new IllegalArgumentException("Código é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
 		
 		if (edicao == null){
-			throw new IllegalArgumentException("Edição é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Edição é obrigatório.");
 		}
 		
 		if (dataLancamento == null){
-			throw new IllegalArgumentException("Data Lançamento é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data Lançamento é obrigatório.");
 		}
 		
-		return produtoEdicaoRepository.
+		FuroProdutoDTO furoProdutoDTO = produtoEdicaoRepository.
 				obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 						codigo, nomeProduto, edicao, dataLancamento);
+		
+		if (furoProdutoDTO != null){
+			//buscar proxima data para lançamento
+			
+			Calendar calendar = Calendar.getInstance();
+			try {
+				calendar.setTime(new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).parse(furoProdutoDTO.getNovaData()));
+			} catch (ParseException e) {
+				return furoProdutoDTO;
+			}
+			
+			List<Integer> listaDiasSemana = 
+					this.distribuicaoFornecedorRepository.obterDiasSemanaDistribuicao(
+							furoProdutoDTO.getCodigoProduto(), 
+							furoProdutoDTO.getIdProdutoEdicao());
+			
+			if (listaDiasSemana != null && !listaDiasSemana.isEmpty()){
+				int diaSemana = -1;
+				for (Integer dia : listaDiasSemana){
+					if (dia > calendar.get(Calendar.DAY_OF_WEEK)){
+						diaSemana = dia;
+						break;
+					}
+				}
+				
+				if (diaSemana == -1){
+					diaSemana = listaDiasSemana.get(0);
+				}
+				
+				while (calendar.get(Calendar.DAY_OF_WEEK) != diaSemana){
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+				
+				furoProdutoDTO.setNovaData(
+						new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).format(calendar.getTime()));
+			}
+		}
+		
+		return furoProdutoDTO;
 	}
 	
 	@Override
 	@Transactional
-	public boolean validarNumeroEdicao(String codigoProduto, Long numeroEdicao) {
+	public boolean validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
 
 		if (codigoProduto == null || codigoProduto.isEmpty()){
 			throw new IllegalArgumentException("Código é obrigatório.");
 		}
 		
-		if (numeroEdicao == null){
+		if (numeroEdicao == null || numeroEdicao.isEmpty()){
 			throw new IllegalArgumentException("Número edição é obrigatório.");
 		}
 
+		if(!Util.isValidNumber(numeroEdicao)) {
+			throw new IllegalArgumentException("Número edição é inválido.");
+		}
 		
 		ProdutoEdicao produtoEdicao = 
 			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,
-																			 numeroEdicao);
+																			 Long.parseLong(numeroEdicao));
 		
 		return (produtoEdicao != null) ? true : false;
 	}

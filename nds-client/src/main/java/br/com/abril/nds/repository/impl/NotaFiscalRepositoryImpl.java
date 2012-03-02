@@ -178,5 +178,29 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		Query query = super.getSession().createQuery(hql);
 		query.setParameter("numero", numero);
 		return (NotaFiscal) query.uniqueResult();
+	}
+	/**
+	 * Método para buscar nota com numero,serie, cnpj e chaveDeAcesso 
+	 * @param filtroConsultaNotaFiscal
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscal> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from NotaFiscal nf where nf.numero = :numero ");
+		hql.append("and nf.serie = :serie ");
+		hql.append("and nf.emitente.cnpj = :cnpj ");		
+		if(filtroConsultaNotaFiscal.getChave() == null){
+			hql.append("and nf.chaveAcesso is null ");	
+		}else{
+			hql.append("and nf.chaveAcesso = :chaveAcesso  ");	
+		}
+		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
+		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
+		query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
+		query.setParameter("chaveAcesso", filtroConsultaNotaFiscal.getChave());
+		return query.list();
 	}	
 }

@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -22,11 +23,11 @@ implements MovimentoEstoqueRepository {
 	}
 	
 	/**
-	 * Obtém uma lista de extratoEdicao.
+	 * Obtém uma lista de extratoEdicao de acordo com statusAprovacao.
 	 */
-	@Override
+	//@Override
 	@SuppressWarnings("unchecked")
-	public List<ExtratoEdicaoDTO> obterListaExtratoEdicao(Long numeroEdicao) {
+	public List<ExtratoEdicaoDTO> obterListaExtratoEdicao(String codigoProduto, Long numeroEdicao, StatusAprovacao statusAprovacao) {
 
 		StringBuilder hql = new StringBuilder("");
 		
@@ -40,7 +41,14 @@ implements MovimentoEstoqueRepository {
 
 		hql.append(" from MovimentoEstoque m ");		
 
-		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao ");		
+		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
+
+		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");		
+
+		
+		if(statusAprovacao != null) {
+			hql.append(" and m.status = :statusAprovacao  ");
+		}
 		
 		hql.append(" group by m.id, m.dataInclusao, m.tipoMovimento.id, m.tipoMovimento.descricao ");		
 		
@@ -48,9 +56,15 @@ implements MovimentoEstoqueRepository {
 		
 		Query query = getSession().createQuery(hql.toString());
 		
+		if(statusAprovacao != null) {
+			query.setParameter("statusAprovacao", statusAprovacao);
+		}
+		
 		query.setParameter("tipoOperacaoEntrada", TipoOperacao.ENTRADA);
 		
 		query.setParameter("tipoOperacaoSaida", TipoOperacao.SAIDA);
+
+		query.setParameter("codigoProduto", codigoProduto);
 		
 		query.setParameter("numeroEdicao", numeroEdicao);
 		

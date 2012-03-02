@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 
@@ -19,8 +20,7 @@ public class LancamentoRepositoryImpl extends
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Lancamento> obterLancamentosBalanceamentoMartriz(Date inicio, Date fim,
-			Long... idsFornecedores) {
+	public List<Lancamento> obterLancamentosBalanceamentoMartriz(FiltroLancamentoDTO filtro) {
 		StringBuilder hql = new StringBuilder("select lancamento from Lancamento lancamento ");
 		hql.append("join fetch lancamento.produtoEdicao produtoEdicao ");
 		hql.append("join fetch produtoEdicao.produto produto ");
@@ -28,18 +28,17 @@ public class LancamentoRepositoryImpl extends
 		hql.append("where lancamento.dataLancamentoPrevista between :inicio and :fim ");
 		hql.append("and fornecedor.permiteBalanceamento = :permiteBalanceamento ");
 	
-		boolean filtraFornecedores = idsFornecedores != null
-				&& idsFornecedores.length > 0;
-		if (filtraFornecedores) {
+		
+		if (filtro.filtraFornecedores()) {
 			hql.append("and fornecedor.id in (:idsFornecedores) ");
 		}
-		hql.append("order by produto.periodicidade asc");
+		hql.append("order by produto.periodicidade asc, lancamento.reparte desc");
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("inicio", inicio);
-		query.setParameter("fim", fim);
+		query.setParameter("inicio", filtro.getPeriodo().getDataInicial());
+		query.setParameter("fim", filtro.getPeriodo().getDataFinal());
 		query.setParameter("permiteBalanceamento", true);
-		if (filtraFornecedores) {
-			query.setParameterList("idsFornecedores", idsFornecedores);
+		if (filtro.filtraFornecedores()) {
+			query.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
 		}
 
 		return query.list();
@@ -60,5 +59,4 @@ public class LancamentoRepositoryImpl extends
 		
 		query.executeUpdate();
 	}
-
 }

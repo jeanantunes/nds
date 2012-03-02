@@ -8,8 +8,11 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 
 public interface RecebimentoFisicoService {
 	
+	List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal);
+	
 	void adicionarRecebimentoFisico(RecebimentoFisico recebimentoFisico);
 	List<RecebimentoFisicoDTO> obterItemNotaPorCnpjNota(String cnpj, String numeroNota, String serieNota );
-	 void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
+	 
+	void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
 				ItemRecebimentoFisico itemRecebimentoFisico);
 }
