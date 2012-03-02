@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.planejamento;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +34,9 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 @Table(name = "LANCAMENTO", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" })})
 @SequenceGenerator(name = "LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
-public class Lancamento {
+public class Lancamento implements Serializable {
+
+	private static final long serialVersionUID = -6120726728298323723L;
 
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_SEQ")
@@ -88,6 +91,9 @@ public class Lancamento {
 	
 	@Column(name = "NUMERO_REPROGRAMACOES")
 	private int numeroReprogramacoes;
+	
+	@OneToMany(mappedBy = "lancamento")
+	private Set<Estudo> estudos = new HashSet<Estudo>();
 
 	public Long getId() {
 		return id;
@@ -203,6 +209,18 @@ public class Lancamento {
 	
 	public void setNumeroReprogramacoes(int numeroReprogramacoes) {
 		this.numeroReprogramacoes = numeroReprogramacoes;
+	}
+	
+	public Estudo getEstudo() {
+		return estudos.isEmpty() ? null : estudos.iterator().next();
+	}
+	
+	public BigDecimal getTotalRecebimentoFisico() {
+		BigDecimal total = BigDecimal.ZERO;
+		for (ItemRecebimentoFisico recebimento : recebimentos) {
+			total = total.add(recebimento.getQtdeFisico());
+		}
+		return total;
 	}
 
 }

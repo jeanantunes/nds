@@ -9,7 +9,9 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
-	List<Lancamento> obterLancamentosBalanceamentoMartriz(FiltroLancamentoDTO filtro);
+	List<Lancamento> obterBalanceamentoMatrizLancamentos(FiltroLancamentoDTO filtro);
+	
+	long totalBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
 
 	void atualizarLancamento(Long idLancamento, Date novaDataLancamentoPrevista);
 
