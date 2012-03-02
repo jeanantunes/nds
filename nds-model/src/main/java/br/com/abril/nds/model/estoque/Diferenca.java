@@ -48,6 +48,8 @@ public class Diferenca {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoque movimentoEstoque;
+	@Column(name = "AUTOMATICA")
+	private Boolean automatica;
 	
 	public Long getId() {
 		return id;
@@ -111,6 +113,14 @@ public class Diferenca {
 
 	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
 		this.movimentoEstoque = movimentoEstoque;
+	}
+
+	public Boolean isAutomatica() {
+		return automatica;
+	}
+
+	public void setAutomatica(Boolean automatica) {
+		this.automatica = automatica;
 	}
 
 }
