@@ -6,7 +6,6 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -50,7 +49,6 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void obterEstudoCota() {
 		
 		EstudoCota estudoCota = this.estudoCotaRepository.obterEstudoCota(NUMERO_COTA, dataReferencia);
@@ -59,7 +57,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertEquals(NUMERO_COTA, estudoCota.getCota().getNumeroCota());
 		
-		//Assert.assertEquals(dataReferencia, estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor());
+		Assert.assertTrue(dataReferencia.before(estudoCota.getEstudo().getDataLancamento()));
 	}
 	
 	private Cota criarCota() {
