@@ -40,6 +40,7 @@
 			$("#produto").autocomplete({source: ""});
 			
 			$("#dataLancamento").mask("99/99/9999");
+			$("#novaData").mask("99/99/9999");
 			$("#edicao").mask("?99999999999999999999", {placeholder:""});
 		});
 		

@@ -23,6 +23,14 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idFornecedor;
 
+	private String cnpj;
+	
+	private String numeroNota;
+	
+	private String serie;
+	
+	private String chave;
+	
 	private Boolean isNotaRecebida;
 
 	private PaginacaoVO paginacao;
@@ -107,20 +115,6 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	}
 
 	/**
-	 * @return the isNotaRecebida
-	 */
-	public Boolean isNotaRecebida() {
-		return isNotaRecebida;
-	}
-
-	/**
-	 * @param isNotaRecebida the isNotaRecebida to set
-	 */
-	public void setNotaRecebida(Boolean isNotaRecebida) {
-		this.isNotaRecebida = isNotaRecebida;
-	}
-
-	/**
 	 * @return the colunaOrdenacao
 	 */
 	public ColunaOrdenacao getColunaOrdenacao() {
@@ -133,4 +127,115 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
+
+	/**
+	 * @return the isNotaRecebida
+	 */
+	public Boolean getIsNotaRecebida() {
+		return isNotaRecebida;
+	}
+
+	/**
+	 * @param isNotaRecebida the isNotaRecebida to set
+	 */
+	public void setIsNotaRecebida(Boolean isNotaRecebida) {
+		this.isNotaRecebida = isNotaRecebida;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
+		result = prime * result
+				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime
+				* result
+				+ ((idTipoNotaFiscal == null) ? 0 : idTipoNotaFiscal.hashCode());
+		result = prime * result
+				+ ((isNotaRecebida == null) ? 0 : isNotaRecebida.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroConsultaNotaFiscalDTO other = (FiltroConsultaNotaFiscalDTO) obj;
+		if (colunaOrdenacao != other.colunaOrdenacao)
+			return false;
+		if (idFornecedor == null) {
+			if (other.idFornecedor != null)
+				return false;
+		} else if (!idFornecedor.equals(other.idFornecedor))
+			return false;
+		if (idTipoNotaFiscal == null) {
+			if (other.idTipoNotaFiscal != null)
+				return false;
+		} else if (!idTipoNotaFiscal.equals(other.idTipoNotaFiscal))
+			return false;
+		if (isNotaRecebida == null) {
+			if (other.isNotaRecebida != null)
+				return false;
+		} else if (!isNotaRecebida.equals(other.isNotaRecebida))
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (periodo == null) {
+			if (other.periodo != null)
+				return false;
+		} else if (!periodo.equals(other.periodo))
+			return false;
+		return true;
+	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	public String getNumeroNota() {
+		return numeroNota;
+	}
+
+	public void setNumeroNota(String numeroNota) {
+		this.numeroNota = numeroNota;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public String getChave() {
+		return chave;
+	}
+
+	public void setChave(String chave) {
+		this.chave = chave;
+	}
+	
 }

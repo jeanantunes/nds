@@ -23,11 +23,11 @@
 
 			$.each(resultado.tableModel.rows, function(index, row) {
 
-				var linkRateioDiferenca = '<a href="javascript:;" onclick="popupRateioDiferenca(' + row.cell.idMovimentoEstoque + ');" style="cursor:pointer" style="border:none">' +
+				var linkRateioDiferenca = '<a href="javascript:;" onclick="popupRateioDiferenca(' + row.cell.id + ');" style="cursor:pointer" style="border:none">' +
 											 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" />' +
 										  '</a>';
 
-				var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.idMovimentoEstoque + ');" style="cursor:pointer" style="border:none">' +
+				var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer" style="border:none">' +
 												'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" />' +
 											'</a>';
 								

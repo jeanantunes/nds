@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -35,7 +36,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscal> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+	public List<NotaFiscalFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
 		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 		
@@ -51,20 +52,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select notaFiscal from NotaFiscal notaFiscal ");
-		
-		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
-			
-			hql.append(", Fornecedor fornecedor ")
-			   .append(" join notaFiscal.emitente ");
-		}
-
-		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
-		
-			hql.append(" join notaFiscal.tipoNotaFiscal ");
-		}
-		
-		hql.append(" where notaFiscal.dataEmissao between :dataInicio and :dataFim ");
+		hql.append(" select notaFiscal from NotaFiscalFornecedor notaFiscal ")
+		   .append(" join notaFiscal.fornecedor ")
+		   .append(" join notaFiscal.tipoNotaFiscal ")
+		   .append(" where notaFiscal.dataEmissao between :dataInicio and :dataFim ");
 		
 		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
 
@@ -73,11 +64,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
 
-		   hql.append(" and fornecedor.id = :idFornecedor ")
- 		      .append(" and fornecedor.juridica.id = notaFiscal.emitente.id ");
+		   hql.append(" and notaFiscal.fornecedor.id = :idFornecedor ");
 		}
 
-		if (filtroConsultaNotaFiscal.isNotaRecebida() != null) {
+		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null && filtroConsultaNotaFiscal.getIsNotaRecebida()) {
 			
 			hql.append(" and notaFiscal.statusNotaFiscal = :statusNotaFiscal ");
 		}
@@ -97,7 +87,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 					hql.append(" notaFiscal.dataExpedicao ");
 					break;
 				case FORNECEDOR:
-					hql.append(" notaFiscal.emitente.razaoSocial ");
+					hql.append(" notaFiscal.fornecedor.juridica.razaoSocial ");
 					break;
 				case NOTA_RECEBIDA:
 					hql.append(" notaFiscal.statusNotaFiscal ");
@@ -138,13 +128,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 			query.setParameter("idFornecedor", filtroConsultaNotaFiscal.getIdFornecedor());
 		}
 		
-		if (filtroConsultaNotaFiscal.isNotaRecebida() != null) {
+		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null && 
+				filtroConsultaNotaFiscal.getIsNotaRecebida()) {
 
-			StatusNotaFiscal statusNotaFiscal = 
-					filtroConsultaNotaFiscal.isNotaRecebida() ? 
-							StatusNotaFiscal.RECEBIDA : StatusNotaFiscal.NAO_RECEBIDA; 
-
-			query.setParameter("statusNotaFiscal", statusNotaFiscal);
+			query.setParameter("statusNotaFiscal", StatusNotaFiscal.RECEBIDA);
 		}
 
 		return query;
@@ -191,5 +178,29 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		Query query = super.getSession().createQuery(hql);
 		query.setParameter("numero", numero);
 		return (NotaFiscal) query.uniqueResult();
+	}
+	/**
+	 * Método para buscar nota com numero,serie, cnpj e chaveDeAcesso 
+	 * @param filtroConsultaNotaFiscal
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscal> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from NotaFiscal nf where nf.numero = :numero ");
+		hql.append("and nf.serie = :serie ");
+		hql.append("and nf.emitente.cnpj = :cnpj ");		
+		if(filtroConsultaNotaFiscal.getChave() == null){
+			hql.append("and nf.chaveAcesso is null ");	
+		}else{
+			hql.append("and nf.chaveAcesso = :chaveAcesso  ");	
+		}
+		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
+		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
+		query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
+		query.setParameter("chaveAcesso", filtroConsultaNotaFiscal.getChave());
+		return query.list();
 	}	
 }

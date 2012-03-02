@@ -1,11 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -32,6 +30,47 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		super(RecebimentoFisico.class);
 	}
 
+	
+	public List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select new ");
+		
+		hql.append(RecebimentoFisicoDTO.class.getCanonicalName());
+		
+		hql.append(" (	itemNotaFiscal.produtoEdicao.produto.codigo, 				");
+		hql.append("  	itemNotaFiscal.produtoEdicao.produto.nome, 					");
+		hql.append("  	itemNotaFiscal.produtoEdicao.numeroEdicao, 					");
+		hql.append(" 	itemNotaFiscal.produtoEdicao.precoVenda, 					");
+		hql.append(" 	itemNotaFiscal.qtde, 										");
+		hql.append(" 	itemRecebimentoFisico.qtdeFisico, 							");
+		hql.append(" 	diferenca.qtde  )											");
+		
+		hql.append(" from ");
+
+		hql.append(" ItemNotaFiscal itemNotaFiscal ");
+
+		hql.append(" left join itemNotaFiscal.recebimentoFisico as itemRecebimentoFisico ");
+		
+		hql.append(" left join itemRecebimentoFisico.diferenca as diferenca ");
+		
+		hql.append(" where ");
+		
+		hql.append(" itemNotaFiscal.notaFiscal.id = :idNotaFiscal ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idNotaFiscal", idNotaFiscal);
+		
+		return query.list();
+		
+	}
+	
+	/**
+	 * TODO:  REMOVER O MÉTODO ABAIXO APÓS REFACTOR UTILIZANDO O MÉTODO "obterListaItemRecebimentoFisico(long)"
+	 */
+	/*
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
@@ -57,7 +96,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		return query.list();
 		
 	}
-		
+		*/
 	
 	@Override
 	public void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,

@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
 @Service
@@ -38,15 +40,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
 		
 		if (codigo == null || codigo.isEmpty()){
-			throw new IllegalArgumentException("Código é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
 		
 		if (edicao == null){
-			throw new IllegalArgumentException("Edição é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Edição é obrigatório.");
 		}
 		
 		if (dataLancamento == null){
-			throw new IllegalArgumentException("Data Lançamento é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data Lançamento é obrigatório.");
 		}
 		
 		FuroProdutoDTO furoProdutoDTO = produtoEdicaoRepository.
@@ -85,7 +87,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					calendar.add(Calendar.DAY_OF_MONTH, 1);
 				}
 				
-				furoProdutoDTO.setNovaData(new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).format(calendar.getTime()));
+				furoProdutoDTO.setNovaData(
+						new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).format(calendar.getTime()));
 			}
 		}
 		

@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
@@ -20,7 +22,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Override
 	public List<Produto> obterProdutoPorNomeProduto(String nome) {
 		if (nome == null || nome.isEmpty()){
-			throw new IllegalArgumentException("Nome é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
 		}
 		
 		return produtoRepository.obterProdutoPorNomeProduto(nome);

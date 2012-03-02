@@ -135,4 +135,43 @@ public class PaginacaoVO implements Serializable {
 	public void setOrdenacao(Ordenacao ordenacao) {
 		this.ordenacao = ordenacao;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((ordenacao == null) ? 0 : ordenacao.hashCode());
+		result = prime
+				* result
+				+ ((qtdResultadosPorPagina == null) ? 0
+						: qtdResultadosPorPagina.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PaginacaoVO other = (PaginacaoVO) obj;
+		if (ordenacao != other.ordenacao)
+			return false;
+		if (qtdResultadosPorPagina == null) {
+			if (other.qtdResultadosPorPagina != null)
+				return false;
+		} else if (!qtdResultadosPorPagina.equals(other.qtdResultadosPorPagina))
+			return false;
+		return true;
+	}
+	
 }

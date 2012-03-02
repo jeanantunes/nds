@@ -36,7 +36,7 @@ public class DateUtil {
 		
 		return dataInicial.compareTo(dataFinal) > 0;
 	}
-	
+
 	/**
 	 * Avança o número de dias a data
 	 * 
@@ -54,5 +54,22 @@ public class DateUtil {
 		cal.setTime(data);
 		cal.add(Calendar.DAY_OF_MONTH, numDias);
 		return cal.getTime();
+	}
+	
+	public static Date parseData(String data, String formato) {
+		
+		try {
+			
+			DateFormat f = new SimpleDateFormat(formato);
+			
+			f.setLenient(false);
+			
+			Date parsedData = f.parse(data);
+			
+			return parsedData;
+		
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 }
