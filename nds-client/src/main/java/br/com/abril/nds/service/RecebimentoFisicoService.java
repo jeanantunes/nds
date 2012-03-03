@@ -2,17 +2,26 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.ItemNotaRecebimentoFisicoDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 
 public interface RecebimentoFisicoService {
 	
-	List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal);
-	
-	void adicionarRecebimentoFisico(RecebimentoFisico recebimentoFisico);
-	List<RecebimentoFisicoDTO> obterItemNotaPorCnpjNota(String cnpj, String numeroNota, String serieNota );
+	 void adicionarRecebimentoFisico(RecebimentoFisico recebimentoFisico);
 	 
-	void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
+	 List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal);
+	 
+	 void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
 				ItemRecebimentoFisico itemRecebimentoFisico);
+	 
+	 void inserirItemNotaRecebimentoFisico(ItemNotaRecebimentoFisicoDTO itemNotaDTO);
+	 
+	 void alterarItemNotaRecebimentoFisico(RecebimentoFisicoDTO recebimentoFisicoDTO);
+	 
+	 void excluirItemNotaRecebimentoFisico(ItemNotaFiscal itemNota);
+	 
+	 
 }

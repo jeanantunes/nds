@@ -15,9 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.ItemNotaRecebimentoFisicoDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
-import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
@@ -25,8 +25,8 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ItemNotaFiscalService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.PessoaService;
@@ -62,6 +62,8 @@ public class RecebimentoFisicoController {
 	private PessoaService pessoaService;
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	@Autowired
+	private ItemNotaFiscalService itemNotaService;
 	
 	private HttpServletRequest request;
 	
@@ -150,32 +152,7 @@ public class RecebimentoFisicoController {
 	}
 	
 	@Post
-	public void verificarExisteNota(String numero) throws ParseException {
-		
-		//MODIFICAR
-		NotaFiscal notaFiscal = null;//TODO chamar a pesquisa de nota
-		
-		//request.getSession().setAttribute(NOTA_FISCAL_ID, null);
-
-		
-		if(notaFiscal == null){	
-			
-			//List<String> msgExisteNota = getMensagemExisteNota();
-			
-			result.use(Results.json()).from("").serialize();	
-		
-		} else {
-			//request.getSession().setAttribute(NOTA_FISCAL_ID, notaFiscal.getId());
-			List<String> msgExisteNota = getMensagemExisteNota();
-			result.use(Results.json()).from(msgExisteNota, Constantes.PARAM_MSGS).serialize();
-			
-			
-			List<RecebimentoFisicoDTO> listaDTO = getListaItemNotaFromBD();
-			obterTableModelParaListItensNotaRecebimento(listaDTO);
-			
-			//result.use(Results.json()).from("").serialize();	
-
-		}
+	public void verificarExisteNota(String numero) {				
 		
 		
 				
@@ -240,31 +217,7 @@ public class RecebimentoFisicoController {
 		return tableModel;
 		
 	}
-	
-	
-	
-	
-	private boolean validarCnpj(PessoaJuridica pessoaJuridica, String cnpj){
-		boolean isValido = true;
-		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
-		if (cnpj == null){
-			isValido = false;
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("CNPJ é obrigatório!");
-		}else if(pessoaJuridica == null){
-			isValido = false;
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("CNPJ não encontrado!");
-		}
-		if(isValido == false){
-			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
-		}	
-					
-		
-		return isValido;
-	}
-	
 	private List<String> getMensagemExisteNota(){
 		
 		
@@ -298,42 +251,58 @@ public class RecebimentoFisicoController {
 
 	@Post
 	@Path("/recebimentoFisico/inserirNota")
-	public void inserirNotaFiscal(NotaFiscalFornecedor notaFiscalFornecedor,
-			RecebimentoFisico recebimentoFisico) throws ParseException {
-
-		System.out.println("@@@@@@@@@@@@@@@@@@@@"
-				+ notaFiscalFornecedor.getDataEmissao());
-		/*
-		 * validator.checking(new Validations() {{
-		 * that(!"".equals(notaFiscalFornecedor.getDataEmissao()),
-		 * "produto.nome", "nome.vazio"); //that(produto.getPreco() > 0,
-		 * "produto.preco", "preco.invalido"); }});
-		 * validator.onErrorUsePageOf(RecebimentoFisicoController
-		 * .class).index();
-		 */
-
-		notaFiscalService.inserirNotaFiscal(notaFiscalFornecedor);
-
-		notaFiscalFornecedor.setOrigem(Origem.MANUAL);
-
-		recebimentoFisico.setNotaFiscal(notaFiscalFornecedor);
-
-		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-
-		// receber o Usuario que inseriu a nota
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-
-		//recebimentoFisico.setUsuario(usuario);
-
-		recebimentoFisicoService.adicionarRecebimentoFisico(recebimentoFisico);
+	public void inserirNotaFiscal(NotaFiscalFornecedor notaFiscalFornecedor) throws ParseException {
+		
+	
+		if(	validaAtributosNecessariosParaInsercao(notaFiscalFornecedor)){
+			notaFiscalService.inserirNotaFiscal(notaFiscalFornecedor);
+		}
+		
+		result.redirectTo("/recebimentoFisico");
+	}
+	
+	@Post
+	@Path("/recebimentoFisico/inserirItemNota")
+	public void inserirItemNota(ItemNotaRecebimentoFisicoDTO itemNotaRecebimentoFisicoDTO) {
+		
+		recebimentoFisicoService.inserirItemNotaRecebimentoFisico(itemNotaRecebimentoFisicoDTO);
+				
+		result.redirectTo("/recebimentoFisico");
+	}
+	
+	@Post
+	@Path("/recebimentoFisico/alterarItemNota")
+	public void alterarItemNota(RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		
+		recebimentoFisicoService.alterarItemNotaRecebimentoFisico(recebimentoFisicoDTO);
+				
 		result.redirectTo("/recebimentoFisico");
 	}
 
-	@Path("recebimentoFisico/pesquisa")
-	public List<RecebimentoFisicoDTO> pesquisaRecebimentoFisico(Fornecedor fornecedor, NotaFiscal notaFiscal) throws Exception {
-		return recebimentoFisicoService.obterItemNotaPorCnpjNota(fornecedor.getJuridica().getCnpj(), notaFiscal.getNumero(), notaFiscal.getSerie());		
+	private boolean validaAtributosNecessariosParaInsercao(
+			NotaFiscalFornecedor notaFiscalFornecedor) {
+		boolean isValido = true;
 		
+		if(notaFiscalFornecedor.getEmitente().getCnpj() == null 
+				|| notaFiscalFornecedor.getNumero() == null
+				|| notaFiscalFornecedor.getSerie() == null
+				|| notaFiscalFornecedor.getDataEmissao() == null
+				|| notaFiscalFornecedor.getValorBruto() == null
+				|| notaFiscalFornecedor.getValorLiquido() == null){
+			isValido = false;
+		}
+		FiltroConsultaNotaFiscalDTO dto = new FiltroConsultaNotaFiscalDTO();
+		dto.setChave(notaFiscalFornecedor.getChaveAcesso());
+		dto.setCnpj(notaFiscalFornecedor.getEmitente().getCnpj());
+		dto.setNumeroNota(notaFiscalFornecedor.getNumero());
+		dto.setSerie(notaFiscalFornecedor.getSerie());
+		
+		List<NotaFiscal> listaNota = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(dto);
+		if(listaNota.isEmpty()){
+			isValido = false;
+		}
+				
+		return isValido;
 	}
 
 }

@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 
 public class RecebimentoFisicoDTO implements Serializable {
@@ -27,6 +28,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private TipoDiferenca tipoDiferenca;
 	
+	private Origem origem;
+	
 	private Long idItemNota;
 
 	public RecebimentoFisicoDTO(String codigo, 
@@ -46,7 +49,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.qtdFisico = qtdFisico;
 		this.diferenca = diferenca;
 		this.tipoDiferenca = tipoDiferenca;
-		this.idItemNota = idItemNota;		
+		this.idItemNota = idItemNota;
+		
 	}
 
 	public String getCodigo() {
@@ -127,6 +131,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 	public void setIdItemNota(Long idItemNota) {
 		this.idItemNota = idItemNota;
+	}
+
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
 	}
 	
 
