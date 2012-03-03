@@ -4,19 +4,19 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.LancamentoDiferencaVO;
-import br.com.abril.nds.client.vo.ResultadoLancamentoDiferencaVO;
+import br.com.abril.nds.client.vo.DiferencaVO;
+import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColuna;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -24,10 +24,10 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -102,63 +102,25 @@ public class DiferencaEstoqueController {
 									String dataLancamentoAte, TipoDiferenca tipoDiferenca,
 									String sortorder, String sortname, int page, int rp) {
 		
-		//List<Diferenca> lista = diferencaEstoqueService.obterDiferencas(new FiltroConsultaDiferencaEstoqueDTO());
+		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
-		Diferenca dto = new Diferenca();
+		filtro.setCodigoProduto(codigoProduto);
+		filtro.setNumeroEdicao(numeroEdicao);
+		filtro.setIdFornecedor(idFornecedor);
+		filtro.setDataLancamentoDe(DateUtil.parseData(dataLancamentoDe, Constantes.DATE_PATTERN_PT_BR));
+		filtro.setDataLancamentoAte(DateUtil.parseData(dataLancamentoAte, Constantes.DATE_PATTERN_PT_BR));
+		filtro.setTipoDiferenca(tipoDiferenca);
 		
-		List<Diferenca> listaDiferencaDTO = new ArrayList<Diferenca>();
+		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);
-		listaDiferencaDTO.add(dto);		
+		List<Diferenca> listaDiferencas =
+			diferencaEstoqueService.obterDiferencas(filtro);
 		
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-		
-		for (Diferenca diferencaDTO : listaDiferencaDTO) {
-			
-			String data = "a";
-			String codigo = "b";
-			String produto = "c";
-			String edicao = "d";
-			String tipoDiferencao = "e";
-			String nota = "f";
-			String exemplar = "g";
-			String status = "h";
-			
-			listaModeloGenerico.add(new CellModel(1, data, codigo, produto, edicao, tipoDiferencao, nota, exemplar, status));
+		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} else {
+			this.processarDiferencas(listaDiferencas, filtro);
 		}
-		
-		TableModel<CellModel> tm = new TableModel<CellModel>();
-		
-		//tm.setPage(1);
-		
-		tm.setTotal(listaModeloGenerico.size());
-		
-		tm.setRows(listaModeloGenerico);
-		
-		Map resultado = new HashMap();
-		
-		resultado.put("TblModelListaFaltasSobras", tm);
-		
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	}
 
 	/**
@@ -234,7 +196,7 @@ public class DiferencaEstoqueController {
 	private void processarDiferencasLancamento(List<Diferenca> listaDiferencas, 
 											   FiltroLancamentoDiferencaEstoqueDTO filtro) {
 
-		List<LancamentoDiferencaVO> listaLancamentosDiferenca = new LinkedList<LancamentoDiferencaVO>();
+		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
 		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
@@ -247,7 +209,7 @@ public class DiferencaEstoqueController {
 			
 			Produto produto = produtoEdicao.getProduto();
 			
-			LancamentoDiferencaVO lancamentoDiferenca = new LancamentoDiferencaVO();
+			DiferencaVO lancamentoDiferenca = new DiferencaVO();
 			
 			lancamentoDiferenca.setId(diferenca.getId().intValue());
 			lancamentoDiferenca.setCodigoProduto(produto.getCodigo());
@@ -273,8 +235,8 @@ public class DiferencaEstoqueController {
 			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
 		}
 		
-		TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel =
-			new TableModel<CellModelKeyValue<LancamentoDiferencaVO>>();
+		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
+			new TableModel<CellModelKeyValue<DiferencaVO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosDiferenca));
 		
@@ -288,20 +250,20 @@ public class DiferencaEstoqueController {
 		String valorTotalDiferencasFormatado = 
 			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
 		
-		ResultadoLancamentoDiferencaVO resultadoLancamentoDiferenca = 
-			new ResultadoLancamentoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
+			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
 	
 		result.use(Results.json()).withoutRoot().from(resultadoLancamentoDiferenca).recursive().serialize();
 	}
 	
 	/*
-	 * Processa o resulta das diferenças para lançamento.
+	 * Processa o resultado das diferenças para lançamento.
 	 *  
-	 * @param listaDiferencas - lista de diferenças (DTO)
+	 * @param listaDiferencas - lista de diferenças
 	 */
 	private void processarDiferencasLancamentoMock(int page) {
 
-		List<LancamentoDiferencaVO> listaLancamentosDiferenca = new LinkedList<LancamentoDiferencaVO>();
+		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
 		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
@@ -310,7 +272,7 @@ public class DiferencaEstoqueController {
 		
 		for (int i = 0; i < quantidadeRegistros; i++) {
 			
-			LancamentoDiferencaVO lancamentoDiferenca = new LancamentoDiferencaVO();
+			DiferencaVO lancamentoDiferenca = new DiferencaVO();
 			
 			lancamentoDiferenca.setId(i);
 			lancamentoDiferenca.setCodigoProduto(i + "");
@@ -335,8 +297,8 @@ public class DiferencaEstoqueController {
 			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
 		}
 		
-		TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel =
-			new TableModel<CellModelKeyValue<LancamentoDiferencaVO>>();
+		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
+			new TableModel<CellModelKeyValue<DiferencaVO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosDiferenca));
 		
@@ -347,10 +309,86 @@ public class DiferencaEstoqueController {
 		String valorTotalDiferencasFormatado = 
 			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
 		
-		ResultadoLancamentoDiferencaVO resultadoLancamentoDiferenca = 
-			new ResultadoLancamentoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
+			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
 	
 		result.use(Results.json()).withoutRoot().from(resultadoLancamentoDiferenca).recursive().serialize();
+	}
+	
+	/*
+	 * Processa o resultado das diferenças.
+	 *  
+	 * @param listaDiferencas - lista de diferenças
+	 * @param filtro - filtro da pesquisa
+	 */
+	private void processarDiferencas(List<Diferenca> listaDiferencas,
+									 FiltroConsultaDiferencaEstoqueDTO filtro) {
+
+		List<DiferencaVO> listaConsultaDiferenca = new LinkedList<DiferencaVO>();
+		
+		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
+		
+		int quantidadeRegistros = diferencaEstoqueService.obterTotalDiferencas(filtro).intValue();
+		
+		for (Diferenca diferenca : listaDiferencas) {
+			
+			DiferencaVO consultaDiferencaVO = new DiferencaVO();
+			
+			consultaDiferencaVO.setId(diferenca.getId().intValue());
+			
+			consultaDiferencaVO.setDataLancamento(
+				DateUtil.formatarData(diferenca.getMovimentoEstoque().getDataInclusao(),
+									  Constantes.DATE_PATTERN_PT_BR));
+			
+			consultaDiferencaVO.setCodigoProduto(diferenca.getProdutoEdicao().getProduto().getCodigo());
+			consultaDiferencaVO.setDescricaoProduto(diferenca.getProdutoEdicao().getProduto().getNome());
+			consultaDiferencaVO.setNumeroEdicao(diferenca.getProdutoEdicao().getNumeroEdicao().toString());
+			
+			consultaDiferencaVO.setPrecoVenda(
+				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
+			
+			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().toString());
+			
+			if (diferenca.getItemRecebimentoFisico() != null) {
+				consultaDiferencaVO.setNumeroNotaFiscal(
+					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero());
+			} else {
+				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
+			}
+			
+			consultaDiferencaVO.setQuantidade(diferenca.getQtde().toString());
+			
+			consultaDiferencaVO.setStatusAprovacao(
+				diferenca.getMovimentoEstoque().getStatus().toString());
+			
+			BigDecimal valorDiferencas = diferenca.getProdutoEdicao().getPrecoVenda().multiply(diferenca.getQtde());
+			consultaDiferencaVO.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorDiferencas));
+			
+			listaConsultaDiferenca.add(consultaDiferencaVO);
+			
+			qtdeTotalDiferencas = 
+				qtdeTotalDiferencas.add(diferenca.getQtde());
+			
+			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
+		}
+		
+		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
+			new TableModel<CellModelKeyValue<DiferencaVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsultaDiferenca));
+		
+		tableModel.setTotal(quantidadeRegistros);
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		String valorTotalDiferencasFormatado = 
+			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+		
+		ResultadoDiferencaVO resultadoDiferencaVO = 
+			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+	
+		result.use(Results.json()).withoutRoot().from(resultadoDiferencaVO).recursive().serialize();
 	}
 	
 	/*
@@ -374,7 +412,32 @@ public class DiferencaEstoqueController {
 	
 			filtro.setPaginacao(paginacao);
 			
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColuna.values(), sortname));
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaLancamento.values(), sortname));
+		}
+	}
+	
+	/*
+	 * Configura a paginação do filtro de pesquisa.
+	 * 
+	 * @param filtro - filtro da pesquisa
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 */
+	private void configurarPaginacaoPesquisa(FiltroConsultaDiferencaEstoqueDTO filtro, 
+											 String sortorder,
+											 String sortname, 
+											 int page, 
+											 int rp) {
+		
+		if (filtro != null) {
+			
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+	
+			filtro.setPaginacao(paginacao);
+			
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaConsulta.values(), sortname));
 		}
 	}
 	

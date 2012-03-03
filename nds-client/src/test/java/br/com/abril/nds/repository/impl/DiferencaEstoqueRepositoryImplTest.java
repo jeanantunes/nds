@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColuna;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -160,7 +160,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.setDataMovimento(this.dataMovimento);
 		filtro.setTipoDiferenca(this.tipoDiferenca);
 		
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.CODIGO_PRODUTO);
 		
 		PaginacaoVO paginacao = new PaginacaoVO();
 		
@@ -206,7 +206,19 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	@Test
 	public void obterDiferencas() {
+		PaginacaoVO paginacao = new PaginacaoVO();
+		
+		paginacao.setOrdenacao(Ordenacao.DESC);
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(10);
+		
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		filtro.setCodigoProduto("1");
+		filtro.setNumeroEdicao(1L);
+		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+		
+		filtro.setPaginacao(paginacao);
 		
 		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro);
 		
@@ -218,6 +230,10 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	@Test
 	public void obterTotalDiferencas() {
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		
+		filtro.setCodigoProduto("1");
+		filtro.setNumeroEdicao(1L);
+		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
 		long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
 		

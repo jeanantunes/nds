@@ -162,36 +162,158 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		return hql;
 	}
+	
+	/*
+	 * Gera a query de busca de diferenças.
+	 *   
+	 * @param filtro - filtro da pesquisa
+	 * @param totalizar - flag para contagem de total
+	 * 
+	 * @return Query
+	 */
+	private String gerarQueryDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
+										boolean totalizar) {
+		
+		String hql;
+		
+		if (totalizar) {
+			
+			hql = "select count(diferenca) ";
+			
+		} else {
+			
+			hql = "select diferenca ";
+		}
+		
+		hql += " from Diferenca diferenca "
+			+ " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
+			+ " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
+			+ " left join itemNotaFiscal.notaFiscal notaFiscal "
+			+ " where diferenca.movimentoEstoque is not null ";
+		
+		if (filtro.getCodigoProduto() != null) {
+			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
+		}
+		
+		if (filtro.getNumeroEdicao() != null) {
+			hql += " and diferenca.produtoEdicao.numeroEdicao = :numeroEdicao ";
+		}
+		
+		if (filtro.getDataLancamentoDe() != null && filtro.getDataLancamentoAte() != null) {
+			hql += " and diferenca.movimentoEstoque.dataInclusao between :dataLancamentoDe and :dataLancamentoAte ";
+		}
+		
+		if (filtro.getTipoDiferenca() != null) {
+			hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+		}
+		
+		return hql;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		String hql = " select diferenca "
-				   + " from Diferenca diferenca "
-				   
-				   + " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
-				   
-				   + " where diferenca.movimentoEstoque is not null ";
-				   
-		/*if (filtro.getClass() != null) {
-			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
-		}*/
-				   
+		String hql = this.gerarQueryDiferencas(filtro, false);
+		
+		if (filtro.getOrdenacaoColuna() != null) {
+			
+			//TODO: ordenação pelo campo total
+			
+			switch (filtro.getOrdenacaoColuna()) {
+			
+				case DATA_LANCAMENTO:
+					hql += "order by diferenca.movimentoEstoque.dataInclusao ";
+					break;
+				case CODIGO_PRODUTO:
+					hql += "order by diferenca.produtoEdicao.produto.codigo ";
+					break;
+				case DESCRICAO_PRODUTO:
+					hql += "order by diferenca.produtoEdicao.produto.nome ";
+					break;
+				case NUMERO_EDICAO:
+					hql += "order by diferenca.produtoEdicao.numeroEdicao ";
+					break;
+				case PRECO_VENDA:
+					hql += "order by diferenca.produtoEdicao.precoVenda ";
+					break;
+				case TIPO_DIFERENCA:
+					hql += "order by diferenca.tipoDiferenca ";
+					break;
+				case NUMERO_NOTA_FISCAL:
+					hql += "order by notaFiscal.numero ";
+					break;
+				case QUANTIDADE:
+					hql += "order by diferenca.qtde ";
+					break;
+				case STATUS_APROVACAO:
+					hql += "order by diferenca.tipoDiferenca ";
+					break;
+				default:
+					break;
+			}
+			
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql += filtro.getPaginacao().getOrdenacao().toString();
+			}
+		}
+		
 		Query query = getSession().createQuery(hql);
+		
+		//TODO: adicionar filtro para fornecedores
+		
+		if (filtro.getCodigoProduto() != null) {
+			query.setParameter("codigoProduto", filtro.getCodigoProduto());
+		}
+		
+		if (filtro.getNumeroEdicao() != null) {
+			query.setParameter("numeroEdicao", filtro.getNumeroEdicao());
+		}
+		
+		if (filtro.getDataLancamentoDe() != null && filtro.getDataLancamentoAte() != null) {
+			query.setParameter("dataLancamentoDe", filtro.getDataLancamentoDe());
+			query.setParameter("dataLancamentoAte", filtro.getDataLancamentoAte());
+		}
+		
+		if (filtro.getTipoDiferenca() != null) {
+			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+		}
+		
+		if (filtro.getPaginacao() != null) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
 		
 		return query.list();
 	}
 	
 	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
-		String hql = " select count(diferenca) "
-				   + " from Diferenca diferenca "
-				   
-				   + " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
-				   
-				   + " where diferenca.movimentoEstoque is not null ";
+		String hql = this.gerarQueryDiferencas(filtro, true);
 		
 		Query query = getSession().createQuery(hql);
+		
+		if (filtro.getCodigoProduto() != null) {
+			query.setParameter("codigoProduto", filtro.getCodigoProduto());
+		}
+		
+		if (filtro.getNumeroEdicao() != null) {
+			query.setParameter("numeroEdicao", filtro.getNumeroEdicao());
+		}
+		
+		if (filtro.getDataLancamentoDe() != null && filtro.getDataLancamentoAte() != null) {
+			query.setParameter("dataLancamentoDe", filtro.getDataLancamentoDe());
+			query.setParameter("dataLancamentoAte", filtro.getDataLancamentoAte());
+		}
+		
+		if (filtro.getTipoDiferenca() != null) {
+			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+		}
 		
 		return (Long) query.uniqueResult();
 	}

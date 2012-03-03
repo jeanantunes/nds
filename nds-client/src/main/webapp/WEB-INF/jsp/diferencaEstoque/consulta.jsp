@@ -22,54 +22,66 @@
 				dataType : 'json',
 				colModel : [ {
 					display : 'Data',
-					name : 'data',
+					name : 'dataLancamento',
 					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Código',
-					name : 'codigo',
+					name : 'codigoProduto',
 					width : 70,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Produto',
-					name : 'produto',
-					width : 170,
+					name : 'descricaoProduto',
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
-					name : 'edicao',
-					width : 80,
+					name : 'numeroEdicao',
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}, {
+					display : 'Preço Venda R$',
+					name : 'precoVenda',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				}, {
 					display : 'Tipo de Diferença',
 					name : 'tipoDiferenca',
-					width : 180,
+					width : 130,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Nota',
-					name : 'nota',
-					width : 90,
+					name : 'numeroNotaFiscal',
+					width : 110,
 					sortable : true,
-					align : 'center'
+					align : 'left'
 				}, {
 					display : 'Exemplar',
-					name : 'exemplar',
-					width : 80,
+					name : 'quantidade',
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Status',
-					name : 'status',
-					width : 80,
+					name : 'statusAprovacao',
+					width : 60,
 					sortable : true,
 					align : 'center'
+				}, {
+					display : 'Total R$',
+					name : 'valorTotalDiferenca',
+					width : 60,
+					sortable : false,
+					align : 'right'
 				} ],
-				sortname : "data",
+				sortname : "dataLancamento",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -105,19 +117,13 @@
 			$(".grids").show();
 		}
 		
-		function getDataFromResult(data) {
+		function getDataFromResult(resultado) {
 			
-			var dadosPesquisa;
+			$("#qtdeTotalDiferencas").html(resultado.qtdeTotalDiferencas);
 			
-			$.each(data, function(index, value) {
-				
-				  if(value[0] == "TblModelListaFaltasSobras") {
-					  dadosPesquisa = value[1];
-				  }
-				  
-			});
+			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
 			
-			return dadosPesquisa;
+			return resultado.tableModel;
 		}
 		
 	</script>
@@ -188,12 +194,27 @@
 		<legend>Faltas e Sobras Cadastradas</legend>
 		<div class="grids" style="display: none;">
 			<table class="consultaFaltasSobrasGrid"></table>
-			<span class="bt_novos" title="Gerar Arquivo"><a
-				href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-					hspace="5" border="0" />Arquivo</a> </span> <span class="bt_novos"
-				title="Imprimir"><a href="javascript:;"><img
-					src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5"
-					border="0" />Imprimir</a> </span>
+			
+			<table width="100%" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td width="70%">
+						<span class="bt_novos" title="Gerar Arquivo">
+							<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+								Arquivo
+							</a>
+						</span>
+						<span class="bt_novos" title="Imprimir">
+							<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+								Imprimir
+							</a>
+						</span>
+					</td>
+					<td width="5%"><strong>Total:</strong></td>
+				    <td id="qtdeTotalDiferencas" width="7%" align="right" />
+				    <td id="valorTotalDiferencas" width="16%" align="right" />
+				    <td width="2%">&nbsp;</td>
+				</tr>
+			</table>
 		</div>
 
 	</fieldset>
