@@ -29,6 +29,10 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private Long idItemNota;
 
+	public RecebimentoFisicoDTO() {
+		
+	}
+	
 	public RecebimentoFisicoDTO(String codigo, 
 			String nomeProduto, 
 			Long edicao, 
