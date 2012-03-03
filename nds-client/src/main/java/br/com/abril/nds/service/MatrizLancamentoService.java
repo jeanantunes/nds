@@ -10,6 +10,8 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 public interface MatrizLancamentoService {
 
 	List<LancamentoDTO> buscarLancamentosBalanceamento(FiltroLancamentoDTO filtro);
+	
+	long totalBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
 
 	List<ResumoPeriodoLancamentoDTO> obterResumoPeriodo(Date dataInicial,
 			List<Long> fornecedores);

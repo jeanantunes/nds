@@ -103,6 +103,43 @@ public class DiferencaEstoqueController {
 			this.processarDiferencasLancamento(listaLancamentoDiferencas, filtro);
 		}
 	}
+	
+	@Post
+	@Path("/lancamento/novo")
+	public void carregarNovasDiferencas(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
+		
+		this.validarEntradaDadosNovoLancamento(dataMovimentoFormatada, tipoDiferenca);
+		
+		int qtdeInicialPadrao = 50;
+		
+		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>(qtdeInicialPadrao);
+		
+		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
+			
+			DiferencaVO diferenca = new DiferencaVO();
+			
+			diferenca.setId(indice);
+			
+			diferenca.setDescricaoProduto("XX");
+			
+			diferenca.setDataLancamento(dataMovimentoFormatada);
+			
+			diferenca.setTipoDiferenca(tipoDiferenca.getDescricao());
+			
+			listaNovasDiferencas.add(diferenca);
+		}
+		
+		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
+			new TableModel<CellModelKeyValue<DiferencaVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNovasDiferencas));
+		
+		tableModel.setTotal(qtdeInicialPadrao);
+		
+		tableModel.setPage(1);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
 
 	@Get
 	public void consulta() {
@@ -329,45 +366,6 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
-	 * Carrega o filtro da pesquisa de lançamento de diferenças.
-	 * 
-	 * @param dataMovimento - data do movimento
-	 * @param tipoDiferenca - tipo de diferença
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 * 
-	 * @return Filtro
-	 */
-	private FiltroLancamentoDiferencaEstoqueDTO carregarFiltroPesquisaLancamentos(Date dataMovimento, 
-																				  TipoDiferenca tipoDiferenca,
-																				  String sortorder, 
-																				  String sortname, 
-																				  int page, 
-																				  int rp) {
-		
-		FiltroLancamentoDiferencaEstoqueDTO filtroAtual = 
-			new FiltroLancamentoDiferencaEstoqueDTO(dataMovimento, tipoDiferenca);
-		
-		this.configurarPaginacaoPesquisaLancamentos(filtroAtual, sortorder, sortname, page, rp);
-		
-		FiltroLancamentoDiferencaEstoqueDTO filtroSessao =
-			(FiltroLancamentoDiferencaEstoqueDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-		
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-			
-		}
-		
-		this.httpSession.setAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE, filtroAtual);
-		
-		return filtroAtual;
-	}
-	
-	/*
 	 * Processa o resultado das diferenças.
 	 *  
 	 * @param listaDiferencas - lista de diferenças
@@ -399,8 +397,8 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
-			
-			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().toString());
+
+			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {
 				consultaDiferencaVO.setNumeroNotaFiscal(
@@ -441,6 +439,45 @@ public class DiferencaEstoqueController {
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
 	
 		result.use(Results.json()).withoutRoot().from(resultadoDiferencaVO).recursive().serialize();
+	}
+	
+	/*
+	 * Carrega o filtro da pesquisa de lançamento de diferenças.
+	 * 
+	 * @param dataMovimento - data do movimento
+	 * @param tipoDiferenca - tipo de diferença
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 * 
+	 * @return Filtro
+	 */
+	private FiltroLancamentoDiferencaEstoqueDTO carregarFiltroPesquisaLancamentos(Date dataMovimento, 
+																				  TipoDiferenca tipoDiferenca,
+																				  String sortorder, 
+																				  String sortname, 
+																				  int page, 
+																				  int rp) {
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroAtual = 
+			new FiltroLancamentoDiferencaEstoqueDTO(dataMovimento, tipoDiferenca);
+		
+		this.configurarPaginacaoPesquisaLancamentos(filtroAtual, sortorder, sortname, page, rp);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroSessao =
+			(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+			
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE, filtroAtual);
+		
+		return filtroAtual;
 	}
 	
 	/*
@@ -510,6 +547,33 @@ public class DiferencaEstoqueController {
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
+	 * 
+	 * @param dataMovimentoFormatada - data de movimento formatado
+	 * @param tipoDiferenca - tipo de diferença
+	 */
+	private void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
+		
+		if (dataMovimentoFormatada == null 
+				|| dataMovimentoFormatada.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+		}
+		
+		if (tipoDiferenca == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
 	}
 	

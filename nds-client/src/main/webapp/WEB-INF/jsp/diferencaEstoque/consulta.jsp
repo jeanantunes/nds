@@ -47,13 +47,13 @@
 				}, {
 					display : 'Preço Venda R$',
 					name : 'precoVenda',
-					width : 80,
+					width : 100,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Tipo de Diferença',
 					name : 'tipoDiferenca',
-					width : 130,
+					width : 110,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -119,9 +119,31 @@
 		
 		function getDataFromResult(resultado) {
 			
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+				//$("#btnConfirmar").hide();
+				//$("#labelTotalGeral").hide();
+
+				return resultado.tableModel;
+			}
+			
 			$("#qtdeTotalDiferencas").html(resultado.qtdeTotalDiferencas);
 			
 			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
+			
+
+			if ($(".grids").css('display') == 'none') {	
+
+				$(".grids").show();
+				//$("#btnConfirmar").show();
+				//$("#labelTotalGeral").show();
+			}
 			
 			return resultado.tableModel;
 		}

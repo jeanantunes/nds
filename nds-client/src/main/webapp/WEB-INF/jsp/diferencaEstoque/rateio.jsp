@@ -13,7 +13,6 @@
 	
 	<script>
 		$(".gridRateioDiferencas").flexigrid({
-			url : '../xml/lancto_faltas_sobras-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
 				display : 'Cota',

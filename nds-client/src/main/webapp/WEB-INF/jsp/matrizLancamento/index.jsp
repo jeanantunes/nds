@@ -322,10 +322,10 @@ function popup() {
 				display : 'Reprogramar',
 				name : 'reprogramar',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
-			sortname : "Nome",
+			sortname : "dataMatrizDistrib",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

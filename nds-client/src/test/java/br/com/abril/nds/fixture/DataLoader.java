@@ -44,6 +44,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
@@ -229,14 +230,19 @@ public class DataLoader {
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
 		
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+		Lancamento lancamento1 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, new Date(), new Date(), new Date(), new Date(),
 				BigDecimal.TEN, StatusLancamento.RECEBIDO, itemRecebimentoFisico);
-		session.save(lancamento);
-
+		session.save(lancamento1);
 		Estudo estudo = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudo);
+		
+		Lancamento lancamento2 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+				produtoEdicaoVeja2, new Date(), new Date(), new Date(), new Date(),
+				BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
+		session.save(lancamento2);
+		
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
