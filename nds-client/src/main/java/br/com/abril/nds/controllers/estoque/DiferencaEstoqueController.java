@@ -104,6 +104,7 @@ public class DiferencaEstoqueController {
 									String sortorder, String sortname, int page, int rp) {
 		
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+
 		
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setNumeroEdicao(numeroEdicao);
@@ -117,6 +118,7 @@ public class DiferencaEstoqueController {
 		List<Diferenca> listaDiferencas =
 			diferencaEstoqueService.obterDiferencas(filtro);
 		
+
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
