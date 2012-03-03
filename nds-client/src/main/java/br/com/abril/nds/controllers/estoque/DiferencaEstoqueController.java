@@ -348,7 +348,7 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
 			
-			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().toString());
+			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {
 				consultaDiferencaVO.setNumeroNotaFiscal(
