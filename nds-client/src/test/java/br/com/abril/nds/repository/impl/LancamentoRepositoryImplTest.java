@@ -69,17 +69,17 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(veja, quatroRodas, infoExame, capricho);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja, Fixture.fornecedorDinap());
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN,
-				quatroRodas);
+				quatroRodas, Fixture.fornecedorDinap());
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), infoExame);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), infoExame, Fixture.fornecedorDinap());
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, capricho);
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, capricho, Fixture.fornecedorDinap());
 		save(veja1, quatroRoda2, infoExame3, capricho1);
 		
 		Usuario usuario = Fixture.usuarioJoao();

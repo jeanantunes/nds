@@ -136,9 +136,10 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
+						$(this).dialog("close");
 						
+						var data = "idDiferenca=" + idMovimentoEstoque;
+						$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -165,20 +166,13 @@
 			width: auto;
 			margin-bottom: 0px !important;
 		}
-		
-		.ui-datepicker 
-		{
-			z-index: 1000 !important;		
-		}
-		
-		.ui-datepicker-today a
-		{
-			display:block !important;
-		}
 	</style>
 </head>
 
 <body>
+	<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
+		<p>Confirma esta Exclusão?</p>
+	</div>
 	<div class="corpo">
 	
 		<div class="container">

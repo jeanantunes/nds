@@ -143,27 +143,27 @@ public class DataLoader {
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				produtoVeja, fornecedorAcme);
 		session.save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				produtoVeja, fornecedorAcme);
 		session.save(produtoEdicaoVeja2);
 		
 		ProdutoEdicao produtoEdicaoVeja3 = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				produtoVeja, fornecedorAcme);
 		session.save(produtoEdicaoVeja3);
 		
 		ProdutoEdicao produtoEdicaoVeja4 = Fixture.produtoEdicao(4L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				produtoVeja, fornecedorAcme);
 		session.save(produtoEdicaoVeja4);
 		
 		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoSuper);
+				produtoSuper, fornecedorAcme);
 		session.save(produtoEdicaoSuper1);
 		
 		Usuario usuario = Fixture.usuarioJoao();

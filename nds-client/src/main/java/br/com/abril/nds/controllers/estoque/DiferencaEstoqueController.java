@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.LancamentoDiferencaVO;
 import br.com.abril.nds.client.vo.ResultadoLancamentoDiferencaVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColuna;
@@ -73,14 +75,14 @@ public class DiferencaEstoqueController {
 
 		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname, page, rp);
 		
-		//this.processarDiferencasLancamentoMock(page);
+		this.processarDiferencasLancamentoMock(page);
 		
 		List<Diferenca> listaLancamentoDiferencas = 
 			this.diferencaEstoqueService.obterDiferencasLancamento(filtro);
 		
 		if (listaLancamentoDiferencas == null || listaLancamentoDiferencas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			//throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		} else {
 			
@@ -167,6 +169,15 @@ public class DiferencaEstoqueController {
 	public void carregarCombosConsulta() {
 		this.carregarComboTiposDiferenca();
 		this.carregarComboFornecedores();
+	}
+	
+	@Post
+	public void excluirFaltaSobra(Long idDiferenca){
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
+				Constantes.PARAM_MSGS).recursive().serialize();
+		
+		//result.forwardTo(DiferencaEstoqueController.class).lancamento();
 	}
 	
 	/**
