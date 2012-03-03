@@ -137,6 +137,7 @@
 			
 			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
 			
+
 			if ($(".grids").css('display') == 'none') {	
 
 				$(".grids").show();

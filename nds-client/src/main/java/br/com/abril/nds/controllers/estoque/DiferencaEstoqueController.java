@@ -463,7 +463,7 @@ public class DiferencaEstoqueController {
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 	
 			filtro.setPaginacao(paginacao);
-			
+
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaLancamento.values(), sortname));
 		}
 	}
