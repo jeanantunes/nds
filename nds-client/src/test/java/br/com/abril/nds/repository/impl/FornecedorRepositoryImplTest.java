@@ -1,8 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.Assert;
