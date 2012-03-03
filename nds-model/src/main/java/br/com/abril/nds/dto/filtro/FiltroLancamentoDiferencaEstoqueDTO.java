@@ -26,7 +26,7 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	
 	private PaginacaoVO paginacao;
 	
-	private OrdenacaoColuna ordenacaoColuna;
+	private OrdenacaoColunaLancamento ordenacaoColuna;
 	
 	/**
 	 * Construtor padrão.
@@ -53,7 +53,7 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	 * @author Discover Technology
 	 *
 	 */
-	public enum OrdenacaoColuna {
+	public enum OrdenacaoColunaLancamento {
 		
 		CODIGO_PRODUTO("codigoProduto"),
 		DESCRICAO_PRODUTO("descricaoProduto"),
@@ -66,7 +66,7 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 		
 		private String nomeColuna;
 		
-		private OrdenacaoColuna(String nomeColuna) {
+		private OrdenacaoColunaLancamento(String nomeColuna) {
 			
 			this.nomeColuna = nomeColuna;
 		}
@@ -123,14 +123,14 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	/**
 	 * @return the ordenacaoColuna
 	 */
-	public OrdenacaoColuna getOrdenacaoColuna() {
+	public OrdenacaoColunaLancamento getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}
 
 	/**
 	 * @param ordenacaoColuna the ordenacaoColuna to set
 	 */
-	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
+	public void setOrdenacaoColuna(OrdenacaoColunaLancamento ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 

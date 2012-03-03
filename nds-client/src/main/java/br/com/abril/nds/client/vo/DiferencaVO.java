@@ -3,12 +3,12 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 
 /**
- * Value Object para lançamento de diferença.
+ * Value Object para lançamento e consulta de diferença.
  * 
  * @author Discover Technology
  *
  */
-public class LancamentoDiferencaVO implements Serializable {
+public class DiferencaVO implements Serializable {
 	
 	/**
 	 * Serial Version UID
@@ -16,6 +16,8 @@ public class LancamentoDiferencaVO implements Serializable {
 	private static final long serialVersionUID = 6329780427551941318L;
 
 	private Integer id;
+	
+	private String dataLancamento;
 	
 	private String codigoProduto;
 	
@@ -31,12 +33,16 @@ public class LancamentoDiferencaVO implements Serializable {
 	
 	private String tipoDiferenca;
 	
+	private String numeroNotaFiscal;
+	
+	private String statusAprovacao;
+	
 	private String valorTotalDiferenca;
 	
 	/**
 	 * Construtor padrão.
 	 */
-	public LancamentoDiferencaVO() {
+	public DiferencaVO() {
 		
 	}
 
@@ -52,6 +58,20 @@ public class LancamentoDiferencaVO implements Serializable {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the dataLancamento
+	 */
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+
+	/**
+	 * @param dataLancamento the dataLancamento to set
+	 */
+	public void setDataLancamento(String dataLancamento) {
+		this.dataLancamento = dataLancamento;
 	}
 
 	/**
@@ -153,6 +173,34 @@ public class LancamentoDiferencaVO implements Serializable {
 	}
 
 	/**
+	 * @return the numeroNotaFiscal
+	 */
+	public String getNumeroNotaFiscal() {
+		return numeroNotaFiscal;
+	}
+
+	/**
+	 * @param numeroNotaFiscal the numeroNotaFiscal to set
+	 */
+	public void setNumeroNotaFiscal(String numeroNotaFiscal) {
+		this.numeroNotaFiscal = numeroNotaFiscal;
+	}
+
+	/**
+	 * @return the statusAprovacao
+	 */
+	public String getStatusAprovacao() {
+		return statusAprovacao;
+	}
+
+	/**
+	 * @param statusAprovacao the statusAprovacao to set
+	 */
+	public void setStatusAprovacao(String statusAprovacao) {
+		this.statusAprovacao = statusAprovacao;
+	}
+
+	/**
 	 * @return the valorDiferenca
 	 */
 	public String getValorTotalDiferenca() {
@@ -188,7 +236,7 @@ public class LancamentoDiferencaVO implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LancamentoDiferencaVO other = (LancamentoDiferencaVO) obj;
+		DiferencaVO other = (DiferencaVO) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
