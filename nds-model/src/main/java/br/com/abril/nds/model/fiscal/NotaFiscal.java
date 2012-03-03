@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.fiscal;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -47,6 +48,12 @@ public abstract class NotaFiscal {
 	private String chaveAcesso;
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
 	private StatusNotaFiscal statusNotaFiscal;
+	@Column(name = "VALOR_BRUTO", nullable = false)
+	private BigDecimal valorBruto;
+	@Column(name = "VALOR_LIQUIDO", nullable = false)
+	private BigDecimal valorLiquido;
+	@Column(name = "VALOR_DESCONTO", nullable = false)
+	private BigDecimal valorDesconto;	
 	@ManyToOne
 	private Usuario usuario;
 	@ManyToOne(optional = false)
@@ -155,5 +162,28 @@ public abstract class NotaFiscal {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 
+	public BigDecimal getValorBruto() {
+		return valorBruto;
+	}
 
+	public void setValorBruto(BigDecimal valorBruto) {
+		this.valorBruto = valorBruto;
+	}
+
+	public BigDecimal getValorLiquido() {
+		return valorLiquido;
+	}
+
+	public void setValorLiquido(BigDecimal valorLiquido) {
+		this.valorLiquido = valorLiquido;
+	}
+
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+	
 }
