@@ -221,8 +221,8 @@ fieldset label {
 							<li><a href='<c:url value="/estoque/extratoEdicao/index"/>'>Extrato de
 									Edição</a>
 							</li>
-							<li><a href="Estoque/lancamento_faltas_sobras.htm">Lançamento
-									de Faltas e Sobras</a>
+							<li>
+								<a href='<c:url value="/estoque/diferenca/lancamento"/>'>Lançamento de Faltas e Sobras</a>
 							</li>
 							<li><a href="<c:url value="recebimentoFisico"/>">Recebimento
 									Fisico</a>
