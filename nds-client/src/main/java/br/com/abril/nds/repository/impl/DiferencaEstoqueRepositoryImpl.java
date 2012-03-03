@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -43,7 +45,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				case DESCRICAO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.descricao ";
 					break;
-				case EXEMPLARES:
+				case QUANTIDADE:
 					hql += "order by diferenca.qtde ";
 					break;
 				case NUMERO_EDICAO:
@@ -52,11 +54,20 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				case PACOTE_PADRAO:
 					hql += "order by diferenca.produtoEdicao.pacotePadrao ";
 					break;
-				case PRECO_PRODUTO:
+				case PRECO_VENDA:
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
+					break;
+				case VALOR_TOTAL_DIFERENCA:
+					hql += " order by "
+						+  " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
+						+  " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
+						+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) "
+						+  " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
+						+  " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+						+  " else 0 end ";
 					break;
 				default:
 					break;
@@ -93,7 +104,20 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			}
 		}
 		
-		return query.list();
+		List<Object[]> listaResultados = query.list();
+		
+		List<Diferenca> listaDiferencas = new ArrayList<Diferenca>();
+		
+		for (Object[] resultado : listaResultados) {
+			
+			Diferenca diferenca = (Diferenca) resultado[0];
+			
+			BigDecimal valorTotalDiferenca = (BigDecimal) resultado[1];
+			
+			listaDiferencas.add(new Diferenca(diferenca, valorTotalDiferenca));
+		}
+		
+		return listaDiferencas;
 	}
 	
 	public Long obterTotalDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
@@ -133,8 +157,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			hql = "select count(diferenca) ";
 			
 		} else {
-			
-			hql = " select diferenca ";
+
+			hql = " select diferenca, "
+				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
+				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) "
+				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
+				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+				+ " else 0 end) as valorTotalDiferenca ";
 		}
 					
 		hql += " from Diferenca diferenca "

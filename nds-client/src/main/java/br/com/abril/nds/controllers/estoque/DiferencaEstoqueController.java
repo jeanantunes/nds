@@ -3,11 +3,15 @@ package br.com.abril.nds.controllers.estoque;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,6 +32,7 @@ import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -48,32 +53,46 @@ public class DiferencaEstoqueController {
 	
 	private Localization localization;
 	
+	private HttpSession httpSession;
+	
 	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private DiferencaEstoqueService diferencaEstoqueService;
+	
+	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 
-	public DiferencaEstoqueController(Result result, Localization localization) {
+	public DiferencaEstoqueController(Result result, 
+								 	  Localization localization,
+								 	  HttpSession httpSession) {
 		
 		this.result = result;
 		this.localization = localization;
+		this.httpSession = httpSession;
 	}
 	
 	@Get
 	public void lancamento() {
 		
 		this.carregarCombosLancamento();
+		
+		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
 	}
 	
 	@Post
 	@Path("/lancamento/pesquisa")
-	public void pesquisarLancamentos(FiltroLancamentoDiferencaEstoqueDTO filtro, 
+	public void pesquisarLancamentos(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca, 
 									 String sortorder, String sortname, int page, int rp) {
-
-		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname, page, rp);
 		
-		//this.processarDiferencasLancamentoMock(page);
+		
+		this.validarEntradaDadosPesquisaLancamentos(dataMovimentoFormatada);
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = 
+			this.carregarFiltroPesquisaLancamentos(
+				dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
 		
 		List<Diferenca> listaLancamentoDiferencas = 
 			this.diferencaEstoqueService.obterDiferencasLancamento(filtro);
@@ -237,9 +256,8 @@ public class DiferencaEstoqueController {
 		List<LancamentoDiferencaVO> listaLancamentosDiferenca = new LinkedList<LancamentoDiferencaVO>();
 		
 		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
-		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
-		int quantidadeRegistros = 30;
+		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
 		for (Diferenca diferenca : listaDiferencas) {
 			
@@ -259,18 +277,16 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde().toString());
 			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
-			
-			BigDecimal valorDiferencas = 
-				produtoEdicao.getPrecoVenda().multiply(diferenca.getQtde());
-			
-			lancamentoDiferenca.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorDiferencas));
+
+			lancamentoDiferenca.setValorTotalDiferenca(
+				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
 			listaLancamentosDiferenca.add(lancamentoDiferenca);
 			
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
 			
-			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
+			valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
 		}
 		
 		TableModel<CellModelKeyValue<LancamentoDiferencaVO>> tableModel =
@@ -354,6 +370,45 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
+	 * Carrega o filtro da pesquisa de lançamento de diferenças.
+	 * 
+	 * @param dataMovimento - data do movimento
+	 * @param tipoDiferenca - tipo de diferença
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 * 
+	 * @return Filtro
+	 */
+	private FiltroLancamentoDiferencaEstoqueDTO carregarFiltroPesquisaLancamentos(Date dataMovimento, 
+																				  TipoDiferenca tipoDiferenca,
+																				  String sortorder, 
+																				  String sortname, 
+																				  int page, 
+																				  int rp) {
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroAtual = 
+			new FiltroLancamentoDiferencaEstoqueDTO(dataMovimento, tipoDiferenca);
+		
+		this.configurarPaginacaoPesquisaLancamentos(filtroAtual, sortorder, sortname, page, rp);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroSessao =
+			(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+			
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE, filtroAtual);
+		
+		return filtroAtual;
+	}
+	
+	/*
 	 * Configura a paginação do filtro de pesquisa de lançamentos.
 	 * 
 	 * @param filtro - filtro da pesquisa
@@ -373,8 +428,28 @@ public class DiferencaEstoqueController {
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 	
 			filtro.setPaginacao(paginacao);
-			
+
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColuna.values(), sortname));
+		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
+	 * 
+	 * @param dataMovimentoFormatada - data de movimento formatado
+	 */
+	private void validarEntradaDadosPesquisaLancamentos(String dataMovimentoFormatada) {
+		
+		if (dataMovimentoFormatada == null 
+				|| dataMovimentoFormatada.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
 		}
 	}
 	

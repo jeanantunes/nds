@@ -34,6 +34,18 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	public FiltroLancamentoDiferencaEstoqueDTO() {
 		
 	}
+	
+	/**
+	 * Construtor.
+	 * 
+	 * @param dataMovimento - data de movimento
+	 * @param tipoDiferenca - tipo de diferença
+	 */
+	public FiltroLancamentoDiferencaEstoqueDTO(Date dataMovimento, TipoDiferenca tipoDiferenca) {
+		
+		this.dataMovimento = dataMovimento;
+		this.tipoDiferenca = tipoDiferenca;
+	}
 
 	/**
 	 * Enum para ordenação das colunas do filtro.
@@ -45,11 +57,12 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 		
 		CODIGO_PRODUTO("codigoProduto"),
 		DESCRICAO_PRODUTO("descricaoProduto"),
-		NUMERO_EDICAO("edicaoProduto"),
-		PRECO_PRODUTO("precoProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
+		PRECO_VENDA("precoVenda"),
 		PACOTE_PADRAO("pacotePadrao"),
-		EXEMPLARES("exemplares"),
-		TIPO_DIFERENCA("tipoDiferenca");
+		QUANTIDADE("quantidade"),
+		TIPO_DIFERENCA("tipoDiferenca"),
+		VALOR_TOTAL_DIFERENCA("valorTotalDiferenca");
 		
 		private String nomeColuna;
 		
@@ -119,6 +132,53 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	 */
 	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((dataMovimento == null) ? 0 : dataMovimento.hashCode());
+		result = prime * result
+				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result
+				+ ((tipoDiferenca == null) ? 0 : tipoDiferenca.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroLancamentoDiferencaEstoqueDTO other = (FiltroLancamentoDiferencaEstoqueDTO) obj;
+		if (dataMovimento == null) {
+			if (other.dataMovimento != null)
+				return false;
+		} else if (!dataMovimento.equals(other.dataMovimento))
+			return false;
+		if (ordenacaoColuna != other.ordenacaoColuna)
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (tipoDiferenca != other.tipoDiferenca)
+			return false;
+		return true;
 	}
 
 }
