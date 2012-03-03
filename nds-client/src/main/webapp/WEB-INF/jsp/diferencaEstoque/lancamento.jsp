@@ -13,6 +13,8 @@
 				$(".grids").hide();
 				$("#btnConfirmar").hide();
 				$("#labelTotalGeral").hide();
+				$("#qtdeTotalDiferencas").hide();
+				$("#valorTotalDiferencas").hide();
 
 				return resultado.tableModel;
 			}
@@ -23,12 +25,12 @@
 
 			$.each(resultado.tableModel.rows, function(index, row) {
 
-				var linkRateioDiferenca = '<a href="javascript:;" onclick="popupRateioDiferenca(' + row.cell.idMovimentoEstoque + ');" style="cursor:pointer" style="border:none">' +
-											 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" />' +
+				var linkRateioDiferenca = '<a href="javascript:;" onclick="popupRateioDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+										     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 										  '</a>';
 
-				var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.idMovimentoEstoque + ');" style="cursor:pointer" style="border:none">' +
-												'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" />' +
+				var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+												'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											'</a>';
 								
 				row.cell.acao = linkRateioDiferenca + linkExclusaoDiferenca;
@@ -39,6 +41,8 @@
 				$(".grids").show();
 				$("#btnConfirmar").show();
 				$("#labelTotalGeral").show();
+				$("#qtdeTotalDiferencas").show();
+				$("#valorTotalDiferencas").show();
 			}
 
 			return resultado.tableModel;
@@ -48,9 +52,48 @@
 
 			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
 
+			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
+			
+			$("#gridLancamentos").flexReload();
+		}
+
+		function popupExclusaoDiferenca(idMovimentoEstoque) {
+
+			$("#dialog-excluir" ).dialog({
+				
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						$("#effect").hide("highlight", {}, 1000, callback);
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});	     
+		}
+
+		function exibirBotaoNovo(tipoDiferenca) {
+
+			if (tipoDiferenca) {
+			
+				$("#btnNovo").show();
+				
+			} else {
+				
+				$("#btnNovo").hide();
+			}
+		}
+		
+		$(function() {
+
 			$("#gridLancamentos").flexigrid({
 				preProcess: executarPreProcessamento,
-				url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />',
 				dataType : 'json',
 				colModel : [{
 					display : 'Código',
@@ -104,7 +147,7 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "descricaoProduto",
@@ -112,43 +155,14 @@
 				usepager : true,
 				useRp : true,
 				rp : 15,
-				params: formData,
 				showTableToggleBtn : true,
 				width : 960,
 				height : 180,
 				singleSelect: true
 			});
-
-			formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
 			
-			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
-			
-			$("#gridLancamentos").flexReload();
-		}
-
-		function popupExclusaoDiferenca(idMovimentoEstoque) {
-
-			$("#dialog-excluir" ).dialog({
+			$("#btnNovo").hide();
 				
-				resizable: false,
-				height:'auto',
-				width:300,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});	     
-		}
-
-		$(function() {
-			
 			$("#datePickerDataMovimento").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -156,6 +170,8 @@
 				dateFormat: 'dd/mm/yy',
 				defaultDate: new Date()
 			});
+
+			$("#datePickerDataMovimento").mask("99/99/9999");
 		});
 	</script>
 	
@@ -197,13 +213,20 @@
 							<td width="111">Data Movimento:</td>
 							<td width="124">
 								<input type="text" 
-									   name="filtro.dataMovimento" 
+									   name="dataMovimentoFormatada" 
 									   id="datePickerDataMovimento" 
-									   style="width: 70px; float: left; margin-right: 5px;" />
+									   style="width: 70px; float: left; margin-right: 5px;"
+									   maxlength="10"
+									   value="${dataAtual}" />
 							</td>
 							<td width="115">Tipo de Diferença:</td>
 							<td width="294">
-								<select id="selectTiposDiferenca" name="filtro.tipoDiferenca" style="width: 220px;">
+								<select id="selectTiposDiferenca" 
+										name="tipoDiferenca"
+										 style="width: 220px;"
+										 onchange="exibirBotaoNovo(this.value);">
+										 
+									<option selected="selected"></option>
 									<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 										<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 									</c:forEach>
@@ -221,7 +244,7 @@
 			
 			<div class="linha_separa_fields">&nbsp;</div>
 
-			<fieldset class="classFieldset">
+			<fieldset id="fieldsetPesquisa" class="classFieldset">
 			
 				<legend>Lançamento Faltas e Sobras</legend>
 				
@@ -232,7 +255,7 @@
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 						<td width="459">
-							<span class="bt_novo">
+							<span id="btnNovo" class="bt_novo">
 								<a href="javascript:;" onclick="popupNovasDiferencas();">Novo</a>
 							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">

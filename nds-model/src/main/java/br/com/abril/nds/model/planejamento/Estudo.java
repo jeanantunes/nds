@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.planejamento;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -7,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -25,7 +27,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @Table(name = "ESTUDO", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
 @SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
-public class Estudo {
+public class Estudo implements Serializable {
+
+	private static final long serialVersionUID = -1896990365355368745L;
 
 	@Id
 	@GeneratedValue(generator = "ESTUDO_SEQ")
@@ -37,8 +41,13 @@ public class Estudo {
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
+	@ManyToOne(optional = true)
+	@JoinColumns({
+			@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
+			@JoinColumn(name = "DATA_LANCAMENTO", referencedColumnName = "DATA_LCTO_DISTRIBUIDOR", insertable = false, updatable = false) })
+	private Lancamento lancamento;
 	
 	public Long getId() {
 		return id;
@@ -70,6 +79,10 @@ public class Estudo {
 	
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
+	}
+	
+	public Lancamento getLancamento() {
+		return lancamento;
 	}
 
 }

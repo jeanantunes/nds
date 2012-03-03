@@ -16,7 +16,7 @@ import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.vo.PeriodoVO;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -49,36 +49,50 @@ public class MatrizLancamentoController {
 	
 	
 	@Post
-	public void matrizLancamento(Date data, Long[] idsFornecedores ) {
-		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO();
-		PeriodoVO periodo = new PeriodoVO(new Date(), new Date());
-		filtro.setPeriodo(periodo);
-		
-		List<LancamentoDTO> dtos = matrizLancamentoService.buscarLancamentosBalanceamento(filtro);
+	public void matrizLancamento(Date data, String idsFornecedores,
+			String sortorder, String sortname, int page, int rp) {
+		List<Long> fornecedores = converterIdsFornecedores(idsFornecedores);
+		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
+		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
+				fornecedores, paginacaoVO, sortname);
+		List<LancamentoDTO> dtos = matrizLancamentoService
+				.buscarLancamentosBalanceamento(filtro);
+		long total = matrizLancamentoService
+				.totalBalanceamentoMatrizLancamentos(data, fornecedores);
+
 		TableModel<CellModelKeyValue<LancamentoDTO>> tm = new TableModel<CellModelKeyValue<LancamentoDTO>>();
-		List<CellModelKeyValue<LancamentoDTO>> cells = CellModelKeyValue.toCellModelKeyValue(dtos);
-		
+		List<CellModelKeyValue<LancamentoDTO>> cells = CellModelKeyValue
+				.toCellModelKeyValue(dtos);
+
 		tm.setRows(cells);
-		tm.setPage(1);
-		tm.setTotal(10);
-		result.use(Results.json()).withoutRoot().from(tm).include("rows").serialize();
+		tm.setPage(page);
+		tm.setTotal((int) total);
+		result.use(Results.json()).withoutRoot().from(tm).include("rows")
+				.serialize();
 	}
 	
 	@Get
-	public void resumoPeriodo(Date data) {
-		List<ResumoPeriodoLancamentoDTO> dtos = new ArrayList<ResumoPeriodoLancamentoDTO>();
-		for (int i = 0; i < 6; i++) {
-			ResumoPeriodoLancamentoDTO dto = new ResumoPeriodoLancamentoDTO();
-			dto.setData(DateUtil.formatarData(data, FORMATO_DATA));
-			dto.setPesoTotal("100");
-			dto.setQtdeExemplares("1000");
-			dto.setQtdeTitulos(5L);
-			dto.setValorTotal("10.000,00");
-			dtos.add(dto);
-		}
+	public void resumoPeriodo(Date dataInicial, String idsFornecedores) {
+		List<Long> fornecedores = converterIdsFornecedores(idsFornecedores);
+		List<ResumoPeriodoLancamentoDTO> dtos = matrizLancamentoService
+				.obterResumoPeriodo(dataInicial, fornecedores);
 		result.use(Results.json()).withoutRoot().from(dtos).serialize();
 	}
-	
-	
+
+
+	/**
+	 * Transforma a lista de identificadores de fornecedores em formato
+	 * texto para a lista de identificadores em formato numérico 
+	 * 
+	 * @param idsFornecedores identificadores em formato texto
+	 * @return lista de identificadores em formato numérico
+	 */
+	private List<Long> converterIdsFornecedores(String idsFornecedores) {
+		List<Long> fornecedores = new ArrayList<Long>();
+		for (String id : idsFornecedores.split(",")) {
+			fornecedores.add(Long.valueOf(id));
+		}
+		return fornecedores;
+	}
 
 }

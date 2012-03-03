@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +20,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	}
 	
 	@Test
+	@Ignore
 	public void obterListaItemRecebimentoFisico() {
 		List<RecebimentoFisicoDTO> listaItemRecebimento = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(1L);
 	}

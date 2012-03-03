@@ -212,7 +212,7 @@ fieldset label {
 					<li><span class="classEstoque">&nbsp;</span><a
 						href="javascript:;">Estoque</a>
 						<ul>
-							<li><a href="Estoque/consulta_notas_sem_fisico.htm">Consulta
+							<li><a href="<c:url value="estoque/consultaNotas"/>">Consulta
 									de Notas</a>
 							</li>
 							<li><a href="estoque/diferenca/consulta">Consulta
@@ -221,8 +221,8 @@ fieldset label {
 							<li><a href='<c:url value="/estoque/extratoEdicao/index"/>'>Extrato de
 									Edição</a>
 							</li>
-							<li><a href="Estoque/lancamento_faltas_sobras.htm">Lançamento
-									de Faltas e Sobras</a>
+							<li>
+								<a href='<c:url value="/estoque/diferenca/lancamento"/>'>Lançamento de Faltas e Sobras</a>
 							</li>
 							<li><a href="<c:url value="recebimentoFisico"/>">Recebimento
 									Fisico</a>

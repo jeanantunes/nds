@@ -13,4 +13,8 @@
         <pattern>/*</pattern>
     </decorator>
     
+     <decorator name="dialog" page="dialog.jsp">
+        <pattern>/*Dialog.jsp</pattern>
+    </decorator>
+    
 </decorators>
