@@ -97,30 +97,27 @@
 	 */
 	function popup_novo_item() {
 		
-			$("#dialog-novo-item").dialog({
-				resizable: false,
-				height:440,
-				width:500,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").show("highlight", {}, 1000, callback);
-						$(".grids").show();
-						nform = document.getElementById('dialognota');
-						nform.submit();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
+		$("#dialog-novo-item").dialog({
+			resizable: false,
+			height:440,
+			width:500,
+			modal: true,
+			buttons: {
+				"Confirmar": cadastrarNovoItemNota,
+				
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
 				}
-			});
+			}
+		});
 	}
 	
 	/**
 	 * CADASTRA NOVO ITEM DE NOTA.
 	 */
 	function cadastrarNovoItemNota() {
+		
+		$("#dialog-novo-item").dialog( "close" );
 		alert('cadastrando novo item nota');
 	}
 	
@@ -129,24 +126,20 @@
 	 */
 	function popup_nova_nota() {
 		
-			$( "#dialog-nova-nota" ).dialog({
-				resizable: false,
-				height:320,
-				width:460,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						$(".grids").show();
-						nform = document.getElementById('dialognota');
-						nform.submit();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
+		$("#dialog-nova-nota").dialog({
+			resizable: false,
+			height:320,
+			width:460,
+			modal: true,
+			buttons: {
+				
+				"Confirmar": cadastrarNovaNota,
+				
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
 				}
-			});	
+			}
+		});	
 			      
 	}
 	
@@ -154,6 +147,8 @@
 	 * CADASTRA NOVA NOTA.
 	 */
 	function cadastrarNovaNota() {
+		
+		$("#dialog-nova-nota").dialog( "close" );
 		alert('cadastrando nova nota');
 	}
 	
@@ -341,21 +336,19 @@
 		
 		$.each(linhasDaGrid, function(index, value) {
 
-			var colunaDiferenca = $(value).find("td")[6];
+			var colunaQtdFisico = $(value).find("td")[5];
 			
-			var valorDiferenca = $(colunaDiferenca).find("div").find('input[name="qtdDiferenca"]').val();
+			var qtdFisico = $(colunaQtdFisico).find("div").find('input[name="qtdFisico"]').val();
 			
-			var idItemNota = $(colunaDiferenca).find("div").find('input[name="idItemNotaFiscal"]').val();
+			var idItemNota = $(colunaQtdFisico).find("div").find('input[name="idItemNotaFiscal"]').val();
 			
 			var itemRecebimento_idItemNota = 'itensRecebimento['+index+'].idItemNota='+idItemNota+'&';
 			
-			var itemRecebimento_diferenca = 'itensRecebimento['+index+'].diferenca='+valorDiferenca+'&';
+			var itemRecebimento_qtdFisico = 'itensRecebimento['+index+'].qtdFisico='+qtdFisico+'&';
 			
-			listaDeValores = (listaDeValores + itemRecebimento_idItemNota + itemRecebimento_diferenca);
+			listaDeValores = (listaDeValores + itemRecebimento_idItemNota + itemRecebimento_qtdFisico);
 			
 		});
-		
-		alert(listaDeValores);
 		
 		return listaDeValores;
 		
@@ -382,13 +375,13 @@
 		
 		$.each(data.rows, function(index, value) {
 			
-			var qtdDiferenca = value.cell[6];
+			var qtdFisico = value.cell[5];
 			
 			var idItemNotaFiscal = 	value.id;
 			
 			var hiddeFields = '<input type="hidden" name="idItemNotaFiscal" value="'+idItemNotaFiscal+'"/>';
 			
-			value.cell[6] = '<input name="qtdDiferenca" style="width: 45px;" type="text" value="'+qtdDiferenca+'"/>'+hiddeFields;
+			value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
 
 			value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[idItemNotaFiscal]+');">APAGAR</a>';
 			

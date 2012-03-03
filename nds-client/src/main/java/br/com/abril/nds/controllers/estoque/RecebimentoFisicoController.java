@@ -205,7 +205,7 @@ public class RecebimentoFisicoController {
 			for(RecebimentoFisicoDTO item : itensRecebimento) {
 
 				System.out.println("idItemNota " + item.getIdItemNota());
-				System.out.println("diferenca " + item.getDiferenca());
+				System.out.println("qtdFisico " + item.getQtdFisico());
 				
 				System.out.println("\n\n" );
 			}
