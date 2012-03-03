@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
@@ -74,14 +73,14 @@ public class DiferencaEstoqueController {
 
 		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname, page, rp);
 		
-		this.processarDiferencasLancamentoMock(page);
+		//this.processarDiferencasLancamentoMock(page);
 		
 		List<Diferenca> listaLancamentoDiferencas = 
 			this.diferencaEstoqueService.obterDiferencasLancamento(filtro);
 		
 		if (listaLancamentoDiferencas == null || listaLancamentoDiferencas.isEmpty()) {
 			
-			//throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		} else {
 			
@@ -104,7 +103,6 @@ public class DiferencaEstoqueController {
 									String sortorder, String sortname, int page, int rp) {
 		
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
-
 		
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setNumeroEdicao(numeroEdicao);
@@ -118,7 +116,6 @@ public class DiferencaEstoqueController {
 		List<Diferenca> listaDiferencas =
 			diferencaEstoqueService.obterDiferencas(filtro);
 		
-
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
@@ -132,15 +129,6 @@ public class DiferencaEstoqueController {
 	public void carregarCombosConsulta() {
 		this.carregarComboTiposDiferenca();
 		this.carregarComboFornecedores();
-	}
-	
-	@Post
-	public void excluirFaltaSobra(Long idDiferenca){
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
-				Constantes.PARAM_MSGS).recursive().serialize();
-		
-		//result.forwardTo(DiferencaEstoqueController.class).lancamento();
 	}
 	
 	/**
