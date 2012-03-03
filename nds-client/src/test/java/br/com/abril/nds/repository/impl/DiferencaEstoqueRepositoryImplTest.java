@@ -159,8 +159,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		filtro.setDataMovimento(this.dataMovimento);
 		filtro.setTipoDiferenca(this.tipoDiferenca);
-		
-		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.CODIGO_PRODUTO);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.VALOR_TOTAL_DIFERENCA);
 		
 		PaginacaoVO paginacao = new PaginacaoVO();
 		
@@ -265,9 +265,15 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			produto = produtoBD;
 		}
 		
+		Fornecedor fornecedor = Fixture.fornecedorDinap();
+		
+		getSession().save(fornecedor);
+		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto,
 					Fixture.fornecedorDinap());
+		
+		produtoEdicao.setFornecedor(fornecedor);
 		
 		getSession().save(produtoEdicao);
 		
