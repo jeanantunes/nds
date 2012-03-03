@@ -84,8 +84,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		getSession().save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto,
-					Fixture.fornecedorDinap());
+			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
 		
 		getSession().save(produtoEdicao);
 		

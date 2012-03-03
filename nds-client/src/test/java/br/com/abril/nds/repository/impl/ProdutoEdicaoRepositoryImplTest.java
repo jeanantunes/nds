@@ -50,8 +50,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		getSession().save(produto);
 
 		ProdutoEdicao produtoEdicao =
-				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto,
-						Fixture.fornecedorFC());
+				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
 		getSession().save(produtoEdicao);
 		
 		Lancamento lancamento = 

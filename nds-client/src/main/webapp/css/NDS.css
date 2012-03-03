@@ -213,7 +213,7 @@ fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left:
 .bt_finalizar a{margin-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
 .bt_finalizar a:hover{color:#00649F; text-decoration:underline;}
 
-.bt_confirmar{background:url(${pageContext.request.contextPath}/images/bt_confirmar.png) no-repeat left center; width:104px; line-height:39px; float:left;}
+.bt_confirmar{background:url(../images/bt_confirmar.png) no-repeat left center; width:104px; line-height:39px; float:left;}
 .bt_confirmar a{padding-left:32px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
 .bt_confirmar a:hover{color:#00649F; text-decoration:underline;}
 

@@ -59,7 +59,7 @@
 
 		function popupExclusaoDiferenca(idMovimentoEstoque) {
 
-			$("#dialog-excluir" ).dialog({
+			$("#dialog-excluir").dialog({
 				
 				resizable: false,
 				height:'auto',
@@ -67,15 +67,18 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
+					$(this).dialog("close");
+					
+					var data = "idDiferenca=" + idMovimentoEstoque;
+					$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
 				}
-			});	     
+				}
+			});
+			
+			$("#dialog-excluir").show();
 		}
 
 		function exibirBotaoNovo(tipoDiferenca) {
@@ -162,16 +165,7 @@
 			});
 			
 			$("#btnNovo").hide();
-			
-			formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
-			
-			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
-			
-			$("#gridLancamentos").flexReload();
-		});
-
-		$(function() {
-			
+				
 			$("#datePickerDataMovimento").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -182,27 +176,6 @@
 
 			$("#datePickerDataMovimento").mask("99/99/9999");
 		});
-		
-		
-		function popupExclusaoDiferenca(idMovimentoEstoque) {
-
-			$("#dialog-excluir" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:300,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$(this).dialog("close");
-					
-					var data = "idDiferenca=" + idMovimentoEstoque;
-					$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	     
 	</script>
 	
 	<style type="text/css">
@@ -215,11 +188,10 @@
 </head>
 
 <body>
-	<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
-		<p>Confirma esta Exclusão?</p>
-	</div>
 	<div class="corpo">
-	
+		<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
+			<p>Confirma esta Exclusão?</p>
+		</div>
 		<div class="container">
 
 			<fieldset class="classFieldset">
