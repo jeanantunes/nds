@@ -2,8 +2,6 @@
 <title>Consulta de Notas</title>
 <script language="javascript" type="text/javascript">
 	
-		var reloadFlex = false;
-
 		function processarResultadoConsultaNF(data) {
 
 			if (data.mensagens) {
@@ -25,9 +23,9 @@
 				var lastIndex = data.rows[i].cell.length - 1;
 
 				data.rows[i].cell[lastIndex-1] = 
-					'<a href="javascript:;" onclick="popup(' + data.rows[i].cell[lastIndex] + ')" ' +
-					' style="cursor:pointer;border:none" title="Visualizar Detalhes">' +
-					'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png"/>' +
+					'<a href="javascript:;" onclick="pesquisarDetalhesNota(' + data.rows[i].cell[lastIndex] + ')" ' +
+					' style="cursor:pointer;border:0px" title="Visualizar Detalhes">' +
+					'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0px"/>' +
 					'</a>';
 			}
 
@@ -39,7 +37,7 @@
 			return data;
 		} 
 
-		function pesquisarNotas(event) { 
+		function pesquisarNotas() { 
 			
 			var formData = $('#formPesquisaNotas').serializeArray();
 
@@ -50,15 +48,15 @@
 				colModel : [ {
 					display : 'Número da Nota',
 					name : 'numero',
-					width : 120,
+					width : 100,
 					sortable : true,
-					align : 'center'
+					align : 'left'
 				}, {
 					display : 'Data de Emissão',
 					name : 'dataEmissao',
 					width : 120,
 					sortable : true,
-					align : 'left'
+					align : 'center'
 				}, {
 					display : 'Data de Expedição',
 					name : 'dataExpedicao',
@@ -68,15 +66,15 @@
 				}, {
 					display : 'Tipo',
 					name : 'descricao',
-					width : 120,
+					width : 200,
 					sortable : true,
-					align : 'center'
+					align : 'left'
 				}, {
 					display : 'Fornecedor',
 					name : 'razaoSocial',
-					width : 120,
+					width : 130,
 					sortable : true,
-					align : 'center'
+					align : 'left'
 				}, {
 					display : 'Nota Recebida',
 					name : 'statusNotaFiscal',
@@ -86,7 +84,7 @@
 				}, {
 					display : "Ação",
 					name : 'acao',
-					width : 120,
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}],
@@ -101,13 +99,12 @@
 				height : 180,
 				singleSelect: true
 			});
+			
+			$("#notasSemFisicoGrid").flexOptions({
+				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData
+			});
 
-			formData = $('#formPesquisaNotas').serializeArray();
-			
-			$("#notasSemFisicoGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData});
-			
 			$("#notasSemFisicoGrid").flexReload();
-
 		}
 		
 		function pesquisarDetalhesNota(idNota) {
@@ -169,15 +166,19 @@
 				params: [{ name: 'idNota', value: idNota }]});
 
 			$("#notasSemFisicoDetalheGrid").flexReload();
-
-			if ($("#dialog-novo").css('display') == 'none') {
-			
-				$("#dialog-novo").show();
-			}
 		}
 		
 		function montarGridComRodape(data) {
 
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				return;
+			}
+			
 			var jsonData = jQuery.toJSON(data);
 
 			var result = jQuery.evalJSON(jsonData);
@@ -185,10 +186,12 @@
 			$("#totalExemplares").html(result.totalExemplares);
 			$("#totalSumarizado").html("R$ " + result.totalSumarizado);
 
+			popup();
+			
 			return result.tableModel;
 		}
 		
-		function popup(idNota) {
+		function popup() {
 
 			$("#dialog-novo").dialog({
 				resizable: false,
@@ -201,11 +204,9 @@
 					},
 				}
 			});
-
-			pesquisarDetalhesNota(idNota);
 		};
 
-		$("#btnPesquisar").keyPress(function(event) {
+		$("#btnPesquisar").keypress(function(event) {
 			
 			var keynum;  
 	          
@@ -231,6 +232,9 @@
 				dateFormat: 'dd/mm/yy',
 				defaultDate: new Date()
 			});
+			
+			$("#datepickerDe").mask("99/99/9999");
+	
 			$("#datepickerAte").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -238,6 +242,8 @@
 				dateFormat: 'dd/mm/yy',
 				defaultDate: new Date()
 			});
+			
+			$("#datepickerAte").mask("99/99/9999");
 		});
 	</script>
 
@@ -292,7 +298,7 @@ fieldset label
 		</div>
 
 		<form name="formPesquisaNotas" id="formPesquisaNotas">
-
+			
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Nota </legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
@@ -311,11 +317,11 @@ fieldset label
 						<td>Período</td>
 						<td width="46">de:</td>
 						<td width="120">
-							<input name="filtroConsultaNotaFiscal.periodo.dataInicial" type="text" id="datepickerDe"
+							<input name="dataInicial" type="text" id="datepickerDe"
 								   style="width: 80px; float: left; margin-right: 5px;" /></td>
 						<td align="center">Até</td>
 						<td>
-							<input name="filtroConsultaNotaFiscal.periodo.dataFinal" type="text" id="datepickerAte"
+							<input name="dataFinal" type="text" id="datepickerAte"
 							 	   style="width: 80px; float: left; margin-right: 5px;" />
 						</td>
 					</tr>

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -48,6 +49,29 @@ public class Diferenca {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoque movimentoEstoque;
+	@Column(name = "AUTOMATICA")
+	private Boolean automatica;
+	@Transient
+	private BigDecimal valorTotalDiferenca;
+	
+	public Diferenca() {
+		
+	}
+	
+	public Diferenca(Diferenca diferenca, BigDecimal valorTotalDiferenca) {
+		
+		this.id = diferenca.id;
+		this.qtde = diferenca.qtde;
+		this.responsavel = diferenca.responsavel;
+		this.itemRecebimentoFisico = diferenca.itemRecebimentoFisico;
+		this.produtoEdicao = diferenca.produtoEdicao;
+		this.tipoDiferenca = diferenca.tipoDiferenca;
+		this.statusConfirmacao = diferenca.statusConfirmacao;
+		this.movimentoEstoque = diferenca.movimentoEstoque;
+		this.automatica = diferenca.automatica;
+		
+		this.valorTotalDiferenca = valorTotalDiferenca;
+	}
 	
 	public Long getId() {
 		return id;
@@ -111,6 +135,22 @@ public class Diferenca {
 
 	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
 		this.movimentoEstoque = movimentoEstoque;
+	}
+
+	public Boolean isAutomatica() {
+		return automatica;
+	}
+
+	public void setAutomatica(Boolean automatica) {
+		this.automatica = automatica;
+	}
+
+	public BigDecimal getValorTotalDiferenca() {
+		return valorTotalDiferenca;
+	}
+
+	public void setValorTotalDiferenca(BigDecimal valorTotalDiferenca) {
+		this.valorTotalDiferenca = valorTotalDiferenca;
 	}
 
 }

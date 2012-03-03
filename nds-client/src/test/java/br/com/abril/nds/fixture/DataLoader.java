@@ -44,6 +44,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
@@ -143,26 +144,41 @@ public class DataLoader {
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja1.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja2.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja2);
 		
 		ProdutoEdicao produtoEdicaoVeja3 = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja3.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja3);
 		
 		ProdutoEdicao produtoEdicaoVeja4 = Fixture.produtoEdicao(4L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja4.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja4);
 		
 		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoSuper);
+		
+		produtoEdicaoSuper1.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoSuper1);
 		
 		Usuario usuario = Fixture.usuarioJoao();
@@ -172,10 +188,17 @@ public class DataLoader {
 		session.save(cfop);
 		
 		TipoMovimento tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimento tipoMovimentoFaltaDe = Fixture.tipoMovimentoFaltaDe();
+		TipoMovimento tipoMovimentoSobraEm = Fixture.tipoMovimentoSobraEm();
+		TipoMovimento tipoMovimentoSobraDe = Fixture.tipoMovimentoSobraDe();
+		
 		TipoMovimento tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		TipoMovimento tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
-		session.save(tipoMovimentoFaltaEm);
+		
+		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSobraEm, tipoMovimentoSobraDe);
+
 		session.save(tipoMovimentoRecFisico);
+		
 		session.save(tipoMovimentoRecReparte);
 
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
@@ -207,14 +230,19 @@ public class DataLoader {
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
 		
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+		Lancamento lancamento1 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, new Date(), new Date(), new Date(), new Date(),
 				BigDecimal.TEN, StatusLancamento.RECEBIDO, itemRecebimentoFisico);
-		session.save(lancamento);
-
+		session.save(lancamento1);
 		Estudo estudo = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudo);
+		
+		Lancamento lancamento2 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+				produtoEdicaoVeja2, new Date(), new Date(), new Date(), new Date(),
+				BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
+		session.save(lancamento2);
+		
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
@@ -286,7 +314,48 @@ public class DataLoader {
 		
 		// Fim dos inserts na tabela DIFERENCA
 		
+		gerarCargaDiferencaEstoque(
+			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
+				usuario, estoqueProduto, TipoDiferenca.FALTA_EM);
+		
+		gerarCargaDiferencaEstoque(
+			session, 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe, 
+				usuario, estoqueProduto, TipoDiferenca.FALTA_DE);
+		
+		gerarCargaDiferencaEstoque(
+			session, 50, produtoEdicaoVeja3, tipoMovimentoSobraDe, 
+				usuario, estoqueProduto, TipoDiferenca.SOBRA_DE);
+		
+		gerarCargaDiferencaEstoque(
+			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
+				usuario, estoqueProduto, TipoDiferenca.SOBRA_EM);
 	}
+	
+	private static void gerarCargaDiferencaEstoque(Session session,
+												   int quantidadeRegistros,
+												   ProdutoEdicao produtoEdicao, 
+												   TipoMovimento tipoMovimento, 
+												   Usuario usuario,
+												   EstoqueProduto estoqueProduto,
+												   TipoDiferenca tipoDiferenca) {
+		
+		for (int i = 1; i <= quantidadeRegistros; i++) {
+			
+			MovimentoEstoque movimentoEstoqueDiferenca = 
+				Fixture.movimentoEstoque(
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO);
+			
+			session.save(movimentoEstoqueDiferenca);
+			
+			Diferenca diferenca = 
+				Fixture.diferenca(
+					new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
+						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
+			
+			session.save(diferenca);
+		}
+	}
+	
 	
 	private static void save(Session session, Object... entidades) {
 		for (Object entidade : entidades) {

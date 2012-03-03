@@ -160,7 +160,7 @@ public class Fixture {
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
-		produto.setTipoProduto(tipo);
+//		produto.setTipoProduto(tipo);
 		return produto;
 	}
 
@@ -285,6 +285,33 @@ public class Fixture {
 		tipoMovimento.setDescricao("Falta EM");
 		tipoMovimento.setIncideDivida(false);
 		tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimento tipoMovimentoFaltaDe() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Falta DE");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimento tipoMovimentoSobraEm() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("SObra EM");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_EM);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimento tipoMovimentoSobraDe() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Sobra DE");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
 		return tipoMovimento;
 	}
 	
