@@ -109,7 +109,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				FORMATO_DATA_LANCAMENTO));
 		dto.setId(lancamento.getId());
 		dto.setIdFornecedor(1L);
-		dto.setNomeFornecedor("ACME");
+		dto.setNomeFornecedor(produtoEdicao.getFornecedor().getJuridica().getNomeFantasia());
 		dto.setLancamento(lancamento.getTipoLancamento().getDescricao());
 		dto.setNomeProduto(produto.getNome());
 		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
@@ -122,10 +122,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo != null) {
 			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
+		} else {
+			dto.setEstudoGerado("0");
 		}
 		return dto;
 	}
-
-
 
 }
