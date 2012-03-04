@@ -59,3 +59,13 @@ function esconde(idDiv) {
 		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
 	}, 3000);
 }
+
+function montarComboBox(result) {
+	var options = "";
+	
+	$.each(result, function(index, row) {
+		options += "<option value='" + row.key.$ + "'>" + row.value.$ + "</option>";
+	});
+	
+	return options;
+}

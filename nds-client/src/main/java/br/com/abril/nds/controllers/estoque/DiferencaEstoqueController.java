@@ -34,6 +34,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -59,6 +60,7 @@ public class DiferencaEstoqueController {
 	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
 
 	public DiferencaEstoqueController(Result result, 
 								 	  Localization localization,
@@ -151,20 +153,18 @@ public class DiferencaEstoqueController {
 	@Post
 	@Path("/pesquisarDiferencas")
 	public void pesquisarDiferencas(String codigoProduto, Long numeroEdicao,
-									Long idFornecedor, String dataLancamentoDe,
-									String dataLancamentoAte, TipoDiferenca tipoDiferenca,
-									String sortorder, String sortname, int page, int rp) {
+									Long idFornecedor, String dataInicial,
+									String dataFinal, TipoDiferenca tipoDiferenca,
+									String sortorder, String sortname,
+									int page, int rp) {
 		
-		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		//TODO: tratar datas
+		//TODO: tratar parâmetros
 		
-		filtro.setCodigoProduto(codigoProduto);
-		filtro.setNumeroEdicao(numeroEdicao);
-		filtro.setIdFornecedor(idFornecedor);
-		filtro.setDataLancamentoDe(DateUtil.parseData(dataLancamentoDe, Constantes.DATE_PATTERN_PT_BR));
-		filtro.setDataLancamentoAte(DateUtil.parseData(dataLancamentoAte, Constantes.DATE_PATTERN_PT_BR));
-		filtro.setTipoDiferenca(tipoDiferenca);
-		
-		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+		FiltroConsultaDiferencaEstoqueDTO filtro =
+			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
+										dataInicial, dataFinal, tipoDiferenca,
+										sortorder, sortname, page, rp);
 		
 		List<Diferenca> listaDiferencas =
 			diferencaEstoqueService.obterDiferencas(filtro);
@@ -181,7 +181,11 @@ public class DiferencaEstoqueController {
 	 */
 	public void carregarCombosConsulta() {
 		this.carregarComboTiposDiferenca();
-		this.carregarComboFornecedores();
+		
+		List<ItemDTO<Long, String>> listaFornecedoresCombo =
+			this.carregarComboFornecedores(null);
+		
+		result.include("listaFornecedores", listaFornecedoresCombo);
 	}
 	
 	/**
@@ -222,11 +226,12 @@ public class DiferencaEstoqueController {
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 */
-	private void carregarComboFornecedores() {
+	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
-		//TODO: adicionar todos os fornecedores no combo
+		//TODO: obter forncedores do produto e do tipo revista
 		
-		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedores();
+		List<Fornecedor> listaFornecedor =
+			fornecedorService.obterFornecedoresPorProduto(codigoProduto);
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
 			new ArrayList<ItemDTO<Long,String>>();
@@ -236,8 +241,18 @@ public class DiferencaEstoqueController {
 				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia())
 			);
 		}
+			
+		return listaFornecedoresCombo;
+	}
+	
+	@Post
+	@Path("/pesquisarFonecedores")
+	public void pesquisarFonecedores(String codigoProduto) {
 		
-		result.include("listaFornecedores", listaFornecedoresCombo);
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = 
+			carregarComboFornecedores(codigoProduto);
+		
+		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
 	/*
@@ -412,15 +427,17 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setStatusAprovacao(
 				diferenca.getMovimentoEstoque().getStatus().toString());
 			
-			BigDecimal valorDiferencas = diferenca.getProdutoEdicao().getPrecoVenda().multiply(diferenca.getQtde());
-			consultaDiferencaVO.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorDiferencas));
+			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
+			
+			consultaDiferencaVO.setValorTotalDiferenca(
+				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
 			listaConsultaDiferenca.add(consultaDiferencaVO);
 			
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
 			
-			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
+			valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
 		}
 		
 		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
@@ -431,6 +448,8 @@ public class DiferencaEstoqueController {
 		tableModel.setTotal(quantidadeRegistros);
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		//TODO: setar ordenação
 		
 		String valorTotalDiferencasFormatado = 
 			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
@@ -476,6 +495,56 @@ public class DiferencaEstoqueController {
 		}
 		
 		this.httpSession.setAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE, filtroAtual);
+		
+		return filtroAtual;
+	}
+	
+	/*
+	 * Carrega o filtro da pesquisa de consulta de diferenças.
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @param numeroEdicao - número da edição
+	 * @param idFornecedor - identificador do fornecedor
+	 * @param dataInicial - data de movimento inicial
+	 * @param dataFinal - data de movimento final
+	 * @param tipoDiferenca - tipo de diferença
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 * 
+	 * @return Filtro
+	 */
+	private FiltroConsultaDiferencaEstoqueDTO carregarFiltroPesquisa(String codigoProduto, Long numeroEdicao,
+																	 Long idFornecedor, String dataInicial,
+																	 String dataFinal, TipoDiferenca tipoDiferenca,
+																	 String sortorder, String sortname,
+																	 int page, int rp) {
+		
+		FiltroConsultaDiferencaEstoqueDTO filtroAtual =  new FiltroConsultaDiferencaEstoqueDTO();
+		
+		filtroAtual.setCodigoProduto(codigoProduto);
+		filtroAtual.setNumeroEdicao(numeroEdicao);
+		filtroAtual.setIdFornecedor(idFornecedor);
+		
+		filtroAtual.setPeriodoVO(
+				new PeriodoVO(DateUtil.parseData(dataInicial, Constantes.DATE_PATTERN_PT_BR),
+							  DateUtil.parseData(dataFinal, Constantes.DATE_PATTERN_PT_BR)));
+		
+		filtroAtual.setTipoDiferenca(tipoDiferenca);
+		
+		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
+		
+		FiltroConsultaDiferencaEstoqueDTO filtroSessao =
+			(FiltroConsultaDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 		
 		return filtroAtual;
 	}

@@ -44,7 +44,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
@@ -206,7 +205,7 @@ public class DataLoader {
 
 		NotaFiscalFornecedor notaFiscalFornecedor = Fixture
 				.notaFiscalFornecedor(cfop, juridicaAcme, fornecedorAcme, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		session.save(notaFiscalFornecedor);
 
 		ItemNotaFiscal itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
@@ -226,7 +225,7 @@ public class DataLoader {
 		
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(
 				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuario,
-				estoqueProduto, StatusAprovacao.APROVADO);
+				estoqueProduto, StatusAprovacao.APROVADO, "Aprovado.");
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
 		
@@ -250,7 +249,7 @@ public class DataLoader {
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuario, estoqueProdutoCota,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado.");
 		save(session, mec);
 		
 		ParametroSistema parametroSistema = Fixture.parametroSistema(1L,
@@ -263,25 +262,29 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoqueDiferenca = Fixture.movimentoEstoque(null, produtoEdicaoVeja1,
 																			  tipoMovimentoRecFisico, usuario,
 																			  estoqueProduto, new Date(),
-																			  new BigDecimal(1), StatusAprovacao.APROVADO);
+																			  new BigDecimal(1), StatusAprovacao.APROVADO,
+																			  "Aprovado.");
 		session.save(movimentoEstoqueDiferenca);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca2 = Fixture.movimentoEstoque(null, produtoEdicaoVeja2,
 																			   tipoMovimentoRecFisico, usuario,
 																			   estoqueProduto, new Date(),
-																			   new BigDecimal(2), StatusAprovacao.APROVADO);
+																			   new BigDecimal(2), StatusAprovacao.APROVADO,
+																			   "Aprovado.");
 		session.save(movimentoEstoqueDiferenca2);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca3 = Fixture.movimentoEstoque(null, produtoEdicaoVeja3,
 																			   tipoMovimentoRecFisico, usuario,
 																			   estoqueProduto, new Date(),
-																			   new BigDecimal(3), StatusAprovacao.APROVADO);
+																			   new BigDecimal(3), StatusAprovacao.APROVADO,
+																			   "Aprovado.");
 		session.save(movimentoEstoqueDiferenca3);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca4 = Fixture.movimentoEstoque(null, produtoEdicaoVeja4,
 																			   tipoMovimentoRecFisico, usuario,
 																			   estoqueProduto, new Date(),
-																			   new BigDecimal(4), StatusAprovacao.APROVADO);
+																			   new BigDecimal(4), StatusAprovacao.APROVADO,
+																			   "Aprovado.");
 		session.save(movimentoEstoqueDiferenca4);
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
@@ -343,7 +346,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "Aprovado.");
 			
 			session.save(movimentoEstoqueDiferenca);
 			

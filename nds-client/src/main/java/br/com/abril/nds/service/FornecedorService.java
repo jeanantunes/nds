@@ -23,4 +23,13 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedores(boolean permiteBalanceamento,
 			SituacaoCadastro... situacoes);
 	
+	/**
+	 * Obtém os fornecedores de acordo com o código produto.
+	 * 
+	 * @param codigoProduto - código do produto
+	 * 
+	 * @return lista de fornecedores
+	 */
+	List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto);
+	
 }
