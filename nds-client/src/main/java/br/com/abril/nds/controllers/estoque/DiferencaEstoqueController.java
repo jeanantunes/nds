@@ -121,10 +121,6 @@ public class DiferencaEstoqueController {
 			
 			DiferencaVO diferenca = new DiferencaVO();
 			
-			diferenca.setId(indice);
-			
-			diferenca.setDescricaoProduto("XX");
-			
 			diferenca.setDataLancamento(dataMovimentoFormatada);
 			
 			diferenca.setTipoDiferenca(tipoDiferenca.getDescricao());
@@ -142,6 +138,26 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(1);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/cadastrarNovasDiferencas")
+	public void cadastrarNovasDiferencas(List<DiferencaVO> listaNovasDiferencas) {
+		
+		if (listaNovasDiferencas == null 
+				|| listaNovasDiferencas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para lançamento!");
+		}
+		
+		for (DiferencaVO diferenca : listaNovasDiferencas) {
+			
+			this.validarNovaDiferenca(diferenca);
+			
+			
+		}
+		
+		result.use(Results.json()).withoutRoot().from(listaNovasDiferencas).recursive().serialize();
 	}
 
 	@Get
@@ -652,6 +668,45 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.ERROR, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+		}
+	}
+	
+	/*
+	 * Valida a entrada de uma nova diferença.
+	 * 
+	 * @param diferenca - diferença
+	 */
+	private void validarNovaDiferenca(DiferencaVO diferenca) {
+		
+		boolean diferencaInvalida = false;
+		
+		if (diferenca.getCodigoProduto() == null 
+				|| diferenca.getCodigoProduto().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferenca.getDescricaoProduto() == null 
+				|| diferenca.getDescricaoProduto().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferenca.getNumeroEdicao() == null 
+				|| diferenca.getNumeroEdicao().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferenca.getQuantidade() == null 
+				|| diferenca.getQuantidade().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferencaInvalida) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
 		}
 	}
 	

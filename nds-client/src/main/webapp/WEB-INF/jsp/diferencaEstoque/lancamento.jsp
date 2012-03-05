@@ -177,6 +177,8 @@
 		});
 	</script>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 	<style type="text/css">
 		fieldset label 
 		{
@@ -270,7 +272,7 @@
 		</div>
 	</div>
 	
-	<jsp:include page="novo.jsp" />
+	<jsp:include page="novoDialog.jsp" />
 	
 	<jsp:include page="rateio.jsp" />
 </body>
