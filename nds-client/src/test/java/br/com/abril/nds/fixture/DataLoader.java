@@ -44,6 +44,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
@@ -143,26 +144,41 @@ public class DataLoader {
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja1.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja2.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja2);
 		
 		ProdutoEdicao produtoEdicaoVeja3 = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja3.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja3);
 		
 		ProdutoEdicao produtoEdicaoVeja4 = Fixture.produtoEdicao(4L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
+		
+		produtoEdicaoVeja4.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoVeja4);
 		
 		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoSuper);
+		
+		produtoEdicaoSuper1.setFornecedor(fornecedorFc);
+		
 		session.save(produtoEdicaoSuper1);
 		
 		Usuario usuario = Fixture.usuarioJoao();
@@ -214,14 +230,19 @@ public class DataLoader {
 		session.save(movimentoEstoque);
 		session.update(estoqueProduto);
 		
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+		Lancamento lancamento1 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, new Date(), new Date(), new Date(), new Date(),
 				BigDecimal.TEN, StatusLancamento.RECEBIDO, itemRecebimentoFisico);
-		session.save(lancamento);
-
+		session.save(lancamento1);
 		Estudo estudo = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudo);
+		
+		Lancamento lancamento2 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
+				produtoEdicaoVeja2, new Date(), new Date(), new Date(), new Date(),
+				BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
+		session.save(lancamento2);
+		
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);

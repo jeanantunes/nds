@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +54,9 @@ public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 		notaFiscal.setDataExpedicao(new Date(System.currentTimeMillis()));
 		notaFiscal.setEmitente(pj);
 		notaFiscal.setOrigem(Origem.INTERFACE);
+		notaFiscal.setValorBruto(BigDecimal.TEN);
+		notaFiscal.setValorLiquido(BigDecimal.TEN);
+		notaFiscal.setValorDesconto(BigDecimal.TEN);
 		
 		TipoNotaFiscal tp = new TipoNotaFiscal();
 		tp.setId(1L);

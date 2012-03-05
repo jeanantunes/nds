@@ -43,7 +43,7 @@ public class RecebimentoFisico {
 	@ManyToOne
 	private Usuario conferente;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS_COFNIRMACAO", nullable = false)
+	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
 	
 	public Long getId() {
