@@ -42,7 +42,7 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 	}
 	
 	public void alterar(T entity) {
-		getSession().update(entity);
+		getSession().merge(entity);
 	}
 	
 	@SuppressWarnings("unchecked")

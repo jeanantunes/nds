@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -141,6 +142,22 @@ public class LancamentoRepositoryImpl extends
 			List<Date> periodoDistribuicao, List<Long> fornecedores) {
 		//TODO: implementar
 		return null;
+	}
+
+	@Override
+	public void atualizar(Date data, StatusLancamento statusLancamento, Long idLancamento) {
+		String hql = " update Lancamento lancamento set lancamento.dataLancamentoDistribuidor = :data lancamento.status = :status "
+				   + " where lancamento.id = :id";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("data", data);
+		
+		query.setParameter("status", statusLancamento);
+		
+		query.setParameter("id", idLancamento);
+		
+		query.executeUpdate();
 	}
 
 

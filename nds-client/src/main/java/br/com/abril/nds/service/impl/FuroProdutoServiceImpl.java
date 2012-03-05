@@ -12,11 +12,13 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -38,6 +40,9 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
+	
+	@Autowired
+	private EstudoRepository estudoRepository;
 	
 	@Transactional
 	@Override
@@ -77,6 +82,11 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nova data não deve ser maior que data de recolhimento.");
 		}
 		
+		Estudo estudo = 
+			this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(
+					lancamento.getDataLancamentoDistribuidor(), 
+					idProdutoEdicao);
+		
 		//verificar se existe distribuição nesse dia da semana
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
@@ -93,6 +103,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
+		
+		if (estudo != null){
+			estudo.setDataLancamento(novaData);
+		}
 		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
@@ -111,6 +125,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		historicoLancamento.setStatus(lancamento.getStatus());
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
+		
+		if (estudo != null){
+			this.estudoRepository.alterar(estudo);
+		}
 		
 		this.lancamentoRepository.alterar(lancamento);
 		

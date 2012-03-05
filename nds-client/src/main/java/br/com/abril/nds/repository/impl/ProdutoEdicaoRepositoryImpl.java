@@ -71,17 +71,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
 		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estudo.qtdeReparte, ")
-		   .append("   lancamento.dataLancamentoDistribuidor, parametroSistema.valor, lancamento.id, produtoEdicao.id)")
-		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ParametroSistema parametroSistema, ")
+		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
+		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ")
 		   .append("      Estudo estudo, Lancamento lancamento ")
+		   .append(" left join estudo.produtoEdicao as estudoP ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
-		   .append(" and   estudo.dataLancamento                 = lancamento.dataLancamentoPrevista ")
-		   .append(" and   estudo.produtoEdicao                  = lancamento.produtoEdicao ")
+		   .append(" and   estudo.dataLancamento                 = lancamento.dataLancamentoDistribuidor ")
+		   .append(" and   estudoP                  = lancamento.produtoEdicao ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
-		   .append(" and   parametroSistema.tipoParametroSistema = :pathCapas ")
 		   .append(" and   lancamento.status                     != :statusFuro");
 		
 		if (nomeProduto != null && !nomeProduto.isEmpty()){
@@ -92,7 +92,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
-		query.setParameter("pathCapas", TipoParametroSistema.PATH_IMAGENS_CAPA);
 		query.setParameter("statusFuro", StatusLancamento.FURO);
 		
 		if (nomeProduto != null && !nomeProduto.isEmpty()){
@@ -101,11 +100,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		
 		query.setMaxResults(1);
 		
-		try {
-			return (FuroProdutoDTO) query.uniqueResult();
-		} catch (NoResultException e) {
-			return null;
-		}
+		return (FuroProdutoDTO) query.uniqueResult();
 	}
 	
 	@Override

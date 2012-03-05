@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
@@ -17,4 +18,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores);
+	
+	void atualizar(Date data, StatusLancamento statusLancamento, Long idLancamento);
 }
