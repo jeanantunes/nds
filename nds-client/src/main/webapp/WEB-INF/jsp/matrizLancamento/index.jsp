@@ -223,15 +223,16 @@ function popup() {
 			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
 			dataType : 'json',
 			autoload: false,
+			singleSelect: true,
 			onSuccess: buscarResumoPeriodo,
 			preProcess : processarColunasLancamentos,
 			onSubmit : function(){
-				var idsFornecedores = new Array();
+				var parametros = new Array();
+				parametros.push({name:'data', value: $("#datepickerDe").val()});
 				$("input[name='checkgroup_menu']:checked").each(function(i) {
-					idsFornecedores.push($(this).val());
+					parametros.push({name:'idsFornecedores', value: $(this).val()});
 				});
-				$("#lancamentosProgramadosGrid").flexOptions({params: [{name:'data', value: $("#datepickerDe").val()}, 
-		                                      {name:'idsFornecedores', value: idsFornecedores}]});
+				$("#lancamentosProgramadosGrid").flexOptions({params: parametros});
 		        return true;
 		    },
 			colModel : [  {
