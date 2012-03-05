@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ItemNotaRecebimentoFisicoDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -91,7 +90,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	@Transactional
-	public void inserirItemNotaRecebimentoFisico(ItemNotaRecebimentoFisicoDTO itemNotaDTO){
+	public void inserirItemNotaRecebimentoFisico(RecebimentoFisicoDTO itemNotaDTO){
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		NotaFiscalFornecedor notaFiscal = new NotaFiscalFornecedor();		
@@ -100,8 +99,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(itemNotaDTO != null){			
 			
 			inserirLancamento(itemNotaDTO,produtoEdicao);
-					
-			notaFiscal.setId(itemNotaDTO.getIdNotaFiscal());			
+			
+			//TODO: receber objeto notaFiscal.
+			notaFiscal.setId(null);			
 			
 			itemNota.setQtde(itemNotaDTO.getRepartePrevisto());
 			itemNota.setProdutoEdicao(produtoEdicao);		
@@ -140,7 +140,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	@Transactional
-	private void inserirLancamento(ItemNotaRecebimentoFisicoDTO itemNotaDTO, ProdutoEdicao prod) {
+	private void inserirLancamento(RecebimentoFisicoDTO itemNotaDTO, ProdutoEdicao prod) {
 		Lancamento lancamento = new Lancamento();
 		
 		lancamento.setDataLancamentoDistribuidor(itemNotaDTO.getDataLancamento());
