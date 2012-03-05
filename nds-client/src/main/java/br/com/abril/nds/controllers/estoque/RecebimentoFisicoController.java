@@ -419,10 +419,5 @@ public class RecebimentoFisicoController {
 		result.redirectTo("/recebimentoFisico");
 	}
 
-	@Path("pesquisa")
-	public List<RecebimentoFisicoDTO> pesquisaRecebimentoFisico(Fornecedor fornecedor, NotaFiscal notaFiscal) throws Exception {
-		return recebimentoFisicoService.obterItemNotaPorCnpjNota(fornecedor.getJuridica().getCnpj(), notaFiscal.getNumero(), notaFiscal.getSerie());		
-		
-	}
 
 }

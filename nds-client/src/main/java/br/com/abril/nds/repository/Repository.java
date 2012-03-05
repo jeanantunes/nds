@@ -22,5 +22,7 @@ public interface Repository<T, K extends Serializable> {
 	List<T> buscarTodos();
 	
 	void alterar(T entity);
+	
+	T merge(T entity);
 
 }
