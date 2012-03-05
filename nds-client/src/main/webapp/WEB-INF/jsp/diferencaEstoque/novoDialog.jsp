@@ -1,5 +1,17 @@
-<div id="dialogNovasDiferencas" title="Lançamento < Faltas e Sobras >" style="display: none;">
-	
+<div id="dialogNovasDiferencas" 
+	 title="Lançamento < Faltas e Sobras >"
+	 style="display: none;">
+
+	<div id="effectDialog" 
+		 class="ui-state-highlight ui-corner-all" 
+		 style="display: none; position: absolute; z-index: 1000; width: 600px;">
+		 
+		<p>
+			<span style="float: left;" class="ui-icon ui-icon-info"></span>
+			<b id="idTextoMensagemDialog"></b>
+		</p>
+	</div>
+
 	<form id="novoLancamentoDiferencaForm"
 		  name="novoLancamentoDiferencaForm" 
 		  action="estoque/diferenca/lancamento/cadastrarNovasDiferencas" 
@@ -62,6 +74,7 @@
 					sortable : false,
 					align : 'center'
 				}],
+				singleSelect: true,
 				width : 580,
 				height : 220
 			});
@@ -89,7 +102,6 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$(this).dialog("close");
 						cadastrarNovasDiferencas();
 					},
 					"Cancelar": function() {
@@ -103,7 +115,7 @@
 
 			if (resultado.mensagens) {
 
-				exibirMensagem(
+				exibirMensagemDialog(
 					resultado.mensagens.tipoMensagem, 
 					resultado.mensagens.listaMensagens
 				);
@@ -144,8 +156,11 @@
 				"<c:url value='/estoque/diferenca/lancamento/cadastrarNovasDiferencas' />", 
 				listaDiferencas,
 				function(result) {
+					$("#dialogNovasDiferencas").dialog("close");
 					$(".grids").show();
-				}
+				},
+				null, 
+				true
 			);
 		}
 
@@ -157,10 +172,12 @@
 
 			$.each(linhasDaGrid, function(index, value) {
 
-				var colunaCodigoProduto = $(value).find("td")[0];
-				var colunaDescricaoProduto = $(value).find("td")[1];
-				var colunaNumeroEdicao = $(value).find("td")[2];
-				var colunaQtdeDiferenca = $(value).find("td")[5];
+				var linha = $(value);
+				
+				var colunaCodigoProduto = linha.find("td")[0];
+				var colunaDescricaoProduto = linha.find("td")[1];
+				var colunaNumeroEdicao = linha.find("td")[2];
+				var colunaQtdeDiferenca = linha.find("td")[5];
 	
 				var codigoProduto = 
 					$(colunaCodigoProduto).find("div").find('input[name="codigoProduto"]').val();
@@ -178,12 +195,7 @@
 
 					return true;
 				}
-				
-				if (!validarNovaDiferenca(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca)) {
 
-					return false;
-				}
-				
 				var diferenca = 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
 	
 				diferenca += 'listaNovasDiferencas[' + index + '].descricaoProduto=' + descricaoProduto + '&';
@@ -199,8 +211,8 @@
 		}
 
 		function validarNovaDiferenca(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca) {
-
-			return true;
+			
+			return false;
 		}
 
 		function isAtributosDiferencaVazios(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca) {
