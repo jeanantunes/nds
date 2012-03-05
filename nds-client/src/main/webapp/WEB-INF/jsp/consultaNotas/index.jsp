@@ -253,16 +253,6 @@ fieldset label
 	width: auto;
 	margin-bottom: 0px !important;
 }
-
-.ui-datepicker 
-{
-	z-index: 1000 !important;		
-}
-
-.ui-datepicker-today a
-{
-	display:block !important;
-}
 </style>
 
 </head>

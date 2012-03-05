@@ -82,6 +82,7 @@ public class FornecedorRepositoryImpl extends
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto) {
 		
@@ -89,13 +90,16 @@ public class FornecedorRepositoryImpl extends
 		
 		hql.append(" select p.fornecedores from Produto p ");
 		
-		hql.append(" where ");
-		
-		hql.append(" p.codigo = :codigoProduto ");
+		if (codigoProduto != null) {
+			hql.append(" where ");
+			hql.append(" p.codigo = :codigoProduto ");
+		}
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("codigoProduto", codigoProduto);
+		if (codigoProduto != null) {
+			query.setParameter("codigoProduto", codigoProduto);
+		}
 		
 		return query.list();
 		
