@@ -135,6 +135,8 @@ function popup() {
 .lancamentosProgramadosGrid #row1 a{color:#fff;}
 .lancamentosProgramadosGrid #row1 a:hover{color:#000;}
 
+.ui-datepicker { z-index: 1000 !important; }
+.ui-datepicker-today a { display:block !important; }
 </style>
 </head>
 
@@ -337,6 +339,16 @@ function popup() {
 		});
 
 		function processarColunasLancamentos(data) {
+			
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				return data;
+			}
+			
 			$.each(data.rows, function(i, row){
 				var inputDataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 				inputDataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
@@ -367,6 +379,16 @@ function popup() {
 		}
 		
 		function popularResumoPeriodo(data) {
+			
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				return data;
+			}
+			
 			var rows='<tr>';
 			$.each(data, function(index, resumo){
 				  rows+='<td>';
