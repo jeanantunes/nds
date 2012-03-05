@@ -37,6 +37,8 @@ public class DiferencaVO implements Serializable {
 	
 	private String statusAprovacao;
 	
+	private String motivoAprovacao;
+	
 	private String valorTotalDiferenca;
 	
 	/**
@@ -200,6 +202,20 @@ public class DiferencaVO implements Serializable {
 		this.statusAprovacao = statusAprovacao;
 	}
 
+	/**
+	 * @return the motivoAprovacao
+	 */
+	public String getMotivoAprovacao() {
+		return motivoAprovacao;
+	}
+
+	/**
+	 * @param motivoAprovacao the motivoAprovacao to set
+	 */
+	public void setMotivoAprovacao(String motivoAprovacao) {
+		this.motivoAprovacao = motivoAprovacao;
+	}
+	
 	/**
 	 * @return the valorDiferenca
 	 */
