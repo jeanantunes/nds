@@ -266,20 +266,20 @@ public class RecebimentoFisicoController {
 		
 		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
 		
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO("54", "Michel", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,29L);
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(1L, 1L,"54", "Michel", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
 		listaDTO.add(recebimentoFisicoDTO);
 
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO("54", "Ana", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,32L);
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(2L, 2L, "54", "Ana", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
 		listaDTO.add(recebimentoFisicoDTO);
 
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO("54", "Jose", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,34L);
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(3L, 3L,"54", "Jose", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
 		listaDTO.add(recebimentoFisicoDTO);
 
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO("54", "Marilda", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,55L);
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(4L, 4L,"54", "Marilda", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
 		listaDTO.add(recebimentoFisicoDTO);
 		
 		return listaDTO;
@@ -302,7 +302,7 @@ public class RecebimentoFisicoController {
 		
 		for(RecebimentoFisicoDTO dto : listaDTO) {
 			
-			String codigo 		     = dto.getCodigo();
+			String codigo 		     = dto.getCodigoProduto();
 			String nomeProduto 	     = dto.getNomeProduto();
 			String edicao 		     = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
 			String precoCapa 	     = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();

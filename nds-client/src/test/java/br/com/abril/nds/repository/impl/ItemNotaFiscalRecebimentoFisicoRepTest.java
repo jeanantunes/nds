@@ -1,33 +1,20 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ItemNotaRecebimentoFisicoDTO;
 import br.com.abril.nds.fixture.Fixture;
-import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ItemNotaFiscalRepository;
 import br.com.abril.nds.service.RecebimentoFisicoService;
@@ -96,26 +83,6 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		
 	}
 	
-	@Test
-	public void inserirItemNotaComDTO() {
 	
-		
-		//teste para analisar um item de Nota sem ItemRecebimento e sem RecebimentoFisico
-		ItemNotaRecebimentoFisicoDTO dto = new ItemNotaRecebimentoFisicoDTO(
-				Fixture.criarData(12, 12, 1983), 
-				Fixture.criarData(12, 03, 1983),  
-				new BigDecimal(0.1),
-				TipoLancamento.LANCAMENTO,
-				1L,null,null,1L,1L);
-		
-		
-		
-		
-		
-		recebimentoFisicoService.inserirItemNotaRecebimentoFisico(dto);
-		System.out.println("");
-		
-		
-	}
 	
 }
