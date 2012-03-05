@@ -147,10 +147,20 @@ public class Fixture {
 		return produto("14", "Placar", "Placar",
 				PeriodicidadeProduto.MENSAL, tipoProduto);
 	}
+	
+	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
+		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
+				PeriodicidadeProduto.SEMANAL, tipoProduto);
+	}
 
 	public static TipoProduto tipoRevista() {
 		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642");
 	}
+	
+	public static TipoProduto tipoCromo() {
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
+	}
+
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -220,7 +230,7 @@ public class Fixture {
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
-		//produto.setTipoProduto(tipo);
+		produto.setTipoProduto(tipo);
 		return produto;
 	}
 

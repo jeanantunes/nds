@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -137,10 +139,27 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
-			List<Date> periodoDistribuicao, List<Long> fornecedores) {
-		//TODO: implementar
-		return null;
+			List<Date> periodoDistribuicao, List<Long> fornecedores, TipoProduto tipoCromo) {
+		StringBuilder hql = new StringBuilder(
+				"select lancamento.dataLancamentoPrevista as data, ");
+		hql.append("count(lancamento.produtoEdicao) as qtdeTitulos, ");
+		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto <> :tipoCromo then lancamento.reparte ");
+		hql.append("else (lancamento.reparte / lancamento.produtoEdicao.pacotePadrao) end ) as qtdeExemplares, ");
+		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.peso)) as pesoTotal, ");
+		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
+		hql.append("from Lancamento lancamento ");
+		hql.append("where lancamento.dataLancamentoPrevista in (:periodo) ");
+		hql.append("and lancamento.produtoEdicao.fornecedor.id in (:fornecedores) ");
+		hql.append("group by lancamento.dataLancamentoPrevista");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameterList("periodo", periodoDistribuicao);
+		query.setParameterList("fornecedores", fornecedores);
+		query.setParameter("tipoCromo", tipoCromo);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ResumoPeriodoLancamentoDTO.class));
+		return query.list();
 	}
 
 
