@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.lancamento;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +50,6 @@ public class MatrizLancamentoController {
 	@Post
 	public void matrizLancamento(Date data, List<Long> idsFornecedores,
 			String sortorder, String sortname, int page, int rp) {
-		//List<Long> fornecedores = converterIdsFornecedores(idsFornecedores);
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
 				idsFornecedores, paginacaoVO, sortname);
@@ -76,22 +74,6 @@ public class MatrizLancamentoController {
 		List<ResumoPeriodoLancamentoDTO> dtos = matrizLancamentoService
 				.obterResumoPeriodo(dataInicial, idsFornecedores);
 		result.use(Results.json()).withoutRoot().from(dtos).serialize();
-	}
-
-
-	/**
-	 * Transforma a lista de identificadores de fornecedores em formato
-	 * texto para a lista de identificadores em formato numérico 
-	 * 
-	 * @param idsFornecedores identificadores em formato texto
-	 * @return lista de identificadores em formato numérico
-	 */
-	private List<Long> converterIdsFornecedores(String idsFornecedores) {
-		List<Long> fornecedores = new ArrayList<Long>();
-		for (String id : idsFornecedores.split(",")) {
-			fornecedores.add(Long.valueOf(id));
-		}
-		return fornecedores;
 	}
 
 }
