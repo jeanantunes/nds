@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
@@ -182,6 +183,15 @@ public class DiferencaEstoqueController {
 	public void carregarCombosConsulta() {
 		this.carregarComboTiposDiferenca();
 		this.carregarComboFornecedores();
+	}
+	
+	@Post
+	public void excluirFaltaSobra(Long idDiferenca){
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
+				Constantes.PARAM_MSGS).recursive().serialize();
+		
+		//result.forwardTo(DiferencaEstoqueController.class).lancamento();
 	}
 	
 	/**
@@ -545,7 +555,6 @@ public class DiferencaEstoqueController {
 		}
 		
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
-			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
 		}
 	}

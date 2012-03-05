@@ -60,22 +60,24 @@
 		function popupExclusaoDiferenca(idMovimentoEstoque) {
 
 			$("#dialog-excluir" ).dialog({
-				
 				resizable: false,
 				height:'auto',
 				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
+					$(this).dialog("close");
+					
+					var data = "idDiferenca=" + idMovimentoEstoque;
+					$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
 				}
-			});	     
+				}
+			});
+			
+			$("#dialog-excluir").show();
 		}
 
 		function exibirBotaoNovo(tipoDiferenca) {
@@ -181,22 +183,14 @@
 			width: auto;
 			margin-bottom: 0px !important;
 		}
-		
-		.ui-datepicker 
-		{
-			z-index: 1000 !important;		
-		}
-		
-		.ui-datepicker-today a
-		{
-			display:block !important;
-		}
 	</style>
 </head>
 
 <body>
 	<div class="corpo">
-	
+		<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
+			<p>Confirma esta Exclusão?</p>
+		</div>
 		<div class="container">
 
 			<fieldset class="classFieldset">
