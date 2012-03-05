@@ -1,6 +1,13 @@
 <div id="dialogNovasDiferencas" title="Lançamento < Faltas e Sobras >" style="display: none;">
-
-	<table id="gridNovasDiferencas" class="gridNovasDiferencas"></table>
+	
+	<form id="novoLancamentoDiferencaForm"
+		  name="novoLancamentoDiferencaForm" 
+		  action="estoque/diferenca/lancamento/cadastrarNovasDiferencas" 
+		  method="post">
+		
+		<table id="gridNovasDiferencas" class="gridNovasDiferencas"></table>
+	
+	</form>
 	
 	<table id="" width="465" border="0" cellspacing="2" cellpadding="2">
 		<tr style="font-size: 11px;">
@@ -16,6 +23,7 @@
 
 			$(".gridNovasDiferencas").flexigrid({
 				preProcess: executarPreProcessamentoNovo,
+				onSuccess: formatarCamposNumericos,
 				dataType : 'json',
 				colModel : [{
 					display : 'Código',
@@ -50,11 +58,11 @@
 				}, {
 					display : 'Exemplares',
 					name : 'quantidade',
-					width : 80,
+					width : 70,
 					sortable : false,
 					align : 'center'
 				}],
-				width : 600,
+				width : 580,
 				height : 220
 			});
 
@@ -67,24 +75,25 @@
 
 			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
 
-			$("#gridNovasDiferencas").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/novo" />', params: formData});
+			$("#gridNovasDiferencas").flexOptions({
+				url : '<c:url value="/estoque/diferenca/lancamento/novo" />', 
+				params: formData
+			});
 			
 			$("#gridNovasDiferencas").flexReload();
 			
-			$("#dialogNovasDiferencas" ).dialog({
+			$("#dialogNovasDiferencas").dialog({
 				resizable: false,
 				height:390,
 				width:600,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						mostrar_1();
-						
+						$(this).dialog("close");
+						cadastrarNovasDiferencas();
 					},
 					"Cancelar": function() {
-						$( this ).dialog( "close" );
+						$(this).dialog("close");
 					}
 				}
 			});
@@ -104,21 +113,112 @@
 
 			$.each(resultado.rows, function(index, row) {
 
-				var inputCodigoProduto = '<input type="text" style="width:60px;" />';
+				var inputCodigoProduto = 
+					'<input type="text" name="codigoProduto" style="width:60px;" maxlenght="255" />';
 
-				var inputDescricaoProduto = '<input type="text" style="width:140px;" />';
+				var inputDescricaoProduto = 
+					'<input type="text" name="descricaoProduto" style="width:140px;" maxlenght="255" />';
 
-				var inputNumeroEdicao = '<input type="text" style="width:40px;" />';
+				var inputNumeroEdicao = 
+					'<input type="text" name="numeroEdicao" style="width:40px;" maxlenght="20" />';
 
-				var inputQuantidade = '<input type="text" style="width:70px;" />';
+				var inputQuantidade = 
+					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
 								
 				row.cell.codigoProduto = inputCodigoProduto;
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
+				row.cell.precoVenda = "";
+				row.cell.qtdeRecebimentoFisico = "";
 				row.cell.quantidade = inputQuantidade;
 			});
 
 			return resultado;
+		}
+
+		function cadastrarNovasDiferencas() {
+			
+			var listaDiferencas = obterListaDiferencas();
+
+			$.postJSON(
+				"<c:url value='/estoque/diferenca/lancamento/cadastrarNovasDiferencas' />", 
+				listaDiferencas,
+				function(result) {
+					$(".grids").show();
+				}
+			);
+		}
+
+		function obterListaDiferencas() {
+
+			var linhasDaGrid = $(".gridNovasDiferencas tr");
+
+			var listaDiferencas = "";
+
+			$.each(linhasDaGrid, function(index, value) {
+
+				var colunaCodigoProduto = $(value).find("td")[0];
+				var colunaDescricaoProduto = $(value).find("td")[1];
+				var colunaNumeroEdicao = $(value).find("td")[2];
+				var colunaQtdeDiferenca = $(value).find("td")[5];
+	
+				var codigoProduto = 
+					$(colunaCodigoProduto).find("div").find('input[name="codigoProduto"]').val();
+				
+				var descricaoProduto = 
+					$(colunaDescricaoProduto).find("div").find('input[name="descricaoProduto"]').val();
+				
+				var numeroEdicao = 
+					$(colunaNumeroEdicao).find("div").find('input[name="numeroEdicao"]').val();
+				
+				var qtdeDiferenca = 
+					$(colunaQtdeDiferenca).find("div").find('input[name="qtdeDiferenca"]').val();
+
+				if (isAtributosDiferencaVazios(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca)) {
+
+					return true;
+				}
+				
+				if (!validarNovaDiferenca(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca)) {
+
+					return false;
+				}
+				
+				var diferenca = 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
+	
+				diferenca += 'listaNovasDiferencas[' + index + '].descricaoProduto=' + descricaoProduto + '&';
+	
+				diferenca += 'listaNovasDiferencas[' + index + '].numeroEdicao=' + numeroEdicao + '&';
+	
+				diferenca += 'listaNovasDiferencas[' + index + '].quantidade=' + qtdeDiferenca  + '&';
+
+				listaDiferencas = (listaDiferencas + diferenca);
+			});
+
+			return listaDiferencas;
+		}
+
+		function validarNovaDiferenca(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca) {
+
+			return true;
+		}
+
+		function isAtributosDiferencaVazios(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca) {
+
+			if (!$.trim(codigoProduto) 
+					&& !$.trim(descricaoProduto)
+					&& !$.trim(numeroEdicao) 
+					&& !$.trim(qtdeDiferenca)) {
+
+				return true;
+			}
+		}
+
+		function formatarCamposNumericos() {
+
+			$("input[name='codigoProduto']").numeric();
+			$("input[name='numeroEdicao']").numeric();
+			$("input[name='qtdeDiferenca']").numeric();
 		}
 	</script>
 	

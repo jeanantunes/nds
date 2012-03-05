@@ -118,10 +118,6 @@ public class DiferencaEstoqueController {
 			
 			DiferencaVO diferenca = new DiferencaVO();
 			
-			diferenca.setId(indice);
-			
-			diferenca.setDescricaoProduto("XX");
-			
 			diferenca.setDataLancamento(dataMovimentoFormatada);
 			
 			diferenca.setTipoDiferenca(tipoDiferenca.getDescricao());
@@ -139,6 +135,13 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(1);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/cadastrarNovasDiferencas")
+	public void cadastrarNovasDiferencas(List<DiferencaVO> listaNovasDiferencas) {
+		
+		result.use(Results.json()).withoutRoot().from(listaNovasDiferencas).recursive().serialize();
 	}
 
 	@Get

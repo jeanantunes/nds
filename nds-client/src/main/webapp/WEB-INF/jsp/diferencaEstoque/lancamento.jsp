@@ -175,6 +175,8 @@
 		});
 	</script>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 	<style type="text/css">
 		fieldset label 
 		{

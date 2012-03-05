@@ -20,7 +20,7 @@
 			url: false, //URL if using data from AJAX
 			method: 'POST', //data sending method
 			dataType: 'xml', //type of data for AJAX, either xml or json
-			errormsg: 'Connection Error',
+			errormsg: 'Erro de conexão',
 			usepager: false,
 			nowrap: true,
 			page: 1, //current page
@@ -29,14 +29,14 @@
 			rp: 15, //results per page
 			rpOptions: [10, 15, 20, 30, 50], //allowed per-page values 
 			title: false,
-			pagestat: 'Displaying {from} to {to} of {total} items',
-			pagetext: 'Page',
-			outof: 'of',
-			findtext: 'Find',
-			procmsg: 'Processing, please wait ...',
+			pagestat: 'Exibindo {from} até {to} de {total} resultados',
+			pagetext: 'Página',
+			outof: 'de',
+			findtext: 'Buscar',
+			procmsg: 'Processando, por favor aguarde ...',
 			query: '',
 			qtype: '',
-			nomsg: 'No items',
+			nomsg: 'Sem resultados',
 			minColToggle: 1, //minimum allowed column to be hidden
 			showToggleBtn: true, //show or hide column toggle popup
 			hideOnSubmit: true,
