@@ -425,7 +425,7 @@ public class Fixture {
 
 	public static NotaFiscalFornecedor notaFiscalFornecedor(CFOP cfop,
 			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
-			Usuario usuario) {
+			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		NotaFiscalFornecedor notaFiscalFornecedor = new NotaFiscalFornecedor();
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
@@ -439,9 +439,9 @@ public class Fixture {
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
 		notaFiscalFornecedor.setFornecedor(fornecedor);
-		notaFiscalFornecedor.setValorBruto(BigDecimal.ZERO);
-		notaFiscalFornecedor.setValorDesconto(BigDecimal.ZERO);
-		notaFiscalFornecedor.setValorLiquido(BigDecimal.ZERO);
+		notaFiscalFornecedor.setValorBruto(valorBruto);
+		notaFiscalFornecedor.setValorDesconto(valorDesconto);
+		notaFiscalFornecedor.setValorLiquido(valorLiquido);
 		return notaFiscalFornecedor;
 	}
 
@@ -482,7 +482,8 @@ public class Fixture {
 	public static MovimentoEstoque movimentoEstoque(
 			ItemRecebimentoFisico itemRecebimentoFisico,
 			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto, StatusAprovacao statusAprovacao) {
+			Usuario usuario, EstoqueProduto estoqueProduto,
+			StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		movimentoEstoque.setDataInclusao(new Date());
@@ -499,6 +500,7 @@ public class Fixture {
 		estoqueProduto.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 	
@@ -509,7 +511,8 @@ public class Fixture {
 													EstoqueProduto estoqueProduto,
 													Date dataInclusao,
 													BigDecimal qtde, 
-													StatusAprovacao status) {
+													StatusAprovacao status,
+													String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
@@ -521,6 +524,7 @@ public class Fixture {
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setStatus(status);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 	
@@ -568,7 +572,7 @@ public class Fixture {
 	public static MovimentoEstoqueCota movimentoEstoqueCota(
 			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
 			Usuario usuario, EstoqueProdutoCota estoqueProdutoCota,
-			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao) {
+			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
 		movimentoEstoque.setDataInclusao(new Date());
@@ -587,6 +591,7 @@ public class Fixture {
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 

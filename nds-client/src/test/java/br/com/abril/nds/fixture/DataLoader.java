@@ -154,36 +154,42 @@ public class DataLoader {
 		criarEstudos(session);
 		criarMovimentosEstoqueCota(session);
 		
+
 		
-		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
+		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
 		MovimentoEstoque movimentoEstoqueDiferenca = Fixture.movimentoEstoque(null, produtoEdicaoVeja1,
+
 																			  tipoMovimentoRecFisico, usuarioJoao,
 																			  estoqueProdutoVeja1, new Date(),
-																			  new BigDecimal(1), StatusAprovacao.APROVADO);
+																			  new BigDecimal(1), StatusAprovacao.APROVADO,
+																			  "Aprovado.");
 		session.save(movimentoEstoqueDiferenca);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca2 = Fixture.movimentoEstoque(null, produtoEdicaoVeja2,
 																			   tipoMovimentoRecFisico, usuarioJoao,
 																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(2), StatusAprovacao.APROVADO);
+																			   new BigDecimal(2), StatusAprovacao.APROVADO,
+																			   "Aprovado.");
 		session.save(movimentoEstoqueDiferenca2);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca3 = Fixture.movimentoEstoque(null, produtoEdicaoVeja3,
 																			   tipoMovimentoRecFisico, usuarioJoao,
 																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(3), StatusAprovacao.APROVADO);
+																			   new BigDecimal(3), StatusAprovacao.APROVADO,
+																			   "Aprovado.");
 		session.save(movimentoEstoqueDiferenca3);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca4 = Fixture.movimentoEstoque(null, produtoEdicaoVeja4,
 																			   tipoMovimentoRecFisico, usuarioJoao,
 																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(4), StatusAprovacao.APROVADO);
+																			   new BigDecimal(4), StatusAprovacao.APROVADO,
+																			   "Aprovado.");
 		session.save(movimentoEstoqueDiferenca4);
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		// Início dos inserts na tabela DIFERENCA
+		// Inicio dos inserts na tabela DIFERENCA
 		
 		Diferenca diferenca = Fixture.diferenca(new BigDecimal(1), usuarioJoao,
 												produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
@@ -235,7 +241,7 @@ public class DataLoader {
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
 	}
 
@@ -249,7 +255,7 @@ public class DataLoader {
 	private static void criarMovimentosEstoque(Session session) {
 		movimentoRecFisicoVeja1 = Fixture.movimentoEstoque(
 				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
-				estoqueProdutoVeja1, StatusAprovacao.APROVADO);
+				estoqueProdutoVeja1, StatusAprovacao.APROVADO, "Aprovado");
 		session.save(movimentoRecFisicoVeja1);
 		session.update(estoqueProdutoVeja1);
 	}
@@ -271,7 +277,7 @@ public class DataLoader {
 	private static void criarNotasFiscais(Session session) {
 		notaFiscalFornecedor = Fixture
 				.notaFiscalFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
-						usuarioJoao);
+						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		session.save(notaFiscalFornecedor);
 
 		itemNotaFiscalFornecedor = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
@@ -687,7 +693,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "Aprovado.");
 			
 			session.save(movimentoEstoqueDiferenca);
 			

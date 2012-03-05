@@ -57,6 +57,12 @@
 
 <link rel="stylesheet" type="text/css" 
 	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
+	
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
 <script language="javascript" type="text/javascript">
 	$(function() {

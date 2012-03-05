@@ -107,7 +107,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscalFornecedor notaFiscal1Veja = Fixture
 				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
 		ItemNotaFiscal itemNotaFiscal1Veja = Fixture.itemNotaFiscal(veja1, usuario,
@@ -128,7 +128,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscalFornecedor notaFiscal2Veja = Fixture
 				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
 		ItemNotaFiscal itemNotaFiscal2Veja = Fixture.itemNotaFiscal(veja1, usuario,
@@ -148,7 +148,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscalFornecedor notaFiscal4Rodas= Fixture
 				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
 		ItemNotaFiscal itemNotaFiscal4Rodas = Fixture.itemNotaFiscal(quatroRoda2, usuario,
