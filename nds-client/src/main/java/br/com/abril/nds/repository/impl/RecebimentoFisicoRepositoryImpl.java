@@ -26,6 +26,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	public List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal) {
 		
 		StringBuffer hql = new StringBuffer();
