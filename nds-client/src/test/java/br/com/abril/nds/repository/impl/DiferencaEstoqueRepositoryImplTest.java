@@ -9,9 +9,9 @@ import junit.framework.Assert;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -191,7 +191,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterTotalDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();

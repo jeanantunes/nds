@@ -22,12 +22,11 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.repository.EstudoCotaRepository;
 
 public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
+	private EstudoCotaRepositoryImpl estudoCotaRepository;
 	
 	private Date dataReferencia = Fixture.criarData(1, 1, 2012);
 	
