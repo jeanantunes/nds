@@ -1,6 +1,6 @@
 var produto = {
 	
-	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, pesquisarPorCodigoCallBack) {
+	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, isFromModal, pesquisarPorCodigoCallBack) {
 		var codigoProduto = $(idCodigo).val();
 		
 		$(idProduto).val("");
@@ -13,7 +13,7 @@ var produto = {
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
 					   "codigoProduto=" + codigoProduto,
-					   function(result) { produto.exibirNomeProduto(result, idProduto, idEdicao, pesquisarPorCodigoCallBack); }, null);
+					   function(result) { produto.exibirNomeProduto(result, idProduto, idEdicao, pesquisarPorCodigoCallBack); }, null, isFromModal);
 		}
 	},
 
@@ -27,12 +27,12 @@ var produto = {
 		}
 	},
 
-	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack) {
+	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal, pesquisarPorNomeCallBack) {
 		var nomeProduto = $(idProduto).val();
 		
-		if (nomeProduto && nomeProduto.length > 0) {
+		if (nomeProduto && nomeProduto.length > 2) {
 			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
-					   function(result) { produto.exibirAutoComplete(result, idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack); });
+					   function(result) { produto.exibirAutoComplete(result, idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack); }, null, isFromModal);
 		}
 	},
 
@@ -56,7 +56,7 @@ var produto = {
 		}
 	},
 
-	validarNumEdicao : function(idCodigo, idEdicao, pesquisarPorCodigoCallBack) {
+	validarNumEdicao : function(idCodigo, idEdicao, isFromModal, pesquisarPorCodigoCallBack) {
 		var codigoProduto = $(idCodigo).val();
 		var numeroEdicao = $(idEdicao).val();
 		
@@ -68,7 +68,7 @@ var produto = {
 			
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
 					   data, pesquisarPorCodigoCallBack,
-					   function() { produto.tratarErroValidacao(idEdicao); });
+					   function() { produto.tratarErroValidacao(idEdicao); }, isFromModal);
 		}
 	},
 

@@ -26,7 +26,7 @@ function pesquisarProdutoPorCodigo() {
 	$("#nomeFornecedor").val("");
 	$("#precoCapa").val("");
 	
-	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', pesquisarProdutoCallBack);	
+	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, pesquisarProdutoCallBack);	
 }
 
 function pesquisarProdutoPorNome() {
@@ -34,14 +34,14 @@ function pesquisarProdutoPorNome() {
 	$("#nomeFornecedor").val("");
 	$("#precoCapa").val("");
 	
-	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', pesquisarProdutoCallBack);
+	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, pesquisarProdutoCallBack);
 }
 
 function validarNumeroEdicao() {
 
 	$("#precoCapa").val("");
 	
-	produto.validarNumEdicao('#codigo', '#edicao', validarEdicaoCallBack);
+	produto.validarNumEdicao('#codigo', '#edicao', false, validarEdicaoCallBack);
 }
 
 var jsExtratoEdicao = {
