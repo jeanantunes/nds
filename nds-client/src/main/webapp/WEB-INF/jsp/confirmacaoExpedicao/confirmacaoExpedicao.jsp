@@ -11,6 +11,10 @@
 
 	
 	function dateToString(date) {
+		gui = date;
+		if(date==null) {
+			return "-";
+		}
 		return $.format.date(date.$+" 00:00:000", "dd/MM/yyyy");
 	}
 	
@@ -38,13 +42,32 @@
 		
 		$.postJSON("<c:url value='/confirmacaoExpedicao/selecionarLancamento'/>", 
 				"idLancamento="+id +"&selecionado="+check.checked, 
-				funcaoRetornoSelecao);
-		
+				retornoSemAcao);				
+	}
+	
+	function retornoSemAcao(data) {
 		
 	}
 	
-	function funcaoRetornoSelecao(selecionado) {
-		alert('Gui');
+	function selecionarTodos(elementoCheck) {
+	
+		if(elementoCheck.checked == false) {
+			
+			for (i=0; i < document.form1.checkgroup.length; i++){
+			
+				if(document.form1.checkgroup[i].checked == true){
+					document.form1.checkgroup[i].checked = false;
+				}
+			}
+		} else {										
+			for (i=0; i < document.form1.checkgroup.length; i++){
+				if(document.form1.checkgroup[i].checked == false){
+				document.form1.checkgroup[i].checked = true;
+						}
+					}
+			}
+		
+
 	}
 			
 	function processaRetorno(data) {
@@ -58,7 +81,6 @@
 		}
 			
 		for(var i=0; i<grid.rows.length; i++) {			
-			gui=grid.rows[i].cell.dataEntrada;
 			grid.rows[i].cell.dataEntrada = dateToString(grid.rows[i].cell.dataEntrada);
 			
 			grid.rows[i].cell.dataChamada = dateToString(grid.rows[i].cell.dataChamada);
@@ -341,7 +363,7 @@
 					<span class="bt_sellAll" style="float: right;">
 					<label for="sel">Selecionar Todos</label>					
 <!-- SELECIONAR TODOS -->	
-						<input type="checkbox" name="Todos" id="sel"onclick="checkAll();" style="float: left;" /> </span>
+						<input type="checkbox" name="Todos" id="sel"onclick="selecionarTodos(this);" style="float: left;" /> </span>
 				
 				</div>
 
