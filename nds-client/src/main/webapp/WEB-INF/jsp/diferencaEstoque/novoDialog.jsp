@@ -40,7 +40,7 @@
 				colModel : [{
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 70,
+					width : 100,
 					sortable : false,
 					align : 'left'
 				},{
@@ -75,7 +75,7 @@
 					align : 'center'
 				}],
 				singleSelect: true,
-				width : 580,
+				width : 610,
 				height : 220
 			});
 
@@ -98,7 +98,7 @@
 			$("#dialogNovasDiferencas").dialog({
 				resizable: false,
 				height:390,
-				width:600,
+				width:640,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -126,18 +126,26 @@
 			$.each(resultado.rows, function(index, row) {
 
 				var inputCodigoProduto = 
-					'<input type="text" name="codigoProduto" style="width:60px;" maxlenght="255" />';
+					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" />';
+
+				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true';
+
+				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true';
+
+				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Produto">'
+									+ '<a href="javascript:;" onclick="produto.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');">&nbsp;</a>'
+									+ '</span>';
 
 				var inputDescricaoProduto = 
-					'<input type="text" name="descricaoProduto" style="width:140px;" maxlenght="255" />';
+					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ');" />';
 
 				var inputNumeroEdicao = 
-					'<input type="text" name="numeroEdicao" style="width:40px;" maxlenght="20" />';
+					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + ');" />';
 
 				var inputQuantidade = 
 					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
 								
-				row.cell.codigoProduto = inputCodigoProduto;
+				row.cell.codigoProduto = inputCodigoProduto + imgLupaPesquisa;
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
 				row.cell.precoVenda = "";

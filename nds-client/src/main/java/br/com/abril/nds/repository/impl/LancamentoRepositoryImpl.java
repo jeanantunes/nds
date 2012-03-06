@@ -1,18 +1,25 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
-import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -141,11 +148,11 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
-			List<Date> periodoDistribuicao, List<Long> fornecedores, TipoProduto tipoCromo) {
+			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo) {
 		StringBuilder hql = new StringBuilder(
 				"select lancamento.dataLancamentoPrevista as data, ");
 		hql.append("count(lancamento.produtoEdicao) as qtdeTitulos, ");
-		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto <> :tipoCromo then lancamento.reparte ");
+		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo then lancamento.reparte ");
 		hql.append("else (lancamento.reparte / lancamento.produtoEdicao.pacotePadrao) end ) as qtdeExemplares, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.peso)) as pesoTotal, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
@@ -156,11 +163,144 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameterList("periodo", periodoDistribuicao);
 		query.setParameterList("fornecedores", fornecedores);
-		query.setParameter("tipoCromo", tipoCromo);
+		query.setParameter("grupoCromo", grupoCromo);
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ResumoPeriodoLancamentoDTO.class));
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(
+			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
+				
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		
+		parametros.put("statusLancamento", StatusLancamento.RECEBIDO);
+		 
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" select lancamento.id as idLancamento, ");	
+		jpql.append(" 	itemRecebido.recebimentoFisico.dataRecebimento as dataEntrada, ");
+		jpql.append(" 	lancamento.produtoEdicao.produto.id as codigo, ");		
+		jpql.append(" 	lancamento.produtoEdicao.produto.nome as produto, ");		
+		jpql.append(" 	lancamento.produtoEdicao.numeroEdicao as edicao, ");		
+		jpql.append(" 	lancamento.produtoEdicao.produto.tipoProduto.descricao as classificacao, ");
+		jpql.append(" 	lancamento.produtoEdicao.precoVenda as preco, ");		
+		jpql.append(" 	lancamento.produtoEdicao.pacotePadrao as pctPadrao, ");		
+		jpql.append(" 	lancamento.reparte as reparte, ");		
+		jpql.append(" 	lancamento.dataRecolhimentoPrevista as dataChamada, ");		
+		jpql.append(" 	lancamento.produtoEdicao.fornecedor.juridica.nomeFantasia as fornecedor, "); //TODO - Obter em Fornecedor
+		jpql.append(" 	estudo.qtdeReparte as estudo"); //TODO - Obter em Estudo
+		
+		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
+						
+		jpql.append(gerarOrderByProdutosNaoExpedidos(
+				LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortOrder()),
+				paginacaoVO.getOrdenacao()));
+				
+		Query query = getSession().createQuery(jpql.toString());
+		
+		for (Entry<String, Object> entry: parametros.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+		
+		query.setFirstResult(paginacaoVO.getPosicaoInicial());
+		query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		
+		query.setResultTransformer(Transformers.aliasToBean(LancamentoNaoExpedidoDTO.class));
+		
+		return (List<LancamentoNaoExpedidoDTO>)query.list();
+	}
+	
+	private String gerarOrderByProdutosNaoExpedidos(LancamentoNaoExpedidoDTO.SortColumn sortOrder, Ordenacao ascOrDesc) {
 
+		String order;
+		
+		if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_ENTRADA)) {
+			order = "itemRecebido.recebimentoFisico.dataRecebimento";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CODIGO_PRODUTO)) {
+			order = "lancamento.produtoEdicao.produto.id";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.NOME_PRODUTO)) {
+			order =  "lancamento.produtoEdicao.produto.nome";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
+			order =  "lancamento.produtoEdicao.numeroEdicao";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
+			return "lancamento.produtoEdicao.produto.tipoProduto.descricao";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
+			order =  "lancamento.produtoEdicao.precoVenda";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
+			order =  "lancamento.produtoEdicao.pacotePadrao";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_REPARTE)) {
+			order =  "lancamento.reparte";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_CHAMADA)) {
+			order =  "lancamento.dataRecolhimentoPrevista";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.FORNECEDOR)) {
+			order =  "lancamento.produtoEdicao.fornecedor.juridica.nomeFantasia";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.ID_ESTUDO)) {
+			order =  "estudo.id";
+		}  else {
+			return "";
+		}
+		
+		return " order by " + order + " " + ascOrDesc + " " ;
+		
+	}
+	
 
+	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo) {
+		
+		StringBuilder hql = new StringBuilder();	
+		
+		hql.append(" from Lancamento lancamento ");
+		
+		hql.append(" left join lancamento.estudos estudo ");
+		
+		hql.append(" join lancamento.recebimentos itemRecebido ");
+		
+		hql.append(" where lancamento.status=:statusLancamento ");
+		
+		
+		if (data != null) {
+			
+			Date inicio = DateUtil.removerTimestamp(data);
+			Date fim = DateUtil.adicionarDias(DateUtil.removerTimestamp(data), 1);
+			
+			hql.append(" AND (lancamento.dataLancamentoPrevista >= :inicio AND lancamento.dataLancamentoPrevista < :fim)");
+			
+			parametros.put("inicio", inicio);
+			parametros.put("fim", fim);
+		}				
+		
+		if (idFornecedor != null) {
+			hql.append(" AND lancamento.produtoEdicao.fornecedor.id = :idFornecedor ");			
+			parametros.put("idFornecedor", idFornecedor);
+		}				
+		
+		if (estudo != null) {
+			hql.append(" AND estudo is not null");			
+		}		
+			
+		return hql.toString();
+	}
+	
+	public Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo) {
+		
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		
+		parametros.put("statusLancamento", StatusLancamento.RECEBIDO);
+		 
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" select count(lancamento.id) ");	
+		
+		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
+										
+		Query query = getSession().createQuery(jpql.toString());
+		
+		for (Entry<String, Object> entry: parametros.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+				
+		return (Long) query.uniqueResult();
+	}	
 }

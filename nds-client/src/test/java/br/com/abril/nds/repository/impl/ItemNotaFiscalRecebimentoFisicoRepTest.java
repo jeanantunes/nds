@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -18,13 +19,12 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ItemNotaFiscalRepository;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 
 public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryImplTest{
 	
 	@Autowired
-	private ItemNotaFiscalRepository itemNotaRepository;
+	private ItemNotaFiscalRepositoryImpl itemNotaRepository;
 	
 	@Autowired
 	private RecebimentoFisicoService recebimentoFisicoService;
@@ -36,7 +36,8 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 	
 	@Before
 	public void setup() {
-		
+		Fornecedor dinap = Fixture.fornecedorDinap();
+		getSession().save(dinap);
 		
 		PessoaJuridica pj = Fixture.juridicaFC();
 		//salvei a pessoa Juridica
@@ -73,15 +74,17 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		getSession().save(tipoProduto);
 		
 		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		produto.addFornecedor(dinap);
 		getSession().save(produto);
 		
 		ProdutoEdicao produtoEdicao =
 				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
 		produtoEdicao.setId(1L);
 		getSession().save(produtoEdicao);	
+	}
 	
-		
-		
+	@Test
+	public void test() {
 		
 	}
 	

@@ -10,12 +10,11 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.repository.CotaRepository;
 
 public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private CotaRepository cotaRepository;
+	private CotaRepositoryImpl cotaRepository;
 	
 	private static final Integer NUMERO_COTA = 1;
 	

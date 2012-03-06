@@ -16,6 +16,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -81,7 +82,6 @@ public class MatrizLancamentoServiceImplTest {
 	@Test
 	public void obterResumoPeriodo() {
 		List<Long> fornecedores = Arrays.asList(1L, 2L);
-		TipoProduto tipoCromo = Fixture.tipoCromo();
 		List<DistribuicaoFornecedor> distribuicoes = Arrays.asList(
 				dinapSegunda, dinapQuarta, dinapSexta, fcSegunda, fcSexta);
 		Mockito.when(
@@ -96,7 +96,7 @@ public class MatrizLancamentoServiceImplTest {
 
 		Mockito.when(
 				lancamentoRepository
-						.buscarResumosPeriodo(periodo, fornecedores, null))
+						.buscarResumosPeriodo(periodo, fornecedores, GrupoProduto.CROMO))
 				.thenReturn(resumos);
 		Date dataInicial = Fixture.criarData(1, Calendar.MARCH, 2012);
 		service.obterResumoPeriodo(dataInicial, fornecedores);
@@ -104,7 +104,7 @@ public class MatrizLancamentoServiceImplTest {
 		Mockito.verify(distribuidorRepository).buscarDiasDistribuicao(
 				fornecedores);
 		Mockito.verify(lancamentoRepository).buscarResumosPeriodo(periodo,
-				fornecedores, null);
+				fornecedores, GrupoProduto.CROMO);
 	}
 	
 

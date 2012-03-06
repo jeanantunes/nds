@@ -16,6 +16,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 /**
@@ -43,6 +46,7 @@ public class Estudo implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
+	@NotFound(action = NotFoundAction.IGNORE)
 	@ManyToOne(optional = true)
 	@JoinColumns({
 			@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),

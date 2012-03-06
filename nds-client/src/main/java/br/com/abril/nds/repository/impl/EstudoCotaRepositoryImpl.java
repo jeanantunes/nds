@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -39,6 +40,44 @@ public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Lon
 		
 		query.setParameter("dataReferencia", dataReferencia);
 		
+		query.setMaxResults(1);
+		
+		return (EstudoCota) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
+			
+		String hql = " from EstudoCota estudoCota "
+				   + " where estudoCota.estudo.dataLancamento= :dataLancamento " 
+				   + " and estudoCota.estudo.produtoEdicao.id=:";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return query.list();
+	}
+	
+	@Override
+	public EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota) {
+			
+		String hql = " from EstudoCota estudoCota "
+				   + " where estudoCota.estudo.dataLancamento= :dataLancamento " 
+				   + " and estudoCota.estudo.produtoEdicao.id=: " 
+				   + " and estudoCota.cota.id ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("idCota", idCota);
+
 		query.setMaxResults(1);
 		
 		return (EstudoCota) query.uniqueResult();
