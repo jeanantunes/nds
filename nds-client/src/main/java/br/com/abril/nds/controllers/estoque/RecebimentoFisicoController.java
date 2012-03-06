@@ -53,8 +53,10 @@ public class RecebimentoFisicoController {
 	private HttpServletRequest request;
 	
 	private Validator validator;
+
+	private static final String CABECALHO_NOTA_FISCAL = "cabecalhoNotaFiscal";
 	
-	private static final String NOTA_FISCAL_ID = "notaFiscalId";
+	private static final String ITENS_NOTA_FISCAL = "itensNotaFiscal";
 	
 	private static final String GRID_RESULT = "gridResult";
 	
@@ -132,12 +134,16 @@ public class RecebimentoFisicoController {
 	@Post
 	public void obterListaItemRecebimentoFisico() {
 		
-		Long idNotaFiscal = (Long) request.getSession().getAttribute(NOTA_FISCAL_ID);
+		NotaFiscal notaFiscal = getNotaFiscalFromSession();
+		
+		Long idNotaFiscal = notaFiscal.getId();
 		
 		//TODO: obter lista do bd apos testes;
-		List<RecebimentoFisicoDTO> listaDTO = getListaItemNotaFromBD();
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = getListaItemNotaFromBD();
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(listaDTO);
+		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
@@ -184,11 +190,24 @@ public class RecebimentoFisicoController {
 	
 
 	@Post
-	public void excluirItemNotaFiscal(String idItemNotaFiscal) {
+	public void excluirItemNotaFiscal(int lineId) {
 		
-		//TODO: code
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
+
+		RecebimentoFisicoDTO apagarReceb = null;
 		
-		System.out.println("REMOVENDO ITEM NOTA FISCAL CODIGO: " + idItemNotaFiscal);
+		for(RecebimentoFisicoDTO recebimento : itensRecebimentoFisico) {
+			
+			if(recebimento.getLineId() == lineId) {
+				apagarReceb = recebimento;
+				break;
+			}
+			
+		}
+		
+		itensRecebimentoFisico.remove(apagarReceb);
+		
+		System.out.println("REMOVENDO ITEM NOTA FISCAL CODIGO: " + lineId);
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Item Nota fiscal removido com sucesso.");
@@ -218,6 +237,11 @@ public class RecebimentoFisicoController {
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	}
 	
+	private void limparDadosPesquisa() {
+		
+		setItensRecebimentoFisicoToSession(null);
+		
+	}
 	
 	
 	@Post
@@ -225,7 +249,9 @@ public class RecebimentoFisicoController {
 
 		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
 		
-		request.getSession().setAttribute(NOTA_FISCAL_ID, null);
+		setNotaFiscalToSession(null);
+		
+		limparDadosPesquisa();
 		
 		//TODO: CHAMAR PESQUISA DO BD
 		NotaFiscal notaFiscal = getNotaFromBD();
@@ -242,7 +268,7 @@ public class RecebimentoFisicoController {
 		
 		} else {
 			
-			request.getSession().setAttribute(NOTA_FISCAL_ID, notaFiscal.getId());
+			setNotaFiscalToSession(notaFiscal);
 			
 			List<String> msgs = new ArrayList<String>();
 			
@@ -294,13 +320,17 @@ public class RecebimentoFisicoController {
 	 * 
 	 * @return TableModel.
 	 */
-	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> listaDTO) {
+	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico) {
 					
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		for(RecebimentoFisicoDTO dto : listaDTO) {
+		int counter = 0;
+		
+		for(RecebimentoFisicoDTO dto : itensRecebimentoFisico) {
+			
+			dto.setLineId(counter++);
 			
 			String codigo 		     = dto.getCodigoProduto();
 			String nomeProduto 	     = dto.getNomeProduto();
@@ -313,7 +343,7 @@ public class RecebimentoFisicoController {
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
-							dto.getIdItemNota().intValue(), 
+							dto.getLineId(), 
 							codigo, 
 							nomeProduto, 
 							edicao, 
@@ -418,6 +448,23 @@ public class RecebimentoFisicoController {
 		recebimentoFisicoService.adicionarRecebimentoFisico(recebimentoFisico);
 		result.redirectTo("/recebimentoFisico");
 	}
+	
+	public NotaFiscal getNotaFiscalFromSession() {
+		return (NotaFiscal) request.getSession().getAttribute(CABECALHO_NOTA_FISCAL);
+	}
 
+	public void setNotaFiscalToSession(NotaFiscal notaFiscal) {
+		request.getSession().setAttribute(CABECALHO_NOTA_FISCAL, notaFiscal);
+	}
+
+	public List<RecebimentoFisicoDTO> getItensRecebimentoFisicoFromSession() {
+		return (List<RecebimentoFisicoDTO>) request.getSession().getAttribute(ITENS_NOTA_FISCAL);
+	}
+
+	public void setItensRecebimentoFisicoToSession(List<RecebimentoFisicoDTO> itensRecebimentoFisico) {
+		request.getSession().setAttribute(ITENS_NOTA_FISCAL, itensRecebimentoFisico);
+	}
+
+	
 
 }

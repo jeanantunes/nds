@@ -44,6 +44,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private TipoLancamento tipoLancamento;	
 	
+	private int lineId;
 	
 	public RecebimentoFisicoDTO() {}
 	
@@ -200,6 +201,15 @@ public class RecebimentoFisicoDTO implements Serializable {
 	public void setTipoLancamento(TipoLancamento tipoLancamento) {
 		this.tipoLancamento = tipoLancamento;
 	}
+
+	public int getLineId() {
+		return lineId;
+	}
+
+	public void setLineId(int lineId) {
+		this.lineId = lineId;
+	}
+	
 	
 
 }

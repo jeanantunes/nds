@@ -340,13 +340,13 @@
 			
 			var qtdFisico = $(colunaQtdFisico).find("div").find('input[name="qtdFisico"]').val();
 			
-			var idItemNota = $(colunaQtdFisico).find("div").find('input[name="idItemNotaFiscal"]').val();
+			var lineId = $(colunaQtdFisico).find("div").find('input[name="lineId"]').val();
 			
-			var itemRecebimento_idItemNota = 'itensRecebimento['+index+'].idItemNota='+idItemNota+'&';
+			var itemRecebimento_lineId = 'itensRecebimento['+index+'].lineId='+lineId+'&';
 			
 			var itemRecebimento_qtdFisico = 'itensRecebimento['+index+'].qtdFisico='+qtdFisico+'&';
 			
-			listaDeValores = (listaDeValores + itemRecebimento_idItemNota + itemRecebimento_qtdFisico);
+			listaDeValores = (listaDeValores + itemRecebimento_lineId + itemRecebimento_qtdFisico);
 			
 		});
 		
@@ -357,9 +357,9 @@
 	/**
 	 * EXCLUI UM ITEM DA NOTA
 	 */
-	function excluirItemNotaFiscal(idItemNotaFiscal) {
+	function excluirItemNotaFiscal(lineId) {
 		
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", "idItemNotaFiscal=" + idItemNotaFiscal, 
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", "lineId=" + lineId, 
 		function(result) {
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			pesquisarItemNotaGrid();
@@ -377,13 +377,13 @@
 			
 			var qtdFisico = value.cell[5];
 			
-			var idItemNotaFiscal = 	value.id;
+			var lineId = value.id;
 			
-			var hiddeFields = '<input type="hidden" name="idItemNotaFiscal" value="'+idItemNotaFiscal+'"/>';
+			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 			
 			value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
 
-			value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[idItemNotaFiscal]+');">APAGAR</a>';
+			value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">APAGAR</a>';
 			
 		});
 		
