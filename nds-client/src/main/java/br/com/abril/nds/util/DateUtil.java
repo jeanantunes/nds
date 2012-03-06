@@ -91,4 +91,25 @@ public class DateUtil {
 		return parseData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
 	
+	/**
+	 * Remove a informa??o de timestamp da data
+	 * 
+	 * @param data
+	 *            data para remo??o do timestamp
+	 * @return data sem informa??o de timestamp
+	 */
+	public static Date removerTimestamp(Date data) {
+		if (data == null) {
+			return null;
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+	
+	
 }

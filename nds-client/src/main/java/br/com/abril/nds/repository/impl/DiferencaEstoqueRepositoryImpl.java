@@ -203,8 +203,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case DATA_LANCAMENTO_NUMERO_EDICAO:
-					//TODO: ordenação por data e num edição
-					hql += "order by diferenca.movimentoEstoque.dataInclusao ";
+					hql += "order by diferenca.movimentoEstoque.dataInclusao, "
+						 + " diferenca.produtoEdicao.numeroEdicao ";
 					break;
 				case DATA_LANCAMENTO:
 					hql += "order by diferenca.movimentoEstoque.dataInclusao ";
@@ -327,7 +327,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal "
 			 + " where diferenca.movimentoEstoque is not null ";
 		
-		if (filtro.getCodigoProduto() != null) {
+		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
 		}
 		
@@ -339,7 +339,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			hql += " and diferenca.produtoEdicao.produto.fornecedores.id = :idFornecedor ";
 		}*/
 		
-		if (filtro.getPeriodoVO().getDataInicial() != null && filtro.getPeriodoVO().getDataFinal() != null) {
+		if (filtro.getPeriodoVO() != null
+				&& filtro.getPeriodoVO().getDataInicial() != null
+				&& filtro.getPeriodoVO().getDataFinal() != null) {
+			
 			hql += " and diferenca.movimentoEstoque.dataInclusao between :dataInicial and :dataFinal ";
 		}
 		
@@ -356,16 +359,12 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	 * @param filtro - filtro da pesquisa
 	 * @param query - objeto query
 	 */
-	
-	/*Gera a query de busca de diferenças
-	 * 
-	 */
 	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
 													 	 Query query) {
 		
 		//TODO: adicionar filtro para fornecedores
 		
-		if (filtro.getCodigoProduto() != null) {
+		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			query.setParameter("codigoProduto", filtro.getCodigoProduto());
 		}
 		
@@ -377,7 +376,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}*/
 		
-		if (filtro.getPeriodoVO().getDataInicial() != null && filtro.getPeriodoVO().getDataFinal() != null) {
+		if (filtro.getPeriodoVO() != null
+				&& filtro.getPeriodoVO().getDataInicial() != null
+				&& filtro.getPeriodoVO().getDataFinal() != null) {
+			
 			query.setParameter("dataInicial", filtro.getPeriodoVO().getDataInicial());
 			query.setParameter("dataFinal", filtro.getPeriodoVO().getDataFinal());
 		}
