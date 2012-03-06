@@ -59,6 +59,11 @@ public class Fixture {
 		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
 				"dinap@mail.com");
 	}
+	
+	public static PessoaJuridica juridicaAcme() {
+		return pessoaJuridica("ACME", "11.222.333/0001-00", "111.222.333.444",
+				"acme@mail.com");
+	}
 
 	public static Fornecedor fornecedorFC() {
 		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true);
@@ -66,6 +71,10 @@ public class Fixture {
 
 	public static Fornecedor fornecedorDinap() {
 		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true);
+	}
+	
+	public static Fornecedor fornecedorAcme() {
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -87,10 +96,71 @@ public class Fixture {
 		return produto("4", "Capricho", "Capricho",
 				PeriodicidadeProduto.QUINZENAL, tipoProduto);
 	}
+	
+	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
+		return produto("5",
+				"Superinteressante", "Superinteressante",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
+		return produto("6", "Boa Forma", "Boa Forma",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoBravo(TipoProduto tipoProduto) {
+		return produto("7", "Bravo", "Bravo",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoContigo(TipoProduto tipoProduto) {
+		return produto("8", "Contigo", "Contigo",
+				PeriodicidadeProduto.QUINZENAL, tipoProduto);
+	}
+	
+	public static Produto produtoCaras(TipoProduto tipoProduto) {
+		return produto("9", "Caras", "Caras",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoClaudia(TipoProduto tipoProduto) {
+		return produto("10", "Claudia", "Claudia",
+				PeriodicidadeProduto.SEMANAL, tipoProduto);
+	}
+	
+	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
+		return produto("11", "Casa Claudia", "Casa Claudia",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoManequim(TipoProduto tipoProduto) {
+		return produto("12", "Manequim", "Manequim",
+				PeriodicidadeProduto.SEMANAL, tipoProduto);
+	}
+	
+	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
+		return produto("13", "National Geographic", "National Geographic",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoPlacar(TipoProduto tipoProduto) {
+		return produto("14", "Placar", "Placar",
+				PeriodicidadeProduto.MENSAL, tipoProduto);
+	}
+	
+	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
+		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
+				PeriodicidadeProduto.SEMANAL, tipoProduto);
+	}
 
 	public static TipoProduto tipoRevista() {
 		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642");
 	}
+	
+	public static TipoProduto tipoCromo() {
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
+	}
+
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -160,7 +230,7 @@ public class Fixture {
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
-//		produto.setTipoProduto(tipo);
+		produto.setTipoProduto(tipo);
 		return produto;
 	}
 
@@ -176,6 +246,7 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setFornecedor(produto.getFornecedores().iterator().next());
 		return produtoEdicao;
 	}
 
@@ -354,7 +425,7 @@ public class Fixture {
 
 	public static NotaFiscalFornecedor notaFiscalFornecedor(CFOP cfop,
 			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
-			Usuario usuario) {
+			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		NotaFiscalFornecedor notaFiscalFornecedor = new NotaFiscalFornecedor();
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
@@ -368,6 +439,9 @@ public class Fixture {
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
 		notaFiscalFornecedor.setFornecedor(fornecedor);
+		notaFiscalFornecedor.setValorBruto(valorBruto);
+		notaFiscalFornecedor.setValorDesconto(valorDesconto);
+		notaFiscalFornecedor.setValorLiquido(valorLiquido);
 		return notaFiscalFornecedor;
 	}
 
@@ -408,7 +482,8 @@ public class Fixture {
 	public static MovimentoEstoque movimentoEstoque(
 			ItemRecebimentoFisico itemRecebimentoFisico,
 			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto, StatusAprovacao statusAprovacao) {
+			Usuario usuario, EstoqueProduto estoqueProduto,
+			StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		movimentoEstoque.setDataInclusao(new Date());
@@ -425,6 +500,7 @@ public class Fixture {
 		estoqueProduto.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 	
@@ -435,7 +511,8 @@ public class Fixture {
 													EstoqueProduto estoqueProduto,
 													Date dataInclusao,
 													BigDecimal qtde, 
-													StatusAprovacao status) {
+													StatusAprovacao status,
+													String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
@@ -447,6 +524,7 @@ public class Fixture {
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setStatus(status);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 	
@@ -494,7 +572,7 @@ public class Fixture {
 	public static MovimentoEstoqueCota movimentoEstoqueCota(
 			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
 			Usuario usuario, EstoqueProdutoCota estoqueProdutoCota,
-			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao) {
+			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
 		movimentoEstoque.setDataInclusao(new Date());
@@ -513,6 +591,7 @@ public class Fixture {
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 

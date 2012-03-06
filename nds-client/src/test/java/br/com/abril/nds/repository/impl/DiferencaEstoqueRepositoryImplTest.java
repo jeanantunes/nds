@@ -109,7 +109,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		getSession().save(fornecedor);
 		
 		NotaFiscalFornecedor notaFiscalFornecedor = 
-			Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, usuario);
+			Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal,
+										 usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		
 		getSession().save(notaFiscalFornecedor);
 
@@ -138,7 +139,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE);
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE, "Pendente.");
 			
 			getSession().save(movimentoEstoque);
 			

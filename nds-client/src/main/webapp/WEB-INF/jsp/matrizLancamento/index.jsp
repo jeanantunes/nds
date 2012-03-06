@@ -135,6 +135,8 @@ function popup() {
 .lancamentosProgramadosGrid #row1 a{color:#fff;}
 .lancamentosProgramadosGrid #row1 a:hover{color:#000;}
 
+.ui-datepicker { z-index: 1000 !important; }
+.ui-datepicker-today a { display:block !important; }
 </style>
 </head>
 
@@ -223,15 +225,16 @@ function popup() {
 			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
 			dataType : 'json',
 			autoload: false,
+			singleSelect: true,
 			onSuccess: buscarResumoPeriodo,
 			preProcess : processarColunasLancamentos,
 			onSubmit : function(){
-				var idsFornecedores = new Array();
+				var parametros = new Array();
+				parametros.push({name:'data', value: $("#datepickerDe").val()});
 				$("input[name='checkgroup_menu']:checked").each(function(i) {
-					idsFornecedores.push($(this).val());
+					parametros.push({name:'idsFornecedores', value: $(this).val()});
 				});
-				$("#lancamentosProgramadosGrid").flexOptions({params: [{name:'data', value: $("#datepickerDe").val()}, 
-		                                      {name:'idsFornecedores', value: idsFornecedores}]});
+				$("#lancamentosProgramadosGrid").flexOptions({params: parametros});
 		        return true;
 		    },
 			colModel : [  {
@@ -336,6 +339,16 @@ function popup() {
 		});
 
 		function processarColunasLancamentos(data) {
+			
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				return data;
+			}
+			
 			$.each(data.rows, function(i, row){
 				var inputDataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 				inputDataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
@@ -366,6 +379,16 @@ function popup() {
 		}
 		
 		function popularResumoPeriodo(data) {
+			
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				return data;
+			}
+			
 			var rows='<tr>';
 			$.each(data, function(index, resumo){
 				  rows+='<td>';

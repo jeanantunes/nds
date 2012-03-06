@@ -2,15 +2,21 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class RecebimentoFisicoDTO implements Serializable {
 	
 	private static final long serialVersionUID = -580201558784688016L;
 
-	private String codigo;
+	private Long idItemNota;
+	
+	private Long idItemRecebimentoFisico;
+	
+	private String codigoProduto;
 	
 	private String nomeProduto;
 	
@@ -30,35 +36,65 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private Origem origem;
 	
-	private Long idItemNota;
-
-	public RecebimentoFisicoDTO(String codigo, 
+	private Long idProdutoEdicao;
+			
+	private Date dataLancamento;
+	
+	private Date dataRecolhimento;
+	
+	private TipoLancamento tipoLancamento;	
+	
+	
+	public RecebimentoFisicoDTO() {}
+	
+	public RecebimentoFisicoDTO(
+			
+			Long idItemNota,
+			Long idItemRecebimentoFisico,
+			String codigoProduto, 
 			String nomeProduto, 
 			Long edicao, 
 			BigDecimal precoCapa, 
 			BigDecimal repartePrevisto, 
 			BigDecimal qtdFisico, 
 			BigDecimal diferenca, 
-			TipoDiferenca tipoDiferenca,
-			Long idItemNota){
-		this.codigo = codigo;
+			TipoDiferenca tipoDiferenca){
+		
+		this.idItemNota = idItemNota;
+		this.idItemRecebimentoFisico = idItemRecebimentoFisico;
+		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
 		this.precoCapa = precoCapa;
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
 		this.diferenca = diferenca;
-		this.tipoDiferenca = tipoDiferenca;
-		this.idItemNota = idItemNota;
+		this.tipoDiferenca = tipoDiferenca;	
 		
 	}
 
-	public String getCodigo() {
-		return codigo;
+	public Long getIdItemNota() {
+		return idItemNota;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+	public void setIdItemNota(Long idItemNota) {
+		this.idItemNota = idItemNota;
+	}
+
+	public Long getIdItemRecebimentoFisico() {
+		return idItemRecebimentoFisico;
+	}
+
+	public void setIdItemRecebimentoFisico(Long idItemRecebimentoFisico) {
+		this.idItemRecebimentoFisico = idItemRecebimentoFisico;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 
 	public String getNomeProduto() {
@@ -125,20 +161,44 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.tipoDiferenca = tipoDiferenca;
 	}
 
-	public Long getIdItemNota() {
-		return idItemNota;
-	}
-
-	public void setIdItemNota(Long idItemNota) {
-		this.idItemNota = idItemNota;
-	}
-
 	public Origem getOrigem() {
 		return origem;
 	}
 
 	public void setOrigem(Origem origem) {
 		this.origem = origem;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	public TipoLancamento getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	public void setTipoLancamento(TipoLancamento tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
 	}
 	
 
