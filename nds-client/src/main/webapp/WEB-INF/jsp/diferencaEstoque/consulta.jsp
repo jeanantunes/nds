@@ -84,7 +84,7 @@
 					sortable : true,
 					align : 'right'
 				} ],
-				sortname : "dataLancamento",
+				sortname : "dataLancamentoNumeroEdicao",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -99,18 +99,18 @@
 			$("#codigo").focus();
 		});
 		
-		function pesquisarProdutoCallBack() {
+		/*function pesquisarProdutoCallBack() {
 			pesquisarFornecedores();
-		}
+		}*/
 		
 		function pesquisarFornecedores() {
 			var data = "codigoProduto=" + $("#codigo").val();
 			
 			$.postJSON("<c:url value='/estoque/diferenca/pesquisarFonecedores' />",
-					   data, retornoFornecedores);
+					   data, montarComboFornecedores);
 		}
 		
-		function retornoFornecedores(result) {
+		function montarComboFornecedores(result) {
 			var comboFornecedores = montarComboBox(result);
 			
 			$("#fornecedor").html(comboFornecedores);
@@ -138,8 +138,6 @@
 			});
 			
 			$(".consultaFaltasSobrasGrid").flexReload();
-			
-			$(".grids").show();
 		}
 		
 		function executarAposSucesso() {
@@ -156,8 +154,6 @@
 				);
 				
 				$(".grids").hide();
-				//$("#btnConfirmar").hide();
-				//$("#labelTotalGeral").hide();
 
 				return resultado.tableModel;
 			}
@@ -174,12 +170,7 @@
 				row.cell.statusAprovacao = spanAprovacao;
 			});
 
-			if ($(".grids").css('display') == 'none') {	
-
-				$(".grids").show();
-				//$("#btnConfirmar").show();
-				//$("#labelTotalGeral").show();
-			}
+			$(".grids").show();
 			
 			return resultado.tableModel;
 		}
@@ -199,19 +190,20 @@
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255" />
 					
 					<span class="classPesquisar" title="Pesquisar Produto">
-						<a href="javascript:;" onclick="produto.pesquisarPorCodigoProduto();">&nbsp;</a>
+						<a href="javascript:;"
+						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', pesquisarFornecedores);">&nbsp;</a>
 					</span>
 				</td>
 				<td width="60">Produto:</td>
 				<td width="220">
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
-					       onkeyup="produto.pesquisarPorNomeProduto();" />
+					       onkeyup="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', pesquisarFornecedores);" />
 				</td>
 				
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
-						   onchange="produto.validarNumEdicao();"/>
+						   onchange="produto.validarNumEdicao('#codigo', '#edicao');"/>
 				</td>
 				
 				<td width="73">Fornecedor:</td>

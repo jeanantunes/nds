@@ -39,7 +39,7 @@ public class ProdutoController {
 		
 		if (produto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado!");
 			
 		} else {
 			
@@ -84,7 +84,7 @@ public class ProdutoController {
 			
 			if (!numEdicaoValida) {
 
-				throw new ValidacaoException(TipoMensagem.ERROR, "Edição não encontrada para o produto.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada para o produto!");
 				
 			} else {
 				
