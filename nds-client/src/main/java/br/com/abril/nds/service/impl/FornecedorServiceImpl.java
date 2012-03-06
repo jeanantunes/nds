@@ -38,4 +38,10 @@ public class FornecedorServiceImpl implements FornecedorService {
 		return fornecedorRepository.obterFornecedores(permiteBalanceamento,
 				situacoes);
 	}
+	
+	@Transactional
+	public List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto) {
+		return fornecedorRepository.obterFornecedoresDeProduto(codigoProduto);
+	}
+	
 }

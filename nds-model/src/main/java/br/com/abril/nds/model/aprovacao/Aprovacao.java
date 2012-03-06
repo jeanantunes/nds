@@ -27,6 +27,8 @@ public abstract class Aprovacao {
 	private Date dataAprovacao;
 	@Column(name = "APROVADO_AUTOMATICAMENTE", nullable = false)
 	private boolean aprovadoAutomaticamente;
+	@Column(name = "MOTIVO", nullable = false)
+	private String motivo;
 	
 	public Usuario getAprovador() {
 		return aprovador;
@@ -58,6 +60,14 @@ public abstract class Aprovacao {
 
 	public void setAprovadoAutomaticamente(boolean aprovadoAutomaticamente) {
 		this.aprovadoAutomaticamente = aprovadoAutomaticamente;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 	
 }

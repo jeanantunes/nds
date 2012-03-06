@@ -51,7 +51,8 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		//Salvei Tipo
 		getSession().save(tipoNotaFiscal);
-		notaFiscal = Fixture.notaFiscalFornecedor(cfop, pj, Fixture.fornecedorFC(), tipoNotaFiscal, Fixture.usuarioJoao());
+		notaFiscal = Fixture.notaFiscalFornecedor(cfop, pj, Fixture.fornecedorFC(), tipoNotaFiscal,
+												  Fixture.usuarioJoao(), BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 	
 	
 		

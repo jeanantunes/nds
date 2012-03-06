@@ -1,22 +1,24 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class ResumoPeriodoLancamentoDTO implements Serializable {
 
 	private static final long serialVersionUID = 7487823794102857136L;
 
-	private String data;
+	private Date data;
 	private Long qtdeTitulos;
-	private String qtdeExemplares;
-	private String pesoTotal;
-	private String valorTotal;
-
-	public String getData() {
+	private BigDecimal qtdeExemplares;
+	private BigDecimal pesoTotal;
+	private BigDecimal valorTotal;
+	
+	public Date getData() {
 		return data;
 	}
 	
-	public void setData(String data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 	
@@ -28,32 +30,28 @@ public class ResumoPeriodoLancamentoDTO implements Serializable {
 		this.qtdeTitulos = qtdeTitulos;
 	}
 	
-	public String getQtdeExemplares() {
+	public BigDecimal getQtdeExemplares() {
 		return qtdeExemplares;
 	}
 	
-	public void setQtdeExemplares(String qtdeExemplares) {
+	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
 		this.qtdeExemplares = qtdeExemplares;
 	}
 	
-	public String getPesoTotal() {
+	public BigDecimal getPesoTotal() {
 		return pesoTotal;
 	}
 	
-	public void setPesoTotal(String pesoTotal) {
+	public void setPesoTotal(BigDecimal pesoTotal) {
 		this.pesoTotal = pesoTotal;
 	}
 	
-	public String getValorTotal() {
+	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
 	
-	public void setValorTotal(String valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
 	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 }

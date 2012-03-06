@@ -57,6 +57,12 @@
 
 <link rel="stylesheet" type="text/css" 
 	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
+	
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
 <script language="javascript" type="text/javascript">
 	$(function() {
@@ -100,6 +106,12 @@ fieldset label {
 	width: auto !important;
 	margin-left: 10px;
 }
+
+
+
+.ui-datepicker { z-index: 1000 !important; }
+
+.ui-datepicker-today a {	display:block !important; }
 </style>
 
 <!-- DECORATOR HEAD -->
@@ -239,7 +251,7 @@ fieldset label {
 							<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
 									Reparte Cota</a>
 							</li>
-							<li><a href="lancamento/furoProduto">Furo de
+							<li><a href="<c:url value='/lancamento/furoProduto'/>">Furo de
 									Produto</a>
 							</li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>

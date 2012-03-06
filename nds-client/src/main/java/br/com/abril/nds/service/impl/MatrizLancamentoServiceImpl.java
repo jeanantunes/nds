@@ -19,6 +19,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -65,7 +66,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Transactional(readOnly = true)
 	public List<ResumoPeriodoLancamentoDTO> obterResumoPeriodo(
 			Date dataInicial, List<Long> fornecedores) {
-		// TODO: Definir periodo
 		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
 		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
 				.buscarDiasDistribuicao(fornecedores);
@@ -75,8 +75,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
 				dataInicial, dataFinal, diasDistribuicao);
+		//TODO: Recuperar tipo de produto cromo 
+		TipoProduto tipoCromo = null;
 		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
-				.buscarResumosPeriodo(periodoDistribuicao, fornecedores);
+				.buscarResumosPeriodo(periodoDistribuicao, fornecedores, tipoCromo);
 		return resumos;
 	}
 
@@ -109,7 +111,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				FORMATO_DATA_LANCAMENTO));
 		dto.setId(lancamento.getId());
 		dto.setIdFornecedor(1L);
-		dto.setNomeFornecedor("ACME");
+		dto.setNomeFornecedor(produtoEdicao.getFornecedor().getJuridica().getNomeFantasia());
 		dto.setLancamento(lancamento.getTipoLancamento().getDescricao());
 		dto.setNomeProduto(produto.getNome());
 		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
@@ -122,10 +124,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo != null) {
 			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
+		} else {
+			dto.setEstudoGerado("0");
 		}
 		return dto;
 	}
-
-
 
 }

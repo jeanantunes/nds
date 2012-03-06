@@ -1,10 +1,10 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 /**
  * Data Transfer Object para filtro de pesquisa de diferenças de estoque.
@@ -25,9 +25,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
-	private Date dataLancamentoDe;
-	
-	private Date dataLancamentoAte;
+	private PeriodoVO periodoVO;
 	
 	private TipoDiferenca tipoDiferenca;
 	
@@ -50,6 +48,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	 */
 	public enum OrdenacaoColunaConsulta {
 		
+		DATA_LANCAMENTO_NUMERO_EDICAO("dataLancamentoNumeroEdicao"),
 		DATA_LANCAMENTO("dataLancamento"),
 		CODIGO_PRODUTO("codigoProduto"),
 		DESCRICAO_PRODUTO("descricaoProduto"),
@@ -58,7 +57,8 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		TIPO_DIFERENCA("tipoDiferenca"),
 		NUMERO_NOTA_FISCAL("numeroNotaFiscal"),
 		QUANTIDADE("quantidade"),
-		STATUS_APROVACAO("statusAprovacao");
+		STATUS_APROVACAO("statusAprovacao"),
+		VALOR_TOTAL_DIFERENCA("valorTotalDiferenca");
 		
 		private String nomeColuna;
 		
@@ -115,35 +115,20 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
-
 	/**
-	 * @return the dataLancamentoDe
+	 * @return the periodoVO
 	 */
-	public Date getDataLancamentoDe() {
-		return dataLancamentoDe;
+	public PeriodoVO getPeriodoVO() {
+		return periodoVO;
 	}
 
 	/**
-	 * @param dataLancamentoDe the dataLancamentoDe to set
+	 * @param periodoVO the periodoVO to set
 	 */
-	public void setDataLancamentoDe(Date dataLancamentoDe) {
-		this.dataLancamentoDe = dataLancamentoDe;
+	public void setPeriodoVO(PeriodoVO periodoVO) {
+		this.periodoVO = periodoVO;
 	}
-
-	/**
-	 * @return the dataLancamentoAte
-	 */
-	public Date getDataLancamentoAte() {
-		return dataLancamentoAte;
-	}
-
-	/**
-	 * @param dataLancamentoAte the dataLancamentoAte to set
-	 */
-	public void setDataLancamentoAte(Date dataLancamentoAte) {
-		this.dataLancamentoAte = dataLancamentoAte;
-	}
-
+	
 	/**
 	 * @return the tipoDiferenca
 	 */
@@ -186,4 +171,72 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime * result
+				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime * result
+				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result
+				+ ((periodoVO == null) ? 0 : periodoVO.hashCode());
+		result = prime * result
+				+ ((tipoDiferenca == null) ? 0 : tipoDiferenca.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroConsultaDiferencaEstoqueDTO other = (FiltroConsultaDiferencaEstoqueDTO) obj;
+		if (codigoProduto == null) {
+			if (other.codigoProduto != null)
+				return false;
+		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (idFornecedor == null) {
+			if (other.idFornecedor != null)
+				return false;
+		} else if (!idFornecedor.equals(other.idFornecedor))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		if (ordenacaoColuna != other.ordenacaoColuna)
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (periodoVO == null) {
+			if (other.periodoVO != null)
+				return false;
+		} else if (!periodoVO.equals(other.periodoVO))
+			return false;
+		if (tipoDiferenca != other.tipoDiferenca)
+			return false;
+		return true;
+	}
+	
 }

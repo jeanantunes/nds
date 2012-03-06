@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.estoque;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,6 +74,8 @@ public class ConsultaNotasController {
 	public void index() {
 		
 		preencherCombos();
+		
+		inserirDataAtual();
 	}
 	
 	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
@@ -139,7 +142,12 @@ public class ConsultaNotasController {
 		result.include("fornecedores", fornecedores);
 		result.include("tiposNotaFiscal", tiposNotaFiscal);		
 	}
-	
+
+	private void inserirDataAtual() {
+		
+		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
+	}
+
 	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscalFornecedor> listaNotasFiscais) {
 
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
@@ -205,7 +213,7 @@ public class ConsultaNotasController {
 		
 		return String.valueOf(itemExibicao == null ? "-" : itemExibicao);
 	}
-
+	
 	private void prepararFiltro(
 			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
 			String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
@@ -228,7 +236,16 @@ public class ConsultaNotasController {
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
 
-		filtroConsultaNotaFiscal.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
+		String[] sortNames = sortname.split(",");
+		
+		List<ColunaOrdenacao> listaColunaOrdenacao = new ArrayList<ColunaOrdenacao>();
+		
+		for (String sort : sortNames) {
+
+			listaColunaOrdenacao.add(Util.getEnumByStringValue(ColunaOrdenacao.values(), sort.trim()));
+		}
+		
+		filtroConsultaNotaFiscal.setListaColunaOrdenacao(listaColunaOrdenacao);
 
 		filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
 		

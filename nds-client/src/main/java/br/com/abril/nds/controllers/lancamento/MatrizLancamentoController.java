@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.lancamento;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,16 +48,15 @@ public class MatrizLancamentoController {
 	
 	
 	@Post
-	public void matrizLancamento(Date data, String idsFornecedores,
+	public void matrizLancamento(Date data, List<Long> idsFornecedores,
 			String sortorder, String sortname, int page, int rp) {
-		List<Long> fornecedores = converterIdsFornecedores(idsFornecedores);
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				fornecedores, paginacaoVO, sortname);
+				idsFornecedores, paginacaoVO, sortname);
 		List<LancamentoDTO> dtos = matrizLancamentoService
 				.buscarLancamentosBalanceamento(filtro);
 		long total = matrizLancamentoService
-				.totalBalanceamentoMatrizLancamentos(data, fornecedores);
+				.totalBalanceamentoMatrizLancamentos(data, idsFornecedores);
 
 		TableModel<CellModelKeyValue<LancamentoDTO>> tm = new TableModel<CellModelKeyValue<LancamentoDTO>>();
 		List<CellModelKeyValue<LancamentoDTO>> cells = CellModelKeyValue
@@ -72,27 +70,10 @@ public class MatrizLancamentoController {
 	}
 	
 	@Get
-	public void resumoPeriodo(Date dataInicial, String idsFornecedores) {
-		List<Long> fornecedores = converterIdsFornecedores(idsFornecedores);
+	public void resumoPeriodo(Date dataInicial, List<Long> idsFornecedores) {
 		List<ResumoPeriodoLancamentoDTO> dtos = matrizLancamentoService
-				.obterResumoPeriodo(dataInicial, fornecedores);
+				.obterResumoPeriodo(dataInicial, idsFornecedores);
 		result.use(Results.json()).withoutRoot().from(dtos).serialize();
-	}
-
-
-	/**
-	 * Transforma a lista de identificadores de fornecedores em formato
-	 * texto para a lista de identificadores em formato numérico 
-	 * 
-	 * @param idsFornecedores identificadores em formato texto
-	 * @return lista de identificadores em formato numérico
-	 */
-	private List<Long> converterIdsFornecedores(String idsFornecedores) {
-		List<Long> fornecedores = new ArrayList<Long>();
-		for (String id : idsFornecedores.split(",")) {
-			fornecedores.add(Long.valueOf(id));
-		}
-		return fornecedores;
 	}
 
 }
