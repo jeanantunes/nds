@@ -12,11 +12,13 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -38,6 +40,9 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
+	
+	@Autowired
+	private EstudoRepository estudoRepository;
 	
 	@Transactional
 	@Override
@@ -91,6 +96,15 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto já expedido não pode sofrer furo.");
 		}
 		
+		Estudo estudo = 
+			this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(
+					lancamento.getDataLancamentoDistribuidor(), 
+					idProdutoEdicao);
+		
+		if (estudo != null){
+			estudo.setDataLancamento(novaData);
+		}
+		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
 		
@@ -111,6 +125,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		historicoLancamento.setStatus(lancamento.getStatus());
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
+		
+		if (estudo != null){
+			this.estudoRepository.alterar(estudo);
+		}
 		
 		this.lancamentoRepository.alterar(lancamento);
 		

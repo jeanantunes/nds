@@ -32,7 +32,8 @@ public class EstudoRepositoryImpl extends AbstractRepository<Estudo, Long> imple
 		String hql = " from Estudo estudo"
 				   + " where estudo.lancamento.dataLancamentoDistribuidor >= :dataReferencia"
 				   + " and estudo.lancamento.produtoEdicao.produto.codigo = :codigoProduto"
-				   + " and estudo.lancamento.produtoEdicao.numeroEdicao = :numeroEdicao";
+				   + " and estudo.lancamento.produtoEdicao.numeroEdicao = :numeroEdicao"
+				   + " order by estudo.lancamento.dataLancamentoDistribuidor";
 		
 		Query query = super.getSession().createQuery(hql);
 
@@ -41,6 +42,25 @@ public class EstudoRepositoryImpl extends AbstractRepository<Estudo, Long> imple
 		query.setParameter("codigoProduto", codigoProduto);
 		
 		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		query.setMaxResults(1);
+		
+		return (Estudo) query.uniqueResult();
+	}
+	
+	@Override
+	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
+		
+		String hql = " from Estudo estudo"
+				   + " where estudo.lancamento.dataLancamentoDistribuidor = :dataReferencia"
+				   + " and estudo.lancamento.produtoEdicao.id = :idProdutoEdicao"
+				   + " order by estudo.lancamento.dataLancamentoDistribuidor";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("dataReferencia", dataReferencia);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		query.setMaxResults(1);
 		
