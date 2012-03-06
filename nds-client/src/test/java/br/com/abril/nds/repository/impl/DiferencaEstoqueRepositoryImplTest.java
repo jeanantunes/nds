@@ -36,14 +36,13 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
-	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	private DiferencaEstoqueRepositoryImpl diferencaEstoqueRepository;
 	
 	private Date dataMovimento;
 	
@@ -155,7 +154,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -209,7 +207,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterDiferencas() {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		
@@ -233,7 +230,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterTotalDiferencas() {
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
