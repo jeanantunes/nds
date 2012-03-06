@@ -205,7 +205,7 @@ $(function() {
 								margin-right: 5px;" />
 
 						<span class="classPesquisar">
-							<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+							<a href="javascript:;" onclick="produto.pesquisarPorCodigoProduto();">&nbsp;</a>
 						</span>
 					
 					</td>
@@ -218,7 +218,7 @@ $(function() {
 
 						<input type="text" name="produto" id="produto" style="width: 220px;" 
 								maxlength="255"
-					       onkeyup="pesquisarPorNomeProduto();" />
+					       onkeyup="produto.pesquisarPorNomeProduto();" />
 
 						
 					
@@ -231,7 +231,7 @@ $(function() {
 					<td width="186">
 					
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-							onblur="validarNumEdicao();"/>
+							onblur="produto.validarNumEdicao();"/>
 								
 					</td>
 					

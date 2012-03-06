@@ -27,13 +27,13 @@
 		$(function() {
 			$("#dataLancamento").datepicker({
 				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			$("#novaData").datepicker({
 				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});

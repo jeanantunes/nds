@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
@@ -51,7 +52,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 	private String getConsultaNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) { 
 
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select notaFiscal from NotaFiscalFornecedor notaFiscal ")
 		   .append(" join notaFiscal.fornecedor ")
 		   .append(" join notaFiscal.tipoNotaFiscal ")
@@ -74,33 +75,47 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		
 		PaginacaoVO paginacao = filtroConsultaNotaFiscal.getPaginacao();
 
-		if (filtroConsultaNotaFiscal.getColunaOrdenacao() != null) {
-				
+		if (filtroConsultaNotaFiscal.getListaColunaOrdenacao() != null || 
+				!filtroConsultaNotaFiscal.getListaColunaOrdenacao().isEmpty()) {
+
 			hql.append(" order by ");
 			
-			switch (filtroConsultaNotaFiscal.getColunaOrdenacao()) {
-	
-				case DATA_EMISSAO:
-					hql.append(" notaFiscal.dataEmissao ");
-					break;
-				case DATA_EXPEDICAO:
-					hql.append(" notaFiscal.dataExpedicao ");
-					break;
-				case FORNECEDOR:
-					hql.append(" notaFiscal.fornecedor.juridica.razaoSocial ");
-					break;
-				case NOTA_RECEBIDA:
-					hql.append(" notaFiscal.statusNotaFiscal ");
-					break;
-				case NUMERO_NOTA:
-					hql.append(" notaFiscal.numero ");
-					break;
-				case TIPO_NOTA:
-					hql.append(" notaFiscal.tipoNotaFiscal.descricao ");
-					break;
-				default:
-					break;
+			String orderByColumn = "";
+			
+			for (ColunaOrdenacao colunaOrdenacao : filtroConsultaNotaFiscal.getListaColunaOrdenacao()) {
+
+				switch (colunaOrdenacao) {
+				
+					case DATA_EMISSAO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.dataEmissao ";
+						break;
+					case DATA_EXPEDICAO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.dataExpedicao ";
+						break;
+					case FORNECEDOR:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.fornecedor.juridica.razaoSocial ";
+						break;
+					case NOTA_RECEBIDA:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.statusNotaFiscal ";
+						break;
+					case NUMERO_NOTA:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.numero ";
+						break;
+					case TIPO_NOTA:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.tipoNotaFiscal.descricao ";
+						break;
+					default:
+						break;
+				}
 			}
+			
+			hql.append(orderByColumn);
 			
 			if (paginacao.getOrdenacao() != null) {
 				

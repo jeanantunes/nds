@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.List;
 
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -35,7 +36,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 
 	private PaginacaoVO paginacao;
 
-	private ColunaOrdenacao colunaOrdenacao;
+	private List<ColunaOrdenacao> listaColunaOrdenacao;
 
 	public enum ColunaOrdenacao {
 
@@ -115,20 +116,6 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	}
 
 	/**
-	 * @return the colunaOrdenacao
-	 */
-	public ColunaOrdenacao getColunaOrdenacao() {
-		return colunaOrdenacao;
-	}
-
-	/**
-	 * @param colunaOrdenacao the colunaOrdenacao to set
-	 */
-	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
-		this.colunaOrdenacao = colunaOrdenacao;
-	}
-
-	/**
 	 * @return the isNotaRecebida
 	 */
 	public Boolean getIsNotaRecebida() {
@@ -150,7 +137,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
+				+ ((listaColunaOrdenacao == null) ? 0 : listaColunaOrdenacao.hashCode());
 		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
 		result = prime
@@ -176,7 +163,10 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroConsultaNotaFiscalDTO other = (FiltroConsultaNotaFiscalDTO) obj;
-		if (colunaOrdenacao != other.colunaOrdenacao)
+		if (listaColunaOrdenacao == null) {
+			if (other.listaColunaOrdenacao != null)
+				return false;
+		} else if (!listaColunaOrdenacao.equals(other.listaColunaOrdenacao))
 			return false;
 		if (idFornecedor == null) {
 			if (other.idFornecedor != null)
@@ -237,5 +227,18 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	public void setChave(String chave) {
 		this.chave = chave;
 	}
-	
+
+	/**
+	 * @return the listaColunaOrdenacao
+	 */
+	public List<ColunaOrdenacao> getListaColunaOrdenacao() {
+		return listaColunaOrdenacao;
+	}
+
+	/**
+	 * @param listaColunaOrdenacao the listaColunaOrdenacao to set
+	 */
+	public void setListaColunaOrdenacao(List<ColunaOrdenacao> listaColunaOrdenacao) {
+		this.listaColunaOrdenacao = listaColunaOrdenacao;
+	}
 }
