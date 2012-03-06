@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -74,12 +75,15 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {
+		Fornecedor dinap = Fixture.fornecedorDinap();
+		getSession().save(dinap);
 		
 		TipoProduto tipoProduto = Fixture.tipoRevista();
 		
 		getSession().save(tipoProduto);
 		
 		Produto produto = Fixture.produtoVeja(tipoProduto);
+		produto.addFornecedor(dinap);
 		
 		getSession().save(produto);
 		
@@ -114,6 +118,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Estudo estudo = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);
 		
 		getSession().save(estudo);
+		
 		
 		return estudo;
 	}
