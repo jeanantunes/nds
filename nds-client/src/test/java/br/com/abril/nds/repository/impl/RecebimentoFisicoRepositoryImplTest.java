@@ -20,7 +20,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void obterListaItemRecebimentoFisico() {
 		List<RecebimentoFisicoDTO> listaItemRecebimento = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(1L);
 	}
