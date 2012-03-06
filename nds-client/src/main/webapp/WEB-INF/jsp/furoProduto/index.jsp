@@ -145,7 +145,7 @@
 							</td>
 							<td width="150" align="right">Data Lançamento:</td>
 							<td width="146">
-								<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;" maxlength="10"/>
+								<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;"/>
 							</td>
 							<td width="258">
 								<span style="cursor: pointer;" class="bt_pesquisar" onclick="pesquisar();">

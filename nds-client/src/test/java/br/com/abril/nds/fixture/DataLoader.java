@@ -159,63 +159,54 @@ public class DataLoader {
 		
 
 		
-		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
+		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		MovimentoEstoque movimentoEstoqueDiferenca = Fixture.movimentoEstoque(null, produtoEdicaoVeja1,
-
-																			  tipoMovimentoRecFisico, usuarioJoao,
-																			  estoqueProdutoVeja1, new Date(),
-																			  new BigDecimal(1), StatusAprovacao.APROVADO,
-																			  "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca);
 		
-		MovimentoEstoque movimentoEstoqueDiferenca2 = Fixture.movimentoEstoque(null, produtoEdicaoVeja2,
-																			   tipoMovimentoRecFisico, usuarioJoao,
-																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(2), StatusAprovacao.APROVADO,
-																			   "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca2 =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja2, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(2),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca2);
 		
-		MovimentoEstoque movimentoEstoqueDiferenca3 = Fixture.movimentoEstoque(null, produtoEdicaoVeja3,
-																			   tipoMovimentoRecFisico, usuarioJoao,
-																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(3), StatusAprovacao.APROVADO,
-																			   "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca3 =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja3, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(3),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca3);
 		
-		MovimentoEstoque movimentoEstoqueDiferenca4 = Fixture.movimentoEstoque(null, produtoEdicaoVeja4,
-																			   tipoMovimentoRecFisico, usuarioJoao,
-																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(4), StatusAprovacao.APROVADO,
-																			   "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca4 =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja4, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(4),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca4);
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		// Inicio dos inserts na tabela DIFERENCA
+		// Início dos inserts na tabela DIFERENCA
 		
-		Diferenca diferenca = Fixture.diferenca(new BigDecimal(1), usuarioJoao,
-												produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-						  						StatusConfirmacao.CONFIRMADO, null,
-						  						movimentoEstoqueDiferenca);
+		Diferenca diferenca =
+			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
 		session.save(diferenca);
 		
-		Diferenca diferenca2 = Fixture.diferenca(new BigDecimal(2), usuarioJoao,
-												produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-												StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,
-												movimentoEstoqueDiferenca2);
+		Diferenca diferenca2 =
+			Fixture.diferenca(new BigDecimal(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2);
 		session.save(diferenca2);
 		
-		Diferenca diferenca3 = Fixture.diferenca(new BigDecimal(3), usuarioJoao,
-												 produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-												 StatusConfirmacao.CONFIRMADO, null,
-												 movimentoEstoqueDiferenca3);
+		Diferenca diferenca3 =
+			Fixture.diferenca(new BigDecimal(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3);
 		session.save(diferenca3);
 		
-		Diferenca diferenca4 = Fixture.diferenca(new BigDecimal(4), usuarioJoao,
-												 produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-												 StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,
-												 movimentoEstoqueDiferenca4);
+		Diferenca diferenca4 =
+			Fixture.diferenca(new BigDecimal(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4);
 		session.save(diferenca4);
 		
 		// Fim dos inserts na tabela DIFERENCA
@@ -290,7 +281,7 @@ public class DataLoader {
 
 	private static void criarEstudos(Session session) {
 		estudoVeja1 = Fixture
-				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+				.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
 		session.save(estudoVeja1);
 	}
 
@@ -696,7 +687,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "Aprovado.");
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "Aprovado manualmente.");
 			
 			session.save(movimentoEstoqueDiferenca);
 			

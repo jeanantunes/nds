@@ -191,19 +191,19 @@
 					
 					<span class="classPesquisar" title="Pesquisar Produto">
 						<a href="javascript:;"
-						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', pesquisarFornecedores);">&nbsp;</a>
+						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, pesquisarFornecedores);">&nbsp;</a>
 					</span>
 				</td>
 				<td width="60">Produto:</td>
 				<td width="220">
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
-					       onkeyup="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', pesquisarFornecedores);" />
+					       onkeyup="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, pesquisarFornecedores);" />
 				</td>
 				
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
-						   onchange="produto.validarNumEdicao('#codigo', '#edicao');"/>
+						   onchange="produto.validarNumEdicao('#codigo', '#edicao', false);"/>
 				</td>
 				
 				<td width="73">Fornecedor:</td>

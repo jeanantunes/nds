@@ -178,6 +178,8 @@ public class DiferencaEstoqueController {
 		//TODO: tratar datas
 		//TODO: tratar parâmetros
 		
+		this.validarEntradaDadosPesquisa(dataInicial, dataFinal);
+		
 		FiltroConsultaDiferencaEstoqueDTO filtro =
 			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
 										dataInicial, dataFinal, tipoDiferenca,
@@ -642,6 +644,28 @@ public class DiferencaEstoqueController {
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
 		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para pesquisa de diferença de estoque.
+	 * 
+	 * @param dataMovimentoFormatada - data de movimento formatado
+	 */
+	private void validarEntradaDadosPesquisa(String dataInicial, String dataFinal) {
+		
+		/*if (dataInicial == null 
+				|| dataInicial.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+		}*/
+		
+		//TODO:
 	}
 	
 	/*

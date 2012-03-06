@@ -24,5 +24,7 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	 * @return {@link Estudo}
 	 */
 	Estudo obterEstudoDoLancamentoMaisProximo(Date dataReferencia, String codigoProduto, Long numeroEdicao);
+	
+	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 
 }
