@@ -26,6 +26,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 
 /**
@@ -98,6 +99,10 @@ public class Lancamento implements Serializable {
 	@NotFound(action = NotFoundAction.IGNORE)
 	@OneToMany(mappedBy = "lancamento")
 	private Set<Estudo> estudos = new HashSet<Estudo>();
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "EXPEDICAO_ID")
+	private Expedicao expedicao;
 
 	public Long getId() {
 		return id;
@@ -225,6 +230,14 @@ public class Lancamento implements Serializable {
 			total = total.add(recebimento.getQtdeFisico());
 		}
 		return total;
+	}
+
+	public Expedicao getExpedicao() {
+		return expedicao;
+	}
+
+	public void setExpedicao(Expedicao expedicao) {
+		this.expedicao = expedicao;
 	}
 
 }
