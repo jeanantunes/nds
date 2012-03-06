@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 
 @Repository
@@ -45,16 +46,18 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepository<Dis
 		StringBuilder sql = new StringBuilder();
 		sql.append("select count(d.codigoDiaSemana) from DistribuicaoFornecedor d, Produto p, ProdutoEdicao e ")
 		   .append("  join p.fornecedores fornecedor  ")
-		   .append("  where d.fornecedor.id   = fornecedor.id ")
-		   .append("  and   e.produto.id      = p.id ")
-		   .append("  and   e.id              = :idProdutoEdicao ")
-		   .append("  and   p.codigo          = :codigoProduto ")
-		   .append("  and   d.codigoDiaSemana = :diaSemana ");
+		   .append("  where d.fornecedor.id        = fornecedor.id ")
+		   .append("  and   e.produto.id           = p.id ")
+		   .append("  and   e.id                   = :idProdutoEdicao ")
+		   .append("  and   p.codigo               = :codigoProduto ")
+		   .append("  and   d.codigoDiaSemana      = :diaSemana ")
+		   .append("  and   d.operacaoDistribuidor = :opeDis");
 		
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setParameter("diaSemana", diaSemana.getCodigoDiaSemana());
+		query.setParameter("opeDis", OperacaoDistribuidor.DISTRIBUICAO);
 		query.setMaxResults(1);
 		
 		try {
