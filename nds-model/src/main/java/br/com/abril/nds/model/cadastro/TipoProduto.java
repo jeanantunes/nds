@@ -28,7 +28,7 @@ public class TipoProduto {
 	@Column(name  = "NCM", nullable = false)
 	private String ncm;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "GRUPO_PRODUTO", nullable = false, unique = true)
+	@Column(name = "GRUPO_PRODUTO", nullable = false)
 	private GrupoProduto grupoProduto;
 	
 	public Long getId() {

@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -519,7 +520,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		List<Date> datas = Arrays.asList(data22022012, data23022012);
 		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
 				.buscarResumosPeriodo(datas,
-						Collections.singletonList(fornecedorDinap.getId()), tipoCromo);
+						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 		Assert.assertEquals(2, resumos.size());
 		
 		ResumoPeriodoLancamentoDTO resumo2202 = resumos.get(0);

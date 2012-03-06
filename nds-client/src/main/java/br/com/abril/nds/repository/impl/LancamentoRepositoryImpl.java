@@ -15,7 +15,7 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
-import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -148,11 +148,11 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
-			List<Date> periodoDistribuicao, List<Long> fornecedores, TipoProduto tipoCromo) {
+			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo) {
 		StringBuilder hql = new StringBuilder(
 				"select lancamento.dataLancamentoPrevista as data, ");
 		hql.append("count(lancamento.produtoEdicao) as qtdeTitulos, ");
-		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto <> :tipoCromo then lancamento.reparte ");
+		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo then lancamento.reparte ");
 		hql.append("else (lancamento.reparte / lancamento.produtoEdicao.pacotePadrao) end ) as qtdeExemplares, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.peso)) as pesoTotal, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
@@ -163,7 +163,7 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameterList("periodo", periodoDistribuicao);
 		query.setParameterList("fornecedores", fornecedores);
-		query.setParameter("tipoCromo", tipoCromo);
+		query.setParameter("grupoCromo", grupoCromo);
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ResumoPeriodoLancamentoDTO.class));
 		return query.list();
