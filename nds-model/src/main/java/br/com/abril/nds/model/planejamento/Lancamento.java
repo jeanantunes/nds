@@ -22,6 +22,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 
@@ -92,6 +95,7 @@ public class Lancamento implements Serializable {
 	@Column(name = "NUMERO_REPROGRAMACOES")
 	private int numeroReprogramacoes;
 	
+	@NotFound(action = NotFoundAction.IGNORE)
 	@OneToMany(mappedBy = "lancamento")
 	private Set<Estudo> estudos = new HashSet<Estudo>();
 
