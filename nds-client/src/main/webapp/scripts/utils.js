@@ -50,6 +50,31 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	$('#effect').show(1000, esconde("effect"));
 }
 
+function exibirMensagemDialog(tipoMensagem, mensagens) {
+
+	var campoTexto = $("#idTextoMensagemDialog");
+
+	campoTexto.html('');
+
+	$.each(mensagens, function(index, value) {
+		campoTexto.append(value + '</br>');
+	});
+
+	$("#effectDialog").removeClass("ui-state-error");
+	$("#effectDialog").removeClass("ui-state-highlight");
+	$("#effectDialog").removeClass("ui-state-default");
+	
+	if (tipoMensagem == "SUCCESS") {
+		$("#effectDialog").addClass("ui-state-default");
+	} else if (tipoMensagem == "WARNING"){
+		$("#effectDialog").addClass("ui-state-highlight");
+	} else if (tipoMensagem == "ERROR"){
+		$("#effectDialog").addClass("ui-state-error");
+	}
+	
+	$('#effectDialog').show(1000, esconde("effectDialog"));
+}
+
 function isNumeric(a){
 	return !isNaN(parseFloat(a))&&isFinite(a);
 }
@@ -58,4 +83,14 @@ function esconde(idDiv) {
 	setTimeout(function() {
 		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
 	}, 3000);
+}
+
+function montarComboBox(result) {
+	var options = "";
+	
+	$.each(result, function(index, row) {
+		options += "<option value='" + row.key.$ + "'>" + row.value.$ + "</option>";
+	});
+	
+	return options;
 }

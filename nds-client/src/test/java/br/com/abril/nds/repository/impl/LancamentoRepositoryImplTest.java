@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
@@ -31,6 +33,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -42,9 +45,11 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Lancamento lancamentoQuatroRodas;
 	private Lancamento lancamentoInfoExame;
 	private Lancamento lancamentoCapricho;
+	private Lancamento lancamentoCromoReiLeao;
 	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
+	private TipoProduto tipoCromo;
 
 	@Before
 	public void setUp() {
@@ -53,20 +58,25 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(fornecedorFC, fornecedorDinap);
 
 		TipoProduto tipoRevista = Fixture.tipoRevista();
-		save(tipoRevista);
+		tipoCromo = Fixture.tipoCromo();
+		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);
-		veja.addFornecedor(fornecedorFC);
+		veja.addFornecedor(fornecedorDinap);
 
 		Produto quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
-		quatroRodas.addFornecedor(fornecedorFC);
+		quatroRodas.addFornecedor(fornecedorDinap);
 
 		Produto infoExame = Fixture.produtoInfoExame(tipoRevista);
-		infoExame.addFornecedor(fornecedorFC);
+		infoExame.addFornecedor(fornecedorDinap);
 
 		Produto capricho = Fixture.produtoCapricho(tipoRevista);
-		capricho.addFornecedor(fornecedorFC);
+		capricho.addFornecedor(fornecedorDinap);
 		save(veja, quatroRodas, infoExame, capricho);
+		
+		Produto cromoReiLeao = Fixture.produtoCromoReiLeao(tipoCromo);
+		cromoReiLeao.addFornecedor(fornecedorDinap);
+		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
@@ -79,8 +89,12 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), infoExame);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, capricho);
-		save(veja1, quatroRoda2, infoExame3, capricho1);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, capricho);
+		
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), cromoReiLeao);
+		
+		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
@@ -93,7 +107,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscalFornecedor notaFiscal1Veja = Fixture
 				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
 		ItemNotaFiscal itemNotaFiscal1Veja = Fixture.itemNotaFiscal(veja1, usuario,
@@ -114,7 +128,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscalFornecedor notaFiscal2Veja = Fixture
 				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
 		ItemNotaFiscal itemNotaFiscal2Veja = Fixture.itemNotaFiscal(veja1, usuario,
@@ -134,7 +148,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscalFornecedor notaFiscal4Rodas= Fixture
 				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
-						usuario);
+						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
 		ItemNotaFiscal itemNotaFiscal4Rodas = Fixture.itemNotaFiscal(quatroRoda2, usuario,
@@ -177,15 +191,25 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				StatusLancamento.RECEBIDO, null);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho1,
-				Fixture.criarData(27, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(12, Calendar.MARCH, 2012),
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
 				StatusLancamento.RECEBIDO, null);
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100), Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
-		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame, lancamentoCapricho, estudo);
+		lancamentoCromoReiLeao = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoReiLeao1,
+				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(23, Calendar.APRIL, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(10000),
+				StatusLancamento.RECEBIDO, null);
+		
+		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
+		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
+				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
 		
 		getSession().flush();
 	}
@@ -195,7 +219,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.CODIGO_PRODUTO.getNomeColuna());
 		
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -213,7 +237,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.NOME_PRODUTO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -231,7 +255,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.NUMERO_EDICAO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -249,7 +273,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.PRECO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -267,7 +291,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.PACOTE_PADRAO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -285,7 +309,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.REPARTE.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -303,7 +327,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.FISICO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -321,7 +345,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.ESTUDO_GERADO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -339,7 +363,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.LANCAMENTO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -357,7 +381,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.RECOLHIMENTO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -375,7 +399,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.FORNECEDOR.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -393,7 +417,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.DATA_LANC_DISTRIB.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -411,7 +435,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.DATA_LANC_PREVISTO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -429,7 +453,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.TOTAL.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
@@ -445,9 +469,9 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterLancamentosBalanceamentoMatrizSemLancamentosData() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
-		Date data = Fixture.criarData(23, Calendar.FEBRUARY, 2012);
+		Date data = Fixture.criarData(24, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorFC.getId()), paginacao,
+				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				"nomeProduto");
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterBalanceamentoMatrizLancamentos(filtro);
@@ -460,7 +484,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorDinap.getId()), paginacao,
+				Collections.singletonList(fornecedorFC.getId()), paginacao,
 				"nomeProduto");
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterBalanceamentoMatrizLancamentos(filtro);
@@ -472,7 +496,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void totalLancamentosBalanceamentoMatriz() {
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		Long total = lancamentoRepository.totalBalanceamentoMatrizLancamentos(
-				data, Collections.singletonList(fornecedorFC.getId()));
+				data, Collections.singletonList(fornecedorDinap.getId()));
 		Assert.assertNotNull(total);
 		Assert.assertEquals(Long.valueOf(3), total);
 	}
@@ -481,9 +505,41 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void totalLancamentosBalanceamentoMatrizNenhum() {
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
 		Long total = lancamentoRepository.totalBalanceamentoMatrizLancamentos(
-				data, Collections.singletonList(fornecedorDinap.getId()));
+				data, Collections.singletonList(fornecedorFC.getId()));
 		Assert.assertNotNull(total);
 		Assert.assertEquals(Long.valueOf(0), total);
+	}
+	
+	@Test
+	public void buscarResumosPeriodo() {
+		Date data22022012 = Fixture.criarData(22,
+				Calendar.FEBRUARY, 2012);
+		Date data23022012 = Fixture.criarData(23,
+				Calendar.FEBRUARY, 2012);
+		List<Date> datas = Arrays.asList(data22022012, data23022012);
+		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
+				.buscarResumosPeriodo(datas,
+						Collections.singletonList(fornecedorDinap.getId()), tipoCromo);
+		Assert.assertEquals(2, resumos.size());
+		
+		ResumoPeriodoLancamentoDTO resumo2202 = resumos.get(0);
+		Assert.assertNotNull(resumo2202);
+		Assert.assertEquals(data22022012, resumo2202.getData());
+		Assert.assertEquals(Long.valueOf(3), resumo2202.getQtdeTitulos());
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(165.00)),
+				CurrencyUtil.formatarValor(resumo2202.getQtdeExemplares()));
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(16.5)),
+				CurrencyUtil.formatarValor(resumo2202.getPesoTotal()));
+		
+		ResumoPeriodoLancamentoDTO resumo2302 = resumos.get(1);
+		Assert.assertNotNull(resumo2302);
+		Assert.assertEquals(data23022012, resumo2302.getData());
+		Assert.assertEquals(Long.valueOf(2), resumo2302.getQtdeTitulos());
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(110.00)),
+				CurrencyUtil.formatarValor(resumo2302.getQtdeExemplares()));
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(101.20)),
+				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
+		
 	}
 
 }
