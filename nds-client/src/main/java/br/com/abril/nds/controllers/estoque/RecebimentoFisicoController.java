@@ -265,7 +265,7 @@ public class RecebimentoFisicoController {
 	@Path("/recebimentoFisico/inserirItemNota")
 	public void inserirItemNota(ItemNotaRecebimentoFisicoDTO itemNotaRecebimentoFisicoDTO) {
 		
-		recebimentoFisicoService.inserirItemNotaRecebimentoFisico(itemNotaRecebimentoFisicoDTO);
+		//recebimentoFisicoService.inserirItemNotaRecebimentoFisico(itemNotaRecebimentoFisicoDTO);
 				
 		result.redirectTo("/recebimentoFisico");
 	}

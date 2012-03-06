@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -100,19 +102,20 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 	public void inserirItemNotaComDTO() {
 	
 		
-		//teste para analisar um item de Nota sem ItemRecebimento e sem RecebimentoFisico
+		/*//teste para analisar um item de Nota sem ItemRecebimento e sem RecebimentoFisico
 		ItemNotaRecebimentoFisicoDTO dto = new ItemNotaRecebimentoFisicoDTO(
 				Fixture.criarData(12, 12, 1983), 
 				Fixture.criarData(12, 03, 1983),  
 				new BigDecimal(0.1),
 				TipoLancamento.LANCAMENTO,
 				1L,null,null,1L,1L);
+		*/
+		
+		NotaFiscal notaFiscal= new NotaFiscalFornecedor();
+		List<ItemNotaRecebimentoFisicoDTO> listaItensNota = new ArrayList<ItemNotaRecebimentoFisicoDTO>();
 		
 		
-		
-		
-		
-		recebimentoFisicoService.inserirItemNotaRecebimentoFisico(dto);
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(notaFiscal, listaItensNota);
 		System.out.println("");
 		
 		

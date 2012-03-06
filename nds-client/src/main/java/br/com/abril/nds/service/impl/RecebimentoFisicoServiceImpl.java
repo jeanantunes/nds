@@ -15,13 +15,16 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ItemNotaFiscalRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 
 @Service
@@ -38,7 +41,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
-
+	
+	@Autowired
+	private NotaFiscalRepository notaFiscalRepository;
 	
 	@Transactional
 	public void adicionarRecebimentoFisico(RecebimentoFisico recebimentoFisico){
@@ -91,11 +96,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	@Transactional
-	public void inserirItemNotaRecebimentoFisico(ItemNotaRecebimentoFisicoDTO itemNotaDTO){
+	private void inserirItemNotaRecebimentoFisico(ItemNotaRecebimentoFisicoDTO itemNotaDTO){
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		NotaFiscalFornecedor notaFiscal = new NotaFiscalFornecedor();		
-		ItemNotaFiscal itemNota = new ItemNotaFiscal();
+		ItemNotaFiscal itemNota = new ItemNotaFiscal();		
 					
 		if(itemNotaDTO != null){			
 			
@@ -109,7 +114,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			itemNota.setQtde(itemNotaDTO.getRepartePrevisto());
 			itemNota.setProdutoEdicao(produtoEdicao);
 			itemNota.setNotaFiscal(notaFiscal);
-			itemNotaFiscalRepository.adicionar(itemNota); 
+			ItemNotaFiscal itemNotaSalvo = itemNotaFiscalRepository.merge(itemNota);
+			
+			inserirItemRecebimentoFisico(itemNotaSalvo);
+			
 			
 		}else{
 			throw new IllegalArgumentException("O Item da Nota deve ser especificado.");
@@ -117,6 +125,13 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	
+	private void inserirItemRecebimentoFisico(ItemNotaFiscal itemNotaSalvo) {
+		
+		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
+		itemRecebimento.setItemNotaFiscal(itemNotaSalvo);
+				
+	}
+
 	@Transactional
 	public void alterarItemNotaRecebimentoFisico(RecebimentoFisicoDTO recebimentoFisicoDTO){
 		if(recebimentoFisicoDTO != null){	
@@ -161,10 +176,57 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		lancamentoRepository.adicionar(lancamento);
 		
 	}
+	
 	@Transactional
 	public void excluirItemNotaRecebimentoFisico(ItemNotaFiscal itemNota){
 		itemNotaFiscalRepository.remover(itemNota);
 	}
 	
+	public void inserirDadosRecebimentoFisico(NotaFiscal notaFiscal, List<ItemNotaRecebimentoFisicoDTO> listaItensNota){
+		
+		
+		
+		
+		//nota Fiscal já existe
+		if(notaFiscal.getId()!= null){
+			
+			for(ItemNotaRecebimentoFisicoDTO itemNotaDTO : listaItensNota){
+				inserirItemNotaRecebimentoFisico(itemNotaDTO);
+				
+				if(itemNotaDTO.getIdRecebimentoFisico() != null){
+					
+										
+					//TODO inserir o item Recebimento
+					
+					
+				}else{
+					//TODO inserir o Recebimento fisico
+					//TODO inserir o item Recebimento
+				}
+				
+			}
+		//nota fiscal nao existe	
+		}else{
+			NotaFiscal notaFsicalDB =notaFiscalRepository.merge(notaFiscal);
+			for(ItemNotaRecebimentoFisicoDTO itemNotaDTO : listaItensNota){
+				itemNotaDTO.setIdNotaFiscal(notaFsicalDB.getId());
+				inserirItemNotaRecebimentoFisico(itemNotaDTO);	
+				
+				if(itemNotaDTO.getIdRecebimentoFisico() != null){
+					
+					//TODO inserir o item Recebimento
+					
+					
+				}else{
+					//TODO inserir o Recebimento fisico
+					//TODO inserir o item Recebimento
+				}
+			}
+			
+			
+		}
+		
+		
+	}	
 	
 }
