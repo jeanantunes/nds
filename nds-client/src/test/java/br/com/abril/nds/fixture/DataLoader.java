@@ -287,7 +287,7 @@ public class DataLoader {
 
 	private static void criarEstudos(Session session) {
 		estudoVeja1 = Fixture
-				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+				.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
 		session.save(estudoVeja1);
 	}
 

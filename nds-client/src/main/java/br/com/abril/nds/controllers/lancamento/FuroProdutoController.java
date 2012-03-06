@@ -106,7 +106,7 @@ public class FuroProdutoController {
 		
 		if (dataLancamento == null || dataLancamento.isEmpty()){
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
-		} else if (!DateUtil.isValidDate(dataLancamento, null)){
+		} else if (!DateUtil.isValidDatePTBR(dataLancamento)){
 			listaMensagemValidacao.add("Valor inválido: Data Lançamento.");
 		}
 		
@@ -194,7 +194,7 @@ public class FuroProdutoController {
 		
 		if (novaData == null || novaData.isEmpty()){
 			listaMensagemValidacao.add("Nova Data é obrigatório.");
-		} else if (!DateUtil.isValidDate(novaData, null)){
+		} else if (!DateUtil.isValidDatePTBR(novaData)){
 			listaMensagemValidacao.add("Valor inválido: Nova Data.");
 		}
 		

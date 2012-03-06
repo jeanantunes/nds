@@ -12,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -27,6 +30,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
+	
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Override
 	@Transactional
@@ -56,6 +62,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 						codigo, nomeProduto, edicao, dataLancamento);
 		
 		if (furoProdutoDTO != null){
+			//buscar path de imagens
+			ParametroSistema parametroSistema = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_CAPA);
+			
+			if (parametroSistema != null){
+				furoProdutoDTO.setPathImagem(parametroSistema.getValor() + furoProdutoDTO.getPathImagem());
+			}
+			
 			//buscar proxima data para lançamento
 			
 			Calendar calendar = Calendar.getInstance();
