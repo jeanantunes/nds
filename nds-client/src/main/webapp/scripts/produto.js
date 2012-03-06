@@ -1,71 +1,64 @@
 var produto = {
 	
-	pesquisarPorCodigoProduto : function() {
-		var codigoProduto = $("#codigo").val();
+	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, pesquisarPorCodigoCallBack) {
+		var codigoProduto = $(idCodigo).val();
 		
-		$("#produto").val("");
-		$("#edicao").val("");
-		$("#edicao").attr("disabled", "disabled");
-		
-		if(typeof limparCamposPrePesquisaProduto == "function") {
-			limparCamposPrePesquisaProduto();
-		}
+		$(idProduto).val("");
+		$(idEdicao).val("");
+		$(idEdicao).attr("disabled", "disabled");
 		
 		if (codigoProduto && codigoProduto.length > 0) {
-			$("#produto").val("");
-			$("#edicao").val("");
+			$(idProduto).val("");
+			$(idEdicao).val("");
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   "codigoProduto=" + codigoProduto, this.exibirNomeProduto, null);
+					   "codigoProduto=" + codigoProduto,
+					   function(result) { produto.exibirNomeProduto(result, idProduto, idEdicao, pesquisarPorCodigoCallBack); }, null);
 		}
 	},
 
-	exibirNomeProduto : function(result) {
-		$("#edicao").removeAttr("disabled");
-		$("#produto").val(result.nome);
-		$("#edicao").focus();
+	exibirNomeProduto : function(result, idProduto, idEdicao, pesquisarPorCodigoCallBack) {
+		$(idEdicao).removeAttr("disabled");
+		$(idProduto).val(result.nome);
+		$(idEdicao).focus();
 		
-		produto.chamarFuncaoCallBackPesquisaProduto();
-	},
-
-	pesquisarPorNomeProduto : function() {
-		var produto = $("#produto").val();
-		
-		if(typeof limparCamposPrePesquisaProduto == "function") {
-			limparCamposPrePesquisaProduto();
-		}
-		
-		if (produto && produto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto",
-					   "nomeProduto=" + produto, this.exibirAutoComplete);
+		if (pesquisarPorCodigoCallBack) {
+			pesquisarPorCodigoCallBack();
 		}
 	},
 
-	exibirAutoComplete : function(result) {
-		$("#produto").autocomplete({
+	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack) {
+		var nomeProduto = $(idProduto).val();
+		
+		if (nomeProduto && nomeProduto.length > 0) {
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
+					   function(result) { produto.exibirAutoComplete(result, idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack); });
+		}
+	},
+
+	exibirAutoComplete : function(result, idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack) {
+		$(idProduto).autocomplete({
 			source: result,
 			select: function(event, ui) {
-				produto.completarPesquisa(ui.item.chave);
+				produto.completarPesquisa(ui.item.chave, idCodigo, idEdicao, pesquisarPorNomeCallBack);
 			}
 		});
 	},
 
-	completarPesquisa : function(chave){
-		$("#edicao").removeAttr("disabled");
-		$("#edicao").val("");
-		$("#codigo").val(chave.codigo);
-		$("#edicao").focus();
+	completarPesquisa : function(chave, idCodigo, idEdicao, pesquisarPorNomeCallBack) {
+		$(idEdicao).removeAttr("disabled");
+		$(idEdicao).val("");
+		$(idCodigo).val(chave.codigo);
+		$(idEdicao).focus();
 		
-		produto.chamarFuncaoCallBackPesquisaProduto();
+		if (pesquisarPorNomeCallBack) {
+			pesquisarPorNomeCallBack();
+		}
 	},
 
-	validarNumEdicao : function() {
-		var codigoProduto = $("#codigo").val();
-		var numeroEdicao = $("#edicao").val();
-		
-		if(typeof limparCamposPrePesquisaEdicao == "function") {
-			limparCamposPrePesquisaEdicao();
-		}
+	validarNumEdicao : function(idCodigo, idEdicao, pesquisarPorCodigoCallBack) {
+		var codigoProduto = $(idCodigo).val();
+		var numeroEdicao = $(idEdicao).val();
 		
 		if (codigoProduto && codigoProduto.length > 0
 				&& numeroEdicao && numeroEdicao.length > 0) {
@@ -74,25 +67,14 @@ var produto = {
 			   		   "&numeroEdicao=" + numeroEdicao;
 			
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
-					   data, produto.chamarFuncaoCallBackValidacaoEdicao, this.tratarErroValidacao);
+					   data, pesquisarPorCodigoCallBack,
+					   function() { produto.tratarErroValidacao(idEdicao); });
 		}
 	},
 
-	tratarErroValidacao : function() {
-		$("#edicao").val("");
-		$("#edicao").focus();
-	},
-
-	chamarFuncaoCallBackPesquisaProduto : function() {
-		if (typeof pesquisarProdutoCallBack == 'function') {
-			pesquisarProdutoCallBack();
-		}
-	},
-
-	chamarFuncaoCallBackValidacaoEdicao : function() {
-		if (typeof validarEdicaoCallBack == 'function') {
-			validarEdicaoCallBack();
-		}
+	tratarErroValidacao : function(idEdicao) {
+		$(idEdicao).val("");
+		$(idEdicao).focus();
 	},
 	
 };
