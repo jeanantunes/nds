@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
@@ -496,19 +497,24 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void totalLancamentosBalanceamentoMatriz() {
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
-		Long total = lancamentoRepository.totalBalanceamentoMatrizLancamentos(
-				data, Collections.singletonList(fornecedorDinap.getId()));
-		Assert.assertNotNull(total);
-		Assert.assertEquals(Long.valueOf(3), total);
+		SumarioLancamentosDTO sumario = lancamentoRepository
+				.sumarioBalanceamentoMatrizLancamentos(data,
+						Collections.singletonList(fornecedorDinap.getId()));
+		Assert.assertNotNull(sumario);
+		Assert.assertEquals(Long.valueOf(3), sumario.getTotalLancamentos());
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(2230)),
+				CurrencyUtil.formatarValor(sumario.getValorTotalLancamentos()));
 	}
 	
 	@Test
 	public void totalLancamentosBalanceamentoMatrizNenhum() {
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
-		Long total = lancamentoRepository.totalBalanceamentoMatrizLancamentos(
-				data, Collections.singletonList(fornecedorFC.getId()));
-		Assert.assertNotNull(total);
-		Assert.assertEquals(Long.valueOf(0), total);
+		SumarioLancamentosDTO sumario = lancamentoRepository
+				.sumarioBalanceamentoMatrizLancamentos(data,
+						Collections.singletonList(fornecedorFC.getId()));
+		Assert.assertNotNull(sumario);
+		Assert.assertEquals(Long.valueOf(0), sumario.getTotalLancamentos());
+		Assert.assertNull(sumario.getValorTotalLancamentos());
 	}
 	
 	@Test
