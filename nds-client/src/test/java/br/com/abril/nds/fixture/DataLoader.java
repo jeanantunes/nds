@@ -116,8 +116,7 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
-			carregarDadosParaExpedicao(session);
-			//carregarDados(session);
+			carregarDados(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -661,10 +660,13 @@ public class DataLoader {
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
 				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
+		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
+				distribuidor, fornecedorDinap, DiaSemana.QUINTA_FEIRA,
+				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
 				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
-		save(session, dinapSegunda, dinapQuarta, dinapSexta);
+		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
 				distribuidor, fornecedorFc, DiaSemana.SEGUNDA_FEIRA,

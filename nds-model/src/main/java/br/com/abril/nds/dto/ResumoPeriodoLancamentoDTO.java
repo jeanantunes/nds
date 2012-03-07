@@ -18,10 +18,6 @@ public class ResumoPeriodoLancamentoDTO implements Serializable {
 		return data;
 	}
 	
-	public void setData(Date data) {
-		this.data = data;
-	}
-	
 	public Long getQtdeTitulos() {
 		return qtdeTitulos;
 	}

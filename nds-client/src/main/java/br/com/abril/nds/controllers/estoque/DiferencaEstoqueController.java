@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
@@ -341,7 +342,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -400,7 +401,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(page);
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -480,7 +481,7 @@ public class DiferencaEstoqueController {
 		//TODO: setar ordenação
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoDiferencaVO = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -732,6 +733,13 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
 		}
+	}
+	
+	private Locale getLocale() {
+		if (localization != null) {
+			return localization.getLocale();
+		}
+		return null;
 	}
 	
 }

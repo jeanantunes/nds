@@ -34,7 +34,7 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Lancamento> obterBalanceamentoMatrizLancamentos(FiltroLancamentoDTO filtro) {
-		StringBuilder hql = new StringBuilder("select lancamento  from Lancamento lancamento ");
+		StringBuilder hql = new StringBuilder("select lancamento from Lancamento lancamento ");
 		hql.append("join fetch lancamento.produtoEdicao produtoEdicao ");
 		hql.append("join fetch produtoEdicao.produto produto ");
 		hql.append("join fetch produto.fornecedores fornecedor ");
