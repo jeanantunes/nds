@@ -246,9 +246,6 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
-		if (produto.getFornecedores() != null && !produto.getFornecedores().isEmpty()) { 
-			produtoEdicao.setFornecedor(produto.getFornecedores().iterator().next());
-		}
 		return produtoEdicao;
 	}
 
