@@ -13,5 +13,7 @@ public class MovimentoServiceImplTest {
 	@Test
 	public void gerarMovimentoEstoqueDeExpedicao(){
 		
+		
+		
 	}
 }

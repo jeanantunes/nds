@@ -405,6 +405,15 @@ public class Fixture {
 		tipoMovimento.setTipoMovimento(DominioTipoMovimento.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimento tipoMovimentoEnvioJornaleiro() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio a Jornaleiro");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.ENVIO_JORNALEIRO);
+		return tipoMovimento;
+	}
 
 	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, BigDecimal qtde) {

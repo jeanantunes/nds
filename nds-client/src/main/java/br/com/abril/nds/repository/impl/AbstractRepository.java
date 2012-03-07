@@ -45,6 +45,7 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 		getSession().update(entity);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T merge(T entity) {
 		return (T) getSession().merge(entity);
 	}

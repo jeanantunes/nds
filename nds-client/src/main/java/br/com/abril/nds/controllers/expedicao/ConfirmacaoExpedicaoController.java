@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -63,13 +64,14 @@ public class ConfirmacaoExpedicaoController {
 			this.fornecedorService = fornecedorService;
 			this.lancamentoService = lancamentoService;
 			this.session = session;
-			this.inicializarTela();
+			//this.inicializarTela();
 		}
 		
 		public void inicializarTela() {
 			gerarListaFornecedores();
 			gerarDataLancamento();
 			session.setAttribute("selecionados", null);
+			result.forwardTo(ConfirmacaoExpedicaoController.class).confirmacaoExpedicao();
 		}
 				
 		
@@ -155,7 +157,8 @@ public class ConfirmacaoExpedicaoController {
 				}
 				
 			} catch(Exception e) {
-				
+				e.printStackTrace();
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"ERRO"));
 			}
 			
 			
@@ -168,7 +171,10 @@ public class ConfirmacaoExpedicaoController {
 		}
 		
 		public Usuario getUsuario() {
-			return null;
+			//TODO getUsuario
+			Usuario usuario = new Usuario();
+			usuario.setId(1L);
+			return usuario;
 		}
 		
 		/**
@@ -201,7 +207,13 @@ public class ConfirmacaoExpedicaoController {
 		@SuppressWarnings("unchecked")
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
-						String dtLancamento, Boolean estudo){
+						String dtLancamento, Boolean estudo, Boolean change){
+			
+			if(!change.equals((Boolean)session.getAttribute("change"))) {				
+				session.setAttribute("selecionados", null);
+				session.setAttribute("change", change);				
+			}
+			
 			
 			PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 			

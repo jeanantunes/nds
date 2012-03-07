@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -34,6 +36,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private MovimentoService movimentoService;
 	
+	@Autowired
+	private ExpedicaoRepository expedicaoRepository;
+	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
@@ -44,17 +49,23 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public void confirmarExpedicao(Long idLancamento, Long idUsuario) {
 		
+		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
+		
+		Expedicao expedicao = new Expedicao();
+		expedicao.setDataExpedicao(new Date());
+		expedicao.setResponsavel(usuario);
+		expedicaoRepository.adicionar(expedicao);
+		
 		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.EXPEDIDO);
+		lancamento.setExpedicao(expedicao);
 		
 		lancamentoRepository.alterar(lancamento);
 		
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setData(new Date());
 		historico.setLancamento(lancamento);
-		
-		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
 		
 		historico.setResponsavel(usuario);
 		historico.setStatus(lancamento.getStatus());

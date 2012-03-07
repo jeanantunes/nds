@@ -82,8 +82,11 @@
 		return grid;
 	}
 	
+	var change = false;
 	
 	function cliquePesquisar() {
+		
+		change= !change;
 		
 		var dataLancamento = $('#idDataLancamento').attr('value');
 		var idFornecedor = $('#idFornecedor').attr('value');
@@ -95,7 +98,8 @@
 			preProcess:processaRetornoPesquisa,
 			params:[{name:'dtLancamento',value:dataLancamento},
 			        {name:'idFornecedor',value:idFornecedor},
-			        {name:'estudo',value:estudo}]		
+			        {name:'estudo',value:estudo},
+			        {name:'change',value:change}]		
 		});
 		
 		$(".confirmaExpedicaoGrid").flexReload();

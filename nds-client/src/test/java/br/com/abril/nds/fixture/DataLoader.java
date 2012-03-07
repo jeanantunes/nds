@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -40,6 +41,7 @@ import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -116,7 +118,8 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
-			carregarDados(session);
+			//carregarDados(session);
+			carregarDadosParaExpedicao(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -710,6 +713,7 @@ public class DataLoader {
 	}
 
 	public static void carregarDadosParaExpedicao(Session session) {
+				
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		session.save(tipoRevista);
 		
@@ -775,8 +779,26 @@ public class DataLoader {
 			Estudo estudo = new Estudo();
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
-			estudo.setQtdeReparte(new BigDecimal(i));
+			estudo.setQtdeReparte(new BigDecimal(10));
 			session.save(estudo);
+			
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO);
+			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
+					estudo, cota);
+			save(session, pessoa,cota,estudoCota);		
+			
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO);
+			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
+					estudo, cota2);
+			save(session, pessoa2,cota2,estudoCota2);		
+			
+			
+			TipoMovimento tipoMovimento = Fixture.tipoMovimentoRecebimentoReparte();	
+
+			TipoMovimento tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
+			save(session,tipoMovimento,tipoMovimento2);
 		}
 	}
 }

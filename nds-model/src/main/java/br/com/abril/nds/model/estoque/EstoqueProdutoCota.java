@@ -11,9 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -21,7 +21,8 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 
 @Entity
-@Table(name = "	ESTOQUE_PRODUTO_COTA")
+@Table(name = "	ESTOQUE_PRODUTO_COTA",uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"COTA_ID", "PRODUTO_EDICAO_ID" })})
 @SequenceGenerator(name="ESTOQUE_PROD_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstoqueProdutoCota {
 	
@@ -32,7 +33,7 @@ public class EstoqueProdutoCota {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-	@OneToOne(optional = false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	@Column(name = "QTDE_RECEBIDA")

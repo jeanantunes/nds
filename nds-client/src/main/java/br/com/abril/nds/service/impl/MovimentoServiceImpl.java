@@ -135,7 +135,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 			estoqueProdutoCota = new EstoqueProdutoCota();
 			estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 			estoqueProdutoCota.setQtdeDevolvida(new BigDecimal(0));
-			estoqueProdutoCota.setQtdeRecebida(new BigDecimal(1));
+			estoqueProdutoCota.setQtdeRecebida(new BigDecimal(0));
 			estoqueProdutoCota.setCota(cota);
 			
 			estoqueProdutoCotaRepository.adicionar(estoqueProdutoCota);
