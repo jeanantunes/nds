@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 	
 	public RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal){
 		StringBuffer hql = new StringBuffer();
-		hql.append("from RecebimentoFisisco rf where rf.notaFiscal.id = :idNotaFiscal ");
+		hql.append("select rf from RecebimentoFisico rf where rf.notaFiscal.id = :idNotaFiscal ");
 		Query query  = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idNotaFiscal", idNotaFiscal);

@@ -115,10 +115,6 @@ fieldset label {
 	margin-left: 10px;
 }
 
-
-
-.ui-datepicker { z-index: 1000 !important; }
-
 .ui-datepicker-today a {	display:block !important; }
 </style>
 

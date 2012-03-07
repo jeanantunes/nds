@@ -7,6 +7,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface RecebimentoFisicoService {
 	
@@ -23,7 +24,7 @@ public interface RecebimentoFisicoService {
 	 
 	 void excluirItemNotaRecebimentoFisico(ItemNotaFiscal itemNota);
 	 
-	 void inserirDadosRecebimentoFisico(NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota);
+	 void inserirDadosRecebimentoFisico(Usuario userLogado,NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota);
 	 
 	 
 }
