@@ -59,7 +59,6 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 	
 		
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		notaFiscal.setId(5L);
 		//Salvei a Nota Fiscal
 		getSession().save(notaFiscal);		
 		
@@ -82,12 +81,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		produtoEdicao.setId(1L);
 		getSession().save(produtoEdicao);	
 	}
-	
-	@Test
-	public void test() {
 		
-	}
-	
 	@Test
 	public void inserirItemNotaComDTO() {
 	
