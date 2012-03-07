@@ -213,7 +213,7 @@ function popup() {
       <div class="linha_separa_fields">&nbsp;</div>      
       <fieldset class="classFieldset" id="resumoPeriodo"; style="display:none;" >
       	<legend>Resumo do Período</legend>
-        <table width="100%" border="0" cellspacing="2" cellpadding="2">
+        <table width="100%" border="0" cellspacing="2" cellpadding="2" id="tableResumoPeriodo">
         </table>
       </fieldset>
     </div>
@@ -339,24 +339,22 @@ function popup() {
 		});
 
 		function processarColunasLancamentos(data) {
-			
 			if (data.mensagens) {
 				exibirMensagem(
 					data.mensagens.tipoMensagem, 
 					data.mensagens.listaMensagens
 				);
-
 				return data;
 			}
-			
-			$.each(data.rows, function(i, row){
+			$("#valorTotal").clear().html(data[1]);
+			$.each(data[0].rows, function(i, row){
 				var inputDataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 				inputDataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
 				inputDataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 				row.cell.dataMatrizDistrib = inputDataDistrib;
-				row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck()" />'
+				row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck()" />';
 			});
-			return data;
+			return data[0];
 		}
 		
 		function buscarResumoPeriodo() {
@@ -393,20 +391,20 @@ function popup() {
 			$.each(data, function(index, resumo){
 				  rows+='<td>';
 				  rows+='<div class="box_resumo">';
-				  rows+='<label>'+ resumo.data +'</label>';
+				  rows+='<label>'+ resumo.dataFormatada +'</label>';
 				  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
 				  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';	
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-				  rows+='<span class="span_2">'+ resumo.qtdeExemplares +'</span>';	
+				  rows+='<span class="span_2">'+ resumo.qtdeExemplaresFormatada +'</span>';	
 				  rows+='<span class="span_1">Peso Total:</span>';
-				  rows+='<span class="span_2">'+ resumo.pesoTotal +'</span>';
+				  rows+='<span class="span_2">'+ resumo.pesoTotalFormatado +'</span>';
 				  rows+='<span class="span_1">Valor Total:</span>';
-				  rows+='<span class="span_2">'+ resumo.valorTotal +'</span>'
+				  rows+='<span class="span_2">'+ resumo.valorTotalFormatado +'</span>'
 				  rows+='</div>';
 				  rows+='</td>';					  
 		    });	
 		    rows+="</tr>";
-		    $("#resumoPeriodo").clear().append(rows);
+		    $("#tableResumoPeriodo").clear().append(rows);
 		}
 		
 </script>
