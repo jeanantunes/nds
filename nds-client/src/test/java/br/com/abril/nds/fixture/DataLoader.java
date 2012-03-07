@@ -738,7 +738,6 @@ public class DataLoader {
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
 					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
-			produtoEdicao.setFornecedor(fornecedor);
 			session.save(produtoEdicao);
 			
 			

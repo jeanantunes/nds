@@ -124,6 +124,10 @@ public class Produto {
 		this.tipoProduto = tipoProduto;
 	}
 	
+	public Fornecedor getFornecedor() {
+		return fornecedores.isEmpty() ? null : fornecedores.iterator().next();
+	}
+	
 	@Override
 	public String toString() {
 		return new StringBuilder(codigo).append("-").append(nome).toString();
