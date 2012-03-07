@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
@@ -23,5 +24,9 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	 * @return {@link EstudoCota}
 	 */
 	EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia);
+	
+	List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
+	
+	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
 	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.hibernate.Session;
@@ -17,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -156,63 +158,54 @@ public class DataLoader {
 		
 
 		
-		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
+		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		MovimentoEstoque movimentoEstoqueDiferenca = Fixture.movimentoEstoque(null, produtoEdicaoVeja1,
-
-																			  tipoMovimentoRecFisico, usuarioJoao,
-																			  estoqueProdutoVeja1, new Date(),
-																			  new BigDecimal(1), StatusAprovacao.APROVADO,
-																			  "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca);
 		
-		MovimentoEstoque movimentoEstoqueDiferenca2 = Fixture.movimentoEstoque(null, produtoEdicaoVeja2,
-																			   tipoMovimentoRecFisico, usuarioJoao,
-																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(2), StatusAprovacao.APROVADO,
-																			   "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca2 =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja2, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(2),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca2);
 		
-		MovimentoEstoque movimentoEstoqueDiferenca3 = Fixture.movimentoEstoque(null, produtoEdicaoVeja3,
-																			   tipoMovimentoRecFisico, usuarioJoao,
-																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(3), StatusAprovacao.APROVADO,
-																			   "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca3 =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja3, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(3),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca3);
 		
-		MovimentoEstoque movimentoEstoqueDiferenca4 = Fixture.movimentoEstoque(null, produtoEdicaoVeja4,
-																			   tipoMovimentoRecFisico, usuarioJoao,
-																			   estoqueProdutoVeja1, new Date(),
-																			   new BigDecimal(4), StatusAprovacao.APROVADO,
-																			   "Aprovado.");
+		MovimentoEstoque movimentoEstoqueDiferenca4 =
+			Fixture.movimentoEstoque(null, produtoEdicaoVeja4, tipoMovimentoRecFisico, usuarioJoao,
+									 estoqueProdutoVeja1, new Date(), new BigDecimal(4),
+									 StatusAprovacao.APROVADO, "Aprovado automaticamente.");
 		session.save(movimentoEstoqueDiferenca4);
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		// Inicio dos inserts na tabela DIFERENCA
+		// Início dos inserts na tabela DIFERENCA
 		
-		Diferenca diferenca = Fixture.diferenca(new BigDecimal(1), usuarioJoao,
-												produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-						  						StatusConfirmacao.CONFIRMADO, null,
-						  						movimentoEstoqueDiferenca);
+		Diferenca diferenca =
+			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
 		session.save(diferenca);
 		
-		Diferenca diferenca2 = Fixture.diferenca(new BigDecimal(2), usuarioJoao,
-												produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-												StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,
-												movimentoEstoqueDiferenca2);
+		Diferenca diferenca2 =
+			Fixture.diferenca(new BigDecimal(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2);
 		session.save(diferenca2);
 		
-		Diferenca diferenca3 = Fixture.diferenca(new BigDecimal(3), usuarioJoao,
-												 produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-												 StatusConfirmacao.CONFIRMADO, null,
-												 movimentoEstoqueDiferenca3);
+		Diferenca diferenca3 =
+			Fixture.diferenca(new BigDecimal(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3);
 		session.save(diferenca3);
 		
-		Diferenca diferenca4 = Fixture.diferenca(new BigDecimal(4), usuarioJoao,
-												 produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-												 StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,
-												 movimentoEstoqueDiferenca4);
+		Diferenca diferenca4 =
+			Fixture.diferenca(new BigDecimal(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4);
 		session.save(diferenca4);
 		
 		// Fim dos inserts na tabela DIFERENCA
@@ -287,7 +280,7 @@ public class DataLoader {
 
 	private static void criarEstudos(Session session) {
 		estudoVeja1 = Fixture
-				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+				.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
 		session.save(estudoVeja1);
 	}
 
@@ -667,10 +660,13 @@ public class DataLoader {
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
 				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
+		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
+				distribuidor, fornecedorDinap, DiaSemana.QUINTA_FEIRA,
+				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
 				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
-		save(session, dinapSegunda, dinapQuarta, dinapSexta);
+		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
 				distribuidor, fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
@@ -693,7 +689,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "Aprovado.");
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "Aprovado manualmente.");
 			
 			session.save(movimentoEstoqueDiferenca);
 			
@@ -713,4 +709,74 @@ public class DataLoader {
 		}
 	}
 
+	public static void carregarDadosParaExpedicao(Session session) {
+		TipoProduto tipoRevista = Fixture.tipoRevista();
+		session.save(tipoRevista);
+		
+		CFOP cfop = Fixture.cfop5102();
+		session.save(cfop);
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		session.save(usuario);
+		
+		for(Integer i=1000;i<1050; i++) {
+			
+			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+			session.save(juridica);
+			
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true);
+			session.save(fornecedor);
+			
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			produto.addFornecedor(fornecedor);
+			session.save(produto); 
+			
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+			produtoEdicao.setFornecedor(fornecedor);
+			session.save(produtoEdicao);
+			
+			
+			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+			session.save(tipoNotaFiscal);
+
+			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
+					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
+			session.save(notaFiscalFornecedor);
+			
+			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+					produtoEdicao, usuario, notaFiscalFornecedor, 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					new BigDecimal(i));					
+			session.save(itemNotaFiscal);
+			
+			RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+				notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+			session.save(recebimentoFisico);
+			
+			
+			ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
+					itemNotaFiscal, recebimentoFisico, new BigDecimal(i));
+			session.save(itemFisico);
+			
+			Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					new BigDecimal(100), 
+					StatusLancamento.RECEBIDO, 
+					itemFisico);
+			lancamento.setReparte(new BigDecimal(10));
+			session.save(lancamento);
+		
+			Estudo estudo = new Estudo();
+			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
+			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setQtdeReparte(new BigDecimal(i));
+			session.save(estudo);
+		}
+	}
 }

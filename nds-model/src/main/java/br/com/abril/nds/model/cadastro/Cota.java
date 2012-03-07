@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class Cota {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
+	@Column(name  ="FATOR_DESCONTO")
+	private BigDecimal fatorDesconto;
 	
 	public Long getId() {
 		return id;
@@ -78,6 +81,14 @@ public class Cota {
 
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
+	}
+	
+	public BigDecimal getFatorDesconto() {
+		return fatorDesconto;
+	}
+	
+	public void setFatorDesconto(BigDecimal fatorDesconto) {
+		this.fatorDesconto = fatorDesconto;
 	}
 
 }

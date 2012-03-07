@@ -17,9 +17,9 @@ import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -75,10 +75,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
 				dataInicial, dataFinal, diasDistribuicao);
-		//TODO: Recuperar tipo de produto cromo 
-		TipoProduto tipoCromo = null;
 		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
-				.buscarResumosPeriodo(periodoDistribuicao, fornecedores, tipoCromo);
+				.buscarResumosPeriodo(periodoDistribuicao, fornecedores, GrupoProduto.CROMO);
 		return resumos;
 	}
 

@@ -8,11 +8,11 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -54,7 +54,6 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void obterEstudoDoLancamentoMaisProximo() {
 		
 		Estudo estudo =
@@ -68,12 +67,15 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	private ProdutoEdicao criarProdutoEdicao() {
 		
+		Fornecedor dinap = Fixture.fornecedorDinap();
+		getSession().save(dinap);
+		
 		TipoProduto tipoProduto = Fixture.tipoProduto("grupo teste", GrupoProduto.REVISTA, "ncm");
 		
 		getSession().save(tipoProduto);
 		
 		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto);
-		
+		produto.addFornecedor(dinap);
 		getSession().save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
@@ -97,7 +99,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	private Estudo criarEstudo(Lancamento lancamento, ProdutoEdicao produtoEdicao) {
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100), new Date(), produtoEdicao);
+		Estudo estudo = Fixture.estudo(new BigDecimal(100), lancamento.getDataLancamentoDistribuidor(), produtoEdicao);
 		
 		getSession().save(estudo);
 		

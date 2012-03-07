@@ -6,6 +6,7 @@ import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscal;
 
 public interface RecebimentoFisicoService {
 	
@@ -16,11 +17,13 @@ public interface RecebimentoFisicoService {
 	 void alterarOrSalvarDiferencaRecebimentoFisico(List<RecebimentoFisicoDTO> listaRecebimentoFisicoDTO,
 				ItemRecebimentoFisico itemRecebimentoFisico);
 	 
-	 void inserirItemNotaRecebimentoFisico(RecebimentoFisicoDTO itemNotaDTO);
+	
 	 
-	 void alterarItemNotaRecebimentoFisico(RecebimentoFisicoDTO itemNotaDTO);
+	 void alterarItemNotaRecebimentoFisico(RecebimentoFisicoDTO recebimentoFisicoDTO);
 	 
 	 void excluirItemNotaRecebimentoFisico(ItemNotaFiscal itemNota);
+	 
+	 void inserirDadosRecebimentoFisico(NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota);
 	 
 	 
 }

@@ -20,7 +20,6 @@ public class PessoaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	
 	@Test
-	@Ignore
 	public void salvarPessoaFisica() {
 		PessoaFisica pf = Fixture.pessoaFisica("123.456.789-00",
 				"jose.silva@mail.com", "José da Silva");
@@ -35,7 +34,6 @@ public class PessoaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void buscarPorNome() {
 		PessoaFisica pf1 = Fixture.pessoaFisica("123.456.789-00",
 				"jose.silva@mail.com", "José da Silva");

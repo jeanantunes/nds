@@ -26,6 +26,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	public List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal) {
 		
 		StringBuffer hql = new StringBuffer();
@@ -63,6 +64,16 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		
 		return query.list();
 		
+	}
+	
+	public RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal){
+		StringBuffer hql = new StringBuffer();
+		hql.append("from RecebimentoFisisco rf where rf.notaFiscal.id = :idNotaFiscal ");
+		Query query  = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idNotaFiscal", idNotaFiscal);
+		
+		return (RecebimentoFisico) query.uniqueResult();
 	}
 }
 	

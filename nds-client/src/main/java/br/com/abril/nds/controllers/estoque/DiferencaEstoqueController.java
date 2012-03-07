@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
@@ -178,6 +179,8 @@ public class DiferencaEstoqueController {
 		//TODO: tratar datas
 		//TODO: tratar parâmetros
 		
+		this.validarEntradaDadosPesquisa(dataInicial, dataFinal);
+		
 		FiltroConsultaDiferencaEstoqueDTO filtro =
 			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
 										dataInicial, dataFinal, tipoDiferenca,
@@ -339,7 +342,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -398,7 +401,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(page);
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -478,7 +481,7 @@ public class DiferencaEstoqueController {
 		//TODO: setar ordenação
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoDiferencaVO = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -645,6 +648,28 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
+	 * Valida a entrada de dados para pesquisa de diferença de estoque.
+	 * 
+	 * @param dataMovimentoFormatada - data de movimento formatado
+	 */
+	private void validarEntradaDadosPesquisa(String dataInicial, String dataFinal) {
+		
+		/*if (dataInicial == null 
+				|| dataInicial.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+		}*/
+		
+		//TODO:
+	}
+	
+	/*
 	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
 	 * 
 	 * @param dataMovimentoFormatada - data de movimento formatado
@@ -708,6 +733,13 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
 		}
+	}
+	
+	private Locale getLocale() {
+		if (localization != null) {
+			return localization.getLocale();
+		}
+		return null;
 	}
 	
 }

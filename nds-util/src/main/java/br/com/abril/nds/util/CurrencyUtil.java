@@ -2,8 +2,7 @@ package br.com.abril.nds.util;
 
 import java.text.DecimalFormat;
 import java.util.Currency;
-
-import br.com.caelum.vraptor.core.Localization;
+import java.util.Locale;
 
 /**
  * Classe utilitária para moedas.
@@ -17,11 +16,11 @@ public abstract class CurrencyUtil {
 	 * Formata um valor de moeda com ou sem símbolo monetário.
 	 * 
 	 * @param valor - valor
-	 * @param localization - localization do VRaptor (necessário para símbolo monetário)
+	 * @param locale - locale recebido do cliente (necessário para símbolo monetário)
 	 * 
 	 * @return Valor formatado
 	 */
-	public static String formatarValor(Number valor, Localization localization) {
+	public static String formatarValor(Number valor, Locale locale) {
 		
 		if (valor == null) {
 			
@@ -30,9 +29,9 @@ public abstract class CurrencyUtil {
 		
 		DecimalFormat decimalFormat = null;
 		
-		if (localization != null) {
+		if (locale != null) {
 		
-			Currency currency = Currency.getInstance(localization.getLocale());
+			Currency currency = Currency.getInstance(locale);
 		
 			decimalFormat = new DecimalFormat(currency.getSymbol() + " #,##0.00");
 			
