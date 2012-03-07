@@ -209,6 +209,32 @@ public class RecebimentoFisicoDTO implements Serializable {
 	public void setLineId(int lineId) {
 		this.lineId = lineId;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + lineId;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof RecebimentoFisicoDTO)) {
+			return false;
+		}
+		RecebimentoFisicoDTO other = (RecebimentoFisicoDTO) obj;
+		if (lineId != other.lineId) {
+			return false;
+		}
+		return true;
+	}
 	
 	
 

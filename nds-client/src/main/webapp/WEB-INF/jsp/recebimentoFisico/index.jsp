@@ -117,8 +117,43 @@
 	 */
 	function cadastrarNovoItemNota() {
 		
-		$("#dialog-novo-item").dialog( "close" );
-		alert('cadastrando novo item nota');
+		var codigo 				= $("#codigo").val();
+		var produto 			= $("#produto").val();
+		var precoCapa			= $("#precoCapa").val();
+		var edicao 				= $("#edicao").val();
+		var dataLancamento 		= $("#datepickerLancto").val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento").val();
+		var repartePrevisto 	= $("#repartePrevisto").val();
+		var tipoLancamento 		= $("#tipoLancamento").val();
+		
+		var dadosCadastro = 
+
+			"itemRecebimento.codigoProduto=" 		+ codigo			+ "&" +
+			"itemRecebimento.nomeProduto=" 			+ produto			+ "&" +
+			"itemRecebimento.precoCapa=" 			+ precoCapa			+ "&" +
+			"itemRecebimento.edicao=" 				+ edicao			+ "&" +
+			"dataLancamento=" 						+ dataLancamento 	+ "&" + 
+		   	"dataRecolhimento=" 					+ dataRecolhimento	+ "&" +
+		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
+		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", dadosCadastro, 
+				function(result) {
+					
+					if(result.tipoMensagem == "SUCCESS") {
+						
+						$("#dialog-novo-item").dialog( "close" );
+						
+					} 
+			
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					
+					refreshItemNotaGrid();
+				
+		});
+		
+		
+		
 	}
 	
 	/**
@@ -148,8 +183,49 @@
 	 */
 	function cadastrarNovaNota() {
 		
-		$("#dialog-nova-nota").dialog( "close" );
-		alert('cadastrando nova nota');
+		var cnpj 			= $("#cnpj").val();
+		var notaFiscal 		= $("#notaFiscal").val();
+		var serie 			= $("#serie").val();
+		var chaveAcesso 	= $("#chaveAcesso").val();
+		var dataEmissao 	= $("#dataEmissao").val();
+		var dataEntrada 	= $("#dataEntrada").val();
+		var valorBruto		= $("#valorBruto").val();
+		var valorLiquido	= $("#valorLiquido").val();
+		var valorDesconto 	= $("#valorDesconto").val();
+		var cfopCodigo 		= $("#cfopCodigo").val();
+		var cfopDescricao 	= $("#cfopDescricao").val();
+		
+		var dadosCadastro = 
+
+			"notaFiscalFornecedor.emitente.cnpj=" 		+ cnpj			+ "&" +
+			"notaFiscalFornecedor.numero=" 				+ notaFiscal	+ "&" +
+			"notaFiscalFornecedor.serie=" 				+ serie			+ "&" +
+			"notaFiscalFornecedor.chaveAcesso=" 		+ chaveAcesso	+ "&" +
+			"dataEmissao=" 								+ dataEmissao	+ "&" +
+			"dataEntrada=" 								+ dataEntrada	+ "&" +
+			"valorBruto=" 								+ valorBruto	+ "&" +
+			"valorLiquido=" 							+ valorLiquido	+ "&" +
+			"valorDesconto=" 							+ valorDesconto	+ "&" + 
+		   	"notaFiscalFornecedor.cfop.codigo=" 		+ cfopCodigo	+ "&" +
+		    "notaFiscalFornecedor.cfop.descricao=" 		+ cfopDescricao;
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirNovaNotaFiscal'/>", dadosCadastro, 
+				function(result) {
+			
+			
+					if(result.tipoMensagem == "SUCCESS") {
+						
+						$("#dialog-nova-nota").dialog( "close" );
+						
+					} 
+			
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					
+					refreshItemNotaGrid();
+				
+		});
+		
+		
 	}
 	
 	/**
@@ -167,36 +243,54 @@
 	 */
 	$(function() {
 		
-			$( "#datepickerDe" ).datepicker({
-				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
-			});
-			$( "#datepickerAte" ).datepicker({
-				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
-			});
 			$( "#datepickerLancto" ).datepicker({
 				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
 			});
 			$( "#datepickerRecolhimento" ).datepicker({
 				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
 			});
-			$( "#datepickerPrevisto" ).datepicker({
+			$( "#dataEmissao" ).datepicker({
 				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
 			});
-			$( "#datepickerMatrizDistrib" ).datepicker({
+			$( "#dataEntrada" ).datepicker({
 				showOn: "button",
-				buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
 			});
+			
+			$("#datepickerLancto").mask("99/99/9999");
+			$("#datepickerRecolhimento").mask("99/99/9999");
+			$("#dataEmissao").mask("99/99/9999");
+			$("#dataEntrada").mask("99/99/9999");
+			
+			$("#valorBruto").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:10
+			});
+
+			$("#valorLiquido").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:10
+			});
+			
+			$("#valorDesconto").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:10
+			});
+			
 			
 			carregarItemNotaGrid();
 			
@@ -308,7 +402,26 @@
 		$(".itemNotaGrid").flexReload();
 	
 	}
+
+    /**
+     * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
+     */
+	function refreshItemNotaGrid() {
 	
+		$(".itemNotaGrid").flexOptions({
+			url: '<c:url value="/"/>estoque/recebimentoFisico/refreshListaItemRecebimentoFisico',
+			preProcess: getDataFromResult,
+			dataType : 'json'
+		});
+	
+		$(".itemNotaGrid").flexReload();
+	
+	}
+
+    
+	
+    
+    
     /**
      * SALVA OS DADOS DOS ITENS DA NOTA EDITADOS.
      */
@@ -319,7 +432,7 @@
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/salvarDadosItensDaNotaFiscal'/>", listaDeValores, 
 		function(result) {
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
-			pesquisarItemNotaGrid();
+			refreshItemNotaGrid();
 		
 		});
 		
@@ -359,10 +472,11 @@
 	 */
 	function excluirItemNotaFiscal(lineId) {
 		
+		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", "lineId=" + lineId, 
 		function(result) {
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
-			pesquisarItemNotaGrid();
+			refreshItemNotaGrid();
 		
 		});
 		
@@ -411,45 +525,62 @@
 	</div>
 
 
-	<div id="dialog-nova-nota" style="display: none;" title="Recebimento Físico">
+	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
 			
 			<table width="439" cellpadding="2" cellspacing="2"
 				style="text-align: left;">
 				<tr>
 					<td width="127">Emissão:</td>
-					<td width="296"><input type="text"
-						name="notaFiscalFornecedor.dataEmissao" style="width: 80px"
-						id="datepickerDe" />
+					<td width="296">
+						<input 	type="text"
+								style="width: 80px"
+								name="dataEmissao"
+								id="dataEmissao" />
 					</td>
 				</tr>
 				<tr>
 					<td>Entrada:</td>
-					<td><input type="text" name="recebimentoFisico.data"
-						value="${dataAtual}" style="width: 80px" id="datepickerAte" />
+					<td>
+						<input 	type="text" 
+								value="${dataAtual}" 
+								style="width: 80px" 
+								id="dataEntrada" />
 					</td>
 				</tr>
 				<tr>
 					<td>Valor Bruto R$:</td>
-					<td><input type="text" name="notaFiscalFornecedor.valorBruto"
-						style="width: 80px" />
+					<td>
+						<input 	type="text"
+								id="valorBruto" 
+								style="width: 80px" />
 					</td>
 				</tr>
 				<tr>
 					<td>Valor Líquido R$:</td>
-					<td><input type="text"
-						name="notaFiscalFornecedor.valorLiquido" style="width: 80px" />
+					<td>
+						<input 	type="text"
+								id="valorLiquido" 
+								style="width: 80px" />
 					</td>
 				</tr>
 				<tr>
 					<td>Valor Desconto R$:</td>
-					<td><input type="text"
-						name="notaFiscalFornecedor.valorDesconto" style="width: 80px" />
+					<td>
+						<input 	type="text"
+								id="valorDesconto" 
+								style="width: 80px" />
 					</td>
 				</tr>
 				<tr>
 					<td>CFOP:</td>
-					<td><input type="text" name="notaFiscalFornecedor.cfop"
-						style="width: 80px" /> <input type="text" style="width: 190px" />
+					<td>
+						<input 	type="text"
+								id="cfopCodigo" 
+								style="width: 80px" /> 
+								
+						<input 	type="text"
+								id="cfopDescricao" 
+								style="width: 190px" />
 					</td>
 				</tr>
 			</table>
@@ -466,7 +597,6 @@
 					<input 
 					type="text"
 					id="codigo"
-					name="codigo"
 					maxlength="255"
 					style="width: 80px; float: left; margin-right: 5px;"/>
 					
@@ -482,7 +612,6 @@
 					<input 
 						maxlength="255"
 						type="text" 
-						name="produto"
 						id="produto"
 						onkeyup="pesquisarPorNomeProduto();" 
 						style="width: 200px;" />
@@ -492,45 +621,57 @@
 				<td>Edição:</td>
 				<td><input 
 					type="text" 
-					name="edicao" id="edicao" maxlength="20"
+					id="edicao" maxlength="20"
 					style="width: 80px;" 
 					onblur="validarNumEdicao();"/>
 				</td>
 			</tr>
 			<tr>
 				<td>Data Lançamento:</td>
-				<td><input type="text" name="datepickerLancto"
-					id="datepickerLancto" style="width: 80px;" />
+				<td><input 	type="text" 
+							name="datepickerLancto"
+							id="datepickerLancto" 
+							style="width: 80px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Data Recolhimento:</td>
-				<td><input type="text" name="datepickerRecolhimento"
-					id="datepickerRecolhimento" style="width: 80px;" />
+				<td><input 	type="text" 
+							name="datepickerRecolhimento"
+							id="datepickerRecolhimento" 
+							style="width: 80px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Preço R$:</td>
-				<td><input type="text" name="textfield" id="textfield"
-					style="width: 80px;" />
+				<td><input 	
+							disabled="disabled"
+							type="text" 
+							id="precoCapa"
+							style="width: 80px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Peso:</td>
-				<td><input type="text" name="textfield2" id="textfield2"
-					style="width: 80px;" />
+				<td><input 	disabled="disabled"
+							type="text" 
+							id="peso"
+							style="width: 80px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Pacote Padrão:</td>
-				<td><input type="text" name="textfield3" id="textfield3"
-					style="width: 200px;" />
+				<td><input 	disabled="disabled"
+							type="text" 
+							id="pacotePadrao"
+							style="width: 200px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Reparte Previsto:</td>
-				<td><input type="text" name="textfield15" id="textfield15"
-					style="width: 80px;" />
+				<td><input 	type="text" 
+							id="repartePrevisto"
+							style="width: 80px;" />
 				</td>
 			</tr>
 			<tr>
