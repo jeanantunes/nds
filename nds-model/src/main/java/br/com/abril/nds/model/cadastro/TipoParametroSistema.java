@@ -9,5 +9,14 @@ public enum TipoParametroSistema {
 
 	PATH_IMAGENS_CAPA, 
 	
-	NUMERO_TENTATIVAS_REPROGRAMACAO;
+	/**
+	 * Número máximo de tentativas de reprogramação lançamento
+	 */
+	NUMERO_TENTATIVAS_REPROGRAMACAO_LANCAMENTO,
+	
+	/**
+	 * Capacidade de Distribuição dáaria do distribuidor, em número de
+	 * exemplares
+	 */
+	CAPACIDADE_DISTRIBUICAO_DIARIA;
 }
