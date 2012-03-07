@@ -187,25 +187,30 @@ public class LancamentoRepositoryImpl extends
 		jpql.append(" 	lancamento.produtoEdicao.produto.tipoProduto.descricao as classificacao, ");
 		jpql.append(" 	lancamento.produtoEdicao.precoVenda as preco, ");		
 		jpql.append(" 	lancamento.produtoEdicao.pacotePadrao as pctPadrao, ");		
-		jpql.append(" 	lancamento.reparte as reparte, ");		
+		jpql.append(" 	estudo.qtdeReparte as reparte, ");		
 		jpql.append(" 	lancamento.dataRecolhimentoPrevista as dataChamada, ");		
-		jpql.append(" 	lancamento.produtoEdicao.fornecedor.juridica.nomeFantasia as fornecedor, "); //TODO - Obter em Fornecedor
+		jpql.append(" 	lancamento.produtoEdicao.fornecedor.juridica.nomeFantasia as fornecedor, ");
 		jpql.append(" 	estudo.qtdeReparte as estudo"); //TODO - Obter em Estudo
 		
 		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
 						
-		jpql.append(gerarOrderByProdutosNaoExpedidos(
-				LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortOrder()),
-				paginacaoVO.getOrdenacao()));
-				
+		
+		if( paginacaoVO != null ) {
+			jpql.append(gerarOrderByProdutosNaoExpedidos(
+					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortOrder()),
+					paginacaoVO.getOrdenacao()));
+		}
+		
 		Query query = getSession().createQuery(jpql.toString());
 		
 		for (Entry<String, Object> entry: parametros.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
 		}
 		
-		query.setFirstResult(paginacaoVO.getPosicaoInicial());
-		query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		if( paginacaoVO != null ) {
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
 		
 		query.setResultTransformer(Transformers.aliasToBean(LancamentoNaoExpedidoDTO.class));
 		
@@ -276,9 +281,11 @@ public class LancamentoRepositoryImpl extends
 			parametros.put("idFornecedor", idFornecedor);
 		}				
 		
-		if (estudo != null) {
+		if (estudo != null && estudo == true ) {
 			hql.append(" AND estudo is not null");			
-		}		
+		} else {
+			hql.append(" AND estudo is null");
+		}
 			
 		return hql.toString();
 	}

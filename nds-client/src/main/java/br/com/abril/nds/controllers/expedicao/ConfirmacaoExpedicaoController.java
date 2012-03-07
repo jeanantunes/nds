@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +8,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -20,7 +23,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -35,7 +38,6 @@ public class ConfirmacaoExpedicaoController {
 		
 		private FornecedorService fornecedorService;
 		private LancamentoService lancamentoService;
-		private MovimentoService movimentoService;
 
 		protected static final String SUCESSO = "SUCCESS";
 		protected static final String FALHA = "ERROR";
@@ -43,8 +45,10 @@ public class ConfirmacaoExpedicaoController {
 		
 		protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a apesquisa realizada.";
 		protected static final String DATA_INVALIDA = "A data informada é inválida";
-
-		//private static final Logger LOG = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
+		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
+		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
+		
+		private static final Logger LOG = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
 		
 		/**
 		 * Construtor
@@ -58,7 +62,6 @@ public class ConfirmacaoExpedicaoController {
 			this.result = result;
 			this.fornecedorService = fornecedorService;
 			this.lancamentoService = lancamentoService;
-			this.movimentoService = movimentoService;
 			this.session = session;
 			this.inicializarTela();
 		}
@@ -66,21 +69,16 @@ public class ConfirmacaoExpedicaoController {
 		public void inicializarTela() {
 			gerarListaFornecedores();
 			gerarDataLancamento();
+			session.setAttribute("selecionados", null);
 		}
+				
+		
 		
 		@SuppressWarnings("unchecked")
-		public List<Long> getSelecionados() {
-			return (List<Long>) session.getAttribute("selecionados");
-		}
-		
-		public void setSelecionados(List<Long> selecionados) {
-			session.setAttribute("selecionados", selecionados);
-		}
-		
 		@Post
 		public void selecionarLancamento(Long idLancamento, Boolean selecionado) throws Exception {
 			
-			List<Long> selecionados = getSelecionados();
+			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
 			if(selecionados == null) {
 				
@@ -95,7 +93,41 @@ public class ConfirmacaoExpedicaoController {
 				selecionados.remove(index);
 			}
 			
-			setSelecionados(selecionados);
+			session.setAttribute("selecionados", selecionados);
+			
+			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Post
+		public void selecionarTodos(Boolean selecionado) throws Exception {
+			
+			if(selecionado==false) {
+				session.setAttribute("selecionados", null);
+			} else {
+			
+				Date date = (Date) session.getAttribute("date");
+				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
+				Boolean estudo = (Boolean) session.getAttribute("estudo");
+				
+				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
+						lancamentoService.obterLancamentosNaoExpedidos(null, date, idFornecedor, estudo);
+				
+				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
+				
+				if(selecionados==null) {
+					selecionados = new ArrayList<Long>();
+				}
+				
+				for ( LancamentoNaoExpedidoDTO lancamento : listaExpedicoes ) {
+									
+					selecionados.add(lancamento.getIdLancamento());
+				}
+				
+				session.setAttribute("selecionados", selecionados);
+			}
+			
+			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
 		/**
@@ -107,11 +139,32 @@ public class ConfirmacaoExpedicaoController {
 		@SuppressWarnings("unchecked")
 		public void confirmarExpedicao(){
 			
+			List<String> mensagens = new ArrayList<String>();
+			
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
-			for( Long idLancamento:selecionados ) {		
-				lancamentoService.confirmarExpedicao(idLancamento, getUsuario().getId());
+			if(selecionados==null  || selecionados.isEmpty()) {
+				mensagens.add(NENHUM_REGISTRO_SELECIONADO);
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, mensagens));
+			} 
+			
+			try {
+				
+				for( Long idLancamento:selecionados ) {		
+					lancamentoService.confirmarExpedicao(idLancamento, getUsuario().getId());
+				}
+				
+			} catch(Exception e) {
+				
 			}
+			
+			
+			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+			
+			
+			ValidacaoVO voValidacao = new ValidacaoVO(TipoMensagem.SUCCESS,mensagens);			
+			
+			result.use(Results.json()).withoutRoot().from(voValidacao).recursive().serialize();
 		}
 		
 		public Usuario getUsuario() {
@@ -145,6 +198,7 @@ public class ConfirmacaoExpedicaoController {
 		 * @param idFornecedor - código do fornecedor
 		 * @throws Exception 
 		 */
+		@SuppressWarnings("unchecked")
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
 						String dtLancamento, Boolean estudo){
@@ -159,6 +213,11 @@ public class ConfirmacaoExpedicaoController {
 			
 			Date date = DateUtil.parseData(dtLancamento, Constantes.DATE_PATTERN_PT_BR);
 			
+			session.setAttribute("paginacaoVO",paginacaoVO);
+			session.setAttribute("date",date);
+			session.setAttribute("idFornecedor",idFornecedor);
+			session.setAttribute("estudo",estudo);
+			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
 				mensagens.add(DATA_INVALIDA);
 				status = FALHA;
@@ -171,7 +230,7 @@ public class ConfirmacaoExpedicaoController {
 				
 				List<CellModelKeyValue<LancamentoNaoExpedidoDTO>> listaCelula = new LinkedList<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 				
-				List<Long> selecionados = getSelecionados();
+				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 				
 				for(LancamentoNaoExpedidoDTO expedicao : listaExpedicoes) {						
 				
