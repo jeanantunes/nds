@@ -161,8 +161,9 @@ public class LancamentoRepositoryImpl extends
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.peso)) as pesoTotal, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
 		hql.append("from Lancamento lancamento ");
+		hql.append("join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
 		hql.append("where lancamento.dataLancamentoPrevista in (:periodo) ");
-		hql.append("and lancamento.produtoEdicao.fornecedor.id in (:fornecedores) ");
+		hql.append("and fornecedor.id in (:fornecedores) ");
 		hql.append("group by lancamento.dataLancamentoPrevista");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameterList("periodo", periodoDistribuicao);
