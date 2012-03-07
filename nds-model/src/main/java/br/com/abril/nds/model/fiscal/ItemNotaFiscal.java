@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.junit.Ignore;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -29,6 +31,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "ITEM_NOTA_FISCAL")
 @SequenceGenerator(name="ITEM_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+@Ignore
 public class ItemNotaFiscal {
 
 	@Id

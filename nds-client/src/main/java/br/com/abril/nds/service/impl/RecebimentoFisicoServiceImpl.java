@@ -18,9 +18,9 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -92,47 +92,45 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		return listaItemRecebimentoFisico;
 		
 	}
-	
-	public void inserirDadosRecebimentoFisico(NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota){
+	@Transactional
+	public void inserirDadosRecebimentoFisico(Usuario userLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota){
 		
 		//nota Fiscal ja existe
-		if(notaFiscal.getId()!= null){
+		if(notaFiscal.getId() != null){
 			
 			for(RecebimentoFisicoDTO recebimentoDTO : listaItensNota){
 				//inserir ItemNotaRecebimento
-				ItemNotaFiscal itemNotaDB = inserirItemNotaRecebimentoFisico(notaFiscal, recebimentoDTO);
+				ItemNotaFiscal itemNotaDB = inserirItemNotaRecebimentoFisico(userLogado,notaFiscal, recebimentoDTO);
 				
 				RecebimentoFisico buscaRecebimentoFisicoDB= recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
 				// se existir recebimentoFisico
 				if(buscaRecebimentoFisicoDB != null){
-					//inserir itemRecebimento										
-					inserirItemRecebimentoFisico(recebimentoDTO, itemNotaDB,buscaRecebimentoFisicoDB);					
-					
+					//inserir itemRecebimento					
+					inserirItemRecebimentoFisico(userLogado,recebimentoDTO, itemNotaDB,buscaRecebimentoFisicoDB);
 				}else{
-					inserirRecebimentoFisico(recebimentoDTO, itemNotaDB, notaFiscal);
+					RecebimentoFisico recebimentoFisicoDB = inserirRecebimentoFisico(userLogado,recebimentoDTO, notaFiscal);
 					
-					inserirItemRecebimentoFisico(recebimentoDTO);
+					inserirItemRecebimentoFisico(userLogado,recebimentoDTO,itemNotaDB, recebimentoFisicoDB);
 				}
 			}
 			
 		//nota fiscal nao existe	
 		}else{
-			NotaFiscal notaFiscalDB =notaFiscalRepository.merge(notaFiscal);
+			notaFiscalRepository.adicionar(notaFiscal);
+			
 			for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota){
+				
 				//inserir item Nota recebimento Fisico
-				ItemNotaFiscal itemNotaDB= inserirItemNotaRecebimentoFisico(notaFiscalDB, recebimentoFisicoDTO);
+				ItemNotaFiscal itemNotaDB= inserirItemNotaRecebimentoFisico(userLogado,notaFiscal, recebimentoFisicoDTO);
 				
 				//inserir recebimento Fisico
-				RecebimentoFisico recebimentoFisicoDB = inserirRecebimentoFisico(recebimentoFisicoDTO, itemNotaDB, notaFiscalDB);	
+				RecebimentoFisico recebimentoFisicoDB = inserirRecebimentoFisico(userLogado,recebimentoFisicoDTO, notaFiscal);	
 				
 				//ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-				inserirItemRecebimentoFisico(recebimentoFisicoDTO, itemNotaDB,recebimentoFisicoDB);
-								
+				inserirItemRecebimentoFisico(userLogado, recebimentoFisicoDTO, itemNotaDB,recebimentoFisicoDB);								
 			}
-		}
-		
+		}		
 	}
-	
 	
 	
 	@Transactional
@@ -141,56 +139,40 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 	}
 	
-	@Transactional
-	private ItemNotaFiscal inserirItemNotaRecebimentoFisico(NotaFiscal notaFsical, RecebimentoFisicoDTO recebimentoDTO){
+
+	private ItemNotaFiscal inserirItemNotaRecebimentoFisico(Usuario userLogado, NotaFiscal notaFiscal, RecebimentoFisicoDTO recebimentoDTO){
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		NotaFiscalFornecedor notaFiscal = new NotaFiscalFornecedor();		
+		produtoEdicao.setId(recebimentoDTO.getIdProdutoEdicao());
+		
 		ItemNotaFiscal itemNota = new ItemNotaFiscal();		
 					
-		if(recebimentoDTO != null){			
-			
-			inserirLancamento(recebimentoDTO,produtoEdicao);
-					
-			notaFiscal.setId(notaFiscal.getId());			
-			
-			itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
-			itemNota.setProdutoEdicao(produtoEdicao);		
-			itemNota.setDataLancamento(new Date(System.currentTimeMillis()));
-			itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
-			itemNota.setProdutoEdicao(produtoEdicao);
-			itemNota.setNotaFiscal(notaFiscal);
-			ItemNotaFiscal itemNotaSalvo = itemNotaFiscalRepository.merge(itemNota);
-			
-			return itemNotaSalvo;
-			
-		}else{
-			throw new IllegalArgumentException("O Item da Nota deve ser especificado.");
-		}		
+		inserirLancamento(recebimentoDTO,produtoEdicao);
+		
+		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());			
+		itemNota.setDataLancamento(new Date(System.currentTimeMillis()));
+		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
+		itemNota.setProdutoEdicao(produtoEdicao);
+		itemNota.setUsuario(userLogado);
+		itemNota.setNotaFiscal(notaFiscal);
+		itemNota.setOrigem(Origem.MANUAL);
+		itemNotaFiscalRepository.adicionar(itemNota);
+				
+		return itemNota;		
 	}
 	
-	private RecebimentoFisico inserirRecebimentoFisico(RecebimentoFisicoDTO recebimentoDTO, ItemNotaFiscal itemNotaDB, NotaFiscal notaFiscal){
+	private RecebimentoFisico inserirRecebimentoFisico(Usuario userLogado, RecebimentoFisicoDTO recebimentoDTO, NotaFiscal notaFiscal){
 		RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
 		recebimentoFisico.setDataRecebimento(new Date(System.currentTimeMillis()));
 		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-		RecebimentoFisico recebimentoFisicoDB= recebimentoFisicoRepository.merge(recebimentoFisico);
-		return recebimentoFisicoDB;	
+		recebimentoFisico.setNotaFiscal(notaFiscal);
+		recebimentoFisico.setRecebedor(userLogado);
+		recebimentoFisicoRepository.adicionar(recebimentoFisico);
+		return recebimentoFisico;	
 		
 	}
 	
-	private ItemRecebimentoFisico inserirItemRecebimentoFisico(RecebimentoFisicoDTO recebimentoDTO, ItemNotaFiscal itemNotaDB, RecebimentoFisico recebimentoFisicoDB) {
-		
-		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
-		
-		itemRecebimento.setItemNotaFiscal(itemNotaDB);
-		itemRecebimento.setItemNotaFiscal(itemNotaDB);
-		itemRecebimento.setRecebimentoFisico(recebimentoFisicoDB);
-		itemRecebimento.setItemNotaFiscal(itemNotaDB);
-		
-		itemRecebimentoFisicoRepository.merge(itemRecebimento);
-		return itemRecebimento;
-	}
-
+	
 	@Transactional
 	public void alterarItemNotaRecebimentoFisico(RecebimentoFisicoDTO recebimentoFisicoDTO){
 		if(recebimentoFisicoDTO != null){	
@@ -221,6 +203,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		lancamento.setDataRecolhimentoDistribuidor(recebimentoFisicoDTO.getDataRecolhimento());
 		lancamento.setDataCriacao(new Date(System.currentTimeMillis()));
 		lancamento.setDataLancamentoPrevista(recebimentoFisicoDTO.getDataLancamento());
+		lancamento.setDataLancamentoDistribuidor(new Date(System.currentTimeMillis()));
 		lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
 		lancamento.setTipoLancamento(recebimentoFisicoDTO.getTipoLancamento());		
 		lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
@@ -242,7 +225,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	
-	private void inserirItemRecebimentoFisico(RecebimentoFisicoDTO recebimentoDTO){
+	private void inserirItemRecebimentoFisico(Usuario userLogado,RecebimentoFisicoDTO recebimentoDTO, ItemNotaFiscal itemNotaDB, RecebimentoFisico recebimentoFisico ){
 		//inserir o item Recebimento
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
 	
@@ -251,7 +234,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		BigDecimal calculoQdeDiferenca = recebimentoDTO.getQtdFisico().subtract(recebimentoDTO.getRepartePrevisto()) ;
 		diferenca.setQtde(calculoQdeDiferenca);
 		diferenca.setItemRecebimentoFisico(itemRecebimento);
-		
+		diferenca.setResponsavel(userLogado);
 		ProdutoEdicao pe = new ProdutoEdicao();
 		pe.setId(recebimentoDTO.getIdProdutoEdicao());					
 		diferenca.setProdutoEdicao(pe);
@@ -267,14 +250,13 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
 			diferencaEstoqueRepository.adicionar(diferenca);
 			
-		}
-			
+		}			
 		//setando diferenca
 		itemRecebimento.setDiferenca(diferenca);
-		//setando item da nota
-		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
-		itemNotaFiscal.setId(recebimentoDTO.getIdItemNota());
-		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
+		//setando item da nota		
+		itemRecebimento.setItemNotaFiscal(itemNotaDB);
+		itemRecebimento.setQtdeFisico(recebimentoDTO.getQtdFisico());
+		itemRecebimento.setRecebimentoFisico(recebimentoFisico);
 		//adicionando item Recebimento Fisico
 		itemRecebimentoFisicoRepository.adicionar(itemRecebimento);
 	}
