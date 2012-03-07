@@ -273,8 +273,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
 		
-		produtoEdicao.setFornecedor(fornecedor);
-		
 		getSession().save(produtoEdicao);
 		
 		return produtoEdicao;

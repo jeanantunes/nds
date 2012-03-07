@@ -110,7 +110,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				FORMATO_DATA_LANCAMENTO));
 		dto.setId(lancamento.getId());
 		dto.setIdFornecedor(1L);
-		dto.setNomeFornecedor(produtoEdicao.getFornecedor().getJuridica().getNomeFantasia());
+		dto.setNomeFornecedor(produto.getFornecedor().getJuridica().getNomeFantasia());
 		dto.setLancamento(lancamento.getTipoLancamento().getDescricao());
 		dto.setNomeProduto(produto.getNome());
 		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
