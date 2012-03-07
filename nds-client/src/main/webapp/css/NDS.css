@@ -535,11 +535,11 @@ select, input{font-size: 12px; height: 21px;}
 	float:left;
 }
 
-
-.ui-datepicker 
+.ui-datepicker
 {
-	z-index: 1000 !important;		
+    z-index: 1003;
 }
+
 
 .ui-datepicker-today a
 {
