@@ -56,7 +56,7 @@ var produto = {
 		}
 	},
 
-	validarNumEdicao : function(idCodigo, idEdicao, isFromModal, pesquisarPorCodigoCallBack) {
+	validarNumEdicao : function(idCodigo, idEdicao, isFromModal, validarEdicaoCallBack) {
 		var codigoProduto = $(idCodigo).val();
 		var numeroEdicao = $(idEdicao).val();
 		
@@ -65,10 +65,10 @@ var produto = {
 			
 			var data = "codigoProduto=" + codigoProduto +
 			   		   "&numeroEdicao=" + numeroEdicao;
-			
+
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
-					   data, pesquisarPorCodigoCallBack,
-					   function() { produto.tratarErroValidacao(idEdicao); }, isFromModal);
+					data, function(result) { validarEdicaoCallBack(idCodigo, idEdicao); },
+					function() { produto.tratarErroValidacao(idEdicao); }, isFromModal);
 		}
 	},
 
