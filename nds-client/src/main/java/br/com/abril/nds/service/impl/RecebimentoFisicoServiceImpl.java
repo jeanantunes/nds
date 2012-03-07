@@ -63,6 +63,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	* @return List - RecebimentoFisicoDTO
 	* 
 	*/
+	@Transactional
 	public List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal) {
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -149,8 +150,11 @@ public class RecebimentoFisicoController {
 		
 		Long idNotaFiscal = notaFiscal.getId();
 		
-		//TODO: obter lista do bd apos testes;
-		List<RecebimentoFisicoDTO> itensRecebimentoFisico = getListaItemNotaFromBD();
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+		
+		if(itensRecebimentoFisico == null) {
+			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
+		}
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
@@ -160,20 +164,6 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	/**
-	 * TODO: remover apos testes...
-	 * 
-	 * @return NotaFiscal
-	 */
-	private NotaFiscal getNotaFromBD() {
-		
-		NotaFiscal notaFiscal = new NotaFiscalFornecedor();
-		
-		notaFiscal.setId(1L);
-		
-		return notaFiscal;
-		
-	}
 	
 	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie) {
 		
@@ -220,8 +210,6 @@ public class RecebimentoFisicoController {
 		}
 		
 		itensRecebimentoFisico.add(itemRecebimento);
-		
-		System.out.println("ADICIONANDO ITEM NOTA FISCAL CODIGO: ");
 		
 		List<String> msgs = new ArrayList<String>();
 		
@@ -284,7 +272,9 @@ public class RecebimentoFisicoController {
 			}
 			
 		}
-			
+	
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession());
+		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens salvos com sucesso.");
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
@@ -295,6 +285,8 @@ public class RecebimentoFisicoController {
 		
 		setItensRecebimentoFisicoToSession(null);
 		
+		setNotaFiscalToSession(null);
+		
 	}
 	
 	
@@ -303,12 +295,27 @@ public class RecebimentoFisicoController {
 
 		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
 		
-		setNotaFiscalToSession(null);
-		
 		limparDadosPesquisa();
 		
-		//TODO: CHAMAR PESQUISA DO BD
-		NotaFiscal notaFiscal = null;//getNotaFromBD();
+		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
+		
+		filtro.setCnpj(cnpj);
+		filtro.setNumeroNota(numeroNotaFiscal);
+		filtro.setSerie(serie);
+		filtro.setChave(chaveAcesso);
+		
+		List<NotaFiscal> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+		
+			
+		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma nota fiscal cadastrada com estes valores.");
+		} 
+		
+		NotaFiscal notaFiscal = null;
+		
+		if(listaNotaFiscal != null && !listaNotaFiscal.isEmpty()) {
+			notaFiscal = listaNotaFiscal.get(0);
+		} 
 		
 		if(notaFiscal == null){	
 
