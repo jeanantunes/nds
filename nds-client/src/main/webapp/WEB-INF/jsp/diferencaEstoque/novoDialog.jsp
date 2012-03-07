@@ -21,15 +21,17 @@
 	
 	</form>
 	
-	<table id="" width="465" border="0" cellspacing="2" cellpadding="2">
+	<table id="" width="510" border="0" cellspacing="2" cellpadding="2">
 		<tr style="font-size: 11px;">
-			<td id="labelTotalGeralNovo" width="329"><strong>Total Geral:</strong></td>
-			<td id="totalPrecoVendaDiferencas" width="71" align="right"></td>
-			<td id="totalRecebimentoFisico" width="45" align="right"></td>
+			<td id="labelTotalGeralNovo" width="55"><strong>Total Geral:</strong></td>
+			<td id="totalPrecoVendaDiferencas" width="5" align="right"></td>
+			<td id="totalRecebimentoFisico" width="10" align="right"></td>
 		</tr>
 	</table>
 	
 	<script language="javascript" type="text/javascript">
+
+		var ultimaLinhaPreenchida;
 	
 		$(function() {
 
@@ -79,9 +81,9 @@
 				height : 220
 			});
 
-			$("#labelTotalGeralNovo").hide();
+			/*$("#labelTotalGeralNovo").hide();
 			$("#totalPrecoVendaDiferencas").hide();
-			$("#totalRecebimentoFisico").hide();
+			$("#totalRecebimentoFisico").hide();*/
 		});
 
 		function popupNovasDiferencas() {
@@ -130,7 +132,7 @@
 
 				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true';
 
-				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true';
+				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true, obterDadosProduto';
 
 				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Produto">'
 									+ '<a href="javascript:;" onclick="produto.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');">&nbsp;</a>'
@@ -140,16 +142,22 @@
 					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ');" />';
 
 				var inputNumeroEdicao = 
-					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + ');" />';
+					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + '); ultimaLinhaPreenchida=' + index + '" />';
 
+				var spanPrecoVenda = '<span id="precoVendaFormatado' + index + '"/>';
+
+				var hiddenPrecoVenda = '<input type="hidden" id="precoVenda' + index + '" />';
+
+				var spanQtdeRecebimentoFisico = '<span id="qtdeRecebimentoFisico' + index + '"/>';
+				
 				var inputQuantidade = 
 					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
-								
+
 				row.cell.codigoProduto = inputCodigoProduto + imgLupaPesquisa;
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
-				row.cell.precoVenda = "";
-				row.cell.qtdeRecebimentoFisico = "";
+				row.cell.precoVenda = hiddenPrecoVenda + spanPrecoVenda;
+				row.cell.qtdeRecebimentoFisico = spanQtdeRecebimentoFisico;
 				row.cell.quantidade = inputQuantidade;
 			});
 
@@ -218,9 +226,33 @@
 			return listaDiferencas;
 		}
 
-		function validarNovaDiferenca(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca) {
+		function obterDadosProduto(idCodigoProduto, idEdicaoProduto) {
+
+			codigoProduto = $(idCodigoProduto).val();
+
+			edicaoProduto = $(idEdicaoProduto).val();
+
+			var data = "codigoProduto=" + codigoProduto
+					 + "&numeroEdicao=" + edicaoProduto;
 			
-			return false;
+			$.postJSON(
+				"<c:url value='/produto/obterProdutoEdicao' />", 
+				data,
+				function(result) {
+
+					$("#precoVenda" + ultimaLinhaPreenchida).val(result.precoVenda);
+					
+					$("#precoVendaFormatado" + ultimaLinhaPreenchida).text(result.precoVenda);
+					$("#precoVendaFormatado" + ultimaLinhaPreenchida).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+
+					$("#totalPrecoVendaDiferencas").text(($("input[id^='precoVenda']").sum()));
+					$("#totalPrecoVendaDiferencas").formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+
+					
+				},
+				null, 
+				true
+			);
 		}
 
 		function isAtributosDiferencaVazios(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca) {

@@ -360,12 +360,12 @@ function popup() {
 		}
 		
 		function buscarResumoPeriodo() {
-			var idsFornecedores = new Array();
+			var parametros = new Array();
+			parametros.push({name:'dataInicial', value: $("#datepickerDe").val()});
 			$("input[name='checkgroup_menu']:checked").each(function(i) {
-				idsFornecedores.push($(this).val());
+				parametros.push({name:'idsFornecedores', value: $(this).val()});
 			});
-			var dataInicial = $("#datepickerDe").val(); 
-			var data = 'dataInicial='+ dataInicial + '&idsFornecedores=' + idsFornecedores;
+			var data = parametros;
 			$.ajax({
 				type:"GET",
 				url:'<c:url value="/matrizLancamento/resumoPeriodo"/>',

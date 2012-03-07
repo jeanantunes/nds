@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import br.com.abril.nds.vo.PeriodoVO;
-
 public class DateUtil {
 
 	public static boolean isValidDate(String valor, String pattern) {
@@ -42,11 +40,7 @@ public class DateUtil {
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
 	
-	public static boolean isDataFinalMaiorDataInicial(PeriodoVO periodo) {
-		
-		Date dataInicial = periodo.getDataInicial();
-		Date dataFinal = periodo.getDataFinal();
-		
+	public static boolean isDataFinalMaiorDataInicial(Date dataInicial, Date dataFinal) {
 		return dataInicial.compareTo(dataFinal) > 0;
 	}
 
