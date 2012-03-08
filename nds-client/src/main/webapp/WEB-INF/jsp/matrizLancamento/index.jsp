@@ -134,6 +134,9 @@ function popup() {
 
 .ui-datepicker { z-index: 1000 !important; }
 .ui-datepicker-today a { display:block !important; }
+.gridLinhaDestacada {
+  background:#F00; font-weight:bold; color:#fff;
+}
 </style>
 </head>
 
@@ -218,6 +221,7 @@ function popup() {
 </form>
 
 <script>
+	var linhasDestacadas = new Array();
 	$("#lancamentosProgramadosGrid").flexigrid({
 			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
 			dataType : 'json',
@@ -353,6 +357,9 @@ function popup() {
 				inputDataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 				row.cell.dataMatrizDistrib = inputDataDistrib;
 				row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck()" />';
+				if (row.cell.semFisico) {
+					linhasDestacadas.push(i+1);
+				}
 			});
 			return data[0];
 		}
@@ -406,6 +413,7 @@ function popup() {
 		    $("#tableResumoPeriodo").append(rows);
 		}
 		
+	
 </script>
 </body>
 
