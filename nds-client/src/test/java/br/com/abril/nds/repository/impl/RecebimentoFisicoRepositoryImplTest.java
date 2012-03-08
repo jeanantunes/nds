@@ -110,7 +110,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
 		
 		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO);
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO, new Date());
 		
 		
 		
@@ -137,7 +137,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		notaFiscalF = Fixture.notaFiscalFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
 		
 		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalF, listaDTO);
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalF, listaDTO, new Date());
 		
 		
 		
