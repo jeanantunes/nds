@@ -82,11 +82,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nova data não deve ser maior que data de recolhimento.");
 		}
 		
-		Estudo estudo = 
-			this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(
-					lancamento.getDataLancamentoDistribuidor(), 
-					idProdutoEdicao);
-		
 		//verificar se existe distribuição nesse dia da semana
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
@@ -101,12 +96,17 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto já expedido não pode sofrer furo.");
 		}
 		
-		lancamento.setDataLancamentoDistribuidor(novaData);
-		lancamento.setStatus(StatusLancamento.FURO);
+		Estudo estudo = 
+			this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(
+					lancamento.getDataLancamentoDistribuidor(), 
+					idProdutoEdicao);
 		
 		if (estudo != null){
 			estudo.setDataLancamento(novaData);
 		}
+		
+		lancamento.setDataLancamentoDistribuidor(novaData);
+		lancamento.setStatus(StatusLancamento.FURO);
 		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());

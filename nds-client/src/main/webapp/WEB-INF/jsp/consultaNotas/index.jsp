@@ -88,7 +88,7 @@
 					sortable : true,
 					align : 'center'
 				}],
-				sortname : "numero",
+				sortname : "numero, dataEmissao",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -132,9 +132,9 @@
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Preço Capa R$',
+					display : 'Preço de Venda R$',
 					name : 'precoCapa',
-					width : 80,
+					width : 100,
 					sortable : true,
 					align : 'right'
 				}, {
@@ -297,7 +297,7 @@ fieldset label
 						<td>Fornecedor:</td>
 						<td>
 							<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
-								<option selected="selected" value="-1">Todos</option>
+								<option selected="selected" value="-1"></option>
 								<c:forEach items="${fornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
@@ -308,11 +308,12 @@ fieldset label
 						<td width="46">de:</td>
 						<td width="120">
 							<input name="dataInicial" type="text" id="datepickerDe"
-								   style="width: 80px; float: left; margin-right: 5px;" /></td>
+								   style="width: 80px; float: left; margin-right: 5px;" value="${dataAtual}" />
+						</td>
 						<td align="center">Até</td>
 						<td>
 							<input name="dataFinal" type="text" id="datepickerAte"
-							 	   style="width: 80px; float: left; margin-right: 5px;" />
+							 	   style="width: 80px; float: left; margin-right: 5px;" value="${dataAtual}" />
 						</td>
 					</tr>
 					<tr>
@@ -329,7 +330,7 @@ fieldset label
 						<td colspan="2">
 						<select name="isNotaRecebida" id="selectNotaRecebida"
 								style="width: 135px;">
-								<option value="-1">Todos</option>
+								<option value="-1"></option>
 								<option value="1">Sim</option>
 								<option value="0">Não</option>
 						</select></td>

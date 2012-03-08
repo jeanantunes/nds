@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -31,6 +33,7 @@ public class RecebimentoFisico {
 	@GeneratedValue(generator = "REC_FISICO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_RECEBIMENTO", nullable = false)
 	private Date dataRecebimento;
 	@Column(name = "DATA_CONFIRMACAO")

@@ -5,37 +5,30 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
-import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -44,61 +37,63 @@ import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
+@Path("/estoque/recebimentoFisico")
 public class RecebimentoFisicoController {
-	@Autowired
-	private Result result;
 	
-	private static final String NOTA_FISCAL_ID = "notaFiscalId";
+	private Result result;
+
+	private HttpServletRequest request;
+	
+	private Validator validator;
+
+	private static final String CABECALHO_NOTA_FISCAL = "cabecalhoNotaFiscal";
+	
+	private static final String ITENS_NOTA_FISCAL = "itensNotaFiscal";
 	
 	private static final String GRID_RESULT = "gridResult";
 	
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
+	
 	@Autowired
 	private RecebimentoFisicoService recebimentoFisicoService;
+	
 	@Autowired
 	private PessoaService pessoaService;
+	
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
 	
-	private HttpServletRequest request;
-	
-	@Autowired
-	private Validator validator;
-	
 
-	public void recebimentoFisico(Result result, HttpServletRequest request,
-			FornecedorService fornecedorService, PessoaService pessoaService,
-			NotaFiscalService notaFiscalService,
-			RecebimentoFisicoService recebimentoFisicoServer,
-			PessoaJuridicaService pessoaJuridicaService,
+	public RecebimentoFisicoController(
+			Result result, 
+			HttpServletRequest request,
 			Validator validator) {
 		this.result = result;
 		this.request = request;
-		this.fornecedorService = fornecedorService;
-		this.pessoaService = pessoaService;
-		this.notaFiscalService = notaFiscalService;
-		this.recebimentoFisicoService = recebimentoFisicoServer;
-		this.pessoaJuridicaService = pessoaJuridicaService;
 		this.validator = validator;
 	}
 
-	@Path("/recebimentoFisico")
 	public void index() throws ParseException {
 
 		preencherCombos();
+		
 		preencherDataEmissao();
 	
 	}
 	
 	private void preencherDataEmissao() {
-		// RecebimentoFisico recebimento = new RecebimentoFisico();
+		
 		Date data = new Date(System.currentTimeMillis());
-		SimpleDateFormat formatarDate = new SimpleDateFormat("dd-MM-yyyy");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-		result.include("dataAtual", formatarDate.format(data));
+		result.include("dataAtual", sdf.format(data));
 
 	}
 
@@ -118,118 +113,301 @@ public class RecebimentoFisicoController {
 	}
 	
 	// metodo para prrencher combo fornecedor com o cnpj informado
-		@Post
-		public void buscaCnpjPorFornecedor(String nomeFantasia) throws ParseException {
+	@Post
+	public void buscaCnpjPorFornecedor(String nomeFantasia) throws ParseException {
 			
-			PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
-			if(pessoaJuridica != null){
-				result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
-			 }else{
-				 throw new ValidacaoException(TipoMensagem.ERROR,"Fornecedor não encontrado");
-			 }
+		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
 		
+		if(pessoaJuridica != null){
+			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
+		}else{
+			 throw new ValidacaoException(TipoMensagem.ERROR,"Fornecedor não encontrado");
 		}
 		
+	}
 
-	// metodo para gerar uma lista com sugestao
+	/**
+	 * Serializa a listaItemRecebimentoFisico que esta em session.
+	 */
+	@Post
+	public void refreshListaItemRecebimentoFisico() {
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
 	
+		
+	/**
+	 * Faz a busca na base de dados da listaItemRecebimentoFisico e a serializa.
+	 */
 	@Post
 	public void obterListaItemRecebimentoFisico() {
 		
-		//TODO
+		NotaFiscal notaFiscal = getNotaFiscalFromSession();
 		
+		Long idNotaFiscal = notaFiscal.getId();
 		
+		//TODO: obter lista do bd apos testes;
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = getListaItemNotaFromBD();
 		
-		TableModel<CellModel> tableModel = null;
-		List<RecebimentoFisicoDTO> listaDTO = getListaItemNotaFromBD();
-		tableModel = obterTableModelParaListItensNotaRecebimento(listaDTO);
-		Map<String, Object> resultado = new HashMap<String, Object>();
-		resultado.put(GRID_RESULT, tableModel);
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	@Post
-	public void verificarExisteNota(String numero) throws ParseException {
+	/**
+	 * TODO: remover apos testes...
+	 * 
+	 * @return NotaFiscal
+	 */
+	private NotaFiscal getNotaFromBD() {
 		
-		//MODIFICAR
-		NotaFiscal notaFiscal = null;//TODO chamar a pesquisa de nota
+		NotaFiscal notaFiscal = new NotaFiscalFornecedor();
 		
-		//request.getSession().setAttribute(NOTA_FISCAL_ID, null);
-
+		notaFiscal.setId(1L);
 		
-		if(notaFiscal == null){	
-			
-			//List<String> msgExisteNota = getMensagemExisteNota();
-			
-			result.use(Results.json()).from("").serialize();	
+		return notaFiscal;
 		
-		} else {
-			//request.getSession().setAttribute(NOTA_FISCAL_ID, notaFiscal.getId());
-			List<String> msgExisteNota = getMensagemExisteNota();
-			result.use(Results.json()).from(msgExisteNota, Constantes.PARAM_MSGS).serialize();
-			
-			
-			List<RecebimentoFisicoDTO> listaDTO = getListaItemNotaFromBD();
-			obterTableModelParaListItensNotaRecebimento(listaDTO);
-			
-			//result.use(Results.json()).from("").serialize();	
-
+	}
+	
+	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie) {
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		if(cnpj == null || cnpj.isEmpty()) {
+			msgs.add("O campo CNPJ é obrigatório");
+		} else if(cnpj.length()<12) {
+			msgs.add("O campo cnpj esta inválido");
 		}
 		
+		if(numeroNotaFiscal == null || numeroNotaFiscal.isEmpty()) {
+			msgs.add("O campo Nota Fiscal é obrigatório");
+		}
+
+		if(serie == null || serie.isEmpty()) {
+			msgs.add("O campo Série é obrigatório");
+		}
+
+		if(!msgs.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
 		
+	}
+
+	@Post 
+	public void incluirItemNotaFiscal(
+			RecebimentoFisicoDTO itemRecebimento, 
+			String dataLancamento, 
+			String dataRecolhimento) {
+		
+		validarNovoItemRecebimentoFisico(
+				itemRecebimento, 
+				dataLancamento, 
+				dataRecolhimento);
+		
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
+		
+		if(itensRecebimentoFisico == null) {
+			
+			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
+			
+			setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
+		}
+		
+		itensRecebimentoFisico.add(itemRecebimento);
+		
+		System.out.println("ADICIONANDO ITEM NOTA FISCAL CODIGO: ");
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		msgs.add("Item Nota fiscal adicionado com sucesso.");
+		
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+		
+	}
+
+	@Post
+	public void excluirItemNotaFiscal(int lineId) {
+		
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
+
+		RecebimentoFisicoDTO apagarReceb = null;
+		
+		for(RecebimentoFisicoDTO recebimento : itensRecebimentoFisico) {
+			
+			if(recebimento.getLineId() == lineId) {
+				apagarReceb = recebimento;
+				break;
+			}
+			
+		}
+		
+		itensRecebimentoFisico.remove(apagarReceb);
+		
+		System.out.println("REMOVENDO ITEM NOTA FISCAL CODIGO: " + lineId);
+		
+		List<String> msgs = new ArrayList<String>();
+		msgs.add("Item Nota fiscal removido com sucesso.");
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+		
+	}
+
+	@Post
+	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
+		
+		List<RecebimentoFisicoDTO> itensRecebimentoFisicoFromSession = getItensRecebimentoFisicoFromSession();
+		
+		if(itensRecebimento != null) {
+			
+			for(RecebimentoFisicoDTO itemFromForm : itensRecebimento) {
+
+				for(RecebimentoFisicoDTO itemFromSession : itensRecebimentoFisicoFromSession) {
+					
+					if(itemFromForm.equals(itemFromSession)) {
+						
+						itemFromSession.setQtdFisico(itemFromForm.getQtdFisico());
+						
+						break;
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+			
+		List<String> msgs = new ArrayList<String>();
+		msgs.add("Itens salvos com sucesso.");
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+	}
+	
+	private void limparDadosPesquisa() {
+		
+		setItensRecebimentoFisicoToSession(null);
+		
+	}
+	
+	
+	@Post
+	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie, String chaveAcesso) {
+
+		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
+		
+		setNotaFiscalToSession(null);
+		
+		limparDadosPesquisa();
+		
+		//TODO: CHAMAR PESQUISA DO BD
+		NotaFiscal notaFiscal = null;//getNotaFromBD();
+		
+		if(notaFiscal == null){	
+
+			List<String> msgs = new ArrayList<String>();
+			
+			msgs.add("Nota fiscal não encontrada");
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
+			
+			result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+		
+		} else {
+			
+			setNotaFiscalToSession(notaFiscal);
+			
+			List<String> msgs = new ArrayList<String>();
+			
+			msgs.add("Nota fiscal encontrada com sucesso");
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+			
+			result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+
+		}
 				
 	}
 	
-	//mockao nervoso
+	
+	/**
+	 *	TODO : remover este mock apos testes 
+	 */
 	private List<RecebimentoFisicoDTO> getListaItemNotaFromBD() {
 		
 		List<RecebimentoFisicoDTO> listaDTO = new ArrayList<RecebimentoFisicoDTO>();
 		
+		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
 		
-				
-		RecebimentoFisicoDTO recebimentoFisicoDTO = new RecebimentoFisicoDTO("54", "Monica", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,1L);
-		RecebimentoFisicoDTO recebimentoFisicoDTO2 = new RecebimentoFisicoDTO("54", "Monica", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,2L);
-		RecebimentoFisicoDTO recebimentoFisicoDTO3 = new RecebimentoFisicoDTO("54", "Monica", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,3L);
-		RecebimentoFisicoDTO recebimentoFisicoDTO4 = new RecebimentoFisicoDTO("54", "Monica", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE,4L);
-		
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(1L, 1L,"54", "Michel", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
 		listaDTO.add(recebimentoFisicoDTO);
-		listaDTO.add(recebimentoFisicoDTO2);
-		listaDTO.add(recebimentoFisicoDTO3);
-		listaDTO.add(recebimentoFisicoDTO4);
+
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(2L, 2L, "54", "Ana", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
+		listaDTO.add(recebimentoFisicoDTO);
+
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(3L, 3L,"54", "Jose", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
+		listaDTO.add(recebimentoFisicoDTO);
+
+		recebimentoFisicoDTO = new RecebimentoFisicoDTO(4L, 4L,"54", "Marilda", 12L, BigDecimal.TEN, BigDecimal.TEN, 
+				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
+		listaDTO.add(recebimentoFisicoDTO);
 		
 		return listaDTO;
-		
 
 	}
 	
 	
 	/**
-	 * Criar Grid na  tela com os dados de recebimentoFisicoDTO
+	 * Obtem um tableModel com os dados da lista de itens de recebimento fisico.
+	 * 
 	 * @param listaExtratoEdicao
-	 * @return
+	 * 
+	 * @return TableModel.
 	 */
-	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> listaDTO) {
+	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico) {
 					
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		for(RecebimentoFisicoDTO dto : listaDTO) {
+		int counter = 0;
+		
+		for(RecebimentoFisicoDTO dto : itensRecebimentoFisico) {
 			
-			String codigo 		     =  dto.getCodigo();
+			dto.setLineId(counter++);
+			
+			String codigo 		     = dto.getCodigoProduto();
 			String nomeProduto 	     = dto.getNomeProduto();
-			String edicao 		     = dto.getEdicao().toString();
-			String precoCapa 	     = dto.getPrecoCapa().toString();
-			String repartePrevisto 	 = dto.getRepartePrevisto().toString();
-			String qtdeFisica		 = dto.getQtdFisico().toString();
-			String diferenca		 = dto.getDiferenca().toString();
-			String valorTotal		 = dto.getValorTotal().toString();
-			listaModeloGenerico.add(new CellModel(dto.getIdItemNota().intValue(), codigo, nomeProduto, edicao, precoCapa, repartePrevisto,qtdeFisica,diferenca,valorTotal));
+			String edicao 		     = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
+			String precoCapa 	     = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String repartePrevisto 	 = (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
+			String qtdeFisica		 = (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
+			String diferenca		 = (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
+			String valorTotal		 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			
+			listaModeloGenerico.add(
+					new CellModel( 	
+							dto.getLineId(), 
+							codigo, 
+							nomeProduto, 
+							edicao, 
+							precoCapa, 
+							repartePrevisto,
+							qtdeFisica,
+							diferenca,
+							valorTotal
+					));
+			
 			
 		}
 		
@@ -242,98 +420,249 @@ public class RecebimentoFisicoController {
 	}
 	
 	
+
 	
-	
-	private boolean validarCnpj(PessoaJuridica pessoaJuridica, String cnpj){
-		boolean isValido = true;
-		List<String> listaMensagemValidacao = new ArrayList<String>();
+	/**
+	 * Inclui na view os dados do combo de Fornecedor.
+	 */
+	private void carregarComboFornecedor() {
 		
-		if (cnpj == null){
-			isValido = false;
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("CNPJ é obrigatório!");
-		}else if(pessoaJuridica == null){
-			isValido = false;
-			listaMensagemValidacao.add(Constantes.TIPO_MSG_ERROR);
-			listaMensagemValidacao.add("CNPJ não encontrado!");
-		}
-		if(isValido == false){
-			result.use(Results.json()).from(listaMensagemValidacao, Constantes.PARAM_MSGS).serialize();
-		}	
-					
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
 		
-		return isValido;
-	}
-	
-	private List<String> getMensagemExisteNota(){
-		
-		
-		List<String> listaMensagemValidacao = new ArrayList<String>();
-		listaMensagemValidacao.add(Constantes.TIPO_MSG_SUCCESS);
-		listaMensagemValidacao.add("Nota Fiscal encontrada!");
-		
-		return listaMensagemValidacao;
-		
-	}
-	
-	public void preencherCombos() {
-		List<Fornecedor> fornecedores = fornecedorService
-				.obterFornecedoresAtivos();
 		if (fornecedores != null) {
 			result.include("listafornecedores", fornecedores);
 		}
 		
+	}
+	
+	/**
+	 * Inclui na view os dados do combo TipoLancamento.
+	 */
+	private void carregarComboTipoLancamento() {
+		
 		List<String> listaTipoLancamento = new ArrayList<String>();
+		
 		for(TipoLancamento obj: TipoLancamento.values()){
+			
 			listaTipoLancamento.add(obj.name());
-		}			
+			
+		}
+		
 		result.include("listaTipoLancamento",listaTipoLancamento);
+		
+	}
+	
+	/**
+	 * Inclui na view dados dos combos.
+	 */
+	public void preencherCombos() {
+		
+		carregarComboFornecedor();
+		
+		carregarComboTipoLancamento();
+		
+	}
+
+	/**
+	 * Valida os dados de uma nota fiscal.
+	 * 
+	 * @param notaFiscalFornecedor
+	 * @param dataEmissao
+	 * @param dataEntrada
+	 * @param valorLiquido
+	 * @param valorBruto
+	 * @param valoDesconto
+	 * 
+	 * @throws ValidacaoException
+	 */
+	private void validarNovaNotaFiscal(
+			NotaFiscalFornecedor notaFiscalFornecedor, String dataEmissao,
+			String dataEntrada, String valorLiquido, String valorBruto,
+			String valorDesconto) throws ValidacaoException {
+
+		List<String> msgs = new ArrayList<String>();
+
+		if(notaFiscalFornecedor == null) {
+			
+			msgs.add("Os campos da Nota Fiscal devem ser informados");
+			
+		} else {
+			
+			if (	notaFiscalFornecedor.getEmitente() == null || 
+					notaFiscalFornecedor.getEmitente().getCnpj() == null || 
+					notaFiscalFornecedor.getEmitente().getCnpj().isEmpty()) {
+				
+				msgs.add("O campo Emitente dever ser informado");
+				
+			}
+
+			if (	notaFiscalFornecedor.getNumero() == null || 
+					notaFiscalFornecedor.getNumero().isEmpty()) {
+				
+				msgs.add("O campo Nota Fiscal dever ser informado");
+				
+			}
+
+			if (	notaFiscalFornecedor.getSerie() == null || 
+					notaFiscalFornecedor.getSerie().isEmpty()) {
+				msgs.add("O campo Série dever ser informado");
+			}
+
+			validarCampoMonetario("Valor Bruto", valorBruto, msgs);
+			
+			validarCampoMonetario("Valor Líquido", valorLiquido, msgs);
+
+			validarCampoMonetario("Valor Desconto", valorDesconto, msgs);
+
+			validarCampoData("Data Emissão", dataEmissao, msgs);
+
+			validarCampoData("Data Entrada", dataEntrada, msgs);			
+		}
+
+		if(!msgs.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+		
+	}
+	
+	private void validarNovoItemRecebimentoFisico(RecebimentoFisicoDTO itemRecebimento, 
+			String dataLancamento, 
+			String dataRecolhimento) {
+		
+
+		List<String> msgs = new ArrayList<String>();
+
+		if(itemRecebimento == null) {
+			
+			msgs.add("Os campos do Novo Item devem ser informados.");
+			
+		} else {
+			
+			if (itemRecebimento.getCodigoProduto() == null) {
+				msgs.add("O campo Código dever ser informado.");
+			}
+
+			if (itemRecebimento.getEdicao() == null) {
+				msgs.add("O campo Edição dever ser informado.");
+			}
+
+			if (itemRecebimento.getRepartePrevisto() == null) {
+				msgs.add("O campo Reparte Previsto dever ser informado.");
+			}
+			
+			if (itemRecebimento.getTipoLancamento() == null) {
+				msgs.add("O campo Tipo Lançamento dever ser informado.");
+			}
+			
+			validarCampoData("Data Lançamento", dataLancamento, msgs);
+
+			validarCampoData("Data Recolhimento", dataRecolhimento, msgs);
+			
+		}
+		
+		if(!msgs.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+		
+	}
+	
+	private void validarCampoData(String label, String valor, List<String> msgs) {
+		
+		if (valor == null || valor.isEmpty()) {
+			
+			msgs.add("O campo " + label + "dever ser informado");
+			
+		} else {
+			
+			try {
+				
+				sdf.parse(valor);
+				
+			} catch (ParseException e) {
+				
+				msgs.add("O campo " + label + " é invalido");
+				
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * Valida valores monitotarios.
+	 * 
+	 * @param label
+	 * @param valor
+	 * @param msgs
+	 */
+	private void validarCampoMonetario(String label, String valor, List<String> msgs) {
+		
+		if (valor == null || valor.isEmpty()) {
+			
+			msgs.add("O campo " + label + " dever ser informado");
+			
+		} else {
+			
+			try {
+				
+				Double.parseDouble(valor.replace(".", "").replace(",", "."));
+				
+			} catch (NumberFormatException e) {
+				
+				msgs.add("O campo " + label + " é invalido");
+				
+			}
+			
+		}
+		
+	}
+	
+
+	@Post
+	public void incluirNovaNotaFiscal(NotaFiscalFornecedor notaFiscalFornecedor, 
+			String dataEmissao,
+			String dataEntrada,
+			String valorLiquido,
+			String valorBruto,
+			String valorDesconto)  {
+		
+		validarNovaNotaFiscal(
+				notaFiscalFornecedor, 
+				dataEmissao,
+				dataEntrada,
+				valorLiquido,
+				valorBruto,
+				valorDesconto);
+		
+		setNotaFiscalToSession(notaFiscalFornecedor);
+		
+		
+		//TODO: Chamar backend
+		
+		List<String> msgs = new ArrayList<String>();
+		msgs.add("Nova nota fiscal cadastrada com sucesso.");
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+		
+	}
+	
+	public NotaFiscal getNotaFiscalFromSession() {
+		return (NotaFiscal) request.getSession().getAttribute(CABECALHO_NOTA_FISCAL);
+	}
+
+	public void setNotaFiscalToSession(NotaFiscal notaFiscal) {
+		request.getSession().setAttribute(CABECALHO_NOTA_FISCAL, notaFiscal);
+	}
+
+	public List<RecebimentoFisicoDTO> getItensRecebimentoFisicoFromSession() {
+		return (List<RecebimentoFisicoDTO>) request.getSession().getAttribute(ITENS_NOTA_FISCAL);
+	}
+
+	public void setItensRecebimentoFisicoToSession(List<RecebimentoFisicoDTO> itensRecebimentoFisico) {
+		request.getSession().setAttribute(ITENS_NOTA_FISCAL, itensRecebimentoFisico);
 	}
 
 	
-	@Get
-	public List<RecebimentoFisico> consulta() {
-		return null;
-	}
-
-	@Post
-	@Path("/recebimentoFisico/inserirNota")
-	public void inserirNotaFiscal(NotaFiscalFornecedor notaFiscalFornecedor,
-			RecebimentoFisico recebimentoFisico) throws ParseException {
-
-		System.out.println("@@@@@@@@@@@@@@@@@@@@"
-				+ notaFiscalFornecedor.getDataEmissao());
-		/*
-		 * validator.checking(new Validations() {{
-		 * that(!"".equals(notaFiscalFornecedor.getDataEmissao()),
-		 * "produto.nome", "nome.vazio"); //that(produto.getPreco() > 0,
-		 * "produto.preco", "preco.invalido"); }});
-		 * validator.onErrorUsePageOf(RecebimentoFisicoController
-		 * .class).index();
-		 */
-
-		notaFiscalService.inserirNotaFiscal(notaFiscalFornecedor);
-
-		notaFiscalFornecedor.setOrigem(Origem.MANUAL);
-
-		recebimentoFisico.setNotaFiscal(notaFiscalFornecedor);
-
-		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-
-		// receber o Usuario que inseriu a nota
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-
-		//recebimentoFisico.setUsuario(usuario);
-
-		recebimentoFisicoService.adicionarRecebimentoFisico(recebimentoFisico);
-		result.redirectTo("/recebimentoFisico");
-	}
-
-	@Path("recebimentoFisico/pesquisa")
-	public List<RecebimentoFisicoDTO> pesquisaRecebimentoFisico(Fornecedor fornecedor, NotaFiscal notaFiscal) throws Exception {
-		return recebimentoFisicoService.obterItemNotaPorCnpjNota(fornecedor.getJuridica().getCnpj(), notaFiscal.getNumero(), notaFiscal.getSerie());		
-		
-	}
 
 }

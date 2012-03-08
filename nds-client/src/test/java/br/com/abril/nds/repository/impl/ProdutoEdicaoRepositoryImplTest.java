@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -41,12 +42,14 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 
 	@Before
 	public void setUp() {
-		
+		Fornecedor dinap = Fixture.fornecedorDinap();
+		getSession().save(dinap);
 		
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		getSession().save(tipoProduto);
 		
 		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		produto.addFornecedor(dinap);
 		getSession().save(produto);
 
 		ProdutoEdicao produtoEdicao =

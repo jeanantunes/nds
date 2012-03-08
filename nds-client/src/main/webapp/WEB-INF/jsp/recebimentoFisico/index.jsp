@@ -1,211 +1,304 @@
 <head>
-<script language="javascript" type="text/javascript">
 
-//funcoes que pesquisa fornecedor por Cnpj
-function pesquisarPorCnpjFornecedor() {
-		
-	var cnpj = $("#cnpj").val();	
-		
-		$.postJSON("<c:url value='recebimentoFisico/buscaCnpj'/>",
-				   "cnpj=" + cnpj, exibirNomeFornecedor);	
-	}
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
-//funcoes que pesquisa cnpj por fornecedor
-function pesquisarCnpjPorFornecedor() {
-		
-	var fornecedor = $("#fornecedor").val();		
-		$.postJSON("<c:url value='recebimentoFisico/buscaCnpjPorFornecedor'/>",
-				   "nomeFantasia=" + fornecedor, exibirCnpj);
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript">
+
+	
+
+	/**
+	 * SELECIONA UM FORNECEDOR A PARTIR DO CNPJ DIGITADO.
+	 */
+	function pesquisarPorCnpjFornecedor() {
 			
-	
-}
-
-function isnull(){
-	forn = document.getElementById('fornecedor').value;
-	if(forn == ""){
-		document.getElementById('cnpj').value="";
-	}
-}
-
-function exibirNomeFornecedor(result) {	
-	$("#fornecedor").val(result.nomeFantasia);
-}
-
-function exibirCnpj(result) {
-	$("#cnpj").val(result.cnpj);
-}
-
-//funcoes que verifica se existe Nota para Fornecedor
-function pesquisarExisteNotaFornecedor() {
-	
-	var notaFiscal = $("#notaFiscal").val();
-	var cnpj = $("#cnpj").val();
-	var serie = $("#cnpj").val();
-	var chaveAcesso = $("#chaveAcesso").val();
-
-	
+		var cnpj = $("#cnpj").val();	
 		
-	$.postJSON("<c:url value='recebimentoFisico/verificarExisteNota'/>",
-				   "numero=" + notaFiscal,  "cnpj=" + cnpj,
-				   "serie=" + serie,
-				   "chaveAcesso=" + chaveAcesso,
-				   confirmaNotaFiscalEncontrada);
-
-}
-
-function confirmaNotaFiscalEncontrada(result) {
+		if(cnpj == "") {
+			$("#fornecedor").val("");
+			return;
+		}
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/buscaCnpj'/>", "cnpj=" + cnpj, 
+		function(result) { 
+			$("#fornecedor").val(result.nomeFantasia);
+		});	
 	
-	if(typeof result == "object"){		
+	}
+	
+	/**
+	 * PESQUISA O CNPJ DO FORNECEDOR SELECIONADO.
+	 */
+	function pesquisarCnpjPorFornecedor() {
+			
+		var fornecedor = $("#fornecedor").val();		
+	
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/buscaCnpjPorFornecedor'/>", "nomeFantasia=" + fornecedor, 
+		function (result) {
+			$("#cnpj").val(result.cnpj);
+		});
+				
+		
+	}
+	
+	
+	/**
+	 * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
+	 * COM OS PARÂMETROS DE PESQUISA
+	 */
+	function verificarNotaFiscalExistente() {
+
+		var cnpj 		= $("#cnpj").val();
+		var notaFiscal 	= $("#notaFiscal").val();
+		var serie 		= $("#serie").val();
+		var chaveAcesso = $("#chaveAcesso").val();
+		
+		var dadosPesquisa = 
+			"cnpj=" 			+ cnpj			+ "&" +
+			"numeroNotaFiscal=" + notaFiscal 	+ "&" + 
+		   	"serie=" 			+ serie			+ "&" +
+		    "chaveAcesso=" 		+ chaveAcesso;
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/verificarNotaFiscalExistente'/>", 
+					   dadosPesquisa,
+					   confirmaNotaFiscalEncontrada);
+	
+	}
+
+	/**
+	 * SE UMA NOTA FOR ENCONTRADA, SERAO PESQUISADOS OS ITEM RELATIVOS A MESMA
+	 * E POPULADA A GRID, CASO CONTRARIO, SERA EXIBIDA POPUP PARA SE CADASTRAR UMA
+	 * NOVA NOTA.
+	 */
+	function confirmaNotaFiscalEncontrada(result) {
+		
+		jsonResposta = result;
+		
+		if(result.tipoMensagem == "SUCCESS") {
+
+			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			
 			pesquisarItemNotaGrid();
-	}else{
+
+		} else {
+			
+			$(".grids").hide();
+			
+			popup_nova_nota();	
 		
-		popup_nota();	
+		}
+		
 	}
 	
-}
-
-
-
-function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
+	/**
+	 * APRESENTA O POPUP PARA CADASTRAR NOVO ITEM NOTA/RECEBIMENTO.
+	 */
+	function popup_novo_item() {
+		
+		$("#dialog-novo-item").dialog({
 			resizable: false,
-			height:500,
-			width:410,
+			height:440,
+			width:500,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					nform = document.getElementById('dialognota');
-					nform.submit();
-				},
+				"Confirmar": cadastrarNovoItemNota,
+				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			}
 		});
-	};
+	}
 	
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:430,
-			width:410,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
+	/**
+	 * CADASTRA NOVO ITEM DE NOTA.
+	 */
+	function cadastrarNovoItemNota() {
+		
+		var codigo 				= $("#codigo").val();
+		var produto 			= $("#produto").val();
+		var precoCapa			= $("#precoCapa").val();
+		var edicao 				= $("#edicao").val();
+		var dataLancamento 		= $("#datepickerLancto").val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento").val();
+		var repartePrevisto 	= $("#repartePrevisto").val();
+		var tipoLancamento 		= $("#tipoLancamento").val();
+		
+		var dadosCadastro = 
+
+			"itemRecebimento.codigoProduto=" 		+ codigo			+ "&" +
+			"itemRecebimento.nomeProduto=" 			+ produto			+ "&" +
+			"itemRecebimento.precoCapa=" 			+ precoCapa			+ "&" +
+			"itemRecebimento.edicao=" 				+ edicao			+ "&" +
+			"dataLancamento=" 						+ dataLancamento 	+ "&" + 
+		   	"dataRecolhimento=" 					+ dataRecolhimento	+ "&" +
+		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
+		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", dadosCadastro, 
+				function(result) {
 					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
+					if(result.tipoMensagem == "SUCCESS") {
+						
+						$("#dialog-novo-item").dialog( "close" );
+						
+					} 
+			
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					
+					refreshItemNotaGrid();
+				
+		});
+		
+		
+		
+	}
 	
-	function popup_nota() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );		
-		$( "#dialog-nota" ).dialog({
+	/**
+	 * APRESENTA O POPUP PARA CADASTRAR NOVA NOTA FISCAL
+	 */
+	function popup_nova_nota() {
+		
+		$("#dialog-nova-nota").dialog({
 			resizable: false,
 			height:320,
 			width:460,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$(".grids").show();
-					nform = document.getElementById('dialognota');
-					nform.submit();
-				},
+				
+				"Confirmar": cadastrarNovaNota,
+				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			}
 		});	
-		      
-	};
+			      
+	}
 	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:330,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {					
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+	/**
+	 * CADASTRA NOVA NOTA.
+	 */
+	function cadastrarNovaNota() {
+		
+		var cnpj 			= $("#cnpj").val();
+		var notaFiscal 		= $("#notaFiscal").val();
+		var serie 			= $("#serie").val();
+		var chaveAcesso 	= $("#chaveAcesso").val();
+		var dataEmissao 	= $("#dataEmissao").val();
+		var dataEntrada 	= $("#dataEntrada").val();
+		var valorBruto		= $("#valorBruto").val();
+		var valorLiquido	= $("#valorLiquido").val();
+		var valorDesconto 	= $("#valorDesconto").val();
+		var cfopCodigo 		= $("#cfopCodigo").val();
+		var cfopDescricao 	= $("#cfopDescricao").val();
+		
+		var dadosCadastro = 
+
+			"notaFiscalFornecedor.emitente.cnpj=" 		+ cnpj			+ "&" +
+			"notaFiscalFornecedor.numero=" 				+ notaFiscal	+ "&" +
+			"notaFiscalFornecedor.serie=" 				+ serie			+ "&" +
+			"notaFiscalFornecedor.chaveAcesso=" 		+ chaveAcesso	+ "&" +
+			"dataEmissao=" 								+ dataEmissao	+ "&" +
+			"dataEntrada=" 								+ dataEntrada	+ "&" +
+			"valorBruto=" 								+ valorBruto	+ "&" +
+			"valorLiquido=" 							+ valorLiquido	+ "&" +
+			"valorDesconto=" 							+ valorDesconto	+ "&" + 
+		   	"notaFiscalFornecedor.cfop.codigo=" 		+ cfopCodigo	+ "&" +
+		    "notaFiscalFornecedor.cfop.descricao=" 		+ cfopDescricao;
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirNovaNotaFiscal'/>", dadosCadastro, 
+				function(result) {
+			
+			
+					if(result.tipoMensagem == "SUCCESS") {
+						
+						$("#dialog-nova-nota").dialog( "close" );
+						
+					} 
+			
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+					refreshItemNotaGrid();
+				
 		});
-	};
+		
+		
+	}
 	
-  //callback function to bring a hidden box back
-		function callback() {
-			setTimeout(function() {
-				$( "#effect:visible").removeAttr( "style" ).fadeOut();
+	/**
+	 * EFEITO PARA ABERTURA POPUP. 
+	 */
+	function callback() {
+		setTimeout(function() {
+			$( "#effect:visible").removeAttr("style" ).fadeOut();
+	
+		}, 1000 );
+	}	
+	
+	/**
+	 * CARREGA CAMPOS DE DATA COM CALENDARIO.
+	 */
+	$(function() {
+		
+			$( "#datepickerLancto" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			$( "#datepickerRecolhimento" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			$( "#dataEmissao" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			$( "#dataEntrada" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			
+			$("#datepickerLancto").mask("99/99/9999");
+			$("#datepickerRecolhimento").mask("99/99/9999");
+			$("#dataEmissao").mask("99/99/9999");
+			$("#dataEntrada").mask("99/99/9999");
+			
+			$("#valorBruto").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:10
+			});
 
-			}, 1000 );
-		};	
-
-	function mostrar(){
-	$(".grids").show();
-}	
-$(function() {
-		$( "#datepickerDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerLancto" ).datepicker({
-			showOn: "button",
-			buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerRecolhimento" ).datepicker({
-			showOn: "button",
-			buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerPrevisto" ).datepicker({
-			showOn: "button",
-			buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerMatrizDistrib" ).datepicker({
-			showOn: "button",
-			buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
+			$("#valorLiquido").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:10
+			});
+			
+			$("#valorDesconto").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:10
+			});
+			
+			
+			carregarItemNotaGrid();
+			
 	});
 	
-	function confirmar(){
-		$(".dados").show();
-	}
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();	}
-	
-	
+	/**
+	 * APRESENTA O CAMPO DE CHAVE DA NFE.
+	 */
 	function mostrar_nfes(){
 		checkBox = document.getElementById('eNF');
 		
@@ -213,24 +306,19 @@ $(function() {
 			$(".nfes").show();
 			
 		}else{
-			document.getElementById('nfes').style.display = "none";
-			document.getElementById('chaveAcesso').value="";
+			$(".nfes").hide();
+			$("#chaveAcesso").val("");
 		}
-		//$(".bt_1").hide();
 
 	};
-	
-	$(function() {
-				
-		carregarItemNotaGrid();
-		
-	});
 
-
+	/**
+	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
+	 */
 	function carregarItemNotaGrid() {
-		$(".itemNotaGrid")
-		.flexigrid(
-		{
+		
+		$(".itemNotaGrid").flexigrid({
+			
 				preProcess: getDataFromResult,
 				dataType : 'json',
 				colModel : [
@@ -300,11 +388,13 @@ $(function() {
 		});
 	}
 
-
+    /**
+     * FAZ A PESQUISA DOS ITENS REFERENTES A NOTA ENCONTRADA.
+     */
 	function pesquisarItemNotaGrid() {
 	
 		$(".itemNotaGrid").flexOptions({
-			url: '<c:url value="/"/>recebimentoFisico/obterListaItemRecebimentoFisico',
+			url: '<c:url value="/"/>estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
 			preProcess: getDataFromResult,
 			dataType : 'json'
 		});
@@ -312,39 +402,113 @@ $(function() {
 		$(".itemNotaGrid").flexReload();
 	
 	}
+
+    /**
+     * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
+     */
+	function refreshItemNotaGrid() {
 	
-	
-	function getDataFromResult(data) {
-	
-				
-			var dadosPesquisa = {page: 0, total: 0};
-		
-			var mensagens = undefined;
-		
-			$.each(data, function(index, value) {
-		
-			if(value[0] == "gridResult") {
-				dadosPesquisa = value[1];
-			} else if(value[0] == "mensagens") {
-				mensagens = value[1];
-			}
-	
+		$(".itemNotaGrid").flexOptions({
+			url: '<c:url value="/"/>estoque/recebimentoFisico/refreshListaItemRecebimentoFisico',
+			preProcess: getDataFromResult,
+			dataType : 'json'
 		});
 	
-		if(typeof mensagens == "object") {
-			$(".grids").hide();
-			exibirMensagem(mensagens[0], mensagens);
-		} else {
-			$(".grids").show();
-		}
+		$(".itemNotaGrid").flexReload();
+	
+	}
+
+    
+	
+    
+    
+    /**
+     * SALVA OS DADOS DOS ITENS DA NOTA EDITADOS.
+     */
+	function salvarDadosItensDaNotaFiscal() {
+		
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/salvarDadosItensDaNotaFiscal'/>", listaDeValores, 
+		function(result) {
+			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			refreshItemNotaGrid();
+		
+		});
+		
+	}
+	
+    /**
+     * OBTEM OS VALORES DA GRID A SEREM ENVIADOS AO SERVIDOR VIA AJAX
+     */
+	function obterListaValores() {
+		
+		var linhasDaGrid = $(".itemNotaGrid tr");
+		
+		var listaDeValores = "";
+		
+		$.each(linhasDaGrid, function(index, value) {
+
+			var colunaQtdFisico = $(value).find("td")[5];
+			
+			var qtdFisico = $(colunaQtdFisico).find("div").find('input[name="qtdFisico"]').val();
+			
+			var lineId = $(colunaQtdFisico).find("div").find('input[name="lineId"]').val();
+			
+			var itemRecebimento_lineId = 'itensRecebimento['+index+'].lineId='+lineId+'&';
+			
+			var itemRecebimento_qtdFisico = 'itensRecebimento['+index+'].qtdFisico='+qtdFisico+'&';
+			
+			listaDeValores = (listaDeValores + itemRecebimento_lineId + itemRecebimento_qtdFisico);
+			
+		});
+		
+		return listaDeValores;
+		
+	}
+	
+	/**
+	 * EXCLUI UM ITEM DA NOTA
+	 */
+	function excluirItemNotaFiscal(lineId) {
 		
 		
-	return dadosPesquisa;
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", "lineId=" + lineId, 
+		function(result) {
+			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			refreshItemNotaGrid();
+		
+		});
+		
+	}
+	
+	/**
+	 * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
+	 */
+	function getDataFromResult(data) {
+		
+		$.each(data.rows, function(index, value) {
+			
+			var qtdFisico = value.cell[5];
+			
+			var lineId = value.id;
+			
+			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
+			
+			value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
+
+			value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">APAGAR</a>';
+			
+		});
+		
+		
+		$(".grids").show();
+		
+		return data;
 
 	}
-//#####################################################
 
-
+	
 </script>
 
 <style type="text/css">
@@ -355,245 +519,295 @@ $(function() {
 </head>
 
 <body>
-<div id="dialog-excluir" title="Recebimento Físico">
-	<p>Confirma este Recebimento?</p>
-</div>
 
-
-<div id="dialog-nota" title="Recebimento Físico">
-	<form id="dialognota" action="<c:url value ="/recebimentoFisico/inserirNota"/>" method="post">
-	    <table width="439" cellpadding="2" cellspacing="2" style="text-align:left;">
-	    <tr>
-	        <td width="127">Emissão:</td>
-	        <td width="296"><input type="text" name="notaFiscalFornecedor.dataEmissao" style="width:80px " id="datepickerDe" /></td>
-	    </tr>
-	    <tr>
-	      <td>Entrada:</td>
-	      <td><input type="text" name="recebimentoFisico.data" value="${dataAtual}" style="width:80px" id="datepickerAte" /></td>
-	    </tr>
-	    <tr>
-	      <td>Valor Bruto R$:</td>
-	      <td><input type="text" name="notaFiscalFornecedor.valorBruto" style="width:80px " /></td>
-	    </tr>
-	    <tr>
-	      <td>Valor Líquido R$:</td>
-	      <td><input type="text" name="notaFiscalFornecedor.valorLiquido" style="width:80px " /></td>
-	    </tr>
-	    <tr>
-	      <td>Valor Desconto R$:</td>
-	      <td><input type="text" name="notaFiscalFornecedor.valorDesconto" style="width:80px " /></td>
-	    </tr>
-	    <tr>
-	      <td>CFOP:</td>
-	      <td><input type="text" name="notaFiscalFornecedor.cfop" style="width:80px " />
-	      <input type="text" style="width:190px " /></td>
-	    </tr>
-	     </table>    
-    </form>
-    
-</div>
-
-
-<div id="dialog-novo" title="Recebimento Físico">
-    <table width="341" border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td>Código:</td>
-    <td width="202"><input type="text" name="textfield6" id="textfield6" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar" title="Pesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-  </tr>
-  <tr>
-    <td>Produto:</td>
-    <td width="202"><input type="text" name="textfield6" id="textfield6" style="width:200px;"/></td>
-  </tr>
-  <tr>
-    <td>Edição:</td>
-    <td><input type="text" name="textfield13" id="textfield13" style="width:80px;" disabled="disabled"/></td>
-  </tr>
-  <tr>
-    <td>Data Lançamento:</td>
-    <td><input type="text" name="datepickerLancto" id="datepickerLancto" style="width:80px;"/></td>
-  </tr>
-  <tr>
-    <td>Data Recolhimento:</td>
-    <td><input type="text" name="datepickerRecolhimento" id="datepickerRecolhimento" style="width:80px;"/></td>
-  </tr>
-  <tr>
-    <td>Preço R$:</td>
-    <td><input type="text" name="textfield" id="textfield" style="width:80px;"/></td>
-  </tr>
-  <tr>
-    <td>Peso:</td>
-    <td><input type="text" name="textfield2" id="textfield2" style="width:80px;"/></td>
-  </tr>
-  <tr>
-    <td>Pacote Padrão:</td>
-    <td><input type="text" name="textfield3" id="textfield3" style="width:200px;"/></td>
-  </tr>
-  <tr>
-    <td>Reparte Previsto:</td>
-    <td><input type="text" name="textfield15" id="textfield15" style="width:80px;"/></td>
-  </tr>
-  <tr>
-    <td>Lançamento:
-    <select name="tipoLancamento" id="tipoLancamento" style="width: 250px;">
-    		<option value=""></option>
-			<c:forEach var="tipoLancamento" items="${listaTipoLancamento}">				
-				<option value="${tipoLancamento}">${tipoLancamento}</option>
-			</c:forEach>
-		</select></td> 
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td><span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="popup();"><img src="images/ico_add_novo.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />Incluir Novo</a></span></td>
-  </tr>
-</table>
-    
-</div>
-
-
-
-
-
-
-
-
-<div class="corpo">
-  
-     <br clear="all"/>
-    <br />
-   
-    <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Recebimento Físico < evento > com < status >.</b></p>
+	<div id="dialog-excluir" title="Recebimento Físico">
+		<p>Confirma este Recebimento?</p>
 	</div>
-    	
-      <fieldset class="classFieldset">
-   	    <legend> Pesquisar Recebimento Físico</legend>
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-        
-        
-        
-  <tr>
-    <td width="43" align="right">CNPJ:</td>
-    <td width="136"><input id="cnpj" onblur="pesquisarPorCnpjFornecedor();" name="cnpj" style="width:130px;"/></td>
-     <td width="86">Fornecedor:</td>
-    <td width="254">
-    	<select id="fornecedor" name="fornecedor"  onchange="pesquisarCnpjPorFornecedor(),isnull();" onblur="pesquisarCnpjPorFornecedor(),isnull();" style="width: 250px;">
-    		<option value=""></option>
-			<c:forEach var="fornecedor" items="${listafornecedores}">				
-				<option value="${fornecedor.juridica.nomeFantasia}">${fornecedor.juridica.nomeFantasia}</option>
-			</c:forEach>
-		</select>
-	</td>
-    <td width="76">Nota Fiscal:</td>
-    <td width="123"><input type="text" id=notaFiscal style="width:100px;"/></td>
-    <td width="33">Série:</td>
-    <td width="43"><input id="serie" type="text"  style="width:30px;"/></td>
-    <td width="110">
-    	<span class="bt_pesquisar" title="Pesquisar Recebimento">
-        	<a href="javascript:;" onclick="pesquisarExisteNotaFornecedor();">Pesquisar</a>
-        </span></td>
-      
-  </tr>
-  <tr>
-    <td colspan="4" height="26"><label for="eNF">É uma NF-e?</label>
-    
-      <input type="checkbox" name="checkbox8" id="eNF" onchange="mostrar_nfes();" style="float:left; margin-right:10px;" />
-     <span id="nfes" class="nfes"> Chave de Acesso:
-      <input type="text" name="textfield11" id="chaveAcesso" style="width:120px; margin-left:10px;" onblur="popup_nota();" /></span>
-     </td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td></span></td>
-  </tr>
-        </table>
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-      
-       <fieldset class="classFieldset">
-       	  <legend>Recebimentos  Físico Cadastrados</legend>
-        <div class="grids" style="display:none;">
-		 	<table class="itemNotaGrid"></table>		 	
-            
-            <span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="popup();"><img src="images/ico_add_novo.gif"  border="0" hspace="5" />Novo Produto</a></span>
-            
-            <span class="bt_novos" title="Salvar"><a href="javascript:;"><img src="images/ico_salvar.gif" width="19" height="17" alt="Salvar"  hspace="5" border="0"/>Salvar</a></span>
-            
-            <span class="bt_confirmar_novo" title="Confirmar Recebimento Físico"><a href="javascript:;" onclick="popup_excluir();"><img src="images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5" />Confirmar</a></span>
-  
+
+
+	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
+			
+			<table width="439" cellpadding="2" cellspacing="2"
+				style="text-align: left;">
+				<tr>
+					<td width="127">Emissão:</td>
+					<td width="296">
+						<input 	type="text"
+								style="width: 80px"
+								name="dataEmissao"
+								id="dataEmissao" />
+					</td>
+				</tr>
+				<tr>
+					<td>Entrada:</td>
+					<td>
+						<input 	type="text" 
+								value="${dataAtual}" 
+								style="width: 80px" 
+								id="dataEntrada" />
+					</td>
+				</tr>
+				<tr>
+					<td>Valor Bruto R$:</td>
+					<td>
+						<input 	type="text"
+								id="valorBruto" 
+								style="width: 80px" />
+					</td>
+				</tr>
+				<tr>
+					<td>Valor Líquido R$:</td>
+					<td>
+						<input 	type="text"
+								id="valorLiquido" 
+								style="width: 80px" />
+					</td>
+				</tr>
+				<tr>
+					<td>Valor Desconto R$:</td>
+					<td>
+						<input 	type="text"
+								id="valorDesconto" 
+								style="width: 80px" />
+					</td>
+				</tr>
+				<tr>
+					<td>CFOP:</td>
+					<td>
+						<input 	type="text"
+								id="cfopCodigo" 
+								style="width: 80px" /> 
+								
+						<input 	type="text"
+								id="cfopDescricao" 
+								style="width: 190px" />
+					</td>
+				</tr>
+			</table>
+
+	</div>
+
+
+	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
+	
+		<table width="341" border="0" cellspacing="2" cellpadding="2">
+			<tr>
+				<td>Código:</td>
+				<td width="202">
+					<input 
+					type="text"
+					id="codigo"
+					maxlength="255"
+					style="width: 80px; float: left; margin-right: 5px;"/>
+					
+					<span class="classPesquisar" title="Pesquisar">
+						<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+					</span>
+					
+				</td>
+			</tr>
+			<tr>
+				<td>Produto:</td>
+				<td width="202">
+					<input 
+						maxlength="255"
+						type="text" 
+						id="produto"
+						onkeyup="pesquisarPorNomeProduto();" 
+						style="width: 200px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Edição:</td>
+				<td><input 
+					type="text" 
+					id="edicao" maxlength="20"
+					style="width: 80px;" 
+					onblur="validarNumEdicao();"/>
+				</td>
+			</tr>
+			<tr>
+				<td>Data Lançamento:</td>
+				<td><input 	type="text" 
+							name="datepickerLancto"
+							id="datepickerLancto" 
+							style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Data Recolhimento:</td>
+				<td><input 	type="text" 
+							name="datepickerRecolhimento"
+							id="datepickerRecolhimento" 
+							style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Preço R$:</td>
+				<td><input 	
+							disabled="disabled"
+							type="text" 
+							id="precoCapa"
+							style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Peso:</td>
+				<td><input 	disabled="disabled"
+							type="text" 
+							id="peso"
+							style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Pacote Padrão:</td>
+				<td><input 	disabled="disabled"
+							type="text" 
+							id="pacotePadrao"
+							style="width: 200px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>Reparte Previsto:</td>
+				<td><input 	type="text" 
+							id="repartePrevisto"
+							style="width: 80px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Lançamento: 
+				</td>				
+				<td>
+					<select name="tipoLancamento"
+						id="tipoLancamento" style="width: 250px;">
+							<option value=""></option>
+							<c:forEach var="tipoLancamento" items="${listaTipoLancamento}">
+								<option value="${tipoLancamento}">${tipoLancamento}</option>
+							</c:forEach>
+					</select>
+				</td>
+			</tr>
+		</table>
+
+	</div>
+
+
+	<div class="corpo">
+
+		<br clear="all" /> <br />
+
+		<div class="container">
+
+			<div id="effect" style="padding: 0 .7em;"
+				class="ui-state-highlight ui-corner-all">
+				<p>
+					<span style="float: left; margin-right: .3em;"
+						class="ui-icon ui-icon-info"></span> <b>Recebimento Físico <
+						evento > com < status >.</b>
+				</p>
+			</div>
+
+			<fieldset class="classFieldset">
+			
+				<legend> Pesquisar Recebimento Físico</legend>
+				
+				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+
+					<tr>
+						<td width="43" align="right">CNPJ:</td>
+						<td width="136"><input id="cnpj"
+							onblur="pesquisarPorCnpjFornecedor();" name="cnpj"
+							style="width: 130px;" />
+						</td>
+						<td width="86">Fornecedor:</td>
+						<td width="254"><select id="fornecedor" name="fornecedor"
+							onblur="pesquisarCnpjPorFornecedor()" style="width: 250px;">
+								<option value=""></option>
+								<c:forEach var="fornecedor" items="${listafornecedores}">
+									<option value="${fornecedor.juridica.nomeFantasia}">${fornecedor.juridica.nomeFantasia}</option>
+								</c:forEach>
+						</select></td>
+						<td width="76">Nota Fiscal:</td>
+						<td width="123"><input type="text" id=notaFiscal
+							style="width: 100px;" />
+						</td>
+						<td width="33">Série:</td>
+						<td width="43"><input id="serie" type="text"
+							style="width: 30px;" />
+						</td>
+						<td width="110"><span class="bt_pesquisar"
+							title="Pesquisar Recebimento"> <a href="javascript:;"
+								onclick="verificarNotaFiscalExistente();">Pesquisar</a> </span>
+						</td>
+
+					</tr>
+					<tr>
+						<td colspan="4" height="26">
+						
+							<label for="eNF">É uma NF-e?</label>
+							
+							<input type="checkbox" name="checkbox8" id="eNF" onchange="mostrar_nfes();" style="float: left; margin-right: 10px;" /> 
+							
+							<span id="nfes" class="nfes"> 
+							
+							Chave de Acesso: 
+							
+							<input type="text" name="textfield11" id="chaveAcesso"
+								style="width: 120px; margin-left: 10px;" />
+						</span>
+						
+						</td>
+						
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td></span></td>
+					</tr>
+				</table>
+				
+			</fieldset>
+			
+			<div class="linha_separa_fields">&nbsp;</div>
+
+			<fieldset class="classFieldset">
+			
+				<legend>Recebimentos Físico Cadastrados</legend>
+				
+				<div class="grids" style="display: none;">
+				
+					<table class="itemNotaGrid"></table>
+
+					<span class="bt_incluir_novo" title="Incluir Nova Linha"> 
+						<a href="javascript:;" onclick="popup_novo_item();"> 
+							<img src="images/ico_add_novo.gif" border="0" hspace="5" />
+							Novo Produto 
+						</a> 
+					</span> 
+					
+					<span class="bt_novos" title="Salvar"> 
+						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
+							<img src="images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+							Salvar 
+						</a> 
+					</span>
+					
+					<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
+						<a href="javascript:;" onclick="alert('confirmando...');;">
+							<img src="images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
+							Confirmar
+						</a>
+					</span>
+
+				</div>
+
+			</fieldset>
+
+			<div class="linha_separa_fields">&nbsp;</div>
+
 		</div>
-              
-              
-            
 
+	</div>
 
-		
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-
-        
-
-    
-    </div>
-</div> 
-<script>
-	$(".notasFisicoGrid").flexigrid({
-			url : '../xml/notas_recebimento_fisico-xml.xml',
-			dataType : 'xml',
-			colModel : [{
-				display : 'Código',
-				name : 'codigo	',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto	',
-				width : 340,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Reparte Previsto',
-				name : 'repartePrevisto',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtd. Fisico',
-				name : 'qtdeFisico',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Diferença',
-				name : 'diferenca',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "produto",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
-		
-</script>
 </body>
+
 </html>

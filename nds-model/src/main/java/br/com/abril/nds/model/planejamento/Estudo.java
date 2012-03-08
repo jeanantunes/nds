@@ -46,7 +46,7 @@ public class Estudo implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
-	@NotFound(action=NotFoundAction.IGNORE)
+	@NotFound(action = NotFoundAction.IGNORE)
 	@ManyToOne(optional = true)
 	@JoinColumns({
 			@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
@@ -87,10 +87,6 @@ public class Estudo implements Serializable {
 	
 	public Lancamento getLancamento() {
 		return lancamento;
-	}
-	
-	public void setLancamento(Lancamento lancamento) {
-		this.lancamento = lancamento;
 	}
 
 }

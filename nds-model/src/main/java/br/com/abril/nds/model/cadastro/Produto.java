@@ -52,6 +52,10 @@ public class Produto {
 	@Column(name = "ORIGEM")
 	private Origem origem;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_PRODUTO_ID")
+	private TipoProduto tipoProduto;
+	
 	public Long getId() {
 		return id;
 	}
@@ -110,6 +114,18 @@ public class Produto {
 	
 	public void setOrigem(Origem origem) {
 		this.origem = origem;
+	}
+	
+	public TipoProduto getTipoProduto() {
+		return tipoProduto;
+	}
+
+	public void setTipoProduto(TipoProduto tipoProduto) {
+		this.tipoProduto = tipoProduto;
+	}
+	
+	public Fornecedor getFornecedor() {
+		return fornecedores.isEmpty() ? null : fornecedores.iterator().next();
 	}
 	
 	@Override

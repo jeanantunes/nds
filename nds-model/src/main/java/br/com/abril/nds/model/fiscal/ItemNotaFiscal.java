@@ -29,6 +29,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "ITEM_NOTA_FISCAL")
 @SequenceGenerator(name="ITEM_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+
 public class ItemNotaFiscal {
 
 	@Id

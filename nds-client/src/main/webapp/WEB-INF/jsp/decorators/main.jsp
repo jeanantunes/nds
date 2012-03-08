@@ -47,6 +47,8 @@
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.ui.datepicker-pt-BR.js"></script>
+<script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>
 
 <script language="javascript" type="text/javascript"
@@ -57,6 +59,18 @@
 
 <link rel="stylesheet" type="text/css" 
 	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
+	
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
+
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.formatCurrency-1.4.0.min.js"></script>
+
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.calculation.min.js"></script> 		
+
+<link rel="stylesheet" type="text/css"
+	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
 <script language="javascript" type="text/javascript">
 	$(function() {
@@ -100,6 +114,8 @@ fieldset label {
 	width: auto !important;
 	margin-left: 10px;
 }
+
+.ui-datepicker-today a {	display:block !important; }
 </style>
 
 <!-- DECORATOR HEAD -->
@@ -248,7 +264,7 @@ fieldset label {
 					<li><span class="classExpedicao">&nbsp;</span><a
 						href="javascript:;">Expedição</a>
 						<ul>
-							<li><a href="Expedicao/confirma_expedicao.htm">Confirma
+							<li><a href="confirmacaoExpedicao/confirmacaoExpedicao">Confirma
 									Expedição</a>
 							</li>
 							<li><a

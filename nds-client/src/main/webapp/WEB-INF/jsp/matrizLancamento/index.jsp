@@ -135,6 +135,8 @@ function popup() {
 .lancamentosProgramadosGrid #row1 a{color:#fff;}
 .lancamentosProgramadosGrid #row1 a:hover{color:#000;}
 
+.ui-datepicker { z-index: 1000 !important; }
+.ui-datepicker-today a { display:block !important; }
 </style>
 </head>
 
@@ -211,7 +213,7 @@ function popup() {
       <div class="linha_separa_fields">&nbsp;</div>      
       <fieldset class="classFieldset" id="resumoPeriodo"; style="display:none;" >
       	<legend>Resumo do Período</legend>
-        <table width="100%" border="0" cellspacing="2" cellpadding="2">
+        <table width="100%" border="0" cellspacing="2" cellpadding="2" id="tableResumoPeriodo">
         </table>
       </fieldset>
     </div>
@@ -223,15 +225,16 @@ function popup() {
 			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
 			dataType : 'json',
 			autoload: false,
+			singleSelect: true,
 			onSuccess: buscarResumoPeriodo,
 			preProcess : processarColunasLancamentos,
 			onSubmit : function(){
-				var idsFornecedores = new Array();
+				var parametros = new Array();
+				parametros.push({name:'data', value: $("#datepickerDe").val()});
 				$("input[name='checkgroup_menu']:checked").each(function(i) {
-					idsFornecedores.push($(this).val());
+					parametros.push({name:'idsFornecedores', value: $(this).val()});
 				});
-				$("#lancamentosProgramadosGrid").flexOptions({params: [{name:'data', value: $("#datepickerDe").val()}, 
-		                                      {name:'idsFornecedores', value: idsFornecedores}]});
+				$("#lancamentosProgramadosGrid").flexOptions({params: parametros});
 		        return true;
 		    },
 			colModel : [  {
@@ -336,23 +339,31 @@ function popup() {
 		});
 
 		function processarColunasLancamentos(data) {
-			$.each(data.rows, function(i, row){
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				return data;
+			}
+			$("#valorTotal").clear().html(data[1]);
+			$.each(data[0].rows, function(i, row){
 				var inputDataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 				inputDataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
 				inputDataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 				row.cell.dataMatrizDistrib = inputDataDistrib;
-				row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck()" />'
+				row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck()" />';
 			});
-			return data;
+			return data[0];
 		}
 		
 		function buscarResumoPeriodo() {
-			var idsFornecedores = new Array();
+			var parametros = new Array();
+			parametros.push({name:'dataInicial', value: $("#datepickerDe").val()});
 			$("input[name='checkgroup_menu']:checked").each(function(i) {
-				idsFornecedores.push($(this).val());
+				parametros.push({name:'idsFornecedores', value: $(this).val()});
 			});
-			var dataInicial = $("#datepickerDe").val(); 
-			var data = 'dataInicial='+ dataInicial + '&idsFornecedores=' + idsFornecedores;
+			var data = parametros;
 			$.ajax({
 				type:"GET",
 				url:'<c:url value="/matrizLancamento/resumoPeriodo"/>',
@@ -366,24 +377,34 @@ function popup() {
 		}
 		
 		function popularResumoPeriodo(data) {
+			
+			if (data.mensagens) {
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+
+				return data;
+			}
+			
 			var rows='<tr>';
 			$.each(data, function(index, resumo){
 				  rows+='<td>';
 				  rows+='<div class="box_resumo">';
-				  rows+='<label>'+ resumo.data +'</label>';
+				  rows+='<label>'+ resumo.dataFormatada +'</label>';
 				  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
 				  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';	
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-				  rows+='<span class="span_2">'+ resumo.qtdeExemplares +'</span>';	
+				  rows+='<span class="span_2">'+ resumo.qtdeExemplaresFormatada +'</span>';	
 				  rows+='<span class="span_1">Peso Total:</span>';
-				  rows+='<span class="span_2">'+ resumo.pesoTotal +'</span>';
+				  rows+='<span class="span_2">'+ resumo.pesoTotalFormatado +'</span>';
 				  rows+='<span class="span_1">Valor Total:</span>';
-				  rows+='<span class="span_2">'+ resumo.valorTotal +'</span>'
+				  rows+='<span class="span_2">'+ resumo.valorTotalFormatado +'</span>'
 				  rows+='</div>';
 				  rows+='</td>';					  
 		    });	
 		    rows+="</tr>";
-		    $("#resumoPeriodo").clear().append(rows);
+		    $("#tableResumoPeriodo").clear().append(rows);
 		}
 		
 </script>

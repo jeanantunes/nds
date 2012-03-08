@@ -14,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -55,9 +57,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public long totalBalanceamentoMatrizLancamentos(Date data,
+	public SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
 			List<Long> idsFornecedores) {
-		return lancamentoRepository.totalBalanceamentoMatrizLancamentos(data,
+		return lancamentoRepository.sumarioBalanceamentoMatrizLancamentos(data,
 				idsFornecedores);
 	}
 	
@@ -65,7 +67,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Transactional(readOnly = true)
 	public List<ResumoPeriodoLancamentoDTO> obterResumoPeriodo(
 			Date dataInicial, List<Long> fornecedores) {
-		// TODO: Definir periodo
 		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
 		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
 				.buscarDiasDistribuicao(fornecedores);
@@ -76,7 +77,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
 				dataInicial, dataFinal, diasDistribuicao);
 		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
-				.buscarResumosPeriodo(periodoDistribuicao, fornecedores);
+				.buscarResumosPeriodo(periodoDistribuicao, fornecedores, GrupoProduto.CROMO);
 		return resumos;
 	}
 
@@ -109,7 +110,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				FORMATO_DATA_LANCAMENTO));
 		dto.setId(lancamento.getId());
 		dto.setIdFornecedor(1L);
-		dto.setNomeFornecedor("ACME");
+		dto.setNomeFornecedor(produto.getFornecedor().getJuridica().getNomeFantasia());
 		dto.setLancamento(lancamento.getTipoLancamento().getDescricao());
 		dto.setNomeProduto(produto.getNome());
 		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
@@ -122,10 +123,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo != null) {
 			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
+		} else {
+			dto.setEstudoGerado("0");
 		}
 		return dto;
 	}
-
-
 
 }

@@ -1,24 +1,27 @@
 <head>
 	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+			
+	<script type="text/javascript"
+			src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 	<script type="text/javascript">
 	
 		$(function() {
-			$('input[id^="dataLancamento"]').datepicker({
+			$('input[id^="data"]').datepicker({
 				showOn: "button",
 				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('input[id^="dataLancamento"]').mask("99/99/9999");
-			$("#edicao").mask("?99999999999999999999", {placeholder:""});
+			$('input[id^="data"]').mask("99/99/9999");
+			$("#edicao").numeric();
 		});
 		
 		$(function() {
 			$(".consultaFaltasSobrasGrid").flexigrid({
-				preProcess: getDataFromResult,
+				preProcess: executarPreProcessamento,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Data',
@@ -78,10 +81,10 @@
 					display : 'Total R$',
 					name : 'valorTotalDiferenca',
 					width : 60,
-					sortable : false,
+					sortable : true,
 					align : 'right'
 				} ],
-				sortname : "dataLancamento",
+				sortname : "dataLancamentoNumeroEdicao",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -92,32 +95,56 @@
 			});
 		});
 		
+		$(function() {
+			$("#codigo").focus();
+		});
+		
+		/*function pesquisarProdutoCallBack() {
+			pesquisarFornecedores();
+		}*/
+		
+		function pesquisarFornecedores() {
+			var data = "codigoProduto=" + $("#codigo").val();
+			
+			$.postJSON("<c:url value='/estoque/diferenca/pesquisarFonecedores' />",
+					   data, montarComboFornecedores);
+		}
+		
+		function montarComboFornecedores(result) {
+			var comboFornecedores = montarComboBox(result);
+			
+			$("#fornecedor").html(comboFornecedores);
+		}
+		
 		function mostrarGridConsulta() {
 			var codigoProduto = $("#codigo").val();
 			var numeroEdicao = $("#edicao").val();
 			var idFornecedor = $("#fornecedor").val();
-			var dataLancamentoDe = $("#dataLancamentoDe").val();
-			var dataLancamentoAte = $("#dataLancamentoAte").val();
+			var dataInicial = $("#dataInicial").val();
+			var dataFinal = $("#dataFinal").val();
 			var tipoDiferenca = $("#tipoDiferenca").val();
 			
 			$(".consultaFaltasSobrasGrid").flexOptions({
 				url: "<c:url value='/estoque/diferenca/pesquisarDiferencas' />",
+				onSuccess: executarAposSucesso,
 				params: [
 				         {name:'codigoProduto', value:codigoProduto},
 				         {name:'numeroEdicao', value:numeroEdicao},
 				         {name:'idFornecedor', value:idFornecedor},
-				         {name:'dataLancamentoDe', value:dataLancamentoDe},
-				         {name:'dataLancamentoAte', value:dataLancamentoAte},
+				         {name:'dataInicial', value:dataInicial},
+				         {name:'dataFinal', value:dataFinal},
 				         {name:'tipoDiferenca', value:tipoDiferenca}
 				        ] ,
 			});
 			
 			$(".consultaFaltasSobrasGrid").flexReload();
-			
-			$(".grids").show();
 		}
 		
-		function getDataFromResult(resultado) {
+		function executarAposSucesso() {
+			$("span[id='statusAprovacao']").tooltip();
+		}
+		
+		function executarPreProcessamento(resultado) {
 			
 			if (resultado.mensagens) {
 
@@ -127,8 +154,6 @@
 				);
 				
 				$(".grids").hide();
-				//$("#btnConfirmar").hide();
-				//$("#labelTotalGeral").hide();
 
 				return resultado.tableModel;
 			}
@@ -137,13 +162,15 @@
 			
 			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
 			
+			$.each(resultado.tableModel.rows, function(index, row) {
+				
+				var spanAprovacao = "<span id='statusAprovacao' title='" + row.cell.motivoAprovacao + "'>"
+									+ row.cell.statusAprovacao + "</span>";
+				
+				row.cell.statusAprovacao = spanAprovacao;
+			});
 
-			if ($(".grids").css('display') == 'none') {	
-
-				$(".grids").show();
-				//$("#btnConfirmar").show();
-				//$("#labelTotalGeral").show();
-			}
+			$(".grids").show();
 			
 			return resultado.tableModel;
 		}
@@ -157,23 +184,26 @@
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
-				<td width="59">Código:</td>
+				<td id="teste" width="59" title="tooltip teste">Código:</td>
 				<td colspan="3">
-					<input type="text" name="codigo" id="codigo" style="width: 80px; float: left; margin-right: 5px;" />
+					<input type="text" name="codigo" id="codigo"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255" />
+					
 					<span class="classPesquisar" title="Pesquisar Produto">
-						<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+						<a href="javascript:;"
+						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, pesquisarFornecedores);">&nbsp;</a>
 					</span>
 				</td>
 				<td width="60">Produto:</td>
 				<td width="220">
-					<input type="text" name="produto" id="produto" style="width: 200px;"
-					       onkeyup="pesquisarPorNomeProduto();" />
+					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
+					       onkeyup="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, pesquisarFornecedores);" />
 				</td>
 				
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
-						   onchange="validarNumEdicao();"/>
+						   onchange="produto.validarNumEdicao('#codigo', '#edicao', false);"/>
 				</td>
 				
 				<td width="73">Fornecedor:</td>
@@ -191,22 +221,26 @@
 			<tr>
 				<td width="178">Período de Data Lançamento:</td>
 				<td width="108">
-					<input type="text" name="dataLancamentoDe" id="dataLancamentoDe" style="width: 80px;" value="${dataAtual}" />
+					<input type="text" name="dataInicial" id="dataInicial" style="width: 80px;" value="${dataAtual}" />
 				</td>
 				<td width="33" align="center">Até</td>
 				<td width="147">
-					<input type="text" name="dataLancamentoAte" id="dataLancamentoAte" style="width: 80px;" value="${dataAtual}" />
+					<input type="text" name="dataFinal" id="dataFinal" style="width: 80px;" value="${dataAtual}" />
 				</td>
 				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
 					<select name="tipoDiferenca" id="tipoDiferenca" style="width: 120px;">
+						<option selected="selected"></option>
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>
 					</select>
 				</td>
-				<td width="137"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a> </span></td>
+				<td width="137">
+					<span class="bt_pesquisar" title="Pesquisar">
+						<a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
+					</span>
+				</td>
 			</tr>
 		</table>
 	</fieldset>

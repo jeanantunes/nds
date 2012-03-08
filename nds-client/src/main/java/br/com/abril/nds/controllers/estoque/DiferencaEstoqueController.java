@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -35,6 +38,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -60,6 +64,11 @@ public class DiferencaEstoqueController {
 	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+	
+	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
+	
+	private boolean manterListaSessao = false;
 
 	public DiferencaEstoqueController(Result result, 
 								 	  Localization localization,
@@ -101,8 +110,75 @@ public class DiferencaEstoqueController {
 			
 		} else {
 			
+			if (!manterListaSessao){
+				this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, null);
+			}
+			
+			Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
+			
+			if (!setIdsExclusao.isEmpty()){
+				for (int index = 0 ; index < listaLancamentoDiferencas.size() ; index++){
+					if (setIdsExclusao.contains(listaLancamentoDiferencas.get(index).getId())){
+						listaLancamentoDiferencas.remove(index);
+					}
+				}
+			}
+			
 			this.processarDiferencasLancamento(listaLancamentoDiferencas, filtro);
 		}
+	}
+	
+	@Post
+	@Path("/lancamento/novo")
+	public void carregarNovasDiferencas(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
+		
+		this.validarEntradaDadosNovoLancamento(dataMovimentoFormatada, tipoDiferenca);
+		
+		int qtdeInicialPadrao = 50;
+		
+		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>(qtdeInicialPadrao);
+		
+		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
+			
+			DiferencaVO diferenca = new DiferencaVO();
+			
+			diferenca.setDataLancamento(dataMovimentoFormatada);
+			
+			diferenca.setTipoDiferenca(tipoDiferenca.getDescricao());
+			
+			listaNovasDiferencas.add(diferenca);
+		}
+		
+		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
+			new TableModel<CellModelKeyValue<DiferencaVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNovasDiferencas));
+		
+		tableModel.setTotal(qtdeInicialPadrao);
+		
+		tableModel.setPage(1);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/cadastrarNovasDiferencas")
+	public void cadastrarNovasDiferencas(List<DiferencaVO> listaNovasDiferencas) {
+		
+		if (listaNovasDiferencas == null 
+				|| listaNovasDiferencas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para lançamento!");
+		}
+		
+		for (DiferencaVO diferenca : listaNovasDiferencas) {
+			
+			this.validarNovaDiferenca(diferenca);
+			
+			
+		}
+		
+		result.use(Results.json()).withoutRoot().from(listaNovasDiferencas).recursive().serialize();
 	}
 
 	@Get
@@ -115,20 +191,20 @@ public class DiferencaEstoqueController {
 	@Post
 	@Path("/pesquisarDiferencas")
 	public void pesquisarDiferencas(String codigoProduto, Long numeroEdicao,
-									Long idFornecedor, String dataLancamentoDe,
-									String dataLancamentoAte, TipoDiferenca tipoDiferenca,
-									String sortorder, String sortname, int page, int rp) {
+									Long idFornecedor, String dataInicial,
+									String dataFinal, TipoDiferenca tipoDiferenca,
+									String sortorder, String sortname,
+									int page, int rp) {
 		
-		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
+		//TODO: tratar datas
+		//TODO: tratar parâmetros
 		
-		filtro.setCodigoProduto(codigoProduto);
-		filtro.setNumeroEdicao(numeroEdicao);
-		filtro.setIdFornecedor(idFornecedor);
-		filtro.setDataLancamentoDe(DateUtil.parseData(dataLancamentoDe, Constantes.DATE_PATTERN_PT_BR));
-		filtro.setDataLancamentoAte(DateUtil.parseData(dataLancamentoAte, Constantes.DATE_PATTERN_PT_BR));
-		filtro.setTipoDiferenca(tipoDiferenca);
+		this.validarEntradaDadosPesquisa(dataInicial, dataFinal);
 		
-		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+		FiltroConsultaDiferencaEstoqueDTO filtro =
+			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
+										dataInicial, dataFinal, tipoDiferenca,
+										sortorder, sortname, page, rp);
 		
 		List<Diferenca> listaDiferencas =
 			diferencaEstoqueService.obterDiferencas(filtro);
@@ -136,6 +212,8 @@ public class DiferencaEstoqueController {
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
+			
+			
 			this.processarDiferencas(listaDiferencas, filtro);
 		}
 	}
@@ -145,16 +223,76 @@ public class DiferencaEstoqueController {
 	 */
 	public void carregarCombosConsulta() {
 		this.carregarComboTiposDiferenca();
-		this.carregarComboFornecedores();
+		
+		List<ItemDTO<Long, String>> listaFornecedoresCombo =
+			this.carregarComboFornecedores(null);
+		
+		result.include("listaFornecedores", listaFornecedoresCombo);
 	}
 	
 	@Post
 	public void excluirFaltaSobra(Long idDiferenca){
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
-				Constantes.PARAM_MSGS).recursive().serialize();
 		
-		//result.forwardTo(DiferencaEstoqueController.class).lancamento();
+		if (this.diferencaEstoqueService.verificarPossibilidadeExclusao(idDiferenca)){
+			Set<Long> setIdsExclusao = obterIdsExcluidosSessao();
+			setIdsExclusao.add(idDiferenca);
+			this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, setIdsExclusao);
+			
+			manterListaSessao = true;
+			
+			FiltroLancamentoDiferencaEstoqueDTO filtro = 
+					(FiltroLancamentoDiferencaEstoqueDTO) 
+					this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+			
+			this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
+					filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+					filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+					filtro.getPaginacao().getQtdResultadosPorPagina());
+		} else {
+			result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, 
+							"Diferença lançada automaticamente não pode ser excluida."), 
+							Constantes.PARAM_MSGS).recursive().serialize();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Set<Long> obterIdsExcluidosSessao() {
+		Set<Long> setIdsExclusao = (Set<Long>) this.httpSession.getAttribute(IDS_DIFERENCAS_EXCLUSAO);
+		if (setIdsExclusao == null){
+			setIdsExclusao = new HashSet<Long>();
+		}
+		
+		return setIdsExclusao;
+	}
+
+	@Post
+	public void confirmarLancamentos(){
+		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
+		
+		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
+		this.diferencaEstoqueService.efetuarAlteracoes(setIdsExclusao);
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, 
+						"Operação efetuada com sucesso."), 
+						Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	public void cancelar(){
+		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
+		
+		this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, null);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = 
+				(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
+				filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+				filtro.getPaginacao().getQtdResultadosPorPagina());
 	}
 	
 	/**
@@ -195,11 +333,12 @@ public class DiferencaEstoqueController {
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 */
-	private void carregarComboFornecedores() {
+	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
-		//TODO: adicionar todos os fornecedores no combo
+		//TODO: obter forncedores do produto e do tipo revista
 		
-		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedores();
+		List<Fornecedor> listaFornecedor =
+			fornecedorService.obterFornecedoresPorProduto(codigoProduto);
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
 			new ArrayList<ItemDTO<Long,String>>();
@@ -209,8 +348,18 @@ public class DiferencaEstoqueController {
 				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia())
 			);
 		}
+			
+		return listaFornecedoresCombo;
+	}
+	
+	@Post
+	@Path("/pesquisarFonecedores")
+	public void pesquisarFonecedores(String codigoProduto) {
 		
-		result.include("listaFornecedores", listaFornecedoresCombo);
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = 
+			carregarComboFornecedores(codigoProduto);
+		
+		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
 	/*
@@ -271,7 +420,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -330,7 +479,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(page);
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -370,7 +519,7 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
-			
+
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {
@@ -385,15 +534,17 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setStatusAprovacao(
 				diferenca.getMovimentoEstoque().getStatus().toString());
 			
-			BigDecimal valorDiferencas = diferenca.getProdutoEdicao().getPrecoVenda().multiply(diferenca.getQtde());
-			consultaDiferencaVO.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorDiferencas));
+			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
+			
+			consultaDiferencaVO.setValorTotalDiferenca(
+				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
 			listaConsultaDiferenca.add(consultaDiferencaVO);
 			
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
 			
-			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
+			valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
 		}
 		
 		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
@@ -405,8 +556,10 @@ public class DiferencaEstoqueController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
+		//TODO: setar ordenação
+		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, this.localization);
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
 		ResultadoDiferencaVO resultadoDiferencaVO = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -449,6 +602,56 @@ public class DiferencaEstoqueController {
 		}
 		
 		this.httpSession.setAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE, filtroAtual);
+		
+		return filtroAtual;
+	}
+	
+	/*
+	 * Carrega o filtro da pesquisa de consulta de diferenças.
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @param numeroEdicao - número da edição
+	 * @param idFornecedor - identificador do fornecedor
+	 * @param dataInicial - data de movimento inicial
+	 * @param dataFinal - data de movimento final
+	 * @param tipoDiferenca - tipo de diferença
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 * 
+	 * @return Filtro
+	 */
+	private FiltroConsultaDiferencaEstoqueDTO carregarFiltroPesquisa(String codigoProduto, Long numeroEdicao,
+																	 Long idFornecedor, String dataInicial,
+																	 String dataFinal, TipoDiferenca tipoDiferenca,
+																	 String sortorder, String sortname,
+																	 int page, int rp) {
+		
+		FiltroConsultaDiferencaEstoqueDTO filtroAtual =  new FiltroConsultaDiferencaEstoqueDTO();
+		
+		filtroAtual.setCodigoProduto(codigoProduto);
+		filtroAtual.setNumeroEdicao(numeroEdicao);
+		filtroAtual.setIdFornecedor(idFornecedor);
+		
+		filtroAtual.setPeriodoVO(
+				new PeriodoVO(DateUtil.parseData(dataInicial, Constantes.DATE_PATTERN_PT_BR),
+							  DateUtil.parseData(dataFinal, Constantes.DATE_PATTERN_PT_BR)));
+		
+		filtroAtual.setTipoDiferenca(tipoDiferenca);
+		
+		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
+		
+		FiltroConsultaDiferencaEstoqueDTO filtroSessao =
+			(FiltroConsultaDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 		
 		return filtroAtual;
 	}
@@ -518,9 +721,103 @@ public class DiferencaEstoqueController {
 		}
 		
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para pesquisa de diferença de estoque.
+	 * 
+	 * @param dataMovimentoFormatada - data de movimento formatado
+	 */
+	private void validarEntradaDadosPesquisa(String dataInicial, String dataFinal) {
+		
+		/*if (dataInicial == null 
+				|| dataInicial.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+		}*/
+		
+		//TODO:
+	}
+	
+	/*
+	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
+	 * 
+	 * @param dataMovimentoFormatada - data de movimento formatado
+	 * @param tipoDiferenca - tipo de diferença
+	 */
+	private void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
+		
+		if (dataMovimentoFormatada == null 
+				|| dataMovimentoFormatada.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
 		}
+		
+		if (tipoDiferenca == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+		}
+	}
+	
+	/*
+	 * Valida a entrada de uma nova diferença.
+	 * 
+	 * @param diferenca - diferença
+	 */
+	private void validarNovaDiferenca(DiferencaVO diferenca) {
+		
+		boolean diferencaInvalida = false;
+		
+		if (diferenca.getCodigoProduto() == null 
+				|| diferenca.getCodigoProduto().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferenca.getDescricaoProduto() == null 
+				|| diferenca.getDescricaoProduto().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferenca.getNumeroEdicao() == null 
+				|| diferenca.getNumeroEdicao().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferenca.getQuantidade() == null 
+				|| diferenca.getQuantidade().trim().isEmpty()) {
+			
+			diferencaInvalida = true;
+		}
+		
+		if (diferencaInvalida) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
+		}
+	}
+	
+	private Locale getLocale() {
+		if (localization != null) {
+			return localization.getLocale();
+		}
+		return null;
 	}
 	
 }

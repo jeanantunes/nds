@@ -1,110 +1,80 @@
-function pesquisarPorCodigoProduto() {
-	var codigoProduto = $("#codigo").val();
+var produto = {
 	
-	$("#produto").val("");
-	$("#edicao").val("");
-	$("#edicao").attr("disabled", "disabled");
-	
-	if(typeof limparCamposPrePesquisaProduto == "function") {
-		limparCamposPrePesquisaProduto();
-	}
-	
-	if (!isNumeric(codigoProduto)) {
-		//TODO: mostrar msg
+	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, isFromModal, pesquisarPorCodigoCallBack) {
+		var codigoProduto = $(idCodigo).val();
 		
-		$("#codigo").val("");
+		$(idProduto).val("");
+		$(idEdicao).val("");
+		$(idEdicao).attr("disabled", "disabled");
 		
-		return;
-	}
-	
-	if (codigoProduto && codigoProduto.length > 0) {
-		$("#produto").val("");
-		$("#edicao").val("");
-		
-		$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-				   "codigoProduto=" + codigoProduto, exibirNomeProduto, null);
-	}
-}
-
-function exibirNomeProduto(result) {
-	$("#edicao").removeAttr("disabled");
-	$("#produto").val(result.nome);
-	$("#edicao").focus();
-	
-	chamarFuncaoCallBackPesquisaProduto();
-}
-
-function pesquisarPorNomeProduto() {
-	var produto = $("#produto").val();
-	
-	if(typeof limparCamposPrePesquisaProduto == "function") {
-		limparCamposPrePesquisaProduto();
-	}
-	
-	if (produto && produto.length > 0) {
-		$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto",
-				   "nomeProduto=" + produto, exibirAutoComplete);
-	}
-}
-
-function exibirAutoComplete(result) {
-	$("#produto").autocomplete({
-		source: result,
-		select: function(event, ui) {
-			completarPesquisa(ui.item.chave);
+		if (codigoProduto && codigoProduto.length > 0) {
+			$(idProduto).val("");
+			$(idEdicao).val("");
+			
+			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+					   "codigoProduto=" + codigoProduto,
+					   function(result) { produto.exibirNomeProduto(result, idProduto, idEdicao, pesquisarPorCodigoCallBack); }, null, isFromModal);
 		}
-	});
-}
+	},
 
-function completarPesquisa(chave){
-	$("#edicao").removeAttr("disabled");
-	$("#edicao").val("");
-	$("#codigo").val(chave.codigo);
-	$("#edicao").focus();
-	
-	chamarFuncaoCallBackPesquisaProduto();
-}
-
-function validarNumEdicao() {
-	var codigoProduto = $("#codigo").val();
-	var numeroEdicao = $("#edicao").val();
-	
-	if(typeof limparCamposPrePesquisaEdicao == "function") {
-		limparCamposPrePesquisaEdicao();
-	}
-	
-	if (!isNumeric(numeroEdicao)) {
-		//TODO: mostrar msg
+	exibirNomeProduto : function(result, idProduto, idEdicao, pesquisarPorCodigoCallBack) {
+		$(idEdicao).removeAttr("disabled");
+		$(idProduto).val(result.nome);
+		$(idEdicao).focus();
 		
-		$("#edicao").val("");
+		if (pesquisarPorCodigoCallBack) {
+			pesquisarPorCodigoCallBack();
+		}
+	},
+
+	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal, pesquisarPorNomeCallBack) {
+		var nomeProduto = $(idProduto).val();
 		
-		return;
-	}
+		if (nomeProduto && nomeProduto.length > 2) {
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
+					   function(result) { produto.exibirAutoComplete(result, idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack); }, null, isFromModal);
+		}
+	},
+
+	exibirAutoComplete : function(result, idCodigo, idProduto, idEdicao, pesquisarPorNomeCallBack) {
+		$(idProduto).autocomplete({
+			source: result,
+			select: function(event, ui) {
+				produto.completarPesquisa(ui.item.chave, idCodigo, idEdicao, pesquisarPorNomeCallBack);
+			}
+		});
+	},
+
+	completarPesquisa : function(chave, idCodigo, idEdicao, pesquisarPorNomeCallBack) {
+		$(idEdicao).removeAttr("disabled");
+		$(idEdicao).val("");
+		$(idCodigo).val(chave.codigo);
+		$(idEdicao).focus();
+		
+		if (pesquisarPorNomeCallBack) {
+			pesquisarPorNomeCallBack();
+		}
+	},
+
+	validarNumEdicao : function(idCodigo, idEdicao, isFromModal, validarEdicaoCallBack) {
+		var codigoProduto = $(idCodigo).val();
+		var numeroEdicao = $(idEdicao).val();
+		
+		if (codigoProduto && codigoProduto.length > 0
+				&& numeroEdicao && numeroEdicao.length > 0) {
+			
+			var data = "codigoProduto=" + codigoProduto +
+			   		   "&numeroEdicao=" + numeroEdicao;
+
+			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
+					data, function(result) { validarEdicaoCallBack(idCodigo, idEdicao); },
+					function() { produto.tratarErroValidacao(idEdicao); }, isFromModal);
+		}
+	},
+
+	tratarErroValidacao : function(idEdicao) {
+		$(idEdicao).val("");
+		$(idEdicao).focus();
+	},
 	
-	if (codigoProduto && codigoProduto.length > 0
-			&& numeroEdicao && numeroEdicao.length > 0) {
-		
-		var data = "codigoProduto=" + codigoProduto +
-		   		   "&numeroEdicao=" + numeroEdicao;
-		
-		$.postJSON(contextPath + "/produto/validarNumeroEdicao",
-				   data, chamarFuncaoCallBackValidacaoEdicao, tratarErroValidacao);
-	}
-}
-
-function tratarErroValidacao() {
-	$("#edicao").val("");
-	$("#edicao").focus();
-}
-
-function chamarFuncaoCallBackPesquisaProduto() {
-	if (typeof pesquisarProdutoCallBack == 'function') {
-		pesquisarProdutoCallBack();
-	}
-}
-
-function chamarFuncaoCallBackValidacaoEdicao() {
-	if (typeof validarEdicaoCallBack == 'function') {
-		validarEdicaoCallBack();
-	}
-}
+};

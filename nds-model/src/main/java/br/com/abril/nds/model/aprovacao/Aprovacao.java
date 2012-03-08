@@ -19,14 +19,20 @@ public abstract class Aprovacao {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "APROVADOR_ID")
 	private Usuario aprovador;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusAprovacao status = StatusAprovacao.PENDENTE;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_APROVACAO")
 	private Date dataAprovacao;
+	
 	@Column(name = "APROVADO_AUTOMATICAMENTE", nullable = false)
 	private boolean aprovadoAutomaticamente;
+	
+	@Column(name = "MOTIVO", nullable = false)
+	private String motivo;
 	
 	public Usuario getAprovador() {
 		return aprovador;
@@ -58,6 +64,14 @@ public abstract class Aprovacao {
 
 	public void setAprovadoAutomaticamente(boolean aprovadoAutomaticamente) {
 		this.aprovadoAutomaticamente = aprovadoAutomaticamente;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 	
 }

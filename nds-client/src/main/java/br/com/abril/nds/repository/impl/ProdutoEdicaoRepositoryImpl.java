@@ -3,15 +3,12 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
-
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 
@@ -70,15 +67,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
-		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estudo.qtdeReparte, ")
+		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estudo.qtdeReparte, lancamento.reparte, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
 		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ")
 		   .append("      Estudo estudo, Lancamento lancamento ")
-		   .append(" left join estudo.produtoEdicao as estudoP ")
+		   .append(" left join lancamento.estudos as estudo ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
-		   .append(" and   estudo.dataLancamento                 = lancamento.dataLancamentoDistribuidor ")
-		   .append(" and   estudoP                  = lancamento.produtoEdicao ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")

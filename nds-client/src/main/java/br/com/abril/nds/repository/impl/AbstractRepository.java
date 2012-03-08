@@ -34,7 +34,7 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 	}
 	
 	public void adicionar(T entity) {
-		getSession().save(entity);
+		getSession().save(entity);			
 	}
 	
 	public void remover(T entity) {
@@ -42,7 +42,11 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 	}
 	
 	public void alterar(T entity) {
-		getSession().merge(entity);
+		getSession().update(entity);
+	}
+	
+	public T merge(T entity) {
+		return (T) getSession().merge(entity);
 	}
 	
 	@SuppressWarnings("unchecked")

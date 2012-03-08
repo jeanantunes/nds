@@ -51,10 +51,6 @@ public class ProdutoEdicao {
 	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;	
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "FORNECEDOR_ID")
-	private Fornecedor fornecedor;
-	
 	public Long getId() {
 		return id;
 	}
@@ -163,14 +159,6 @@ public class ProdutoEdicao {
 	public String toString() {
 		return new StringBuilder(produto.toString()).append("-")
 				.append(numeroEdicao).toString();
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
 	}
 
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,8 +39,8 @@ public class Distribuidor {
 	private PessoaJuridica juridica;
 	@OneToMany(mappedBy = "distribuidor")
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();
-	@Column(name = "CAPACIDADE_DISTRIBUICAO")
-	private Long capacidadeDistribuicao;
+	@Column(name = "FATOR_DESCONTO")
+	private BigDecimal fatorDesconto;
 
 	public Long getId() {
 		return id;
@@ -73,12 +74,12 @@ public class Distribuidor {
 		this.diasDistribuicao = diasDistribuicao;
 	}
 	
-	public Long getCapacidadeDistribuicao() {
-		return capacidadeDistribuicao;
+	public BigDecimal getFatorDesconto() {
+		return fatorDesconto;
 	}
 	
-	public void setCapacidadeDistribuicao(Long capacidadeDistribuicao) {
-		this.capacidadeDistribuicao = capacidadeDistribuicao;
+	public void setFatorDesconto(BigDecimal fatorDesconto) {
+		this.fatorDesconto = fatorDesconto;
 	}
 
 }

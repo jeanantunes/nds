@@ -1,23 +1,39 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 
 public class ResumoPeriodoLancamentoDTO implements Serializable {
 
 	private static final long serialVersionUID = 7487823794102857136L;
 
-	private String data;
+	private Date data;
+	private String dataFormatada;
 	private Long qtdeTitulos;
-	private String qtdeExemplares;
-	private String pesoTotal;
-	private String valorTotal;
-
-	public String getData() {
+	private BigDecimal qtdeExemplares;
+	private String qtdeExemplaresFormatada;
+	private BigDecimal pesoTotal;
+	private String pesoTotalFormatado;
+	private BigDecimal valorTotal;
+	private String valorTotalFormatado;
+	
+	public Date getData() {
 		return data;
 	}
 	
-	public void setData(String data) {
+	public void setData(Date data) {
 		this.data = data;
+		if (data != null) {
+			dataFormatada = DateUtil.formatarDataPTBR(data);
+		}
+	}
+	
+	public String getDataFormatada() {
+		return dataFormatada;
 	}
 	
 	public Long getQtdeTitulos() {
@@ -28,32 +44,49 @@ public class ResumoPeriodoLancamentoDTO implements Serializable {
 		this.qtdeTitulos = qtdeTitulos;
 	}
 	
-	public String getQtdeExemplares() {
+	public BigDecimal getQtdeExemplares() {
 		return qtdeExemplares;
 	}
 	
-	public void setQtdeExemplares(String qtdeExemplares) {
+	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
 		this.qtdeExemplares = qtdeExemplares;
+		if (qtdeExemplares != null) {
+			qtdeExemplaresFormatada = qtdeExemplares.toBigInteger().toString();
+		}
 	}
 	
-	public String getPesoTotal() {
+	public String getQtdeExemplaresFormatado() {
+		return qtdeExemplaresFormatada;
+	}
+	
+	public BigDecimal getPesoTotal() {
 		return pesoTotal;
 	}
 	
-	public void setPesoTotal(String pesoTotal) {
+	public void setPesoTotal(BigDecimal pesoTotal) {
 		this.pesoTotal = pesoTotal;
+		if (pesoTotal != null) {
+			pesoTotalFormatado = pesoTotal.toString();
+		}
 	}
 	
-	public String getValorTotal() {
+	public String getPesoTotalFormatado() {
+		return pesoTotalFormatado;
+	}
+	
+	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
 	
-	public void setValorTotal(String valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+		if (valorTotal != null) {
+			valorTotalFormatado = CurrencyUtil.formatarValor(valorTotal);
+		}
 	}
 	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getValorTotalFormatado() {
+		return valorTotalFormatado;
 	}
-
+	
 }

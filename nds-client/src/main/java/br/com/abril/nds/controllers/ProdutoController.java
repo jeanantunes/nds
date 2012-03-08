@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -39,7 +40,7 @@ public class ProdutoController {
 		
 		if (produto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado!");
 			
 		} else {
 			
@@ -80,11 +81,14 @@ public class ProdutoController {
 		
 		try {
 			
-			numEdicaoValida = produtoEdicaoService.validarNumeroEdicao(codigoProduto, numeroEdicao);
+			ProdutoEdicao produtoEdicao =
+				produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+			
+			numEdicaoValida = (produtoEdicao != null);
 			
 			if (!numEdicaoValida) {
 
-				throw new ValidacaoException(TipoMensagem.ERROR, "Edição não encontrada para o produto.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada para o produto!");
 				
 			} else {
 				
@@ -97,7 +101,21 @@ public class ProdutoController {
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			
 		}
+	}
+	
+	@Post
+	@Path("/obterProdutoEdicao")
+	public void obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao) {
 		
+		ProdutoEdicao produtoEdicao =
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+		
+		if (produtoEdicao == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada para o produto!");
+		}
+		
+		result.use(Results.json()).from(produtoEdicao, "result").serialize();
 	}
 	
 }

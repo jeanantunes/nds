@@ -110,25 +110,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	@Override
-	@Transactional
-	public boolean validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
+	@Transactional(readOnly = true)
+	public ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao) {
 
-		if (codigoProduto == null || codigoProduto.isEmpty()){
+		if (codigoProduto == null || codigoProduto.isEmpty()) {
+			
 			throw new IllegalArgumentException("Código é obrigatório.");
 		}
 		
-		if (numeroEdicao == null || numeroEdicao.isEmpty()){
+		if (numeroEdicao == null || numeroEdicao.isEmpty()) {
+			
 			throw new IllegalArgumentException("Número edição é obrigatório.");
 		}
 
-		if(!Util.isValidNumber(numeroEdicao)) {
+		if (!Util.isValidNumber(numeroEdicao)) {
+
 			throw new IllegalArgumentException("Número edição é inválido.");
 		}
 		
-		ProdutoEdicao produtoEdicao = 
-			produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,
-																			 Long.parseLong(numeroEdicao));
-		
-		return (produtoEdicao != null) ? true : false;
+		return produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				codigoProduto, Long.parseLong(numeroEdicao));
 	}
 }

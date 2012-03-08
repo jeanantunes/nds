@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,14 +36,13 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
-	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	private DiferencaEstoqueRepositoryImpl diferencaEstoqueRepository;
 	
 	private Date dataMovimento;
 	
@@ -109,7 +109,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		getSession().save(fornecedor);
 		
 		NotaFiscalFornecedor notaFiscalFornecedor = 
-			Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, usuario);
+			Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal,
+										 usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		
 		getSession().save(notaFiscalFornecedor);
 
@@ -138,7 +139,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE);
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE, "Pendente.");
 			
 			getSession().save(movimentoEstoque);
 			
@@ -272,11 +273,18 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
 		
-		produtoEdicao.setFornecedor(fornecedor);
-		
 		getSession().save(produtoEdicao);
 		
 		return produtoEdicao;
+	}
+	
+	@Test
+	public void buscarStatusDiferencaLancadaAutomaticamente(){
+		Boolean flag = null;
+		
+		flag = this.diferencaEstoqueRepository.buscarStatusDiferencaLancadaAutomaticamente(1L);
+		
+		Assert.assertNotNull(flag);
 	}
 	
 }

@@ -21,17 +21,27 @@ function validarEdicaoCallBack() {
 	
 }
 
-function limparCamposPrePesquisaProduto() {
+function pesquisarProdutoPorCodigo() {
 
 	$("#nomeFornecedor").val("");
 	$("#precoCapa").val("");
 	
+	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, pesquisarProdutoCallBack);	
 }
 
-function limparCamposPrePesquisaEdicao() {
+function pesquisarProdutoPorNome() {
+
+	$("#nomeFornecedor").val("");
+	$("#precoCapa").val("");
+	
+	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, pesquisarProdutoCallBack);
+}
+
+function validarNumeroEdicao() {
 
 	$("#precoCapa").val("");
 	
+	produto.validarNumEdicao('#codigo', '#edicao', false, validarEdicaoCallBack);
 }
 
 var jsExtratoEdicao = {
@@ -205,7 +215,8 @@ $(function() {
 								margin-right: 5px;" />
 
 						<span class="classPesquisar">
-							<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+							<a href="javascript:;"
+							   onclick="pesquisarProdutoPorCodigo();">&nbsp;</a>
 						</span>
 					
 					</td>
@@ -217,8 +228,8 @@ $(function() {
 					<td width="236">
 
 						<input type="text" name="produto" id="produto" style="width: 220px;" 
-								maxlength="255"
-					       onkeyup="pesquisarPorNomeProduto();" />
+							   maxlength="255"
+					       	   onkeyup="pesquisarProdutoPorNome();" />
 
 						
 					
@@ -231,7 +242,7 @@ $(function() {
 					<td width="186">
 					
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-							onblur="validarNumEdicao();"/>
+						   onblur="validarNumeroEdicao();"/>
 								
 					</td>
 					

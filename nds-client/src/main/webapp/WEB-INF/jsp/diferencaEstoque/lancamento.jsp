@@ -12,6 +12,7 @@
 				
 				$(".grids").hide();
 				$("#btnConfirmar").hide();
+				$("#btnCancelar").hide();
 				$("#labelTotalGeral").hide();
 				$("#qtdeTotalDiferencas").hide();
 				$("#valorTotalDiferencas").hide();
@@ -40,6 +41,7 @@
 
 				$(".grids").show();
 				$("#btnConfirmar").show();
+				$("#btnCancelar").show();
 				$("#labelTotalGeral").show();
 				$("#qtdeTotalDiferencas").show();
 				$("#valorTotalDiferencas").show();
@@ -60,7 +62,6 @@
 		function popupExclusaoDiferenca(idMovimentoEstoque) {
 
 			$("#dialog-excluir").dialog({
-				
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -69,11 +70,16 @@
 					"Confirmar": function() {
 					$(this).dialog("close");
 					
-					var data = "idDiferenca=" + idMovimentoEstoque;
-					$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
+					var data = "?idDiferenca=" + idMovimentoEstoque;
+					
+					$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/excluirFaltaSobra" />'+data});
+					$("#gridLancamentos").flexReload();
+					
+					//var data = "idDiferenca=" + idMovimentoEstoque;
+					//$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog("close");
 				}
 				}
 			});
@@ -91,6 +97,32 @@
 				
 				$("#btnNovo").hide();
 			}
+		}
+		
+		function popupConfirmar(){
+			$("#dialog-confirmar-lancamentos").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+					$(this).dialog("close");
+					
+					$.postJSON("<c:url value='/estoque/diferenca/confirmarLancamentos'/>");
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+				}
+			});
+			
+			$("#dialog-confirmar-lancamentos").show();
+		}
+		
+		function cancelarModificacoes(){
+			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/cancelar" />'});
+			$("#gridLancamentos").flexReload();
 		}
 		
 		$(function() {
@@ -178,6 +210,10 @@
 		});
 	</script>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	
 	<style type="text/css">
 		fieldset label 
 		{
@@ -191,6 +227,9 @@
 	<div class="corpo">
 		<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
 			<p>Confirma esta Exclusão?</p>
+		</div>
+		<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
+			<p>Confirma estes Lançamentos?</p>
 		</div>
 		<div class="container">
 
@@ -254,7 +293,10 @@
 								<a href="javascript:;" onclick="popupNovasDiferencas();">Novo</a>
 							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
-								<a href="javascript:;" onclick="popup();">Confirmar</a>
+								<a href="javascript:;" onclick="popupConfirmar();">Confirmar</a>
+							</span>
+							<span id="btnCancelar" class="total bt_cancelar" style="display: none;">
+								<a href="javascript:;" onclick="cancelarModificacoes();">Cancelar</a>
 							</span>
 						</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">
@@ -271,7 +313,7 @@
 		</div>
 	</div>
 	
-	<jsp:include page="novo.jsp" />
+	<jsp:include page="novoDialog.jsp" />
 	
-	<jsp:include page="rateio.jsp" />
+	<jsp:include page="rateioDialog.jsp" />
 </body>

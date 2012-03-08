@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import br.com.abril.nds.vo.PeriodoVO;
-
 public class DateUtil {
 
 	public static boolean isValidDate(String valor, String pattern) {
@@ -42,11 +40,7 @@ public class DateUtil {
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
 	
-	public static boolean isDataFinalMaiorDataInicial(PeriodoVO periodo) {
-		
-		Date dataInicial = periodo.getDataInicial();
-		Date dataFinal = periodo.getDataFinal();
-		
+	public static boolean isDataFinalMaiorDataInicial(Date dataInicial, Date dataFinal) {
 		return dataInicial.compareTo(dataFinal) > 0;
 	}
 
@@ -90,5 +84,26 @@ public class DateUtil {
 		
 		return parseData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
+	
+	/**
+	 * Remove a informa??o de timestamp da data
+	 * 
+	 * @param data
+	 *            data para remo??o do timestamp
+	 * @return data sem informa??o de timestamp
+	 */
+	public static Date removerTimestamp(Date data) {
+		if (data == null) {
+			return null;
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+	
 	
 }
