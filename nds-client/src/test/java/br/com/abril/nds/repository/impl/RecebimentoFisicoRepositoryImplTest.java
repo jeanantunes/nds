@@ -25,17 +25,16 @@ import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.service.RecebimentoFisicoService;
+import br.com.abril.nds.service.impl.RecebimentoFisicoServiceImpl;
 
 public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 	
 	@Autowired
-	private RecebimentoFisicoService recebimentoFisicoService;
+	private RecebimentoFisicoServiceImpl recebimentoFisicoService;
 	
 	@Autowired
-	private NotaFiscalRepository notaFiscalRepository;
+	private NotaFiscalRepositoryImpl notaFiscalRepository;
 	
 	Fornecedor dinap = new Fornecedor();
 	PessoaJuridica pj = new PessoaJuridica();
@@ -111,15 +110,11 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		
 		
 		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO);
-		
-		
-		
 	}
 	
 	@Test	
+	@Ignore
 	public void inserirItemNotaSemIdNota() {
-		
-		
 		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
 		
 		recebimentoDTO.setIdProdutoEdicao(1L);
