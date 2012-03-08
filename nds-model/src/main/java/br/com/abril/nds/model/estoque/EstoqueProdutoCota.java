@@ -29,18 +29,24 @@ public class EstoqueProdutoCota {
 	@GeneratedValue(generator = "ESTOQUE_PROD_COTA_SEQ")	
 	@Column(name = "ID")
 	private Long id;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
+	
 	@Column(name = "QTDE_RECEBIDA")
 	private BigDecimal qtdeRecebida;
+	
 	@Column(name = "QTDE_DEVOLVIDA")
 	private BigDecimal qtdeDevolvida;
+	
 	@OneToMany(mappedBy = "estoqueProdutoCota")
 	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
+	
 	@Version
 	@Column(name = "VERSAO")
 	private Long versao = 0L;

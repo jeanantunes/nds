@@ -59,7 +59,7 @@
 
 		function popupExclusaoDiferenca(idMovimentoEstoque) {
 
-			$("#dialog-excluir" ).dialog({
+			$("#dialog-excluir").dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -72,7 +72,7 @@
 					$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog("close");
 				}
 				}
 			});
@@ -90,6 +90,27 @@
 				
 				$("#btnNovo").hide();
 			}
+		}
+		
+		function popupConfirmar(){
+			$("#dialog-confirmar-lancamentos").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+					$(this).dialog("close");
+					
+					$.postJSON("<c:url value='/estoque/diferenca/confirmarLancamentos'/>", data);
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+				}
+			});
+			
+			$("#dialog-confirmar-lancamentos").show();
 		}
 		
 		$(function() {
@@ -195,6 +216,9 @@
 		<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
 			<p>Confirma esta Exclusão?</p>
 		</div>
+		<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
+			<p>Confirma estes Lançamentos?</p>
+		</div>
 		<div class="container">
 
 			<fieldset class="classFieldset">
@@ -257,7 +281,7 @@
 								<a href="javascript:;" onclick="popupNovasDiferencas();">Novo</a>
 							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
-								<a href="javascript:;" onclick="popup();">Confirmar</a>
+								<a href="javascript:;" onclick="popupConfirmar();">Confirmar</a>
 							</span>
 						</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">

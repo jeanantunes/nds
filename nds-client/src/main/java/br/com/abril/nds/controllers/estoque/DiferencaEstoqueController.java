@@ -210,11 +210,30 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	public void excluirFaltaSobra(Long idDiferenca){
-		result.use(Results.json()).from(
+		
+		if (this.diferencaEstoqueService.verificarPossibilidadeExclusao(idDiferenca)){
+			//setar id de diferenca na sessão
+		} else {
+			result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, 
+							"Diferença com tipo aprovação automática não pode ser excluida."), 
+							Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		
+		//setar id de diferenca na sessão
+		
+		/*result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
-				Constantes.PARAM_MSGS).recursive().serialize();
+				Constantes.PARAM_MSGS).recursive().serialize();*/
+		
+		
 		
 		//result.forwardTo(DiferencaEstoqueController.class).lancamento();
+	}
+	
+	@Post
+	public void confirmarLancamentos(){
+		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
 	}
 	
 	/**
