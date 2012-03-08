@@ -52,5 +52,7 @@ public interface DiferencaEstoqueService {
 	 * @return Quantidade total de registros de diferenças para consulta
 	 */
 	Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
+	
+	boolean verificarPossibilidadeExclusao(Long idDiferenca);
 
 }

@@ -53,4 +53,12 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	 */
 	Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
 	
+	/**
+	 * Verifica se a diferença foi lançada automaticamente (pelo recebimento físico)
+	 * 
+	 * @param idDiferenca
+	 * @return flag que indica se diferença foi lançada automaticamente
+	 */
+	boolean buscarStatusDiferencaLancadaAutomaticamente(Long idDiferenca);
+	
 }

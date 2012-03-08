@@ -388,5 +388,16 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
 		}
 	}
+	
+	/*
+	 * @see br.com.abril.nds.repository.DiferencaEstoqueRepository#buscarStatusDiferencaLancadaAutomaticamente(java.lang.Long)
+	 */
+	public boolean buscarStatusDiferencaLancadaAutomaticamente(Long idDiferenca){
+		Query query = 
+				this.getSession().createQuery("select d.automatica from Diferenca d where d.id = :idDiferenca");
+		query.setParameter("idDiferenca", idDiferenca);
+		
+		return (Boolean) query.uniqueResult();
+	}
 
 }
