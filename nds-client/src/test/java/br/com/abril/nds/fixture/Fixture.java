@@ -511,7 +511,8 @@ public class Fixture {
 													EstoqueProduto estoqueProduto,
 													Date dataInclusao,
 													BigDecimal qtde, 
-													StatusAprovacao status) {
+													StatusAprovacao status,
+													String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
@@ -523,6 +524,7 @@ public class Fixture {
 		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setStatus(status);
+		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
 	

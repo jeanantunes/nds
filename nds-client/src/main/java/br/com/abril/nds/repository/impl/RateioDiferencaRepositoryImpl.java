@@ -31,7 +31,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepository<RateioDife
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(RateioDiferenca.class.getCanonicalName())
 		   .append(" (rateioDiferenca, rateioDiferenca.cota) ")
-		   .append(" from RateioDiferenca reateioDiferenca, Diferenca diferenca ")
+		   .append(" from RateioDiferenca rateioDiferenca, Diferenca diferenca ")
 		   .append(" where rateioDiferenca.diferenca.id = diferenca.id ")
 		   .append(" and diferenca.id = :idDiferenca ");
 		

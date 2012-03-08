@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
@@ -63,6 +66,10 @@ public class DiferencaEstoqueController {
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+	
+	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
+	
+	private boolean manterListaSessao = false;
 
 	public DiferencaEstoqueController(Result result, 
 								 	  Localization localization,
@@ -103,6 +110,20 @@ public class DiferencaEstoqueController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		} else {
+			
+			if (!manterListaSessao){
+				this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, null);
+			}
+			
+			Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
+			
+			if (!setIdsExclusao.isEmpty()){
+				for (int index = 0 ; index < listaLancamentoDiferencas.size() ; index++){
+					if (setIdsExclusao.contains(listaLancamentoDiferencas.get(index).getId())){
+						listaLancamentoDiferencas.remove(index);
+					}
+				}
+			}
 			
 			this.processarDiferencasLancamento(listaLancamentoDiferencas, filtro);
 		}
@@ -190,6 +211,8 @@ public class DiferencaEstoqueController {
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
+			
+			
 			this.processarDiferencas(listaDiferencas, filtro);
 		}
 	}
@@ -210,28 +233,65 @@ public class DiferencaEstoqueController {
 	public void excluirFaltaSobra(Long idDiferenca){
 		
 		if (this.diferencaEstoqueService.verificarPossibilidadeExclusao(idDiferenca)){
-			//setar id de diferenca na sessão
+			Set<Long> setIdsExclusao = obterIdsExcluidosSessao();
+			setIdsExclusao.add(idDiferenca);
+			this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, setIdsExclusao);
+			
+			manterListaSessao = true;
+			
+			FiltroLancamentoDiferencaEstoqueDTO filtro = 
+					(FiltroLancamentoDiferencaEstoqueDTO) 
+					this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+			
+			this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
+					filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+					filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+					filtro.getPaginacao().getQtdResultadosPorPagina());
 		} else {
 			result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.ERROR, 
-							"Diferença com tipo aprovação automática não pode ser excluida."), 
+							"Diferença lançada automaticamente não pode ser excluida."), 
 							Constantes.PARAM_MSGS).recursive().serialize();
 		}
-		
-		//setar id de diferenca na sessão
-		
-		/*result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
-				Constantes.PARAM_MSGS).recursive().serialize();*/
-		
-		
-		
-		//result.forwardTo(DiferencaEstoqueController.class).lancamento();
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Set<Long> obterIdsExcluidosSessao() {
+		Set<Long> setIdsExclusao = (Set<Long>) this.httpSession.getAttribute(IDS_DIFERENCAS_EXCLUSAO);
+		if (setIdsExclusao == null){
+			setIdsExclusao = new HashSet<Long>();
+		}
+		
+		return setIdsExclusao;
+	}
+
 	@Post
 	public void confirmarLancamentos(){
 		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
+		
+		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
+		this.diferencaEstoqueService.efetuarAlteracoes(setIdsExclusao);
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, 
+						"Operação efetuada com sucesso."), 
+						Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	public void cancelar(){
+		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
+		
+		this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, null);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = 
+				(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
+				filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+				filtro.getPaginacao().getQtdResultadosPorPagina());
 	}
 	
 	/**
@@ -495,6 +555,8 @@ public class DiferencaEstoqueController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
+		//TODO: setar ordenação
+		
 		String valorTotalDiferencasFormatado = 
 			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		
@@ -722,11 +784,6 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
-		}
-		
-		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
 		}
 		
 		if (tipoDiferenca == null) {

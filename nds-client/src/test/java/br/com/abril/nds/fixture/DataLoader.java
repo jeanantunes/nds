@@ -163,25 +163,25 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoqueDiferenca =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
 									 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
-									 StatusAprovacao.APROVADO);
+									 StatusAprovacao.APROVADO, "motivo");
 		session.save(movimentoEstoqueDiferenca);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca2 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja2, tipoMovimentoRecFisico, usuarioJoao,
 									 estoqueProdutoVeja1, new Date(), new BigDecimal(2),
-									 StatusAprovacao.APROVADO);
+									 StatusAprovacao.APROVADO, "motivo");
 		session.save(movimentoEstoqueDiferenca2);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca3 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja3, tipoMovimentoRecFisico, usuarioJoao,
 									 estoqueProdutoVeja1, new Date(), new BigDecimal(3),
-									 StatusAprovacao.APROVADO);
+									 StatusAprovacao.APROVADO, "motivo");
 		session.save(movimentoEstoqueDiferenca3);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca4 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja4, tipoMovimentoRecFisico, usuarioJoao,
 									 estoqueProdutoVeja1, new Date(), new BigDecimal(4),
-									 StatusAprovacao.APROVADO);
+									 StatusAprovacao.APROVADO, "motivo");
 		session.save(movimentoEstoqueDiferenca4);
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
@@ -689,7 +689,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "motivo");
 			
 			session.save(movimentoEstoqueDiferenca);
 			

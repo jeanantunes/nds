@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -54,5 +55,7 @@ public interface DiferencaEstoqueService {
 	Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
 	
 	boolean verificarPossibilidadeExclusao(Long idDiferenca);
+	
+	void efetuarAlteracoes(Set<Long> idsDiferencaExclusao);
 
 }
