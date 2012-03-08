@@ -300,10 +300,10 @@ public class DataLoader {
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
 						produtoEdicaoVeja2,
-						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja2.getPeb()), new Date(),
-						new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO,
+						new Date(), BigDecimal.TEN, StatusLancamento.BALANCEADO,
 						null);
 		session.save(lancamentoVeja2);
 

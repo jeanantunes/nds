@@ -31,6 +31,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -63,6 +64,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private DiferencaEstoqueService diferencaEstoqueService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
@@ -172,11 +176,13 @@ public class DiferencaEstoqueController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para lançamento!");
 		}
 		
+		Integer linha = 0;
+		
 		for (DiferencaVO diferenca : listaNovasDiferencas) {
 			
-			this.validarNovaDiferenca(diferenca);
+			this.validarNovaDiferenca(diferenca, linha);
 			
-			
+			linha++;
 		}
 		
 		result.use(Results.json()).withoutRoot().from(listaNovasDiferencas).recursive().serialize();
@@ -392,7 +398,7 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
 			
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
-			lancamentoDiferenca.setQuantidade(diferenca.getQtde().toString());
+			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
 			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 
 			lancamentoDiferenca.setValorTotalDiferenca(
@@ -417,65 +423,6 @@ public class DiferencaEstoqueController {
 		tableModel.setTotal(qtdeTotalRegistros.intValue());
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
-		
-		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
-			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
-	
-		result.use(Results.json()).withoutRoot().from(resultadoLancamentoDiferenca).recursive().serialize();
-	}
-	
-	/*
-	 * Processa o resultado das diferenças para lançamento.
-	 *  
-	 * @param listaDiferencas - lista de diferenças
-	 */
-	private void processarDiferencasLancamentoMock(int page) {
-
-		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
-		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
-		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
-		
-		int quantidadeRegistros = 30;
-		
-		for (int i = 0; i < quantidadeRegistros; i++) {
-			
-			DiferencaVO lancamentoDiferenca = new DiferencaVO();
-			
-			lancamentoDiferenca.setId(i);
-			lancamentoDiferenca.setCodigoProduto(i + "");
-			lancamentoDiferenca.setDescricaoProduto("Descrição Produto " + i);
-			lancamentoDiferenca.setNumeroEdicao(i + "");
-			
-			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(i + 100));
-			
-			lancamentoDiferenca.setPacotePadrao(i + "");
-			lancamentoDiferenca.setQuantidade(i + "");
-			lancamentoDiferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE.getDescricao());
-			
-			BigDecimal valorDiferencas = new BigDecimal(i + 100).multiply(new BigDecimal(i));
-			
-			lancamentoDiferenca.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorDiferencas));
-			
-			listaLancamentosDiferenca.add(lancamentoDiferenca);
-			
-			qtdeTotalDiferencas = 
-				qtdeTotalDiferencas.add(new BigDecimal(i));
-			
-			valorTotalDiferencas = valorTotalDiferencas.add(valorDiferencas);
-		}
-		
-		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
-			new TableModel<CellModelKeyValue<DiferencaVO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosDiferenca));
-		
-		tableModel.setTotal(quantidadeRegistros);
-		
-		tableModel.setPage(page);
 		
 		String valorTotalDiferencasFormatado = 
 			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
@@ -528,7 +475,7 @@ public class DiferencaEstoqueController {
 				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
 			}
 			
-			consultaDiferencaVO.setQuantidade(diferenca.getQtde().toString());
+			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(
 				diferenca.getMovimentoEstoque().getStatus().toString());
@@ -797,8 +744,9 @@ public class DiferencaEstoqueController {
 	 * Valida a entrada de uma nova diferença.
 	 * 
 	 * @param diferenca - diferença
+	 * @param linha - linha a ser validada
 	 */
-	private void validarNovaDiferenca(DiferencaVO diferenca) {
+	private void validarNovaDiferenca(DiferencaVO diferenca, Integer linha) {
 		
 		boolean diferencaInvalida = false;
 		
@@ -821,21 +769,51 @@ public class DiferencaEstoqueController {
 		}
 		
 		if (diferenca.getQuantidade() == null 
-				|| diferenca.getQuantidade().trim().isEmpty()) {
+				|| BigDecimal.ZERO.equals(diferenca.getQuantidade())) {
 			
 			diferencaInvalida = true;
 		}
 		
 		if (diferencaInvalida) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
+			ValidacaoVO validacao = 
+				new ValidacaoVO(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
+			
+			validacao.setDados(linha);
+			
+			throw new ValidacaoException(validacao);
+		}
+		
+		ProdutoEdicao produtoEdicao =
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
+		
+		if (produtoEdicao == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, 
+					"Produto inválido: Código [" 
+						+ diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
+		}
+		
+		if (diferenca.getQtdeEstoqueAtual() == null 
+				|| (diferenca.getQuantidade().compareTo(diferenca.getQtdeEstoqueAtual()) > 0)) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Quantidade de Exemplares não pode ser maior que a Quantidade em Estoque do produto!");
 		}
 	}
 	
+	/*
+	 * Obtém o locale da requisição HTTP.
+	 */
 	private Locale getLocale() {
+		
 		if (localization != null) {
+			
 			return localization.getLocale();
 		}
+		
 		return null;
 	}
 	

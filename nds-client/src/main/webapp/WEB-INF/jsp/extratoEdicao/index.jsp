@@ -227,7 +227,7 @@ $(function() {
 
 						<input type="text" name="produto" id="produto" style="width: 220px;" 
 							   maxlength="255"
-					       	   onkeyup="produto.autoCompletarPorNomeProduto('#codigo', '#produto', '#edicao', false);"
+					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
 					       	   onchange="jsExtratoEdicao.pesquisarProdutoPorNome();"/>
 
 						

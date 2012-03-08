@@ -16,6 +16,8 @@ public class ValidacaoVO {
 	private TipoMensagem tipoMensagem;
 	
 	private List<String> listaMensagens;
+	
+	private Object dados;
 
 	/**
 	 * Construtor.
@@ -78,4 +80,19 @@ public class ValidacaoVO {
 	public void setListaMensagens(List<String> listaMensagens) {
 		this.listaMensagens = listaMensagens;
 	}
+
+	/**
+	 * @return the dados
+	 */
+	public Object getDados() {
+		return dados;
+	}
+
+	/**
+	 * @param dados the dados to set
+	 */
+	public void setDados(Object dados) {
+		this.dados = dados;
+	}
+	
 }

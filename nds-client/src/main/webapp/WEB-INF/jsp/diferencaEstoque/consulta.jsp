@@ -191,7 +191,8 @@
 				<td id="teste" width="59" title="tooltip teste">Código:</td>
 				<td colspan="3">
 					<input type="text" name="codigo" id="codigo"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255" />
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+						   onchange="produto.limparCamposPesquisa('#produto', '#edicao', pesquisarProdutosSuccessCallBack)" />
 					
 					<span class="classPesquisar" title="Pesquisar Produto">
 						<a href="javascript:;"
@@ -203,7 +204,7 @@
 				<td width="60">Produto:</td>
 				<td width="220">
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
-					       onkeyup="produto.autoCompletarPorNomeProduto('#codigo', '#produto', '#edicao', false);"
+					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
 					       onchange="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
 					       											  pesquisarProdutosSuccessCallBack,
 					       											  pesquisarProdutosErrorCallBack);"/>

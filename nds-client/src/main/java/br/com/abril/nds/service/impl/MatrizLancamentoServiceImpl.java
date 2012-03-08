@@ -51,7 +51,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<LancamentoDTO> dtos = new ArrayList<LancamentoDTO>(
 				lancamentos.size());
 		for (Lancamento lancamento : lancamentos) {
-			LancamentoDTO dto = montarDTO(lancamento);
+			LancamentoDTO dto = montarDTO(filtro.getData(),lancamento);
 			dtos.add(dto);
 		}
 		return dtos;
@@ -118,7 +118,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return datas;
 	}
 
-	private LancamentoDTO montarDTO(Lancamento lancamento) {
+	private LancamentoDTO montarDTO(Date data, Lancamento lancamento) {
 		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 		Produto produto = produtoEdicao.getProduto();
 		LancamentoDTO dto = new LancamentoDTO();
@@ -149,6 +149,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
 		} else {
 			dto.setEstudoGerado("0");
+		}
+		dto.setFuro(lancamento.isFuro());
+		dto.setCancelamentoGD(lancamento.isCancelamentoGD());
+		if (DateUtil.isHoje(data) && lancamento.isSemRecebimentoFisico()) {
+			dto.setSemFisico(true);
 		}
 		return dto;
 	}

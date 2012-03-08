@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -40,6 +43,8 @@ public class Fornecedor implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
+	@OneToMany(mappedBy = "fornecedor")
+	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
 	
 	public Long getId() {
 		return id;
@@ -79,6 +84,14 @@ public class Fornecedor implements Serializable {
 	
 	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
+	}
+	
+	public Set<EnderecoFornecedor> getEnderecos() {
+		return enderecos;
+	}
+	
+	public void setEnderecos(Set<EnderecoFornecedor> enderecos) {
+		this.enderecos = enderecos;
 	}
 
 	@Override
