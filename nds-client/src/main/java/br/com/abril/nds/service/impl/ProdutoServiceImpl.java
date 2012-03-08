@@ -30,6 +30,16 @@ public class ProdutoServiceImpl implements ProdutoService {
 	
 	@Transactional
 	@Override
+	public List<Produto> obterProdutoLikeNomeProduto(String nome) {
+		if (nome == null || nome.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
+		}
+		
+		return produtoRepository.obterProdutoLikeNomeProduto(nome);
+	}
+	
+	@Transactional
+	@Override
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
 		if (codigoProduto == null || codigoProduto.isEmpty()){
 			throw new IllegalArgumentException("Código é obrigatório.");

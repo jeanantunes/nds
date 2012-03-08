@@ -27,17 +27,29 @@ public class RateioDiferenca {
 	@GeneratedValue(generator = "RATEIO_DIFERENCA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "DIFERENCA_ID")
 	private Diferenca diferenca;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
+	
+	public RateioDiferenca(){}
+	
+	public RateioDiferenca (RateioDiferenca rateioDiferenca, Cota cota) {
+		this.id = rateioDiferenca.getId();
+		this.qtde = rateioDiferenca.getQtde();
+		this.cota = cota;
+	}
 	
 	public Long getId() {
 		return id;
@@ -78,6 +90,4 @@ public class RateioDiferenca {
 	public void setEstudoCota(EstudoCota estudoCota) {
 		this.estudoCota = estudoCota;
 	}
-	
-
 }

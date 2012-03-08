@@ -20,7 +20,6 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 

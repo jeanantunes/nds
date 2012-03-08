@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * @author T30541
@@ -17,7 +18,8 @@ import javax.persistence.Table;
  * @created 14-fev-2012 11:35:32
  */
 @Entity
-@Table(name = "PRODUTO_EDICAO")
+@Table(name = "PRODUTO_EDICAO", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"NUMERO_EDICAO", "PRODUTO_ID" })})
 @SequenceGenerator(name="PROD_ED_SEQ", initialValue = 1, allocationSize = 1)
 public class ProdutoEdicao {
 
@@ -50,10 +52,6 @@ public class ProdutoEdicao {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;	
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "FORNECEDOR_ID")
-	private Fornecedor fornecedor;
 	
 	public Long getId() {
 		return id;
@@ -163,14 +161,6 @@ public class ProdutoEdicao {
 	public String toString() {
 		return new StringBuilder(produto.toString()).append("-")
 				.append(numeroEdicao).toString();
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
 	}
 
 }

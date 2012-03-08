@@ -85,8 +85,12 @@ function esconde(idDiv) {
 	}, 3000);
 }
 
-function montarComboBox(result) {
+function montarComboBox(result, linhaEmBranco) {
 	var options = "";
+	
+	if (linhaEmBranco) {
+		options += "<option selected='selected'></option>";
+	}
 	
 	$.each(result, function(index, row) {
 		options += "<option value='" + row.key.$ + "'>" + row.value.$ + "</option>";

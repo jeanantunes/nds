@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -48,7 +51,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<LancamentoDTO> dtos = new ArrayList<LancamentoDTO>(
 				lancamentos.size());
 		for (Lancamento lancamento : lancamentos) {
-			LancamentoDTO dto = montarDTO(lancamento);
+			LancamentoDTO dto = montarDTO(filtro.getData(),lancamento);
 			dtos.add(dto);
 		}
 		return dtos;
@@ -56,9 +59,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public long totalBalanceamentoMatrizLancamentos(Date data,
+	public SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
 			List<Long> idsFornecedores) {
-		return lancamentoRepository.totalBalanceamentoMatrizLancamentos(data,
+		return lancamentoRepository.sumarioBalanceamentoMatrizLancamentos(data,
 				idsFornecedores);
 	}
 	
@@ -73,11 +76,33 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
 			diasDistribuicao.add(distribuicao.getDiaSemana());
 		}
+
 		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
 				dataInicial, dataFinal, diasDistribuicao);
 		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
-				.buscarResumosPeriodo(periodoDistribuicao, fornecedores, GrupoProduto.CROMO);
-		return resumos;
+				.buscarResumosPeriodo(periodoDistribuicao, fornecedores,
+						GrupoProduto.CROMO);
+		
+		return montarResumoPeriodo(periodoDistribuicao, resumos);
+	}
+
+	private List<ResumoPeriodoLancamentoDTO> montarResumoPeriodo(
+			List<Date> periodoDistribuicao,
+			List<ResumoPeriodoLancamentoDTO> resumos) {
+		Map<Date, ResumoPeriodoLancamentoDTO> mapa = new HashMap<Date, ResumoPeriodoLancamentoDTO>();
+		for (ResumoPeriodoLancamentoDTO resumo : resumos) {
+			mapa.put(resumo.getData(), resumo);
+		}
+		List<ResumoPeriodoLancamentoDTO> retorno = new ArrayList<ResumoPeriodoLancamentoDTO>(
+				periodoDistribuicao.size());
+		for (Date data : periodoDistribuicao) {
+			ResumoPeriodoLancamentoDTO resumo = mapa.get(data);
+			if (resumo == null) {
+				resumo = ResumoPeriodoLancamentoDTO.empty(data);
+			}
+			retorno.add(resumo);
+		}
+		return retorno;
 	}
 
 	private List<Date> filtrarPeriodoDistribuicao (Date dataInicial,
@@ -93,7 +118,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return datas;
 	}
 
-	private LancamentoDTO montarDTO(Lancamento lancamento) {
+	private LancamentoDTO montarDTO(Date data, Lancamento lancamento) {
 		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 		Produto produto = produtoEdicao.getProduto();
 		LancamentoDTO dto = new LancamentoDTO();
@@ -109,7 +134,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				FORMATO_DATA_LANCAMENTO));
 		dto.setId(lancamento.getId());
 		dto.setIdFornecedor(1L);
-		dto.setNomeFornecedor(produtoEdicao.getFornecedor().getJuridica().getNomeFantasia());
+		dto.setNomeFornecedor(produto.getFornecedor().getJuridica().getNomeFantasia());
 		dto.setLancamento(lancamento.getTipoLancamento().getDescricao());
 		dto.setNomeProduto(produto.getNome());
 		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
@@ -124,6 +149,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
 		} else {
 			dto.setEstudoGerado("0");
+		}
+		dto.setFuro(lancamento.isFuro());
+		dto.setCancelamentoGD(lancamento.isCancelamentoGD());
+		if (DateUtil.isHoje(data) && lancamento.isSemRecebimentoFisico()) {
+			dto.setSemFisico(true);
 		}
 		return dto;
 	}

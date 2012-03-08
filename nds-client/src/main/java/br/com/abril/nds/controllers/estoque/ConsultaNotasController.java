@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -68,7 +67,7 @@ public class ConsultaNotasController {
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 
-	private static final String FILTRO_SESSION_ATTRIBUTE = "filtro";
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroConsultaNotaFiscal";
 	
 	@Path("/")
 	public void index() {
@@ -152,18 +151,19 @@ public class ConsultaNotasController {
 
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
 		for (NotaFiscalFornecedor notaFiscal : listaNotasFiscais) {
-			
+
 			CellModel cellModel = 
-					new CellModel(notaFiscal.getId().intValue(), notaFiscal.getNumero(), 
-								  simpleDateFormat.format(notaFiscal.getDataEmissao()), 
-								  simpleDateFormat.format(notaFiscal.getDataExpedicao()), 
-								  notaFiscal.getTipoNotaFiscal().getDescricao(), 
-								  notaFiscal.getFornecedor().getJuridica().getRazaoSocial(), 
-								  StatusNotaFiscal.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ", 
-								  " ", String.valueOf(notaFiscal.getId()));
+					new CellModel(
+							notaFiscal.getId().intValue(), 
+							itemExibicaoToString(notaFiscal.getNumero()),
+							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao())), 
+							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
+							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
+							itemExibicaoToString(notaFiscal.getFornecedor().getJuridica().getRazaoSocial()),
+							StatusNotaFiscal.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ", 
+							" ", 
+							itemExibicaoToString(notaFiscal.getId()));
 
 			listaCellModels.add(cellModel);
 		}
@@ -247,8 +247,11 @@ public class ConsultaNotasController {
 		
 		filtroConsultaNotaFiscal.setListaColunaOrdenacao(listaColunaOrdenacao);
 
-		filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
-		
+		if (isNotaRecebida > -1) {
+
+			filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
+		}
+
 		FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscalSession =
 			(FiltroConsultaNotaFiscalDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		

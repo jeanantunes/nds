@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -105,8 +106,10 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public long totalBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores) {
-		StringBuilder hql = new StringBuilder("select count(lancamento) from Lancamento lancamento ");
+	public SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores) {
+		StringBuilder hql = new StringBuilder("select count(lancamento) as totalLancamentos, " );
+		hql.append("sum(lancamento.reparte * produtoEdicao.precoVenda) as valorTotalLancamentos ");
+		hql.append("from Lancamento lancamento ");
 		hql.append("join lancamento.produtoEdicao produtoEdicao ");
 		hql.append("join produtoEdicao.produto produto ");
 		hql.append("join produto.fornecedores fornecedor ");
@@ -126,7 +129,8 @@ public class LancamentoRepositoryImpl extends
 		if (filtraFornecedores) {
 			query.setParameterList("idsFornecedores", idsFornecedores);
 		}
-		return (Long) query.uniqueResult();
+		query.setResultTransformer(new AliasToBeanResultTransformer(SumarioLancamentosDTO.class));
+		return (SumarioLancamentosDTO) query.uniqueResult();
 	}
 
 	@Override
@@ -157,9 +161,11 @@ public class LancamentoRepositoryImpl extends
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.peso)) as pesoTotal, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
 		hql.append("from Lancamento lancamento ");
+		hql.append("join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
 		hql.append("where lancamento.dataLancamentoPrevista in (:periodo) ");
-		hql.append("and lancamento.produtoEdicao.fornecedor.id in (:fornecedores) ");
-		hql.append("group by lancamento.dataLancamentoPrevista");
+		hql.append("and fornecedor.id in (:fornecedores) ");
+		hql.append("group by lancamento.dataLancamentoPrevista ");
+		hql.append("order by lancamento.dataLancamentoPrevista");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameterList("periodo", periodoDistribuicao);
 		query.setParameterList("fornecedores", fornecedores);

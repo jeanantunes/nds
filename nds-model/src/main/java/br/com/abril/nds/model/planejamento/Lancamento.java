@@ -239,5 +239,17 @@ public class Lancamento implements Serializable {
 	public void setExpedicao(Expedicao expedicao) {
 		this.expedicao = expedicao;
 	}
+	
+	public boolean isFuro() {
+		return StatusLancamento.FURO.equals(status);
+	}
+	
+	public boolean isCancelamentoGD() {
+		return StatusLancamento.CANCELADO_GD.equals(status);
+	}
+	
+	public boolean isSemRecebimentoFisico() {
+		return recebimentos.isEmpty();
+	}
 
 }

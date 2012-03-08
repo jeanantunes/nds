@@ -28,6 +28,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -246,9 +247,6 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
-		if (produto.getFornecedores() != null && !produto.getFornecedores().isEmpty()) { 
-			produtoEdicao.setFornecedor(produto.getFornecedores().iterator().next());
-		}
 		return produtoEdicao;
 	}
 
@@ -595,6 +593,16 @@ public class Fixture {
 		movimentoEstoque.setStatus(statusAprovacao);
 		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
+	}
+	
+	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
+		RateioDiferenca rateioDiferenca = new RateioDiferenca();
+		rateioDiferenca.setCota(cota);
+		rateioDiferenca.setDiferenca(diferenca);
+		rateioDiferenca.setEstudoCota(estudoCota);
+		rateioDiferenca.setQtde(qtde);
+		
+		return rateioDiferenca;
 	}
 
 }
