@@ -54,7 +54,10 @@
 
 			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
 
-			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', params: formData});
+			$("#gridLancamentos").flexOptions({
+				url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
+				params: formData
+			});
 			
 			$("#gridLancamentos").flexReload();
 		}

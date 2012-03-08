@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -29,6 +31,9 @@ public class ProdutoController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	public ProdutoController(Result result) {
 		this.result = result;
@@ -133,6 +138,28 @@ public class ProdutoController {
 		}
 		
 		result.use(Results.json()).from(produtoEdicao, "result").serialize();
+	}
+	
+	@Post
+	@Path("/obterEstoque")
+	public void obterEstoque(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null) {
+			
+			result.use(Results.json()).from("", "estoqueProduto").serialize();
+		}
+		
+		EstoqueProduto estoqueProduto =
+			this.estoqueProdutoService.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if (estoqueProduto == null) {
+			
+			result.use(Results.json()).from("", "estoqueProduto").serialize();
+			
+		} else {
+		
+			result.use(Results.json()).from(estoqueProduto, "result").serialize();
+		}
 	}
 	
 }
