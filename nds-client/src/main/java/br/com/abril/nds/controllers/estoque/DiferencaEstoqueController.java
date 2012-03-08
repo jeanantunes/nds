@@ -270,7 +270,7 @@ public class DiferencaEstoqueController {
 		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
 		
 		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
-		this.diferencaEstoqueService.efetuarAlteracoes(setIdsExclusao);
+		this.diferencaEstoqueService.efetuarAlteracoes(this.getIdUsuario(), setIdsExclusao);
 		
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, 
@@ -837,6 +837,11 @@ public class DiferencaEstoqueController {
 			return localization.getLocale();
 		}
 		return null;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Long getIdUsuario(){
+		return 1L;
 	}
 	
 }

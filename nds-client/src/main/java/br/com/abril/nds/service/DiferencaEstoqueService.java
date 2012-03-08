@@ -56,6 +56,6 @@ public interface DiferencaEstoqueService {
 	
 	boolean verificarPossibilidadeExclusao(Long idDiferenca);
 	
-	void efetuarAlteracoes(Set<Long> idsDiferencaExclusao);
+	void efetuarAlteracoes(Long idUsuario, Set<Long> idsDiferencaExclusao);
 
 }
