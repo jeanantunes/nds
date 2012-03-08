@@ -39,9 +39,15 @@ public class DateUtil {
 		
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
-	
-	public static boolean isDataFinalMaiorDataInicial(Date dataInicial, Date dataFinal) {
-		return dataInicial.compareTo(dataFinal) > 0;
+
+	public static boolean isDataInicialMaiorDataFinal(Date dataInicial, Date dataFinal) {
+		
+		if (dataInicial != null && dataFinal != null) {
+			
+			return dataInicial.compareTo(dataFinal) > 0;
+		}
+		
+		return false;
 	}
 
 	/**

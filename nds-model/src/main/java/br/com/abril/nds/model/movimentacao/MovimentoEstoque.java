@@ -23,12 +23,15 @@ public class MovimentoEstoque extends Movimento {
 
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
+	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private ItemRecebimentoFisico itemRecebimentoFisico;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTOQUE_PRODUTO_ID")
 	private EstoqueProduto estoqueProduto;

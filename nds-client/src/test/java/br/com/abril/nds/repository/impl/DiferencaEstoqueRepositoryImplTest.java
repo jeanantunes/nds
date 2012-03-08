@@ -270,4 +270,13 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		return produtoEdicao;
 	}
 	
+	@Test
+	public void buscarStatusDiferencaLancadaAutomaticamente(){
+		Boolean flag = null;
+		
+		flag = this.diferencaEstoqueRepository.buscarStatusDiferencaLancadaAutomaticamente(1L);
+		
+		Assert.assertNotNull(flag);
+	}
+	
 }
