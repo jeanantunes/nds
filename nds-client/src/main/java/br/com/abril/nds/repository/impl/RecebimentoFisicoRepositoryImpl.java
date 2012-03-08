@@ -41,11 +41,13 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		hql.append(" 	itemNotaFiscal.produtoEdicao.produto.codigo, 	");
 		hql.append("  	itemNotaFiscal.produtoEdicao.produto.nome, 		");
 		hql.append("  	itemNotaFiscal.produtoEdicao.numeroEdicao, 		");
+		hql.append("  	itemNotaFiscal.produtoEdicao.id, 				");
 		hql.append(" 	itemNotaFiscal.produtoEdicao.precoVenda, 		");
 		hql.append(" 	itemNotaFiscal.qtde, 							");
 		hql.append(" 	itemRecebimentoFisico.qtdeFisico, 				");
 		hql.append(" 	diferenca.qtde,  								");
-		hql.append(" 	diferenca.tipoDiferenca ) 						");
+		hql.append(" 	diferenca.tipoDiferenca,  						");
+		hql.append(" 	itemNotaFiscal.origem  )						");
 		
 		hql.append(" from ");
 

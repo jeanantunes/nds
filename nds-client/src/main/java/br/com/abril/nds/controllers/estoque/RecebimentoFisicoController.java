@@ -15,16 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.PessoaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
@@ -69,6 +75,8 @@ public class RecebimentoFisicoController {
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
 	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 
 	public RecebimentoFisicoController(
 			Result result, 
@@ -132,6 +140,10 @@ public class RecebimentoFisicoController {
 	@Post
 	public void refreshListaItemRecebimentoFisico() {
 		
+		if( getItensRecebimentoFisicoFromSession() == null) {
+			setItensRecebimentoFisicoToSession(new LinkedList<RecebimentoFisicoDTO>());
+		}
+		
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -149,8 +161,11 @@ public class RecebimentoFisicoController {
 		
 		Long idNotaFiscal = notaFiscal.getId();
 		
-		//TODO: obter lista do bd apos testes;
-		List<RecebimentoFisicoDTO> itensRecebimentoFisico = getListaItemNotaFromBD();
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+		
+		if(itensRecebimentoFisico == null) {
+			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
+		}
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
@@ -160,20 +175,6 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	/**
-	 * TODO: remover apos testes...
-	 * 
-	 * @return NotaFiscal
-	 */
-	private NotaFiscal getNotaFromBD() {
-		
-		NotaFiscal notaFiscal = new NotaFiscalFornecedor();
-		
-		notaFiscal.setId(1L);
-		
-		return notaFiscal;
-		
-	}
 	
 	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie) {
 		
@@ -201,14 +202,29 @@ public class RecebimentoFisicoController {
 
 	@Post 
 	public void incluirItemNotaFiscal(
-			RecebimentoFisicoDTO itemRecebimento, 
+			RecebimentoFisicoDTO itemRecebimento,
+			String numeroEdicao,
 			String dataLancamento, 
 			String dataRecolhimento) {
 		
 		validarNovoItemRecebimentoFisico(
 				itemRecebimento, 
+				numeroEdicao,
 				dataLancamento, 
 				dataRecolhimento);
+		try {
+			itemRecebimento.setDataLancamento(sdf.parse(dataLancamento));
+			itemRecebimento.setDataRecolhimento(sdf.parse(dataRecolhimento));
+		} catch(ParseException e) {
+			itemRecebimento.setDataLancamento(null);
+			itemRecebimento.setDataRecolhimento(null);
+		}
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(itemRecebimento.getCodigoProduto(), numeroEdicao);
+		
+		if(produtoEdicao == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não existe.");
+		}
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
 		
@@ -219,9 +235,11 @@ public class RecebimentoFisicoController {
 			setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		}
 		
-		itensRecebimentoFisico.add(itemRecebimento);
+		itemRecebimento.setEdicao(produtoEdicao.getNumeroEdicao());
+
+		itemRecebimento.setIdProdutoEdicao(produtoEdicao.getId());
 		
-		System.out.println("ADICIONANDO ITEM NOTA FISCAL CODIGO: ");
+		itensRecebimentoFisico.add(itemRecebimento);
 		
 		List<String> msgs = new ArrayList<String>();
 		
@@ -284,7 +302,13 @@ public class RecebimentoFisicoController {
 			}
 			
 		}
-			
+	
+		//TODO: capturar usuario logado
+		Usuario usuarioLogado = new Usuario();
+		usuarioLogado.setId(1L);
+		
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuarioLogado, getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens salvos com sucesso.");
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
@@ -295,6 +319,8 @@ public class RecebimentoFisicoController {
 		
 		setItensRecebimentoFisicoToSession(null);
 		
+		setNotaFiscalToSession(null);
+		
 	}
 	
 	
@@ -303,12 +329,27 @@ public class RecebimentoFisicoController {
 
 		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
 		
-		setNotaFiscalToSession(null);
-		
 		limparDadosPesquisa();
 		
-		//TODO: CHAMAR PESQUISA DO BD
-		NotaFiscal notaFiscal = null;//getNotaFromBD();
+		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
+		
+		filtro.setCnpj(cnpj);
+		filtro.setNumeroNota(numeroNotaFiscal);
+		filtro.setSerie(serie);
+		filtro.setChave(chaveAcesso);
+		
+		List<NotaFiscal> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+		
+			
+		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma nota fiscal cadastrada com estes valores.");
+		} 
+		
+		NotaFiscal notaFiscal = null;
+		
+		if(listaNotaFiscal != null && !listaNotaFiscal.isEmpty()) {
+			notaFiscal = listaNotaFiscal.get(0);
+		} 
 		
 		if(notaFiscal == null){	
 
@@ -334,36 +375,6 @@ public class RecebimentoFisicoController {
 
 		}
 				
-	}
-	
-	
-	/**
-	 *	TODO : remover este mock apos testes 
-	 */
-	private List<RecebimentoFisicoDTO> getListaItemNotaFromBD() {
-		
-		List<RecebimentoFisicoDTO> listaDTO = new ArrayList<RecebimentoFisicoDTO>();
-		
-		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
-		
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO(1L, 1L,"54", "Michel", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
-		listaDTO.add(recebimentoFisicoDTO);
-
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO(2L, 2L, "54", "Ana", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
-		listaDTO.add(recebimentoFisicoDTO);
-
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO(3L, 3L,"54", "Jose", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
-		listaDTO.add(recebimentoFisicoDTO);
-
-		recebimentoFisicoDTO = new RecebimentoFisicoDTO(4L, 4L,"54", "Marilda", 12L, BigDecimal.TEN, BigDecimal.TEN, 
-				BigDecimal.TEN, BigDecimal.TEN, TipoDiferenca.FALTA_DE);
-		listaDTO.add(recebimentoFisicoDTO);
-		
-		return listaDTO;
-
 	}
 	
 	
@@ -419,8 +430,31 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	
+	/**
+	 * Inclui na view os dados do combo de CFOP.
+	 */
+	private void carregarComboCfop() {
+		
+		List<CFOP> listaCFOP = recebimentoFisicoService.obterListaCFOP();
+		
+		if (listaCFOP != null) {
+			result.include("listacfop", listaCFOP);
+		}
+		
+	}
 
+	/**
+	 * Inclui na view os dados do combo de TipoNotaFiscal.
+	 */
+	private void carregarComboTipoNotaFiscal() {
+		
+		List<TipoNotaFiscal> listaTipoNotaFiscal = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
+		
+		if (listaTipoNotaFiscal != null) {
+			result.include("listaTipoNotaFiscal", listaTipoNotaFiscal);
+		}
+		
+	}
 	
 	/**
 	 * Inclui na view os dados do combo de Fornecedor.
@@ -458,6 +492,10 @@ public class RecebimentoFisicoController {
 	public void preencherCombos() {
 		
 		carregarComboFornecedor();
+		
+		carregarComboCfop();
+		
+		carregarComboTipoNotaFiscal();
 		
 		carregarComboTipoLancamento();
 		
@@ -525,7 +563,8 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	private void validarNovoItemRecebimentoFisico(RecebimentoFisicoDTO itemRecebimento, 
+	private void validarNovoItemRecebimentoFisico(RecebimentoFisicoDTO itemRecebimento,
+			String numeroEdicao,
 			String dataLancamento, 
 			String dataRecolhimento) {
 		
@@ -542,7 +581,7 @@ public class RecebimentoFisicoController {
 				msgs.add("O campo Código dever ser informado.");
 			}
 
-			if (itemRecebimento.getEdicao() == null) {
+			if (numeroEdicao == null) {
 				msgs.add("O campo Edição dever ser informado.");
 			}
 
@@ -633,18 +672,37 @@ public class RecebimentoFisicoController {
 				valorLiquido,
 				valorBruto,
 				valorDesconto);
+	
+		try {
+			notaFiscalFornecedor.setDataEmissao(sdf.parse(dataEmissao));
+			notaFiscalFornecedor.setDataExpedicao(sdf.parse(dataEntrada));
+		} catch(ParseException e) {
+			notaFiscalFornecedor.setDataEmissao(null);
+			notaFiscalFornecedor.setDataExpedicao(null);
+		}
+		
+		notaFiscalFornecedor.setValorLiquido(getBigDecimalFromValor(valorLiquido));
+		notaFiscalFornecedor.setValorBruto(getBigDecimalFromValor(valorBruto));
+		notaFiscalFornecedor.setValorDesconto(getBigDecimalFromValor(valorDesconto));
 		
 		setNotaFiscalToSession(notaFiscalFornecedor);
-		
-		
-		//TODO: Chamar backend
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Nova nota fiscal cadastrada com sucesso.");
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
-		
-		
+	
+	}
+	
+	/**
+	 * Retorna valor BigDecimal.
+	 * 
+	 * @param valor
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal getBigDecimalFromValor(String valor) {
+		return new BigDecimal(valor.replace(".", "").replace(",", "."));
 	}
 	
 	public NotaFiscal getNotaFiscalFromSession() {
