@@ -35,8 +35,6 @@ public class Endereco {
 	private int numero;
 	@Column(name = "UF")
 	private String uf;
-	@Column(name = "TIPO_ENDERECO")
-	private TipoEndereco tipoEndereco;
 
 	public Long getId() {
 		return id;
@@ -101,15 +99,5 @@ public class Endereco {
 	public void setUf(String uf) {
 		this.uf = uf;
 	}
-
-	public TipoEndereco getTipoEndereco() {
-		return tipoEndereco;
-	}
-
-	public void setTipoEndereco(TipoEndereco tipoEndereco) {
-		this.tipoEndereco = tipoEndereco;
-	}
-	
-	
 
 }
