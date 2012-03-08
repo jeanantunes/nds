@@ -7,12 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
@@ -29,12 +24,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 
-
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
-@TransactionConfiguration(transactionManager = "transactionManager")
-@Transactional
 public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired

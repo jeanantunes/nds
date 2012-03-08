@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
@@ -196,10 +197,8 @@ public class DiferencaEstoqueController {
 									String sortorder, String sortname,
 									int page, int rp) {
 		
-		//TODO: tratar datas
-		//TODO: tratar parâmetros
-		
-		this.validarEntradaDadosPesquisa(dataInicial, dataFinal);
+		this.validarEntradaDadosPesquisa(numeroEdicao, idFornecedor,
+										 dataInicial, dataFinal, tipoDiferenca);
 		
 		FiltroConsultaDiferencaEstoqueDTO filtro =
 			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
@@ -335,7 +334,7 @@ public class DiferencaEstoqueController {
 	 */
 	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
-		//TODO: obter forncedores do produto e do tipo revista
+		//TODO: obter forncedores do tipo revista
 		
 		List<Fornecedor> listaFornecedor =
 			fornecedorService.obterFornecedoresPorProduto(codigoProduto);
@@ -730,21 +729,46 @@ public class DiferencaEstoqueController {
 	 * 
 	 * @param dataMovimentoFormatada - data de movimento formatado
 	 */
-	private void validarEntradaDadosPesquisa(String dataInicial, String dataFinal) {
+	private void validarEntradaDadosPesquisa(Long numeroEdicao, Long idFornecedor,
+											 String dataInicial, String dataFinal,
+											 TipoDiferenca tipoDiferenca) {
 		
-		/*if (dataInicial == null 
+		if (dataInicial == null 
 				|| dataInicial.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+				TipoMensagem.ERROR, "O preenchimento do campo [Data Inicial] é obrigatório!");
 		}
 		
-		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
+		if (dataFinal == null 
+				|| dataFinal.trim().isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
-		}*/
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O preenchimento do campo [Data Final] é obrigatório!");
+		}
+			
+		if (!DateUtil.isValidDatePTBR(dataInicial)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data Inicial inválida");
+		}
 		
-		//TODO:
+		if (!DateUtil.isValidDatePTBR(dataFinal)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Data Final inválida");
+		}
+		
+		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
+												 DateUtil.parseDataPTBR(dataFinal))) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "O campo [Data Incial] não pode ser maior que o campo [Data Final]!");
+		}
+		
+		if (numeroEdicao == null && idFornecedor == null && tipoDiferenca == null) {
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Para realizar a pesquisa é necessário informar a edição, o fornecedor ou o tipo de diferença!");
+		}
+		
 	}
 	
 	/*
@@ -760,11 +784,6 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
-		}
-		
-		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
 		}
 		
 		if (tipoDiferenca == null) {

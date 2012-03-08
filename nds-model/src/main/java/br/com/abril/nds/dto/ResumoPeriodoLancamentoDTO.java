@@ -89,4 +89,14 @@ public class ResumoPeriodoLancamentoDTO implements Serializable {
 		return valorTotalFormatado;
 	}
 	
+	public static ResumoPeriodoLancamentoDTO empty(Date data) {
+		ResumoPeriodoLancamentoDTO resumo = new ResumoPeriodoLancamentoDTO();
+		resumo.setData(data);
+		resumo.setPesoTotal(BigDecimal.ZERO);
+		resumo.setQtdeExemplares(BigDecimal.ZERO);
+		resumo.setQtdeTitulos(0L);
+		resumo.setValorTotal(BigDecimal.ZERO);
+		return resumo;
+	}
+	
 }
