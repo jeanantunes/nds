@@ -27,7 +27,7 @@ public abstract class Aprovacao {
 	private Date dataAprovacao;
 	@Column(name = "APROVADO_AUTOMATICAMENTE", nullable = false)
 	private boolean aprovadoAutomaticamente;
-	@Column(name = "MOTIVO", nullable = false)
+	@Column(name = "MOTIVO")
 	private String motivo;
 	
 	public Usuario getAprovador() {

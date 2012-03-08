@@ -9,9 +9,9 @@ import junit.framework.Assert;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -39,6 +39,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
+@DirtiesContext
 public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
@@ -84,21 +85,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		getSession().save(tipoNotaFiscal);
 		
 		CFOP cfop = Fixture.cfop5102();
-		
-		Criteria criteria = getSession().createCriteria(CFOP.class);
-		
-		criteria.add(Restrictions.eq("codigo", cfop.getCodigo()));
-		
-		CFOP cfopDB = (CFOP) criteria.uniqueResult();
-		
-		if (cfopDB == null) {
-			
-			getSession().save(cfop);
-			
-		} else {
-			
-			cfop = cfopDB;
-		}
+		save(cfop);
+	
 		
 		PessoaJuridica pessoaJuridica = Fixture.juridicaDinap();
 		
@@ -139,7 +127,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE, "Pendente.");
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE);
 			
 			getSession().save(movimentoEstoque);
 			
@@ -154,6 +142,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -191,6 +180,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterTotalDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -206,6 +196,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterDiferencas() {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		
@@ -229,6 +220,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterTotalDiferencas() {
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
