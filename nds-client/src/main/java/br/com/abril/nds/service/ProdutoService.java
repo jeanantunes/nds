@@ -8,6 +8,8 @@ public interface ProdutoService {
 
 	List<Produto> obterProdutoPorNomeProduto(String nome);
 	
+	List<Produto> obterProdutoLikeNomeProduto(String nome);
+	
 	Produto obterProdutoPorCodigo(String codigoProduto);
 	
 }
