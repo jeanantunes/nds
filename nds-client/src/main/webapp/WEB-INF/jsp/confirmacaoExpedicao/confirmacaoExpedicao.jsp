@@ -192,8 +192,7 @@
 		
 		$(".grids").show();		
 	});
-	
-
+		
 	function popupConfirmar() {
 
 		$("#dialog-confirmar").dialog({

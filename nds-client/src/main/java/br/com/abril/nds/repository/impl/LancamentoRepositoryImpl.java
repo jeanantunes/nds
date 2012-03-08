@@ -175,38 +175,25 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(
+	public List<Lancamento> obterLancamentosNaoExpedidos(
 			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 				
 		Map<String, Object> parametros = new HashMap<String, Object>();
-		
-		parametros.put("statusLancamento", StatusLancamento.RECEBIDO);
 		 
-		StringBuilder jpql = new StringBuilder();
+		StringBuilder hql = new StringBuilder();
 		
-		jpql.append(" select lancamento.id as idLancamento, ");	
-		jpql.append(" 	itemRecebido.recebimentoFisico.dataRecebimento as dataEntrada, ");
-		jpql.append(" 	lancamento.produtoEdicao.produto.id as codigo, ");		
-		jpql.append(" 	lancamento.produtoEdicao.produto.nome as produto, ");		
-		jpql.append(" 	lancamento.produtoEdicao.numeroEdicao as edicao, ");		
-		jpql.append(" 	lancamento.produtoEdicao.produto.tipoProduto.descricao as classificacao, ");
-		jpql.append(" 	lancamento.produtoEdicao.precoVenda as preco, ");		
-		jpql.append(" 	lancamento.produtoEdicao.pacotePadrao as pctPadrao, ");		
-		jpql.append(" 	estudo.qtdeReparte as reparte, ");		
-		jpql.append(" 	lancamento.dataRecolhimentoPrevista as dataChamada, ");		
-		jpql.append(" 	lancamento.produtoEdicao.fornecedor.juridica.nomeFantasia as fornecedor, ");
-		jpql.append(" 	estudo.qtdeReparte as estudo"); //TODO - Obter em Estudo
+		hql.append(" select lancamento ");
 		
-		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
 						
 		
 		if( paginacaoVO != null ) {
-			jpql.append(gerarOrderByProdutosNaoExpedidos(
+			hql.append(gerarOrderByProdutosNaoExpedidos(
 					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortOrder()),
 					paginacaoVO.getOrdenacao()));
 		}
 		
-		Query query = getSession().createQuery(jpql.toString());
+		Query query = getSession().createQuery(hql.toString());
 		
 		for (Entry<String, Object> entry: parametros.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
@@ -217,9 +204,7 @@ public class LancamentoRepositoryImpl extends
 			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
 		}
 		
-		query.setResultTransformer(Transformers.aliasToBean(LancamentoNaoExpedidoDTO.class));
-		
-		return (List<LancamentoNaoExpedidoDTO>)query.list();
+		return (List<Lancamento>)query.list();
 	}
 	
 	private String gerarOrderByProdutosNaoExpedidos(LancamentoNaoExpedidoDTO.SortColumn sortOrder, Ordenacao ascOrDesc) {
@@ -262,12 +247,19 @@ public class LancamentoRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();	
 		
 		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
 		
+		if(idFornecedor!=null) {
+			hql.append(" join produto.fornecedores fornecedor ");
+		}
+		
+		hql.append(" left join lancamento.recebimentos itemRecebido ");
 		hql.append(" left join lancamento.estudos estudo ");
 		
-		hql.append(" join lancamento.recebimentos itemRecebido ");
-		
 		hql.append(" where lancamento.status=:statusLancamento ");
+		
+		parametros.put("statusLancamento", StatusLancamento.RECEBIDO);
 		
 		
 		if (data != null) {
@@ -282,7 +274,7 @@ public class LancamentoRepositoryImpl extends
 		}				
 		
 		if (idFornecedor != null) {
-			hql.append(" AND lancamento.produtoEdicao.fornecedor.id = :idFornecedor ");			
+			hql.append(" AND fornecedor.id = :idFornecedor ");			
 			parametros.put("idFornecedor", idFornecedor);
 		}				
 		
@@ -291,7 +283,7 @@ public class LancamentoRepositoryImpl extends
 		} else {
 			hql.append(" AND estudo is null");
 		}
-			
+		
 		return hql.toString();
 	}
 	
@@ -303,7 +295,7 @@ public class LancamentoRepositoryImpl extends
 		 
 		StringBuilder jpql = new StringBuilder();
 		
-		jpql.append(" select count(lancamento.id) ");	
+		jpql.append(" select count(lancamento) ");	
 		
 		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
 										

@@ -34,9 +34,11 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 			throw new NullPointerException();
 		}
 		
-		Criteria criteria = super.getSession().createCriteria(ItemRecebimentoFisico.class);
+		Criteria criteria = super.getSession().createCriteria(ItemRecebimentoFisico.class, "itemRecebimento");
 		
-		criteria.add(Restrictions.eq("itemNotaFiscal.produtoEdicao.id", idProdutoEdicao));
+		criteria.createAlias("itemRecebimento.itemNotaFiscal", "itemNotaFiscal");
+		criteria.createAlias("itemNotaFiscal.produtoEdicao", "produtoEdicao");
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		criteria.add(Restrictions.eq("itemNotaFiscal.dataLancamento", dataLancamento));
 		
 		criteria.setMaxResults(1);

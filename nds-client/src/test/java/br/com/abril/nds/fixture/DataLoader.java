@@ -740,6 +740,8 @@ public class DataLoader {
 					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
 			session.save(produtoEdicao);
 			
+			EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, new BigDecimal(0));
+			save(session, estoqueProduto);
 			
 			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 			session.save(tipoNotaFiscal);

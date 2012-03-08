@@ -23,7 +23,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		
 		Criteria criteria = super.getSession().createCriteria(EstoqueProdutoCota.class);
 		
-		criteria.add(Restrictions.eq("id", idProdutoEdicao));
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		criteria.add(Restrictions.eq("cota.id", idCota));
 				
 		criteria.setMaxResults(1);
