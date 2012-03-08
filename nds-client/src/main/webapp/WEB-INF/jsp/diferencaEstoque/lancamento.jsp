@@ -12,6 +12,7 @@
 				
 				$(".grids").hide();
 				$("#btnConfirmar").hide();
+				$("#btnCancelar").hide();
 				$("#labelTotalGeral").hide();
 				$("#qtdeTotalDiferencas").hide();
 				$("#valorTotalDiferencas").hide();
@@ -40,6 +41,7 @@
 
 				$(".grids").show();
 				$("#btnConfirmar").show();
+				$("#btnCancelar").show();
 				$("#labelTotalGeral").show();
 				$("#qtdeTotalDiferencas").show();
 				$("#valorTotalDiferencas").show();
@@ -68,8 +70,13 @@
 					"Confirmar": function() {
 					$(this).dialog("close");
 					
-					var data = "idDiferenca=" + idMovimentoEstoque;
-					$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
+					var data = "?idDiferenca=" + idMovimentoEstoque;
+					
+					$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/excluirFaltaSobra" />'+data});
+					$("#gridLancamentos").flexReload();
+					
+					//var data = "idDiferenca=" + idMovimentoEstoque;
+					//$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
 				},
 				"Cancelar": function() {
 					$(this).dialog("close");
@@ -102,7 +109,7 @@
 					"Confirmar": function() {
 					$(this).dialog("close");
 					
-					$.postJSON("<c:url value='/estoque/diferenca/confirmarLancamentos'/>", data);
+					$.postJSON("<c:url value='/estoque/diferenca/confirmarLancamentos'/>");
 				},
 				"Cancelar": function() {
 					$(this).dialog("close");
@@ -111,6 +118,11 @@
 			});
 			
 			$("#dialog-confirmar-lancamentos").show();
+		}
+		
+		function cancelarModificacoes(){
+			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/cancelar" />'});
+			$("#gridLancamentos").flexReload();
 		}
 		
 		$(function() {
@@ -282,6 +294,9 @@
 							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
 								<a href="javascript:;" onclick="popupConfirmar();">Confirmar</a>
+							</span>
+							<span id="btnCancelar" class="total bt_cancelar" style="display: none;">
+								<a href="javascript:;" onclick="cancelarModificacoes();">Cancelar</a>
 							</span>
 						</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">

@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,8 +73,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return diferenca == null ? false : !diferenca;
 	}
 	
+	
+	//TODO: no momento esse método trata apenas as exclusões de diferenca, deve fazer todo o necessário para esta funcionalidade, morô
 	@Transactional
-	public void excluirDiferenca(List<Long> idsDiferenca){
+	public void efetuarAlteracoes(Set<Long> idsDiferencaExclusao){
+		this.excluirDiferenca(idsDiferencaExclusao);
+	}
+	
+	
+	private void excluirDiferenca(Set<Long> idsDiferenca){
 		
 		for (Long idDiferenca : idsDiferenca){
 			
