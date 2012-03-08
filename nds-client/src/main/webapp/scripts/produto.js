@@ -1,7 +1,27 @@
 var produto = {
+	
+	//Limpar campos pesquisa
+	limparCamposPesquisa : function(idProduto, idEdicao, successCallBack) {
+		$(idProduto).val("");
+		$(idEdicao).val("");
+		$(idEdicao).attr("disabled", "disabled");
+		
+		if (successCallBack) {
+			successCallBack();
+		}
+	},
 		
 	//Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		
+		//Seta um timed out para esperar a execução da função que limpa os campos
+		//no momento que o codigo do produto é alterado na tela.
+		setTimeout(function() { produto.pesquisarPorCodigoProdutoAposTimedOut(idCodigo, idProduto,
+																	  		  idEdicao, isFromModal,
+																	  		  successCallBack, errorCallBack);  }, 100);
+	},
+	
+	pesquisarPorCodigoProdutoAposTimedOut : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo).val();
 		
 		codigoProduto = $.trim(codigoProduto);
@@ -41,7 +61,7 @@ var produto = {
 	},
 	
 	//Mostrar auto complete por nome do produto
-	autoCompletarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal) {
+	autoCompletarPorNomeProduto : function(idProduto, isFromModal) {
 		var nomeProduto = $(idProduto).val();
 		
 		if (nomeProduto && nomeProduto.length > 2) {
@@ -62,8 +82,8 @@ var produto = {
 		
 		//Seta um timed out para esperar o auto complet do campo 
 		//de nome do produto ser preenchido pelo jQuery
-		setTimeout(function() {produto.pesquisarPorNomeProdutoAposTimedOut(idCodigo, idProduto, idEdicao,
-																	       isFromModal, successCallBack, errorCallBack);},  200);
+		setTimeout(function() { produto.pesquisarPorNomeProdutoAposTimedOut(idCodigo, idProduto, idEdicao,
+																	        isFromModal, successCallBack, errorCallBack); },  200);
 	},
 	
 	pesquisarPorNomeProdutoAposTimedOut : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
