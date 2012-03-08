@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
@@ -125,7 +124,7 @@ public class EnderecoController {
 
 		return new CellModel(
 					  endereco.getId().intValue(),
-					  endereco.getTipoEndereco().toString(),
+					  //endereco.getTipoEndereco().toString(),
 					  endereco.getLogradouro(), 
 					  endereco.getBairro(),
 					  endereco.getCep(), 
@@ -151,7 +150,7 @@ public class EnderecoController {
 		endereco.setId(1L);
 		endereco.setLogradouro("Capitão José Cristovam de Lima");
 		endereco.setNumero(5);
-		endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+		//endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
 		endereco.setUf("SP");
 
 		listaEndereco.add(endereco);
@@ -164,7 +163,7 @@ public class EnderecoController {
 		endereco.setId(2L);
 		endereco.setLogradouro("Capitão José Cristovam de Lima");
 		endereco.setNumero(5);
-		endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+		//endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
 		endereco.setUf("SP");
 
 		listaEndereco.add(endereco);
@@ -177,7 +176,7 @@ public class EnderecoController {
 		endereco.setId(3L);
 		endereco.setLogradouro("Capitão José Cristovam de Lima");
 		endereco.setNumero(5);
-		endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+		//endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
 		endereco.setUf("SP");
 
 		listaEndereco.add(endereco);
