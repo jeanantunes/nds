@@ -27,7 +27,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.RecebimentoFisicoService;
-
+@Ignore
 public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 	
@@ -140,6 +140,11 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalF, listaDTO);
 		
 		
+		
+	}
+	
+	@Test
+	public void alterarItemNotaRecebimentoFisico(){
 		
 	}
 		
