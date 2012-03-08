@@ -247,8 +247,11 @@ public class ConsultaNotasController {
 		
 		filtroConsultaNotaFiscal.setListaColunaOrdenacao(listaColunaOrdenacao);
 
-		filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
-		
+		if (isNotaRecebida > -1) {
+
+			filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
+		}
+
 		FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscalSession =
 			(FiltroConsultaNotaFiscalDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
