@@ -2,7 +2,9 @@ package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +44,8 @@ public class Cota {
 	private SituacaoCadastro situacaoCadastro;
 	@Column(name  ="FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
+	@OneToMany(mappedBy = "cota")
+	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
 	
 	public Long getId() {
 		return id;
@@ -89,6 +93,14 @@ public class Cota {
 	
 	public void setFatorDesconto(BigDecimal fatorDesconto) {
 		this.fatorDesconto = fatorDesconto;
+	}
+	
+	public Set<EnderecoCota> getEnderecos() {
+		return enderecos;
+	}
+	
+	public void setEnderecos(Set<EnderecoCota> enderecos) {
+		this.enderecos = enderecos;
 	}
 
 }
