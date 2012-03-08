@@ -112,7 +112,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameter("numeroEdicao", numeroEdicao);
 		
-		//TODO: no banco nao deveria retornar mais de um registro
 		query.setMaxResults(1);
 		
 		return (ProdutoEdicao) query.uniqueResult();

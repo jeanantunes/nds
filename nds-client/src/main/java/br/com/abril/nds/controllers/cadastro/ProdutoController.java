@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers;
+package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.List;

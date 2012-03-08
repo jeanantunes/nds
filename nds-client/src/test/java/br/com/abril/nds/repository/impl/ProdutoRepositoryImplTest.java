@@ -41,7 +41,15 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterProdutoPorNomeProduto() {
 		List<Produto> listaProduto = 
-			produtoRepository.obterProdutoLikeNomeProduto("Veja");
+			produtoRepository.obterProdutoPorNomeProduto("Veja");
+		
+		Assert.assertTrue(!listaProduto.isEmpty());
+	}
+	
+	@Test
+	public void obterProdutoLikeNomeProduto() {
+		List<Produto> listaProduto = 
+			produtoRepository.obterProdutoLikeNomeProduto("Vej");
 		
 		Assert.assertTrue(!listaProduto.isEmpty());
 	}
