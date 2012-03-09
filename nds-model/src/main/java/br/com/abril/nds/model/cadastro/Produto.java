@@ -39,7 +39,7 @@ public class Produto {
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
 	
-	@Column(name = "NOME", nullable = false)
+	@Column(name = "NOME", nullable = false, unique = true)
 	private String nome;
 	
 	@Column(name = "DESCRICAO")

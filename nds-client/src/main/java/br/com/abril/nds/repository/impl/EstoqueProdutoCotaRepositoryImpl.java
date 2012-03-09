@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -23,11 +24,27 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		
 		Criteria criteria = super.getSession().createCriteria(EstoqueProdutoCota.class);
 		
-		criteria.add(Restrictions.eq("id", idProdutoEdicao));
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		criteria.add(Restrictions.eq("cota.id", idCota));
 				
 		criteria.setMaxResults(1);
 		
 		return (EstoqueProdutoCota) criteria.uniqueResult();
+	}
+	
+	public EstoqueProdutoCota buscarEstoquePorProdutEdicaoECota(Long idProdutoEdicao, Long idCota) {
+		StringBuilder hql = new StringBuilder("select estoqueProdutoCota ");
+		hql.append(" from EstoqueProdutoCota estoqueProdutoCota, ProdutoEdicao produtoEdicao, Cota cota ")
+		   .append(" where estoqueProdutoCota.produtoEdicao.id = produtoEdicao.id ")
+		   .append(" and estoqueProdutoCota.cota.id            = cota.id ")
+		   .append(" and produtoEdicao.id                      = :idProdutoEdicao ")
+		   .append(" and cota.id                               = :idCota");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("idCota", idCota);
+		query.setMaxResults(1);
+		
+		return (EstoqueProdutoCota) query.uniqueResult();
 	}
 }

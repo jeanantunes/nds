@@ -47,6 +47,9 @@ public class Cota {
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
 	
+	@ManyToOne(optional = false)
+	private Box box;
+	
 	public Long getId() {
 		return id;
 	}
@@ -102,5 +105,21 @@ public class Cota {
 	public void setEnderecos(Set<EnderecoCota> enderecos) {
 		this.enderecos = enderecos;
 	}
+
+	/**
+	 * @return the box
+	 */
+	public Box getBox() {
+		return box;
+	}
+
+	/**
+	 * @param box the box to set
+	 */
+	public void setBox(Box box) {
+		this.box = box;
+	}
+	
+	
 
 }

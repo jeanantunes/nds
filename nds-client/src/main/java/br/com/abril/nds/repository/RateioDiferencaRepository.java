@@ -7,4 +7,6 @@ public interface RateioDiferencaRepository extends Repository<RateioDiferenca, L
 	boolean verificarExistenciaRateioDiferenca(Long idDiferenca);
 	
 	RateioDiferenca obterRateioDiferencaPorDiferenca(Long idDiferenca);
+	
+	void removerRateioDiferencaPorDiferenca(Long idDiferenca);
 }

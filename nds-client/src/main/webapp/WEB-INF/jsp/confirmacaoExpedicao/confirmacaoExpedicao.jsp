@@ -3,21 +3,13 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
+<script type="text/javascript"	
+	src="${pageContext.request.contextPath}/scripts/jquery-dateFormat/jquery.dateFormat-1.0.js"></script>
+
 <title>NDS - Novo Distrib</title>
 
 <script type="text/javascript">
 
-	var gui ;
-
-	
-	function dateToString(date) {
-		gui = date;
-		if(date==null) {
-			return "-";
-		}
-		return $.format.date(date.$+" 00:00:000", "dd/MM/yyyy");
-	}
-	
 	function gerarCheckbox(id,name,idLancamento,selecionado) {
 		var html = "";
 		html+= ' <input ';
@@ -37,9 +29,7 @@
 	}
 	
 	function adicionarSelecao(id, check) {
-		
-		alert("idLancamento="+id +",selecionado="+check.checked);
-		
+				
 		$.postJSON("<c:url value='/confirmacaoExpedicao/selecionarLancamento'/>", 
 				"idLancamento="+id +"&selecionado="+check.checked, 
 				retornoSemAcao);				
@@ -48,51 +38,56 @@
 	function retornoSemAcao(data) {
 		
 	}
+
 	
 	function selecionarTodos(elementoCheck) {
-	
-		if(elementoCheck.checked == false) {
-			
-			for (i=0; i < document.form1.checkgroup.length; i++){
-			
-				if(document.form1.checkgroup[i].checked == true){
-					document.form1.checkgroup[i].checked = false;
-				}
-			}
-		} else {										
-			for (i=0; i < document.form1.checkgroup.length; i++){
-				if(document.form1.checkgroup[i].checked == false){
-				document.form1.checkgroup[i].checked = true;
-						}
-					}
-			}
 		
+		var selects =  document.getElementsByName("selecao");
 
+		$.postJSON("<c:url value='/confirmacaoExpedicao/selecionarTodos'/>", 
+				"selecionado="+elementoCheck.checked, 
+				retornoSemAcao);	
+		
+		$.each(selects, function(index, row) {
+			row.checked=elementoCheck.checked;
+		});
+		
 	}
 			
-	function processaRetorno(data) {
-		
-		var status = data[0];
+	function processaRetornoPesquisa(data) {
+				
+		var grid = data[0];
 		var mensagens = data[1];
-		var grid =  data[2];
+		var status = data[2];
 		
-		if(mensagens!=null && mensagens.length>0) {
-			exibirMensagem(status, mensagens);
+		if(mensagens!=null && mensagens.length!=0) {
+			exibirMensagem(status,mensagens);
 		}
-			
+		
+		if(!grid.rows) {
+			return grid;
+		}
+		
 		for(var i=0; i<grid.rows.length; i++) {			
-			grid.rows[i].cell.dataEntrada = dateToString(grid.rows[i].cell.dataEntrada);
 			
-			grid.rows[i].cell.dataChamada = dateToString(grid.rows[i].cell.dataChamada);
-			
-			grid.rows[i].cell.selecionado = gerarCheckbox('idCheck'+i,'check'+i, grid.rows[i].cell.idLancamento,grid.rows[i].cell.selecionado);
+			var cell = grid.rows[i].cell;
+					
+			if(cell.estudo) {
+				cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
+			} else {
+				cell.estudo="";
+				cell.selecionado="";
+			}
 		}
 		
 		return grid;
 	}
 	
+	var change = false;
 	
 	function cliquePesquisar() {
+		
+		change= !change;
 		
 		var dataLancamento = $('#idDataLancamento').attr('value');
 		var idFornecedor = $('#idFornecedor').attr('value');
@@ -101,10 +96,11 @@
 		$(".confirmaExpedicaoGrid").flexOptions({			
 			url : '<c:url value="/confirmacaoExpedicao/pesquisarExpedicoes"/>',
 			dataType : 'json',
-			preProcess:processaRetorno,
+			preProcess:processaRetornoPesquisa,
 			params:[{name:'dtLancamento',value:dataLancamento},
 			        {name:'idFornecedor',value:idFornecedor},
-			        {name:'estudo',value:estudo}]		
+			        {name:'estudo',value:estudo},
+			        {name:'ultimaPesquisa',value:new Date()}]		
 		});
 		
 		$(".confirmaExpedicaoGrid").flexReload();
@@ -170,19 +166,19 @@
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Estudo',
 				name : 'estudo',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : '',
 				name : 'selecionado',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
 			sortname : "codigo",
@@ -197,49 +193,10 @@
 		
 		$(".grids").show();		
 	});
-	
-	function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+	function popupConfirmar() {
 
-		$("#dialog-novo").dialog({
-			resizable : false,
-			height : 370,
-			width : 410,
-			modal : true,
-			buttons : {
-				"Fechar" : function() {
-					$(this).dialog("close");
-				},
-			}
-		});
-	};
-
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
-		$("#dialog-novo").dialog({
-			resizable : false,
-			height : 430,
-			width : 410,
-			modal : true,
-			buttons : {
-				"Confirmar" : function() {
-					$(this).dialog("close");
-					$("#effect").hide("highlight", {}, 1000, callback);
-
-				},
-				"Cancelar" : function() {
-					$(this).dialog("close");
-				}
-			}
-		});
-
-	};
-
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
-		$("#dialog-excluir").dialog({
+		$("#dialog-confirmar").dialog({
 			resizable : false,
 			height : 140,
 			width : 380,
@@ -247,12 +204,15 @@
 			buttons : {
 				"Confirmar" : function() {
 					
-					$.getJSON("<c:url value='/confirmacaoExpedicao/confirmarExpedicao'/>", 
-							null, 
-							alert('Guilherme'));
+					$(".confirmaExpedicaoGrid").flexOptions({			
+						url : '<c:url value="/confirmacaoExpedicao/confirmarExpedicao"/>',
+						dataType : 'json',
+						preProcess:processaRetornoPesquisa		
+					});
 					
+					$(".confirmaExpedicaoGrid").flexReload();
+										
 					$(this).dialog("close");
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -283,8 +243,9 @@
 	
 
 	<form action="" method="get" id="form1" name="form1">
-		<div id="dialog-excluir" title="Matriz de Expedi��o">
-			<p>Confirma Matriz de aExpedi&ccedil;�o?</p>
+		
+		<div id="dialog-confirmar" title="Matriz de Expedição" style="display: none">
+			<p>Confirmar Matriz de Expedição?</p>
 		</div>
 
 		<div class="corpo"></div>
@@ -357,7 +318,7 @@
 
 					<span class="bt_confirmar">
 <!-- CONFIRMAR -->						
-						<a href="javascript:popup_excluir();">Confirmar</a> 
+						<a href="javascript:popupConfirmar();">Confirmar</a> 
 					</span> 
 					
 					<span class="bt_sellAll" style="float: right;">
