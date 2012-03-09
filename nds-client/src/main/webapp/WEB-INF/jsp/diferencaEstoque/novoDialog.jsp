@@ -21,11 +21,11 @@
 	
 	</form>
 	
-	<table id="" width="510" border="0" cellspacing="2" cellpadding="2">
+	<table id="" width="505" border="0" cellspacing="2" cellpadding="2">
 		<tr style="font-size: 11px;">
 			<td id="labelTotalGeralNovo" width="55"><strong>Total Geral:</strong></td>
 			<td id="totalPrecoVendaDiferencas" width="5" align="right"></td>
-			<td id="totalRecebimentoFisico" width="10" align="right"></td>
+			<td id="totalRecebimentoFisico" width="10" align="center"></td>
 		</tr>
 	</table>
 	
@@ -80,10 +80,6 @@
 				width : 610,
 				height : 220
 			});
-
-			/*$("#labelTotalGeralNovo").hide();
-			$("#totalPrecoVendaDiferencas").hide();
-			$("#totalRecebimentoFisico").hide();*/
 		});
 
 		function popupNovasDiferencas() {
@@ -107,6 +103,7 @@
 						cadastrarNovasDiferencas();
 					},
 					"Cancelar": function() {
+						$("#gridNovasDiferencas").flexAddData({rows:[]});
 						$(this).dialog("close");
 					}
 				}
@@ -130,7 +127,7 @@
 				var inputCodigoProduto = 
 					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" />';
 
-				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true';
+				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true, null, function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
 
 				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true, obterDadosProduto';
 
@@ -139,16 +136,18 @@
 									+ '</span>';
 
 				var inputDescricaoProduto = 
-					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ');" />';
+					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroPesquisaProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
 
 				var inputNumeroEdicao = 
-					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + '); ultimaLinhaPreenchida=' + index + '" />';
+					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + '); ultimaLinhaPreenchida=' + index + '" disabled="disabled" />';
 
 				var spanPrecoVenda = '<span id="precoVendaFormatado' + index + '"/>';
 
 				var hiddenPrecoVenda = '<input type="hidden" id="precoVenda' + index + '" />';
 
-				var spanQtdeRecebimentoFisico = '<span id="qtdeRecebimentoFisico' + index + '"/>';
+				var spanQtdeRecebimentoFisico = '<span id="qtdeRecebimentoFisicoFormatado' + index + '"/>';
+
+				var hiddenQtdeRecebimentoFisico = '<input type="hidden" id="qtdeRecebimentoFisico' + index + '" />';
 				
 				var inputQuantidade = 
 					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
@@ -157,10 +156,13 @@
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
 				row.cell.precoVenda = hiddenPrecoVenda + spanPrecoVenda;
-				row.cell.qtdeRecebimentoFisico = spanQtdeRecebimentoFisico;
+				row.cell.qtdeRecebimentoFisico = hiddenQtdeRecebimentoFisico + spanQtdeRecebimentoFisico;
 				row.cell.quantidade = inputQuantidade;
 			});
 
+			$("#totalPrecoVendaDiferencas").empty();
+			$("#totalRecebimentoFisico").empty();
+			
 			return resultado;
 		}
 
@@ -175,9 +177,14 @@
 					$("#dialogNovasDiferencas").dialog("close");
 					$(".grids").show();
 				},
-				null, 
+				tratarErroCadastroNovasDiferencas, 
 				true
 			);
+		}
+
+		function tratarErroCadastroNovasDiferencas(jsonData) {
+
+			
 		}
 
 		function obterListaDiferencas() {
@@ -193,6 +200,7 @@
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaDescricaoProduto = linha.find("td")[1];
 				var colunaNumeroEdicao = linha.find("td")[2];
+				var colunaQtdeEstoqueAtual = linha.find("td")[4]
 				var colunaQtdeDiferenca = linha.find("td")[5];
 	
 				var codigoProduto = 
@@ -203,10 +211,13 @@
 				
 				var numeroEdicao = 
 					$(colunaNumeroEdicao).find("div").find('input[name="numeroEdicao"]').val();
+
+				var qtdeEstoqueAtual =
+					$(colunaQtdeEstoqueAtual).find("div").find('input[id^="qtdeRecebimentoFisico"]').val();
 				
 				var qtdeDiferenca = 
 					$(colunaQtdeDiferenca).find("div").find('input[name="qtdeDiferenca"]').val();
-
+				
 				if (isAtributosDiferencaVazios(codigoProduto, descricaoProduto, numeroEdicao, qtdeDiferenca)) {
 
 					return true;
@@ -219,6 +230,8 @@
 				diferenca += 'listaNovasDiferencas[' + index + '].numeroEdicao=' + numeroEdicao + '&';
 	
 				diferenca += 'listaNovasDiferencas[' + index + '].quantidade=' + qtdeDiferenca  + '&';
+
+				diferenca += 'listaNovasDiferencas[' + index + '].qtdeEstoqueAtual=' + qtdeEstoqueAtual  + '&';
 
 				listaDiferencas = (listaDiferencas + diferenca);
 			});
@@ -238,17 +251,42 @@
 			$.postJSON(
 				"<c:url value='/produto/obterProdutoEdicao' />", 
 				data,
-				function(result) {
+				function(produtoEdicao) {
 
-					$("#precoVenda" + ultimaLinhaPreenchida).val(result.precoVenda);
+					$("#precoVenda" + ultimaLinhaPreenchida).val(produtoEdicao.precoVenda);
 					
-					$("#precoVendaFormatado" + ultimaLinhaPreenchida).text(result.precoVenda);
+					$("#precoVendaFormatado" + ultimaLinhaPreenchida).text(produtoEdicao.precoVenda);
 					$("#precoVendaFormatado" + ultimaLinhaPreenchida).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
 
 					$("#totalPrecoVendaDiferencas").text(($("input[id^='precoVenda']").sum()));
 					$("#totalPrecoVendaDiferencas").formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
 
+					obterEstoqueProduto(produtoEdicao);
+				},
+				null, 
+				true
+			);
+		}
+
+		function obterEstoqueProduto(produtoEdicao) {
+
+			if (!produtoEdicao) {
+
+				return;
+			}
+
+			var data = "idProdutoEdicao=" + produtoEdicao.id;
+			
+			$.postJSON(
+				"<c:url value='/produto/obterEstoque' />", 
+				data,
+				function(estoqueProduto) {
 					
+					if (estoqueProduto) {
+						$("#qtdeRecebimentoFisico" + ultimaLinhaPreenchida).val(estoqueProduto.qtde);
+						$("#qtdeRecebimentoFisicoFormatado" + ultimaLinhaPreenchida).text(estoqueProduto.qtde);
+						$("#totalRecebimentoFisico").text(($("input[id^='qtdeRecebimentoFisico']").sum()));
+					}
 				},
 				null, 
 				true
@@ -271,6 +309,37 @@
 			$("input[name='codigoProduto']").numeric();
 			$("input[name='numeroEdicao']").numeric();
 			$("input[name='qtdeDiferenca']").numeric();
+		}
+
+		function reprocessarDadosLancamento(idCampoPrecoVenda,
+											idCampoPrecoVendaFormatado,
+								  			idCampoQtdeRecebimentoFisico,
+								  			idCampoQtdeRecebimentoFisicoFormatado) {
+
+			$(idCampoPrecoVenda).val("");
+			$(idCampoPrecoVendaFormatado).text("");
+
+			var somaPrecoVenda = $("input[id^='precoVenda']").sum();
+			
+			$("#totalPrecoVendaDiferencas").text(somaPrecoVenda);
+			$("#totalPrecoVendaDiferencas").formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+
+			if (somaPrecoVenda == 0) {
+
+				$("#totalPrecoVendaDiferencas").text("");
+			}
+						
+			$(idCampoQtdeRecebimentoFisico).val("");
+			$(idCampoQtdeRecebimentoFisicoFormatado).text("");
+
+			var somaQtdeRecebimentoFisico = $("input[id^='qtdeRecebimentoFisico']").sum();
+			
+			$("#totalRecebimentoFisico").text((somaQtdeRecebimentoFisico));
+			
+			if (somaQtdeRecebimentoFisico == 0) {
+
+				$("#totalRecebimentoFisico").text("");
+			}
 		}
 	</script>
 	

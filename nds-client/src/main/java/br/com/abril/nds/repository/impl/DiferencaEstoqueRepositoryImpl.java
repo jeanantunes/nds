@@ -324,8 +324,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		hql += " from Diferenca diferenca "
 			 + " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
-			 + " left join itemNotaFiscal.notaFiscal notaFiscal "
-			 + " where diferenca.movimentoEstoque is not null ";
+			 + " left join itemNotaFiscal.notaFiscal notaFiscal ";
+		
+		if (filtro.getIdFornecedor() != null) {
+			 
+			 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
+		}
+			 
+		hql += " where diferenca.movimentoEstoque is not null ";
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
@@ -335,9 +341,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			hql += " and diferenca.produtoEdicao.numeroEdicao = :numeroEdicao ";
 		}
 		
-		/*if (filtro.getIdFornecedor() != null) {
-			hql += " and diferenca.produtoEdicao.produto.fornecedores.id = :idFornecedor ";
-		}*/
+		if (filtro.getIdFornecedor() != null) {
+			hql += " and fornecedores.id = :idFornecedor ";
+		}
 		
 		if (filtro.getPeriodoVO() != null
 				&& filtro.getPeriodoVO().getDataInicial() != null
@@ -362,8 +368,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
 													 	 Query query) {
 		
-		//TODO: adicionar filtro para fornecedores
-		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			query.setParameter("codigoProduto", filtro.getCodigoProduto());
 		}
@@ -372,9 +376,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			query.setParameter("numeroEdicao", filtro.getNumeroEdicao());
 		}
 		
-		/*if (filtro.getIdFornecedor() != null) {
+		if (filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}*/
+		}
 		
 		if (filtro.getPeriodoVO() != null
 				&& filtro.getPeriodoVO().getDataInicial() != null
@@ -387,6 +391,17 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		if (filtro.getTipoDiferenca() != null) {
 			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
 		}
+	}
+	
+	/*
+	 * @see br.com.abril.nds.repository.DiferencaEstoqueRepository#buscarStatusDiferencaLancadaAutomaticamente(java.lang.Long)
+	 */
+	public boolean buscarStatusDiferencaLancadaAutomaticamente(Long idDiferenca){
+		Query query = 
+				this.getSession().createQuery("select d.automatica from Diferenca d where d.id = :idDiferenca");
+		query.setParameter("idDiferenca", idDiferenca);
+		
+		return (Boolean) query.uniqueResult();
 	}
 
 }

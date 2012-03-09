@@ -26,12 +26,15 @@ public abstract class Movimento extends Aprovacao {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	@Column(name = "ID")
 	private Long id;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_INCLUSAO", nullable = false)
 	private Date dataInclusao;
