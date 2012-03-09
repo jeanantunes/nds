@@ -18,6 +18,5 @@ public interface RecebimentoFisicoRepository extends Repository<RecebimentoFisic
 	List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal);
 	
 	RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal);
-
 	 
 }

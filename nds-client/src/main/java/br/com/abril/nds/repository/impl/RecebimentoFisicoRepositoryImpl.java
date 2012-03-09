@@ -78,6 +78,9 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		
 		return (RecebimentoFisico) query.uniqueResult();
 	}
+	
+		
+	
 }
 	
 
