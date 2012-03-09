@@ -502,8 +502,6 @@ public class DiferencaEstoqueController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		//TODO: setar ordenação
-		
 		String valorTotalDiferencasFormatado = 
 			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
 		

@@ -52,6 +52,14 @@ var jsExtratoEdicao = {
 		
 	},
 	
+	limparCamposPesquisa : function() {
+
+		$("#nomeFornecedor").val("");
+		$("#precoCapa").val("");
+		
+		produto.limparCamposPesquisa('#produto', '#edicao', false);	
+	},
+	
 	pesquisarProdutoPorCodigo : function() {
 
 		$("#nomeFornecedor").val("");
@@ -210,7 +218,8 @@ $(function() {
 								maxlength="255"
 								style="width: 70px; 
 								float: left; 
-								margin-right: 5px;" />
+								margin-right: 5px;"
+								onchange="jsExtratoEdicao.limparCamposPesquisa();" />
 
 						<span class="classPesquisar">
 							<a href="javascript:;"

@@ -131,7 +131,7 @@
 			"itemRecebimento.codigoProduto=" 		+ codigo			+ "&" +
 			"itemRecebimento.nomeProduto=" 			+ produto			+ "&" +
 			"itemRecebimento.precoCapa=" 			+ precoCapa			+ "&" +
-			"itemRecebimento.edicao=" 				+ edicao			+ "&" +
+			"numeroEdicao=" 						+ edicao			+ "&" +
 			"dataLancamento=" 						+ dataLancamento 	+ "&" + 
 		   	"dataRecolhimento=" 					+ dataRecolhimento	+ "&" +
 		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
@@ -192,8 +192,8 @@
 		var valorBruto		= $("#valorBruto").val();
 		var valorLiquido	= $("#valorLiquido").val();
 		var valorDesconto 	= $("#valorDesconto").val();
-		var cfopCodigo 		= $("#cfopCodigo").val();
-		var cfopDescricao 	= $("#cfopDescricao").val();
+		var cfopId 			= $("#cfop").val();
+		var tipoNotaFiscal  = $("#tipoNotaFiscal").val();
 		
 		var dadosCadastro = 
 
@@ -206,8 +206,8 @@
 			"valorBruto=" 								+ valorBruto	+ "&" +
 			"valorLiquido=" 							+ valorLiquido	+ "&" +
 			"valorDesconto=" 							+ valorDesconto	+ "&" + 
-		   	"notaFiscalFornecedor.cfop.codigo=" 		+ cfopCodigo	+ "&" +
-		    "notaFiscalFornecedor.cfop.descricao=" 		+ cfopDescricao;
+			"notaFiscalFornecedor.cfop.id=" 			+ cfopId		+ "&" +
+			"notaFiscalFornecedor.tipoNotaFiscal.id="   + tipoNotaFiscal;
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirNovaNotaFiscal'/>", dadosCadastro, 
 				function(result) {
@@ -243,25 +243,19 @@
 	 */
 	$(function() {
 		
-			$( "#datepickerLancto" ).datepicker({
+			$("#datepickerLancto").datepicker({
 				showOn: "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
-			$( "#datepickerRecolhimento" ).datepicker({
+			$("#datepickerRecolhimento").datepicker({
 				showOn: "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
-			$( "#dataEmissao" ).datepicker({
-				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			$( "#dataEntrada" ).datepicker({
+			$("#dataEmissao").datepicker({
 				showOn: "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly: true,
@@ -271,7 +265,6 @@
 			$("#datepickerLancto").mask("99/99/9999");
 			$("#datepickerRecolhimento").mask("99/99/9999");
 			$("#dataEmissao").mask("99/99/9999");
-			$("#dataEntrada").mask("99/99/9999");
 			
 			$("#valorBruto").maskMoney({
 				 thousands:'.', 
@@ -541,7 +534,8 @@
 				<tr>
 					<td>Entrada:</td>
 					<td>
-						<input 	type="text" 
+						<input 	disabled="disabled"
+								type="text" 
 								value="${dataAtual}" 
 								style="width: 80px" 
 								id="dataEntrada" />
@@ -574,13 +568,25 @@
 				<tr>
 					<td>CFOP:</td>
 					<td>
-						<input 	type="text"
-								id="cfopCodigo" 
-								style="width: 80px" /> 
-								
-						<input 	type="text"
-								id="cfopDescricao" 
-								style="width: 190px" />
+					
+						<select id="cfop" style="width: 250px;">
+								<option value=""></option>
+								<c:forEach var="cfop" items="${listacfop}">
+									<option value="${cfop.id}">${cfop.codigo} - ${cfop.descricao}</option>
+								</c:forEach>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Tipo Nota Fiscal:</td>
+					<td>
+					
+						<select id="tipoNotaFiscal" style="width: 250px;">
+								<option value=""></option>
+								<c:forEach var="tipoNotaFiscal" items="${listaTipoNotaFiscal}">
+									<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
+								</c:forEach>
+						</select>
 					</td>
 				</tr>
 			</table>
