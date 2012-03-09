@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +122,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
 			
+			BigDecimal qtd = diferenca.getQtde();
+			
 			if (!diferenca.isAutomatica()){
 				
 				TipoMovimento tipoMovimento = new TipoMovimento();
@@ -130,9 +133,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				switch (diferenca.getTipoDiferenca().getTipoMovimentoEstoque()){
 					case SOBRA_DE:
 						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
+						qtd = qtd.negate();
 						break;
 					case SOBRA_EM:
 						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
+						qtd = qtd.negate();
 						break;
 					case FALTA_DE:
 						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
@@ -173,7 +178,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 					movimentoEstoqueCota.setCota(rateioDiferenca.getCota());
-					movimentoEstoqueCota.setQtde(diferenca.getQtde().negate());
+					movimentoEstoqueCota.setQtde(diferenca.getQtde());
 					movimentoEstoqueCota.setDataInclusao(new Date());
 					movimentoEstoqueCota.setAprovadoAutomaticamente(false);
 					movimentoEstoqueCota.setMotivo(MOTIVO);
@@ -185,13 +190,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					this.movimentoCotaRepository.adicionar(movimentoEstoqueCota);
 					
-					estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota.getQtdeDevolvida().add(diferenca.getQtde()));
-					estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota.getQtdeRecebida().subtract(diferenca.getQtde()));
+					estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota.getQtdeDevolvida().add(qtd));
+					estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota.getQtdeRecebida().subtract(qtd));
 					
 					this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 					
 					EstudoCota estudoCota = rateioDiferenca.getEstudoCota();
-					estudoCota.setQtdeEfetiva(rateioDiferenca.getEstudoCota().getQtdeEfetiva().add(diferenca.getQtde()));
+					estudoCota.setQtdeEfetiva(rateioDiferenca.getEstudoCota().getQtdeEfetiva().add(qtd));
 					this.estudoCotaRepository.alterar(estudoCota);
 					
 					Estudo estudo = estudoCota.getEstudo();
@@ -203,8 +208,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					estudo.setQtdeReparte(estudoCota.getQtdeEfetiva());
 					
 					this.estudoRepository.alterar(estudo);
-				} else {
-					
 				}
 				
 				EstoqueProduto estoqueProduto = 
@@ -217,7 +220,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 							"Estoque Produto não encontrado, parâmetros de busca: idProdutoEdicao: " + diferenca.getProdutoEdicao().getId());
 				}
 				
-				estoqueProduto.setQtde(estoqueProduto.getQtde().add(diferenca.getQtde()));
+				estoqueProduto.setQtde(estoqueProduto.getQtde().add(qtd));
 				
 				this.estoqueProdutoRespository.alterar(estoqueProduto);
 				
