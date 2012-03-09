@@ -70,7 +70,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estudo.qtdeReparte, lancamento.reparte, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
 		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ")
-		   .append("      Estudo estudo, Lancamento lancamento ")
+		   .append("      Lancamento lancamento ")
 		   .append(" left join lancamento.estudos as estudo ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
