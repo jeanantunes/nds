@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
+import br.com.abril.nds.model.estoque.Expedicao;
 
 /**
  * Interface responsável por definir as regras de implementação referente a expedição de lançamentos de produtos.
@@ -11,7 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
  * @author Discover Technology
  *
  */
-public interface ExpedicaoRepository {
+public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	
 	/**
 	 * Efetua consulta do resumo de expedição de produtos.
@@ -41,3 +42,4 @@ public interface ExpedicaoRepository {
 	 */
 	Long obterQuantidadeResumoExpedicaoPorBox(FiltroResumoExpedicaoDTO filtro);
 }
+

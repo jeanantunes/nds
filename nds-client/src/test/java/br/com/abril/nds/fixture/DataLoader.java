@@ -119,8 +119,8 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
-			//carregarDados(session);
-			carregarDadosParaResumoExpedicao(session);
+			carregarDados(session);
+			//carregarDadosParaResumoExpedicao(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -162,7 +162,7 @@ public class DataLoader {
 		
 
 		
-		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
+		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
 		MovimentoEstoque movimentoEstoqueDiferenca =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
@@ -190,7 +190,7 @@ public class DataLoader {
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		// Início dos inserts na tabela DIFERENCA
+		// Inicio dos inserts na tabela DIFERENCA
 		
 		Diferenca diferenca =
 			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
@@ -714,79 +714,9 @@ public class DataLoader {
 			session.save(entidade);
 		}
 	}
-
-	public static void carregarDadosParaExpedicao(Session session, StatusLancamento statusLancamento) {
-		TipoProduto tipoRevista = Fixture.tipoRevista();
-		session.save(tipoRevista);
-		
-		CFOP cfop = Fixture.cfop5102();
-		session.save(cfop);
-		
-		Usuario usuario = Fixture.usuarioJoao();
-		session.save(usuario);
-		
-		for(Integer i=1000;i<1050; i++) {
-			
-			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
-			session.save(juridica);
-			
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true);
-			session.save(fornecedor);
-			
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
-			produto.addFornecedor(fornecedor);
-			session.save(produto); 
-			
-			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
-			session.save(produtoEdicao);
-			
-			
-			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-			session.save(tipoNotaFiscal);
-
-			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
-							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
-			session.save(notaFiscalFornecedor);
-			
-			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
-					produtoEdicao, usuario, notaFiscalFornecedor, 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					new BigDecimal(i));					
-			session.save(itemNotaFiscal);
-			
-			RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
-				notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
-			session.save(recebimentoFisico);
-			
-			
-			ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
-					itemNotaFiscal, recebimentoFisico, new BigDecimal(i));
-			session.save(itemFisico);
-			
-			Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					new BigDecimal(100), 
-					statusLancamento, 
-					itemFisico);
-			lancamento.setReparte(new BigDecimal(10));
-			session.save(lancamento);
-		
-			Estudo estudo = new Estudo();
-			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
-			estudo.setProdutoEdicao(produtoEdicao);
-			estudo.setQtdeReparte(new BigDecimal(i));
-			session.save(estudo);
-		}
-	}
 	
 	/**
-	 * Gera massa de dados para o teste de Resumo de Expedições agrupadas por produto
+	 * Gera massa de dados para o teste de Resumo de Expedicao agrupadas por produto
 	 * @param session
 	 */
 	private static void carregarDadosParaResumoExpedicao(Session session){
