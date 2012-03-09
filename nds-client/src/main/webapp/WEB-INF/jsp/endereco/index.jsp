@@ -215,10 +215,10 @@
 						<select  style="width:157px" 
 								 name="enderecoAssociacao.tipoEndereco" 
 								 id="tipoEndereco">
-							<option>COMERCIAL</option>
-							<option>Local de Entrega</option>
-							<option>Residencial</option>
-							<option>Cobrança</option>
+							<option value="COMERCIAL">Comercial</option>
+							<option value="LOCAL_ENTREGA">Local de Entrega</option>
+							<option value="RESIDENCIAL">Residencial</option>
+							<option value="COBRANCA">Cobrança</option>
 						</select>
 					</td>
 					<td width="76">CEP:</td>
