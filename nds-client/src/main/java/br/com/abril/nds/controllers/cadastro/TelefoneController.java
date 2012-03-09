@@ -17,4 +17,12 @@ public class TelefoneController {
 	public void pesquisarTelefones(){
 		//TODO: chamar service para carregar telefones
 	}
+	
+	public void adicionarTelefone(){
+		//TODO: setar telefone na sessão
+	}
+	
+	public void removerTelefone(){
+		//TODO: setar telefone na sessão
+	}
 }
