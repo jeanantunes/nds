@@ -9,10 +9,12 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -23,6 +25,8 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -68,16 +72,16 @@ public class Fixture {
 				"acme@mail.com");
 	}
 
-	public static Fornecedor fornecedorFC() {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true);
+	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
 	}
 
-	public static Fornecedor fornecedorDinap() {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true);
+	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
 	}
 	
-	public static Fornecedor fornecedorAcme() {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false);
+	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -163,7 +167,18 @@ public class Fixture {
 	public static TipoProduto tipoCromo() {
 		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
 	}
-
+	
+	public static TipoFornecedor tipoFornecedorPublicacao() {
+		return tipoFornecedor("Fornecedor Publicação", GrupoFornecedor.PUBLICACAO);
+	}
+	
+	public static TipoFornecedor tipoFornecedorOutros() {
+		return tipoFornecedor("Fornecedor Outros", GrupoFornecedor.OUTROS);
+	}
+	
+	public static Box boxReparte300() {
+		return criarBox("300", "Box 300", TipoBox.REPARTE);
+	}
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -209,11 +224,13 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
-			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento) {
+			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
+			TipoFornecedor tipo) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
 		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
+		fornecedor.setTipoFornecedor(tipo);
 		return fornecedor;
 	}
 
@@ -224,6 +241,13 @@ public class Fixture {
 		tipoProduto.setGrupoProduto(grupo);
 		tipoProduto.setNcm(ncm);
 		return tipoProduto;
+	}
+	
+	public static TipoFornecedor tipoFornecedor(String descricao, GrupoFornecedor grupo) {
+		TipoFornecedor tipoFornecedor = new TipoFornecedor();
+		tipoFornecedor.setDescricao(descricao);
+		tipoFornecedor.setGrupoFornecedor(grupo);
+		return tipoFornecedor;
 	}
 
 	public static Produto produto(String codigo, String descricao, String nome,
@@ -294,7 +318,7 @@ public class Fixture {
 	}
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,
-			SituacaoCadastro situacaoCadastro) {
+			SituacaoCadastro situacaoCadastro, Box box) {
 
 		Cota cota = new Cota();
 
@@ -303,6 +327,8 @@ public class Fixture {
 		cota.setPessoa(pessoa);
 
 		cota.setSituacaoCadastro(situacaoCadastro);
+		
+		cota.setBox(box);
 
 		return cota;
 	}
@@ -539,9 +565,8 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 	
-	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor){
+	public static ParametroSistema parametroSistema(TipoParametroSistema tipoParametroSistema, String valor){
 		ParametroSistema parametroSistema = new ParametroSistema();
-		parametroSistema.setId(id);
 		parametroSistema.setTipoParametroSistema(tipoParametroSistema);
 		parametroSistema.setValor(valor);
 		
@@ -650,6 +675,14 @@ public class Fixture {
 		}
 		
 		return lancamento;
+	}
+	
+	public static Box criarBox(String codigo, String nome, TipoBox tipoBox) {
+		Box box = new Box();
+		box.setCodigo(codigo);
+		box.setNome(nome);
+		box.setTipoBox(tipoBox);
+		return box;
 	}
 
 }

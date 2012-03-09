@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -73,6 +74,8 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
 		save(tipoMovimentoFaltEM);
 		
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
 		
 		for(Integer i=1000;i<1010; i++) {
 			
@@ -80,7 +83,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
 			save(juridica);
 			
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			save(fornecedor);
 			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);

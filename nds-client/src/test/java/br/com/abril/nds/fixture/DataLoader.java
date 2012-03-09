@@ -14,6 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -26,6 +27,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -106,6 +108,9 @@ public class DataLoader {
 	private static ItemRecebimentoFisico itemRecebimentoFisico;
 	private static EstoqueProduto estoqueProdutoVeja1;
 	private static MovimentoEstoque movimentoRecFisicoVeja1;
+	private static TipoFornecedor tipoFornecedorPublicacao;
+	private static TipoFornecedor tipoFornecedorOutros;
+	private static Box box300Reparte;
 
 
 	public static void main(String[] args) {
@@ -143,6 +148,8 @@ public class DataLoader {
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
 		criarUsuarios(session);
+		criarTiposFornecedores(session);
+		criarBoxes(session);
 		criarFornecedores(session);
 		criarDiasDistribuicaoFornecedores(session);
 		criarCotas(session);
@@ -231,6 +238,18 @@ public class DataLoader {
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 	}
 
+	private static void criarBoxes(Session session) {
+		box300Reparte = Fixture.boxReparte300();
+		save(session, box300Reparte);
+	}
+
+	private static void criarTiposFornecedores(Session session) {
+		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(session, tipoFornecedorPublicacao);
+		tipoFornecedorOutros = Fixture.tipoFornecedorOutros();
+		save(session, tipoFornecedorOutros);
+	}
+
 	private static void criarMovimentosEstoqueCota(Session session) {
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
@@ -243,7 +262,7 @@ public class DataLoader {
 	}
 
 	private static void criarParametrosSistema(Session session) {
-		ParametroSistema parametroSistema = Fixture.parametroSistema(1L,
+		ParametroSistema parametroSistema = Fixture.parametroSistema(
 				TipoParametroSistema.PATH_IMAGENS_CAPA,
 				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 		session.save(parametroSistema);
@@ -621,14 +640,14 @@ public class DataLoader {
 				"manoel@mail.com", "Manoel da Silva");
 		save(session, manoel);
 		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO);
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box300Reparte);
 		save(session, cotaManoel);
 	}
 
 	private static void criarFornecedores(Session session) {
-		fornecedorAcme = Fixture.fornecedorAcme();
-		fornecedorDinap = Fixture.fornecedorDinap();
-		fornecedorFc = Fixture.fornecedorFC();
+		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 	}
 
@@ -746,7 +765,7 @@ public class DataLoader {
 					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
 			session.save(juridica);
 			
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			session.save(fornecedor);
 			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);

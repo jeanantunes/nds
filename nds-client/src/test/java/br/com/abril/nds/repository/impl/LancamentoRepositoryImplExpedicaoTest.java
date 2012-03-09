@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO.SortColumn;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -23,6 +24,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
@@ -51,7 +53,8 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 	
 	@Before
 	public void setUp() {
-		
+		Box box300Reparte = Fixture.boxReparte300();
+		save(box300Reparte);
 
 		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
@@ -63,13 +66,16 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
+		
 		for(Integer i=1000;i<1050; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
 					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
 			save(juridica);
 			
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			save(fornecedor);
 			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
@@ -122,13 +128,13 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save(estudo);
 			
 			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
-			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO);
+			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
 					estudo, cota);
 			save(pessoa,cota,estudoCota);		
 			
 			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
-			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO);
+			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);
 			save( pessoa2,cota2,estudoCota2);		

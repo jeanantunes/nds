@@ -3,15 +3,16 @@
 
 <script type="text/javascript">
 
+var linhasDestacadas = new Array();
+
 function pesquisar(){
 	$(".grids").show();
 	$("#lancamentosProgramadosGrid").flexReload();
 	$("#resumoPeriodo").show();
+	linhasDestacadas = new Array();
 }
 
 function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:370,
@@ -26,8 +27,6 @@ function popup() {
 	};
 	
 	function popup_reprogramar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
 		$( "#dialog-reprogramar" ).dialog({
 			resizable: false,
 			height:160,
@@ -47,8 +46,6 @@ function popup() {
 	
 	
 	function popup_volume_valor() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
 		$( "#dialog-volume-valor" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -67,8 +64,6 @@ function popup() {
 	};
 	
 	function popup_peso() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
 		$( "#dialog-peso" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -87,8 +82,6 @@ function popup() {
 	};
 	
 	function popup_num_lancto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
 		$( "#dialog-num-lancto" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -134,9 +127,25 @@ function popup() {
 
 .ui-datepicker { z-index: 1000 !important; }
 .ui-datepicker-today a { display:block !important; }
+
 .gridLinhaDestacada {
-  background:#F00; font-weight:bold; color:#fff;
+  background:#F00; 
+  font-weight:bold; 
+  color:#fff;
 }
+
+.gridLinhaDestacada:hover {
+   color:#000;
+}
+
+.gridLinhaDestacada a {
+   color:#fff;
+}
+
+.gridLinhaDestacada a:hover {
+   color:#000;
+}
+
 </style>
 </head>
 
@@ -221,7 +230,7 @@ function popup() {
 </form>
 
 <script>
-	var linhasDestacadas = new Array();
+	
 	$("#lancamentosProgramadosGrid").flexigrid({
 			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
 			dataType : 'json',
@@ -253,13 +262,13 @@ function popup() {
 			}, {
 				display : 'Edição',
 				name : 'numEdicao',
-				width : 30,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'preco',
-				width : 50,
+				width : 75,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -271,31 +280,31 @@ function popup() {
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Físico',
 				name : 'fisico',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estudo Gerado',
 				name : 'estudoGerado',
-				width : 40,
+				width : 75,
 				sortable : true,
 				align : 'center'
 			},{
 				display : 'Lançamento',
 				name : 'lancamento',
-				width : 60,
+				width : 65,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Recolhimento',
 				name : 'dataRecolhimento',
-				width : 70,
+				width : 75,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -313,19 +322,19 @@ function popup() {
 			}, {
 				display : 'Matriz/Distrib.',
 				name : 'dataMatrizDistrib',
-				width : 105,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			},{
 				display : 'Total R$',
 				name : 'total',
-				width : 40,
+				width : 60,
 				sortable : true,
 				align : 'right'
 			},{
 				display : 'Reprogramar',
 				name : 'reprogramar',
-				width : 70,
+				width : 65,
 				sortable : false,
 				align : 'center'
 			}],
@@ -350,6 +359,7 @@ function popup() {
 				);
 				return data;
 			}
+			linhasDestacadas = new Array();
 			$("#valorTotal").html(data[1]);
 			$.each(data[0].rows, function(i, row){
 				var inputDataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
@@ -411,6 +421,13 @@ function popup() {
 		    });	
 		    rows+="</tr>";
 		    $("#tableResumoPeriodo").append(rows);
+		    
+		    $(".lancamentosProgramadosGrid tr").each(function(i){
+		    	if($.inArray((i+1), linhasDestacadas) > -1) {
+		    		 $(this).removeClass("erow").addClass("gridLinhaDestacada");
+					 $(this).children("td").removeClass("sorted");
+		    	}
+		   	});
 		}
 		
 	
