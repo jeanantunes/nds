@@ -21,10 +21,12 @@ public class LancamentoDTO  implements Serializable {
 	private String dataMatrizDistrib;
 	private String total;
 	private String fisico;
-	private String estudoGerado;
+	private String qtdeEstudo;
 	private boolean semFisico;
 	private boolean cancelamentoGD;
-	private boolean isFuro;
+	private boolean furo;
+	private boolean estudoFechado;
+	private boolean expedido;
 	
 	public Long getId() {
 		return id;
@@ -146,12 +148,12 @@ public class LancamentoDTO  implements Serializable {
 		this.fisico = fisico;
 	}
 	
-	public String getEstudoGerado() {
-		return estudoGerado;
+	public String getQtdeEstudo() {
+		return qtdeEstudo;
 	}
 	
-	public void setEstudoGerado(String estudoGerado) {
-		this.estudoGerado = estudoGerado;
+	public void setQtdeEstudo(String qtdeEstudo) {
+		this.qtdeEstudo = qtdeEstudo;
 	}
 	
 	public boolean isSemFisico() {
@@ -171,11 +173,27 @@ public class LancamentoDTO  implements Serializable {
 	}
 	
 	public boolean isFuro() {
-		return isFuro;
+		return furo;
 	}
 	
-	public void setFuro(boolean isFuro) {
-		this.isFuro = isFuro;
+	public void setFuro(boolean furo) {
+		this.furo = furo;
+	}
+	
+	public boolean isEstudoFechado() {
+		return estudoFechado;
+	}
+	
+	public void setEstudoFechado(boolean estudoFechado) {
+		this.estudoFechado = estudoFechado;
+	}
+	
+	public boolean isExpedido() {
+		return expedido;
+	}
+	
+	public void setExpedido(boolean expedido) {
+		this.expedido = expedido;
 	}
 
 	@Override

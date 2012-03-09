@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.service.FornecedorService;
@@ -40,8 +41,10 @@ public class FornecedorServiceImpl implements FornecedorService {
 	}
 	
 	@Transactional
-	public List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto) {
-		return fornecedorRepository.obterFornecedoresDeProduto(codigoProduto);
+	public List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto,
+														GrupoFornecedor grupoFornecedor) {
+		
+		return fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, grupoFornecedor);
 	}
 	
 }

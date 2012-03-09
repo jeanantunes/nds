@@ -50,7 +50,9 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Test
 	public void obterFornecedoresDeProduto() {
-		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo());
+		List<Fornecedor> fornecedores =
+			fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo(), null);
+		
 		Assert.assertTrue(fornecedores.size() == 1);
 		Assert.assertTrue(fornecedores.contains(fornecedor1));
 	}
