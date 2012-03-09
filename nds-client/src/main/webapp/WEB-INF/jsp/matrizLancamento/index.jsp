@@ -288,7 +288,7 @@ function popup() {
 				align : 'center'
 			}, {
 				display : 'Estudo Gerado',
-				name : 'estudoGerado',
+				name : 'qtdeEstudo',
 				width : 75,
 				sortable : true,
 				align : 'center'
