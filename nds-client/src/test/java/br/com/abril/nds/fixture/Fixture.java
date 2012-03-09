@@ -3,6 +3,7 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -29,6 +30,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
@@ -421,6 +423,15 @@ public class Fixture {
 		tipoMovimento.setTipoMovimento(DominioTipoMovimento.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimento tipoMovimentoEnvioJornaleiro() {
+		TipoMovimento tipoMovimento = new TipoMovimento();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio a Jornaleiro");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setTipoMovimento(DominioTipoMovimento.ENVIO_JORNALEIRO);
+		return tipoMovimento;
+	}
 
 	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, BigDecimal qtde) {
@@ -612,6 +623,7 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 	
+
 	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
@@ -620,6 +632,41 @@ public class Fixture {
 		rateioDiferenca.setQtde(qtde);
 		
 		return rateioDiferenca;
+	}
+
+
+
+	
+	public static Expedicao expedicao(Usuario responsavel,Date dataExpedicao){
+		
+		Expedicao expedicao = new Expedicao();
+		expedicao.setResponsavel(responsavel);
+		expedicao.setDataExpedicao(dataExpedicao);
+		
+		return expedicao;
+	}
+	
+	public static Lancamento lancamentos(TipoLancamento tipoLancamento,
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
+			Date dataStatus, BigDecimal reparte,
+			StatusLancamento statusLancamento, List<ItemRecebimentoFisico> recebimentos) {
+		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dataCriacao);
+		lancamento.setDataStatus(dataStatus);
+		lancamento.setReparte(reparte);
+		lancamento.setStatus(statusLancamento);
+		lancamento.setTipoLancamento(tipoLancamento);
+		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setDataLancamentoPrevista(dlp);
+		lancamento.setDataLancamentoDistribuidor(dlp);
+		lancamento.setDataRecolhimentoPrevista(drp);
+		lancamento.setDataRecolhimentoDistribuidor(drp);
+		
+		for(ItemRecebimentoFisico x : recebimentos){
+			lancamento.addRecebimento(x);
+		}
+		
+		return lancamento;
 	}
 
 }

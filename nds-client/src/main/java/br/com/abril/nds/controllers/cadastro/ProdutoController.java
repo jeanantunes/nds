@@ -79,21 +79,15 @@ public class ProdutoController {
 	
 	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+		Produto produto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		
-		if (listaProduto == null || listaProduto.isEmpty()) {
+		if (produto == null) {
 		
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
 		
-		} else if (listaProduto.size() == 1) {
-			
-			result.use(Results.json()).from(listaProduto.get(0), "result").serialize();
-			
-		} else {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Existe mais de um produto com o nome \"" + nomeProduto + "\"!");
-		
 		}
+			
+		result.use(Results.json()).from(produto, "result").serialize();
 	}
 	
 	@Post

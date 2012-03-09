@@ -1,8 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 
 public class LancamentoNaoExpedidoDTO implements Serializable {
@@ -15,7 +13,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		//-ItemNotaFiscal.produtoEdicao = Lancamento.produtoEdicao
 		//-ItemNotaFiscal.dataLancamento = Lancamento.dataLancamentoDistribuidor
 	
-	private Date dataEntrada;
+	private String dataEntrada;
 	//Lancamento.produtoEdicao.produto.id.
 	private Long codigo;
 	//Lancamento.produtoEdicao.produto.nome
@@ -25,25 +23,26 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	//Lancamento.produtoEdicao.produto.tipoProduto.descricao
 	private String classificacao;
 	//Lancamento.produtoEdicao.precoVenda
-	private BigDecimal preco;
+	private String preco;
 	//Lancamento.produtoEdicao.pacotePadrao
 	private Integer pctPadrao;
 	//Lancamento.estudo.qtdeReparte
-	private BigDecimal reparte;
+	private Integer reparte;
 	//Lancamento.dataRecolhimentoPrevista
-	private Date  dataChamada;
+	private String  dataChamada;
 	//Lancamento.produtoEdicao.produto.? List
 	private String fornecedor;
 	//Lancamento.estudo.id
-	private BigDecimal estudo;
+	private Integer estudo;
 	//campo de tela
 	private Boolean selecionado; 
-			
-	public LancamentoNaoExpedidoDTO(Long idLancamento, Date  dataEntrada, Long codigo, String produto, Long edicao, 
-			String classificacao, BigDecimal preco, Integer pctPadrao, BigDecimal reparte, Date  dataChamada, 
-			String fornecedor, BigDecimal estudo) {
-		
+
+	
+	
+	
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, Long codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado) {
 		super();
+		this.idLancamento = idLancamento;
 		this.dataEntrada = dataEntrada;
 		this.codigo = codigo;
 		this.produto = produto;
@@ -55,117 +54,193 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.dataChamada = dataChamada;
 		this.fornecedor = fornecedor;
 		this.estudo = estudo;
-		this.idLancamento = idLancamento;
-	}
-	
-	public LancamentoNaoExpedidoDTO() {
-		
-	}
-
-	public Long getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getProduto() {
-		return produto;
-	}
-
-	public void setProduto(String produto) {
-		this.produto = produto;
-	}
-
-	public Long getEdicao() {
-		return edicao;
-	}
-
-	public void setEdicao(Long edicao) {
-		this.edicao = edicao;
-	}
-
-	public String getClassificacao() {
-		return classificacao;
-	}
-
-	public void setClassificacao(String classificacao) {
-		this.classificacao = classificacao;
-	}
-
-	public BigDecimal getPreco() {
-		return preco;
-	}
-
-	public void setPreco(BigDecimal preco) {
-		this.preco = preco;
-	}
-
-	public Integer getPctPadrao() {
-		return pctPadrao;
-	}
-
-	public void setPctPadrao(Integer pctPadrao) {
-		this.pctPadrao = pctPadrao;
-	}
-
-	public BigDecimal getReparte() {
-		return reparte;
-	}
-
-	public void setReparte(BigDecimal reparte) {
-		this.reparte = reparte;
-	}
-
-	public Date  getDataChamada() {
-		return dataChamada;
-	}
-	
-	public void setDataChamada(Date dataChamada) {
-		this.dataChamada = dataChamada;
-	}
-
-	public String getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(String fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	public BigDecimal getEstudo() {
-		return estudo;
-	}
-
-	public void setEstudo(BigDecimal estudo) {
-		this.estudo = estudo;
-	}
-
-	public Boolean getSelecionado() {
-		return selecionado;
-	}
-
-	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
 	}
 
-	public Date  getDataEntrada() {
-		return dataEntrada;
-	}
-		
 
-	public void setDataEntrada(Date  dataEntrada) {
-		this.dataEntrada = dataEntrada;
-	}	
+
 
 	public Long getIdLancamento() {
 		return idLancamento;
 	}
 
+
+
+
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
+
+
+
+
+	public String getDataEntrada() {
+		return dataEntrada;
+	}
+
+
+
+
+	public void setDataEntrada(String dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+
+
+
+
+	public Long getCodigo() {
+		return codigo;
+	}
+
+
+
+
+	public void setCodigo(Long codigo) {
+		this.codigo = codigo;
+	}
+
+
+
+
+	public String getProduto() {
+		return produto;
+	}
+
+
+
+
+	public void setProduto(String produto) {
+		this.produto = produto;
+	}
+
+
+
+
+	public Long getEdicao() {
+		return edicao;
+	}
+
+
+
+
+	public void setEdicao(Long edicao) {
+		this.edicao = edicao;
+	}
+
+
+
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+
+
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+
+
+
+	public String getPreco() {
+		return preco;
+	}
+
+
+
+
+	public void setPreco(String preco) {
+		this.preco = preco;
+	}
+
+
+
+
+	public Integer getPctPadrao() {
+		return pctPadrao;
+	}
+
+
+
+
+	public void setPctPadrao(Integer pctPadrao) {
+		this.pctPadrao = pctPadrao;
+	}
+
+
+
+
+	public Integer getReparte() {
+		return reparte;
+	}
+
+
+
+
+	public void setReparte(Integer reparte) {
+		this.reparte = reparte;
+	}
+
+
+
+
+	public String getDataChamada() {
+		return dataChamada;
+	}
+
+
+
+
+	public void setDataChamada(String dataChamada) {
+		this.dataChamada = dataChamada;
+	}
+
+
+
+
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+
+
+
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
+
+
+
+	public Integer getEstudo() {
+		return estudo;
+	}
+
+
+
+
+	public void setEstudo(Integer estudo) {
+		this.estudo = estudo;
+	}
+
+
+
+
+	public Boolean getSelecionado() {
+		return selecionado;
+	}
+
+
+
+
+	public void setSelecionado(Boolean selecionado) {
+		this.selecionado = selecionado;
+	}
+
+
+
 
 	public static enum SortColumn {
 		

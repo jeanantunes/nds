@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
@@ -147,6 +146,8 @@ public class DiferencaEstoqueController {
 			
 			DiferencaVO diferenca = new DiferencaVO();
 			
+			diferenca.setId(indice);
+			
 			diferenca.setDataLancamento(dataMovimentoFormatada);
 			
 			diferenca.setTipoDiferenca(tipoDiferenca.getDescricao());
@@ -176,13 +177,11 @@ public class DiferencaEstoqueController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para lançamento!");
 		}
 		
-		Integer linha = 0;
+		this.validarPreenchimentoNovasDiferencas(listaNovasDiferencas);
 		
 		for (DiferencaVO diferenca : listaNovasDiferencas) {
 			
-			this.validarNovaDiferenca(diferenca, linha);
-			
-			linha++;
+			this.validarNovaDiferenca(diferenca);
 		}
 		
 		result.use(Results.json()).withoutRoot().from(listaNovasDiferencas).recursive().serialize();
@@ -276,7 +275,7 @@ public class DiferencaEstoqueController {
 		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
 		
 		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
-		this.diferencaEstoqueService.efetuarAlteracoes(setIdsExclusao);
+		this.diferencaEstoqueService.efetuarAlteracoes(this.getIdUsuario(), setIdsExclusao);
 		
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, 
@@ -741,46 +740,68 @@ public class DiferencaEstoqueController {
 	/*
 	 * Valida a entrada de uma nova diferença.
 	 * 
-	 * @param diferenca - diferença
-	 * @param linha - linha a ser validada
+	 * @param listaNovasDiferencas - lista das novas diferenças
 	 */
-	private void validarNovaDiferenca(DiferencaVO diferenca, Integer linha) {
-		
-		boolean diferencaInvalida = false;
-		
-		if (diferenca.getCodigoProduto() == null 
-				|| diferenca.getCodigoProduto().trim().isEmpty()) {
+	private void validarPreenchimentoNovasDiferencas(List<DiferencaVO> listaNovasDiferencas) {
+
+		List<Integer> linhasComErro = new ArrayList<Integer>();
+
+
+		for (DiferencaVO diferenca : listaNovasDiferencas) {
 			
-			diferencaInvalida = true;
+			boolean diferencaInvalida = false;
+			
+			if (diferenca.getCodigoProduto() == null 
+					|| diferenca.getCodigoProduto().trim().isEmpty()) {
+				
+				diferencaInvalida = true;
+			}
+			
+			if (diferenca.getDescricaoProduto() == null 
+					|| diferenca.getDescricaoProduto().trim().isEmpty()) {
+				
+				diferencaInvalida = true;
+			}
+			
+			if (diferenca.getNumeroEdicao() == null 
+					|| diferenca.getNumeroEdicao().trim().isEmpty()) {
+				
+				diferencaInvalida = true;
+			}
+			
+			if (diferenca.getQuantidade() == null 
+					|| BigDecimal.ZERO.equals(diferenca.getQuantidade())) {
+				
+				diferencaInvalida = true;
+			}
+			
+			if (diferencaInvalida) {
+
+				linhasComErro.add(diferenca.getId());
+			}
 		}
 		
-		if (diferenca.getDescricaoProduto() == null 
-				|| diferenca.getDescricaoProduto().trim().isEmpty()) {
-			
-			diferencaInvalida = true;
-		}
-		
-		if (diferenca.getNumeroEdicao() == null 
-				|| diferenca.getNumeroEdicao().trim().isEmpty()) {
-			
-			diferencaInvalida = true;
-		}
-		
-		if (diferenca.getQuantidade() == null 
-				|| BigDecimal.ZERO.equals(diferenca.getQuantidade())) {
-			
-			diferencaInvalida = true;
-		}
-		
-		if (diferencaInvalida) {
+		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = 
 				new ValidacaoVO(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
 			
-			validacao.setDados(linha);
+			validacao.setDados(linhasComErro);
 			
 			throw new ValidacaoException(validacao);
 		}
+	}
+	
+	/*
+	 * Valida o cadastro de uma nova diferença.
+	 * 
+	 * @param diferenca - nova diferença
+	 */
+	private void validarNovaDiferenca(DiferencaVO diferenca) {
+		
+		List<Integer> linhasComErro = new ArrayList<Integer>();
+		
+		List<String> listaMensagensErro = new ArrayList<String>();
 		
 		ProdutoEdicao produtoEdicao =
 			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
@@ -788,17 +809,26 @@ public class DiferencaEstoqueController {
 		
 		if (produtoEdicao == null) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.ERROR, 
-					"Produto inválido: Código [" 
-						+ diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
+			linhasComErro.add(diferenca.getId());
+			
+			listaMensagensErro.add("Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		
 		if (diferenca.getQtdeEstoqueAtual() == null 
 				|| (diferenca.getQuantidade().compareTo(diferenca.getQtdeEstoqueAtual()) > 0)) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.ERROR, "Quantidade de Exemplares não pode ser maior que a Quantidade em Estoque do produto!");
+			linhasComErro.add(diferenca.getId());
+			
+			listaMensagensErro.add("Quantidade de Exemplares não pode ser maior que a Quantidade em Estoque do produto!");
+		}
+		
+		if (!linhasComErro.isEmpty() && !listaMensagensErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, listaMensagensErro);
+		
+			validacao.setDados(linhasComErro);
+		
+			throw new ValidacaoException(validacao);
 		}
 	}
 	
@@ -813,6 +843,11 @@ public class DiferencaEstoqueController {
 		}
 		
 		return null;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Long getIdUsuario(){
+		return 1L;
 	}
 	
 }

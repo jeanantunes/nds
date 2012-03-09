@@ -8,7 +8,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 
 	List<Produto> obterProdutoLikeNomeProduto(String nome);
 	
-	List<Produto> obterProdutoPorNomeProduto(String nome);
+	Produto obterProdutoPorNomeProduto(String nome);
 	
 	Produto obterProdutoPorCodigo(String codigoProduto);
 }

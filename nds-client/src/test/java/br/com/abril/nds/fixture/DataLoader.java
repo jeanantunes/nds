@@ -1,8 +1,10 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,6 +32,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -120,6 +123,7 @@ public class DataLoader {
 			session = sf.openSession();
 			tx = session.beginTransaction();
 			carregarDados(session);
+			//carregarDadosParaResumoExpedicao(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,13 +160,13 @@ public class DataLoader {
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
 		criarMovimentosEstoque(session);
-		criarLancamentos(session);
+		criarLancamentos(session,StatusLancamento.EXPEDIDO);
 		criarEstudos(session);
 		criarMovimentosEstoqueCota(session);
 		
 
 		
-		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
+		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
 		MovimentoEstoque movimentoEstoqueDiferenca =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
@@ -190,7 +194,7 @@ public class DataLoader {
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		// Início dos inserts na tabela DIFERENCA
+		// Inicio dos inserts na tabela DIFERENCA
 		
 		Diferenca diferenca =
 			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
@@ -295,7 +299,7 @@ public class DataLoader {
 		session.save(estudoVeja1);
 	}
 
-	private static void criarLancamentos(Session session) {
+	private static void criarLancamentos(Session session, StatusLancamento statusLancamento) {
 		lancamentoVeja1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -303,7 +307,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
-						new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO,
+						new Date(), BigDecimal.TEN, statusLancamento,
 						itemRecebimentoFisico);
 		session.save(lancamentoVeja1);
 		
@@ -314,7 +318,9 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja2.getPeb()), new Date(),
+
 						new Date(), BigDecimal.TEN, StatusLancamento.BALANCEADO,
+
 						null);
 		session.save(lancamentoVeja2);
 
@@ -325,7 +331,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
-								new Date(), new BigDecimal(100), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(100), statusLancamento,
 								null);
 		session.save(lancamentoSuper1);
 		
@@ -336,7 +342,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1000), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(1000), statusLancamento,
 								null);
 		session.save(lancamentoCapricho1);
 		
@@ -347,7 +353,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
-								new Date(), new BigDecimal(500), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(500), statusLancamento,
 								null);
 		session.save(lancamentoInfoExame1);
 		
@@ -358,7 +364,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1500), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(1500), statusLancamento,
 								null);
 		session.save(lancamentoQuatroRodas1);
 		
@@ -369,7 +375,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBoaForma1.getPeb()), new Date(),
-								new Date(), new BigDecimal(190), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(190), statusLancamento,
 								null);
 		session.save(lancamentoBoaForma1);
 		
@@ -380,7 +386,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBravo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(250), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(250), statusLancamento,
 								null);
 		session.save(lancamentoBravo1);
 		
@@ -391,7 +397,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCaras1.getPeb()), new Date(),
-								new Date(), new BigDecimal(290), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(290), statusLancamento,
 								null);
 		session.save(lancamentoBoaCaras1);
 		
@@ -402,7 +408,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(350), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(350), statusLancamento,
 								null);
 		session.save(lancamentoCasaClaudia1);
 		
@@ -413,7 +419,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(400), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(400), statusLancamento,
 								null);
 		session.save(lancamentoClaudia1);
 		
@@ -424,7 +430,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoContigo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(185), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(185), statusLancamento,
 								null);
 		session.save(lancamentoContigo1);
 		
@@ -435,7 +441,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoManequim1.getPeb()), new Date(),
-								new Date(), new BigDecimal(225), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(225), statusLancamento,
 								null);
 		session.save(lancamentoManequim1);
 		
@@ -446,7 +452,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoNatGeo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(75), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(75), statusLancamento,
 								null);
 		session.save(lancamentoNatGeo1);
 		
@@ -457,7 +463,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoPlacar1.getPeb()), new Date(),
-								new Date(), new BigDecimal(195), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(195), statusLancamento,
 								null);
 		session.save(lancamentoPlacar1);
 	}
@@ -719,8 +725,13 @@ public class DataLoader {
 			session.save(entidade);
 		}
 	}
-
-	public static void carregarDadosParaExpedicao(Session session) {
+	
+	/**
+	 * Gera massa de dados para o teste de Resumo de Expedicao agrupadas por produto
+	 * @param session
+	 */
+	private static void carregarDadosParaResumoExpedicao(Session session){
+		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		session.save(tipoRevista);
 		
@@ -730,7 +741,17 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 		
-		for(Integer i=1000;i<1050; i++) {
+		TipoMovimento tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
+		session.save(tipoMovimentoSobraDe);
+		
+		TipoMovimento tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
+		session.save(tipoMovimentoFaltDe);
+		
+		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
+		session.save(tipoMovimentoFaltEM);
+		
+		
+		for(Integer i=1000;i<1010; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
 					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
@@ -751,35 +772,60 @@ public class DataLoader {
 			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 			session.save(tipoNotaFiscal);
 
-			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
-							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
-			session.save(notaFiscalFornecedor);
 			
-			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
-					produtoEdicao, usuario, notaFiscalFornecedor, 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					new BigDecimal(i));					
-			session.save(itemNotaFiscal);
+			List<ItemRecebimentoFisico> listaRecebimentos = new ArrayList<ItemRecebimentoFisico>() ;
 			
-			RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
-				notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
-			session.save(recebimentoFisico);
+			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigDecimal.ZERO);
+			session.save(estoque);
 			
+			for(int x= 1; x< 3 ;x++){
+				
+				NotaFiscalFornecedor notaFiscalFornecedor = Fixture
+						.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
+				session.save(notaFiscalFornecedor);
+				
+				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+						produtoEdicao, usuario, notaFiscalFornecedor, 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						new BigDecimal(i));					
+				session.save(itemNotaFiscal);
+				
+				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+					notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+				session.save(recebimentoFisico);
+				
+				ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
+						itemNotaFiscal, recebimentoFisico, new BigDecimal(i+x));
+				session.save(itemFisico);
+				
+				
+				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				
+				session.save(movimentoEstoque);
+				
+				Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque);
+				session.save(diferenca);
+				
+				itemFisico.setDiferenca(diferenca);
+				session.update(itemFisico);
+				
+				listaRecebimentos.add(itemFisico);
+			}
 			
-			ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
-					itemNotaFiscal, recebimentoFisico, new BigDecimal(i));
-			session.save(itemFisico);
+			Expedicao expedicao = Fixture.expedicao(usuario,Fixture.criarData(1, 3, 2010));
+			session.save(expedicao);
 			
-			Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+			Lancamento lancamento = Fixture.lancamentos(TipoLancamento.LANCAMENTO, produtoEdicao,
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					new BigDecimal(100), 
-					StatusLancamento.RECEBIDO, 
-					itemFisico);
+					StatusLancamento.EXPEDIDO, 
+					listaRecebimentos);
 			lancamento.setReparte(new BigDecimal(10));
+			lancamento.setExpedicao(expedicao);
 			session.save(lancamento);
 		
 			Estudo estudo = new Estudo();
@@ -789,4 +835,5 @@ public class DataLoader {
 			session.save(estudo);
 		}
 	}
+	
 }

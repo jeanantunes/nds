@@ -28,9 +28,8 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Produto> obterProdutoPorNomeProduto(String nome) {
+	public Produto obterProdutoPorNomeProduto(String nome) {
 		String hql = "from Produto produto "
 				   + " where upper(produto.nome) = upper(:nome) order by produto.nome";
 		
@@ -38,7 +37,9 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 
 		query.setParameter("nome", nome);
 		
-		return query.list();
+		query.setMaxResults(1);
+		
+		return (Produto) query.uniqueResult();
 	}
 	
 	@Override

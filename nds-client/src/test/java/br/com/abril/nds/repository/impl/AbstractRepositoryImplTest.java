@@ -37,5 +37,13 @@ public abstract class AbstractRepositoryImplTest {
 		getSession().flush();
 		getSession().clear();
 	}
-
+	
+	protected void update(Object... entidades) {
+		for (Object entidade : entidades) {
+			getSession().update(entidade);
+		}
+		getSession().flush();
+		getSession().clear();
+	}
+	
 }
