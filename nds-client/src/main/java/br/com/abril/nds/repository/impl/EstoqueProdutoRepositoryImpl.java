@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +30,19 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepository<EstoqueProd
 		criteria.setMaxResults(1);
 		
 		return (EstoqueProduto) criteria.uniqueResult();
+	}
+	
+	public EstoqueProduto buscarEstoqueProdutoPorProdutoEdicao(Long idProdutoEdicao){
+		StringBuilder hql = new StringBuilder("select estoqueProduto ");
+		hql.append(" from EstoqueProduto estoqueProduto, ProdutoEdicao produtoEdicao ")
+		   .append(" where estoqueProduto.produtoEdicao.id = produtoEdicao.id ")
+		   .append(" and produtoEdicao.id = :idProdutoEdicao");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setMaxResults(1);
+		
+		return (EstoqueProduto) query.uniqueResult();
 	}
 
 }
