@@ -164,7 +164,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append("join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
 		hql.append("where lancamento.dataLancamentoPrevista in (:periodo) ");
 		hql.append("and fornecedor.id in (:fornecedores) ");
-		hql.append("group by lancamento.dataLancamentoPrevista");
+		hql.append("group by lancamento.dataLancamentoPrevista ");
+		hql.append("order by lancamento.dataLancamentoPrevista");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameterList("periodo", periodoDistribuicao);
 		query.setParameterList("fornecedores", fornecedores);

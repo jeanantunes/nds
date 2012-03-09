@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
 public class DateUtil {
 
 	public static boolean isValidDate(String valor, String pattern) {
@@ -39,9 +41,15 @@ public class DateUtil {
 		
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
-	
-	public static boolean isDataFinalMaiorDataInicial(Date dataInicial, Date dataFinal) {
-		return dataInicial.compareTo(dataFinal) > 0;
+
+	public static boolean isDataInicialMaiorDataFinal(Date dataInicial, Date dataFinal) {
+		
+		if (dataInicial != null && dataFinal != null) {
+			
+			return dataInicial.compareTo(dataFinal) > 0;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -103,6 +111,13 @@ public class DateUtil {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal.getTime();
+	}
+	
+	public static boolean isHoje(Date data) {
+		if (data == null) {
+			return false;
+		}
+		return DateUtils.isSameDay(new Date(), data);
 	}
 	
 	

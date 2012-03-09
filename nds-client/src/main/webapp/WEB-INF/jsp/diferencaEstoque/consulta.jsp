@@ -99,9 +99,13 @@
 			$("#codigo").focus();
 		});
 		
-		/*function pesquisarProdutoCallBack() {
+		function pesquisarProdutosSuccessCallBack() {
 			pesquisarFornecedores();
-		}*/
+		}
+		
+		function pesquisarProdutosErrorCallBack() {
+			pesquisarFornecedores();
+		}
 		
 		function pesquisarFornecedores() {
 			var data = "codigoProduto=" + $("#codigo").val();
@@ -111,12 +115,12 @@
 		}
 		
 		function montarComboFornecedores(result) {
-			var comboFornecedores = montarComboBox(result);
+			var comboFornecedores =  montarComboBox(result, true);
 			
 			$("#fornecedor").html(comboFornecedores);
 		}
 		
-		function mostrarGridConsulta() {
+		function pesquisar() {
 			var codigoProduto = $("#codigo").val();
 			var numeroEdicao = $("#edicao").val();
 			var idFornecedor = $("#fornecedor").val();
@@ -126,7 +130,7 @@
 			
 			$(".consultaFaltasSobrasGrid").flexOptions({
 				url: "<c:url value='/estoque/diferenca/pesquisarDiferencas' />",
-				onSuccess: executarAposSucesso,
+				onSuccess: executarAposProcessamento,
 				params: [
 				         {name:'codigoProduto', value:codigoProduto},
 				         {name:'numeroEdicao', value:numeroEdicao},
@@ -140,7 +144,7 @@
 			$(".consultaFaltasSobrasGrid").flexReload();
 		}
 		
-		function executarAposSucesso() {
+		function executarAposProcessamento() {
 			$("span[id='statusAprovacao']").tooltip();
 		}
 		
@@ -169,12 +173,12 @@
 				
 				row.cell.statusAprovacao = spanAprovacao;
 			});
-
+				
 			$(".grids").show();
 			
 			return resultado.tableModel;
 		}
-		
+				
 	</script>
 </head>
 
@@ -187,17 +191,23 @@
 				<td id="teste" width="59" title="tooltip teste">Código:</td>
 				<td colspan="3">
 					<input type="text" name="codigo" id="codigo"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255" />
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+						   onchange="produto.limparCamposPesquisa('#produto', '#edicao', pesquisarProdutosSuccessCallBack)" />
 					
 					<span class="classPesquisar" title="Pesquisar Produto">
 						<a href="javascript:;"
-						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, pesquisarFornecedores);">&nbsp;</a>
+						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
+								   									   pesquisarProdutosSuccessCallBack,
+								   									   pesquisarProdutosErrorCallBack);">&nbsp;</a>
 					</span>
 				</td>
 				<td width="60">Produto:</td>
 				<td width="220">
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
-					       onkeyup="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, pesquisarFornecedores);" />
+					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       onchange="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
+					       											  pesquisarProdutosSuccessCallBack,
+					       											  pesquisarProdutosErrorCallBack);"/>
 				</td>
 				
 				<td width="50" align="right">Edição:</td>
@@ -209,6 +219,7 @@
 				<td width="73">Fornecedor:</td>
 				<td width="230" colspan="2">
 					<select name="fornecedor" id="fornecedor" style="width: 200px;">
+						<option selected="selected"></option>
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
 						</c:forEach>
@@ -238,7 +249,7 @@
 				</td>
 				<td width="137">
 					<span class="bt_pesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
+						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>
 				</td>
 			</tr>

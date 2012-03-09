@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Value Object para lançamento e consulta de diferença.
@@ -29,7 +30,7 @@ public class DiferencaVO implements Serializable {
 	
 	private String pacotePadrao;
 	
-	private String quantidade;
+	private BigDecimal quantidade;
 	
 	private String tipoDiferenca;
 	
@@ -40,6 +41,8 @@ public class DiferencaVO implements Serializable {
 	private String motivoAprovacao;
 	
 	private String valorTotalDiferenca;
+	
+	private BigDecimal qtdeEstoqueAtual;
 	
 	/**
 	 * Construtor padrão.
@@ -149,14 +152,14 @@ public class DiferencaVO implements Serializable {
 	/**
 	 * @return the quantidade
 	 */
-	public String getQuantidade() {
+	public BigDecimal getQuantidade() {
 		return quantidade;
 	}
 
 	/**
 	 * @param quantidade the quantidade to set
 	 */
-	public void setQuantidade(String quantidade) {
+	public void setQuantidade(BigDecimal quantidade) {
 		this.quantidade = quantidade;
 	}
 
@@ -230,6 +233,20 @@ public class DiferencaVO implements Serializable {
 		this.valorTotalDiferenca = valorTotalDiferenca;
 	}
 
+	/**
+	 * @return the qtdeEstoqueAtual
+	 */
+	public BigDecimal getQtdeEstoqueAtual() {
+		return qtdeEstoqueAtual;
+	}
+
+	/**
+	 * @param qtdeEstoqueAtual the qtdeEstoqueAtual to set
+	 */
+	public void setQtdeEstoqueAtual(BigDecimal qtdeEstoqueAtual) {
+		this.qtdeEstoqueAtual = qtdeEstoqueAtual;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

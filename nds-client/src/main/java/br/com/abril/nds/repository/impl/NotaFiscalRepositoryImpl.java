@@ -62,17 +62,21 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 
 			hql.append(" and notaFiscal.tipoNotaFiscal.id = :idTipoNotaFiscal ");
 		}
-		
+
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
 
 		   hql.append(" and notaFiscal.fornecedor.id = :idFornecedor ");
 		}
 
-		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null && filtroConsultaNotaFiscal.getIsNotaRecebida()) {
-			
-			hql.append(" and notaFiscal.statusNotaFiscal = :statusNotaFiscal ");
+		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
+
+			String condicaoNotaRecebida = filtroConsultaNotaFiscal.getIsNotaRecebida() ? " = " : " != ";
+
+			hql.append(" and notaFiscal.statusNotaFiscal ")
+			   .append(condicaoNotaRecebida) 
+			   .append(" :statusNotaFiscal ");
 		}
-		
+
 		PaginacaoVO paginacao = filtroConsultaNotaFiscal.getPaginacao();
 
 		if (filtroConsultaNotaFiscal.getListaColunaOrdenacao() != null || 
@@ -143,8 +147,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 			query.setParameter("idFornecedor", filtroConsultaNotaFiscal.getIdFornecedor());
 		}
 		
-		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null && 
-				filtroConsultaNotaFiscal.getIsNotaRecebida()) {
+		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
 
 			query.setParameter("statusNotaFiscal", StatusNotaFiscal.RECEBIDA);
 		}
