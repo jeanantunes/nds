@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
-import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -48,6 +47,7 @@ public class ConfirmacaoExpedicaoController {
 		protected static final String DATA_INVALIDA = "A data informada é inválida";
 		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
 		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
+		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro ao confirmar expedições!";
 		
 		private static final Logger LOG = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
 		
@@ -64,10 +64,9 @@ public class ConfirmacaoExpedicaoController {
 			this.fornecedorService = fornecedorService;
 			this.lancamentoService = lancamentoService;
 			this.session = session;
-			//this.inicializarTela();
 		}
 		
-		public void inicializarTela() {
+		public void index() {
 			gerarListaFornecedores();
 			gerarDataLancamento();
 			session.setAttribute("selecionados", null);
@@ -139,35 +138,52 @@ public class ConfirmacaoExpedicaoController {
 		}
 		
 		@SuppressWarnings("unchecked")
-		public void confirmarExpedicao(){
+		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
+				String sortorder, Long idFornecedor, 
+				String dtLancamento, Boolean estudo, Boolean change){
+			
+			String status = SUCESSO;
 			
 			List<String> mensagens = new ArrayList<String>();
 			
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
-			if(selecionados==null  || selecionados.isEmpty()) {
-				mensagens.add(NENHUM_REGISTRO_SELECIONADO);
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, mensagens));
-			} 
-			
+			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
+		
 			try {
 				
-				for( Long idLancamento:selecionados ) {		
-					lancamentoService.confirmarExpedicao(idLancamento, getUsuario().getId());
-				}
+				if(selecionados==null  || selecionados.isEmpty()) {
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, NENHUM_REGISTRO_SELECIONADO));
+				} 
 				
-			} catch(Exception e) {
-				e.printStackTrace();
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"ERRO"));
+				lancamentoService.confirmarExpedicoes(selecionados,getUsuario().getId());
+				
+				grid = gerarGrid(
+						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+				
+			} catch(ValidacaoException e) {
+				
+				mensagens = e.getValidacao().getListaMensagens();
+				status=e.getValidacao().getTipoMensagem().name();
+								
+			}catch(Exception e) {
+				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
+				status=TipoMensagem.ERROR.name();
 			}
 			
+			if(grid==null) {
+				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
+			}
 			
-			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);	
+			
+			Object[] retorno = new Object[3];
+			retorno[0] = grid;
+			retorno[1] = mensagens;
+			retorno[2] = status;
 			
 			
-			ValidacaoVO voValidacao = new ValidacaoVO(TipoMensagem.SUCCESS,mensagens);			
-			
-			result.use(Results.json()).withoutRoot().from(voValidacao).recursive().serialize();
+			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
 		
 		public Usuario getUsuario() {
@@ -207,20 +223,49 @@ public class ConfirmacaoExpedicaoController {
 		@SuppressWarnings("unchecked")
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
-						String dtLancamento, Boolean estudo, Boolean change){
+						String dtLancamento, Boolean estudo, String ultimaPesquisa){
 			
-			if(!change.equals((Boolean)session.getAttribute("change"))) {				
+			String status= SUCESSO;
+			
+			boolean isNewSearch = !ultimaPesquisa.equals((String)session.getAttribute("ultimaPesquisa"));
+			
+			if(isNewSearch) {				
 				session.setAttribute("selecionados", null);
-				session.setAttribute("change", change);				
-			}
-			
-			
-			PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
-			
-			String status = SUCESSO;
+				session.setAttribute("ultimaPesquisa", ultimaPesquisa);				
+			}			
 			
 			List<String> mensagens = new ArrayList<String>();
 			
+			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
+			
+			try {
+				grid = gerarGrid(
+						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+			}catch(ValidacaoException e) {
+				mensagens = e.getValidacao().getListaMensagens();
+				status=e.getValidacao().getTipoMensagem().name();
+				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
+			}
+			
+			if (isNewSearch) {
+				mensagens = new ArrayList<String>();
+			}
+			
+			Object[] retorno = new Object[3];
+			retorno[0] = grid;
+			retorno[1] = mensagens;
+			retorno[2] = status;
+			
+			result.use(Results.json()).withoutRoot().from(retorno).serialize();						
+		}	
+		
+		@SuppressWarnings("unchecked")		
+		public TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> gerarGrid( Integer page, Integer rp, String sortname, 
+				String sortorder, Long idFornecedor, 
+				String dtLancamento, Boolean estudo){
+			
+			PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+						
 			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
 			
 			Date date = DateUtil.parseData(dtLancamento, Constantes.DATE_PATTERN_PT_BR);
@@ -231,8 +276,7 @@ public class ConfirmacaoExpedicaoController {
 			session.setAttribute("estudo",estudo);
 			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				mensagens.add(DATA_INVALIDA);
-				status = FALHA;
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
@@ -254,7 +298,7 @@ public class ConfirmacaoExpedicaoController {
 				}
 				
 				if(listaExpedicoes.isEmpty()) {
-					mensagens.add(MSG_PESQUISA_SEM_RESULTADO);
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
 				}
 							
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
@@ -264,14 +308,16 @@ public class ConfirmacaoExpedicaoController {
 				grid.setRows(listaCelula);
 				
 			}
+			return grid;
+		}
+		
+		private class Retorno {
+			private List<String> mensagens;
+			private TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid;
+			
+			public Retorno(List<String> mensagens, TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid) {
 				
-			Object[] retorno = new Object[3];
-			retorno[0] = status;
-			retorno[1] = mensagens;
-			retorno[2] = grid;
-			
-			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
-			
-		}	
+			}
+		}
 		
 	}

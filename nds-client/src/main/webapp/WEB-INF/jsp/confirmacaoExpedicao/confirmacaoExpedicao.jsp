@@ -55,23 +55,24 @@
 	}
 			
 	function processaRetornoPesquisa(data) {
-		
-		var status = data[0];
+				
+		var grid = data[0];
 		var mensagens = data[1];
-		var grid =  data[2];
+		var status = data[2];
 		
-		if(mensagens!=null && mensagens.length>0) {
-			exibirMensagem(status, mensagens);
+		if(mensagens!=null && mensagens.length!=0) {
+			exibirMensagem(status,mensagens);
 		}
-			
+		
+		if(!grid.rows) {
+			return grid;
+		}
+		
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
-			
-			cell.dataEntrada = $.format.date(cell.dataEntrada.$ + " 00:00:000", "dd/MM/yyyy");
-			cell.dataChamada = $.format.date(cell.dataChamada.$ + " 00:00:000", "dd/MM/yyyy");
-			
-			if(cell.estudo != null) {
+					
+			if(cell.estudo) {
 				cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
 			} else {
 				cell.estudo="";
@@ -99,7 +100,7 @@
 			params:[{name:'dtLancamento',value:dataLancamento},
 			        {name:'idFornecedor',value:idFornecedor},
 			        {name:'estudo',value:estudo},
-			        {name:'change',value:change}]		
+			        {name:'ultimaPesquisa',value:new Date()}]		
 		});
 		
 		$(".confirmaExpedicaoGrid").flexReload();
@@ -165,19 +166,19 @@
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Estudo',
 				name : 'estudo',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : '',
 				name : 'selecionado',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
 			sortname : "codigo",
@@ -203,8 +204,14 @@
 			buttons : {
 				"Confirmar" : function() {
 					
-					$.getJSON("<c:url value='/confirmacaoExpedicao/confirmarExpedicao'/>");
+					$(".confirmaExpedicaoGrid").flexOptions({			
+						url : '<c:url value="/confirmacaoExpedicao/confirmarExpedicao"/>',
+						dataType : 'json',
+						preProcess:processaRetornoPesquisa		
+					});
 					
+					$(".confirmaExpedicaoGrid").flexReload();
+										
 					$(this).dialog("close");
 				},
 				"Cancelar" : function() {
@@ -236,7 +243,8 @@
 	
 
 	<form action="" method="get" id="form1" name="form1">
-		<div id="dialog-confirmar" title="Matriz de Expedição">
+		
+		<div id="dialog-confirmar" title="Matriz de Expedição" style="display: none">
 			<p>Confirmar Matriz de Expedição?</p>
 		</div>
 

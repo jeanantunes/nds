@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -57,7 +59,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}
 		return dtos;
 	}
-
+	
 	private LancamentoNaoExpedidoDTO montarDTOExpedicao(Lancamento lancamento) {
 		
 		String fornecedor;
@@ -68,34 +70,50 @@ public class LancamentoServiceImpl implements LancamentoService {
 			fornecedor = lancamento.getProdutoEdicao().getProduto().getFornecedor().getJuridica().getRazaoSocial();			
 		}
 		
+		Date maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
+		
 		if(lancamento.getRecebimentos().size()>1) {
-			
-			Date maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
 			
 			Iterator<ItemRecebimentoFisico> itemFisico = lancamento.getRecebimentos().iterator();
 			
-			while(itemFisico.next()) {
-				//if(maisRecente.getTime()<itemFisico.)
+			while(itemFisico.hasNext()) {
+				
+				ItemRecebimentoFisico item = itemFisico.next();
+			
+				if(maisRecente.getTime()<item.getRecebimentoFisico().getDataRecebimento().getTime()) {
+					maisRecente = item.getRecebimentoFisico().getDataRecebimento();
+				}
 			}
-		}
+		} 
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		
 		LancamentoNaoExpedidoDTO dto = new LancamentoNaoExpedidoDTO(
 				lancamento.getId(), 
-				lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento(), 
+				sdf.format(maisRecente), 
 				lancamento.getProdutoEdicao().getProduto().getId(), 
 				lancamento.getProdutoEdicao().getProduto().getNome(), 
 				lancamento.getProdutoEdicao().getNumeroEdicao(), 
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
-				lancamento.getProdutoEdicao().getPrecoVenda(), 
+				lancamento.getProdutoEdicao().getPrecoVenda().toString().replace(".", ","), 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
-				(lancamento.getEstudo()==null)? null : lancamento.getEstudo().getQtdeReparte(), 
-				lancamento.getDataRecolhimentoPrevista(), 
+				(lancamento.getEstudo()==null)? null : lancamento.getEstudo().getQtdeReparte().intValue(), 
+				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
-				lancamento.getEstudo().getQtdeReparte());
+				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
+				false);
 		
 		return dto;
 	}
 
+	@Transactional
+	public void confirmarExpedicoes(List<Long> idLancamentos,Long idUsuario) {
+		
+		for( Long idLancamento:idLancamentos ) {		
+			this.confirmarExpedicao(idLancamento, idUsuario);
+		}
+	}
+	
 	@Override
 	@Transactional
 	public void confirmarExpedicao(Long idLancamento, Long idUsuario) {

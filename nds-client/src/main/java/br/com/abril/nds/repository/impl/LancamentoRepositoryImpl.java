@@ -214,26 +214,22 @@ public class LancamentoRepositoryImpl extends
 		if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_ENTRADA)) {
 			order = "itemRecebido.recebimentoFisico.dataRecebimento";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CODIGO_PRODUTO)) {
-			order = "lancamento.produtoEdicao.produto.id";
+			order = "produto.id";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.NOME_PRODUTO)) {
-			order =  "lancamento.produtoEdicao.produto.nome";
+			order =  "produto.nome";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.EDICAO)) {
-			order =  "lancamento.produtoEdicao.numeroEdicao";
+			order =  "produtoEdicao.numeroEdicao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CLASSIFICACAO_PRODUTO)) {
-			return "lancamento.produtoEdicao.produto.tipoProduto.descricao";
+			order = "produto.tipoProduto.descricao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.PRECO_PRODUTO)) {
-			order =  "lancamento.produtoEdicao.precoVenda";
+			order =  "produtoEdicao.precoVenda";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_PACOTE_PADRAO)) {
-			order =  "lancamento.produtoEdicao.pacotePadrao";
+			order =  "produtoEdicao.pacotePadrao";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_REPARTE)) {
 			order =  "lancamento.reparte";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_CHAMADA)) {
 			order =  "lancamento.dataRecolhimentoPrevista";
-		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.FORNECEDOR)) {
-			order =  "lancamento.produtoEdicao.fornecedor.juridica.nomeFantasia";
-		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.ID_ESTUDO)) {
-			order =  "estudo.id";
-		}  else {
+		} else {
 			return "";
 		}
 		
@@ -242,6 +238,16 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 
+	/**
+	 * Obtém query de Lancamentos a serem expedidos
+	 * 
+	 * @param parametros
+	 * @param data
+	 * @param idFornecedor
+	 * @param estudo
+	 * @param sortOrder
+	 * @return
+	 */
 	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo) {
 		
 		StringBuilder hql = new StringBuilder();	

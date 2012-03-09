@@ -264,7 +264,7 @@ fieldset label {
 					<li><span class="classExpedicao">&nbsp;</span><a
 						href="javascript:;">Expedição</a>
 						<ul>
-							<li><a href="confirmacaoExpedicao/inicializarTela">Confirma
+							<li><a href="confirmacaoExpedicao/index">Confirma
 									Expedição</a>
 							</li>
 							<li><a

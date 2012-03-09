@@ -165,6 +165,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					
 		Assert.assertTrue(nLancamentos.equals(50L));
 	}	
+
 }
 
 
