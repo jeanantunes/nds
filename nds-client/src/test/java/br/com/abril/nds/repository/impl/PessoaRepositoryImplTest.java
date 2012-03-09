@@ -4,7 +4,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,10 +47,10 @@ public class PessoaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		PessoaJuridica pj2 = Fixture.pessoaJuridica("Acme Ltda",
 				"11.111.111/0001-11", "000.000.000.000", "acme@mail.com");
-		getSession().save(pf1);
-		getSession().save(pf2);
-		getSession().save(pj1);
-		getSession().save(pj2);
+		save(pf1);
+		save(pf2);
+		save(pj1);
+		save(pj2);
 		flushClear();
 		
 		List<Pessoa> pessoas = pessoaRepository.buscarPorNome("José"); 

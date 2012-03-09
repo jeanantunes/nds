@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
@@ -52,11 +53,13 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
+	private TipoFornecedor tipoFornecedorPublicacao;
 
 	@Before
 	public void setUp() {
-		fornecedorFC = Fixture.fornecedorFC();
-		fornecedorDinap = Fixture.fornecedorDinap();
+		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
+		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
 		TipoProduto tipoRevista = Fixture.tipoRevista();
@@ -212,8 +215,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
 				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
-		
-		getSession().flush();
 	}
 
 	@Test

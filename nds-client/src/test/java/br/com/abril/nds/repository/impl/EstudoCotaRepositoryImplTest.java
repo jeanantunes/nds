@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -45,7 +46,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudo, cota);
 		
-		getSession().save(estudoCota);
+		save(estudoCota);
 	}
 	
 	@Test
@@ -64,32 +65,35 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Pessoa pessoa = Fixture.juridicaFC();
 		
-		getSession().save(pessoa);
+		save(pessoa);
 		
 		Cota cota = Fixture.cota(NUMERO_COTA, pessoa, SituacaoCadastro.ATIVO);
 		
-		getSession().save(cota);
+		save(cota);
 		
 		return cota;
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {
-		Fornecedor dinap = Fixture.fornecedorDinap();
-		getSession().save(dinap);
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
+		
+		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		save(dinap);
 		
 		TipoProduto tipoProduto = Fixture.tipoRevista();
 		
-		getSession().save(tipoProduto);
+		save(tipoProduto);
 		
 		Produto produto = Fixture.produtoVeja(tipoProduto);
 		produto.addFornecedor(dinap);
 		
-		getSession().save(produto);
+		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
 		
-		getSession().save(produtoEdicao);
+		save(produtoEdicao);
 		
 		return produtoEdicao;
 	}
@@ -107,7 +111,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				BigDecimal.TEN,
 				StatusLancamento.RECEBIDO, null);
 		
-		getSession().save(lancamento);
+		save(lancamento);
 		
 		return lancamento;
 	}
@@ -116,7 +120,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Estudo estudo = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);
 		
-		getSession().save(estudo);
+		save(estudo);
 		
 		
 		return estudo;

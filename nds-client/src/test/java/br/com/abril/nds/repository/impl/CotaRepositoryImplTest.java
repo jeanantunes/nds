@@ -24,11 +24,11 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		PessoaJuridica pessoaJuridica = 
 			Fixture.pessoaJuridica("FC", "01.001.001/001-00", "000.000.000.00", "fc@mail.com");
 
-		getSession().save(pessoaJuridica);
+		save(pessoaJuridica);
 		
 		Cota cota = Fixture.cota(NUMERO_COTA, pessoaJuridica, SituacaoCadastro.ATIVO);
 		
-		getSession().save(cota);
+		save(cota);
 	}
 	
 	@Test
