@@ -78,7 +78,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(validacao);
 		}
 		
-		if (DateUtil.isDataFinalMaiorDataInicial(periodo.getDataInicial(), periodo.getDataFinal())) {
+		if (DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
 
 			throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve anteceder a data final.");
 		}

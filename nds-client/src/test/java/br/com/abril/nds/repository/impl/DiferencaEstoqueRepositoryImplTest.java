@@ -6,12 +6,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -23,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -39,6 +39,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
+@DirtiesContext
 public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
@@ -53,6 +54,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	private long qtdeMovimentos;
 	
 	private int qtdResultadoPorPagina;
+
+	private TipoFornecedor tipoFornecedorPublicacao;
 	
 	@Before
 	public void setup() {
@@ -65,15 +68,18 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.qtdResultadoPorPagina = 15;
 		
+		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
+
 		ProdutoEdicao produtoEdicao = this.criarProdutoEdicao();
 		
 		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaEm();
 		
-		getSession().save(tipoMovimento);
+		save(tipoMovimento);
 		
 		Usuario usuario = Fixture.usuarioJoao();
 		
-		getSession().save(usuario);
+		save(usuario);
 		
 		this.tipoDiferenca = TipoDiferenca.FALTA_EM;
 		
@@ -81,57 +87,45 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		
-		getSession().save(tipoNotaFiscal);
+		save(tipoNotaFiscal);
 		
 		CFOP cfop = Fixture.cfop5102();
-		
-		Criteria criteria = getSession().createCriteria(CFOP.class);
-		
-		criteria.add(Restrictions.eq("codigo", cfop.getCodigo()));
-		
-		CFOP cfopDB = (CFOP) criteria.uniqueResult();
-		
-		if (cfopDB == null) {
-			
-			getSession().save(cfop);
-			
-		} else {
-			
-			cfop = cfopDB;
-		}
+		save(cfop);
+	
 		
 		PessoaJuridica pessoaJuridica = Fixture.juridicaDinap();
 		
-		getSession().save(pessoaJuridica);
+		save(pessoaJuridica);
 		
-		Fornecedor fornecedor = Fixture.fornecedorDinap();
 		
-		getSession().save(fornecedor);
+		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		
+		save(fornecedor);
 		
 		NotaFiscalFornecedor notaFiscalFornecedor = 
 			Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal,
 										 usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		
-		getSession().save(notaFiscalFornecedor);
+		save(notaFiscalFornecedor);
 
 		ItemNotaFiscal itemNotaFiscal = 
 			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), BigDecimal.TEN);
 		
-		getSession().save(itemNotaFiscal);
+		save(itemNotaFiscal);
 
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
 			notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
 		
-		getSession().save(recebimentoFisico);
+		save(recebimentoFisico);
 		
 		ItemRecebimentoFisico itemRecebimentoFisico =  
 			Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal("1.0"));
 		
-		getSession().save(itemRecebimentoFisico);
+		save(itemRecebimentoFisico);
 		
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, quantidadeDiferenca);
 		
-		getSession().save(estoqueProduto);
+		save(estoqueProduto);
 		
 		for (int i = 0; i < this.qtdeMovimentos; i++) {
 			
@@ -141,7 +135,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 						estoqueProduto, dataMovimento, 
 							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE, "Pendente.");
 			
-			getSession().save(movimentoEstoque);
+			save(movimentoEstoque);
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
@@ -149,11 +143,12 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
-			getSession().save(diferenca);
+			save(diferenca);
 		}		
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -191,6 +186,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterTotalDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -206,6 +202,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterDiferencas() {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		
@@ -229,6 +226,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterTotalDiferencas() {
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
@@ -247,35 +245,31 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		TipoProduto tipoProduto = Fixture.tipoRevista();
 		
-		getSession().save(tipoProduto);
+		save(tipoProduto);
 		
 		Produto produto = Fixture.produtoVeja(tipoProduto);
+		save(produto);
 		
-		Criteria criteria = getSession().createCriteria(Produto.class);
+		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		
-		criteria.add(Restrictions.eq("codigo", produto.getCodigo()));
-		
-		Produto produtoBD = (Produto) criteria.uniqueResult();
-		
-		if (produtoBD == null) {
-		
-			getSession().save(produto);
-			
-		} else {
-			
-			produto = produtoBD;
-		}
-		
-		Fornecedor fornecedor = Fixture.fornecedorDinap();
-		
-		getSession().save(fornecedor);
+		save(fornecedor);
 		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
 		
-		getSession().save(produtoEdicao);
+		save(produtoEdicao);
 		
 		return produtoEdicao;
+	}
+	
+	@Test
+	@Ignore//TODO: corrigir
+	public void buscarStatusDiferencaLancadaAutomaticamente(){
+		Boolean flag = null;
+		
+		flag = this.diferencaEstoqueRepository.buscarStatusDiferencaLancadaAutomaticamente(1L);
+		
+		Assert.assertNotNull(flag);
 	}
 	
 }

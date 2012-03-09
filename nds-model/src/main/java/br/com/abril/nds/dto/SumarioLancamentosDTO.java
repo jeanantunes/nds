@@ -29,6 +29,8 @@ public class SumarioLancamentosDTO implements Serializable {
 		this.valorTotalLancamentos = valorTotalLancamentos;
 		if (valorTotalLancamentos != null) {
 			valorTotalFormatado = CurrencyUtil.formatarValor(valorTotalLancamentos);
+		} else {
+			valorTotalFormatado = CurrencyUtil.formatarValor(BigDecimal.ZERO);
 		}
 	}
 	

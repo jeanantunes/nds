@@ -22,6 +22,9 @@ public class LancamentoDTO  implements Serializable {
 	private String total;
 	private String fisico;
 	private String estudoGerado;
+	private boolean semFisico;
+	private boolean cancelamentoGD;
+	private boolean isFuro;
 	
 	public Long getId() {
 		return id;
@@ -149,6 +152,30 @@ public class LancamentoDTO  implements Serializable {
 	
 	public void setEstudoGerado(String estudoGerado) {
 		this.estudoGerado = estudoGerado;
+	}
+	
+	public boolean isSemFisico() {
+		return semFisico;
+	}
+	
+	public void setSemFisico(boolean semFisico) {
+		this.semFisico = semFisico;
+	}
+	
+	public boolean isCancelamentoGD() {
+		return cancelamentoGD;
+	}
+	
+	public void setCancelamentoGD(boolean cancelamentoGD) {
+		this.cancelamentoGD = cancelamentoGD;
+	}
+	
+	public boolean isFuro() {
+		return isFuro;
+	}
+	
+	public void setFuro(boolean isFuro) {
+		this.isFuro = isFuro;
 	}
 
 	@Override

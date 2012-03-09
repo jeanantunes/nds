@@ -32,25 +32,34 @@ public class Diferenca {
 	@Id
 	@GeneratedValue(generator = "DIFERENCA_SEQ")
 	private Long id;
+	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
+	
 	@ManyToOne(optional = false)
 	private Usuario responsavel;
+	
 	@OneToOne(optional = true)
 	private ItemRecebimentoFisico itemRecebimentoFisico;
+	
 	@ManyToOne(optional = false)
 	private ProdutoEdicao produtoEdicao;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DIFERENCA", nullable = false)
 	private TipoDiferenca tipoDiferenca;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
+	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
 	private MovimentoEstoque movimentoEstoque;
+	
 	@Column(name = "AUTOMATICA")
 	private Boolean automatica;
+	
 	@Transient
 	private BigDecimal valorTotalDiferenca;
 	

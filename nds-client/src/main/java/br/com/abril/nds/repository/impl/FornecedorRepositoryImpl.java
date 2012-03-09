@@ -88,16 +88,22 @@ public class FornecedorRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select p.fornecedores from Produto p ");
+		hql.append(" select fornecedores from Produto p ");
+		hql.append(" join p.fornecedores fornecedores ");
 		
-		if (codigoProduto != null) {
-			hql.append(" where ");
-			hql.append(" p.codigo = :codigoProduto ");
+		hql.append(" where fornecedores.situacaoCadastro = :situacaoCadastro ");
+		
+		if (codigoProduto != null && codigoProduto.length() > 0) {
+			hql.append(" and p.codigo = :codigoProduto ");
 		}
+		
+		hql.append(" group by fornecedores ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		if (codigoProduto != null) {
+		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
+		
+		if (codigoProduto != null && codigoProduto.length() > 0) {
 			query.setParameter("codigoProduto", codigoProduto);
 		}
 		

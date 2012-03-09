@@ -80,7 +80,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 			gerarMovimentoCota(dataLancamento,idProdutoEdicao,estudoCota.getCota().getId(),
 					idUsuario, estudoCota.getQtdeEfetiva());
 			
-			total.add(estudoCota.getQtdeEfetiva());
+			total = total.add(estudoCota.getQtdeEfetiva());
 		}
 		
 		gerarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, total);
@@ -110,7 +110,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 		if(tipoMovimento.isAprovacaoAutomatica()) {			
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 		}
-		
+				
 		BigDecimal novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
 		estoqueProduto.setQtde(novaQuantidade);
 				
@@ -135,7 +135,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 			estoqueProdutoCota = new EstoqueProdutoCota();
 			estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 			estoqueProdutoCota.setQtdeDevolvida(new BigDecimal(0));
-			estoqueProdutoCota.setQtdeRecebida(new BigDecimal(1));
+			estoqueProdutoCota.setQtdeRecebida(new BigDecimal(0));
 			estoqueProdutoCota.setCota(cota);
 			
 			estoqueProdutoCotaRepository.adicionar(estoqueProdutoCota);

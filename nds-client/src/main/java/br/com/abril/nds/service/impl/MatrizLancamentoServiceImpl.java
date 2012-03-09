@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<LancamentoDTO> dtos = new ArrayList<LancamentoDTO>(
 				lancamentos.size());
 		for (Lancamento lancamento : lancamentos) {
-			LancamentoDTO dto = montarDTO(lancamento);
+			LancamentoDTO dto = montarDTO(filtro.getData(),lancamento);
 			dtos.add(dto);
 		}
 		return dtos;
@@ -74,11 +76,33 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
 			diasDistribuicao.add(distribuicao.getDiaSemana());
 		}
+
 		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
 				dataInicial, dataFinal, diasDistribuicao);
 		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
-				.buscarResumosPeriodo(periodoDistribuicao, fornecedores, GrupoProduto.CROMO);
-		return resumos;
+				.buscarResumosPeriodo(periodoDistribuicao, fornecedores,
+						GrupoProduto.CROMO);
+		
+		return montarResumoPeriodo(periodoDistribuicao, resumos);
+	}
+
+	private List<ResumoPeriodoLancamentoDTO> montarResumoPeriodo(
+			List<Date> periodoDistribuicao,
+			List<ResumoPeriodoLancamentoDTO> resumos) {
+		Map<Date, ResumoPeriodoLancamentoDTO> mapa = new HashMap<Date, ResumoPeriodoLancamentoDTO>();
+		for (ResumoPeriodoLancamentoDTO resumo : resumos) {
+			mapa.put(resumo.getData(), resumo);
+		}
+		List<ResumoPeriodoLancamentoDTO> retorno = new ArrayList<ResumoPeriodoLancamentoDTO>(
+				periodoDistribuicao.size());
+		for (Date data : periodoDistribuicao) {
+			ResumoPeriodoLancamentoDTO resumo = mapa.get(data);
+			if (resumo == null) {
+				resumo = ResumoPeriodoLancamentoDTO.empty(data);
+			}
+			retorno.add(resumo);
+		}
+		return retorno;
 	}
 
 	private List<Date> filtrarPeriodoDistribuicao (Date dataInicial,
@@ -94,7 +118,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return datas;
 	}
 
-	private LancamentoDTO montarDTO(Lancamento lancamento) {
+	private LancamentoDTO montarDTO(Date data, Lancamento lancamento) {
 		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 		Produto produto = produtoEdicao.getProduto();
 		LancamentoDTO dto = new LancamentoDTO();
@@ -125,6 +149,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
 		} else {
 			dto.setEstudoGerado("0");
+		}
+		dto.setFuro(lancamento.isFuro());
+		dto.setCancelamentoGD(lancamento.isCancelamentoGD());
+		if (DateUtil.isHoje(data) && lancamento.isSemRecebimentoFisico()) {
+			dto.setSemFisico(true);
 		}
 		return dto;
 	}

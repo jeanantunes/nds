@@ -253,7 +253,6 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 				listaMensagens = json.listaMensagens;
 			}
 			
-			
 			if (tipoMensagem && listaMensagens) {
 				
 				if (tipoMensagem == "SUCCESS") {
@@ -282,7 +281,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 					}
 					
 					if (errorCallBackFunction) {
-						errorCallBackFunction();
+						errorCallBackFunction(json);
 					}
 				}
 			} else {

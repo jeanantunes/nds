@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -36,10 +40,17 @@ public class Fornecedor implements Serializable {
 	private boolean permiteBalanceamento;
 	@ManyToOne(optional = false)
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@JoinColumn(name = "JURIDICA_ID")
 	private PessoaJuridica juridica;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
+	@OneToMany(mappedBy = "fornecedor")
+	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
+	private TipoFornecedor tipoFornecedor;
 	
 	public Long getId() {
 		return id;
@@ -79,6 +90,22 @@ public class Fornecedor implements Serializable {
 	
 	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
+	}
+	
+	public Set<EnderecoFornecedor> getEnderecos() {
+		return enderecos;
+	}
+	
+	public void setEnderecos(Set<EnderecoFornecedor> enderecos) {
+		this.enderecos = enderecos;
+	}
+	
+	public TipoFornecedor getTipoFornecedor() {
+		return tipoFornecedor;
+	}
+	
+	public void setTipoFornecedor(TipoFornecedor tipoFornecedor) {
+		this.tipoFornecedor = tipoFornecedor;
 	}
 
 	@Override

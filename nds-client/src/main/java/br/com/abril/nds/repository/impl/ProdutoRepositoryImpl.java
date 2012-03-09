@@ -17,7 +17,7 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Produto> obterProdutoPorNomeProduto(String nome) {
+	public List<Produto> obterProdutoLikeNomeProduto(String nome) {
 		String hql = "from Produto produto "
 				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
 		
@@ -26,6 +26,20 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		query.setParameter("nome", nome + "%");
 		
 		return query.list();
+	}
+	
+	@Override
+	public Produto obterProdutoPorNomeProduto(String nome) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.nome) = upper(:nome) order by produto.nome";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("nome", nome);
+		
+		query.setMaxResults(1);
+		
+		return (Produto) query.uniqueResult();
 	}
 	
 	@Override

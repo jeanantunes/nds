@@ -1,5 +1,6 @@
 package br.com.abril.nds.client.vo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public class ValidacaoVO {
 	private TipoMensagem tipoMensagem;
 	
 	private List<String> listaMensagens;
+	
+	private List<? extends Serializable> dados;
 
 	/**
 	 * Construtor.
@@ -78,4 +81,19 @@ public class ValidacaoVO {
 	public void setListaMensagens(List<String> listaMensagens) {
 		this.listaMensagens = listaMensagens;
 	}
+
+	/**
+	 * @return the dados
+	 */
+	public List<? extends Serializable> getDados() {
+		return dados;
+	}
+
+	/**
+	 * @param dados the dados to set
+	 */
+	public void setDados(List<? extends Serializable> dados) {
+		this.dados = dados;
+	}
+	
 }

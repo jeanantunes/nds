@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers;
+package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -30,6 +32,9 @@ public class ProdutoController {
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
+	
 	public ProdutoController(Result result) {
 		this.result = result;
 	}
@@ -40,27 +45,25 @@ public class ProdutoController {
 		
 		if (produto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + codigoProduto + "\" não encontrado!");
 			
 		} else {
 			
 			result.use(Results.json()).from(produto, "result").serialize();
 			
-		}
-		
-		
+		}		
 	}
 	
 	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+	public void autoCompletarPorPorNomeProduto(String nomeProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNomeProduto(nomeProduto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
 		if (listaProduto != null && !listaProduto.isEmpty()) {
 			Produto produtoAutoComplete = null;
 			
-			for (Produto produto : listaProduto){
+			for (Produto produto : listaProduto) {
 				produtoAutoComplete = new Produto();
 				produtoAutoComplete.setCodigo(produto.getCodigo());
 				
@@ -72,6 +75,19 @@ public class ProdutoController {
 		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+	
+	@Post
+	public void pesquisarPorNomeProduto(String nomeProduto) {
+		Produto produto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+		
+		if (produto == null) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
+		
+		}
+			
+		result.use(Results.json()).from(produto, "result").serialize();
 	}
 	
 	@Post
@@ -88,7 +104,7 @@ public class ProdutoController {
 			
 			if (!numEdicaoValida) {
 
-				throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada para o produto!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Edição \"" + numeroEdicao + "\" não encontrada para o produto!");
 				
 			} else {
 				
@@ -116,6 +132,28 @@ public class ProdutoController {
 		}
 		
 		result.use(Results.json()).from(produtoEdicao, "result").serialize();
+	}
+	
+	@Post
+	@Path("/obterEstoque")
+	public void obterEstoque(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null) {
+			
+			result.use(Results.json()).from("", "estoqueProduto").serialize();
+		}
+		
+		EstoqueProduto estoqueProduto =
+			this.estoqueProdutoService.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if (estoqueProduto == null) {
+			
+			result.use(Results.json()).from("", "estoqueProduto").serialize();
+			
+		} else {
+		
+			result.use(Results.json()).from(estoqueProduto, "result").serialize();
+		}
 	}
 	
 }

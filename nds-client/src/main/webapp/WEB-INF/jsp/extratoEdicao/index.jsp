@@ -7,43 +7,6 @@
 
 <script type="text/javascript">
 
-
-function pesquisarProdutoCallBack() {
-	
-	jsExtratoEdicao.pesquisarNomeFornecedor();
-	
-}
-
-
-function validarEdicaoCallBack() {
-	
-	jsExtratoEdicao.pesquisarPrecoCapa();
-	
-}
-
-function pesquisarProdutoPorCodigo() {
-
-	$("#nomeFornecedor").val("");
-	$("#precoCapa").val("");
-	
-	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, pesquisarProdutoCallBack);	
-}
-
-function pesquisarProdutoPorNome() {
-
-	$("#nomeFornecedor").val("");
-	$("#precoCapa").val("");
-	
-	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, pesquisarProdutoCallBack);
-}
-
-function validarNumeroEdicao() {
-
-	$("#precoCapa").val("");
-	
-	produto.validarNumEdicao('#codigo', '#edicao', false, validarEdicaoCallBack);
-}
-
 var jsExtratoEdicao = {
 
 	pesquisarExtratoEdicao : function() {
@@ -86,6 +49,49 @@ var jsExtratoEdicao = {
 		$.postJSON('<c:url value="/"/>estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
 			$("#precoCapa").val(result);
 		});
+		
+	},
+	
+	limparCamposPesquisa : function() {
+
+		$("#nomeFornecedor").val("");
+		$("#precoCapa").val("");
+		
+		produto.limparCamposPesquisa('#produto', '#edicao', false);	
+	},
+	
+	pesquisarProdutoPorCodigo : function() {
+
+		$("#nomeFornecedor").val("");
+		$("#precoCapa").val("");
+		
+		produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);	
+	},
+
+	pesquisarProdutoPorNome : function() {
+
+		$("#nomeFornecedor").val("");
+		$("#precoCapa").val("");
+		
+		produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);
+	},
+
+	validarNumeroEdicao : function() {
+
+		$("#precoCapa").val("");
+		
+		produto.validarNumEdicao('#codigo', '#edicao', false, jsExtratoEdicao.validarEdicaoCallBack);
+	},
+	
+	validarEdicaoCallBack : function() {
+		
+		jsExtratoEdicao.pesquisarPrecoCapa();
+			
+	},
+	
+	pesquisarProdutoCallBack : function() {
+		
+		jsExtratoEdicao.pesquisarNomeFornecedor();
 		
 	},
 		
@@ -212,11 +218,12 @@ $(function() {
 								maxlength="255"
 								style="width: 70px; 
 								float: left; 
-								margin-right: 5px;" />
+								margin-right: 5px;"
+								onchange="jsExtratoEdicao.limparCamposPesquisa();" />
 
 						<span class="classPesquisar">
 							<a href="javascript:;"
-							   onclick="pesquisarProdutoPorCodigo();">&nbsp;</a>
+							   onclick="jsExtratoEdicao.pesquisarProdutoPorCodigo();">&nbsp;</a>
 						</span>
 					
 					</td>
@@ -229,7 +236,8 @@ $(function() {
 
 						<input type="text" name="produto" id="produto" style="width: 220px;" 
 							   maxlength="255"
-					       	   onkeyup="pesquisarProdutoPorNome();" />
+					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       	   onchange="jsExtratoEdicao.pesquisarProdutoPorNome();"/>
 
 						
 					
@@ -242,7 +250,7 @@ $(function() {
 					<td width="186">
 					
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20"
-						   onblur="validarNumeroEdicao();"/>
+						   onchange="jsExtratoEdicao.validarNumeroEdicao();"/>
 								
 					</td>
 					

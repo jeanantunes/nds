@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -66,22 +67,24 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
 		
-		Fornecedor dinap = Fixture.fornecedorDinap();
-		getSession().save(dinap);
+		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		save(dinap);
 		
 		TipoProduto tipoProduto = Fixture.tipoProduto("grupo teste", GrupoProduto.REVISTA, "ncm");
 		
-		getSession().save(tipoProduto);
+		save(tipoProduto);
 		
 		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		produto.addFornecedor(dinap);
-		getSession().save(produto);
+		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
 		
-		getSession().save(produtoEdicao);
+		save(produtoEdicao);
 		
 		return produtoEdicao;
 	}
@@ -92,7 +95,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataReferencia, 
 					dataReferencia, new Date(), new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
 		
-		getSession().save(lancamento);
+		save(lancamento);
 		
 		return lancamento;
 	}
@@ -101,7 +104,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Estudo estudo = Fixture.estudo(new BigDecimal(100), lancamento.getDataLancamentoDistribuidor(), produtoEdicao);
 		
-		getSession().save(estudo);
+		save(estudo);
 		
 		return estudo;
 	}
