@@ -90,6 +90,10 @@ function checkAll(todos, checkgroupName) {
 	}	
 }
 
+function verifyAtLeastOneChecked(checkgroupName) {
+	return false;
+}
+
 function verifyCheck(todos){
 	$(todos).uncheck();
 }
