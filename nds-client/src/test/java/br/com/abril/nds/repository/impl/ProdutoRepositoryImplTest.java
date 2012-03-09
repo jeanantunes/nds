@@ -40,10 +40,10 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterProdutoPorNomeProduto() {
-		List<Produto> listaProduto = 
+		Produto produto = 
 			produtoRepository.obterProdutoPorNomeProduto("Veja");
 		
-		Assert.assertTrue(!listaProduto.isEmpty());
+		Assert.assertTrue(produto != null);
 	}
 	
 	@Test
