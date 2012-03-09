@@ -24,7 +24,7 @@
                 <li><a href="Financeiro/baixa_bancaria.htm">Baixa Bancária</a></li>
                 <li><a href="Financeiro/baixa_bancaria_manual.htm">Baixa Bancária Manual</a></li>
                 <li><a href="Financeiro/baixa_manual_divida.htm">Baixa Manual de Dívidas</a></li>
-                <li><a href="Financeiro/consulta_boletos_jornaleiros.htm">Consulta Boletos por Cota</a></li>
+                <li><a href="financeiro/consulta_boletos_jornaleiros.htm">Consulta Boletos por Cota</a></li>
                 <li><a href="Financeiro/conta_corrente.htm">Conta Corrente</a></li>
                 <li><a href="Financeiro/debitos_creditos.htm">Débitos / Créditos Cota</a></li>
                 

@@ -8,6 +8,7 @@ import java.util.List;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -37,6 +38,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -479,6 +481,7 @@ public class Fixture {
 		notaFiscalFornecedor.setValorBruto(valorBruto);
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
+
 		return notaFiscalFornecedor;
 	}
 
@@ -630,7 +633,6 @@ public class Fixture {
 		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
-	
 
 	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
@@ -642,9 +644,6 @@ public class Fixture {
 		return rateioDiferenca;
 	}
 
-
-
-	
 	public static Expedicao expedicao(Usuario responsavel,Date dataExpedicao){
 		
 		Expedicao expedicao = new Expedicao();
@@ -683,6 +682,32 @@ public class Fixture {
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
 		return box;
+	}
+
+	//FINANCEIRO - HENRIQUE
+	public static Boleto boleto(Integer nossoNumero,
+				                Date dataEmissao,
+				                Date dataVencimento,
+				                Date dataPagamento,
+				                String encargos,
+				                Double valor,
+				                String tipoBaixa,
+				                String acao,
+				                StatusCobranca status,
+				                Cota cota){
+			
+		Boleto boleto = new Boleto();
+		boleto.setNossoNumero(nossoNumero);
+		boleto.setDataEmissao(dataEmissao);
+		boleto.setDataVencimento(dataVencimento);
+		boleto.setDataPagamento(dataPagamento);
+		boleto.setEncargos(encargos);
+		boleto.setValor(valor);
+		boleto.setTipoBaixa(tipoBaixa);
+		boleto.setAcao(acao);
+		boleto.setStatusCobranca(status);
+		boleto.setCota(cota);
+		return boleto;
 	}
 
 }
