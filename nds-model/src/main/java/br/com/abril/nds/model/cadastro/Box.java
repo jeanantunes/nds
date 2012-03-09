@@ -22,13 +22,33 @@ public class Box {
 	@Id
 	@GeneratedValue(generator = "BOX_SEQ")
 	@Column(name = "ID")
+	
 	private Long id;
 	@Column(name = "CODIGO", nullable = false)
+	
 	private String codigo;
 	@Enumerated(EnumType.STRING)
+	
 	@Column(name = "TIPO_BOX", nullable = false)
 	private TipoBox tipoBox;
 	
+	@Column(name="NOME")
+	private String nome;
+
+	/**
+	 * @return the nome
+	 */
+	public String getNome() {
+		return nome;
+	}
+
+	/**
+	 * @param nome the nome to set
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
 	public Long getId() {
 		return id;
 	}

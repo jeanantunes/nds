@@ -282,7 +282,7 @@ fieldset label {
 							<li><a href="Expedicao/painel_monitor_nfe.htm">Painel
 									Monitor NF-e</a>
 							</li>
-							<li><a href="Expedicao/resumo_expedicao_nota.htm">Resumo
+							<li><a href="expedicao/resumo">Resumo
 									de Expedição</a>
 							</li>
 							<li><a href="Expedicao/tratamento_arquivo_retorno_nfe.htm">Integração
