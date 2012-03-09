@@ -695,6 +695,29 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
+	 * Exclui o item selecionado em recebimento Fisico
+	 * @param recebimentoFisicoDTO
+	 */
+	@Post
+	public void excluirItens(RecebimentoFisicoDTO recebimentoFisicoDTO){		
+		recebimentoFisicoService.excluirItem(recebimentoFisicoDTO);
+	}
+	
+	/**
+	 * confirmaçao de recebimento fisico
+	 * @param notaFiscal
+	 * @param itensRecebimento
+	 */
+	@Post
+	public void confirmarRecebimentoFisico(NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> itensRecebimento){
+		//TODO: capturar usuario logado
+		Usuario usuarioLogado = new Usuario();
+		usuarioLogado.setId(1L);
+		
+		recebimentoFisicoService.confirmarRecebimentoFisico(usuarioLogado, notaFiscal, itensRecebimento, new Date());
+	}
+	
+	/**
 	 * Retorna valor BigDecimal.
 	 * 
 	 * @param valor
