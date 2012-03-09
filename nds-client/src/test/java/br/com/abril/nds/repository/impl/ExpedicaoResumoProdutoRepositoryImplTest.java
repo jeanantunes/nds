@@ -1,0 +1,212 @@
+package br.com.abril.nds.repository.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+
+import br.com.abril.nds.dto.ExpedicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
+import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ExpedicaoRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+
+public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
+	
+	@Autowired
+	private ExpedicaoRepository expedicaoRepository;
+	
+	private Date dataLancamento = Fixture.criarData(23, Calendar.FEBRUARY, 2012);
+	
+	@Before
+	public void setup() {
+		
+		TipoProduto tipoRevista = Fixture.tipoRevista();
+		save(tipoRevista);
+		
+		CFOP cfop = Fixture.cfop5102();
+		save(cfop);
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(usuario);
+		
+		TipoMovimento tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
+		save(tipoMovimentoSobraDe);
+		
+		TipoMovimento tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
+		save(tipoMovimentoFaltDe);
+		
+		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
+		save(tipoMovimentoFaltEM);
+		
+		
+		for(Integer i=1000;i<1010; i++) {
+			
+			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+			save(juridica);
+			
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true);
+			save(fornecedor);
+			
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			produto.addFornecedor(fornecedor);
+			save(produto); 
+			
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+			save(produtoEdicao);
+			
+			
+			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+			save(tipoNotaFiscal);
+
+			
+			List<ItemRecebimentoFisico> listaRecebimentos = new ArrayList<ItemRecebimentoFisico>() ;
+			
+			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigDecimal.ZERO);
+			save(estoque);
+			
+			for(int x= 1; x< 3 ;x++){
+				
+				NotaFiscalFornecedor notaFiscalFornecedor = Fixture
+						.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
+				save(notaFiscalFornecedor);
+				
+				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+						produtoEdicao, usuario, notaFiscalFornecedor, 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						new BigDecimal(i));					
+				save(itemNotaFiscal);
+				
+				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+					notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+				save(recebimentoFisico);
+				
+				ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
+						itemNotaFiscal, recebimentoFisico, new BigDecimal(i+x));
+				save(itemFisico);
+				
+				
+				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				
+				save(movimentoEstoque);
+				
+				Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque);
+				save(diferenca);
+				
+				itemFisico.setDiferenca(diferenca);
+				update(itemFisico);
+				
+				listaRecebimentos.add(itemFisico);
+			}
+			
+			Expedicao expedicao = Fixture.expedicao(usuario,Fixture.criarData(1, 3, 2010));
+			save(expedicao);
+			
+			Lancamento lancamento = Fixture.lancamentos(TipoLancamento.LANCAMENTO, produtoEdicao,
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					new BigDecimal(100), 
+					StatusLancamento.EXPEDIDO, 
+					listaRecebimentos);
+			lancamento.setReparte(new BigDecimal(10));
+			lancamento.setExpedicao(expedicao);
+			save(lancamento);
+		
+			Estudo estudo = new Estudo();
+			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
+			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setQtdeReparte(new BigDecimal(i));
+			save(estudo);
+		}
+		
+	}
+	
+	@Test 
+	@DirtiesContext
+	public void consultarResumoExpedicaoPorProdutos(){
+		
+		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
+		filtro.setDataLancamento(dataLancamento);
+		filtro.setPaginacao(getPaginacaoVO(1, 10, Ordenacao.DESC));
+		
+		List<ExpedicaoDTO> lista = expedicaoRepository.obterResumoExpedicaoPorProduto(filtro);
+		
+		Assert.assertNotNull(lista);
+		
+		Assert.assertTrue(!lista.isEmpty());
+	
+	}
+		
+	@Test
+	@DirtiesContext
+	public void consultarQuantidadeResumoExpedicaoPorProdutos(){
+		
+		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
+		filtro.setDataLancamento(dataLancamento);
+		filtro.setPaginacao(getPaginacaoVO(1, 10, Ordenacao.DESC));
+		
+		Long quantidade =  expedicaoRepository.obterQuantidadeResumoExpedicaoPorProduto(filtro);
+		
+		Assert.assertNotNull(quantidade);
+		
+		Assert.assertTrue(quantidade != 0);
+	}
+
+	/**
+	 * Retorna um objeto com  valores de paginação.
+	 * @param paginaAtual
+	 * @param resultadoPorPagina
+	 * @param ordenacao
+	 * @return PaginacaoVO
+	 */
+	private PaginacaoVO getPaginacaoVO(int paginaAtual, int resultadoPorPagina, Ordenacao ordenacao){
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+		
+		paginacao.setOrdenacao(ordenacao);
+		paginacao.setPaginaAtual(paginaAtual);
+		paginacao.setQtdResultadosPorPagina(resultadoPorPagina);
+		
+		return paginacao;
+	}
+	
+}
