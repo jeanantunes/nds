@@ -19,12 +19,14 @@ import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.MovimentoCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
@@ -65,6 +67,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private EstudoRepository estudoRepository;
+	
+	private static final String MOTIVO = "Exclusão diferença";
 	
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
@@ -115,45 +122,61 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
 			
 			if (!diferenca.isAutomatica()){
+				
+				TipoMovimento tipoMovimento = new TipoMovimento();
+				tipoMovimento.setAprovacaoAutomatica(false);
+				tipoMovimento.setDescricao(MOTIVO);
+				
+				switch (diferenca.getTipoDiferenca().getTipoMovimentoEstoque()){
+					case SOBRA_DE:
+						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
+						break;
+					case SOBRA_EM:
+						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
+						break;
+					case FALTA_DE:
+						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
+						break;
+					case FALTA_EM:
+						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_EM);
+						break;
+				}
+				
+				Usuario usuario = new Usuario();
+				usuario.setId(idUsuario);
+				
 				RateioDiferenca rateioDiferenca = 
 						this.rateioDiferencaRepository.obterRateioDiferencaPorDiferenca(idDiferenca);
 				
 				if (rateioDiferenca != null){
 					
-					TipoMovimento tipoMovimento = new TipoMovimento();
-					tipoMovimento.setAprovacaoAutomatica(false);
-					tipoMovimento.setDescricao("desc");
+					if (rateioDiferenca.getCota() == null){
+						throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+					}
 					
-					switch (diferenca.getTipoDiferenca().getTipoMovimentoEstoque()){
-						case SOBRA_DE:
-							tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
-							break;
-						case SOBRA_EM:
-							tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
-							break;
-						case FALTA_DE:
-							tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
-							break;
-						case FALTA_EM:
-							tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_EM);
-							break;
+					if (rateioDiferenca.getEstudoCota() == null){
+						throw new ValidacaoException(TipoMensagem.ERROR, "Estudo Cota não encontrado.");
 					}
 					
 					this.tipoMovimentoRepository.adicionar(tipoMovimento);
 					
-					Usuario usuario = new Usuario();
-					usuario.setId(idUsuario);
-					
 					EstoqueProdutoCota estoqueProdutoCota = 
 							this.estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
 									diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId());
+					
+					if (estoqueProdutoCota == null){
+						throw new ValidacaoException(
+								TipoMensagem.ERROR, 
+								"Estoque Produto Cota não encontrado, parâmetros de busca: idProdutoEdicao: " + diferenca.getProdutoEdicao().getId() + 
+								", idCota: " + rateioDiferenca.getCota().getId());
+					}
 					
 					MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 					movimentoEstoqueCota.setCota(rateioDiferenca.getCota());
 					movimentoEstoqueCota.setQtde(diferenca.getQtde().negate());
 					movimentoEstoqueCota.setDataInclusao(new Date());
 					movimentoEstoqueCota.setAprovadoAutomaticamente(false);
-					movimentoEstoqueCota.setMotivo("Exclusão diferença");
+					movimentoEstoqueCota.setMotivo(MOTIVO);
 					movimentoEstoqueCota.setTipoMovimento(tipoMovimento);
 					movimentoEstoqueCota.setUsuario(usuario);
 					movimentoEstoqueCota.setCota(rateioDiferenca.getCota());
@@ -167,31 +190,52 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 					
-					EstoqueProduto estoqueProduto = 
-							estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(
-									diferenca.getProdutoEdicao().getId());
-					
-					MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-					movimentoEstoque.setAprovadoAutomaticamente(false);
-					movimentoEstoque.setMotivo("Exclusão diferença");
-					movimentoEstoque.setDataInclusao(new Date());
-					movimentoEstoque.setTipoMovimento(tipoMovimento);
-					movimentoEstoque.setUsuario(usuario);
-					movimentoEstoque.setQtde(diferenca.getQtde());
-					movimentoEstoque.setEstoqueProduto(estoqueProduto);
-					movimentoEstoque.setProdutoEdicao(diferenca.getProdutoEdicao());
-					
-					this.movimentoEstoqueRepository.adicionar(movimentoEstoque);
-					
 					EstudoCota estudoCota = rateioDiferenca.getEstudoCota();
 					estudoCota.setQtdeEfetiva(rateioDiferenca.getEstudoCota().getQtdeEfetiva().add(diferenca.getQtde()));
 					this.estudoCotaRepository.alterar(estudoCota);
 					
+					Estudo estudo = estudoCota.getEstudo();
+					
+					if (estudo == null){
+						throw new ValidacaoException(TipoMensagem.ERROR, "Estudo não encontrado.");
+					}
+					
+					estudo.setQtdeReparte(estudoCota.getQtdeEfetiva());
+					
+					this.estudoRepository.alterar(estudo);
 				} else {
 					
 				}
 				
-				//this.diferencaEstoqueRepository.remover(diferenca);
+				EstoqueProduto estoqueProduto = 
+						estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(
+								diferenca.getProdutoEdicao().getId());
+				
+				if (estoqueProduto == null){
+					throw new ValidacaoException(
+							TipoMensagem.ERROR, 
+							"Estoque Produto não encontrado, parâmetros de busca: idProdutoEdicao: " + diferenca.getProdutoEdicao().getId());
+				}
+				
+				estoqueProduto.setQtde(estoqueProduto.getQtde().add(diferenca.getQtde()));
+				
+				this.estoqueProdutoRespository.alterar(estoqueProduto);
+				
+				MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+				movimentoEstoque.setAprovadoAutomaticamente(false);
+				movimentoEstoque.setMotivo(MOTIVO);
+				movimentoEstoque.setDataInclusao(new Date());
+				movimentoEstoque.setTipoMovimento(tipoMovimento);
+				movimentoEstoque.setUsuario(usuario);
+				movimentoEstoque.setQtde(diferenca.getQtde());
+				movimentoEstoque.setEstoqueProduto(estoqueProduto);
+				movimentoEstoque.setProdutoEdicao(diferenca.getProdutoEdicao());
+				
+				this.movimentoEstoqueRepository.adicionar(movimentoEstoque);
+				
+				this.rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
+				
+				this.diferencaEstoqueRepository.remover(diferenca);
 			} else {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Diferença com automática não pode ser excluída.");
 			}

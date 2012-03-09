@@ -45,10 +45,11 @@ public class RateioDiferenca {
 	
 	public RateioDiferenca(){}
 	
-	public RateioDiferenca (RateioDiferenca rateioDiferenca, Cota cota) {
+	public RateioDiferenca (RateioDiferenca rateioDiferenca, Cota cota, EstudoCota estudoCota) {
 		this.id = rateioDiferenca.getId();
 		this.qtde = rateioDiferenca.getQtde();
 		this.cota = cota;
+		this.estudoCota = estudoCota;
 	}
 	
 	public Long getId() {
