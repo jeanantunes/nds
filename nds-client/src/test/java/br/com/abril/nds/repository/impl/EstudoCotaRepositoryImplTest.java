@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -62,12 +63,14 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	private Cota criarCota() {
+		Box box300Reparte = Fixture.boxReparte300();
+		save(box300Reparte);
 		
 		Pessoa pessoa = Fixture.juridicaFC();
 		
 		save(pessoa);
 		
-		Cota cota = Fixture.cota(NUMERO_COTA, pessoa, SituacaoCadastro.ATIVO);
+		Cota cota = Fixture.cota(NUMERO_COTA, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 		
 		save(cota);
 		

@@ -9,6 +9,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -173,6 +175,10 @@ public class Fixture {
 	public static TipoFornecedor tipoFornecedorOutros() {
 		return tipoFornecedor("Fornecedor Outros", GrupoFornecedor.OUTROS);
 	}
+	
+	public static Box boxReparte300() {
+		return criarBox("300", "Box 300", TipoBox.REPARTE);
+	}
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -312,7 +318,7 @@ public class Fixture {
 	}
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,
-			SituacaoCadastro situacaoCadastro) {
+			SituacaoCadastro situacaoCadastro, Box box) {
 
 		Cota cota = new Cota();
 
@@ -321,6 +327,8 @@ public class Fixture {
 		cota.setPessoa(pessoa);
 
 		cota.setSituacaoCadastro(situacaoCadastro);
+		
+		cota.setBox(box);
 
 		return cota;
 	}
@@ -667,6 +675,14 @@ public class Fixture {
 		}
 		
 		return lancamento;
+	}
+	
+	public static Box criarBox(String codigo, String nome, TipoBox tipoBox) {
+		Box box = new Box();
+		box.setCodigo(codigo);
+		box.setNome(nome);
+		box.setTipoBox(tipoBox);
+		return box;
 	}
 
 }

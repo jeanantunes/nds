@@ -14,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -49,6 +50,9 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 	
 	@Before
 	public void setUp(){
+		Box box300Reparte = Fixture.boxReparte300();
+		save(box300Reparte);
+		
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
@@ -111,7 +115,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		diferenca.setAutomatica(true);
 		save(diferenca);
 		
-		Cota cota = Fixture.cota(1, pessoaJuridica, SituacaoCadastro.ATIVO);
+		Cota cota = Fixture.cota(1, pessoaJuridica, SituacaoCadastro.ATIVO, box300Reparte);
 		save(cota);
 		
 		Estudo estudo = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);

@@ -14,6 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -109,6 +110,7 @@ public class DataLoader {
 	private static MovimentoEstoque movimentoRecFisicoVeja1;
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
+	private static Box box300Reparte;
 
 
 	public static void main(String[] args) {
@@ -147,6 +149,7 @@ public class DataLoader {
 		criarParametrosSistema(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
+		criarBoxes(session);
 		criarFornecedores(session);
 		criarDiasDistribuicaoFornecedores(session);
 		criarCotas(session);
@@ -233,6 +236,11 @@ public class DataLoader {
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+	}
+
+	private static void criarBoxes(Session session) {
+		box300Reparte = Fixture.boxReparte300();
+		save(session, box300Reparte);
 	}
 
 	private static void criarTiposFornecedores(Session session) {
@@ -632,7 +640,7 @@ public class DataLoader {
 				"manoel@mail.com", "Manoel da Silva");
 		save(session, manoel);
 		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO);
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box300Reparte);
 		save(session, cotaManoel);
 	}
 
