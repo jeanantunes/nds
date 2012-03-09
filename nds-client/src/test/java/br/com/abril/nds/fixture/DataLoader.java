@@ -165,7 +165,7 @@ public class DataLoader {
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
 		criarMovimentosEstoque(session);
-		criarLancamentos(session,StatusLancamento.EXPEDIDO);
+		criarLancamentos(session);
 		criarEstudos(session);
 		criarMovimentosEstoqueCota(session);
 		
@@ -311,7 +311,7 @@ public class DataLoader {
 		session.save(estudoVeja1);
 	}
 
-	private static void criarLancamentos(Session session, StatusLancamento statusLancamento) {
+	private static void criarLancamentos(Session session) {
 		lancamentoVeja1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -319,7 +319,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
-						new Date(), BigDecimal.TEN, statusLancamento,
+						new Date(), BigDecimal.TEN,  StatusLancamento.RECEBIDO,
 						itemRecebimentoFisico);
 		session.save(lancamentoVeja1);
 		
@@ -343,7 +343,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
-								new Date(), new BigDecimal(100), statusLancamento,
+								new Date(), new BigDecimal(100), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoSuper1);
 		
@@ -354,7 +354,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1000), statusLancamento,
+								new Date(), new BigDecimal(1000), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoCapricho1);
 		
@@ -365,7 +365,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
-								new Date(), new BigDecimal(500), statusLancamento,
+								new Date(), new BigDecimal(500), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoInfoExame1);
 		
@@ -376,7 +376,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1500), statusLancamento,
+								new Date(), new BigDecimal(1500), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoQuatroRodas1);
 		
@@ -387,7 +387,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBoaForma1.getPeb()), new Date(),
-								new Date(), new BigDecimal(190), statusLancamento,
+								new Date(), new BigDecimal(190), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoBoaForma1);
 		
@@ -398,7 +398,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBravo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(250), statusLancamento,
+								new Date(), new BigDecimal(250), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoBravo1);
 		
@@ -409,7 +409,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCaras1.getPeb()), new Date(),
-								new Date(), new BigDecimal(290), statusLancamento,
+								new Date(), new BigDecimal(290), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoBoaCaras1);
 		
@@ -420,7 +420,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(350), statusLancamento,
+								new Date(), new BigDecimal(350), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoCasaClaudia1);
 		
@@ -431,7 +431,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(400), statusLancamento,
+								new Date(), new BigDecimal(400), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoClaudia1);
 		
@@ -442,7 +442,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoContigo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(185), statusLancamento,
+								new Date(), new BigDecimal(185), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoContigo1);
 		
@@ -453,7 +453,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoManequim1.getPeb()), new Date(),
-								new Date(), new BigDecimal(225), statusLancamento,
+								new Date(), new BigDecimal(225), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoManequim1);
 		
@@ -464,7 +464,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoNatGeo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(75), statusLancamento,
+								new Date(), new BigDecimal(75), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoNatGeo1);
 		
@@ -475,7 +475,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoPlacar1.getPeb()), new Date(),
-								new Date(), new BigDecimal(195), statusLancamento,
+								new Date(), new BigDecimal(195), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoPlacar1);
 	}
