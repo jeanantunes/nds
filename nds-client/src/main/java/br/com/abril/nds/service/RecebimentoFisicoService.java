@@ -20,8 +20,6 @@ public interface RecebimentoFisicoService {
 	 
 	 List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
 	 
-	 void excluirItem(RecebimentoFisicoDTO recebimentoFisicoDTO);
-	 
 	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual);
 	 
 }

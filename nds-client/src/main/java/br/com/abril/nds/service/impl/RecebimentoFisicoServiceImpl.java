@@ -135,6 +135,37 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		return pessoaJuridicaRepository.buscarPorCnpj(cnpj);
 	}
 	
+	
+	private void verificarExclusao(Long idNotaFiscal, List<RecebimentoFisicoDTO> listaItensNotaAtual){
+		
+		List<RecebimentoFisicoDTO> listaExclusao = new ArrayList<RecebimentoFisicoDTO>();
+		List<RecebimentoFisicoDTO> listaItemRecebimentoFisicoBD = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);
+		
+		boolean indItemEncontrado = false;
+		
+		for(RecebimentoFisicoDTO recebimentoBD : listaItemRecebimentoFisicoBD){
+			
+			indItemEncontrado = false;
+			
+			for(RecebimentoFisicoDTO recebimentoAtual : listaItensNotaAtual){
+				
+				if(recebimentoBD.getIdItemRecebimentoFisico().equals(recebimentoAtual.getIdItemRecebimentoFisico())){	
+					indItemEncontrado = true;
+					break;
+				}
+			}
+			
+			if(!indItemEncontrado) {
+				listaExclusao.add(recebimentoBD);			
+			}
+		}
+		
+		for(RecebimentoFisicoDTO recebimentoDTO : listaExclusao){
+			excluirItem(recebimentoDTO);
+		}
+		
+	}
+	
 	/**
 	 * Atualiza os dados de uma nota fiscal existente.
 	 * 
@@ -222,14 +253,15 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		if(notaFiscal.getId() != null) {
 			
+			verificarExclusao(notaFiscal.getId(), listaItensNota);
+			
 			atualizarDadosNotaFiscalExistente(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 			
 		} else {
 			
 			notaFiscal.setDataExpedicao(dataAtual);
 			
-			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
-			
+			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);			
 		}		
 	}
 	
@@ -401,27 +433,37 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	/**
 	 * Exclui Itens da Nota e RecebimentoFisico
-	 */
-	@Transactional
-	public void excluirItem(RecebimentoFisicoDTO recebimentoFisicoDTO){
+	 */	
+	private void excluirItem(RecebimentoFisicoDTO recebimentoFisicoDTO){
 		
 		if(recebimentoFisicoDTO != null && recebimentoFisicoDTO.getIdItemRecebimentoFisico() != null 
 				&& recebimentoFisicoDTO.getIdItemNota() != null){
-			
-			if(recebimentoFisicoDTO.getOrigemItemNota().equals(Origem.MANUAL)){
+			if(recebimentoFisicoDTO.getOrigemItemNota() != null){
+				if(recebimentoFisicoDTO.getOrigemItemNota().equals(Origem.MANUAL)){
 					
-					excluirItemRecebimentoFisico(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+					excluirItemNotaFiscal(recebimentoFisicoDTO.getIdItemNota());	
 					
-					excluirItemNotaFiscal(recebimentoFisicoDTO.getIdItemNota());				
-			}else{				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal Interface não pode ser excluida");
-			}
+					excluirItemRecebimentoFisico(recebimentoFisicoDTO.getIdItemRecebimentoFisico(), recebimentoFisicoDTO);
+					
+					excluirLancamento(recebimentoFisicoDTO);
+									
+				}else{				
+					throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal Interface não pode ser excluida");
+				}
+			}	
 		
 		}else{
 			throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal não existente");
 		}
 	}
 	
+	private void excluirLancamento(RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		Lancamento lancamento = lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(recebimentoFisicoDTO.getDataLancamento(), recebimentoFisicoDTO.getTipoLancamento(), recebimentoFisicoDTO.getIdProdutoEdicao());	
+		if(lancamento != null){
+			lancamentoRepository.remover(lancamento);
+		}
+	}
+
 	/**
 	 * Confirmação de RecebimentoFisico
 	 * @param usuarioLogado
@@ -491,9 +533,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 */
 	private void excluirItemNotaFiscal(Long idItemNota) {
 		
-		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
-		
-		itemNotaFiscal.setId(idItemNota);	
+		ItemNotaFiscal itemNotaFiscal = itemNotaFiscalRepository.buscarPorId(idItemNota);
 		
 		itemNotaFiscalRepository.remover(itemNotaFiscal);		
 	}
@@ -502,7 +542,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * Exclui Item Recebimento Fisico
 	 * @param idItemRecebimentoFisico
 	 */
-	private void excluirItemRecebimentoFisico(Long idItemRecebimentoFisico) {
+	private void excluirItemRecebimentoFisico(Long idItemRecebimentoFisico, RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
 		
 		itemRecebimentoFisico.setId(idItemRecebimentoFisico);

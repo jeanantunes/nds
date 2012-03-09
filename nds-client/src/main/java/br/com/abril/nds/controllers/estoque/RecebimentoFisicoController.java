@@ -694,15 +694,7 @@ public class RecebimentoFisicoController {
 	
 	}
 	
-	/**
-	 * Exclui o item selecionado em recebimento Fisico
-	 * @param recebimentoFisicoDTO
-	 */
-	@Post
-	public void excluirItens(RecebimentoFisicoDTO recebimentoFisicoDTO){		
-		recebimentoFisicoService.excluirItem(recebimentoFisicoDTO);
-	}
-	
+		
 	/**
 	 * confirmaçao de recebimento fisico
 	 * @param notaFiscal
