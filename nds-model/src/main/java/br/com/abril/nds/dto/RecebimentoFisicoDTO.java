@@ -34,7 +34,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private TipoDiferenca tipoDiferenca;
 	
-	private Origem origem;
+	private Origem origemItemNota;
 	
 	private Long idProdutoEdicao;
 			
@@ -54,23 +54,27 @@ public class RecebimentoFisicoDTO implements Serializable {
 			Long idItemRecebimentoFisico,
 			String codigoProduto, 
 			String nomeProduto, 
-			Long edicao, 
+			Long edicao,
+			Long idProdutoEdicao,
 			BigDecimal precoCapa, 
 			BigDecimal repartePrevisto, 
 			BigDecimal qtdFisico, 
 			BigDecimal diferenca, 
-			TipoDiferenca tipoDiferenca){
+			TipoDiferenca tipoDiferenca,
+			Origem origemItemNota){
 		
 		this.idItemNota = idItemNota;
 		this.idItemRecebimentoFisico = idItemRecebimentoFisico;
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.edicao = edicao;
+		this.idProdutoEdicao = idProdutoEdicao;
 		this.precoCapa = precoCapa;
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
 		this.diferenca = diferenca;
-		this.tipoDiferenca = tipoDiferenca;	
+		this.tipoDiferenca = tipoDiferenca;
+		this.origemItemNota = origemItemNota;
 		
 	}
 
@@ -161,13 +165,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
 		this.tipoDiferenca = tipoDiferenca;
 	}
+	
 
-	public Origem getOrigem() {
-		return origem;
+	public Origem getOrigemItemNota() {
+		return origemItemNota;
 	}
 
-	public void setOrigem(Origem origem) {
-		this.origem = origem;
+	public void setOrigemItemNota(Origem origemItemNota) {
+		this.origemItemNota = origemItemNota;
 	}
 
 	public Long getIdProdutoEdicao() {
