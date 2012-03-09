@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -37,6 +38,7 @@ import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
@@ -236,6 +238,8 @@ public class DataLoader {
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+		
+		carregarBoletos(session);
 	}
 
 	private static void criarBoxes(Session session) {
@@ -734,12 +738,13 @@ public class DataLoader {
 		}
 	}
 	
+	
 	/**
 	 * Gera massa de dados para o teste de Resumo de Expedicao agrupadas por produto
 	 * @param session
 	 */
 	private static void carregarDadosParaResumoExpedicao(Session session){
-		
+
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		session.save(tipoRevista);
 		
@@ -842,6 +847,131 @@ public class DataLoader {
 			estudo.setQtdeReparte(new BigDecimal(i));
 			session.save(estudo);
 		}
+	}
+	
+	//FINANCEIRO - CONSULTA BOLETOS
+	private static void carregarBoletos(Session session) {
+		
+		PessoaJuridica juridicaAcme = Fixture.pessoaJuridica("Acme",
+				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
+				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
+		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
+				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
+		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
+				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+		save(session, manoel);
+
+
+		Cota cotaManoel = Fixture.cota(1000, manoel, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaManoel);
+		
+		Cota cotaJuridicaAcme = Fixture.cota(2000, juridicaAcme, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaAcme);
+		
+		Cota cotaJuridicaDinap = Fixture.cota(3000, juridicaDinap, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaDinap);
+		
+		Cota cotaJuridicaFc = Fixture.cota(4000, juridicaFc, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaFc);
+		
+		Cota cotaJuridicaDistrib = Fixture.cota(5000, juridicaDistrib, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaDistrib);
+		
+		Boleto boleto0 = Fixture.boleto(10000,
+				                       new Date(), 
+				                       new Date(), 
+				                       new Date(), 
+				                       "ENCARGOS", 
+				                       558.90, 
+				                       "TIPO_BAIXA", 
+				                       "ACAO", 
+				                       StatusCobranca.PAGO,
+				                       cotaManoel);
+		
+		Boleto boleto1 = Fixture.boleto(20000,
+                                        new Date(), 
+                                        new Date(), 
+                                        new Date(), 
+                                        "ENCARGOS", 
+                                        100.35, 
+                                        "TIPO_BAIXA",
+                                        "ACAO", 
+                                        StatusCobranca.PAGO,
+                                        cotaJuridicaAcme);
+		
+		Boleto boleto2 = Fixture.boleto(30000,
+                						new Date(), 
+                						new Date(), 
+                						new Date(), 
+                						"ENCARGOS", 
+                						1005.80, 
+                						"TIPO_BAIXA",
+                						"ACAO", 
+                						StatusCobranca.PAGO,
+                						cotaJuridicaDinap);
+		
+		Boleto boleto3 = Fixture.boleto(40000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                200.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.PAGO,
+						                cotaJuridicaFc);
+		
+		Boleto boleto4 = Fixture.boleto(50000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                3500.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaJuridicaDistrib);
+		
+		Boleto boleto5 = Fixture.boleto(60000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                50.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaManoel);
+		
+		Boleto boleto6 = Fixture.boleto(70000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                1002.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaJuridicaAcme);
+		
+		Boleto boleto7 = Fixture.boleto(80000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                1000.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaJuridicaAcme);
+		
+	    save(session,boleto0,boleto1,boleto2,boleto3,boleto4,boleto5,boleto6,boleto7);    
+	    
 	}
 	
 }
