@@ -9,11 +9,63 @@
 				modal : true
 			});
 		};
+		
+		function popularGrid() {
+			
+			$("#telefonesGrid").flexigrid({
+				//preProcess: processarResultado,
+				url : '<c:url value="/cadastro/telefone/pesquisarTelefones" />',
+				dataType : 'json',
+				colModel : [  {
+					display : 'Tipo Telefone',
+					name : 'tipotelefone',
+					width : 165,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'DDD',
+					name : 'ddd',
+					width : 100,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Número',
+					name : 'numero',
+					width : 150,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Ramal',
+					name : 'ramal',
+					width : 100,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Principal',
+					name : 'principal',
+					width : 100,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Ação',
+					name : 'acao',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}],
+				width : 770,
+				height : 150
+			});
+		}
+		
+		$(function(){
+			popularGrid();
+		});
 	</script>
 </head>
 
 <div class="container">
-	<div id="manutencaoTelefones" style="display:none" title="Cadastro Telefones">
+	<div id="manutencaoTelefones" style="display:none" title="Telefones">
 		<table width="280" cellpadding="2" cellspacing="2" style="text-align:left ">
 			<tr>
 				<td width="72">Tipo:</td>
@@ -35,16 +87,9 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
-					<div id="divOpcao1" style="display:none;">
-						<div style="width:80px; float:left;">Ramal:</div>
-						<input type="text" style="width:40px; float:left;" />
-					</div>
-					
-					<div id="divOpcao2" style="display:none;">
-						<div style="width:80px; float:left;;">ID:</div>
-						<input type="text" style="width:40px; float:left;" />
-					</div>
+				<td>Ramal: </td>
+				<td>
+					<input type="text" style="width:40px; float:left;" />
 				</td>
 			</tr>
 			<tr>
@@ -57,7 +102,7 @@
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td><span class="bt_add"><a href="javascript:;" onclick="popup();">Incluir Novo</a></span></td>
+				<td><span class="bt_add"><a href="javascript:;" onclick="alert('ela me bagunça');">Incluir Novo</a></span></td>
 			</tr>
 		</table>
 		
@@ -67,6 +112,6 @@
 		
 		<br />
 		
-		<table class="telefonesGrid"></table>
+		<table id="telefonesGrid"></table>
 	</div>
 </div>
