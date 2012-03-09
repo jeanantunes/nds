@@ -121,7 +121,7 @@ public class FuroProdutoController {
 		
 		List<Produto> listaProdutoEdicao = null;
 		try {
-			listaProdutoEdicao = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
+			listaProdutoEdicao = this.produtoService.obterProdutoLikeNomeProduto(nomeProduto);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException){
 				throw e;

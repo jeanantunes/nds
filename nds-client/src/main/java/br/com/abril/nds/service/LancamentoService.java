@@ -31,6 +31,8 @@ public interface LancamentoService {
 	 */
 	void confirmarExpedicao(Long idLancamento, Long idUsuario);
 	
+	void confirmarExpedicoes(List<Long> idLancamentos, Long idUsuario);
+	
 	Lancamento obterPorId(Long idLancamento);
 }
  

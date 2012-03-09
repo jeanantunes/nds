@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -31,32 +32,35 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 
 	@Before
 	public void setUp() {
-		Fornecedor dinap = Fixture.fornecedorDinap();
-		getSession().save(dinap);
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
+		
+		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		save(dinap);
 		
 		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
-		getSession().save(tipoProduto);
+		save(tipoProduto);
 		
 		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		produto.addFornecedor(dinap);
-		getSession().save(produto);
+		save(produto);
 
 		ProdutoEdicao produtoEdicao =
 				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
-		getSession().save(produtoEdicao);
+		save(produtoEdicao);
 		
 		Lancamento lancamento = 
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, 
 						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
-		getSession().save(lancamento);
+		save(lancamento);
 		
 		Estudo estudo = 
 				Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);
-		getSession().save(estudo);
+		save(estudo);
 		
 		ParametroSistema parametroSistema = 
-				Fixture.parametroSistema(1L, TipoParametroSistema.PATH_IMAGENS_CAPA, "");
-		getSession().save(parametroSistema);
+				Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA, "");
+		save(parametroSistema);
 	}
 	
 	@Test
@@ -81,11 +85,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 				produtoEdicaoRepository.obterProdutoEdicaoPorCodigoEdicaoDataLancamento("1", null, 1L, new Date());
 		
 		Assert.assertTrue(furoProdutoDTO != null);
-	}
-
-	protected void flushClear() {
-		getSession().flush();
-		getSession().clear();
 	}
 	
 	@Test

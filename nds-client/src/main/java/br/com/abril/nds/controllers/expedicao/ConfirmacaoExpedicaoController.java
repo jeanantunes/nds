@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +8,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -20,7 +23,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -35,7 +38,6 @@ public class ConfirmacaoExpedicaoController {
 		
 		private FornecedorService fornecedorService;
 		private LancamentoService lancamentoService;
-		private MovimentoService movimentoService;
 
 		protected static final String SUCESSO = "SUCCESS";
 		protected static final String FALHA = "ERROR";
@@ -43,8 +45,11 @@ public class ConfirmacaoExpedicaoController {
 		
 		protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a apesquisa realizada.";
 		protected static final String DATA_INVALIDA = "A data informada é inválida";
-
-		//private static final Logger LOG = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
+		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
+		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
+		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro ao confirmar expedições!";
+		
+		private static final Logger LOG = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
 		
 		/**
 		 * Construtor
@@ -58,29 +63,23 @@ public class ConfirmacaoExpedicaoController {
 			this.result = result;
 			this.fornecedorService = fornecedorService;
 			this.lancamentoService = lancamentoService;
-			this.movimentoService = movimentoService;
 			this.session = session;
-			this.inicializarTela();
 		}
 		
-		public void inicializarTela() {
+		public void index() {
 			gerarListaFornecedores();
 			gerarDataLancamento();
+			session.setAttribute("selecionados", null);
+			result.forwardTo(ConfirmacaoExpedicaoController.class).confirmacaoExpedicao();
 		}
+				
+		
 		
 		@SuppressWarnings("unchecked")
-		public List<Long> getSelecionados() {
-			return (List<Long>) session.getAttribute("selecionados");
-		}
-		
-		public void setSelecionados(List<Long> selecionados) {
-			session.setAttribute("selecionados", selecionados);
-		}
-		
 		@Post
 		public void selecionarLancamento(Long idLancamento, Boolean selecionado) throws Exception {
 			
-			List<Long> selecionados = getSelecionados();
+			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
 			if(selecionados == null) {
 				
@@ -95,7 +94,41 @@ public class ConfirmacaoExpedicaoController {
 				selecionados.remove(index);
 			}
 			
-			setSelecionados(selecionados);
+			session.setAttribute("selecionados", selecionados);
+			
+			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Post
+		public void selecionarTodos(Boolean selecionado) throws Exception {
+			
+			if(selecionado==false) {
+				session.setAttribute("selecionados", null);
+			} else {
+			
+				Date date = (Date) session.getAttribute("date");
+				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
+				Boolean estudo = (Boolean) session.getAttribute("estudo");
+				
+				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
+						lancamentoService.obterLancamentosNaoExpedidos(null, date, idFornecedor, estudo);
+				
+				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
+				
+				if(selecionados==null) {
+					selecionados = new ArrayList<Long>();
+				}
+				
+				for ( LancamentoNaoExpedidoDTO lancamento : listaExpedicoes ) {
+									
+					selecionados.add(lancamento.getIdLancamento());
+				}
+				
+				session.setAttribute("selecionados", selecionados);
+			}
+			
+			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
 		/**
@@ -105,17 +138,59 @@ public class ConfirmacaoExpedicaoController {
 		}
 		
 		@SuppressWarnings("unchecked")
-		public void confirmarExpedicao(){
+		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
+				String sortorder, Long idFornecedor, 
+				String dtLancamento, Boolean estudo, Boolean change){
+			
+			String status = SUCESSO;
+			
+			List<String> mensagens = new ArrayList<String>();
 			
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
-			for( Long idLancamento:selecionados ) {		
-				lancamentoService.confirmarExpedicao(idLancamento, getUsuario().getId());
+			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
+		
+			try {
+				
+				if(selecionados==null  || selecionados.isEmpty()) {
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, NENHUM_REGISTRO_SELECIONADO));
+				} 
+				
+				lancamentoService.confirmarExpedicoes(selecionados,getUsuario().getId());
+				
+				grid = gerarGrid(
+						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+				
+			} catch(ValidacaoException e) {
+				
+				mensagens = e.getValidacao().getListaMensagens();
+				status=e.getValidacao().getTipoMensagem().name();
+								
+			}catch(Exception e) {
+				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
+				status=TipoMensagem.ERROR.name();
 			}
+			
+			if(grid==null) {
+				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
+			}
+			
+			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);	
+			
+			Object[] retorno = new Object[3];
+			retorno[0] = grid;
+			retorno[1] = mensagens;
+			retorno[2] = status;
+			
+			
+			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
 		
 		public Usuario getUsuario() {
-			return null;
+			//TODO getUsuario
+			Usuario usuario = new Usuario();
+			usuario.setId(1L);
+			return usuario;
 		}
 		
 		/**
@@ -145,23 +220,63 @@ public class ConfirmacaoExpedicaoController {
 		 * @param idFornecedor - código do fornecedor
 		 * @throws Exception 
 		 */
+		@SuppressWarnings("unchecked")
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
-						String dtLancamento, Boolean estudo){
+						String dtLancamento, Boolean estudo, String ultimaPesquisa){
 			
-			PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+			String status= SUCESSO;
 			
-			String status = SUCESSO;
+			boolean isNewSearch = !ultimaPesquisa.equals((String)session.getAttribute("ultimaPesquisa"));
+			
+			if(isNewSearch) {				
+				session.setAttribute("selecionados", null);
+				session.setAttribute("ultimaPesquisa", ultimaPesquisa);				
+			}			
 			
 			List<String> mensagens = new ArrayList<String>();
 			
 			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
 			
+			try {
+				grid = gerarGrid(
+						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+			}catch(ValidacaoException e) {
+				mensagens = e.getValidacao().getListaMensagens();
+				status=e.getValidacao().getTipoMensagem().name();
+				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
+			}
+			
+			if (isNewSearch) {
+				mensagens = new ArrayList<String>();
+			}
+			
+			Object[] retorno = new Object[3];
+			retorno[0] = grid;
+			retorno[1] = mensagens;
+			retorno[2] = status;
+			
+			result.use(Results.json()).withoutRoot().from(retorno).serialize();						
+		}	
+		
+		@SuppressWarnings("unchecked")		
+		public TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> gerarGrid( Integer page, Integer rp, String sortname, 
+				String sortorder, Long idFornecedor, 
+				String dtLancamento, Boolean estudo){
+			
+			PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
+						
+			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
+			
 			Date date = DateUtil.parseData(dtLancamento, Constantes.DATE_PATTERN_PT_BR);
 			
+			session.setAttribute("paginacaoVO",paginacaoVO);
+			session.setAttribute("date",date);
+			session.setAttribute("idFornecedor",idFornecedor);
+			session.setAttribute("estudo",estudo);
+			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				mensagens.add(DATA_INVALIDA);
-				status = FALHA;
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
@@ -171,7 +286,7 @@ public class ConfirmacaoExpedicaoController {
 				
 				List<CellModelKeyValue<LancamentoNaoExpedidoDTO>> listaCelula = new LinkedList<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 				
-				List<Long> selecionados = getSelecionados();
+				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 				
 				for(LancamentoNaoExpedidoDTO expedicao : listaExpedicoes) {						
 				
@@ -183,7 +298,7 @@ public class ConfirmacaoExpedicaoController {
 				}
 				
 				if(listaExpedicoes.isEmpty()) {
-					mensagens.add(MSG_PESQUISA_SEM_RESULTADO);
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
 				}
 							
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
@@ -193,14 +308,16 @@ public class ConfirmacaoExpedicaoController {
 				grid.setRows(listaCelula);
 				
 			}
+			return grid;
+		}
+		
+		private class Retorno {
+			private List<String> mensagens;
+			private TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid;
+			
+			public Retorno(List<String> mensagens, TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid) {
 				
-			Object[] retorno = new Object[3];
-			retorno[0] = status;
-			retorno[1] = mensagens;
-			retorno[2] = grid;
-			
-			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
-			
-		}	
+			}
+		}
 		
 	}
