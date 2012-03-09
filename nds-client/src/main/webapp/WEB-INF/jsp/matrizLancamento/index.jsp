@@ -367,6 +367,10 @@ function popup() {
 					dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 					row.cell.dataMatrizDistrib = dataDistrib;
 					row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck($(\'#selRep\'));" />';
+				} else {
+					var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
+					row.cell.dataMatrizDistrib = dataDistrib;
+					row.cell.reprogramar='<input type="checkbox" name="checkgroup" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
 				}
 				if (row.cell.semFisico || row.cell.cancelamentoGD || row.cell.furo ) {
 					linhasDestacadas.push(i+1);

@@ -76,12 +76,16 @@ function mostra_div(p, valor) {
 function checkAll(todos, checkgroupName) {
 	if(todos.checked == false) {
 		$("input[name=" + checkgroupName + "]").each(function(){
-			$(this).uncheck();
+			if (!$(this).is(':disabled')) {
+				$(this).uncheck();
+			}
 		});
 	}		
 	else {										
 		$("input[name=" + checkgroupName + "]").each(function(){
-			$(this).check();
+			if (!$(this).is(':disabled')) {
+				$(this).check();
+			}
 		});
 	}	
 }
