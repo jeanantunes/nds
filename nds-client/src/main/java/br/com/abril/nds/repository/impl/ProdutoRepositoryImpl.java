@@ -8,9 +8,18 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.repository.ProdutoRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados da entidade 
+ * {@link br.com.abril.nds.model.cadastro.Produto}
+ * 
+ * @author Discover Technology
+ */
 @Repository
 public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> implements ProdutoRepository {
 
+	/**
+	 * Construtor padrão.
+	 */
 	public ProdutoRepositoryImpl() {
 		super(Produto.class);
 	}

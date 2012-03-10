@@ -49,6 +49,12 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.view.Results;
 
+/**
+ * Classe responsável pelo controle das ações referentes às
+ * telas de consulta de diferenças e lançamento de diferenças.
+ * 
+ * @author Discover Technology
+ */
 @Resource
 @Path("/estoque/diferenca")
 public class DiferencaEstoqueController {

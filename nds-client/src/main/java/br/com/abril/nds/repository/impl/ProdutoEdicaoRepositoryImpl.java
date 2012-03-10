@@ -12,10 +12,19 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados da entidade 
+ * {@link br.com.abril.nds.model.cadastro.ProdutoEdicao}
+ * 
+ * @author Discover Technology
+ */
 @Repository
 public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdicao, Long> 
 										 implements ProdutoEdicaoRepository {
 
+	/**
+	 * Construtor padrão.
+	 */
 	public ProdutoEdicaoRepositoryImpl() {
 		super(ProdutoEdicao.class);
 	}
