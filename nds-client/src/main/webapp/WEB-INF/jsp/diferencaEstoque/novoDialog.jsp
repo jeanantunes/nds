@@ -93,6 +93,8 @@
 			});
 			
 			$("#gridNovasDiferencas").flexReload();
+
+			$("#effectDialog").hide();
 			
 			$("#dialogNovasDiferencas").dialog({
 				resizable: false,
@@ -126,11 +128,15 @@
 			$.each(resultado.rows, function(index, row) {
 
 				var hiddenId = '<input type="hidden" name="id" value="' + index + '" />';
-				
+
+				var parametroLimparCamposPesquisa = '\'#descricaoProduto' + index + '\', \'#edicao' + index + '\',  function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
+								
 				var inputCodigoProduto = 
-					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" />';
+					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="produto.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" />';
 
 				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true, null, function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
+
+				var parametroAutoCompleteProduto = '\'#descricaoProduto' + index + '\', true';
 
 				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true, obterDadosProduto';
 
@@ -139,7 +145,7 @@
 									+ '</span>';
 
 				var inputDescricaoProduto = 
-					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroPesquisaProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
 
 				var inputNumeroEdicao = 
 					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + '); ultimaLinhaPreenchida=' + index + '" disabled="disabled" />';
@@ -173,12 +179,27 @@
 			
 			var listaDiferencas = obterListaDiferencas();
 
+			var dataMovimento = "dataMovimento=" + $("#datePickerDataMovimento").val();
+
+			var tipoDiferenca = "&tipoDiferenca=" + $("#selectTiposDiferenca").val();
+
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/cadastrarNovasDiferencas' />", 
-				listaDiferencas,
+				listaDiferencas + dataMovimento + tipoDiferenca,
 				function(result) {
-					$("#dialogNovasDiferencas").dialog("close");
+
+					$("#gridLancamentos").flexOptions({
+						url : '<c:url value="/estoque/diferenca/lancamento/pesquisa/novos" />',
+						params: dataMovimento + tipoDiferenca
+					});
+					
+					$("#gridLancamentos").flexReload();
+					
 					$(".grids").show();
+
+					$("#btnConfirmar").show();
+
+					$("#dialogNovasDiferencas").dialog("close");
 				},
 				tratarErroCadastroNovasDiferencas, 
 				true

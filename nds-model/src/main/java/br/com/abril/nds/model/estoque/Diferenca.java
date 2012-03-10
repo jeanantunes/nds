@@ -36,7 +36,7 @@ public class Diferenca {
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	private Usuario responsavel;
 	
 	@OneToOne(optional = true)
