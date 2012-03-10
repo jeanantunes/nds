@@ -4,7 +4,7 @@
 
 	<div id="effectDialog" 
 		 class="ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 1000; width: 600px;">
+		 style="display: none; position: absolute; z-index: 2000; width: 600px;">
 		 
 		<p>
 			<span style="float: left;" class="ui-icon ui-icon-info"></span>
@@ -12,14 +12,9 @@
 		</p>
 	</div>
 
-	<form id="novoLancamentoDiferencaForm"
-		  name="novoLancamentoDiferencaForm" 
-		  action="estoque/diferenca/lancamento/cadastrarNovasDiferencas" 
-		  method="post">
-		
-		<table id="gridNovasDiferencas" class="gridNovasDiferencas"></table>
+	<table id="gridNovasDiferencas" class="gridNovasDiferencas"></table>
 	
-	</form>
+	<br />
 	
 	<table id="" width="505" border="0" cellspacing="2" cellpadding="2">
 		<tr style="font-size: 11px;">
@@ -76,7 +71,6 @@
 					sortable : false,
 					align : 'center'
 				}],
-				singleSelect: true,
 				width : 610,
 				height : 220,
 				disableSelect : true
@@ -194,10 +188,6 @@
 					});
 					
 					$("#gridLancamentos").flexReload();
-					
-					$(".grids").show();
-
-					$("#btnConfirmar").show();
 
 					$("#dialogNovasDiferencas").dialog("close");
 				},

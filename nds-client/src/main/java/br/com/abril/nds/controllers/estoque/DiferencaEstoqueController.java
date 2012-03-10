@@ -17,6 +17,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DiferencaVO;
+import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -296,6 +297,35 @@ public class DiferencaEstoqueController {
 			this.processarDiferencas(listaDiferencas, filtro);
 		}
 	}
+	
+	@Post
+	@Path("/lancamento/rateio")
+	public void carregarRateio(Date dataMovimento, TipoDiferenca tipoDiferenca, Long idDiferenca) {
+		
+		int qtdeInicialPadrao = 50;
+		
+		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>(qtdeInicialPadrao);
+		
+		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
+			
+			RateioCotaVO rateioCota = new RateioCotaVO();
+			
+			rateioCota.setIdDiferenca(idDiferenca);
+			
+			listaNovosRateiosCota.add(rateioCota);
+		}
+		
+		TableModel<CellModelKeyValue<RateioCotaVO>> tableModel =
+			new TableModel<CellModelKeyValue<RateioCotaVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNovosRateiosCota));
+		
+		tableModel.setTotal(qtdeInicialPadrao);
+		
+		tableModel.setPage(1);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
 
 	/**
 	 * Método responsável por carregar todos os combos da tela de consulta.
@@ -351,12 +381,12 @@ public class DiferencaEstoqueController {
 		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
 		
 		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
+		
 		this.diferencaEstoqueService.efetuarAlteracoes(this.getIdUsuario(), setIdsExclusao);
 		
 		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, 
-						"Operação efetuada com sucesso."), 
-						Constantes.PARAM_MSGS).recursive().serialize();
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
