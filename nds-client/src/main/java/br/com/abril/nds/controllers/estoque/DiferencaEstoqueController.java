@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoCo
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -339,10 +340,8 @@ public class DiferencaEstoqueController {
 	 */
 	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
-		//TODO: obter forncedores do tipo revista
-		
 		List<Fornecedor> listaFornecedor =
-			fornecedorService.obterFornecedoresPorProduto(codigoProduto);
+			fornecedorService.obterFornecedoresPorProduto(codigoProduto, GrupoFornecedor.PUBLICACAO);
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
 			new ArrayList<ItemDTO<Long,String>>();

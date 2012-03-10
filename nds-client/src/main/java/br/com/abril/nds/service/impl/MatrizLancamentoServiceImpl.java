@@ -146,12 +146,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dto.setFisico(lancamento.getTotalRecebimentoFisico().toString());
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo != null) {
-			dto.setEstudoGerado(estudo.getQtdeReparte().toString());
+			dto.setQtdeEstudo(estudo.getQtdeReparte().toString());
 		} else {
-			dto.setEstudoGerado("0");
+			dto.setQtdeEstudo("0");
 		}
 		dto.setFuro(lancamento.isFuro());
 		dto.setCancelamentoGD(lancamento.isCancelamentoGD());
+		dto.setExpedido(lancamento.isExpedido());
+		dto.setEstudoFechado(lancamento.isEstudoFechado());
 		if (DateUtil.isHoje(data) && lancamento.isSemRecebimentoFisico()) {
 			dto.setSemFisico(true);
 		}

@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 public interface FornecedorService {
@@ -27,9 +28,11 @@ public interface FornecedorService {
 	 * Obtém os fornecedores de acordo com o código produto.
 	 * 
 	 * @param codigoProduto - código do produto
+	 * @param grupoFornecedor - grupo do fornecedor
 	 * 
 	 * @return lista de fornecedores
 	 */
-	List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto);
+	List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto,
+												 GrupoFornecedor grupoFornecedor);
 	
 }

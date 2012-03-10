@@ -2,8 +2,6 @@ package br.com.abril.nds.model.cadastro;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
@@ -23,13 +21,12 @@ public class Telefone {
 	@GeneratedValue(generator = "TELEFONE_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "NUMERO", nullable = false)
 	private String numero;
+	
 	@Column(name = "RAMAL")
 	private String ramal;
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_TELEFONE")
-	private TipoTelefone tipoTelefone;
 
 	public Long getId() {
 		return id;
@@ -54,15 +51,4 @@ public class Telefone {
 	public void setRamal(String ramal) {
 		this.ramal = ramal;
 	}
-
-	public TipoTelefone getTipoTelefone() {
-		return tipoTelefone;
-	}
-
-	public void setTipoTelefone(TipoTelefone tipoTelefone) {
-		this.tipoTelefone = tipoTelefone;
-	}
-	
-	
-
 }

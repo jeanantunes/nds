@@ -18,6 +18,30 @@ $.fn.hoverClass = function(c) {
 	});
 };
 
+$.fn.disable = function() {
+	return this.each(function() {
+		if (typeof this.disabled != "undefined") this.disabled = true;
+	});
+};
+
+$.fn.enable = function() {
+	return this.each(function() {
+		if (typeof this.disabled != "undefined") this.disabled = false;
+	});
+};
+
+$.fn.check = function() {
+	return this.each(function() {
+		if (typeof this.checked != "undefined") this.checked = true;
+	});
+};
+
+$.fn.uncheck = function() {
+	return this.each(function() {
+		if (typeof this.checked != "undefined") this.checked = false;
+	});
+};
+
 var sURL = unescape(window.location.pathname);
 
 function doLoad()
@@ -49,76 +73,28 @@ function mostra_div(p, valor) {
  }
 }
 
-
-function checkAll()
-{
-	if(document.form1.Todos.checked == false) {
-		for (i=0; i < document.form1.checkgroup.length; i++){
-			if(document.form1.checkgroup[i].checked == true){
-			document.form1.checkgroup[i].checked = false;
-				}
+function checkAll(todos, checkgroupName) {
+	if(todos.checked == false) {
+		$("input[name=" + checkgroupName + "]").each(function(){
+			if (!$(this).is(':disabled')) {
+				$(this).uncheck();
 			}
+		});
 	}		
-else{										
-	for (i=0; i < document.form1.checkgroup.length; i++){
-		if(document.form1.checkgroup[i].checked == false){
-		document.form1.checkgroup[i].checked = true;
-				}
+	else {										
+		$("input[name=" + checkgroupName + "]").each(function(){
+			if (!$(this).is(':disabled')) {
+				$(this).check();
 			}
-	}
-}
-function checkAll_fornecedor()
-{
-	if(document.form1.Todos1.checked == false) {
-		for (i=0; i < document.form1.checkgroup_menu.length; i++){
-			if(document.form1.checkgroup_menu[i].checked == true){
-			document.form1.checkgroup_menu[i].checked = false;
-				}
-			}
-	}		
-else{										
-	for (i=0; i < document.form1.checkgroup_menu.length; i++){
-		if(document.form1.checkgroup_menu[i].checked == false){
-		document.form1.checkgroup_menu[i].checked = true;
-				}
-			}
-	}
+		});
+	}	
 }
 
-
-function verifyCheck_1()
-{
-	document.form1.Todos1.checked = false;
-/*	if(document.form1.Todos.checked == true) {
-		
-
-	for (i=0; i < document.form1.checkgroup.length; i++){
-
-	document.form1.checkgroup[i].click();
-
-		}
-	}*/
+function verifyCheck(todos){
+	$(todos).uncheck();
 }
-
-function verifyCheck()
-{
-	document.form1.Todos.checked = false;
-/*	if(document.form1.Todos.checked == true) {
-		
-
-	for (i=0; i < document.form1.checkgroup.length; i++){
-
-	document.form1.checkgroup[i].click();
-
-		}
-	}*/
-}
-
-
-		
-
 	
-	//callback function to bring a hidden box back
+//callback function to bring a hidden box back
 	
 $(document).ready(function(){	
 	$("#selFornecedor").click(function() {

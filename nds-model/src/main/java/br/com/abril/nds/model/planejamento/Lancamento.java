@@ -248,8 +248,17 @@ public class Lancamento implements Serializable {
 		return StatusLancamento.CANCELADO_GD.equals(status);
 	}
 	
+	public boolean isExpedido() {
+		return StatusLancamento.EXPEDIDO.equals(status);
+	}
+
+	public boolean isEstudoFechado() {
+		return StatusLancamento.ESTUDO_FECHADO.equals(status);
+	}
+	
 	public boolean isSemRecebimentoFisico() {
 		return recebimentos.isEmpty();
 	}
+	
 
 }

@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 
@@ -84,7 +85,8 @@ public class FornecedorRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto) {
+	public List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto,
+													   GrupoFornecedor grupoFornecedor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -97,11 +99,19 @@ public class FornecedorRepositoryImpl extends
 			hql.append(" and p.codigo = :codigoProduto ");
 		}
 		
+		if (grupoFornecedor != null) {
+			hql.append(" and fornecedores.tipoFornecedor.grupoFornecedor = :grupoFornecedor ");
+		}
+		
 		hql.append(" group by fornecedores ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
+		
+		if (grupoFornecedor != null) {
+			query.setParameter("grupoFornecedor", grupoFornecedor);
+		}		
 		
 		if (codigoProduto != null && codigoProduto.length() > 0) {
 			query.setParameter("codigoProduto", codigoProduto);

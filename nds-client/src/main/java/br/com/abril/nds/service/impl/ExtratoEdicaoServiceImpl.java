@@ -88,7 +88,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 	@Transactional
 	public String obterNomeFornecedorDeProduto(String codigoProduto) {
 		
-		List<Fornecedor> listaFornecedor = fornecedorRepository.obterFornecedoresDeProduto(codigoProduto);
+		List<Fornecedor> listaFornecedor =
+			fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
 		
 		if(listaFornecedor != null && listaFornecedor.size() == 1) {
 			

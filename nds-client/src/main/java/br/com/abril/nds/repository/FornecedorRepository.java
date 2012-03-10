@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
@@ -35,9 +36,11 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * Obtém a lista de fornecedores relativos a um produto.
 	 * 
 	 * @param codigoProduto
+	 * @param grupoFornecedor
 	 * 
 	 * @return List - Fornecedor.
 	 */
-	List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto);
+	public List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto,
+													   GrupoFornecedor grupoFornecedor);
 	
 }

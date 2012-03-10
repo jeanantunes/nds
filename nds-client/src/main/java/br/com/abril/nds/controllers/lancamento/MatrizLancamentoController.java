@@ -52,6 +52,7 @@ public class MatrizLancamentoController {
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
 	private static final String CAMPO_REQUERIDO_KEY = "required_field";
+	private static final String CAMPO_MAIOR_IGUAL_KEY = "validator.must.be.greaterEquals";
 
 	@Path("/matrizLancamento")
 	public void index() {
@@ -112,6 +113,7 @@ public class MatrizLancamentoController {
 
 	private void verificarCamposObrigatorios(Date data,
 			List<Long> idsFornecedores) {
+		Date atual = DateUtil.removerTimestamp(new Date());
 		List<String> mensagens = new ArrayList<String>();
 		if (idsFornecedores == null || idsFornecedores.isEmpty()) {
 			mensagens.add(localization.getMessage(CAMPO_REQUERIDO_KEY,
@@ -120,6 +122,9 @@ public class MatrizLancamentoController {
 		if (data == null) {
 			mensagens.add(localization.getMessage(CAMPO_REQUERIDO_KEY,
 					"Data de Lançamento Matriz/Distribuidor"));
+		} else if (data.before(atual)) {
+			mensagens.add(localization.getMessage(CAMPO_MAIOR_IGUAL_KEY,
+					"Data de Lançamento Matriz/Distribuidor", DateUtil.formatarDataPTBR(atual)));
 		}
 		if (!mensagens.isEmpty()) {
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, mensagens);
