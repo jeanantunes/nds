@@ -115,6 +115,94 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 	}
 	
+	/**
+	 * Insere os dados do recebimento físico.
+	 */
+	@Transactional
+	public void inserirDadosRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
+		
+		if(notaFiscal == null || listaItensNota == null) {
+			return;
+		}
+		
+		if(notaFiscal.getId() != null) {
+			
+			verificarExclusao(notaFiscal.getId(), listaItensNota);
+			
+			atualizarDadosNotaFiscalExistente(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
+			
+		} else {
+			
+			notaFiscal.setDataExpedicao(dataAtual);
+			
+			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);			
+		}		
+	}
+	
+	/**
+	 * Confirmação de RecebimentoFisico
+	 * @param usuarioLogado
+	 * @param notaFiscal
+	 * @param listaItensNota
+	 * @param dataAtual
+	 */
+	@Transactional
+	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
+		
+		List<ItemNotaFiscal> listaItemNotaFiscalInterface = new ArrayList<ItemNotaFiscal>();
+		
+		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota){
+			
+			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+						
+			lancarFaltaOUSobra(usuarioLogado, recebimentoFisicoDTO, itemRecebimento);
+			
+			incluirItensNotaInterface(notaFiscal,recebimentoFisicoDTO, listaItemNotaFiscalInterface);
+		}
+		
+		if(listaItemNotaFiscalInterface.size() <= 0 ){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há itens na Nota Fiscal Interface.");
+		}
+		
+		alterarRecebimentoFisicoParaConfirmado(usuarioLogado,notaFiscal,dataAtual);		
+		
+	}
+	
+	@Override
+	@Transactional
+	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+		
+		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+		
+	}
+	
+	/**
+	 * Exclui Itens da Nota e RecebimentoFisico
+	 */	
+	private void excluirItem(RecebimentoFisicoDTO recebimentoFisicoDTO){
+		
+		if(recebimentoFisicoDTO != null && recebimentoFisicoDTO.getIdItemRecebimentoFisico() != null 
+				&& recebimentoFisicoDTO.getIdItemNota() != null){
+			if(recebimentoFisicoDTO.getOrigemItemNota() != null){
+				if(recebimentoFisicoDTO.getOrigemItemNota().equals(Origem.MANUAL)){
+					
+					excluirItemRecebimentoFisico(recebimentoFisicoDTO);
+					
+					excluirItemNotaFiscal(recebimentoFisicoDTO.getIdItemNota());	
+					
+					excluirLancamento(recebimentoFisicoDTO);
+									
+				}else{				
+					throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal Interface não pode ser excluida");
+				}
+			}	
+		
+		}else{
+			throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal não existente");
+		}
+	}
+			
 	@Transactional
 	public List<CFOP> obterListaCFOP() {
 		return cFOPRepository.buscarTodos();
@@ -241,32 +329,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 	}
 	
-	/**
-	 * Insere os dados do recebimento físico.
-	 */
-	@Transactional
-	public void inserirDadosRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
-		if(notaFiscal == null || listaItensNota == null) {
-			return;
-		}
-		
-		if(notaFiscal.getId() != null) {
-			
-			verificarExclusao(notaFiscal.getId(), listaItensNota);
-			
-			atualizarDadosNotaFiscalExistente(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
-			
-		} else {
-			
-			notaFiscal.setDataExpedicao(dataAtual);
-			
-			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);			
-		}		
-	}
-	
-	
-	
 	/**
 	 * Insere um itemNotaFiscal.
 	 * 
@@ -423,40 +486,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemRecebimentoFisicoRepository.adicionar(itemRecebimento);		
 	}
 
-	@Override
-	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
-		
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
-		
-	}
-	
-	/**
-	 * Exclui Itens da Nota e RecebimentoFisico
-	 */	
-	private void excluirItem(RecebimentoFisicoDTO recebimentoFisicoDTO){
-		
-		if(recebimentoFisicoDTO != null && recebimentoFisicoDTO.getIdItemRecebimentoFisico() != null 
-				&& recebimentoFisicoDTO.getIdItemNota() != null){
-			if(recebimentoFisicoDTO.getOrigemItemNota() != null){
-				if(recebimentoFisicoDTO.getOrigemItemNota().equals(Origem.MANUAL)){
-					
-					excluirItemNotaFiscal(recebimentoFisicoDTO.getIdItemNota());	
-					
-					excluirItemRecebimentoFisico(recebimentoFisicoDTO.getIdItemRecebimentoFisico(), recebimentoFisicoDTO);
-					
-					excluirLancamento(recebimentoFisicoDTO);
-									
-				}else{				
-					throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal Interface não pode ser excluida");
-				}
-			}	
-		
-		}else{
-			throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal não existente");
-		}
-	}
-	
 	private void excluirLancamento(RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		Lancamento lancamento = lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(recebimentoFisicoDTO.getDataLancamento(), recebimentoFisicoDTO.getTipoLancamento(), recebimentoFisicoDTO.getIdProdutoEdicao());	
 		if(lancamento != null){
@@ -464,36 +493,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 	}
 
-	/**
-	 * Confirmação de RecebimentoFisico
-	 * @param usuarioLogado
-	 * @param notaFiscal
-	 * @param listaItensNota
-	 * @param dataAtual
-	 */
-	@Transactional
-	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
-		List<ItemNotaFiscal> listaItemNotaFiscalInterface = new ArrayList<ItemNotaFiscal>();
-		
-		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota){
-			
-			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
-						
-			lancarFaltaOUSobra(usuarioLogado, recebimentoFisicoDTO, itemRecebimento);
-			
-			incluirItensNotaInterface(notaFiscal,recebimentoFisicoDTO, listaItemNotaFiscalInterface);
-		}
-		
-		if(listaItemNotaFiscalInterface.size() <= 0 ){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há itens na Nota Fiscal Interface.");
-		}
-		
-		alterarRecebimentoFisicoParaConfirmado(usuarioLogado,notaFiscal,dataAtual);		
-		
-	}
-	
 	/**
 	 * Atualização de Data e Satatus em Recebimento Fisico
 	 * @param usuarioLogado
@@ -542,11 +542,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * Exclui Item Recebimento Fisico
 	 * @param idItemRecebimentoFisico
 	 */
-	private void excluirItemRecebimentoFisico(Long idItemRecebimentoFisico, RecebimentoFisicoDTO recebimentoFisicoDTO) {
-		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-		
-		itemRecebimentoFisico.setId(idItemRecebimentoFisico);
-		
-		itemRecebimentoFisicoRepository.remover(itemRecebimentoFisico);		
+	private void excluirItemRecebimentoFisico(RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+		if(itemRecebimento != null){
+			itemRecebimentoFisicoRepository.remover(itemRecebimento);		
+		}
 	}
 }

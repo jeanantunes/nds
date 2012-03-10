@@ -158,7 +158,6 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	}
 	
 	@Test
-	@Ignore
 	public void excluirItemNotaFiscalTeste(){
 		
 		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
