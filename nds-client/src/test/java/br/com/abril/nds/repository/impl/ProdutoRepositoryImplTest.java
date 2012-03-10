@@ -23,11 +23,11 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void setUp() {
 		TipoProduto tipoProduto =
 			Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
-		getSession().save(tipoProduto);
+		save(tipoProduto);
 		
 		Produto produto =
 			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
-		getSession().save(produto);
+		save(produto);
 	}
 	
 	@Test
@@ -40,8 +40,16 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterProdutoPorNomeProduto() {
+		Produto produto = 
+			produtoRepository.obterProdutoPorNomeProduto("Veja");
+		
+		Assert.assertTrue(produto != null);
+	}
+	
+	@Test
+	public void obterProdutoLikeNomeProduto() {
 		List<Produto> listaProduto = 
-			produtoRepository.obterProdutoLikeNomeProduto("Veja");
+			produtoRepository.obterProdutoLikeNomeProduto("Vej");
 		
 		Assert.assertTrue(!listaProduto.isEmpty());
 	}

@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 
 public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -32,6 +33,7 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 	private DistribuicaoFornecedor dinapSexta;
 	private DistribuicaoFornecedor fcSegunda;
 	private DistribuicaoFornecedor fcSexta;
+	private TipoFornecedor tipoFornecedorPublicacao;
 	
 	@Before
 	public void setUp() {
@@ -41,8 +43,11 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(pj);
 		save(distribuidor);
 		
-		fornecedorFC = Fixture.fornecedorFC();
-		fornecedorDinap = Fixture.fornecedorDinap();
+		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
+		
+		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
+		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(

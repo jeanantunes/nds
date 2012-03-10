@@ -78,7 +78,8 @@
 				}],
 				singleSelect: true,
 				width : 610,
-				height : 220
+				height : 220,
+				disableSelect : true
 			});
 		});
 
@@ -124,6 +125,8 @@
 
 			$.each(resultado.rows, function(index, row) {
 
+				var hiddenId = '<input type="hidden" name="id" value="' + index + '" />';
+				
 				var inputCodigoProduto = 
 					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" />';
 
@@ -152,7 +155,7 @@
 				var inputQuantidade = 
 					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
 
-				row.cell.codigoProduto = inputCodigoProduto + imgLupaPesquisa;
+				row.cell.codigoProduto = hiddenId + inputCodigoProduto + imgLupaPesquisa;
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
 				row.cell.precoVenda = hiddenPrecoVenda + spanPrecoVenda;
@@ -184,7 +187,29 @@
 
 		function tratarErroCadastroNovasDiferencas(jsonData) {
 
+			if (!jsonData || !jsonData.mensagens) {
+
+				return;
+			}
+
+			var dadosValidacao = jsonData.mensagens.dados;
 			
+			var linhasDaGrid = $(".gridNovasDiferencas tr");
+
+			$.each(linhasDaGrid, function(index, value) {
+
+				var linha = $(value);
+
+				if (dadosValidacao 
+						&& ($.inArray(index, dadosValidacao) > -1)) {
+
+					linha.removeClass('erow').addClass('linhaComErro');
+					
+				} else {
+
+					linha.removeClass('linhaComErro');					
+				}
+			});
 		}
 
 		function obterListaDiferencas() {
@@ -202,7 +227,10 @@
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaQtdeEstoqueAtual = linha.find("td")[4]
 				var colunaQtdeDiferenca = linha.find("td")[5];
-	
+
+				var id = 
+					$(colunaCodigoProduto).find("div").find('input[name="id"]').val();
+				
 				var codigoProduto = 
 					$(colunaCodigoProduto).find("div").find('input[name="codigoProduto"]').val();
 				
@@ -223,7 +251,10 @@
 					return true;
 				}
 
-				var diferenca = 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
+
+				var diferenca = 'listaNovasDiferencas[' + index + '].id=' + id + '&';
+				
+				diferenca += 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
 	
 				diferenca += 'listaNovasDiferencas[' + index + '].descricaoProduto=' + descricaoProduto + '&';
 	
