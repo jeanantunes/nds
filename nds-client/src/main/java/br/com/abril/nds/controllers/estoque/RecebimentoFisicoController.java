@@ -49,14 +49,10 @@ public class RecebimentoFisicoController {
 	private Result result;
 
 	private HttpServletRequest request;
-	
-	private Validator validator;
 
 	private static final String CABECALHO_NOTA_FISCAL = "cabecalhoNotaFiscal";
 	
 	private static final String ITENS_NOTA_FISCAL = "itensNotaFiscal";
-	
-	private static final String GRID_RESULT = "gridResult";
 	
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -81,10 +77,12 @@ public class RecebimentoFisicoController {
 			Validator validator) {
 		this.result = result;
 		this.request = request;
-		this.validator = validator;
 	}
-
-	public void index() throws ParseException {
+	
+	/**
+	 * Direciona para a página de recebimento físico.
+	 */
+	public void index() {
 
 		preencherCombos();
 		
@@ -92,6 +90,9 @@ public class RecebimentoFisicoController {
 	
 	}
 	
+	/**
+	 * Inclúi a data atual para a view.
+	 */
 	private void preencherDataEmissao() {
 		
 		Date data = new Date(System.currentTimeMillis());
@@ -101,8 +102,12 @@ public class RecebimentoFisicoController {
 		result.include("dataAtual", sdf.format(data));
 
 	}
-
-	// metodo para prrencher combo fornecedor com o cnpj informado
+	
+	/**
+	 * Método para prencher combo fornecedor com o cnpj informado.
+	 * 
+	 * @param cnpj
+	 */
 	@Post
 	public void buscaCnpj(String cnpj){
 		
@@ -117,9 +122,13 @@ public class RecebimentoFisicoController {
 		}
 	}
 	
-	// metodo para prrencher combo fornecedor com o cnpj informado
+	/**
+	 * Método para prencher combo fornecedor com o cnpj informado	 
+	 * 
+	 * @param nomeFantasia
+	 */
 	@Post
-	public void buscaCnpjPorFornecedor(String nomeFantasia) throws ParseException {
+	public void buscaCnpjPorFornecedor(String nomeFantasia){
 			
 		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
 		
@@ -132,7 +141,8 @@ public class RecebimentoFisicoController {
 	}
 
 	/**
-	 * Serializa a listaItemRecebimentoFisico que esta em session.
+	 * Serializa a listaItemRecebimentoFisico que esta em session recalculando os campos
+	 * valorTotal e valorDiferenca.
 	 */
 	@Post
 	public void refreshListaItemRecebimentoFisico() {
@@ -149,6 +159,11 @@ public class RecebimentoFisicoController {
 		
 	}
 	
+	/**
+	 * Recalcula os campos valorTotal e valorDiferenca.
+	 * 
+	 * @param itensRecebimento
+	 */
 	private void recarregarValoresCalculados(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
 		for(RecebimentoFisicoDTO item : itensRecebimento) {
@@ -186,7 +201,13 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	
+	/**
+	 * Valida os dados da nova Nota Fiscal.
+	 * 
+	 * @param cnpj
+	 * @param numeroNotaFiscal
+	 * @param serie
+	 */
 	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie) {
 		
 		List<String> msgs = new ArrayList<String>();
@@ -211,6 +232,37 @@ public class RecebimentoFisicoController {
 		
 	}
 
+	/**
+	 * Serializa os dados do produtoEdicao pesquisado.
+	 * 
+	 * @param codigo
+	 * @param edicao
+	 */
+	public void obterProdutoEdicao(String codigo, String edicao) {
+		
+		if(codigo!=null && !codigo.trim().isEmpty() && edicao != null) {
+			
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicao);
+		
+			if(produtoEdicao!=null) {
+				result.use(Results.json()).from(produtoEdicao, "result").serialize();
+			}
+			
+		}
+		
+		result.use(Results.nothing());
+		
+	}
+	
+	/**
+	 * Inclui um novo item nota fiscal e dados de recebimento físico.
+	 * 
+	 * @param itemRecebimento
+	 * @param numeroEdicao
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 * @param itensRecebimento
+	 */
 	@Post 
 	public void incluirItemNotaFiscal(
 			RecebimentoFisicoDTO itemRecebimento,
@@ -243,17 +295,15 @@ public class RecebimentoFisicoController {
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
 		
 		if(itensRecebimentoFisico == null) {
-			
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
-			
 			setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		}
 		
 		itemRecebimento.setOrigemItemNota(Origem.MANUAL);
-		
 		itemRecebimento.setEdicao(produtoEdicao.getNumeroEdicao());
-
 		itemRecebimento.setIdProdutoEdicao(produtoEdicao.getId());
+		
+		validarProdutoEdicaoExistente(itemRecebimento, itensRecebimentoFisico);
 		
 		itensRecebimentoFisico.add(itemRecebimento);
 		
@@ -267,6 +317,32 @@ public class RecebimentoFisicoController {
 		
 	}
 
+	/**
+	 * Verifica se o novo item ja esta adicionado a nota fiscal que esta sendo editada. 
+	 * 
+	 * @param novoItemRecebimento
+	 * @param itensRecebimentoAdicionadosANota
+	 */
+	private void validarProdutoEdicaoExistente(RecebimentoFisicoDTO novoItemRecebimento, List<RecebimentoFisicoDTO> itensRecebimentoAdicionadosANota) {
+	
+		for(RecebimentoFisicoDTO itemJaAdicionado : itensRecebimentoAdicionadosANota) {
+			
+			if(novoItemRecebimento.getIdProdutoEdicao().equals(itemJaAdicionado.getIdProdutoEdicao())) {
+			
+				throw new ValidacaoException(TipoMensagem.WARNING, "Produto edição já existente nesta nota fiscal.");
+				
+			}
+			
+		}
+		
+		
+	}
+	
+	/**
+	 * Recalcula o campo valorTotal do itemRecebimentoFisico.
+	 * 
+	 * @param itemRecebimento
+	 */
 	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
 		
 		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
@@ -285,6 +361,11 @@ public class RecebimentoFisicoController {
 		
 	}
 	
+	/**
+	 * Recalcula o campo valorDiferenca do itemRecebimentoFisico.
+	 * 
+	 * @param itemRecebimento
+	 */
 	private void carregarValorDiferenca(RecebimentoFisicoDTO itemRecebimento) {
 		
 		if(itemRecebimento.getRepartePrevisto() == null) {
@@ -305,6 +386,12 @@ public class RecebimentoFisicoController {
 		
 	}
 	
+	/**
+	 * Exclui um item de nota fiscal da lista em session.
+	 * 
+	 * @param lineId
+	 * @param itensRecebimento
+	 */
 	@Post
 	public void excluirItemNotaFiscal(int lineId, List<RecebimentoFisicoDTO> itensRecebimento) {
 		
@@ -325,8 +412,6 @@ public class RecebimentoFisicoController {
 		
 		itensRecebimentoFisico.remove(apagarReceb);
 		
-		System.out.println("REMOVENDO ITEM NOTA FISCAL CODIGO: " + lineId);
-		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Item Nota fiscal removido com sucesso.");
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
@@ -334,7 +419,11 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	
+	/**
+	 * Atualiza o campo qtdFisico da lista de itemRecebimentoFisico que se encontra em session.
+	 * 
+	 * @param itensRecebimento
+	 */
 	private void atualizarItensRecebimentoEmSession(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisicoFromSession = getItensRecebimentoFisicoFromSession();
@@ -364,6 +453,12 @@ public class RecebimentoFisicoController {
 		}		
 	}
 	
+	/**
+	 * Salva as alterações de recebimento físico realizadas em uma nota existente ou nota
+	 * que esteja sendo criada.
+	 *  
+	 * @param itensRecebimento
+	 */
 	@Post
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
@@ -381,7 +476,10 @@ public class RecebimentoFisicoController {
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	}
 	
-	private void limparDadosPesquisa() {
+	/**
+	 * Limpa os dados mantidos em session.
+	 */
+	private void limparDadosDaSession() {
 		
 		setItensRecebimentoFisicoToSession(null);
 		
@@ -389,13 +487,27 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	
+	/**
+	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
+	 * CNPJ, numero da nota, série e chave de acesso caso a mesma
+	 * seja uma nota fiscal eletrônica. Caso a nota seja encontrada
+	 * o id interno da mesma será colocado na session.
+	 * 
+	 * @param cnpj
+	 * @param numeroNotaFiscal
+	 * @param serie
+	 * @param chaveAcesso
+	 */
 	@Post
 	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie, String chaveAcesso) {
 
 		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
 		
-		limparDadosPesquisa();
+		if(chaveAcesso == null || chaveAcesso.trim().isEmpty()) {
+			chaveAcesso = null;
+		}
+		
+		limparDadosDaSession();
 		
 		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
 		
@@ -724,7 +836,16 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-
+	/**
+	 * Inclui os dados de uma nova nota fiscal em session.
+	 * 
+	 * @param notaFiscalFornecedor
+	 * @param dataEmissao
+	 * @param dataEntrada
+	 * @param valorLiquido
+	 * @param valorBruto
+	 * @param valorDesconto
+	 */
 	@Post
 	public void incluirNovaNotaFiscal(NotaFiscalFornecedor notaFiscalFornecedor, 
 			String dataEmissao,
@@ -781,6 +902,7 @@ public class RecebimentoFisicoController {
 		request.getSession().setAttribute(CABECALHO_NOTA_FISCAL, notaFiscal);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<RecebimentoFisicoDTO> getItensRecebimentoFisicoFromSession() {
 		return (List<RecebimentoFisicoDTO>) request.getSession().getAttribute(ITENS_NOTA_FISCAL);
 	}

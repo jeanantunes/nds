@@ -7,7 +7,70 @@
 
 <script type="text/javascript">
 
+var jsDadosProduto = {
+
+exibirDetalhesProdutoEdicao : function() {
 	
+	var data = "codigo=" + $("#codigo").val() + "&edicao=" + $("#edicao").val();
+	
+	$.postJSON('<c:url value="/"/>estoque/recebimentoFisico/obterProdutoEdicao', data, function(result){
+		
+		if(typeof result != "undefined") {
+			
+			$("#precoCapa").val(result.precoVenda);			
+			$("#peso").val(result.peso);			
+			$("#pacotePadrao").val(result.pacotePadrao);			
+			
+		}
+		
+	});
+	
+},
+
+limparCamposPesquisa : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.limparCamposPesquisa('#produto', '#edicao', true);	
+},
+
+pesquisarProdutoPorCodigo : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});	
+},
+
+pesquisarProdutoPorNome : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});
+},
+
+validarNumeroEdicao : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.validarNumEdicao('#codigo', '#edicao', true, jsDadosProduto.validarEdicaoCallBack);
+},
+
+validarEdicaoCallBack : function() {
+	
+	jsDadosProduto.exibirDetalhesProdutoEdicao();
+		
+}
+
+
+};
 
 	/**
 	 * SELECIONA UM FORNECEDOR A PARTIR DO CNPJ DIGITADO.
@@ -536,12 +599,18 @@
 
 <body>
 
-	<div id="dialog-excluir" title="Recebimento Físico">
-		<p>Confirma este Recebimento?</p>
-	</div>
-
-
 	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
+			
+			<div 	id="effectDialog" 
+		 			class="ui-state-highlight ui-corner-all" 
+		 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
+		 
+				<p>
+					<span style="float: left;" class="ui-icon ui-icon-info"></span>
+					<b id="idTextoMensagemDialog"></b>
+				</p>
+				
+			</div>
 			
 			<table width="439" cellpadding="2" cellspacing="2"
 				style="text-align: left;">
@@ -618,6 +687,17 @@
 
 
 	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
+
+		<div 	id="effectDialog" 
+	 			class="ui-state-highlight ui-corner-all" 
+	 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
+	 
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextoMensagemDialog"></b>
+			</p>
+			
+		</div>
 	
 		<table width="341" border="0" cellspacing="2" cellpadding="2">
 			<tr>
@@ -627,10 +707,11 @@
 					type="text"
 					id="codigo"
 					maxlength="255"
-					style="width: 80px; float: left; margin-right: 5px;"/>
+					style="width: 80px; float: left; margin-right: 5px;"
+					onchange="jsDadosProduto.limparCamposPesquisa();"/>
 					
 					<span class="classPesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+						<a href="javascript:;" onclick="jsDadosProduto.pesquisarProdutoPorCodigo();">&nbsp;</a>
 					</span>
 					
 				</td>
@@ -642,8 +723,9 @@
 						maxlength="255"
 						type="text" 
 						id="produto"
-						onkeyup="pesquisarPorNomeProduto();" 
-						style="width: 200px;" />
+						
+					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       	   onchange="jsDadosProduto.pesquisarProdutoPorNome();"/>
 				</td>
 			</tr>
 			<tr>
@@ -652,7 +734,7 @@
 					type="text" 
 					id="edicao" maxlength="20"
 					style="width: 80px;" 
-					onblur="validarNumEdicao();"/>
+					onchange="jsDadosProduto.validarNumeroEdicao();"/>
 				</td>
 			</tr>
 			<tr>
