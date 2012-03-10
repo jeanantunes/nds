@@ -137,18 +137,21 @@
 		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
 		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
 		
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", dadosCadastro, 
-				function(result) {
-					
-					if(result.tipoMensagem == "SUCCESS") {
-						
-						$("#dialog-novo-item").dialog( "close" );
-						
-					} 
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", (dadosCadastro +"&" + listaDeValores), 
+
+		function(result) {
 			
-					exibirMensagem(result.tipoMensagem, result.listaMensagens);
-					
-					refreshItemNotaGrid();
+		if(result.tipoMensagem == "SUCCESS") {
+				
+			$("#dialog-novo-item").dialog( "close" );
+				
+		} 
+	
+		exibirMensagem(result.tipoMensagem, result.listaMensagens);
+		
+		refreshItemNotaGrid();
 				
 		});
 		
@@ -465,8 +468,12 @@
 	 */
 	function excluirItemNotaFiscal(lineId) {
 		
+		var dadosExclusao = "lineId=" + lineId;
 		
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", "lineId=" + lineId, 
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", (dadosExclusao + "&" + listaDeValores), 
+		
 		function(result) {
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			refreshItemNotaGrid();
@@ -484,13 +491,29 @@
 			
 			var qtdFisico = value.cell[5];
 			
+			var exclusaoPermitida = value.cell[8];
+			
 			var lineId = value.id;
 			
 			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 			
+			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+			
 			value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
+			
+			if(exclusaoPermitida == "S") {
+				
+				value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+				
+			} else {
+				
+				value.cell[8] = '<a href="javascript:;" disabled="disabled">'+imgExclusao+'</a>';
+				
+			}
+			
 
-			value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">APAGAR</a>';
+			
+
 			
 		});
 		
@@ -785,21 +808,21 @@
 
 					<span class="bt_incluir_novo" title="Incluir Nova Linha"> 
 						<a href="javascript:;" onclick="popup_novo_item();"> 
-							<img src="images/ico_add_novo.gif" border="0" hspace="5" />
+							<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
 							Novo Produto 
 						</a> 
 					</span> 
 					
 					<span class="bt_novos" title="Salvar"> 
 						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
-							<img src="images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
 							Salvar 
 						</a> 
 					</span>
 					
 					<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
 						<a href="javascript:;" onclick="alert('confirmando...');;">
-							<img src="images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
+							<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
 							Confirmar
 						</a>
 					</span>

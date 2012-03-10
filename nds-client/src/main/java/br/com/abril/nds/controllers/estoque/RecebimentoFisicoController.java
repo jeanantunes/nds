@@ -16,6 +16,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -29,7 +30,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PessoaJuridicaService;
-import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
@@ -68,9 +68,6 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private RecebimentoFisicoService recebimentoFisicoService;
-	
-	@Autowired
-	private PessoaService pessoaService;
 	
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
@@ -144,9 +141,23 @@ public class RecebimentoFisicoController {
 			setItensRecebimentoFisicoToSession(new LinkedList<RecebimentoFisicoDTO>());
 		}
 		
+		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
+		
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private void recarregarValoresCalculados(List<RecebimentoFisicoDTO> itensRecebimento) {
+		
+		for(RecebimentoFisicoDTO item : itensRecebimento) {
+			
+			carregarValorTotal(item);
+			
+			carregarValorDiferenca(item);
+			
+		}
 		
 	}
 	
@@ -205,7 +216,10 @@ public class RecebimentoFisicoController {
 			RecebimentoFisicoDTO itemRecebimento,
 			String numeroEdicao,
 			String dataLancamento, 
-			String dataRecolhimento) {
+			String dataRecolhimento, 
+			List<RecebimentoFisicoDTO> itensRecebimento) {
+		
+		atualizarItensRecebimentoEmSession(itensRecebimento);
 		
 		validarNovoItemRecebimentoFisico(
 				itemRecebimento, 
@@ -235,6 +249,8 @@ public class RecebimentoFisicoController {
 			setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		}
 		
+		itemRecebimento.setOrigemItemNota(Origem.MANUAL);
+		
 		itemRecebimento.setEdicao(produtoEdicao.getNumeroEdicao());
 
 		itemRecebimento.setIdProdutoEdicao(produtoEdicao.getId());
@@ -251,8 +267,48 @@ public class RecebimentoFisicoController {
 		
 	}
 
+	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
+		
+		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		
+		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
+		
+		BigDecimal valorTotal = new BigDecimal(0.0D);
+		
+		if(qtdRepartePrevisto != null && precoCapa != null) {
+			
+			valorTotal = qtdRepartePrevisto.multiply(precoCapa);
+		
+		}
+		
+		itemRecebimento.setValorTotal(valorTotal);
+		
+	}
+	
+	private void carregarValorDiferenca(RecebimentoFisicoDTO itemRecebimento) {
+		
+		if(itemRecebimento.getRepartePrevisto() == null) {
+			itemRecebimento.setRepartePrevisto(new BigDecimal("0.0"));
+		}
+
+		if(itemRecebimento.getQtdFisico() == null) {
+			itemRecebimento.setQtdFisico(new BigDecimal("0.0"));
+		}
+
+		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		
+		BigDecimal qtdFisico = itemRecebimento.getQtdFisico();
+		
+		BigDecimal valorDiferenca = qtdRepartePrevisto.subtract(qtdFisico);
+		
+		itemRecebimento.setDiferenca(valorDiferenca);
+		
+	}
+	
 	@Post
-	public void excluirItemNotaFiscal(int lineId) {
+	public void excluirItemNotaFiscal(int lineId, List<RecebimentoFisicoDTO> itensRecebimento) {
+		
+		atualizarItensRecebimentoEmSession(itensRecebimento);
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
 
@@ -277,11 +333,15 @@ public class RecebimentoFisicoController {
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
 		
 	}
-
-	@Post
-	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
+	
+	
+	private void atualizarItensRecebimentoEmSession(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisicoFromSession = getItensRecebimentoFisicoFromSession();
+		
+		if(itensRecebimentoFisicoFromSession == null) {
+			return;
+		}
 		
 		if(itensRecebimento != null) {
 			
@@ -301,7 +361,13 @@ public class RecebimentoFisicoController {
 				
 			}
 			
-		}
+		}		
+	}
+	
+	@Post
+	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
+		
+		atualizarItensRecebimentoEmSession(itensRecebimento);
 	
 		//TODO: capturar usuario logado
 		Usuario usuarioLogado = new Usuario();
@@ -397,14 +463,15 @@ public class RecebimentoFisicoController {
 			
 			dto.setLineId(counter++);
 			
-			String codigo 		     = dto.getCodigoProduto();
-			String nomeProduto 	     = dto.getNomeProduto();
-			String edicao 		     = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
-			String precoCapa 	     = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String repartePrevisto 	 = (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
-			String qtdeFisica		 = (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
-			String diferenca		 = (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
-			String valorTotal		 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			String codigo 		     	= dto.getCodigoProduto();
+			String nomeProduto 	     	= dto.getNomeProduto();
+			String edicao 		     	= (dto.getEdicao() 				== null) 	? "" 	: dto.getEdicao().toString();
+			String precoCapa 	     	= (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String repartePrevisto 	 	= (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
+			String qtdeFisica		 	= (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
+			String diferenca		 	= (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
+			String valorTotal		 	= (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			String exclusaoPermitida	= (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
@@ -416,7 +483,8 @@ public class RecebimentoFisicoController {
 							repartePrevisto,
 							qtdeFisica,
 							diferenca,
-							valorTotal
+							valorTotal,
+							exclusaoPermitida
 					));
 			
 			
