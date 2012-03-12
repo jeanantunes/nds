@@ -20,6 +20,11 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+/**
+ * Classe responsável pelo controle das ações referentes a produtos.
+ * 
+ * @author Discover Technology
+ */
 @Resource
 @Path("/produto")
 public class ProdutoController {
