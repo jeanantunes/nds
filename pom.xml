@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.abril</groupId>
@@ -195,6 +196,11 @@
 				<artifactId>gson</artifactId>
 				<version>1.7.1</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.8.3</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -218,6 +224,10 @@
 		<dependency>
 			<artifactId>log4j</artifactId>
 			<groupId>log4j</groupId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -249,8 +259,8 @@
 		<!-- DESABILITADO até início de atividades neste módulo <module>nds-server</module> -->
 
 		<module>nds-client</module>
-        <module>nds-util</module>
-  </modules>
+		<module>nds-util</module>
+	</modules>
 
 	<reporting>
 		<plugins>

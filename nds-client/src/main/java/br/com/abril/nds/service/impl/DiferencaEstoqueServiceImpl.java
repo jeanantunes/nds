@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -12,10 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
@@ -30,7 +35,9 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.MovimentoCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
+import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -71,6 +78,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
+	
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
+	
+	@Autowired
+	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
 	private static final String MOTIVO = "Exclusão diferença";
 	
@@ -244,4 +257,111 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			}
 		}
 	}
+
+	@Transactional(readOnly = true)
+	public boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, 
+												  Long idProdutoEdicao,
+												  TipoDiferenca tipoDiferenca) {
+
+		List<ItemRecebimentoFisico> listaItensRecebimentoFisico =
+			this.recebimentoFisicoRepository.obterItensRecebimentoFisicoDoProduto(idProdutoEdicao);
+		
+		ParametroSistema parametroNumeroDiasPermitidoLancamento = 
+			this.obterParametroNumeroDiasPermissaoLancamentoDiferenca(tipoDiferenca);
+		
+		Integer numeroDiasPermitidoLancamento = 0;
+		
+		if (parametroNumeroDiasPermitidoLancamento != null) {
+			
+			numeroDiasPermitidoLancamento = 
+				Integer.parseInt(parametroNumeroDiasPermitidoLancamento.getValor());
+		}
+		
+		for (ItemRecebimentoFisico itemRecebimentoFisico : listaItensRecebimentoFisico) {
+			
+			Calendar dataConfirmacaoRecebimentoFisico = Calendar.getInstance();
+			
+			dataConfirmacaoRecebimentoFisico.setTime(
+				itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao());
+			
+			dataConfirmacaoRecebimentoFisico.add(Calendar.DAY_OF_MONTH, numeroDiasPermitidoLancamento);
+			
+			Calendar calendarLancamentoDiferenca = Calendar.getInstance();
+			
+			calendarLancamentoDiferenca.setTime(dataLancamentoDiferenca);
+			
+			if (dataConfirmacaoRecebimentoFisico.equals(calendarLancamentoDiferenca)
+					|| dataConfirmacaoRecebimentoFisico.after(calendarLancamentoDiferenca)) {
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Transactional
+	public void salvarNovaDiferenca(Diferenca diferenca) {
+		
+		if (diferenca == null) {
+			
+			throw new IllegalArgumentException("Diferença não pode ser nula");
+		}
+		
+		this.diferencaEstoqueRepository.adicionar(diferenca);
+	}
+	
+	/*
+	 * Obtém o parâmetro de número de dias de permissão para lançamento de uma diferença.
+	 * 
+	 * @param tipoDiferenca - tipo de diferença
+	 * 
+	 * @return {@link ParametroSistema}
+	 */
+	private ParametroSistema obterParametroNumeroDiasPermissaoLancamentoDiferenca(TipoDiferenca tipoDiferenca) {
+		
+		ParametroSistema parametroNumeroDiasLancamento;
+		
+		switch (tipoDiferenca)  {
+		
+			case FALTA_DE:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE); 
+				
+				break;
+				
+			case FALTA_EM:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM);
+				
+				break;
+				
+			case SOBRA_DE:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE);
+				
+				break;
+				
+			case SOBRA_EM:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM);
+				
+				break;
+				
+			default:
+				
+				parametroNumeroDiasLancamento = null;
+		}
+		
+		return parametroNumeroDiasLancamento;
+	}
+	
 }
