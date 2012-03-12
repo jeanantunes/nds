@@ -29,4 +29,12 @@ public class EstudoCotaServiceImpl implements EstudoCotaService {
 		return this.estudoCotaRepository.obterEstudoCota(numeroCota, dataReferencia);
 	}
 
+	@Transactional(readOnly = true)
+	public EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, 
+																  Long idProdutoEdicao,
+																  Integer numeroCota) {
+		
+		return this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(dataLancamentoDistribuidor, idProdutoEdicao, numeroCota);
+	}
+
 }
