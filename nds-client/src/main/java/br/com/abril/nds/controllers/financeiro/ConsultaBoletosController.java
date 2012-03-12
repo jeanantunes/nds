@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.service.BoletoService;
@@ -18,6 +19,8 @@ import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -39,9 +42,16 @@ public class ConsultaBoletosController {
     private Result result;
 
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
-    
+
 	@Autowired
 	private BoletoService boletoService;
+	
+	
+	
+	private static final String FILTRO_PESQUISA_BOLETOS_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
+	private HttpSession httpSession;
+	
+	
 
 	public ConsultaBoletosController(Result result) {
 		this.result = result;
@@ -49,6 +59,7 @@ public class ConsultaBoletosController {
 	
 	@Get
     public void consulta(){
+		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pago"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pago"));
@@ -63,7 +74,14 @@ public class ConsultaBoletosController {
 	public void consultaBoletos(String numCota,
 								String dataDe,
 								String dataAte, 
-								StatusCobranca status){
+								StatusCobranca status,
+								
+								String sortorder, 
+								String sortname, 
+								int page, 
+								int rp
+								
+								){
 		
 		//VALIDACOES
 		if (numCota==null || numCota.isEmpty()){
@@ -79,6 +97,64 @@ public class ConsultaBoletosController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve ser menor do que a data final.");
 		}
 	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		FiltroConsultaBoletosCotaDTO filtroAtual = new FiltroConsultaBoletosCotaDTO(Integer.parseInt(numCota),
+                																	DateUtil.parseData(dataDe,"dd/MM/yyyy"),
+                																	DateUtil.parseData(dataAte,"dd/MM/yyyy"),
+                																	status);
+		
+		
+        if (filtroAtual != null) {
+			
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+	
+			filtroAtual.setPaginacao(paginacao);
+
+			filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaLancamento.values(), sortname));
+		}
+		
+		
+		
+		FiltroConsultaBoletosCotaDTO filtroSessao = (FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_BOLETOS_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+			
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_BOLETOS_SESSION_ATTRIBUTE, filtroAtual);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//BUSCA BOLETOS
 		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(Integer.parseInt(numCota),
 				                                                      DateUtil.parseData(dataDe,"dd/MM/yyyy"),
