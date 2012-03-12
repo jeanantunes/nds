@@ -36,6 +36,8 @@ public class Cota {
 	private Integer numeroCota;
 	@ManyToOne(optional = false)
 	private Pessoa pessoa;
+	@Column(name = "VIP", nullable = false)
+	private boolean vip;
 	@OneToMany
 	@JoinColumn(name = "COTA_ID")
 	private List<PDV> pdvs = new ArrayList<PDV>();
@@ -64,6 +66,14 @@ public class Cota {
 	
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
+	}
+	
+	public boolean isVip() {
+		return vip;
+	}
+	
+	public void setVip(boolean vip) {
+		this.vip = vip;
 	}
 	
 	public List<PDV> getPdvs() {
@@ -106,20 +116,12 @@ public class Cota {
 		this.enderecos = enderecos;
 	}
 
-	/**
-	 * @return the box
-	 */
 	public Box getBox() {
 		return box;
 	}
 
-	/**
-	 * @param box the box to set
-	 */
 	public void setBox(Box box) {
 		this.box = box;
 	}
-	
-	
 
 }
