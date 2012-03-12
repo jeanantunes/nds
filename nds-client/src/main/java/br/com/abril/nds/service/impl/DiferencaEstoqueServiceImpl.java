@@ -40,6 +40,7 @@ import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -282,7 +283,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			Calendar dataConfirmacaoRecebimentoFisico = Calendar.getInstance();
 			
 			dataConfirmacaoRecebimentoFisico.setTime(
-				itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao());
+				DateUtil.removerTimestamp(
+					itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao()));
 			
 			dataConfirmacaoRecebimentoFisico.add(Calendar.DAY_OF_MONTH, numeroDiasPermitidoLancamento);
 			
