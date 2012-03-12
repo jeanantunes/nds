@@ -35,9 +35,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -86,13 +88,16 @@ public class DiferencaEstoqueController {
 	@Autowired
 	private EstudoCotaService estudoCotaService; 
 	
+	@Autowired
+	private EstudoService estudoService;
+	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
 	
 	private static final String LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
 	
-	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
+	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
 	
 	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
 	
@@ -243,6 +248,8 @@ public class DiferencaEstoqueController {
 			
 			Diferenca diferenca = new Diferenca();
 			
+			diferenca.setId(diferencaVO.getId());
+			
 			ProdutoEdicao produtoEdicao =
 				this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
 					diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
@@ -325,6 +332,8 @@ public class DiferencaEstoqueController {
 	@Post
 	@Path("/lancamento/rateio")
 	public void carregarRateio(Long idDiferenca) {
+		
+		this.verificarExistenciaEstudo(idDiferenca);
 		
 		int qtdeInicialPadrao = 50;
 		
@@ -1178,6 +1187,25 @@ public class DiferencaEstoqueController {
 		}
 		
 		return null;
+	}
+	
+	private void verificarExistenciaEstudo(Long idDiferenca) {
+		
+		DiferencaVO diferenca = this.obterDiferencaPorId(idDiferenca);
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(diferenca.getDataLancamento());
+		
+		ProdutoEdicao produtoEdicao =
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
+		
+		Estudo estudo =
+			this.estudoService.obterEstudoDoLancamentoPorDataProdutoEdicao(dataMovimento, produtoEdicao.getId());
+		
+		if (estudo == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo para a data deste lançamento!");
+		}
 	}
 	
 	/*
