@@ -86,24 +86,19 @@ validarEdicaoCallBack : function() {
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/buscaCnpj'/>", "cnpj=" + cnpj, 
 		function(result) { 
-			$("#fornecedor").val(result.nomeFantasia);
+			$("#fornecedor").val(result.cnpj);
 		});	
 	
 	}
 	
 	/**
-	 * PESQUISA O CNPJ DO FORNECEDOR SELECIONADO.
+	 * EXIBI O CNPJ DO FORNECEDOR SELECIONADO.
 	 */
-	function pesquisarCnpjPorFornecedor() {
+	function exibirCnpjDoFornecedor() {
 			
-		var fornecedor = $("#fornecedor").val();		
+		var cnpjDoFornecedor = $("#fornecedor").val();		
 	
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/buscaCnpjPorFornecedor'/>", "nomeFantasia=" + fornecedor, 
-		function (result) {
-			$("#cnpj").val(result.cnpj);
-		});
-				
-		
+		$("#cnpj").val(cnpjDoFornecedor);
 	}
 	
 	
@@ -123,6 +118,8 @@ validarEdicaoCallBack : function() {
 			"numeroNotaFiscal=" + notaFiscal 	+ "&" + 
 		   	"serie=" 			+ serie			+ "&" +
 		    "chaveAcesso=" 		+ chaveAcesso;
+		
+		limparCampos();
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/verificarNotaFiscalExistente'/>", 
 					   dadosPesquisa,
@@ -159,6 +156,8 @@ validarEdicaoCallBack : function() {
 	 * APRESENTA O POPUP PARA CADASTRAR NOVO ITEM NOTA/RECEBIMENTO.
 	 */
 	function popup_novo_item() {
+		
+		limparCamposNovoItem();
 		
 		$("#dialog-novo-item").dialog({
 			resizable: false,
@@ -211,12 +210,10 @@ validarEdicaoCallBack : function() {
 			$("#dialog-novo-item").dialog( "close" );
 				
 		} 
-	
-		exibirMensagem(result.tipoMensagem, result.listaMensagens);
 		
 		refreshItemNotaGrid();
 				
-		});
+		}, null, true);
 		
 		
 		
@@ -284,15 +281,58 @@ validarEdicaoCallBack : function() {
 						$("#dialog-nova-nota").dialog( "close" );
 						
 					} 
-			
-					exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					
 					refreshItemNotaGrid();
 				
-		});
+		}, null, true);
 		
 		
 	}
+	
+	/**
+	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
+	*/
+	function limparCampos() {
+		
+		$("#dataEmissao").val("");
+		$("#valorBruto").val("");
+		$("#valorLiquido").val("");
+		$("#valorDesconto").val("");
+		$("#cfop").val("");
+		$("#tipoNotaFiscal").val("");
+		
+		$("#codigo").val("");
+		$("#produto").val("");
+		$("#precoCapa").val("");
+		$("#edicao").val("");
+		$("#datepickerLancto").val("");
+		$("#datepickerRecolhimento").val("");
+		$("#repartePrevisto").val("");
+		$("#tipoLancamento").val("");		
+	
+	}
+
+	/**
+	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
+	*/
+	function limparCamposNovoItem() {
+		
+		$("#codigo").val("");
+		$("#produto").val("");
+		$("#precoCapa").val("");
+		$("#edicao").val("");
+		$("#datepickerLancto").val("");
+		$("#datepickerRecolhimento").val("");
+		$("#repartePrevisto").val("");
+		$("#tipoLancamento").val("");
+		$("#peso").val("");
+		$("#pacotePadrao").val("");
+	
+	}
+
+	
+	
+	
 	
 	/**
 	 * EFEITO PARA ABERTURA POPUP. 
@@ -496,7 +536,23 @@ validarEdicaoCallBack : function() {
 		});
 		
 	}
-	
+
+    /**
+     * COFIRMA OS DADOS DOS ITENS DA NOTA EDITADOS.
+     */
+	function confirmarRecebimentoFisico() {
+		
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/confirmarRecebimentoFisico'/>", listaDeValores, 
+		function(result) {
+			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			refreshItemNotaGrid();
+		
+		});
+		
+	}
+    
     /**
      * OBTEM OS VALORES DA GRID A SEREM ENVIADOS AO SERVIDOR VIA AJAX
      */
@@ -554,7 +610,7 @@ validarEdicaoCallBack : function() {
 			
 			var qtdFisico = value.cell[5];
 			
-			var exclusaoPermitida = value.cell[8];
+			var alteracaoPermitida = value.cell[8];
 			
 			var lineId = value.id;
 			
@@ -562,16 +618,12 @@ validarEdicaoCallBack : function() {
 			
 			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
-			value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
-			
-			if(exclusaoPermitida == "S") {
-				
+			if(alteracaoPermitida == "S") {
+				value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
 				value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
-				
 			} else {
-				
-				value.cell[8] = '<a href="javascript:;" disabled="disabled">'+imgExclusao+'</a>';
-				
+				value.cell[5] = '<input name="qtdFisico" disabled="disabled" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
+				value.cell[8] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
 			}
 			
 
@@ -601,13 +653,13 @@ validarEdicaoCallBack : function() {
 
 	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
 			
-			<div 	id="effectDialog" 
+			<div 	id="effectDialogNumber2" 
 		 			class="ui-state-highlight ui-corner-all" 
 		 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
 		 
 				<p>
 					<span style="float: left;" class="ui-icon ui-icon-info"></span>
-					<b id="idTextoMensagemDialog"></b>
+					<b id="idTextoMensagemDialogNumber2"></b>
 				</p>
 				
 			</div>
@@ -690,7 +742,7 @@ validarEdicaoCallBack : function() {
 
 		<div 	id="effectDialog" 
 	 			class="ui-state-highlight ui-corner-all" 
-	 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
+	 			style="display: none; position: absolute; z-index: 1003; width: 600px;">
 	 
 			<p>
 				<span style="float: left;" class="ui-icon ui-icon-info"></span>
@@ -832,13 +884,15 @@ validarEdicaoCallBack : function() {
 							style="width: 130px;" />
 						</td>
 						<td width="86">Fornecedor:</td>
+						
 						<td width="254"><select id="fornecedor" name="fornecedor"
-							onblur="pesquisarCnpjPorFornecedor()" style="width: 250px;">
+							onblur="exibirCnpjDoFornecedor()" style="width: 250px;">
 								<option value=""></option>
 								<c:forEach var="fornecedor" items="${listafornecedores}">
-									<option value="${fornecedor.juridica.nomeFantasia}">${fornecedor.juridica.nomeFantasia}</option>
+									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.nomeFantasia}</option>
 								</c:forEach>
 						</select></td>
+						
 						<td width="76">Nota Fiscal:</td>
 						<td width="123"><input type="text" id=notaFiscal
 							style="width: 100px;" />
@@ -864,7 +918,7 @@ validarEdicaoCallBack : function() {
 							
 							Chave de Acesso: 
 							
-							<input type="text" name="textfield11" id="chaveAcesso"
+							<input type="text" name="chaveAcesso" id="chaveAcesso"
 								style="width: 120px; margin-left: 10px;" />
 						</span>
 						
@@ -903,7 +957,7 @@ validarEdicaoCallBack : function() {
 					</span>
 					
 					<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
-						<a href="javascript:;" onclick="alert('confirmando...');;">
+						<a href="javascript:;" onclick="confirmarRecebimentoFisico()">
 							<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
 							Confirmar
 						</a>

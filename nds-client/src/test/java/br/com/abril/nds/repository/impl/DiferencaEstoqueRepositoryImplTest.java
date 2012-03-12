@@ -35,6 +35,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -109,7 +110,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(notaFiscalFornecedor);
 
 		ItemNotaFiscal itemNotaFiscal = 
-			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), BigDecimal.TEN);
+			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		
 		save(itemNotaFiscal);
 

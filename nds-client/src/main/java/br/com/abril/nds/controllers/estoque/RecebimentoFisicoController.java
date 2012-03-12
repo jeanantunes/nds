@@ -123,24 +123,6 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
-	 * Método para prencher combo fornecedor com o cnpj informado	 
-	 * 
-	 * @param nomeFantasia
-	 */
-	@Post
-	public void buscaCnpjPorFornecedor(String nomeFantasia){
-			
-		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
-		
-		if(pessoaJuridica != null){
-			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
-		}else{
-			 throw new ValidacaoException(TipoMensagem.ERROR,"Fornecedor não encontrado");
-		}
-		
-	}
-
-	/**
 	 * Serializa a listaItemRecebimentoFisico que esta em session recalculando os campos
 	 * valorTotal e valorDiferenca.
 	 */
@@ -583,7 +565,7 @@ public class RecebimentoFisicoController {
 			String qtdeFisica		 	= (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
 			String diferenca		 	= (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
 			String valorTotal		 	= (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
-			String exclusaoPermitida	= (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String alteracaoPermitida	= (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
@@ -596,7 +578,7 @@ public class RecebimentoFisicoController {
 							qtdeFisica,
 							diferenca,
 							valorTotal,
-							exclusaoPermitida
+							alteracaoPermitida
 					));
 			
 			
@@ -862,6 +844,10 @@ public class RecebimentoFisicoController {
 				valorBruto,
 				valorDesconto);
 	
+		if(notaFiscalFornecedor.getChaveAcesso() == null || notaFiscalFornecedor.getChaveAcesso().trim().isEmpty()) {
+			notaFiscalFornecedor.setChaveAcesso(null);
+		}
+		
 		try {
 			notaFiscalFornecedor.setDataEmissao(sdf.parse(dataEmissao));
 			notaFiscalFornecedor.setDataExpedicao(sdf.parse(dataEntrada));
@@ -881,6 +867,31 @@ public class RecebimentoFisicoController {
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	
+	}
+	
+		
+	/**
+	 * confirmaçao de recebimento fisico
+	 * @param notaFiscal
+	 * @param itensRecebimento
+	 */
+	@Post
+	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
+		
+		atualizarItensRecebimentoEmSession(itensRecebimento);
+		
+		//TODO: capturar usuario logado
+		Usuario usuarioLogado = new Usuario();
+		usuarioLogado.setId(1L);
+		
+		recebimentoFisicoService.confirmarRecebimentoFisico(usuarioLogado, getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		
+		List<String> msgs = new ArrayList<String>();
+		msgs.add("Itens Confirmados com Sucesso.");
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+		
 	}
 	
 	/**

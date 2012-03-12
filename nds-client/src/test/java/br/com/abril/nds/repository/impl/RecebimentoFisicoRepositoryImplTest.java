@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -20,7 +21,10 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -48,6 +52,9 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	TipoProduto tipoProduto = new TipoProduto();
 	Produto produto = new Produto();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+	RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
+	ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
+	ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
 	
 	Long idNotaFiscal;
 	
@@ -89,13 +96,29 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		
 		produtoEdicao =
 				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
-		produtoEdicao.setId(1L);
-		save(produtoEdicao);	
+		save(produtoEdicao);
+		
+		itemNotaFiscal= 
+				Fixture.itemNotaFiscal(
+						produtoEdicao, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(12));
+		save(itemNotaFiscal);
+		
+		recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
+		save(recebimentoFisico);
+		
+		itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		save(itemRecebimentoFisico);
 	}
 	
 	
 	@Test
-	@Ignore //TODO: corrigir
+	@Ignore
 	public void inserirItemNotaComDTOComNota() {
 		
 		
@@ -113,15 +136,12 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		
 		NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
 		
-		
 		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO, new Date());
-		
-		
 		
 	}
 	
 	@Test
-	@Ignore //TODO: corrigir
+	@Ignore
 	public void inserirItemNotaSemIdNota() {
 		
 		
@@ -143,8 +163,27 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		
 		
 		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalF, listaDTO, new Date());
+	}
+	
+	@Test
+	public void excluirItemNotaFiscalTeste(){
 		
+		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
 		
+		recebimentoDTO.setIdProdutoEdicao(1L);
+		recebimentoDTO.setQtdFisico(new BigDecimal(50));
+		recebimentoDTO.setDataLancamento(new Date(System.currentTimeMillis()));
+		recebimentoDTO.setDataRecolhimento(new Date(System.currentTimeMillis()));
+		recebimentoDTO.setRepartePrevisto(new BigDecimal(12));
+		recebimentoDTO.setTipoLancamento(TipoLancamento.LANCAMENTO);
+	
+		List<RecebimentoFisicoDTO> listaDTO = new ArrayList<RecebimentoFisicoDTO>();
+		
+		listaDTO.add(recebimentoDTO);
+		
+		NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
+		
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO, new Date());
 		
 	}
 		

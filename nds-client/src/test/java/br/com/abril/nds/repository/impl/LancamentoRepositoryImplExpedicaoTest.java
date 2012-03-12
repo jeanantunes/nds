@@ -97,7 +97,9 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			
 			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
 					produtoEdicao, usuario, notaFiscalFornecedor, 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+					TipoLancamento.LANCAMENTO,
 					new BigDecimal(i));					
 			save(itemNotaFiscal);
 			

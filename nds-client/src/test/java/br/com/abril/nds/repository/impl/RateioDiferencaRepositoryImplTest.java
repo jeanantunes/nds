@@ -39,6 +39,7 @@ import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTest{
@@ -85,7 +86,17 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal);
 				
-		ItemNotaFiscal itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscal, new Date(), BigDecimal.ONE);
+		ItemNotaFiscal itemNotaFiscal = 
+				
+				Fixture.itemNotaFiscal(
+						produtoEdicao, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						BigDecimal.ONE);
+		
 		save(itemNotaFiscal);
 		
 		NotaFiscalFornecedor notaFiscalFornecedor = 

@@ -58,7 +58,10 @@ public class RecebimentoFisicoDTO implements Serializable {
 			Long idProdutoEdicao,
 			BigDecimal precoCapa, 
 			BigDecimal repartePrevisto, 
-			BigDecimal qtdFisico, 
+			BigDecimal qtdFisico,
+			Date dataLancamento,
+			Date dataRecolhimento,
+			TipoLancamento tipoLancamento,			
 			BigDecimal diferenca, 
 			TipoDiferenca tipoDiferenca,
 			Origem origemItemNota){
@@ -72,6 +75,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
+		
+		this.dataLancamento = dataLancamento;
+		this.dataRecolhimento = dataRecolhimento;
+		this.tipoLancamento = tipoLancamento;
+		
 		this.diferenca = diferenca;
 		this.tipoDiferenca = tipoDiferenca;
 		this.origemItemNota = origemItemNota;
