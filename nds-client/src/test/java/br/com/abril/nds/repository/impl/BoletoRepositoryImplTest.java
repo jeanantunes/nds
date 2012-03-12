@@ -2,22 +2,20 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.repository.BoletoRepository;
 
-@Ignore
 public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Autowired
@@ -36,8 +34,12 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
 		save(pessoaJuridica);
 		
+		//CRIA UM OBJETO BOX NA SESSAO PARA TESTES
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.REPARTE);
+		save(box);
+		
 		//CRIA UM OBJETO COTA NA SESSAO PARA TESTES
-		Cota cota = Fixture.cota(NUMERO_COTA, pessoaJuridica, SituacaoCadastro.ATIVO,null);
+		Cota cota = Fixture.cota(NUMERO_COTA, pessoaJuridica, SituacaoCadastro.ATIVO,box);
 		save(cota);
 		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES

@@ -12,14 +12,20 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.TipoMensagem;
 
+/**
+ * Classe de implementação de serviços referentes a entidade
+ * {@link br.com.abril.nds.model.cadastro.Produto}
+ * 
+ * @author Discover Technology
+ */
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
 	
-	@Transactional
 	@Override
+	@Transactional(readOnly = true)
 	public Produto obterProdutoPorNomeProduto(String nome) {
 		if (nome == null || nome.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
@@ -28,8 +34,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 		return produtoRepository.obterProdutoPorNomeProduto(nome);
 	}
 	
-	@Transactional
 	@Override
+	@Transactional(readOnly = true)
 	public List<Produto> obterProdutoLikeNomeProduto(String nome) {
 		if (nome == null || nome.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
@@ -38,8 +44,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 		return produtoRepository.obterProdutoLikeNomeProduto(nome);
 	}
 	
-	@Transactional
 	@Override
+	@Transactional(readOnly = true)
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
 		if (codigoProduto == null || codigoProduto.isEmpty()){
 			throw new IllegalArgumentException("Código é obrigatório.");

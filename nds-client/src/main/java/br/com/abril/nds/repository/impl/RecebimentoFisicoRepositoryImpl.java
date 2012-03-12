@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 
@@ -78,9 +79,21 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		
 		return (RecebimentoFisico) query.uniqueResult();
 	}
-	
-		
-	
-}
-	
 
+
+	@SuppressWarnings("unchecked")
+	public List<ItemRecebimentoFisico> obterItensRecebimentoFisicoDoProduto(Long idProdutoEdicao) {
+		
+		String hql = " select itemRecebimentoFisico "
+				   + " from ItemRecebimentoFisico itemRecebimentoFisico "
+				   + " where itemRecebimentoFisico.itemNotaFiscal.produtoEdicao.id = :idProdutoEdicao "
+				   + " order by itemRecebimentoFisico.recebimentoFisico.dataConfirmacao asc ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return query.list();
+	}
+
+}
