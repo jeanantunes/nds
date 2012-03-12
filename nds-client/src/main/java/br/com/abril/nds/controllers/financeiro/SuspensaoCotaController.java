@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
+import br.com.abril.nds.dto.DividaDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -85,6 +86,19 @@ public class SuspensaoCotaController {
 	public List<CotaSuspensaoDTO> getListaCotaSuspensao() {
 
 		List<CotaSuspensaoDTO> listaCotaSuspensao = new ArrayList<CotaSuspensaoDTO>();
+		
+		List<DividaDTO> dividas = new ArrayList<DividaDTO>();
+		dividas.add(new DividaDTO("10/10/2010", 100.0));
+		
+		
+		CotaSuspensaoDTO cotaS = new CotaSuspensaoDTO(
+				1L, 
+				"Guilherme de Morais Leandro", 
+				50.0, 
+				60.0, 
+				true, 
+				null);
+		
 		listaCotaSuspensao.add(new CotaSuspensaoDTO(
 				1L, 
 				"Guilherme de Morais Leandro", 
@@ -92,6 +106,7 @@ public class SuspensaoCotaController {
 				60.0, 
 				true, 
 				null));	
+		
 		
 		return listaCotaSuspensao;
 	}

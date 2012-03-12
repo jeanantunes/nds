@@ -2,10 +2,9 @@
 
 <script language="javascript" type="text/javascript">
 	
-	function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
+	function popup_detalhes() {
+		
+		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:360,
@@ -19,29 +18,6 @@
 			}
 		});
 	};
-	
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:210,
-			width:650,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
 	
 	function popup_suspender() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -132,7 +108,7 @@ $(function() {
 	<style type="text/css">
 		  #effect { display: none; margin: 0px; width:980px;  position: absolute; }
 		  #effect_1 { display: none; margin: 0px; width:800px;  position: absolute; }
-		  #dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-confirm{display:none; font-size:12px;}
+		  #dialog-detalhes, #dialog-alterar, #dialog-excluir, #dialog-confirm{display:none; font-size:12px;}
  	 </style>
 </head>
 
@@ -156,7 +132,7 @@ $(function() {
 
 
 
-<div id="dialog-novo" title="Suspensão de Cota">
+<div id="dialog-detalhes" title="Suspensão de Cota">
      
     <table width="300" border="0" cellspacing="1" cellpadding="1">
   <tr>
@@ -348,8 +324,8 @@ $(function() {
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
-			
-			cell.acao = gerarAcoes(cell.cota);
+						
+			cell.acao = gerarAcoes(cell.cota,cell.dividas);
 			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.cota,cell.selecionado);;
 					
 		/*	if(cell.estudo) {
@@ -380,11 +356,11 @@ $(function() {
 		return input.outerHTML; 
 	}
 	
-	function gerarAcoes(idCota) {
+	function gerarAcoes(idCota,dividas) {
 		
 		var a = document.createElement("A");
 		a.href = "javascript:;";
-		a.setAttribute("onclick","popup();");
+		a.setAttribute("onclick","popup_detalhes();");
 		
 		var img =document.createElement("IMG");
 		img.src="${pageContext.request.contextPath}/images/ico_detalhes.png";
@@ -405,6 +381,69 @@ $(function() {
 		a2.innerHTML = img2.outerHTML;
 		
 		return a.outerHTML + a2.outerHTML;
+	}
+	
+	function gerarTabelaDetalhes(dividas) {
+		
+		var table = documento.createElement("TABLE");
+		table.width="300";
+		table.border="0";
+		table.cellspacing="1";
+		table.cellpadding="1";
+		//TODO - esconder
+		table.style="display:none;"
+		
+		var linhaCota = document.createElement("TR");
+	 	 
+	 	var tdCota = document.createElement("TD");
+	 	tdCota.colspan="2";
+	 	tdCota.align="left";
+	 	textoLinhaCota = document.createTextNode("Cota: ".bold() + " - Guilherme de Morais Leandro");
+	 	tdCota.appendChild(textoLinhaCota);
+	 	
+	 	linhaCota.appendChild(tdCota);
+	 	
+	 	table.appendChild(linhaCota);
+	 	
+	 	 var cabecalho = document.createElement("TR");
+	 	 
+		 	var tdDia = document.createElement("TD");
+		 	tdDia.width="136";
+		 	tdDia.align="left";
+		 	textoDia = document.createTextNode("Dia Vencimento".bold());
+		 	tdDia.appendChild(textoDia);			 	
+		 	cabecalho.appendChild(tdDia);
+		 	
+		 	var tdValor = document.createElement("TD");
+		 	tdValor.width="157";
+		 	tdValor.align="rigth";
+		 	textoValor = document.createTextNode("Valor R$".bold());
+		 	tdValor.appendChild(textoValor);			 	
+		 	cabecalho.appendChild(tdValor);
+		 	
+		 	table.appendChild(cabecalho);
+		
+		 $(dividas).each(function (index, domEle) {
+			 
+			 var linha = document.createElement("TR");
+		 	 
+			 	var cel = document.createElement("TD");
+			 	cel.align="left";
+			 	text = document.createTextNode("99/99/9999");
+			 	cel.appendChild(text);			 	
+			 	linha.appendChild(cel);
+			 	
+			 	var cel2 = document.createElement("TD");
+			 	cel2.align="rigth";
+			 	text2 = document.createTextNode("125,00");
+			 	cel2.appendChild(text2);			 	
+			 	linha.appendChild(cel2);
+			 	
+			 	table.appendChild(linha);
+			 
+			
+		 });
+		
 	}
 	
 </script>
