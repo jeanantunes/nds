@@ -3,13 +3,15 @@
 
 <script type="text/javascript">
 
-var linhasDestacadas = new Array();
+var linhasDestacadas = [];
+var lancamentosSelecionados = [];
 
 function pesquisar(){
 	$(".grids").show();
 	$("#lancamentosProgramadosGrid").flexReload();
 	$("#resumoPeriodo").show();
-	linhasDestacadas = new Array();
+	linhasDestacadas = [];
+	$('#selRep').uncheck();
 }
 
 function popup_reprogramar() {
@@ -46,11 +48,13 @@ $(function() {
 	
 	$("#datepickerDe").mask("99/99/9999");
 	$("#datepickerDe_1").mask("99/99/9999");
+
+	
 	
 });
 
 function abrirReprogramar() {
-	var selecionado = verifyAtLeastOneChecked($("#checkgroup"));
+	var selecionado = verifyAtLeastOneChecked('checkgroup');
 	if (selecionado) {
 		popup_reprogramar();
 	} else {
@@ -61,7 +65,7 @@ function abrirReprogramar() {
 }
 
 function voltarConfiguracaoOriginal() {
-	var selecionado = verifyAtLeastOneChecked($("#checkgroup"));
+	var selecionado = verifyAtLeastOneChecked('checkgroup');
 	if (selecionado) {
 		popup_reprogramar();
 	} else {
@@ -308,7 +312,7 @@ function voltarConfiguracaoOriginal() {
 				);
 				return data;
 			}
-			linhasDestacadas = new Array();
+			linhasDestacadas = [];
 			$("#valorTotal").html(data[1]);
 			$.each(data[0].rows, function(i, row){
 				var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
@@ -317,11 +321,11 @@ function voltarConfiguracaoOriginal() {
 					dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
 					dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 					row.cell.dataMatrizDistrib = dataDistrib;
-					row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck($(\'#selRep\'));" />';
+					row.cell.reprogramar='<input type="checkbox" value="'+row.cell.id+'" name="checkgroup" onclick="verifyCheck($(\'#selRep\'));" />';
 				} else {
 					var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 					row.cell.dataMatrizDistrib = dataDistrib;
-					row.cell.reprogramar='<input type="checkbox" name="checkgroup" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
+					row.cell.reprogramar='<input type="checkbox" name="checkgroup" value="'+row.cell.id+'" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
 				}
 				if (row.cell.semFisico || row.cell.cancelamentoGD || row.cell.furo ) {
 					linhasDestacadas.push(i+1);
@@ -331,7 +335,7 @@ function voltarConfiguracaoOriginal() {
 		}
 		
 		function buscarResumoPeriodo() {
-			var parametros = new Array();
+			var parametros = [];
 			parametros.push({name:'dataInicial', value: $("#datepickerDe").val()});
 			$("input[name='checkgroup_menu']:checked").each(function(i) {
 				parametros.push({name:'idsFornecedores', value: $(this).val()});
@@ -377,15 +381,21 @@ function voltarConfiguracaoOriginal() {
 		    rows+="</tr>";
 		    $("#tableResumoPeriodo").append(rows);
 		    
-		    $(".lancamentosProgramadosGrid tr").each(function(i){
-		    	if($.inArray((i+1), linhasDestacadas) > -1) {
-		    		 $(this).removeClass("erow").addClass("gridLinhaDestacada");
-					 $(this).children("td").removeClass("sorted");
-		    	}
-		   	});
+		    $(linhasDestacadas).each(function(i, item){
+			 id = '#row' + item;			    	
+			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id).children("td").removeClass("sorted");
+		   });
+
+		   $('input[name=checkgroup]').bind('change', function() {
+  			if (this.checked) {
+			  lancamentosSelecionados.push(this.value);					
+			} else {
+			  lancamentosSelecionados = removeFromArray(lancamentosSelecionados, this.value);				
+			}
+		   });	
 		}
 		
 	
 </script>
 </body>
-

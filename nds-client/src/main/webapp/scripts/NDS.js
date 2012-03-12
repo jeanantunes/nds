@@ -91,11 +91,22 @@ function checkAll(todos, checkgroupName) {
 }
 
 function verifyAtLeastOneChecked(checkgroupName) {
-	return false;
+	var checked = $("input[name=" + checkgroupName + "]:checked").length;	
+	return checked >= 1;
 }
 
 function verifyCheck(todos){
 	$(todos).uncheck();
+}
+
+function removeFromArray(array, data) {
+    var newArray = [];		
+    $(array).each(function() {
+	if (this != data) {
+		newArray.push(this);	
+	}
+    }); 	
+    return newArray;			
 }
 	
 //callback function to bring a hidden box back
