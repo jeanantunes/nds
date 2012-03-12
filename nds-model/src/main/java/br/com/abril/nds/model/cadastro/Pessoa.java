@@ -33,14 +33,15 @@ public abstract class Pessoa {
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "EMAIL")
-	private String email;
+	private String email;	
+	
 	@OneToMany
 	@JoinColumn(name = "PESSOA_ID")
 	public List<Endereco> enderecos = new ArrayList<Endereco>();
 	@OneToMany
 	@JoinColumn(name = "PESSOA_ID")
 	public List<Telefone> telefones = new ArrayList<Telefone>();
-
+	
 	public Long getId() {
 		return id;
 	}
