@@ -7,7 +7,70 @@
 
 <script type="text/javascript">
 
+var jsDadosProduto = {
+
+exibirDetalhesProdutoEdicao : function() {
 	
+	var data = "codigo=" + $("#codigo").val() + "&edicao=" + $("#edicao").val();
+	
+	$.postJSON('<c:url value="/"/>estoque/recebimentoFisico/obterProdutoEdicao', data, function(result){
+		
+		if(typeof result != "undefined") {
+			
+			$("#precoCapa").val(result.precoVenda);			
+			$("#peso").val(result.peso);			
+			$("#pacotePadrao").val(result.pacotePadrao);			
+			
+		}
+		
+	});
+	
+},
+
+limparCamposPesquisa : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.limparCamposPesquisa('#produto', '#edicao', true);	
+},
+
+pesquisarProdutoPorCodigo : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});	
+},
+
+pesquisarProdutoPorNome : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});
+},
+
+validarNumeroEdicao : function() {
+
+	$("#precoCapa").val("");
+	$("#peso").val("");
+	$("#pacotePadrao").val("");
+	
+	produto.validarNumEdicao('#codigo', '#edicao', true, jsDadosProduto.validarEdicaoCallBack);
+},
+
+validarEdicaoCallBack : function() {
+	
+	jsDadosProduto.exibirDetalhesProdutoEdicao();
+		
+}
+
+
+};
 
 	/**
 	 * SELECIONA UM FORNECEDOR A PARTIR DO CNPJ DIGITADO.
@@ -137,18 +200,21 @@
 		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
 		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
 		
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", dadosCadastro, 
-				function(result) {
-					
-					if(result.tipoMensagem == "SUCCESS") {
-						
-						$("#dialog-novo-item").dialog( "close" );
-						
-					} 
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", (dadosCadastro +"&" + listaDeValores), 
+
+		function(result) {
 			
-					exibirMensagem(result.tipoMensagem, result.listaMensagens);
-					
-					refreshItemNotaGrid();
+		if(result.tipoMensagem == "SUCCESS") {
+				
+			$("#dialog-novo-item").dialog( "close" );
+				
+		} 
+	
+		exibirMensagem(result.tipoMensagem, result.listaMensagens);
+		
+		refreshItemNotaGrid();
 				
 		});
 		
@@ -465,8 +531,12 @@
 	 */
 	function excluirItemNotaFiscal(lineId) {
 		
+		var dadosExclusao = "lineId=" + lineId;
 		
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", "lineId=" + lineId, 
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", (dadosExclusao + "&" + listaDeValores), 
+		
 		function(result) {
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			refreshItemNotaGrid();
@@ -484,13 +554,29 @@
 			
 			var qtdFisico = value.cell[5];
 			
+			var exclusaoPermitida = value.cell[8];
+			
 			var lineId = value.id;
 			
 			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 			
+			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+			
 			value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
+			
+			if(exclusaoPermitida == "S") {
+				
+				value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+				
+			} else {
+				
+				value.cell[8] = '<a href="javascript:;" disabled="disabled">'+imgExclusao+'</a>';
+				
+			}
+			
 
-			value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">APAGAR</a>';
+			
+
 			
 		});
 		
@@ -513,12 +599,18 @@
 
 <body>
 
-	<div id="dialog-excluir" title="Recebimento Físico">
-		<p>Confirma este Recebimento?</p>
-	</div>
-
-
 	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
+			
+			<div 	id="effectDialog" 
+		 			class="ui-state-highlight ui-corner-all" 
+		 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
+		 
+				<p>
+					<span style="float: left;" class="ui-icon ui-icon-info"></span>
+					<b id="idTextoMensagemDialog"></b>
+				</p>
+				
+			</div>
 			
 			<table width="439" cellpadding="2" cellspacing="2"
 				style="text-align: left;">
@@ -595,6 +687,17 @@
 
 
 	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
+
+		<div 	id="effectDialog" 
+	 			class="ui-state-highlight ui-corner-all" 
+	 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
+	 
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextoMensagemDialog"></b>
+			</p>
+			
+		</div>
 	
 		<table width="341" border="0" cellspacing="2" cellpadding="2">
 			<tr>
@@ -604,10 +707,11 @@
 					type="text"
 					id="codigo"
 					maxlength="255"
-					style="width: 80px; float: left; margin-right: 5px;"/>
+					style="width: 80px; float: left; margin-right: 5px;"
+					onchange="jsDadosProduto.limparCamposPesquisa();"/>
 					
 					<span class="classPesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="pesquisarPorCodigoProduto();">&nbsp;</a>
+						<a href="javascript:;" onclick="jsDadosProduto.pesquisarProdutoPorCodigo();">&nbsp;</a>
 					</span>
 					
 				</td>
@@ -619,8 +723,9 @@
 						maxlength="255"
 						type="text" 
 						id="produto"
-						onkeyup="pesquisarPorNomeProduto();" 
-						style="width: 200px;" />
+						
+					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       	   onchange="jsDadosProduto.pesquisarProdutoPorNome();"/>
 				</td>
 			</tr>
 			<tr>
@@ -629,7 +734,7 @@
 					type="text" 
 					id="edicao" maxlength="20"
 					style="width: 80px;" 
-					onblur="validarNumEdicao();"/>
+					onchange="jsDadosProduto.validarNumeroEdicao();"/>
 				</td>
 			</tr>
 			<tr>
@@ -785,21 +890,21 @@
 
 					<span class="bt_incluir_novo" title="Incluir Nova Linha"> 
 						<a href="javascript:;" onclick="popup_novo_item();"> 
-							<img src="images/ico_add_novo.gif" border="0" hspace="5" />
+							<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
 							Novo Produto 
 						</a> 
 					</span> 
 					
 					<span class="bt_novos" title="Salvar"> 
 						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
-							<img src="images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
 							Salvar 
 						</a> 
 					</span>
 					
 					<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
 						<a href="javascript:;" onclick="alert('confirmando...');;">
-							<img src="images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
+							<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
 							Confirmar
 						</a>
 					</span>

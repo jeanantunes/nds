@@ -12,10 +12,19 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados da entidade 
+ * {@link br.com.abril.nds.model.cadastro.ProdutoEdicao}
+ * 
+ * @author Discover Technology
+ */
 @Repository
 public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdicao, Long> 
 										 implements ProdutoEdicaoRepository {
 
+	/**
+	 * Construtor padrão.
+	 */
 	public ProdutoEdicaoRepositoryImpl() {
 		super(ProdutoEdicao.class);
 	}
@@ -70,7 +79,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estudo.qtdeReparte, lancamento.reparte, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
 		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ")
-		   .append("      Estudo estudo, Lancamento lancamento ")
+		   .append("      Lancamento lancamento ")
 		   .append(" left join lancamento.estudos as estudo ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")

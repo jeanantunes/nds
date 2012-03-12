@@ -8,9 +8,18 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.repository.ProdutoRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados da entidade 
+ * {@link br.com.abril.nds.model.cadastro.Produto}
+ * 
+ * @author Discover Technology
+ */
 @Repository
 public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> implements ProdutoRepository {
 
+	/**
+	 * Construtor padrão.
+	 */
 	public ProdutoRepositoryImpl() {
 		super(Produto.class);
 	}
@@ -28,9 +37,8 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Produto> obterProdutoPorNomeProduto(String nome) {
+	public Produto obterProdutoPorNomeProduto(String nome) {
 		String hql = "from Produto produto "
 				   + " where upper(produto.nome) = upper(:nome) order by produto.nome";
 		
@@ -38,7 +46,9 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 
 		query.setParameter("nome", nome);
 		
-		return query.list();
+		query.setMaxResults(1);
+		
+		return (Produto) query.uniqueResult();
 	}
 	
 	@Override

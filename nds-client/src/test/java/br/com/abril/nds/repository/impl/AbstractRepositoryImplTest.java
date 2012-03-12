@@ -26,16 +26,24 @@ public abstract class AbstractRepositoryImplTest {
 		getSession().clear();
 	}
 	
-	protected Session getSession() {
+	private Session getSession() {
 		return sf.getCurrentSession();
 	}
 	
 	protected void save(Object... entidades) {
 		for (Object entidade : entidades) {
-			getSession().save(entidade);
+			getSession().saveOrUpdate(entidade);
 		}
 		getSession().flush();
 		getSession().clear();
 	}
-
+	
+	protected void update(Object... entidades) {
+		for (Object entidade : entidades) {
+			getSession().update(entidade);
+		}
+		getSession().flush();
+		getSession().clear();
+	}
+	
 }

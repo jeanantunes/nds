@@ -4,7 +4,7 @@
 
 	<div id="effectDialog" 
 		 class="ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 1000; width: 600px;">
+		 style="display: none; position: absolute; z-index: 2000; width: 600px;">
 		 
 		<p>
 			<span style="float: left;" class="ui-icon ui-icon-info"></span>
@@ -12,14 +12,9 @@
 		</p>
 	</div>
 
-	<form id="novoLancamentoDiferencaForm"
-		  name="novoLancamentoDiferencaForm" 
-		  action="estoque/diferenca/lancamento/cadastrarNovasDiferencas" 
-		  method="post">
-		
-		<table id="gridNovasDiferencas" class="gridNovasDiferencas"></table>
+	<table id="gridNovasDiferencas" class="gridNovasDiferencas"></table>
 	
-	</form>
+	<br />
 	
 	<table id="" width="505" border="0" cellspacing="2" cellpadding="2">
 		<tr style="font-size: 11px;">
@@ -76,9 +71,9 @@
 					sortable : false,
 					align : 'center'
 				}],
-				singleSelect: true,
 				width : 610,
-				height : 220
+				height : 220,
+				disableSelect : true
 			});
 		});
 
@@ -92,6 +87,8 @@
 			});
 			
 			$("#gridNovasDiferencas").flexReload();
+
+			$("#effectDialog").hide();
 			
 			$("#dialogNovasDiferencas").dialog({
 				resizable: false,
@@ -124,10 +121,16 @@
 
 			$.each(resultado.rows, function(index, row) {
 
+				var hiddenId = '<input type="hidden" name="id" value="' + index + '" />';
+
+				var parametroLimparCamposPesquisa = '\'#descricaoProduto' + index + '\', \'#edicao' + index + '\',  function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
+								
 				var inputCodigoProduto = 
-					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" />';
+					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="produto.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" />';
 
 				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true, null, function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
+
+				var parametroAutoCompleteProduto = '\'#descricaoProduto' + index + '\', true';
 
 				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true, obterDadosProduto';
 
@@ -136,7 +139,7 @@
 									+ '</span>';
 
 				var inputDescricaoProduto = 
-					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroPesquisaProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
 
 				var inputNumeroEdicao = 
 					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + '); ultimaLinhaPreenchida=' + index + '" disabled="disabled" />';
@@ -152,7 +155,7 @@
 				var inputQuantidade = 
 					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
 
-				row.cell.codigoProduto = inputCodigoProduto + imgLupaPesquisa;
+				row.cell.codigoProduto = hiddenId + inputCodigoProduto + imgLupaPesquisa;
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
 				row.cell.precoVenda = hiddenPrecoVenda + spanPrecoVenda;
@@ -170,12 +173,23 @@
 			
 			var listaDiferencas = obterListaDiferencas();
 
+			var dataMovimento = "dataMovimento=" + $("#datePickerDataMovimento").val();
+
+			var tipoDiferenca = "&tipoDiferenca=" + $("#selectTiposDiferenca").val();
+
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/cadastrarNovasDiferencas' />", 
-				listaDiferencas,
+				listaDiferencas + dataMovimento + tipoDiferenca,
 				function(result) {
+
+					$("#gridLancamentos").flexOptions({
+						url : '<c:url value="/estoque/diferenca/lancamento/pesquisa/novos" />',
+						params: dataMovimento + tipoDiferenca
+					});
+					
+					$("#gridLancamentos").flexReload();
+
 					$("#dialogNovasDiferencas").dialog("close");
-					$(".grids").show();
 				},
 				tratarErroCadastroNovasDiferencas, 
 				true
@@ -184,7 +198,29 @@
 
 		function tratarErroCadastroNovasDiferencas(jsonData) {
 
+			if (!jsonData || !jsonData.mensagens) {
+
+				return;
+			}
+
+			var dadosValidacao = jsonData.mensagens.dados;
 			
+			var linhasDaGrid = $(".gridNovasDiferencas tr");
+
+			$.each(linhasDaGrid, function(index, value) {
+
+				var linha = $(value);
+
+				if (dadosValidacao 
+						&& ($.inArray(index, dadosValidacao) > -1)) {
+
+					linha.removeClass('erow').addClass('linhaComErro');
+					
+				} else {
+
+					linha.removeClass('linhaComErro');					
+				}
+			});
 		}
 
 		function obterListaDiferencas() {
@@ -202,7 +238,10 @@
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaQtdeEstoqueAtual = linha.find("td")[4]
 				var colunaQtdeDiferenca = linha.find("td")[5];
-	
+
+				var id = 
+					$(colunaCodigoProduto).find("div").find('input[name="id"]').val();
+				
 				var codigoProduto = 
 					$(colunaCodigoProduto).find("div").find('input[name="codigoProduto"]').val();
 				
@@ -223,7 +262,10 @@
 					return true;
 				}
 
-				var diferenca = 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
+
+				var diferenca = 'listaNovasDiferencas[' + index + '].id=' + id + '&';
+				
+				diferenca += 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
 	
 				diferenca += 'listaNovasDiferencas[' + index + '].descricaoProduto=' + descricaoProduto + '&';
 	

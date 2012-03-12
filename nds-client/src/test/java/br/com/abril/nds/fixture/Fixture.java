@@ -3,15 +3,19 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -22,15 +26,19 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -66,16 +74,16 @@ public class Fixture {
 				"acme@mail.com");
 	}
 
-	public static Fornecedor fornecedorFC() {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true);
+	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
 	}
 
-	public static Fornecedor fornecedorDinap() {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true);
+	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
 	}
 	
-	public static Fornecedor fornecedorAcme() {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false);
+	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -161,7 +169,18 @@ public class Fixture {
 	public static TipoProduto tipoCromo() {
 		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
 	}
-
+	
+	public static TipoFornecedor tipoFornecedorPublicacao() {
+		return tipoFornecedor("Fornecedor Publicação", GrupoFornecedor.PUBLICACAO);
+	}
+	
+	public static TipoFornecedor tipoFornecedorOutros() {
+		return tipoFornecedor("Fornecedor Outros", GrupoFornecedor.OUTROS);
+	}
+	
+	public static Box boxReparte300() {
+		return criarBox("300", "Box 300", TipoBox.REPARTE);
+	}
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -207,11 +226,13 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
-			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento) {
+			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
+			TipoFornecedor tipo) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
 		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
+		fornecedor.setTipoFornecedor(tipo);
 		return fornecedor;
 	}
 
@@ -222,6 +243,13 @@ public class Fixture {
 		tipoProduto.setGrupoProduto(grupo);
 		tipoProduto.setNcm(ncm);
 		return tipoProduto;
+	}
+	
+	public static TipoFornecedor tipoFornecedor(String descricao, GrupoFornecedor grupo) {
+		TipoFornecedor tipoFornecedor = new TipoFornecedor();
+		tipoFornecedor.setDescricao(descricao);
+		tipoFornecedor.setGrupoFornecedor(grupo);
+		return tipoFornecedor;
 	}
 
 	public static Produto produto(String codigo, String descricao, String nome,
@@ -292,7 +320,7 @@ public class Fixture {
 	}
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,
-			SituacaoCadastro situacaoCadastro) {
+			SituacaoCadastro situacaoCadastro, Box box) {
 
 		Cota cota = new Cota();
 
@@ -301,6 +329,8 @@ public class Fixture {
 		cota.setPessoa(pessoa);
 
 		cota.setSituacaoCadastro(situacaoCadastro);
+		
+		cota.setBox(box);
 
 		return cota;
 	}
@@ -451,6 +481,7 @@ public class Fixture {
 		notaFiscalFornecedor.setValorBruto(valorBruto);
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
+
 		return notaFiscalFornecedor;
 	}
 
@@ -537,9 +568,8 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 	
-	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor){
+	public static ParametroSistema parametroSistema(TipoParametroSistema tipoParametroSistema, String valor){
 		ParametroSistema parametroSistema = new ParametroSistema();
-		parametroSistema.setId(id);
 		parametroSistema.setTipoParametroSistema(tipoParametroSistema);
 		parametroSistema.setValor(valor);
 		
@@ -603,7 +633,7 @@ public class Fixture {
 		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
 	}
-	
+
 	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
@@ -612,6 +642,72 @@ public class Fixture {
 		rateioDiferenca.setQtde(qtde);
 		
 		return rateioDiferenca;
+	}
+
+	public static Expedicao expedicao(Usuario responsavel,Date dataExpedicao){
+		
+		Expedicao expedicao = new Expedicao();
+		expedicao.setResponsavel(responsavel);
+		expedicao.setDataExpedicao(dataExpedicao);
+		
+		return expedicao;
+	}
+	
+	public static Lancamento lancamentos(TipoLancamento tipoLancamento,
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
+			Date dataStatus, BigDecimal reparte,
+			StatusLancamento statusLancamento, List<ItemRecebimentoFisico> recebimentos) {
+		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dataCriacao);
+		lancamento.setDataStatus(dataStatus);
+		lancamento.setReparte(reparte);
+		lancamento.setStatus(statusLancamento);
+		lancamento.setTipoLancamento(tipoLancamento);
+		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setDataLancamentoPrevista(dlp);
+		lancamento.setDataLancamentoDistribuidor(dlp);
+		lancamento.setDataRecolhimentoPrevista(drp);
+		lancamento.setDataRecolhimentoDistribuidor(drp);
+		
+		for(ItemRecebimentoFisico x : recebimentos){
+			lancamento.addRecebimento(x);
+		}
+		
+		return lancamento;
+	}
+	
+	public static Box criarBox(String codigo, String nome, TipoBox tipoBox) {
+		Box box = new Box();
+		box.setCodigo(codigo);
+		box.setNome(nome);
+		box.setTipoBox(tipoBox);
+		return box;
+	}
+
+	//FINANCEIRO - HENRIQUE
+	public static Boleto boleto(Integer nossoNumero,
+				                Date dataEmissao,
+				                Date dataVencimento,
+				                Date dataPagamento,
+				                String encargos,
+				                Double valor,
+				                String tipoBaixa,
+				                String acao,
+				                StatusCobranca status,
+				                Cota cota){
+			
+		Boleto boleto = new Boleto();
+		boleto.setNossoNumero(nossoNumero);
+		boleto.setDataEmissao(dataEmissao);
+		boleto.setDataVencimento(dataVencimento);
+		boleto.setDataPagamento(dataPagamento);
+		boleto.setEncargos(encargos);
+		boleto.setValor(valor);
+		boleto.setTipoBaixa(tipoBaixa);
+		boleto.setAcao(acao);
+		boleto.setStatusCobranca(status);
+		boleto.setCota(cota);
+		return boleto;
 	}
 
 }

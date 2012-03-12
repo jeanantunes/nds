@@ -1,7 +1,10 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,27 +12,33 @@ import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
@@ -101,6 +110,9 @@ public class DataLoader {
 	private static ItemRecebimentoFisico itemRecebimentoFisico;
 	private static EstoqueProduto estoqueProdutoVeja1;
 	private static MovimentoEstoque movimentoRecFisicoVeja1;
+	private static TipoFornecedor tipoFornecedorPublicacao;
+	private static TipoFornecedor tipoFornecedorOutros;
+	private static Box box300Reparte;
 
 
 	public static void main(String[] args) {
@@ -115,6 +127,7 @@ public class DataLoader {
 			session = sf.openSession();
 			tx = session.beginTransaction();
 			carregarDados(session);
+			//carregarDadosParaResumoExpedicao(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,6 +150,8 @@ public class DataLoader {
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
 		criarUsuarios(session);
+		criarTiposFornecedores(session);
+		criarBoxes(session);
 		criarFornecedores(session);
 		criarDiasDistribuicaoFornecedores(session);
 		criarCotas(session);
@@ -156,7 +171,7 @@ public class DataLoader {
 		
 
 		
-		// Início dos inserts na tabela MOVIMENTO_ESTOQUE
+		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
 		MovimentoEstoque movimentoEstoqueDiferenca =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
@@ -184,7 +199,7 @@ public class DataLoader {
 		
 		// Fim dos inserts na tabela MOVIMENTO_ESTOQUE
 		
-		// Início dos inserts na tabela DIFERENCA
+		// Inicio dos inserts na tabela DIFERENCA
 		
 		Diferenca diferenca =
 			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
@@ -223,6 +238,20 @@ public class DataLoader {
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+		
+		gerarBoletos(session);
+	}
+
+	private static void criarBoxes(Session session) {
+		box300Reparte = Fixture.boxReparte300();
+		save(session, box300Reparte);
+	}
+
+	private static void criarTiposFornecedores(Session session) {
+		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(session, tipoFornecedorPublicacao);
+		tipoFornecedorOutros = Fixture.tipoFornecedorOutros();
+		save(session, tipoFornecedorOutros);
 	}
 
 	private static void criarMovimentosEstoqueCota(Session session) {
@@ -237,7 +266,7 @@ public class DataLoader {
 	}
 
 	private static void criarParametrosSistema(Session session) {
-		ParametroSistema parametroSistema = Fixture.parametroSistema(1L,
+		ParametroSistema parametroSistema = Fixture.parametroSistema(
 				TipoParametroSistema.PATH_IMAGENS_CAPA,
 				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 		session.save(parametroSistema);
@@ -290,7 +319,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
-						new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO,
+						new Date(), BigDecimal.TEN,  StatusLancamento.RECEBIDO,
 						itemRecebimentoFisico);
 		session.save(lancamentoVeja1);
 		
@@ -301,7 +330,9 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja2.getPeb()), new Date(),
+
 						new Date(), BigDecimal.TEN, StatusLancamento.BALANCEADO,
+
 						null);
 		session.save(lancamentoVeja2);
 
@@ -613,14 +644,14 @@ public class DataLoader {
 				"manoel@mail.com", "Manoel da Silva");
 		save(session, manoel);
 		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO);
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box300Reparte);
 		save(session, cotaManoel);
 	}
 
 	private static void criarFornecedores(Session session) {
-		fornecedorAcme = Fixture.fornecedorAcme();
-		fornecedorDinap = Fixture.fornecedorDinap();
-		fornecedorFc = Fixture.fornecedorFC();
+		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 	}
 
@@ -705,6 +736,242 @@ public class DataLoader {
 		for (Object entidade : entidades) {
 			session.save(entidade);
 		}
+	}
+	
+	
+	/**
+	 * Gera massa de dados para o teste de Resumo de Expedicao agrupadas por produto
+	 * @param session
+	 */
+	private static void carregarDadosParaResumoExpedicao(Session session){
+
+		TipoProduto tipoRevista = Fixture.tipoRevista();
+		session.save(tipoRevista);
+		
+		CFOP cfop = Fixture.cfop5102();
+		session.save(cfop);
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		session.save(usuario);
+		
+		TipoMovimento tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
+		session.save(tipoMovimentoSobraDe);
+		
+		TipoMovimento tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
+		session.save(tipoMovimentoFaltDe);
+		
+		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
+		session.save(tipoMovimentoFaltEM);
+		
+		
+		for(Integer i=1000;i<1010; i++) {
+			
+			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+			session.save(juridica);
+			
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
+			session.save(fornecedor);
+			
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			produto.addFornecedor(fornecedor);
+			session.save(produto); 
+			
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+			session.save(produtoEdicao);
+			
+			
+			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+			session.save(tipoNotaFiscal);
+
+			
+			List<ItemRecebimentoFisico> listaRecebimentos = new ArrayList<ItemRecebimentoFisico>() ;
+			
+			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigDecimal.ZERO);
+			session.save(estoque);
+			
+			for(int x= 1; x< 3 ;x++){
+				
+				NotaFiscalFornecedor notaFiscalFornecedor = Fixture
+						.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
+				session.save(notaFiscalFornecedor);
+				
+				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+						produtoEdicao, usuario, notaFiscalFornecedor, 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						new BigDecimal(i));					
+				session.save(itemNotaFiscal);
+				
+				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+					notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+				session.save(recebimentoFisico);
+				
+				ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
+						itemNotaFiscal, recebimentoFisico, new BigDecimal(i+x));
+				session.save(itemFisico);
+				
+				
+				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				
+				session.save(movimentoEstoque);
+				
+				Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque);
+				session.save(diferenca);
+				
+				itemFisico.setDiferenca(diferenca);
+				session.update(itemFisico);
+				
+				listaRecebimentos.add(itemFisico);
+			}
+			
+			Expedicao expedicao = Fixture.expedicao(usuario,Fixture.criarData(1, 3, 2010));
+			session.save(expedicao);
+			
+			Lancamento lancamento = Fixture.lancamentos(TipoLancamento.LANCAMENTO, produtoEdicao,
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					new BigDecimal(100), 
+					StatusLancamento.EXPEDIDO, 
+					listaRecebimentos);
+			lancamento.setReparte(new BigDecimal(10));
+			lancamento.setExpedicao(expedicao);
+			session.save(lancamento);
+		
+			Estudo estudo = new Estudo();
+			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
+			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setQtdeReparte(new BigDecimal(i));
+			session.save(estudo);
+		}
+	}
+	
+	//FINANCEIRO - CONSULTA BOLETOS
+	private static void gerarBoletos(Session session) {
+		
+		PessoaJuridica juridicaAcme = Fixture.pessoaJuridica("Acme",
+				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
+				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
+		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
+				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
+		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
+				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+		save(session, manoel);
+
+
+		Cota cotaManoel = Fixture.cota(1000, manoel, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaManoel);
+		
+		Cota cotaJuridicaAcme = Fixture.cota(2000, juridicaAcme, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaAcme);
+		
+		Cota cotaJuridicaDinap = Fixture.cota(3000, juridicaDinap, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaDinap);
+		
+		Cota cotaJuridicaFc = Fixture.cota(4000, juridicaFc, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaFc);
+		
+		Cota cotaJuridicaDistrib = Fixture.cota(5000, juridicaDistrib, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaDistrib);
+		
+		Boleto boleto0 = Fixture.boleto(10000,
+				                       new Date(), 
+				                       new Date(), 
+				                       new Date(), 
+				                       "ENCARGOS", 
+				                       558.90, 
+				                       "TIPO_BAIXA", 
+				                       "ACAO", 
+				                       StatusCobranca.PAGO,
+				                       cotaManoel);
+		
+		Boleto boleto1 = Fixture.boleto(20000,
+                                        new Date(), 
+                                        new Date(), 
+                                        new Date(), 
+                                        "ENCARGOS", 
+                                        100.35, 
+                                        "TIPO_BAIXA",
+                                        "ACAO", 
+                                        StatusCobranca.PAGO,
+                                        cotaJuridicaAcme);
+		
+		Boleto boleto2 = Fixture.boleto(30000,
+                						new Date(), 
+                						new Date(), 
+                						new Date(), 
+                						"ENCARGOS", 
+                						1005.80, 
+                						"TIPO_BAIXA",
+                						"ACAO", 
+                						StatusCobranca.PAGO,
+                						cotaJuridicaDinap);
+		
+		Boleto boleto3 = Fixture.boleto(40000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                200.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.PAGO,
+						                cotaJuridicaFc);
+		
+		Boleto boleto4 = Fixture.boleto(50000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                3500.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaJuridicaDistrib);
+		
+		Boleto boleto5 = Fixture.boleto(60000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                50.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaManoel);
+		
+		Boleto boleto6 = Fixture.boleto(70000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                1002.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaJuridicaAcme);
+		
+		Boleto boleto7 = Fixture.boleto(80000,
+						                new Date(), 
+						                new Date(), 
+						                new Date(), 
+						                "ENCARGOS", 
+						                1000.00, 
+						                "TIPO_BAIXA",
+						                "ACAO", 
+						                StatusCobranca.NAO_PAGO,
+						                cotaJuridicaAcme);
+		
+	    save(session,boleto0,boleto1,boleto2,boleto3,boleto4,boleto5,boleto6,boleto7);    
+	    
 	}
 	
 }

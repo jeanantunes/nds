@@ -1,11 +1,13 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -55,7 +57,11 @@ public interface DiferencaEstoqueService {
 	Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
 	
 	boolean verificarPossibilidadeExclusao(Long idDiferenca);
+
+	void efetuarAlteracoes(Long idUsuario, Set<Long> idsDiferencaExclusao);
+
+	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
 	
-	void efetuarAlteracoes(Set<Long> idsDiferencaExclusao);
+	void salvarNovaDiferenca(Diferenca diferenca);
 
 }

@@ -18,5 +18,30 @@ public enum TipoParametroSistema {
 	 * Capacidade de Distribuição dáaria do distribuidor, em número de
 	 * exemplares
 	 */
-	CAPACIDADE_DISTRIBUICAO_DIARIA;
+	CAPACIDADE_DISTRIBUICAO_DIARIA,
+	
+	/**
+	 * Número de dias permitido para lançamento de uma
+	 * diferença de estoque do tipo FALTA DE.
+	 */
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE,
+	
+	/**
+	 * Número de dias permitido para lançamento de uma
+	 * diferença de estoque do tipo FALTA EM.
+	 */
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM,
+	
+	/**
+	 * Número de dias permitido para lançamento de uma
+	 * diferença de estoque do tipo SOBRA DE.
+	 */
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE,
+	
+	/**
+	 * Número de dias permitido para lançamento de uma
+	 * diferença de estoque do tipo SOBRA EM.
+	 */
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM;
+	
 }
