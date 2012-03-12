@@ -8,9 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
@@ -48,9 +45,7 @@ public class ConfirmacaoExpedicaoController {
 		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
 		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
 		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro ao confirmar expedições!";
-		
-		private static final Logger LOG = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
-		
+				
 		/**
 		 * Construtor
 		 * 
@@ -66,6 +61,9 @@ public class ConfirmacaoExpedicaoController {
 			this.session = session;
 		}
 		
+		/**
+		 * Inicializa dados da tela
+		 */
 		public void index() {
 			gerarListaFornecedores();
 			gerarDataLancamento();
@@ -74,11 +72,16 @@ public class ConfirmacaoExpedicaoController {
 		}
 				
 		
-		
-		@SuppressWarnings("unchecked")
+		/**
+		 * Adiciona ou remove um item da lista de item adicionado
+		 * 
+		 * @param idLancamento - id do lancamento a ser adicionado
+		 * @param selecionado - true(adiciona a lista) false(remove da lista)
+		 */
 		@Post
-		public void selecionarLancamento(Long idLancamento, Boolean selecionado) throws Exception {
+		public void selecionarLancamento(Long idLancamento, Boolean selecionado) {
 			
+			@SuppressWarnings("unchecked")
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
 			if(selecionados == null) {
@@ -99,9 +102,13 @@ public class ConfirmacaoExpedicaoController {
 			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 		}
 		
-		@SuppressWarnings("unchecked")
+		/**
+		 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
+		 * 
+		 * @param selecionado - true(adiciona todos) false (remove todos)
+		 */
 		@Post
-		public void selecionarTodos(Boolean selecionado) throws Exception {
+		public void selecionarTodos(Boolean selecionado){
 			
 			if(selecionado==false) {
 				session.setAttribute("selecionados", null);
@@ -114,6 +121,7 @@ public class ConfirmacaoExpedicaoController {
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
 						lancamentoService.obterLancamentosNaoExpedidos(null, date, idFornecedor, estudo);
 				
+				@SuppressWarnings("unchecked")
 				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 				
 				if(selecionados==null) {
@@ -132,20 +140,33 @@ public class ConfirmacaoExpedicaoController {
 		}
 		
 		/**
-		 * Método com finalidade de redirecionamento para a p�gina
+		 * Método com finalidade de redirecionamento para a página
 		 */
 		public void confirmacaoExpedicao() {
 		}
 		
-		@SuppressWarnings("unchecked")
+		
+		/**
+		 * Confirma expedição, gera movimentos do distribuidor e cotas e retorna dados da 
+		 * pesquisa atualizados
+		 * 
+		 * @param page - nº da página a pesquisar
+		 * @param rp - nº de registros por página
+		 * @param sortname - nome da coluna de ordenação
+		 * @param sortorder - ordenação (asc - desc)
+		 * @param idFornecedor - código do fornecedor
+		 * @param dtLancamento - data de lançamento
+		 * @param estudo - boolean - possui ou não estudo
+		 */
 		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
-				String dtLancamento, Boolean estudo, Boolean change){
+				String dtLancamento, Boolean estudo){
 			
 			String status = SUCESSO;
 			
 			List<String> mensagens = new ArrayList<String>();
 			
+			@SuppressWarnings("unchecked")
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
 			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
@@ -186,6 +207,11 @@ public class ConfirmacaoExpedicaoController {
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
 		
+		/**
+		 * Método que obtém o usuário logado
+		 * 
+		 * @return usuário logado
+		 */
 		public Usuario getUsuario() {
 			//TODO getUsuario
 			Usuario usuario = new Usuario();
@@ -215,12 +241,19 @@ public class ConfirmacaoExpedicaoController {
 		
 		/**
 		 * Realiza pesquisa de expedições por filtro, e retorna JSON com a mesma.
-		 * 
-		 * @param dataLancamento - Data de lan�amento da expedição
+		 * 		 
+		 * @param page - nº da página a pesquisar
+		 * @param rp - nº de registros por página
+		 * @param sortname - nome da coluna de ordenação
+		 * @param sortorder - ordenação (asc - desc)
 		 * @param idFornecedor - código do fornecedor
-		 * @throws Exception 
+		 * @param dtLancamento - data de lançamento
+		 * @param estudo - boolean - possui ou não estudo
+		 * @param ultimaPesquisa - data/hora gerada ao clique do botão pesquisar utilizada para identificar
+		 * 	uma nova pesquisa(data diferente da guardada em sessão), pódendo assim limpar seleções e lançar
+		 * 	mensagens de validação de filtro de pesquisa, que não correrão ao paginar os dados
+		 * 
 		 */
-		@SuppressWarnings("unchecked")
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
 						String dtLancamento, Boolean estudo, String ultimaPesquisa){
@@ -258,8 +291,19 @@ public class ConfirmacaoExpedicaoController {
 			
 			result.use(Results.json()).withoutRoot().from(retorno).serialize();						
 		}	
-		
-		@SuppressWarnings("unchecked")		
+			
+		/**
+		 * Gera a tabela utilizada pelo FlexGrid de acordo com os filtros e dados de paginação
+		 * 
+		 * @param page - nº da página a pesquisar
+		 * @param rp - nº de registros por página
+		 * @param sortname - nome da coluna de ordenação
+		 * @param sortorder - ordenação (asc - desc)
+		 * @param idFornecedor - código do fornecedor
+		 * @param dtLancamento - data de lançamento
+		 * @param estudo - boolean - possui ou não estudo
+		 * @return
+		 */
 		public TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> gerarGrid( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
 				String dtLancamento, Boolean estudo){
@@ -286,6 +330,7 @@ public class ConfirmacaoExpedicaoController {
 				
 				List<CellModelKeyValue<LancamentoNaoExpedidoDTO>> listaCelula = new LinkedList<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 				
+				@SuppressWarnings("unchecked")
 				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 				
 				for(LancamentoNaoExpedidoDTO expedicao : listaExpedicoes) {						
@@ -309,15 +354,5 @@ public class ConfirmacaoExpedicaoController {
 				
 			}
 			return grid;
-		}
-		
-		private class Retorno {
-			private List<String> mensagens;
-			private TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid;
-			
-			public Retorno(List<String> mensagens, TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid) {
-				
-			}
-		}
-		
+		}				
 	}
