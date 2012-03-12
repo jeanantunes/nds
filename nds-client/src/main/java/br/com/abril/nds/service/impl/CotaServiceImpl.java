@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,18 @@ public class CotaServiceImpl implements CotaService {
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
 		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasPorNomePessoa(String nome) {
+		
+		return this.cotaRepository.obterCotasPorNomePessoa(nome);
+	}
+
+	@Transactional(readOnly = true)
+	public Cota obterPorNome(String nome) {
+		
+		return this.cotaRepository.obterPorNome(nome);
 	}
 
 }
