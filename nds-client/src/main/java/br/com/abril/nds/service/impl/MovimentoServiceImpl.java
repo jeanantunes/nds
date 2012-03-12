@@ -69,6 +69,11 @@ public class MovimentoServiceImpl implements MovimentoService{
 	@Transactional
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
 		
+		TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
+				TipoOperacao.SAIDA, DominioTipoMovimento.ENVIO_JORNALEIRO);
+		
+		TipoMovimento tipoMovimentoCota = tipoMovimentoRepository.buscarTipoMovimento(
+				TipoOperacao.ENTRADA, DominioTipoMovimento.RECEBIMENTO_REPARTE);
 		
 		List<EstudoCota> listaEstudoCota = estudoCotaRepository.
 				obterEstudoCotaPorDataProdutoEdicao(dataLancamento, idProdutoEdicao);
@@ -78,20 +83,19 @@ public class MovimentoServiceImpl implements MovimentoService{
 		for( EstudoCota estudoCota:listaEstudoCota ) {
 			
 			gerarMovimentoCota(dataLancamento,idProdutoEdicao,estudoCota.getCota().getId(),
-					idUsuario, estudoCota.getQtdeEfetiva());
+					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota);
 			
 			total = total.add(estudoCota.getQtdeEfetiva());
 		}
 		
-		gerarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, total);
+		gerarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, total, tipoMovimento);
 	}
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade) {
+	public void gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimento tipoMovimento) {
 		
-		TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
-				TipoOperacao.SAIDA, DominioTipoMovimento.ENVIO_JORNALEIRO);
+		
 		
 		ItemRecebimentoFisico itemRecebimentoFisico = 
 				itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
@@ -110,9 +114,17 @@ public class MovimentoServiceImpl implements MovimentoService{
 		if(tipoMovimento.isAprovacaoAutomatica()) {			
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 		}
-				
-		BigDecimal novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
-		estoqueProduto.setQtde(novaQuantidade);
+		
+		BigDecimal novaQuantidade;
+		
+		if(TipoOperacao.ENTRADA.equals(tipoMovimento.getTipoOperacao())) {
+			 novaQuantidade = estoqueProduto.getQtde().add(quantidade); 
+				estoqueProduto.setQtde(novaQuantidade);
+		} else {
+			 novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+				estoqueProduto.setQtde(novaQuantidade);			
+		}
+		
 				
 		movimentoEstoqueRepository.adicionar(movimentoEstoque);
 		estoqueProdutoRespository.alterar(estoqueProduto);
@@ -120,11 +132,8 @@ public class MovimentoServiceImpl implements MovimentoService{
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade) {
-		
-		TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
-				TipoOperacao.ENTRADA, DominioTipoMovimento.RECEBIMENTO_REPARTE);
-				
+	public void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade, TipoMovimento tipoMovimento) {
+						
 		EstoqueProdutoCota estoqueProdutoCota =  estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
 				
 		if(estoqueProdutoCota == null) {
@@ -154,9 +163,15 @@ public class MovimentoServiceImpl implements MovimentoService{
 			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
 		}
 		
-		BigDecimal novaQuantidade = estoqueProdutoCota.getQtdeRecebida().add(quantidade); 
-		estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
-				
+		BigDecimal novaQuantidade;
+		
+		if(TipoOperacao.ENTRADA.equals(tipoMovimento.getTipoOperacao())) {
+			 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().add(quantidade); 
+			 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
+		} else {
+			 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().subtract(quantidade); 
+			 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);			
+		}
 		movimentoCotaRepository.adicionar(movimentoEstoqueCota);
 		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 	}
