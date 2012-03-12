@@ -4,72 +4,8 @@
 		src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
-		function popup_manual() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
-			$("#dialog-manual").dialog({
-				resizable : false,
-				height : 'auto',
-				width : 470,
-				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-	
-						$(this).dialog("close");
-	
-					},
-					"Cancelar" : function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-		};
-		function popup() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-			$("#dialog-novo").dialog({
-				resizable : false,
-				height : 280,
-				width : 770,
-				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						popup_excluir();
-						$(this).dialog("close");
-	
-					},
-					"Cancelar" : function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-		};
-	
-		function popup_alterar() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-			$("#dialog-novo").dialog({
-				resizable : false,
-				height : 500,
-				width : 650,
-				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").hide("highlight", {}, 1000, callback);
-	
-					},
-					"Cancelar" : function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-	
-		};
-	
-		function popup_excluir() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+		function popup_excluir() {	
 			$("#dialog-excluir").dialog({
 				resizable : false,
 				height : 170,
@@ -86,6 +22,7 @@
 				}
 			});
 		};
+		
 		$(function() {
 			$("input[id^='datepicker']")
 					.datepicker(
@@ -110,12 +47,7 @@
 			$('#baixaManual').hide();
 			$('#extratoBaixaManual').hide();
 		}
-		function dividaManual() {
-	
-			$('#extratoBaixaManual').show();
-			$('#dadosArquivo').hide();
-	
-		}
+		
 		function dividaManualNossoNumero() {
 			$('#nossoNumero').show();
 			$('#porCota').hide();
@@ -148,127 +80,6 @@
 <body>
 	<div id="dialog-excluir" title="Baixa Bancária">
 		<p>Confirma a Baixa deste Valor?</p>
-	</div>
-
-	<div id="dialog-manual" title="Baixa de Boletos Manual">
-
-		<table width="436" border="0" cellpadding="2" cellspacing="1">
-			<tr>
-				<td width="430" align="center"><table width="430" border="0"
-						cellpadding="2" cellspacing="1" style="text-align: left;">
-						<tr>
-							<td><strong>Cota:</strong></td>
-							<td colspan="3">9999 - José da Silva Pereira</td>
-						</tr>
-						<tr>
-							<td width="85"><strong>Banco:</strong></td>
-							<td width="142">Santander</td>
-							<td width="71"><strong>Emissão:</strong></td>
-							<td width="111">12/11/2011</td>
-						</tr>
-						<tr>
-							<td><strong>Vencimento:</strong></td>
-							<td>12/12/2011</td>
-							<td><strong>Valor R$:</strong></td>
-							<td>999.999,99</td>
-						</tr>
-					</table> <br />
-					<table width="430" border="0" cellpadding="2" cellspacing="1"
-						style="text-align: left;">
-						<tr>
-							<td width="120"><strong>Data Pagto</strong></td>
-							<td width="15" align="center"><strong>&nbsp;&nbsp;</strong></td>
-							<td width="155"><strong>Valor Desconto R$</strong></td>
-							<td width="11" align="center"><strong>&nbsp;&nbsp;</strong></td>
-							<td width="126"><strong>Valor Juros R$</strong></td>
-						</tr>
-						<tr>
-							<td><input type="text" name="textfield12" id="datepickerDe"
-								style="width: 80px;" /></td>
-							<td align="center">&nbsp;</td>
-							<td><input type="text" name="textfield13" id="textfield13"
-								style="width: 80px; text-align: right;" /></td>
-							<td align="center">&nbsp;</td>
-							<td><input type="text" name="textfield14" id="textfield14"
-								style="width: 80px; text-align: right;" /></td>
-						</tr>
-					</table> <br />
-					<table width="430" border="0" cellpadding="2" cellspacing="1"
-						style="text-align: left;">
-						<tr>
-							<td><strong>Motivo:</strong></td>
-						</tr>
-						<tr>
-							<td width="424"><textarea name="textfield6" rows="3"
-									id="textfield7" style="width: 410px;"></textarea></td>
-						</tr>
-					</table></td>
-			</tr>
-		</table>
-
-
-	</div>
-
-
-
-	<div id="dialog-novo" title="Baixa Bancária">
-
-		<table width="740" border="0" cellpadding="2" cellspacing="1">
-			<tr>
-				<td width="114" align="left"><strong>Nome do Arquivo:</strong></td>
-				<td width="191" align="left">CNR00145.DAT</td>
-				<td width="114" align="left"><strong>Data Competência:</strong></td>
-				<td width="92" align="left">01/11/2011</td>
-				<td width="71" align="left"><strong>Valor R$:</strong></td>
-				<td width="127" align="left">999.999,99</td>
-			</tr>
-		</table>
-		<table width="740" border="0" cellpadding="2" cellspacing="1">
-			<tr class="header_table">
-				<td width="350" align="center"><strong>Leitura e
-						Conferência de Arquivo</strong></td>
-				<td width="24" align="center"><strong>&nbsp;&nbsp;</strong></td>
-				<td width="350" align="center"><strong>Baixa
-						Automática</strong></td>
-			</tr>
-			<tr>
-				<td align="center" valign="top" bgcolor="#FFFFFF"
-					style="border: 1px solid #CCC;"><table width="100%" border="0"
-						cellspacing="1" cellpadding="1">
-						<tr>
-							<td width="44%" align="left"><strong>Qtde.
-									Registros:</strong></td>
-							<td width="56%" align="left">99999</td>
-						</tr>
-						<tr>
-							<td align="left"><strong>Data do Processamento:</strong></td>
-							<td align="left">99/99/9999</td>
-						</tr>
-						<tr>
-							<td align="left"><strong> Registros Verificados:</strong></td>
-							<td align="left">999.999</td>
-						</tr>
-					</table></td>
-				<td align="center" bgcolor="#FFFFFF">&nbsp;</td>
-				<td align="center" valign="top" bgcolor="#FFFFFF"
-					style="border: 1px solid #CCC;"><table width="100%" border="0"
-						cellspacing="1" cellpadding="1">
-						<tr>
-							<td width="52%" align="left"><strong>Registros
-									Lidos:</strong></td>
-							<td width="48%" align="left">999.999</td>
-						</tr>
-						<tr>
-							<td align="left"><strong>Registros Baixados:</strong></td>
-							<td align="left">999.999</td>
-						</tr>
-						<tr>
-							<td align="left"><strong>Registros Rejeitados:</strong></td>
-							<td align="left">999.999</td>
-						</tr>
-					</table></td>
-			</tr>
-		</table>
 	</div>
 
 	<fieldset class="classFieldset">
@@ -341,7 +152,7 @@
 					Boleto</td>
 			</tr>
 			<tr>
-				<td class="linha_borda"><strong>Núm. Boleto:</strong></td>
+				<td class="linha_borda"><strong>Num. Boleto:</strong></td>
 				<td class="linha_borda">987675433456675</td>
 			</tr>
 			<tr>
@@ -543,4 +354,5 @@
 
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
+	
 </body>
