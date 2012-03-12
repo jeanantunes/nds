@@ -36,7 +36,7 @@ public class RecebimentoFisico {
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_RECEBIMENTO", nullable = false)
 	private Date dataRecebimento;
-	@Temporal(value=TemporalType.DATE)
+	@Temporal(value=TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CONFIRMACAO")
 	private Date dataConfirmacao;
 	@OneToOne(optional = false)

@@ -56,7 +56,8 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return criteria.list();
 	}
 
-	public Cota obterPorNome(String nome) {
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterPorNome(String nome) {
 
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		
@@ -69,9 +70,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 			)
 		);
 		
-		criteria.setMaxResults(1);
-		
-		return (Cota) criteria.uniqueResult();
+		return criteria.list();
 	}
 
 }

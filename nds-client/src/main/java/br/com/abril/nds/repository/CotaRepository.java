@@ -33,12 +33,12 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<Cota> obterCotasPorNomePessoa(String nome);
 	
 	/**
-	 * Obtém uma cota pelo seu nome.
+	 * Obtém uma lista de cotas pelo nome.
 	 * 
 	 * @param nome - nome da cota (pessoa)
 	 * 
-	 * @return {@link Cota}
+	 * @return Lista de {@link Cota}
 	 */
-	Cota obterPorNome(String nome);
+	List<Cota> obterPorNome(String nome);
 	
 }
