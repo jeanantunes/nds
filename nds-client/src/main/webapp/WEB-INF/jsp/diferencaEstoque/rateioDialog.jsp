@@ -113,11 +113,17 @@
 
 			$.each(resultado.rows, function(index, row) {
 
-				var inputNumeroCota = '<input name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" />';
+				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(\'#quantidadeRateio' + index + '\')}';
 
-				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Cota"><a href="javascript:;">&nbsp;</a></span>';
+				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true, null, function() {reprocessarDadosRateio(\'#quantidadeRateio' + index + '\')}';
 
-				var inputNomeCota = '<input name="nomeCota" type="text" style="width:220px;" />';
+				var parametroAutoCompleteCota = '\'#nomeCota' + index + '\', true';
+				
+				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" />';
+
+				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Cota"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');">&nbsp;</a></span>';
+
+				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')"  />';
 
 				var spanReparteCota = '<span id="qtdeReparteCota' + index + '"/>';
 				
@@ -140,7 +146,7 @@
 			
 			var somaQtdeRateio = $("input[id^='quantidadeRateio']").sum();
 			
-			$("#totalRateio").text(somaPrecoVenda);
+			$("#totalRateio").text(somaQtdeRateio);
 			
 			if (somaQtdeRateio == 0) {
 			
