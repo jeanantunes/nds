@@ -22,6 +22,8 @@
 	
 	<script language="javascript" type="text/javascript">
 
+		var ultimaLinhaPreenchida;
+	
 		$(function() {
 			
 			$(".gridRateioDiferencas").flexigrid({
@@ -62,12 +64,6 @@
 		function popupRateioDiferenca(idDiferencaSelecionada) {
 
 			var rateioData = [
-  				{
-  					name: 'dataMovimento', value: $("#datePickerDataMovimento").val()
-  				},
-  				{
-  					name: 'tipoDiferenca', value: $("#selectTiposDiferenca").val()
-  				},
   				{
   					name: 'idDiferenca', value: idDiferencaSelecionada
   				}
@@ -115,7 +111,9 @@
 
 				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(\'#quantidadeRateio' + index + '\')}';
 
-				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true, null, function() {reprocessarDadosRateio(\'#quantidadeRateio' + index + '\')}';
+				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', \'#quantidadeRateio' + index + '\'); ultimaLinhaPreenchida=' + index + ';';
+
+				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true, function() {' + chamadaMetodoObterQuantidadeReparteCota + '}, null';
 
 				var parametroAutoCompleteCota = '\'#nomeCota' + index + '\', true';
 				
@@ -138,6 +136,34 @@
 			$("#totalRateio").empty();
 			
 			return resultado;
+		}
+
+		function obterQuantidadeReparteCota(idDiferenca, idCampoNumeroCota, idCampoQtdeRateio) {
+
+			var data = [
+   				{
+   					name: 'idDiferenca', value: idDiferenca
+   				},
+   				{
+   					name: 'numeroCota', value: $(idCampoNumeroCota).val()
+   				}
+   			];
+			
+			$.postJSON(
+				"<c:url value='/estoque/diferenca/lancamento/rateio/obterQuantidadeReparte' />", 
+				data,
+				function(qtdeReparteCota) {
+					
+					if (qtdeReparteCota) {
+						
+						$("#qtdeReparteCota" + ultimaLinhaPreenchida).text(qtdeReparteCota);
+
+						reprocessarDadosRateio(idCampoQtdeRateio);
+					}
+				},
+				null, 
+				true
+			);
 		}
 
 		function reprocessarDadosRateio(idCampoQtdeRateio) {
