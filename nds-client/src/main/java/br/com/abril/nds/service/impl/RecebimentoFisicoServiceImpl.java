@@ -27,6 +27,8 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -40,6 +42,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
+import br.com.abril.nds.repository.TipoMovimentoRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.MovimentoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
@@ -59,6 +62,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private ItemNotaFiscalRepository itemNotaFiscalRepository;
+	
+	@Autowired
+	private TipoMovimentoRepository tipoMovimentoRepository;
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
@@ -701,11 +707,15 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 			
+			TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
+					TipoOperacao.ENTRADA, DominioTipoMovimento.RECEBIMENTO_FISICO);
+			
 			movimentoService.gerarMovimentoEstoque(
 					recebimentoFisicoDTO.getDataLancamento(), 
 					recebimentoFisicoDTO.getIdProdutoEdicao(), 
 					usuarioLogado.getId(), 
-					recebimentoFisicoDTO.getRepartePrevisto());
+					recebimentoFisicoDTO.getRepartePrevisto(),
+					tipoMovimento);
 			
 		}
 		
