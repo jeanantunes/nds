@@ -47,7 +47,6 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -114,7 +113,7 @@ public class DataLoader {
 	private static RecebimentoFisico recebimentoFisico;
 	private static ItemRecebimentoFisico itemRecebimentoFisico;
 	private static EstoqueProduto estoqueProdutoVeja1;
-	private static AbstractMovimentoEstoque movimentoRecFisicoVeja1;
+	private static MovimentoEstoque movimentoRecFisicoVeja1;
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
 	private static Box box300Reparte;
