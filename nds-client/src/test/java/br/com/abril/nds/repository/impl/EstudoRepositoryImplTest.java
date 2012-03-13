@@ -5,10 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
@@ -26,6 +24,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.util.Constantes;
 
+@Ignore
 public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -33,15 +32,10 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 	
-	private Date dataReferencia;
-	
 	private ProdutoEdicao produtoEdicao;
 	
 	@Before
 	public void setup() throws ParseException {
-
-		this.dataReferencia = this.simpleDateFormat.parse("01/01/2012");
-		
 		this.produtoEdicao = this.criarProdutoEdicao();
 		
 		for (int dia = 1; dia <= 3; dia++) {
@@ -52,18 +46,6 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 			
 			this.criarEstudo(lancamento, this.produtoEdicao);
 		}
-	}
-	
-	@Test
-	public void obterEstudoDoLancamentoMaisProximo() {
-		
-		Estudo estudo =
-			this.estudoRepository.obterEstudoDoLancamentoMaisProximo(
-				this.dataReferencia, this.produtoEdicao.getProduto().getCodigo(), this.produtoEdicao.getNumeroEdicao());
-		
-		Assert.assertNotNull(estudo);
-		
-		//Assert.assertEquals(dataReferencia, estudo.getLancamento().getDataLancamentoDistribuidor());
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {

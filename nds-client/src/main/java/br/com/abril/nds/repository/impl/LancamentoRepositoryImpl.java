@@ -40,7 +40,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append("join fetch produtoEdicao.produto produto ");
 		hql.append("join fetch produto.fornecedores fornecedor ");
 		hql.append("left join fetch lancamento.recebimentos recebimento ");
-		hql.append("left join fetch lancamento.estudos estudo ");
+		hql.append("left join fetch lancamento.estudo estudo ");
 		hql.append("where fornecedor.permiteBalanceamento = :permiteBalanceamento ");
 		if (filtro.getData() != null) {
 			hql.append("and lancamento.dataLancamentoPrevista = :data ");
@@ -262,7 +262,6 @@ public class LancamentoRepositoryImpl extends
 		}
 		
 		hql.append(" left join lancamento.recebimentos itemRecebido ");
-		hql.append(" left join lancamento.estudos estudo ");
 		
 		hql.append(" where lancamento.status=:statusLancamento ");
 		
@@ -286,9 +285,9 @@ public class LancamentoRepositoryImpl extends
 		}				
 		
 		if (estudo != null && estudo == true ) {
-			hql.append(" AND estudo is not null");			
+			hql.append(" AND lancamento.estudo is not null");			
 		} else {
-			hql.append(" AND estudo is null");
+			hql.append(" AND lancamento.estudo is null");
 		}
 		
 		return hql.toString();

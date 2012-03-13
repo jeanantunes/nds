@@ -2,14 +2,16 @@ package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,11 +49,8 @@ public class Estudo implements Serializable {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
 	@NotFound(action = NotFoundAction.IGNORE)
-	@ManyToOne(optional = true)
-	@JoinColumns({
-			@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
-			@JoinColumn(name = "DATA_LANCAMENTO", referencedColumnName = "DATA_LCTO_DISTRIBUIDOR", insertable = false, updatable = false) })
-	private Lancamento lancamento;
+	@OneToMany(mappedBy = "estudo")
+	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
 	public Long getId() {
 		return id;
@@ -86,7 +85,7 @@ public class Estudo implements Serializable {
 	}
 	
 	public Lancamento getLancamento() {
-		return lancamento;
+		return lancamentos.isEmpty() ? null : lancamentos.iterator().next();
 	}
 
 }
