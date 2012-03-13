@@ -7,38 +7,19 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 
 	private static final long serialVersionUID = 6884763521167786938L;
 
-	private Long idLancamento;
-	
-	//ItemRecebimentoFisico.recebimentoFisico.dataRecebimento;	
-		//-ItemNotaFiscal.produtoEdicao = Lancamento.produtoEdicao
-		//-ItemNotaFiscal.dataLancamento = Lancamento.dataLancamentoDistribuidor
-	
+	private Long idLancamento;		
 	private String dataEntrada;
-	//Lancamento.produtoEdicao.produto.id.
 	private Long codigo;
-	//Lancamento.produtoEdicao.produto.nome
 	private String produto;
-	//Lancamento.produtoEdicao.numeroEdicao
 	private Long edicao;
-	//Lancamento.produtoEdicao.produto.tipoProduto.descricao
 	private String classificacao;
-	//Lancamento.produtoEdicao.precoVenda
 	private String preco;
-	//Lancamento.produtoEdicao.pacotePadrao
 	private Integer pctPadrao;
-	//Lancamento.estudo.qtdeReparte
 	private Integer reparte;
-	//Lancamento.dataRecolhimentoPrevista
 	private String  dataChamada;
-	//Lancamento.produtoEdicao.produto.? List
 	private String fornecedor;
-	//Lancamento.estudo.id
 	private Integer estudo;
-	//campo de tela
 	private Boolean selecionado; 
-
-	
-	
 	
 	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, Long codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado) {
 		super();
@@ -56,9 +37,6 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.estudo = estudo;
 		this.selecionado = selecionado;
 	}
-
-
-
 
 	public Long getIdLancamento() {
 		return idLancamento;

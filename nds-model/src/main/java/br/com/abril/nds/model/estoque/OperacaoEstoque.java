@@ -1,11 +1,11 @@
-package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.estoque;
 
 /**
  * @author T30541
  * @version 1.0
  * @created 14-fev-2012 11:35:33
  */
-public enum TipoOperacao {
+public enum OperacaoEstoque {
 	ENTRADA,
 	SAIDA
 }

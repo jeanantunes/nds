@@ -29,14 +29,14 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -65,13 +65,13 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		TipoMovimento tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
+		TipoMovimentoEstoque tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
 		save(tipoMovimentoSobraDe);
 		
-		TipoMovimento tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
+		TipoMovimentoEstoque tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
 		save(tipoMovimentoFaltDe);
 		
-		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimentoEstoque tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
 		save(tipoMovimentoFaltEM);
 		
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -113,7 +113,9 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 				
 				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
 						produtoEdicao, usuario, notaFiscalFornecedor, 
-						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+						TipoLancamento.LANCAMENTO,
 						new BigDecimal(i));					
 				save(itemNotaFiscal);
 				

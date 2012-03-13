@@ -16,9 +16,13 @@ public class RateioCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 3244681304919095515L;
 	
+	private Long id;
+	
 	private Long idDiferenca;
 	
 	private Integer numeroCota;
+	
+	private String nomeCota;
 	
 	private BigDecimal reparteCota;
 	
@@ -29,6 +33,20 @@ public class RateioCotaVO implements Serializable {
 	 */
 	public RateioCotaVO() {
 		
+	}
+	
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
@@ -57,6 +75,20 @@ public class RateioCotaVO implements Serializable {
 	 */
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
+	}
+	
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
 
 	/**
@@ -94,10 +126,17 @@ public class RateioCotaVO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((idDiferenca == null) ? 0 : idDiferenca.hashCode());
 		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
 				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime * result
+				+ ((quantidade == null) ? 0 : quantidade.hashCode());
+		result = prime * result
+				+ ((reparteCota == null) ? 0 : reparteCota.hashCode());
 		return result;
 	}
 
@@ -113,15 +152,35 @@ public class RateioCotaVO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RateioCotaVO other = (RateioCotaVO) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		if (idDiferenca == null) {
 			if (other.idDiferenca != null)
 				return false;
 		} else if (!idDiferenca.equals(other.idDiferenca))
 			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
 		if (numeroCota == null) {
 			if (other.numeroCota != null)
 				return false;
 		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		if (quantidade == null) {
+			if (other.quantidade != null)
+				return false;
+		} else if (!quantidade.equals(other.quantidade))
+			return false;
+		if (reparteCota == null) {
+			if (other.reparteCota != null)
+				return false;
+		} else if (!reparteCota.equals(other.reparteCota))
 			return false;
 		return true;
 	}

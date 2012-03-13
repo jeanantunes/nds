@@ -7,13 +7,15 @@ import java.util.List;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -23,10 +25,12 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -34,10 +38,15 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
@@ -45,11 +54,6 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
-import br.com.abril.nds.model.movimentacao.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -181,6 +185,8 @@ public class Fixture {
 	public static Box boxReparte300() {
 		return criarBox("300", "Box 300", TipoBox.REPARTE);
 	}
+	
+	
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -304,6 +310,8 @@ public class Fixture {
 		Distribuidor distribuidor = new Distribuidor();
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
+		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
+				TipoCobranca.BOLETO, new BigDecimal(200)));
 		return distribuidor;
 	}
 
@@ -321,17 +329,13 @@ public class Fixture {
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,
 			SituacaoCadastro situacaoCadastro, Box box) {
-
 		Cota cota = new Cota();
-
 		cota.setNumeroCota(numeroCota);
-
 		cota.setPessoa(pessoa);
-
 		cota.setSituacaoCadastro(situacaoCadastro);
-		
 		cota.setBox(box);
-
+		ContratoCota contratoCota = criarContratoCota(cota, true);
+		cota.setContratoCota(contratoCota);
 		return cota;
 	}
 
@@ -380,71 +384,71 @@ public class Fixture {
 		return cfop;
 	}
 
-	public static TipoMovimento tipoMovimentoFaltaEm() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoFaltaEm() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
 		tipoMovimento.setDescricao("Falta EM");
 		tipoMovimento.setIncideDivida(false);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_EM);
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimento tipoMovimentoFaltaDe() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoFaltaDe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
 		tipoMovimento.setDescricao("Falta DE");
 		tipoMovimento.setIncideDivida(false);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_DE);
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimento tipoMovimentoSobraEm() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoSobraEm() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
 		tipoMovimento.setDescricao("SObra EM");
 		tipoMovimento.setIncideDivida(false);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_EM);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimento tipoMovimentoSobraDe() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoSobraDe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
 		tipoMovimento.setDescricao("Sobra DE");
 		tipoMovimento.setIncideDivida(false);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_DE);
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimento tipoMovimentoRecebimentoFisico() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoFisico() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Recebimento de Mercadoria");
 		tipoMovimento.setIncideDivida(false);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.RECEBIMENTO_FISICO);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimento tipoMovimentoRecebimentoReparte() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoReparte() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Recebimento Reparte");
 		tipoMovimento.setIncideDivida(true);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.RECEBIMENTO_REPARTE);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimento tipoMovimentoEnvioJornaleiro() {
-		TipoMovimento tipoMovimento = new TipoMovimento();
+	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Envio a Jornaleiro");
 		tipoMovimento.setIncideDivida(true);
-		tipoMovimento.setTipoMovimento(DominioTipoMovimento.ENVIO_JORNALEIRO);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		return tipoMovimento;
 	}
 
 	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
-			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, BigDecimal qtde) {
+			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
 		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
 		itemNotaFiscal.setOrigem(Origem.MANUAL);
 		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
@@ -452,6 +456,8 @@ public class Fixture {
 		itemNotaFiscal.setUsuario(usuario);
 		itemNotaFiscal.setNotaFiscal(notaFiscal);
 		itemNotaFiscal.setDataLancamento(dataLancamento);
+		itemNotaFiscal.setDataRecolhimento(dataRecolhimento);
+		itemNotaFiscal.setTipoLancamento(tipoLancamento);
 		return itemNotaFiscal;
 	}
 
@@ -521,7 +527,7 @@ public class Fixture {
 
 	public static MovimentoEstoque movimentoEstoque(
 			ItemRecebimentoFisico itemRecebimentoFisico,
-			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
+			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
 			Usuario usuario, EstoqueProduto estoqueProduto,
 			StatusAprovacao statusAprovacao, String motivo) {
 
@@ -532,7 +538,7 @@ public class Fixture {
 		movimentoEstoque.setQtde(new BigDecimal(1.0));
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getTipoOperacao() == TipoOperacao.ENTRADA) {
+		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
 			estoqueProduto.setQtde(estoqueProduto.getQtde().add(movimentoEstoque.getQtde()));
 		} else {
 			estoqueProduto.setQtde(estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde()));
@@ -546,7 +552,7 @@ public class Fixture {
 	
 	public static MovimentoEstoque movimentoEstoque(ItemRecebimentoFisico itemRecebimentoFisico,
 													ProdutoEdicao produtoEdicao, 
-													TipoMovimento tipoMovimento,
+													TipoMovimentoEstoque tipoMovimento,
 													Usuario usuario, 
 													EstoqueProduto estoqueProduto,
 													Date dataInclusao,
@@ -609,7 +615,7 @@ public class Fixture {
 	}
 	
 	public static MovimentoEstoqueCota movimentoEstoqueCota(
-			ProdutoEdicao produtoEdicao, TipoMovimento tipoMovimento,
+			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
 			Usuario usuario, EstoqueProdutoCota estoqueProdutoCota,
 			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
 
@@ -619,7 +625,7 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getTipoOperacao() == TipoOperacao.ENTRADA) {
+		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
 			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
 					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
 		} else {
@@ -685,7 +691,7 @@ public class Fixture {
 	}
 
 	//FINANCEIRO - HENRIQUE
-	public static Boleto boleto(Integer nossoNumero,
+	public static Boleto boleto(String nossoNumero,
 				                Date dataEmissao,
 				                Date dataVencimento,
 				                Date dataPagamento,
@@ -708,6 +714,33 @@ public class Fixture {
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
 		return boleto;
+	}
+	
+	public static ContratoCota criarContratoCota(Cota cota,
+			boolean exigeDocSuspensao) {
+		ContratoCota contratoCota = new ContratoCota();
+		contratoCota.setCota(cota);
+		contratoCota.setExigeDocumentacaoSuspencao(exigeDocSuspensao);
+		return contratoCota;
+	}
+	
+	public static PoliticaCobranca criarPoliticaCobranca(
+			Distribuidor distribuidor, TipoCobranca tipo, BigDecimal valorMinimo) {
+		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
+		politicaCobranca.setTipoCobranca(tipo);
+		politicaCobranca.setValorMinino(valorMinimo);
+		politicaCobranca.setDistribuidor(distribuidor);
+		return politicaCobranca;
+	}
+	
+	public static Feriado feriado(Date data, String descricao) {
+		
+		Feriado feriado = new Feriado();
+		
+		feriado.setData(data);
+		feriado.setDescricao(descricao);
+		
+		return feriado;
 	}
 
 }

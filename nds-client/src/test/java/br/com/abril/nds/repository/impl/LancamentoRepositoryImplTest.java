@@ -116,8 +116,11 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(notaFiscal1Veja);
 
 		ItemNotaFiscal itemNotaFiscal1Veja = Fixture.itemNotaFiscal(veja1, usuario,
-				notaFiscal1Veja, Fixture.criarData(22, Calendar.FEBRUARY,
-						2012), new BigDecimal(50));
+				notaFiscal1Veja, 
+				Fixture.criarData(22, Calendar.FEBRUARY,2012),
+				Fixture.criarData(22, Calendar.FEBRUARY,2012),
+				TipoLancamento.LANCAMENTO,
+						new BigDecimal(50));
 		save(itemNotaFiscal1Veja);
 		
 		Date dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -136,9 +139,15 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
-		ItemNotaFiscal itemNotaFiscal2Veja = Fixture.itemNotaFiscal(veja1, usuario,
-				notaFiscal2Veja, Fixture.criarData(22, Calendar.FEBRUARY,
-						2012), new BigDecimal(50));
+		ItemNotaFiscal itemNotaFiscal2Veja = Fixture.itemNotaFiscal(
+				veja1, 
+				usuario,
+				notaFiscal2Veja, 
+				Fixture.criarData(22, Calendar.FEBRUARY,2012), 
+				Fixture.criarData(22, Calendar.FEBRUARY,2012),
+				TipoLancamento.LANCAMENTO,
+				new BigDecimal(50));
+		
 		save(itemNotaFiscal2Veja);
 
 		RecebimentoFisico recebimentoFisico2Veja = Fixture.recebimentoFisico(
@@ -156,9 +165,17 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
-		ItemNotaFiscal itemNotaFiscal4Rodas = Fixture.itemNotaFiscal(quatroRoda2, usuario,
-				notaFiscal4Rodas, Fixture.criarData(22, Calendar.FEBRUARY,
-						2012), new BigDecimal(25));
+		ItemNotaFiscal itemNotaFiscal4Rodas = 
+		
+				Fixture.itemNotaFiscal(
+						quatroRoda2, 
+						usuario,
+						notaFiscal4Rodas, 
+						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
+						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(25));
+		
 		save(itemNotaFiscal4Rodas);
 		
 		RecebimentoFisico recebimentoFisico4Rodas = Fixture.recebimentoFisico(

@@ -3,13 +3,10 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.CotaRepository;
 
@@ -31,7 +28,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		super(Cota.class);
 	}
 
-	@Override
 	public Cota obterPorNumerDaCota(Integer numeroCota) {
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -43,29 +39,38 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return (Cota) criteria.uniqueResult();
 	}
 
-	/**
-	 * @see br.com.abril.nds.repository.CotaRepository#obterEnderecosPorIdCota(java.lang.Long)
-	 */
-	@Override
 	@SuppressWarnings("unchecked")
-	public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota) {
-
-		StringBuilder hql = new StringBuilder();
+	public List<Cota> obterCotasPorNomePessoa(String nome) {
 		
-		hql.append(" select enderecoCota.endereco as endereco, ")
-		   .append(" enderecoCota.principal as enderecoPrincipal, ")
-		   .append(" enderecoCota.tipoEndereco as tipoEndereco ")
-		   .append(" from EnderecoCota enderecoCota ")
-		   .append(" where enderecoCota.cota.id = :idCota ");
-
-		Query query = getSession().createQuery(hql.toString());
-
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(EnderecoAssociacaoDTO.class);
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		
-		query.setResultTransformer(resultTransformer);
+		criteria.createAlias("pessoa", "pessoa");
 		
-		query.setParameter("idCota", idCota);
+		criteria.add(
+			Restrictions.or(
+				Restrictions.ilike("pessoa.nome", nome, MatchMode.ANYWHERE),
+				Restrictions.ilike("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)
+			)
+		);
 		
-		return query.list();
+		return criteria.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterPorNome(String nome) {
+
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
+		criteria.createAlias("pessoa", "pessoa");
+		
+		criteria.add(
+			Restrictions.or(
+				Restrictions.eq("pessoa.nome", nome),
+				Restrictions.eq("pessoa.razaoSocial", nome)
+			)
+		);
+		
+		return criteria.list();
+	}
+
 }

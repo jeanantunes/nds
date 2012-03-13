@@ -3,121 +3,78 @@
 
 <script type="text/javascript">
 
-var linhasDestacadas = new Array();
+var linhasDestacadas = [];
+var lancamentosSelecionados = [];
 
 function pesquisar(){
 	$(".grids").show();
 	$("#lancamentosProgramadosGrid").flexReload();
 	$("#resumoPeriodo").show();
-	linhasDestacadas = new Array();
+	linhasDestacadas = [];
+	lancamentosSelecionados = [];
+	$('#selRep').uncheck();
 }
 
-function popup() {
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:370,
-			width:410,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				}
+function popup_reprogramar() {
+	$( "#dialog-reprogramar" ).dialog({
+		resizable: false,
+		height:160,
+		width:320,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				$( this ).dialog( "close" );
+				$("#effect").show("highlight", {}, 1000, callback);
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
 			}
-		});
-	};
-	
-	function popup_reprogramar() {
-		$( "#dialog-reprogramar" ).dialog({
-			resizable: false,
-			height:160,
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	
-	function popup_volume_valor() {
-		$( "#dialog-volume-valor" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_peso() {
-		$( "#dialog-peso" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_num_lancto() {
-		$( "#dialog-num-lancto" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	
-	$(function() {
-		$( "#datepickerDe" ).datepicker({
-			showOn: "button",
-			dateFormat: 'dd/mm/yy',
-			buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
-			buttonImageOnly: true
-		});
-		$( "#datepickerDe_1" ).datepicker({
-			showOn: "button",
-			dateFormat: 'dd/mm/yy',
-			buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
-			buttonImageOnly: true
-		});
-		
-		$("#datepickerDe").mask("99/99/9999");
-		$("#datepickerDe_1").mask("99/99/9999");
-		
+		}
 	});
+};
+	
+$(function() {
+	$( "#datepickerDe" ).datepicker({
+		showOn: "button",
+		dateFormat: 'dd/mm/yy',
+		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
+		buttonImageOnly: true
+	});
+	$( "#datepickerDe_1" ).datepicker({
+		showOn: "button",
+		dateFormat: 'dd/mm/yy',
+		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
+		buttonImageOnly: true
+	});
+	
+	$("#datepickerDe").mask("99/99/9999");
+	$("#datepickerDe_1").mask("99/99/9999");
+
+	
+	
+});
+
+function abrirReprogramar() {
+	var selecionado = verifyAtLeastOneChecked('checkgroup');
+	if (selecionado) {
+		popup_reprogramar();
+	} else {
+		mensagens = new Array();
+		mensagens.push('Nenhum registro selecionado.');
+		exibirMensagem('ERROR', mensagens);
+	}
+}
+
+function voltarConfiguracaoOriginal() {
+	var selecionado = verifyAtLeastOneChecked('checkgroup');
+	if (selecionado) {
+		popup_reprogramar();
+	} else {
+		mensagens = new Array();
+		mensagens.push('Nenhum registro selecionado.');
+		exibirMensagem('ERROR', mensagens);
+	}
+}
 
 </script>
 <style>
@@ -201,7 +158,7 @@ function popup() {
       <fieldset class="classFieldset">
        	  <legend>Balanceamento da Matriz de Lançamento Cadastrados</legend>
         <div class="grids" style="display:none;">
-        <span class="bt_configura_inicial"><a href="javascript:;"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
+        <span class="bt_configura_inicial"><a href="javascript:;" onclick="voltarConfiguracaoOriginal();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
 
 
            <br clear="all" />
@@ -210,7 +167,7 @@ function popup() {
             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="<c:url value='images/ico_excel.png'/>" hspace="5" border="0" />Arquivo</a></span>
               <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="<c:url value='images/ico_impressora.gif'/>" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
              
-              <span class="bt_novos" title="Reprogramar"><a href="javascript:;" onclick="popup_reprogramar();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a></span>
+              <span class="bt_novos" title="Reprogramar"><a href="javascript:;" onclick="abrirReprogramar();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a></span>
          	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
           
               <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selRep">Selecionar Todos</label><input type="checkbox" id="selRep" name="Todos" onclick="checkAll(this, 'checkgroup');"/></span>
@@ -356,21 +313,26 @@ function popup() {
 				);
 				return data;
 			}
-			linhasDestacadas = new Array();
+			linhasDestacadas = [];
 			$("#valorTotal").html(data[1]);
 			$.each(data[0].rows, function(i, row){
-				row.cell.reprogramar='';
 				var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
 				if (!emEstudoExpedido) {
 					var dataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 					dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
 					dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 					row.cell.dataMatrizDistrib = dataDistrib;
-					row.cell.reprogramar='<input type="checkbox" name="checkgroup" onclick="verifyCheck($(\'#selRep\'));" />';
+					var id = row.cell.id.toString(); 					
+					var reprogramar = '<input type="checkbox" value="'+id+'" name="checkgroup" ';
+					if ($.inArray(id, lancamentosSelecionados) != -1) {
+						reprogramar+='checked="checked" ';					
+					}
+					reprogramar+='onclick="verifyCheck($(\'#selRep\'));" />';	
+					row.cell.reprogramar=reprogramar;
 				} else {
 					var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 					row.cell.dataMatrizDistrib = dataDistrib;
-					row.cell.reprogramar='<input type="checkbox" name="checkgroup" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
+					row.cell.reprogramar='<input type="checkbox" name="checkgroup" value="'+row.cell.id+'" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
 				}
 				if (row.cell.semFisico || row.cell.cancelamentoGD || row.cell.furo ) {
 					linhasDestacadas.push(i+1);
@@ -380,7 +342,7 @@ function popup() {
 		}
 		
 		function buscarResumoPeriodo() {
-			var parametros = new Array();
+			var parametros = [];
 			parametros.push({name:'dataInicial', value: $("#datepickerDe").val()});
 			$("input[name='checkgroup_menu']:checked").each(function(i) {
 				parametros.push({name:'idsFornecedores', value: $(this).val()});
@@ -426,15 +388,22 @@ function popup() {
 		    rows+="</tr>";
 		    $("#tableResumoPeriodo").append(rows);
 		    
-		    $(".lancamentosProgramadosGrid tr").each(function(i){
-		    	if($.inArray((i+1), linhasDestacadas) > -1) {
-		    		 $(this).removeClass("erow").addClass("gridLinhaDestacada");
-					 $(this).children("td").removeClass("sorted");
-		    	}
-		   	});
+		    $(linhasDestacadas).each(function(i, item){
+			 id = '#row' + item;			    	
+			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id).children("td").removeClass("sorted");
+		   });
+
+		   $('input[name=checkgroup]').bind('change', function() {
+			var id = this.value.toString();  			
+			if (this.checked && $.inArray(id, lancamentosSelecionados) == -1) {
+			  lancamentosSelecionados.push(id);					
+			} else {
+			  lancamentosSelecionados = removeFromArray(lancamentosSelecionados, id);				
+			}
+		   });	
 		}
 		
 	
 </script>
 </body>
-

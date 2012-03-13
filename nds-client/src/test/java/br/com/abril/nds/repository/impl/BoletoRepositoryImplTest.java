@@ -43,7 +43,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(cota);
 		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES
-	    Boleto boleto = Fixture.boleto(5, 
+	    Boleto boleto = Fixture.boleto("5", 
                 					   new Date(), 
                 					   new Date(), 
                 					   new Date(), 
@@ -78,6 +78,14 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		for (int i=0; i<boletos.size();i++){
 		    Assert.assertEquals(NUMERO_COTA, boletos.get(i).getCota().getNumeroCota());
 		}
+	}
+	
+	@Test
+	public void obterPorNossoNumero() {
+		
+		Boleto boleto = boletoRepository.obterPorNossoNumero("5");
+		
+		Assert.assertNotNull(boleto);	
 	}
 
 }

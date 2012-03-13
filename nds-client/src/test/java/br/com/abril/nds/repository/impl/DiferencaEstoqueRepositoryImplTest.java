@@ -27,15 +27,19 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -73,7 +77,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 
 		ProdutoEdicao produtoEdicao = this.criarProdutoEdicao();
 		
-		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaEm();
 		
 		save(tipoMovimento);
 		
@@ -109,7 +113,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(notaFiscalFornecedor);
 
 		ItemNotaFiscal itemNotaFiscal = 
-			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), BigDecimal.TEN);
+			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		
 		save(itemNotaFiscal);
 
@@ -126,6 +130,14 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, quantidadeDiferenca);
 		
 		save(estoqueProduto);
+		
+		Lancamento lancamentoVeja =
+			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+							   DateUtil.adicionarDias(new Date(), 1), DateUtil.adicionarDias(new Date(),
+							   produtoEdicao.getPeb()), new Date(),
+							   new Date(), BigDecimal.TEN,  StatusLancamento.RECEBIDO,
+							   itemRecebimentoFisico);
+		save(lancamentoVeja);
 		
 		for (int i = 0; i < this.qtdeMovimentos; i++) {
 			

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoOperacao;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 
 @Repository
@@ -35,9 +35,9 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" ( m.id, m.dataInclusao, m.tipoMovimento.descricao, ");		
 		
-		hql.append(" sum(case when m.tipoMovimento.tipoOperacao  = :tipoOperacaoEntrada then m.qtde else 0 end), ");
+		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end), ");
 
-		hql.append(" sum(case when m.tipoMovimento.tipoOperacao  = :tipoOperacaoSaida then m.qtde else 0 end) )  ");
+		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end) )  ");
 
 		hql.append(" from MovimentoEstoque m ");		
 
@@ -60,9 +60,9 @@ implements MovimentoEstoqueRepository {
 			query.setParameter("statusAprovacao", statusAprovacao);
 		}
 		
-		query.setParameter("tipoOperacaoEntrada", TipoOperacao.ENTRADA);
+		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
 		
-		query.setParameter("tipoOperacaoSaida", TipoOperacao.SAIDA);
+		query.setParameter("tipoOperacaoSaida", OperacaoEstoque.SAIDA);
 
 		query.setParameter("codigoProduto", codigoProduto);
 		

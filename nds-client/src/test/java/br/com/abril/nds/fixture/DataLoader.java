@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -36,17 +37,18 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -55,12 +57,12 @@ import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
-	private static TipoMovimento tipoMovimentoFaltaEm;
-	private static TipoMovimento tipoMovimentoFaltaDe;
-	private static TipoMovimento tipoMovimentoSobraEm;
-	private static TipoMovimento tipoMovimentoSobraDe;
-	private static TipoMovimento tipoMovimentoRecFisico;
-	private static TipoMovimento tipoMovimentoRecReparte;
+	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
+	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
+	private static TipoMovimentoEstoque tipoMovimentoSobraEm;
+	private static TipoMovimentoEstoque tipoMovimentoSobraDe;
+	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
+	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
 	private static Usuario usuarioJoao;
@@ -104,6 +106,8 @@ public class DataLoader {
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
 	private static Estudo estudoVeja1;
+	private static Estudo estudoVeja1Atual;
+	private static EstudoCota estudoCotaManoel;
 	private static NotaFiscalFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscal itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
@@ -167,8 +171,9 @@ public class DataLoader {
 		criarMovimentosEstoque(session);
 		criarLancamentos(session);
 		criarEstudos(session);
+		criarEstudosCota(session);
 		criarMovimentosEstoqueCota(session);
-		
+		criarFeriado(session);		
 
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
@@ -301,16 +306,28 @@ public class DataLoader {
 		session.save(notaFiscalFornecedor);
 
 		itemNotaFiscalFornecedor = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
-				usuarioJoao, notaFiscalFornecedor, new Date(), BigDecimal.TEN);
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		session.save(itemNotaFiscalFornecedor);
 	}
 
 	private static void criarEstudos(Session session) {
-		estudoVeja1 = Fixture
-				.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
+		estudoVeja1 = 
+			Fixture.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
+		
 		session.save(estudoVeja1);
+		
+		estudoVeja1Atual = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+			
+		session.save(estudoVeja1Atual);
 	}
 
+	private static void criarEstudosCota(Session session) {
+
+		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		
+		session.save(estudoCotaManoel);
+	}
+	
 	private static void criarLancamentos(Session session) {
 		lancamentoVeja1 = Fixture
 				.lancamento(
@@ -709,7 +726,7 @@ public class DataLoader {
 	private static void gerarCargaDiferencaEstoque(Session session,
 												   int quantidadeRegistros,
 												   ProdutoEdicao produtoEdicao, 
-												   TipoMovimento tipoMovimento, 
+												   TipoMovimentoEstoque tipoMovimento, 
 												   Usuario usuario,
 												   EstoqueProduto estoqueProduto,
 												   TipoDiferenca tipoDiferenca) {
@@ -754,13 +771,13 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 		
-		TipoMovimento tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
+		TipoMovimentoEstoque tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
 		session.save(tipoMovimentoSobraDe);
 		
-		TipoMovimento tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
+		TipoMovimentoEstoque tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
 		session.save(tipoMovimentoFaltDe);
 		
-		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimentoEstoque tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
 		session.save(tipoMovimentoFaltEM);
 		
 		
@@ -800,7 +817,9 @@ public class DataLoader {
 				
 				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
 						produtoEdicao, usuario, notaFiscalFornecedor, 
-						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+						TipoLancamento.LANCAMENTO,
 						new BigDecimal(i));					
 				session.save(itemNotaFiscal);
 				
@@ -882,7 +901,7 @@ public class DataLoader {
 		Cota cotaJuridicaDistrib = Fixture.cota(5000, juridicaDistrib, SituacaoCadastro.ATIVO,box300Reparte);
 		save(session, cotaJuridicaDistrib);
 		
-		Boleto boleto0 = Fixture.boleto(10000,
+		Boleto boleto0 = Fixture.boleto("10000",
 				                       new Date(), 
 				                       new Date(), 
 				                       new Date(), 
@@ -893,7 +912,7 @@ public class DataLoader {
 				                       StatusCobranca.PAGO,
 				                       cotaManoel);
 		
-		Boleto boleto1 = Fixture.boleto(20000,
+		Boleto boleto1 = Fixture.boleto("20000",
                                         new Date(), 
                                         new Date(), 
                                         new Date(), 
@@ -904,7 +923,7 @@ public class DataLoader {
                                         StatusCobranca.PAGO,
                                         cotaJuridicaAcme);
 		
-		Boleto boleto2 = Fixture.boleto(30000,
+		Boleto boleto2 = Fixture.boleto("30000",
                 						new Date(), 
                 						new Date(), 
                 						new Date(), 
@@ -915,7 +934,7 @@ public class DataLoader {
                 						StatusCobranca.PAGO,
                 						cotaJuridicaDinap);
 		
-		Boleto boleto3 = Fixture.boleto(40000,
+		Boleto boleto3 = Fixture.boleto("40000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -926,7 +945,7 @@ public class DataLoader {
 						                StatusCobranca.PAGO,
 						                cotaJuridicaFc);
 		
-		Boleto boleto4 = Fixture.boleto(50000,
+		Boleto boleto4 = Fixture.boleto("50000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -937,7 +956,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto5 = Fixture.boleto(60000,
+		Boleto boleto5 = Fixture.boleto("60000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -948,7 +967,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaManoel);
 		
-		Boleto boleto6 = Fixture.boleto(70000,
+		Boleto boleto6 = Fixture.boleto("70000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -959,7 +978,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaAcme);
 		
-		Boleto boleto7 = Fixture.boleto(80000,
+		Boleto boleto7 = Fixture.boleto("80000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -972,6 +991,16 @@ public class DataLoader {
 		
 	    save(session,boleto0,boleto1,boleto2,boleto3,boleto4,boleto5,boleto6,boleto7);    
 	    
+	}
+	
+	private static void criarFeriado(Session session) {
+		Feriado feriadoIndependencia =
+				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "Independência do Brasil");
+		save(session, feriadoIndependencia);
+		
+		Feriado feriadoProclamacao =
+				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "Proclamação da República");
+		save(session, feriadoProclamacao);
 	}
 	
 }

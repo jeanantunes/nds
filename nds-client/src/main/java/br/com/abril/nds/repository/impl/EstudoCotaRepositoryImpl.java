@@ -50,8 +50,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Lon
 	public List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
 			
 		String hql = " from EstudoCota estudoCota "
-				   + " where estudoCota.estudo.dataLancamento= :dataLancamento " 
-				   + " and estudoCota.estudo.produtoEdicao.id=:idProdutoEdicao";
+				   + " where estudoCota.estudo.dataLancamento = :dataLancamento " 
+				   + " and estudoCota.estudo.produtoEdicao.id = :idProdutoEdicao";
 		
 		Query query = super.getSession().createQuery(hql);
 		
@@ -67,8 +67,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Lon
 			
 		String hql = " from EstudoCota estudoCota "
 				   + " where estudoCota.estudo.dataLancamento= :dataLancamento " 
-				   + " and estudoCota.estudo.produtoEdicao.id=: " 
-				   + " and estudoCota.cota.id ";
+				   + " and estudoCota.estudo.produtoEdicao.id= :idProdutoEdicao " 
+				   + " and estudoCota.cota.id = :idCota";
 		
 		Query query = super.getSession().createQuery(hql);
 		
@@ -77,6 +77,28 @@ public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Lon
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		query.setParameter("idCota", idCota);
+
+		query.setMaxResults(1);
+		
+		return (EstudoCota) query.uniqueResult();
+	}
+	
+	public EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, 
+																  Long idProdutoEdicao, 
+																  Integer numeroCota) {
+		
+		String hql = " from EstudoCota estudoCota "
+				   + " where estudoCota.estudo.dataLancamento = :dataLancamentoDistribuidor " 
+				   + " and estudoCota.estudo.produtoEdicao.id = :idProdutoEdicao " 
+				   + " and estudoCota.cota.numeroCota = :numeroCota ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("numeroCota", numeroCota);
 
 		query.setMaxResults(1);
 		

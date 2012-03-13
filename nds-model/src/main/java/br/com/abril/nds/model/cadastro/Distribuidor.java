@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cascade;
+
 /**
  * @author T30541
  * @version 1.0
@@ -41,6 +43,10 @@ public class Distribuidor {
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();
 	@Column(name = "FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@OneToOne(optional = false)
+	@JoinColumn(name = "POLITICA_COBRANCA_ID")
+	private PoliticaCobranca politicaCobranca;
 
 	public Long getId() {
 		return id;
@@ -80,6 +86,14 @@ public class Distribuidor {
 	
 	public void setFatorDesconto(BigDecimal fatorDesconto) {
 		this.fatorDesconto = fatorDesconto;
+	}
+	
+	public PoliticaCobranca getPoliticaCobranca() {
+		return politicaCobranca;
+	}
+	
+	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
+		this.politicaCobranca = politicaCobranca;
 	}
 
 }

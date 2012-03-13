@@ -90,8 +90,23 @@ function checkAll(todos, checkgroupName) {
 	}	
 }
 
+function verifyAtLeastOneChecked(checkgroupName) {
+	var checked = $("input[name=" + checkgroupName + "]:checked").length;	
+	return checked >= 1;
+}
+
 function verifyCheck(todos){
 	$(todos).uncheck();
+}
+
+function removeFromArray(array, item) {
+    var newArray = [];
+    for (i=0; i<array.length; i++) {
+	if (array[i] != item) {
+	    newArray.push(array[i]);	
+	}
+    }			
+    return newArray;			
 }
 	
 //callback function to bring a hidden box back

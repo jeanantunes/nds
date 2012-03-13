@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.estoque;
 
 import java.math.BigDecimal;
 
@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.movimentacao.Movimento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
@@ -27,6 +27,9 @@ public class MovimentoEstoqueCota  extends Movimento {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
 	private EstoqueProdutoCota estoqueProdutoCota;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
+	private TipoMovimentoEstoque tipoMovimento;
 	
 	public Cota getCota() {
 		return cota;
@@ -58,6 +61,14 @@ public class MovimentoEstoqueCota  extends Movimento {
 	
 	public void setEstoqueProdutoCota(EstoqueProdutoCota estoqueProdutoCota) {
 		this.estoqueProdutoCota = estoqueProdutoCota;
+	}
+	
+	public TipoMovimentoEstoque getTipoMovimento() {
+		return tipoMovimento;
+	}
+	
+	public void setTipoMovimento(TipoMovimentoEstoque tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
 	}
 
 }

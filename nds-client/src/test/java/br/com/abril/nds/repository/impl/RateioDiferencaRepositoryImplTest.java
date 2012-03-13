@@ -27,18 +27,19 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTest{
@@ -85,7 +86,17 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal);
 				
-		ItemNotaFiscal itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscal, new Date(), BigDecimal.ONE);
+		ItemNotaFiscal itemNotaFiscal = 
+				
+				Fixture.itemNotaFiscal(
+						produtoEdicao, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						BigDecimal.ONE);
+		
 		save(itemNotaFiscal);
 		
 		NotaFiscalFornecedor notaFiscalFornecedor = 
@@ -100,7 +111,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 				Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigDecimal.TEN);
 		save(itemRecebimentoFisico);
 		
-		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaDe();
+		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaDe();
 		save(tipoMovimento);
 		
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigDecimal.TEN);

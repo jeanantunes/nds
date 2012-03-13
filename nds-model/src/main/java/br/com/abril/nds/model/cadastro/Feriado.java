@@ -8,22 +8,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
+ * Cadastro de Feriados
+ * 
  * @author francisco.garcia
- * @version 1.0
- * @created 14-fev-2012 11:35:31
+ *
  */
 @Entity
-@Table(name = "CALENDARIO_DISTRIBUIDOR")
-@SequenceGenerator(name="CAL_DISTRIB_SEQ", initialValue = 1, allocationSize = 1)
-public class CalendarioDistribuidor {
+@Table(name = "FERIADO")
+@SequenceGenerator(name="FERIADO_SEQ", initialValue = 1, allocationSize = 1)
+public class Feriado {
 
 	@Id
-	@GeneratedValue(generator = "CAL_DISTRIB_SEQ")
+	@GeneratedValue(generator = "FERIADO_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	@Column(name = "DATA", nullable = false)
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA", nullable = false, unique = true)
 	private Date data;
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;

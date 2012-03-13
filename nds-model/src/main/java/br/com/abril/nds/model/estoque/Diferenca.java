@@ -16,7 +16,6 @@ import javax.persistence.Transient;
 
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
