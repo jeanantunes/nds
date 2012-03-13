@@ -63,5 +63,7 @@ public interface DiferencaEstoqueService {
 	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
 	
 	void salvarNovaDiferenca(Diferenca diferenca);
+	
+	Diferenca obterDiferenca(Long id);
 
 }

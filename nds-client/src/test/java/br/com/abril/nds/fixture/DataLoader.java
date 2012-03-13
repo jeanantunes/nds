@@ -47,6 +47,7 @@ import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -104,6 +105,8 @@ public class DataLoader {
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
 	private static Estudo estudoVeja1;
+	private static Estudo estudoVeja1Atual;
+	private static EstudoCota estudoCotaManoel;
 	private static NotaFiscalFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscal itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
@@ -167,6 +170,7 @@ public class DataLoader {
 		criarMovimentosEstoque(session);
 		criarLancamentos(session);
 		criarEstudos(session);
+		criarEstudosCota(session);
 		criarMovimentosEstoqueCota(session);
 		
 
@@ -306,11 +310,23 @@ public class DataLoader {
 	}
 
 	private static void criarEstudos(Session session) {
-		estudoVeja1 = Fixture
-				.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
+		estudoVeja1 = 
+			Fixture.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
+		
 		session.save(estudoVeja1);
+		
+		estudoVeja1Atual = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+			
+		session.save(estudoVeja1Atual);
 	}
 
+	private static void criarEstudosCota(Session session) {
+
+		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		
+		session.save(estudoCotaManoel);
+	}
+	
 	private static void criarLancamentos(Session session) {
 		lancamentoVeja1 = Fixture
 				.lancamento(
