@@ -1,11 +1,15 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -34,6 +38,17 @@ public class Box {
 	
 	@Column(name="NOME")
 	private String nome;
+	
+	@OneToMany(mappedBy = "box")
+	private Set<Cota> cotas = new HashSet<Cota>();
+	
+	public Set<Cota> getCotas() {
+		return cotas;
+	}
+
+	public void setCotas(Set<Cota> cotas) {
+		this.cotas = cotas;
+	}
 
 	/**
 	 * @return the nome
