@@ -40,6 +40,7 @@ import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.FeriadoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -86,6 +87,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
+	@Autowired
+	private FeriadoService feriadoService;
+	
 	private static final String MOTIVO = "Exclusão diferença";
 	
 	@Transactional(readOnly = true)
@@ -103,11 +107,19 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
+		Date dataInicialLancamento = feriadoService.subtrairDiasUteis(new Date(), 7);
+		
+		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
+		
 		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
 	}
 	
 	@Transactional(readOnly = true)
 	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+		
+		Date dataInicialLancamento = feriadoService.subtrairDiasUteis(new Date(), 7);
+		
+		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
 		
 		return this.diferencaEstoqueRepository.obterTotalDiferencas(filtro);
 	}

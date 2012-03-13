@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -689,7 +690,8 @@ public class Fixture {
 		return box;
 	}
 
-	public static Boleto boleto(Integer nossoNumero,
+	//FINANCEIRO - HENRIQUE
+	public static Boleto boleto(String nossoNumero,
 				                Date dataEmissao,
 				                Date dataVencimento,
 				                Date dataPagamento,
@@ -729,6 +731,16 @@ public class Fixture {
 		politicaCobranca.setValorMinino(valorMinimo);
 		politicaCobranca.setDistribuidor(distribuidor);
 		return politicaCobranca;
+	}
+	
+	public static Feriado feriado(Date data, String descricao) {
+		
+		Feriado feriado = new Feriado();
+		
+		feriado.setData(data);
+		feriado.setDescricao(descricao);
+		
+		return feriado;
 	}
 
 }

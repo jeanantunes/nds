@@ -48,7 +48,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Transactional(readOnly = true)
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
 		if (codigoProduto == null || codigoProduto.isEmpty()){
-			throw new IllegalArgumentException("Código é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
 		
 		return produtoRepository.obterProdutoPorCodigo(codigoProduto);

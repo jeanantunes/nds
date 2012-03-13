@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Cadastro de Feriados
@@ -24,7 +26,8 @@ public class Feriado {
 	@GeneratedValue(generator = "FERIADO_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	@Column(name = "DATA", nullable = false)
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA", nullable = false, unique = true)
 	private Date data;
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
