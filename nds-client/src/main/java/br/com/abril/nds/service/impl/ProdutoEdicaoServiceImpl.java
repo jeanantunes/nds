@@ -22,6 +22,12 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
+/**
+ * Classe de implementação de serviços referentes a entidade
+ * {@link br.com.abril.nds.model.cadastro.ProdutoEdicao}
+ * 
+ * @author Discover Technology
+ */
 @Service
 public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
@@ -35,13 +41,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto(nomeProduto);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
 		
@@ -131,4 +137,5 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				codigoProduto, Long.parseLong(numeroEdicao));
 	}
+	
 }

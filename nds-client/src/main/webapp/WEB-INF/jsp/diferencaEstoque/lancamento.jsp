@@ -1,13 +1,13 @@
 <head>
 	<script language="javascript" type="text/javascript">
 
-		function executarPreProcessamento(resultado) {
-
-			if (resultado.mensagens) {
+		function executarPreProcessamento(data) {
+			
+			if (data.mensagens) {
 
 				exibirMensagem(
-					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
 				);
 				
 				$(".grids").hide();
@@ -17,9 +17,16 @@
 				$("#qtdeTotalDiferencas").hide();
 				$("#valorTotalDiferencas").hide();
 
-				return resultado.tableModel;
+				return;
 			}
 
+			if (!data.result) {
+
+				return;
+			}
+			
+			var resultado = data.result;
+			
 			$("#qtdeTotalDiferencas").html(resultado.qtdeTotalDiferencas);
 			
 			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
@@ -216,6 +223,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 	<style type="text/css">
 		fieldset label 

@@ -29,4 +29,10 @@ public class EstudoServiceImpl implements EstudoService {
 		return this.estudoRepository.obterEstudoDoLancamentoMaisProximo(dataReferencia, codigoProduto, numeroEdicao);
 	}
 
+	@Transactional(readOnly = true)
+	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
+		
+		return this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
+	}
+
 }

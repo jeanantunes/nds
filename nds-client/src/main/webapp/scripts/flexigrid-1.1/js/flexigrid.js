@@ -1125,7 +1125,7 @@
 			$(g.gDiv).prepend(g.nDiv);
 			$(g.nBtn).addClass('nBtn')
 				.html('<div></div>')
-				.attr('title', 'Hide/Show Columns')
+				.attr('title', 'Esconder/Mostrar Colunas')
 				.click(function () {
 					$(g.nDiv).toggle();
 					return true;

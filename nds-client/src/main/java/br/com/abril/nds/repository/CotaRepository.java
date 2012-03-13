@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.Cota;
 
 /**
@@ -19,5 +21,24 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return {@link Cota}
 	 */
 	Cota obterPorNumerDaCota(Integer numeroCota);
+	
+	/**
+	 * Obtém uma lista de cotas através
+	 * da comparação por nome.
+	 * 
+	 * @param nome - nome da cota
+	 * 
+	 * @return Lista de {@link Cota}
+	 */
+	List<Cota> obterCotasPorNomePessoa(String nome);
+	
+	/**
+	 * Obtém uma lista de cotas pelo nome.
+	 * 
+	 * @param nome - nome da cota (pessoa)
+	 * 
+	 * @return Lista de {@link Cota}
+	 */
+	List<Cota> obterPorNome(String nome);
 	
 }

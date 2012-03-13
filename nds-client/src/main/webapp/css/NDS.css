@@ -470,8 +470,8 @@ select, input{font-size: 12px; height: 21px;}
 
 .hDivBox th{font-weight:bold!important;}
 
-.box_resumo{border:1px solid #DFDFDF; padding:5px; font-size:11px; float:left; width: 160px;}
-.box_resumo label{width:139px; text-align:center; color:#01649E; font-weight:bold; border:1px solid #DFDFDF; margin-right:0px!important; margin-left:0px!important;}
+.box_resumo{border:1px solid #DFDFDF; padding:5px; font-size:11px; float:left; width: 145px;}
+.box_resumo label{width:139px !important; text-align:center; color:#01649E; font-weight:bold; border:1px solid #DFDFDF; margin-right:0px!important; margin-left:0px!important;}
 .box_resumo .span_1{width:80px; float:left; font-weight:bold; line-height:20px; border:1px solid #DFDFDF; }
 .box_resumo .span_2{width:57px; float:left; text-align:right; clear:right; line-height:20px; border:1px solid #DFDFDF; }
 

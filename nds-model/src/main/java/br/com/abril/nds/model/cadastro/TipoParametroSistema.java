@@ -24,24 +24,24 @@ public enum TipoParametroSistema {
 	 * Número de dias permitido para lançamento de uma
 	 * diferença de estoque do tipo FALTA DE.
 	 */
-	NUMERO_DIAS_LANCAMENTO_FALTA_DE,
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE,
 	
 	/**
 	 * Número de dias permitido para lançamento de uma
 	 * diferença de estoque do tipo FALTA EM.
 	 */
-	NUMERO_DIAS_LANCAMENTO_FALTA_EM,
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM,
 	
 	/**
 	 * Número de dias permitido para lançamento de uma
 	 * diferença de estoque do tipo SOBRA DE.
 	 */
-	NUMERO_DIAS_LANCAMENTO_SOBRA_DE,
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE,
 	
 	/**
 	 * Número de dias permitido para lançamento de uma
 	 * diferença de estoque do tipo SOBRA EM.
 	 */
-	NUMERO_DIAS_LANCAMENTO_SOBRA_EM;
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM;
 	
 }

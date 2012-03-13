@@ -15,8 +15,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
 
 /**
  * @author francisco.garcia
@@ -35,7 +38,10 @@ public class Cota {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
+	@Column(name = "VIP", nullable = false)
+	private boolean vip;
 	@OneToMany
 	@JoinColumn(name = "COTA_ID")
 	private List<PDV> pdvs = new ArrayList<PDV>();
@@ -46,9 +52,16 @@ public class Cota {
 	private BigDecimal fatorDesconto;
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
-	
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@OneToOne(optional = false)
+	@JoinColumn(name = "CONTRATO_COTA_ID")
+	private ContratoCota contratoCota;
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
 	private Box box;
+	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+	@OneToMany(mappedBy = "cota")
+	private List<HistoricoSituacaoCota> historicos = new ArrayList<HistoricoSituacaoCota>();
 	
 	public Long getId() {
 		return id;
@@ -64,6 +77,14 @@ public class Cota {
 	
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
+	}
+	
+	public boolean isVip() {
+		return vip;
+	}
+	
+	public void setVip(boolean vip) {
+		this.vip = vip;
 	}
 	
 	public List<PDV> getPdvs() {
@@ -106,20 +127,28 @@ public class Cota {
 		this.enderecos = enderecos;
 	}
 
-	/**
-	 * @return the box
-	 */
 	public Box getBox() {
 		return box;
 	}
 
-	/**
-	 * @param box the box to set
-	 */
 	public void setBox(Box box) {
 		this.box = box;
 	}
 	
+	public ContratoCota getContratoCota() {
+		return contratoCota;
+	}
 	
+	public void setContratoCota(ContratoCota contratoCota) {
+		this.contratoCota = contratoCota;
+	}
+	
+	public List<HistoricoSituacaoCota> getHistoricos() {
+		return historicos;
+	}
+	
+	public void setHistoricos(List<HistoricoSituacaoCota> historicos) {
+		this.historicos = historicos;
+	}
 
 }

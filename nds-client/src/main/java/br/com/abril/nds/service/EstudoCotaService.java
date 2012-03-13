@@ -14,5 +14,7 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 public interface EstudoCotaService {
 	
 	EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia);
+	
+	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
 
 }

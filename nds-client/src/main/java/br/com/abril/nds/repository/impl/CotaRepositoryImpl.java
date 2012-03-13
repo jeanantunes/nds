@@ -1,6 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +28,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		super(Cota.class);
 	}
 
-	@Override
 	public Cota obterPorNumerDaCota(Integer numeroCota) {
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -37,6 +39,38 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return (Cota) criteria.uniqueResult();
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterCotasPorNomePessoa(String nome) {
+		
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
+		criteria.createAlias("pessoa", "pessoa");
+		
+		criteria.add(
+			Restrictions.or(
+				Restrictions.ilike("pessoa.nome", nome, MatchMode.ANYWHERE),
+				Restrictions.ilike("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)
+			)
+		);
+		
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterPorNome(String nome) {
+
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
+		criteria.createAlias("pessoa", "pessoa");
+		
+		criteria.add(
+			Restrictions.or(
+				Restrictions.eq("pessoa.nome", nome),
+				Restrictions.eq("pessoa.razaoSocial", nome)
+			)
+		);
+		
+		return criteria.list();
+	}
 
 }

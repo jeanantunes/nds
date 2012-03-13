@@ -216,7 +216,7 @@ fieldset label {
 							<li><a href="Financeiro/parametros_cobranca.htm">Parâmetros
 									de Cobrança</a>
 							</li>
-							<li><a href="Financeiro/suspensao_jornaleiro.htm">Suspensão
+							<li><a href="suspensaoCota/index">Suspensão
 									Cota</a>
 							</li>
 							<li><a href="Financeiro/workflow_aprovacao.htm">Work

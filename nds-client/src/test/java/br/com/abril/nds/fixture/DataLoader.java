@@ -239,7 +239,7 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
-		carregarBoletos(session);
+		gerarBoletos(session);
 	}
 
 	private static void criarBoxes(Session session) {
@@ -852,7 +852,7 @@ public class DataLoader {
 	}
 	
 	//FINANCEIRO - CONSULTA BOLETOS
-	private static void carregarBoletos(Session session) {
+	private static void gerarBoletos(Session session) {
 		
 		PessoaJuridica juridicaAcme = Fixture.pessoaJuridica("Acme",
 				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
