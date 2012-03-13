@@ -78,14 +78,20 @@
 
 		function pesquisar() { 
 
-			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+			$.postJSON(
+				"<c:url value='/estoque/diferenca/lancamento/limparSessao' />", 
+				null,
+				function() {
+					var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
 
-			$("#gridLancamentos").flexOptions({
-				url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
-				params: formData
-			});
-			
-			$("#gridLancamentos").flexReload();
+					$("#gridLancamentos").flexOptions({
+						url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
+						params: formData
+					});
+					
+					$("#gridLancamentos").flexReload();
+				}
+			);
 		}
 
 		function popupExclusaoDiferenca(idMovimentoEstoque) {
