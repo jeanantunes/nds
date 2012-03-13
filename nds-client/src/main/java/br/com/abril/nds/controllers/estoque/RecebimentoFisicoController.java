@@ -175,6 +175,8 @@ public class RecebimentoFisicoController {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
 		
+		recarregarValoresCalculados(itensRecebimentoFisico);
+		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
@@ -557,15 +559,16 @@ public class RecebimentoFisicoController {
 			
 			dto.setLineId(counter++);
 			
-			String codigo 		     	= dto.getCodigoProduto();
-			String nomeProduto 	     	= dto.getNomeProduto();
-			String edicao 		     	= (dto.getEdicao() 				== null) 	? "" 	: dto.getEdicao().toString();
-			String precoCapa 	     	= (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String repartePrevisto 	 	= (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
-			String qtdeFisica		 	= (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
-			String diferenca		 	= (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
-			String valorTotal		 	= (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
-			String alteracaoPermitida	= (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String codigo 		     	 = dto.getCodigoProduto();
+			String nomeProduto 	     	 = dto.getNomeProduto();
+			String edicao 		     	 = (dto.getEdicao() 				== null) 	? "" 	: dto.getEdicao().toString();
+			String precoCapa 	     	 = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
+			String qtdeFisica		 	 = (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
+			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
+			String valorTotal		 	 = (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			String alteracaoPermitida	 = (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String destacarValorNegativo = (dto.getDiferenca() != null && dto.getDiferenca().doubleValue() < 0.0D) ? "S" : "N";
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
@@ -578,7 +581,8 @@ public class RecebimentoFisicoController {
 							qtdeFisica,
 							diferenca,
 							valorTotal,
-							alteracaoPermitida
+							alteracaoPermitida,
+							destacarValorNegativo
 					));
 			
 			
