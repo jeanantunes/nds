@@ -7,21 +7,21 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
-import br.com.abril.nds.repository.TipoMovimentoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 
 @Repository
-public class TipoMovimentoRepositoryImpl extends AbstractRepository<TipoMovimentoEstoque, Long> implements TipoMovimentoRepository{
+public class TipoMovimentoEstoqueRepositoryImpl extends AbstractRepository<TipoMovimentoEstoque, Long> implements TipoMovimentoEstoqueRepository{
 
-	public TipoMovimentoRepositoryImpl() {
+	public TipoMovimentoEstoqueRepositoryImpl() {
 		super(TipoMovimentoEstoque.class);
 	}
 
 	@Override
-	public TipoMovimentoEstoque buscarTipoMovimento(TipoOperacao tipoOperacao, GrupoMovimentoEstoque tipoMovimento) {
+	public TipoMovimentoEstoque buscarTipoMovimentoEstoque(TipoOperacao tipoOperacao, GrupoMovimentoEstoque tipoMovimento) {
 
 		Criteria criteria = super.getSession().createCriteria(TipoMovimentoEstoque.class);
 		
-		criteria.add(Restrictions.eq("tipoOperacao", tipoOperacao));
+		criteria.add(Restrictions.eq("operacaoEstoque", tipoOperacao));
 		criteria.add(Restrictions.eq("tipoMovimento", tipoMovimento));
 		
 		
