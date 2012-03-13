@@ -20,6 +20,18 @@ public abstract class Constantes {
 	
 	public static final String TIPO_MSG_ERROR = "error";
 	
+	/**
+	 * Constante que representa o nome do atributo com a lista de endereços 
+	 * armazenado na sessão para serem persistidos na base. 
+	 */
+	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = "listaEnderecosSalvarSessao";
+
+	/**
+	 * Constante que representa o nome do atributo com a lista de endereços 
+	 * armazenado na sessão para serem persistidos na base. 
+	 */
+	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = "listaEnderecosRemoverSessao";
+	
 }
 
 
