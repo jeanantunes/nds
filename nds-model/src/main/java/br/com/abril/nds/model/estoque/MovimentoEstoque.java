@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.estoque;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -9,8 +9,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.movimentacao.Movimento;
 
 /**
  * @author francisco.garcia

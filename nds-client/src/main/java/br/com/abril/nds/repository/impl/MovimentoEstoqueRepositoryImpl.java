@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 
 @Repository

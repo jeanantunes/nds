@@ -1,4 +1,5 @@
-package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.estoque;
+
 
 /**
  * @author francisco.garcia

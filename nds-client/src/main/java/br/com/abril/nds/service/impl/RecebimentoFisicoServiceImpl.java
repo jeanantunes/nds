@@ -16,16 +16,16 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -187,6 +187,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
+		verificarValorDaNota(listaItensNota,notaFiscal.getValorBruto());
+		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
@@ -206,9 +208,31 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		alterarRecebimentoFisicoParaConfirmado(usuarioLogado, notaFiscal, dataAtual);	
 		
 	}
-	
-	
-	
+	/**
+	 * Método que compara o valor bruto da nota com a soma dos valores dos itens
+	 * @param listaItensNota
+	 * @param valorBruto
+	 */
+	private void verificarValorDaNota(List<RecebimentoFisicoDTO> listaItensNota, BigDecimal valorBruto) {
+		
+		BigDecimal somaValorDosItens = new BigDecimal(0.0);
+		
+		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota) {
+			somaValorDosItens = somaValorDosItens.add(recebimentoFisicoDTO.getValorTotal());
+		}
+		
+		if(valorBruto == null){
+			valorBruto = new BigDecimal(0.0);
+		}
+		
+		Double parseSoma = somaValorDosItens.doubleValue();
+		Double parseValorBruto = valorBruto.doubleValue();
+		
+		if(!parseSoma.equals(parseValorBruto)){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Valor Bruto da Nota não corresponde a soma dos valores Totais do Item da Nota");
+		}
+	}
+
 	@Override
 	@Transactional
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {

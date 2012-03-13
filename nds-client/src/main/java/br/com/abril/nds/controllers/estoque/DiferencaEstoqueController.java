@@ -36,8 +36,8 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.service.CotaService;
@@ -563,13 +563,22 @@ public class DiferencaEstoqueController {
 	}
 
 	@Post
-	public void confirmarLancamentos(){
-		
-		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
-		
+	@SuppressWarnings("unchecked")
+	public void confirmarLancamentos() {
+
 		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
 		
-		this.diferencaEstoqueService.efetuarAlteracoes(this.getIdUsuario(), setIdsExclusao);
+		Set<Diferenca> listaNovasDiferencas =
+			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		Map<Long, RateioCotaVO> mapaRateioCotas =
+			(Map<Long, RateioCotaVO>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
+			(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		this.diferencaEstoqueService.efetuarAlteracoes(
+			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getIdUsuario(), setIdsExclusao);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
