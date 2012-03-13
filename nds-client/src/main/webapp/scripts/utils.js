@@ -51,8 +51,8 @@ function exibirMensagem(tipoMensagem, mensagens) {
 }
 
 function exibirMensagemDialog(tipoMensagem, mensagens) {
-
-	var campoTexto = $("#idTextoMensagemDialog");
+	
+	var campoTexto = $(".effectDialogText");
 
 	campoTexto.html('');
 
@@ -60,19 +60,19 @@ function exibirMensagemDialog(tipoMensagem, mensagens) {
 		campoTexto.append(value + '</br>');
 	});
 
-	$("#effectDialog").removeClass("ui-state-error");
-	$("#effectDialog").removeClass("ui-state-highlight");
-	$("#effectDialog").removeClass("ui-state-default");
+	$(".effectDialog").removeClass("ui-state-error");
+	$(".effectDialog").removeClass("ui-state-highlight");
+	$(".effectDialog").removeClass("ui-state-default");
 	
 	if (tipoMensagem == "SUCCESS") {
-		$("#effectDialog").addClass("ui-state-default");
+		$(".effectDialog").addClass("ui-state-default");
 	} else if (tipoMensagem == "WARNING"){
-		$("#effectDialog").addClass("ui-state-highlight");
+		$(".effectDialog").addClass("ui-state-highlight");
 	} else if (tipoMensagem == "ERROR"){
-		$("#effectDialog").addClass("ui-state-error");
+		$(".effectDialog").addClass("ui-state-error");
 	}
 	
-	$('#effectDialog').show(1000, esconde("effectDialog"));
+	$('.effectDialog').show(1000, escondeDialog("effectDialog"));
 }
 
 function isNumeric(a){
@@ -82,6 +82,12 @@ function isNumeric(a){
 function esconde(idDiv) {
 	setTimeout(function() {
 		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
+	}, 3000);
+}
+
+function escondeDialog(idDiv) {
+	setTimeout(function() {
+		$('.' + idDiv + ':visible').removeAttr("style").fadeOut();
 	}, 3000);
 }
 

@@ -1,7 +1,7 @@
 <div id="dialogRateioDiferencas" title="Lançamento Faltas e Sobras" style="display: none;">
 
 	<div class="effectDialog ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 2000; width: 600px;">
+		 style="display: none; position: absolute; z-index: 2000; width: 500px;">
 		 
 		<p>
 			<span style="float: left;" class="ui-icon ui-icon-info"></span>
