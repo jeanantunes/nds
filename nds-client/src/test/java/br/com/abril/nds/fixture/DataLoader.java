@@ -45,7 +45,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -56,12 +56,12 @@ import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
-	private static TipoMovimento tipoMovimentoFaltaEm;
-	private static TipoMovimento tipoMovimentoFaltaDe;
-	private static TipoMovimento tipoMovimentoSobraEm;
-	private static TipoMovimento tipoMovimentoSobraDe;
-	private static TipoMovimento tipoMovimentoRecFisico;
-	private static TipoMovimento tipoMovimentoRecReparte;
+	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
+	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
+	private static TipoMovimentoEstoque tipoMovimentoSobraEm;
+	private static TipoMovimentoEstoque tipoMovimentoSobraDe;
+	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
+	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
 	private static Usuario usuarioJoao;
@@ -725,7 +725,7 @@ public class DataLoader {
 	private static void gerarCargaDiferencaEstoque(Session session,
 												   int quantidadeRegistros,
 												   ProdutoEdicao produtoEdicao, 
-												   TipoMovimento tipoMovimento, 
+												   TipoMovimentoEstoque tipoMovimento, 
 												   Usuario usuario,
 												   EstoqueProduto estoqueProduto,
 												   TipoDiferenca tipoDiferenca) {
@@ -770,13 +770,13 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		session.save(usuario);
 		
-		TipoMovimento tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
+		TipoMovimentoEstoque tipoMovimentoSobraDe  = Fixture.tipoMovimentoSobraDe();
 		session.save(tipoMovimentoSobraDe);
 		
-		TipoMovimento tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
+		TipoMovimentoEstoque tipoMovimentoFaltDe  = Fixture.tipoMovimentoFaltaDe();
 		session.save(tipoMovimentoFaltDe);
 		
-		TipoMovimento tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimentoEstoque tipoMovimentoFaltEM  = Fixture.tipoMovimentoFaltaEm();
 		session.save(tipoMovimentoFaltEM);
 		
 		

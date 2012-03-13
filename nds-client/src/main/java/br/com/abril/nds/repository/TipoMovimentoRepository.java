@@ -1,11 +1,11 @@
 package br.com.abril.nds.repository;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 
-public interface TipoMovimentoRepository extends Repository<TipoMovimento, Long> {
+public interface TipoMovimentoRepository extends Repository<TipoMovimentoEstoque, Long> {
 	
-	TipoMovimento buscarTipoMovimento(TipoOperacao tipoOperacao, DominioTipoMovimento dominioTipoMovimento);
+	TipoMovimentoEstoque buscarTipoMovimento(TipoOperacao tipoOperacao, GrupoMovimentoEstoque dominioTipoMovimento);
 
 }

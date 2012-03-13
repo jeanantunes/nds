@@ -99,13 +99,13 @@ function verifyCheck(todos){
 	$(todos).uncheck();
 }
 
-function removeFromArray(array, data) {
-    var newArray = [];		
-    $(array).each(function() {
-	if (this != data) {
-		newArray.push(this);	
+function removeFromArray(array, item) {
+    var newArray = [];
+    for (i=0; i<array.length; i++) {
+	if (array[i] != item) {
+	    newArray.push(array[i]);	
 	}
-    }); 	
+    }			
     return newArray;			
 }
 	

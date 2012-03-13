@@ -21,10 +21,10 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
+import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -140,24 +140,24 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			if (!diferenca.isAutomatica()){
 				
-				TipoMovimento tipoMovimento = new TipoMovimento();
+				TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 				tipoMovimento.setAprovacaoAutomatica(false);
 				tipoMovimento.setDescricao(MOTIVO);
 				
 				switch (diferenca.getTipoDiferenca().getTipoMovimentoEstoque()){
 					case SOBRA_DE:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_DE);
 						qtd = qtd.negate();
 						break;
 					case SOBRA_EM:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_EM);
 						qtd = qtd.negate();
 						break;
 					case FALTA_DE:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_DE);
 						break;
 					case FALTA_EM:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_EM);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
 						break;
 				}
 				

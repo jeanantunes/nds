@@ -35,6 +35,10 @@ public class MovimentoEstoque extends Movimento {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTOQUE_PRODUTO_ID")
 	private EstoqueProduto estoqueProduto;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
+	private TipoMovimentoEstoque tipoMovimento;
 	
 	public BigDecimal getQtde() {
 		return qtde;
@@ -66,6 +70,14 @@ public class MovimentoEstoque extends Movimento {
 	
 	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
 		this.estoqueProduto = estoqueProduto;
+	}
+	
+	public TipoMovimentoEstoque getTipoMovimento() {
+		return tipoMovimento;
+	}
+	
+	public void setTipoMovimento(TipoMovimentoEstoque tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
 	}
 
 }

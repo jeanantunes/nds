@@ -24,8 +24,8 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -700,8 +700,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 			
-			TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
-					TipoOperacao.ENTRADA, DominioTipoMovimento.RECEBIMENTO_FISICO);
+			TipoMovimentoEstoque tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
+					TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 			
 			movimentoService.gerarMovimentoEstoque(
 					recebimentoFisicoDTO.getDataLancamento(), 

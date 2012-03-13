@@ -34,7 +34,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -74,7 +74,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 
 		ProdutoEdicao produtoEdicao = this.criarProdutoEdicao();
 		
-		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaEm();
 		
 		save(tipoMovimento);
 		
