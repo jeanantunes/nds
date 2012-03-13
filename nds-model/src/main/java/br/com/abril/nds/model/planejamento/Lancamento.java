@@ -14,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -97,8 +98,11 @@ public class Lancamento implements Serializable {
 	private int numeroReprogramacoes;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
-	@OneToMany(mappedBy = "lancamento")
-	private Set<Estudo> estudos = new HashSet<Estudo>();
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
+		@JoinColumn(name = "DATA_LCTO_DISTRIBUIDOR", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
+	private Estudo estudo;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
@@ -221,7 +225,7 @@ public class Lancamento implements Serializable {
 	}
 	
 	public Estudo getEstudo() {
-		return estudos.isEmpty() ? null : estudos.iterator().next();
+		return estudo;
 	}
 	
 	public BigDecimal getTotalRecebimentoFisico() {

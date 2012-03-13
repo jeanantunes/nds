@@ -22,12 +22,6 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
-	
-	@Transactional(readOnly = true)
-	public Estudo obterEstudoDoLancamentoMaisProximo(Date dataReferencia, String codigoProduto, Long numeroEdicao) {
-		
-		return this.estudoRepository.obterEstudoDoLancamentoMaisProximo(dataReferencia, codigoProduto, numeroEdicao);
-	}
 
 	@Transactional(readOnly = true)
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {

@@ -88,7 +88,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> 
 		}	
 		
 		hql.append( "FROM" )
-			.append( " Estudo estudo join estudo.lancamento lancamento ") 
+			.append( " Estudo estudo join estudo.lancamentos lancamento ") 
 			.append( " JOIN lancamento.recebimentos itemRecebimento ")
 			.append("  JOIN lancamento.expedicao expedicao ")
 			.append( " JOIN itemRecebimento.diferenca diferenca")
