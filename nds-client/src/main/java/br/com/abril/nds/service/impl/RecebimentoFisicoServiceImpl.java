@@ -41,7 +41,7 @@ import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.service.MovimentoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -49,7 +49,7 @@ import br.com.abril.nds.util.TipoMensagem;
 public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Autowired
-	private MovimentoService movimentoService;
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
@@ -61,7 +61,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private ItemNotaFiscalRepository itemNotaFiscalRepository;
 	
 	@Autowired
-	private TipoMovimentoEstoqueRepository tipoMovimentoRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
@@ -700,10 +700,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 			
-			TipoMovimentoEstoque tipoMovimento = tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 			
-			movimentoService.gerarMovimentoEstoque(
+			movimentoEstoqueService.gerarMovimentoEstoque(
 					recebimentoFisicoDTO.getDataLancamento(), 
 					recebimentoFisicoDTO.getIdProdutoEdicao(), 
 					usuarioLogado.getId(), 

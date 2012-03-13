@@ -6,6 +6,6 @@ import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 
 public interface TipoMovimentoEstoqueRepository extends Repository<TipoMovimentoEstoque, Long> {
 	
-	TipoMovimentoEstoque buscarTipoMovimentoEstoque(TipoOperacao tipoOperacao, GrupoMovimentoEstoque dominioTipoMovimento);
+	TipoMovimentoEstoque buscarTipoMovimentoEstoque(TipoOperacao tipoOperacao, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
 }
