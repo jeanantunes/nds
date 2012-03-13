@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.estoque;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

@@ -1,5 +1,4 @@
 package br.com.abril.nds.model.estoque;
-import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
 
 /**
  * @author francisco.garcia

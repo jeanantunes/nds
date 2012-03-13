@@ -3,7 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 public interface MovimentoEstoqueService {
 
