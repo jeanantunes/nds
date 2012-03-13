@@ -38,7 +38,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
-import br.com.abril.nds.repository.TipoMovimentoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -63,7 +63,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private RateioDiferencaRepository rateioDiferencaRepository;
 	
 	@Autowired
-	private TipoMovimentoRepository tipoMovimentoRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoRepository;
 	
 	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;

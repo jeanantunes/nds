@@ -28,7 +28,7 @@ import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.MovimentoCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.TipoMovimentoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.MovimentoService;
 
@@ -60,7 +60,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 	UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	TipoMovimentoRepository tipoMovimentoRepository;
+	TipoMovimentoEstoqueRepository tipoMovimentoRepository;
 	
 	@Autowired
 	ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -69,10 +69,10 @@ public class MovimentoServiceImpl implements MovimentoService{
 	@Transactional
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
 		
-		TipoMovimentoEstoque tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
+		TipoMovimentoEstoque tipoMovimento = tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				TipoOperacao.SAIDA, GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
-		TipoMovimentoEstoque tipoMovimentoCota = tipoMovimentoRepository.buscarTipoMovimento(
+		TipoMovimentoEstoque tipoMovimentoCota = tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		List<EstudoCota> listaEstudoCota = estudoCotaRepository.
