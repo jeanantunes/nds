@@ -301,7 +301,7 @@ public class DataLoader {
 		session.save(notaFiscalFornecedor);
 
 		itemNotaFiscalFornecedor = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
-				usuarioJoao, notaFiscalFornecedor, new Date(), BigDecimal.TEN);
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		session.save(itemNotaFiscalFornecedor);
 	}
 
@@ -800,7 +800,9 @@ public class DataLoader {
 				
 				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
 						produtoEdicao, usuario, notaFiscalFornecedor, 
-						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+						TipoLancamento.LANCAMENTO,
 						new BigDecimal(i));					
 				session.save(itemNotaFiscal);
 				

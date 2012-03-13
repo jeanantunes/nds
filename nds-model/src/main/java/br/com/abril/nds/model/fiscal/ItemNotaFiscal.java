@@ -19,6 +19,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -44,15 +45,26 @@ public class ItemNotaFiscal {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
+	
 	@ManyToOne
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM")
 	private Origem origem;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
-	private Date dataLancamento;
+	private Date dataLancamento;	
+	
+	@Column(name = "TIPO_LANCAMENTO", nullable = false)
+	private TipoLancamento tipoLancamento;	
+	
+	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_REC", nullable = false)
+	private Date dataRecolhimento;	
+	
 	@OneToOne(mappedBy = "itemNotaFiscal")
 	private ItemRecebimentoFisico recebimentoFisico;
 
@@ -120,5 +132,20 @@ public class ItemNotaFiscal {
 		this.recebimentoFisico = recebimentoFisico;
 	}
 
+	public TipoLancamento getTipoLancamento() {
+		return tipoLancamento;
+	}
 
+	public void setTipoLancamento(TipoLancamento tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+	
 }

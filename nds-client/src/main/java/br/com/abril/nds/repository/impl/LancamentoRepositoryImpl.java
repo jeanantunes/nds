@@ -320,14 +320,23 @@ public class LancamentoRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Lancamento lancamento ");
+		
 		hql.append(" where lancamento.dataLancamentoPrevista = :dataPrevista ");
-		hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+		
+		if (tipoLancamento != null) {
+			hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+		}
+		
 		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setDate("dataPrevista", dataPrevista);
-		query.setParameter("tipoLancamento", tipoLancamento);
+		
+		if(tipoLancamento != null){	
+			query.setParameter("tipoLancamento", tipoLancamento);
+		}
+		
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
 		
 		return (Lancamento) query.uniqueResult();

@@ -444,7 +444,7 @@ public class Fixture {
 	}
 
 	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
-			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, BigDecimal qtde) {
+			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
 		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
 		itemNotaFiscal.setOrigem(Origem.MANUAL);
 		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
@@ -452,6 +452,8 @@ public class Fixture {
 		itemNotaFiscal.setUsuario(usuario);
 		itemNotaFiscal.setNotaFiscal(notaFiscal);
 		itemNotaFiscal.setDataLancamento(dataLancamento);
+		itemNotaFiscal.setDataRecolhimento(dataRecolhimento);
+		itemNotaFiscal.setTipoLancamento(tipoLancamento);
 		return itemNotaFiscal;
 	}
 

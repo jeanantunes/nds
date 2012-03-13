@@ -98,7 +98,15 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
 		save(produtoEdicao);
 		
-		itemNotaFiscal= Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscal, new Date(), new BigDecimal(12));
+		itemNotaFiscal= 
+				Fixture.itemNotaFiscal(
+						produtoEdicao, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(12));
 		save(itemNotaFiscal);
 		
 		recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
