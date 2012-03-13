@@ -2,8 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -58,11 +60,13 @@ public interface DiferencaEstoqueService {
 	
 	boolean verificarPossibilidadeExclusao(Long idDiferenca);
 
-	void efetuarAlteracoes(Long idUsuario, Set<Long> idsDiferencaExclusao);
+	void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
+						   Map<Long, RateioCotaVO> mapaRateioCotas,
+						   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
+						   Long idUsuario, 
+						   Set<Long> idsDiferencaExclusao);
 
 	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
-	
-	void salvarNovaDiferenca(Diferenca diferenca);
 	
 	Diferenca obterDiferenca(Long id);
 

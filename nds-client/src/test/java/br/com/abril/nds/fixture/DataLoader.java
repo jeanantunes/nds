@@ -735,14 +735,14 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, "motivo");
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, "motivo");
 			
 			session.save(movimentoEstoqueDiferenca);
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(
 					new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
-						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
+						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca);
 			
 			session.save(diferenca);
 		}

@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -89,7 +91,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private FeriadoService feriadoService;
-	
+
 	private static final String MOTIVO = "Exclusão diferença";
 	
 	@Transactional(readOnly = true)
@@ -135,11 +137,78 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return diferenca == null ? false : !diferenca;
 	}
 	
-	
-	//TODO: no momento esse método trata apenas as exclusões de diferenca, deve fazer todo o necessário para esta funcionalidade, morô
 	@Transactional
-	public void efetuarAlteracoes(Long idUsuario, Set<Long> idsDiferencaExclusao){
+	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
+								  Map<Long, RateioCotaVO> mapaRateioCotas,
+								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
+								  Long idUsuario, 
+								  Set<Long> idsDiferencaExclusao) {
+		
 		this.excluirDiferenca(idUsuario, idsDiferencaExclusao);
+		
+		if (listaNovasDiferencas != null 
+				&& !listaNovasDiferencas.isEmpty()) {
+			
+			this.confirmarNovosLancamentosDiferenca(
+				listaNovasDiferencas, mapaRateioCotas, idUsuario, idsDiferencaExclusao);
+			
+		} else {
+			
+			this.confirmarLancamentosDiferenca(
+				mapaRateioCotas, filtroPesquisa, idUsuario);
+		}
+	}
+	
+	private void confirmarNovosLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
+													Map<Long, RateioCotaVO> mapaRateioCotas,
+													Long idUsuario, 
+													Set<Long> idsDiferencaExclusao) {
+		
+		for (Diferenca diferenca : listaNovasDiferencas) {
+
+			if (idsDiferencaExclusao.contains(diferenca.getId())) {
+				
+				continue;
+			}
+			
+			this.diferencaEstoqueRepository.adicionar(diferenca);
+			
+			this.processarRateioCotas(diferenca, mapaRateioCotas);
+		}
+	}
+	
+	private void confirmarLancamentosDiferenca(Map<Long, RateioCotaVO> mapaRateioCotas,
+											   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
+											   Long idUsuario) {
+		
+		filtroPesquisa.setPaginacao(null);
+		filtroPesquisa.setOrdenacaoColuna(null);
+		
+		List<Diferenca> listaDiferencas =
+			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
+		
+		for (Diferenca diferenca : listaDiferencas) {
+
+			this.processarRateioCotas(diferenca, mapaRateioCotas);
+		}
+	}
+	
+	private void processarRateioCotas(Diferenca diferenca,
+									  Map<Long, RateioCotaVO> mapaRateioCotas) {
+		
+		if (mapaRateioCotas == null || mapaRateioCotas.isEmpty()) {
+			
+			return;
+		}
+			
+		RateioCotaVO rateioCotaVO = mapaRateioCotas.get(diferenca.getId());
+		
+		if (rateioCotaVO == null) {
+			
+			return;
+		}
+		
+		
 	}
 	
 	private void excluirDiferenca(Long idUsuario, Set<Long> idsDiferenca){
@@ -312,17 +381,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 		
 		return false;
-	}
-	
-	@Transactional
-	public void salvarNovaDiferenca(Diferenca diferenca) {
-		
-		if (diferenca == null) {
-			
-			throw new IllegalArgumentException("Diferença não pode ser nula");
-		}
-		
-		this.diferencaEstoqueRepository.adicionar(diferenca);
 	}
 	
 	@Transactional(readOnly = true)
