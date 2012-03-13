@@ -16,6 +16,8 @@ public class RateioCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 3244681304919095515L;
 	
+	private Integer id;
+	
 	private Long idDiferenca;
 	
 	private Integer numeroCota;
@@ -29,6 +31,20 @@ public class RateioCotaVO implements Serializable {
 	 */
 	public RateioCotaVO() {
 		
+	}
+	
+	/**
+	 * @return the id
+	 */
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	/**
@@ -94,10 +110,7 @@ public class RateioCotaVO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((idDiferenca == null) ? 0 : idDiferenca.hashCode());
-		result = prime * result
-				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -113,15 +126,10 @@ public class RateioCotaVO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RateioCotaVO other = (RateioCotaVO) obj;
-		if (idDiferenca == null) {
-			if (other.idDiferenca != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!idDiferenca.equals(other.idDiferenca))
-			return false;
-		if (numeroCota == null) {
-			if (other.numeroCota != null)
-				return false;
-		} else if (!numeroCota.equals(other.numeroCota))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

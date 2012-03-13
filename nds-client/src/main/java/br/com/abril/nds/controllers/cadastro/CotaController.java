@@ -61,6 +61,8 @@ public class CotaController {
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
+		nomeCota = this.removerSufixoTipoPessoa(nomeCota);
+		
 		List<Cota> listaCotas = this.cotaService.obterCotasPorNomePessoa(nomeCota);
 		
 		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
@@ -84,17 +86,7 @@ public class CotaController {
 	@Post
 	public void pesquisarPorNome(String nomeCota) {
 		
-		if (nomeCota != null && !nomeCota.trim().isEmpty()) {
-			
-			if (nomeCota.contains(SUFIXO_PESSOA_FISICA)) {
-				
-				nomeCota = nomeCota.replace(SUFIXO_PESSOA_FISICA, "");
-				
-			} else if (nomeCota.contains(SUFIXO_PESSOA_JURIDICA)) {
-				
-				nomeCota = nomeCota.replace(SUFIXO_PESSOA_JURIDICA, "");
-			}
-		}
+		nomeCota = this.removerSufixoTipoPessoa(nomeCota);
 		
 		Cota cota = this.cotaService.obterPorNome(nomeCota);
 		
@@ -142,6 +134,30 @@ public class CotaController {
 		}
 		
 		return nomeExibicao;
+	}
+	
+	/*
+	 * Remove o sufixo do tipo de pessoa.
+	 * 
+	 * @param nomeCota - nome da cota
+	 * 
+	 * @return Nome da cota sem sufixo
+	 */
+	private String removerSufixoTipoPessoa(String nomeCota) {
+		
+		if (nomeCota != null && !nomeCota.trim().isEmpty()) {
+			
+			if (nomeCota.contains(SUFIXO_PESSOA_FISICA)) {
+				
+				return nomeCota.replace(SUFIXO_PESSOA_FISICA, "");
+				
+			} else if (nomeCota.contains(SUFIXO_PESSOA_JURIDICA)) {
+				
+				return nomeCota.replace(SUFIXO_PESSOA_JURIDICA, "");
+			}
+		}
+		
+		return nomeCota;
 	}
 
 }

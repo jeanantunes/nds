@@ -99,6 +99,8 @@ public class DiferencaEstoqueController {
 	
 	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
 	
+	private static final String LISTA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE = "listaRateiosCadastrados";
+	
 	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
 	
 	private boolean manterListaSessao = false;
@@ -332,9 +334,7 @@ public class DiferencaEstoqueController {
 	@Post
 	@Path("/lancamento/rateio")
 	public void carregarRateio(Long idDiferenca) {
-		
-		this.verificarExistenciaEstudo(idDiferenca);
-		
+
 		int qtdeInicialPadrao = 50;
 		
 		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>(qtdeInicialPadrao);
@@ -342,6 +342,8 @@ public class DiferencaEstoqueController {
 		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
 			
 			RateioCotaVO rateioCota = new RateioCotaVO();
+			
+			rateioCota.setId(indice);
 			
 			rateioCota.setIdDiferenca(idDiferenca);
 			
@@ -359,7 +361,7 @@ public class DiferencaEstoqueController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
-	
+
 	@Post
 	@Path("/lancamento/rateio/obterQuantidadeReparte")
 	public void obterQuantidadeReparteCota(Long idDiferenca, Integer numeroCota) {
@@ -379,14 +381,68 @@ public class DiferencaEstoqueController {
 		if (estudoCota != null 
 				&& estudoCota.getQtdeEfetiva() != null) {
 		
-			result.use(Results.json()).from(estudoCota.getQtdeEfetiva()).serialize();
+			result.use(Results.json()).from(estudoCota.getQtdeEfetiva(), "result").serialize();
 		
 		} else {
 			
-			result.use(Results.json()).from("").serialize();
+			result.use(Results.json()).from("", "result").serialize();
 		}
 	}
 
+	@Post
+	@Path("/lancamento/rateio/validarEstudo")
+	public void verificarExistenciaEstudo(Long idDiferenca) {
+		
+		DiferencaVO diferencaVO = this.obterDiferencaPorId(idDiferenca);
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(diferencaVO.getDataLancamento());
+		
+		ProdutoEdicao produtoEdicao =
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
+		
+		Estudo estudo =
+			this.estudoService.obterEstudoDoLancamentoPorDataProdutoEdicao(dataMovimento, produtoEdicao.getId());
+		
+		if (estudo == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo na data deste lançamento!");
+		}
+
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/cadastrarRateioCotas")
+	@SuppressWarnings("unchecked")
+	public void cadastrarRateioCotas(List<RateioCotaVO> listaNovosRateios) {
+		
+		if (listaNovosRateios == null 
+				|| listaNovosRateios.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para o rateio!");
+		}
+		
+		this.validarPreenchimentoNovosRateios(listaNovosRateios);
+		
+		//TODO: EFETUAR CARREGAMENTO DOS RATEIOS
+		
+		List<RateioCotaVO> listaRateios = (List<RateioCotaVO>)
+			this.httpSession.getAttribute(LISTA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		if (listaRateios == null) {
+			
+			listaRateios = new ArrayList<RateioCotaVO>();
+		}
+		
+		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
+		
+			this.validarNovoRateio(rateioCotaVO);
+		}
+		
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
 	/**
 	 * Método responsável por carregar todos os combos da tela de consulta.
 	 */
@@ -998,7 +1054,7 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
-	 * Valida a entrada de uma nova diferença.
+	 * Valida o preenchimento das novas diferenças.
 	 * 
 	 * @param listaNovasDiferencas - lista das novas diferenças
 	 */
@@ -1050,6 +1106,48 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(validacao);
 		}
+	}
+	
+	/*
+	 * Valida o preenchimentos dos novos rateios.
+	 * 
+	 * @param listaNovosRateios - lista dos novos rateios
+	 */
+	private void validarPreenchimentoNovosRateios(List<RateioCotaVO> listaNovosRateios) {
+
+		List<Long> linhasComErro = new ArrayList<Long>();
+
+		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
+			
+			boolean rateioInvalido = false;
+			
+			//TODO: VALIDAR
+			
+			if (rateioInvalido) {
+				
+				linhasComErro.add(null);
+			}
+		}
+		
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = 
+				new ValidacaoVO(TipoMensagem.ERROR, "Existe(m) rateio(s) preenchido(s) incorretamente!");
+			
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/*
+	 * Valida o cadastro de um novo rateio.
+	 * 
+	 * @param novoRateioCota - novo rateio
+	 */
+	private void validarNovoRateio(RateioCotaVO novoRateioCota) {
+		
+		//TODO VALIDAR
 	}
 	
 	/*
@@ -1168,7 +1266,7 @@ public class DiferencaEstoqueController {
 	private DiferencaVO obterDiferencaPorId(Long idDiferenca) {
 		
 		List<DiferencaVO> listaDiferencas =
-			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
 		
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			
@@ -1186,25 +1284,6 @@ public class DiferencaEstoqueController {
 		return null;
 	}
 	
-	private void verificarExistenciaEstudo(Long idDiferenca) {
-		
-		DiferencaVO diferenca = this.obterDiferencaPorId(idDiferenca);
-		
-		Date dataMovimento = DateUtil.parseDataPTBR(diferenca.getDataLancamento());
-		
-		ProdutoEdicao produtoEdicao =
-			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
-		
-		Estudo estudo =
-			this.estudoService.obterEstudoDoLancamentoPorDataProdutoEdicao(dataMovimento, produtoEdicao.getId());
-		
-		if (estudo == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo para a data deste lançamento!");
-		}
-	}
-	
 	/*
 	 * Obtém o locale da requisição HTTP.
 	 */
@@ -1219,7 +1298,8 @@ public class DiferencaEstoqueController {
 	}
 	
 	//TODO: não há como reconhecer usuario, ainda
-	private Long getIdUsuario(){
+	private Long getIdUsuario() {
+		
 		return 1L;
 	}
 	
