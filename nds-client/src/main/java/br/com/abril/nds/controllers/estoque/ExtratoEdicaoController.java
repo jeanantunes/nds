@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.service.ExtratoEdicaoService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -40,6 +39,7 @@ public class ExtratoEdicaoController {
 	
 	private static final String GRID_RESULT = "gridResult";
 	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
+	private static final String DESTACAR_SALDO_TOTAL_EXTRATO_EDICAO = "destacarSaldoTotalExtratoEdicao";
 	
 	
 	
@@ -58,7 +58,7 @@ public class ExtratoEdicaoController {
 	}
 	
 	/**
-	 * Obtem e serializa o nome do fornecedor do produto.
+	 * Obtem e serializa a razão social do fornecedor do produto.
 	 * @param codigo
 	 */
 	public void obterFornecedorDeProduto(String codigo) {
@@ -67,7 +67,11 @@ public class ExtratoEdicaoController {
 		
 		if(codigo!=null && !codigo.trim().isEmpty()) {
 		
-			resultado = extratoEdicaoService.obterNomeFornecedorDeProduto(codigo);
+			resultado = extratoEdicaoService.obterRazaoSocialFornecedorDeProduto(codigo);
+			
+			if(resultado == null) {
+				resultado = "";
+			}
 			
 		} 
 		
@@ -124,8 +128,13 @@ public class ExtratoEdicaoController {
 		
 		tableModel = obterTableModelParaListaExtratoEdicao(infoGeralExtratoEdicao.getListaExtratoEdicao());
 		
+		String destacarValorSaldo = (infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao().doubleValue() < 0.0D) ? "S" : "N";
+		
 		resultado.put(GRID_RESULT, tableModel);
+		
 		resultado.put(SALDO_TOTAL_EXTRATO_EDICAO, infoGeralExtratoEdicao.getSaldoTotalExtratoEdicao());
+		
+		resultado.put(DESTACAR_SALDO_TOTAL_EXTRATO_EDICAO, destacarValorSaldo);
 		
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		
@@ -134,10 +143,6 @@ public class ExtratoEdicaoController {
 	private List<String> validarParametrosPesquisa(String codigoProduto, Long numeroEdicao) {
 
 		List<String> msgWarningValidacao = new LinkedList<String>();
-		
-		if(codigoProduto == null || codigoProduto.isEmpty() || numeroEdicao == null) {
-			msgWarningValidacao.add(TipoMensagem.WARNING.name());
-		}
 		
 		if(codigoProduto == null || codigoProduto.isEmpty() ) {
 			msgWarningValidacao.add("O preenchimento do campo código é obrigatório!.");
@@ -165,8 +170,10 @@ public class ExtratoEdicaoController {
 			String descTipoMovimento 	= extrato.getDescMovimento();
 			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
 			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();
-			String qtdParcial 			= extrato.getQtdParcial().doubleValue() < 0.0D ? "-" : extrato.getQtdParcial().toString();
-			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial));
+			String qtdParcial 			= extrato.getQtdParcial().toString();
+			String destacarValor		= (extrato.getQtdParcial().doubleValue() < 0.0D) ? "S" : "N";
+			
+			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial, destacarValor));
 			
 		}
 		
