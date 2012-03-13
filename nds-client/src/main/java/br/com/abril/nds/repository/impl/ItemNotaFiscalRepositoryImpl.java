@@ -35,7 +35,7 @@ public class ItemNotaFiscalRepositoryImpl extends
 
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
+		query.setParameter("idNotaFiscal", idNotaFiscal);
 
 		return query.list();
 	}

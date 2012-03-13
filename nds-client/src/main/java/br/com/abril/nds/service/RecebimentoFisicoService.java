@@ -22,4 +22,6 @@ public interface RecebimentoFisicoService {
 	 
 	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual);
 	 
+	 void cancelarNotaFiscal(Long idNotaFiscal);
+	 
 }
