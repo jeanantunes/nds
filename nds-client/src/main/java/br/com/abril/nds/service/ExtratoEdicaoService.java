@@ -25,11 +25,11 @@ public interface ExtratoEdicaoService {
 	public ProdutoEdicao obterProdutoEdicao(String codigoProduto, Long numeroEdicao);
 	
 	/**
-	 * Obtem o nome do fornecedor para um produto.
+	 * Obtem a razão social do fornecedor de um produto.
 	 * 
 	 * @param codigoProduto
 	 * @return String
 	 */
-	public String obterNomeFornecedorDeProduto(String codigoProduto);
+	public String obterRazaoSocialFornecedorDeProduto(String codigoProduto);
 	
 }
