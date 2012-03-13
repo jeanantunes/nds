@@ -7,10 +7,11 @@ import java.util.List;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -23,10 +24,12 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -181,6 +184,8 @@ public class Fixture {
 	public static Box boxReparte300() {
 		return criarBox("300", "Box 300", TipoBox.REPARTE);
 	}
+	
+	
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -304,6 +309,8 @@ public class Fixture {
 		Distribuidor distribuidor = new Distribuidor();
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
+		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
+				TipoCobranca.BOLETO, new BigDecimal(200)));
 		return distribuidor;
 	}
 
@@ -321,17 +328,13 @@ public class Fixture {
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,
 			SituacaoCadastro situacaoCadastro, Box box) {
-
 		Cota cota = new Cota();
-
 		cota.setNumeroCota(numeroCota);
-
 		cota.setPessoa(pessoa);
-
 		cota.setSituacaoCadastro(situacaoCadastro);
-		
 		cota.setBox(box);
-
+		ContratoCota contratoCota = criarContratoCota(cota, true);
+		cota.setContratoCota(contratoCota);
 		return cota;
 	}
 
@@ -684,7 +687,6 @@ public class Fixture {
 		return box;
 	}
 
-	//FINANCEIRO - HENRIQUE
 	public static Boleto boleto(Integer nossoNumero,
 				                Date dataEmissao,
 				                Date dataVencimento,
@@ -708,6 +710,23 @@ public class Fixture {
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
 		return boleto;
+	}
+	
+	public static ContratoCota criarContratoCota(Cota cota,
+			boolean exigeDocSuspensao) {
+		ContratoCota contratoCota = new ContratoCota();
+		contratoCota.setCota(cota);
+		contratoCota.setExigeDocumentacaoSuspencao(exigeDocSuspensao);
+		return contratoCota;
+	}
+	
+	public static PoliticaCobranca criarPoliticaCobranca(
+			Distribuidor distribuidor, TipoCobranca tipo, BigDecimal valorMinimo) {
+		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
+		politicaCobranca.setTipoCobranca(tipo);
+		politicaCobranca.setValorMinino(valorMinimo);
+		politicaCobranca.setDistribuidor(distribuidor);
+		return politicaCobranca;
 	}
 
 }
