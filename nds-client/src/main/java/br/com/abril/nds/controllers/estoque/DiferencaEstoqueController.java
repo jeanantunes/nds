@@ -35,9 +35,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -86,13 +88,16 @@ public class DiferencaEstoqueController {
 	@Autowired
 	private EstudoCotaService estudoCotaService; 
 	
+	@Autowired
+	private EstudoService estudoService;
+	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
 	
 	private static final String LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
 	
-	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
+	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
 	
 	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
 	
@@ -148,7 +153,7 @@ public class DiferencaEstoqueController {
 			if (!setIdsExclusao.isEmpty()){
 				for (int index = 0 ; index < listaLancamentoDiferencas.size() ; index++){
 					if (setIdsExclusao.contains(listaLancamentoDiferencas.get(index).getId())){
-						listaLancamentoDiferencas.remove(index);
+						listaLancamentoDiferencas.remove(index--);
 					}
 				}
 			}
@@ -165,7 +170,7 @@ public class DiferencaEstoqueController {
 	public void pesquisarLancamentosNovos(Date dataMovimento, TipoDiferenca tipoDiferenca,
 										  String sortorder, String sortname, int page, int rp) {
 		
-		List<Diferenca> listaNovasDiferencas = (List<Diferenca>)
+		Set<Diferenca> listaNovasDiferencas = (Set<Diferenca>)
 			this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
 		if (listaNovasDiferencas != null 
@@ -229,12 +234,12 @@ public class DiferencaEstoqueController {
 		
 		this.validarPreenchimentoNovasDiferencas(listaNovasDiferencas);
 		
-		List<Diferenca> listaDiferencas = (List<Diferenca>)
+		Set<Diferenca> listaDiferencas = (Set<Diferenca>)
 			this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
 		if (listaDiferencas == null) {
 			
-			listaDiferencas = new ArrayList<Diferenca>();
+			listaDiferencas = new HashSet<Diferenca>();
 		}
 		
 		for (DiferencaVO diferencaVO : listaNovasDiferencas) {
@@ -242,6 +247,8 @@ public class DiferencaEstoqueController {
 			this.validarNovaDiferenca(diferencaVO, dataMovimento, tipoDiferenca);
 			
 			Diferenca diferenca = new Diferenca();
+			
+			diferenca.setId(diferencaVO.getId());
 			
 			ProdutoEdicao produtoEdicao =
 				this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
@@ -326,6 +333,8 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio")
 	public void carregarRateio(Long idDiferenca) {
 		
+		this.verificarExistenciaEstudo(idDiferenca);
+		
 		int qtdeInicialPadrao = 50;
 		
 		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>(qtdeInicialPadrao);
@@ -390,30 +399,43 @@ public class DiferencaEstoqueController {
 		result.include("listaFornecedores", listaFornecedoresCombo);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
 	public void excluirFaltaSobra(Long idDiferenca){
 		
-		if (this.diferencaEstoqueService.verificarPossibilidadeExclusao(idDiferenca)){
-			Set<Long> setIdsExclusao = obterIdsExcluidosSessao();
-			setIdsExclusao.add(idDiferenca);
-			this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, setIdsExclusao);
-			
-			manterListaSessao = true;
-			
-			FiltroLancamentoDiferencaEstoqueDTO filtro = 
-					(FiltroLancamentoDiferencaEstoqueDTO) 
-					this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
-			
-			this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
-					filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
-					filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
-					filtro.getPaginacao().getQtdResultadosPorPagina());
-		} else {
-			result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.ERROR, 
-							"Diferença lançada automaticamente não pode ser excluida."), 
-							Constantes.PARAM_MSGS).recursive().serialize();
+		Set<Diferenca> listaNovasDiferencas = (Set<Diferenca>)
+				this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		boolean removido = false;
+		if (listaNovasDiferencas != null){
+			Diferenca dif = new Diferenca();
+			dif.setId(idDiferenca);
+			removido = listaNovasDiferencas.remove(dif);
 		}
+		
+		if (!removido){
+			if (this.diferencaEstoqueService.verificarPossibilidadeExclusao(idDiferenca)){
+				Set<Long> setIdsExclusao = obterIdsExcluidosSessao();
+				setIdsExclusao.add(idDiferenca);
+				this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, setIdsExclusao);
+			} else {
+				result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.ERROR, 
+								"Diferença lançada automaticamente não pode ser excluida."), 
+								Constantes.PARAM_MSGS).recursive().serialize();
+			}
+		}
+		
+		manterListaSessao = true;
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = 
+				(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
+				filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+				filtro.getPaginacao().getQtdResultadosPorPagina());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -438,22 +460,6 @@ public class DiferencaEstoqueController {
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
-	}
-	
-	@Post
-	public void cancelar(){
-		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
-		
-		this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, null);
-		
-		FiltroLancamentoDiferencaEstoqueDTO filtro = 
-				(FiltroLancamentoDiferencaEstoqueDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
-		
-		this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
-				filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
-				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
-				filtro.getPaginacao().getQtdResultadosPorPagina());
 	}
 	
 	/**
@@ -608,7 +614,7 @@ public class DiferencaEstoqueController {
 	 * @param listaDiferencas - lista de diferenças
 	 * @param filtro - filtro da pesquisa
 	 */
-	private void processarDiferencasLancamentoNovos(List<Diferenca> listaDiferencas, 
+	private void processarDiferencasLancamentoNovos(Set<Diferenca> listaDiferencas, 
 												   	FiltroLancamentoDiferencaEstoqueDTO filtro) {
 
 		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
@@ -1178,6 +1184,25 @@ public class DiferencaEstoqueController {
 		}
 		
 		return null;
+	}
+	
+	private void verificarExistenciaEstudo(Long idDiferenca) {
+		
+		DiferencaVO diferenca = this.obterDiferencaPorId(idDiferenca);
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(diferenca.getDataLancamento());
+		
+		ProdutoEdicao produtoEdicao =
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
+		
+		Estudo estudo =
+			this.estudoService.obterEstudoDoLancamentoPorDataProdutoEdicao(dataMovimento, produtoEdicao.getId());
+		
+		if (estudo == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo para a data deste lançamento!");
+		}
 	}
 	
 	/*
