@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 
 @Entity
 @Table(name = "ESTOQUE_PRODUTO")

@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.estoque;
 
 import java.math.BigDecimal;
 
@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.movimentacao.Movimento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")

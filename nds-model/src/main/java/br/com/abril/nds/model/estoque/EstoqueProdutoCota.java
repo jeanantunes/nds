@@ -18,7 +18,6 @@ import javax.persistence.Version;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 
 @Entity
 @Table(name = "	ESTOQUE_PRODUTO_COTA",uniqueConstraints = { @UniqueConstraint(columnNames = {
