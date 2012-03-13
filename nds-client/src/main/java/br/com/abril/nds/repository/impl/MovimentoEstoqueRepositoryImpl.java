@@ -25,7 +25,7 @@ implements MovimentoEstoqueRepository {
 	}
 	
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(Date dataOperacao, List<Long> listaIdFornecedor) {
-
+		
 		/*
 		StringBuilder hql = new StringBuilder("");
 		
