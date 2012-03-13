@@ -1,4 +1,4 @@
-package br.com.abril.nds.model;
+package br.com.abril.nds.model.movimentacao;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
