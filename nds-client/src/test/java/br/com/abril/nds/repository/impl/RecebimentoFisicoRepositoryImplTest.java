@@ -115,56 +115,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
 		save(itemRecebimentoFisico);
 	}
-	
-	
-	@Test
-	@Ignore
-	public void inserirItemNotaComDTOComNota() {
 		
-		
-		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
-		
-		recebimentoDTO.setIdProdutoEdicao(1L);
-		recebimentoDTO.setQtdFisico(new BigDecimal(50));
-		recebimentoDTO.setDataLancamento(new Date(System.currentTimeMillis()));
-		recebimentoDTO.setDataRecolhimento(new Date(System.currentTimeMillis()));
-		recebimentoDTO.setRepartePrevisto(new BigDecimal(12));
-		recebimentoDTO.setTipoLancamento(TipoLancamento.LANCAMENTO);
-	
-		List<RecebimentoFisicoDTO> listaDTO = new ArrayList<RecebimentoFisicoDTO>();
-		listaDTO.add(recebimentoDTO);
-		
-		NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
-		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO, new Date());
-		
-	}
-	
-	@Test
-	@Ignore
-	public void inserirItemNotaSemIdNota() {
-		
-		
-		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
-		
-		recebimentoDTO.setIdProdutoEdicao(1L);
-		recebimentoDTO.setQtdFisico(new BigDecimal(50));
-		recebimentoDTO.setDataLancamento(new Date(System.currentTimeMillis()));
-		recebimentoDTO.setDataRecolhimento(new Date(System.currentTimeMillis()));
-		recebimentoDTO.setRepartePrevisto(new BigDecimal(12));
-		recebimentoDTO.setTipoLancamento(TipoLancamento.LANCAMENTO);
-	
-		List<RecebimentoFisicoDTO> listaDTO = new ArrayList<RecebimentoFisicoDTO>();
-		listaDTO.add(recebimentoDTO);
-		
-		//NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
-		NotaFiscal notaFiscalF = new NotaFiscalFornecedor();
-		notaFiscalF = Fixture.notaFiscalFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
-		
-		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalF, listaDTO, new Date());
-	}
-	
 	@Test
 	public void excluirItemNotaFiscalTeste(){
 		
