@@ -624,7 +624,7 @@ public class DiferencaEstoqueController {
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
 			listaFornecedoresCombo.add(
-				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia())
+				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial())
 			);
 		}
 			
@@ -851,7 +851,7 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(
-				diferenca.getMovimentoEstoque().getStatus().toString());
+				diferenca.getMovimentoEstoque().getStatus().getDescricao());
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
 			

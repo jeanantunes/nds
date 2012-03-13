@@ -8,7 +8,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Boleto}  
+ * {@link br.com.abril.nds.model.financeiro.Boleto}  
  * 
  * @author Discover Technology
  *
@@ -24,4 +24,12 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 */
 	List<Boleto> obterBoletosPorCota(Integer numeroCota, Date vencimentoDe, Date vencimentoAte,StatusCobranca status);
 	
+	/**
+	 * Obtém um boleto de acordo com o nosso número.
+	 * 
+	 * @param nossoNumero - nosso numero
+	 * 
+	 * @return {@link Boleto}
+	 */
+	Boleto obterPorNossoNumero(String nossoNumero);
 }
