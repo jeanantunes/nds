@@ -11,6 +11,7 @@ function pesquisar(){
 	$("#lancamentosProgramadosGrid").flexReload();
 	$("#resumoPeriodo").show();
 	linhasDestacadas = [];
+	lancamentosSelecionados = [];
 	$('#selRep').uncheck();
 }
 
@@ -321,7 +322,13 @@ function voltarConfiguracaoOriginal() {
 					dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
 					dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
 					row.cell.dataMatrizDistrib = dataDistrib;
-					row.cell.reprogramar='<input type="checkbox" value="'+row.cell.id+'" name="checkgroup" onclick="verifyCheck($(\'#selRep\'));" />';
+					var id = row.cell.id.toString(); 					
+					var reprogramar = '<input type="checkbox" value="'+id+'" name="checkgroup" ';
+					if ($.inArray(id, lancamentosSelecionados) != -1) {
+						reprogramar+='checked="checked" ';					
+					}
+					reprogramar+='onclick="verifyCheck($(\'#selRep\'));" />';	
+					row.cell.reprogramar=reprogramar;
 				} else {
 					var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 					row.cell.dataMatrizDistrib = dataDistrib;
@@ -388,10 +395,11 @@ function voltarConfiguracaoOriginal() {
 		   });
 
 		   $('input[name=checkgroup]').bind('change', function() {
-  			if (this.checked) {
-			  lancamentosSelecionados.push(this.value);					
+			var id = this.value.toString();  			
+			if (this.checked && $.inArray(id, lancamentosSelecionados) == -1) {
+			  lancamentosSelecionados.push(id);					
 			} else {
-			  lancamentosSelecionados = removeFromArray(lancamentosSelecionados, this.value);				
+			  lancamentosSelecionados = removeFromArray(lancamentosSelecionados, id);				
 			}
 		   });	
 		}
