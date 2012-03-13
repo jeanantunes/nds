@@ -333,6 +333,12 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			 
 		hql += " where diferenca.movimentoEstoque is not null ";
 		
+		if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
+			hql += " and diferenca.produtoEdicao.id in " +
+				   " 	(select distinct lancamento.produtoEdicao.id from Lancamento lancamento " +
+				   " 		where lancamento.dataLancamentoDistribuidor >= :dataLimiteLancamentoDistribuidor) ";
+		}
+			
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
 		}
@@ -367,6 +373,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	 */
 	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
 													 	 Query query) {
+		
+		if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
+			query.setParameter("dataLimiteLancamentoDistribuidor", filtro.getDataLimiteLancamentoDistribuidor());
+		}
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			query.setParameter("codigoProduto", filtro.getCodigoProduto());

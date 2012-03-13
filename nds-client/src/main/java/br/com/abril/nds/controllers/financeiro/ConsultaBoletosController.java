@@ -170,7 +170,7 @@ public class ConsultaBoletosController {
 		
 		for (Boleto boleto : boletos){	
 			listaModelo.add(new CellModel(1,
-										  Integer.toString(boleto.getNossoNumero()),
+										  boleto.getNossoNumero(),
 										  DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"),

@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 
@@ -20,4 +21,5 @@ public interface BoletoService {
     
 	List<Boleto> obterBoletosPorCota(Integer numeroCota, Date vencimentoDe, Date vencimentoAte, StatusCobranca status);
 	
+	void baixarBoleto(PagamentoDTO pagamentoDTO);
 }

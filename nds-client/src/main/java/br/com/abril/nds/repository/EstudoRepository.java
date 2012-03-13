@@ -13,18 +13,6 @@ import br.com.abril.nds.model.planejamento.Estudo;
  */
 public interface EstudoRepository extends Repository<Estudo, Long> {
 	
-	/**
-	 * Obtém o estudo relacionado ao lançamento mais próximo
-	 * da data de referência e produto passados como parâmetro.
-	 * 
-	 * @param data - data de referencia
-	 * @param codigoProduto - código do produto
-	 * @param numeroEdicao - número da edição
-	 * 
-	 * @return {@link Estudo}
-	 */
-	Estudo obterEstudoDoLancamentoMaisProximo(Date dataReferencia, String codigoProduto, Long numeroEdicao);
-	
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 
 }

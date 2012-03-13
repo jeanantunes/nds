@@ -35,7 +35,7 @@ public class Produto {
 	@Column(name = "CODIGO", unique = true)
 	private String codigo;
 	
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
 	

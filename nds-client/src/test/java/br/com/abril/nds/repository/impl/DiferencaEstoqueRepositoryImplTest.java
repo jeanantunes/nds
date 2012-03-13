@@ -34,9 +34,12 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -74,7 +77,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 
 		ProdutoEdicao produtoEdicao = this.criarProdutoEdicao();
 		
-		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaEm();
+		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaEm();
 		
 		save(tipoMovimento);
 		
@@ -127,6 +130,14 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, quantidadeDiferenca);
 		
 		save(estoqueProduto);
+		
+		Lancamento lancamentoVeja =
+			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+							   DateUtil.adicionarDias(new Date(), 1), DateUtil.adicionarDias(new Date(),
+							   produtoEdicao.getPeb()), new Date(),
+							   new Date(), BigDecimal.TEN,  StatusLancamento.RECEBIDO,
+							   itemRecebimentoFisico);
+		save(lancamentoVeja);
 		
 		for (int i = 0; i < this.qtdeMovimentos; i++) {
 			

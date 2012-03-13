@@ -28,10 +28,6 @@ public abstract class Movimento extends Aprovacao {
 	private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
-	private TipoMovimento tipoMovimento;
-	
-	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
@@ -45,14 +41,6 @@ public abstract class Movimento extends Aprovacao {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public TipoMovimento getTipoMovimento() {
-		return tipoMovimento;
-	}
-	
-	public void setTipoMovimento(TipoMovimento tipoMovimento) {
-		this.tipoMovimento = tipoMovimento;
 	}
 	
 	public Usuario getUsuario() {

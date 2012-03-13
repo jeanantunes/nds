@@ -5,10 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -28,6 +30,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -37,6 +40,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
@@ -91,6 +95,9 @@ public class DiferencaEstoqueController {
 	@Autowired
 	private EstudoService estudoService;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
@@ -98,6 +105,8 @@ public class DiferencaEstoqueController {
 	private static final String LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
 	
 	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
+	
+	private static final String MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE = "mapaRateiosCadastrados";
 	
 	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
 	
@@ -126,9 +135,7 @@ public class DiferencaEstoqueController {
 									 String sortorder, String sortname, int page, int rp) {
 		
 		this.validarEntradaDadosPesquisaLancamentos(dataMovimentoFormatada);
-		
-		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, null);
-		
+
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = 
@@ -331,17 +338,37 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/lancamento/rateio")
+	@SuppressWarnings("unchecked")
 	public void carregarRateio(Long idDiferenca) {
-		
-		this.verificarExistenciaEstudo(idDiferenca);
-		
+
 		int qtdeInicialPadrao = 50;
 		
 		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>(qtdeInicialPadrao);
 		
-		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
+		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
+			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		List<RateioCotaVO> listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
+		
+		if (mapaRateiosCadastrados == null) {
+			
+			mapaRateiosCadastrados = new HashMap<Long, List<RateioCotaVO>>();
+			
+		} else {
+			
+			listaRateiosCadastrados = mapaRateiosCadastrados.get(idDiferenca);
+		}
+		
+		if (listaRateiosCadastrados != null && !listaRateiosCadastrados.isEmpty()) {
+			
+			listaNovosRateiosCota.addAll(listaRateiosCadastrados);
+		}
+		
+		for (int indice = listaNovosRateiosCota.size(); indice < qtdeInicialPadrao; indice++) {
 			
 			RateioCotaVO rateioCota = new RateioCotaVO();
+			
+			rateioCota.setId(Long.valueOf(indice));
 			
 			rateioCota.setIdDiferenca(idDiferenca);
 			
@@ -359,7 +386,7 @@ public class DiferencaEstoqueController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
-	
+
 	@Post
 	@Path("/lancamento/rateio/obterQuantidadeReparte")
 	public void obterQuantidadeReparteCota(Long idDiferenca, Integer numeroCota) {
@@ -379,14 +406,101 @@ public class DiferencaEstoqueController {
 		if (estudoCota != null 
 				&& estudoCota.getQtdeEfetiva() != null) {
 		
-			result.use(Results.json()).from(estudoCota.getQtdeEfetiva()).serialize();
+			result.use(Results.json()).from(estudoCota.getQtdeEfetiva(), "result").serialize();
 		
 		} else {
 			
-			result.use(Results.json()).from("").serialize();
+			result.use(Results.json()).from("", "result").serialize();
 		}
 	}
 
+	@Post
+	@Path("/lancamento/rateio/validarEstudo")
+	public void verificarExistenciaEstudo(Long idDiferenca) {
+		
+		DiferencaVO diferencaVO = this.obterDiferencaPorId(idDiferenca);
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(diferencaVO.getDataLancamento());
+		
+		ProdutoEdicao produtoEdicao =
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
+		
+		Estudo estudo =
+			this.estudoService.obterEstudoDoLancamentoPorDataProdutoEdicao(dataMovimento, produtoEdicao.getId());
+		
+		if (estudo == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo na data deste lançamento!");
+		}
+
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/cadastrarRateioCotas")
+	@SuppressWarnings("unchecked")
+	public void cadastrarRateioCotas(List<RateioCotaVO> listaNovosRateios, Long idDiferenca) {
+		
+		if (listaNovosRateios == null 
+				|| listaNovosRateios.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para o rateio!");
+		}
+		
+		this.validarPreenchimentoNovosRateios(listaNovosRateios);
+		
+		this.validarSomaQuantidadeRateio(listaNovosRateios, idDiferenca);
+		
+		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
+			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		List<RateioCotaVO> listaRateiosCadastrados = null;
+		
+		if (mapaRateiosCadastrados == null) {
+
+			mapaRateiosCadastrados = new HashMap<Long, List<RateioCotaVO>>();
+
+		} else {
+			
+			listaRateiosCadastrados = mapaRateiosCadastrados.get(idDiferenca);
+		}
+		
+		if (listaRateiosCadastrados == null || listaRateiosCadastrados.isEmpty()) {
+			
+			listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
+		}
+		
+		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
+		
+			this.validarNovoRateio(rateioCotaVO);
+
+			if (!listaRateiosCadastrados.contains(rateioCotaVO)) {
+				
+				listaRateiosCadastrados.add(rateioCotaVO);
+			}
+		}
+		
+		mapaRateiosCadastrados.put(idDiferenca, listaRateiosCadastrados);
+		
+		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, mapaRateiosCadastrados);
+		
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/limparSessao")
+	public void limparDadosSessao() {
+		
+		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, null);
+		
+		this.httpSession.setAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, null);
+		
+		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, null);
+		
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
 	/**
 	 * Método responsável por carregar todos os combos da tela de consulta.
 	 */
@@ -510,7 +624,7 @@ public class DiferencaEstoqueController {
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
 			listaFornecedoresCombo.add(
-				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia())
+				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial())
 			);
 		}
 			
@@ -737,7 +851,7 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(
-				diferenca.getMovimentoEstoque().getStatus().toString());
+				diferenca.getMovimentoEstoque().getStatus().getDescricao());
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
 			
@@ -998,7 +1112,7 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
-	 * Valida a entrada de uma nova diferença.
+	 * Valida o preenchimento das novas diferenças.
 	 * 
 	 * @param listaNovasDiferencas - lista das novas diferenças
 	 */
@@ -1048,6 +1162,133 @@ public class DiferencaEstoqueController {
 			
 			validacao.setDados(linhasComErro);
 			
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/*
+	 * Valida o preenchimentos dos novos rateios.
+	 * 
+	 * @param listaNovosRateios - lista dos novos rateios
+	 */
+	private void validarPreenchimentoNovosRateios(List<RateioCotaVO> listaNovosRateios) {
+
+		List<Long> linhasComErro = new ArrayList<Long>();
+
+		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
+			
+			boolean rateioInvalido = false;
+			
+			if (rateioCotaVO.getNumeroCota() == null) {
+				
+				rateioInvalido = true;
+			}
+			
+			if (rateioCotaVO.getNomeCota() == null
+					|| rateioCotaVO.getNomeCota().trim().isEmpty()) {
+				
+				rateioInvalido = true;
+			}
+			
+			if (rateioCotaVO.getReparteCota() == null) {
+				
+				rateioInvalido = true;
+			}
+			
+			if (rateioCotaVO.getQuantidade() == null
+					|| BigDecimal.ZERO.equals(rateioCotaVO.getQuantidade())) {
+				
+				rateioInvalido = true;
+			}
+			
+			if (rateioInvalido) {
+				
+				linhasComErro.add(rateioCotaVO.getId());
+			}
+		}
+		
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = 
+				new ValidacaoVO(TipoMensagem.ERROR, "Existe(m) rateio(s) preenchido(s) incorretamente!");
+			
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/*
+	 * Efetua a validação da somatória das quantidades 
+	 * do rateio x quantidade da diferença.
+	 * 
+	 * @param listaNovosRateios - lista do nos rateios
+	 * @param idDiferenca - id da diferença
+	 */
+	private void validarSomaQuantidadeRateio(List<RateioCotaVO> listaNovosRateios, Long idDiferenca) {
+		
+		DiferencaVO diferencaVO = this.obterDiferencaPorId(idDiferenca);
+
+		BigDecimal somaQtdeRateio = BigDecimal.ZERO;
+		
+		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
+			
+			somaQtdeRateio = somaQtdeRateio.add(rateioCotaVO.getQuantidade());
+		}
+		
+		if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) > 0) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "A somatória das quantidades de rateio (" 
+					+ somaQtdeRateio + ") é maior que a quantidade da diferença (" 
+					+ diferencaVO.getQuantidade() + ")!");
+		}
+	}
+	
+	/*
+	 * Valida o cadastro de um novo rateio.
+	 * 
+	 * @param novoRateioCota - novo rateio
+	 */
+	private void validarNovoRateio(RateioCotaVO novoRateioCota) {
+		
+		List<Long> linhasComErro = new ArrayList<Long>();
+		
+		List<String> listaMensagensErro = new ArrayList<String>();
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(novoRateioCota.getNumeroCota());
+		
+		if (cota == null) {
+			
+			linhasComErro.add(novoRateioCota.getId());
+			
+			listaMensagensErro.add("Cota inválida: Número [" + novoRateioCota.getNumeroCota() + "] - Nome [" + novoRateioCota.getNomeCota() + " ]");
+		}
+		
+		DiferencaVO diferencaVO = this.obterDiferencaPorId(novoRateioCota.getIdDiferenca());
+		
+		TipoDiferenca tipoDiferenca =
+			Util.getEnumByStringValue(TipoDiferenca.values(), diferencaVO.getTipoDiferenca());
+		
+		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
+				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
+			
+			if (novoRateioCota.getReparteCota() == null
+					|| novoRateioCota.getQuantidade().compareTo(novoRateioCota.getReparteCota()) > 0) {
+				
+				linhasComErro.add(novoRateioCota.getId());
+				
+				listaMensagensErro.add("Quantidade do rateio para o tipo de diferença '" +
+					tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!");
+			}
+		}
+		
+		if (!linhasComErro.isEmpty() && !listaMensagensErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, listaMensagensErro);
+		
+			validacao.setDados(linhasComErro);
+		
 			throw new ValidacaoException(validacao);
 		}
 	}
@@ -1168,7 +1409,7 @@ public class DiferencaEstoqueController {
 	private DiferencaVO obterDiferencaPorId(Long idDiferenca) {
 		
 		List<DiferencaVO> listaDiferencas =
-			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
 		
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			
@@ -1186,25 +1427,6 @@ public class DiferencaEstoqueController {
 		return null;
 	}
 	
-	private void verificarExistenciaEstudo(Long idDiferenca) {
-		
-		DiferencaVO diferenca = this.obterDiferencaPorId(idDiferenca);
-		
-		Date dataMovimento = DateUtil.parseDataPTBR(diferenca.getDataLancamento());
-		
-		ProdutoEdicao produtoEdicao =
-			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
-		
-		Estudo estudo =
-			this.estudoService.obterEstudoDoLancamentoPorDataProdutoEdicao(dataMovimento, produtoEdicao.getId());
-		
-		if (estudo == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo para a data deste lançamento!");
-		}
-	}
-	
 	/*
 	 * Obtém o locale da requisição HTTP.
 	 */
@@ -1219,7 +1441,8 @@ public class DiferencaEstoqueController {
 	}
 	
 	//TODO: não há como reconhecer usuario, ainda
-	private Long getIdUsuario(){
+	private Long getIdUsuario() {
+		
 		return 1L;
 	}
 	

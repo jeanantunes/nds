@@ -21,10 +21,10 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
+import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -33,13 +33,14 @@ import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
-import br.com.abril.nds.repository.MovimentoCotaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
-import br.com.abril.nds.repository.TipoMovimentoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.FeriadoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -57,13 +58,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
 	
 	@Autowired
-	private MovimentoCotaRepository movimentoCotaRepository;
+	private MovimentoEstoqueCotaRepository movimentoCotaRepository;
 	
 	@Autowired
 	private RateioDiferencaRepository rateioDiferencaRepository;
 	
 	@Autowired
-	private TipoMovimentoRepository tipoMovimentoRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoRepository;
 	
 	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
@@ -86,6 +87,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
+	@Autowired
+	private FeriadoService feriadoService;
+	
 	private static final String MOTIVO = "Exclusão diferença";
 	
 	@Transactional(readOnly = true)
@@ -103,11 +107,19 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
+		Date dataInicialLancamento = feriadoService.subtrairDiasUteis(new Date(), 7);
+		
+		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
+		
 		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
 	}
 	
 	@Transactional(readOnly = true)
 	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+		
+		Date dataInicialLancamento = feriadoService.subtrairDiasUteis(new Date(), 7);
+		
+		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
 		
 		return this.diferencaEstoqueRepository.obterTotalDiferencas(filtro);
 	}
@@ -140,24 +152,24 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			if (!diferenca.isAutomatica()){
 				
-				TipoMovimento tipoMovimento = new TipoMovimento();
+				TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 				tipoMovimento.setAprovacaoAutomatica(false);
 				tipoMovimento.setDescricao(MOTIVO);
 				
 				switch (diferenca.getTipoDiferenca().getTipoMovimentoEstoque()){
 					case SOBRA_DE:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_DE);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_DE);
 						qtd = qtd.negate();
 						break;
 					case SOBRA_EM:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.FALTA_EM);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_EM);
 						qtd = qtd.negate();
 						break;
 					case FALTA_DE:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_DE);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_DE);
 						break;
 					case FALTA_EM:
-						tipoMovimento.setTipoMovimento(DominioTipoMovimento.SOBRA_EM);
+						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
 						break;
 				}
 				
@@ -311,6 +323,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 		
 		this.diferencaEstoqueRepository.adicionar(diferenca);
+	}
+	
+	@Transactional(readOnly = true)
+	public Diferenca obterDiferenca(Long id) {
+		
+		return this.diferencaEstoqueRepository.buscarPorId(id);
 	}
 	
 	/*

@@ -24,8 +24,8 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -39,9 +39,9 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
-import br.com.abril.nds.repository.TipoMovimentoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.service.MovimentoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -49,7 +49,7 @@ import br.com.abril.nds.util.TipoMensagem;
 public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Autowired
-	private MovimentoService movimentoService;
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
@@ -61,7 +61,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private ItemNotaFiscalRepository itemNotaFiscalRepository;
 	
 	@Autowired
-	private TipoMovimentoRepository tipoMovimentoRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
@@ -724,10 +724,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 			
-			TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
-					TipoOperacao.ENTRADA, DominioTipoMovimento.RECEBIMENTO_FISICO);
+			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 			
-			movimentoService.gerarMovimentoEstoque(
+			movimentoEstoqueService.gerarMovimentoEstoque(
 					recebimentoFisicoDTO.getDataLancamento(), 
 					recebimentoFisicoDTO.getIdProdutoEdicao(), 
 					usuarioLogado.getId(), 

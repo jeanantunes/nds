@@ -36,7 +36,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -111,7 +111,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 				Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigDecimal.TEN);
 		save(itemRecebimentoFisico);
 		
-		TipoMovimento tipoMovimento = Fixture.tipoMovimentoFaltaDe();
+		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaDe();
 		save(tipoMovimento);
 		
 		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigDecimal.TEN);

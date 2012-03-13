@@ -1,6 +1,25 @@
 <head>
 	<script language="javascript" type="text/javascript">
 
+		function verificarExistenciaEstudo(idDiferenca) {
+
+			var data = [
+   				{
+   					name: 'idDiferenca', value: idDiferenca
+   				}
+   			];
+			
+			$.postJSON(
+				"<c:url value='/estoque/diferenca/lancamento/rateio/validarEstudo' />", 
+				data,
+				function(result) {
+					
+					popupRateioDiferenca(idDiferenca);
+				},
+				null
+			);
+		}
+	
 		function executarPreProcessamento(data) {
 			
 			if (data.mensagens) {
@@ -33,7 +52,7 @@
 
 			$.each(resultado.tableModel.rows, function(index, row) {
 
-				var linkRateioDiferenca = '<a href="javascript:;" onclick="popupRateioDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+				var linkRateioDiferenca = '<a href="javascript:;" onclick="verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
 										     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 										  '</a>';
 
@@ -59,14 +78,20 @@
 
 		function pesquisar() { 
 
-			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+			$.postJSON(
+				"<c:url value='/estoque/diferenca/lancamento/limparSessao' />", 
+				null,
+				function() {
+					var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
 
-			$("#gridLancamentos").flexOptions({
-				url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
-				params: formData
-			});
-			
-			$("#gridLancamentos").flexReload();
+					$("#gridLancamentos").flexOptions({
+						url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
+						params: formData
+					});
+					
+					$("#gridLancamentos").flexReload();
+				}
+			);
 		}
 
 		function popupExclusaoDiferenca(idMovimentoEstoque) {
