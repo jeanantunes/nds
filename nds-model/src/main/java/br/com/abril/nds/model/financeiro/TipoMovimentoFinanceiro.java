@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import br.com.abril.nds.model.TipoMovimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
 @DiscriminatorValue(value = "FINANCEIRO")
