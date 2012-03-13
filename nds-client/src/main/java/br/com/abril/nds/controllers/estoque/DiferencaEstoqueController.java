@@ -563,13 +563,22 @@ public class DiferencaEstoqueController {
 	}
 
 	@Post
-	public void confirmarLancamentos(){
-		
-		//TODO: efetuar demais operações pertinentes a esta rotina, morô?
-		
+	@SuppressWarnings("unchecked")
+	public void confirmarLancamentos() {
+
 		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
 		
-		this.diferencaEstoqueService.efetuarAlteracoes(this.getIdUsuario(), setIdsExclusao);
+		Set<Diferenca> listaNovasDiferencas =
+			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		Map<Long, RateioCotaVO> mapaRateioCotas =
+			(Map<Long, RateioCotaVO>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
+			(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		this.diferencaEstoqueService.efetuarAlteracoes(
+			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getIdUsuario(), setIdsExclusao);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),

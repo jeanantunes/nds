@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -81,6 +82,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		Query query = super.getSession().createQuery(hql);
 		
+		query.setParameter("status", StatusAprovacao.PENDENTE);
+		
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -126,6 +129,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		Query query = getSession().createQuery(hql);
 		
+		query.setParameter("status", StatusAprovacao.PENDENTE);
+		
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -168,26 +173,17 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		}
 					
 		hql += " from Diferenca diferenca "
-			+  " left join diferenca.movimentoEstoque movimentoEstoque ";
-		
-		boolean whereUtilizado = false;
-		
+			+  " join diferenca.movimentoEstoque movimentoEstoque "
+			+  " where movimentoEstoque.status = :status ";
+
 		if (filtro.getDataMovimento() != null) {
-			
-			hql += (!whereUtilizado) ? " where " : " and ";
-						
-			hql += " movimentoEstoque.dataInclusao = :dataMovimento ";
-			
-			whereUtilizado = true;
+
+			hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
-			
-			hql += (!whereUtilizado) ? " where " : " and ";
-			
-			hql += " diferenca.tipoDiferenca = :tipoDiferenca ";
-			
-			whereUtilizado = true;
+
+			hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
 		}
 		
 		return hql;
