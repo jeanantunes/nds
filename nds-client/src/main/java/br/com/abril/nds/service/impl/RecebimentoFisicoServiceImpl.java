@@ -724,8 +724,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 			
-			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+			TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 			
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					recebimentoFisicoDTO.getDataLancamento(), 
