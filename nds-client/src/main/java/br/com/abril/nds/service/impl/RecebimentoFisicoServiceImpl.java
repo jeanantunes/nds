@@ -187,6 +187,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
+		verificarValorDaNota(listaItensNota,notaFiscal.getValorBruto());
+		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
@@ -206,9 +208,31 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		alterarRecebimentoFisicoParaConfirmado(usuarioLogado, notaFiscal, dataAtual);	
 		
 	}
-	
-	
-	
+	/**
+	 * Método que compara o valor bruto da nota com a soma dos valores dos itens
+	 * @param listaItensNota
+	 * @param valorBruto
+	 */
+	private void verificarValorDaNota(List<RecebimentoFisicoDTO> listaItensNota, BigDecimal valorBruto) {
+		
+		BigDecimal somaValorDosItens = new BigDecimal(0.0);
+		
+		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota) {
+			somaValorDosItens = somaValorDosItens.add(recebimentoFisicoDTO.getValorTotal());
+		}
+		
+		if(valorBruto == null){
+			valorBruto = new BigDecimal(0.0);
+		}
+		
+		Double parseSoma = somaValorDosItens.doubleValue();
+		Double parseValorBruto = valorBruto.doubleValue();
+		
+		if(!parseSoma.equals(parseValorBruto)){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Valor Bruto da Nota não corresponde a soma dos valores Totais do Item da Nota");
+		}
+	}
+
 	@Override
 	@Transactional
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
