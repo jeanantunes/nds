@@ -22,7 +22,7 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.LancamentoService;
-import br.com.abril.nds.service.MovimentoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -38,7 +38,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	private MovimentoService movimentoService;
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
@@ -138,7 +138,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setStatus(lancamento.getStatus());
 		historicoLancamentoRepository.adicionar(historico);
 		
-		movimentoService.gerarMovimentoEstoqueDeExpedicao(
+		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
 				lancamento.getDataLancamentoPrevista(), 
 				lancamento.getProdutoEdicao().getId(),
 				idUsuario);

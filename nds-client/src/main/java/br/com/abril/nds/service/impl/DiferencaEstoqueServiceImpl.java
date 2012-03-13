@@ -33,7 +33,7 @@ import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
-import br.com.abril.nds.repository.MovimentoCotaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
@@ -57,7 +57,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
 	
 	@Autowired
-	private MovimentoCotaRepository movimentoCotaRepository;
+	private MovimentoEstoqueCotaRepository movimentoCotaRepository;
 	
 	@Autowired
 	private RateioDiferencaRepository rateioDiferencaRepository;

@@ -17,12 +17,12 @@ public class TipoMovimentoEstoqueRepositoryImpl extends AbstractRepository<TipoM
 	}
 
 	@Override
-	public TipoMovimentoEstoque buscarTipoMovimentoEstoque(TipoOperacao tipoOperacao, GrupoMovimentoEstoque tipoMovimento) {
+	public TipoMovimentoEstoque buscarTipoMovimentoEstoque(TipoOperacao tipoOperacao, GrupoMovimentoEstoque grupoMovimentoEstoque) {
 
 		Criteria criteria = super.getSession().createCriteria(TipoMovimentoEstoque.class);
 		
 		criteria.add(Restrictions.eq("operacaoEstoque", tipoOperacao));
-		criteria.add(Restrictions.eq("tipoMovimento", tipoMovimento));
+		criteria.add(Restrictions.eq("grupoMovimentoEstoque", grupoMovimentoEstoque));
 		
 		
 		criteria.setMaxResults(1);
