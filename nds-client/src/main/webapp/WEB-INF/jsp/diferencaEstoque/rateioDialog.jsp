@@ -23,6 +23,8 @@
 	<script language="javascript" type="text/javascript">
 
 		var ultimaLinhaPreenchida;
+
+		var idDiferencaAtual;
 	
 		$(function() {
 			
@@ -77,6 +79,8 @@
 			$("#gridRateioDiferencas").flexReload();
 			
 			$(".effectDialog").hide();
+
+			idDiferencaAtual = idDiferencaSelecionada;
 			
 			$("#dialogRateioDiferencas").dialog({
 				resizable: false,
@@ -88,7 +92,6 @@
 						cadastrasRateioCotas();
 					},
 					"Cancelar": function() {
-						$("#gridRateioDiferencas").flexAddData({rows:[]});
 						$(this).dialog("close");
 					}
 				}
@@ -109,6 +112,14 @@
 
 			$.each(resultado.rows, function(index, row) {
 
+				var numeroCota = row.cell.numeroCota ? row.cell.numeroCota : '';
+
+				var nomeCota = row.cell.nomeCota ? row.cell.nomeCota : '';
+
+				var reparteCota = row.cell.reparteCota ? row.cell.reparteCota : '';
+
+				var quantidade = row.cell.quantidade ? row.cell.quantidade : ''; 
+
 				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(\'#quantidadeRateio' + index + '\')}';
 
 				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', \'#quantidadeRateio' + index + '\'); ultimaLinhaPreenchida=' + index + ';';
@@ -121,25 +132,25 @@
 				
 				var inputIdDiferenca = '<input name="idDiferenca" type="hidden" value="' + row.cell.idDiferenca + '" />';
 				
-				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" />';
+				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" value="' + numeroCota + '" />';
 
 				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Cota"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');">&nbsp;</a></span>';
 
-				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')"  />';
+				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" value="' + nomeCota + '" />';
 
-				var inputReparteCota = '<input id="qtdeReparteCota' + index + '" name="qtdeReparteCota" type="hidden" />';
+				var inputReparteCota = '<input id="qtdeReparteCota' + index + '" name="qtdeReparteCota" type="hidden" value="' + reparteCota + '" />';
 				
-				var spanReparteCota = '<span id="spanQtdeReparteCota' + index + '"/>';
+				var spanReparteCota = '<span id="spanQtdeReparteCota' + index + '">' + reparteCota + '</span>';
 				
-				var inputQtdeRateio = '<input id="quantidadeRateio' + index + '" name="quantidadeRateio" type="text" style="width:60px; text-align:center;" />';
+				var inputQtdeRateio = '<input id="quantidadeRateio' + index + '" name="quantidadeRateio" type="text" style="width:60px; text-align:center;" value="' + quantidade + '" />';
 
 				row.cell.numeroCota = inputId + inputIdDiferenca + inputNumeroCota + imgLupaPesquisa;
 				row.cell.nomeCota = inputNomeCota;
 				row.cell.reparteCota = inputReparteCota + spanReparteCota;
 				row.cell.quantidade = inputQtdeRateio;
 			});
-
-			$("#totalRateio").empty();
+			
+			reprocessarDadosRateio();
 			
 			return resultado;
 		}
@@ -171,8 +182,11 @@
 		}
 
 		function reprocessarDadosRateio(idCampoQtdeRateio) {
-			
-			$(idCampoQtdeRateio).val("");
+
+			if (idCampoQtdeRateio) {
+
+				$(idCampoQtdeRateio).val("");
+			}
 			
 			var somaQtdeRateio = $("input[id^='qtdeReparteCota']").sum();
 			
@@ -190,7 +204,7 @@
 
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/cadastrarRateioCotas' />", 
-				listaRateioCotas,
+				listaRateioCotas + 'idDiferenca=' + idDiferencaAtual,
 				function(result) {
 					$("#dialogRateioDiferencas").dialog("close");
 				},
@@ -268,6 +282,8 @@
 				rateio += 'listaNovosRateios[' + index + '].idDiferenca=' + idDiferenca + '&';
 
 				rateio += 'listaNovosRateios[' + index + '].numeroCota=' + numeroCota + '&';
+
+				rateio += 'listaNovosRateios[' + index + '].nomeCota=' + nomeCota + '&';
 	
 				rateio += 'listaNovosRateios[' + index + '].reparteCota=' + reparteCota + '&';
 	

@@ -32,4 +32,10 @@ public enum TipoDiferenca {
 		return descricao;
 	}
 	
+	@Override
+	public String toString() {
+	
+		return this.getDescricao();
+	}
+	
 }
