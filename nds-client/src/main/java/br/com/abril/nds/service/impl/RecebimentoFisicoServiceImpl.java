@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.hibernate.mapping.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +16,8 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -456,7 +453,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
 			return;
 		}
-		
+		//TODO : Por hora estamos usando somente a Data Lancamento como unica. Verificar se a do Distribuidor também será
 		Lancamento lancamento = lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(recebimentoFisicoDTO.getDataLancamento(), null, recebimentoFisicoDTO.getIdProdutoEdicao());
 		
 		if(lancamento != null) {
@@ -478,18 +475,14 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			lancamento = new Lancamento();
 			
 			lancamento.setDataLancamentoDistribuidor(recebimentoFisicoDTO.getDataLancamento());
-			
 			lancamento.setDataRecolhimentoDistribuidor(recebimentoFisicoDTO.getDataRecolhimento());
+
+			lancamento.setDataLancamentoPrevista(recebimentoFisicoDTO.getDataLancamento());
+			lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
 			
 			lancamento.setTipoLancamento(recebimentoFisicoDTO.getTipoLancamento());		
 
 			lancamento.setDataCriacao(dataAtual);
-			
-			lancamento.setDataLancamentoPrevista(recebimentoFisicoDTO.getDataLancamento());
-			
-			lancamento.setDataLancamentoDistribuidor(dataAtual);
-			
-			lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
 		
 			lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
 			

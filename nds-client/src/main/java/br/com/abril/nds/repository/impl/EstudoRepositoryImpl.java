@@ -52,9 +52,9 @@ public class EstudoRepositoryImpl extends AbstractRepository<Estudo, Long> imple
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
 		
 		String hql = " from Estudo estudo"
-				   + " where estudo.lancamento.dataLancamentoDistribuidor = :dataReferencia"
-				   + " and estudo.lancamento.produtoEdicao.id = :idProdutoEdicao"
-				   + " order by estudo.lancamento.dataLancamentoDistribuidor";
+				   + " where estudo.dataLancamento = :dataReferencia "
+				   + " and estudo.produtoEdicao.id = :idProdutoEdicao "
+				   + " order by estudo.dataLancamento ";
 		
 		Query query = super.getSession().createQuery(hql);
 

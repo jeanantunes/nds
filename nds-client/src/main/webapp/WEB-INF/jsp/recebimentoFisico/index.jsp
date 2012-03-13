@@ -601,6 +601,31 @@ validarEdicaoCallBack : function() {
 		
 	}
 	
+	function destacarValorNegativo(data) {
+
+		$.each(data.rows, function(index, value) {
+
+			var destacarValorNegativo = value.cell[9];
+	
+			var diferenca = value.cell[6];
+	
+			if(destacarValorNegativo == "S") {
+	
+				value.cell[6] = '<span style="color: red">'+diferenca+'</span>';
+	
+			} else {
+	
+				value.cell[6] = '<span style="color: black">'+diferenca+'</span>';
+	
+			}
+			
+		});
+
+		return data;
+
+	}
+
+	
 	/**
 	 * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
 	 */
@@ -626,11 +651,10 @@ validarEdicaoCallBack : function() {
 				value.cell[8] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
 			}
 			
-
-			
-
 			
 		});
+
+		data = destacarValorNegativo(data);
 		
 		
 		$(".grids").show();

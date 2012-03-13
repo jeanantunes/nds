@@ -313,6 +313,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		this.diferencaEstoqueRepository.adicionar(diferenca);
 	}
 	
+	@Transactional(readOnly = true)
+	public Diferenca obterDiferenca(Long id) {
+		
+		return this.diferencaEstoqueRepository.buscarPorId(id);
+	}
+	
 	/*
 	 * Obtém o parâmetro de número de dias de permissão para lançamento de uma diferença.
 	 * 
