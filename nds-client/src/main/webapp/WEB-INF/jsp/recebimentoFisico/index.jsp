@@ -677,15 +677,14 @@ validarEdicaoCallBack : function() {
 
 	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
 			
-			<div 	id="effectDialogNumber2" 
-		 			class="ui-state-highlight ui-corner-all" 
-		 			style="display: none; position: absolute; z-index: 1000; width: 600px;">
-		 
+			<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 500px;">
+			 
 				<p>
 					<span style="float: left;" class="ui-icon ui-icon-info"></span>
-					<b id="idTextoMensagemDialogNumber2"></b>
+					<b class="effectDialogText"></b>
 				</p>
-				
+			
 			</div>
 			
 			<table width="439" cellpadding="2" cellspacing="2"
@@ -764,15 +763,13 @@ validarEdicaoCallBack : function() {
 
 	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 
-		<div 	id="effectDialog" 
-	 			class="ui-state-highlight ui-corner-all" 
-	 			style="display: none; position: absolute; z-index: 1003; width: 600px;">
-	 
+		<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 500px;">
+			 
 			<p>
 				<span style="float: left;" class="ui-icon ui-icon-info"></span>
-				<b id="idTextoMensagemDialog"></b>
+				<b class="effectDialogText"></b>
 			</p>
-			
 		</div>
 	
 		<table width="341" border="0" cellspacing="2" cellpadding="2">
