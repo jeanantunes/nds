@@ -44,8 +44,6 @@ public class TelefoneController {
 	
 	@Post
 	public void pesquisarTelefones(){
-		//TODO: chamar service para carregar telefones
-		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
 		this.result.use(Results.json()).from(this.getTableModelListaEndereco(telefonesSessao), "result").recursive().serialize();
@@ -64,7 +62,7 @@ public class TelefoneController {
 			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
 			telefone = new Telefone();
 			
-			telefoneAssociacaoDTO.setReferencia((int) (new Date()).getTime());
+			telefoneAssociacaoDTO.setReferencia((int) (new Date()).getTime() * -1);
 			telefoneAssociacaoDTO.setTelefone(telefone);
 		} else {
 			telefoneAssociacaoDTO = telefonesSessao.get(referencia);
@@ -99,9 +97,9 @@ public class TelefoneController {
 			setTelefonesRemover.add(telefoneAssociacaoDTO.getTelefone().getId());
 			
 			this.httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, setTelefonesRemover);
-			
-			this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSalvarSessao);
 		}
+		
+		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSalvarSessao);
 		
 		this.pesquisarTelefones();
 	}
@@ -166,12 +164,12 @@ public class TelefoneController {
 	private CellModel getCellModelEndereco(TelefoneAssociacaoDTO telefoneAssociacao) {
 
 		return new CellModel(
-				telefoneAssociacao.getReferencia(),
-				telefoneAssociacao.getTipoTelefone() == null ? "" : telefoneAssociacao.getTipoTelefone().toString(),
-				telefoneAssociacao.getTelefone().getDdd(),
-				telefoneAssociacao.getTelefone().getNumero(),
-				telefoneAssociacao.getTelefone().getRamal(),
-				String.valueOf(telefoneAssociacao.isPrincipal())
-			);
+			telefoneAssociacao.getReferencia(),
+			telefoneAssociacao.getTipoTelefone() == null ? "" : TipoTelefone.getDescricao(telefoneAssociacao.getTipoTelefone()),
+			telefoneAssociacao.getTelefone().getDdd(),
+			telefoneAssociacao.getTelefone().getNumero(),
+			telefoneAssociacao.getTelefone().getRamal(),
+			String.valueOf(telefoneAssociacao.isPrincipal())
+		);
 	}
 }

@@ -19,6 +19,15 @@ public class TelefoneAssociacaoDTO implements Serializable {
 	private boolean principal;
 	
 	private int referencia;
+	
+	public TelefoneAssociacaoDTO(){}
+	
+	public TelefoneAssociacaoDTO(boolean principal, Telefone telefone, TipoTelefone tipoTelefone){
+		this.principal = principal;
+		this.telefone = telefone;
+		this.tipoTelefone = tipoTelefone;
+		this.referencia = telefone.getId().intValue();
+	}
 
 	public Telefone getTelefone() {
 		return telefone;
