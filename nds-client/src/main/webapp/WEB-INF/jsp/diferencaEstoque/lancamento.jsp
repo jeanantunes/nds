@@ -76,22 +76,55 @@
 			return resultado.tableModel;
 		} 
 
-		function pesquisar() { 
+		function pesquisar(confirmado) { 
 
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/limparSessao' />", 
-				null,
-				function() {
-					var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+				'confirmado=' + confirmado,
+				function(result) {
 
-					$("#gridLancamentos").flexOptions({
-						url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
-						params: formData
-					});
+					if (!result.confirmado) {
+
+						popupMensagemConfirmacao();
+						
+					} else {
 					
-					$("#gridLancamentos").flexReload();
+						var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+	
+						$("#gridLancamentos").flexOptions({
+							url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
+							params: formData
+						});
+						
+						$("#gridLancamentos").flexReload();
+
+						$("#dialogConfirmacaoPerdaDados").dialog("close");
+					}
 				}
 			);
+		}
+
+		function popupMensagemConfirmacao() {
+
+			$("#dialogConfirmacaoPerdaDados").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: 
+				{
+					"Confirmar": function() {
+						
+						pesquisar(true);
+						
+					}, "Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#dialogConfirmacaoPerdaDados").show();
 		}
 
 		function popupExclusaoDiferenca(idDiferenca) {
@@ -252,10 +285,13 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 	<style type="text/css">
-		fieldset label 
-		{
+		fieldset label {
 			width: auto;
 			margin-bottom: 0px !important;
+		}
+		
+		#dialogConfirmacaoPerdaDados {
+			display:none;
 		}
 	</style>
 </head>
@@ -267,6 +303,9 @@
 		</div>
 		<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
 			<p>Confirma estes Lançamentos?</p>
+		</div>
+		<div id="dialogConfirmacaoPerdaDados" title="Lançamento Faltas e Sobras">
+			<p>Ao prosseguir com essa ação você perderá seus dados não salvos. Deseja prosseguir?</p>
 		</div>
 		<div class="container">
 
@@ -305,7 +344,7 @@
 							</td>
 							<td width="280">
 								<span class="bt_pesquisar">
-									<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
+									<a href="javascript:;" onclick="pesquisar(false);">Pesquisar</a>
 								</span>
 							</td>
 						</tr>
