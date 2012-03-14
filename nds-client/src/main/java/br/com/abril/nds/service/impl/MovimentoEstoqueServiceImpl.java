@@ -17,8 +17,8 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
@@ -93,52 +93,78 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
-		
-		
+
 		ItemRecebimentoFisico itemRecebimentoFisico = 
-				itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+			itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
 				
-		EstoqueProduto estoqueProduto =  estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if (estoqueProduto == null) {
+			
+			estoqueProduto = new EstoqueProduto();
+			
+			estoqueProduto.setProdutoEdicao(produtoEdicao);
+			
+			estoqueProduto.setQtde(BigDecimal.ZERO);
+			
+			this.estoqueProdutoRespository.adicionar(estoqueProduto);
+		}
 		
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+		
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setProdutoEdicao(itemRecebimentoFisico.getItemNotaFiscal().getProdutoEdicao());		
+		movimentoEstoque.setProdutoEdicao(produtoEdicao);		
 		movimentoEstoque.setDataInclusao(new Date());
 		movimentoEstoque.setUsuario(usuarioRepository.buscarPorId(idUsuario));
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
 		
-		if(tipoMovimentoEstoque.isAprovacaoAutomatica()) {			
+		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {		
+			
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 		}
 		
-		BigDecimal novaQuantidade;
+		if (StatusAprovacao.APROVADO.equals(movimentoEstoque.getStatus())) {
 		
-		if(TipoOperacao.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
-			 novaQuantidade = estoqueProduto.getQtde().add(quantidade); 
-				estoqueProduto.setQtde(novaQuantidade);
-		} else {
-			 novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+			BigDecimal novaQuantidade;
+			
+			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
+				
+				 novaQuantidade = estoqueProduto.getQtde().add(quantidade);
+				 
+				 estoqueProduto.setQtde(novaQuantidade);
+				 
+			} else {
+				
+				novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+				
 				estoqueProduto.setQtde(novaQuantidade);			
+			}
+		
+			estoqueProdutoRespository.alterar(estoqueProduto);
 		}
 		
-				
 		movimentoEstoqueRepository.adicionar(movimentoEstoque);
-		estoqueProdutoRespository.alterar(estoqueProduto);
+		
+		return movimentoEstoque;
 	}
 	
 	@Override
 	@Transactional
 	public void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 						
-		EstoqueProdutoCota estoqueProdutoCota =  estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
+		EstoqueProdutoCota estoqueProdutoCota = 
+			estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
 				
-		if(estoqueProdutoCota == null) {
+		if (estoqueProdutoCota == null) {
 			
 			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+			
 			Cota cota = cotaRepository.buscarPorId(idCota);
 			
 			estoqueProdutoCota = new EstoqueProdutoCota();
@@ -151,6 +177,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 				
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
+		
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(estoqueProdutoCota.getCota());
 		movimentoEstoqueCota.setDataInclusao(new Date());
@@ -159,22 +186,30 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setQtde(quantidade);
 		movimentoEstoqueCota.setUsuario(usuarioRepository.buscarPorId(idUsuario));
 		
-		if(tipoMovimentoEstoque.isAprovacaoAutomatica()) {			
+		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {	
+			
 			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
 		}
 		
-		BigDecimal novaQuantidade;
+		if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
 		
-		if(TipoOperacao.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
-			 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().add(quantidade); 
-			 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
-		} else {
-			 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().subtract(quantidade); 
-			 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);			
+			BigDecimal novaQuantidade;
+			
+			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
+				
+				 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().add(quantidade); 
+				 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
+				 
+			} else {
+				
+				 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().subtract(quantidade); 
+				 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);			
+			}
+			
+			estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 		}
+		
 		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
-		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 	}
-
 
 }

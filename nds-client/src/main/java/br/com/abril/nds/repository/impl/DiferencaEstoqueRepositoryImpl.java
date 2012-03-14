@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -82,7 +82,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		Query query = super.getSession().createQuery(hql);
 		
-		query.setParameter("status", StatusAprovacao.PENDENTE);
+		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
 		if (filtro.getDataMovimento() != null) {
 			
@@ -129,7 +129,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		Query query = getSession().createQuery(hql);
 		
-		query.setParameter("status", StatusAprovacao.PENDENTE);
+		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
 		if (filtro.getDataMovimento() != null) {
 			
@@ -174,7 +174,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 					
 		hql += " from Diferenca diferenca "
 			+  " join diferenca.movimentoEstoque movimentoEstoque "
-			+  " where movimentoEstoque.status = :status ";
+			+  " where diferenca.statusConfirmacao = :statusConfirmacao ";
 
 		if (filtro.getDataMovimento() != null) {
 

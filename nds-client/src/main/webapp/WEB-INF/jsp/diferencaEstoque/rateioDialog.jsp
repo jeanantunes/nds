@@ -120,9 +120,9 @@
 
 				var quantidade = row.cell.quantidade ? row.cell.quantidade : ''; 
 
-				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(\'#quantidadeRateio' + index + '\')}';
+				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(' + index + ')}';
 
-				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', \'#quantidadeRateio' + index + '\'); ultimaLinhaPreenchida=' + index + ';';
+				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', ' + index + '); ultimaLinhaPreenchida=' + index + ';';
 
 				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true, function() {' + chamadaMetodoObterQuantidadeReparteCota + '}, null';
 
@@ -155,7 +155,7 @@
 			return resultado;
 		}
 
-		function obterQuantidadeReparteCota(idDiferenca, idCampoNumeroCota, idCampoQtdeRateio) {
+		function obterQuantidadeReparteCota(idDiferenca, idCampoNumeroCota, index) {
 
 			var data = [
    				{
@@ -174,18 +174,43 @@
 					$("#qtdeReparteCota" + ultimaLinhaPreenchida).val(qtdeReparteCota);
 					$("#spanQtdeReparteCota" + ultimaLinhaPreenchida).text(qtdeReparteCota);
 
-					reprocessarDadosRateio(idCampoQtdeRateio);
+					reprocessarDadosRateio(index);
 				},
 				null, 
 				true
 			);
 		}
 
-		function reprocessarDadosRateio(idCampoQtdeRateio) {
+		function reprocessarDadosRateio(index) {
 
-			if (idCampoQtdeRateio) {
+			var campoQtdeRateio = $('#quantidadeRateio' + index);
+			
+			if (campoQtdeRateio) {
 
-				$(idCampoQtdeRateio).val("");
+				campoQtdeRateio.val("");
+
+				campoQtdeRateio.focus();
+			}
+
+			var campoQtdeReparteCota = $('#qtdeReparteCota' + index);
+
+			if (campoQtdeReparteCota) {
+
+				campoQtdeReparteCota.val("");
+			}
+
+			var campoSpanQtdeReparteCota = $('#spanQtdeReparteCota' + index);
+
+			if (campoSpanQtdeReparteCota) {
+
+				campoSpanQtdeReparteCota.text("");
+			}
+
+			var linhaDaGrid = $(".gridRateioDiferencas tr").eq(index);
+
+			if (linhaDaGrid) {
+
+				linhaDaGrid.removeClass('linhaComErro');
 			}
 			
 			var somaQtdeRateio = $("input[id^='qtdeReparteCota']").sum();

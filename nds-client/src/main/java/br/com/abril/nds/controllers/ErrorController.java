@@ -19,4 +19,5 @@ public class ErrorController {
 		result.include("stackTrace", stackTrace);
 		result.include("message", throwable.getMessage());
 	}
+	
 }
