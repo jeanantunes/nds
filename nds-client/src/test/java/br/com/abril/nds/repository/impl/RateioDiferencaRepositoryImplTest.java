@@ -122,8 +122,8 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(movimentoEstoque);
 		
 		diferenca = 
-				Fixture.diferenca(BigDecimal.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque);
-		diferenca.setAutomatica(true);
+				Fixture.diferenca(BigDecimal.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+		
 		save(diferenca);
 		
 		Cota cota = Fixture.cota(1, pessoaJuridica, SituacaoCadastro.ATIVO, box300Reparte);
