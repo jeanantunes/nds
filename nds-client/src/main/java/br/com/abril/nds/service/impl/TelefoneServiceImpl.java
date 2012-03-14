@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -66,22 +66,10 @@ public class TelefoneServiceImpl implements TelefoneService {
 
 	@Transactional
 	@Override
-	public void removerTelefonesCota(List<TelefoneCota> listaTelefonesCota) {
+	public void removerTelefonesCota(Collection<Long> listaTelefonesCota) {
 		
-		List<Long> idsTelefones = new ArrayList<Long>();
-		
-		if (listaTelefonesCota != null){
-			for (TelefoneCota telefoneCota : listaTelefonesCota){
-				if (telefoneCota == null || telefoneCota.getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone Cota é obrigatório");
-				}
-				
-				idsTelefones.add(telefoneCota.getId());
-			}
-		}
-		
-		if (!idsTelefones.isEmpty()){
-			this.telefoneCotaRepository.removerTelefonesCota(idsTelefones);
+		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
+			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
 		}
 	}
 
@@ -123,22 +111,9 @@ public class TelefoneServiceImpl implements TelefoneService {
 
 	@Transactional
 	@Override
-	public void removerTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor) {
-
-		List<Long> idsTelefones = new ArrayList<Long>();
-		
-		if (listaTelefonesFornecedor != null){
-			for (TelefoneFornecedor telefoneFornecedor : listaTelefonesFornecedor){
-				if (telefoneFornecedor == null || telefoneFornecedor.getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone Fornecedor é obrigatório");
-				}
-				
-				idsTelefones.add(telefoneFornecedor.getId());
-			}
-		}
-		
-		if (!idsTelefones.isEmpty()){
-			this.telefoneFornecedorRepository.removerTelefonesFornecedor(idsTelefones);
+	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
+		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
+			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
 		}
 	}
 	
