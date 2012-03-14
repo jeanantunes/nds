@@ -60,22 +60,31 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
-
+	
+	private static PessoaJuridica juridicaAcme;
+	private static PessoaJuridica juridicaDinap;
+	private static PessoaJuridica juridicaFc;
+	private static PessoaJuridica juridicaDistrib;
+	private static PessoaFisica manoel;
+	private static PessoaFisica jose;
+	private static PessoaFisica ze;
+	
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
 	private static TipoMovimentoEstoque tipoMovimentoSobraEm;
 	private static TipoMovimentoEstoque tipoMovimentoSobraDe;
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
+	
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
 	private static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
 	private static Fornecedor fornecedorFc;
-	private static Cota cotaManoel;
 	private static Distribuidor distribuidor;
 	private static TipoProduto tipoProdutoRevista;
+	
 	private static Produto produtoVeja;
 	private static Produto produtoSuper;
 	private static Produto produtoCapricho;
@@ -90,6 +99,7 @@ public class DataLoader {
 	private static Produto produtoManequim;
 	private static Produto produtoNatGeo;
 	private static Produto produtoPlacar;
+	
 	private static ProdutoEdicao produtoEdicaoVeja1;
 	private static ProdutoEdicao produtoEdicaoVeja2;
 	private static ProdutoEdicao produtoEdicaoVeja3;
@@ -107,11 +117,9 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoManequim1;
 	private static ProdutoEdicao produtoEdicaoNatGeo1;
 	private static ProdutoEdicao produtoEdicaoPlacar1;
+	
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
-	private static Estudo estudoVeja1;
-	private static Estudo estudoVeja1Atual;
-	private static EstudoCota estudoCotaManoel;
 	private static NotaFiscalFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscal itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
@@ -120,18 +128,30 @@ public class DataLoader {
 	private static MovimentoEstoque movimentoRecFisicoVeja1;
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
-	private static Box box300Reparte;
-	private static EstudoCota estudoCotaVeja1Joao;
+	
 	private static Cota cotaJose;
+	private static Cota cotaManoel;
+	private static Cota cotaJuridicaAcme;
+	private static Cota cotaJuridicaDinap;
+	private static Cota cotaJuridicaFc;
+	private static Cota cotaJuridicaDistrib;
+	
+	private static Estudo estudoVeja1;
+	private static Estudo estudoVeja1Atual;
 	private static Estudo estudoVeja2;
-	private static EstudoCota estudoCotaVeja2Joao;
-	private static EstudoCota estudoCotaCaprichoZe;
-	private static Cota cotaZe;
 	private static Estudo estudoSuper1;
 	private static Estudo estudoCapricho1;
 	private static EstudoCota estudoCotaSuper1Manoel;
+	private static EstudoCota estudoCotaManoel;
+	private static EstudoCota estudoCotaVeja2Joao;
+	private static EstudoCota estudoCotaCaprichoZe;
+	private static EstudoCota estudoCotaVeja1Joao;
+	private static Cota cotaZe;
+	
+	private static Box box300Reparte;
 	private static Box box1;
 	private static Box box2;
+	
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 
@@ -147,9 +167,12 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
-			//carregarDados(session);
-			carregarDadosParaResumoExpedicao(session);
+			
+			carregarDados(session);
+			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
+			//carregarBoletos(session);
+			
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -169,11 +192,12 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
-		criarBoxes(session);
+		criarBox(session);
 		criarFornecedores(session);
 		criarDiasDistribuicaoFornecedores(session);
 		criarCotas(session);
@@ -262,12 +286,6 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
-		gerarBoletos(session);
-	}
-
-	private static void criarBoxes(Session session) {
-		box300Reparte = Fixture.boxReparte300();
-		save(session, box300Reparte);
 	}
 
 	private static void criarTiposFornecedores(Session session) {
@@ -338,20 +356,37 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoVeja2.getDataLancamentoDistribuidor(), produtoEdicaoVeja2);
 		session.save(estudoVeja2);
 		
-		estudoSuper1 = Fixture
-				.estudo(BigDecimal.TEN, lancamentoSuper1.getDataLancamentoDistribuidor(), produtoEdicaoSuper1);
+		estudoSuper1 = Fixture.estudo(
+			BigDecimal.TEN, lancamentoSuper1.getDataLancamentoDistribuidor(), produtoEdicaoSuper1);
+		
 		session.save(estudoSuper1);
 		
 		estudoCapricho1 = Fixture
 				.estudo(BigDecimal.TEN, lancamentoCapricho1.getDataLancamentoDistribuidor(), produtoEdicaoCapricho1);
 		session.save(estudoCapricho1);
+		
+		estudoVeja1Atual = Fixture
+				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+		session.save(estudoVeja1Atual);
 	}
 
-	private static void criarEstudosCota(Session session) {
-
-		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+    private static void criarEstudosCota(Session session) {
 		
-		session.save(estudoCotaManoel);
+		estudoCotaVeja1Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1, cotaJose);
+		save(session,estudoCotaVeja1Joao);
+		
+		estudoCotaVeja2Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2, cotaJose);
+		save(session,estudoCotaVeja2Joao);
+		
+		estudoCotaCaprichoZe = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCapricho1, cotaZe);
+		save(session,estudoCotaCaprichoZe);
+		
+		estudoCotaSuper1Manoel = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1, cotaManoel);
+		save(session,estudoCotaSuper1Manoel);
+		
+		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		save(session,estudoCotaManoel);
+	
 	}
 	
 	private static void criarLancamentosExpedidos(Session session){
@@ -408,6 +443,8 @@ public class DataLoader {
 	}
 	
 	private static void criarLancamentos(Session session) {
+		
+		
 		lancamentoVeja1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -432,7 +469,7 @@ public class DataLoader {
 						null);
 		session.save(lancamentoVeja2);
 
-		Lancamento lancamentoSuper1 = Fixture
+		lancamentoSuper1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
 						produtoEdicaoSuper1,
@@ -443,7 +480,7 @@ public class DataLoader {
 								null);
 		session.save(lancamentoSuper1);
 		
-		Lancamento lancamentoCapricho1 = Fixture
+		lancamentoCapricho1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
 						produtoEdicaoCapricho1,
@@ -453,6 +490,8 @@ public class DataLoader {
 								new Date(), new BigDecimal(1000), StatusLancamento.RECEBIDO,
 								null);
 		session.save(lancamentoCapricho1);
+		
+		
 		
 		Lancamento lancamentoInfoExame1 = Fixture
 				.lancamento(
@@ -736,27 +775,29 @@ public class DataLoader {
 	}
 
 	private static void criarCotas(Session session) {
-		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");
-		save(session, manoel);
+		
+		criarPessoas(session);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
-
 		save(session, cotaManoel);
-		
-		PessoaFisica jose = Fixture.pessoaFisica("123.456.789-01",
-				"jose@mail.com", "Jose da Silva");
-		save(session, jose);
 		
 		cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(session, cotaJose);
 		
-		PessoaFisica ze = Fixture.pessoaFisica("123.456.789-02",
-				"ze@mail.com", "Ze da Silva");
-		save(session, ze);
-		
 		cotaZe = Fixture.cota(12345, ze, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaZe);
+		
+		cotaJuridicaAcme = Fixture.cota(2000, juridicaAcme, SituacaoCadastro.ATIVO,box1);
+		save(session, cotaJuridicaAcme);
+		
+		cotaJuridicaDinap = Fixture.cota(3000, juridicaDinap, SituacaoCadastro.ATIVO,box2);
+		save(session, cotaJuridicaDinap);
+		
+		cotaJuridicaFc = Fixture.cota(4000, juridicaFc, SituacaoCadastro.ATIVO,box2);
+		save(session, cotaJuridicaFc);
+		
+		cotaJuridicaDistrib = Fixture.cota(5000, juridicaDistrib, SituacaoCadastro.ATIVO,box300Reparte);
+		save(session, cotaJuridicaDistrib);
 	}
 
 	private static void criarFornecedores(Session session) {
@@ -1001,7 +1042,7 @@ public class DataLoader {
 		criarLancamentosExpedidos(session);
 		criarEstudos(session);
 		criarMovimentosEstoqueCota(session);
-		criarEstudoCota(session);
+		criarEstudosCota(session);
 		
 		MovimentoEstoque movimentoEstoqueDiferenca =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
@@ -1081,57 +1122,41 @@ public class DataLoader {
 		
 		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.REPARTE);
 		session.save(box2);
+		
+		box300Reparte = Fixture.boxReparte300();
+		session.save(box300Reparte);
 	}
-
-	private static void criarEstudoCota(Session session) {
-		
-		estudoCotaVeja1Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1, cotaJose);
-		save(session,estudoCotaVeja1Joao);
-		
-		estudoCotaVeja2Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2, cotaJose);
-		save(session,estudoCotaVeja2Joao);
-		
-		estudoCotaCaprichoZe = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCapricho1, cotaZe);
-		save(session,estudoCotaCaprichoZe);
-		
-		estudoCotaSuper1Manoel = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1, cotaManoel);
-		save(session,estudoCotaSuper1Manoel);
 	
+	
+	private static void criarPessoas(Session session){
+		juridicaAcme = Fixture.pessoaJuridica("Acme",
+				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+		juridicaDinap = Fixture.pessoaJuridica("Dinap",
+				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
+		juridicaFc = Fixture.pessoaJuridica("FC",
+				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
+		juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
+				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+		
+		manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+
+		jose = Fixture.pessoaFisica("123.456.789-01",
+				"jose@mail.com", "Jose da Silva");
+		
+		ze = Fixture.pessoaFisica("123.456.789-02",
+				"ze@mail.com", "Ze da Silva");
+		
+		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib,manoel,jose,ze);
 	}
 	
 	
 	//FINANCEIRO - CONSULTA BOLETOS
-	private static void gerarBoletos(Session session) {
+	private static void carregarBoletos(Session session) {
 		
-		PessoaJuridica juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
-		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
-		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
-				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
-		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib);
-		
-		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");
-		save(session, manoel);
-
-
-		Cota cotaManoel = Fixture.cota(1000, manoel, SituacaoCadastro.ATIVO,box300Reparte);
-		save(session, cotaManoel);
-		
-		Cota cotaJuridicaAcme = Fixture.cota(2000, juridicaAcme, SituacaoCadastro.ATIVO,box300Reparte);
-		save(session, cotaJuridicaAcme);
-		
-		Cota cotaJuridicaDinap = Fixture.cota(3000, juridicaDinap, SituacaoCadastro.ATIVO,box300Reparte);
-		save(session, cotaJuridicaDinap);
-		
-		Cota cotaJuridicaFc = Fixture.cota(4000, juridicaFc, SituacaoCadastro.ATIVO,box300Reparte);
-		save(session, cotaJuridicaFc);
-		
-		Cota cotaJuridicaDistrib = Fixture.cota(5000, juridicaDistrib, SituacaoCadastro.ATIVO,box300Reparte);
-		save(session, cotaJuridicaDistrib);
+		criarPessoas(session);
+		criarBox(session);
+		criarCotas(session);
 		
 		Boleto boleto0 = Fixture.boleto("10000",
 				                       new Date(), 

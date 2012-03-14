@@ -73,6 +73,10 @@
 				return;
 			}
 			
+			if (data.result){
+				data.rows = data.result.rows;
+			}
+			
 			var i;
 
 			for (i = 0 ; i < data.rows.length; i++) {
@@ -92,6 +96,9 @@
 				$('#telefonesGrid').show();
 			}
 			
+			if (data.result){
+				return data.result;
+			}
 			return data;
 		}
 		

@@ -2,11 +2,14 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
@@ -25,16 +28,18 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Autowired
 	private TelefoneFornecedorRepository telefoneFornecedorRepository;
 	
+	@Transactional(readOnly = true)
 	@Override
-	public List<TelefoneCota> buscarTelefonesCota(Long idCota) {
+	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
 		
 		if (idCota == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		}
 		
-		return this.telefoneCotaRepository.buscarTelefonesCota(idCota);
+		return this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
 	}
 
+	@Transactional
 	@Override
 	public void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota) {
 		
@@ -59,6 +64,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void removerTelefonesCota(List<TelefoneCota> listaTelefonesCota) {
 		
@@ -79,16 +85,18 @@ public class TelefoneServiceImpl implements TelefoneService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
-	public List<TelefoneFornecedor> buscarTelefonesFornecedor(Long idFornecedor) {
+	public List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar) {
 		
 		if (idFornecedor == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdFornecedor é obrigatório");
 		}
 		
-		return this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor);
+		return this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
 	}
 
+	@Transactional
 	@Override
 	public void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor) {
 		
@@ -113,6 +121,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void removerTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor) {
 
