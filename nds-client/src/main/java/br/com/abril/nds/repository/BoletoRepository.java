@@ -1,9 +1,8 @@
 package br.com.abril.nds.repository;
 
-import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 
 /**
@@ -16,13 +15,22 @@ import br.com.abril.nds.model.financeiro.Boleto;
 public interface BoletoRepository extends Repository<Boleto,Long> {
 
 	/**
-	 * Obtém uma lista de Boletos pelo número da Cota.
+	 * Obtém uma lista de Boletos para os parametros passados.
 	 * 
-	 * @param numeroCota - número da cota
+	 * @param filtro - parametros de busca
 	 * 
 	 * @return {@link List<Boleto>}
 	 */
-	List<Boleto> obterBoletosPorCota(Integer numeroCota, Date vencimentoDe, Date vencimentoAte,StatusCobranca status);
+	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
+	
+	/**
+	 * Obtém a quantidade de Boletos para os parametros passados.
+	 * 
+	 * @param filtro - parametros de busca
+	 * 
+	 * @return quantidade
+	 */
+	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 	
 	/**
 	 * Obtém um boleto de acordo com o nosso número.
@@ -32,4 +40,5 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return {@link Boleto}
 	 */
 	Boleto obterPorNossoNumero(String nossoNumero);
+
 }

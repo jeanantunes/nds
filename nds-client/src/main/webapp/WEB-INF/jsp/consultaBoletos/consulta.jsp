@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
 
-    $(function() {
+	$(function() {
 		$(".boletosCotaGrid").flexigrid({
 		    preProcess: getDataFromResult,
 		    dataType : 'json',
@@ -70,28 +70,26 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 360
 		});
     });
-    
-    
+		
 	$(function() {
-			$( "#dataDe" ).datepicker({
-				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
-			});
-			
-			$( "#dataAte" ).datepicker({
-				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
-			});
-			
-			
-	}); 
+		$( "#dataDe" ).datepicker({
+			showOn: "button",
+			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#dataAte" ).datepicker({
+			showOn: "button",
+			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
 		
 		
+    }); 
+	
 	function mostrarGridConsulta() {
 		
 		/*PASSAGEM DE PARAMETROS*/
@@ -113,9 +111,9 @@
 		
 		$(".grids").show();
 	}	
-	
-	
+    
 	function getDataFromResult(resultado) {
+		
 		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
 		if (resultado.mensagens) {
 			exibirMensagem(
@@ -132,9 +130,10 @@
 				  dadosPesquisa = value[1];
 			  }
 		});
+		
 		return dadosPesquisa;
 	}
-		
+			
 		
 </script>
 
@@ -154,8 +153,16 @@
    	    <legend> Pesquisar Boletos por Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
+            
               <td width="29">Cota:</td>
-              <td width="260"><input name="numCota" id="numCota" type="text" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span> - <input name="descricaoCota" id="descricaoCota" type="text" class="nome_jornaleiro" style="width:130px;"/></td>
+              <td width="260"><input name="numCota" id="numCota" type="text" style="width:80px; float:left; margin-right:5px;" />
+			      <span class="classPesquisar">
+			          <a href="javascript:;">&nbsp;</a>
+			      </span> - 
+			      <input name="descricaoCota" id="descricaoCota" type="text" class="nome_jornaleiro" style="width:130px;"/>
+			  
+			  </td>
+              
               <td width="124">Data de Vencimento:</td>
               <td width="114"><input name="dataDe" id="dataDe" type="text" id="dataDe" style="width:80px; float:left; margin-right:5px;" value="${dataDe}"/></td>
               <td width="25">Até:</td>
@@ -180,16 +187,16 @@
 	       	  <legend>Boletos Cadastrados</legend>
 	          <div class="grids" style="display:none;">
 		       	  
-		       	  
 		       	  <table class="boletosCotaGrid"></table>
-		          
 		        
 		          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 		
 				  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			  
 			  </div>
 	      </fieldset>
-	      <div class="linha_separa_fields">&nbsp;</div>
+	      
+	  <div class="linha_separa_fields">&nbsp;</div>
 
   </div>
 
