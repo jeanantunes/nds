@@ -98,11 +98,11 @@
 		function getActions(idTelefone) {
 
 			return '<a href="javascript:;" onclick="editarTelefone(' + idTelefone + ')" ' +
-					' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">' +
 					'<img src="/nds-client/images/ico_editar.gif" border="0px"/>' +
 					'</a>' +
 					'<a href="javascript:;" onclick="removerTelefone(' + idTelefone + ')" ' +
-					' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Excluir telefone">' +
 					'<img src="/nds-client/images/ico_excluir.gif" border="0px"/>' +
 					'</a>';
 		}
