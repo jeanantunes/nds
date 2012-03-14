@@ -476,7 +476,13 @@ public class RecebimentoFisicoController {
 	 */
 	public void cancelarNotaRecebimentoFisico() {
 		
-		//TODO: chamar back end para cancelamento da nota.
+		NotaFiscal notaFiscal = getNotaFiscalFromSession();
+		
+		if(notaFiscal == null || notaFiscal.getId() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma Nota Fiscal existente para cancelamento do recebimento físico.");
+		}
+				
+		recebimentoFisicoService.cancelarNotaFiscal(notaFiscal.getId());
 		
 		setItensRecebimentoFisicoToSession(null);
 		setNotaFiscalToSession(null);
