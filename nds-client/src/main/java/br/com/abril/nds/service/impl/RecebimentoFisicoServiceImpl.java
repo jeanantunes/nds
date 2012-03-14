@@ -16,9 +16,11 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
@@ -41,6 +43,7 @@ import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -83,6 +86,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 		
 	/**
@@ -603,20 +609,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	
-	/**
-	 * Faz a inserção da falta ou sobra referente a um itemRecebimentoFisico e atualiza o registro
-	 * de itemRecebimentoFisico com o lançamento da diferença.
-	 * 
-	 * @param usuarioLogado
-	 * @param recebimentoFisicoDTO
-	 */
-	private void lancarFaltaOUSobra(
+	
+	private Diferenca obterDiferencaDeItemRecebimentoFisico(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		
-		//TODO: Chamar componente DIOGENES SERVICE
-		
-		/*BigDecimal calculoQdeDiferenca = recebimentoFisicoDTO.getQtdFisico().subtract(recebimentoFisicoDTO.getRepartePrevisto()) ;
+		BigDecimal calculoQdeDiferenca = recebimentoFisicoDTO.getQtdFisico().subtract(recebimentoFisicoDTO.getRepartePrevisto()) ;
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());					
@@ -636,18 +634,13 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
 			
-			diferencaEstoqueRepository.adicionar(diferenca);						
-			
 		} else if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) > 0){						
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
 			
-			diferencaEstoqueRepository.adicionar(diferenca);
-			
 		}
 		
-		//TODO: VERIFICAR SE A LINHA ABAIXO É NECESSARIA.
-		itemRecebimentoFisicoRepository.alterar(itemRecebimentoFisico);*/
+		return diferenca;
 		
 	}
 	
@@ -767,7 +760,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		if(indDiferenca) {
 			
-			//lancarFaltaOUSobra(usuarioLogado, recebimentoFisicoDTO);
+			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
+			diferencaEstoqueService.lancarDiferenca(diferenca);
+			
+			
 			
 		} else {
 			
