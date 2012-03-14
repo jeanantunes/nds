@@ -230,7 +230,7 @@
 		<table width="950" border="0" cellspacing="2" cellpadding="2"
 			class="filtro">
 			<tr>
-				<td width="178">Período de Data Lançamento:</td>
+				<td width="100">Período de Data:</td>
 				<td width="108">
 					<input type="text" name="dataInicial" id="dataInicial" style="width: 80px;" value="${dataAtual}" />
 				</td>
