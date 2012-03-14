@@ -1,19 +1,21 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 
 public interface TelefoneService {
 	
-	List<TelefoneCota> buscarTelefonesCota(Long idCota);
+	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
 	
 	void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota);
 	
 	void removerTelefonesCota(List<TelefoneCota> listaTelefonesCota);
 	
-	List<TelefoneFornecedor> buscarTelefonesFornecedor(Long idFornecedor);
+	List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar);
 	
 	void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor);
 	

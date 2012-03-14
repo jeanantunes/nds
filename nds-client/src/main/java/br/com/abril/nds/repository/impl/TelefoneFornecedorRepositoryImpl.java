@@ -1,10 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 
@@ -18,12 +20,23 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<Telefon
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TelefoneFornecedor> buscarTelefonesFornecedor(Long idFornecedor) {
-		StringBuilder hql = new StringBuilder("from TelefoneFornecedor ");
-		hql.append(" where fornecedor.id = :idFornecedor ");
+	public List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar) {
+		StringBuilder hql = new StringBuilder("select new ");
+		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
+		   .append(" (t.principal, t.telefone, t.tipoTelefone) ")
+		   .append(" from TelefoneFornecedor t ")
+		   .append(" where t.fornecedor.id = :idFornecedor ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			hql.append(" and t.telefone.id not in (:idsIgnorar) ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idFornecedor", idFornecedor);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
 		
 		return query.list();
 	}

@@ -10,5 +10,22 @@ public enum TipoTelefone {
 	CELULAR,
 	FAX,
 	RESIDENCIAL,
-	RADIO
+	RADIO;
+	
+	public static String getDescricao(TipoTelefone tipoTelefone){
+		switch(tipoTelefone){
+			case COMERCIAL:
+				return "Comercial";
+			case CELULAR:
+				return "Celular";
+			case FAX:
+				return "Fax";
+			case RESIDENCIAL:
+				return "Residencial";
+			case RADIO:
+				return "Rádio";
+			default:
+				return "";
+		}
+	}
 }
