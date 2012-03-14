@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -767,4 +769,19 @@ public class Fixture {
 		return feriado;
 	}
 
+	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
+										 String logradouro, int numero, 
+										 String bairro, String cidade, String uf) {
+		
+		Endereco endereco = new Endereco();
+		
+		endereco.setBairro(bairro);
+		endereco.setCep(cep);
+		endereco.setCidade(cidade);
+		endereco.setLogradouro(logradouro);
+		endereco.setNumero(numero);
+		endereco.setUf(uf);
+		
+		return endereco;
+	}
 }
