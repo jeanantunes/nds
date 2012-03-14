@@ -17,13 +17,17 @@ public class ExpedicaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long idBox;
 	private String codigoProduto;
 	private String nomeProduto;
+	private String codigoBox;
+	private String nomeBox;
 	private Long numeroEdicao;
 	private BigDecimal precoCapa;
 	private BigDecimal qntReparte;
 	private BigDecimal qntDiferenca;
 	private BigDecimal valorFaturado;
+	private Long qntProduto;
 	
 	public ExpedicaoDTO() {}
 	
@@ -39,6 +43,20 @@ public class ExpedicaoDTO implements Serializable {
 		this.qntDiferenca = qntDiferenca;
 		this.valorFaturado = valorFaturado;
 	}
+	
+	public ExpedicaoDTO(Long idBox,String codigoBox, String nomeBox,
+			BigDecimal precoCapa, BigDecimal qntReparte,
+			BigDecimal qntDiferenca, BigDecimal valorFaturado) {
+
+		this.idBox = idBox;
+		this.codigoBox = codigoBox;
+		this.nomeBox = nomeBox;
+		this.precoCapa = precoCapa;
+		this.qntReparte = qntReparte;
+		this.qntDiferenca = qntDiferenca;
+		this.valorFaturado = valorFaturado;
+	}
+	
 
 	/**
 	 * @return the codigoProduto
@@ -138,6 +156,63 @@ public class ExpedicaoDTO implements Serializable {
 		this.valorFaturado = valorFaturado;
 	}
 
+	/**
+	 * @return the idBox
+	 */
+	public Long getIdBox() {
+		return idBox;
+	}
+
+	/**
+	 * @param idBox the idBox to set
+	 */
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
+	}
+
+	/**
+	 * @return the codigoBox
+	 */
+	public String getCodigoBox() {
+		return codigoBox;
+	}
+
+	/**
+	 * @param codigoBox the codigoBox to set
+	 */
+	public void setCodigoBox(String codigoBox) {
+		this.codigoBox = codigoBox;
+	}
+
+	/**
+	 * @return the nomeBox
+	 */
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	/**
+	 * @param nomeBox the nomeBox to set
+	 */
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
+	/**
+	 * @return the qntProduto
+	 */
+	public Long getQntProduto() {
+		return qntProduto;
+	}
+
+	/**
+	 * @param qntProduto the qntProduto to set
+	 */
+	public void setQntProduto(Long qntProduto) {
+		this.qntProduto = qntProduto;
+	}
+
+	
 	
 	
 }

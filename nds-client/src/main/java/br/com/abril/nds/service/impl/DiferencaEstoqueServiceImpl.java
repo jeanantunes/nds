@@ -43,6 +43,7 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FeriadoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -91,6 +92,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private FeriadoService feriadoService;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 
 	private static final String MOTIVO = "Exclusão diferença";
 	
@@ -190,6 +194,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		for (Diferenca diferenca : listaDiferencas) {
 
 			this.processarRateioCotas(diferenca, mapaRateioCotas);
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque =
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+			
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
+					diferenca.getQtde(), tipoMovimentoEstoque);
 		}
 	}
 	

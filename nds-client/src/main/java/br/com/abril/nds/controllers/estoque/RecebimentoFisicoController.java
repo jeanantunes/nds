@@ -472,6 +472,22 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
+	 * Faz o cancelamento de uma nota fiscal e seu recebimento físico.
+	 */
+	public void cancelarNotaRecebimentoFisico() {
+		
+		//TODO: chamar back end para cancelamento da nota.
+		
+		setItensRecebimentoFisicoToSession(null);
+		setNotaFiscalToSession(null);
+		
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Recebimento Físico cancelado com sucesso");
+		
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+	}
+	
+	/**
 	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
 	 * CNPJ, numero da nota, série e chave de acesso caso a mesma
 	 * seja uma nota fiscal eletrônica. Caso a nota seja encontrada
