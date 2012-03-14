@@ -306,6 +306,8 @@ validarEdicaoCallBack : function() {
 	*/
 	function limparCampos() {
 		
+		$(".effectDialog").hide();
+		
 		$("#dataEmissao").val("");
 		$("#valorBruto").val("");
 		$("#valorLiquido").val("");
@@ -328,6 +330,8 @@ validarEdicaoCallBack : function() {
 	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
 	*/
 	function limparCamposNovoItem() {
+		
+		$(".effectDialog").hide();
 		
 		$("#codigo").val("");
 		$("#produto").val("");
