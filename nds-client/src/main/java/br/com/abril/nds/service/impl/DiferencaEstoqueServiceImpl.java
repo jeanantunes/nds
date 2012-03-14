@@ -148,6 +148,18 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
+	public Diferenca lancarDiferenca(Diferenca diferenca) {
+		
+		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
+		
+		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		
+		this.diferencaEstoqueRepository.adicionar(diferenca);
+		
+		return diferenca;
+	}
+	
+	@Transactional
 	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 					  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
