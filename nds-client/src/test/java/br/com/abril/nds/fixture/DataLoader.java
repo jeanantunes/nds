@@ -19,6 +19,8 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -29,6 +31,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -175,7 +178,7 @@ public class DataLoader {
 		criarEstudosCota(session);
 		criarMovimentosEstoqueCota(session);
 		criarFeriado(session);		
-
+		criarEnderecoCotaPF(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -753,6 +756,7 @@ public class DataLoader {
 	private static void save(Session session, Object... entidades) {
 		for (Object entidade : entidades) {
 			session.save(entidade);
+			session.flush();
 		}
 	}
 	
@@ -1002,6 +1006,34 @@ public class DataLoader {
 		Feriado feriadoProclamacao =
 				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "Proclamação da República");
 		save(session, feriadoProclamacao);
+	}
+
+	private static void criarEnderecoCotaPF(Session session) {
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+
+		Cota cotaManoel = Fixture.cota(1000, manoel, SituacaoCadastro.ATIVO,box300Reparte);
+		
+		Endereco endereco = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+
+		EnderecoCota enderecoCota = new EnderecoCota();
+		enderecoCota.setCota(cotaManoel);
+		enderecoCota.setEndereco(endereco);
+		enderecoCota.setPrincipal(true);
+		enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
+		
+		Endereco endereco2 = Fixture.criarEndereco(
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
+
+		EnderecoCota enderecoCota2 = new EnderecoCota();
+		enderecoCota2.setCota(cotaManoel);
+		enderecoCota2.setEndereco(endereco2);
+		enderecoCota2.setPrincipal(true);
+		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
+		
+		save(session, manoel, cotaManoel, endereco, enderecoCota, endereco2, enderecoCota2);
 	}
 	
 }

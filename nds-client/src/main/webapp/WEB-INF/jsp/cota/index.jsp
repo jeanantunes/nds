@@ -2,25 +2,6 @@
 <title>NDS - Novo Distrib</title>
 <script language="javascript" type="text/javascript">
 	
-	function popup_excluir_end() {
-	
-		$( "#dialog-excluir-end" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	}
-	
 	function popup_cnpj() {
 		
 		$( "#dialog-cnpj" ).dialog({
@@ -42,6 +23,11 @@
 		});
 	}
 	
+	function limparFormsTabs() {
+		
+		limparFormEndereco();
+	}
+
 	function popup_cpf(idCota) {
 
 		if (idCota) {
@@ -50,6 +36,13 @@
 				type: 'POST',
 				url: '<c:url value="/cadastro/cota/editarCota" />',
 				data: { "idCota": idCota }
+			});
+		
+		} else {
+			
+			$.ajax({
+				type: 'POST',
+				url: '<c:url value="/cadastro/cota/novaCota" />'
 			});
 		}
 
@@ -66,14 +59,24 @@
 					
 				},
 				"Cancelar": function() {
+					$("#tabpf").tabs('select', 0);
+					limparFormsTabs();
 					$( this ).dialog( "close" );
 				}
 			}
 		});
+
+		$(".ui-dialog-titlebar-close").click(function() {
+
+			$("#tabpf").tabs('select', 0);
+			limparFormsTabs();
+		});
 	}
 	
 	$(function() {
+		
 		$( "#tabpf" ).tabs();
+		
 		$( "#tabpj" ).tabs();
 	});
 	
@@ -106,18 +109,6 @@
 		<span class="bt_novos" title="Novo">
 			<a href="javascript:;" onclick="popup_cpf(1);">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar PF
-			</a>
-		</span>
-		 
-		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="popup_cnpj();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CNPJ
-			</a>
-		</span>
-		
-		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="popup_cnpj();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar PJ
 			</a>
 		</span>
 
@@ -154,34 +145,6 @@
 		
 		</div>
 		
-	</div>
-	
-	<div id="dialog-cnpj" title="Nova Cota">
-		
-		<div id="tabpj">
-			
-			<ul>
-				<li><a href="#tabpj-1">Dados Cadastrais</a></li>
-				<li><a onclick="popularGridEnderecos();">Endereços</a></li>
-				<li><a href="#tabpj-3">Telefones</a></li>
-				<li><a href="#tabpj-4">PDV</a></li>
-				<li><a href="#tabpj-5">Financeiro</a></li>
-				<li><a href="#tabpj-6">Bancos</a></li>
-				<li><a href="#tabpj-7">Distribuição</a></li>
-				<li><a href="#tabpj-8">Sócios</a></li>
-			</ul>
-
-			<div id="tabpj-1"></div>				
-			<div id="tabpj-2">
-
-			</div>
-			<div id="tabpj-3"></div>
-			<div id="tabpj-4"></div>
-			<div id="tabpj-5"></div>
-			<div id="tabpj-6"></div>
-			<div id="tabpj-7"></div>
-			<div id="tabpj-8"></div>			  
-		</div>
 	</div>
 	
 </body>

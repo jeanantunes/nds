@@ -76,10 +76,13 @@ public class EnderecoController {
 	 * @param enderecoAssociacao
 	 */
 	@SuppressWarnings("unchecked")
-	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
+	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao, String numero) {
+
+		validarDadosEndereco(enderecoAssociacao, numero);
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		if (listaEnderecoAssociacao == null) {
 
@@ -182,6 +185,22 @@ public class EnderecoController {
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
+	private void validarDadosEndereco(EnderecoAssociacaoDTO enderecoAssociacao, String numero) {
+		
+		if (numero != null) {
+
+			try {
+			
+				int number = Integer.parseInt(numero);
+				
+				enderecoAssociacao.getEndereco().setNumero(number);
+
+			} catch (NumberFormatException e) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Valor inválido para o campo [Número]");
+			}
+		}
+	}
 	
 	/**
 	 * Método que retorna um Table Model de acordo com a lista de Endereços desejada.

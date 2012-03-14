@@ -2,6 +2,26 @@
 
 <script type="text/javascript">
 
+	function confirmarExclusaoEndereco(idEndereco) {
+	
+		$( "#dialog-excluir-end" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					removerEndereco(idEndereco);
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}			
+		});
+	}
+
 	function processarResultadoConsultaEndereco(data) {
 
 		if (data.mensagens) {
@@ -44,7 +64,7 @@
 				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
 				'</a>' +
-				'<a href="javascript:;" onclick="removerEndereco(' + idEndereco + ')" ' +
+				'<a href="javascript:;" onclick="confirmarExclusaoEndereco(' + idEndereco + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
@@ -52,6 +72,103 @@
 
 	function popularGridEnderecos() {
 
+		$(".enderecosGrid").flexReload();
+	}		
+	
+	function incluirNovoEndereco() {
+
+		var formData = $("#formEnderecos").serializeArray();
+
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/incluirNovoEndereco" />',
+			formData,
+			function(result) {
+				$(".enderecosGrid").flexAddData({
+					page: result.page, total: result.total, rows: result.rows
+				});	
+				
+				limparFormEndereco();
+				
+				$("#tipoEndereco").focus();
+			},
+			null,
+			true
+		);
+	}
+
+	function editarEndereco(idEndereco) {
+
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/editarEndereco" />',
+			{ "idEndereco": idEndereco },
+			function(result) {
+				$("#idEndereco").val(result.endereco.id);
+				$("#tipoEndereco").val(result.tipoEndereco);
+				$("#cep").val(result.endereco.cep);
+				$("#logradouro").val(result.endereco.logradouro);
+				$("#numero").val(result.endereco.numero);
+				$("#complemento").val(result.endereco.complemento);
+				$("#bairro").val(result.endereco.bairro);
+				$("#cidade").val(result.endereco.cidade);
+				$("#uf").val(result.endereco.uf);
+				$("#principal").attr("checked", result.enderecoPrincipal);
+			},
+			null, 
+			true
+		);
+	}
+
+	function removerEndereco(idEndereco) {
+		
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/removerEndereco" />',
+			{ "idEndereco" : idEndereco },
+			function(result) {
+				$(".enderecosGrid").flexAddData({
+					page: result.page, total: result.total, rows: result.rows
+				});		
+			},
+			null,
+			true
+		);
+	}
+
+	function popup() {
+
+		$("#manutencaoEnderecos").dialog({
+			resizable: false,
+			height:640,
+			width:840,
+			modal : true,
+			buttons : {
+				"Fechar" : function() {
+					$(this).dialog("close");
+				},
+			}
+		});
+	}
+	
+	function limparFormEndereco() {
+		$("#idEndereco").val("");
+		$("#tipoEndereco").val("");
+		$("#cep").val("");
+		$("#logradouro").val("");
+		$("#numero").val("");
+		$("#complemento").val("");
+		$("#bairro").val("");
+		$("#cidade").val("");
+		$("#uf").val("");
+		$("#principal").attr("checked", false);
+	}
+	
+	$(function() {
+
+		$("#cep").mask("99999-999");
+		$("#uf").mask("aa");
+	});
+	
+	$(document).ready(function() {
+		
 		$(".enderecosGrid").flexigrid({
 			preProcess: processarResultadoConsultaEndereco,
 			url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
@@ -103,110 +220,6 @@
 			height : 150,
 			singleSelect: true
 		});
-	}		
-	
-	function incluirNovoEndereco() {
-
-		var numero = $("#numero").val();
-		
-		if (isNaN(numero)) {
-			
-			exibirMensagemDialog(
-				"ERROR", 
-				["Valor inválido para o campo [Número]"]
-			);
-
-			return;
-		}
-
-		var formData = $("#formEnderecos").serializeArray();
-		
-		formData.push({
-			name: "endereco.id",
-			value: 5
-		});
-
-		$.postJSON(
-			'<c:url value="/cadastro/endereco/incluirNovoEndereco" />',
-			formData,
-			function(result) {
-				$(".enderecosGrid").flexAddData({
-					page: result.page, total: result.total, rows: result.rows
-				});	
-				$("#idEndereco").val("");
-				$("#tipoEndereco").val("");
-				$("#cep").val("");
-				$("#logradouro").val("");
-				$("#numero").val("");
-				$("#complemento").val("");
-				$("#bairro").val("");
-				$("#cidade").val("");
-				$("#uf").val("");
-				$("#principal").attr("checked", false);
-
-				$("#tipoEndereco").focus();
-			},
-			null,
-			true
-		);
-	}
-
-	function editarEndereco(idEndereco) {
-
-		$.postJSON(
-			'<c:url value="/cadastro/endereco/editarEndereco" />',
-			{ "idEndereco": idEndereco },
-			function(result) {
-				$("#idEndereco").val(result.endereco.id);
-				$("#tipoEndereco").val(result.tipoEndereco);
-				$("#cep").val(result.endereco.cep);
-				$("#logradouro").val(result.endereco.logradouro);
-				$("#numero").val(result.endereco.numero);
-				$("#complemento").val(result.endereco.complemento);
-				$("#bairro").val(result.endereco.bairro);
-				$("#cidade").val(result.endereco.cidade);
-				$("#uf").val(result.endereco.uf);
-				$("#principal").attr("checked", result.enderecoPrincipal);
-			},
-			null, 
-			true
-		);
-	}
-
-	function removerEndereco(idEndereco) {
-
-		$.postJSON(
-			'<c:url value="/cadastro/endereco/removerEndereco" />',
-			{ "idEndereco" : idEndereco },
-			function(result) {
-				$(".enderecosGrid").flexAddData({
-					page: result.page, total: result.total, rows: result.rows
-				});		
-			},
-			null,
-			true
-		);
-	}
-
-	function popup() {
-
-		$("#manutencaoEnderecos").dialog({
-			resizable: false,
-			height:640,
-			width:840,
-			modal : true,
-			buttons : {
-				"Fechar" : function() {
-					$(this).dialog("close");
-				},
-			}
-		});
-	}
-	
-	$(function() {
-
-		$("#cep").mask("99999-999");
-		$("#uf").mask("aa");
 	});
 	
 </script>
@@ -215,6 +228,10 @@
 </head>
 
 <div id="manutencaoEnderecos" title="Detalhes da Nota">
+
+<div id="dialog-excluir-end" title="Excluir Endereço">
+	<p>Confirma a exclusão desse endereço?</p>
+</div>
 
 <div id="effectDialog" 
 	 class="ui-state-highlight ui-corner-all" 
