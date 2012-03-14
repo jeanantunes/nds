@@ -44,6 +44,8 @@ public class DiferencaVO implements Serializable {
 	
 	private BigDecimal qtdeEstoqueAtual;
 	
+	private boolean cadastrado;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -245,6 +247,20 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setQtdeEstoqueAtual(BigDecimal qtdeEstoqueAtual) {
 		this.qtdeEstoqueAtual = qtdeEstoqueAtual;
+	}
+	
+	/**
+	 * @return the cadastrado
+	 */
+	public boolean isCadastrado() {
+		return cadastrado;
+	}
+
+	/**
+	 * @param cadastrado the cadastrado to set
+	 */
+	public void setCadastrado(boolean cadastrado) {
+		this.cadastrado = cadastrado;
 	}
 	
 	/* (non-Javadoc)

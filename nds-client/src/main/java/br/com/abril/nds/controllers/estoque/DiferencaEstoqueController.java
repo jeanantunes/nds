@@ -20,6 +20,7 @@ import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DiferencaVO;
+import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -194,15 +195,26 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/lancamento/novo")
+	@SuppressWarnings("unchecked")
 	public void carregarNovasDiferencas(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
 		
 		this.validarEntradaDadosNovoLancamento(dataMovimentoFormatada, tipoDiferenca);
 		
-		int qtdeInicialPadrao = 50;
+		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>();
 		
-		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>(qtdeInicialPadrao);
+		List<DiferencaVO> listaDiferencasCadastradas =
+			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
 		
-		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
+		int qtdeDiferencasCadastradas = 0;
+		
+		if (listaDiferencasCadastradas != null) {
+			
+			qtdeDiferencasCadastradas = listaDiferencasCadastradas.size();
+		}
+		
+		int qtdeInicialPadrao = qtdeDiferencasCadastradas + 50;
+		
+		for (int indice = listaNovasDiferencas.size(); indice < qtdeInicialPadrao; indice++) {
 			
 			DiferencaVO diferenca = new DiferencaVO();
 			
@@ -295,7 +307,7 @@ public class DiferencaEstoqueController {
 			movimentoEstoque.setStatus(StatusAprovacao.PENDENTE);
 			
 			diferenca.setMovimentoEstoque(movimentoEstoque);
-			
+
 			listaDiferencas.add(diferenca);
 		}
 		
@@ -344,9 +356,7 @@ public class DiferencaEstoqueController {
 	@SuppressWarnings("unchecked")
 	public void carregarRateio(Long idDiferenca) {
 
-		int qtdeInicialPadrao = 50;
-		
-		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>(qtdeInicialPadrao);
+		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>();
 		
 		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
@@ -366,6 +376,8 @@ public class DiferencaEstoqueController {
 			
 			listaNovosRateiosCota.addAll(listaRateiosCadastrados);
 		}
+		
+		int qtdeInicialPadrao = listaNovosRateiosCota.size() + 50;
 		
 		for (int indice = listaNovosRateiosCota.size(); indice < qtdeInicialPadrao; indice++) {
 			
@@ -495,11 +507,29 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/lancamento/limparSessao")
-	public void limparDadosSessao() {
+	@SuppressWarnings("unchecked")
+	public void limparDadosSessao(boolean confirmado) {
+	
+		Set<Diferenca> listaNovasDiferencas =
+			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
+			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		if (!confirmado) {
+		
+			if ((listaNovasDiferencas != null && !listaNovasDiferencas.isEmpty())
+					|| (mapaRateiosCadastrados != null && !mapaRateiosCadastrados.isEmpty())) {
+	
+				result.use(Results.json()).from(new ConfirmacaoVO(false), "result").serialize();
+				
+				return;
+			}
+		}
 		
 		this.limparSessao();
-		
-		result.use(Results.json()).from("", "result").serialize();
+			
+		result.use(Results.json()).from(new ConfirmacaoVO(true), "result").serialize();
 	}
 	
 	/**
@@ -784,6 +814,8 @@ public class DiferencaEstoqueController {
 			
 			lancamentoDiferenca.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
+			
+			lancamentoDiferenca.setCadastrado(true);
 			
 			listaLancamentosDiferenca.add(lancamentoDiferenca);
 			
@@ -1424,6 +1456,14 @@ public class DiferencaEstoqueController {
 			return;
 		}
 		
+		List<DiferencaVO> listaDiferencasCadastradas =
+			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
+		
+		if (listaDiferencasCadastradas != null) {
+			
+			listaNovasDiferencas.addAll(listaDiferencasCadastradas);
+		}
+		
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
 		comparatorChain.addComparator(new BeanComparator("codigoProduto"));
@@ -1442,8 +1482,15 @@ public class DiferencaEstoqueController {
 				if (diferencaVO.getCodigoProduto().trim().equalsIgnoreCase(ultimaDiferencaVO.getCodigoProduto())
 						&& diferencaVO.getNumeroEdicao().trim().equalsIgnoreCase(ultimaDiferencaVO.getNumeroEdicao())) {
 					
-					linhasComErro.add(ultimaDiferencaVO.getId());
-					linhasComErro.add(diferencaVO.getId());
+					if (!ultimaDiferencaVO.isCadastrado()) {
+						
+						linhasComErro.add(ultimaDiferencaVO.getId());
+					}
+					
+					if (!diferencaVO.isCadastrado()) {
+						
+						linhasComErro.add(diferencaVO.getId());
+					}
 				}
 			}
 			
