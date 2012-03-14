@@ -68,8 +68,7 @@
 					data.mensagens.tipoMensagem, 
 					data.mensagens.listaMensagens
 				);
-
-				$('#telefonesGrid').hide();
+				
 				return;
 			}
 			
@@ -142,23 +141,40 @@
 		function removerTelefone(referenciaTelefone){
 			var data = "referencia=" + referenciaTelefone;
 		
-			$.postJSON(
-				'/nds-client/cadastro/telefone/removerTelefone',
-				data,
-				function(result) {
-					$("#telefonesGrid").flexAddData({
-						page: 1, total: 1, rows: result.rows
-					});
-					
-					limparCampos();
-					
-					$("#referenciaHidden").val("");
-					
-					$("#botaoAddEditar").text("Incluir Novo");
-				},
-				null,
-				true
-			);
+			$("#dialog-excluir").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$(this).dialog("close");
+						
+						$.postJSON(
+							'/nds-client/cadastro/telefone/removerTelefone',
+							data,
+							function(result) {
+								$("#telefonesGrid").flexAddData({
+									page: 1, total: 1, rows: result.rows
+								});
+								
+								limparCampos();
+								
+								$("#referenciaHidden").val("");
+								
+								$("#botaoAddEditar").text("Incluir Novo");
+							},
+							null,
+							true
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#dialog-excluir").show();
 		}
 		
 		function editarTelefone(referenciaTelefone){
@@ -223,6 +239,18 @@
 
 <div class="container">
 	<div id="manutencaoTelefones" style="display:none" title="Telefones">
+		<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 600px;">
+			 
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b class="effectDialogText"></b>
+			</p>
+		</div>
+		
+		<div id="dialog-excluir" title="Telefones">
+			<p>Confirma esta Exclusão?</p>
+		</div>
 		<table width="280" cellpadding="2" cellspacing="2" style="text-align:left ">
 			<tr>
 				<td width="72">Tipo:</td>
@@ -240,13 +268,13 @@
 			<tr>
 				<td>Telefone: </td>
 				<td>
-					<input type="text" style="width:40px" id="ddd" />-<input type="text" style="width:110px" id="numero" />
+					<input type="text" style="width:40px" id="ddd" maxlength="255" />-<input type="text" style="width:110px" id="numero" maxlength="255"/>
 				</td>
 			</tr>
 			<tr id="trRamalId">
 				<td id="lblRamalId">Ramal: </td>
 				<td>
-					<input type="text" style="width:40px; float:left;" id="ramal" />
+					<input type="text" style="width:40px; float:left;" id="ramal" maxlength="255"/>
 				</td>
 			</tr>
 			<tr>
