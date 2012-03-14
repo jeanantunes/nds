@@ -87,7 +87,7 @@ public class Lancamento implements Serializable {
 	private BigDecimal reparte;
 	
 	@OneToMany
-	@JoinColumn(name = "ITEM_REC_FISICO_ID")
+	//@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	
 	@OneToMany(mappedBy = "lancamento")

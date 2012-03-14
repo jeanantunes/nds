@@ -7,11 +7,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.mapping.Array;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.controllers.expedicao.ConfirmacaoExpedicaoController;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
-import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -25,7 +29,12 @@ public class SuspensaoCotaController {
 
 	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a apesquisa realizada.";
 	protected static final String NENHUM_REGISTRO_SELECIONADO = "Nenhum registro foi selecionado!";
+	protected static final String SEM_BAIXA_NA_DATA = "Não foi feita baixa bancária na data de operação atual.";
 	protected static final int RESULTADOS_POR_PAGINA_INCIAL = 15;
+	protected static final String ERRO_CARREGAR_SUGESTAO_SUSPENSAO = "Erro inesperado ao carregar sugestão de suspensão de cotas.";
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SuspensaoCotaController.class);
 	
 	private final Result result;
 	private final HttpSession session;
@@ -44,80 +53,109 @@ public class SuspensaoCotaController {
 	 * Inicializa dados da tela
 	 */
 	public void index() {
-		
-		TipoMensagem status = TipoMensagem.SUCCESS;
-		List<String> mensagens = new ArrayList<String>();
-		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = null;		
-		
-		try {
-			
-			verificarBaixaBancariaNaData();
-			
-			grid = obterCotasSuspensao(1,RESULTADOS_POR_PAGINA_INCIAL,"cota","asc");
-			
-		} catch(ValidacaoException e) {
-			mensagens = e.getValidacao().getListaMensagens();
-			status=e.getValidacao().getTipoMensagem();
-		}
-		
-		result.include("grid",grid);
-		result.include("msg",mensagens);
-		result.include("status",status.name());		
+	
+		// TODO - REMOVER!
+		session.setAttribute("baixa", true);
 		
 		result.forwardTo(SuspensaoCotaController.class).suspensaoCota();
 	}
 
+	//TODO REMOVER ENTRADA
+	public void semBaixa() {
+		
+		session.setAttribute("baixa", false);
+		
+		result.forwardTo(SuspensaoCotaController.class).suspensaoCota();
+	}
+	
 	private void verificarBaixaBancariaNaData() {
-		//throw new BaixaBancariaInexistenteException();		
+				
+		if ( (Boolean)session.getAttribute("baixa") == false ) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));
+		} 
+		
 	}
 	
 	public void obterCotasSuspensaoJSON(Integer page, Integer rp, String sortname, 
 			String sortorder) {
 		
-		Object[] retorno = new Object[3];
-		retorno[0] = obterCotasSuspensao(page,rp,sortname,sortorder);
-		retorno[1] = new ArrayList<String>();
-		retorno[2] = TipoMensagem.SUCCESS.name();
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		List<String> mensagens = new ArrayList<String>();
+		Long totalSugerida = 0L;		
+		Double total = 0.0;
+		
+		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = null;
+		
+		try {
+			verificarBaixaBancariaNaData();
+			//TODO getRealSize()
+			totalSugerida = 50L;
+			//TODO getRealConsignado
+			total = 50000.00;
+			grid = obterCotasSuspensao(page,rp,sortname,sortorder, totalSugerida);			
+				
+		} catch(ValidacaoException e) {
+			mensagens = e.getValidacao().getListaMensagens();
+			status = e.getValidacao().getTipoMensagem();
+		} catch(Exception e) {			
+			mensagens.add(ERRO_CARREGAR_SUGESTAO_SUSPENSAO);
+			LOG.error(ERRO_CARREGAR_SUGESTAO_SUSPENSAO, e);
+			status = TipoMensagem.ERROR;
+		}
+		
+		if(grid == null) {
+			grid = new TableModel<CellModelKeyValue<CotaSuspensaoDTO>>();
+		}
+		
+		Object[] retorno = new Object[5];
+		retorno[0] = grid;
+		retorno[1] = mensagens;
+		retorno[2] = status.name();
+		retorno[3] = totalSugerida;
+		retorno[4] = total;
 		
 		result.use(Results.json()).withoutRoot().from(retorno).serialize();	
 	}
 	
 	
-	public List<CotaSuspensaoDTO> getListaCotaSuspensao() {
+	//TODO obter dados reais
+	public List<CotaSuspensaoDTO> getListaCotaSuspensao(Integer page, Integer rp, Long total) {
 
 		List<CotaSuspensaoDTO> listaCotaSuspensao = new ArrayList<CotaSuspensaoDTO>();
-		
-		List<DividaDTO> dividas = new ArrayList<DividaDTO>();
-		dividas.add(new DividaDTO("10/10/2010", 100.0));
-		
-		
-		CotaSuspensaoDTO cotaS = new CotaSuspensaoDTO(
-				1L, 
-				"Guilherme de Morais Leandro", 
-				50.0, 
-				60.0, 
-				true, 
-				null);
-		
-		listaCotaSuspensao.add(new CotaSuspensaoDTO(
-				1L, 
-				"Guilherme de Morais Leandro", 
-				50.0, 
-				60.0, 
-				true, 
-				null));	
-		
+	
+		for(Integer i = page*rp ; i < (page*rp) + rp ; i++) {
+								
+			CotaSuspensaoDTO cotaS = new CotaSuspensaoDTO(
+					i.longValue(), 
+					"Pessoa" + i, 
+					i*100.0, 
+					i* 10.0, 
+					false);
+					//i%2==0);
+			
+			listaCotaSuspensao.add(cotaS);	
+		}
 		
 		return listaCotaSuspensao;
 	}
+
+
+	//TODO obter dados reais
+	public void getInadinplenciasDaCota(Long idCota) {
+		
+		List<DividaDTO> dividas = new ArrayList<DividaDTO>();
+		dividas.add(new DividaDTO("10/10/2010", 100.0));
+		dividas.add(new DividaDTO("10/10/2011", 200.0));
+		
+		result.use(Results.json()).from(dividas, "result").serialize();
+	}
 	
 	private TableModel<CellModelKeyValue<CotaSuspensaoDTO>> obterCotasSuspensao(Integer page, Integer rp, String sortname, 
-			String sortorder) {
+			String sortorder, Long total) {
 		
 		//TODO getRealList()
-		List<CotaSuspensaoDTO> listaCotaSuspensao = getListaCotaSuspensao();
-		//TODO getRealSize()
-		Integer total = listaCotaSuspensao.size();
+		List<CotaSuspensaoDTO> listaCotaSuspensao = getListaCotaSuspensao(page,rp,total);
+		
 		
 		List<CellModelKeyValue<CotaSuspensaoDTO>> listaCelula = new LinkedList<CellModelKeyValue<CotaSuspensaoDTO>>();
 		
@@ -142,7 +180,7 @@ public class SuspensaoCotaController {
 		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = new TableModel<CellModelKeyValue<CotaSuspensaoDTO>>();
 		
 		grid.setPage(page);
-		grid.setTotal(total);
+		grid.setTotal(total.intValue());
 		grid.setRows(listaCelula);
 		
 		return grid;
@@ -155,7 +193,7 @@ public class SuspensaoCotaController {
 	 * @param selecionado - true(adiciona a lista) false(remove da lista)
 	 */
 	@Post
-	public void selecionarItem(Long idLancamento, Boolean selecionado) {
+	public void selecionarItem(Long idCota, Boolean selecionado) {
 		
 		@SuppressWarnings("unchecked")
 		List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
@@ -165,10 +203,10 @@ public class SuspensaoCotaController {
 			selecionados = new ArrayList<Long>();			
 		}
 
-		int index = selecionados.indexOf(idLancamento); 
+		int index = selecionados.indexOf(idCota); 
 		
 		if(index==-1) {
-			selecionados.add(idLancamento);
+			selecionados.add(idCota);
 		} else {
 			selecionados.remove(index);
 		}
@@ -195,7 +233,7 @@ public class SuspensaoCotaController {
 			Boolean estudo = (Boolean) session.getAttribute("estudo");
 			
 			//TODO getRealList();
-			List<CotaSuspensaoDTO> lista= getListaCotaSuspensao();
+			List<CotaSuspensaoDTO> lista= getListaCotaSuspensao(1,50,50L);
 			
 			@SuppressWarnings("unchecked")
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
@@ -213,6 +251,11 @@ public class SuspensaoCotaController {
 		}
 		
 		result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
+	}
+	
+	@Post
+	public void suspenderCototas() {
+		System.out.println("GUI");
 	}
 	
 }

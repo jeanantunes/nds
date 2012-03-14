@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -47,6 +48,7 @@ import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -126,8 +128,9 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
-			carregarDados(session);
-			//carregarDadosParaResumoExpedicao(session);
+			
+			//carregarDados(session);
+			dadosExpedicao(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -972,6 +975,103 @@ public class DataLoader {
 		
 	    save(session,boleto0,boleto1,boleto2,boleto3,boleto4,boleto5,boleto6,boleto7);    
 	    
+	}
+	
+	public static void dadosExpedicao(Session session) {
+		
+		Box box300Reparte = Fixture.boxReparte300();
+		save(session,box300Reparte);
+
+		
+		TipoProduto tipoRevista = Fixture.tipoRevista();
+		save(session,tipoRevista);
+		
+		CFOP cfop = Fixture.cfop5102();
+		save(session,cfop);
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session,usuario);
+		
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(session,tipoFornecedorPublicacao);
+		
+		for(Integer i=1000;i<1050; i++) {
+			
+			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+			save(session,juridica);
+			
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
+			save(session,fornecedor);
+			
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			produto.addFornecedor(fornecedor);
+			save(session,produto); 
+			
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+			save(session,produtoEdicao);
+			
+			
+			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+			save(session,tipoNotaFiscal);
+
+			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
+					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
+			save(session,notaFiscalFornecedor);
+			
+			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+					produtoEdicao, usuario, notaFiscalFornecedor, 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					new BigDecimal(i));					
+			save(session,itemNotaFiscal);
+			
+			RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
+				notaFiscalFornecedor, usuario, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+			save(session,recebimentoFisico);
+			
+			
+			ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
+					itemNotaFiscal, recebimentoFisico, new BigDecimal(i));
+			save(session,itemFisico);
+			
+			Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					new BigDecimal(100), 
+					StatusLancamento.RECEBIDO, 
+					itemFisico);
+			lancamento.setReparte(new BigDecimal(10));
+			save(session,lancamento);
+		
+			Estudo estudo = new Estudo();
+			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
+			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setQtdeReparte(new BigDecimal(10));
+			save(session,estudo);
+			
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
+			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
+					estudo, cota);
+			save(session,pessoa,cota,estudoCota);		
+			
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
+			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
+					estudo, cota2);
+			save(session, pessoa2,cota2,estudoCota2);		
+			
+			
+			TipoMovimento tipoMovimento = Fixture.tipoMovimentoRecebimentoReparte();	
+
+			TipoMovimento tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
+			save(session,tipoMovimento,tipoMovimento2);
+		}
+		
 	}
 	
 }

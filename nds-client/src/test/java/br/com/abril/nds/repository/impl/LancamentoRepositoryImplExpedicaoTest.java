@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO.SortColumn;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -39,7 +38,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImplTest{
@@ -48,8 +46,6 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 	@Autowired
 	private LancamentoRepositoryImpl lancamentoRepository;
 	
-	@Autowired
-	private LancamentoService lancamentoService;
 	
 	@Before
 	public void setUp() {
