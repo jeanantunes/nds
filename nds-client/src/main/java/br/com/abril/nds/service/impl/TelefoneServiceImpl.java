@@ -32,7 +32,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
 	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
 		

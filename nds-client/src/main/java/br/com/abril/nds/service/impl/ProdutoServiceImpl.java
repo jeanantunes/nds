@@ -54,4 +54,13 @@ public class ProdutoServiceImpl implements ProdutoService {
 		return produtoRepository.obterProdutoPorCodigo(codigoProduto);
 	}
 	
+	@Transactional(readOnly = true)
+	public String obterNomeProdutoPorCodigo(String codigoProduto) {
+		if (codigoProduto == null || codigoProduto.trim().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
+		}
+		
+		return this.produtoRepository.obterNomeProdutoPorCodigo(codigoProduto);
+	}
+	
 }
