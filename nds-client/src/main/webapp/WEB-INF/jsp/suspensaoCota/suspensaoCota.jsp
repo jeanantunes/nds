@@ -2,7 +2,16 @@
 
 <script language="javascript" type="text/javascript">
 	
-	function popup_detalhes() {
+	function getDetalhes(idCota) {
+		
+		$.postJSON("<c:url value='/suspensaoCota/getInadinplenciasDaCota'/>", 
+				"idCota="+idCota+"&method='get'", 
+				popupDetalhes);	
+	};
+	
+	function popupDetalhes(result) {
+				
+		gerarTabelaDetalhes(result);
 		
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
@@ -17,10 +26,10 @@
 				},
 			}
 		});
-	};
+	}
 	
-	function popup_suspender() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+	function popupConfirmar() {
 	
 		$( "#dialog-suspender" ).dialog({
 			resizable: false,
@@ -29,9 +38,12 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					$.postJSON("<c:url value='/suspensaoCota/suspenderCotas'/>", 
+							"", 
+							popupRelatorio);	
+					
 					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					popup_confirm();
 					
 				},
 				"Cancelar": function() {
@@ -42,31 +54,13 @@
 		      
 	};
 	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					/*popup_chamadao();*/
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_confirm() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-confirm" ).dialog({
+	function popupRelatorio(result) {
+		
+		gerarRelatorio(result);
+		
+		table.innerHTML="";
+		
+		$( "#divRelatorio" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:380,
@@ -79,18 +73,51 @@
 		});
 	};
 	
-  //callback function to bring a hidden box back
-		function callback() {
-			setTimeout(function() {
-				$( "#effect:visible").removeAttr( "style" ).fadeOut();
-
-			}, 1000 );
-		};	
-
+	
+	function adicionarSelecao(id, check) {
+		
+		$.postJSON("<c:url value='/suspensaoCota/selecionarItem'/>", 
+				"idCota="+id +"&selecionado="+check.checked, 
+				retornoSemAcao);				
+	}
+	
+	function retornoSemAcao(data) {
+		
+	}
+	
+	function popup_excluir() {
+	
+		$( "#dialog-excluir" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
+	
+	function gerarRelatorio() {
+		
+		var div = document.getElementById('divRelatorio')
+		
+		div.innerHTML="GUILHERME";
+		
+	}
+	
+	
+ 
 	function mostrar(){
-	$(".grids").show();
-}	
-$(function() {
+		$(".grids").show();
+	}	
+	
+	$(function() {
 		$( "#datepickerDe" ).datepicker({
 			showOn: "button",
 			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -105,16 +132,11 @@ $(function() {
 		
 </script>
 
-	<style type="text/css">
-		  #effect { display: none; margin: 0px; width:980px;  position: absolute; }
-		  #effect_1 { display: none; margin: 0px; width:800px;  position: absolute; }
-		  #dialog-detalhes, #dialog-alterar, #dialog-excluir, #dialog-confirm{display:none; font-size:12px;}
- 	 </style>
 </head>
 
 <body>
 <form action="" method="get" id="form1" name="form1">
-<div id="dialog-confirm" title="Cota Suspensa">
+<div id="divRelatorio" title="Cota Suspensa" style="display:none">
 	<p><strong>Proceder com a devolução de Documentação</strong></p>
      
 </div>
@@ -134,7 +156,7 @@ $(function() {
 
 <div id="dialog-detalhes" title="Suspensão de Cota">
      
-    <table width="300" border="0" cellspacing="1" cellpadding="1">
+    <table id="tabelaDetalhesId" width="300" border="0" cellspacing="1" cellpadding="1">
   <tr>
     <td colspan="2" align="left"><strong>Cota:&nbsp;</strong>9999 - José da Silva Pereira</td>
   </tr>
@@ -166,7 +188,7 @@ $(function() {
 
 
 
-<div class="corpo">
+<div class="corpo" style="display:none;">
     
    
     <div class="container">
@@ -174,7 +196,7 @@ $(function() {
       
        <fieldset class="classFieldset">
        	  <legend>Suspender Cotas</legend>
-        <div class="grids" style="display:Block;">
+        <div class="grids" style="display:block;">
 			<table class="suspensaoGrid"></table>
           	<table width="100%" border="0" cellspacing="2" cellpadding="2">
               <tr>
@@ -182,7 +204,7 @@ $(function() {
                 	 
                      <span class="bt_novos" title="Suspender Cota">
 <!-- SUSPENDER COTAS -->
-                     	<a href="javascript:;" onclick="popup_suspender();">
+                     	<a href="javascript:;" onclick="popupConfirmar();">
                      		<img src="${pageContext.request.contextPath}/images/ico_suspender.gif" hspace="5" border="0"/>
                      		Suspender Cotas
                      	</a>
@@ -211,7 +233,7 @@ $(function() {
                 	</strong>
                 </td>
                 
-                <td width="5%">
+                <td width="5%" id="totalSugerida">
                 	3
                 </td>
                 
@@ -221,7 +243,8 @@ $(function() {
                 	</strong>
                 </td>
                 
-                <td width="17%">
+                <td width="17%" id="total">
+                	
                 	10.567,00
                 </td>
                 
@@ -252,6 +275,7 @@ $(function() {
 </form>
 <script>	
 	$(function() {	
+		
 		$(".suspensaoGrid").flexigrid($.extend({},{
 			url : '<c:url value="/suspensaoCota/obterCotasSuspensaoJSON"/>',
 			dataType : 'json',
@@ -303,8 +327,7 @@ $(function() {
 			height : 260
 		})); 	
 		
-		$(".grids").show();	
-		
+		$(".flexigrid").css("zIndex",-10);
 	});
 	
 	function processaRetornoPesquisa(data) {
@@ -312,45 +335,45 @@ $(function() {
 		var grid = data[0];
 		var mensagens = data[1];
 		var status = data[2];
+		var totalSugerida = data[3];
+		var total = data[4];
+		
 		
 		if(mensagens!=null && mensagens.length!=0) {
 			exibirMensagem(status,mensagens);
 		}
-		
-		if(!grid.rows) {
+				
+		if(!grid.rows || status=="error") {
 			return grid;
+		} else {
+			$(".corpo").show();	
 		}
+		
+		document.getElementById("total").innerText = total;
+		document.getElementById("totalSugerida").innerText = totalSugerida;		
 		
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
 						
 			cell.acao = gerarAcoes(cell.cota,cell.dividas);
-			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.cota,cell.selecionado);;
-					
-		/*	if(cell.estudo) {
-				cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
-			} else {
-				cell.estudo="";
-				cell.selecionado="";
-			}
-		*/
+			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.cota,cell.selecionado);;					
 		}
 		
 		return grid;
 	}
 	
-	function gerarCheckbox(id,name,idLancamento,selecionado) {
+	function gerarCheckbox(id,name,idCota,selecionado) {
 		
 		var input = document.createElement("INPUT");
 		input.id=id;
 		input.name=name;
 		input.style.setProperty("float","left");
 		input.type="checkbox";
-		input.setAttribute("onclick","adicionarSelecao(idLancamento,this);");
+		input.setAttribute("onclick","adicionarSelecao("+idCota+",this);");
 		
 		if(selecionado==true) {
-			input.checker="checked";
+			input.checker=true;
 		}
 		
 		return input.outerHTML; 
@@ -360,7 +383,7 @@ $(function() {
 		
 		var a = document.createElement("A");
 		a.href = "javascript:;";
-		a.setAttribute("onclick","popup_detalhes();");
+		a.setAttribute("onclick","getDetalhes("+idCota+");");
 		
 		var img =document.createElement("IMG");
 		img.src="${pageContext.request.contextPath}/images/ico_detalhes.png";
@@ -384,23 +407,18 @@ $(function() {
 	}
 	
 	function gerarTabelaDetalhes(dividas) {
+				
+		var table = document.getElementById('tabelaDetalhesId')
 		
-		var table = documento.createElement("TABLE");
-		table.width="300";
-		table.border="0";
-		table.cellspacing="1";
-		table.cellpadding="1";
-		//TODO - esconder
-		table.style="display:none;"
-		
+		table.innerHTML="";
+	
 		var linhaCota = document.createElement("TR");
 	 	 
 	 	var tdCota = document.createElement("TD");
-	 	tdCota.colspan="2";
+	 	tdCota.setAttribute("colspan","2");
 	 	tdCota.align="left";
-	 	textoLinhaCota = document.createTextNode("Cota: ".bold() + " - Guilherme de Morais Leandro");
-	 	tdCota.appendChild(textoLinhaCota);
-	 	
+	 	tdCota.innerHTML="Cota: ".bold() + " - Guilherme de Morais Leandro";
+	 	 	
 	 	linhaCota.appendChild(tdCota);
 	 	
 	 	table.appendChild(linhaCota);
@@ -410,40 +428,37 @@ $(function() {
 		 	var tdDia = document.createElement("TD");
 		 	tdDia.width="136";
 		 	tdDia.align="left";
-		 	textoDia = document.createTextNode("Dia Vencimento".bold());
-		 	tdDia.appendChild(textoDia);			 	
+		 	tdDia.innerHTML="Dia Vencimento".bold();
 		 	cabecalho.appendChild(tdDia);
 		 	
 		 	var tdValor = document.createElement("TD");
 		 	tdValor.width="157";
-		 	tdValor.align="rigth";
-		 	textoValor = document.createTextNode("Valor R$".bold());
-		 	tdValor.appendChild(textoValor);			 	
+		 	tdValor.align="right";
+		 	tdValor.innerHTML="Valor R$".bold();		 	
 		 	cabecalho.appendChild(tdValor);
 		 	
 		 	table.appendChild(cabecalho);
 		
-		 $(dividas).each(function (index, domEle) {
+		 $(dividas).each(function (index, divida) {
 			 
 			 var linha = document.createElement("TR");
 		 	 
 			 	var cel = document.createElement("TD");
 			 	cel.align="left";
-			 	text = document.createTextNode("99/99/9999");
+			 	text = document.createTextNode(divida.vencimento);
 			 	cel.appendChild(text);			 	
 			 	linha.appendChild(cel);
 			 	
 			 	var cel2 = document.createElement("TD");
-			 	cel2.align="rigth";
-			 	text2 = document.createTextNode("125,00");
+			 	cel2.align="right";
+			 	text2 = document.createTextNode(divida.valor);
 			 	cel2.appendChild(text2);			 	
 			 	linha.appendChild(cel2);
 			 	
 			 	table.appendChild(linha);
 			 
 			
-		 });
-		
+		 });		 		
 	}
 	
 </script>

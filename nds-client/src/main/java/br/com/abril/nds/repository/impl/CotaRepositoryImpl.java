@@ -101,4 +101,9 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		return query.list();
 	}
+
+	@Override
+	public List<Cota> obterCotasSujeitasSuspensao(Integer limiteInadimplencia) {
+		return null;
+	}
 }

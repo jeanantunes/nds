@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class CotaSuspensaoDTO implements Serializable{
 
@@ -12,21 +11,19 @@ public class CotaSuspensaoDTO implements Serializable{
 	private Double vlrConsignado;
 	private Double vlrReparte;
 	private Boolean selecionado;
-	private List<DividaDTO> dividas;	
 	
 	
 	public CotaSuspensaoDTO(){
 		
 	}
 	
-	public CotaSuspensaoDTO(Long cota, String nome, Double vlrConsignado, Double vlrReparte, Boolean selecionado, List<DividaDTO> dividas) {
+	public CotaSuspensaoDTO(Long cota, String nome, Double vlrConsignado, Double vlrReparte, Boolean selecionado) {
 		super();
 		this.cota = cota;
 		this.nome = nome;
 		this.vlrConsignado = vlrConsignado;
 		this.vlrReparte = vlrReparte;
 		this.selecionado = selecionado;
-		this.dividas = dividas;
 	}
 
 
@@ -87,18 +84,6 @@ public class CotaSuspensaoDTO implements Serializable{
 
 	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
-	}
-
-
-
-	public List<DividaDTO> getDividas() {
-		return dividas;
-	}
-
-
-
-	public void setDividas(List<DividaDTO> dividas) {
-		this.dividas = dividas;
 	}
 	
 }

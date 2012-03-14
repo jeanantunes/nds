@@ -975,7 +975,7 @@ public class DataLoader {
 	
 
 	/**
-	 * Gera massa de dados para teste de consulta de lanÃ§amentos agrupadas por Box
+	 * Gera massa de dados para teste de consulta de lançamentos agrupadas por Box
 	 * @param session
 	 */
 	public static void carregarDadosParaResumoExpedicaoBox(Session session){
@@ -1427,11 +1427,11 @@ public class DataLoader {
 	
 	private static void criarFeriado(Session session) {
 		Feriado feriadoIndependencia =
-				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "IndependÃªncia do Brasil");
+				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "Independência do Brasil");
 		save(session, feriadoIndependencia);
 		
 		Feriado feriadoProclamacao =
-				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "ProclamaÃ§Ã£o da RepÃºblica");
+				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "Proclamação da República");
 		save(session, feriadoProclamacao);
 	}
 
