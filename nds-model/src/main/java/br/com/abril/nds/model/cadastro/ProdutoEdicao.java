@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,9 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import br.com.abril.nds.model.planejamento.Lancamento;
 
 /**
  * @author T30541
@@ -51,7 +56,10 @@ public class ProdutoEdicao {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
-	private Produto produto;	
+	private Produto produto;
+	
+	@OneToMany(mappedBy = "produtoEdicao")
+	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
 	public Long getId() {
 		return id;
@@ -125,6 +133,15 @@ public class ProdutoEdicao {
 		this.produto = produto;
 	}
 	
+
+	public Set<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	public void setLancamentos(Set<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
