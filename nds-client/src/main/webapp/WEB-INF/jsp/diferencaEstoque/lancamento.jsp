@@ -94,7 +94,7 @@
 			);
 		}
 
-		function popupExclusaoDiferenca(idMovimentoEstoque) {
+		function popupExclusaoDiferenca(idDiferenca) {
 
 			$("#dialog-excluir").dialog({
 				resizable: false,
@@ -105,7 +105,7 @@
 					"Confirmar": function() {
 					$(this).dialog("close");
 					
-					var data = "?idDiferenca=" + idMovimentoEstoque;
+					var data = "?idDiferenca=" + idDiferenca;
 					
 					$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/excluirFaltaSobra" />'+data});
 					$("#gridLancamentos").flexReload();
