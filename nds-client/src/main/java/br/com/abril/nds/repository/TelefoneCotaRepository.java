@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -11,5 +12,5 @@ public interface TelefoneCotaRepository extends Repository<TelefoneCota, Long> {
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
 	
-	void removerTelefonesCota(List<Long> listaTelefonesCota);
+	void removerTelefonesCota(Collection<Long> listaTelefonesCota);
 }

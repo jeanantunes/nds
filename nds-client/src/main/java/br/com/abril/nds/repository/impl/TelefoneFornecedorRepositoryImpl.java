@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<Telefon
 	}
 
 	@Override
-	public void removerTelefonesFornecedor(List<Long> listaTelefonesFornecedor) {
+	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
 		StringBuilder hql = new StringBuilder("delete from TelefoneFornecedor ");
 		hql.append(" where id in (:idsFornecedor) ");
 		
