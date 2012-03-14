@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -38,7 +39,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append("join fetch produtoEdicao.produto produto ");
 		hql.append("join fetch produto.fornecedores fornecedor ");
 		hql.append("left join fetch lancamento.recebimentos recebimento ");
-		hql.append("left join fetch lancamento.estudos estudo ");
+		hql.append("left join fetch lancamento.estudo estudo ");
 		hql.append("where fornecedor.permiteBalanceamento = :permiteBalanceamento ");
 		if (filtro.getData() != null) {
 			hql.append("and lancamento.dataLancamentoPrevista = :data ");
@@ -260,7 +261,6 @@ public class LancamentoRepositoryImpl extends
 		}
 		
 		hql.append(" join lancamento.recebimentos itemRecebido ");
-		hql.append(" left join lancamento.estudos estudo ");
 		
 		hql.append(" where (lancamento.status=:statusRecebido ");
 		hql.append(" or lancamento.status=:statusBalanceado ");
@@ -284,9 +284,9 @@ public class LancamentoRepositoryImpl extends
 		}				
 		
 		if (estudo != null && estudo == true ) {
-			hql.append(" AND estudo is not null");			
+			hql.append(" AND lancamento.estudo is not null");			
 		} else {
-			hql.append(" AND estudo is null");
+			hql.append(" AND lancamento.estudo is null");
 		}
 		
 		return hql.toString();
@@ -309,5 +309,32 @@ public class LancamentoRepositoryImpl extends
 		}
 				
 		return (Long) query.uniqueResult();
-	}	
+	}
+	
+	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Lancamento lancamento ");
+		
+		hql.append(" where lancamento.dataLancamentoPrevista = :dataPrevista ");
+		
+		if (tipoLancamento != null) {
+			hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+		}
+		
+		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setDate("dataPrevista", dataPrevista);
+		
+		if(tipoLancamento != null){	
+			query.setParameter("tipoLancamento", tipoLancamento);
+		}
+		
+		query.setLong("idProdutoEdicao", idProdutoEdicao);
+		
+		return (Lancamento) query.uniqueResult();
+	}
 }

@@ -6,7 +6,9 @@ package br.com.abril.nds.model.cadastro;
  * @created 14-fev-2012 11:35:33
  */
 public enum TipoTelefone {
-	TELEFONE,
+	COMERCIAL,
 	CELULAR,
-	FAX
+	FAX,
+	RESIDENCIAL,
+	RADIO
 }

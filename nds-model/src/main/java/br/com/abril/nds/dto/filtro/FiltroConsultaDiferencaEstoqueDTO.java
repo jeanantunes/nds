@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -32,6 +33,8 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColunaConsulta ordenacaoColuna;
+	
+	private Date dataLimiteLancamentoDistribuidor;
 
 	/**
 	 * Construtor padrão.
@@ -169,6 +172,20 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	 */
 	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
+	}
+
+	/**
+	 * @return the dataLimiteLancamentoDistribuidor
+	 */
+	public Date getDataLimiteLancamentoDistribuidor() {
+		return dataLimiteLancamentoDistribuidor;
+	}
+
+	/**
+	 * @param dataLimiteLancamentoDistribuidor the dataLimiteLancamentoDistribuidor to set
+	 */
+	public void setDataLimiteLancamentoDistribuidor(Date dataLimiteLancamentoDistribuidor) {
+		this.dataLimiteLancamentoDistribuidor = dataLimiteLancamentoDistribuidor;
 	}
 
 	/* (non-Javadoc)

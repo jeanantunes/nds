@@ -1,8 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.repository.ItemNotaFiscalRepository;
 
 /**
@@ -21,6 +26,18 @@ public class ItemNotaFiscalRepositoryImpl extends
 	 */
 	public ItemNotaFiscalRepositoryImpl() {
 		super(ItemNotaFiscal.class);
+	}
+	
+	public List<ItemNotaFiscal> buscarItensPorIdNota(Long idNotaFiscal){
+		
+		String hql = "from ItemNotaFiscal item "				
+				+ " where item.notaFiscal.id = :idNotaFiscal";
+
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("idNotaFiscal", idNotaFiscal);
+
+		return query.list();
 	}
 
 }

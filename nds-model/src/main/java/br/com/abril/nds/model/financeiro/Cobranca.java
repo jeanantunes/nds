@@ -38,8 +38,8 @@ public abstract class Cobranca {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "NOSSO_NUMERO", nullable = false)
-	private Integer nossoNumero;
+	@Column(name = "NOSSO_NUMERO", nullable = false, unique = true)
+	private String nossoNumero;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_EMISSAO", nullable = false)
@@ -83,11 +83,11 @@ public abstract class Cobranca {
 		this.id = id;
 	}
 
-	public Integer getNossoNumero() {
+	public String getNossoNumero() {
 		return nossoNumero;
 	}
 
-	public void setNossoNumero(Integer nossoNumero) {
+	public void setNossoNumero(String nossoNumero) {
 		this.nossoNumero = nossoNumero;
 	}
 

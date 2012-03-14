@@ -2,13 +2,12 @@
 	 title="Lançamento < Faltas e Sobras >"
 	 style="display: none;">
 
-	<div id="effectDialog" 
-		 class="ui-state-highlight ui-corner-all" 
+	<div class="effectDialog ui-state-highlight ui-corner-all" 
 		 style="display: none; position: absolute; z-index: 2000; width: 600px;">
 		 
 		<p>
 			<span style="float: left;" class="ui-icon ui-icon-info"></span>
-			<b id="idTextoMensagemDialog"></b>
+			<b class="effectDialogText"></b>
 		</p>
 	</div>
 

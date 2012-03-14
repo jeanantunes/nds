@@ -219,10 +219,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 			hql.append("and nf.chaveAcesso = :chaveAcesso  ");	
 		}
 		Query query = super.getSession().createQuery(hql.toString());
+		
 		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
 		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
 		query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
-		query.setParameter("chaveAcesso", filtroConsultaNotaFiscal.getChave());
+		
+		if(filtroConsultaNotaFiscal.getChave() != null){
+			query.setParameter("chaveAcesso", filtroConsultaNotaFiscal.getChave());
+		}
+		
 		return query.list();
 	}	
 }

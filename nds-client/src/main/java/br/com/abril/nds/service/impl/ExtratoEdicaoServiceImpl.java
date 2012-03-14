@@ -86,7 +86,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 	}
 	
 	@Transactional
-	public String obterNomeFornecedorDeProduto(String codigoProduto) {
+	public String obterRazaoSocialFornecedorDeProduto(String codigoProduto) {
 		
 		List<Fornecedor> listaFornecedor =
 			fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
@@ -95,9 +95,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 			Fornecedor fornecedor = listaFornecedor.get(0);
 			
-			String nomeFornecedor = (fornecedor.getJuridica() != null) ? fornecedor.getJuridica().getNomeFantasia() : "" ;
+			String razao = (fornecedor.getJuridica() != null) ? fornecedor.getJuridica().getRazaoSocial() : "" ;
 			
-			return nomeFornecedor;
+			return razao;
 			
 		}
 		

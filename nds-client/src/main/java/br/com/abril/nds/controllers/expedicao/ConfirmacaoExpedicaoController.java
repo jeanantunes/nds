@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
-import br.com.abril.nds.service.MovimentoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -60,7 +60,7 @@ public class ConfirmacaoExpedicaoController {
 		 */
 		public ConfirmacaoExpedicaoController(Result result,HttpSession session, 
 				FornecedorService fornecedorService, LancamentoService lancamentoService,
-				MovimentoService movimentoService) {
+				MovimentoEstoqueService movimentoEstoqueService) {
 			
 			this.result = result;
 			this.fornecedorService = fornecedorService;

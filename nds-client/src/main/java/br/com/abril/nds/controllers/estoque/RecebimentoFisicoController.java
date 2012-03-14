@@ -123,24 +123,6 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
-	 * Método para prencher combo fornecedor com o cnpj informado	 
-	 * 
-	 * @param nomeFantasia
-	 */
-	@Post
-	public void buscaCnpjPorFornecedor(String nomeFantasia){
-			
-		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarCnpjPorFornecedor(nomeFantasia);
-		
-		if(pessoaJuridica != null){
-			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
-		}else{
-			 throw new ValidacaoException(TipoMensagem.ERROR,"Fornecedor não encontrado");
-		}
-		
-	}
-
-	/**
 	 * Serializa a listaItemRecebimentoFisico que esta em session recalculando os campos
 	 * valorTotal e valorDiferenca.
 	 */
@@ -192,6 +174,8 @@ public class RecebimentoFisicoController {
 		if(itensRecebimentoFisico == null) {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
+		
+		recarregarValoresCalculados(itensRecebimentoFisico);
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
@@ -488,6 +472,28 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
+	 * Faz o cancelamento de uma nota fiscal e seu recebimento físico.
+	 */
+	public void cancelarNotaRecebimentoFisico() {
+		
+		NotaFiscal notaFiscal = getNotaFiscalFromSession();
+		
+		if(notaFiscal == null || notaFiscal.getId() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma Nota Fiscal existente para cancelamento do recebimento físico.");
+		}
+				
+		recebimentoFisicoService.cancelarNotaFiscal(notaFiscal.getId());
+		
+		setItensRecebimentoFisicoToSession(null);
+		setNotaFiscalToSession(null);
+		
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Recebimento Físico cancelado com sucesso");
+		
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+	}
+	
+	/**
 	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
 	 * CNPJ, numero da nota, série e chave de acesso caso a mesma
 	 * seja uma nota fiscal eletrônica. Caso a nota seja encontrada
@@ -575,15 +581,16 @@ public class RecebimentoFisicoController {
 			
 			dto.setLineId(counter++);
 			
-			String codigo 		     	= dto.getCodigoProduto();
-			String nomeProduto 	     	= dto.getNomeProduto();
-			String edicao 		     	= (dto.getEdicao() 				== null) 	? "" 	: dto.getEdicao().toString();
-			String precoCapa 	     	= (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String repartePrevisto 	 	= (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
-			String qtdeFisica		 	= (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
-			String diferenca		 	= (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
-			String valorTotal		 	= (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
-			String exclusaoPermitida	= (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String codigo 		     	 = dto.getCodigoProduto();
+			String nomeProduto 	     	 = dto.getNomeProduto();
+			String edicao 		     	 = (dto.getEdicao() 				== null) 	? "" 	: dto.getEdicao().toString();
+			String precoCapa 	     	 = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
+			String qtdeFisica		 	 = (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
+			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
+			String valorTotal		 	 = (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			String alteracaoPermitida	 = (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String destacarValorNegativo = (dto.getDiferenca() != null && dto.getDiferenca().doubleValue() < 0.0D) ? "S" : "N";
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
@@ -596,7 +603,8 @@ public class RecebimentoFisicoController {
 							qtdeFisica,
 							diferenca,
 							valorTotal,
-							exclusaoPermitida
+							alteracaoPermitida,
+							destacarValorNegativo
 					));
 			
 			
@@ -862,6 +870,10 @@ public class RecebimentoFisicoController {
 				valorBruto,
 				valorDesconto);
 	
+		if(notaFiscalFornecedor.getChaveAcesso() == null || notaFiscalFornecedor.getChaveAcesso().trim().isEmpty()) {
+			notaFiscalFornecedor.setChaveAcesso(null);
+		}
+		
 		try {
 			notaFiscalFornecedor.setDataEmissao(sdf.parse(dataEmissao));
 			notaFiscalFornecedor.setDataExpedicao(sdf.parse(dataEntrada));
@@ -881,6 +893,31 @@ public class RecebimentoFisicoController {
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	
+	}
+	
+		
+	/**
+	 * confirmaçao de recebimento fisico
+	 * @param notaFiscal
+	 * @param itensRecebimento
+	 */
+	@Post
+	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
+		
+		atualizarItensRecebimentoEmSession(itensRecebimento);
+		
+		//TODO: capturar usuario logado
+		Usuario usuarioLogado = new Usuario();
+		usuarioLogado.setId(1L);
+		
+		recebimentoFisicoService.confirmarRecebimentoFisico(usuarioLogado, getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		
+		List<String> msgs = new ArrayList<String>();
+		msgs.add("Itens Confirmados com Sucesso.");
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+		
 	}
 	
 	/**

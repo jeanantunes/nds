@@ -13,8 +13,6 @@ import br.com.abril.nds.model.planejamento.Estudo;
  */
 public interface EstudoService {
 	
-	Estudo obterEstudoDoLancamentoMaisProximo(Date dataReferencia, String codigoProduto, Long numeroEdicao);
-	
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 
 }

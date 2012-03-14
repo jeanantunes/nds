@@ -27,11 +27,11 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -93,7 +93,9 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			
 			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
 					produtoEdicao, usuario, notaFiscalFornecedor, 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+					TipoLancamento.LANCAMENTO,
 					new BigDecimal(i));					
 			save(itemNotaFiscal);
 			
@@ -136,9 +138,9 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save( pessoa2,cota2,estudoCota2);		
 			
 			
-			TipoMovimento tipoMovimento = Fixture.tipoMovimentoRecebimentoReparte();	
+			TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoRecebimentoReparte();	
 
-			TipoMovimento tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
+			TipoMovimentoEstoque tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
 			save(tipoMovimento,tipoMovimento2);
 		}
 		

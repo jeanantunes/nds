@@ -71,6 +71,36 @@ public class DateUtil {
 		return cal.getTime();
 	}
 	
+	/**
+	 * Subtrai o número de dias da data
+	 * 
+	 * @param data - data para subtração de dias
+	 * @param numDias - número de dias para subtrair
+	 * 
+	 * @return nova data com o número de dias subtratidos
+	 */
+	public static Date subtrairDias(Date data, int numDias) {
+		if (data == null) {
+			return null;
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		cal.add(Calendar.DAY_OF_MONTH, -numDias);
+		return cal.getTime();
+	}
+	
+	/**
+	 * Método que verifica se a data informada é sábado ou domingo
+	 * 
+	 * @param cal - data para comparação
+	 * 
+	 * @return variável indicando se a data é sábado ou domingo
+	 */
+	public static boolean isSabadoDomingo(Calendar cal) {
+		return (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+				|| (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY);
+	}
+	
 	public static Date parseData(String data, String formato) {
 		
 		try {

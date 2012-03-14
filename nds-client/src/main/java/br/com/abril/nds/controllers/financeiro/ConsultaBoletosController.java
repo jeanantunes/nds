@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.service.BoletoService;
@@ -40,21 +43,19 @@ import br.com.caelum.vraptor.view.Results;
 public class ConsultaBoletosController {
 
     private Result result;
+    
+    private HttpSession httpSession;
 
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
 
+    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+    
 	@Autowired
 	private BoletoService boletoService;
 	
-	
-	
-	private static final String FILTRO_PESQUISA_BOLETOS_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
-	private HttpSession httpSession;
-	
-	
-
-	public ConsultaBoletosController(Result result) {
+	public ConsultaBoletosController(Result result, HttpSession httpSession) {
 		this.result = result;
+		this.httpSession = httpSession;
 	}
 	
 	@Get
@@ -65,101 +66,50 @@ public class ConsultaBoletosController {
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pago"));
 		
 		result.include("listaStatusCombo",listaStatusCombo);
-		result.include("dataDe", DateUtil.formatarData(Calendar.getInstance().getTime(), "MM/dd/yyyy"));
-		result.include("dataAte",DateUtil.formatarData(Calendar.getInstance().getTime(), "MM/dd/yyyy"));
+		result.include("dataDe", DateUtil.formatarData(Calendar.getInstance().getTime(), "dd/MM/yyyy"));
+		result.include("dataAte",DateUtil.formatarData(Calendar.getInstance().getTime(), "dd/MM/yyyy"));
 	}
-	
+
 	@Post
 	@Path("/consultaBoletos")
 	public void consultaBoletos(String numCota,
 								String dataDe,
 								String dataAte, 
 								StatusCobranca status,
-								
 								String sortorder, 
 								String sortname, 
 								int page, 
 								int rp
-								
 								){
 		
 		//VALIDACOES
-		if (numCota==null || numCota.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Digite o número da cota.");
-		}
-		if (dataDe==null || dataDe.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Digite a data inicial.");
-		}
-		if (dataAte==null || dataAte.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Digite a data final.");
-		}
-		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseData(dataDe,"dd/MM/yyyy"),DateUtil.parseData(dataAte,"dd/MM/yyyy"))){
-			throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve ser menor do que a data final.");
-		}
-	
+		validar(numCota,
+                dataDe,
+                dataAte,
+                status);
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaBoletosCotaDTO filtroAtual = new FiltroConsultaBoletosCotaDTO(Integer.parseInt(numCota),
-                																	DateUtil.parseData(dataDe,"dd/MM/yyyy"),
-                																	DateUtil.parseData(dataAte,"dd/MM/yyyy"),
-                																	status);
-		
-		
-        if (filtroAtual != null) {
-			
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+                															        DateUtil.parseData(dataDe,"dd/MM/yyyy"),
+                															        DateUtil.parseData(dataAte,"dd/MM/yyyy"),
+                															        status);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtroAtual.setPaginacao(paginacao);
+		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBoletos.values(), sortname));
 	
-			filtroAtual.setPaginacao(paginacao);
-
-			filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaLancamento.values(), sortname));
-		}
-		
-		
-		
-		FiltroConsultaBoletosCotaDTO filtroSessao = (FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_BOLETOS_SESSION_ATTRIBUTE);
+		FiltroConsultaBoletosCotaDTO filtroSessao = (FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		
 		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
 		
 			filtroAtual.getPaginacao().setPaginaAtual(1);
-			
 		}
 		
-		this.httpSession.setAttribute(FILTRO_PESQUISA_BOLETOS_SESSION_ATTRIBUTE, filtroAtual);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 		
 		
 		
 		//BUSCA BOLETOS
-		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(Integer.parseInt(numCota),
-				                                                      DateUtil.parseData(dataDe,"dd/MM/yyyy"),
-				                                                      DateUtil.parseData(dataAte,"dd/MM/yyyy"),
-				                                                      status);
+		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(filtroAtual);
 		
 		//CARREGA DIRETO DA ENTIDADE PARA A TABELA
 		List<CellModel> listaModelo = new LinkedList<CellModel>();
@@ -170,7 +120,7 @@ public class ConsultaBoletosController {
 		
 		for (Boleto boleto : boletos){	
 			listaModelo.add(new CellModel(1,
-										  Integer.toString(boleto.getNossoNumero()),
+										  boleto.getNossoNumero(),
 										  DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"),
@@ -184,8 +134,16 @@ public class ConsultaBoletosController {
 		}	
 		
 		TableModel<CellModel> tm = new TableModel<CellModel>();
-		tm.setTotal(listaModelo.size());
+
+		//DEFINE TOTAL DE REGISTROS NO TABLEMODEL
+		tm.setTotal( (int) this.boletoService.obterQuantidadeBoletosPorCota(filtroAtual));
+		
+		//DEFINE CONTEUDO NO TABLEMODEL
 		tm.setRows(listaModelo);
+		
+		//DEFINE PAGINA ATUAL NO TABLEMODEL
+		tm.setPage(filtroAtual.getPaginacao().getPaginaAtual());
+		
 		
 		//PREPARA RESULTADO PARA A VIEW (HASHMAP)
 		Map<String, TableModel<CellModel>> resultado = new HashMap<String, TableModel<CellModel>>();
@@ -196,4 +154,22 @@ public class ConsultaBoletosController {
 
 	}
 	
+	
+	
+	public void validar(String numCota,
+						   String dataDe,
+						   String dataAte, 
+						   StatusCobranca status){
+		//VALIDACOES
+		if (numCota==null || numCota.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Digite o número da cota.");
+		}
+		if ( (dataDe!=null) && (dataAte!=null) ){
+		    if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseData(dataDe,"dd/MM/yyyy"),DateUtil.parseData(dataAte,"dd/MM/yyyy"))){
+			    throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve ser menor do que a data final.");
+		    }
+		}
+	}
+	
+
 }

@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,34 +16,41 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
@@ -50,6 +59,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private ItemNotaFiscalRepository itemNotaFiscalRepository;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
@@ -69,11 +81,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Autowired
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
 	
+	@Autowired
+	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
-	@Transactional
-	public void adicionarRecebimentoFisico(RecebimentoFisico recebimentoFisico){
-		
-	}
 		
 	/**
 	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
@@ -100,7 +110,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			BigDecimal valorTotal = new BigDecimal(0.0D);
 			
-			if(qtdRepartePrevisto != null || precoCapa != null) {
+			if(qtdRepartePrevisto != null && precoCapa != null) {
 				
 				valorTotal = qtdRepartePrevisto.multiply(precoCapa);
 			
@@ -110,10 +120,200 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		}
 		
-		return listaItemRecebimentoFisico;
+		return listaItemRecebimentoFisico;		
+	}
+	
+	/**
+	 * Cancela Recebimento Fisico e Itens de recebimento Fisico e uma Nota de origem manual com seus itens de Nota 
+	 * @param idNotaFiscal
+	 */
+	@Transactional
+	public void cancelarNotaFiscal(Long idNotaFiscal){
+		
+		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNotaFiscal);
+		
+		if(notaFiscal != null){
+			
+			RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
+			
+			if(recebimentoFisico != null){
+				
+				if(StatusConfirmacao.PENDENTE.equals(recebimentoFisico.getStatusConfirmacao())){
+						
+					List<ItemRecebimentoFisico> listaItemRecebimentoFisico = itemRecebimentoFisicoRepository.obterItemPorIdRecebimentoFisico(recebimentoFisico.getId());
+						
+					if(listaItemRecebimentoFisico != null){
+						
+						for(ItemRecebimentoFisico itemRecebimentoFisico : listaItemRecebimentoFisico){
+							
+							itemRecebimentoFisicoRepository.remover(itemRecebimentoFisico);
+						}
+					}				
+					recebimentoFisicoRepository.remover(recebimentoFisico);
+				}
+					
+			}
+			
+			if(Origem.MANUAL.equals(notaFiscal.getOrigem())){
+				
+				List<ItemNotaFiscal> listaItemNotaFiscal = itemNotaFiscalRepository.buscarItensPorIdNota(idNotaFiscal);
+				
+				for(ItemNotaFiscal itemNotaFiscal : listaItemNotaFiscal){
+					
+					itemNotaFiscalRepository.remover(itemNotaFiscal);
+				}
+				
+				notaFiscalRepository.remover(notaFiscal);				
+			}
+		}	
 		
 	}
 	
+	private void validarExisteNotaConfirmada(Long idNotaFiscal){
+		
+		if(idNotaFiscal == null){
+			return;
+		}
+		
+		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(idNotaFiscal);
+		
+		if(recebimentoFisico != null){
+
+			if(StatusConfirmacao.CONFIRMADO.equals(recebimentoFisico.getStatusConfirmacao())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "O Recebimento ja foi confirmado, não é possível alterar os dados do mesmo.");
+			}
+		}
+	}
+	
+	/**
+	 * Insere os dados do recebimento físico.
+	 */
+	@Transactional
+	public void inserirDadosRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
+		
+		if(notaFiscal == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nota fiscal não existente.");
+		}
+		
+		validarExisteNotaConfirmada(notaFiscal.getId());
+		
+		if(listaItensNota == null || listaItensNota.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem itens relativos a esta nota fiscal");
+		}
+		
+		if(notaFiscal.getId() != null) {
+			
+			RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
+			
+			if(recebimentoFisico != null){
+
+				verificarExclusao(notaFiscal.getId(), listaItensNota);
+
+			}
+				
+			atualizarDadosNotaFiscalExistente(recebimentoFisico, usuarioLogado, notaFiscal, listaItensNota, dataAtual);
+			
+		} else {
+			
+			notaFiscal.setDataExpedicao(dataAtual);
+			
+			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);			
+		}		
+	}
+	
+	/**
+	 * Confirmação de RecebimentoFisico
+	 * 
+	 * @param usuarioLogado
+	 * @param notaFiscal
+	 * @param listaItensNota
+	 * @param dataAtual
+	 */
+	@Transactional
+	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
+		
+		verificarValorDaNota(listaItensNota,notaFiscal.getValorBruto());
+		
+		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
+		
+		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
+
+		if(listaItemRecebimentoFisico == null || listaItemRecebimentoFisico.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem itens para confirmação de recebimento físico nesta nota fiscal");
+		}
+		
+		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItemRecebimentoFisico) {
+
+			inserirMovimentoEstoque(usuarioLogado, recebimentoFisicoDTO);
+			
+			inserirLancamento(recebimentoFisicoDTO, dataAtual, usuarioLogado);
+			
+		}
+		
+		alterarRecebimentoFisicoParaConfirmado(usuarioLogado, notaFiscal, dataAtual);	
+		
+	}
+	/**
+	 * Método que compara o valor bruto da nota com a soma dos valores dos itens
+	 * @param listaItensNota
+	 * @param valorBruto
+	 */
+	private void verificarValorDaNota(List<RecebimentoFisicoDTO> listaItensNota, BigDecimal valorBruto) {
+		
+		BigDecimal somaValorDosItens = new BigDecimal(0.0);
+		
+		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota) {
+			somaValorDosItens = somaValorDosItens.add(recebimentoFisicoDTO.getValorTotal());
+		}
+		
+		if(valorBruto == null){
+			valorBruto = new BigDecimal(0.0);
+		}
+		
+		Double parseSoma = somaValorDosItens.doubleValue();
+		Double parseValorBruto = valorBruto.doubleValue();
+		
+		if(!parseSoma.equals(parseValorBruto)){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Valor Bruto da Nota não corresponde a soma dos valores Totais do Item da Nota");
+		}
+	}
+
+	@Override
+	@Transactional
+	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+		
+		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+		
+	}
+	
+	/**
+	 * Exclui Itens da Nota e RecebimentoFisico
+	 */	
+	private void excluirItem(RecebimentoFisicoDTO recebimentoFisicoDTO){
+		
+		if(	recebimentoFisicoDTO != null && 
+			recebimentoFisicoDTO.getIdItemRecebimentoFisico() != null && 
+			recebimentoFisicoDTO.getIdItemNota() != null ){
+			
+			if (recebimentoFisicoDTO.getOrigemItemNota() != null) {
+
+				if (recebimentoFisicoDTO.getOrigemItemNota().equals(Origem.MANUAL)) {
+					
+					excluirItemRecebimentoFisico(recebimentoFisicoDTO);
+
+					excluirItemNotaFiscal(recebimentoFisicoDTO.getIdItemNota());
+
+				} else {
+					throw new ValidacaoException(TipoMensagem.ERROR,
+							"Item Nota Fiscal Interface não pode ser excluida");
+				}
+			}
+		
+		} else {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Item Nota Fiscal não existente");
+		}
+	}
+			
 	@Transactional
 	public List<CFOP> obterListaCFOP() {
 		return cFOPRepository.buscarTodos();
@@ -134,38 +334,82 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		return pessoaJuridicaRepository.buscarPorCnpj(cnpj);
 	}
 	
+	
+	private void verificarExclusao(Long idNotaFiscal, List<RecebimentoFisicoDTO> listaItensNotaAtual){
+		
+		List<RecebimentoFisicoDTO> listaExclusao = new ArrayList<RecebimentoFisicoDTO>();
+		
+		List<RecebimentoFisicoDTO> listaItemRecebimentoFisicoBD = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);
+		
+		boolean indItemEncontrado = false;
+		
+		for(RecebimentoFisicoDTO recebimentoBD : listaItemRecebimentoFisicoBD){
+			
+			indItemEncontrado = false;
+			
+			for(RecebimentoFisicoDTO recebimentoAtual : listaItensNotaAtual){
+				
+				if(recebimentoBD.getIdItemRecebimentoFisico().equals(recebimentoAtual.getIdItemRecebimentoFisico())){	
+					indItemEncontrado = true;
+					break;
+				}
+			}
+			
+			if(!indItemEncontrado) {
+				listaExclusao.add(recebimentoBD);			
+			}
+		}
+		
+		for(RecebimentoFisicoDTO recebimentoDTO : listaExclusao){
+			
+			if(Origem.INTERFACE.equals(recebimentoDTO.getOrigemItemNota())){
+				continue;
+			}
+			
+			excluirItem(recebimentoDTO);
+		}
+		
+	}
+	
 	/**
 	 * Atualiza os dados de uma nota fiscal existente.
 	 * 
+	 * @param recebimentoFisico
 	 * @param usuarioLogado
 	 * @param notaFiscal
 	 * @param listaItensNota
 	 */
-	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
-		
-		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
+	private void atualizarDadosNotaFiscalExistente(RecebimentoFisico recebimentoFisico, Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		if(recebimentoFisico == null){
 			recebimentoFisico = inserirRecebimentoFisico(usuarioLogado, notaFiscal, dataAtual);
-		}
+		}	
 		
 		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota){
 			
 			ItemNotaFiscal itemNota = null;
 			
 			if(recebimentoFisicoDTO.getIdItemNota() == null) {
-				itemNota = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO);
+				itemNota = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual);
 			} else {
 				itemNota = new ItemNotaFiscal();
 				itemNota.setId(recebimentoFisicoDTO.getIdItemNota());
 			}
 			
-			inserirItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO, itemNota, recebimentoFisico);
-
-			if(recebimentoFisicoDTO.getIdItemRecebimentoFisico() == null) {
-				inserirLancamento(recebimentoFisicoDTO, dataAtual);
-			} 
-			
+			if(recebimentoFisicoDTO.getIdItemRecebimentoFisico()!=null) {
+				
+				if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
+					continue;
+				}
+				
+				atualizarItemRecebimentoFisico(recebimentoFisicoDTO);
+				
+			} else {
+				
+				inserirItemRecebimentoFisico(recebimentoFisicoDTO, itemNota, recebimentoFisico);
+				
+			}
+		
 		}
 		
 	}
@@ -200,39 +444,13 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		for( RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota ){
 			
-			ItemNotaFiscal itemNotaFiscal = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO);
+			ItemNotaFiscal itemNotaFiscal = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual);
 			
-			inserirItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO, itemNotaFiscal, recebimentoFisico);
-			
-			inserirLancamento(recebimentoFisicoDTO, dataAtual);
+			inserirItemRecebimentoFisico(recebimentoFisicoDTO, itemNotaFiscal, recebimentoFisico);
+						
 		}
 		
 	}
-	
-	/**
-	 * Insere os dados do recebimento físico.
-	 */
-	@Transactional
-	public void inserirDadosRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
-		
-		if(notaFiscal == null || listaItensNota == null) {
-			return;
-		}
-		
-		if(notaFiscal.getId() != null) {
-			
-			atualizarDadosNotaFiscalExistente(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
-			
-		} else {
-			
-			notaFiscal.setDataExpedicao(dataAtual);
-			
-			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
-			
-		}
-		
-	}
-	
 	
 	
 	/**
@@ -241,10 +459,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param usuarioLogado
 	 * @param notaFiscal
 	 * @param recebimentoDTO
+	 * @param dataAtual
 	 * 
 	 * @return ItemNotaFiscal
 	 */
-	private ItemNotaFiscal incluirItemNotaFiscal(Usuario usuarioLogado, NotaFiscal notaFiscal, RecebimentoFisicoDTO recebimentoDTO){
+	private ItemNotaFiscal incluirItemNotaFiscal(Usuario usuarioLogado, NotaFiscal notaFiscal, RecebimentoFisicoDTO recebimentoDTO, Date dataAtual){
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(recebimentoDTO.getIdProdutoEdicao());
@@ -253,6 +472,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());			
 		itemNota.setDataLancamento(recebimentoDTO.getDataLancamento());
+		itemNota.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
+		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
 		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
@@ -289,33 +510,93 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	
 	/**
-	 * Cria um registro de lançamento ligado ao itemRecebimentoFisico.
+	 * Caso não exista um registro um registro de lançamento, este será criado e amarrado ao itemRecebimentoFisico.
+	 * Caso o registro de lançamento exista, sera feito apenas a amarração deste com o itemRecebimentoFisico.
 	 * 
 	 * @param recebimentoFisicoDTO
 	 * @param dataAtual
+	 * @param usuarioLogado
 	 */
-	@Transactional
-	private void inserirLancamento(RecebimentoFisicoDTO recebimentoFisicoDTO, Date dataAtual) {
+	private void inserirLancamento(RecebimentoFisicoDTO recebimentoFisicoDTO, Date dataAtual, Usuario usuarioLogado) {
 		
-		Lancamento lancamento = new Lancamento();
+		if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
+			return;
+		}
+		//TODO : Por hora estamos usando somente a Data Lancamento como unica. Verificar se a do Distribuidor também será
+		Lancamento lancamento = lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(recebimentoFisicoDTO.getDataLancamento(), null, recebimentoFisicoDTO.getIdProdutoEdicao());
 		
-		lancamento.setDataLancamentoDistribuidor(recebimentoFisicoDTO.getDataLancamento());
-		lancamento.setDataRecolhimentoDistribuidor(recebimentoFisicoDTO.getDataRecolhimento());
-		lancamento.setDataCriacao(dataAtual);
-		lancamento.setDataLancamentoPrevista(recebimentoFisicoDTO.getDataLancamento());
-		lancamento.setDataLancamentoDistribuidor(dataAtual);
-		lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
-		lancamento.setTipoLancamento(recebimentoFisicoDTO.getTipoLancamento());		
-		lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
-		lancamento.setStatus(StatusLancamento.RECEBIDO);
-		lancamento.setDataStatus(dataAtual);
+		if(lancamento != null) {
+			
+			if(lancamento.getRecebimentos() == null) {
+				lancamento.setRecebimentos(new HashSet<ItemRecebimentoFisico>());
+			}
+			
+			ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
+			
+			itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+			
+			lancamento.getRecebimentos().add(itemRecebimentoFisico);
+			
+			lancamentoRepository.alterar(lancamento);
 		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());
+		} else {
+
+			lancamento = new Lancamento();
+			
+			lancamento.setDataLancamentoDistribuidor(recebimentoFisicoDTO.getDataLancamento());
+			lancamento.setDataRecolhimentoDistribuidor(recebimentoFisicoDTO.getDataRecolhimento());
+
+			lancamento.setDataLancamentoPrevista(recebimentoFisicoDTO.getDataLancamento());
+			lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
+			
+			lancamento.setTipoLancamento(recebimentoFisicoDTO.getTipoLancamento());		
+
+			lancamento.setDataCriacao(dataAtual);
 		
-		lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
+			
+			lancamento.setStatus(StatusLancamento.RECEBIDO);
+			
+			lancamento.setDataStatus(dataAtual);
+			
+			ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
+			itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+			
+			lancamento.getRecebimentos().add(itemRecebimentoFisico);
+			
+			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+			produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());
+			
+			lancamento.setProdutoEdicao(produtoEdicao);
+			
+			lancamentoRepository.adicionar(lancamento);
+			
+		}
+
 		
-		lancamentoRepository.adicionar(lancamento);
+		inserirHistoricoLancamento(lancamento, dataAtual, usuarioLogado);
+		
+		
+	}
+	
+	/**
+	 * Insere novo registro de historico de lancamento.
+	 * 
+	 * @param lancamento
+	 * @param dataAtual
+	 * @param usuarioLogado
+	 */
+	private void inserirHistoricoLancamento(Lancamento lancamento, Date dataAtual, Usuario usuarioLogado) {
+		
+		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
+		
+		historicoLancamento.setData(dataAtual);
+		historicoLancamento.setLancamento(lancamento);
+		historicoLancamento.setResponsavel(usuarioLogado);
+		historicoLancamento.setStatus(lancamento.getStatus());
+		
+		historicoLancamentoRepository.adicionar(historicoLancamento);
+		
 		
 	}
 	
@@ -326,17 +607,20 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * 
 	 * @param usuarioLogado
 	 * @param recebimentoFisicoDTO
-	 * @param itemRecebimentoFisico
 	 */
 	private void lancarFaltaOUSobra(
 			Usuario usuarioLogado,
-			RecebimentoFisicoDTO recebimentoFisicoDTO,
-			ItemRecebimentoFisico itemRecebimentoFisico) {
+			RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		
-		BigDecimal calculoQdeDiferenca = recebimentoFisicoDTO.getQtdFisico().subtract(recebimentoFisicoDTO.getRepartePrevisto()) ;
+		//TODO: Chamar componente DIOGENES SERVICE
+		
+		/*BigDecimal calculoQdeDiferenca = recebimentoFisicoDTO.getQtdFisico().subtract(recebimentoFisicoDTO.getRepartePrevisto()) ;
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());					
+		
+		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
+		itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -361,44 +645,142 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 		
 		//TODO: VERIFICAR SE A LINHA ABAIXO É NECESSARIA.
-		itemRecebimentoFisicoRepository.alterar(itemRecebimentoFisico);
+		itemRecebimentoFisicoRepository.alterar(itemRecebimentoFisico);*/
 		
+	}
+	
+	/**
+	 * Verifica se existe divergência entre a qtdFisica e repartePrevisto.
+	 * 
+	 * @param repartePrevisto
+	 * @param qtdFisico
+	 * 
+	 * @return boolean
+	 */
+	private boolean verificarDiferencaExistente(BigDecimal repartePrevisto, BigDecimal qtdFisico) {
+		
+		BigDecimal calculoQdeDiferenca = qtdFisico.subtract(repartePrevisto); 
+		
+		if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) < 0) {
+			
+			return true;
+			
+		} else if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) > 0) {						
+
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * Atualiza a qtdFisicao de um itemRecebimento
+	 *  
+	 * @param recebimentoDTO
+	 */
+	private void atualizarItemRecebimentoFisico(RecebimentoFisicoDTO recebimentoDTO) {
+		
+		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoDTO.getIdItemRecebimentoFisico());
+		
+		itemRecebimento.setQtdeFisico(recebimentoDTO.getQtdFisico());
+		
+		itemRecebimentoFisicoRepository.alterar(itemRecebimento);		
 	}
 	
 	
 	/**
-	 * Faz a inserção de um itemRecebimento, apontando também 
-	 * a falta ou sobra referente ao mesmo.
+	 * Faz a inserção de um itemRecebimento.
 	 *  
-	 * @param usuarioLogado
 	 * @param recebimentoDTO
 	 * @param itemNotaFiscal
 	 * @param recebimentoFisico
 	 */
-	private void inserirItemRecebimentoFisico( 
-			Usuario usuarioLogado, 
+	private void inserirItemRecebimentoFisico(
 			RecebimentoFisicoDTO recebimentoDTO, 
 			ItemNotaFiscal itemNotaFiscal, 
 			RecebimentoFisico recebimentoFisico ) {
 		
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
 		
-		itemRecebimento.setDiferenca(null);
 		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
 		itemRecebimento.setQtdeFisico(recebimentoDTO.getQtdFisico());
 		itemRecebimento.setRecebimentoFisico(recebimentoFisico);
 		
-		itemRecebimentoFisicoRepository.adicionar(itemRecebimento);
-		
-		lancarFaltaOUSobra(usuarioLogado, recebimentoDTO, itemRecebimento);
-		
+		itemRecebimentoFisicoRepository.adicionar(itemRecebimento);		
 	}
 
-	@Override
-	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+	/**
+	 * Atualização de Data e Satatus em Recebimento Fisico.
+	 * 
+	 * @param usuarioLogado
+	 * @param notaFiscal
+	 * @param dataAtual
+	 */
+	private void alterarRecebimentoFisicoParaConfirmado(Usuario usuarioLogado, NotaFiscal notaFiscal, Date dataAtual) {
+		
+		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
+		
+		recebimentoFisico.setDataConfirmacao(dataAtual);
+		recebimentoFisico.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+		recebimentoFisico.setConferente(usuarioLogado);
+		
+		recebimentoFisicoRepository.alterar(recebimentoFisico);
+		
+	}
+	
+	
+	/**
+	 * Exclui Item da Nota  
+	 * @param idItemNota
+	 */
+	private void excluirItemNotaFiscal(Long idItemNota) {
+		
+		ItemNotaFiscal itemNotaFiscal = itemNotaFiscalRepository.buscarPorId(idItemNota);
+		
+		itemNotaFiscalRepository.remover(itemNotaFiscal);		
+	}
+	
+	/**
+	 * Exclui Item Recebimento Fisico
+	 * @param idItemRecebimentoFisico
+	 */
+	private void excluirItemRecebimentoFisico(RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+		if(itemRecebimento != null){
+			itemRecebimentoFisicoRepository.remover(itemRecebimento);		
+		}
+	}
+	
+	/**
+	 * Inserir movimento estoque e estoque de produto
+	 */
+	private void inserirMovimentoEstoque(
+			Usuario usuarioLogado,
+			RecebimentoFisicoDTO recebimentoFisicoDTO) {
+	
+		
+		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
+		
+		if(indDiferenca) {
+			
+			//lancarFaltaOUSobra(usuarioLogado, recebimentoFisicoDTO);
+			
+		} else {
+			
+			TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					recebimentoFisicoDTO.getDataLancamento(), 
+					recebimentoFisicoDTO.getIdProdutoEdicao(), 
+					usuarioLogado.getId(), 
+					recebimentoFisicoDTO.getRepartePrevisto(),
+					tipoMovimento);
+			
+		}
 		
 	}
 	

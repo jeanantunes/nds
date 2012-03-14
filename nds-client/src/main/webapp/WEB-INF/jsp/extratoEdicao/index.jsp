@@ -7,6 +7,8 @@
 
 <script type="text/javascript">
 
+
+
 var jsExtratoEdicao = {
 
 	pesquisarExtratoEdicao : function() {
@@ -101,6 +103,8 @@ var jsExtratoEdicao = {
 		
 		jsExtratoEdicao.saldoTotalExtratoEdicao = 0.0;
 		
+		var destacarValorSaldoTotal;
+		
 		if(typeof data.mensagens == "object") {
 		
 			$(".grids").hide();
@@ -112,9 +116,17 @@ var jsExtratoEdicao = {
 			$.each(data, function(index, value) {
 				
 				  if(value[0] == "gridResult") {
-					  jsExtratoEdicao.dadosPesquisa = value[1];
+					  
+					  jsExtratoEdicao.dadosPesquisa = jsExtratoEdicao.destacarValorParcial(value[1]);
+					  
 				  } else if(value[0] == "saldoTotalExtratoEdicao") {
+					  
 					  jsExtratoEdicao.saldoTotalExtratoEdicao = value[1];
+					  
+				  } else if(value[0] == "destacarSaldoTotalExtratoEdicao") {
+					  
+					  destacarValorSaldoTotal = value[1];
+					  
 				  } 
 				  
 			});
@@ -123,10 +135,43 @@ var jsExtratoEdicao = {
 			
 		}
 		
-		$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
+		if(destacarValorSaldoTotal == "S") {
+			$("#saldoTotalExtratoEdicao").css("color", "red");
+			$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
+		} else {
+			$("#saldoTotalExtratoEdicao").css("color", "black");
+			$("#saldoTotalExtratoEdicao").html(jsExtratoEdicao.saldoTotalExtratoEdicao); 
+		}
+		
 		
 		return jsExtratoEdicao.dadosPesquisa;
 				
+	},
+	
+	destacarValorParcial : function(data) {
+		
+		$.each(data.rows, function(index, value) {
+				
+				var destacarValorNegativo = value.cell[5];
+				
+				var valorParcial =  value.cell[4];
+				
+				if(destacarValorNegativo == "S") {
+					
+					value.cell[4] = '<span style="color: red">'+valorParcial+'</span>';
+					
+				} else {
+					
+					value.cell[4] = '<span style="color: black">'+valorParcial+'</span>';
+					
+				}
+					
+				
+				
+		});
+		  
+		return data;
+		
 	},
 	
 	carregarExtratoEdicaoGrid: function() {

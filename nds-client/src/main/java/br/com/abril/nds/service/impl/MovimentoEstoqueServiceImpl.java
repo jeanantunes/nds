@@ -13,27 +13,27 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.movimentacao.DominioTipoMovimento;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
-import br.com.abril.nds.repository.MovimentoCotaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.TipoMovimentoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
-import br.com.abril.nds.service.MovimentoService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 
 @Service
-public class MovimentoServiceImpl implements MovimentoService{
+public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Autowired
 	EstoqueProdutoRespository estoqueProdutoRespository;
@@ -45,7 +45,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 	MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	@Autowired
-	MovimentoCotaRepository movimentoCotaRepository;
+	MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
@@ -60,7 +60,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 	UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	TipoMovimentoRepository tipoMovimentoRepository;
+	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
 	ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -69,11 +69,11 @@ public class MovimentoServiceImpl implements MovimentoService{
 	@Transactional
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
 		
-		TipoMovimento tipoMovimento = tipoMovimentoRepository.buscarTipoMovimento(
-				TipoOperacao.SAIDA, DominioTipoMovimento.ENVIO_JORNALEIRO);
+		TipoMovimentoEstoque tipoMovimento = 
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
-		TipoMovimento tipoMovimentoCota = tipoMovimentoRepository.buscarTipoMovimento(
-				TipoOperacao.ENTRADA, DominioTipoMovimento.RECEBIMENTO_REPARTE);
+		TipoMovimentoEstoque tipoMovimentoCota =
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		List<EstudoCota> listaEstudoCota = estudoCotaRepository.
 				obterEstudoCotaPorDataProdutoEdicao(dataLancamento, idProdutoEdicao);
@@ -93,7 +93,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimento tipoMovimento) {
+	public void gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
 		
 		
@@ -108,16 +108,16 @@ public class MovimentoServiceImpl implements MovimentoService{
 		movimentoEstoque.setProdutoEdicao(itemRecebimentoFisico.getItemNotaFiscal().getProdutoEdicao());		
 		movimentoEstoque.setDataInclusao(new Date());
 		movimentoEstoque.setUsuario(usuarioRepository.buscarPorId(idUsuario));
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
+		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
 		
-		if(tipoMovimento.isAprovacaoAutomatica()) {			
+		if(tipoMovimentoEstoque.isAprovacaoAutomatica()) {			
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 		}
 		
 		BigDecimal novaQuantidade;
 		
-		if(TipoOperacao.ENTRADA.equals(tipoMovimento.getTipoOperacao())) {
+		if(TipoOperacao.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 			 novaQuantidade = estoqueProduto.getQtde().add(quantidade); 
 				estoqueProduto.setQtde(novaQuantidade);
 		} else {
@@ -132,7 +132,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade, TipoMovimento tipoMovimento) {
+	public void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 						
 		EstoqueProdutoCota estoqueProdutoCota =  estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
 				
@@ -151,7 +151,7 @@ public class MovimentoServiceImpl implements MovimentoService{
 		}
 				
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
-		movimentoEstoqueCota.setTipoMovimento(tipoMovimento);
+		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(estoqueProdutoCota.getCota());
 		movimentoEstoqueCota.setDataInclusao(new Date());
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
@@ -159,20 +159,20 @@ public class MovimentoServiceImpl implements MovimentoService{
 		movimentoEstoqueCota.setQtde(quantidade);
 		movimentoEstoqueCota.setUsuario(usuarioRepository.buscarPorId(idUsuario));
 		
-		if(tipoMovimento.isAprovacaoAutomatica()) {			
+		if(tipoMovimentoEstoque.isAprovacaoAutomatica()) {			
 			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
 		}
 		
 		BigDecimal novaQuantidade;
 		
-		if(TipoOperacao.ENTRADA.equals(tipoMovimento.getTipoOperacao())) {
+		if(TipoOperacao.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 			 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().add(quantidade); 
 			 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
 		} else {
 			 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().subtract(quantidade); 
 			 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);			
 		}
-		movimentoCotaRepository.adicionar(movimentoEstoqueCota);
+		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
 		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 	}
 
