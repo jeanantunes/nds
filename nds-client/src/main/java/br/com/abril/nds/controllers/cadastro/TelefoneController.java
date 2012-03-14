@@ -148,8 +148,18 @@ public class TelefoneController {
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
 
 		for (Integer key : listaEnderecoAssociacao.keySet()) {
+			
+			TelefoneAssociacaoDTO telefoneAssociacao = listaEnderecoAssociacao.get(key);
 
-			CellModel cellModel = getCellModelEndereco(listaEnderecoAssociacao.get(key));
+			CellModel cellModel = new CellModel(
+				telefoneAssociacao.getReferencia(),
+				telefoneAssociacao.getTipoTelefone() == null ? "" : 
+					TipoTelefone.getDescricao(telefoneAssociacao.getTipoTelefone()),
+				telefoneAssociacao.getTelefone().getDdd(),
+				telefoneAssociacao.getTelefone().getNumero(),
+				telefoneAssociacao.getTelefone().getRamal(),
+				String.valueOf(telefoneAssociacao.isPrincipal())
+			);
 
 			listaCellModel.add(cellModel);
 		}
@@ -159,17 +169,5 @@ public class TelefoneController {
 		tableModel.setTotal(listaCellModel.size()); 
 
 		return tableModel;
-	}
-
-	private CellModel getCellModelEndereco(TelefoneAssociacaoDTO telefoneAssociacao) {
-
-		return new CellModel(
-			telefoneAssociacao.getReferencia(),
-			telefoneAssociacao.getTipoTelefone() == null ? "" : TipoTelefone.getDescricao(telefoneAssociacao.getTipoTelefone()),
-			telefoneAssociacao.getTelefone().getDdd(),
-			telefoneAssociacao.getTelefone().getNumero(),
-			telefoneAssociacao.getTelefone().getRamal(),
-			String.valueOf(telefoneAssociacao.isPrincipal())
-		);
 	}
 }
