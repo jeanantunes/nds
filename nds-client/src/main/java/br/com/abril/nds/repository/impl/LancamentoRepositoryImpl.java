@@ -20,7 +20,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -261,22 +260,22 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" join produto.fornecedores fornecedor ");
 		}
 		
-		hql.append(" left join lancamento.recebimentos itemRecebido ");
+		hql.append(" join lancamento.recebimentos itemRecebido ");
 		
-		hql.append(" where lancamento.status=:statusLancamento ");
+		hql.append(" where (lancamento.status=:statusRecebido ");
+		hql.append(" or lancamento.status=:statusBalanceado ");
+		hql.append(" or lancamento.status=:statusEstudoFechado) ");
 		
-		parametros.put("statusLancamento", StatusLancamento.RECEBIDO);
+		parametros.put("statusRecebido", StatusLancamento.RECEBIDO);
+		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
+		parametros.put("statusEstudoFechado", StatusLancamento.ESTUDO_FECHADO);
 		
 		
 		if (data != null) {
 			
-			Date inicio = DateUtil.removerTimestamp(data);
-			Date fim = DateUtil.adicionarDias(DateUtil.removerTimestamp(data), 1);
+			hql.append(" AND lancamento.dataLancamentoPrevista = :data");
 			
-			hql.append(" AND (lancamento.dataLancamentoPrevista >= :inicio AND lancamento.dataLancamentoPrevista < :fim)");
-			
-			parametros.put("inicio", inicio);
-			parametros.put("fim", fim);
+			parametros.put("data", data);
 		}				
 		
 		if (idFornecedor != null) {
@@ -296,9 +295,7 @@ public class LancamentoRepositoryImpl extends
 	public Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo) {
 		
 		Map<String, Object> parametros = new HashMap<String, Object>();
-		
-		parametros.put("statusLancamento", StatusLancamento.RECEBIDO);
-		 
+				 
 		StringBuilder jpql = new StringBuilder();
 		
 		jpql.append(" select count(lancamento) ");	

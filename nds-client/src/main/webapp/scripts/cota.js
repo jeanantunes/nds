@@ -37,7 +37,7 @@ var cota = {
 		
 		if (numeroCota && numeroCota.length > 0) {
 			
-			$.postJSON(contextPath + "/cota/pesquisarPorNumero",
+			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
 				"numeroCota=" + numeroCota,
 				function(result) { 
 					cota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
@@ -86,7 +86,7 @@ var cota = {
 		if (nomeCota && nomeCota.length > 2) {
 			
 			$.postJSON(
-				contextPath + "/cota/autoCompletarPorNome", "nomeCota=" + nomeCota,
+				contextPath + "/cadastro/cota/autoCompletarPorNome", "nomeCota=" + nomeCota,
 				function(result) { 
 					cota.exibirAutoComplete(result, idCampoNomeCota); 
 				},
@@ -128,7 +128,7 @@ var cota = {
 		
 		if (nomeCota && nomeCota.length > 0) {
 			$.postJSON(
-				contextPath + "/cota/pesquisarPorNome", 
+				contextPath + "/cadastro/cota/pesquisarPorNome", 
 				"nomeCota=" + nomeCota,
 				function(result) {
 					cota.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroCota, idCampoNomeCota, successCallBack);

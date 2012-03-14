@@ -157,9 +157,9 @@ public class ConsultaBoletosController {
 	
 	
 	public void validar(String numCota,
-						   String dataDe,
-						   String dataAte, 
-						   StatusCobranca status){
+					    String dataDe,
+					    String dataAte, 
+					    StatusCobranca status){
 		//VALIDACOES
 		if (numCota==null || numCota.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Digite o número da cota.");

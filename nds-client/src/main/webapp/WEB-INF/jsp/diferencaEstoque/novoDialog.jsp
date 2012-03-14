@@ -122,12 +122,12 @@
 
 				var hiddenId = '<input type="hidden" name="id" value="' + index + '" />';
 
-				var parametroLimparCamposPesquisa = '\'#descricaoProduto' + index + '\', \'#edicao' + index + '\',  function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
+				var parametroLimparCamposPesquisa = '\'#descricaoProduto' + index + '\', \'#edicao' + index + '\',  function() {reprocessarDadosLancamento(' + index + ')}';
 								
 				var inputCodigoProduto = 
 					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="produto.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" />';
 
-				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true, null, function() {reprocessarDadosLancamento(\'#precoVenda' + index + '\', \'#precoVendaFormatado' + index + '\', \'#qtdeRecebimentoFisico' + index + '\', \'#qtdeRecebimentoFisicoFormatado' + index + '\')}';
+				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true, null, function() {reprocessarDadosLancamento(' + index + ')}';
 
 				var parametroAutoCompleteProduto = '\'#descricaoProduto' + index + '\', true';
 
@@ -162,8 +162,7 @@
 				row.cell.quantidade = inputQuantidade;
 			});
 
-			$("#totalPrecoVendaDiferencas").empty();
-			$("#totalRecebimentoFisico").empty();
+			reprocessarDadosLancamento();
 			
 			return resultado;
 		}
@@ -352,13 +351,20 @@
 			$("input[name='qtdeDiferenca']").numeric();
 		}
 
-		function reprocessarDadosLancamento(idCampoPrecoVenda,
-											idCampoPrecoVendaFormatado,
-								  			idCampoQtdeRecebimentoFisico,
-								  			idCampoQtdeRecebimentoFisicoFormatado) {
+		function reprocessarDadosLancamento(index) {
 
-			$(idCampoPrecoVenda).val("");
-			$(idCampoPrecoVendaFormatado).text("");
+			var campoPrecoVenda = $("#precoVenda" + index);
+			var campoPrecoVendaFormatado = $("#precoVendaFormatado" + index);
+
+			if (campoPrecoVenda) {
+				
+				campoPrecoVenda.val("");
+			}
+
+			if (campoPrecoVendaFormatado) {
+				
+				campoPrecoVendaFormatado.text("");
+			}
 
 			var somaPrecoVenda = $("input[id^='precoVenda']").sum();
 			
@@ -369,9 +375,19 @@
 
 				$("#totalPrecoVendaDiferencas").text("");
 			}
-						
-			$(idCampoQtdeRecebimentoFisico).val("");
-			$(idCampoQtdeRecebimentoFisicoFormatado).text("");
+
+			var campoQtdeRecebimentoFisico = $("#qtdeRecebimentoFisico" + index);
+			var campoQtdeRecebimentoFisicoFormatado = $("#qtdeRecebimentoFisicoFormatado" + index);
+
+			if (campoQtdeRecebimentoFisico) {
+				
+				campoQtdeRecebimentoFisico.val("");
+			}
+
+			if (campoQtdeRecebimentoFisicoFormatado) {
+				
+				campoQtdeRecebimentoFisicoFormatado.text("");
+			}
 
 			var somaQtdeRecebimentoFisico = $("input[id^='qtdeRecebimentoFisico']").sum();
 			
@@ -380,6 +396,13 @@
 			if (somaQtdeRecebimentoFisico == 0) {
 
 				$("#totalRecebimentoFisico").text("");
+			}
+
+			var linhaDaGrid = $(".gridNovasDiferencas tr").eq(index);
+
+			if (linhaDaGrid) {
+
+				linhaDaGrid.removeClass('linhaComErro');
 			}
 		}
 	</script>

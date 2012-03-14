@@ -82,13 +82,13 @@ function isNumeric(a){
 function esconde(idDiv) {
 	setTimeout(function() {
 		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
-	}, 3000);
+	}, 5000);
 }
 
 function escondeDialog(idDiv) {
 	setTimeout(function() {
 		$('.' + idDiv + ':visible').removeAttr("style").fadeOut();
-	}, 3000);
+	}, 5000);
 }
 
 function montarComboBox(result, linhaEmBranco) {

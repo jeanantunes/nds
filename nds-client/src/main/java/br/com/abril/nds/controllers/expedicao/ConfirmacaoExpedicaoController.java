@@ -8,6 +8,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
@@ -44,8 +47,12 @@ public class ConfirmacaoExpedicaoController {
 		protected static final String DATA_INVALIDA = "A data informada é inválida";
 		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
 		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
-		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro ao confirmar expedições!";
-				
+		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
+		protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
+		
+		private static final Logger LOG = LoggerFactory
+				.getLogger(ConfirmacaoExpedicaoController.class);
+		
 		/**
 		 * Construtor
 		 * 
@@ -174,7 +181,7 @@ public class ConfirmacaoExpedicaoController {
 			try {
 				
 				if(selecionados==null  || selecionados.isEmpty()) {
-					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, NENHUM_REGISTRO_SELECIONADO));
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, NENHUM_REGISTRO_SELECIONADO));
 				} 
 				
 				lancamentoService.confirmarExpedicoes(selecionados,getUsuario().getId());
@@ -190,6 +197,7 @@ public class ConfirmacaoExpedicaoController {
 			}catch(Exception e) {
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();
+				LOG.error(ERRO_CONFIRMAR_EXPEDICOES, e);
 			}
 			
 			if(grid==null) {
@@ -274,9 +282,16 @@ public class ConfirmacaoExpedicaoController {
 			try {
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+			
 			}catch(ValidacaoException e) {
 				mensagens = e.getValidacao().getListaMensagens();
 				status=e.getValidacao().getTipoMensagem().name();
+				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
+			
+			} catch (Exception e) {
+				mensagens.add(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS);
+				status=TipoMensagem.ERROR.name();
+				LOG.error(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS, e);
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
 			

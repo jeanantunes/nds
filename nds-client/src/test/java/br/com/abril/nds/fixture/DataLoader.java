@@ -975,7 +975,7 @@ public class DataLoader {
 	
 
 	/**
-	 * Gera massa de dados para teste de consulta de lanÃ§amentos agrupadas por Box
+	 * Gera massa de dados para teste de consulta de lançamentos agrupadas por Box
 	 * @param session
 	 */
 	public static void carregarDadosParaResumoExpedicaoBox(Session session){
@@ -1221,7 +1221,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaAcme);
 		
-		Boleto boleto8 = Fixture.boleto(90000,
+		Boleto boleto8 = Fixture.boleto("90000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1232,7 +1232,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto9 = Fixture.boleto(100000,
+		Boleto boleto9 = Fixture.boleto("100000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1243,7 +1243,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto10 = Fixture.boleto(110000,
+		Boleto boleto10 = Fixture.boleto("110000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1254,7 +1254,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto11 = Fixture.boleto(120000,
+		Boleto boleto11 = Fixture.boleto("120000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1265,7 +1265,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto12 = Fixture.boleto(130000,
+		Boleto boleto12 = Fixture.boleto("130000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1276,7 +1276,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto13 = Fixture.boleto(140000,
+		Boleto boleto13 = Fixture.boleto("140000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1287,7 +1287,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto14 = Fixture.boleto(150000,
+		Boleto boleto14 = Fixture.boleto("150000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1298,7 +1298,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto15 = Fixture.boleto(160000,
+		Boleto boleto15 = Fixture.boleto("160000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1309,7 +1309,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto16 = Fixture.boleto(170000,
+		Boleto boleto16 = Fixture.boleto("170000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1320,7 +1320,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto17 = Fixture.boleto(180000,
+		Boleto boleto17 = Fixture.boleto("180000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1331,7 +1331,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto18 = Fixture.boleto(190000,
+		Boleto boleto18 = Fixture.boleto("190000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1342,7 +1342,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto19 = Fixture.boleto(200000,
+		Boleto boleto19 = Fixture.boleto("200000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1353,7 +1353,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto20 = Fixture.boleto(210000,
+		Boleto boleto20 = Fixture.boleto("210000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1364,7 +1364,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto21 = Fixture.boleto(220000,
+		Boleto boleto21 = Fixture.boleto("220000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1375,7 +1375,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto22 = Fixture.boleto(230000,
+		Boleto boleto22 = Fixture.boleto("230000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1386,7 +1386,7 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJuridicaDistrib);
 		
-		Boleto boleto23 = Fixture.boleto(240000,
+		Boleto boleto23 = Fixture.boleto("240000",
 						                new Date(), 
 						                new Date(), 
 						                new Date(), 
@@ -1427,11 +1427,11 @@ public class DataLoader {
 	
 	private static void criarFeriado(Session session) {
 		Feriado feriadoIndependencia =
-				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "IndependÃªncia do Brasil");
+				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "Independência do Brasil");
 		save(session, feriadoIndependencia);
 		
 		Feriado feriadoProclamacao =
-				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "ProclamaÃ§Ã£o da RepÃºblica");
+				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "Proclamação da República");
 		save(session, feriadoProclamacao);
 	}
 

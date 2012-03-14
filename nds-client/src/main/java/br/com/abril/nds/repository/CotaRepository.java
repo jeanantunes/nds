@@ -51,4 +51,12 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 */
 	List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota);
 	
+	/**
+	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * 
+	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
+	 * @return Cotasw
+	 */
+	List<Cota> obterCotasSujeitasSuspensao(Integer limiteInadimplencia);
+	
 }

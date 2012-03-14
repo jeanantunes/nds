@@ -15,6 +15,8 @@ import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -30,6 +32,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -95,6 +98,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 
 	private static final String MOTIVO = "Exclusão diferença";
 	
@@ -142,8 +148,20 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
+	public Diferenca lancarDiferenca(Diferenca diferenca) {
+		
+		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
+		
+		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		
+		this.diferencaEstoqueRepository.adicionar(diferenca);
+		
+		return diferenca;
+	}
+	
+	@Transactional
 	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
-								  Map<Long, RateioCotaVO> mapaRateioCotas,
+			 					  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 								  Long idUsuario, 
 								  Set<Long> idsDiferencaExclusao) {
@@ -164,7 +182,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	private void confirmarNovosLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
-													Map<Long, RateioCotaVO> mapaRateioCotas,
+			 										Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 													Long idUsuario, 
 													Set<Long> idsDiferencaExclusao) {
 		
@@ -174,18 +192,36 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				continue;
 			}
+
+			Long idDiferencaTemporario = diferenca.getId();
 			
 			this.diferencaEstoqueRepository.adicionar(diferenca);
 			
-			this.processarRateioCotas(diferenca, mapaRateioCotas);
+			if (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) {
+				
+				List<RateioCotaVO> listaRateioCotas = mapaRateioCotas.remove(idDiferencaTemporario);
+				
+				mapaRateioCotas.put(diferenca.getId(), listaRateioCotas);
+			}
+			
+			diferenca.setMovimentoEstoque(null);
+			
+			this.processarMovimentoEstoque(diferenca, idUsuario);
+			
+			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
+			
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+			
+			this.diferencaEstoqueRepository.alterar(diferenca);
 		}
 	}
 	
-	private void confirmarLancamentosDiferenca(Map<Long, RateioCotaVO> mapaRateioCotas,
+	private void confirmarLancamentosDiferenca(Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 											   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 											   Long idUsuario) {
 		
 		filtroPesquisa.setPaginacao(null);
+		
 		filtroPesquisa.setOrdenacaoColuna(null);
 		
 		List<Diferenca> listaDiferencas =
@@ -193,34 +229,73 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (Diferenca diferenca : listaDiferencas) {
 
-			this.processarRateioCotas(diferenca, mapaRateioCotas);
+			this.processarMovimentoEstoque(diferenca, idUsuario);
 			
-			TipoMovimentoEstoque tipoMovimentoEstoque =
-				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
 			
-			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
-					diferenca.getQtde(), tipoMovimentoEstoque);
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+			
+			this.diferencaEstoqueRepository.merge(diferenca);
 		}
 	}
 	
+	private void processarMovimentoEstoque(Diferenca diferenca, 
+								    	   Long idUsuario) {
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque =
+			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+		
+		MovimentoEstoque movimentoEstoque =
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
+					diferenca.getQtde(), tipoMovimentoEstoque);
+		
+		diferenca.setMovimentoEstoque(movimentoEstoque);
+	}
+	
 	private void processarRateioCotas(Diferenca diferenca,
-									  Map<Long, RateioCotaVO> mapaRateioCotas) {
+									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+									  Long idUsuario) {
 		
 		if (mapaRateioCotas == null || mapaRateioCotas.isEmpty()) {
 			
 			return;
 		}
 			
-		RateioCotaVO rateioCotaVO = mapaRateioCotas.get(diferenca.getId());
+		List<RateioCotaVO> listaRateioCotaVO = mapaRateioCotas.get(diferenca.getId());
 		
-		if (rateioCotaVO == null) {
+		if (listaRateioCotaVO == null || listaRateioCotaVO.isEmpty()) {
 			
 			return;
 		}
 		
-		
+		for (RateioCotaVO rateioCotaVO : listaRateioCotaVO) {
+			
+			RateioDiferenca rateioDiferenca = new RateioDiferenca();
+
+			rateioDiferenca.setDiferenca(diferenca);
+			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
+			
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
+			
+			rateioDiferenca.setCota(cota);
+			
+			EstudoCota estudoCota =
+				this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(
+					diferenca.getMovimentoEstoque().getDataInclusao(), 
+						diferenca.getProdutoEdicao().getId(), rateioCotaVO.getNumeroCota());
+			
+			rateioDiferenca.setEstudoCota(estudoCota);
+			
+			this.rateioDiferencaRepository.adicionar(rateioDiferenca);
+			
+			this.movimentoEstoqueService.gerarMovimentoCota(
+				diferenca.getMovimentoEstoque().getDataInclusao(),
+					diferenca.getProdutoEdicao().getId(),
+						cota.getId(), idUsuario, rateioCotaVO.getQuantidade(), 
+							diferenca.getMovimentoEstoque().getTipoMovimento());
+		}
 	}
 	
 	private void excluirDiferenca(Long idUsuario, Set<Long> idsDiferenca){
