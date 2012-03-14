@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -22,7 +21,7 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	private Date dataVencimentoAte;
 	private StatusCobranca statusCobranca;
 	private PaginacaoVO paginacao;
-	private OrdenacaoColunaLancamento ordenacaoColuna;
+	private OrdenacaoColunaBoletos ordenacaoColuna;
 	
 	/**
 	 * Construtor padrão.
@@ -71,9 +70,9 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		
 		@Override
 		public String toString() {
-			
 			return this.nomeColuna;
 		}
+		
 	}
 	
 	public Integer getNumeroCota() {
@@ -120,11 +119,11 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		return serialVersionUID;
 	}
 
-	public OrdenacaoColunaLancamento getOrdenacaoColuna() {
+	public OrdenacaoColunaBoletos getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}
 
-	public void setOrdenacaoColuna(OrdenacaoColunaLancamento ordenacaoColuna) {
+	public void setOrdenacaoColuna(OrdenacaoColunaBoletos ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
