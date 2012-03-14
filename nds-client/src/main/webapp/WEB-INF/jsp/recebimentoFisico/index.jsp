@@ -290,6 +290,18 @@ validarEdicaoCallBack : function() {
 	}
 	
 	/**
+	* LIMPA OS CAMPOS DE PESQUISA DE NOTA FISCAL
+	*/
+	function limparCamposPesquisa() {
+		
+		$("#cnpj").val("");
+		$("#notaFiscal").val("");
+		$("#serie").val("");
+		$("#chaveAcesso").val("");
+		
+	}
+	
+	/**
 	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
 	*/
 	function limparCampos() {
@@ -517,7 +529,33 @@ validarEdicaoCallBack : function() {
 	
 	}
 
-    
+    /**
+     * FAZ O CANCELAMENTO DE UMA NOTA FISCAL E SEU RECEBIMENTO FISICO.
+     */
+	function cancelarNotaRecebimentoFisico() {
+    	
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/cancelarNotaRecebimentoFisico'/>", "", 
+
+		function(result) {
+					
+	    	if(result.tipoMensagem == "SUCCESS") {
+				
+	    		$(".grids").hide();
+	    		
+	    		limparCamposPesquisa();
+	        	
+	        	limparCamposNovoItem();
+	        	
+	        	limparCampos();
+	        	
+	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
+	        	
+			} 
+	    	
+		});
+    	
+    	
+	}
 	
     
     
@@ -974,6 +1012,13 @@ validarEdicaoCallBack : function() {
 						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
 							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
 							Salvar 
+						</a> 
+					</span>
+					
+					<span class="bt_novos" title="Cancelar"> 
+						<a href="javascript:;" onclick="cancelarNotaRecebimentoFisico()">
+							<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+							Cancelar 
 						</a> 
 					</span>
 					
