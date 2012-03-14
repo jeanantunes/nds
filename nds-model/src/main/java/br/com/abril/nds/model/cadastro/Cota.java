@@ -21,6 +21,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 
+import br.com.abril.nds.model.planejamento.EstudoCota;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -62,6 +64,9 @@ public class Cota {
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
 	private List<HistoricoSituacaoCota> historicos = new ArrayList<HistoricoSituacaoCota>();
+	
+	@OneToMany(mappedBy = "cota")
+	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
 	public Long getId() {
 		return id;
@@ -150,5 +155,15 @@ public class Cota {
 	public void setHistoricos(List<HistoricoSituacaoCota> historicos) {
 		this.historicos = historicos;
 	}
+
+	public Set<EstudoCota> getEstudoCotas() {
+		return estudoCotas;
+	}
+
+	public void setEstudoCotas(Set<EstudoCota> estudoCotas) {
+		this.estudoCotas = estudoCotas;
+	}
+	
+	
 
 }

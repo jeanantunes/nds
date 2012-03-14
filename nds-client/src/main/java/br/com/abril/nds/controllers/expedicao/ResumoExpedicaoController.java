@@ -2,11 +2,13 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
@@ -23,6 +25,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -177,39 +180,47 @@ public class ResumoExpedicaoController {
 	 */
 	private void pesquisarResumoBox(FiltroResumoExpedicaoDTO filtro){
 		
+		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoPorBox(filtro);
+		
+		if (list == null || list.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		List<ResumoExpedicaoVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoVO>();
 		
-		BigDecimal qtdeTotalReparte = BigDecimal.TEN;
-		BigDecimal valorTotalFaturado = BigDecimal.ONE;
+		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
 		
-		//Obter no banco de dados os dados referentes a pesquisa de Box
+		ResumoExpedicaoVO resumoExpedicaoVO = null;
 		
-		int quantidadeRegistros = 30; //Obter no banco de dados o total de registros
-		
-		for (int i = 0; i < quantidadeRegistros; i++){
+		for (ExpedicaoDTO expd  : list){
 			
-			ResumoExpedicaoVO resumoExpedicaoVO = new ResumoExpedicaoVO();
-			resumoExpedicaoVO.setId(i);
-			resumoExpedicaoVO.setCodigoBox(i*7+"");
-			resumoExpedicaoVO.setDescricaoBox("Box " + i);
-			resumoExpedicaoVO.setDataLancamento("10/10/2010");
-			resumoExpedicaoVO.setQntProduto(i*2+"");
-			resumoExpedicaoVO.setReparte("2000");
-			resumoExpedicaoVO.setValorFaturado("5555555");
+			resumoExpedicaoVO = new ResumoExpedicaoVO();
+			resumoExpedicaoVO.setCodigoBox(expd.getCodigoBox());
+			resumoExpedicaoVO.setDescricaoBox(expd.getNomeBox());
+			resumoExpedicaoVO.setQntProduto(getValor(expd.getQntProduto()));
+			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
+			resumoExpedicaoVO.setReparte(getValor(expd.getQntReparte()));
+			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
+			resumoExpedicaoVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
+			
+			valorTotalFaturado = valorTotalFaturado.add(expd.getValorFaturado());
+			qtdeTotalReparte = qtdeTotalReparte.add(expd.getQntReparte());
 			
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}
 		
+		listaLancamentosExpedidos =  ordenarEmMemoria(listaLancamentosExpedidos, filtro.getPaginacao(), filtro.getOrdenacaoColunaBox().toString());
+		
 		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidos));
-
-		tableModel.setTotal(quantidadeRegistros);
-
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaLancamentosExpedidos.size());
 
 		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
-		
 
 		ResultadoResumoExpedicaoVO resultadoResumoExpedicao = new ResultadoResumoExpedicaoVO(tableModel, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
 
@@ -243,11 +254,11 @@ public class ResumoExpedicaoController {
 			resumoExpedicaoVO = new ResumoExpedicaoVO();
 			resumoExpedicaoVO.setCodigoProduto(expd.getCodigoProduto());
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
-			resumoExpedicaoVO.setEdicaoProduto(expd.getNumeroEdicao()+"");
+			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
 			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
-			resumoExpedicaoVO.setReparte(expd.getQntReparte().intValue()+"");
+			resumoExpedicaoVO.setReparte(getValor(expd.getQntReparte()));
 			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
-			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca().intValue()+"");
+			resumoExpedicaoVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
 			
 			valorTotalFaturado = valorTotalFaturado.add(expd.getValorFaturado());
 			qtdeTotalReparte = qtdeTotalReparte.add(expd.getQntReparte());
@@ -270,6 +281,15 @@ public class ResumoExpedicaoController {
 
 		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
 
+	}
+	/**
+	 * Retorna um valor no formato de uma String
+	 * @param valor
+	 * @return
+	 */
+	private String getValor(Number valor ){
+		
+		return (valor!= null)  ?String.valueOf(valor.intValue()):"";
 	}
 	
 	/**
@@ -316,9 +336,33 @@ public class ResumoExpedicaoController {
 
 			filtro.setPaginacao(paginacao);
 
-			filtro.setOrdenacaoColunaProduto(Util.getEnumByStringValue(FiltroResumoExpedicaoDTO.OrdenacaoColunaProduto.values(),sortname));
+			filtro.setOrdenacaoColunaBox(Util.getEnumByStringValue(FiltroResumoExpedicaoDTO.OrdenacaoColunaBox.values(),sortname));
 		}
 	}
+	
+	
+	/**
+	 * Ordena a lista de resumo de lançamentos agrupadas por box.
+	 * @param listaAOrdenar
+	 * @param paginacao
+	 * @param nomeAtributoOrdenacao
+	 * @return List
+	 */
+	@SuppressWarnings("unchecked")
+	private <T extends Object> List<T> ordenarEmMemoria(List<T> listaAOrdenar, 
+														PaginacaoVO paginacao, 
+														String nomeAtributoOrdenacao) {
+		
+		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao));
+		
+		if (Ordenacao.DESC.equals(paginacao.getOrdenacao())) {
+			
+			Collections.reverse(listaAOrdenar);
+		}
+		
+		return listaAOrdenar;
+	}
+	
 		
 	/**
 	 * Carrega o combo de Tipo de Consulta.

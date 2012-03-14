@@ -472,6 +472,28 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
+	 * Faz o cancelamento de uma nota fiscal e seu recebimento físico.
+	 */
+	public void cancelarNotaRecebimentoFisico() {
+		
+		NotaFiscal notaFiscal = getNotaFiscalFromSession();
+		
+		if(notaFiscal == null || notaFiscal.getId() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma Nota Fiscal existente para cancelamento do recebimento físico.");
+		}
+				
+		recebimentoFisicoService.cancelarNotaFiscal(notaFiscal.getId());
+		
+		setItensRecebimentoFisicoToSession(null);
+		setNotaFiscalToSession(null);
+		
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Recebimento Físico cancelado com sucesso");
+		
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+	}
+	
+	/**
 	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
 	 * CNPJ, numero da nota, série e chave de acesso caso a mesma
 	 * seja uma nota fiscal eletrônica. Caso a nota seja encontrada

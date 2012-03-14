@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
@@ -40,6 +41,6 @@ public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	 * @param filtro
 	 * @return List<ExpedicaoDTO>
 	 */
-	Long obterQuantidadeResumoExpedicaoPorBox(FiltroResumoExpedicaoDTO filtro);
+	Long obterQuantidadeResumoExpedicaoPorBox(Long idBox,Date dataLancamento);
 }
 

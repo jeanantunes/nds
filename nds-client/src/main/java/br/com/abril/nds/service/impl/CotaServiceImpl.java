@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.CotaService;
@@ -56,4 +57,12 @@ public class CotaServiceImpl implements CotaService {
 		return listaCotas.get(0);
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.CotaService#obterEnderecosPorIdCota(java.lang.Long)
+	 */
+	@Transactional(readOnly = true)
+	public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota) {
+
+		return this.cotaRepository.obterEnderecosPorIdCota(idCota);
+	}
 }

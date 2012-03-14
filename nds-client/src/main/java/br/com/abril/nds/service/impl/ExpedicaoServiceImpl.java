@@ -30,11 +30,12 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 		
 		return expedicaoRepository.obterResumoExpedicaoPorProduto(filtro);
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
 	public List<ExpedicaoDTO> obterResumoExpedicaoPorBox(FiltroResumoExpedicaoDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return expedicaoRepository.obterResumoExpedicaoPorBox(filtro);
 	}
 	
 	@Transactional(readOnly = true)

@@ -33,7 +33,13 @@ $(function() {
 			width : 90,
 			sortable : true,
 			align : 'center'
-		}, {
+		},{
+			display : 'Diferença',
+			name : 'qntDiferenca',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
 			display : 'Valor Faturado R$',
 			name : 'valorFaturado',
 			width : 90,
@@ -42,10 +48,7 @@ $(function() {
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
+		scroll:true,
 		width : 960,
 		height : 150
 	});
@@ -75,7 +78,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Preço Capa R$',
+			display : 'Preço Venda R$',
 			name : 'precoCapa',
 			width : 90,
 			sortable : true,
@@ -111,7 +114,7 @@ $(function() {
 
 });
 /**
- * Executa o pré processamento das informações retornadas da requisição de pesquisa.
+ * Executa o pr� processamento das informações retornadas da requisi��o de pesquisa.
  */
 function executarPreProcessamento(resultado) {
 	
@@ -142,7 +145,7 @@ function executarPreProcessamento(resultado) {
 }
 
 /**
- * Renderiza componente de data de lançamento
+ * Renderiza componente de data de lan�amento
  */
 $(function() {
 	
@@ -159,7 +162,7 @@ $(function() {
 });
 
 /**
- * Efetua a pesquisa de resumo de expedições, conforme tipo de pesquisa selecionado.
+ * Efetua a pesquisa de resumo de expedi��es, conforme tipo de pesquisa selecionado.
  */
 function pesquisar () {
 		
@@ -180,7 +183,7 @@ function pesquisar () {
 	}
 
 /**
- * Efetua a busca das informações referente a Produto, e monta grid
+ * Efetua a busca das informa��es referente a Produto, e monta grid
  */
 function carregarGridProduto(formData){
 
@@ -195,7 +198,7 @@ function carregarGridProduto(formData){
 }
 
 /**
- * Efetua a busca das informações referente a Box, e monta o grid
+ * Efetua a busca das informa��es referente a Box, e monta o grid
  */
 function carregarGridbox(formData){
 
