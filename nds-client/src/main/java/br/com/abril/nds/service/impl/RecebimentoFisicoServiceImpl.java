@@ -120,7 +120,52 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		}
 		
-		return listaItemRecebimentoFisico;
+		return listaItemRecebimentoFisico;		
+	}
+	
+	/**
+	 * Cancela Recebimento Fisico e Itens de recebimento Fisico e uma Nota de origem manual com seus itens de Nota 
+	 * @param idNotaFiscal
+	 */
+	@Transactional
+	public void cancelarNotaFiscal(Long idNotaFiscal){
+		
+		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNotaFiscal);
+		
+		if(notaFiscal != null){
+			
+			RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
+			
+			if(recebimentoFisico != null){
+				
+				if(StatusConfirmacao.PENDENTE.equals(recebimentoFisico.getStatusConfirmacao())){
+						
+					List<ItemRecebimentoFisico> listaItemRecebimentoFisico = itemRecebimentoFisicoRepository.obterItemPorIdRecebimentoFisico(recebimentoFisico.getId());
+						
+					if(listaItemRecebimentoFisico != null){
+						
+						for(ItemRecebimentoFisico itemRecebimentoFisico : listaItemRecebimentoFisico){
+							
+							itemRecebimentoFisicoRepository.remover(itemRecebimentoFisico);
+						}
+					}				
+					recebimentoFisicoRepository.remover(recebimentoFisico);
+				}
+					
+			}
+			
+			if(Origem.MANUAL.equals(notaFiscal.getOrigem())){
+				
+				List<ItemNotaFiscal> listaItemNotaFiscal = itemNotaFiscalRepository.buscarItensPorIdNota(idNotaFiscal);
+				
+				for(ItemNotaFiscal itemNotaFiscal : listaItemNotaFiscal){
+					
+					itemNotaFiscalRepository.remover(itemNotaFiscal);
+				}
+				
+				notaFiscalRepository.remover(notaFiscal);				
+			}
+		}	
 		
 	}
 	
@@ -724,8 +769,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 			
-			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-					TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+			TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 			
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					recebimentoFisicoDTO.getDataLancamento(), 
@@ -735,7 +781,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 					tipoMovimento);
 			
 		}
-		
 		
 	}
 	

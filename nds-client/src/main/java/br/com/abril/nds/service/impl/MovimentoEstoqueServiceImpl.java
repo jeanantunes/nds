@@ -69,11 +69,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
 		
-		TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-				TipoOperacao.SAIDA, GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		TipoMovimentoEstoque tipoMovimento = 
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
-		TipoMovimentoEstoque tipoMovimentoCota = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-				TipoOperacao.ENTRADA, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		TipoMovimentoEstoque tipoMovimentoCota =
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		List<EstudoCota> listaEstudoCota = estudoCotaRepository.
 				obterEstudoCotaPorDataProdutoEdicao(dataLancamento, idProdutoEdicao);

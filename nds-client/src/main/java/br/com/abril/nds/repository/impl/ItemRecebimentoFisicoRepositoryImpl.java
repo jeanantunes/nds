@@ -1,8 +1,10 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +46,24 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 		criteria.setMaxResults(1);
 		
 		return (ItemRecebimentoFisico) criteria.uniqueResult();
+	}
+	
+	@Override
+	public List<ItemRecebimentoFisico> obterItemPorIdRecebimentoFisico(Long idRecebimentoFisico) {
+		
+		if(	idRecebimentoFisico == null) {
+			throw new NullPointerException();
+		}
+		
+		String hql = " select itemRecebimentoFisico "
+				   + " from ItemRecebimentoFisico itemRecebimentoFisico "
+				   + " where itemRecebimentoFisico.recebimentoFisico.id = :idRecebimentoFisico ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("idRecebimentoFisico", idRecebimentoFisico);
+		
+		return query.list();
 	}
 
 }

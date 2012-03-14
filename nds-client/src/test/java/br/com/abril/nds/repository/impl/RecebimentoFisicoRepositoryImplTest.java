@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -85,6 +87,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		save(usuario);
 		
 		notaFiscal = Fixture.notaFiscalFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
+		notaFiscal.setOrigem(Origem.MANUAL);
 		save(notaFiscal);		
 				
 		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
@@ -117,7 +120,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	}
 		
 	@Test
-	public void excluirItemNotaFiscalTeste(){
+	public void inserirDadosRecebimentoFisico(){
 		
 		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
 		
@@ -135,6 +138,12 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
 		
 		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO, new Date());
+		
+	}
+	
+	@Test
+	public void cancelamentoDeDadosRecebimentoFisico(){
+		recebimentoFisicoService.cancelarNotaFiscal(notaFiscal.getId());
 		
 	}
 		

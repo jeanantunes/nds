@@ -299,6 +299,30 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		
+		if (recebimento != null) {
+			lancamento.addRecebimento(recebimento);
+		}
+		return lancamento;
+	}
+	
+	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,
+			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
+			Date dataStatus, BigDecimal reparte,
+			StatusLancamento statusLancamento, ItemRecebimentoFisico recebimento,Expedicao expedicao) {
+		Lancamento lancamento = new Lancamento();
+		lancamento.setDataCriacao(dataCriacao);
+		lancamento.setDataStatus(dataStatus);
+		lancamento.setReparte(reparte);
+		lancamento.setStatus(statusLancamento);
+		lancamento.setTipoLancamento(tipoLancamento);
+		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setDataLancamentoPrevista(dlp);
+		lancamento.setDataLancamentoDistribuidor(dlp);
+		lancamento.setDataRecolhimentoPrevista(drp);
+		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.setExpedicao(expedicao);
+		lancamento.setExpedicao(expedicao);
 		if (recebimento != null) {
 			lancamento.addRecebimento(recebimento);
 		}
