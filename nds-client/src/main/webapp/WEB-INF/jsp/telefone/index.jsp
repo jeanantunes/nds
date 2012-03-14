@@ -108,7 +108,6 @@
 		}
 		
 		function adicionarTelefone(){
-			//alert('ela me bagunça');
 			
 			var data = "referencia=" + $("#referenciaHidden").val() + "&tipoTelefone=" + $("#tipoTelefone").val() + "&ddd=" + $("#ddd").val() + 
 				"&numero=" + $("#numero").val() + "&ramal=" + $("#ramal").val() + 
@@ -175,7 +174,7 @@
 						
 						$("#botaoAddEditar").text("Editar");
 						
-						opcaoTel(result.tipoTelefone, 'ramalId', 'lblRamalId');
+						opcaoTel(result.tipoTelefone, 'trRamalId', 'lblRamalId', 'ramal');
 					}
 				},
 				null,
