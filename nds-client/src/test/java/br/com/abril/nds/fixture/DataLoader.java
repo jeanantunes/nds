@@ -70,7 +70,7 @@ public class DataLoader {
 	private static PessoaJuridica juridicaDistrib;
 	private static PessoaFisica manoel;
 	private static PessoaFisica jose;
-	private static PessoaFisica ze;
+	private static PessoaFisica maria;
 	
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
@@ -137,10 +137,8 @@ public class DataLoader {
 	
 	private static Cota cotaJose;
 	private static Cota cotaManoel;
-	private static Cota cotaJuridicaAcme;
-	private static Cota cotaJuridicaDinap;
-	private static Cota cotaJuridicaFc;
-	private static Cota cotaJuridicaDistrib;
+	private static Cota cotaMaria;
+
 	
 	private static Estudo estudoVeja1;
 	private static Estudo estudoVeja1Atual;
@@ -152,13 +150,10 @@ public class DataLoader {
 	private static EstudoCota estudoCotaVeja2Joao;
 	private static EstudoCota estudoCotaCaprichoZe;
 	private static EstudoCota estudoCotaVeja1Joao;
-	private static Cota cotaZe;
 	
 	private static Box box300Reparte;
 	private static Box box1;
 	private static Box box2;
-	
-
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -194,7 +189,7 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
-		
+		criarPessoas(session);
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
 		criarUsuarios(session);
@@ -381,7 +376,7 @@ public class DataLoader {
 		estudoCotaVeja2Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2, cotaJose);
 		save(session,estudoCotaVeja2Joao);
 		
-		estudoCotaCaprichoZe = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCapricho1, cotaZe);
+		estudoCotaCaprichoZe = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCapricho1, cotaMaria);
 		save(session,estudoCotaCaprichoZe);
 		
 		estudoCotaSuper1Manoel = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1, cotaManoel);
@@ -779,7 +774,7 @@ public class DataLoader {
 
 	private static void criarCotas(Session session) {
 		
-		criarPessoas(session);
+		
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(session, cotaManoel);
@@ -787,20 +782,10 @@ public class DataLoader {
 		cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(session, cotaJose);
 		
-		cotaZe = Fixture.cota(12345, ze, SituacaoCadastro.ATIVO,box2);
-		save(session, cotaZe);
+		cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
+		save(session, cotaMaria);
 		
-		cotaJuridicaAcme = Fixture.cota(2000, juridicaAcme, SituacaoCadastro.ATIVO,box1);
-		save(session, cotaJuridicaAcme);
-		
-		cotaJuridicaDinap = Fixture.cota(3000, juridicaDinap, SituacaoCadastro.ATIVO,box2);
-		save(session, cotaJuridicaDinap);
-		
-		cotaJuridicaFc = Fixture.cota(4000, juridicaFc, SituacaoCadastro.ATIVO,box2);
-		save(session, cotaJuridicaFc);
-		
-		cotaJuridicaDistrib = Fixture.cota(5000, juridicaDistrib, SituacaoCadastro.ATIVO,box300Reparte);
-		save(session, cotaJuridicaDistrib);
+	
 	}
 
 	private static void criarFornecedores(Session session) {
@@ -1147,10 +1132,10 @@ public class DataLoader {
 		jose = Fixture.pessoaFisica("123.456.789-01",
 				"jose@mail.com", "Jose da Silva");
 		
-		ze = Fixture.pessoaFisica("123.456.789-02",
-				"ze@mail.com", "Ze da Silva");
+		maria = Fixture.pessoaFisica("123.456.789-02",
+				"maria@mail.com", "Maria da Silva");
 		
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib,manoel,jose,ze);
+		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib,manoel,jose,maria);
 	}
 	
 	
@@ -1181,7 +1166,7 @@ public class DataLoader {
                                         "TIPO_BAIXA",
                                         "ACAO", 
                                         StatusCobranca.PAGO,
-                                        cotaJuridicaAcme);
+                                        cotaMaria);
 		
 		Boleto boleto2 = Fixture.boleto("30000",
                 						new Date(), 
@@ -1192,7 +1177,7 @@ public class DataLoader {
                 						"TIPO_BAIXA",
                 						"ACAO", 
                 						StatusCobranca.PAGO,
-                						cotaJuridicaDinap);
+                						cotaJose);
 		
 		Boleto boleto3 = Fixture.boleto("40000",
 						                new Date(), 
@@ -1203,7 +1188,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.PAGO,
-						                cotaJuridicaFc);
+						                cotaMaria);
 		
 		Boleto boleto4 = Fixture.boleto("50000",
 						                new Date(), 
@@ -1214,7 +1199,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto5 = Fixture.boleto("60000",
 						                new Date(), 
@@ -1236,7 +1221,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaAcme);
+						                cotaMaria);
 		
 		Boleto boleto7 = Fixture.boleto("80000",
 						                new Date(), 
@@ -1247,7 +1232,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaAcme);
+						                cotaJose);
 		
 		Boleto boleto8 = Fixture.boleto("90000",
 						                new Date(), 
@@ -1258,7 +1243,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaMaria);
 		
 		Boleto boleto9 = Fixture.boleto("100000",
 						                new Date(), 
@@ -1269,7 +1254,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto10 = Fixture.boleto("110000",
 						                new Date(), 
@@ -1280,7 +1265,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaJose);
 		
 		Boleto boleto11 = Fixture.boleto("120000",
 						                new Date(), 
@@ -1291,7 +1276,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaMaria);
 		
 		Boleto boleto12 = Fixture.boleto("130000",
 						                new Date(), 
@@ -1302,7 +1287,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto13 = Fixture.boleto("140000",
 						                new Date(), 
@@ -1313,7 +1298,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaJose);
 		
 		Boleto boleto14 = Fixture.boleto("150000",
 						                new Date(), 
@@ -1324,7 +1309,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto15 = Fixture.boleto("160000",
 						                new Date(), 
@@ -1335,7 +1320,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaMaria);
 		
 		Boleto boleto16 = Fixture.boleto("170000",
 						                new Date(), 
@@ -1346,7 +1331,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto17 = Fixture.boleto("180000",
 						                new Date(), 
@@ -1357,7 +1342,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaMaria);
 		
 		Boleto boleto18 = Fixture.boleto("190000",
 						                new Date(), 
@@ -1368,7 +1353,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto19 = Fixture.boleto("200000",
 						                new Date(), 
@@ -1379,7 +1364,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaMaria);
 		
 		Boleto boleto20 = Fixture.boleto("210000",
 						                new Date(), 
@@ -1390,7 +1375,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto21 = Fixture.boleto("220000",
 						                new Date(), 
@@ -1401,7 +1386,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaMaria);
 		
 		Boleto boleto22 = Fixture.boleto("230000",
 						                new Date(), 
@@ -1412,7 +1397,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaManoel);
 		
 		Boleto boleto23 = Fixture.boleto("240000",
 						                new Date(), 
@@ -1423,7 +1408,7 @@ public class DataLoader {
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJuridicaDistrib);
+						                cotaJose);
 		
 	    save(session,
     		 boleto0,
@@ -1466,12 +1451,6 @@ public class DataLoader {
 	}
 
 	private static void criarEnderecoCotaPF(Session session) {
-		
-		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");
-
-		Cota cotaManoel = Fixture.cota(1000, manoel, SituacaoCadastro.ATIVO,box300Reparte);
-		
 		Endereco endereco = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
 
@@ -1490,7 +1469,7 @@ public class DataLoader {
 		enderecoCota2.setPrincipal(true);
 		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
 		
-		save(session, manoel, cotaManoel, endereco, enderecoCota, endereco2, enderecoCota2);
+		save(session, endereco, enderecoCota, endereco2, enderecoCota2);
 	}
 	
 	public static void dadosExpedicao(Session session) {
@@ -1592,8 +1571,7 @@ public class DataLoader {
 	}
 	
 	private static void criarParametroEmail(Session session){
-		
-		session.save(Fixture.criarParametrosEmail());
+		save(session, Fixture.criarParametrosEmail());
 	}
 	
 }
