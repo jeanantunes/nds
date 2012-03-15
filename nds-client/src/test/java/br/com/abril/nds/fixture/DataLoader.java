@@ -50,8 +50,8 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -126,8 +126,8 @@ public class DataLoader {
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 
-	private static NotaFiscalFornecedor notaFiscalFornecedor;
-	private static ItemNotaFiscal itemNotaFiscalFornecedor;
+	private static NotaFiscalEntradaFornecedor notaFiscalFornecedor;
+	private static ItemNotaFiscalEntrada itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
 	private static ItemRecebimentoFisico itemRecebimentoFisico;
 	private static EstoqueProduto estoqueProdutoVeja1;
@@ -335,7 +335,7 @@ public class DataLoader {
 
 	private static void criarNotasFiscais(Session session) {
 		notaFiscalFornecedor = Fixture
-				.notaFiscalFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		session.save(notaFiscalFornecedor);
 
@@ -938,12 +938,12 @@ public class DataLoader {
 			
 			for(int x= 1; x< 3 ;x++){
 				
-				NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
+						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 				
-				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+				ItemNotaFiscalEntrada itemNotaFiscal= Fixture.itemNotaFiscal(
 						produtoEdicao, usuario, notaFiscalFornecedor, 
 						Fixture.criarData(23, Calendar.FEBRUARY, 2012), new Date(),TipoLancamento.LANCAMENTO,
 						new BigDecimal(i));					
@@ -1511,12 +1511,12 @@ public class DataLoader {
 			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 			save(session,tipoNotaFiscal);
 
-			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
+					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 			
-			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+			ItemNotaFiscalEntrada itemNotaFiscal= Fixture.itemNotaFiscal(
 					produtoEdicao, usuario, notaFiscalFornecedor, 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					DateUtil.adicionarDias(Fixture.criarData(23, Calendar.FEBRUARY, 2012), 7),

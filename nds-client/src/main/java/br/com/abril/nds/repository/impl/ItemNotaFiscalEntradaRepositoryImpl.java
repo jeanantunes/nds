@@ -5,10 +5,8 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.repository.ItemNotaFiscalRepository;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -18,19 +16,19 @@ import br.com.abril.nds.repository.ItemNotaFiscalRepository;
  * 
  */
 @Repository
-public class ItemNotaFiscalRepositoryImpl extends
-		AbstractRepository<ItemNotaFiscal, Long> implements ItemNotaFiscalRepository {
+public class ItemNotaFiscalEntradaRepositoryImpl extends
+		AbstractRepository<ItemNotaFiscalEntrada, Long> implements ItemNotaFiscalEntradaRepository {
 
 	/**
 	 * Construtor padrão.
 	 */
-	public ItemNotaFiscalRepositoryImpl() {
-		super(ItemNotaFiscal.class);
+	public ItemNotaFiscalEntradaRepositoryImpl() {
+		super(ItemNotaFiscalEntrada.class);
 	}
 	
-	public List<ItemNotaFiscal> buscarItensPorIdNota(Long idNotaFiscal){
+	public List<ItemNotaFiscalEntrada> buscarItensPorIdNota(Long idNotaFiscal){
 		
-		String hql = "from ItemNotaFiscal item "				
+		String hql = "from ItemNotaFiscalEntrada item "				
 				+ " where item.notaFiscal.id = :idNotaFiscal";
 
 		Query query = super.getSession().createQuery(hql);

@@ -19,11 +19,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
@@ -65,7 +65,7 @@ public class ConsultaNotasController {
 	private TipoNotaFiscalService tipoNotaFiscalService;
 
 	@Autowired
-	private NotaFiscalService notaFiscalService;
+	private NotaFiscalEntradaService notaFiscalService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroConsultaNotaFiscal";
 	
@@ -84,7 +84,7 @@ public class ConsultaNotasController {
 
 		try {
 
-			List<NotaFiscalFornecedor> listaNotasFiscais =
+			List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
 				notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 
 			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
@@ -147,11 +147,11 @@ public class ConsultaNotasController {
 		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
 	}
 
-	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscalFornecedor> listaNotasFiscais) {
+	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
 
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
-		for (NotaFiscalFornecedor notaFiscal : listaNotasFiscais) {
+		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
 
 			CellModel cellModel = 
 					new CellModel(
