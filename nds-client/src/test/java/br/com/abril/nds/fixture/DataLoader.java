@@ -218,6 +218,7 @@ public class DataLoader {
 		criarMovimentosEstoqueCota(session);
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
+		criarParametroEmail(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -1017,11 +1018,7 @@ public class DataLoader {
 	
 
 	/**
-<<<<<<< Updated upstream
-	 * Gera massa de dados para teste de consulta de lançamentos agrupadas por Box
-=======
 	 * Gera massa de dados para teste de consulta de lan�amentos agrupadas por Box
->>>>>>> Stashed changes
 	 * @param session
 	 */
 	public static void carregarDadosParaResumoExpedicaoBox(Session session){
@@ -1591,6 +1588,11 @@ public class DataLoader {
 			TipoMovimento tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
 			save(session,tipoMovimento,tipoMovimento2);
 		}
+	}
+	
+	private static void criarParametroEmail(Session session){
+		
+		session.save(Fixture.criarParametrosEmail());
 	}
 	
 }

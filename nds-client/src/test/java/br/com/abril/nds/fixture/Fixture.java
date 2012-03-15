@@ -786,4 +786,17 @@ public class Fixture {
 		
 		return endereco;
 	}
+	
+	public static ParametroSistema[] criarParametrosEmail(){
+		
+		ParametroSistema[] parametrosEmail = new ParametroSistema[5];
+		parametrosEmail[0] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
+		parametrosEmail[1] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
+		parametrosEmail[2] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
+		parametrosEmail[3] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_SENHA, "discover10");
+		parametrosEmail[4] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PORTA, "465");
+		
+		return parametrosEmail;
+		
+	}
 }
