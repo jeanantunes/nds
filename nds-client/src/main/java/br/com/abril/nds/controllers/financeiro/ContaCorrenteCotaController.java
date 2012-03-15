@@ -8,13 +8,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jrimum.domkee.financeiro.banco.Pessoa;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ContaCorrenteCotaDTO;
-import br.com.abril.nds.dto.RecebimentoFisicoDTO;
-import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
@@ -150,5 +148,20 @@ public class ContaCorrenteCotaController {
 		return tableModel;
 		
 	}
+	
+	@Post
+	public void verificarContaCorrenteExistente(String numeroCota) {
+		
+		List<String> msgs = new ArrayList<String>();
 
+		if(numeroCota == null || numeroCota.isEmpty()) {
+			msgs.add("O campo número da Cota é obrigatório");
+		}
+		
+		
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
+			
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+			
+	}
 }

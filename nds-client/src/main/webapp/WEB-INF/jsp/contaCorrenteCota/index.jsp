@@ -9,13 +9,12 @@ function pesquisarPorCotaNome() {
 	var cota = $("#cota").val();	
 	
 	if(cota == "") {
-		$("#nome").val("");
+		$("#nomeCota").val("");
 		return;
 	}
 	
 	$.postJSON("<c:url value='/financeiro/contaCorrenteCota/buscarCota'/>", "numeroCota=" + cota, 
 	function(result) {
-		alert(result.nome);
 		$("#nomeCota").val(result.nome);
 	});	
 
@@ -299,7 +298,7 @@ function popup_encargos() {
               <td width="263"><input type="text" name="nomeCota" id="nomeCota" style="width:230px;"/></td>
               <td width="72">&nbsp;</td>
               <td width="283">&nbsp;</td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="verificarContaCorrenteCotaExistente();">Pesquisar</a></span></td>
             </tr>
           </table>
 
@@ -312,7 +311,7 @@ function popup_encargos() {
           <strong> ------------ </strong>
           <br />
 
-       	  <table class="itemContaCorrenteCota"></table>
+       	  <table class="itemContaCorrenteCotaGrid"></table>
         
                 	<span class="bt_novos" title="Negociar Divida"><a href="javascript:;"><img src="../images/ico_negociar.png" hspace="5" border="0" />Negociar Divida</a></span>
 
