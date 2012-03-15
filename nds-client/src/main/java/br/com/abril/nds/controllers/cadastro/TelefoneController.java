@@ -240,13 +240,15 @@ public class TelefoneController {
 			List<TelefoneCota> lista = new ArrayList<TelefoneCota>();
 			for (Integer key : map.keySet()){
 				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-				TelefoneCota telefoneCota = new TelefoneCota();
-				telefoneCota.setCota(cota);
-				telefoneCota.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-				telefoneCota.setTelefone(telefoneAssociacaoDTO.getTelefone());
-				telefoneCota.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
-				
-				lista.add(telefoneCota);
+				if (telefoneAssociacaoDTO.getTipoTelefone() != null){
+					TelefoneCota telefoneCota = new TelefoneCota();
+					telefoneCota.setCota(cota);
+					telefoneCota.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
+					telefoneCota.setTelefone(telefoneAssociacaoDTO.getTelefone());
+					telefoneCota.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
+					
+					lista.add(telefoneCota);
+				}
 			}
 			
 			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
@@ -258,13 +260,15 @@ public class TelefoneController {
 			List<TelefoneFornecedor> lista = new ArrayList<TelefoneFornecedor>();
 			for (Integer key : map.keySet()){
 				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-				TelefoneFornecedor telefoneFornecedor = new TelefoneFornecedor();
-				telefoneFornecedor.setFornecedor(fornecedor);
-				telefoneFornecedor.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-				telefoneFornecedor.setTelefone(telefoneAssociacaoDTO.getTelefone());
-				telefoneFornecedor.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
-				
-				lista.add(telefoneFornecedor);
+				if (telefoneAssociacaoDTO.getTipoTelefone() != null){
+					TelefoneFornecedor telefoneFornecedor = new TelefoneFornecedor();
+					telefoneFornecedor.setFornecedor(fornecedor);
+					telefoneFornecedor.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
+					telefoneFornecedor.setTelefone(telefoneAssociacaoDTO.getTelefone());
+					telefoneFornecedor.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
+					
+					lista.add(telefoneFornecedor);
+				}
 			}
 			
 			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();

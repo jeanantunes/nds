@@ -16,7 +16,6 @@
 			
 			$("#telefonesGrid").flexigrid({
 				preProcess: processarResultado,
-				//url : '/nds-client/cadastro/telefone/pesquisarTelefones',
 				dataType : 'json',
 				colModel : [  {
 					display : 'Tipo Telefone',
@@ -249,6 +248,8 @@
 							result.tipoMensagem, 
 							result.listaMensagens
 						);
+						
+						cadastrar();
 					}
 				},
 				null,
@@ -257,6 +258,10 @@
 		}
 		
 		function cadastrar(){
+			limparCampos();
+			$("#referenciaHidden").val("");
+			$("#botaoAddEditar").text("Incluir Novo");
+			
 			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
 			$.postJSON(
 				'/nds-client/cadastro/telefone/cadastrar',
