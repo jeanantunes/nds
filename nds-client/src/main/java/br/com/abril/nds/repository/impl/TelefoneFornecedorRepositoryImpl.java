@@ -45,7 +45,7 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<Telefon
 	@Override
 	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
 		StringBuilder hql = new StringBuilder("delete from TelefoneFornecedor ");
-		hql.append(" where id in (:idsFornecedor) ");
+		hql.append(" where telefone.id in (:idsFornecedor) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idsFornecedor", listaTelefonesFornecedor);

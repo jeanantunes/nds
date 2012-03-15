@@ -175,6 +175,17 @@ public class FuroProdutoController {
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 	
+	@Post
+	public void buscarNomeProduto(String codigoProduto){
+		String nomeProduto = this.produtoService.obterNomeProdutoPorCodigo(codigoProduto);
+		
+		if (nomeProduto == null){
+			this.result.use(Results.json()).from("").serialize();
+		} else {
+			this.result.use(Results.json()).from(nomeProduto, "result").serialize();
+		}
+	}
+	
 	private void validarDadosEntradaConfirmarFuro(String codigoProduto, Long idProdutoEdicao, 
 			String novaData, Long idLancamento) {
 		

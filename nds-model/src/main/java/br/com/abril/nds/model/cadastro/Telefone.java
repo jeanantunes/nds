@@ -25,7 +25,7 @@ public class Telefone {
 	@Column(name = "NUMERO", nullable = false)
 	private String numero;
 	
-	@Column(name = "RAMAL")
+	@Column(name = "RAMAL", nullable = true)
 	private String ramal;
 	
 	@Column(name = "DDD")

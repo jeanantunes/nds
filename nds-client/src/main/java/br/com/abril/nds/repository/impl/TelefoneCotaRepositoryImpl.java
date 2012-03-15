@@ -43,12 +43,12 @@ public class TelefoneCotaRepositoryImpl extends AbstractRepository<TelefoneCota,
 	}
 
 	@Override
-	public void removerTelefonesCota(Collection<Long> listaTelefonesCota) {
+	public void removerTelefonesCota(Collection<Long> listaTelefones) {
 		StringBuilder hql = new StringBuilder("delete from TelefoneCota ");
-		hql.append(" where id in (:idsCota) ");
+		hql.append(" where telefone.id in (:ids) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameterList("idsCota", listaTelefonesCota);
+		query.setParameterList("ids", listaTelefones);
 		
 		query.executeUpdate();
 	}

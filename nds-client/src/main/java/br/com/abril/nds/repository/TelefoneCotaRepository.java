@@ -12,5 +12,5 @@ public interface TelefoneCotaRepository extends Repository<TelefoneCota, Long> {
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
 	
-	void removerTelefonesCota(Collection<Long> listaTelefonesCota);
+	void removerTelefonesCota(Collection<Long> listaTelefones);
 }
