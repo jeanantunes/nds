@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
@@ -36,12 +37,15 @@ public abstract class NotaFiscal {
 	private BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "CFOP_ID")
 	private CFOP cfop;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "PJ_ID")
 	private PessoaJuridica emitente;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_NF_ID")
 	private TipoNotaFiscal tipoNotaFiscal;
 	
 	public Date getDataEmissao() {

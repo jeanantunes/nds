@@ -8,6 +8,8 @@ package br.com.abril.nds.model.fiscal;
 public enum StatusNotaFiscalEntrada {
 	
 	RECEBIDA,
+	
 	NAO_RECEBIDA,
+	
 	PENDENTE
 }
