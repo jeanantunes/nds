@@ -337,7 +337,7 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
-				TipoCobranca.BOLETO, new BigDecimal(200)));
+				TipoCobranca.BOLETO, new BigDecimal(200), true));
 		return distribuidor;
 	}
 
@@ -753,10 +753,13 @@ public class Fixture {
 	}
 	
 	public static PoliticaCobranca criarPoliticaCobranca(
-			Distribuidor distribuidor, TipoCobranca tipo, BigDecimal valorMinimo) {
+			Distribuidor distribuidor, TipoCobranca tipo,
+			BigDecimal valorMinimo, boolean aceitaPagamentoDivergente) {
+		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setTipoCobranca(tipo);
 		politicaCobranca.setValorMinino(valorMinimo);
+		politicaCobranca.setAceitaPagamentoDivergente(aceitaPagamentoDivergente);
 		politicaCobranca.setDistribuidor(distribuidor);
 		return politicaCobranca;
 	}
