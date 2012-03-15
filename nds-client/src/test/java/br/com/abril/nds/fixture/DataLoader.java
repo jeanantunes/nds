@@ -166,10 +166,12 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
+
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarBoletos(session);
+
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1002,6 +1004,7 @@ public class DataLoader {
 		}
 	}
 	
+
 
 	/**
 	 * Gera massa de dados para teste de consulta de lan�amentos agrupadas por Box

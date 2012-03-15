@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.IOException;
 import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,6 +47,12 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	public void teste() {
 		
 		boletoService.baixarBoletos(null, null);
+	}
+	
+	@Test
+	public void testeImpressao() throws IOException {
+		byte[] b = boletoService.gerarImpressaoBoleto("123");
+		Assert.assertTrue(b.length > 0);
 	}
 	
 }
