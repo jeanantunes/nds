@@ -3,13 +3,15 @@ package br.com.abril.nds.model.cadastro;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
 @DiscriminatorValue(value = "COTA")
 public class ContratoCota extends Contrato {
 	
-	@OneToOne(mappedBy = "contratoCota")
+	@OneToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	@Column(name = "EXIGE_DOC_SUSPENSAO", nullable = false)
 	private boolean exigeDocumentacaoSuspencao;

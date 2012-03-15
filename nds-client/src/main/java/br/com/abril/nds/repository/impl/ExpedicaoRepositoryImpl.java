@@ -233,7 +233,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> 
 			.append(" and lancamento.status =:status ")
 			.append(" and box.tipoBox =:tipoBox ")
 			
-			.append(" GROUP BY box.id");
+			.append(" GROUP BY box.codigo");
 		
 		return hql.toString();
 	}

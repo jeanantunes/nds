@@ -45,10 +45,4 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 		return expedicaoRepository.obterQuantidadeResumoExpedicaoPorProduto(filtro);
 	}
 
-	@Override
-	public Long obterQuantidadeResumoExpedicaoPorBox(FiltroResumoExpedicaoDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Ignore
 public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Autowired
