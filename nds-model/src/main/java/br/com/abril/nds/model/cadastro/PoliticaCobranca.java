@@ -30,6 +30,9 @@ public class PoliticaCobranca {
 	private int inadimplenciasSuspencao;
 	@OneToOne(mappedBy = "politicaCobranca")
 	private Distribuidor distribuidor;
+	@Column(name = "ACEITA_PGTO_DIVERGENTE")
+	private boolean aceitaPagamentoDivergente;
+	
 	
 	public Long getId() {
 		return id;
@@ -69,6 +72,14 @@ public class PoliticaCobranca {
 	
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
+	}
+
+	public boolean isAceitaPagamentoDivergente() {
+		return aceitaPagamentoDivergente;
+	}
+
+	public void setAceitaPagamentoDivergente(boolean aceitaPagamentoDivergente) {
+		this.aceitaPagamentoDivergente = aceitaPagamentoDivergente;
 	}
 
 }
