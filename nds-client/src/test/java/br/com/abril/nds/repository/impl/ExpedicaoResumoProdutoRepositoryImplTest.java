@@ -132,7 +132,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 				
 				save(movimentoEstoque);
 				
-				Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque);
+				Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
 				save(diferenca);
 				
 				itemFisico.setDiferenca(diferenca);

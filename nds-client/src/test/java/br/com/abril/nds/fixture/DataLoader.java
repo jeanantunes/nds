@@ -251,22 +251,22 @@ public class DataLoader {
 		
 		Diferenca diferenca =
 			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
 		session.save(diferenca);
 		
 		Diferenca diferenca2 =
 			Fixture.diferenca(new BigDecimal(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true);
 		session.save(diferenca2);
 		
 		Diferenca diferenca3 =
 			Fixture.diferenca(new BigDecimal(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true);
 		session.save(diferenca3);
 		
 		Diferenca diferenca4 =
 			Fixture.diferenca(new BigDecimal(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true);
 		session.save(diferenca4);
 		
 		// Fim dos inserts na tabela DIFERENCA
@@ -878,7 +878,7 @@ public class DataLoader {
 			Diferenca diferenca = 
 				Fixture.diferenca(
 					new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca);
+						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true);
 			
 			session.save(diferenca);
 		}
@@ -979,7 +979,7 @@ public class DataLoader {
 				if(indDiferenca > 5){
 					
 					
-					Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque);
+					Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
 					session.save(diferenca);
 					
 					itemFisico.setDiferenca(diferenca);
@@ -1017,7 +1017,11 @@ public class DataLoader {
 	
 
 	/**
+<<<<<<< Updated upstream
 	 * Gera massa de dados para teste de consulta de lançamentos agrupadas por Box
+=======
+	 * Gera massa de dados para teste de consulta de lan�amentos agrupadas por Box
+>>>>>>> Stashed changes
 	 * @param session
 	 */
 	public static void carregarDadosParaResumoExpedicaoBox(Session session){
@@ -1072,22 +1076,22 @@ public class DataLoader {
 		
 		Diferenca diferenca =
 			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
 		session.save(diferenca);
 		
 		Diferenca diferenca2 =
 			Fixture.diferenca(new BigDecimal(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true);
 		session.save(diferenca2);
 		
 		Diferenca diferenca3 =
 			Fixture.diferenca(new BigDecimal(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true);
 		session.save(diferenca3);
 		
 		Diferenca diferenca4 =
 			Fixture.diferenca(new BigDecimal(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true);
 		session.save(diferenca4);
 		
 		// Fim dos inserts na tabela DIFERENCA
@@ -1453,11 +1457,13 @@ public class DataLoader {
 	
 	private static void criarFeriado(Session session) {
 		Feriado feriadoIndependencia =
+
 				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "Independência do Brasil");
 		save(session, feriadoIndependencia);
 		
 		Feriado feriadoProclamacao =
 				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "Proclamação da República");
+
 		save(session, feriadoProclamacao);
 	}
 

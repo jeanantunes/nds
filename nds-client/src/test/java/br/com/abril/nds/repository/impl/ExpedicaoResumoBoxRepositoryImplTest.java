@@ -312,22 +312,22 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 
 		Diferenca diferenca =
 			Fixture.diferenca(new BigDecimal(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
 		save(diferenca);
 		
 		Diferenca diferenca2 =
 			Fixture.diferenca(new BigDecimal(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true);
 		save(diferenca2);
 		
 		Diferenca diferenca3 =
 			Fixture.diferenca(new BigDecimal(3), usuarioJoao, produtoEdicaoSuper1, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true);
 		save(diferenca3);
 		
 		Diferenca diferenca4 =
 			Fixture.diferenca(new BigDecimal(4), usuarioJoao, produtoEdicaoCapricho1, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true);
 		save(diferenca4);
 						
 		gerarCargaDiferencaEstoque(
@@ -429,7 +429,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 			Diferenca diferenca = 
 			Fixture.diferenca(
 			new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
-			StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca);
+			StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
 			
 			save(diferenca);
 		}
