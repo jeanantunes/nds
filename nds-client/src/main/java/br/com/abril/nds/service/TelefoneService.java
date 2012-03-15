@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -13,11 +14,11 @@ public interface TelefoneService {
 	
 	void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota);
 	
-	void removerTelefonesCota(List<TelefoneCota> listaTelefonesCota);
+	void removerTelefonesCota(Collection<Long> listaTelefonesCota);
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar);
 	
 	void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor);
 	
-	void removerTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor);
+	void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor);
 }

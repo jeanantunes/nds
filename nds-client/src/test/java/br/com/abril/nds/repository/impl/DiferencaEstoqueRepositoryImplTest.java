@@ -151,7 +151,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque);
+								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque, true);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			

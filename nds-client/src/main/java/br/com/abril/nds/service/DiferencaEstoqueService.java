@@ -63,8 +63,7 @@ public interface DiferencaEstoqueService {
 	void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 						   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-						   Long idUsuario, 
-						   Set<Long> idsDiferencaExclusao);
+						   Long idUsuario);
 
 	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
 	

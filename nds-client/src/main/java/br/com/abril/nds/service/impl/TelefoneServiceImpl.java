@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -27,6 +28,9 @@ public class TelefoneServiceImpl implements TelefoneService {
 	
 	@Autowired
 	private TelefoneFornecedorRepository telefoneFornecedorRepository;
+	
+	@Autowired
+	private TelefoneRepository telefoneRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -56,8 +60,10 @@ public class TelefoneServiceImpl implements TelefoneService {
 				}
 				
 				if (telefoneCota.getTelefone().getId() == null){
+					this.telefoneRepository.adicionar(telefoneCota.getTelefone());
 					this.telefoneCotaRepository.adicionar(telefoneCota);
 				} else {
+					this.telefoneRepository.alterar(telefoneCota.getTelefone());
 					this.telefoneCotaRepository.alterar(telefoneCota);
 				}
 			}
@@ -66,22 +72,11 @@ public class TelefoneServiceImpl implements TelefoneService {
 
 	@Transactional
 	@Override
-	public void removerTelefonesCota(List<TelefoneCota> listaTelefonesCota) {
+	public void removerTelefonesCota(Collection<Long> listaTelefonesCota) {
 		
-		List<Long> idsTelefones = new ArrayList<Long>();
-		
-		if (listaTelefonesCota != null){
-			for (TelefoneCota telefoneCota : listaTelefonesCota){
-				if (telefoneCota == null || telefoneCota.getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone Cota é obrigatório");
-				}
-				
-				idsTelefones.add(telefoneCota.getId());
-			}
-		}
-		
-		if (!idsTelefones.isEmpty()){
-			this.telefoneCotaRepository.removerTelefonesCota(idsTelefones);
+		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
+			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
+			this.telefoneRepository.removerTelefones(listaTelefonesCota);
 		}
 	}
 
@@ -113,8 +108,10 @@ public class TelefoneServiceImpl implements TelefoneService {
 				}
 				
 				if (telefoneFornecedor.getTelefone().getId() == null){
+					this.telefoneRepository.adicionar(telefoneFornecedor.getTelefone());
 					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
 				} else {
+					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
 					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
 				}
 			}
@@ -123,22 +120,10 @@ public class TelefoneServiceImpl implements TelefoneService {
 
 	@Transactional
 	@Override
-	public void removerTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor) {
-
-		List<Long> idsTelefones = new ArrayList<Long>();
-		
-		if (listaTelefonesFornecedor != null){
-			for (TelefoneFornecedor telefoneFornecedor : listaTelefonesFornecedor){
-				if (telefoneFornecedor == null || telefoneFornecedor.getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone Fornecedor é obrigatório");
-				}
-				
-				idsTelefones.add(telefoneFornecedor.getId());
-			}
-		}
-		
-		if (!idsTelefones.isEmpty()){
-			this.telefoneFornecedorRepository.removerTelefonesFornecedor(idsTelefones);
+	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
+		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
+			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
+			this.telefoneRepository.removerTelefones(listaTelefonesFornecedor);
 		}
 	}
 	
@@ -156,12 +141,20 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Número é obrigatório");
 		}
 		
-		if (telefone.getRamal() == null || telefone.getRamal().trim().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Ramal é obrigatório");
-		}
-		
 		if (tipoTelefone == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo Telefone é obrigatório");
+		}
+		
+		if (telefone.getDdd().trim().length() > 255){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo DDD");
+		}
+		
+		if (telefone.getNumero().trim().length() > 255){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Número");
+		}
+		
+		if (telefone.getRamal().trim().length() > 255){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Ramal");
 		}
 	}
 }

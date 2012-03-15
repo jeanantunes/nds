@@ -38,4 +38,6 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * @return {@link Produto}
 	 */
 	Produto obterProdutoPorCodigo(String codigoProduto);
+	
+	String obterNomeProdutoPorCodigo(String codigoProduto);
 }

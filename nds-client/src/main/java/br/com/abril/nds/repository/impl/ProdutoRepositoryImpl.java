@@ -62,5 +62,12 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		
 		return (Produto) query.uniqueResult();
 	}
-	
+
+	@Override
+	public String obterNomeProdutoPorCodigo(String codigoProduto) {
+		Query query = this.getSession().createQuery("select p.nome from Produto p where p.codigo = :codigoProduto");
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		return (String) query.uniqueResult();
+	}
 }

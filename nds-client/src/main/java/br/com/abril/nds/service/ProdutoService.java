@@ -39,4 +39,6 @@ public interface ProdutoService {
 	 */
 	Produto obterProdutoPorCodigo(String codigoProduto);
 	
+	String obterNomeProdutoPorCodigo(String codigoProduto);
+	
 }
