@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
@@ -59,13 +60,16 @@ public class BaixaFinanceiraController {
 			IOUtils.copyLarge(uploadedFile.getFile(), new FileOutputStream(file));
 			
 			ArquivoPagamentoBancoDTO arquivoPagamento =
-					leitorRetornoBancoService.obterPagamentosBanco(file);
+					leitorRetornoBancoService.obterPagamentosBanco(file,
+																   uploadedFile.getFileName());
 			
 			boletoService.baixarBoletos(arquivoPagamento, obterUsuario());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		result.forwardTo(BaixaFinanceiraController.class).baixa();
 	}
 	
 	private Usuario obterUsuario() {

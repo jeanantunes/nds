@@ -10,7 +10,9 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -20,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -728,7 +731,8 @@ public class Fixture {
 				                String tipoBaixa,
 				                String acao,
 				                StatusCobranca status,
-				                Cota cota){
+				                Cota cota,
+				                Banco banco){
 			
 		Boleto boleto = new Boleto();
 		boleto.setNossoNumero(nossoNumero);
@@ -741,6 +745,8 @@ public class Fixture {
 		boleto.setAcao(acao);
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
+		boleto.setBanco(banco);
+		
 		return boleto;
 	}
 	
@@ -801,5 +807,25 @@ public class Fixture {
 		
 		return parametrosEmail;
 		
+	}
+	
+	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
+								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco) {
+		
+		Banco banco = new Banco();
+		
+		banco.setAgencia(agencia);
+		banco.setAtivo(ativo);
+		banco.setCarteira(carteira);
+		banco.setCodigoCedente(codigoCedente);
+		banco.setConta(conta);
+		banco.setDvAgencia(dvAgencia);
+		banco.setDvConta(dvConta);
+		banco.setInstrucoes(instrucoes);
+		banco.setMoeda(moeda);
+		banco.setNome(nome);
+		banco.setNumeroBanco(numeroBanco);
+		
+		return banco;
 	}
 }

@@ -26,7 +26,9 @@ public class LeitorRetornoBancoServiceImpl implements LeitorRetornoBancoService 
 
 	public static final String FORMATO_DATA_ARQUIVO = "ddMMyy";
 	
-	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file) throws IOException, ParseException {
+	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file,
+														 String nomeArquivo) throws IOException,
+														 							ParseException {
 		
 		List<String> lines = FileUtils.readLines(file, "UTF8");
 		
@@ -85,6 +87,7 @@ public class LeitorRetornoBancoServiceImpl implements LeitorRetornoBancoService 
 		
 		arquivoPagamentoBanco.setListaPagemento(listaPagamento);
 		arquivoPagamentoBanco.setSomaPagamentos(somaPagamentos);
+		arquivoPagamentoBanco.setNomeArquivo(nomeArquivo);
 		
 		return arquivoPagamentoBanco;
 	}
