@@ -57,7 +57,7 @@ public class Diferenca {
 	private MovimentoEstoque movimentoEstoque;
 	
 	@Column(name = "AUTOMATICA")
-	private Boolean automatica;
+	private Boolean automatica = false;
 	
 	@Transient
 	private BigDecimal valorTotalDiferenca;

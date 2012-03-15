@@ -44,6 +44,8 @@ public class DiferencaVO implements Serializable {
 	
 	private BigDecimal qtdeEstoqueAtual;
 	
+	private Boolean automatica;
+	
 	private boolean cadastrado;
 	
 	/**
@@ -261,6 +263,20 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setCadastrado(boolean cadastrado) {
 		this.cadastrado = cadastrado;
+	}
+	
+	/**
+	 * @return the automatica
+	 */
+	public Boolean isAutomatica() {
+		return automatica;
+	}
+
+	/**
+	 * @param automatica the automatica to set
+	 */
+	public void setAutomatica(Boolean automatica) {
+		this.automatica = automatica;
 	}
 	
 	/* (non-Javadoc)

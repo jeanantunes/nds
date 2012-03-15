@@ -614,7 +614,8 @@ public class Fixture {
 									  TipoDiferenca tipoDiferenca,
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
-									  MovimentoEstoque movimentoEstoque) {
+									  MovimentoEstoque movimentoEstoque,
+									  Boolean automatica) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -625,6 +626,7 @@ public class Fixture {
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setMovimentoEstoque(movimentoEstoque);
+		diferenca.setAutomatica(automatica);
 		
 		return diferenca;
 	}

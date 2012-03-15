@@ -113,6 +113,21 @@
 			$("#novaData").val("");
 			$("#codigo").focus();
 		}
+		
+		function buscarNomeProduto(){
+			var data = "codigoProduto=" + $("#codigo").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/buscarNomeProduto'/>", data,
+				function(result){
+					if (result){
+						$("#produto").val(result);
+						$("#edicao").focus();
+					} else {
+						$("#produto").val("");
+						$("#produto").focus();
+					}
+				}
+			);
+		}
 	</script>
 	<style type="text/css">
 		.dados, .dadosFiltro, .grids{display:none;}
@@ -133,7 +148,7 @@
 			        	<tr>
 			        		<td width="45" align="right">Código:</td>
 			        		<td width="79">
-			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255"/>
+			        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255" onblur="buscarNomeProduto();"/>
 			        		</td>
 							<td width="64" align="right">Produto:</td>
 							<td width="196">
