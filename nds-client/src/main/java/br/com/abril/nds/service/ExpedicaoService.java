@@ -33,10 +33,4 @@ public interface ExpedicaoService {
 	 */
 	Long obterQuantidadeResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro);
 	
-	/**
-	 * Retorna a quantidade de resumo de expedição de box.
-	 * @param filtro
-	 * @return List<ExpedicaoDTO>
-	 */
-	Long obterQuantidadeResumoExpedicaoPorBox(FiltroResumoExpedicaoDTO filtro);
 }

@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -28,6 +29,9 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Autowired
 	private TelefoneFornecedorRepository telefoneFornecedorRepository;
 	
+	@Autowired
+	private TelefoneRepository telefoneRepository;
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
@@ -36,7 +40,24 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		}
 		
-		return this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneCotaRepository.buscarTelefonesPessoaPorCota(idCota);
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
+		this.salvarTelefonesCota(listaTelefonesAdicionar);
+		this.removerTelefonesCota(listaTelefonesRemover);
 	}
 
 	@Transactional
@@ -56,6 +77,12 @@ public class TelefoneServiceImpl implements TelefoneService {
 				}
 				
 				if (telefoneCota.getTelefone().getId() == null){
+					this.telefoneRepository.adicionar(telefoneCota.getTelefone());
+				} else {
+					this.telefoneRepository.alterar(telefoneCota.getTelefone());
+				}
+				
+				if (telefoneCota.getId() == null){
 					this.telefoneCotaRepository.adicionar(telefoneCota);
 				} else {
 					this.telefoneCotaRepository.alterar(telefoneCota);
@@ -70,6 +97,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
 			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
+			this.telefoneRepository.removerTelefones(listaTelefonesCota);
 		}
 	}
 
@@ -81,7 +109,24 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdFornecedor é obrigatório");
 		}
 		
-		return this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneFornecedorRepository.buscarTelefonesPessoaPorFornecedor(idFornecedor);
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public void cadastrarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
+		this.salvarTelefonesFornecedor(listaTelefonesAdicionar);
+		this.removerTelefonesFornecedor(listaTelefonesRemover);
 	}
 
 	@Transactional
@@ -101,6 +146,12 @@ public class TelefoneServiceImpl implements TelefoneService {
 				}
 				
 				if (telefoneFornecedor.getTelefone().getId() == null){
+					this.telefoneRepository.adicionar(telefoneFornecedor.getTelefone());
+				} else {
+					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
+				}
+				
+				if (telefoneFornecedor.getId() == null){
 					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
 				} else {
 					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
@@ -114,6 +165,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
 		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
 			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
+			this.telefoneRepository.removerTelefones(listaTelefonesFornecedor);
 		}
 	}
 	
@@ -131,12 +183,20 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Número é obrigatório");
 		}
 		
-		if (telefone.getRamal() == null || telefone.getRamal().trim().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Ramal é obrigatório");
-		}
-		
 		if (tipoTelefone == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo Telefone é obrigatório");
+		}
+		
+		if (telefone.getDdd().trim().length() > 255){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo DDD");
+		}
+		
+		if (telefone.getNumero().trim().length() > 255){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Número");
+		}
+		
+		if (telefone.getRamal().trim().length() > 255){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Ramal");
 		}
 	}
 }

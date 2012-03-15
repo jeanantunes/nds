@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 
@@ -45,11 +46,24 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<Telefon
 	@Override
 	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
 		StringBuilder hql = new StringBuilder("delete from TelefoneFornecedor ");
-		hql.append(" where id in (:idsFornecedor) ");
+		hql.append(" where telefone.id in (:idsFornecedor) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idsFornecedor", listaTelefonesFornecedor);
 		
 		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Telefone> buscarTelefonesPessoaPorFornecedor(Long idFornecedor) {
+		StringBuilder hql = new StringBuilder("select c.juridica.telefones ");
+		hql.append(" from Fornecedor c ")
+		   .append(" where c.id = :idFornecedor");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		return query.list();
 	}
 }

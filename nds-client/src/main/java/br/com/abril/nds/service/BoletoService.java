@@ -1,13 +1,11 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
-import br.com.abril.nds.dto.PagamentoDTO;
-import br.com.abril.nds.model.StatusCobranca;
+
+import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
-
-//import br.com.abril.nds.model.cadastro.Boleto;
-
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -17,9 +15,11 @@ import br.com.abril.nds.model.financeiro.Boleto;
  *
  */
 public interface BoletoService {
-
+    
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
+
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
-	void baixarBoleto(PagamentoDTO pagamentoDTO);
+	
+	void baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento, Usuario usuario);
 	
 }
