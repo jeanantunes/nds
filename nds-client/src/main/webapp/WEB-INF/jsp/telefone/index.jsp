@@ -1,6 +1,6 @@
 <head>
 	<script type="text/javascript">
-		function popup() {
+		function popupTelefone() {
 			
 			$("#manutencaoTelefones").dialog({
 				resizable: false,
@@ -16,7 +16,7 @@
 			
 			$("#telefonesGrid").flexigrid({
 				preProcess: processarResultado,
-				url : '/nds-client/cadastro/telefone/pesquisarTelefones',
+				//url : '/nds-client/cadastro/telefone/pesquisarTelefones',
 				dataType : 'json',
 				colModel : [  {
 					display : 'Tipo Telefone',
@@ -37,7 +37,7 @@
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Ramal',
+					display : 'Ramal / ID',
 					name : 'ramal',
 					width : 100,
 					sortable : true,
@@ -115,8 +115,8 @@
 		
 		function adicionarTelefone(){
 			
-			var data = "referencia=" + $("#referenciaHidden").val() + "&tipoTelefone=" + $("#tipoTelefone").val() + "&ddd=" + $("#ddd").val() + 
-				"&numero=" + $("#numero").val() + "&ramal=" + $("#ramal").val() + 
+			var data = "referencia=" + $("#referenciaHidden").val() + "&tipoTelefone=" + $("#tipoTelefone").val() + 
+				"&ddd=" + $("#ddd").val() + "&numero=" + $("#numero").val() + "&ramal=" + $("#ramal").val() + 
 				"&principal=" + ("" + $("#principal").attr("checked") == 'checked');
 			
 			$.postJSON(
@@ -223,10 +223,12 @@
 				case 'FAX':
 					div1.show();
 					lbl.text('Ramal:');
+					campo.css('width', 40);
 				break;
 				case 'RADIO':
 					div1.show();
 					lbl.text('ID:');
+					campo.css('width', 167);
 				break;
 				default:
 					div1.hide();
@@ -234,9 +236,52 @@
 				break;
 			}
 		}
+		
+		//OS MÉTODOS A BAIXO FORAM CRIADOS APENAS PARA TESTE, JA QUE ESSA TELA SERÁ INCLUDE PARA OUTRAS
+		function salvar(){
+			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
+			$.postJSON(
+				'/nds-client/cadastro/telefone/salvar',
+				data,
+				function(result){
+					if (result.tipoMensagem){
+						exibirMensagemDialog(
+							result.tipoMensagem, 
+							result.listaMensagens
+						);
+					}
+				},
+				null,
+				true
+			);
+		}
+		
+		function cadastrar(){
+			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
+			$.postJSON(
+				'/nds-client/cadastro/telefone/cadastrar',
+				data,
+				function(result){
+					popupTelefone();
+					$("#telefonesGrid").flexAddData({
+						page: 1, total: 1, rows: result.rows
+					});
+				},
+				null,
+				true
+			);
+		}
 	</script>
 </head>
-
+ID Cota:
+<br/>
+<input type="text" id="idCota"/>
+<br/><br/>
+ID Fornecedor:
+<br/>
+<input type="text" id="idFornecedor"/>
+<br/><br/>
+<button onclick="cadastrar();">Cadastrar</button>
 <div class="container">
 	<div id="manutencaoTelefones" style="display:none" title="Telefones">
 		<div class="effectDialog ui-state-highlight ui-corner-all" 
@@ -287,7 +332,7 @@
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td><span class="bt_add"><a href="javascript:;" onclick="adicionarTelefone();">Incluir Novo</a></span></td>
+				<td><span class="bt_add"><a href="javascript:;" onclick="adicionarTelefone();" id="botaoAddEditar">Incluir Novo</a></span></td>
 			</tr>
 		</table>
 		
@@ -298,6 +343,10 @@
 		<br />
 		
 		<table id="telefonesGrid"></table>
+		
+		<br/>
+		
+		<button onclick="salvar();">Salvar</button>
 		
 		<input type="hidden" id="referenciaHidden"/>
 	</div>
