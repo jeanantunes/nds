@@ -194,7 +194,7 @@ fieldset label {
 							<li><a href="Financeiro/consulta_boletos_jornaleiros.htm">Consulta
 									Boletos por Cota</a>
 							</li>
-							<li><a href="Financeiro/conta_corrente.htm">Conta
+							<li><a href='<c:url value="/financeiro/contaCorrenteCota/index"/>'>Conta
 									Corrente</a>
 							</li>
 							<li><a href="Financeiro/debitos_creditos.htm">Débitos /
@@ -240,7 +240,7 @@ fieldset label {
 							<li>
 								<a href='<c:url value="/estoque/diferenca/lancamento"/>'>Lançamento de Faltas e Sobras</a>
 							</li>
-							<li><a href="<c:url value="recebimentoFisico"/>">Recebimento
+							<li><a href='<c:url value="/estoque/recebimentoFisico/index"/>'>Recebimento
 									Fisico</a>
 							</li>
 							<li><a href="Estoque/help_estoque.htm">Help</a>
