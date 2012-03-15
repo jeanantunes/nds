@@ -240,7 +240,7 @@ fieldset label {
 							<li>
 								<a href='<c:url value="/estoque/diferenca/lancamento"/>'>Lançamento de Faltas e Sobras</a>
 							</li>
-							<li><a href="<c:url value="recebimentoFisico"/>">Recebimento
+							<li><a href='<c:url value="/estoque/recebimentoFisico/index"/>'>Recebimento
 									Fisico</a>
 							</li>
 							<li><a href="Estoque/help_estoque.htm">Help</a>
