@@ -18,9 +18,12 @@ public interface LeitorRetornoBancoService {
 	 * Obtém os pagamentos retornados pelo banco.
 	 * 
 	 * @param file - arquivo de retorno
+	 * @param nomeArquivo - nome do arquivo
 	 * 
 	 * @return {@link ArquivoPagamentoBancoDTO}
 	 */
-	ArquivoPagamentoBancoDTO obterPagamentosBanco(File file) throws IOException, ParseException;
+	ArquivoPagamentoBancoDTO obterPagamentosBanco(File file,
+			 									  String nomeArquivo) throws IOException,
+			 									  							 ParseException;
 	
 }
