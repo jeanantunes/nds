@@ -6,7 +6,26 @@ package br.com.abril.nds.model.cadastro;
  * @created 14-fev-2012 11:35:33
  */
 public enum TipoTelefone {
-	TELEFONE,
+	COMERCIAL,
 	CELULAR,
-	FAX
+	FAX,
+	RESIDENCIAL,
+	RADIO;
+	
+	public static String getDescricao(TipoTelefone tipoTelefone){
+		switch(tipoTelefone){
+			case COMERCIAL:
+				return "Comercial";
+			case CELULAR:
+				return "Celular";
+			case FAX:
+				return "Fax";
+			case RESIDENCIAL:
+				return "Residencial";
+			case RADIO:
+				return "Rádio";
+			default:
+				return "";
+		}
+	}
 }

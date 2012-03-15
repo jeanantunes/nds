@@ -97,6 +97,7 @@
 				<version>${org.springframework.version}</version>
 				<type>jar</type>
 			</dependency>
+			
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
@@ -201,6 +202,25 @@
 				<artifactId>commons-beanutils</artifactId>
 				<version>1.8.3</version>
 			</dependency>
+			
+			<dependency>
+		   		<groupId>org.jrimum</groupId>
+		   		<artifactId>jrimum-bopepo</artifactId>
+		   		<version>0.2.3-SNAPSHOT</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>javax.mail</groupId>
+				 <artifactId>mail</artifactId>
+				 <version>1.4.4</version>
+		    </dependency>
+		    
+		    <dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity</artifactId>
+				<version>1.6-beta1</version>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
@@ -231,6 +251,16 @@
 		</dependency>
 	</dependencies>
 
+	<repositories>
+		<repository>
+			<id>jrimum.org</id>
+			<url>http://jrimum.org/maven/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+    
 	<build>
 		<plugins>
 			<plugin>

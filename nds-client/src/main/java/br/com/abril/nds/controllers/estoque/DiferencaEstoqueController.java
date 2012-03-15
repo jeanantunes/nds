@@ -16,9 +16,11 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DiferencaVO;
+import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -104,13 +106,11 @@ public class DiferencaEstoqueController {
 	
 	private static final String LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
 	
+	private static final String LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE = "listaNovasDiferencasVO";
+	
 	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
 	
 	private static final String MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE = "mapaRateiosCadastrados";
-	
-	private static final String IDS_DIFERENCAS_EXCLUSAO = "idsDiferencasExclusao";
-	
-	private boolean manterListaSessao = false;
 
 	public DiferencaEstoqueController(Result result, 
 								 	  Localization localization,
@@ -125,6 +125,8 @@ public class DiferencaEstoqueController {
 	public void lancamento() {
 		
 		this.carregarCombosLancamento();
+		
+		this.limparSessao();
 		
 		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
 	}
@@ -151,20 +153,6 @@ public class DiferencaEstoqueController {
 			
 		} else {
 			
-			if (!manterListaSessao){
-				this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, null);
-			}
-			
-			Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
-			
-			if (!setIdsExclusao.isEmpty()){
-				for (int index = 0 ; index < listaLancamentoDiferencas.size() ; index++){
-					if (setIdsExclusao.contains(listaLancamentoDiferencas.get(index).getId())){
-						listaLancamentoDiferencas.remove(index--);
-					}
-				}
-			}
-			
 			Long qtdeTotalRegistros = this.diferencaEstoqueService.obterTotalDiferencasLancamento(filtro);
 			
 			this.processarDiferencasLancamento(listaLancamentoDiferencas, filtro, qtdeTotalRegistros.intValue());
@@ -175,7 +163,7 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/pesquisa/novos")
 	@SuppressWarnings("unchecked")
 	public void pesquisarLancamentosNovos(Date dataMovimento, TipoDiferenca tipoDiferenca,
-										  String sortorder, String sortname, int page, int rp) {
+										  String sortorder, String sortname, Integer page, Integer rp) {
 		
 		Set<Diferenca> listaNovasDiferencas = (Set<Diferenca>)
 			this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
@@ -188,20 +176,52 @@ public class DiferencaEstoqueController {
 					dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
 			
 			processarDiferencasLancamentoNovos(listaNovasDiferencas, filtro);
+			
+		} else {
+			
+			ResultadoDiferencaVO resultadoDiferencaVO = new ResultadoDiferencaVO();
+			
+			TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
+					new TableModel<CellModelKeyValue<DiferencaVO>>();
+				
+			tableModel.setRows(new ArrayList<CellModelKeyValue<DiferencaVO>>());
+
+			tableModel.setTotal(0);
+			
+			tableModel.setPage(1);
+			
+			resultadoDiferencaVO.setTableModel(tableModel);
+			
+			resultadoDiferencaVO.setQtdeTotalDiferencas(BigDecimal.ZERO);
+			
+			resultadoDiferencaVO.setValorTotalDiferencas("");
+			
+			result.use(Results.json()).from(resultadoDiferencaVO, "result").recursive().serialize();
 		}
 	}
 	
 	@Post
 	@Path("/lancamento/novo")
+	@SuppressWarnings("unchecked")
 	public void carregarNovasDiferencas(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
 		
 		this.validarEntradaDadosNovoLancamento(dataMovimentoFormatada, tipoDiferenca);
 		
-		int qtdeInicialPadrao = 50;
+		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>();
 		
-		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>(qtdeInicialPadrao);
+		List<DiferencaVO> listaDiferencasCadastradas =
+			(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
 		
-		for (int indice = 0; indice < qtdeInicialPadrao; indice++) {
+		int qtdeDiferencasCadastradas = 0;
+		
+		if (listaDiferencasCadastradas != null) {
+			
+			qtdeDiferencasCadastradas = listaDiferencasCadastradas.size();
+		}
+		
+		int qtdeInicialPadrao = qtdeDiferencasCadastradas + 50;
+		
+		for (int indice = listaNovasDiferencas.size(); indice < qtdeInicialPadrao; indice++) {
 			
 			DiferencaVO diferenca = new DiferencaVO();
 			
@@ -240,6 +260,8 @@ public class DiferencaEstoqueController {
 		}
 		
 		this.validarPreenchimentoNovasDiferencas(listaNovasDiferencas);
+		
+		this.validarProdutosDuplicadosLancamento(listaNovasDiferencas);
 		
 		Set<Diferenca> listaDiferencas = (Set<Diferenca>)
 			this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
@@ -292,9 +314,21 @@ public class DiferencaEstoqueController {
 			movimentoEstoque.setStatus(StatusAprovacao.PENDENTE);
 			
 			diferenca.setMovimentoEstoque(movimentoEstoque);
-			
+
 			listaDiferencas.add(diferenca);
 		}
+		
+		Set<DiferencaVO> listaNovasDiferencasVO = 
+			(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+		
+		if (listaNovasDiferencasVO == null) {
+			
+			listaNovasDiferencasVO = new HashSet<DiferencaVO>();
+		}
+		
+		listaNovasDiferencasVO.addAll(listaNovasDiferencas);
+		
+		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
 		
@@ -341,9 +375,7 @@ public class DiferencaEstoqueController {
 	@SuppressWarnings("unchecked")
 	public void carregarRateio(Long idDiferenca) {
 
-		int qtdeInicialPadrao = 50;
-		
-		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>(qtdeInicialPadrao);
+		List<RateioCotaVO> listaNovosRateiosCota = new ArrayList<RateioCotaVO>();
 		
 		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
@@ -363,6 +395,8 @@ public class DiferencaEstoqueController {
 			
 			listaNovosRateiosCota.addAll(listaRateiosCadastrados);
 		}
+		
+		int qtdeInicialPadrao = listaNovosRateiosCota.size() + 50;
 		
 		for (int indice = listaNovosRateiosCota.size(); indice < qtdeInicialPadrao; indice++) {
 			
@@ -450,6 +484,8 @@ public class DiferencaEstoqueController {
 		
 		this.validarPreenchimentoNovosRateios(listaNovosRateios);
 		
+		this.validarCotasDuplicadasRateio(listaNovosRateios);
+		
 		this.validarSomaQuantidadeRateio(listaNovosRateios, idDiferenca);
 		
 		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
@@ -490,15 +526,29 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/lancamento/limparSessao")
-	public void limparDadosSessao() {
+	@SuppressWarnings("unchecked")
+	public void limparDadosSessao(boolean confirmado) {
+	
+		Set<Diferenca> listaNovasDiferencas =
+			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, null);
+		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
+			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, null);
+		if (!confirmado) {
 		
-		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, null);
+			if ((listaNovasDiferencas != null && !listaNovasDiferencas.isEmpty())
+					|| (mapaRateiosCadastrados != null && !mapaRateiosCadastrados.isEmpty())) {
+	
+				result.use(Results.json()).from(new ConfirmacaoVO(false), "result").serialize();
+				
+				return;
+			}
+		}
 		
-		result.use(Results.json()).from("", "result").serialize();
+		this.limparSessao();
+			
+		result.use(Results.json()).from(new ConfirmacaoVO(true), "result").serialize();
 	}
 	
 	/**
@@ -513,76 +563,91 @@ public class DiferencaEstoqueController {
 		result.include("listaFornecedores", listaFornecedoresCombo);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@Post
+	@Path("/lancamento/excluir")
+	@SuppressWarnings("unchecked")
 	public void excluirFaltaSobra(Long idDiferenca){
 		
 		Set<Diferenca> listaNovasDiferencas = (Set<Diferenca>)
-				this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-		
-		boolean removido = false;
-		if (listaNovasDiferencas != null){
-			Diferenca dif = new Diferenca();
-			dif.setId(idDiferenca);
-			removido = listaNovasDiferencas.remove(dif);
-		}
-		
-		if (!removido){
-			if (this.diferencaEstoqueService.verificarPossibilidadeExclusao(idDiferenca)){
-				Set<Long> setIdsExclusao = obterIdsExcluidosSessao();
-				setIdsExclusao.add(idDiferenca);
-				this.httpSession.setAttribute(IDS_DIFERENCAS_EXCLUSAO, setIdsExclusao);
-			} else {
-				result.use(Results.json()).from(
-						new ValidacaoVO(TipoMensagem.ERROR, 
-								"Diferença lançada automaticamente não pode ser excluida."), 
-								Constantes.PARAM_MSGS).recursive().serialize();
+			this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+
+		if (listaNovasDiferencas != null) {
+			
+			Diferenca diferencaARemover = null;
+			
+			for (Diferenca diferenca : listaNovasDiferencas) {
+				
+				if (diferenca.getId().equals(idDiferenca)) {
+					
+					diferencaARemover = diferenca;
+					break;
+				}
+			}
+			
+			if (diferencaARemover != null) {
+				
+				listaNovasDiferencas.remove(diferencaARemover);
 			}
 		}
 		
-		manterListaSessao = true;
+		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaNovasDiferencas);
 		
-		FiltroLancamentoDiferencaEstoqueDTO filtro = 
-				(FiltroLancamentoDiferencaEstoqueDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		Set<DiferencaVO> listaNovasDiferencasVO = (Set<DiferencaVO>)
+			this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
-		this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()), 
-				filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
-				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
-				filtro.getPaginacao().getQtdResultadosPorPagina());
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Set<Long> obterIdsExcluidosSessao() {
-		Set<Long> setIdsExclusao = (Set<Long>) this.httpSession.getAttribute(IDS_DIFERENCAS_EXCLUSAO);
-		if (setIdsExclusao == null){
-			setIdsExclusao = new HashSet<Long>();
+		if (listaNovasDiferencasVO != null) {
+			
+			DiferencaVO diferencaVOARemover = null;
+			
+			for (DiferencaVO diferencaVO : listaNovasDiferencasVO) {
+				
+				if (diferencaVO.getId().equals(idDiferenca)) {
+					
+					diferencaVOARemover = diferencaVO;
+					break;
+				}
+			}
+			
+			if (diferencaVOARemover != null) {
+				
+				listaNovasDiferencasVO.remove(diferencaVOARemover);
+			}
 		}
 		
-		return setIdsExclusao;
+		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtro = 
+			(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		this.pesquisarLancamentosNovos(
+			filtro.getDataMovimento(), filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+					filtro.getPaginacao().getQtdResultadosPorPagina());
 	}
 
 	@Post
 	@SuppressWarnings("unchecked")
 	public void confirmarLancamentos() {
 
-		Set<Long> setIdsExclusao = this.obterIdsExcluidosSessao();
-		
 		Set<Diferenca> listaNovasDiferencas =
 			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
-		Map<Long, RateioCotaVO> mapaRateioCotas =
-			(Map<Long, RateioCotaVO>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		 Map<Long, List<RateioCotaVO>> mapaRateioCotas =
+			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
 			(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
 		this.diferencaEstoqueService.efetuarAlteracoes(
-			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getIdUsuario(), setIdsExclusao);
+			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getIdUsuario());
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+		
+		this.limparSessao();
 	}
 	
 	/**
@@ -688,6 +753,7 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
 			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
+			lancamentoDiferenca.setAutomatica(diferenca.isAutomatica());
 			
 			if (diferenca.getMovimentoEstoque() != null) {
 			
@@ -781,6 +847,8 @@ public class DiferencaEstoqueController {
 			
 			lancamentoDiferenca.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
+			
+			lancamentoDiferenca.setCadastrado(true);
 			
 			listaLancamentosDiferenca.add(lancamentoDiferenca);
 			
@@ -1255,6 +1323,56 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
+	 * Valida se há cotas duplicadas no rateio.
+	 * 
+	 * @param listaNovosRateios - lista dos novos rateios
+	 */
+	@SuppressWarnings("unchecked")
+	private void validarCotasDuplicadasRateio(List<RateioCotaVO> listaNovosRateios) {
+		
+		if (listaNovosRateios == null) {
+			
+			return;
+		}
+		
+		Collections.sort(listaNovosRateios, new BeanComparator("numeroCota"));
+		
+		List<Long> linhasComErro = new ArrayList<Long>();
+		
+		RateioCotaVO ultimoRateioCotaVO = null;
+		
+		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
+			
+			Integer numeroCota = rateioCotaVO.getNumeroCota();
+			
+			if (numeroCota == null) {
+				
+				continue;
+			}
+			
+			if (ultimoRateioCotaVO != null) {
+				
+				if (numeroCota.equals(ultimoRateioCotaVO.getNumeroCota())) {
+					
+					linhasComErro.add(ultimoRateioCotaVO.getId());
+					linhasComErro.add(rateioCotaVO.getId());
+				}
+			}
+			
+			ultimoRateioCotaVO = rateioCotaVO;
+		}
+		
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, "Existem cotas duplicadas para o rateio!");
+			
+			validacao.setDados(linhasComErro);
+		
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/*
 	 * Valida o cadastro de um novo rateio.
 	 * 
 	 * @param novoRateioCota - novo rateio
@@ -1325,13 +1443,19 @@ public class DiferencaEstoqueController {
 			
 			listaMensagensErro.add("Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
+
+		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
+				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
 		
-		if (diferenca.getQtdeEstoqueAtual() == null 
-				|| (diferenca.getQuantidade().compareTo(diferenca.getQtdeEstoqueAtual()) > 0)) {
-			
-			linhasComErro.add(diferenca.getId());
-			
-			listaMensagensErro.add("Quantidade de Exemplares não pode ser maior que a Quantidade em Estoque do produto!");
+			if (diferenca.getQtdeEstoqueAtual() == null 
+					|| (diferenca.getQuantidade().compareTo(diferenca.getQtdeEstoqueAtual()) > 0)) {
+				
+				linhasComErro.add(diferenca.getId());
+				
+				listaMensagensErro.add(
+					"Quantidade de Exemplares para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+						+ "' não pode ser maior que a Quantidade em Estoque do produto!");
+			}
 		}
 		
 		if (!this.diferencaEstoqueService.validarDataLancamentoDiferenca(
@@ -1346,6 +1470,70 @@ public class DiferencaEstoqueController {
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, listaMensagensErro);
 		
+			validacao.setDados(linhasComErro);
+		
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/*
+	 * Valida se há produtos duplicados no lançamento da diferença.
+	 * 
+	 * @param listaNovasDiferencas - lista das novas diferenças
+	 */
+	@SuppressWarnings("unchecked")
+	private void validarProdutosDuplicadosLancamento(List<DiferencaVO> listaNovasDiferencas) {
+		
+		if (listaNovasDiferencas == null) {
+			
+			return;
+		}
+		
+		Set<DiferencaVO> listaDiferencasCadastradas =
+			(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+		
+		if (listaDiferencasCadastradas != null) {
+			
+			listaNovasDiferencas.addAll(listaDiferencasCadastradas);
+		}
+		
+		ComparatorChain comparatorChain = new ComparatorChain();
+		
+		comparatorChain.addComparator(new BeanComparator("codigoProduto"));
+		comparatorChain.addComparator(new BeanComparator("numeroEdicao"));
+		
+		Collections.sort(listaNovasDiferencas, comparatorChain);
+		
+		List<Long> linhasComErro = new ArrayList<Long>();
+		
+		DiferencaVO ultimaDiferencaVO = null;
+		
+		for (DiferencaVO diferencaVO : listaNovasDiferencas) {
+			
+			if (ultimaDiferencaVO != null) {
+				
+				if (diferencaVO.getCodigoProduto().trim().equalsIgnoreCase(ultimaDiferencaVO.getCodigoProduto())
+						&& diferencaVO.getNumeroEdicao().trim().equalsIgnoreCase(ultimaDiferencaVO.getNumeroEdicao())) {
+					
+					if (!ultimaDiferencaVO.isCadastrado()) {
+						
+						linhasComErro.add(ultimaDiferencaVO.getId());
+					}
+					
+					if (!diferencaVO.isCadastrado()) {
+						
+						linhasComErro.add(diferencaVO.getId());
+					}
+				}
+			}
+			
+			ultimaDiferencaVO = diferencaVO;
+		}
+		
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, "Existem produtos duplicados para o lançamento!");
+			
 			validacao.setDados(linhasComErro);
 		
 			throw new ValidacaoException(validacao);
@@ -1394,20 +1582,6 @@ public class DiferencaEstoqueController {
 	}
 	
 	/*
-	 * Verifica se a tela está em modo de inclusão de lançamentos.
-	 * 
-	 * @return Verdadeiro ou falso
-	 */
-	@SuppressWarnings("unchecked")
-	private boolean isModoInclusaoLancamentos() {
-		
-		List<DiferencaVO> listaNovasDiferencas =
-				(List<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-			
-		return (listaNovasDiferencas != null && !listaNovasDiferencas.isEmpty());
-	}
-	
-	/*
 	 * Obtém uma diferença pesquisada pelo seu id.
 	 * 
 	 * @param idDiferenca - id da diferença
@@ -1434,6 +1608,20 @@ public class DiferencaEstoqueController {
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * Limpa os dados da sessão.
+	 */
+	private void limparSessao() {
+	
+		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, null);
+		
+		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, null);
+		
+		this.httpSession.setAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, null);
+		
+		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, null);
 	}
 	
 	/*

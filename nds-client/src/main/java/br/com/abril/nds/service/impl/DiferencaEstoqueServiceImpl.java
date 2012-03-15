@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,28 +14,20 @@ import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
-import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
-import br.com.abril.nds.repository.EstudoRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
@@ -59,10 +50,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	@Autowired
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
-	
-	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoCotaRepository;
-	
+
 	@Autowired
 	private RateioDiferencaRepository rateioDiferencaRepository;
 	
@@ -70,19 +58,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private TipoMovimentoEstoqueRepository tipoMovimentoRepository;
 	
 	@Autowired
-	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
-	
-	@Autowired
-	private EstoqueProdutoRespository estoqueProdutoRespository;
-	
-	@Autowired
-	private MovimentoEstoqueRepository movimentoEstoqueRepository;
-	
-	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
-	
-	@Autowired
-	private EstudoRepository estudoRepository;
 	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
@@ -95,8 +71,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
-
-	private static final String MOTIVO = "Exclusão diferença";
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
@@ -142,19 +119,28 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
+	public Diferenca lancarDiferenca(Diferenca diferenca) {
+		
+		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
+		
+		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		
+		this.diferencaEstoqueRepository.adicionar(diferenca);
+		
+		return diferenca;
+	}
+	
+	@Transactional
 	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
-								  Map<Long, RateioCotaVO> mapaRateioCotas,
+			 					  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-								  Long idUsuario, 
-								  Set<Long> idsDiferencaExclusao) {
-		
-		this.excluirDiferenca(idUsuario, idsDiferencaExclusao);
-		
+								  Long idUsuario) {
+
 		if (listaNovasDiferencas != null 
 				&& !listaNovasDiferencas.isEmpty()) {
 			
 			this.confirmarNovosLancamentosDiferenca(
-				listaNovasDiferencas, mapaRateioCotas, idUsuario, idsDiferencaExclusao);
+				listaNovasDiferencas, mapaRateioCotas, idUsuario);
 			
 		} else {
 			
@@ -164,28 +150,40 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	private void confirmarNovosLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
-													Map<Long, RateioCotaVO> mapaRateioCotas,
-													Long idUsuario, 
-													Set<Long> idsDiferencaExclusao) {
+			 										Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+													Long idUsuario) {
 		
 		for (Diferenca diferenca : listaNovasDiferencas) {
 
-			if (idsDiferencaExclusao.contains(diferenca.getId())) {
-				
-				continue;
-			}
+			Long idDiferencaTemporario = diferenca.getId();
 			
 			this.diferencaEstoqueRepository.adicionar(diferenca);
 			
-			this.processarRateioCotas(diferenca, mapaRateioCotas);
+			if (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) {
+				
+				List<RateioCotaVO> listaRateioCotas = mapaRateioCotas.remove(idDiferencaTemporario);
+				
+				mapaRateioCotas.put(diferenca.getId(), listaRateioCotas);
+			}
+			
+			diferenca.setMovimentoEstoque(null);
+			
+			this.processarMovimentoEstoque(diferenca, idUsuario);
+			
+			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
+			
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+			
+			this.diferencaEstoqueRepository.alterar(diferenca);
 		}
 	}
 	
-	private void confirmarLancamentosDiferenca(Map<Long, RateioCotaVO> mapaRateioCotas,
+	private void confirmarLancamentosDiferenca(Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 											   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 											   Long idUsuario) {
 		
 		filtroPesquisa.setPaginacao(null);
+		
 		filtroPesquisa.setOrdenacaoColuna(null);
 		
 		List<Diferenca> listaDiferencas =
@@ -193,162 +191,72 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (Diferenca diferenca : listaDiferencas) {
 
-			this.processarRateioCotas(diferenca, mapaRateioCotas);
+			this.processarMovimentoEstoque(diferenca, idUsuario);
 			
-			TipoMovimentoEstoque tipoMovimentoEstoque =
-				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
 			
-			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
-					diferenca.getQtde(), tipoMovimentoEstoque);
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+			
+			this.diferencaEstoqueRepository.merge(diferenca);
 		}
 	}
 	
+	private void processarMovimentoEstoque(Diferenca diferenca, 
+								    	   Long idUsuario) {
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque =
+			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+		
+		MovimentoEstoque movimentoEstoque =
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
+					diferenca.getQtde(), tipoMovimentoEstoque);
+		
+		diferenca.setMovimentoEstoque(movimentoEstoque);
+	}
+	
 	private void processarRateioCotas(Diferenca diferenca,
-									  Map<Long, RateioCotaVO> mapaRateioCotas) {
+									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+									  Long idUsuario) {
 		
 		if (mapaRateioCotas == null || mapaRateioCotas.isEmpty()) {
 			
 			return;
 		}
 			
-		RateioCotaVO rateioCotaVO = mapaRateioCotas.get(diferenca.getId());
+		List<RateioCotaVO> listaRateioCotaVO = mapaRateioCotas.get(diferenca.getId());
 		
-		if (rateioCotaVO == null) {
+		if (listaRateioCotaVO == null || listaRateioCotaVO.isEmpty()) {
 			
 			return;
 		}
 		
-		
-	}
-	
-	private void excluirDiferenca(Long idUsuario, Set<Long> idsDiferenca){
-		
-		for (Long idDiferenca : idsDiferenca){
+		for (RateioCotaVO rateioCotaVO : listaRateioCotaVO) {
 			
-			Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
+			RateioDiferenca rateioDiferenca = new RateioDiferenca();
+
+			rateioDiferenca.setDiferenca(diferenca);
+			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			
-			BigDecimal qtd = diferenca.getQtde();
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
 			
-			if (!diferenca.isAutomatica()){
-				
-				TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
-				tipoMovimento.setAprovacaoAutomatica(false);
-				tipoMovimento.setDescricao(MOTIVO);
-				
-				switch (diferenca.getTipoDiferenca().getTipoMovimentoEstoque()){
-					case SOBRA_DE:
-						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_DE);
-						qtd = qtd.negate();
-						break;
-					case SOBRA_EM:
-						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.FALTA_EM);
-						qtd = qtd.negate();
-						break;
-					case FALTA_DE:
-						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_DE);
-						break;
-					case FALTA_EM:
-						tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
-						break;
-				}
-				
-				Usuario usuario = new Usuario();
-				usuario.setId(idUsuario);
-				
-				RateioDiferenca rateioDiferenca = 
-						this.rateioDiferencaRepository.obterRateioDiferencaPorDiferenca(idDiferenca);
-				
-				if (rateioDiferenca != null){
-					
-					if (rateioDiferenca.getCota() == null){
-						throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
-					}
-					
-					if (rateioDiferenca.getEstudoCota() == null){
-						throw new ValidacaoException(TipoMensagem.ERROR, "Estudo Cota não encontrado.");
-					}
-					
-					this.tipoMovimentoRepository.adicionar(tipoMovimento);
-					
-					EstoqueProdutoCota estoqueProdutoCota = 
-							this.estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
-									diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId());
-					
-					if (estoqueProdutoCota == null){
-						throw new ValidacaoException(
-								TipoMensagem.ERROR, 
-								"Estoque Produto Cota não encontrado, parâmetros de busca: idProdutoEdicao: " + diferenca.getProdutoEdicao().getId() + 
-								", idCota: " + rateioDiferenca.getCota().getId());
-					}
-					
-					MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
-					movimentoEstoqueCota.setCota(rateioDiferenca.getCota());
-					movimentoEstoqueCota.setQtde(diferenca.getQtde());
-					movimentoEstoqueCota.setDataInclusao(new Date());
-					movimentoEstoqueCota.setAprovadoAutomaticamente(false);
-					movimentoEstoqueCota.setMotivo(MOTIVO);
-					movimentoEstoqueCota.setTipoMovimento(tipoMovimento);
-					movimentoEstoqueCota.setUsuario(usuario);
-					movimentoEstoqueCota.setCota(rateioDiferenca.getCota());
-					movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
-					movimentoEstoqueCota.setProdutoEdicao(diferenca.getProdutoEdicao());
-					
-					this.movimentoCotaRepository.adicionar(movimentoEstoqueCota);
-					
-					estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota.getQtdeDevolvida().add(qtd));
-					estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota.getQtdeRecebida().subtract(qtd));
-					
-					this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
-					
-					EstudoCota estudoCota = rateioDiferenca.getEstudoCota();
-					estudoCota.setQtdeEfetiva(rateioDiferenca.getEstudoCota().getQtdeEfetiva().add(qtd));
-					this.estudoCotaRepository.alterar(estudoCota);
-					
-					Estudo estudo = estudoCota.getEstudo();
-					
-					if (estudo == null){
-						throw new ValidacaoException(TipoMensagem.ERROR, "Estudo não encontrado.");
-					}
-					
-					estudo.setQtdeReparte(estudoCota.getQtdeEfetiva());
-					
-					this.estudoRepository.alterar(estudo);
-				}
-				
-				EstoqueProduto estoqueProduto = 
-						estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(
-								diferenca.getProdutoEdicao().getId());
-				
-				if (estoqueProduto == null){
-					throw new ValidacaoException(
-							TipoMensagem.ERROR, 
-							"Estoque Produto não encontrado, parâmetros de busca: idProdutoEdicao: " + diferenca.getProdutoEdicao().getId());
-				}
-				
-				estoqueProduto.setQtde(estoqueProduto.getQtde().add(qtd));
-				
-				this.estoqueProdutoRespository.alterar(estoqueProduto);
-				
-				MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-				movimentoEstoque.setAprovadoAutomaticamente(false);
-				movimentoEstoque.setMotivo(MOTIVO);
-				movimentoEstoque.setDataInclusao(new Date());
-				movimentoEstoque.setTipoMovimento(tipoMovimento);
-				movimentoEstoque.setUsuario(usuario);
-				movimentoEstoque.setQtde(diferenca.getQtde());
-				movimentoEstoque.setEstoqueProduto(estoqueProduto);
-				movimentoEstoque.setProdutoEdicao(diferenca.getProdutoEdicao());
-				
-				this.movimentoEstoqueRepository.adicionar(movimentoEstoque);
-				
-				this.rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
-				
-				this.diferencaEstoqueRepository.remover(diferenca);
-			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Diferença com automática não pode ser excluída.");
-			}
+			rateioDiferenca.setCota(cota);
+			
+			EstudoCota estudoCota =
+				this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(
+					diferenca.getMovimentoEstoque().getDataInclusao(), 
+						diferenca.getProdutoEdicao().getId(), rateioCotaVO.getNumeroCota());
+			
+			rateioDiferenca.setEstudoCota(estudoCota);
+			
+			this.rateioDiferencaRepository.adicionar(rateioDiferenca);
+			
+			this.movimentoEstoqueService.gerarMovimentoCota(
+				diferenca.getMovimentoEstoque().getDataInclusao(),
+					diferenca.getProdutoEdicao().getId(),
+						cota.getId(), idUsuario, rateioCotaVO.getQuantidade(), 
+							diferenca.getMovimentoEstoque().getTipoMovimento());
 		}
 	}
 

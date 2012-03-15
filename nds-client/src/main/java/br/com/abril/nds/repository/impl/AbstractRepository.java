@@ -34,7 +34,7 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 	}
 	
 	public void adicionar(T entity) {
-		getSession().save(entity);			
+		getSession().save(entity);		
 	}
 	
 	public void remover(T entity) {

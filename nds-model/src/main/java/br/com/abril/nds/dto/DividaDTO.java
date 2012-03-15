@@ -1,6 +1,10 @@
 package br.com.abril.nds.dto;
 
-public class DividaDTO {
+import java.io.Serializable;
+
+public class DividaDTO implements Serializable{
+	
+	private static final long serialVersionUID = -5403191577161993585L;
 	
 	private String vencimento;
 	private Double valor;

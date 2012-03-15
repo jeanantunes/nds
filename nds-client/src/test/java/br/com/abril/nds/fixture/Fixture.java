@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -335,7 +337,7 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
-				TipoCobranca.BOLETO, new BigDecimal(200)));
+				TipoCobranca.BOLETO, new BigDecimal(200), true));
 		return distribuidor;
 	}
 
@@ -612,7 +614,8 @@ public class Fixture {
 									  TipoDiferenca tipoDiferenca,
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
-									  MovimentoEstoque movimentoEstoque) {
+									  MovimentoEstoque movimentoEstoque,
+									  Boolean automatica) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -623,6 +626,7 @@ public class Fixture {
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setMovimentoEstoque(movimentoEstoque);
+		diferenca.setAutomatica(automatica);
 		
 		return diferenca;
 	}
@@ -749,10 +753,13 @@ public class Fixture {
 	}
 	
 	public static PoliticaCobranca criarPoliticaCobranca(
-			Distribuidor distribuidor, TipoCobranca tipo, BigDecimal valorMinimo) {
+			Distribuidor distribuidor, TipoCobranca tipo,
+			BigDecimal valorMinimo, boolean aceitaPagamentoDivergente) {
+		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setTipoCobranca(tipo);
 		politicaCobranca.setValorMinino(valorMinimo);
+		politicaCobranca.setAceitaPagamentoDivergente(aceitaPagamentoDivergente);
 		politicaCobranca.setDistribuidor(distribuidor);
 		return politicaCobranca;
 	}
@@ -767,4 +774,32 @@ public class Fixture {
 		return feriado;
 	}
 
+	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
+										 String logradouro, int numero, 
+										 String bairro, String cidade, String uf) {
+		
+		Endereco endereco = new Endereco();
+		
+		endereco.setBairro(bairro);
+		endereco.setCep(cep);
+		endereco.setCidade(cidade);
+		endereco.setLogradouro(logradouro);
+		endereco.setNumero(numero);
+		endereco.setUf(uf);
+		
+		return endereco;
+	}
+	
+	public static ParametroSistema[] criarParametrosEmail(){
+		
+		ParametroSistema[] parametrosEmail = new ParametroSistema[5];
+		parametrosEmail[0] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
+		parametrosEmail[1] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
+		parametrosEmail[2] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
+		parametrosEmail[3] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_SENHA, "discover10");
+		parametrosEmail[4] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PORTA, "465");
+		
+		return parametrosEmail;
+		
+	}
 }

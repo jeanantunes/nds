@@ -38,27 +38,52 @@
 
 				return;
 			}
+			
+			var resultado = data.result;
 
-			if (!data.result) {
+			if (!resultado) {
 
 				return;
 			}
-			
-			var resultado = data.result;
 			
 			$("#qtdeTotalDiferencas").html(resultado.qtdeTotalDiferencas);
 			
 			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
 
+			if (resultado.qtdeTotalDiferencas == 0) {
+
+				$("#labelTotalGeral").hide();
+				$("#qtdeTotalDiferencas").hide();
+				
+			} else {
+
+				$("#labelTotalGeral").show();
+				$("#qtdeTotalDiferencas").show();
+			}
+
+			if (!resultado.tableModel) {
+
+				return;
+			}
+			
 			$.each(resultado.tableModel.rows, function(index, row) {
 
 				var linkRateioDiferenca = '<a href="javascript:;" onclick="verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
 										     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 										  '</a>';
 
-				var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
-												'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
-											'</a>';
+				if (row.cell.automatica) {
+					
+					var linkExclusaoDiferenca = '<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
+													'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+												'</a>';
+					
+				} else {
+
+					var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+													'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+												'</a>';
+				}
 								
 				row.cell.acao = linkRateioDiferenca + linkExclusaoDiferenca;
 			});
@@ -76,25 +101,58 @@
 			return resultado.tableModel;
 		} 
 
-		function pesquisar() { 
+		function pesquisar(confirmado) { 
 
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/limparSessao' />", 
-				null,
-				function() {
-					var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+				'confirmado=' + confirmado,
+				function(result) {
 
-					$("#gridLancamentos").flexOptions({
-						url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
-						params: formData
-					});
+					if (!result.confirmado) {
+
+						popupMensagemConfirmacao();
+						
+					} else {
 					
-					$("#gridLancamentos").flexReload();
+						var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+	
+						$("#gridLancamentos").flexOptions({
+							url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
+							params: formData
+						});
+						
+						$("#gridLancamentos").flexReload();
+
+						$("#dialogConfirmacaoPerdaDados").dialog("close");
+					}
 				}
 			);
 		}
 
-		function popupExclusaoDiferenca(idMovimentoEstoque) {
+		function popupMensagemConfirmacao() {
+
+			$("#dialogConfirmacaoPerdaDados").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: 
+				{
+					"Confirmar": function() {
+						
+						pesquisar(true);
+						
+					}, "Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#dialogConfirmacaoPerdaDados").show();
+		}
+
+		function popupExclusaoDiferenca(idDiferenca) {
 
 			$("#dialog-excluir").dialog({
 				resizable: false,
@@ -103,19 +161,28 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-					$(this).dialog("close");
-					
-					var data = "?idDiferenca=" + idMovimentoEstoque;
-					
-					$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/excluirFaltaSobra" />'+data});
-					$("#gridLancamentos").flexReload();
-					
-					//var data = "idDiferenca=" + idMovimentoEstoque;
-					//$.postJSON("<c:url value='/estoque/diferenca/excluirFaltaSobra'/>", data);
-				},
-				"Cancelar": function() {
-					$(this).dialog("close");
-				}
+						
+						$(this).dialog("close");
+
+						var data = [
+		    				{
+		    					name: 'idDiferenca', value: idDiferenca
+		    				}
+		    			];
+						
+						$("#gridLancamentos").flexOptions(
+							{
+								url : '<c:url value="/estoque/diferenca/lancamento/excluir" />',
+								params: data
+							}
+						);
+						
+						$("#gridLancamentos").flexReload();
+						
+					}, "Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
 				}
 			});
 			
@@ -140,24 +207,41 @@
 				height:'auto',
 				width:300,
 				modal: true,
-				buttons: {
+				buttons: 
+				{
 					"Confirmar": function() {
-					$(this).dialog("close");
+						
+						$.postJSON(
+							"<c:url value='/estoque/diferenca/confirmarLancamentos' />", 
+							null,
+							function(result) {
+	
+								$("#datePickerDataMovimento").datepicker({
+									showOn : "button",
+									buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+									buttonImageOnly : true,
+									dateFormat: 'dd/mm/yy',
+									defaultDate: new Date()
+								});
+	
+								$("#selectTiposDiferenca").val(null);
+								
+								$("#gridLancamentos").flexAddData({rows:[]});
+
+								$("#gridLancamentos").flexReload();
+							}
+						);
+	
+						$(this).dialog("close");
 					
-					$.postJSON("<c:url value='/estoque/diferenca/confirmarLancamentos'/>");
-				},
-				"Cancelar": function() {
-					$(this).dialog("close");
-				}
+					}, "Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
 				}
 			});
 			
 			$("#dialog-confirmar-lancamentos").show();
-		}
-		
-		function cancelarModificacoes(){
-			$("#gridLancamentos").flexOptions({url : '<c:url value="/estoque/diferenca/cancelar" />'});
-			$("#gridLancamentos").flexReload();
 		}
 		
 		$(function() {
@@ -252,10 +336,13 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 	<style type="text/css">
-		fieldset label 
-		{
+		fieldset label {
 			width: auto;
 			margin-bottom: 0px !important;
+		}
+		
+		#dialogConfirmacaoPerdaDados {
+			display:none;
 		}
 	</style>
 </head>
@@ -267,6 +354,9 @@
 		</div>
 		<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
 			<p>Confirma estes Lançamentos?</p>
+		</div>
+		<div id="dialogConfirmacaoPerdaDados" title="Lançamento Faltas e Sobras">
+			<p>Ao prosseguir com essa ação você perderá seus dados não salvos. Deseja prosseguir?</p>
 		</div>
 		<div class="container">
 
@@ -305,7 +395,7 @@
 							</td>
 							<td width="280">
 								<span class="bt_pesquisar">
-									<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
+									<a href="javascript:;" onclick="pesquisar(false);">Pesquisar</a>
 								</span>
 							</td>
 						</tr>
@@ -331,9 +421,6 @@
 							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
 								<a href="javascript:;" onclick="popupConfirmar();">Confirmar</a>
-							</span>
-							<span id="btnCancelar" class="total bt_cancelar" style="display: none;">
-								<a href="javascript:;" onclick="cancelarModificacoes();">Cancelar</a>
 							</span>
 						</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">

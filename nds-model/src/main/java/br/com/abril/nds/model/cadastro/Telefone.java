@@ -25,8 +25,11 @@ public class Telefone {
 	@Column(name = "NUMERO", nullable = false)
 	private String numero;
 	
-	@Column(name = "RAMAL")
+	@Column(name = "RAMAL", nullable = true)
 	private String ramal;
+	
+	@Column(name = "DDD")
+	private String ddd;
 
 	public Long getId() {
 		return id;
@@ -50,5 +53,13 @@ public class Telefone {
 
 	public void setRamal(String ramal) {
 		this.ramal = ramal;
+	}
+
+	public String getDdd() {
+		return ddd;
+	}
+
+	public void setDdd(String ddd) {
+		this.ddd = ddd;
 	}
 }

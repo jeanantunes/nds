@@ -61,13 +61,14 @@ public interface DiferencaEstoqueService {
 	boolean verificarPossibilidadeExclusao(Long idDiferenca);
 
 	void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
-						   Map<Long, RateioCotaVO> mapaRateioCotas,
+			 			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 						   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-						   Long idUsuario, 
-						   Set<Long> idsDiferencaExclusao);
+						   Long idUsuario);
 
 	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
 	
 	Diferenca obterDiferenca(Long id);
+	
+	Diferenca lancarDiferenca(Diferenca diferenca);
 
 }

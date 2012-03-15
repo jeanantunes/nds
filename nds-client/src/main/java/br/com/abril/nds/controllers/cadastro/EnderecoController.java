@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -42,18 +43,6 @@ public class EnderecoController {
 
 	@Path("/")
 	public void index() { }
-
-	/**
-	 * Constante que representa o nome do atributo com a lista de endereços 
-	 * armazenado na sessão para serem persistidos na base. 
-	 */
-	private static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosSalvarSessao";
-
-	/**
-	 * Constante que representa o nome do atributo com a lista de endereços 
-	 * armazenado na sessão para serem persistidos na base. 
-	 */
-	private static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessao";
 	
 	/**
 	 * Método que realiza a pesquisa dos endereços cadastrados para uma determinada pessoa.
@@ -63,7 +52,7 @@ public class EnderecoController {
 	public void pesquisarEnderecos() {
 
 		List<EnderecoAssociacaoDTO> listaEndereco =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		TableModel<CellModel> tableModelEndereco = new TableModel<CellModel>();
 		
@@ -76,7 +65,7 @@ public class EnderecoController {
 			tableModelEndereco = getTableModelListaEndereco(listaEndereco);
 		}
 
-		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEndereco);
+		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEndereco);
 
 		this.result.use(Results.json()).withoutRoot().from(tableModelEndereco).recursive().serialize();
 	}
@@ -87,10 +76,13 @@ public class EnderecoController {
 	 * @param enderecoAssociacao
 	 */
 	@SuppressWarnings("unchecked")
-	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
+	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao, String numero) {
+
+		validarDadosEndereco(enderecoAssociacao, numero);
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		if (listaEnderecoAssociacao == null) {
 
@@ -101,11 +93,20 @@ public class EnderecoController {
 			validarExistenciaEnderecoPrincipal(listaEnderecoAssociacao);
 		}
 
-		listaEnderecoAssociacao.add(enderecoAssociacao);
+		if (listaEnderecoAssociacao.contains(enderecoAssociacao)) {
+
+			int index = listaEnderecoAssociacao.indexOf(enderecoAssociacao);
+
+			listaEnderecoAssociacao.set(index, enderecoAssociacao);
+
+		} else {
+
+			listaEnderecoAssociacao.add(enderecoAssociacao);
+		}
 
 		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEnderecoAssociacao);
 
-		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao);
+		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 
 		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
 	}
@@ -129,7 +130,7 @@ public class EnderecoController {
 		} else {
 
 			List<Endereco> listaEnderecosRemover = 
-				(List<Endereco>) this.session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+				(List<Endereco>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 
 			if (listaEnderecosRemover == null) {
 
@@ -138,21 +139,21 @@ public class EnderecoController {
 
 			listaEnderecosRemover.add(endereco);
 
-			this.session.setAttribute(LISTA_ENDERECOS_REMOVER_SESSAO, listaEnderecosRemover);
+			this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaEnderecosRemover);
 		}
 
 		EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
-		
+
 		enderecoAssociacao.setEndereco(endereco);
-		
+
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		listaEnderecoAssociacao.remove(enderecoAssociacao);
 
 		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEnderecoAssociacao);
 
-		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao);
+		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 
 		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
 	}
@@ -164,7 +165,7 @@ public class EnderecoController {
 	 */
 	@Post
 	@SuppressWarnings("unchecked")
-	public void editarEndereco(Long idEndereco) {		
+	public void editarEndereco(Long idEndereco) {
 
 		Endereco endereco = new Endereco();
 
@@ -175,7 +176,7 @@ public class EnderecoController {
 		enderecoAssociacao.setEndereco(endereco);
 
 		List<EnderecoAssociacaoDTO> listaEndereco =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		int index = listaEndereco.indexOf(enderecoAssociacao);
 
@@ -184,6 +185,22 @@ public class EnderecoController {
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
+	private void validarDadosEndereco(EnderecoAssociacaoDTO enderecoAssociacao, String numero) {
+		
+		if (numero != null) {
+
+			try {
+			
+				int number = Integer.parseInt(numero);
+				
+				enderecoAssociacao.getEndereco().setNumero(number);
+
+			} catch (NumberFormatException e) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Valor inválido para o campo [Número]");
+			}
+		}
+	}
 	
 	/**
 	 * Método que retorna um Table Model de acordo com a lista de Endereços desejada.
@@ -225,7 +242,7 @@ public class EnderecoController {
 
 		return new CellModel(
 				enderecoAssociacao.getEndereco().getId().intValue(),
-				enderecoAssociacao.getTipoEndereco().toString(),
+				enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
 				enderecoAssociacao.getEndereco().getLogradouro(), 
 				enderecoAssociacao.getEndereco().getBairro(),
 				enderecoAssociacao.getEndereco().getCep(), 
@@ -248,56 +265,5 @@ public class EnderecoController {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	private List<Endereco> getListaEndereco() {
-
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
-
-		Endereco endereco = new Endereco();
-
-		endereco.setBairro("Vila Carvalho");
-		endereco.setCep("13735-430");
-		endereco.setCidade("Mococa");
-		endereco.setId(1L);
-		endereco.setLogradouro("Capitão José Cristovam de Lima");
-		endereco.setNumero(5);
-		//endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-		endereco.setUf("SP");
-
-		listaEndereco.add(endereco);
-
-		endereco = new Endereco();
-
-		endereco.setBairro("Vila Carvalho");
-		endereco.setCep("13735-430");
-		endereco.setCidade("Mococa");
-		endereco.setId(2L);
-		endereco.setLogradouro("Capitão José Cristovam de Lima");
-		endereco.setNumero(5);
-		//endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-		endereco.setUf("SP");
-
-		listaEndereco.add(endereco);
-
-		endereco = new Endereco();
-
-		endereco.setBairro("Vila Carvalho");
-		endereco.setCep("13735-430");
-		endereco.setCidade("Mococa");
-		endereco.setId(3L);
-		endereco.setLogradouro("Capitão José Cristovam de Lima");
-		endereco.setNumero(5);
-		//endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-		endereco.setUf("SP");
-
-		listaEndereco.add(endereco);
-
-		return listaEndereco;
 	}
 }

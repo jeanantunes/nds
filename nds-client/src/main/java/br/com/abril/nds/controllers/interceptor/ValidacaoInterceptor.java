@@ -2,6 +2,8 @@ package br.com.abril.nds.controllers.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -25,6 +27,8 @@ import com.google.gson.Gson;
 @RequestScoped
 @Intercepts(before=ExecuteMethodInterceptor.class)
 public class ValidacaoInterceptor implements Interceptor {
+	
+	private Logger logger = Logger.getLogger(ValidacaoInterceptor.class);
 
 	private Result result;
 	
@@ -49,6 +53,8 @@ public class ValidacaoInterceptor implements Interceptor {
 			stack.next(method, resourceInstance);
 			
 		} catch (Throwable throwable ) {
+			
+			logger.error(throwable.getMessage(), throwable);
 			
 			Throwable cause = ExceptionUtil.getRootCause(throwable);
 			

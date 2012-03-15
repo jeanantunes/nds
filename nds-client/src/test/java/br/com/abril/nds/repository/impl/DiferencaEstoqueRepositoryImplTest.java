@@ -87,7 +87,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.tipoDiferenca = TipoDiferenca.FALTA_EM;
 		
-		StatusConfirmacao statusConfirmacao = StatusConfirmacao.CONFIRMADO;
+		StatusConfirmacao statusConfirmacao = StatusConfirmacao.PENDENTE;
 		
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		
@@ -151,7 +151,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque);
+								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque, true);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			

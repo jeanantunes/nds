@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 
 /**
@@ -40,5 +41,22 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return Lista de {@link Cota}
 	 */
 	List<Cota> obterPorNome(String nome);
+	
+	/**
+	 * Obtém uma lista dos endereços cadastrados para uma determinada cota.
+	 * 
+	 * @param idCota - Id da cota.
+	 * 
+	 * @return List<Endereco> 
+	 */
+	List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota);
+	
+	/**
+	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * 
+	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
+	 * @return Cotasw
+	 */
+	List<Cota> obterCotasSujeitasSuspensao(Integer limiteInadimplencia);
 	
 }
