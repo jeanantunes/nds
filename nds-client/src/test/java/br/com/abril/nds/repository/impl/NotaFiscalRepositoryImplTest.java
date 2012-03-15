@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
@@ -65,7 +65,7 @@ public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 		tp.setTipoOperacao(TipoOperacao.ENTRADA);
 		save(tp);
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE);
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscal.setTipoNotaFiscal(tp);
 		save(notaFiscal);
 		

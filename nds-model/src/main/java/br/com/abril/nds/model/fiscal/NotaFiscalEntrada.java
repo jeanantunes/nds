@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -28,11 +29,18 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@GeneratedValue(generator = "NF_ENTRADA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
+	
 	@ManyToOne
+	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
+	private StatusNotaFiscalEntrada statusNotaFiscal;
 	
 	public Long getId() {
 		return id;
@@ -56,6 +64,14 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	public StatusNotaFiscalEntrada getStatusNotaFiscal() {
+		return statusNotaFiscal;
+	}
+	
+	public void setStatusNotaFiscal(StatusNotaFiscalEntrada statusNotaFiscal) {
+		this.statusNotaFiscal = statusNotaFiscal;
 	}
 
 }

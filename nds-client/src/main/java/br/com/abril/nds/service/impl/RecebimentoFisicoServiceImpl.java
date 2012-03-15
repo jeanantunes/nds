@@ -26,7 +26,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -441,7 +441,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.RECEBIDA);
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setOrigem(Origem.MANUAL);
 		
