@@ -28,7 +28,7 @@ public class ControleBaixaBancaria {
 	@Column(name = "ID")
 	private Long id;
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA", nullable = false)
+	@Column(name = "DATA", nullable = false, unique = true)
 	private Date data;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)

@@ -5,6 +5,12 @@ import java.math.BigDecimal;
 
 public class ContagemDevolucaoDTO implements Serializable {
 
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	private Long idMovimentoEstoqueCota;
+	private Long idConferenciaEncParcial;
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
@@ -56,9 +62,18 @@ public class ContagemDevolucaoDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	
-	
-	
+	public Long getIdMovimentoEstoqueCota() {
+		return idMovimentoEstoqueCota;
+	}
+	public void setIdMovimentoEstoqueCota(Long idMovimentoEstoqueCota) {
+		this.idMovimentoEstoqueCota = idMovimentoEstoqueCota;
+	}
+	public Long getIdConferenciaEncParcial() {
+		return idConferenciaEncParcial;
+	}
+	public void setIdConferenciaEncParcial(Long idConferenciaEncParcial) {
+		this.idConferenciaEncParcial = idConferenciaEncParcial;
+	}
 	
 	
 }

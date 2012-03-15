@@ -37,13 +37,14 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), "0", 
                 					   100.00, "1", "1", StatusCobranca.PAGO, cota);
-		save(boleto);	
+		save(boleto);
 	}
 	
 	@Test
 	@Ignore
 	public void teste() {
-		boletoService.baixarBoleto(null);
+		
+		boletoService.baixarBoletos(null, null);
 	}
 	
 }

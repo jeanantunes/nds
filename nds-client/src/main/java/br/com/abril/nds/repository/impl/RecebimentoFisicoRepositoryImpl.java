@@ -55,7 +55,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepository<Recebime
 		
 		hql.append(" from ");
 
-		hql.append(" ItemNotaFiscal itemNotaFiscal ");
+		hql.append(" ItemNotaFiscalEntrada itemNotaFiscal ");
 
 		hql.append(" left join itemNotaFiscal.recebimentoFisico as itemRecebimentoFisico ");
 		

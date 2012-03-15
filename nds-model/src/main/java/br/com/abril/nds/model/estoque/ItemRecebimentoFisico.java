@@ -11,13 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 
-/**
- * @author francisco.garcia
- * @version 1.0
- * @created 14-fev-2012 11:35:32
- */
 @Entity
 @Table(name = "ITEM_RECEB_FISICO")
 @SequenceGenerator(name="ITEM_REC_FISICO_SEQ", initialValue = 1, allocationSize = 1)
@@ -36,8 +31,8 @@ public class ItemRecebimentoFisico {
 	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")
 	private RecebimentoFisico recebimentoFisico;
 	@OneToOne(optional = false)
-	@JoinColumn(name = "ITEM_NF_ID")
-	private ItemNotaFiscal itemNotaFiscal;
+	@JoinColumn(name = "ITEM_NF_ENTRADA_ID")
+	private ItemNotaFiscalEntrada itemNotaFiscal;
 	/**
 	 * @return the id
 	 */
@@ -89,13 +84,13 @@ public class ItemRecebimentoFisico {
 	/**
 	 * @return the itemNotaFiscal
 	 */
-	public ItemNotaFiscal getItemNotaFiscal() {
+	public ItemNotaFiscalEntrada getItemNotaFiscal() {
 		return itemNotaFiscal;
 	}
 	/**
 	 * @param itemNotaFiscal the itemNotaFiscal to set
 	 */
-	public void setItemNotaFiscal(ItemNotaFiscal itemNotaFiscal) {
+	public void setItemNotaFiscal(ItemNotaFiscalEntrada itemNotaFiscal) {
 		this.itemNotaFiscal = itemNotaFiscal;
 	}
 }
