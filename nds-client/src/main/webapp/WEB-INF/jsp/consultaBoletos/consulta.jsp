@@ -1,7 +1,6 @@
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
-
 <script type="text/javascript">
 
 	$(function() {
@@ -111,6 +110,8 @@
 		
 		$(".grids").show();
 	}	
+	
+	
     
 	function getDataFromResult(resultado) {
 		
@@ -124,6 +125,8 @@
 			return resultado.tableModel;
 		}
 		
+		
+		
 		var dadosPesquisa;
 		$.each(resultado, function(index, value) {
 			  if(value[0] == "TblModelBoletos") {
@@ -131,10 +134,47 @@
 			  }
 		});
 		
+		
+		
+		$.each(dadosPesquisa.rows, 
+				function(index, row) {
+
+					 var linkImpressao = '<a href="javascript:;" target="blank" onclick="imprimeBoleto(' + row.cell[2] + ');" style="cursor:pointer">' +
+					 					 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
+					 					 '</a>';
+		
+					 var linkEmail = '<a href="javascript:;" target="blank" onclick="imprimeBoleto(' + row.cell[2] + ');" style="cursor:pointer">' +
+					 			     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
+					 				 '</a>';
+									
+				     row.cell[8] = linkImpressao + linkEmail;
+		         }
+		);
+		
+		
 		return dadosPesquisa;
 	}
-			
 		
+	
+	
+	function imprimeBoleto(nossoNumero){
+		var data = [
+	   				{
+	   					name: 'nossoNumero', value: nossoNumero
+	   				}
+	   			   ];
+				
+		$.postJSON(
+			"<c:url value='/financeiro/boletos/imprimeBoleto' />", 
+			data,
+			function(result) {
+
+			},
+			null
+		);
+    }
+	
+	
 </script>
 
 </head>
@@ -189,9 +229,9 @@
 		       	  
 		       	  <table class="boletosCotaGrid"></table>
 		        
-		          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		          <span class="bt_novos" title="Gerar Arquivo" ><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 		
-				  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+				  <span class="bt_novos" title="Imprimir" ><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 			  
 			  </div>
 	      </fieldset>

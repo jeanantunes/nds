@@ -1,13 +1,15 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import org.springframework.transaction.annotation.Transactional;
+import br.com.abril.nds.dto.BoletoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
@@ -22,6 +24,7 @@ import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.util.BoletoImpressao;
 
 @Service
 public class BoletoServiceImpl implements BoletoService {
@@ -159,6 +162,70 @@ public class BoletoServiceImpl implements BoletoService {
 		FORA_DATA_PAGAMENTO,
 		NAO_ENCONTRADO,
 		PAGO_SUCESSO;
+	}
+
+	@Override
+	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
+
+        BoletoImpressao boleto = new BoletoImpressao();
+        BoletoDTO dadosBoleto = boletoRepository.obterDadosBoleto(nossoNumero);
+
+        boleto.setCedenteNome(dadosBoleto.getCedenteNome());
+		boleto.setCedenteDocumento(dadosBoleto.getCedenteDocumento());
+
+		boleto.setSacadoNome(dadosBoleto.getSacadoNome());
+		boleto.setSacadoDocumento(dadosBoleto.getSacadoDocumento());
+
+        boleto.setEnderecoSacadoUf(dadosBoleto.getEnderecoSacadoUf());//!!
+        boleto.setEnderecoSacadoLocalidade(dadosBoleto.getEnderecoSacadoLocalidade());
+        boleto.setEnderecoSacadoCep(dadosBoleto.getEnderecoSacadoCep());
+        boleto.setEnderecoSacadoBairro(dadosBoleto.getEnderecoSacadoBairro());
+        boleto.setEnderecoSacadoLogradouro(dadosBoleto.getEnderecoSacadoLogradouro());
+        boleto.setEnderecoSacadoNumero(dadosBoleto.getEnderecoSacadoNumero());
+ 
+        boleto.setSacadorAvalistaNome(dadosBoleto.getSacadorAvalistaNome());
+		boleto.setSacadorAvalistaDocumento(dadosBoleto.getSacadorAvalistaDocumento());
+		
+		boleto.setEnderecoSacadorAvalistaUf(dadosBoleto.getEnderecoSacadorAvalistaUf());//!!
+        boleto.setEnderecoSacadorAvalistaLocalidade(dadosBoleto.getEnderecoSacadorAvalistaLocalidade());
+        boleto.setEnderecoSacadorAvalistaCep(dadosBoleto.getEnderecoSacadorAvalistaCep());
+        boleto.setEnderecoSacadorAvalistaBairro(dadosBoleto.getEnderecoSacadorAvalistaBairro());
+        boleto.setEnderecoSacadorAvalistaLogradouro(dadosBoleto.getEnderecoSacadorAvalistaLogradouro());
+        boleto.setEnderecoSacadorAvalistaNumero(dadosBoleto.getEnderecoSacadorAvalistaNumero());
+
+        boleto.setContaBanco(dadosBoleto.getContaBanco());
+        boleto.setContaNumero(dadosBoleto.getContaNumero());
+        boleto.setContaCarteira(dadosBoleto.getContaCarteira());
+        boleto.setContaAgencia(dadosBoleto.getContaAgencia());
+        
+        boleto.setTituloNumeroDoDocumento(dadosBoleto.getTituloNumeroDoDocumento());
+        boleto.setTituloNossoNumero(dadosBoleto.getTituloNossoNumero());
+        boleto.setTituloDigitoDoNossoNumero(dadosBoleto.getTituloDigitoDoNossoNumero());
+        boleto.setTituloValor(dadosBoleto.getTituloValor());
+        boleto.setTituloDataDoDocumento(dadosBoleto.getTituloDataDoDocumento());
+        boleto.setTituloDataDoVencimento(dadosBoleto.getTituloDataDoVencimento());
+        boleto.setTituloTipoDeDocumento(dadosBoleto.getTituloTipoDeDocumento());//!!!
+        boleto.setTituloAceite(dadosBoleto.getTituloAceite());//!!!
+        boleto.setTituloDesconto(dadosBoleto.getTituloDesconto());
+        boleto.setTituloDeducao(dadosBoleto.getTituloDeducao());
+        boleto.setTituloMora(dadosBoleto.getTituloMora());
+        boleto.setTituloAcrecimo(dadosBoleto.getTituloAcrecimo());
+        boleto.setTituloValorCobrado(dadosBoleto.getTituloValorCobrado());
+
+        boleto.setBoletoLocalPagamento(dadosBoleto.getBoletoLocalPagamento());
+        boleto.setBoletoInstrucaoAoSacado(dadosBoleto.getBoletoInstrucaoAoSacado());
+        boleto.setBoletoInstrucao1(dadosBoleto.getBoletoInstrucao1());
+        boleto.setBoletoInstrucao2(dadosBoleto.getBoletoInstrucao2());
+        boleto.setBoletoInstrucao3(dadosBoleto.getBoletoInstrucao3());
+        boleto.setBoletoInstrucao4(dadosBoleto.getBoletoInstrucao4());
+        boleto.setBoletoInstrucao5(dadosBoleto.getBoletoInstrucao5());
+        boleto.setBoletoInstrucao6(dadosBoleto.getBoletoInstrucao6());
+        boleto.setBoletoInstrucao7(dadosBoleto.getBoletoInstrucao7());
+		boleto.setBoletoInstrucao8(dadosBoleto.getBoletoInstrucao8());
+
+		byte[] b = boleto.obterArrayByte();
+		
+        return b;
 	}
 
 }
