@@ -123,6 +123,9 @@ public class DataLoader {
 	
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
+	private static Lancamento lancamentoSuper1;
+	private static Lancamento lancamentoCapricho1;
+
 	private static NotaFiscalFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscal itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
@@ -155,8 +158,6 @@ public class DataLoader {
 	private static Box box1;
 	private static Box box2;
 	
-	private static Lancamento lancamentoSuper1;
-	private static Lancamento lancamentoCapricho1;
 
 
 	public static void main(String[] args) {
