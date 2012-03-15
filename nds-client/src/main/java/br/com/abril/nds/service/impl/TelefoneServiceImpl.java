@@ -97,7 +97,8 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
 			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
-			this.telefoneRepository.removerTelefones(listaTelefonesCota);
+			
+			this.removerTelefone(listaTelefonesCota);
 		}
 	}
 
@@ -165,7 +166,8 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
 		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
 			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
-			this.telefoneRepository.removerTelefones(listaTelefonesFornecedor);
+			
+			this.removerTelefone(listaTelefonesFornecedor);
 		}
 	}
 	
@@ -197,6 +199,22 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		if (telefone.getRamal().trim().length() > 255){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Ramal");
+		}
+	}
+	
+	private void removerTelefone(Collection<Long> listaTelefonesCota) {
+		for (Long idTelefone : listaTelefonesCota){
+			Telefone telefone = this.telefoneRepository.buscarPorId(idTelefone);
+			
+			if (telefone != null){
+				try {
+					this.telefoneRepository.remover(telefone);
+				} catch (Exception e) {
+					//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
+					//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer
+					//selects que terão que ser alterados até que todas as associações estejam definidas.
+				}
+			}
 		}
 	}
 }
