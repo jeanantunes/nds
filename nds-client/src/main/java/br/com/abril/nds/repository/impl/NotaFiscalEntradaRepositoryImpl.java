@@ -10,18 +10,18 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
-import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Long> implements
-		NotaFiscalRepository {
+public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFiscalEntrada, Long> implements
+		NotaFiscalEntradaRepository {
 
-	public NotaFiscalRepositoryImpl() {
-		super(NotaFiscal.class);
+	public NotaFiscalEntradaRepositoryImpl() {
+		super(NotaFiscalEntrada.class);
 	}
 
 	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
@@ -37,7 +37,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscalFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+	public List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
 		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 		
@@ -53,7 +53,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select notaFiscal from NotaFiscalFornecedor notaFiscal ")
+		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ")
 		   .append(" join notaFiscal.fornecedor ")
 		   .append(" join notaFiscal.tipoNotaFiscal ")
 		   .append(" where notaFiscal.dataEmissao between :dataInicio and :dataFim ");
@@ -170,7 +170,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 				   + " (itemNotaFiscal.qtde * itemNotaFiscal.produtoEdicao.precoVenda) as valorTotal, "
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca " 
-				   + " from ItemNotaFiscal itemNotaFiscal "
+				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
 				   + " left join itemNotaFiscal.recebimentoFisico.diferenca as diferenca "
 				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal "
 				   + " order by itemNotaFiscal.id ";
@@ -186,7 +186,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 	}
 
 	@Override	
-	public void inserirNotaFiscal(NotaFiscal notaFiscal){
+	public void inserirNotaFiscal(NotaFiscalEntrada notaFiscal){
 		
 		if (notaFiscal == null) {
 			throw new IllegalArgumentException("Erro inesperado. Nota Fiscal não definida.");
@@ -195,11 +195,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 		}
 	}
 	@Override	
-	public NotaFiscal obterNotaFiscalPorNumero(String numero){
-		String hql = "from NotaFiscal nf where nf.numero = :numero ";
+	public NotaFiscalEntrada obterNotaFiscalPorNumero(String numero){
+		String hql = "from NotaFiscalEntrada nf where nf.numero = :numero ";
 		Query query = super.getSession().createQuery(hql);
 		query.setParameter("numero", numero);
-		return (NotaFiscal) query.uniqueResult();
+		return (NotaFiscalEntrada) query.uniqueResult();
 	}
 	/**
 	 * Metodo para buscar nota com numero,serie, cnpj e chaveDeAcesso 
@@ -207,10 +207,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Lon
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscal> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("from NotaFiscal nf where nf.numero = :numero ");
+		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");
 		hql.append("and nf.serie = :serie ");
 		hql.append("and nf.emitente.cnpj = :cnpj ");		
 		if(filtroConsultaNotaFiscal.getChave() == null){

@@ -28,8 +28,8 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -110,12 +110,12 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 		
-		NotaFiscalFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
-		ItemNotaFiscal itemNotaFiscal1Veja = Fixture.itemNotaFiscal(veja1, usuario,
+		ItemNotaFiscalEntrada itemNotaFiscal1Veja = Fixture.itemNotaFiscal(veja1, usuario,
 				notaFiscal1Veja, 
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
@@ -134,12 +134,12 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(itemRecebimentoFisico1Veja);
 		
 		
-		NotaFiscalFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
-		ItemNotaFiscal itemNotaFiscal2Veja = Fixture.itemNotaFiscal(
+		ItemNotaFiscalEntrada itemNotaFiscal2Veja = Fixture.itemNotaFiscal(
 				veja1, 
 				usuario,
 				notaFiscal2Veja, 
@@ -160,12 +160,12 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(itemRecebimentoFisico2Veja);
 		
 		
-		NotaFiscalFornecedor notaFiscal4Rodas= Fixture
-				.notaFiscalFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+		NotaFiscalEntradaFornecedor notaFiscal4Rodas= Fixture
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
-		ItemNotaFiscal itemNotaFiscal4Rodas = 
+		ItemNotaFiscalEntrada itemNotaFiscal4Rodas = 
 		
 				Fixture.itemNotaFiscal(
 						quatroRoda2, 

@@ -16,14 +16,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-/**
- * @author francisco.garcia
- * @version 1.0
- * @created 14-fev-2012 11:35:32
- */
 @Entity
 @Table(name = "RECEBIMENTO_FISICO")
 @SequenceGenerator(name="REC_FISICO_SEQ", initialValue = 1, allocationSize = 1)
@@ -41,7 +36,7 @@ public class RecebimentoFisico {
 	private Date dataConfirmacao;
 	@OneToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
-	private NotaFiscal notaFiscal;
+	private NotaFiscalEntrada notaFiscal;
 	@ManyToOne(optional = false)
 	private Usuario recebedor;
 	@ManyToOne
@@ -74,11 +69,11 @@ public class RecebimentoFisico {
 		this.dataConfirmacao = dataConfirmacao;
 	}
 	
-	public NotaFiscal getNotaFiscal() {
+	public NotaFiscalEntrada getNotaFiscal() {
 		return notaFiscal;
 	}
 
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
+	public void setNotaFiscal(NotaFiscalEntrada notaFiscal) {
 		this.notaFiscal = notaFiscal;
 	}
 	

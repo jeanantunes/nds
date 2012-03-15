@@ -29,8 +29,8 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -86,12 +86,12 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 			save(tipoNotaFiscal);
 
-			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
+					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(notaFiscalFornecedor);
 			
-			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+			ItemNotaFiscalEntrada itemNotaFiscal= Fixture.itemNotaFiscal(
 					produtoEdicao, usuario, notaFiscalFornecedor, 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012),

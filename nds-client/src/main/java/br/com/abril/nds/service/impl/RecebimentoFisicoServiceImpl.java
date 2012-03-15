@@ -23,8 +23,9 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -35,10 +36,10 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
-import br.com.abril.nds.repository.ItemNotaFiscalRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -61,7 +62,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
 	
 	@Autowired
-	private ItemNotaFiscalRepository itemNotaFiscalRepository;
+	private ItemNotaFiscalEntradaRepository itemNotaFiscalRepository;
 	
 	@Autowired
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
@@ -70,7 +71,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
-	private NotaFiscalRepository notaFiscalRepository;
+	private NotaFiscalEntradaRepository notaFiscalRepository;
 	
 	@Autowired
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
@@ -136,7 +137,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public void cancelarNotaFiscal(Long idNotaFiscal){
 		
-		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNotaFiscal);
+		NotaFiscalEntrada notaFiscal = notaFiscalRepository.buscarPorId(idNotaFiscal);
 		
 		if(notaFiscal != null){
 			
@@ -164,9 +165,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			if(Origem.MANUAL.equals(notaFiscal.getOrigem())){
 				
-				List<ItemNotaFiscal> listaItemNotaFiscal = itemNotaFiscalRepository.buscarItensPorIdNota(idNotaFiscal);
+				List<ItemNotaFiscalEntrada> listaItemNotaFiscal = itemNotaFiscalRepository.buscarItensPorIdNota(idNotaFiscal);
 				
-				for(ItemNotaFiscal itemNotaFiscal : listaItemNotaFiscal){
+				for(ItemNotaFiscalEntrada itemNotaFiscal : listaItemNotaFiscal){
 					
 					itemNotaFiscalRepository.remover(itemNotaFiscal);
 				}
@@ -197,7 +198,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * Insere os dados do recebimento físico.
 	 */
 	@Transactional
-	public void inserirDadosRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
+	public void inserirDadosRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
 		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nota fiscal não existente.");
@@ -238,7 +239,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param dataAtual
 	 */
 	@Transactional
-	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscal notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
+	public void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
 		
 		verificarValorDaNota(listaItensNota,notaFiscal.getValorBruto());
 		
@@ -387,7 +388,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param notaFiscal
 	 * @param listaItensNota
 	 */
-	private void atualizarDadosNotaFiscalExistente(RecebimentoFisico recebimentoFisico, Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
+	private void atualizarDadosNotaFiscalExistente(RecebimentoFisico recebimentoFisico, Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		if(recebimentoFisico == null){
 			recebimentoFisico = inserirRecebimentoFisico(usuarioLogado, notaFiscal, dataAtual);
@@ -395,12 +396,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota){
 			
-			ItemNotaFiscal itemNota = null;
+			ItemNotaFiscalEntrada itemNota = null;
 			
 			if(recebimentoFisicoDTO.getIdItemNota() == null) {
 				itemNota = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual);
 			} else {
-				itemNota = new ItemNotaFiscal();
+				itemNota = new ItemNotaFiscalEntrada();
 				itemNota.setId(recebimentoFisicoDTO.getIdItemNota());
 			}
 			
@@ -430,7 +431,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param notaFiscal
 	 * @param listaItensNota
 	 */
-	private void inserirDadosNovaNotaFiscal(Usuario usuarioLogado, NotaFiscal notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
+	private void inserirDadosNovaNotaFiscal(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		String cnpj = notaFiscal.getEmitente().getCnpj();
 		
@@ -452,7 +453,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		for( RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota ){
 			
-			ItemNotaFiscal itemNotaFiscal = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual);
+			ItemNotaFiscalEntrada itemNotaFiscal = incluirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual);
 			
 			inserirItemRecebimentoFisico(recebimentoFisicoDTO, itemNotaFiscal, recebimentoFisico);
 						
@@ -471,12 +472,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * 
 	 * @return ItemNotaFiscal
 	 */
-	private ItemNotaFiscal incluirItemNotaFiscal(Usuario usuarioLogado, NotaFiscal notaFiscal, RecebimentoFisicoDTO recebimentoDTO, Date dataAtual){
+	private ItemNotaFiscalEntrada incluirItemNotaFiscal(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, RecebimentoFisicoDTO recebimentoDTO, Date dataAtual){
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(recebimentoDTO.getIdProdutoEdicao());
 		
-		ItemNotaFiscal itemNota = new ItemNotaFiscal();		
+		ItemNotaFiscalEntrada itemNota = new ItemNotaFiscalEntrada();		
 		
 		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());			
 		itemNota.setDataLancamento(recebimentoDTO.getDataLancamento());
@@ -501,7 +502,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * 
 	 * @return RecebimentoFisico
 	 */
-	private RecebimentoFisico inserirRecebimentoFisico(Usuario userLogado, NotaFiscal notaFiscal, Date dataAtual){
+	private RecebimentoFisico inserirRecebimentoFisico(Usuario userLogado, NotaFiscalEntrada notaFiscal, Date dataAtual){
 		
 		RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
 		
@@ -693,7 +694,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 */
 	private void inserirItemRecebimentoFisico(
 			RecebimentoFisicoDTO recebimentoDTO, 
-			ItemNotaFiscal itemNotaFiscal, 
+			ItemNotaFiscalEntrada itemNotaFiscal, 
 			RecebimentoFisico recebimentoFisico ) {
 		
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
@@ -713,7 +714,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param notaFiscal
 	 * @param dataAtual
 	 */
-	private void alterarRecebimentoFisicoParaConfirmado(Usuario usuarioLogado, NotaFiscal notaFiscal, Date dataAtual) {
+	private void alterarRecebimentoFisicoParaConfirmado(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, Date dataAtual) {
 		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
 		
@@ -732,7 +733,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 */
 	private void excluirItemNotaFiscal(Long idItemNota) {
 		
-		ItemNotaFiscal itemNotaFiscal = itemNotaFiscalRepository.buscarPorId(idItemNota);
+		ItemNotaFiscalEntrada itemNotaFiscal = itemNotaFiscalRepository.buscarPorId(idItemNota);
 		
 		itemNotaFiscalRepository.remover(itemNotaFiscal);		
 	}
