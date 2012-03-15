@@ -40,7 +40,24 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		}
 		
-		return this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneCotaRepository.buscarTelefonesPessoaPorCota(idCota);
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
+		this.salvarTelefonesCota(listaTelefonesAdicionar);
+		this.removerTelefonesCota(listaTelefonesRemover);
 	}
 
 	@Transactional
@@ -61,9 +78,13 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				if (telefoneCota.getTelefone().getId() == null){
 					this.telefoneRepository.adicionar(telefoneCota.getTelefone());
-					this.telefoneCotaRepository.adicionar(telefoneCota);
 				} else {
 					this.telefoneRepository.alterar(telefoneCota.getTelefone());
+				}
+				
+				if (telefoneCota.getId() == null){
+					this.telefoneCotaRepository.adicionar(telefoneCota);
+				} else {
 					this.telefoneCotaRepository.alterar(telefoneCota);
 				}
 			}
@@ -88,7 +109,24 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdFornecedor é obrigatório");
 		}
 		
-		return this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneFornecedorRepository.buscarTelefonesPessoaPorFornecedor(idFornecedor);
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public void cadastrarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
+		this.salvarTelefonesFornecedor(listaTelefonesAdicionar);
+		this.removerTelefonesFornecedor(listaTelefonesRemover);
 	}
 
 	@Transactional
@@ -109,9 +147,13 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				if (telefoneFornecedor.getTelefone().getId() == null){
 					this.telefoneRepository.adicionar(telefoneFornecedor.getTelefone());
-					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
 				} else {
 					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
+				}
+				
+				if (telefoneFornecedor.getId() == null){
+					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
+				} else {
 					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
 				}
 			}
