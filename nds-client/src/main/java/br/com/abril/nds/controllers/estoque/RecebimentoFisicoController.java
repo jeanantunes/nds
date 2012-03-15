@@ -36,6 +36,8 @@ import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -199,7 +201,7 @@ public class RecebimentoFisicoController {
 		
 		if(cnpj == null || cnpj.isEmpty()) {
 			msgs.add("O campo CNPJ é obrigatório");
-		} else if(cnpj.length()<12) {
+		} else if(!verificarValidadeCnpj(cnpj)) {
 			msgs.add("O campo cnpj esta inválido");
 		}
 		
@@ -213,6 +215,18 @@ public class RecebimentoFisicoController {
 
 		if(!msgs.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+		
+	}
+
+	private boolean verificarValidadeCnpj(String cnpj) {
+	
+		CNPJValidator cnpjValidator = new CNPJValidator();
+		try{
+			cnpjValidator.assertValid(cnpj);
+			return true;
+		}catch(InvalidStateException e){
+			return false;
 		}
 		
 	}
