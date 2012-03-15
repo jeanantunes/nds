@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -37,8 +40,12 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		Cota cota = Fixture.cota(1000, pessoaJuridica, SituacaoCadastro.ATIVO,box);
 		save(cota);
 		
+		Banco bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
+			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+		save(bancoHSBC);
+		
 		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), "0", 
-                					   100.00, "1", "1", StatusCobranca.PAGO, cota);
+                					   100.00, "1", "1", StatusCobranca.PAGO, cota, bancoHSBC);
 		save(boleto);
 	}
 	
