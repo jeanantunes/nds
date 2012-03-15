@@ -33,9 +33,9 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -81,12 +81,12 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
 		
-		NotaFiscal notaFiscal = 
-				Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
+		NotaFiscalEntrada notaFiscal = 
+				Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal);
 				
-		ItemNotaFiscal itemNotaFiscal = 
+		ItemNotaFiscalEntrada itemNotaFiscal = 
 				
 				Fixture.itemNotaFiscal(
 						produtoEdicao, 
@@ -99,8 +99,8 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		save(itemNotaFiscal);
 		
-		NotaFiscalFornecedor notaFiscalFornecedor = 
-				Fixture.notaFiscalFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
+				Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscalFornecedor);
 		
