@@ -271,14 +271,6 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.caelum.stella</groupId>
-			<artifactId>caelum-stella-bean-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>br.com.caelum.stella</groupId>
-			<artifactId>caelum-stella-hibernate-user-types</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>br.com.caelum.stella</groupId>
 			<artifactId>caelum-stella-boleto</artifactId>
 		</dependency>
 	</dependencies>

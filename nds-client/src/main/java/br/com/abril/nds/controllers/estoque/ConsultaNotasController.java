@@ -20,7 +20,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
@@ -161,7 +161,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
 							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
 							itemExibicaoToString(notaFiscal.getFornecedor().getJuridica().getRazaoSocial()),
-							StatusNotaFiscal.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ", 
+							StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ", 
 							" ", 
 							itemExibicaoToString(notaFiscal.getId()));
 

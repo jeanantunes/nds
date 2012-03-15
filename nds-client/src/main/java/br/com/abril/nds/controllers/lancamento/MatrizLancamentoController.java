@@ -89,8 +89,6 @@ public class MatrizLancamentoController {
 		result.use(Results.json()).withoutRoot().from(resultado).serialize();
 	}
 
-
-	
 	@Get
 	public void resumoPeriodo(Date dataInicial, List<Long> idsFornecedores) {
 		validar();

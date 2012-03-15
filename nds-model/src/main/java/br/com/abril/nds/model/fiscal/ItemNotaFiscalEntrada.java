@@ -22,7 +22,6 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-
 @Entity
 @Table(name = "ITEM_NOTA_FISCAL_ENTRADA")
 @SequenceGenerator(name="ITEM_NF_ENTRADA_SEQ", initialValue = 1, allocationSize = 1)
@@ -32,11 +31,14 @@ public class ItemNotaFiscalEntrada {
 	@GeneratedValue(generator = "ITEM_NF_ENTRADA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscalEntrada notaFiscal;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -57,7 +59,7 @@ public class ItemNotaFiscalEntrada {
 	private TipoLancamento tipoLancamento;	
 	
 	@Temporal(value=TemporalType.DATE)
-	@Column(name = "DATA_REC", nullable = false)
+	@Column(name = "DATA_RECOLHIMENTO", nullable = false)
 	private Date dataRecolhimento;	
 	
 	@OneToOne(mappedBy = "itemNotaFiscal")
