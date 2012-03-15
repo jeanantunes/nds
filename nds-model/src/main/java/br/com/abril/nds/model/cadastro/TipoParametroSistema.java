@@ -42,6 +42,31 @@ public enum TipoParametroSistema {
 	 * Número de dias permitido para lançamento de uma
 	 * diferença de estoque do tipo SOBRA EM.
 	 */
-	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM;
+	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM,
+	
+	/**
+	 * SMTP de autenticação da conta de e-mail do sistema
+	 */
+	EMAIL_PROTOCOLO,
+	
+	/**
+	 * Senha de autenticação da conta de e-mail do sistema
+	 */
+	EMAIL_SENHA,
+	
+	/**
+	 * Número da Porta de autenticação da conta de e-mail do sistema
+	 */
+	EMAIL_PORTA,
+	
+	/**
+	 * Nome do host de autenticação da conta de e-mail do sistema
+	 */
+	EMAIL_HOST,
+	
+	/**
+	 * Usúario de de autenticação da conta de e-mail do sistema
+	 */
+	EMAIL_USUARIO;
 	
 }
