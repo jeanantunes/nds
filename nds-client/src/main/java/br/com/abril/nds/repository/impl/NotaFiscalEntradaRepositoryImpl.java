@@ -12,7 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -149,7 +149,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 		
 		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
 
-			query.setParameter("statusNotaFiscal", StatusNotaFiscal.RECEBIDA);
+			query.setParameter("statusNotaFiscal", StatusNotaFiscalEntrada.RECEBIDA);
 		}
 
 		return query;

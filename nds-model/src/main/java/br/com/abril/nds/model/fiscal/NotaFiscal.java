@@ -3,8 +3,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
@@ -15,27 +13,34 @@ public abstract class NotaFiscal {
 
 	@Column(name = "DATA_EMISSAO", nullable = false)
 	private Date dataEmissao;
+	
 	@Column(name = "DATA_EXPEDICAO", nullable = false)
 	private Date dataExpedicao;
+	
 	@Column(name = "NUMERO", nullable = false)
 	private String numero;
+	
 	@Column(name = "SERIE", nullable  = false)
 	private String serie;
+	
 	@Column(name = "CHAVE_ACESSO")
 	private String chaveAcesso;
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
-	private StatusNotaFiscal statusNotaFiscal;
+	
 	@Column(name = "VALOR_BRUTO", nullable = false)
 	private BigDecimal valorBruto;
+	
 	@Column(name = "VALOR_LIQUIDO", nullable = false)
 	private BigDecimal valorLiquido;
+	
 	@Column(name = "VALOR_DESCONTO", nullable = false)
 	private BigDecimal valorDesconto;	
+	
 	@ManyToOne(optional = false)
 	private CFOP cfop;
+	
 	@ManyToOne(optional = false)
 	private PessoaJuridica emitente;
+	
 	@ManyToOne(optional = false)
 	private TipoNotaFiscal tipoNotaFiscal;
 	
@@ -77,14 +82,6 @@ public abstract class NotaFiscal {
 	
 	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
-	}
-	
-	public StatusNotaFiscal getStatusNotaFiscal() {
-		return statusNotaFiscal;
-	}
-	
-	public void setStatusNotaFiscal(StatusNotaFiscal statusNotaFiscal) {
-		this.statusNotaFiscal = statusNotaFiscal;
 	}
 	
 	public CFOP getCfop() {

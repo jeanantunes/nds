@@ -54,7 +54,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -506,7 +506,7 @@ public class Fixture {
 		notaFiscalFornecedor.setNumero("2344242");
 		notaFiscalFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalFornecedor.setSerie("345353543");
-		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE);
+		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
 		notaFiscalFornecedor.setFornecedor(fornecedor);
