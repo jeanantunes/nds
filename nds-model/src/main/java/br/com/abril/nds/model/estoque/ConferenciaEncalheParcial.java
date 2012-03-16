@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -46,7 +45,7 @@ public class ConferenciaEncalheParcial {
 	@ManyToOne(optional = true)
 	private Usuario responsavel;
 	
-	@OneToOne(optional = true)
+	@ManyToOne(optional = true)
 	private ProdutoEdicao produtoEdicao;
 
 	public Long getId() {

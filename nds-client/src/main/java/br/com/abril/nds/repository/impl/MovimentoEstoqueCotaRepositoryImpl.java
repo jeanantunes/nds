@@ -57,7 +57,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		hql.append(" where ");	
 		
-		hql.append(" lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor and	");		
+		hql.append(" ( lancamento.dataRecolhimentoDistribuidor between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) and ");		
 		
 		if(listaIdProdutoDosFornecedores != null && !listaIdProdutoDosFornecedores.isEmpty()) {
 			hql.append(" lancamento.produtoEdicao.produto.id in  ( :listaIdProdutoDosFornecedores ) and 	");		
@@ -90,20 +90,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	//TODO: 
-	/*
 	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, Object filtroConsultaListaContagemDevolucao) {
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
-		query.setParameter("tipoMovimento", tipoMovimento);
+		//TODO: usar param do filtro
+		List listaIdProdutoDosFornecedores = null;
+		
+		query.setParameter("dataRecolhimentoDistribuidorInicial", null);
+
+		query.setParameter("dataRecolhimentoDistribuidorFinal", null);
+		
+		query.setParameter("tipoMovimento", null);
+		
 		if(listaIdProdutoDosFornecedores != null && !listaIdProdutoDosFornecedores.isEmpty()) {
+			
 			query.setParameterList("listaIdProdutoDosFornecedores", listaIdProdutoDosFornecedores);
+			
 		}
-		
-		
-	}*/
 	
+		return query;
+		
+	}
 	 
 	
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
@@ -113,18 +121,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		String hql = getConsultaListaContagemDevolucao(null, false);
 		
-		Query query = getSession().createQuery(hql.toString());
+		//TODO usar filtro
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, null);
 		
-		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
-		query.setParameter("tipoMovimento", tipoMovimento);
-		if(listaIdProdutoDosFornecedores != null && !listaIdProdutoDosFornecedores.isEmpty()) {
-			query.setParameterList("listaIdProdutoDosFornecedores", listaIdProdutoDosFornecedores);
-		}
 		
-		//FIXME: 
+		//TODO usar filtro
 		query.setFirstResult(0);
 
-		//FIXME: 
+		//TODO usar filtro
 		query.setMaxResults(1000);
 		
 		return query.list();
@@ -136,15 +140,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			TipoMovimentoEstoque tipoMovimento,
 			List<Long> listaIdProdutoDosFornecedores) {
 		
-		String hql = getConsultaListaContagemDevolucao(null, false);
+		String hql = getConsultaListaContagemDevolucao(null, true);
 		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
-		query.setParameter("tipoMovimento", tipoMovimento);
-		if(listaIdProdutoDosFornecedores != null && !listaIdProdutoDosFornecedores.isEmpty()) {
-			query.setParameterList("listaIdProdutoDosFornecedores", listaIdProdutoDosFornecedores);
-		}
+		//TODO usar filtro
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, null);
 		
 		return (Integer) query.uniqueResult();
 		
