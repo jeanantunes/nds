@@ -7,11 +7,13 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.service.ConsultaBaseEnderecoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
@@ -40,6 +42,9 @@ public class EnderecoController {
 
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private ConsultaBaseEnderecoService consultaBaseEnderecoService;
 	
 	@Path("/")
 	public void index() {
@@ -188,6 +193,70 @@ public class EnderecoController {
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
+	/**
+	 * Método que realiza a busca do endereço pelo CEP 
+	 * 
+	 * @param cep
+	 */
+	@Post
+	public void obterEnderecoPorCep(String cep) {
+		
+		cep = retirarFormatacaoCep(cep);
+		
+		EnderecoVO enderecoRetornado = this.consultaBaseEnderecoService.buscarPorCep(cep);
+		
+		if (enderecoRetornado == null) {
+			
+			this.result.nothing();
+		
+		} else {
+
+			Endereco endereco = parseEndereco(enderecoRetornado);
+			
+			endereco.setCep(cep);
+
+			EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
+
+			enderecoAssociacao.setEndereco(endereco);
+
+			enderecoAssociacao.setEnderecoPrincipal(false);
+
+			this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
+		}
+	}
+
+	private Endereco parseEndereco(EnderecoVO enderecoRetornado) {
+		
+		String bairro = enderecoRetornado.getBairro() == null 
+					? "" : enderecoRetornado.getBairro().getNome();
+		
+		String cidade = enderecoRetornado.getLocalidade() == null 
+					? "" : enderecoRetornado.getLocalidade().getNome();
+		
+		String logradouro = enderecoRetornado.getLogradouro() == null 
+					? "" : enderecoRetornado.getLogradouro().getNome();
+		
+		String uf = enderecoRetornado.getUnidadeFederecao() == null 
+					? "" : enderecoRetornado.getUnidadeFederecao().getSigla();
+		
+		Endereco endereco = new Endereco();
+
+		endereco.setBairro(bairro);
+
+		endereco.setCidade(cidade);
+
+		endereco.setLogradouro(logradouro);
+
+		endereco.setUf(uf);
+		
+		return endereco;
+	}
+
+	private String retirarFormatacaoCep(String cep) {
+
+		return cep.replaceAll("-", "");
+	}
+	
 	/**
 	 * 
 	 * @param enderecoAssociacao

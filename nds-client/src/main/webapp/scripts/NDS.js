@@ -233,6 +233,10 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 			var tipoMensagem = null;
 			var listaMensagens = null;
 			
+			if(!json) {
+				return;
+			}
+			
 			if (json.mensagens) {
 				
 				tipoMensagem = json.mensagens.tipoMensagem;

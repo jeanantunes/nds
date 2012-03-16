@@ -200,6 +200,30 @@
 		});
 	});
 	
+	function pesquisarEnderecoPorCep() {
+	
+		var cep =  $("#cep").val();
+		
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/obterEnderecoPorCep" />',
+			{ "cep": cep },
+			function(result) {
+				$("#idEndereco").val(result.id);
+				$("#tipoEndereco").val(result.tipoEndereco);
+				$("#cep").val(result.endereco.cep);
+				$("#logradouro").val(result.endereco.logradouro);
+				$("#numero").val(result.endereco.numero);
+				$("#complemento").val(result.endereco.complemento);
+				$("#bairro").val(result.endereco.bairro);
+				$("#cidade").val(result.endereco.cidade);
+				$("#uf").val(result.endereco.uf);
+				$("#principal").attr("checked", result.enderecoPrincipal);
+			},
+			null, 
+			true
+		);
+	}
+	
 	$(document).ready(function() {
 		
 		$(".enderecosGrid").flexigrid({
@@ -290,8 +314,9 @@
 				<td width="241">
 				<input type="text" style="float:left; margin-right:5px;" 
 					   name="enderecoAssociacao.endereco.cep" id="cep" />
+
 					<span class="classPesquisar" title="Pesquisar Cep.">
-						<a href="javascript:;">&nbsp;</a>
+						<a href="javascript:;" onclick="pesquisarEnderecoPorCep();">&nbsp;</a>
 					</span></td>
 			</tr>
 			<tr>
