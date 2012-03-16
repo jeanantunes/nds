@@ -2,6 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
+
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 
 public class ContagemDevolucaoDTO implements Serializable {
 
@@ -9,17 +12,69 @@ public class ContagemDevolucaoDTO implements Serializable {
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
-	private Long idMovimentoEstoqueCota;
+
 	private Long idConferenciaEncParcial;
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
 	private BigDecimal precoVenda;
 	private BigDecimal qtdDevolucao;
-	private BigDecimal qtdNota;
 	private BigDecimal valorTotal;
+	private BigDecimal qtdNota;
+	private BigDecimal diferenca;
+	private Date dataRecolhimentoDistribuidor;
+	private Date dataConfEncalheParcial;
+	private Date dataAprovacao;
+	private StatusAprovacao statusAprovacao;
 	
+	public ContagemDevolucaoDTO(){}
 	
+	public ContagemDevolucaoDTO(
+		
+			Long idConferenciaEncParcial,
+			String codigoProduto, 
+			String nomeProduto, 
+			Long numeroEdicao,
+			BigDecimal precoVenda, 
+			BigDecimal qtdDevolucao,
+			BigDecimal valorTotal,
+			BigDecimal qtdNota,
+			BigDecimal diferenca,
+			Date dataRecolhimentoDistribuidor, 
+			Date dataConfEncalheParcial,
+			Date dataAprovacao, 
+			StatusAprovacao statusAprovacao) {
+		
+		super();
+		this.idConferenciaEncParcial = idConferenciaEncParcial;
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
+		this.precoVenda = precoVenda;
+		this.qtdDevolucao = qtdDevolucao;
+		this.valorTotal = valorTotal;
+		this.qtdNota = qtdNota;
+		this.diferenca = diferenca;
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		this.dataConfEncalheParcial = dataConfEncalheParcial;
+		this.dataAprovacao = dataAprovacao;
+		this.statusAprovacao = statusAprovacao;
+	}
+
+
+	
+	public BigDecimal getDiferenca() {
+		return diferenca;
+	}
+	public void setDiferenca(BigDecimal diferenca) {
+		this.diferenca = diferenca;
+	}
+	public Long getIdConferenciaEncParcial() {
+		return idConferenciaEncParcial;
+	}
+	public void setIdConferenciaEncParcial(Long idConferenciaEncParcial) {
+		this.idConferenciaEncParcial = idConferenciaEncParcial;
+	}
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -62,18 +117,29 @@ public class ContagemDevolucaoDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	public Long getIdMovimentoEstoqueCota() {
-		return idMovimentoEstoqueCota;
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
 	}
-	public void setIdMovimentoEstoqueCota(Long idMovimentoEstoqueCota) {
-		this.idMovimentoEstoqueCota = idMovimentoEstoqueCota;
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
-	public Long getIdConferenciaEncParcial() {
-		return idConferenciaEncParcial;
+	public Date getDataConfEncalheParcial() {
+		return dataConfEncalheParcial;
 	}
-	public void setIdConferenciaEncParcial(Long idConferenciaEncParcial) {
-		this.idConferenciaEncParcial = idConferenciaEncParcial;
+	public void setDataConfEncalheParcial(Date dataConfEncalheParcial) {
+		this.dataConfEncalheParcial = dataConfEncalheParcial;
 	}
-	
+	public Date getDataAprovacao() {
+		return dataAprovacao;
+	}
+	public void setDataAprovacao(Date dataAprovacao) {
+		this.dataAprovacao = dataAprovacao;
+	}
+	public StatusAprovacao getStatusAprovacao() {
+		return statusAprovacao;
+	}
+	public void setStatusAprovacao(StatusAprovacao statusAprovacao) {
+		this.statusAprovacao = statusAprovacao;
+	}
 	
 }
