@@ -1,9 +1,9 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 /**
  * Data Transfer Object para filtro da pesquisa de digitação contagem devolução
@@ -15,7 +15,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Date dataPesquisa;
+	private PeriodoVO periodo;
 	
 	private Long idFornecedor;
 	
@@ -29,9 +29,9 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	public FiltroDigitacaoContagemDevolucaoDTO(){}	
 	
 	
-	public FiltroDigitacaoContagemDevolucaoDTO(Date dataPesquisa, Long idFornecedor){
-		this.dataPesquisa = dataPesquisa;
+	public FiltroDigitacaoContagemDevolucaoDTO(PeriodoVO periodo, Long idFornecedor){
 		this.idFornecedor = idFornecedor;
+		this.periodo = periodo;
 	}	
 	
 	
@@ -41,17 +41,16 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	 * @author Discover Technology
 	 *
 	 */
-	public enum OrdenacaoColuna{
+	public enum OrdenacaoColuna {
 		
-		NOSSO_NUMERO("nossoNumero"),
-		DATA_EMISSAO("dataVencimento"),
-		DATA_VENCIMENTO("dataVencimento"),
-		DATA_PAGAMENTO("dataPagamento"),
-		ENCARGOS("encargos"),
-		VALOR("valor"),
-		TIPO_BAIXA("tipoBaixa"),
-		STATUS("status"),
-		ACAO("acao");
+		CODIGO_PRODUTO("codigo"),
+		NOME_PRODUTO("produto"),
+		NUMERO_EDICAO("edicao"),
+		PRECO_CAPA("precoVenda"),
+		QTD_DEVOLUCAO("qtdDevolucao"),
+		VALOR_TOTAL("valorTotal"),
+		QTD_NOTA("qtdNota"),
+		DIFERENCA("diferenca");
 		
 		private String nomeColuna;
 		
@@ -65,21 +64,6 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		}
 		
 	}
-
-	/**
-	 * @return the dataPesquisa
-	 */
-	public Date getDataPesquisa() {
-		return dataPesquisa;
-	}
-
-	/**
-	 * @param dataPesquisa the dataPesquisa to set
-	 */
-	public void setDataPesquisa(Date dataPesquisa) {
-		this.dataPesquisa = dataPesquisa;
-	}
-
 	/**
 	 * @return the idFornecedor
 	 */
@@ -122,6 +106,22 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
+	/**
+	 * @return the periodo
+	 */
+	public PeriodoVO getPeriodo() {
+		return periodo;
+	}
+
+
+	/**
+	 * @param periodo the periodo to set
+	 */
+	public void setPeriodo(PeriodoVO periodo) {
+		this.periodo = periodo;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -130,15 +130,15 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((dataPesquisa == null) ? 0 : dataPesquisa.hashCode());
-		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
 		return result;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -152,11 +152,6 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroDigitacaoContagemDevolucaoDTO other = (FiltroDigitacaoContagemDevolucaoDTO) obj;
-		if (dataPesquisa == null) {
-			if (other.dataPesquisa != null)
-				return false;
-		} else if (!dataPesquisa.equals(other.dataPesquisa))
-			return false;
 		if (idFornecedor == null) {
 			if (other.idFornecedor != null)
 				return false;
@@ -169,8 +164,15 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 				return false;
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
+		if (periodo == null) {
+			if (other.periodo != null)
+				return false;
+		} else if (!periodo.equals(other.periodo))
+			return false;
 		return true;
 	}
+
+	
 	
 	
 }

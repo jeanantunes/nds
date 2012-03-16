@@ -1,12 +1,15 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -18,16 +21,19 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
-import br.com.abril.nds.model.financeiro.TipoBaixa;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaAutomaticaRepository;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.util.BoletoImpressao;
+import br.com.abril.nds.util.TipoMensagem;
+
 
 @Service
 public class BoletoServiceImpl implements BoletoService {
@@ -40,6 +46,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	private BaixaAutomaticaRepository baixaAutomaticaRepository;
+	
+	@Autowired
+	private ControleBaixaBancariaRepository controleBaixaRepository;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -59,11 +68,29 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Override
 	@Transactional
-	public void baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento, Usuario usuario) {
+	public void baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
+							  BigDecimal valorFinanceiro,
+							  Usuario usuario) {
 		
 		Date dataOperacao = obterDataOperacao();
 		
-		//TODO: verificar se já foi feita uma baixa automática no dia
+		ControleBaixaBancaria controleBaixa =
+				controleBaixaRepository.obterPorData(dataOperacao);
+		
+		if (controleBaixa != null
+			&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					"Já foi realizada baixa automática na data de operação atual!");
+		}
+		
+		if (valorFinanceiro == null
+				|| !valorFinanceiro.equals(arquivoPagamento.getSomaPagamentos())) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+				"Valor financeiro inválido! A soma dos valores dos boletos pagos " +
+				"deve ser igual ao valor informado!");
+		}
 		
 		PoliticaCobranca politicaCobranca =
 			politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO);
@@ -76,7 +103,7 @@ public class BoletoServiceImpl implements BoletoService {
 				
 				for (PagamentoDTO pagamento : arquivoPagamento.getListaPagemento()) {
 				
-					baixarBoleto(pagamento, dataOperacao, TipoBaixa.AUTOMATICA,
+					baixarBoleto(pagamento, dataOperacao,
 								 arquivoPagamento.getNomeArquivo(), politicaCobranca);
 				}
 				
@@ -97,7 +124,7 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Override
 	@Transactional
-	public void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao, TipoBaixa tipoBaixa,
+	public void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao,
 							 String nomeArquivo, PoliticaCobranca politicaCobranca) {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero());
@@ -107,7 +134,7 @@ public class BoletoServiceImpl implements BoletoService {
 			//Não paga o boleto o gera baixa com status de boleto pago anteriormente
 			if (boleto.getStatusCobranca().equals(StatusCobranca.PAGO)) {
 				
-				gerarBaixaAutomatica(StatusBaixa.PAGO_ANTERIORMENTE, null, tipoBaixa,
+				gerarBaixaAutomatica(StatusBaixa.PAGO_ANTERIORMENTE, null,
 									 dataOperacao, nomeArquivo);
 				
 				return;
@@ -116,7 +143,7 @@ public class BoletoServiceImpl implements BoletoService {
 			//Não paga o boleto o gera baixa com status de boleto fora da data
 			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) > 0) {
 				
-				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DATA, null, tipoBaixa,
+				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DATA, null,
 									 dataOperacao, nomeArquivo);
 				
 				return;
@@ -127,20 +154,20 @@ public class BoletoServiceImpl implements BoletoService {
 				//Não paga o boleto o gera baixa com status de não pago por divergência
 				if (politicaCobranca == null || !politicaCobranca.isAceitaPagamentoDivergente()) {
 					
-					gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA, null, tipoBaixa,
+					gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA, null,
 							 			 dataOperacao, nomeArquivo);
 					
 					return;
 				} else {
 				
 					//Paga o boleto o gera baixa com status de pago com divergência
-					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA, null, tipoBaixa,
+					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA, null,
 				 			 dataOperacao, nomeArquivo);
 				}
 			} else {
 			
 				//Paga o boleto o gera baixa com status de pago
-				gerarBaixaAutomatica(StatusBaixa.PAGO, boleto, tipoBaixa,
+				gerarBaixaAutomatica(StatusBaixa.PAGO, boleto,
 						 			 dataOperacao, nomeArquivo);
 			}
 			
@@ -151,18 +178,17 @@ public class BoletoServiceImpl implements BoletoService {
 			
 		} else {
 			
-			gerarBaixaAutomatica(StatusBaixa.PAGO, null, tipoBaixa,
+			gerarBaixaAutomatica(StatusBaixa.PAGO, null,
 								 dataOperacao, nomeArquivo);
 		}
 	}
 	
-	private void gerarBaixaAutomatica(StatusBaixa statusBaixa, Boleto boleto, TipoBaixa tipoBaixa,
+	private void gerarBaixaAutomatica(StatusBaixa statusBaixa, Boleto boleto,
 									  Date dataBaixa, String nomeArquivo) {
 		
 		BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
 		
 		baixaAutomatica.setDataBaixa(dataBaixa);
-		baixaAutomatica.setTipoBaixa(tipoBaixa);
 		baixaAutomatica.setNomeArquivo(nomeArquivo);
 		baixaAutomatica.setStatus(statusBaixa);
 		baixaAutomatica.setBoleto(boleto);
@@ -240,5 +266,5 @@ public class BoletoServiceImpl implements BoletoService {
 		
         return b;
 	}
-	
+
 }

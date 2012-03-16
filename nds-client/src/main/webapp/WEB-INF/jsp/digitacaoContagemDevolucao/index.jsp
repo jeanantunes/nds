@@ -3,7 +3,7 @@
 
 $(function() {
 	
-$(".contagemDevolucaoGrid").flexigrid({
+$("#contagemDevolucaoGrid").flexigrid({
 		
 		dataType : 'json',
 		preProcess:executarPreProcessamento,
@@ -49,6 +49,12 @@ $(".contagemDevolucaoGrid").flexigrid({
 			width : 120,
 			sortable : true,
 			align : 'center'
+		}, {
+			display : 'Diferença',
+			name : 'qntDiferenca',
+			width : 80,
+			sortable : true,
+			align : 'center'
 		},{
 			display : 'Replicar Qtde',
 			name : 'replicarQtde',
@@ -68,17 +74,15 @@ $(".contagemDevolucaoGrid").flexigrid({
 });
 	
 $(function() {
-	
-	$("#dataPesquisa").datepicker({
-		showOn : "button",
-		buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-		buttonImageOnly : true,
-		dateFormat: 'dd/mm/yy',
-		defaultDate: new Date()
+	$('input[id^="data"]').datepicker({
+		showOn: "button",
+		buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+		buttonImageOnly: true,
+		dateFormat: "dd/mm/yy"
 	});
 	
-	$("#dataPesquisa").mask("99/99/9999");
-	$("#dataPesquisa").focus();
+	$('input[id^="data"]').mask("99/99/9999");
+	$("#edicao").numeric();
 });
 
 
@@ -136,17 +140,19 @@ function executarPreProcessamento(resultado) {
 		  
 			  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				 <tr>
-				    <td width="42">Data:</td>
-				    <td width="115"><input name="dataPesquisa" type="text" id="dataPesquisa" style="width:80px; float:left; margin-right:5px;"/></td>
-				    <td colspan="3">Fornecedor:</td>
-				    <td width="270">
+				     <td width="73">Período de:</td>
+				    <td width="121"><input name="dataDe" type="text" id="dataDe" style="width:80px; float:left; margin-right:5px;"/></td>
+				    <td width="22">Até:</td>
+				    <td width="131"><input name="dataAte" type="text" id="dataAte" style="width:80px; float:left; margin-right:5px;"/></td>
+				    <td colspan="77">Fornecedor:</td>
+				    <td width="287">
 				    <select name="idFornecedor" id="idFornecedor" style="width:250px;">
 				      <option selected="selected">Todos</option>
 				      <c:forEach items="${listaFornecedores}" var="fornecedor">
 				      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
 				      </c:forEach>
 				    </select></td>
-				    <td width="429"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+				    <td width="203"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
 				  </tr>
 			  </table>
 			
@@ -161,7 +167,7 @@ function executarPreProcessamento(resultado) {
 		 
 		 <div class="grids" id="grids" style="display:none;">
 		 	
-		 	 <table class="contagemDevolucaoGrid"></table>
+		 	 <table class="contagemDevolucaoGrid" id="contagemDevolucaoGrid"></table>
 		 	
 		 	<table width="100%" border="0" cellspacing="2" cellpadding="2">
 				  <tr>

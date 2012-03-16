@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -71,17 +73,39 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataPesquisa,Long idFornecedor,String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe,String dataAte,Long idFornecedor,String sortorder, String sortname, int page, int rp){
 		
+		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
 		
-		validarParametroPesquisa(dataPesquisa);
-		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = 
-				new FiltroDigitacaoContagemDevolucaoDTO(DateUtil.parseData(dataPesquisa, "dd/MM/yyyy"), idFornecedor);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		tratarFiltro(filtro);
+		
+		efetuarPesquisa(filtro);
+	}
+	
+	private List<ContagemDevolucaoDTO> getMock(){
+		
+		List<ContagemDevolucaoDTO> list = new ArrayList<ContagemDevolucaoDTO>();
+		
+		for (int i = 0; i < 10; i++) {
+		
+			ContagemDevolucaoDTO xx = new ContagemDevolucaoDTO();
+			xx.setCodigoProduto("100");
+			xx.setIdConferenciaEncParcial(10L);
+			//xx.setIdMovimentoEstoqueCota(1L);
+			xx.setNomeProduto("Nome");
+			xx.setNumeroEdicao(10L);
+			xx.setPrecoVenda(new BigDecimal(20));
+			xx.setQtdDevolucao(new BigDecimal(25));
+			xx.setQtdNota(new BigDecimal(85));
+			xx.setValorTotal(new BigDecimal(52));
+			
+			list.add(xx);
+		}
+		return list;
 		
 	}
 	
@@ -91,11 +115,13 @@ public class DigitacaoContagemDevolucaoController  {
 	 */
 	public void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
 		
-		Long quantidadeRegistros = 0L; //TODO chamar componente
+		Long quantidadeRegistros = 10L; //TODO chamar componente
 		
 		InfoContagemDevolucaoDTO infoConatege = new InfoContagemDevolucaoDTO();//TODO chamar componente
 		
-		List<ContagemDevolucaoDTO> listaResultados = infoConatege.getListaContagemDevolucao();
+		//List<ContagemDevolucaoDTO> listaResultados = infoConatege.getListaContagemDevolucao();
+		
+		List<ContagemDevolucaoDTO> listaResultados =  getMock();
 		
 		if (listaResultados == null || listaResultados.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -109,7 +135,16 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			digitacaoContagemDevolucaoVO = new DigitacaoContagemDevolucaoVO();
 			
-			
+			digitacaoContagemDevolucaoVO.setCodigoProduto(dto.getCodigoProduto());
+			digitacaoContagemDevolucaoVO.setIdConferenciaEncParcial(String.valueOf(dto.getIdConferenciaEncParcial()) );
+			//digitacaoContagemDevolucaoVO.setIdMovimentoEstoqueCota(String.valueOf(dto.getIdMovimentoEstoqueCota()));
+			digitacaoContagemDevolucaoVO.setNomeProduto(dto.getNomeProduto());
+			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
+			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
+			digitacaoContagemDevolucaoVO.setQntDiferenca(null);
+			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf(dto.getQtdDevolucao()));
+			digitacaoContagemDevolucaoVO.setQtdNota(String.valueOf(dto.getQtdNota()));
+			digitacaoContagemDevolucaoVO.setValorTotal(CurrencyUtil.formatarValor(dto.getValorTotal()));
 			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
 		}
@@ -170,22 +205,108 @@ public class DigitacaoContagemDevolucaoController  {
 		}
 	}
 	
+	
 	/**
-	 * Verifica se os parametros de pesquisas são validos.
-	 * 
-	 * @param dataPesquisa
+	 * Valida o periodo da consulta e retorna um objeto com os valores. 
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return PeriodoVO
 	 */
-	private void validarParametroPesquisa(String dataPesquisa){
+	private PeriodoVO obterPeriodoValidado(String dataInicial, String dataFinal) {
+				
+		tratarErroDatas(validarPreenchimentoObrigatorio(dataInicial, dataFinal));
+
+		tratarErroDatas(validarFormatoDatas(dataInicial, dataFinal));		
 		
+		validarPeriodo(dataInicial, dataFinal);		
 		
-		if (dataPesquisa == null || dataPesquisa.isEmpty()) {
+		PeriodoVO periodo = new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), 
+										  DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
+
+		return periodo; 
+	}
+	
+	/**
+	 * Trata mensagens de erro, caso tenha mensagem lança exceção de erro.
+	 * @param mensagensErro
+	 */
+	private void tratarErroDatas(List<String> mensagensErro){
+		
+		ValidacaoVO validacao = new ValidacaoVO();
+		
+		validacao.setTipoMensagem(TipoMensagem.ERROR);
+		
+		if(!mensagensErro.isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo \"Data \" é obrigatório." );
+			validacao.setListaMensagens(mensagensErro);
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/**
+	 * Valida o período informado para consulta 
+	 * @param dataInicial
+	 * @param dataFinal
+	 */
+	private void validarPeriodo(String dataInicial,String dataFinal){
+
+		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
+				 								 DateUtil.parseDataPTBR(dataFinal))) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Período de] não pode ser maior que o campo [Até]!");
 		}
 		
-		if (!DateUtil.isValidDate(dataPesquisa, "dd/MM/yyyy")) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,"Data de pesquisa inválida." );
+		if (!DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
+						 						 DateUtil.parseDataPTBR(dataFinal))) {
+		
+			throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Até] não pode ser menor que o campo [Período de]!");
 		}
+		
+	}
+	
+	/**
+	 * Valida o formato  das datas informadas  em um determinado período.
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return List<String>
+	 */
+	private List<String> validarFormatoDatas(String dataInicial,String dataFinal){
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if (!DateUtil.isValidDate(dataInicial, "dd/MM/yyyy")) {
+			
+			mensagens.add("O campo [Período de] é inválido");
+		} 
+		
+		if (!DateUtil.isValidDate(dataFinal, "dd/MM/yyyy")) {
+			
+			mensagens.add ("O campo [Até] é inválido");
+		}
+		
+		return mensagens;
+	}
+	
+	/**
+	 * Valida o preenchimento obrigatório do período informado.
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return List<String>
+	 */
+	private List<String> validarPreenchimentoObrigatorio(String dataInicial,String dataFinal){
+		
+		 List<String> mensagens = new ArrayList<String>();
+		
+		if (dataInicial == null || dataInicial.isEmpty()) {
+			
+			mensagens.add("O preenchimento do campo [Período de] é obrigatório");
+		} 
+		
+		if (dataFinal == null || dataFinal.isEmpty()) {
+			
+			mensagens.add("O preenchimento do campo [Até] é obrigatório");
+		} 
+		
+		return mensagens;
 	}
 }

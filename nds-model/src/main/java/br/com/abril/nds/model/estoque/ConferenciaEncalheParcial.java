@@ -8,9 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -24,6 +25,10 @@ public class ConferenciaEncalheParcial {
 	@Id
 	@GeneratedValue(generator = "CONFERENCIA_ENC_PARCIAL_SEQ")
 	private Long id;
+	
+	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_REC_DISTRIB", nullable = false)
+	private Date dataRecolhimentoDistribuidor;
 	
 	@Column(name = "DATA_CONF_ENC_PARCIAL", nullable = false)
 	private Date dataConfEncalheParcial;
@@ -40,7 +45,7 @@ public class ConferenciaEncalheParcial {
 	@ManyToOne(optional = true)
 	private Usuario responsavel;
 	
-	@OneToOne(optional = true)
+	@ManyToOne(optional = true)
 	private ProdutoEdicao produtoEdicao;
 
 	public Long getId() {
@@ -97,6 +102,14 @@ public class ConferenciaEncalheParcial {
 
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
+	}
+
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
 	
 	

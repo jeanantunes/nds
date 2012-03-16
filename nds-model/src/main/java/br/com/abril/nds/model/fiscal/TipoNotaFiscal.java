@@ -28,6 +28,10 @@ public class TipoNotaFiscal {
 	private String descricao;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "GRUPO_NOTA_FISCAL", nullable = false)
+	private GrupoNotaFiscal grupoNotaFiscal;
+	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
 	
@@ -47,12 +51,19 @@ public class TipoNotaFiscal {
 		this.descricao = descricao;
 	}
 	
+	public GrupoNotaFiscal getGrupoNotaFiscal() {
+		return grupoNotaFiscal;
+	}
+	
+	public void setGrupoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+		this.grupoNotaFiscal = grupoNotaFiscal;
+		this.tipoOperacao = grupoNotaFiscal.getTipoOperacao();
+	}
+	
 	public TipoOperacao getTipoOperacao() {
 		return tipoOperacao;
 	}
 	
-	public void setTipoOperacao(TipoOperacao tipoOperacao) {
-		this.tipoOperacao = tipoOperacao;
-	}
+	
 
 }

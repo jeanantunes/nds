@@ -9,6 +9,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -53,7 +54,9 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -476,6 +479,15 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		return tipoMovimento;
+	}
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -493,7 +505,7 @@ public class Fixture {
 	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
-		tipoNotaFiscal.setTipoOperacao(br.com.abril.nds.model.fiscal.TipoOperacao.ENTRADA);
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
 		return tipoNotaFiscal;
 	}
 
@@ -671,6 +683,38 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 
+	public static MovimentoEstoqueCota movimentoEstoqueCotaEnvioEncalhe(
+			Date dataInclusao,
+			ProdutoEdicao produtoEdicao, 	
+			TipoMovimentoEstoque tipoMovimento,
+			Usuario usuario, 
+			EstoqueProdutoCota estoqueProdutoCota,
+			BigDecimal qtde, 
+			Cota cota, 
+			StatusAprovacao statusAprovacao, 
+			String motivo) {
+
+		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
+		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setProdutoEdicao(produtoEdicao);
+		movimentoEstoque.setQtde(qtde);
+		movimentoEstoque.setTipoMovimento(tipoMovimento);
+		movimentoEstoque.setUsuario(usuario);
+		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
+			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
+					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
+		} else {
+			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
+					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
+		}
+		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
+		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
+		movimentoEstoque.setCota(cota);
+		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoque.setMotivo(motivo);
+		return movimentoEstoque;
+	}
+	
 	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
@@ -720,8 +764,7 @@ public class Fixture {
 		box.setTipoBox(tipoBox);
 		return box;
 	}
-
-	//FINANCEIRO - HENRIQUE
+	
 	public static Boleto boleto(String nossoNumero,
 				                Date dataEmissao,
 				                Date dataVencimento,
@@ -827,5 +870,16 @@ public class Fixture {
 		banco.setNumeroBanco(numeroBanco);
 		
 		return banco;
+	}
+	
+	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel) {
+	
+		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
+		
+		controleBaixaBancaria.setData(data);
+		controleBaixaBancaria.setStatus(status);
+		controleBaixaBancaria.setResponsavel(responsavel);
+		
+		return controleBaixaBancaria;
 	}
 }
