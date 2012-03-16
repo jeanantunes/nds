@@ -47,8 +47,9 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(bancoHSBC);
 		
 		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), "0", 
-                					   BigDecimal.TEN, "1", "1", StatusCobranca.PAGO, cota, bancoHSBC);
+                					   new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC);
 		save(boleto);
+
 	}
 	
 	@Test

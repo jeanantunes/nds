@@ -63,6 +63,12 @@ public class ConsultaBoletosController {
 		this.result = result;
 		this.httpSession = httpSession;
 		this.httpResponse = httpResponse;
+		
+		/*
+		ServletContext context = httpSession.getServletContext();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		*/
+		
 	}
 	
 	@Get
@@ -125,12 +131,19 @@ public class ConsultaBoletosController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
+		String dtPagto;
 		for (Boleto boleto : boletos){	
+			
+			dtPagto="";
+			if (boleto.getDataPagamento()!=null){
+				dtPagto=DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy");
+			}
+			
 			listaModelo.add(new CellModel(1,
 										  boleto.getNossoNumero(),
 										  DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
-										  DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"),
+										  dtPagto,
 										  boleto.getEncargos(),
 										  boleto.getValor().toString(),
 										  boleto.getTipoBaixa(),
@@ -162,22 +175,45 @@ public class ConsultaBoletosController {
 	}
 	
 	
-	
-	@Post
+	@Get
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto(String nossoNumero) throws Exception{
-		/*
+		
 		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-         
+        
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
 		
+		//result.use(Results.json()).withoutRoot().from(b);
+		
 		httpResponse.flushBuffer();
-		*/
 	}
+	
+	
+	@Get
+	@Path("/enviaBoleto")
+	public void enviaBoleto(String nossoNumero) throws Exception{
+		
+		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
+        
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+		
+		//result.use(Results.json()).withoutRoot().from(b);
+		
+		httpResponse.flushBuffer();
+	}
+	
+	
+	
+	
+	
 	
 	
 	
