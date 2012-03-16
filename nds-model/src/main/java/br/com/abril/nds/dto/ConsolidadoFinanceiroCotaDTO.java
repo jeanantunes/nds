@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ContaCorrenteCotaDTO implements Serializable {
+public class ConsolidadoFinanceiroCotaDTO implements Serializable {
 	
 	private static final long serialVersionUID = -580201558784688016L;
 
-	private Date data;
+	private Date dataConsolidado;
 	
 	private BigDecimal valorPostergado;
 	
-	private BigDecimal NA;
+	private BigDecimal numeroAtradao;
 	
 	private BigDecimal consignado;
 	
@@ -30,18 +30,37 @@ public class ContaCorrenteCotaDTO implements Serializable {
 	
 	private int lineId;
 	
-	public ContaCorrenteCotaDTO() {
+	public ConsolidadoFinanceiroCotaDTO(
+			Date dataConsolidado,
+			BigDecimal numeroAtrasado,
+			BigDecimal consignado,
+			BigDecimal encalhe,
+			BigDecimal vendaEncalhe,
+			BigDecimal debCred,
+			BigDecimal encargos,
+			BigDecimal pendente,
+			BigDecimal total) {
+		this.dataConsolidado = dataConsolidado;
+		this.numeroAtradao = numeroAtrasado;
+		this.consignado = consignado;
+		this.encalhe = encalhe;
+		this.vendaEncalhe = vendaEncalhe;
+		this.debCred = debCred;
+		this.encargos = encargos;
+		this.pendente = pendente;
+		this.total = total;
+		
 		
 	}
 	
-	public Date getData() {
-		return data;
+	public Date getDataConsolidado() {
+		return dataConsolidado;
 	}
 
 
 
-	public void setData(Date data) {
-		this.data = data;
+	public void setDataConsolidado(Date dataConsolidado) {
+		this.dataConsolidado = dataConsolidado;
 	}
 
 
@@ -55,19 +74,6 @@ public class ContaCorrenteCotaDTO implements Serializable {
 	public void setValorPostergado(BigDecimal valorPostergado) {
 		this.valorPostergado = valorPostergado;
 	}
-
-
-
-	public BigDecimal getNA() {
-		return NA;
-	}
-
-
-
-	public void setNA(BigDecimal nA) {
-		NA = nA;
-	}
-
 
 
 	public BigDecimal getConsignado() {
@@ -139,8 +145,14 @@ public class ContaCorrenteCotaDTO implements Serializable {
 	public void setPendente(BigDecimal pendente) {
 		this.pendente = pendente;
 	}
+	
+	public BigDecimal getNumeroAtradao() {
+		return numeroAtradao;
+	}
 
-
+	public void setNumeroAtradao(BigDecimal numeroAtradao) {
+		this.numeroAtradao = numeroAtradao;
+	}
 
 	public BigDecimal getTotal() {
 		return total;
@@ -182,10 +194,10 @@ public class ContaCorrenteCotaDTO implements Serializable {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof ContaCorrenteCotaDTO)) {
+		if (!(obj instanceof ConsolidadoFinanceiroCotaDTO)) {
 			return false;
 		}
-		ContaCorrenteCotaDTO other = (ContaCorrenteCotaDTO) obj;
+		ConsolidadoFinanceiroCotaDTO other = (ConsolidadoFinanceiroCotaDTO) obj;
 		if (lineId != other.lineId) {
 			return false;
 		}

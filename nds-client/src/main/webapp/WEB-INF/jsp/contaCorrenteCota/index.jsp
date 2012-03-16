@@ -2,6 +2,27 @@
 <script language="javascript" type="text/javascript">
 
 /**
+ * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
+ * COM OS PARÂMETROS DE PESQUISA
+ */
+function verificarContaCorrenteCotaExistente() {
+
+	var cota = $("#cota").val();
+	
+	var dadosPesquisa = 
+		"numeroCota=" 			+ cota;			
+	
+	//limparCampos();
+	
+	$.postJSON("<c:url value='/financeiro/contaCorrenteCota/verificarContaCorrenteCotaExistente'/>", 
+				   dadosPesquisa,
+				   confirmaContaCorrenteCotaEncontrada);
+
+}
+
+
+
+/**
  * SELECIONA o NOME A PARTIR DA COTA DIGITADO.
  */
 function pesquisarPorCotaNome() {
@@ -21,43 +42,24 @@ function pesquisarPorCotaNome() {
 }
 
 /**
- * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
- * COM OS PARÂMETROS DE PESQUISA
- */
-function verificarContaCorrenteCotaExistente() {
-
-	var cota = $("#cota").val();
-	
-	var dadosPesquisa = 
-		"numeroCota=" 			+ cota;			
-	
-	//limparCampos();
-	
-	$.postJSON("<c:url value='/financeiro/contaCorrenteCota/verificarContaCorrenteCotaExistente'/>", 
-				   dadosPesquisa,
-				   confirmaContaCorrenteCotaEncontrada);
-
-}
-
-/**
  * SE A CONTA CORRENTE FOR ENCONTRADA, SERAO PESQUISADOS OS ITEM RELATIVOS A MESMA
  * E POPULADA A GRID
  */
 function confirmaContaCorrenteCotaEncontrada(result) {
 	
-	jsonResposta = result;
+	//jsonResposta = result;
 	
-	if(result.tipoMensagem == "SUCCESS") {
+	//if(result.tipoMensagem == "SUCCESS") {
 
-		exibirMensagem(result.tipoMensagem, result.listaMensagens);
+		//exibirMensagem(result.tipoMensagem, result.listaMensagens);
 		
 		pesquisarItemContaCorrenteCota();
 
-	} else {
+	//} else {
 		
-		$(".grids").hide();
+	//	$(".grids").hide();
 		
-	}
+	//} vai precis
 	
 }
 
@@ -65,21 +67,72 @@ function confirmaContaCorrenteCotaEncontrada(result) {
  * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
  */
 function pesquisarItemContaCorrenteCota() {
-
-	$(".itemNotaGrid").flexOptions({
-		url: '<c:url value="/"/>estoque/recebimentoFisico/obterListaItemContaCorrenteCota',
+		
+	$(".itemContaCorrenteCotaGrid").flexOptions({
+		
+		url: '<c:url value="/"/>financeiro/contaCorrenteCota/itemContaCorrenteCota',
 		preProcess: getDataFromResult,
 		dataType : 'json'
 	});
 
 	$(".itemContaCorrenteCotaGrid").flexReload();
+	
+}
+
+/**
+ * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
+ */
+function getDataFromResult(data) {
+		
+	$.each(data.rows, function(index, value) {
+		
+		var consignado = value.cell[3];
+		var encalhe = value.cell[4];
+		var vendaEncalhe = value.cell[5];
+		var debCred = value.cell[6];
+		var encargos = value.cell[7];
+		
+		//var alteracaoPermitida = value.cell[8];
+		
+		var lineId = value.id;
+		
+		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
+		
+		
+		//if(alteracaoPermitida == "S") {
+			
+			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
+			value.cell[4] = '<a href="#"/>'+encalhe+'</a>'+hiddeFields;
+			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
+			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
+			value.cell[7] = '<a href="#"/>'+encargos+'</a>'+hiddeFields;
+			
+		
+	});
+
+	//data = destacarValorNegativo(data);
+	
+	
+	$(".grids").show();
+	
+	return data;
 
 }
+
+/*
+ * O JAVASCRIPT ABAIXO E O PRIMEIRO A SER EXECUTADO 
+ * QUANDO A PAGINA CARREGA.
+ */
+$(function() {
+	
+	carregarItemContaCorrenteCotaGrid();
+	
+});
 
 /**
  * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
  */
-function carregarItemNotaGrid() {
+function carregarItemContaCorrenteCotaGrid() {
 	
 	$(".itemContaCorrenteCotaGrid").flexigrid({
 		
@@ -95,45 +148,45 @@ function carregarItemNotaGrid() {
 		}, {
 			display : 'Vlr.Postergado',
 			name : 'valorPostergado',
-			width : 60,
+			width : 70,
 			sortable : false,
 			align : 'left'
 		}, {
 			display : 'NA',
 			name : 'NA',
-			width : 60,
+			width : 90,
 			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Consignado',
 			name : 'precoCapa',
-			width : 60,
+			width : 70,
 			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Encalhe',
 			name : 'encalhe',
-			width : 60,
+			width : 90,
 			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Venda Encalhe',
 			name : 'vendaEncalhe',
-			width : 60,
+			width : 90,
 			sortable : false,
 			align : 'center'
 		}, {
 			
 			display : 'Déb/Cred.',
 			name : 'debCred',
-			width : 60,
+			width : 90,
 			sortable : false,
 			align : 'center'
 			
 		}, {
 			display : 'Encargos',
 			name : 'encargos',
-			width : 60,
+			width : 90,
 			sortable : false,
 			align : 'center'
 			
@@ -141,7 +194,7 @@ function carregarItemNotaGrid() {
 			
 			display : 'Pendente',
 			name : 'pendente',
-			width : 60,
+			width : 90,
 			sortable : false,
 			align : 'center'
 			
@@ -149,7 +202,7 @@ function carregarItemNotaGrid() {
 			
 			display : 'Total R$',
 			name : 'total',
-			width : 60,
+			width : 90,
 			sortable : true,
 			align : 'center'
 		}],
@@ -313,12 +366,12 @@ function popup_encargos() {
 
        	  <table class="itemContaCorrenteCotaGrid"></table>
         
-                	<span class="bt_novos" title="Negociar Divida"><a href="javascript:;"><img src="../images/ico_negociar.png" hspace="5" border="0" />Negociar Divida</a></span>
+                	<span class="bt_novos" title="Negociar Divida"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Negociar Divida</a></span>
 
                     
-                    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+                    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 </div>
             
            
