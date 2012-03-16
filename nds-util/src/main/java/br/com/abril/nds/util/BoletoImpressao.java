@@ -1,11 +1,10 @@
 package br.com.abril.nds.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import org.jrimum.bopepo.BancosSuportados;
 import org.jrimum.bopepo.Boleto;
 import org.jrimum.bopepo.view.BoletoViewer;
@@ -684,16 +683,14 @@ public class BoletoImpressao {
 	 
 	 
 	 
-
 	 
-	 
-	 
-	 
-	 
-	 
-	 /*
-	 //TESTE
-	 public static void main(String[] args) throws IOException{
+	   /*
+	   //TESTE
+	   public static void main(String[] args) throws IOException{
+		 
+		    System.out.println( gerarNossoNumero("239104761", "8351202", new Date("04/07/2008") ));
+		 
+		 
 	        BoletoImpressao boleto = new BoletoImpressao();
 	        
 	        
@@ -758,8 +755,8 @@ public class BoletoImpressao {
 	        byte[] b = boleto.obterArrayByte();
 	        
 		}
+	    
 	    */
-	 
 	 
 	 
 }

@@ -56,6 +56,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -495,7 +496,7 @@ public class Fixture {
 	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
-		tipoNotaFiscal.setTipoOperacao(br.com.abril.nds.model.fiscal.TipoOperacao.ENTRADA);
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
 		return tipoNotaFiscal;
 	}
 
@@ -722,8 +723,7 @@ public class Fixture {
 		box.setTipoBox(tipoBox);
 		return box;
 	}
-
-	//FINANCEIRO - HENRIQUE
+	
 	public static Boleto boleto(String nossoNumero,
 				                Date dataEmissao,
 				                Date dataVencimento,

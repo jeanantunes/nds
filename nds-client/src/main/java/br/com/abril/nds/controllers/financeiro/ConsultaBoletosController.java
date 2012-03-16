@@ -20,7 +20,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaB
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.service.BoletoService;
-import br.com.abril.nds.util.BoletoImpressao;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
