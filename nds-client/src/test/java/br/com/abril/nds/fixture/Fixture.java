@@ -9,6 +9,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -53,6 +54,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -827,5 +829,16 @@ public class Fixture {
 		banco.setNumeroBanco(numeroBanco);
 		
 		return banco;
+	}
+	
+	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel) {
+	
+		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
+		
+		controleBaixaBancaria.setData(data);
+		controleBaixaBancaria.setStatus(status);
+		controleBaixaBancaria.setResponsavel(responsavel);
+		
+		return controleBaixaBancaria;
 	}
 }

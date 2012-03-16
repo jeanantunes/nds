@@ -30,10 +30,6 @@ public class BaixaAutomatica {
 	private Date dataBaixa;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_BAIXA", nullable = false)
-	private TipoBaixa tipoBaixa;
-	
-	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)
 	private StatusBaixa status;
 	
@@ -70,20 +66,6 @@ public class BaixaAutomatica {
 	 */
 	public void setDataBaixa(Date dataBaixa) {
 		this.dataBaixa = dataBaixa;
-	}
-
-	/**
-	 * @return the tipoBaixa
-	 */
-	public TipoBaixa getTipoBaixa() {
-		return tipoBaixa;
-	}
-
-	/**
-	 * @param tipoBaixa the tipoBaixa to set
-	 */
-	public void setTipoBaixa(TipoBaixa tipoBaixa) {
-		this.tipoBaixa = tipoBaixa;
 	}
 
 	/**

@@ -53,7 +53,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Ignore
 	public void teste() {
 		
-		boletoService.baixarBoletos(null, null);
+		boletoService.baixarBoletos(null, null, null);
 	}
 	
 	@Test

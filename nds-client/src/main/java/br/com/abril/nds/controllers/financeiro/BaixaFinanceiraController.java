@@ -2,13 +2,15 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
@@ -51,7 +53,7 @@ public class BaixaFinanceiraController {
 	}
 	
 	@Post
-	public void baixarBoletosAutomatico(UploadedFile uploadedFile) {
+	public void baixarBoletosAutomatico(UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		try {
 			
@@ -63,9 +65,13 @@ public class BaixaFinanceiraController {
 					leitorRetornoBancoService.obterPagamentosBanco(file,
 																   uploadedFile.getFileName());
 			
-			boletoService.baixarBoletos(arquivoPagamento, obterUsuario());
+			boletoService.baixarBoletos(arquivoPagamento,
+										new BigDecimal(valorFinanceiro),
+										obterUsuario());
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		

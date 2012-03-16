@@ -120,8 +120,8 @@
 					<td width="109"><input name="datepickerAte" type="text"
 						id="datepickerAte" style="width: 80px;" /></td>
 					<td width="129">Valor Financeiro R$:</td>
-					<td width="104"><input type="text" name="textfield"
-						id="textfield" style="width: 90px; text-align: right;" /></td>
+					<td width="104"><input type="text" name="valorFinanceiro"
+						id="valorFinanceiro" style="width: 90px; text-align: right;" /></td>
 					<td width="111"><span class="bt_integrar"><a
 							href="javascript:;" onclick="mostrarArquivo();">Integrar</a></span></td>
 				</tr>
