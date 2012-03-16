@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.util.BoletoImpressao;
+
 
 @Service
 public class BoletoServiceImpl implements BoletoService {
@@ -240,5 +242,5 @@ public class BoletoServiceImpl implements BoletoService {
 		
         return b;
 	}
-	
+
 }
