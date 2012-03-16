@@ -55,6 +55,8 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -478,6 +480,14 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Crédito");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.CREDITO);
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -485,6 +495,15 @@ public class Fixture {
 		tipoMovimento.setDescricao("Envio Encalhe");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Débito");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
 		return tipoMovimento;
 	}
 	
@@ -770,7 +789,7 @@ public class Fixture {
 				                Date dataVencimento,
 				                Date dataPagamento,
 				                String encargos,
-				                Double valor,
+				                BigDecimal valor,
 				                String tipoBaixa,
 				                String acao,
 				                StatusCobranca status,

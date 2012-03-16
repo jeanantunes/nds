@@ -17,7 +17,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -25,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -52,6 +50,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -82,6 +81,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
+	
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
@@ -173,8 +175,10 @@ public class DataLoader {
 			session = sf.openSession();
 			tx = session.beginTransaction();
 
-			carregarDadosParaContagemdDevolucao(session);
+			//carregarDadosParaContagemdDevolucao(session);
 			//carregarDados(session);
+
+			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarBoletos(session);
@@ -914,13 +918,18 @@ public class DataLoader {
 		tipoMovimentoSobraDe = Fixture.tipoMovimentoSobraDe();
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
-		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 
+		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+		
+		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
+		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
-				tipoMovimentoRecFisico, tipoMovimentoRecReparte, 
+				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
+				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
 				tipoMovimentoEnvioEncalhe);
+
 	}
 
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
@@ -1254,7 +1263,7 @@ public class DataLoader {
 				                       new Date(), 
 				                       new Date(), 
 				                       "ENCARGOS", 
-				                       558.90, 
+				                       new BigDecimal(558.90), 
 				                       "TIPO_BAIXA", 
 				                       "ACAO", 
 				                       StatusCobranca.PAGO,
@@ -1266,7 +1275,7 @@ public class DataLoader {
                                         new Date(), 
                                         new Date(), 
                                         "ENCARGOS", 
-                                        100.35, 
+                                        new BigDecimal(100.35), 
                                         "TIPO_BAIXA",
                                         "ACAO", 
                                         StatusCobranca.PAGO,
@@ -1278,7 +1287,7 @@ public class DataLoader {
                 						new Date(), 
                 						null,
                 						"ENCARGOS", 
-                						1005.80, 
+                						new BigDecimal(376.07),
                 						"TIPO_BAIXA",
                 						"ACAO", 
                 						StatusCobranca.NAO_PAGO,
@@ -1290,7 +1299,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                200.00, 
+						                new BigDecimal(200.00),
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1299,22 +1308,22 @@ public class DataLoader {
 		
 		Boleto boleto4 = Fixture.boleto("1310809032012641",
 						                new Date(), 
-						                new Date(), 
+						                DateUtil.parseDataPTBR("12/03/2012"), 
 						                null, 
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
 						                cotaManoel,
 					                    bancoHSBC);
 		
-		Boleto boleto5 = Fixture.boleto("60000",
+		Boleto boleto5 = Fixture.boleto("1311009032012840",
 						                new Date(), 
-						                new Date(), 
+						                DateUtil.parseDataPTBR("11/03/2012"), 
 						                null,
 						                "ENCARGOS", 
-						                50.00, 
+						                new BigDecimal(50.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1326,7 +1335,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                1002.00, 
+						                new BigDecimal(1002.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1338,7 +1347,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                1000.00, 
+						                new BigDecimal(1000.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1350,7 +1359,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1362,7 +1371,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1374,7 +1383,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1386,7 +1395,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1398,7 +1407,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1410,7 +1419,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1422,7 +1431,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1434,7 +1443,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00),
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1446,7 +1455,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00),
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1458,7 +1467,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00),
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1470,7 +1479,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1482,7 +1491,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1494,7 +1503,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00),
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1506,7 +1515,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00),
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1518,7 +1527,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1530,7 +1539,7 @@ public class DataLoader {
 						                new Date(), 
 						                null,
 						                "ENCARGOS", 
-						                3500.00, 
+						                new BigDecimal(3500.00), 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
@@ -1704,10 +1713,10 @@ public class DataLoader {
 	//TODO: Henrique, ajustar a fixture de banco para criar a carteira
 	private static void criarBanco(Session session) {
 		
-//		bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
-//							  123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
-//		
-//		save(session, bancoHSBC);
+		bancoHSBC = Fixture.banco(10L, true, null, "1010",
+							  123456L, "1", "1", "Instruções.", null, "HSBC", "399");
+		
+		save(session, bancoHSBC);
 	}
 	
 }

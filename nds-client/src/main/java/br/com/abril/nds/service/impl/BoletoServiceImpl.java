@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaAutomaticaRepository;
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.BoletoImpressao;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -55,6 +57,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	private ControleBaixaBancariaService controleBaixaService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Transactional
 	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
@@ -103,7 +108,7 @@ public class BoletoServiceImpl implements BoletoService {
 				
 				for (PagamentoDTO pagamento : arquivoPagamento.getListaPagemento()) {
 				
-					baixarBoleto(pagamento, dataOperacao,
+					baixarBoleto(pagamento, dataOperacao, usuario,
 								 arquivoPagamento.getNomeArquivo(), politicaCobranca);
 				}
 				
@@ -124,7 +129,7 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Override
 	@Transactional
-	public void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao,
+	public void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao, Usuario usuario,
 							 String nomeArquivo, PoliticaCobranca politicaCobranca) {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero());
@@ -134,14 +139,14 @@ public class BoletoServiceImpl implements BoletoService {
 			//Não paga o boleto o gera baixa com status de boleto pago anteriormente
 			if (boleto.getStatusCobranca().equals(StatusCobranca.PAGO)) {
 				
-				gerarBaixaAutomatica(StatusBaixa.PAGO_ANTERIORMENTE, null,
+				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, null,
 									 dataOperacao, nomeArquivo);
 				
 				return;
 			}
 			
 			//Não paga o boleto o gera baixa com status de boleto fora da data
-			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) > 0) {
+			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) < 0) {
 				
 				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DATA, null,
 									 dataOperacao, nomeArquivo);
@@ -149,7 +154,7 @@ public class BoletoServiceImpl implements BoletoService {
 				return;
 			}
 			
-			if (!pagamento.getValorPagamento().equals(boleto.getValor())) {
+			if (pagamento.getValorPagamento().compareTo(boleto.getValor()) != 0) {
 				
 				//Não paga o boleto o gera baixa com status de não pago por divergência
 				if (politicaCobranca == null || !politicaCobranca.isAceitaPagamentoDivergente()) {
@@ -161,8 +166,28 @@ public class BoletoServiceImpl implements BoletoService {
 				} else {
 				
 					//Paga o boleto o gera baixa com status de pago com divergência
-					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA, null,
-				 			 dataOperacao, nomeArquivo);
+					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA, boleto,
+				 			 			 dataOperacao, nomeArquivo);
+					
+					BigDecimal valor = pagamento.getValorPagamento();
+					GrupoMovimentoFinaceiro grupoMovimento = null;
+					
+					if (boleto.getValor().compareTo(pagamento.getValorPagamento()) == 1) {
+						
+						valor = boleto.getValor().subtract(pagamento.getValorPagamento());
+						
+						grupoMovimento = GrupoMovimentoFinaceiro.DEBITO;
+						
+					} else {
+						
+						valor = pagamento.getValorPagamento().subtract(boleto.getValor());
+						
+						grupoMovimento = GrupoMovimentoFinaceiro.CREDITO;
+					}
+					
+					movimentoFinanceiroCotaService
+						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+															   grupoMovimento, usuario, valor);
 				}
 			} else {
 			
@@ -178,11 +203,11 @@ public class BoletoServiceImpl implements BoletoService {
 			
 		} else {
 			
-			gerarBaixaAutomatica(StatusBaixa.PAGO, null,
+			gerarBaixaAutomatica(StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, null,
 								 dataOperacao, nomeArquivo);
 		}
 	}
-	
+
 	private void gerarBaixaAutomatica(StatusBaixa statusBaixa, Boleto boleto,
 									  Date dataBaixa, String nomeArquivo) {
 		

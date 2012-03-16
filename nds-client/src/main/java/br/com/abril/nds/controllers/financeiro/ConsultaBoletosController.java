@@ -132,7 +132,7 @@ public class ConsultaBoletosController {
 										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"),
 										  boleto.getEncargos(),
-										  Double.toString(boleto.getValor()),
+										  boleto.getValor().toString(),
 										  boleto.getTipoBaixa(),
 										  boleto.getStatusCobranca().name(),
 										  boleto.getAcao()
