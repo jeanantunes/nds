@@ -214,16 +214,6 @@
 			</dependency>
 			<dependency>
 				<groupId>br.com.caelum.stella</groupId>
-				<artifactId>caelum-stella-bean-validation</artifactId>
-				<version>2.0-beta1</version>
-			</dependency>
-			<dependency>
-				<groupId>br.com.caelum.stella</groupId>
-				<artifactId>caelum-stella-hibernate-user-types</artifactId>
-				<version>2.0-beta1</version>
-			</dependency>
-			<dependency>
-				<groupId>br.com.caelum.stella</groupId>
 				<artifactId>caelum-stella-boleto</artifactId>
 				<version>2.0-beta1</version>
 			</dependency>
@@ -236,6 +226,11 @@
 				<groupId>org.apache.velocity</groupId>
 				<artifactId>velocity</artifactId>
 				<version>1.6-beta1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itextpdf</groupId>
+				<artifactId>itextpdf</artifactId>
+				<version>5.2.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
