@@ -55,8 +55,7 @@ public class Cota {
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@OneToOne(optional = false)
-	@JoinColumn(name = "CONTRATO_COTA_ID")
+	@OneToOne(mappedBy = "cota")
 	private ContratoCota contratoCota;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")

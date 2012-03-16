@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +44,25 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/financeiro/boletos")
 public class ConsultaBoletosController {
 
-    private Result result;
+    
+	private Result result;
     
     private HttpSession httpSession;
+    
+    private HttpServletResponse httpResponse;
 
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
 
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
     
-	@Autowired
+	
+    @Autowired
 	private BoletoService boletoService;
 	
-	public ConsultaBoletosController(Result result, HttpSession httpSession) {
+	public ConsultaBoletosController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
 		this.result = result;
 		this.httpSession = httpSession;
+		this.httpResponse = httpResponse;
 	}
 	
 	@Get
@@ -152,6 +159,24 @@ public class ConsultaBoletosController {
 		//RETORNA HASHMAP EM FORMATO JASON PARA A VIEW
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
+	}
+	
+	
+	
+	@Post
+	@Path("/imprimeBoleto")
+	public void imprimeBoleto(String nossoNumero) throws Exception{
+		/*
+		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
+         
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+		
+		httpResponse.flushBuffer();
+		*/
 	}
 	
 	

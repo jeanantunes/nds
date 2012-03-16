@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.RecebimentoFisicoService;
@@ -27,7 +27,7 @@ import br.com.abril.nds.service.RecebimentoFisicoService;
 public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryImplTest{
 	
 	@Autowired
-	private ItemNotaFiscalRepositoryImpl itemNotaRepository;
+	private ItemNotaFiscalEntradaRepositoryImpl itemNotaRepository;
 	
 	@Autowired
 	private RecebimentoFisicoService recebimentoFisicoService;
@@ -56,7 +56,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		//slavei o CFOP
 		save(cfop);
 		
-		NotaFiscalFornecedor notaFiscal = new NotaFiscalFornecedor();
+		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		//Salvei Tipo
 		save(tipoNotaFiscal);
@@ -101,7 +101,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 				1L,null,null,1L,1L);
 		*/
 		
-		NotaFiscal notaFiscal= new NotaFiscalFornecedor();
+		NotaFiscal notaFiscal= new NotaFiscalEntradaFornecedor();
 		//List<ItemNotaRecebimentoFisicoDTO> listaItensNota = new ArrayList<ItemNotaRecebimentoFisicoDTO>();
 		
 		

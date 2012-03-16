@@ -62,7 +62,8 @@
 		function mostrarArquivo() {
 			$('#dadosArquivo').show();
 			$('#extratoBaixaManual').hide();
-	
+			
+			$('#formBaixaAutomatica').submit();
 		}
 	</script>
 	
@@ -108,19 +109,25 @@
 		</table>
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			class="filtro" id="baixaAuto">
-			<tr>
-				<td width="100">Nome Arquivo:</td>
-				<td colspan="3"><input name="fileField" type="file"
-					id="fileField" size="25" /></td>
-				<td width="117">Data Competência:</td>
-				<td width="109"><input name="datepickerAte" type="text"
-					id="datepickerAte" style="width: 80px;" /></td>
-				<td width="129">Valor Financeiro R$:</td>
-				<td width="104"><input type="text" name="textfield"
-					id="textfield" style="width: 90px; text-align: right;" /></td>
-				<td width="111"><span class="bt_integrar"><a
-						href="javascript:;" onclick="mostrarArquivo();">Integrar</a></span></td>
-			</tr>
+			
+			<form id="formBaixaAutomatica" action="financeiro/baixarBoletosAutomatico" method="post" enctype="multipart/form-data">
+				
+				<tr>
+					<td width="100">Nome Arquivo:</td>
+					<td colspan="3"><input name="uploadedFile" type="file"
+						id="uploadedFile" size="25" /></td>
+					<td width="117">Data Competência:</td>
+					<td width="109"><input name="datepickerAte" type="text"
+						id="datepickerAte" style="width: 80px;" /></td>
+					<td width="129">Valor Financeiro R$:</td>
+					<td width="104"><input type="text" name="textfield"
+						id="textfield" style="width: 90px; text-align: right;" /></td>
+					<td width="111"><span class="bt_integrar"><a
+							href="javascript:;" onclick="mostrarArquivo();">Integrar</a></span></td>
+				</tr>
+			
+			</form>
+			
 		</table>
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			class="filtro" id="baixaManual">

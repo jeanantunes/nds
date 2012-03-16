@@ -22,19 +22,22 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -60,7 +63,7 @@ public class RecebimentoFisicoController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private NotaFiscalService notaFiscalService;
+	private NotaFiscalEntradaService notaFiscalService;
 	
 	@Autowired
 	private RecebimentoFisicoService recebimentoFisicoService;
@@ -165,7 +168,7 @@ public class RecebimentoFisicoController {
 	@Post
 	public void obterListaItemRecebimentoFisico() {
 		
-		NotaFiscal notaFiscal = getNotaFiscalFromSession();
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
 		
 		Long idNotaFiscal = notaFiscal.getId();
 		
@@ -198,7 +201,7 @@ public class RecebimentoFisicoController {
 		
 		if(cnpj == null || cnpj.isEmpty()) {
 			msgs.add("O campo CNPJ é obrigatório");
-		} else if(cnpj.length()<12) {
+		} else if(!verificarValidadeCnpj(cnpj)) {
 			msgs.add("O campo cnpj esta inválido");
 		}
 		
@@ -212,6 +215,18 @@ public class RecebimentoFisicoController {
 
 		if(!msgs.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+		
+	}
+
+	private boolean verificarValidadeCnpj(String cnpj) {
+	
+		CNPJValidator cnpjValidator = new CNPJValidator();
+		try{
+			cnpjValidator.assertValid(cnpj);
+			return true;
+		}catch(InvalidStateException e){
+			return false;
 		}
 		
 	}
@@ -476,7 +491,7 @@ public class RecebimentoFisicoController {
 	 */
 	public void cancelarNotaRecebimentoFisico() {
 		
-		NotaFiscal notaFiscal = getNotaFiscalFromSession();
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
 		
 		if(notaFiscal == null || notaFiscal.getId() == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma Nota Fiscal existente para cancelamento do recebimento físico.");
@@ -522,7 +537,7 @@ public class RecebimentoFisicoController {
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		
-		List<NotaFiscal> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
 			
 		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
@@ -702,7 +717,7 @@ public class RecebimentoFisicoController {
 	 * @throws ValidacaoException
 	 */
 	private void validarNovaNotaFiscal(
-			NotaFiscalFornecedor notaFiscalFornecedor, String dataEmissao,
+			NotaFiscalEntradaFornecedor notaFiscalFornecedor, String dataEmissao,
 			String dataEntrada, String valorLiquido, String valorBruto,
 			String valorDesconto) throws ValidacaoException {
 
@@ -855,7 +870,7 @@ public class RecebimentoFisicoController {
 	 * @param valorDesconto
 	 */
 	@Post
-	public void incluirNovaNotaFiscal(NotaFiscalFornecedor notaFiscalFornecedor, 
+	public void incluirNovaNotaFiscal(NotaFiscalEntradaFornecedor notaFiscalFornecedor, 
 			String dataEmissao,
 			String dataEntrada,
 			String valorLiquido,
@@ -931,8 +946,8 @@ public class RecebimentoFisicoController {
 		return new BigDecimal(valor.replace(".", "").replace(",", "."));
 	}
 	
-	public NotaFiscal getNotaFiscalFromSession() {
-		return (NotaFiscal) request.getSession().getAttribute(CABECALHO_NOTA_FISCAL);
+	public NotaFiscalEntrada getNotaFiscalFromSession() {
+		return (NotaFiscalEntrada) request.getSession().getAttribute(CABECALHO_NOTA_FISCAL);
 	}
 
 	public void setNotaFiscalToSession(NotaFiscal notaFiscal) {

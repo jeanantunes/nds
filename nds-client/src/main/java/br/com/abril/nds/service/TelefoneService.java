@@ -12,11 +12,15 @@ public interface TelefoneService {
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
 	
+	void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
+	
 	void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota);
 	
 	void removerTelefonesCota(Collection<Long> listaTelefonesCota);
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar);
+	
+	void cadastrarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
 	
 	void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor);
 	

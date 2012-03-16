@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -23,5 +24,18 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 		query.setParameterList("ids", idsTelefones);
 		
 		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Telefone> buscarTelefonesPessoa(Long idPessoa) {
+		StringBuilder hql = new StringBuilder("select p.telefones ");
+		hql.append(" from Pessoa p ")
+		   .append(" where p.id = :idPessoa");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idPessoa", idPessoa);
+		
+		return query.list();
 	}
 }
