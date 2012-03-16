@@ -27,6 +27,11 @@
 		<groupId>org.apache.velocity</groupId>
 		<artifactId>velocity</artifactId>
 	</dependency>
+
+    <dependency>
+        <groupId>org.jrimum</groupId>
+        <artifactId>jrimum-bopepo</artifactId>
+    </dependency>
     
   </dependencies>
 </project>

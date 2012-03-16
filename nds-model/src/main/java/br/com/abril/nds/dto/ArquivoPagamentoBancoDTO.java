@@ -8,6 +8,8 @@ public class ArquivoPagamentoBancoDTO {
 	private List<PagamentoDTO> listaPagemento;
 	
 	private BigDecimal somaPagamentos;
+	
+	private String nomeArquivo;
 
 	/**
 	 * @return the listaPagemento
@@ -35,6 +37,20 @@ public class ArquivoPagamentoBancoDTO {
 	 */
 	public void setSomaPagamentos(BigDecimal somaPagamentos) {
 		this.somaPagamentos = somaPagamentos;
+	}
+
+	/**
+	 * @return the nomeArquivo
+	 */
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	/**
+	 * @param nomeArquivo the nomeArquivo to set
+	 */
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
 	}
 
 }

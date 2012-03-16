@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.BoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 
@@ -41,4 +42,14 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 */
 	Boleto obterPorNossoNumero(String nossoNumero);
 
+
+	/**
+	 * Obtém os dados para a impressão do boleto de acordo com o nosso número.
+	 * 
+	 * @param nossoNumero - nosso numero
+	 * 
+	 * @return {@link BoletoTemplate}
+	 */
+	BoletoDTO obterDadosBoleto(String nossoNumero);
+	
 }

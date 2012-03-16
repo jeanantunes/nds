@@ -97,7 +97,7 @@
 				<version>${org.springframework.version}</version>
 				<type>jar</type>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
@@ -202,25 +202,41 @@
 				<artifactId>commons-beanutils</artifactId>
 				<version>1.8.3</version>
 			</dependency>
-			
 			<dependency>
-		   		<groupId>org.jrimum</groupId>
-		   		<artifactId>jrimum-bopepo</artifactId>
-		   		<version>0.2.3-SNAPSHOT</version>
+				<groupId>org.jrimum</groupId>
+				<artifactId>jrimum-bopepo</artifactId>
+				<version>0.2.3-SNAPSHOT</version>
 			</dependency>
-			
+			<dependency>
+				<groupId>br.com.caelum.stella</groupId>
+				<artifactId>caelum-stella-core</artifactId>
+				<version>2.0-beta1</version>
+			</dependency>
+			<dependency>
+				<groupId>br.com.caelum.stella</groupId>
+				<artifactId>caelum-stella-bean-validation</artifactId>
+				<version>2.0-beta1</version>
+			</dependency>
+			<dependency>
+				<groupId>br.com.caelum.stella</groupId>
+				<artifactId>caelum-stella-hibernate-user-types</artifactId>
+				<version>2.0-beta1</version>
+			</dependency>
+			<dependency>
+				<groupId>br.com.caelum.stella</groupId>
+				<artifactId>caelum-stella-boleto</artifactId>
+				<version>2.0-beta1</version>
+			</dependency>
 			<dependency>
 				<groupId>javax.mail</groupId>
-				 <artifactId>mail</artifactId>
-				 <version>1.4.4</version>
-		    </dependency>
-		    
-		    <dependency>
+				<artifactId>mail</artifactId>
+				<version>1.4.4</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.velocity</groupId>
 				<artifactId>velocity</artifactId>
 				<version>1.6-beta1</version>
 			</dependency>
-			
 		</dependencies>
 	</dependencyManagement>
 
@@ -249,6 +265,14 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>br.com.caelum.stella</groupId>
+			<artifactId>caelum-stella-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>br.com.caelum.stella</groupId>
+			<artifactId>caelum-stella-boleto</artifactId>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -260,7 +284,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-    
+
 	<build>
 		<plugins>
 			<plugin>

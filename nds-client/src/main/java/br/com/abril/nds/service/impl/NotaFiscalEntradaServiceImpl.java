@@ -13,19 +13,19 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PeriodoVO;
 
 @Service
-public class NotaFiscalServiceImpl implements NotaFiscalService {
+public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 	@Autowired
-	private NotaFiscalRepository notaFiscalDAO;
+	private NotaFiscalEntradaRepository notaFiscalDAO;
 	
 	@Override
 	@Transactional
@@ -35,17 +35,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 
 	@Autowired
-	private NotaFiscalRepository notaFiscalRepository;
+	private NotaFiscalEntradaRepository notaFiscalRepository;
 
 		
 	@Transactional
-	public void inserirNotaFiscal(NotaFiscal notaFiscal){
+	public void inserirNotaFiscal(NotaFiscalEntrada notaFiscal){
 		
 	}
 
 	@Override
 	@Transactional
-	public List<NotaFiscalFornecedor> obterNotasFiscaisCadastradas(
+	public List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(
 			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
 		PeriodoVO periodo = filtroConsultaNotaFiscal.getPeriodo(); 
@@ -120,14 +120,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Override
 	@Transactional
-	public NotaFiscal obterNotaFiscalPorNumero(String numero){
+	public NotaFiscalEntrada obterNotaFiscalPorNumero(String numero){
 		return notaFiscalRepository.obterNotaFiscalPorNumero(numero);
 
 	}
 	
 	@Override
 	@Transactional
-	public List<NotaFiscal> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		if(filtroConsultaNotaFiscal.getNumeroNota() == null || filtroConsultaNotaFiscal.getSerie() == null || filtroConsultaNotaFiscal.getCnpj() == null){
 			throw new IllegalArgumentException("Todos os dados são obrigatórios");
 		}

@@ -15,7 +15,9 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -23,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -50,8 +53,8 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -126,8 +129,8 @@ public class DataLoader {
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 
-	private static NotaFiscalFornecedor notaFiscalFornecedor;
-	private static ItemNotaFiscal itemNotaFiscalFornecedor;
+	private static NotaFiscalEntradaFornecedor notaFiscalFornecedor;
+	private static ItemNotaFiscalEntrada itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
 	private static ItemRecebimentoFisico itemRecebimentoFisico;
 	private static EstoqueProduto estoqueProdutoVeja1;
@@ -154,6 +157,8 @@ public class DataLoader {
 	private static Box box300Reparte;
 	private static Box box1;
 	private static Box box2;
+	
+	private static Banco bancoHSBC;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -166,10 +171,12 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
+
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			//carregarBoletos(session);
+			carregarBoletos(session);
+			
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -335,7 +342,7 @@ public class DataLoader {
 
 	private static void criarNotasFiscais(Session session) {
 		notaFiscalFornecedor = Fixture
-				.notaFiscalFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		session.save(notaFiscalFornecedor);
 
@@ -938,12 +945,12 @@ public class DataLoader {
 			
 			for(int x= 1; x< 3 ;x++){
 				
-				NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
+						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 				
-				ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+				ItemNotaFiscalEntrada itemNotaFiscal= Fixture.itemNotaFiscal(
 						produtoEdicao, usuario, notaFiscalFornecedor, 
 						Fixture.criarData(23, Calendar.FEBRUARY, 2012), new Date(),TipoLancamento.LANCAMENTO,
 						new BigDecimal(i));					
@@ -1002,6 +1009,7 @@ public class DataLoader {
 		}
 	}
 	
+
 
 	/**
 	 * Gera massa de dados para teste de consulta de lan�amentos agrupadas por Box
@@ -1145,8 +1153,9 @@ public class DataLoader {
 		criarPessoas(session);
 		criarBox(session);
 		criarCotas(session);
+		criarBanco(session);
 		
-		Boleto boleto0 = Fixture.boleto("10000",
+		Boleto boleto0 = Fixture.boleto("1309309032012440",
 				                       new Date(), 
 				                       new Date(), 
 				                       new Date(), 
@@ -1155,9 +1164,10 @@ public class DataLoader {
 				                       "TIPO_BAIXA", 
 				                       "ACAO", 
 				                       StatusCobranca.PAGO,
-				                       cotaManoel);
+				                       cotaManoel,
+				                       bancoHSBC);
 		
-		Boleto boleto1 = Fixture.boleto("20000",
+		Boleto boleto1 = Fixture.boleto("1309709032012747",
                                         new Date(), 
                                         new Date(), 
                                         new Date(), 
@@ -1166,249 +1176,272 @@ public class DataLoader {
                                         "TIPO_BAIXA",
                                         "ACAO", 
                                         StatusCobranca.PAGO,
-                                        cotaMaria);
+                                        cotaMaria,
+ 				                        bancoHSBC);
 		
-		Boleto boleto2 = Fixture.boleto("30000",
+		Boleto boleto2 = Fixture.boleto("1310209032012740",
                 						new Date(), 
                 						new Date(), 
-                						new Date(), 
+                						null,
                 						"ENCARGOS", 
                 						1005.80, 
                 						"TIPO_BAIXA",
                 						"ACAO", 
-                						StatusCobranca.PAGO,
-                						cotaJose);
+                						StatusCobranca.NAO_PAGO,
+                						cotaJose,
+ 				                        bancoHSBC);
 		
-		Boleto boleto3 = Fixture.boleto("40000",
+		Boleto boleto3 = Fixture.boleto("1310609032012041",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                200.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
-						                StatusCobranca.PAGO,
-						                cotaMaria);
+						                StatusCobranca.NAO_PAGO,
+						                cotaMaria,
+					                    bancoHSBC);
 		
-		Boleto boleto4 = Fixture.boleto("50000",
+		Boleto boleto4 = Fixture.boleto("1310809032012641",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null, 
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto5 = Fixture.boleto("60000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                50.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto6 = Fixture.boleto("70000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                1002.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto7 = Fixture.boleto("80000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                1000.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJose);
+						                cotaJose,
+					                    bancoHSBC);
 		
 		Boleto boleto8 = Fixture.boleto("90000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto9 = Fixture.boleto("100000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto10 = Fixture.boleto("110000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJose);
+						                cotaJose,
+					                    bancoHSBC);
 		
 		Boleto boleto11 = Fixture.boleto("120000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto12 = Fixture.boleto("130000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto13 = Fixture.boleto("140000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJose);
+						                cotaJose,
+					                    bancoHSBC);
 		
 		Boleto boleto14 = Fixture.boleto("150000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto15 = Fixture.boleto("160000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto16 = Fixture.boleto("170000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto17 = Fixture.boleto("180000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto18 = Fixture.boleto("190000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto19 = Fixture.boleto("200000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto20 = Fixture.boleto("210000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto21 = Fixture.boleto("220000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaMaria);
+						                cotaMaria,
+					                    bancoHSBC);
 		
 		Boleto boleto22 = Fixture.boleto("230000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaManoel);
+						                cotaManoel,
+					                    bancoHSBC);
 		
 		Boleto boleto23 = Fixture.boleto("240000",
 						                new Date(), 
 						                new Date(), 
-						                new Date(), 
+						                null,
 						                "ENCARGOS", 
 						                3500.00, 
 						                "TIPO_BAIXA",
 						                "ACAO", 
 						                StatusCobranca.NAO_PAGO,
-						                cotaJose);
+						                cotaJose,
+					                    bancoHSBC);
 		
 	    save(session,
     		 boleto0,
@@ -1511,12 +1544,12 @@ public class DataLoader {
 			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 			save(session,tipoNotaFiscal);
 
-			NotaFiscalFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
+					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 			
-			ItemNotaFiscal itemNotaFiscal= Fixture.itemNotaFiscal(
+			ItemNotaFiscalEntrada itemNotaFiscal= Fixture.itemNotaFiscal(
 					produtoEdicao, usuario, notaFiscalFornecedor, 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					DateUtil.adicionarDias(Fixture.criarData(23, Calendar.FEBRUARY, 2012), 7),
@@ -1572,6 +1605,14 @@ public class DataLoader {
 	
 	private static void criarParametroEmail(Session session){
 		save(session, Fixture.criarParametrosEmail());
+	}
+	
+	private static void criarBanco(Session session) {
+		
+		bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
+							  123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+		
+		save(session, bancoHSBC);
 	}
 	
 }

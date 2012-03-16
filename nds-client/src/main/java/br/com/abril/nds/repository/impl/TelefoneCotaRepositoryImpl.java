@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 
@@ -51,5 +52,18 @@ public class TelefoneCotaRepositoryImpl extends AbstractRepository<TelefoneCota,
 		query.setParameterList("ids", listaTelefones);
 		
 		query.executeUpdate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Telefone> buscarTelefonesPessoaPorCota(Long idCota) {
+		StringBuilder hql = new StringBuilder("select c.pessoa.telefones ");
+		hql.append(" from Cota c ")
+		   .append(" where c.id = :idCota");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
 	}
 }

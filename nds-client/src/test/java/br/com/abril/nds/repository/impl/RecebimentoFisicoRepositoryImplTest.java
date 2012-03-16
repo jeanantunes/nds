@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,14 +24,13 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 
 public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplTest{
@@ -42,7 +40,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	private RecebimentoFisicoService recebimentoFisicoService;
 	
 	@Autowired
-	private NotaFiscalRepository notaFiscalRepository;
+	private NotaFiscalEntradaRepository notaFiscalRepository;
 	
 	Fornecedor dinap = new Fornecedor();
 	PessoaJuridica pj = new PessoaJuridica();
@@ -50,12 +48,12 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 	TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 	Fornecedor fornecedor = new Fornecedor();
 	Usuario usuario = new Usuario();
-	NotaFiscalFornecedor notaFiscal = new NotaFiscalFornecedor();
+	NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
 	TipoProduto tipoProduto = new TipoProduto();
 	Produto produto = new Produto();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 	RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
-	ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
+	ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
 	ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
 	
 	Long idNotaFiscal;
@@ -86,7 +84,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		notaFiscal = Fixture.notaFiscalFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
+		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
 		notaFiscal.setOrigem(Origem.MANUAL);
 		save(notaFiscal);		
 				
@@ -135,7 +133,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		
 		listaDTO.add(recebimentoDTO);
 		
-		NotaFiscal notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
+		NotaFiscalEntrada notaFiscalFromBD = notaFiscalRepository.buscarPorId(notaFiscal.getId());
 		
 		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuario,notaFiscalFromBD, listaDTO, new Date());
 		

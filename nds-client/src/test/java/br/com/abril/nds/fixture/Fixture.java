@@ -10,7 +10,9 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -20,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -51,10 +54,10 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -473,9 +476,9 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
-	public static ItemNotaFiscal itemNotaFiscal(ProdutoEdicao produtoEdicao,
-			Usuario usuario, NotaFiscal notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
-		ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
+	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
+			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
+		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
 		itemNotaFiscal.setOrigem(Origem.MANUAL);
 		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
 		itemNotaFiscal.setQtde(qtde);
@@ -494,10 +497,10 @@ public class Fixture {
 		return tipoNotaFiscal;
 	}
 
-	public static NotaFiscalFornecedor notaFiscalFornecedor(CFOP cfop,
+	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(CFOP cfop,
 			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
-		NotaFiscalFornecedor notaFiscalFornecedor = new NotaFiscalFornecedor();
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = new NotaFiscalEntradaFornecedor();
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
 		notaFiscalFornecedor.setDataEmissao(new Date());
@@ -506,7 +509,7 @@ public class Fixture {
 		notaFiscalFornecedor.setNumero("2344242");
 		notaFiscalFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalFornecedor.setSerie("345353543");
-		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE);
+		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
 		notaFiscalFornecedor.setFornecedor(fornecedor);
@@ -517,7 +520,7 @@ public class Fixture {
 		return notaFiscalFornecedor;
 	}
 
-	public static RecebimentoFisico recebimentoFisico(NotaFiscalFornecedor notaFiscalFornecedor, 
+	public static RecebimentoFisico recebimentoFisico(NotaFiscalEntradaFornecedor notaFiscalFornecedor, 
 													  Usuario usuario,
 													  Date dataRecebimento,
 													  Date dataConfirmacao,
@@ -534,7 +537,7 @@ public class Fixture {
 		return recebimentoFisico;
 	}
 
-	public static ItemRecebimentoFisico itemRecebimentoFisico(ItemNotaFiscal itemNotaFiscal, 
+	public static ItemRecebimentoFisico itemRecebimentoFisico(ItemNotaFiscalEntrada itemNotaFiscal, 
 															  RecebimentoFisico recebimentoFisico,
 															  BigDecimal qtdeFisico) {
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
@@ -728,7 +731,8 @@ public class Fixture {
 				                String tipoBaixa,
 				                String acao,
 				                StatusCobranca status,
-				                Cota cota){
+				                Cota cota,
+				                Banco banco){
 			
 		Boleto boleto = new Boleto();
 		boleto.setNossoNumero(nossoNumero);
@@ -741,6 +745,8 @@ public class Fixture {
 		boleto.setAcao(acao);
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
+		boleto.setBanco(banco);
+		
 		return boleto;
 	}
 	
@@ -801,5 +807,25 @@ public class Fixture {
 		
 		return parametrosEmail;
 		
+	}
+	
+	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
+								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco) {
+		
+		Banco banco = new Banco();
+		
+		banco.setAgencia(agencia);
+		banco.setAtivo(ativo);
+		banco.setCarteira(carteira);
+		banco.setCodigoCedente(codigoCedente);
+		banco.setConta(conta);
+		banco.setDvAgencia(dvAgencia);
+		banco.setDvConta(dvConta);
+		banco.setInstrucoes(instrucoes);
+		banco.setMoeda(moeda);
+		banco.setNome(nome);
+		banco.setNumeroBanco(numeroBanco);
+		
+		return banco;
 	}
 }

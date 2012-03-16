@@ -60,7 +60,7 @@ public class ValidacaoInterceptor implements Interceptor {
 			
 			if (cause instanceof ValidacaoException) {
 
-				this.tratarExecaoValidacao((ValidacaoException) cause);
+				this.tratarExcecaoValidacao((ValidacaoException) cause);
 			
 			} else {
 				
@@ -76,7 +76,7 @@ public class ValidacaoInterceptor implements Interceptor {
 	 * 
 	 * @param validacaoException
 	 */
-	private void tratarExecaoValidacao(ValidacaoException validacaoException) {
+	private void tratarExcecaoValidacao(ValidacaoException validacaoException) {
 
 		if (Util.isAjaxRequest(request)) {
 		

@@ -16,17 +16,17 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 
 public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Autowired
-	private NotaFiscalRepository notaFiscalRepository;
+	private NotaFiscalEntradaRepository notaFiscalRepository;
 	
 	String cnpj = "00.000.000/0001-00";
 	String chave = "11111";
@@ -46,7 +46,7 @@ public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 		cfop.setId(1L);
 		save(cfop);
 		
-		NotaFiscal notaFiscal = new NotaFiscalFornecedor();
+		NotaFiscalEntrada notaFiscal = new NotaFiscalEntradaFornecedor();
 		notaFiscal.setCfop(cfop);
 		notaFiscal.setChaveAcesso(chave);
 		notaFiscal.setNumero(numeroNota);
@@ -65,7 +65,7 @@ public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 		tp.setTipoOperacao(TipoOperacao.ENTRADA);
 		save(tp);
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscal.PENDENTE);
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscal.setTipoNotaFiscal(tp);
 		save(notaFiscal);
 		
@@ -80,7 +80,7 @@ public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumeroNota(numeroNota);
 		filtro.setSerie(serie);
 		
-		List<NotaFiscal> listaNotas = notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
 		Assert.assertEquals(1, listaNotas.size());		
 		

@@ -40,7 +40,24 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		}
 		
-		return this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneCotaRepository.buscarTelefonesPessoaPorCota(idCota);
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
+		this.salvarTelefonesCota(listaTelefonesAdicionar);
+		this.removerTelefonesCota(listaTelefonesRemover);
 	}
 
 	@Transactional
@@ -61,9 +78,13 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				if (telefoneCota.getTelefone().getId() == null){
 					this.telefoneRepository.adicionar(telefoneCota.getTelefone());
-					this.telefoneCotaRepository.adicionar(telefoneCota);
 				} else {
 					this.telefoneRepository.alterar(telefoneCota.getTelefone());
+				}
+				
+				if (telefoneCota.getId() == null){
+					this.telefoneCotaRepository.adicionar(telefoneCota);
+				} else {
 					this.telefoneCotaRepository.alterar(telefoneCota);
 				}
 			}
@@ -76,7 +97,8 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
 			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
-			this.telefoneRepository.removerTelefones(listaTelefonesCota);
+			
+			this.removerTelefone(listaTelefonesCota);
 		}
 	}
 
@@ -88,7 +110,24 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdFornecedor é obrigatório");
 		}
 		
-		return this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneFornecedorRepository.buscarTelefonesPessoaPorFornecedor(idFornecedor);
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public void cadastrarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
+		this.salvarTelefonesFornecedor(listaTelefonesAdicionar);
+		this.removerTelefonesFornecedor(listaTelefonesRemover);
 	}
 
 	@Transactional
@@ -109,9 +148,13 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				if (telefoneFornecedor.getTelefone().getId() == null){
 					this.telefoneRepository.adicionar(telefoneFornecedor.getTelefone());
-					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
 				} else {
 					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
+				}
+				
+				if (telefoneFornecedor.getId() == null){
+					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
+				} else {
 					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
 				}
 			}
@@ -123,7 +166,8 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
 		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
 			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
-			this.telefoneRepository.removerTelefones(listaTelefonesFornecedor);
+			
+			this.removerTelefone(listaTelefonesFornecedor);
 		}
 	}
 	
@@ -155,6 +199,22 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		if (telefone.getRamal().trim().length() > 255){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Ramal");
+		}
+	}
+	
+	private void removerTelefone(Collection<Long> listaTelefonesCota) {
+		for (Long idTelefone : listaTelefonesCota){
+			Telefone telefone = this.telefoneRepository.buscarPorId(idTelefone);
+			
+			if (telefone != null){
+				try {
+					this.telefoneRepository.remover(telefone);
+				} catch (Exception e) {
+					//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
+					//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer
+					//selects que terão que ser alterados até que todas as associações estejam definidas.
+				}
+			}
 		}
 	}
 }

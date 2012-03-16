@@ -23,8 +23,10 @@ public class TipoNotaFiscal {
 	@GeneratedValue(generator = "TP_NOTA_FISCAL_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;

@@ -22,26 +22,23 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-/**
- * @author francisco.garcia
- * @version 1.0
- * @created 14-fev-2012 11:35:32
- */
 @Entity
-@Table(name = "ITEM_NOTA_FISCAL")
-@SequenceGenerator(name="ITEM_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
-
-public class ItemNotaFiscal {
+@Table(name = "ITEM_NOTA_FISCAL_ENTRADA")
+@SequenceGenerator(name="ITEM_NF_ENTRADA_SEQ", initialValue = 1, allocationSize = 1)
+public class ItemNotaFiscalEntrada {
 
 	@Id
-	@GeneratedValue(generator = "ITEM_NOTA_FISCAL_SEQ")
+	@GeneratedValue(generator = "ITEM_NF_ENTRADA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
-	private NotaFiscal notaFiscal;
+	private NotaFiscalEntrada notaFiscal;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -62,7 +59,7 @@ public class ItemNotaFiscal {
 	private TipoLancamento tipoLancamento;	
 	
 	@Temporal(value=TemporalType.DATE)
-	@Column(name = "DATA_REC", nullable = false)
+	@Column(name = "DATA_RECOLHIMENTO", nullable = false)
 	private Date dataRecolhimento;	
 	
 	@OneToOne(mappedBy = "itemNotaFiscal")
@@ -84,11 +81,11 @@ public class ItemNotaFiscal {
 		this.qtde = qtde;
 	}	
 	
-	public NotaFiscal getNotaFiscal() {
+	public NotaFiscalEntrada getNotaFiscal() {
 		return notaFiscal;
 	}
 	
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
+	public void setNotaFiscal(NotaFiscalEntrada notaFiscal) {
 		this.notaFiscal = notaFiscal;
 	}
 	
