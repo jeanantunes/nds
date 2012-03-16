@@ -7,7 +7,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,10 +19,9 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 
-public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
+public class NotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Autowired
 	private NotaFiscalEntradaRepository notaFiscalRepository;
@@ -35,44 +33,34 @@ public class NotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Before
 	public void setup() {
-		
-		
 		PessoaJuridica pj = Fixture.juridicaFC();
 		save(pj);
 		
-		CFOP cfop =new CFOP();
-		cfop.setCodigo("1");
-		cfop.setDescricao("cfop desc");
-		cfop.setId(1L);
+		CFOP cfop  = Fixture.cfop5102();
 		save(cfop);
+
+		TipoNotaFiscal tp = Fixture.tipoNotaFiscalRecebimento();
+		save(tp);
 		
 		NotaFiscalEntrada notaFiscal = new NotaFiscalEntradaFornecedor();
 		notaFiscal.setCfop(cfop);
 		notaFiscal.setChaveAcesso(chave);
 		notaFiscal.setNumero(numeroNota);
 		notaFiscal.setSerie(serie);
-		notaFiscal.setDataEmissao(new Date(System.currentTimeMillis()));
-		notaFiscal.setDataExpedicao(new Date(System.currentTimeMillis()));
+		notaFiscal.setDataEmissao(new Date());
+		notaFiscal.setDataExpedicao(new Date());
 		notaFiscal.setEmitente(pj);
 		notaFiscal.setOrigem(Origem.INTERFACE);
 		notaFiscal.setValorBruto(BigDecimal.TEN);
 		notaFiscal.setValorLiquido(BigDecimal.TEN);
 		notaFiscal.setValorDesconto(BigDecimal.TEN);
 		
-		TipoNotaFiscal tp = new TipoNotaFiscal();
-		tp.setId(1L);
-		tp.setDescricao("desc");		
-		tp.setTipoOperacao(TipoOperacao.ENTRADA);
-		save(tp);
-		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscal.setTipoNotaFiscal(tp);
 		save(notaFiscal);
-		
 	}
 	
 	@Test
-	@Ignore //TODO: corrigir
 	public void obterNotaFiscalPorAtributosEmRecebimentoFisico() {
 		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
 		filtro.setCnpj(cnpj);

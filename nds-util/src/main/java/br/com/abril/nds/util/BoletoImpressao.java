@@ -1,13 +1,9 @@
 package br.com.abril.nds.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.jrimum.bopepo.BancosSuportados;
 import org.jrimum.bopepo.Boleto;
