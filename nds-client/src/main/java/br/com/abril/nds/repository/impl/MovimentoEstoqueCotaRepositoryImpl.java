@@ -1,29 +1,25 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository{
+public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
 
 	public MovimentoEstoqueCotaRepositoryImpl() {
 		super(MovimentoEstoqueCota.class);
 	}
 
-	//TODO UTILIZAR DTO DE FILTRO...
-	private String getConsultaListaContagemDevolucao(Object filtro, boolean indBuscaQtd) {
-		
-		//TODO: param abaixo passado com o filtro remover abaixo pos testes
-		List listaIdProdutoDosFornecedores = null;
+	private String getConsultaListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, List<Long> listaIdProdutoDosFornecedores, boolean indBuscaQtd) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
@@ -35,17 +31,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 
 			hql.append(" select new " + ContagemDevolucaoDTO.class.getCanonicalName() 	);		
 			
-			hql.append(" ( 	parcial.id,  											");		
-			hql.append("  	lancamento.produtoEdicao.produto.codigo,  				");		
-			hql.append(" 	lancamento.produtoEdicao.produto.codigo.nome, 			");
-			hql.append(" 	lancamento.produtoEdicao.numeroEdicao, 					");
-			hql.append(" 	lancamento.produtoEdicao.precoVenda, 					");
-			hql.append("  	sum( movimento.qtde ) as qtdDevolucao,	 				");
-			hql.append("  	parcial.qtde,	 										");
-			hql.append("  	lancamento.dataRecolhimentoDistribuidor,	 			");
-			hql.append("  	parcial.dataConfEncalheParcial,	 						");
-			hql.append("  	parcial.dataAprovacao,	 								");
-			hql.append("  	parcial.statusAprovacao	 )								");
+			hql.append(" ( 	parcial.id,  																");		
+			hql.append("  	lancamento.produtoEdicao.produto.codigo,  									");		
+			hql.append(" 	lancamento.produtoEdicao.produto.codigo.nome, 								");
+			hql.append(" 	lancamento.produtoEdicao.numeroEdicao, 										");
+			hql.append(" 	lancamento.produtoEdicao.precoVenda, 										");
+			hql.append("  	sum( movimento.qtde ) as qtdDevolucao,	 									");
+			hql.append("  	sum( lancamento.produtoEdicao.precoVenda * movimento.qtde ) as valorTotal,	");
+			hql.append("  	parcial.qtde,	 															");
+			hql.append("  	sum( movimento.qtde  - parcial.qtde  ) as diferenca,						");
+			hql.append("  	lancamento.dataRecolhimentoDistribuidor,	 								");
+			hql.append("  	parcial.dataConfEncalheParcial,	 											");
+			hql.append("  	parcial.dataAprovacao,	 													");
+			hql.append("  	parcial.statusAprovacao	 )													");
 			
 		}
 		
@@ -69,7 +67,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		hql.append(" parcial.id is null ) and ");		
 		
 		hql.append(" ( ( lancamento.dataRecolhimentoDistribuidor = movimento.dataInclusao	and ");		
-		hql.append(" lancamento.produtoEdicao.id = movimento.produtoEdicao.id and movimento.tipoMovimento = :tipoMovimento ) or  	");		
+		hql.append(" lancamento.produtoEdicao.id = movimento.produtoEdicao.id and movimento.tipoMovimento = :tipoMovimentoEstoque ) or  ");		
 
 		hql.append("  movimento.id is null ) ");		
 
@@ -86,22 +84,67 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		hql.append("  	parcial.dataAprovacao,	 								");
 		hql.append("  	parcial.statusAprovacao	 								");
 		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+
+		if (filtro.getOrdenacaoColuna() != null) {
+
+			hql.append(" order by ");
+			
+			String orderByColumn = "";
+			
+				switch (filtro.getOrdenacaoColuna()) {
+				
+					case CODIGO_PRODUTO:
+						orderByColumn = " lancamento.produtoEdicao.produto.codigo ";
+						break;
+					case NOME_PRODUTO:
+						orderByColumn = " lancamento.produtoEdicao.produto.codigo.nome ";
+						break;
+					case NUMERO_EDICAO:
+						orderByColumn = " lancamento.produtoEdicao.numeroEdicao ";
+						break;
+					case PRECO_CAPA:
+						orderByColumn = " lancamento.produtoEdicao.precoVenda ";
+						break;
+					case QTD_DEVOLUCAO:
+						orderByColumn = " qtdDevolucao ";
+						break;
+					case VALOR_TOTAL:
+						orderByColumn = " valorTotal ";
+						break;
+					case QTD_NOTA:
+						orderByColumn = " parcial.qtde ";
+						break;
+					case DIFERENCA:
+						orderByColumn = " diferenca ";
+						break;
+						
+					default:
+						break;
+				}
+			
+			hql.append(orderByColumn);
+			
+			if (paginacao.getOrdenacao() != null) {
+				
+				hql.append(paginacao.getOrdenacao().toString());
+				
+			}
+			
+		}
+		
 		return hql.toString();
 	}
 	
-	//TODO: 
-	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, Object filtroConsultaListaContagemDevolucao) {
+	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque, List<Long> listaIdProdutoDosFornecedores) {
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		//TODO: usar param do filtro
-		List listaIdProdutoDosFornecedores = null;
-		
-		query.setParameter("dataRecolhimentoDistribuidorInicial", null);
+		query.setParameter("dataRecolhimentoDistribuidorInicial", filtro.getPeriodo().getDataInicial());
 
-		query.setParameter("dataRecolhimentoDistribuidorFinal", null);
+		query.setParameter("dataRecolhimentoDistribuidorFinal", filtro.getPeriodo().getDataFinal());
 		
-		query.setParameter("tipoMovimento", null);
+		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
 		if(listaIdProdutoDosFornecedores != null && !listaIdProdutoDosFornecedores.isEmpty()) {
 			
@@ -112,38 +155,30 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return query;
 		
 	}
-	 
 	
-	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
-			Date dataRecolhimentoDistribuidor,
-			TipoMovimentoEstoque tipoMovimento,
-			List<Long> listaIdProdutoDosFornecedores) {
+	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque, List<Long> listaIdProdutoDosFornecedores) {
 		
-		String hql = getConsultaListaContagemDevolucao(null, false);
+		String hql = getConsultaListaContagemDevolucao(filtro, listaIdProdutoDosFornecedores, false);
 		
-		//TODO usar filtro
-		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, null);
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, tipoMovimentoEstoque, listaIdProdutoDosFornecedores);
 		
-		
-		//TODO usar filtro
-		query.setFirstResult(0);
+		query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 
-		//TODO usar filtro
-		query.setMaxResults(1000);
+		query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
 		
 	}
 	
-	public Integer obterQuantidadeContagemDevolucao(
-			Date dataRecolhimentoDistribuidor,
-			TipoMovimentoEstoque tipoMovimento,
+	
+	public Integer obterQuantidadeContagemDevolucao( 
+			FiltroDigitacaoContagemDevolucaoDTO filtro, 
+			TipoMovimentoEstoque tipoMovimentoEstoque, 
 			List<Long> listaIdProdutoDosFornecedores) {
 		
-		String hql = getConsultaListaContagemDevolucao(null, true);
+		String hql = getConsultaListaContagemDevolucao(filtro, listaIdProdutoDosFornecedores, true);
 		
-		//TODO usar filtro
-		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, null);
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, tipoMovimentoEstoque, listaIdProdutoDosFornecedores);
 		
 		return (Integer) query.uniqueResult();
 		

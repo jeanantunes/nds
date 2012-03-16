@@ -41,17 +41,16 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	 * @author Discover Technology
 	 *
 	 */
-	public enum OrdenacaoColuna{
+	public enum OrdenacaoColuna {
 		
-		NOSSO_NUMERO("nossoNumero"),
-		DATA_EMISSAO("dataVencimento"),
-		DATA_VENCIMENTO("dataVencimento"),
-		DATA_PAGAMENTO("dataPagamento"),
-		ENCARGOS("encargos"),
-		VALOR("valor"),
-		TIPO_BAIXA("tipoBaixa"),
-		STATUS("status"),
-		ACAO("acao");
+		CODIGO_PRODUTO("codigo"),
+		NOME_PRODUTO("produto"),
+		NUMERO_EDICAO("edicao"),
+		PRECO_CAPA("precoVenda"),
+		QTD_DEVOLUCAO("qtdDevolucao"),
+		VALOR_TOTAL("valorTotal"),
+		QTD_NOTA("qtdNota"),
+		DIFERENCA("diferenca");
 		
 		private String nomeColuna;
 		

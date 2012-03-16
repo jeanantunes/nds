@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 
@@ -16,8 +18,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao() {
 		
-		movimentoEstoqueCotaRepository.obterListaContagemDevolucao(null, null, null);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
 		
+		//movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, null);
 		
 		return null;
 	
