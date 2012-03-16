@@ -33,6 +33,8 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<Telefon
 			hql.append(" and t.telefone.id not in (:idsIgnorar) ");
 		}
 		
+		hql.append(" order by t.tipoTelefone ");
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idFornecedor", idFornecedor);
 		
