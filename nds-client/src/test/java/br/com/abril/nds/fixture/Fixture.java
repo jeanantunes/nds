@@ -479,6 +479,15 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		return tipoMovimento;
+	}
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -674,6 +683,38 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 
+	public static MovimentoEstoqueCota movimentoEstoqueCotaEnvioEncalhe(
+			Date dataInclusao,
+			ProdutoEdicao produtoEdicao, 	
+			TipoMovimentoEstoque tipoMovimento,
+			Usuario usuario, 
+			EstoqueProdutoCota estoqueProdutoCota,
+			BigDecimal qtde, 
+			Cota cota, 
+			StatusAprovacao statusAprovacao, 
+			String motivo) {
+
+		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
+		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setProdutoEdicao(produtoEdicao);
+		movimentoEstoque.setQtde(qtde);
+		movimentoEstoque.setTipoMovimento(tipoMovimento);
+		movimentoEstoque.setUsuario(usuario);
+		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
+			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
+					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
+		} else {
+			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
+					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
+		}
+		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
+		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
+		movimentoEstoque.setCota(cota);
+		movimentoEstoque.setStatus(statusAprovacao);
+		movimentoEstoque.setMotivo(motivo);
+		return movimentoEstoque;
+	}
+	
 	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
