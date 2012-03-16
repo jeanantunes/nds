@@ -683,16 +683,14 @@ public class BoletoImpressao {
 	 
 	 
 	 
-
 	 
-	 
-	 
-	 
-	 
-	 
-	 /*
-	 //TESTE
-	 public static void main(String[] args) throws IOException{
+	   /*
+	   //TESTE
+	   public static void main(String[] args) throws IOException{
+		 
+		    System.out.println( gerarNossoNumero("239104761", "8351202", new Date("04/07/2008") ));
+		 
+		 
 	        BoletoImpressao boleto = new BoletoImpressao();
 	        
 	        
@@ -757,8 +755,8 @@ public class BoletoImpressao {
 	        byte[] b = boleto.obterArrayByte();
 	        
 		}
+	    
 	    */
-	 
 	 
 	 
 }

@@ -721,8 +721,7 @@ public class Fixture {
 		box.setTipoBox(tipoBox);
 		return box;
 	}
-
-	//FINANCEIRO - HENRIQUE
+	
 	public static Boleto boleto(String nossoNumero,
 				                Date dataEmissao,
 				                Date dataVencimento,
