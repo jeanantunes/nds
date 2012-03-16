@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,7 +32,8 @@ public class Banco {
 	private String dvConta;
 	@Column(name = "CODIGO_CEDENTE", nullable = false)
 	private String codigoCedente;
-	@Column(name = "CARTEIRA", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "CARTEIRA_ID")
 	private Carteira carteira;
 	@Column(name = "MOEDA", nullable = false)
 	private Moeda moeda;

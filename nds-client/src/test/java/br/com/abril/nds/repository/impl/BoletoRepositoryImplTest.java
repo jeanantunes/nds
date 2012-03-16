@@ -53,23 +53,23 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Cota cota = Fixture.cota(NUMERO_COTA, pessoaJuridica, SituacaoCadastro.ATIVO,box);
 		save(cota);
 		
-		Banco bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
-				  			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
-		save(bancoHSBC);
+//		Banco bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
+//				  			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+		//save(bancoHSBC);
 		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES
-	    Boleto boleto = Fixture.boleto("5", 
-                					   new Date(), 
-                					   new Date(), 
-                					   new Date(), 
-                					   "0", 
-                					   100.00, 
-                					   "1", 
-                					   "1",
-                					   StatusCobranca.PAGO,
-                					   cota,
-                					   bancoHSBC);
-		save(boleto);
+//	    Boleto boleto = Fixture.boleto("5", 
+//                					   new Date(), 
+//                					   new Date(), 
+//                					   new Date(), 
+//                					   "0", 
+//                					   100.00, 
+//                					   "1", 
+//                					   "1",
+//                					   StatusCobranca.PAGO,
+//                					   cota,
+//                					   bancoHSBC);
+//		save(boleto);
 		
 		
 	}
