@@ -4,7 +4,7 @@ public enum GrupoMovimentoFinaceiro {
 	
 	ENVIO_JORNALEIRO(OperacaoFinaceira.DEBITO),
 	CREDITO(OperacaoFinaceira.CREDITO),
-	DEBITO(OperacaoFinaceira.CREDITO);
+	DEBITO(OperacaoFinaceira.DEBITO);
 	
 	private OperacaoFinaceira operacaoFinaceira;
 	
