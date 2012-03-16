@@ -81,6 +81,7 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoSobraDe;
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
+	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
 	
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
@@ -172,10 +173,11 @@ public class DataLoader {
 			session = sf.openSession();
 			tx = session.beginTransaction();
 
+			carregarDadosParaContagemdDevolucao(session);
 			//carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			carregarBoletos(session);
+			//carregarBoletos(session);
 
 			commit = true;
 		} catch (Exception e) {
@@ -195,6 +197,50 @@ public class DataLoader {
 		}
 	}
 
+	private static void carregarDadosParaContagemdDevolucao(Session session) {
+		
+		criarPessoas(session);
+		criarDistribuidor(session);
+		criarParametrosSistema(session);
+		criarUsuarios(session);
+		criarTiposFornecedores(session);
+		criarBox(session);
+		criarFornecedores(session);
+		criarDiasDistribuicaoFornecedores(session);
+		criarCotas(session);
+		criarTiposProduto(session);
+		criarProdutos(session);
+		criarProdutosEdicao(session);
+		criarCFOP(session);
+		criarTiposMovimento(session);
+		criarTiposNotaFiscal(session);
+		criarNotasFiscais(session);
+		criarRecebimentosFisicos(session);
+		criarEstoquesProdutos(session);
+		
+		criarMovimentosEstoque(session);
+		
+		criarLancamentos(session);
+		criarEstudos(session);
+		criarEstudosCota(session);
+		
+		criarMovimentosEstoqueCota(session);
+		
+		criarFeriado(session);		
+		criarEnderecoCotaPF(session);
+		criarParametroEmail(session);
+		
+		criarMovimentosEstoqueCotaConferenciaEncalhe(session);
+		
+		//TODO: code the rest 
+		
+	}
+
+
+	
+	
+	
+	
 	private static void carregarDados(Session session) {
 		criarPessoas(session);
 		criarDistribuidor(session);
@@ -309,6 +355,50 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
+	}
+	
+	private static void criarMovimentosEstoqueCotaConferenciaEncalhe(Session session) {
+		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
 	}
 
 	private static void criarParametrosSistema(Session session) {
@@ -824,9 +914,13 @@ public class DataLoader {
 		tipoMovimentoSobraDe = Fixture.tipoMovimentoSobraDe();
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
-				tipoMovimentoRecFisico, tipoMovimentoRecReparte);
+				tipoMovimentoRecFisico, tipoMovimentoRecReparte, 
+				tipoMovimentoEnvioEncalhe);
 	}
 
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
