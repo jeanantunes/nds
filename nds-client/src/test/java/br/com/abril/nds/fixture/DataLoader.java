@@ -172,11 +172,11 @@ public class DataLoader {
 			session = sf.openSession();
 			tx = session.beginTransaction();
 
-			carregarDados(session);
+			//carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			carregarBoletos(session);
-			
+
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
