@@ -92,10 +92,6 @@ public class LeitorRetornoBancoServiceImpl implements LeitorRetornoBancoService 
 		return arquivoPagamentoBanco;
 	}
 	
-	private void validarValorPagamentos() {
-		//TODO:
-	}
-	
 	private BigDecimal formatarValor(String valor) {
 		
 		StringBuilder sb = new StringBuilder(valor);

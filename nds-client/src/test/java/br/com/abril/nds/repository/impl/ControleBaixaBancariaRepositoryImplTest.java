@@ -33,7 +33,7 @@ public class ControleBaixaBancariaRepositoryImplTest extends AbstractRepositoryI
 	}
 	
 	@Test
-	public void obterProdutoPorCodigo() {
+	public void obterPorData() {
 		ControleBaixaBancaria controleBaixaBancaria = 
 				controleBaixaBancariaRepository.obterPorData(new Date());
 		
