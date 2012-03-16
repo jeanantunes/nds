@@ -1701,12 +1701,13 @@ public class DataLoader {
 		save(session, Fixture.criarParametrosEmail());
 	}
 	
+	//TODO: Henrique, ajustar a fixture de banco para criar a carteira
 	private static void criarBanco(Session session) {
 		
-		bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
-							  123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
-		
-		save(session, bancoHSBC);
+//		bancoHSBC = Fixture.banco(10L, true, Carteira.COBRANCA_NAO_REGISTRADA, "1010",
+//							  123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+//		
+//		save(session, bancoHSBC);
 	}
 	
 }
