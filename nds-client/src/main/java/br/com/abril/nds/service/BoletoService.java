@@ -31,7 +31,7 @@ public interface BoletoService {
 					   BigDecimal valorFinanceiro,
 					   Usuario usuario);
 	
-	void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao,
+	void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao, Usuario usuario,
 					  String nomeArquivo, PoliticaCobranca politicaCobranca);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;

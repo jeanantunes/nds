@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -57,7 +58,7 @@ public abstract class Cobranca {
 	private String encargos;
 
 	@Column(name = "VALOR", nullable = false)
-	private Double valor;
+	private BigDecimal valor;
 	
 	@Column(name = "TIPO_BAIXA", nullable = true)
 	private String tipoBaixa;
@@ -123,11 +124,11 @@ public abstract class Cobranca {
 		this.encargos = encargos;
 	}
 
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
