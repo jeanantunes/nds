@@ -19,8 +19,9 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.DiferencaVO;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
+import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -56,7 +57,6 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -859,7 +859,7 @@ public class DiferencaEstoqueController {
 		}
 		
 		List<DiferencaVO> listaLancamentosDiferencaPaginada =
-			this.paginarEmMemoria(
+			PaginacaoUtil.paginarEOrdenarEmMemoria(
 				listaLancamentosDiferenca, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 		
 		TableModel<CellModelKeyValue<DiferencaVO>> tableModel =
@@ -1538,47 +1538,6 @@ public class DiferencaEstoqueController {
 		
 			throw new ValidacaoException(validacao);
 		}
-	}
-	
-	/*
-	 * Efetua a paginação de uma lista em memória.
-	 *  
-	 * @param listaAPaginar - lista a ser paginada
-	 * @param paginacao - dados da paginação
-	 * @param nomeAtributoOrdenacao - atributo da classe que será ordenado
-	 * 
-	 * @return Lista paginada
-	 */
-	@SuppressWarnings("unchecked")
-	private <T extends Object> List<T> paginarEmMemoria(List<T> listaAPaginar, 
-														PaginacaoVO paginacao, 
-														String nomeAtributoOrdenacao) {
-		
-		Collections.sort(
-			listaAPaginar, new BeanComparator(nomeAtributoOrdenacao));
-		
-		if (Ordenacao.DESC.equals(paginacao.getOrdenacao())) {
-			
-			Collections.reverse(listaAPaginar);
-		}
-		
-		Integer posicaoInicial = paginacao.getPosicaoInicial();
-		
-		Integer qtdeTotalRegistros = listaAPaginar.size();
-		
-		Integer posicaoFinal = qtdeTotalRegistros;
-		
-		if (qtdeTotalRegistros > paginacao.getQtdResultadosPorPagina()) {
-			
-			posicaoFinal = posicaoInicial + paginacao.getQtdResultadosPorPagina();
-			
-			if (posicaoFinal > qtdeTotalRegistros) {
-				
-				posicaoFinal = qtdeTotalRegistros;
-			}
-		}
-		
-		return listaAPaginar.subList(posicaoInicial, posicaoFinal);
 	}
 	
 	/*

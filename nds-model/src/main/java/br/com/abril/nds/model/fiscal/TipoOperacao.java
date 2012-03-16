@@ -8,5 +8,4 @@ package br.com.abril.nds.model.fiscal;
 public enum TipoOperacao {
 	ENTRADA,
 	SAIDA,
-	REENTRADA
 }
