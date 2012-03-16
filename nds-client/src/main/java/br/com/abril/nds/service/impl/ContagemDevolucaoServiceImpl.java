@@ -16,7 +16,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao() {
 		
-		movimentoEstoqueCotaRepository.obterListaContagemDevolucao(null, null);
+		movimentoEstoqueCotaRepository.obterListaContagemDevolucao(null, null, null);
 		
 		
 		return null;
