@@ -38,4 +38,6 @@ public class EnderecoCota extends AssociacaoEndereco {
 		this.cota = cota;
 	}
 
+	
+	
 }

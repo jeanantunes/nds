@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class AssociacaoEndereco {
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade=CascadeType.MERGE)
 	@JoinColumn(name = "ENDERECO_ID")
 	private Endereco endereco;
 	@Column(name = "TIPO_ENDERECO", nullable = false)
@@ -43,4 +44,35 @@ public abstract class AssociacaoEndereco {
 		this.principal = principal;
 	}
 
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((endereco == null) ? 0 : endereco.hashCode());
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AssociacaoEndereco other = (AssociacaoEndereco) obj;
+		if (endereco == null) {
+			if (other.endereco != null)
+				return false;
+		} else if (!endereco.equals(other.endereco))
+			return false;
+		return true;
+	}
 }

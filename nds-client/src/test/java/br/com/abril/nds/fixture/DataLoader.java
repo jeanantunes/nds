@@ -1602,7 +1602,7 @@ public class DataLoader {
 		EnderecoCota enderecoCota2 = new EnderecoCota();
 		enderecoCota2.setCota(cotaManoel);
 		enderecoCota2.setEndereco(endereco2);
-		enderecoCota2.setPrincipal(true);
+		enderecoCota2.setPrincipal(false);
 		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
 		
 		save(session, endereco, enderecoCota, endereco2, enderecoCota2);

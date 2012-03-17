@@ -20,6 +20,8 @@ public interface CotaService {
 
 	Cota obterPorNome(String nome);
 	
+	Cota obterPorId(Long idCota);
+	
 	/**
 	 * Obtém uma lista dos endereços cadastrados para uma determinada cota.
 	 * 
@@ -28,5 +30,16 @@ public interface CotaService {
 	 * @return List<EnderecoAssociacaoDTO> 
 	 */
 	List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota);
-	
+	/**
+	 * Persiste um conjunto de endereços para uma determinada cota.
+	 * 
+	 * @param cota
+	 * 
+	 * @param listaEnderecoAssociacaoSalvar
+	 * 
+	 * @param listaEnderecoAssociacaoRemover
+	 */
+	void processarEnderecos(Cota cota, 
+							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar, 
+							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
 }

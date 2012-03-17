@@ -20,12 +20,27 @@ public class EnderecoAssociacaoDTO implements Serializable {
 	 */
 	public EnderecoAssociacaoDTO() { }
 	
+	private Long id;
+	
 	private Endereco endereco;
 	
 	private TipoEndereco tipoEndereco;
 	
 	private boolean enderecoPrincipal;
 
+	private ColunaOrdenacao colunaOrdenacao;
+	
+	public enum ColunaOrdenacao {
+		
+		TIPO_ENDERECO,
+		LOGRADOURO,
+		BAIRRO,
+		CEP,
+		CIDADE,
+		PRINCIPAL
+		;
+	}
+	
 	/**
 	 * @return the endereco
 	 */
@@ -69,14 +84,41 @@ public class EnderecoAssociacaoDTO implements Serializable {
 	}
 
 	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the colunaOrdenacao
+	 */
+	public ColunaOrdenacao getColunaOrdenacao() {
+		return colunaOrdenacao;
+	}
+
+	/**
+	 * @param colunaOrdenacao the colunaOrdenacao to set
+	 */
+	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
+		this.colunaOrdenacao = colunaOrdenacao;
+	}
+
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((endereco == null) ? 0 : endereco.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -92,10 +134,10 @@ public class EnderecoAssociacaoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		EnderecoAssociacaoDTO other = (EnderecoAssociacaoDTO) obj;
-		if (endereco == null) {
-			if (other.endereco != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!endereco.equals(other.endereco))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
