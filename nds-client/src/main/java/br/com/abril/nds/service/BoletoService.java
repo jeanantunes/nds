@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
@@ -16,10 +17,9 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Interface que define serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Boleto}  
+ * {@link br.com.abril.nds.model.cadastro.Boleto}
  * 
  * @author Discover Technology
- *
  */
 public interface BoletoService {
     
@@ -27,11 +27,11 @@ public interface BoletoService {
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 
-	void baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
-					   BigDecimal valorFinanceiro,
-					   Usuario usuario);
+	ResumoBaixaBoletosDTO baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
+					   					BigDecimal valorFinanceiro, Usuario usuario);
 	
-	void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao, Usuario usuario,
+	void baixarBoleto(ResumoBaixaBoletosDTO resumoBaixaBoletos, PagamentoDTO pagamento,
+					  Date dataOperacao, Usuario usuario,
 					  String nomeArquivo, PoliticaCobranca politicaCobranca);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;

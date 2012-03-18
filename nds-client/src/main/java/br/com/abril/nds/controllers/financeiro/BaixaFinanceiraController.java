@@ -2,9 +2,7 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 
 import javax.servlet.http.HttpSession;
 
@@ -12,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorRetornoBancoService;
@@ -22,6 +21,8 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.ioc.spring.VRaptorRequestHolder;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro")
@@ -54,33 +55,46 @@ public class BaixaFinanceiraController {
 	
 	@Post
 	public void baixarBoletosAutomatico(UploadedFile uploadedFile, String valorFinanceiro) {
+			
+		//TODO: validar tamanho arquivo, caminho para gravar, obrigatoriedade dos campos, tamanho do nome do arquivo, etc
+		
+		//TODO: refactor nomes classes
+		
+		String pathAplicacao = VRaptorRequestHolder.currentRequest().getServletContext().getRealPath("");
+		
+		pathAplicacao = pathAplicacao.replace("\\", "/");
+		
+		File fileDir = new File(pathAplicacao, "temp/arquivo");
+		
+		fileDir.mkdirs();
+		
+		File fileArquivoRetorno = new File(fileDir, uploadedFile.getFileName());
+		
+		//TODO:
 		
 		try {
-			
-			File file = new File("/" + uploadedFile.getFileName());
-			
-			IOUtils.copyLarge(uploadedFile.getFile(), new FileOutputStream(file));
-			
-			ArquivoPagamentoBancoDTO arquivoPagamento =
-					leitorRetornoBancoService.obterPagamentosBanco(file,
-																   uploadedFile.getFileName());
-			
-			boletoService.baixarBoletos(arquivoPagamento,
-										new BigDecimal(valorFinanceiro),
-										obterUsuario());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
+			IOUtils.copyLarge(uploadedFile.getFile(), new FileOutputStream(fileArquivoRetorno));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		result.forwardTo(BaixaFinanceiraController.class).baixa();
+		ArquivoPagamentoBancoDTO arquivoPagamento =
+				leitorRetornoBancoService.obterPagamentosBanco(fileArquivoRetorno,
+															   uploadedFile.getFileName());
+		
+		ResumoBaixaBoletosDTO resumoBaixaBoleto = 
+			boletoService.baixarBoletos(arquivoPagamento, new BigDecimal(valorFinanceiro),
+										obterUsuario());
+		
+		result.use(Results.json()).from(resumoBaixaBoleto, "result").serialize();
 	}
 	
 	private Usuario obterUsuario() {
-		//TODO:
+		
+		//TODO: obter usuário
+		
 		Usuario usuario = new Usuario();
+		
 		usuario.setId(1L);
 		
 		return usuario;
