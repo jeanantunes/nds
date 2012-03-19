@@ -29,6 +29,8 @@ public class Endereco {
 	private String cidade;
 	@Column(name = "COMPLEMENTO")
 	private String complemento;
+	@Column(name = "TIPO_LOGRADOURO")
+	private String tipoLogradouro;
 	@Column(name = "LOGRADOURO")
 	private String logradouro;
 	@Column(name = "NUMERO")
@@ -74,6 +76,20 @@ public class Endereco {
 
 	public void setComplemento(String complemento) {
 		this.complemento = complemento;
+	}
+	
+	/**
+	 * @return the tipoLogradouro
+	 */
+	public String getTipoLogradouro() {
+		return tipoLogradouro;
+	}
+
+	/**
+	 * @param tipoLogradouro the tipoLogradouro to set
+	 */
+	public void setTipoLogradouro(String tipoLogradouro) {
+		this.tipoLogradouro = tipoLogradouro;
 	}
 
 	public String getLogradouro() {
