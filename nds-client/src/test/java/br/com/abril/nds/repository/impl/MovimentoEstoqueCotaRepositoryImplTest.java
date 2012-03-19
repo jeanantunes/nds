@@ -11,6 +11,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -44,7 +45,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				(FiltroDigitacaoContagemDevolucaoDTO)params.get(FILTRO), 
 				tipoMovimentoEstoque, 
 				(List<Long>)params.get(LISTA_ID_PRODUTO));
