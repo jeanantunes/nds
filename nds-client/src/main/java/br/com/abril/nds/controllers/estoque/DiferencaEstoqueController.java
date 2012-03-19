@@ -117,6 +117,8 @@ public class DiferencaEstoqueController {
 	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
 	
 	private static final String MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE = "mapaRateiosCadastrados";
+	
+	private static final String MODO_INCLUSAO_SESSION_ATTRIBUTE = "modoInclusaoDiferenca";
 
 	public DiferencaEstoqueController(Result result, 
 								 	  Localization localization,
@@ -417,6 +419,8 @@ public class DiferencaEstoqueController {
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
 		
+		this.httpSession.setAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE, true);
+		
 		result.use(Results.json()).from("").serialize();
 	}
 
@@ -666,6 +670,7 @@ public class DiferencaEstoqueController {
 				if (diferenca.getId().equals(idDiferenca)) {
 					
 					diferencaARemover = diferenca;
+					
 					break;
 				}
 			}
@@ -715,9 +720,19 @@ public class DiferencaEstoqueController {
 	@Post
 	@SuppressWarnings("unchecked")
 	public void confirmarLancamentos() {
-
+		
+		Boolean modoInclusao = (Boolean) this.httpSession.getAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
+		
 		Set<Diferenca> listaNovasDiferencas =
 			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		if (modoInclusao != null 
+				&& modoInclusao
+				&& (listaNovasDiferencas == null
+						|| listaNovasDiferencas.isEmpty())) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamentos a confirmar!");
+		}
 		
 		 Map<Long, List<RateioCotaVO>> mapaRateioCotas =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
@@ -1659,13 +1674,15 @@ public class DiferencaEstoqueController {
 	 */
 	private void limparSessao() {
 	
-		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		this.httpSession.removeAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
 	}
 	
 	/*

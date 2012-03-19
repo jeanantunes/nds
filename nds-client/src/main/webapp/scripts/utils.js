@@ -1,3 +1,6 @@
+var messageTimeout;
+var messageDialogTimeout;
+
 $(document).ready(function(){
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
@@ -80,15 +83,31 @@ function isNumeric(a){
 }
 
 function esconde(idDiv) {
-	setTimeout(function() {
-		$('#' + idDiv + ':visible').removeAttr("style").fadeOut();
-	}, 5000);
+	messageTimeout = 
+		setTimeout(function() {
+			$('#' + idDiv).removeAttr("style").fadeOut();
+		}, 5000);
 }
 
 function escondeDialog(idDiv) {
-	setTimeout(function() {
-		$('.' + idDiv + ':visible').removeAttr("style").fadeOut();
-	}, 5000);
+	messageDialogTimeout =
+		setTimeout(function() {
+			$('.' + idDiv).removeAttr("style").fadeOut();
+		}, 5000);
+}
+
+function clearMessageTimeout() {
+	
+	clearTimeout(messageTimeout);
+	
+	$('#effect').hide();
+}
+
+function clearMessageDialogTimeout() {
+	
+	clearTimeout(messageDialogTimeout);
+	
+	$('.effectDialog').hide();
 }
 
 function montarComboBox(result, linhaEmBranco) {
