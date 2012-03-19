@@ -16,7 +16,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		
 	}
 	
-	public List<ConsolidadoFinanceiroCota> buscarListaDeConsolidado(Long idCota){
+	public List<ConsolidadoFinanceiroCotaDTO> buscarListaDeConsolidado(Integer numeroCota){
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -41,11 +41,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		
 		hql.append(" where ");
 		
-		hql.append(" consolidadoFinanceiroCota.id = :idCota ");
+		hql.append(" consolidadoFinanceiroCota.cota = :numeroCota ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 		
-		query.setParameter("idCota", idCota);
+		query.setParameter("numeroCota", numeroCota);
 		
 		return query.list();
 	}
