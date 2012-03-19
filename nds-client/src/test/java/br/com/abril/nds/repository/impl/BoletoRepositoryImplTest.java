@@ -66,7 +66,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   new Date(), 
                 					   new Date(), 
                 					   "0", 
-                					   BigDecimal.TEN, 
+                					   new BigDecimal(100.00), 
                 					   "1", 
                 					   "1",
                 					   StatusCobranca.PAGO,

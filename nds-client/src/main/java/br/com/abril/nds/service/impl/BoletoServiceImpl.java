@@ -268,7 +268,7 @@ public class BoletoServiceImpl implements BoletoService {
         boleto.setTituloValor(dadosBoleto.getTituloValor());
         boleto.setTituloDataDoDocumento(dadosBoleto.getTituloDataDoDocumento());
         boleto.setTituloDataDoVencimento(dadosBoleto.getTituloDataDoVencimento());
-        boleto.setTituloTipoDeDocumento(dadosBoleto.getTituloTipoDeDocumento());//!!!
+        boleto.setTituloTipoDeDocumento(dadosBoleto.getTituloTipoDeDocumento());
         boleto.setTituloAceite(dadosBoleto.getTituloAceite());//!!!
         boleto.setTituloDesconto(dadosBoleto.getTituloDesconto());
         boleto.setTituloDeducao(dadosBoleto.getTituloDeducao());

@@ -138,16 +138,21 @@
 		
 		$.each(dadosPesquisa.rows, 
 				function(index, row) {
-
-					 var linkImpressao = '<a href="javascript:;" target="blank" onclick="imprimeBoleto(' + row.cell[2] + ');" style="cursor:pointer">' +
-					 					 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
-					 					 '</a>';
-		
-					 var linkEmail = '<a href="javascript:;" target="blank" onclick="imprimeBoleto(' + row.cell[2] + ');" style="cursor:pointer">' +
-					 			     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
-					 				 '</a>';
-									
-				     row.cell[8] = linkImpressao + linkEmail;
+			
+			         if (row.cell[3] == ''){
+			        	 
+						 var linkImpressao = '<a target="blank" href="${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
+						 					 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
+						 					 '</a>';
+			
+						 var linkImpressao = '<a target="blank" href="${pageContext.request.contextPath}/financeiro/boletos/enviaBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
+						 					 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
+						 					 '</a>';
+										
+					     row.cell[8] = linkImpressao + linkEmail;
+					     
+			         }
+			         
 		         }
 		);
 		
@@ -155,24 +160,6 @@
 		return dadosPesquisa;
 	}
 		
-	
-	
-	function imprimeBoleto(nossoNumero){
-		var data = [
-	   				{
-	   					name: 'nossoNumero', value: nossoNumero
-	   				}
-	   			   ];
-				
-		$.postJSON(
-			"<c:url value='/financeiro/boletos/imprimeBoleto' />", 
-			data,
-			function(result) {
-
-			},
-			null
-		);
-    }
 	
 	
 </script>
