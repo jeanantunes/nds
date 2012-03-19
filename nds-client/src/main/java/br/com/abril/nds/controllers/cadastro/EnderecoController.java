@@ -7,14 +7,19 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
+import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.ConsultaBaseEnderecoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -39,28 +44,42 @@ public class EnderecoController {
 	private HttpSession session;
 	
 	@Autowired
-	private EnderecoService enderecoService;
-
-	@Path("/")
-	public void index() { }
+	private ConsultaBaseEnderecoService consultaBaseEnderecoService;
 	
+	@Path("/")
+	public void index() {
+		
+		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+
+		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+	}
+
 	/**
 	 * Método que realiza a pesquisa dos endereços cadastrados para uma determinada pessoa.
 	 */
 	@Post
 	@SuppressWarnings("unchecked")
-	public void pesquisarEnderecos() {
+	public void pesquisarEnderecos(String sortname, String sortorder) {
 
 		List<EnderecoAssociacaoDTO> listaEndereco =
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		TableModel<CellModel> tableModelEndereco = new TableModel<CellModel>();
-		
+
 		if (listaEndereco == null) {
 
 			listaEndereco = new ArrayList<EnderecoAssociacaoDTO>();
 
 		} else {
+
+			if (sortname != null) {
+
+				sortorder = sortorder == null ? "asc" : sortorder;
+
+				Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+
+				PaginacaoUtil.ordenarEmMemoria(listaEndereco, ordenacao, sortname);
+			}
 
 			tableModelEndereco = getTableModelListaEndereco(listaEndereco);
 		}
@@ -76,9 +95,9 @@ public class EnderecoController {
 	 * @param enderecoAssociacao
 	 */
 	@SuppressWarnings("unchecked")
-	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao, String numero) {
+	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
 
-		validarDadosEndereco(enderecoAssociacao, numero);
+		validarDadosEndereco(enderecoAssociacao);
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
@@ -90,7 +109,7 @@ public class EnderecoController {
 		
 		} else if (enderecoAssociacao.isEnderecoPrincipal()) {
 
-			validarExistenciaEnderecoPrincipal(listaEnderecoAssociacao);
+			validarExistenciaEnderecoPrincipal(listaEnderecoAssociacao, enderecoAssociacao);
 		}
 
 		if (listaEnderecoAssociacao.contains(enderecoAssociacao)) {
@@ -114,46 +133,39 @@ public class EnderecoController {
 	/**
 	 * Método que irá remover um endereço a partir de seu ID. 
 	 * 
-	 * @param idEndereco
+	 * @param idEnderecoAssociacao
 	 */
+	@Post
 	@SuppressWarnings("unchecked")
-	public void removerEndereco(Long idEndereco) {
+	public void removerEndereco(Long idEnderecoAssociacao) {
 
-		Endereco endereco = enderecoService.obterEnderecoPorId(idEndereco);
-
-		if (endereco == null) {
-
-			endereco = new Endereco();
-
-			endereco.setId(idEndereco);
-
-		} else {
-
-			List<Endereco> listaEnderecosRemover = 
-				(List<Endereco>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-
-			if (listaEnderecosRemover == null) {
-
-				listaEnderecosRemover = new ArrayList<Endereco>();
-			}
-
-			listaEnderecosRemover.add(endereco);
-
-			this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaEnderecosRemover);
-		}
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar =
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
 
-		enderecoAssociacao.setEndereco(endereco);
+		enderecoAssociacao.setId(idEnderecoAssociacao);
 
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		listaEnderecoAssociacaoSalvar.remove(enderecoAssociacao);
 
-		listaEnderecoAssociacao.remove(enderecoAssociacao);
+		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacaoSalvar);
 
-		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEnderecoAssociacao);
+		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEnderecoAssociacaoSalvar);
 
-		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
+		if (idEnderecoAssociacao >= 0) {
+
+			List<EnderecoAssociacaoDTO> listaEnderecosRemover = 
+					(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+
+			if (listaEnderecosRemover == null) {
+
+				listaEnderecosRemover = new ArrayList<EnderecoAssociacaoDTO>();
+			}
+
+			listaEnderecosRemover.add(enderecoAssociacao);
+
+			this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaEnderecosRemover);
+		}
 
 		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
 	}
@@ -161,19 +173,15 @@ public class EnderecoController {
 	/**
 	 * Método responsável por preparar um endereço para a edição.
 	 * 
-	 * @param idEndereco
+	 * @param idEnderecoAssociacao
 	 */
 	@Post
 	@SuppressWarnings("unchecked")
-	public void editarEndereco(Long idEndereco) {
-
-		Endereco endereco = new Endereco();
-
-		endereco.setId(idEndereco);
+	public void editarEndereco(Long idEnderecoAssociacao) {
 
 		EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
 
-		enderecoAssociacao.setEndereco(endereco);
+		enderecoAssociacao.setId(idEnderecoAssociacao);
 
 		List<EnderecoAssociacaoDTO> listaEndereco =
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
@@ -185,20 +193,123 @@ public class EnderecoController {
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 
-	private void validarDadosEndereco(EnderecoAssociacaoDTO enderecoAssociacao, String numero) {
+	/**
+	 * Método que realiza a busca do endereço pelo CEP 
+	 * 
+	 * @param cep
+	 */
+	@Post
+	public void obterEnderecoPorCep(String cep) {
 		
-		if (numero != null) {
-
-			try {
+		cep = retirarFormatacaoCep(cep);
+		
+		EnderecoVO enderecoRetornado = this.consultaBaseEnderecoService.buscarPorCep(cep);
+		
+		if (enderecoRetornado == null) {
 			
-				int number = Integer.parseInt(numero);
-				
-				enderecoAssociacao.getEndereco().setNumero(number);
+			this.result.nothing();
+		
+		} else {
 
-			} catch (NumberFormatException e) {
-				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Valor inválido para o campo [Número]");
-			}
+			Endereco endereco = parseEndereco(enderecoRetornado);
+			
+			endereco.setCep(cep);
+
+			EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
+
+			enderecoAssociacao.setEndereco(endereco);
+
+			enderecoAssociacao.setEnderecoPrincipal(false);
+
+			this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
+		}
+	}
+
+	private Endereco parseEndereco(EnderecoVO enderecoRetornado) {
+		
+		String bairro = enderecoRetornado.getBairro() == null 
+					? "" : enderecoRetornado.getBairro().getNome();
+		
+		String cidade = enderecoRetornado.getLocalidade() == null 
+					? "" : enderecoRetornado.getLocalidade().getNome();
+		
+		String tipoLogradouro = enderecoRetornado.getTipoLogradouro() == null 
+				? "" : enderecoRetornado.getTipoLogradouro().getNome();
+		
+		String logradouro = enderecoRetornado.getLogradouro() == null 
+					? "" : enderecoRetornado.getLogradouro().getNome();
+		
+		String uf = enderecoRetornado.getUnidadeFederecao() == null 
+					? "" : enderecoRetornado.getUnidadeFederecao().getSigla();
+		
+		Endereco endereco = new Endereco();
+
+		endereco.setBairro(bairro);
+
+		endereco.setCidade(cidade);
+
+		endereco.setTipoLogradouro(tipoLogradouro);
+		
+		endereco.setLogradouro(logradouro);
+
+		endereco.setUf(uf);
+		
+		return endereco;
+	}
+
+	private String retirarFormatacaoCep(String cep) {
+
+		return cep.replaceAll("-", "");
+	}
+	
+	/**
+	 * 
+	 * @param enderecoAssociacao
+	 */
+	private void validarDadosEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
+	
+		Endereco endereco = enderecoAssociacao.getEndereco();
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (endereco.getCep() == null || endereco.getCep().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
+		}
+
+		if (endereco.getTipoLogradouro() == null || endereco.getTipoLogradouro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
+		}
+		
+		if (endereco.getLogradouro() == null || endereco.getLogradouro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
+		}
+
+		if (endereco.getNumero() <= 0) {
+			
+			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
+		}
+		
+		if (endereco.getBairro() == null || endereco.getBairro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Bairro] é obrigatório.");
+		}		
+
+		if (endereco.getCidade() == null || endereco.getCidade().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Cidade] é obrigatório.");
+		}
+		
+		if (endereco.getUf() == null || endereco.getUf().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [UF] é obrigatório.");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
 		}
 	}
 	
@@ -216,11 +327,16 @@ public class EnderecoController {
 
 		long idCellModel = 0;
 		
-		for (EnderecoAssociacaoDTO endereco : listaEnderecoAssociacao) {
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
-			endereco.getEndereco().setId(++idCellModel);
+			if (enderecoAssociacao.getId() == null) {
 
-			CellModel cellModel = getCellModelEndereco(endereco);
+				idCellModel = (int) System.currentTimeMillis() * -1;
+
+				enderecoAssociacao.setId(idCellModel);
+			}
+
+			CellModel cellModel = getCellModelEndereco(enderecoAssociacao);
 
 			listaCellModel.add(cellModel);
 		}
@@ -241,7 +357,7 @@ public class EnderecoController {
 	private CellModel getCellModelEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
 
 		return new CellModel(
-				enderecoAssociacao.getEndereco().getId().intValue(),
+				enderecoAssociacao.getId().intValue(),
 				enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
 				enderecoAssociacao.getEndereco().getLogradouro(), 
 				enderecoAssociacao.getEndereco().getBairro(),
@@ -250,17 +366,18 @@ public class EnderecoController {
 				String.valueOf(enderecoAssociacao.isEnderecoPrincipal())
 			);
 	}
-
+	
 	/**
 	 * Método que realiza a verificação de endereço principal na lista corrente. 
 	 * 
 	 * @param listaEnderecoAssociacao
 	 */
-	private void validarExistenciaEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+	private void validarExistenciaEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacao,
+													EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
-			if (enderecoAssociacao.isEnderecoPrincipal()) {
+			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
 
 				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
 			}

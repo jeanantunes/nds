@@ -1,5 +1,7 @@
 <head>
 
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+
 <script type="text/javascript">
 
 	function confirmarExclusaoEndereco(idEndereco) {
@@ -13,7 +15,6 @@
 				"Confirmar": function() {
 					removerEndereco(idEndereco);
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -23,15 +24,13 @@
 	}
 
 	function processarResultadoConsultaEndereco(data) {
-
+                                                                                                                                                                                                                                                                                                                                                                  
 		if (data.mensagens) {
 
 			exibirMensagemDialog(
 				data.mensagens.tipoMensagem, 
 				data.mensagens.listaMensagens
 			);
-
-			$(".enderecosGrid").hide();
 
 			return;
 		}
@@ -91,20 +90,28 @@
 				
 				$("#tipoEndereco").focus();
 			},
-			null,
+			function(result) {
+				
+				processarResultadoConsultaEndereco(result);
+			},
 			true
 		);
 	}
 
 	function editarEndereco(idEndereco) {
 
+		$("#linkIncluirNovoEndereco").html("<img src='${pageContext.request.contextPath}/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
+		$("#btnIncluirNovoEndereco").removeClass();
+		$("#btnIncluirNovoEndereco").addClass("bt_novos");
+
 		$.postJSON(
 			'<c:url value="/cadastro/endereco/editarEndereco" />',
-			{ "idEndereco": idEndereco },
+			{ "idEnderecoAssociacao": idEndereco },
 			function(result) {
-				$("#idEndereco").val(result.endereco.id);
+				$("#idEndereco").val(result.id);
 				$("#tipoEndereco").val(result.tipoEndereco);
 				$("#cep").val(result.endereco.cep);
+				$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
 				$("#logradouro").val(result.endereco.logradouro);
 				$("#numero").val(result.endereco.numero);
 				$("#complemento").val(result.endereco.complemento);
@@ -122,13 +129,16 @@
 		
 		$.postJSON(
 			'<c:url value="/cadastro/endereco/removerEndereco" />',
-			{ "idEndereco" : idEndereco },
+			{ "idEnderecoAssociacao" : idEndereco },
 			function(result) {
 				$(".enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});		
 			},
-			null,
+			function(result) {
+				
+				processarResultadoConsultaEndereco(result);
+			},
 			true
 		);
 	}
@@ -149,9 +159,15 @@
 	}
 	
 	function limparFormEndereco() {
+
+		$("#linkIncluirNovoEndereco").html("Incluir Novo");
+		$("#btnIncluirNovoEndereco").removeClass();
+		$("#btnIncluirNovoEndereco").addClass("bt_add");
+
 		$("#idEndereco").val("");
 		$("#tipoEndereco").val("");
 		$("#cep").val("");
+		$("#tipoLogradouro").val("");
 		$("#logradouro").val("");
 		$("#numero").val("");
 		$("#complemento").val("");
@@ -165,7 +181,51 @@
 
 		$("#cep").mask("99999-999");
 		$("#uf").mask("aa");
+		$("#numero").numeric();
+		
+		$("#linkIncluirNovoEndereco").keypress(function() {
+			
+			var keynum = 0;
+	          
+	        if(window.event) {
+
+	            keynum = event.keyCode;
+	        
+	        } else if(event.which) {   
+
+	        	keynum = event.which;
+	        }
+
+			if (keynum == 13) {
+				incluirNovoEndereco();
+			}
+		});
 	});
+	
+	function pesquisarEnderecoPorCep() {
+	
+		var cep =  $("#cep").val();
+		
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/obterEnderecoPorCep" />',
+			{ "cep": cep },
+			function(result) {
+				$("#idEndereco").val(result.id);
+				$("#tipoEndereco").val(result.tipoEndereco);
+				$("#cep").val(result.endereco.cep);
+				$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
+				$("#logradouro").val(result.endereco.logradouro);
+				$("#numero").val(result.endereco.numero);
+				$("#complemento").val(result.endereco.complemento);
+				$("#bairro").val(result.endereco.bairro);
+				$("#cidade").val(result.endereco.cidade);
+				$("#uf").val(result.endereco.uf);
+				$("#principal").attr("checked", result.enderecoPrincipal);
+			},
+			null, 
+			true
+		);
+	}
 	
 	$(document).ready(function() {
 		
@@ -175,37 +235,37 @@
 			dataType : 'json',
 			colModel : [  {
 				display : 'Tipo Endereço',
-				name : 'tipoendereco',
+				name : 'tipoEndereco',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Logradouro',
-				name : 'logradouro',
+				name : 'endereco.logradouro',
 				width : 205,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Bairro',
-				name : 'bairro',
+				name : 'endereco.bairro',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Cep',
-				name : 'cep',
+				name : 'endereco.cep',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Cidade',
-				name : 'cidade',
+				name : 'endereco.cidade',
 				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Principal',
-				name : 'principal',
+				name : 'enderecoPrincipal',
 				width : 50,
 				sortable : true,
 				align : 'center'
@@ -218,6 +278,8 @@
 			}],
 			width : 770,
 			height : 150,
+			sortorder: "asc",
+			sortname: "endereco.logradouro",
 			singleSelect: true
 		});
 	});
@@ -227,24 +289,15 @@
 
 </head>
 
-<div id="manutencaoEnderecos" title="Detalhes da Nota">
+<div id="manutencaoEnderecos">
 
-<div id="dialog-excluir-end" title="Excluir Endereço">
-	<p>Confirma a exclusão desse endereço?</p>
-</div>
-
-<div id="effectDialog" 
-	 class="ui-state-highlight ui-corner-all" 
-	 style="display: none; position: absolute; z-index: 1000; width: 800px;">
-<p>
-	<span style="float: left;" class="ui-icon ui-icon-info"></span>
-	<b id="idTextoMensagemDialog"></b>
-</p>
-</div>
+	<div id="dialog-excluir-end" title="Excluir Endereço">
+		<p>Confirma a exclusão desse endereço?</p>
+	</div>
 
 	<form name="formEnderecos" id="formEnderecos">
 		
-		<input type="hidden" name="enderecoAssociacao.endereco.id" id="idEndereco">
+		<input type="hidden" name="enderecoAssociacao.id" id="idEndereco"/>
 		
 		<table width="754" cellpadding="2" cellspacing="2" style="text-align:left ">
 			<tr>
@@ -264,60 +317,68 @@
 				<td width="241">
 				<input type="text" style="float:left; margin-right:5px;" 
 					   name="enderecoAssociacao.endereco.cep" id="cep" />
+
 					<span class="classPesquisar" title="Pesquisar Cep.">
-						<a href="javascript:;">&nbsp;</a>
+						<a href="javascript:;" onclick="pesquisarEnderecoPorCep();">&nbsp;</a>
 					</span></td>
 			</tr>
 			<tr>
+				<td>Tipo Logradouro:</td>
+				<td>
+					<input type="text" style="width:230px" 
+						   name="enderecoAssociacao.endereco.tipoLogradouro" id="tipoLogradouro" />
+				</td>
 				<td>Logradouro:</td>
 				<td>
 					<input type="text" style="width:250px" 
 						   name="enderecoAssociacao.endereco.logradouro" id="logradouro" />
 				</td>
+			</tr>
+			<tr>			
 				<td>N&uacute;mero:</td>
 				<td>
 					<input type="text" style="width:50px" 
-						   name="enderecoAssociacao.endereco.numero" id="numero" />
+						   name="enderecoAssociacao.endereco.numero" id="numero" maxlength="11" />
 				</td>
-			</tr>
-			<tr>
 				<td>Complemento:</td>
 				<td>
 					<input type="text" style="width:250px" 
 						   name="enderecoAssociacao.endereco.complemento" id="complemento" />
 				</td>
+			</tr>
+			<tr>
+			
 				<td>Bairro:</td>
 				<td>
 					<input type="text"  style="width:230px" 
 						   name="enderecoAssociacao.endereco.bairro" id="bairro" />
 				</td>
+				<td>Cidade:</td>
+				<td>
+					<input type="text" style="width:250px" 
+						   name="enderecoAssociacao.endereco.cidade" id="cidade" />
+				</td>
+				
 			</tr>
 			<tr>
-			<td>Cidade:</td>
-			<td>
-				<input type="text" style="width:250px" 
-					   name="enderecoAssociacao.endereco.cidade" id="cidade" />
-			</td>
-			<td>UF:</td>
-			<td>
-				<input type="text" style="width:50px;text-transform:uppercase" 
-					   name="enderecoAssociacao.endereco.uf" id="uf"  />
-			</td>
-			</tr>
-			<tr>
-			  <td>Principal:</td>
-			  <td>
-			  	<input type="checkbox" id="principal" 
-			  		   name="enderecoAssociacao.enderecoPrincipal"/>
-			  </td>
-			  <td>&nbsp;</td>
-			  <td>&nbsp;</td>
+				<td>UF:</td>
+				<td>
+					<input type="text" style="width:50px;text-transform:uppercase" 
+						   name="enderecoAssociacao.endereco.uf" id="uf"  />
+				</td>
+			    <td>Principal:</td>
+			   	<td>
+				  	<input type="checkbox" id="principal" 
+				  		   name="enderecoAssociacao.enderecoPrincipal"/>
+			  	</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
 		  </tr>
 			<tr>
 			  <td>&nbsp;</td>
 			  <td>
-			  	<span class="bt_add">
-			  		<a href="javascript:;" onclick="incluirNovoEndereco();">Incluir Novo</a>
+			  	<span class="bt_add" id="btnIncluirNovoEndereco">
+			  		<a href="javascript:;" onclick="incluirNovoEndereco();" id="linkIncluirNovoEndereco">Incluir Novo</a>
 			  	</span>
 			  </td>
 			  <td>&nbsp;</td>

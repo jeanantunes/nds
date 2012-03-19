@@ -18,6 +18,7 @@ import org.jrimum.domkee.financeiro.banco.febraban.ContaBancaria;
 import org.jrimum.domkee.financeiro.banco.febraban.NumeroDaConta;
 import org.jrimum.domkee.financeiro.banco.febraban.Sacado;
 import org.jrimum.domkee.financeiro.banco.febraban.SacadorAvalista;
+import org.jrimum.domkee.financeiro.banco.febraban.TipoDeCobranca;
 import org.jrimum.domkee.financeiro.banco.febraban.TipoDeTitulo;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo.Aceite;
@@ -47,7 +48,7 @@ public class BoletoImpressao {
 	private String enderecoSacadorAvalistaLogradouro;
 	private String enderecoSacadorAvalistaNumero;
 	
-	private String contaBanco;
+	private String  contaBanco;
 	private Integer contaNumero;
 	private Integer contaCarteira;
 	private Integer contaAgencia;
@@ -557,27 +558,44 @@ public class BoletoImpressao {
         enderecoSac.setNumero(getEnderecoSacadoNumero());
         sacado.addEndereco(enderecoSac);
         
-        //SACADO AVALISTA
-        SacadorAvalista sacadorAvalista = new SacadorAvalista(getSacadorAvalistaNome(), getSacadorAvalistaDocumento());
-
-        //ENDERECO DO SACADO AVALISTA
-        Endereco enderecoSacAval = new Endereco();
-        enderecoSacAval.setUF(UnidadeFederativa.valueOf(getEnderecoSacadorAvalistaUf()));
-        enderecoSacAval.setLocalidade(getEnderecoSacadorAvalistaLocalidade());
-        enderecoSacAval.setCep(new CEP(getEnderecoSacadorAvalistaCep()));
-        enderecoSacAval.setBairro(getEnderecoSacadorAvalistaBairro());
-        enderecoSacAval.setLogradouro(getEnderecoSacadorAvalistaLogradouro());
-        enderecoSacAval.setNumero(getEnderecoSacadorAvalistaNumero());
-        sacadorAvalista.addEndereco(enderecoSacAval);
-
+        SacadorAvalista sacadorAvalista = null;
+        if ( (getSacadorAvalistaNome()!=null) && !("".equals(getSacadorAvalistaNome())) ){
+	        //SACADOR AVALISTA
+	        sacadorAvalista = new SacadorAvalista(getSacadorAvalistaNome(), getSacadorAvalistaDocumento());
+	
+	        //ENDERECO DO SACADO AVALISTA
+	        Endereco enderecoSacAval = new Endereco();
+	        enderecoSacAval.setUF(UnidadeFederativa.valueOf(getEnderecoSacadorAvalistaUf()));
+	        enderecoSacAval.setLocalidade(getEnderecoSacadorAvalistaLocalidade());
+	        enderecoSacAval.setCep(new CEP(getEnderecoSacadorAvalistaCep()));
+	        enderecoSacAval.setBairro(getEnderecoSacadorAvalistaBairro());
+	        enderecoSacAval.setLogradouro(getEnderecoSacadorAvalistaLogradouro());
+	        enderecoSacAval.setNumero(getEnderecoSacadorAvalistaNumero());
+	        sacadorAvalista.addEndereco(enderecoSacAval);
+        }
+        
         //CONTA BANCARIA
         ContaBancaria contaBancaria = new ContaBancaria(BancosSuportados.valueOf(getContaBanco()).create());
         contaBancaria.setNumeroDaConta(new NumeroDaConta(getContaNumero(), "0"));
-        contaBancaria.setCarteira(new Carteira(getContaCarteira()));
+        
+        //if (getContaCarteira()==0){
+              contaBancaria.setCarteira(new Carteira(1,TipoDeCobranca.SEM_REGISTRO));
+        //}
+          //else{
+        	//  contaBancaria.setCarteira(new Carteira(getContaNumero()));  
+        //  }
+        
         contaBancaria.setAgencia(new Agencia(getContaAgencia(), "1"));
         
         //TITULO
-        Titulo titulo = new Titulo(contaBancaria, sacado, cedente /*, sacadorAvalista*/);
+        Titulo titulo;
+        if (sacadorAvalista!=null){
+            titulo = new Titulo(contaBancaria, sacado, cedente, sacadorAvalista);
+        }
+        else{
+        	titulo = new Titulo(contaBancaria, sacado, cedente);
+        }
+        
         titulo.setNumeroDoDocumento(getTituloNumeroDoDocumento());
         titulo.setNossoNumero(getTituloNossoNumero());
         titulo.setDigitoDoNossoNumero(getTituloDigitoDoNossoNumero());
@@ -688,9 +706,6 @@ public class BoletoImpressao {
 	   //TESTE
 	   public static void main(String[] args) throws IOException{
 		 
-		    System.out.println( gerarNossoNumero("239104761", "8351202", new Date("04/07/2008") ));
-		 
-		 
 	        BoletoImpressao boleto = new BoletoImpressao();
 	        
 	        
@@ -706,7 +721,8 @@ public class BoletoImpressao {
 	        boleto.setEnderecoSacadoBairro("Grande Centro");
 	        boleto.setEnderecoSacadoLogradouro("Rua poeta dos programas");
 	        boleto.setEnderecoSacadoNumero("1");
-	 
+	        
+	        
 	        boleto.setSacadorAvalistaNome("PROJETO JRimum");
 			boleto.setSacadorAvalistaDocumento("00.000.208/0001-00");
 			
@@ -716,7 +732,8 @@ public class BoletoImpressao {
 	        boleto.setEnderecoSacadorAvalistaBairro("Grande Centro");
 	        boleto.setEnderecoSacadorAvalistaLogradouro("Rua poeta dos programas");
 	        boleto.setEnderecoSacadorAvalistaNumero("1");
-
+	        
+            
 	        boleto.setContaBanco("BANCO_BRADESCO");
 	        boleto.setContaNumero(123456);
 	        boleto.setContaCarteira(30);
@@ -751,11 +768,10 @@ public class BoletoImpressao {
 	        
 	        
 	        //boletoImpressao.gerar("D:/Boleto.pdf");
-	        //boleto.visualizar("D:/Boleto.pdf");
-	        byte[] b = boleto.obterArrayByte();
+	        boleto.visualizar("D:/Boleto.pdf");
+	        //byte[] b = boleto.obterArrayByte();
 	        
 		}
-	    
 	    */
 	 
 	 

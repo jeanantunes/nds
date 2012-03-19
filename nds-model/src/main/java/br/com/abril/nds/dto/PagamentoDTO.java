@@ -10,6 +10,8 @@ public class PagamentoDTO {
 	private Date dataPagamento;
 	
 	private BigDecimal valorPagamento;
+	
+	private Integer numeroRegistro;
 
 	/**
 	 * @return the nossoNumero
@@ -51,6 +53,20 @@ public class PagamentoDTO {
 	 */
 	public void setValorPagamento(BigDecimal valorPagamento) {
 		this.valorPagamento = valorPagamento;
+	}
+
+	/**
+	 * @return the numeroRegistro
+	 */
+	public Integer getNumeroRegistro() {
+		return numeroRegistro;
+	}
+
+	/**
+	 * @param numeroRegistro the numeroRegistro to set
+	 */
+	public void setNumeroRegistro(Integer numeroRegistro) {
+		this.numeroRegistro = numeroRegistro;
 	}
 	
 }

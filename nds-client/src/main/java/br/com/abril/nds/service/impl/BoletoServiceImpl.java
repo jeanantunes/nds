@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
@@ -22,6 +25,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaAutomaticaRepository;
@@ -31,10 +35,16 @@ import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.BoletoImpressao;
 import br.com.abril.nds.util.TipoMensagem;
 
-
+/**
+ * Classe de implementação de serviços referentes a entidade
+ * {@link br.com.abril.nds.model.cadastro.Boleto}
+ * 
+ * @author Discover Technology
+ */
 @Service
 public class BoletoServiceImpl implements BoletoService {
 
@@ -56,6 +66,9 @@ public class BoletoServiceImpl implements BoletoService {
 	@Autowired
 	private ControleBaixaBancariaService controleBaixaService;
 	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
 	@Transactional
 	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
 		return this.boletoRepository.obterBoletosPorCota(filtro);
@@ -68,9 +81,8 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Override
 	@Transactional
-	public void baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
-							  BigDecimal valorFinanceiro,
-							  Usuario usuario) {
+	public ResumoBaixaBoletosDTO baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
+							  				   BigDecimal valorFinanceiro, Usuario usuario) {
 		
 		Date dataOperacao = obterDataOperacao();
 		
@@ -81,7 +93,7 @@ public class BoletoServiceImpl implements BoletoService {
 			&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, 
-					"Já foi realizada baixa automática na data de operação atual!");
+				"Já foi realizada baixa automática na data de operação atual!");
 		}
 		
 		if (valorFinanceiro == null
@@ -98,12 +110,14 @@ public class BoletoServiceImpl implements BoletoService {
 		controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,
 												  dataOperacao, usuario);
 		
+		ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
+		
 		try {
 			if (arquivoPagamento != null && arquivoPagamento.getListaPagemento() != null) {
 				
 				for (PagamentoDTO pagamento : arquivoPagamento.getListaPagemento()) {
 				
-					baixarBoleto(pagamento, dataOperacao,
+					baixarBoleto(resumoBaixaBoletos, pagamento, dataOperacao, usuario,
 								 arquivoPagamento.getNomeArquivo(), politicaCobranca);
 				}
 				
@@ -115,17 +129,38 @@ public class BoletoServiceImpl implements BoletoService {
 				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
 						  								  dataOperacao, usuario);
 			}
+			
+			return resumoBaixaBoletos;
+			
 		} catch (Exception e) {
 			
 			controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-													  dataOperacao, usuario);
+					  								  dataOperacao, usuario);
+			
+			if (e instanceof ValidacaoException) {
+				
+				throw new ValidacaoException(((ValidacaoException) e).getValidacao());
+			
+			} else {
+			
+				throw new ValidacaoException(TipoMensagem.ERROR, 
+											 "Falha ao processar a baixa automática: " + e.getMessage());
+			}
 		}
 	}
 	
 	@Override
 	@Transactional
-	public void baixarBoleto(PagamentoDTO pagamento, Date dataOperacao,
+	public void baixarBoleto(ResumoBaixaBoletosDTO resumoBaixaBoletos, PagamentoDTO pagamento,
+							 Date dataOperacao, Usuario usuario,
 							 String nomeArquivo, PoliticaCobranca politicaCobranca) {
+		
+		resumoBaixaBoletos.setQuantidadeLidos(
+			resumoBaixaBoletos.getQuantidadeLidos() + 1);
+		
+		validarDadosEntrada(pagamento);
+		
+		//TODO: tratar pagamentos, datas, etc
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero());
 		
@@ -134,63 +169,154 @@ public class BoletoServiceImpl implements BoletoService {
 			//Não paga o boleto o gera baixa com status de boleto pago anteriormente
 			if (boleto.getStatusCobranca().equals(StatusCobranca.PAGO)) {
 				
-				gerarBaixaAutomatica(StatusBaixa.PAGO_ANTERIORMENTE, null,
-									 dataOperacao, nomeArquivo);
+				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, null,
+									 dataOperacao, nomeArquivo,
+									 pagamento.getNumeroRegistro());
+				
+				resumoBaixaBoletos.setQuantidadeRejeitados(
+					resumoBaixaBoletos.getQuantidadeRejeitados() + 1);
 				
 				return;
 			}
 			
 			//Não paga o boleto o gera baixa com status de boleto fora da data
-			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) > 0) {
+			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) < 0) {
 				
 				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DATA, null,
-									 dataOperacao, nomeArquivo);
+									 dataOperacao, nomeArquivo,
+									 pagamento.getNumeroRegistro());
+				
+				resumoBaixaBoletos.setQuantidadeRejeitados(
+					resumoBaixaBoletos.getQuantidadeRejeitados() + 1);
 				
 				return;
 			}
 			
-			if (!pagamento.getValorPagamento().equals(boleto.getValor())) {
+			if (pagamento.getValorPagamento().compareTo(boleto.getValor()) != 0) {
 				
 				//Não paga o boleto o gera baixa com status de não pago por divergência
 				if (politicaCobranca == null || !politicaCobranca.isAceitaPagamentoDivergente()) {
 					
 					gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA, null,
-							 			 dataOperacao, nomeArquivo);
+							 			 dataOperacao, nomeArquivo,
+										 pagamento.getNumeroRegistro());
+					
+					resumoBaixaBoletos.setQuantidadeRejeitados(
+						resumoBaixaBoletos.getQuantidadeRejeitados() + 1);
 					
 					return;
 				} else {
 				
 					//Paga o boleto o gera baixa com status de pago com divergência
-					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA, null,
-				 			 dataOperacao, nomeArquivo);
+					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA, boleto,
+				 			 			 dataOperacao, nomeArquivo,
+										 pagamento.getNumeroRegistro());
+					
+					boleto.setDataPagamento(dataOperacao);
+					boleto.setStatusCobranca(StatusCobranca.PAGO);
+					
+					boletoRepository.alterar(boleto);
+					
+					resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
+						resumoBaixaBoletos.getQuantidadeBaixadosComDivergencia() + 1);
+					
+					BigDecimal valor = pagamento.getValorPagamento();
+					GrupoMovimentoFinaceiro grupoMovimento = null;
+					
+					if (boleto.getValor().compareTo(pagamento.getValorPagamento()) == 1) {
+						
+						valor = boleto.getValor().subtract(pagamento.getValorPagamento());
+						
+						grupoMovimento = GrupoMovimentoFinaceiro.DEBITO;
+						
+					} else {
+						
+						valor = pagamento.getValorPagamento().subtract(boleto.getValor());
+						
+						grupoMovimento = GrupoMovimentoFinaceiro.CREDITO;
+					}
+					
+					movimentoFinanceiroCotaService
+						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+															   grupoMovimento, usuario, valor);
+					
+					return;
 				}
 			} else {
 			
 				//Paga o boleto o gera baixa com status de pago
 				gerarBaixaAutomatica(StatusBaixa.PAGO, boleto,
-						 			 dataOperacao, nomeArquivo);
+						 			 dataOperacao, nomeArquivo,
+									 pagamento.getNumeroRegistro());
+				
+				boleto.setDataPagamento(dataOperacao);
+				boleto.setStatusCobranca(StatusCobranca.PAGO);
+				
+				boletoRepository.alterar(boleto);
+				
+				resumoBaixaBoletos.setQuantidadeBaixados(
+					resumoBaixaBoletos.getQuantidadeBaixados() + 1);
+				
+				return;
 			}
-			
-			boleto.setDataPagamento(dataOperacao);
-			boleto.setStatusCobranca(StatusCobranca.PAGO);
-			
-			boletoRepository.alterar(boleto);
-			
 		} else {
 			
-			gerarBaixaAutomatica(StatusBaixa.PAGO, null,
-								 dataOperacao, nomeArquivo);
+			gerarBaixaAutomatica(StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, null,
+								 dataOperacao, nomeArquivo,
+								 pagamento.getNumeroRegistro());
+			
+			resumoBaixaBoletos.setQuantidadeBaixados(
+				resumoBaixaBoletos.getQuantidadeBaixados() + 1);
+			
+			return;
 		}
 	}
 	
+	private void validarDadosEntrada(PagamentoDTO pagamento) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (pagamento.getDataPagamento() == null) {
+			
+			listaMensagens.add("Data de pagmento é obrigatória!");
+		}
+		
+		if (pagamento.getNossoNumero() == null) {
+
+			listaMensagens.add("Nosso número é obrigatória!");
+		}
+		
+		if (pagamento.getNumeroRegistro() == null) {
+
+			listaMensagens.add("Número de registro do arquivo é obrigatório!");
+		}
+		
+		if (pagamento.getValorPagamento() == null) {
+
+			listaMensagens.add("Valor do pagmento é obrigatório!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO();
+			
+			validacao.setTipoMensagem(TipoMensagem.ERROR);
+			validacao.setListaMensagens(listaMensagens);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
+
 	private void gerarBaixaAutomatica(StatusBaixa statusBaixa, Boleto boleto,
-									  Date dataBaixa, String nomeArquivo) {
+									  Date dataBaixa, String nomeArquivo,
+									  Integer numeroLinhaArquivo) {
 		
 		BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
 		
 		baixaAutomatica.setDataBaixa(dataBaixa);
 		baixaAutomatica.setNomeArquivo(nomeArquivo);
 		baixaAutomatica.setStatus(statusBaixa);
+		baixaAutomatica.setNumeroRegistroArquivo(numeroLinhaArquivo);
 		baixaAutomatica.setBoleto(boleto);
 		
 		baixaAutomaticaRepository.adicionar(baixaAutomatica);
@@ -243,7 +369,7 @@ public class BoletoServiceImpl implements BoletoService {
         boleto.setTituloValor(dadosBoleto.getTituloValor());
         boleto.setTituloDataDoDocumento(dadosBoleto.getTituloDataDoDocumento());
         boleto.setTituloDataDoVencimento(dadosBoleto.getTituloDataDoVencimento());
-        boleto.setTituloTipoDeDocumento(dadosBoleto.getTituloTipoDeDocumento());//!!!
+        boleto.setTituloTipoDeDocumento(dadosBoleto.getTituloTipoDeDocumento());
         boleto.setTituloAceite(dadosBoleto.getTituloAceite());//!!!
         boleto.setTituloDesconto(dadosBoleto.getTituloDesconto());
         boleto.setTituloDeducao(dadosBoleto.getTituloDeducao());
