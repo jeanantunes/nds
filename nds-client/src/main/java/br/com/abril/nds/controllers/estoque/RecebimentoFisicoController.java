@@ -520,8 +520,14 @@ public class RecebimentoFisicoController {
 	 * @param chaveAcesso
 	 */
 	@Post
-	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie, String chaveAcesso) {
+	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie,String indNFe, String chaveAcesso) {
 
+		if(indNFe.equals("S")){
+			if(chaveAcesso == null || chaveAcesso.trim().isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Chave de Acesso é Obrigatória!");
+			}
+		}
+		
 		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
 		
 		if(chaveAcesso == null || chaveAcesso.trim().isEmpty()) {
