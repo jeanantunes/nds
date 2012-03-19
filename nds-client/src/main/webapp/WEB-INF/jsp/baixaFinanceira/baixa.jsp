@@ -1,20 +1,22 @@
 <head>
 	
+	
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-		
-	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	
 	<script type="text/javascript">
 	
 	
-		$(function() {
+		/*$(function() {
 		    
 			var options = {
 		        success:       showResponse,  // post-submit callback
-		        url: contextPath + "/financeiro/baixarBoletosAutomatico",
+		        //url: contextPath + "/financeiro/baixarBoletosAutomatico",
 		 
+		        dataType: "json",
+		        
+				
+		        
 		        // other available options: 
 		        //url:       url         // override for form's 'action' attribute 
 		        //type:      type        // 'get' or 'post', override for form's 'method' attribute 
@@ -24,16 +26,21 @@
 		 
 		        // $.ajax options can be used here too, for example: 
 		        //timeout:   3000 
+				
+				//contentType: "text/plain"
 		    };  
 		    
 		    $('#formBaixaAutomatica').submit(function() {
 		        $(this).ajaxSubmit(options);
 		        return false; 
 		    });
-		});
+			
+		});*/
 		
-		function showResponse(data, statusText, xhr, $form) {
+		/*function showResponse(data, statusText, xhr, $form) {
 
+			alert("response");
+		
 			if (data.mensagens) {
 
 				exibirMensagem(
@@ -49,7 +56,7 @@
 			$("#quantidadeLidos").html(data.result.quantidadeLidos);
 			
 			$('#dadosArquivo').show();
-		}
+		}*/
 	
 	
 		function popup_excluir() {	
@@ -115,11 +122,9 @@
 	</script>
 	
 	<style>
-		#dadosArquivo {
-			display: none;
-		}
 		
-		#baixaManual,#baixaAuto,#extratoBaixaManual,#nossoNumero,#porCota {
+		
+		#baixaManual,#extratoBaixaManual,#nossoNumero,#porCota {
 			display: none;
 		}
 	</style>
@@ -157,18 +162,18 @@
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			class="filtro" id="baixaAuto">
 			
-			<form id="formBaixaAutomatica" method="post" enctype="multipart/form-data">
+			<form action="/nds-client/financeiro/baixa" id="formBaixaAutomatica"
+				  method="post" enctype="multipart/form-data" >
 				
 				<tr>
 					<td width="100">Nome Arquivo:</td>
 					<td colspan="3"><input name="uploadedFile" type="file"
 						id="uploadedFile" size="25" /></td>
-					<td width="117">Data Competência:</td>
-					<td width="109"><input name="datepickerAte" type="text"
-						id="datepickerAte" style="width: 80px;" /></td>
-					<td width="129">Valor Financeiro R$:</td>
-					<td width="104"><input type="text" name="valorFinanceiro"
+					
+					<td width="133">Valor Financeiro R$:</td>
+					<td width="288"><input type="text" name="valorFinanceiro"
 						id="valorFinanceiro" style="width: 90px; text-align: right;" /></td>
+					
 					<td width="111"><span class="bt_integrar"><a
 							href="javascript:;" onclick="mostrarArquivo();">Integrar</a></span></td>
 				</tr>
@@ -348,17 +353,29 @@
 						<tr>
 							<td width="121" align="left" class="linha_borda"><strong>Nome
 									do Arquivo:</strong></td>
-							<td width="137" align="right" class="linha_borda">CNR00145.DAT</td>
+							<td width="137" align="right" class="linha_borda">
+								<c:if test="${resumoBaixaBoleto != null}">
+									${resumoBaixaBoleto.nomeArquivo}
+								</c:if>
+							</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda"><strong>Data
 									Competência:</strong></td>
-							<td align="right" class="linha_borda">01/11/2011</td>
+							<td align="right" class="linha_borda">
+								<c:if test="${resumoBaixaBoleto != null}">
+									${resumoBaixaBoleto.dataCompetencia}
+								</c:if>
+							</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda"><strong>Valor
 									R$:</strong></td>
-							<td align="right" class="linha_borda">999.999,99</td>
+							<td align="right" class="linha_borda">
+								<c:if test="${resumoBaixaBoleto != null}">
+									${resumoBaixaBoleto.somaPagamentos}
+								</c:if>
+							</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda">&nbsp;</td>
@@ -382,22 +399,38 @@
 						<tr>
 							<td width="162" align="left" class="linha_borda"><strong>Registros
 									Lidos:</strong></td>
-							<td id="quantidadeLidos" width="102" align="right" class="linha_borda">999.999</td>
+							<td id="quantidadeLidos" width="102" align="right" class="linha_borda">
+								<c:if test="${resumoBaixaBoleto != null}">
+									${resumoBaixaBoleto.quantidadeLidos}
+								</c:if>
+							</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda"><strong>Registros
 									Baixados:</strong></td>
-							<td align="right" class="linha_borda">999.999</td>
+							<td align="right" class="linha_borda">
+								<c:if test="${resumoBaixaBoleto != null}">
+									${resumoBaixaBoleto.quantidadeBaixados}
+								</c:if>
+							</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda"><strong>Registros
 									Rejeitados:</strong></td>
-							<td align="right" class="linha_borda">999.999</td>
+							<td align="right" class="linha_borda">
+								<c:if test="${resumoBaixaBoleto != null}">
+									${resumoBaixaBoleto.quantidadeRejeitados}
+								</c:if>
+							</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda"><strong>Baixados
 									com Divergência:</strong></td>
-							<td align="right" class="linha_borda">999.999</td>
+							<td align="right" class="linha_borda">
+							<c:if test="${resumoBaixaBoleto != null}">
+								${resumoBaixaBoleto.quantidadeBaixadosComDivergencia}
+							</c:if>
+							</td>
 						</tr>
 					</table></td>
 			</tr>

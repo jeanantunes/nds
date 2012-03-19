@@ -9,11 +9,14 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorRetornoBancoService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -54,7 +57,7 @@ public class BaixaFinanceiraController {
 	}
 	
 	@Post
-	public void baixarBoletosAutomatico(UploadedFile uploadedFile, String valorFinanceiro) {
+	public void baixa(UploadedFile uploadedFile, String valorFinanceiro) {
 			
 		//TODO: validar tamanho arquivo, caminho para gravar, obrigatoriedade dos campos, tamanho do nome do arquivo, etc
 		
@@ -86,7 +89,9 @@ public class BaixaFinanceiraController {
 			boletoService.baixarBoletos(arquivoPagamento, new BigDecimal(valorFinanceiro),
 										obterUsuario());
 		
-		result.use(Results.json()).from(resumoBaixaBoleto, "result").serialize();
+		result.include("resumoBaixaBoleto", resumoBaixaBoleto);
+		
+		result.forwardTo(BaixaFinanceiraController.class).baixa();
 	}
 	
 	private Usuario obterUsuario() {
