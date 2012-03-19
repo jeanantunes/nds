@@ -1,0 +1,83 @@
+package br.com.abril.nds.util.export;
+
+public class ExportHeader {
+	
+	private String value;
+	
+	private Export.Alignment alignment;
+	
+	public ExportHeader() {
+		
+	}
+
+	public ExportHeader(String value) {
+		
+		this.value = value;
+	}
+	
+	public ExportHeader(String value, Export.Alignment alignment) {
+		
+		this.value = value;
+		this.alignment = alignment;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	/**
+	 * @return the alignment
+	 */
+	public Export.Alignment getAlignment() {
+		return alignment;
+	}
+
+	/**
+	 * @param alignment the alignment to set
+	 */
+	public void setAlignment(Export.Alignment alignment) {
+		this.alignment = alignment;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ExportHeader other = (ExportHeader) obj;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+
+}

@@ -22,8 +22,6 @@
 	
 	<script language="javascript" type="text/javascript">
 
-		var ultimaLinhaPreenchida;
-
 		var idDiferencaAtual;
 	
 		$(function() {
@@ -122,7 +120,7 @@
 
 				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(' + index + ')}';
 
-				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', ' + index + '); ultimaLinhaPreenchida=' + index + ';';
+				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', ' + index + ');';
 
 				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true, function() {' + chamadaMetodoObterQuantidadeReparteCota + '}, null';
 
@@ -150,7 +148,7 @@
 				row.cell.quantidade = inputQtdeRateio;
 			});
 			
-			reprocessarDadosRateio();
+			reprocessarDadosRateio(null, true);
 			
 			return resultado;
 		}
@@ -171,9 +169,11 @@
 				data,
 				function(qtdeReparteCota) {
 
-					$("#qtdeReparteCota" + ultimaLinhaPreenchida).val(qtdeReparteCota);
-					$("#spanQtdeReparteCota" + ultimaLinhaPreenchida).text(qtdeReparteCota);
-
+					$("#qtdeReparteCota" + index).val(qtdeReparteCota);
+					$("#spanQtdeReparteCota" + index).html(qtdeReparteCota);
+					
+					$('#quantidadeRateio' + index).focus();
+					
 					reprocessarDadosRateio(index);
 				},
 				null, 
@@ -181,11 +181,11 @@
 			);
 		}
 
-		function reprocessarDadosRateio(index) {
+		function reprocessarDadosRateio(index, limpar) {
 
 			var campoQtdeRateio = $('#quantidadeRateio' + index);
 			
-			if (campoQtdeRateio) {
+			if (campoQtdeRateio && limpar) {
 
 				campoQtdeRateio.val("");
 
@@ -194,14 +194,14 @@
 
 			var campoQtdeReparteCota = $('#qtdeReparteCota' + index);
 
-			if (campoQtdeReparteCota) {
+			if (campoQtdeReparteCota && limpar) {
 
 				campoQtdeReparteCota.val("");
 			}
 
 			var campoSpanQtdeReparteCota = $('#spanQtdeReparteCota' + index);
 
-			if (campoSpanQtdeReparteCota) {
+			if (campoSpanQtdeReparteCota && limpar) {
 
 				campoSpanQtdeReparteCota.text("");
 			}
