@@ -3,11 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsolidadoFinanceiroCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 
+@Repository
 public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<ConsolidadoFinanceiroCota,Long> implements ConsolidadoFinanceiroRepository {
 
 	public ConsolidadoFinanceiroRepositoryImpl(){
@@ -16,7 +18,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		
 	}
 	
-	public List<ConsolidadoFinanceiroCota> buscarListaDeConsolidado(Long idCota){
+	@SuppressWarnings("unchecked")
+	public List<ConsolidadoFinanceiroCotaDTO> buscarListaDeConsolidado(Integer numeroCota){
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -41,11 +44,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		
 		hql.append(" where ");
 		
-		hql.append(" consolidadoFinanceiroCota.id = :idCota ");
+		hql.append(" consolidadoFinanceiroCota.cota = :numeroCota ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 		
-		query.setParameter("idCota", idCota);
+		query.setParameter("numeroCota", numeroCota);
 		
 		return query.list();
 	}

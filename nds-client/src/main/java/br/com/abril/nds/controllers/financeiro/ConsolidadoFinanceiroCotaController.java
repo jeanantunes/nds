@@ -12,6 +12,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ConsolidadoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.service.ConsolidadoFinanceiroCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
@@ -24,7 +25,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/contaCorrenteCota")
-public class ContaCorrenteCotaController {
+public class ConsolidadoFinanceiroCotaController {
 		
 	private Result result;
 
@@ -33,7 +34,10 @@ public class ContaCorrenteCotaController {
 	@Autowired
 	private CotaService cotaService;
 	
-	public ContaCorrenteCotaController(Result result,HttpServletRequest request){
+	@Autowired
+	private ConsolidadoFinanceiroCotaService consolidadoFinanceiroCotaService;
+	
+	public ConsolidadoFinanceiroCotaController(Result result,HttpServletRequest request){
 		this.result = result;
 		this.request = request;
 	}
@@ -56,17 +60,17 @@ public class ContaCorrenteCotaController {
 	}
 	
 	@Post
-	public void itemContaCorrenteCota() {
+	public void itemContaCorrenteCota(Integer numeroCota) {
 		//TODO Passar lista de conta corrente cota
-		List<ConsolidadoFinanceiroCotaDTO> listaItensContaCorrenteCota =  mokParaGrid();
+		List<ConsolidadoFinanceiroCotaDTO> listaItensContaCorrenteCota =  consolidadoFinanceiroCotaService.obterListaConsolidadoPorCota(numeroCota);
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private List<ConsolidadoFinanceiroCotaDTO> mokParaGrid() {
+	/*private List<ConsolidadoFinanceiroCotaDTO> mokParaGrid() {
 		List<ConsolidadoFinanceiroCotaDTO> listaItensContaCorrenteCota = new ArrayList<ConsolidadoFinanceiroCotaDTO>();
-		/*
-		ConsolidadoFinanceiroCotaDTO contaCorrenteCotaDTO = new ConsolidadoFinanceiroCotaDTO();
+		
+		ConsolidadoFinanceiroCotaDTO contaCorrenteCotaDTO = new ConsolidadoFinanceiroCotaDTO(new Date(),new BigDecimal(10), new BigDecimal(34), new BigDe );
 		contaCorrenteCotaDTO.setData(new Date());
 		contaCorrenteCotaDTO.setValorPostergado(new BigDecimal(5.6));
 		contaCorrenteCotaDTO.setNA(new BigDecimal(12.4));
@@ -91,9 +95,9 @@ public class ContaCorrenteCotaController {
 		}else{
 			throw new ValidacaoException(TipoMensagem.ERROR,"Valor Total não calculado devido a valores nulos!");
 		}
-		*/
+		
 		return listaItensContaCorrenteCota;
-	}
+	}*/
 
 	/**
 	 * Obtem uma lista de Conta Corrente cota e prepara o Grid para receber os valores
