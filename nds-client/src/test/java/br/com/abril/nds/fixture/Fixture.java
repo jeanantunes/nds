@@ -40,6 +40,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -782,6 +783,13 @@ public class Fixture {
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
 		return box;
+	}
+	
+	public static Carteira carteira(int codigo, TipoRegistroCobranca tipoRegistroCobranca){
+		Carteira carteira = new Carteira();
+		carteira.setCodigo(codigo);
+		carteira.setTipoRegistroCobranca(tipoRegistroCobranca);
+		return carteira;
 	}
 	
 	public static Boleto boleto(String nossoNumero,

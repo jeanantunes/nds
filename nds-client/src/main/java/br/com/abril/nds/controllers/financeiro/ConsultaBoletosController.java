@@ -63,12 +63,6 @@ public class ConsultaBoletosController {
 		this.result = result;
 		this.httpSession = httpSession;
 		this.httpResponse = httpResponse;
-		
-		/*
-		ServletContext context = httpSession.getServletContext();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		*/
-		
 	}
 	
 	@Get
@@ -186,9 +180,7 @@ public class ConsultaBoletosController {
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
-		
-		//result.use(Results.json()).withoutRoot().from(b);
-		
+
 		httpResponse.flushBuffer();
 	}
 	
@@ -204,9 +196,7 @@ public class ConsultaBoletosController {
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
-		
-		//result.use(Results.json()).withoutRoot().from(b);
-		
+
 		httpResponse.flushBuffer();
 	}
 	

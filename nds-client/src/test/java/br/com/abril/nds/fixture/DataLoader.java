@@ -17,6 +17,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -39,6 +40,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -85,6 +87,9 @@ public class DataLoader {
 	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
+	
+	private static Carteira carteiraRegistrada;
+	private static Carteira carteiraSemRegistro;
 	
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
@@ -177,8 +182,6 @@ public class DataLoader {
 			tx = session.beginTransaction();
 
 			//carregarDadosParaContagemdDevolucao(session);
-			//carregarDados(session);
-
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
@@ -273,6 +276,7 @@ public class DataLoader {
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
 		criarParametroEmail(session);
+		criarCarteira(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -1214,6 +1218,16 @@ public class DataLoader {
 		session.save(rateioDiferencaJose);
 		
 	}
+
+	
+	private static void criarCarteira(Session session){
+		carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
+	    
+		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+	    
+		save(session,carteiraRegistrada,carteiraSemRegistro);
+	}
+	
 	
 	private static void criarBox(Session session){
 		
@@ -1711,11 +1725,9 @@ public class DataLoader {
 		save(session, Fixture.criarParametrosEmail());
 	}
 	
-	//TODO: Henrique, ajustar a fixture de banco para criar a carteira
 	private static void criarBanco(Session session) {
-		
-		bancoHSBC = Fixture.banco(10L, true, null, "1010",
-							  123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+							  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399");
 		
 		save(session, bancoHSBC);
 	}
