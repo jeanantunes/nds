@@ -85,7 +85,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select enderecoCota.endereco as endereco, ")
+		hql.append(" select enderecoCota.id as id, enderecoCota.endereco as endereco, ")
 		   .append(" enderecoCota.principal as enderecoPrincipal, ")
 		   .append(" enderecoCota.tipoEndereco as tipoEndereco ")
 		   .append(" from EnderecoCota enderecoCota ")

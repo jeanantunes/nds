@@ -11,11 +11,9 @@ import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -34,8 +32,8 @@ public class CotaController {
 	
 	private static final String SUFIXO_PESSOA_FISICA = " (PF)";
 	
-	private static final String SUFIXO_PESSOA_JURIDICA = " (PF)";
-	
+	private static final String SUFIXO_PESSOA_JURIDICA = " (PJ)";
+
 	@Autowired
 	private CotaService cotaService;
 
@@ -63,25 +61,50 @@ public class CotaController {
 
 		if (idCota == null) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro desconhecido.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
 		}
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
 				this.cotaService.obterEnderecosPorIdCota(idCota);
 
 		this.session.setAttribute(
-				Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
+			Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
+		);
 		
 		this.result.nothing();
 	}
 	
 	@Post
+	public void salvarCota(Long idCota) {
+		
+		Cota cota = this.cotaService.obterPorId(idCota);
+
+		processarEnderecosCota(cota);
+		
+		this.result.nothing();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void processarEnderecosCota(Cota cota) {
+
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		
+		this.cotaService.processarEnderecos(cota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
+	}
+
+	@Post
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
-		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 
 		if (cota == null) {
-			
+
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
 			
 		} else {
@@ -91,10 +114,10 @@ public class CotaController {
 			
 			CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 			
-			result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
+			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 		}		
 	}
-	
+
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
@@ -117,7 +140,7 @@ public class CotaController {
 			}
 		}
 		
-		result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
+		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
 	}
 	
 	@Post
@@ -137,7 +160,7 @@ public class CotaController {
 				
 		CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 			
-		result.use(Results.json()).from(cotaVO, "result").serialize();
+		this.result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
 	
 	/*
@@ -195,96 +218,5 @@ public class CotaController {
 		}
 		
 		return nomeCota;
-	}
-
-	
-	private List<EnderecoAssociacaoDTO> obterListaEnderecoAssociacao() {
-	
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
-				new ArrayList<EnderecoAssociacaoDTO>();
-
-		Long id = 1L;
-		
-		Endereco endereco = new Endereco();
-		EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
-		
-		endereco.setBairro("bairro " + id);
-		endereco.setCep("cep " + id);
-		endereco.setCidade("cidade " + id);
-		endereco.setComplemento("complemento " + id);
-		endereco.setId(id);
-		endereco.setLogradouro("logradouro " + id);
-		endereco.setNumero(id.intValue());
-		endereco.setUf("uf " + id);
-		
-		enderecoAssociacao.setEndereco(endereco);
-		enderecoAssociacao.setEnderecoPrincipal(false);
-		enderecoAssociacao.setTipoEndereco(TipoEndereco.COBRANCA);
-
-		listaEnderecoAssociacao.add(enderecoAssociacao);
-		
-		id++;
-		
-		endereco = new Endereco();
-		enderecoAssociacao = new EnderecoAssociacaoDTO();
-		
-		endereco.setBairro("bairro " + id);
-		endereco.setCep("cep " + id);
-		endereco.setCidade("cidade " + id);
-		endereco.setComplemento("complemento " + id);
-		endereco.setId(id);
-		endereco.setLogradouro("logradouro " + id);
-		endereco.setNumero(id.intValue());
-		endereco.setUf("uf " + id);
-		
-		enderecoAssociacao.setEndereco(endereco);
-		enderecoAssociacao.setEnderecoPrincipal(false);
-		enderecoAssociacao.setTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
-
-		listaEnderecoAssociacao.add(enderecoAssociacao);
-		
-		id++;
-				
-		endereco = new Endereco();
-		enderecoAssociacao = new EnderecoAssociacaoDTO();
-		
-		endereco.setBairro("bairro " + id);
-		endereco.setCep("cep " + id);
-		endereco.setCidade("cidade " + id);
-		endereco.setComplemento("complemento " + id);
-		endereco.setId(id);
-		endereco.setLogradouro("logradouro " + id);
-		endereco.setNumero(id.intValue());
-		endereco.setUf("uf " + id);
-		
-		enderecoAssociacao.setEndereco(endereco);
-		enderecoAssociacao.setEnderecoPrincipal(false);
-		enderecoAssociacao.setTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
-		
-		listaEnderecoAssociacao.add(enderecoAssociacao);
-
-		id++;
-		
-		endereco = new Endereco();
-		enderecoAssociacao = new EnderecoAssociacaoDTO();
-		
-		endereco.setBairro("bairro " + id);
-		endereco.setCep("cep " + id);
-		endereco.setCidade("cidade " + id);
-		endereco.setComplemento("complemento " + id);
-		endereco.setId(id);
-		endereco.setLogradouro("logradouro " + id);
-		endereco.setNumero(id.intValue());
-		endereco.setUf("uf " + id);
-		
-		enderecoAssociacao.setEndereco(endereco);
-		enderecoAssociacao.setEnderecoPrincipal(true);
-		enderecoAssociacao.setTipoEndereco(TipoEndereco.COMERCIAL);
-
-		listaEnderecoAssociacao.add(enderecoAssociacao);
-		
-		id++;
-		
-		return listaEnderecoAssociacao;
 	}
 }

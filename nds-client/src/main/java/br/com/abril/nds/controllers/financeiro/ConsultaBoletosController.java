@@ -125,14 +125,21 @@ public class ConsultaBoletosController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
+		String dtPagto;
 		for (Boleto boleto : boletos){	
+			
+			dtPagto="";
+			if (boleto.getDataPagamento()!=null){
+				dtPagto=DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy");
+			}
+			
 			listaModelo.add(new CellModel(1,
 										  boleto.getNossoNumero(),
 										  DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"),
 										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
-										  DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"),
+										  dtPagto,
 										  boleto.getEncargos(),
-										  Double.toString(boleto.getValor()),
+										  boleto.getValor().toString(),
 										  boleto.getTipoBaixa(),
 										  boleto.getStatusCobranca().name(),
 										  boleto.getAcao()
@@ -162,22 +169,41 @@ public class ConsultaBoletosController {
 	}
 	
 	
-	
-	@Post
+	@Get
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto(String nossoNumero) throws Exception{
-		/*
+		
 		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-         
+        
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
-		
+
 		httpResponse.flushBuffer();
-		*/
 	}
+	
+	
+	@Get
+	@Path("/enviaBoleto")
+	public void enviaBoleto(String nossoNumero) throws Exception{
+		
+		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
+        
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+
+		httpResponse.flushBuffer();
+	}
+	
+	
+	
+	
+	
 	
 	
 	

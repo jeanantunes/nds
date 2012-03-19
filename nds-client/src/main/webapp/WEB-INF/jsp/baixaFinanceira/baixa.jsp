@@ -2,8 +2,55 @@
 	
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+		
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	
 	<script type="text/javascript">
+	
+	
+		$(function() {
+		    
+			var options = {
+		        success:       showResponse,  // post-submit callback
+		        url: contextPath + "/financeiro/baixarBoletosAutomatico",
+		 
+		        // other available options: 
+		        //url:       url         // override for form's 'action' attribute 
+		        //type:      type        // 'get' or 'post', override for form's 'method' attribute 
+		        //dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
+		        //clearForm: true        // clear all form fields after successful submit 
+		        //resetForm: true        // reset the form after successful submit 
+		 
+		        // $.ajax options can be used here too, for example: 
+		        //timeout:   3000 
+		    };  
+		    
+		    $('#formBaixaAutomatica').submit(function() {
+		        $(this).ajaxSubmit(options);
+		        return false; 
+		    });
+		});
+		
+		function showResponse(data, statusText, xhr, $form) {
+
+			if (data.mensagens) {
+
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				$('#dadosArquivo').hide();
+				
+				return;
+			}
+			
+			$("#quantidadeLidos").html(data.result.quantidadeLidos);
+			
+			$('#dadosArquivo').show();
+		}
+	
 	
 		function popup_excluir() {	
 			$("#dialog-excluir").dialog({
@@ -60,7 +107,7 @@
 	
 		}
 		function mostrarArquivo() {
-			$('#dadosArquivo').show();
+			
 			$('#extratoBaixaManual').hide();
 			
 			$('#formBaixaAutomatica').submit();
@@ -110,7 +157,7 @@
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			class="filtro" id="baixaAuto">
 			
-			<form id="formBaixaAutomatica" action="financeiro/baixarBoletosAutomatico" method="post" enctype="multipart/form-data">
+			<form id="formBaixaAutomatica" method="post" enctype="multipart/form-data">
 				
 				<tr>
 					<td width="100">Nome Arquivo:</td>
@@ -335,7 +382,7 @@
 						<tr>
 							<td width="162" align="left" class="linha_borda"><strong>Registros
 									Lidos:</strong></td>
-							<td width="102" align="right" class="linha_borda">999.999</td>
+							<td id="quantidadeLidos" width="102" align="right" class="linha_borda">999.999</td>
 						</tr>
 						<tr>
 							<td align="left" class="linha_borda"><strong>Registros

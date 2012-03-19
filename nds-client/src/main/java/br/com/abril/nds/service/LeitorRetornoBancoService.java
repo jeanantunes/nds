@@ -23,7 +23,6 @@ public interface LeitorRetornoBancoService {
 	 * @return {@link ArquivoPagamentoBancoDTO}
 	 */
 	ArquivoPagamentoBancoDTO obterPagamentosBanco(File file,
-			 									  String nomeArquivo) throws IOException,
-			 									  							 ParseException;
+			 									  String nomeArquivo);
 	
 }
