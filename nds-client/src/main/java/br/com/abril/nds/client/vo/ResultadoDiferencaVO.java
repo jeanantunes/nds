@@ -5,7 +5,10 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class ResultadoDiferencaVO implements Serializable {
 
 	/**
@@ -15,8 +18,10 @@ public class ResultadoDiferencaVO implements Serializable {
 	
 	private TableModel<CellModelKeyValue<DiferencaVO>> tableModel;
 	
+	@Export(label = "Total Geral")
 	private BigDecimal qtdeTotalDiferencas;
 	
+	@Export(label = "")
 	private String valorTotalDiferencas;
 	
 	/**
