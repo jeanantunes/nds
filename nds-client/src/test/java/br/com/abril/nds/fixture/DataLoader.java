@@ -17,7 +17,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -25,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -172,13 +170,12 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
+			carregarDados(session);
 
-			carregarDadosParaContagemdDevolucao(session);
-			//carregarDados(session);
+			//carregarDadosParaContagemdDevolucao(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarBoletos(session);
-
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
