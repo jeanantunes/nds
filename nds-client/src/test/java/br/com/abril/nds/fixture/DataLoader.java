@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -181,7 +182,7 @@ public class DataLoader {
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			//carregarBoletos(session);
+			carregarBoletos(session);
 
 			commit = true;
 		} catch (Exception e) {
@@ -1714,7 +1715,7 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 		
 		bancoHSBC = Fixture.banco(10L, true, null, "1010",
-							  123456L, "1", "1", "Instruções.", null, "HSBC", "399");
+							  123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
 		
 		save(session, bancoHSBC);
 	}

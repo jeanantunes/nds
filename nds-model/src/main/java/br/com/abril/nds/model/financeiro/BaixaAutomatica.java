@@ -15,6 +15,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * @author Discover Technology
+ * @version 1.0
+ * @created 15-mar-2012 10:00:00
+ */
 @Entity
 @Table(name = "BAIXA_AUTOMATICA")
 @SequenceGenerator(name = "BAIXA_AUTOMATICA_SEQ", initialValue = 1, allocationSize = 1)
@@ -35,6 +40,9 @@ public class BaixaAutomatica {
 	
 	@Column(name = "NOME_ARQUIVO", nullable = false)
 	private String nomeArquivo;
+	
+	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = false)
+	private Integer numeroRegistroArquivo;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "BOLETO_ID")
@@ -94,6 +102,20 @@ public class BaixaAutomatica {
 	 */
 	public void setNomeArquivo(String nomeArquivo) {
 		this.nomeArquivo = nomeArquivo;
+	}
+
+	/**
+	 * @return the numeroRegistroArquivo
+	 */
+	public Integer getNumeroRegistroArquivo() {
+		return numeroRegistroArquivo;
+	}
+
+	/**
+	 * @param numeroRegistroArquivo the numeroRegistroArquivo to set
+	 */
+	public void setNumeroRegistroArquivo(Integer numeroRegistroArquivo) {
+		this.numeroRegistroArquivo = numeroRegistroArquivo;
 	}
 
 	/**
