@@ -233,6 +233,9 @@ public class EnderecoController {
 		String cidade = enderecoRetornado.getLocalidade() == null 
 					? "" : enderecoRetornado.getLocalidade().getNome();
 		
+		String tipoLogradouro = enderecoRetornado.getTipoLogradouro() == null 
+				? "" : enderecoRetornado.getTipoLogradouro().getNome();
+		
 		String logradouro = enderecoRetornado.getLogradouro() == null 
 					? "" : enderecoRetornado.getLogradouro().getNome();
 		
@@ -245,6 +248,8 @@ public class EnderecoController {
 
 		endereco.setCidade(cidade);
 
+		endereco.setTipoLogradouro(tipoLogradouro);
+		
 		endereco.setLogradouro(logradouro);
 
 		endereco.setUf(uf);
@@ -272,6 +277,11 @@ public class EnderecoController {
 			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
 		}
 
+		if (endereco.getTipoLogradouro() == null || endereco.getTipoLogradouro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
+		}
+		
 		if (endereco.getLogradouro() == null || endereco.getLogradouro().isEmpty()) {
 			
 			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");

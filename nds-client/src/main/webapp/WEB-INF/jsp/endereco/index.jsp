@@ -111,6 +111,7 @@
 				$("#idEndereco").val(result.id);
 				$("#tipoEndereco").val(result.tipoEndereco);
 				$("#cep").val(result.endereco.cep);
+				$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
 				$("#logradouro").val(result.endereco.logradouro);
 				$("#numero").val(result.endereco.numero);
 				$("#complemento").val(result.endereco.complemento);
@@ -166,6 +167,7 @@
 		$("#idEndereco").val("");
 		$("#tipoEndereco").val("");
 		$("#cep").val("");
+		$("#tipoLogradouro").val("");
 		$("#logradouro").val("");
 		$("#numero").val("");
 		$("#complemento").val("");
@@ -211,6 +213,7 @@
 				$("#idEndereco").val(result.id);
 				$("#tipoEndereco").val(result.tipoEndereco);
 				$("#cep").val(result.endereco.cep);
+				$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
 				$("#logradouro").val(result.endereco.logradouro);
 				$("#numero").val(result.endereco.numero);
 				$("#complemento").val(result.endereco.complemento);
@@ -320,49 +323,56 @@
 					</span></td>
 			</tr>
 			<tr>
+				<td>Tipo Logradouro:</td>
+				<td>
+					<input type="text" style="width:230px" 
+						   name="enderecoAssociacao.endereco.tipoLogradouro" id="tipoLogradouro" />
+				</td>
 				<td>Logradouro:</td>
 				<td>
 					<input type="text" style="width:250px" 
 						   name="enderecoAssociacao.endereco.logradouro" id="logradouro" />
 				</td>
+			</tr>
+			<tr>			
 				<td>N&uacute;mero:</td>
 				<td>
 					<input type="text" style="width:50px" 
 						   name="enderecoAssociacao.endereco.numero" id="numero" maxlength="11" />
 				</td>
-			</tr>
-			<tr>
 				<td>Complemento:</td>
 				<td>
 					<input type="text" style="width:250px" 
 						   name="enderecoAssociacao.endereco.complemento" id="complemento" />
 				</td>
+			</tr>
+			<tr>
+			
 				<td>Bairro:</td>
 				<td>
 					<input type="text"  style="width:230px" 
 						   name="enderecoAssociacao.endereco.bairro" id="bairro" />
 				</td>
+				<td>Cidade:</td>
+				<td>
+					<input type="text" style="width:250px" 
+						   name="enderecoAssociacao.endereco.cidade" id="cidade" />
+				</td>
+				
 			</tr>
 			<tr>
-			<td>Cidade:</td>
-			<td>
-				<input type="text" style="width:250px" 
-					   name="enderecoAssociacao.endereco.cidade" id="cidade" />
-			</td>
-			<td>UF:</td>
-			<td>
-				<input type="text" style="width:50px;text-transform:uppercase" 
-					   name="enderecoAssociacao.endereco.uf" id="uf"  />
-			</td>
-			</tr>
-			<tr>
-			  <td>Principal:</td>
-			  <td>
-			  	<input type="checkbox" id="principal" 
-			  		   name="enderecoAssociacao.enderecoPrincipal"/>
-			  </td>
-			  <td>&nbsp;</td>
-			  <td>&nbsp;</td>
+				<td>UF:</td>
+				<td>
+					<input type="text" style="width:50px;text-transform:uppercase" 
+						   name="enderecoAssociacao.endereco.uf" id="uf"  />
+				</td>
+			    <td>Principal:</td>
+			   	<td>
+				  	<input type="checkbox" id="principal" 
+				  		   name="enderecoAssociacao.enderecoPrincipal"/>
+			  	</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
 		  </tr>
 			<tr>
 			  <td>&nbsp;</td>
