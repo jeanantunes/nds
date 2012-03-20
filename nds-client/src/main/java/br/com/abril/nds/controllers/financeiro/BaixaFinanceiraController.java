@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -20,6 +21,7 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -52,6 +54,10 @@ public class BaixaFinanceiraController {
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
 	
+	private static final String FORMATO_DATA_DIRETORIO = "yyyy-MM-dd";
+	
+	private static final String DIRETORIO_TEMPORARIO_ARQUIVO_BANCO = "temp/arquivos_banco/";
+	
 	private static final String EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE = "exibeCamposBaixaAutomatica";
 	
 	private static final String RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE = "resumoBaixaAutomaticaBoleto";
@@ -81,42 +87,103 @@ public class BaixaFinanceiraController {
 		
 		request.setAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, true);
 		
-		//TODO: validar tamanho arquivo, caminho para gravar, tamanho do nome do arquivo
-		
 		validarEntradaDados(uploadedFile, valorFinanceiro);
 		
 		BigDecimal valorFinanceiroFormatado = new BigDecimal(valorFinanceiro);
-					
-		String pathAplicacao = servletContext.getRealPath("");
 		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
+		ResumoBaixaBoletosDTO resumoBaixaBoleto = null;
 		
-		File fileDir = new File(pathAplicacao, "temp/arquivo");
-		
-		fileDir.mkdirs();
-		
-		File fileArquivoRetorno = new File(fileDir, uploadedFile.getFileName());
-		
-		//TODO:
 		try {
-			IOUtils.copyLarge(uploadedFile.getFile(), new FileOutputStream(fileArquivoRetorno));
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+			//Grava o arquivo em disco e retorna o File do arquivo
+			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
+			
+			ArquivoPagamentoBancoDTO arquivoPagamento =
+					leitorArquivoBancoService.obterPagamentosBanco(fileArquivoBanco,
+																   uploadedFile.getFileName());
+			
+			resumoBaixaBoleto = 
+				boletoService.baixarBoletos(arquivoPagamento, valorFinanceiroFormatado,
+											obterUsuario());
+		
+		} finally {
+			
+			//Deleta os arquivos dentro do diretório temporário
+			deletarArquivoTemporario();
 		}
-		
-		ArquivoPagamentoBancoDTO arquivoPagamento =
-				leitorArquivoBancoService.obterPagamentosBanco(fileArquivoRetorno,
-															   uploadedFile.getFileName());
-		
-		ResumoBaixaBoletosDTO resumoBaixaBoleto = 
-			boletoService.baixarBoletos(arquivoPagamento, valorFinanceiroFormatado,
-										obterUsuario());
 		
 		request.setAttribute(RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, resumoBaixaBoleto);
 		
 		result.forwardTo(BaixaFinanceiraController.class).baixa();
 	}
 	
+	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
+
+		String pathAplicacao = servletContext.getRealPath("");
+		
+		pathAplicacao = pathAplicacao.replace("\\", "/");
+		
+		String dirDataAtual = DateUtil.formatarData(new Date(), FORMATO_DATA_DIRETORIO);
+		
+		File fileDir = new File(pathAplicacao, DIRETORIO_TEMPORARIO_ARQUIVO_BANCO + dirDataAtual);
+		
+		fileDir.mkdirs();
+		
+		File fileArquivoBanco = new File(fileDir, uploadedFile.getFileName());
+		
+		FileOutputStream fos = null;
+		
+		try {
+			
+			fos = new FileOutputStream(fileArquivoBanco);
+			
+			IOUtils.copyLarge(uploadedFile.getFile(), fos);
+		
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao gravar o arquivo em disco!");
+			}
+		}
+		
+		return fileArquivoBanco;
+	}
+	
+	private void deletarArquivoTemporario() {
+		
+		String pathAplicacao = servletContext.getRealPath("");
+		
+		pathAplicacao = pathAplicacao.replace("\\", "/");
+		
+		File fileDir = new File(pathAplicacao, DIRETORIO_TEMPORARIO_ARQUIVO_BANCO);
+		
+		removerFiles(fileDir);
+	}
+	
+	public void removerFiles(File file) {
+        
+		if (file.isDirectory()) {
+        	
+            File[] files = file.listFiles();
+            
+            for (File f : files) {
+                
+            	removerFiles(f);
+            }
+        }
+		
+        file.delete();
+    }
+
 	private void validarEntradaDados(UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		List<String> listaMensagens = new ArrayList<String>();

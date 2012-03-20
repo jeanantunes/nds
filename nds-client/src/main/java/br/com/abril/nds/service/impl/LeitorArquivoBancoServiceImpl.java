@@ -49,24 +49,13 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	private static final int INDEX_CNAB_400_NUMERO_REGISTRO_INICIO = 394;
 	private static final int INDEX_CNAB_400_NUMERO_REGISTRO_FIM = 400;
 	
-	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file,
-														 String nomeArquivo) {
+	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
+		
+		validarDadosEntrada(file, nomeArquivo);
 		
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = null;
 		
 		List<String> lines = null;
-		
-		if (nomeArquivo == null || nomeArquivo.trim().length() == 0) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nome do arquivo é obrigatório!");
-		}
-		
-		if (!isExtensaoArquivoValida(nomeArquivo)) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Extensão do arquivo inválida!");
-		}
-		
-		if (file == null || !file.isFile()) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo inválido!");
-		}
 		
 		try {
 			lines = FileUtils.readLines(file, "UTF8");
@@ -156,21 +145,24 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		return arquivoPagamentoBanco;
 	}
 	
-	private boolean isExtensaoArquivoValida(String nomeArquivo) {
+	private void validarDadosEntrada(File file, String nomeArquivo) {
 		
-		int index = nomeArquivo.lastIndexOf(".");
-		
-		String extensao = nomeArquivo.substring(index + 1, nomeArquivo.length());
-		
-		for (String extensaoAceita : EXTENSOES_ARQUIVO_VALIDAS) {
-			
-			if (extensaoAceita.equalsIgnoreCase(extensao)) {
-				
-				return true;
-			}
+		if (nomeArquivo == null || nomeArquivo.trim().length() == 0) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nome do arquivo é obrigatório!");
 		}
 		
-		return false;
+		if (nomeArquivo.trim().length() > 255) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"O nome do arquivo deve possuir até 255 caracteres!");
+		}
+		
+		if (!isExtensaoArquivoValida(nomeArquivo)) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Extensão do arquivo inválida!");
+		}
+		
+		if (file == null || !file.isFile()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo inválido!");
+		}
 	}
 	
 	private void validarConteudoLinhas(List<String> lines) {
@@ -245,6 +237,23 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			
 			throw new ValidacaoException(validacao);
 		}
+	}
+	
+	private boolean isExtensaoArquivoValida(String nomeArquivo) {
+		
+		int index = nomeArquivo.lastIndexOf(".");
+		
+		String extensao = nomeArquivo.substring(index + 1, nomeArquivo.length());
+		
+		for (String extensaoAceita : EXTENSOES_ARQUIVO_VALIDAS) {
+			
+			if (extensaoAceita.equalsIgnoreCase(extensao)) {
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	private Integer parseInteger(String valor) {
