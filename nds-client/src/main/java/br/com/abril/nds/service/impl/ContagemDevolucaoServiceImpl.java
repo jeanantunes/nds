@@ -18,6 +18,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
+import br.com.abril.nds.util.MockPerfilUsuario;
 
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
@@ -27,7 +28,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Autowired
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
-	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa) {
+	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, MockPerfilUsuario mockPerfilUsuario) {
 		
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
 		
@@ -90,7 +91,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * 
 	 * @param listaContagemDevolucao
 	 */
-	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, MockPerfilUsuario mockPerfilUsuario) {
 		
 	}
 
@@ -99,11 +100,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * 
 	 * @param listaContagemDevolucao
 	 */
-	public void inserirCorrecaoListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
-		
-	}
-
+	public void inserirCorrecaoListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, MockPerfilUsuario mockPerfilUsuario) {
 	
+	}
 	
 	private void inserirContagemDevolucao(ContagemDevolucaoDTO contagem, Date dataAtual) {
 		
@@ -122,30 +121,21 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	private void confirmarContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa) {
-		
+	public void confirmarContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa) {
 		//TODO
-		
 	}
 	
 	private void sinalizarRecolhimentoFinalizado() {
-
-		
-		
+		//TODO
 	}
 	
 	private void gerarNotaFiscalParcial() {
-	
 		//TODO
-		
 	}
 
 	private void gerarNotaFiscalFinal() {
-		
 		//TODO
-		
 	}
 
-	
 	
 }
