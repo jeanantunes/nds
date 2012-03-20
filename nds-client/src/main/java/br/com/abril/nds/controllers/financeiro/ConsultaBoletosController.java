@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
@@ -20,7 +22,10 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaB
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.impl.EmailServiceImpl;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -45,6 +50,12 @@ import br.com.caelum.vraptor.view.Results;
 public class ConsultaBoletosController {
 
     
+	@Autowired
+	private EmailService email;
+	
+	@Autowired
+	private BoletoService boletoService;
+	
 	private Result result;
     
     private HttpSession httpSession;
@@ -54,10 +65,7 @@ public class ConsultaBoletosController {
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
 
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
-    
-	
-    @Autowired
-	private BoletoService boletoService;
+   
 	
 	public ConsultaBoletosController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
 		this.result = result;
@@ -69,8 +77,8 @@ public class ConsultaBoletosController {
     public void consulta(){
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
-		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pago"));
-		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pago"));
+		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));
+		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pagos"));
 		
 		result.include("listaStatusCombo",listaStatusCombo);
 		result.include("dataDe", DateUtil.formatarData(Calendar.getInstance().getTime(), "dd/MM/yyyy"));
@@ -168,7 +176,6 @@ public class ConsultaBoletosController {
 
 	}
 	
-	
 	@Get
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto(String nossoNumero) throws Exception{
@@ -184,28 +191,17 @@ public class ConsultaBoletosController {
 		httpResponse.flushBuffer();
 	}
 	
-	
-	@Get
+	@Post
 	@Path("/enviaBoleto")
 	public void enviaBoleto(String nossoNumero) throws Exception{
+
+		File[] anexo = new File[]{boletoService.gerarAnexoBoleto(nossoNumero)};
+		String[] destinatarios = new String[]{boletoService.obterEmailCota(nossoNumero)};
 		
-		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-        
-		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
-
-		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(b);
-
-		httpResponse.flushBuffer();
+		email.enviar("Assunto", "Mensagem", destinatarios, anexo);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	public void validar(String numCota,
 					    String dataDe,
@@ -222,5 +218,4 @@ public class ConsultaBoletosController {
 		}
 	}
 	
-
 }
