@@ -1,5 +1,8 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -13,6 +16,9 @@ public class ImpressaoBoletosController {
 
 	private Result result;
 	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
 	public ImpressaoBoletosController(Result result){
 		this.result = result;
 	}
@@ -23,12 +29,15 @@ public class ImpressaoBoletosController {
 	
 	@Post
 	public void gerarDivida(){
+		//trecho que simula possível demora no processamento dessa rotina
 		try {
 			Thread.sleep(5000L);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		this.gerarCobrancaService.gerarCobranca();
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
