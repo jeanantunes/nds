@@ -242,8 +242,8 @@ public class BoletoServiceImpl implements BoletoService {
 					}
 					
 					movimentoFinanceiroCotaService
-						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
-															   grupoMovimento, usuario, valor);
+						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(), grupoMovimento,
+															   usuario, valor, dataOperacao);
 					
 					return;
 				}
