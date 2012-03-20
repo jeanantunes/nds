@@ -4,7 +4,17 @@ import javax.servlet.http.HttpServletRequest;
 
 public abstract class Util {
 
-	public static boolean isValidNumber(String valor){
+	public static boolean isNumeric(String valor){
+		try {
+			Double.parseDouble(valor);
+		} catch (NumberFormatException n){
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean isLong(String valor){
 		try {
 			Long.parseLong(valor);
 		} catch (NumberFormatException n){
