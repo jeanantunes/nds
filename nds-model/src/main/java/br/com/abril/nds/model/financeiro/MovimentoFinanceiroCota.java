@@ -1,10 +1,11 @@
-package br.com.abril.nds.model.financeiro;
+ package br.com.abril.nds.model.financeiro;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -21,6 +22,8 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	@OneToMany
+	@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA", joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID")})
 	private List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	
 	public Cota getCota() {
