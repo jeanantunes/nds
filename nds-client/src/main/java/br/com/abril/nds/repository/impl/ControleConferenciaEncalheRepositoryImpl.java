@@ -23,6 +23,7 @@ public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository
 		   .append(" where cce.data = d.dataOperacao");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		query.setMaxResults(1);
 		
 		return (StatusOperacao) query.uniqueResult();
 	}

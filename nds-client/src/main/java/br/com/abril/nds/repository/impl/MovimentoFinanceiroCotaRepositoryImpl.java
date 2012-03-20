@@ -19,8 +19,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(){
 		
-		StringBuilder hql = new StringBuilder("from MovimentoFinanceiroCota mfc, Distribuidor d, ControleConferenciaEncalhe ");
-		hql.append(" where mfc.dataInclusao = d.dataOperacao ");
+		StringBuilder hql = new StringBuilder("from MovimentoFinanceiroCota mfc, Distribuidor d ");
+		hql.append(" where mfc.dataInclusao = d.dataOperacao ")
+		   .append(" order by mfc.cota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
