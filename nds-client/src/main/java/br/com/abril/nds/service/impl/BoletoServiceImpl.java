@@ -37,6 +37,7 @@ import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.BoletoImpressao;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -129,6 +130,10 @@ public class BoletoServiceImpl implements BoletoService {
 				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
 						  								  dataOperacao, usuario);
 			}
+			
+			resumoBaixaBoletos.setNomeArquivo(arquivoPagamento.getNomeArquivo());
+			resumoBaixaBoletos.setDataCompetencia(DateUtil.formatarDataPTBR(dataOperacao));
+			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
 			
 			return resumoBaixaBoletos;
 			

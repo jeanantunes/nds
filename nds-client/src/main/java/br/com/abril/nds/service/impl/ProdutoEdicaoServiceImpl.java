@@ -129,7 +129,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			throw new IllegalArgumentException("Número edição é obrigatório.");
 		}
 
-		if (!Util.isValidNumber(numeroEdicao)) {
+		if (!Util.isLong(numeroEdicao)) {
 
 			throw new IllegalArgumentException("Número edição é inválido.");
 		}

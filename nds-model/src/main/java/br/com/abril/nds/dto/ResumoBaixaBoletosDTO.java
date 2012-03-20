@@ -1,8 +1,16 @@
 package br.com.abril.nds.dto;
 
+import java.math.BigDecimal;
+
 
 public class ResumoBaixaBoletosDTO {
 
+	private String nomeArquivo;
+	
+	private String dataCompetencia;
+	
+	private BigDecimal somaPagamentos;
+	
 	private Integer quantidadeLidos = 0;
 	
 	private Integer quantidadeBaixados = 0;
@@ -10,6 +18,48 @@ public class ResumoBaixaBoletosDTO {
 	private Integer quantidadeRejeitados = 0;
 
 	private Integer quantidadeBaixadosComDivergencia = 0;
+
+	/**
+	 * @return the nomeArquivo
+	 */
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	/**
+	 * @param nomeArquivo the nomeArquivo to set
+	 */
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	/**
+	 * @return the dataCompetencia
+	 */
+	public String getDataCompetencia() {
+		return dataCompetencia;
+	}
+
+	/**
+	 * @param dataCompetencia the dataCompetencia to set
+	 */
+	public void setDataCompetencia(String dataCompetencia) {
+		this.dataCompetencia = dataCompetencia;
+	}
+
+	/**
+	 * @return the somaPagamentos
+	 */
+	public BigDecimal getSomaPagamentos() {
+		return somaPagamentos;
+	}
+
+	/**
+	 * @param somaPagamentos the somaPagamentos to set
+	 */
+	public void setSomaPagamentos(BigDecimal somaPagamentos) {
+		this.somaPagamentos = somaPagamentos;
+	}
 
 	/**
 	 * @return the quantidadeLidos
@@ -67,5 +117,5 @@ public class ResumoBaixaBoletosDTO {
 			Integer quantidadeBaixadosComDivergencia) {
 		this.quantidadeBaixadosComDivergencia = quantidadeBaixadosComDivergencia;
 	}
-	
+
 }

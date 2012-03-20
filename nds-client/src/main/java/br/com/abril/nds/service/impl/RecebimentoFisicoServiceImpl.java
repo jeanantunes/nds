@@ -14,6 +14,7 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -24,8 +25,8 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -34,7 +35,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
-import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -45,6 +46,7 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -74,10 +76,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private NotaFiscalEntradaRepository notaFiscalRepository;
 	
 	@Autowired
-	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	private CFOPRepository cFOPRepository;
 	
 	@Autowired
-	private CFOPRepository cFOPRepository;
+	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
@@ -223,7 +225,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			atualizarDadosNotaFiscalExistente(recebimentoFisico, usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 			
 		} else {
-			
+					
 			notaFiscal.setDataExpedicao(dataAtual);
 			
 			inserirDadosNovaNotaFiscal(usuarioLogado, notaFiscal, listaItensNota, dataAtual);			
@@ -441,11 +443,17 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
+		List<Fornecedor> fornecedor =	fornecedorService.obterFornecedores(cnpj);
+		
+		((NotaFiscalEntradaFornecedor)notaFiscal).setFornecedor(fornecedor.get(0));
+		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setOrigem(Origem.MANUAL);
 		
 		notaFiscal.setEmitente(emitente);
+		
+		notaFiscal.setUsuario(usuarioLogado);
 		
 		notaFiscalRepository.adicionar(notaFiscal);
 		
@@ -625,7 +633,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		Diferenca diferenca = new Diferenca();
 		
-		diferenca.setQtde(calculoQdeDiferenca);
+		diferenca.setQtde(calculoQdeDiferenca.abs());
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setResponsavel(usuarioLogado);
 		diferenca.setProdutoEdicao(produtoEdicao);
@@ -763,6 +771,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
 			diferencaEstoqueService.lancarDiferenca(diferenca);
+			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
+			itemRecebimento.setDiferenca(diferenca);
+			itemRecebimentoFisicoRepository.alterar(itemRecebimento);
 			
 			
 			

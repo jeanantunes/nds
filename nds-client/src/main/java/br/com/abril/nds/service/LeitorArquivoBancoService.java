@@ -1,8 +1,6 @@
 package br.com.abril.nds.service;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 
@@ -12,7 +10,7 @@ import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
  * 
  * @author Discover Technology
  */
-public interface LeitorRetornoBancoService {
+public interface LeitorArquivoBancoService {
 
 	/**
 	 * Obtém os pagamentos retornados pelo banco.

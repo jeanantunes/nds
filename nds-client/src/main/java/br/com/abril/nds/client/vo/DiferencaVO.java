@@ -3,12 +3,17 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
+
 /**
  * Value Object para lançamento e consulta de diferença.
  * 
  * @author Discover Technology
  *
  */
+@Exportable
 public class DiferencaVO implements Serializable {
 	
 	/**
@@ -20,18 +25,25 @@ public class DiferencaVO implements Serializable {
 	
 	private String dataLancamento;
 	
+	@Export(label = "Código")
 	private String codigoProduto;
 	
+	@Export(label = "Produto")
 	private String descricaoProduto;
 	
+	@Export(label = "Edição", alignment = Alignment.CENTER)
 	private String numeroEdicao;
 	
+	@Export(label = "Preço Venda", alignment = Alignment.RIGHT)
 	private String precoVenda;
 	
+	@Export(label = "Pacote Padrão", alignment = Alignment.CENTER)
 	private String pacotePadrao;
 	
+	@Export(label = "Exemplares", alignment = Alignment.CENTER)
 	private BigDecimal quantidade;
 	
+	@Export(label = "Tipo de Diferença")
 	private String tipoDiferenca;
 	
 	private String numeroNotaFiscal;
@@ -40,6 +52,7 @@ public class DiferencaVO implements Serializable {
 	
 	private String motivoAprovacao;
 	
+	@Export(label = "Total R$", alignment = Alignment.RIGHT)
 	private String valorTotalDiferenca;
 	
 	private BigDecimal qtdeEstoqueAtual;

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -13,6 +15,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 
 	/**
@@ -20,8 +23,10 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1821183862532025765L;
 	
+	@Export(label = "Data Movimento")
 	private Date dataMovimento;
 	
+	@Export(label = "Tipo de Diferença")
 	private TipoDiferenca tipoDiferenca;
 	
 	private PaginacaoVO paginacao;

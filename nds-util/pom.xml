@@ -34,12 +34,17 @@
 			<artifactId>velocity</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.jrimum</groupId>
+			<artifactId>jrimum-bopepo</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jrimum</groupId>
-			<artifactId>jrimum-bopepo</artifactId>
+			<groupId>poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.1-FINAL</version>
 		</dependency>
 	</dependencies>
 

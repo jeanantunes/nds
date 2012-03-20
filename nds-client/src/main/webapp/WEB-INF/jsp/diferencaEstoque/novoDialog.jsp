@@ -102,6 +102,9 @@
 						$("#gridNovasDiferencas").flexAddData({rows:[]});
 						$(this).dialog("close");
 					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout();
 				}
 			});
 		}
