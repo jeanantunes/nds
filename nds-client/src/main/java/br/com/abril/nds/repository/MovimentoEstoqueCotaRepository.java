@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
@@ -13,11 +14,13 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque, 
-			List<Long> listaIdProdutoDosFornecedores);
+			boolean indBuscaTotalMovimentoEParcial);
 	
 	public Integer obterQuantidadeContagemDevolucao( 
+			FiltroDigitacaoContagemDevolucaoDTO filtro);
+	
+	public BigDecimal obterValorTotalGeralContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
-			TipoMovimentoEstoque tipoMovimentoEstoque, 
-			List<Long> listaIdProdutoDosFornecedores);
+			TipoMovimentoEstoque tipoMovimentoEstoque);
 	
 }

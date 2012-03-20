@@ -245,7 +245,7 @@ public class DataLoader {
 		criarEstudos(session);
 		criarEstudosCota(session);
 		
-		criarMovimentosEstoqueCota(session);
+		//criarMovimentosEstoqueCota(session);
 		
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
@@ -385,38 +385,32 @@ public class DataLoader {
 				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
 		save(session, estoqueProdutoCota);
 		
-		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe
+				(DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()), 
+				produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
-		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
-		save(session, estoqueProdutoCota);
 		
 
-		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()), 
+				produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()),
+				produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
 		
 		
-		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
-		save(session, estoqueProdutoCota);
-		
-		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
-				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
-		save(session, mec);
-		
-		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
-		save(session, estoqueProdutoCota);
-		
-		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()),
+				produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
