@@ -115,18 +115,20 @@
 		}
 		
 		function buscarNomeProduto(){
-			var data = "codigoProduto=" + $("#codigo").val();
-			$.postJSON("<c:url value='/lancamento/furoProduto/buscarNomeProduto'/>", data,
-				function(result){
-					if (result){
-						$("#produto").val(result);
-						$("#edicao").focus();
-					} else {
-						$("#produto").val("");
-						$("#produto").focus();
+			if ($("#codigo").val().length > 0){
+				var data = "codigoProduto=" + $("#codigo").val();
+				$.postJSON("<c:url value='/lancamento/furoProduto/buscarNomeProduto'/>", data,
+					function(result){
+						if (result){
+							$("#produto").val(result);
+							$("#edicao").focus();
+						} else {
+							$("#produto").val("");
+							$("#produto").focus();
+						}
 					}
-				}
-			);
+				);
+			}
 		}
 	</script>
 	<style type="text/css">
