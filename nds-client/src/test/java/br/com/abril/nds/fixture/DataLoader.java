@@ -54,8 +54,11 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -266,6 +269,7 @@ public class DataLoader {
 
 
 	private static void carregarDados(Session session) {
+		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
@@ -293,6 +297,7 @@ public class DataLoader {
 		criarEnderecoCotaPF(session);
 		criarParametroEmail(session);
 		criarCarteira(session);
+		criarDivida(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -362,6 +367,25 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
+	}
+
+	private static void criarDivida(Session session) {
+		ConsolidadoFinanceiroCota consolidado = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
+						new Date(), new BigDecimal(200));
+		save(session, consolidado);
+		
+		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(session, divida);
+		
+		Boleto boleto = Fixture.boleto("123", new Date(),
+				DateUtil.adicionarDias(new Date(), 2), null, null,
+				new BigDecimal(200), null, null, StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC);
+		boleto.setDivida(divida);
+		save(session, boleto);
 	}
 
 	private static void criarTiposFornecedores(Session session) {

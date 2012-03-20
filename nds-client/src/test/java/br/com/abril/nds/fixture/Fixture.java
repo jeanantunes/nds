@@ -1,6 +1,7 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -56,10 +57,13 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -941,16 +945,40 @@ public class Fixture {
 
 
 
-	public static HistoricoInadimplencia criarHistoricoInadimplencia(Cobranca cobranca, Date dataInclusao, Usuario usuario, StatusInadimplencia status) {
-		
+	public static HistoricoInadimplencia criarHistoricoInadimplencia(
+			Cobranca cobranca, Date dataInclusao, Usuario usuario,
+			StatusInadimplencia status) {
 		HistoricoInadimplencia historicoInadimplencia = new HistoricoInadimplencia();
-		
 		historicoInadimplencia.setCobranca(cobranca);
 		historicoInadimplencia.setDataInclusao(dataInclusao);
 		historicoInadimplencia.setResponsavel(usuario);
 		historicoInadimplencia.setStatus(status);
-		
 		return historicoInadimplencia;
+	}
+	
+	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
+			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
+			BigDecimal valorConsolidado) {
+		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		consolidado.setConsignado(valorConsolidado);
+		consolidado.setMovimentos(movimentos);
+		consolidado.setCota(cota);
+		consolidado.setDataConsolidado(data);
+		consolidado.setTotal(valorConsolidado);
+		return consolidado;
+	}
+	
+	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
+			Cota cota, Date data, Usuario usuario, StatusDivida status,
+			BigDecimal valor) {
+		Divida divida = new Divida();
+		divida.setConsolidado(consolidado);
+		divida.setCota(cota);
+		divida.setData(data);
+		divida.setResponsavel(usuario);
+		divida.setStatus(status);
+		divida.setValor(valor);
+		return divida;
 	}
 	
 }
