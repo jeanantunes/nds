@@ -197,7 +197,8 @@ public class DataLoader {
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			carregarBoletos(session);
+			//carregarBoletos(session);
+			//carregarDadosInadimplencia(session);
 
 			commit = true;
 		} catch (Exception e) {
