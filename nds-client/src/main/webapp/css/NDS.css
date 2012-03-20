@@ -554,3 +554,8 @@ select, input{font-size: 12px; height: 21px;}
 		
 	background-color: #FA8072;
 }
+
+.linha_borda {
+    border-bottom: 1px solid #F0F0F0;
+    line-height: 18px;
+}

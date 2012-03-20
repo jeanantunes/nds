@@ -11,6 +11,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -20,10 +21,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@TableGenerator(name="SEQ_GENERATOR", table="SEQ_GENERATOR", initialValue = 1, allocationSize = 1)
 public abstract class Movimento extends Aprovacao {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SEQ_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
 	
