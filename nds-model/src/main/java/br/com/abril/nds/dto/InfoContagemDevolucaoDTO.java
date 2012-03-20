@@ -8,6 +8,8 @@ public class InfoContagemDevolucaoDTO implements Serializable {
 
 	private List<ContagemDevolucaoDTO> listaContagemDevolucao;
 	
+	private Integer qtdTotalRegistro;
+	
 	private BigDecimal valorTotalGeral;
 
 	public InfoContagemDevolucaoDTO() {}
@@ -38,6 +40,13 @@ public class InfoContagemDevolucaoDTO implements Serializable {
 	public void setValorTotalGeral(BigDecimal valorTotalGeral) {
 		this.valorTotalGeral = valorTotalGeral;
 	}
-	
+
+	public Integer getQtdTotalRegistro() {
+		return qtdTotalRegistro;
+	}
+
+	public void setQtdTotalRegistro(Integer qtdTotalRegistro) {
+		this.qtdTotalRegistro = qtdTotalRegistro;
+	}
 	
 }
