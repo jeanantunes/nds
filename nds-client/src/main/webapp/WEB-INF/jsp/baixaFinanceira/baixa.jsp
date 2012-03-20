@@ -1,11 +1,9 @@
 <head>
 	
-	
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
-	
 	
 		/*$(function() {
 		    
@@ -78,13 +76,14 @@
 		};
 		
 		$(function() {
-			$("input[id^='datepicker']")
-					.datepicker(
-							{
-								showOn : "button",
-								buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-								buttonImageOnly : true
-							});
+			
+			if (${exibeCamposBaixaAutomatica}) {
+				$('#baixaAuto').show();
+			} else {
+				$('#baixaAuto').hide();
+			}
+			
+			$("#valorFinanceiro").numeric();
 	
 		});
 	
@@ -159,28 +158,34 @@
 				<td width="104">&nbsp;</td>
 			</tr>
 		</table>
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro" id="baixaAuto">
-			
-			<form action="/nds-client/financeiro/baixa" id="formBaixaAutomatica"
-				  method="post" enctype="multipart/form-data" >
+		
+		<form action="<c:url value='/financeiro/baixa' />" id="formBaixaAutomatica"
+			  method="post" enctype="multipart/form-data" >
+		
+			<table width="950" border="0" cellpadding="2" cellspacing="1"
+				class="filtro" id="baixaAuto">
 				
-				<tr>
-					<td width="100">Nome Arquivo:</td>
-					<td colspan="3"><input name="uploadedFile" type="file"
-						id="uploadedFile" size="25" /></td>
-					
-					<td width="133">Valor Financeiro R$:</td>
-					<td width="288"><input type="text" name="valorFinanceiro"
-						id="valorFinanceiro" style="width: 90px; text-align: right;" /></td>
-					
-					<td width="111"><span class="bt_integrar"><a
-							href="javascript:;" onclick="mostrarArquivo();">Integrar</a></span></td>
-				</tr>
-			
-			</form>
-			
-		</table>
+					<tr>
+						<td width="100">Nome Arquivo:</td>
+						<td colspan="3">
+							<input name="uploadedFile" type="file" id="uploadedFile" size="25" />
+						</td>
+						
+						<td width="133">Valor Financeiro R$:</td>
+						<td width="288">
+							<input type="text" name="valorFinanceiro"
+								   id="valorFinanceiro" style="width: 90px; text-align: right;" />
+						</td>
+						
+						<td width="111">
+							<span class="bt_integrar">
+								<a href="javascript:;" onclick="mostrarArquivo();">Integrar</a>
+							</span>
+						</td>
+					</tr>			
+			</table>
+		</form>
+		
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			class="filtro" id="baixaManual">
 			<tr>
@@ -336,110 +341,97 @@
 	</fieldset>
 
 
-
-	<fieldset class="classFieldset" id="dadosArquivo">
-		<legend> Baixa Financeira Integrada</legend>
-		<br />
-
-		<table border="0" align="center" cellpadding="2" cellspacing="2">
-			<tr>
-				<td valign="top">
-					<table width="269" border="0" align="center" cellpadding="2"
-						cellspacing="1" style="display: inline; margin-right: 15px;">
-						<tr>
-							<td colspan="2" align="center" class="header_table">Dados do
-								Arquivo</td>
-						</tr>
-						<tr>
-							<td width="121" align="left" class="linha_borda"><strong>Nome
-									do Arquivo:</strong></td>
-							<td width="137" align="right" class="linha_borda">
-								<c:if test="${resumoBaixaBoleto != null}">
-									${resumoBaixaBoleto.nomeArquivo}
-								</c:if>
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Data
-									Competência:</strong></td>
-							<td align="right" class="linha_borda">
-								<c:if test="${resumoBaixaBoleto != null}">
-									${resumoBaixaBoleto.dataCompetencia}
-								</c:if>
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Valor
-									R$:</strong></td>
-							<td align="right" class="linha_borda">
-								<c:if test="${resumoBaixaBoleto != null}">
-									${resumoBaixaBoleto.somaPagamentos}
-								</c:if>
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda">&nbsp;</td>
-							<td align="right" class="linha_borda">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="2" align="left"
-								style="line-height: 28px; border: 1px solid #0C0;"><img
-								src="${pageContext.request.contextPath}/images/bt_check.gif" width="22" height="22"
-								alt="Arquivo Integrado com Sucesso" align="left" /> <span><strong>Arquivo
-										Integrado com Sucesso!</strong></span></td>
-						</tr>
-					</table>
-				</td>
-				<td valign="top"><table width="275" border="0" align="center"
-						cellpadding="2" cellspacing="1" style="display: inline;">
-						<tr>
-							<td colspan="2" align="center" class="header_table"
-								class="linha_borda">Baixa Automática</td>
-						</tr>
-						<tr>
-							<td width="162" align="left" class="linha_borda"><strong>Registros
-									Lidos:</strong></td>
-							<td id="quantidadeLidos" width="102" align="right" class="linha_borda">
-								<c:if test="${resumoBaixaBoleto != null}">
-									${resumoBaixaBoleto.quantidadeLidos}
-								</c:if>
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Registros
-									Baixados:</strong></td>
-							<td align="right" class="linha_borda">
-								<c:if test="${resumoBaixaBoleto != null}">
-									${resumoBaixaBoleto.quantidadeBaixados}
-								</c:if>
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Registros
-									Rejeitados:</strong></td>
-							<td align="right" class="linha_borda">
-								<c:if test="${resumoBaixaBoleto != null}">
-									${resumoBaixaBoleto.quantidadeRejeitados}
-								</c:if>
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Baixados
-									com Divergência:</strong></td>
-							<td align="right" class="linha_borda">
-							<c:if test="${resumoBaixaBoleto != null}">
-								${resumoBaixaBoleto.quantidadeBaixadosComDivergencia}
-							</c:if>
-							</td>
-						</tr>
-					</table></td>
-			</tr>
-		</table>
-		<br /> <br />
-		<div class="linha_separa_fields">&nbsp;</div>
-		<br clear="all" />
-
-	</fieldset>
+	<c:if test="${resumoBaixaAutomaticaBoleto != null}">
+		<fieldset class="classFieldset" id="dadosArquivo">
+			<legend> Baixa Financeira Integrada</legend>
+			<br />
+	
+			<table border="0" align="center" cellpadding="2" cellspacing="2">
+				<tr>
+					<td valign="top">
+						<table width="269" border="0" align="center" cellpadding="2"
+							cellspacing="1" style="display: inline; margin-right: 15px;">
+							<tr>
+								<td colspan="2" align="center" class="header_table">Dados do
+									Arquivo</td>
+							</tr>
+							<tr>
+								<td width="121" align="left" class="linha_borda"><strong>Nome
+										do Arquivo:</strong></td>
+								<td width="137" align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.nomeArquivo}
+								</td>
+							</tr>
+							<tr>
+								<td align="left" class="linha_borda"><strong>Data
+										Competência:</strong></td>
+								<td align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.dataCompetencia}
+								</td>
+							</tr>
+							<tr>
+								<td align="left" class="linha_borda"><strong>Valor
+										R$:</strong></td>
+								<td align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.somaPagamentos}
+								</td>
+							</tr>
+							<tr>
+								<td align="left" class="linha_borda">&nbsp;</td>
+								<td align="right" class="linha_borda">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" align="left"
+									style="line-height: 28px; border: 1px solid #0C0;"><img
+									src="${pageContext.request.contextPath}/images/bt_check.gif" width="22" height="22"
+									alt="Arquivo Integrado com Sucesso" align="left" /> <span><strong>Arquivo
+											Integrado com Sucesso!</strong></span></td>
+							</tr>
+						</table>
+					</td>
+					<td valign="top"><table width="275" border="0" align="center"
+							cellpadding="2" cellspacing="1" style="display: inline;">
+							<tr>
+								<td colspan="2" align="center" class="header_table"
+									class="linha_borda">Baixa Automática</td>
+							</tr>
+							<tr>
+								<td width="162" align="left" class="linha_borda"><strong>Registros
+										Lidos:</strong></td>
+								<td id="quantidadeLidos" width="102" align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.quantidadeLidos}
+								</td>
+							</tr>
+							<tr>
+								<td align="left" class="linha_borda"><strong>Registros
+										Baixados:</strong></td>
+								<td align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.quantidadeBaixados}
+								</td>
+							</tr>
+							<tr>
+								<td align="left" class="linha_borda"><strong>Registros
+										Rejeitados:</strong></td>
+								<td align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.quantidadeRejeitados}
+								</td>
+							</tr>
+							<tr>
+								<td align="left" class="linha_borda"><strong>Baixados
+										com Divergência:</strong></td>
+								<td align="right" class="linha_borda">
+									${resumoBaixaAutomaticaBoleto.quantidadeBaixadosComDivergencia}
+								</td>
+							</tr>
+						</table></td>
+				</tr>
+			</table>
+			<br /> <br />
+			<div class="linha_separa_fields">&nbsp;</div>
+			<br clear="all" />
+	
+		</fieldset>
+	</c:if>
 	<div class="linha_separa_fields">&nbsp;</div>
 	
 </body>

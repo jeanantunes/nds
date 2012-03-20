@@ -13,7 +13,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
-import br.com.abril.nds.service.LeitorRetornoBancoService;
+import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -24,7 +24,7 @@ import br.com.abril.nds.util.TipoMensagem;
  * @author Discover Technology
  */
 @Service
-public class LeitorRetornoBancoServiceImpl implements LeitorRetornoBancoService {
+public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService {
 
 	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret"};
 	
