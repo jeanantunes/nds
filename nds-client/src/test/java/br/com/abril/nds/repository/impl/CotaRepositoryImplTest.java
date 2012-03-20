@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -8,22 +10,50 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private CotaRepositoryImpl cotaRepository;
-	
+		
 	private static final Integer NUMERO_COTA = 1;
+	
+	private Cota cota;
+	private Boleto boleto1;
+	private HistoricoInadimplencia histInadimplencia1;
+	
+	private Boleto boleto2;
+	private HistoricoInadimplencia histInadimplencia2;
+	private Usuario usuario;
+	
 	
 	@Before
 	public void setup() {
@@ -32,15 +62,112 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 			Fixture.pessoaJuridica("FC", "01.001.001/001-00", "000.000.000.00", "fc@mail.com");
 
 		save(pessoaJuridica);
+
+		PessoaFisica pessoaFisica = Fixture.pessoaFisica("100.955.356-39", "joao@gmail.com", "João da Silva");
+		save(pessoaFisica);
 		
 		Box box = Fixture.boxReparte300();
 		save(box);
 		
-		Cota cota = Fixture.cota(NUMERO_COTA, pessoaJuridica, SituacaoCadastro.ATIVO, box);
+		cota = Fixture.cota(NUMERO_COTA, pessoaFisica, SituacaoCadastro.ATIVO, box);
 		
 		save(cota);
 		
 		criarEnderecoCota(cota);
+		
+		usuario = Fixture.usuarioJoao();
+		save(usuario);
+			
+	}
+	
+	public void setupHistoricoInadimplencia() {
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		save(tipoProdutoRevista);
+		
+		Produto produto = Fixture.produtoBoaForma(tipoProdutoRevista);
+		save(produto);
+		
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produto);
+		
+		save(produtoEdicaoVeja1);
+		
+		
+		Estudo estudo = Fixture.estudo(new BigDecimal(50), new Date(), produtoEdicaoVeja1);
+		save(estudo);
+		
+		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(50), new BigDecimal(50), estudo, cota);
+		save(estudoCota);
+		
+		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
+			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+		save(bancoHSBC);
+		
+		boleto1  = Fixture.boleto(
+				"123", 
+				new Date(), 
+				Fixture.criarData(10, 10, 2000), 
+				new Date(), 
+				"encargos", 
+				new BigDecimal(10.10),
+				"tipoBaixa", 
+				"acao", 
+				StatusCobranca.NAO_PAGO, 
+				cota, 
+				bancoHSBC);
+		save(boleto1);
+		
+
+		boleto2  = Fixture.boleto(
+				"1234", 
+				new Date(), 
+				new Date(), 
+				new Date(), 
+				"encargos", 
+				new BigDecimal(10.10),
+				"tipoBaixa", 
+				"acao", 
+				StatusCobranca.NAO_PAGO, 
+				cota, 
+				bancoHSBC);
+		save(boleto2);
+		
+		
+		histInadimplencia1 = Fixture.criarHistoricoInadimplencia(
+				boleto1, new Date(), usuario, StatusInadimplencia.ATIVA);
+		save(histInadimplencia1);
+		
+		histInadimplencia2 = Fixture.criarHistoricoInadimplencia(
+				boleto2, new Date(), usuario, StatusInadimplencia.ATIVA);
+		save(histInadimplencia2);
+	}
+	
+	public void setUpSuspensaoCota() {
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		save(tipoProdutoRevista);
+		
+		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		save(produtoVeja);
+		
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produtoVeja);
+		save(produtoEdicaoVeja1);
+		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovimentoRecReparte);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuario, estoqueProdutoCota,
+				new BigDecimal(20), cota, StatusAprovacao.APROVADO, "Aprovado");
+		save(mec);			
 	}
 	
 	@Test
@@ -54,8 +181,26 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterEnderecosPorIdCotaSucesso() {
+	public void obterCotasSujeitasSuspensao() throws Exception {
+		
+		setupHistoricoInadimplencia();
+		
+		try {
+			List<Cota> lista = cotaRepository.obterCotasSujeitasSuspensao(
+					"asc",
+					CotaSuspensaoDTO.Ordenacao.NOME.name(),
+					1);
+			Assert.assertEquals(lista.size(),1);			
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
 
+	
+	@Test
+	public void obterEnderecosPorIdCotaSucesso() {
 		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
 	
 		Assert.assertNotNull(cota);
@@ -93,6 +238,51 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
 		
 		save(endereco, enderecoCota, endereco2, enderecoCota2);
+	}
+	
+	@Test
+	public void obterValorConsignadoDaCota() {
+		
+		setUpSuspensaoCota();
+		
+		List<ProdutoValorDTO> valores =  cotaRepository.obterValorConsignadoDaCota(cota.getId());
+		
+		Assert.assertEquals(valores.get(0).getTotal(),200.0);
+		
+	}
+	
+	@Test
+	public void obterReparteDaCotaNoDia() {
+		
+		setUpSuspensaoCota();
+		
+		List<ProdutoValorDTO> valores =  cotaRepository.obterReparteDaCotaNoDia(cota.getId(), new Date());
+		
+		Assert.assertEquals(valores.get(0).getTotal(),400.0);
+		
+	}
+	
+	@Test
+	public void obterDividaAcumuladaCota() {
+		
+		setupHistoricoInadimplencia();
+		
+		Double valores =  cotaRepository.obterDividaAcumuladaCota(cota.getId());
+		
+		Assert.assertEquals(valores,20.2);
+		
+	}
+	
+	@Test
+	public void obterDataAberturaDividas() {
+		
+		setupHistoricoInadimplencia();
+		
+		Date dataAbertura =  cotaRepository.obterDataAberturaDividas(cota.getId());
+		
+		Assert.assertEquals(dataAbertura, Fixture.criarData(10, 10, 2000));
+		
+		
 	}
 
 }

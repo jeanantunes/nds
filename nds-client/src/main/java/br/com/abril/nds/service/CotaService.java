@@ -2,8 +2,11 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -42,4 +45,57 @@ public interface CotaService {
 	void processarEnderecos(Cota cota, 
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar, 
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
+	
+	/**
+	 * Obtém cobranças não pagas em nome da cota
+	 * 
+	 * @param idCota -  Código da cota
+	 * @return Lista de Cobranças
+	 */
+	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota);
+	
+	/**
+	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * 
+	 * @return lista de Cotas
+	 */
+	List<Cota> obterCotasSujeitasSuspensao();
+
+	/**
+	 * Suspende lista de cotas
+	 * 
+	 * @param idCotas - código das cotas a serem suspensas
+	 * 
+	 * @return Lista de Cotas suspensas
+	 */List<Cota>suspenderCotas(List<Long> idCotas, Long idUsuario);
+	
+	/**
+	 * Suspende cota
+	 * 
+	 * 
+	 * @param idCota - Código da cota a ser suspensa
+	 * 
+	 * @return Cota - cota suspensa
+	 */
+	Cota suspenderCota(Long idCota, Usuario usuario);
+
+	/**
+	 * Suspende lista de cotas e retorna dados básicos das cota suspensas com 
+	 * necessidade de devolução de contrato
+	 * 
+	 * @param idCotas - Códigos das cotas
+	 * @param usuario - usuário
+	 * @return
+	 */
+	List<CotaSuspensaoDTO> suspenderCotasGetDTO(List<Long> idCotas, Long idUsuario);
+	
+	/**
+	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * 
+	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
+	 * 
+	 * @param paginacaoVO - Dados referentes a paginação e ordenação
+	 * @return lista de CotaSuspensaoDTO
+	 */
+	List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn);
 }

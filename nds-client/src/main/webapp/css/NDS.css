@@ -288,8 +288,8 @@ fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left:
 .bt_integrar a:hover{color:#00649F; text-decoration:underline;}
 
 
-.class_linha_1{background:#f0f0f0; line-height:39px;}
-.class_linha_2{background:#f8f8f8; line-height:39px;	}
+.class_linha_1{background:#f0f0f0; line-height:28px;}
+.class_linha_2{background:#f8f8f8; line-height:28px;	}
 
 .linha_separa_fields{height:12px; width:980px;  float:left; overflow:hidden;}
 .linha_separa_fields_2{height:12px; width:700px;  float:left; overflow:hidden;}
@@ -481,8 +481,8 @@ select, input{font-size: 12px; height: 21px;}
 .formsFiltroHome{line-height:21px!important; float:left; padding:2px; height:auto; margin-right:5px;}
 
 
-#effect { display: none; margin: 0px; width:980px;  position: absolute; }
- #effect_1 { display: none; margin: 0px; width:800px;  position: absolute; }
+#effect { display: none; margin: 0px; width:980px;  position: absolute; z-index: 10; }
+ #effect_1 { display: none; margin: 0px; width:800px;  position: absolute;  z-index: 10;}
 
 #dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco, #dialog-confirmar-lancamentos{display:none; font-size:12px;}
   #pf-fiador, #pf-comprador, #pf-jornaleiro, #dialog-financeiro, #dialog-cpf, #dialog-cnpj{display:none;}

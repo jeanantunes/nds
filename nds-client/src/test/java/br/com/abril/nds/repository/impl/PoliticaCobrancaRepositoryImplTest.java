@@ -22,7 +22,7 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		PoliticaCobranca politicaCobranca =
 			Fixture.criarPoliticaCobranca(null, TipoCobranca.BOLETO,
-										  new BigDecimal(200), true);
+										  new BigDecimal(200), true,1);
 		
 		save(politicaCobranca);
 	}
