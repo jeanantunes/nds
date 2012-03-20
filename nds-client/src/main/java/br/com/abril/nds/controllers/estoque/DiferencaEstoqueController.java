@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.estoque;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -56,6 +58,8 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
@@ -81,6 +85,8 @@ public class DiferencaEstoqueController {
 	private Localization localization;
 	
 	private HttpSession httpSession;
+	
+	private HttpServletResponse httpServletResponse;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -111,14 +117,95 @@ public class DiferencaEstoqueController {
 	private static final String LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE = "listaDiferencasPesquisadas";
 	
 	private static final String MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE = "mapaRateiosCadastrados";
+	
+	private static final String MODO_INCLUSAO_SESSION_ATTRIBUTE = "modoInclusaoDiferenca";
 
 	public DiferencaEstoqueController(Result result, 
 								 	  Localization localization,
-								 	  HttpSession httpSession) {
+								 	  HttpSession httpSession,
+								 	  HttpServletResponse httpServletResponse) {
 		
 		this.result = result;
 		this.localization = localization;
 		this.httpSession = httpSession;
+		this.httpServletResponse = httpServletResponse;
+	}
+
+	@Get
+	@Path("/lancamento/exportar/pdf")
+	public void exportarPDF() throws IOException {
+		
+		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
+		
+		FiltroLancamentoDiferencaEstoqueDTO filtroSessao =
+			(FiltroLancamentoDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+		
+		List<Diferenca> listaLancamentoDiferencas = 
+			this.diferencaEstoqueService.obterDiferencasLancamento(filtroSessao);
+		
+		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		
+		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
+		
+		for (Diferenca diferenca : listaLancamentoDiferencas) {
+			
+			ProdutoEdicao produtoEdicao = diferenca.getProdutoEdicao();
+			
+			Produto produto = produtoEdicao.getProduto();
+			
+			DiferencaVO lancamentoDiferenca = new DiferencaVO();
+			
+			if (diferenca.getId() != null) {
+				
+				lancamentoDiferenca.setId(diferenca.getId());
+			}
+			
+			lancamentoDiferenca.setCodigoProduto(produto.getCodigo());
+			lancamentoDiferenca.setDescricaoProduto(produto.getDescricao());
+			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
+			
+			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
+			
+			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
+			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
+			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
+			lancamentoDiferenca.setAutomatica(diferenca.isAutomatica());
+			
+			if (diferenca.getMovimentoEstoque() != null) {
+			
+				Date dataLancamento = diferenca.getMovimentoEstoque().getDataInclusao();
+				
+				if (dataLancamento != null) {
+					
+					lancamentoDiferenca.setDataLancamento(DateUtil.formatarDataPTBR(dataLancamento));
+				}
+			}
+
+			lancamentoDiferenca.setValorTotalDiferenca(
+				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
+			
+			listaLancamentosDiferenca.add(lancamentoDiferenca);
+			
+			qtdeTotalDiferencas = 
+				qtdeTotalDiferencas.add(diferenca.getQtde());
+			
+			valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
+		}
+		
+		String valorTotalDiferencasFormatado = 
+			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
+		
+		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
+			new ResultadoDiferencaVO(null, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+		
+		this.httpServletResponse.setContentType("application/pdf");
+
+		this.httpServletResponse.addHeader("Content-Disposition", "attachment; filename=" + "teste.pdf");
+
+		FileExporter.to(FileType.PDF).exportInOutputStream(
+			filtroSessao, resultadoLancamentoDiferenca, listaLancamentosDiferenca,
+				DiferencaVO.class, this.httpServletResponse.getOutputStream());
 	}
 	
 	@Get
@@ -331,6 +418,8 @@ public class DiferencaEstoqueController {
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
+		
+		this.httpSession.setAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE, true);
 		
 		result.use(Results.json()).from("").serialize();
 	}
@@ -581,6 +670,7 @@ public class DiferencaEstoqueController {
 				if (diferenca.getId().equals(idDiferenca)) {
 					
 					diferencaARemover = diferenca;
+					
 					break;
 				}
 			}
@@ -630,9 +720,19 @@ public class DiferencaEstoqueController {
 	@Post
 	@SuppressWarnings("unchecked")
 	public void confirmarLancamentos() {
-
+		
+		Boolean modoInclusao = (Boolean) this.httpSession.getAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
+		
 		Set<Diferenca> listaNovasDiferencas =
 			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		if (modoInclusao != null 
+				&& modoInclusao
+				&& (listaNovasDiferencas == null
+						|| listaNovasDiferencas.isEmpty())) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamentos a confirmar!");
+		}
 		
 		 Map<Long, List<RateioCotaVO>> mapaRateioCotas =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
@@ -1574,13 +1674,15 @@ public class DiferencaEstoqueController {
 	 */
 	private void limparSessao() {
 	
-		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
 		
-		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, null);
+		this.httpSession.removeAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
+		this.httpSession.removeAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
 	}
 	
 	/*

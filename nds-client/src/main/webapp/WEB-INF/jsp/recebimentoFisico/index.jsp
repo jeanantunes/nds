@@ -107,16 +107,27 @@ validarEdicaoCallBack : function() {
 	 * COM OS PARÂMETROS DE PESQUISA
 	 */
 	function verificarNotaFiscalExistente() {
+		
+	checkBox = document.getElementById('eNF');
+		
+		
 
 		var cnpj 		= $("#cnpj").val();
 		var notaFiscal 	= $("#notaFiscal").val();
-		var serie 		= $("#serie").val();
+		var serie 		= $("#serie").val();		
 		var chaveAcesso = $("#chaveAcesso").val();
-		
+        var indNFe      = "N";
+        
+        if(checkBox.checked){
+			indNFe = "S";
+			
+		}
+        
 		var dadosPesquisa = 
 			"cnpj=" 			+ cnpj			+ "&" +
 			"numeroNotaFiscal=" + notaFiscal 	+ "&" + 
 		   	"serie=" 			+ serie			+ "&" +
+		 	"indNFe=" 			+ indNFe		+ "&" +
 		    "chaveAcesso=" 		+ chaveAcesso;
 		
 		limparCampos();
@@ -151,7 +162,7 @@ validarEdicaoCallBack : function() {
 		}
 		
 	}
-	
+		
 	/**
 	 * APRESENTA O POPUP PARA CADASTRAR NOVO ITEM NOTA/RECEBIMENTO.
 	 */
@@ -161,7 +172,7 @@ validarEdicaoCallBack : function() {
 		
 		$("#dialog-novo-item").dialog({
 			resizable: false,
-			height:440,
+			height:480,
 			width:500,
 			modal: true,
 			buttons: {
@@ -172,6 +183,47 @@ validarEdicaoCallBack : function() {
 				}
 			}
 		});
+	}
+	
+	/**
+	*INCLUIR NOVO ITEM DA NOTA
+	*/
+	function incluirNovoItemNota(){
+		
+
+		var codigo 				= $("#codigo").val();
+		var produto 			= $("#produto").val();
+		var precoCapa			= $("#precoCapa").val();
+		var edicao 				= $("#edicao").val();
+		var dataLancamento 		= $("#datepickerLancto").val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento").val();
+		var repartePrevisto 	= $("#repartePrevisto").val();
+		var tipoLancamento 		= $("#tipoLancamento").val();
+		
+		var dadosCadastro = 
+
+			"itemRecebimento.codigoProduto=" 		+ codigo			+ "&" +
+			"itemRecebimento.nomeProduto=" 			+ produto			+ "&" +
+			"itemRecebimento.precoCapa=" 			+ precoCapa			+ "&" +
+			"numeroEdicao=" 						+ edicao			+ "&" +
+			"dataLancamento=" 						+ dataLancamento 	+ "&" + 
+		   	"dataRecolhimento=" 					+ dataRecolhimento	+ "&" +
+		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
+		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
+		
+		var listaDeValores  = obterListaValores();
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", (dadosCadastro +"&" + listaDeValores), 
+
+		function(result) {
+			
+		refreshItemNotaGrid();
+		
+		limparCamposNovoItem();
+				
+		}, null, true);
+		
+		
 	}
 	
 	/**
@@ -629,18 +681,21 @@ validarEdicaoCallBack : function() {
 	 */
 	function excluirItemNotaFiscal(lineId) {
 		
-		var dadosExclusao = "lineId=" + lineId;
-		
-		var listaDeValores  = obterListaValores();
-		
-		$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", (dadosExclusao + "&" + listaDeValores), 
-		
-		function(result) {
-			exibirMensagem(result.tipoMensagem, result.listaMensagens);
-			refreshItemNotaGrid();
-		
-		});
-		
+		if(confirm("Deseja realmente excluir o item selecionado?")){
+			var dadosExclusao = "lineId=" + lineId;
+			
+			var listaDeValores  = obterListaValores();
+			
+			$.postJSON("<c:url value='/estoque/recebimentoFisico/excluirItemNotaFiscal'/>", (dadosExclusao + "&" + listaDeValores), 
+			
+			function(result) {
+				exibirMensagem(result.tipoMensagem, result.listaMensagens);
+				refreshItemNotaGrid();
+			
+			});
+		}else{
+			return;
+		}		
 	}
 	
 	function destacarValorNegativo(data) {
@@ -914,6 +969,10 @@ validarEdicaoCallBack : function() {
 					</select>
 				</td>
 			</tr>
+			<tr>
+			    <td>&nbsp;</td>			
+			    <td><span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="incluirNovoItemNota();"><img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />Incluir Novo</a></span></td>			
+			 </tr>			
 		</table>
 
 	</div>
@@ -952,7 +1011,7 @@ validarEdicaoCallBack : function() {
 							onblur="exibirCnpjDoFornecedor()" style="width: 250px;">
 								<option value=""></option>
 								<c:forEach var="fornecedor" items="${listafornecedores}">
-									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.nomeFantasia}</option>
+									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
 						</select></td>
 						

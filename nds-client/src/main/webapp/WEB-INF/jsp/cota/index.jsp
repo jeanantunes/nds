@@ -28,6 +28,16 @@
 		limparFormEndereco();
 	}
 
+	function editarCota() {
+		
+		var idCota = prompt("Digite o id da cota a ser editada.");
+		
+		if (idCota) {
+			
+			popup_cpf(idCota);
+		}
+	}
+	
 	function popup_cpf(idCota) {
 
 		if (idCota) {
@@ -53,14 +63,14 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					salvarCota();
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
 					
 				},
 				"Cancelar": function() {
-					$("#tabpf").tabs('select', 0);
 					limparFormsTabs();
+					$("#tabpf").tabs('select', 0);
 					$( this ).dialog( "close" );
 				}
 			}
@@ -71,6 +81,21 @@
 			$("#tabpf").tabs('select', 0);
 			limparFormsTabs();
 		});
+	}
+	  
+	function salvarCota(){
+		
+		$.ajax({
+			type: 'POST',
+			url: '<c:url value="/cadastro/cota/salvarCota" />',
+			data: { "idCota" : 8 }
+		});
+
+		limparFormsTabs();
+		
+		$("#tabpf").tabs('select', 0);
+		
+		$( this ).dialog( "close" );
 	}
 	
 	$(function() {
@@ -107,7 +132,7 @@
 		</span>
 		
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="popup_cpf(1);">
+			<a href="javascript:;" onclick="editarCota();">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar PF
 			</a>
 		</span>
@@ -117,6 +142,14 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<div id="dialog-cpf" title="Nova Cota">
+
+		<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 600px;">
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b class="effectDialogText"></b>
+			</p>
+		</div>
 
 		<div id="tabpf">
 			<ul>

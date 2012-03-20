@@ -36,7 +36,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		String hql = this.gerarQueryDiferencasLancamento(filtro, false);
 		
-		if (filtro.getOrdenacaoColuna() != null) {
+		if (filtro != null && filtro.getOrdenacaoColuna() != null) {
 			
 			switch (filtro.getOrdenacaoColuna()) {
 			
@@ -84,26 +84,29 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
-		if (filtro.getDataMovimento() != null) {
-			
-			query.setParameter("dataMovimento", filtro.getDataMovimento());
-		}
+		if (filtro != null) {
 		
-		if (filtro.getTipoDiferenca() != null) {
-		
-			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
-		}
-		
-		if (filtro.getPaginacao() != null) {
-			
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+			if (filtro.getDataMovimento() != null) {
 				
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+				query.setParameter("dataMovimento", filtro.getDataMovimento());
 			}
 			
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			if (filtro.getTipoDiferenca() != null) {
 			
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+			}
+			
+			if (filtro.getPaginacao() != null) {
+				
+				if (filtro.getPaginacao().getPosicaoInicial() != null) {
+					
+					query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+				}
+				
+				if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				
+					query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				}
 			}
 		}
 		
@@ -175,15 +178,18 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		hql += " from Diferenca diferenca "
 			+  " join diferenca.movimentoEstoque movimentoEstoque "
 			+  " where diferenca.statusConfirmacao = :statusConfirmacao ";
-
-		if (filtro.getDataMovimento() != null) {
-
-			hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
-		}
 		
-		if (filtro.getTipoDiferenca() != null) {
-
-			hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+		if (filtro != null) {
+			
+			if (filtro.getDataMovimento() != null) {
+	
+				hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
+			}
+			
+			if (filtro.getTipoDiferenca() != null) {
+	
+				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+			}
 		}
 		
 		return hql;

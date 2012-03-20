@@ -1,8 +1,6 @@
 package br.com.abril.nds.controllers.financeiro;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
-import br.com.abril.nds.dto.ContaCorrenteCotaDTO;
+import br.com.abril.nds.dto.ConsolidadoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.service.ConsolidadoFinanceiroCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
@@ -26,7 +25,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/contaCorrenteCota")
-public class ContaCorrenteCotaController {
+public class ConsolidadoFinanceiroCotaController {
 		
 	private Result result;
 
@@ -35,7 +34,10 @@ public class ContaCorrenteCotaController {
 	@Autowired
 	private CotaService cotaService;
 	
-	public ContaCorrenteCotaController(Result result,HttpServletRequest request){
+	@Autowired
+	private ConsolidadoFinanceiroCotaService consolidadoFinanceiroCotaService;
+	
+	public ConsolidadoFinanceiroCotaController(Result result,HttpServletRequest request){
 		this.result = result;
 		this.request = request;
 	}
@@ -58,16 +60,17 @@ public class ContaCorrenteCotaController {
 	}
 	
 	@Post
-	public void obterListaItemContaCorrenteCota() {
+	public void itemContaCorrenteCota(Integer numeroCota) {
 		//TODO Passar lista de conta corrente cota
-		List<ContaCorrenteCotaDTO> listaItensContaCorrenteCota =  mokParaGrid();
-		obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
+		List<ConsolidadoFinanceiroCotaDTO> listaItensContaCorrenteCota =  consolidadoFinanceiroCotaService.obterListaConsolidadoPorCota(numeroCota);
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private List<ContaCorrenteCotaDTO> mokParaGrid() {
-		List<ContaCorrenteCotaDTO> listaItensContaCorrenteCota = new ArrayList<ContaCorrenteCotaDTO>();
+	/*private List<ConsolidadoFinanceiroCotaDTO> mokParaGrid() {
+		List<ConsolidadoFinanceiroCotaDTO> listaItensContaCorrenteCota = new ArrayList<ConsolidadoFinanceiroCotaDTO>();
 		
-		ContaCorrenteCotaDTO contaCorrenteCotaDTO = new ContaCorrenteCotaDTO();
+		ConsolidadoFinanceiroCotaDTO contaCorrenteCotaDTO = new ConsolidadoFinanceiroCotaDTO(new Date(),new BigDecimal(10), new BigDecimal(34), new BigDe );
 		contaCorrenteCotaDTO.setData(new Date());
 		contaCorrenteCotaDTO.setValorPostergado(new BigDecimal(5.6));
 		contaCorrenteCotaDTO.setNA(new BigDecimal(12.4));
@@ -88,19 +91,20 @@ public class ContaCorrenteCotaController {
 				.subtract(contaCorrenteCotaDTO.getEncalhe().add(contaCorrenteCotaDTO.getDebCred()));
 		
 			contaCorrenteCotaDTO.setTotal(totalCalculado);
+			listaItensContaCorrenteCota.add(contaCorrenteCotaDTO);
 		}else{
 			throw new ValidacaoException(TipoMensagem.ERROR,"Valor Total não calculado devido a valores nulos!");
 		}
 		
 		return listaItensContaCorrenteCota;
-	}
+	}*/
 
 	/**
 	 * Obtem uma lista de Conta Corrente cota e prepara o Grid para receber os valores
 	 * @param itensContaCorrenteCota
 	 * @return
 	 */
-	private TableModel<CellModel> obterTableModelParaListItensContaCorrenteCota(List<ContaCorrenteCotaDTO> itensContaCorrenteCota) {
+	private TableModel<CellModel> obterTableModelParaListItensContaCorrenteCota(List<ConsolidadoFinanceiroCotaDTO> itensContaCorrenteCota) {
 					
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
@@ -108,13 +112,13 @@ public class ContaCorrenteCotaController {
 		
 		int counter = 0;
 		
-		for(ContaCorrenteCotaDTO dto : itensContaCorrenteCota) {
+		for(ConsolidadoFinanceiroCotaDTO dto : itensContaCorrenteCota) {
 			
 			dto.setLineId(counter++);
 			
-			String data 		     	 = dto.getData().toString();
+			//String data 		     	 = dto.getData().toString();
 			String valorPostergado	     = (dto.getValorPostergado() 	== null) 	? "0.0" : dto.getValorPostergado().toString();
-			String NA 		     	     = (dto.getNA()			        == null) 	? "0.0" : dto.getNA().toString();
+			//String NA 		     	     = (dto.getNA()			        == null) 	? "0.0" : dto.getNA().toString();
 			String consignado 	     	 = (dto.getConsignado()			== null) 	? "0.0" : dto.getConsignado().toString();
 			String encalhe 	 	         = (dto.getEncalhe()        	== null) 	? "0.0" : dto.getEncalhe().toString();
 			String vendaEncalhe		 	 = (dto.getVendaEncalhe()		== null) 	? "0.0" : dto.getVendaEncalhe().toString();
@@ -126,9 +130,9 @@ public class ContaCorrenteCotaController {
 			listaModeloGenerico.add(
 					new CellModel( 	
 							dto.getLineId(), 
-							data, 
+							//data, 
 							valorPostergado, 
-							NA, 
+							//NA, 
 							consignado, 
 							encalhe,
 							vendaEncalhe,
@@ -150,7 +154,7 @@ public class ContaCorrenteCotaController {
 	}
 	
 	@Post
-	public void verificarContaCorrenteExistente(String numeroCota) {
+	public void verificarContaCorrenteCotaExistente(String numeroCota) {
 		
 		List<String> msgs = new ArrayList<String>();
 

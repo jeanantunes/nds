@@ -31,7 +31,6 @@
 				
 				$(".grids").hide();
 				$("#btnConfirmar").hide();
-				$("#btnCancelar").hide();
 				$("#labelTotalGeral").hide();
 				$("#qtdeTotalDiferencas").hide();
 				$("#valorTotalDiferencas").hide();
@@ -92,7 +91,6 @@
 
 				$(".grids").show();
 				$("#btnConfirmar").show();
-				$("#btnCancelar").show();
 				$("#labelTotalGeral").show();
 				$("#qtdeTotalDiferencas").show();
 				$("#valorTotalDiferencas").show();
@@ -216,19 +214,7 @@
 							null,
 							function(result) {
 	
-								$("#datePickerDataMovimento").datepicker({
-									showOn : "button",
-									buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-									buttonImageOnly : true,
-									dateFormat: 'dd/mm/yy',
-									defaultDate: new Date()
-								});
-	
-								$("#selectTiposDiferenca").val(null);
-								
-								$("#gridLancamentos").flexAddData({rows:[]});
-
-								$("#gridLancamentos").flexReload();
+								inicializar();
 							}
 						);
 	
@@ -243,8 +229,8 @@
 			
 			$("#dialog-confirmar-lancamentos").show();
 		}
-		
-		$(function() {
+
+		function configurarFlexiGrid() {
 
 			$("#gridLancamentos").flexigrid({
 				preProcess: executarPreProcessamento,
@@ -314,8 +300,18 @@
 				height : 180,
 				singleSelect: true
 			});
+		}
+
+		function inicializar() {
 			
+			configurarFlexiGrid();
+
+			$(".grids").hide();
+			$("#btnConfirmar").hide();
 			$("#btnNovo").hide();
+			$("#labelTotalGeral").hide();
+			$("#qtdeTotalDiferencas").hide();
+			$("#valorTotalDiferencas").hide();
 				
 			$("#datePickerDataMovimento").datepicker({
 				showOn : "button",
@@ -326,6 +322,13 @@
 			});
 
 			$("#datePickerDataMovimento").mask("99/99/9999");
+
+			$("#selectTiposDiferenca").val(null);
+		}
+		
+		$(function() {
+
+			inicializar();
 		});
 	</script>
 	
