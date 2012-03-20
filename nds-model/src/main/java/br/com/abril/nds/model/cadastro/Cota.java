@@ -66,6 +66,8 @@ public class Cota {
 	
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
+	@Column(name = "FATOR_VENCIMENTO", nullable = false)
+	private int fatorVencimento;
 	
 	public Long getId() {
 		return id;
@@ -161,6 +163,14 @@ public class Cota {
 
 	public void setEstudoCotas(Set<EstudoCota> estudoCotas) {
 		this.estudoCotas = estudoCotas;
+	}
+	
+	public int getFatorVencimento() {
+		return fatorVencimento;
+	}
+	
+	public void setFatorVencimento(int fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
 	}
 
 	/**

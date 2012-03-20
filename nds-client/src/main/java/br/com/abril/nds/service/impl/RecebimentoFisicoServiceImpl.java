@@ -35,7 +35,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
-import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -572,7 +571,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 			lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
 			
-			lancamento.setStatus(StatusLancamento.RECEBIDO);
+			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 			
 			lancamento.setDataStatus(dataAtual);
 			

@@ -135,7 +135,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
 							   DateUtil.adicionarDias(new Date(), 1), DateUtil.adicionarDias(new Date(),
 							   produtoEdicao.getPeb()), new Date(),
-							   new Date(), BigDecimal.TEN,  StatusLancamento.RECEBIDO,
+							   new Date(), BigDecimal.TEN,  StatusLancamento.CONFIRMADO,
 							   itemRecebimentoFisico);
 		save(lancamentoVeja);
 		
