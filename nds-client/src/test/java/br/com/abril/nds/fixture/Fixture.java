@@ -55,8 +55,11 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -346,7 +349,7 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
-				TipoCobranca.BOLETO, new BigDecimal(200), true));
+				TipoCobranca.BOLETO, new BigDecimal(200), true,1));
 		return distribuidor;
 	}
 
@@ -830,13 +833,14 @@ public class Fixture {
 	
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, TipoCobranca tipo,
-			BigDecimal valorMinimo, boolean aceitaPagamentoDivergente) {
+			BigDecimal valorMinimo, boolean aceitaPagamentoDivergente, int inadimplenciasSuspencao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setTipoCobranca(tipo);
 		politicaCobranca.setValorMinino(valorMinimo);
 		politicaCobranca.setAceitaPagamentoDivergente(aceitaPagamentoDivergente);
 		politicaCobranca.setDistribuidor(distribuidor);
+		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
 		return politicaCobranca;
 	}
 	
@@ -909,4 +913,18 @@ public class Fixture {
 		
 		return controleBaixaBancaria;
 	}
+
+
+	public static HistoricoInadimplencia criarHistoricoInadimplencia(Cobranca cobranca, Date dataInclusao, Usuario usuario, StatusInadimplencia status) {
+		
+		HistoricoInadimplencia historicoInadimplencia = new HistoricoInadimplencia();
+		
+		historicoInadimplencia.setCobranca(cobranca);
+		historicoInadimplencia.setDataInclusao(dataInclusao);
+		historicoInadimplencia.setResponsavel(usuario);
+		historicoInadimplencia.setStatus(status);
+		
+		return historicoInadimplencia;
+	}
+	
 }

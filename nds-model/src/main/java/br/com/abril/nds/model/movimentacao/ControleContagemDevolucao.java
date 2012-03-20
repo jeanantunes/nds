@@ -12,12 +12,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CONTROLE_CONFERENCIA_ENCALHE")
-@SequenceGenerator(name="CTRL_CONF_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
-public class ControleConferenciaEncalhe {
+@Table(name = "CONTROLE_CONTAGEM_DEVOLUCAO")
+@SequenceGenerator(name="CTRL_CONT_DEVOLUCAO_SEQ", initialValue = 1, allocationSize = 1)
+public class ControleContagemDevolucao {
 	
 	@Id
-	@GeneratedValue(generator = "CTRL_CONF_ENCALHE_SEQ")
+	@GeneratedValue(generator = "CTRL_CONT_DEVOLUCAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "DATA", nullable = false)
