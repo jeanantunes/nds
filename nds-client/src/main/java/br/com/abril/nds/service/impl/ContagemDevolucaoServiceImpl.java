@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
@@ -80,30 +85,67 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	}
 	
 
-	
-	/**
-	 * Carrega os valores de exemplar nota.
-	 *  
-	 * @param listaContagemDevolucao
-	 */
-	private void carregarValorExemplarNota(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
-		
-		if(listaContagemDevolucao == null || listaContagemDevolucao.isEmpty()) {
-			return;
-		}
-		
-		//TODO: code
-		
-	}
-
 	/**
 	 * Salva os dados parciais de devolução digitados pelo usuario.
 	 * 
 	 * @param listaContagemDevolucao
 	 */
-	private void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		
 	}
+
+	/**
+	 * Caso algum valor tiver sido corrigido, o valor da diferenca sera grava como novo registro de ConferenciaEncalheParcial.
+	 * 
+	 * @param listaContagemDevolucao
+	 */
+	public void inserirCorrecaoListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+		
+	}
+
+	
+	
+	private void inserirContagemDevolucao(ContagemDevolucaoDTO contagem, Date dataAtual) {
+		
+		ProdutoEdicao produtoEdicao = null;//TODO: find by codigoProduto e numeroEdicao
+		
+		Usuario usuario = null; //TODO: //obter usuario resp.
+		
+		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
+		
+		conferenciaEncalheParcial.setDataConfEncalheParcial(new Date());
+		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(contagem.getDataRecolhimentoDistribuidor());
+		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
+		conferenciaEncalheParcial.setQtde(contagem.getQtdNota());
+		conferenciaEncalheParcial.setResponsavel(usuario);
+		conferenciaEncalheParcial.setStatusAprovacao(StatusAprovacao.PENDENTE);
+		
+	}
+	
+	private void confirmarContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa) {
+		
+		//TODO
+		
+	}
+	
+	private void sinalizarRecolhimentoFinalizado() {
+
+		
+		
+	}
+	
+	private void gerarNotaFiscalParcial() {
+	
+		//TODO
+		
+	}
+
+	private void gerarNotaFiscalFinal() {
+		
+		//TODO
+		
+	}
+
 	
 	
 }
