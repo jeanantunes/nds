@@ -1,17 +1,34 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.CotaRepository;
 
 /**
@@ -102,8 +119,115 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Cota> obterCotasSujeitasSuspensao(Integer limiteInadimplencia) {
-		return null;
+	public List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia) {
+		
+		
+		Criteria criteria = getSession().createCriteria(Cota.class,"cota");
+		
+		criteria.add(Restrictions.eq("cota.vip", false));
+		criteria.add(Restrictions.eq("cota.situacaoCadastro", SituacaoCadastro.ATIVO));
+		
+		DetachedCriteria subQueryInadimplencia = DetachedCriteria.forClass(HistoricoInadimplencia.class, "historicoInadimplencia");
+		subQueryInadimplencia.createAlias("historicoInadimplencia.cobranca","cobranca");
+		subQueryInadimplencia.createAlias("cobranca.cota","cotaH");
+		subQueryInadimplencia.add(Restrictions.eqProperty("cotaH.id", "cota.id"));  
+		subQueryInadimplencia.add(Restrictions.eq("historicoInadimplencia.status", StatusInadimplencia.ATIVA)); 		
+		subQueryInadimplencia.setProjection(Projections.rowCount());
+				
+		criteria.add(Subqueries.le(limiteInadimplencia.longValue(), subQueryInadimplencia)); 
+		
+		criteria.addOrder(Order.asc("cota.numeroCota"));
+				
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		return criteria.list();
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoValorDTO> obterReparteDaCotaNoDia(Long idCota, Date date) {
+
+		Criteria criteria = getSession().createCriteria(MovimentoEstoqueCota.class,"movimento");
+		
+		criteria.createAlias("movimento.produtoEdicao", "produtoEdicao");
+		criteria.createAlias("movimento.tipoMovimento", "tipoMovimento");
+		
+		criteria.add(Restrictions.eq("dataInclusao", date));
+		criteria.add(Restrictions.eq("tipoMovimento.operacaoEstoque", OperacaoEstoque.ENTRADA));
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+		ProjectionList projections =  Projections.projectionList();
+		projections.add(Projections.alias(Projections.property("qtde"),"quantidade"));
+		projections.add(Projections.alias(Projections.property("produtoEdicao.precoVenda"),"preco"));
+		
+		criteria.setProjection(projections);
+		
+		criteria.setResultTransformer(Transformers.aliasToBean(ProdutoValorDTO.class));		
+				
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota) {
+		
+		Criteria criteria = getSession().createCriteria(EstoqueProdutoCota.class,"epCota");
+		criteria.createAlias("epCota.produtoEdicao", "produtoEdicao");
+		criteria.createAlias("epCota.cota", "cota");
+				
+		criteria.add(Restrictions.eq("cota.id", idCota));
+	
+		ProjectionList projections =  Projections.projectionList();
+		projections.add(Projections.alias(Projections.property("epCota.qtdeRecebida"),"quantidade"));
+		projections.add(Projections.alias(Projections.property("produtoEdicao.precoVenda"),"preco"));
+		
+		criteria.setProjection(projections);
+		
+		criteria.setResultTransformer(Transformers.aliasToBean(ProdutoValorDTO.class));		
+				
+		return criteria.list();
+	}
+
+	public Double obterDividaAcumuladaCota(Long idCota) {		
+		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
+		criteria.createAlias("cobranca.cota", "cota");
+		
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
+		criteria.setProjection(Projections.sum("valor"));
+		
+		BigDecimal dividaAcumulada = (BigDecimal) criteria.uniqueResult();
+		
+		return dividaAcumulada == null ? 0 : dividaAcumulada.doubleValue();				
+	}
+
+	@Override
+	public Date obterDataAberturaDividas(Long idCota) {
+		
+		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
+		criteria.createAlias("cobranca.cota", "cota");
+		
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
+		criteria.setProjection(Projections.min("dataVencimento"));			
+		
+		return (Date) criteria.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {		
+		
+		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
+		criteria.createAlias("cobranca.cota", "cota");
+		
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
+		
+		criteria.addOrder(Order.asc("dataVencimento"));
+		
+		return criteria.list();				
 	}
 }

@@ -54,7 +54,9 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -89,7 +91,10 @@ public class DataLoader {
 	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte;
 	
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota;	
+
 	private static Carteira carteiraRegistrada;
 	private static Carteira carteiraSemRegistro;
 	
@@ -170,7 +175,17 @@ public class DataLoader {
 	private static Box box2;
 	
 	private static Banco bancoHSBC;
-	private static TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte;
+
+	
+	private static Boleto boleto1;
+	private static Boleto boleto2;
+	private static Boleto boleto3;
+	private static Boleto boleto4;
+	private static Boleto boleto5;
+	private static Boleto boleto6;
+	private static Boleto boleto7;
+	private static Boleto boleto8;
+	private static Boleto boleto9;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -188,6 +203,9 @@ public class DataLoader {
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarBoletos(session);
+			//carregarDadosInadimplencia(session);
+
+
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -233,7 +251,7 @@ public class DataLoader {
 		criarEstudos(session);
 		criarEstudosCota(session);
 		
-		criarMovimentosEstoqueCota(session);
+		//criarMovimentosEstoqueCota(session);
 		
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
@@ -363,11 +381,11 @@ public class DataLoader {
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		save(session, mec);
 		
-		MovimentoFinanceiroCota mfc = Fixture.movimentoFinanceiroCota(
+		movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec));
+				new BigDecimal(200), Arrays.asList(mec), new Date());
 
-		save(session, mfc);
+		save(session, movimentoFinanceiroCota);
 	}
 	
 	private static void criarMovimentosEstoqueCotaConferenciaEncalhe(Session session) {
@@ -376,38 +394,32 @@ public class DataLoader {
 				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
 		save(session, estoqueProdutoCota);
 		
-		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe
+				(DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()), 
+				produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
-		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
-		save(session, estoqueProdutoCota);
 		
 
-		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()), 
+				produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()),
+				produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
 		
 		
-		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
-		save(session, estoqueProdutoCota);
-		
-		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
-				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
-		save(session, mec);
-		
-		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
-		save(session, estoqueProdutoCota);
-		
-		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(new Date(), produtoEdicaoVeja1,
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				DateUtil.adicionarDias(new Date(),produtoEdicaoVeja1.getPeb()),
+				produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec);
@@ -1735,6 +1747,89 @@ public class DataLoader {
 							  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399");
 		
 		save(session, bancoHSBC);
+	}
+	
+	public static void carregarDadosInadimplencia(Session session) {
+		carregarDados(session);
+		carregarBoletos(session);
+				
+		boleto1.setDataVencimento( Fixture.criarData(10, 3, 2012));
+		boleto2.setDataVencimento( Fixture.criarData(11, 2, 2012));
+		boleto3.setDataVencimento( Fixture.criarData(12, 3, 2012));
+		boleto4.setDataVencimento( Fixture.criarData(13, 3, 2012));
+		boleto5.setDataVencimento( Fixture.criarData(14, 2, 2012));
+		boleto6.setDataVencimento( Fixture.criarData(15, 3, 2012));
+		boleto7.setDataVencimento( Fixture.criarData(16, 3, 2012));
+		boleto8.setDataVencimento( Fixture.criarData(8, 1, 2012));
+		boleto8.setCota(cotaMaria);
+		boleto8.setStatusCobranca(StatusCobranca.NAO_PAGO);
+		boleto9.setDataVencimento( Fixture.criarData(18, 3, 2012));		
+		
+		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6, boleto7, boleto8, boleto9);
+		
+		HistoricoInadimplencia histInadimplencia1 = 
+				Fixture.criarHistoricoInadimplencia( boleto1, Fixture.criarData(10, 3, 2012), 
+						usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia1);
+	    HistoricoInadimplencia histInadimplencia2 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto2, Fixture.criarData(10, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia2);
+	    HistoricoInadimplencia histInadimplencia3 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto3, Fixture.criarData(11, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia3);
+	    HistoricoInadimplencia histInadimplencia4 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto4, Fixture.criarData(12, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia4);
+	    HistoricoInadimplencia histInadimplencia5 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto5, Fixture.criarData(13, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia5);
+	    HistoricoInadimplencia histInadimplencia6 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto6, Fixture.criarData(14, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia6);
+	    HistoricoInadimplencia histInadimplencia7 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto7, Fixture.criarData(15, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia7);
+	    HistoricoInadimplencia histInadimplencia8 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto8, Fixture.criarData(16, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia8);
+	    HistoricoInadimplencia histInadimplencia = 
+	    		Fixture.criarHistoricoInadimplencia( boleto9, Fixture.criarData(17, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia);
+	    
+	    EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(
+				produtoEdicaoBravo1, cotaJose, new BigDecimal(10.77), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota2);
+		
+		EstoqueProdutoCota estoqueProdutoCota3 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(session, estoqueProdutoCota3);
+		
+		EstoqueProdutoCota estoqueProdutoCota4 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaMaria, new BigDecimal(186), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota4);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		MovimentoEstoqueCota mec2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(28), cotaMaria, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec2);
+	    
 	}
 	
 }

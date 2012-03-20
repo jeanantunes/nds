@@ -2,21 +2,23 @@
 
 <script language="javascript" type="text/javascript">
 	
-	function getDetalhes(idCota) {
-		
+	function getDetalhes(idCota, nome) {
+		nomeCota = nome;
 		$.postJSON("<c:url value='/suspensaoCota/getInadinplenciasDaCota'/>", 
 				"idCota="+idCota+"&method='get'", 
 				popupDetalhes);	
 	};
 	
+	var nomeCota;
+	
 	function popupDetalhes(result) {
 				
-		gerarTabelaDetalhes(result);
+		gerarTabelaDetalhes(result, nomeCota);
 		
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:'auto',
-			width:360,
+			width:380,
 			modal: true,
 			buttons: {
 				"Fechar": function() {
@@ -28,6 +30,12 @@
 		});
 	}
 	
+	function selecionarTodos(element) {
+		$.postJSON("<c:url value='/suspensaoCota/selecionarTodos'/>", 
+				"selecionado="+element.checked, 
+				checkAll(element,'selecao'));	
+		
+	}
 	
 	function popupConfirmar() {
 	
@@ -56,10 +64,21 @@
 	
 	function popupRelatorio(result) {
 		
-		gerarRelatorio(result);
+		var cotas = result[0];
+		var mensagens = result[1];
+		var status = result[2];	
 		
-		table.innerHTML="";
 		
+		if(mensagens!=null && mensagens.length!=0) {
+			exibirMensagem(status,mensagens);
+		}
+		
+		if(status=="ERROR" || status=="WARNING") {
+			return null;
+		}
+		
+		gerarRelatorio(cotas);
+				
 		$( "#divRelatorio" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -67,6 +86,8 @@
 			modal: true,
 			buttons: {
 				"Fechar": function() {
+					$(".suspensaoGrid").flexReload();
+					exibirMensagem(status,["Suspensão realizada com sucesso."]);
 					$( this ).dialog( "close" );
 				}
 			}
@@ -103,14 +124,6 @@
 		});
 	};
 	
-	function gerarRelatorio() {
-		
-		var div = document.getElementById('divRelatorio')
-		
-		div.innerHTML="GUILHERME";
-		
-	}
-	
 	
  
 	function mostrar(){
@@ -136,14 +149,18 @@
 
 <body>
 <form action="" method="get" id="form1" name="form1">
-<div id="divRelatorio" title="Cota Suspensa" style="display:none">
-	<p><strong>Proceder com a devolução de Documentação</strong></p>
-     
-</div>
 
-<div id="dialog-excluir" title="Suspensão da Cota">
-	<p>Confirma a exclusão desta suspensão?</p>
-  
+<div id="divRelatorio" title="Cota Suspensa" style="display:none">
+
+	<fieldset style="width:330px;">
+     
+     <legend>Proceder com a devolução de Documentação das Cotas</legend>
+     
+   	<table id="tabelaRelatorio" width="330" border="0" cellspacing="1" cellpadding="1">
+     
+    </table>
+</fieldset>
+        
 </div>
 
 <div id="dialog-suspender" title="Suspensão da Cota">
@@ -154,37 +171,9 @@
 
 
 
-<div id="dialog-detalhes" title="Suspensão de Cota">
-     
-    <table id="tabelaDetalhesId" width="300" border="0" cellspacing="1" cellpadding="1">
-  <tr>
-    <td colspan="2" align="left"><strong>Cota:&nbsp;</strong>9999 - José da Silva Pereira</td>
-  </tr>
-  <tr>
-    <td width="136" align="left"><strong>Dia Vencimento</strong></td>
-    <td width="157" align="right"><strong>Valor R$</strong></td>
-  </tr>
-  <tr class="">
-    <td align="left">99/99/9999</td>
-    <td align="right">120,00</td>
-  </tr>
-  <tr>
-    <td align="left">99/99/9999</td>
-    <td align="right">125,00</td>
-  </tr>
-  <tr>
-    <td align="left">99/99/9999</td>
-    <td align="right">87,00</td>
-  </tr>
-</table>
-
-
-    </div>
-
-
-
-
-
+<div id="dialog-detalhes" title="Suspensão de Cota">     
+    
+  </div>
 
 
 
@@ -233,8 +222,7 @@
                 	</strong>
                 </td>
                 
-                <td width="5%" id="totalSugerida">
-                	3
+                <td width="5%" id="totalSugerida">                	
                 </td>
                 
                 <td width="7%">
@@ -243,9 +231,8 @@
                 	</strong>
                 </td>
                 
-                <td width="17%" id="total">
+                <td width="17%" id="total">                	
                 	
-                	10.567,00
                 </td>
                 
                 <td width="17%">
@@ -253,7 +240,7 @@
 <!-- SELECIONAR TODOS -->	                
 	                <span class="bt_sellAll">
 	                	<label for="sel">Selecionar Todos</label>
-	                	<input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left;"/>
+	                	<input type="checkbox" id="sel" name="Todos" onclick="selecionarTodos(this)" style="float:left;"/>
 	                </span>
 	                
                 </td>
@@ -280,6 +267,7 @@
 			url : '<c:url value="/suspensaoCota/obterCotasSuspensaoJSON"/>',
 			dataType : 'json',
 			preProcess:processaRetornoPesquisa,
+			onChangeSort: function(name, order) { sortGrid(".suspensaoGrid", order);}, 
 			colModel : [  {
 				display : 'Cota',
 				name : 'cota',
@@ -289,45 +277,54 @@
 			},{
 				display : 'Nome',
 				name : 'nome',
-				width : 320,
+				width : 210,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Valor Consignado Total R$',
 				name : 'vlrConsignado',
-				width : 200,
+				width : 150,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor Reparte do Dia R$',
 				name : 'vlrReparte',
-				width : 200,
+				width : 150,
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Divida Acumulada R$',
+				name : 'dividaAcumulada',
+				width : 140,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dias em Aberto',
+				name : 'diasAberto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 70,
-				sortable : true,
+				width : 40,
+				sortable : false,
 				align : 'center',
 			},{
 				display : '  ',
 				name : 'selecionado',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
-			sortname : "Nome",
+			sortname : "name",
 			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
+			usepager : false,
+			useRp : false,
 			showTableToggleBtn : true,
 			width : 960,
 			height : 260
 		})); 	
-		
-		$(".flexigrid").css("zIndex",-10);
 	});
 	
 	function processaRetornoPesquisa(data) {
@@ -335,12 +332,16 @@
 		var grid = data[0];
 		var mensagens = data[1];
 		var status = data[2];
-		var totalSugerida = data[3];
-		var total = data[4];
 		
+		var checkTodos = document.getElementById("sel");
 		
-		if(mensagens!=null && mensagens.length!=0) {
+		if(checkTodos.checked==true) {
+			
+		}
+		
+		if(mensagens != null && mensagens.length!=0 && checkTodos.checked!=true) {
 			exibirMensagem(status,mensagens);
+			checkTodos.checked=false;
 		}
 				
 		if(!grid.rows || status=="error") {
@@ -349,16 +350,22 @@
 			$(".corpo").show();	
 		}
 		
-		document.getElementById("total").innerText = total;
-		document.getElementById("totalSugerida").innerText = totalSugerida;		
+
+		var totalSugerida = grid.rows.length;
+		var total = 0.0;
 		
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
-						
-			cell.acao = gerarAcoes(cell.cota,cell.dividas);
-			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.cota,cell.selecionado);;					
+			
+			total += parseFloat(cell.vlrConsignado.replace(".","").replace(",","."));
+			
+			cell.acao = gerarAcoes(cell.idCota,cell.dividas,cell.nome);
+			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
 		}
+		
+		document.getElementById("total").innerText = total.toFixed(2).replace(".",",");
+		document.getElementById("totalSugerida").innerText = totalSugerida;	
 		
 		return grid;
 	}
@@ -379,86 +386,208 @@
 		return input.outerHTML; 
 	}
 	
-	function gerarAcoes(idCota,dividas) {
+	function gerarAcoes(idCota,dividas,nome) {
 		
 		var a = document.createElement("A");
 		a.href = "javascript:;";
-		a.setAttribute("onclick","getDetalhes("+idCota+");");
+		a.setAttribute("onclick","getDetalhes("+idCota+",'"+nome+"');");
 		
 		var img =document.createElement("IMG");
 		img.src="${pageContext.request.contextPath}/images/ico_detalhes.png";
 		img.border="0";
 		img.hspace="5";
 		img.title="Detalhes";		
-		a.innerHTML = img.outerHTML;
+		a.innerHTML = img.outerHTML;		
 		
-		var a2 = document.createElement("A");
-		a2.href = "javascript:;";
-		a2.setAttribute("onclick","popup_excluir();");
-		
-		var img2 =document.createElement("IMG");
-		img2.src="${pageContext.request.contextPath}/images/ico_excluir.gif";
-		img2.border="0";
-		img2.hspace="5";
-		img2.title="Excluir da Suspensão";		
-		a2.innerHTML = img2.outerHTML;
-		
-		return a.outerHTML + a2.outerHTML;
+		return a.outerHTML;
 	}
 	
-	function gerarTabelaDetalhes(dividas) {
-				
-		var table = document.getElementById('tabelaDetalhesId')
+	function gerarTabelaDetalhes(dividas, nome) {
+		var div = document.getElementById("dialog-detalhes");
 		
-		table.innerHTML="";
-	
-		var linhaCota = document.createElement("TR");
-	 	 
-	 	var tdCota = document.createElement("TD");
-	 	tdCota.setAttribute("colspan","2");
-	 	tdCota.align="left";
-	 	tdCota.innerHTML="Cota: ".bold() + " - Guilherme de Morais Leandro";
-	 	 	
-	 	linhaCota.appendChild(tdCota);
+		div.innerHTML="";
+		
+		var fieldset  = document.createElement("FIELDSET");
+		fieldset.style.setProperty("width","330px");
+		
+		div.appendChild(fieldset);
+		
+		var legend = document.createElement("LEGEND");
+		legend.innerHTML = "Cota: ".bold() + " - " + nome;
+		
+		fieldset.appendChild(legend);
+		
+		var table = document.createElement("TABLE");
+		table.id = "tabelaDetalhesId";
+		table.width = "330";
+		table.border = "0";
+		table.cellspacing = "1";
+		table.cellpadding = "1";
+		
+		fieldset.appendChild(table);
+		
+		var tbody = document.createElement("TBODY");
+		
+		table.appendChild(tbody);
+		
+	 	var cabecalho = document.createElement("TR");
+	 	cabecalho.className="header_table";
 	 	
-	 	table.appendChild(linhaCota);
+	 	var tdDia = document.createElement("TD");
+	 	tdDia.width="136";
+	 	tdDia.align="left";
+	 	tdDia.innerHTML="Dia Vencimento".bold();
+	 	cabecalho.appendChild(tdDia);
 	 	
-	 	 var cabecalho = document.createElement("TR");
-	 	 
-		 	var tdDia = document.createElement("TD");
-		 	tdDia.width="136";
-		 	tdDia.align="left";
-		 	tdDia.innerHTML="Dia Vencimento".bold();
-		 	cabecalho.appendChild(tdDia);
-		 	
-		 	var tdValor = document.createElement("TD");
-		 	tdValor.width="157";
-		 	tdValor.align="right";
-		 	tdValor.innerHTML="Valor R$".bold();		 	
-		 	cabecalho.appendChild(tdValor);
-		 	
-		 	table.appendChild(cabecalho);
+	 	var tdValor = document.createElement("TD");
+	 	tdValor.width="157";
+	 	tdValor.align="right";
+	 	tdValor.innerHTML="Valor R$".bold();		 	
+	 	cabecalho.appendChild(tdValor);
+	 	
+	 	tbody.appendChild(cabecalho);
 		
 		 $(dividas).each(function (index, divida) {
 			 
 			 var linha = document.createElement("TR");
-		 	 
-			 	var cel = document.createElement("TD");
-			 	cel.align="left";
-			 	text = document.createTextNode(divida.vencimento);
-			 	cel.appendChild(text);			 	
-			 	linha.appendChild(cel);
-			 	
-			 	var cel2 = document.createElement("TD");
-			 	cel2.align="right";
-			 	text2 = document.createTextNode(divida.valor);
-			 	cel2.appendChild(text2);			 	
-			 	linha.appendChild(cel2);
-			 	
-			 	table.appendChild(linha);
+			 
+			 var lin = (index%2==0) ? 1:2;
+			 
+			 linha.className="class_linha_" + lin ;
+	 	 
+		 	var cel = document.createElement("TD");
+		 	cel.align="left";
+		 	text = document.createTextNode(divida.vencimento);
+		 	cel.appendChild(text);			 	
+		 	linha.appendChild(cel);
+		 	
+		 	var cel2 = document.createElement("TD");
+		 	cel2.align="right";
+		 	text2 = document.createTextNode(divida.valor);
+		 	cel2.appendChild(text2);			 	
+		 	linha.appendChild(cel2);
+		 	
+		 	tbody.appendChild(linha);
 			 
 			
 		 });		 		
+	}
+	
+	function gerarRelatorio(cotas) {
+		
+		var table = document.getElementById("tabelaRelatorio");
+		table.width = "330";
+		table.border = "0";
+		table.cellspacing = "1";
+		table.cellpadding = "1";
+		
+		table.innerHTML="";
+		
+		var tbody = document.createElement("TBODY");
+		
+		table.appendChild(tbody);
+		
+	 	var cabecalho = document.createElement("TR");
+	 	cabecalho.className="header_table";
+	 	
+	 	var tdDia = document.createElement("TD");
+	 	tdDia.width="136";
+	 	tdDia.align="left";
+	 	tdDia.innerHTML="Dia Vencimento".bold();
+	 	cabecalho.appendChild(tdDia);
+	 	
+	 	var tdValor = document.createElement("TD");
+	 	tdValor.width="157";
+	 	tdValor.align="right";
+	 	tdValor.innerHTML="Valor R$".bold();		 	
+	 	cabecalho.appendChild(tdValor);
+	 	
+	 	tbody.appendChild(cabecalho);
+		
+		 $(cotas).each(function (index, cota) {
+			 
+			 var linha = document.createElement("TR");
+			 
+			 var lin = (index%2==0) ? 1:2;
+			 
+			 linha.className="class_linha_" + lin ;
+	 	 
+		 	var cel = document.createElement("TD");
+		 	cel.align="left";
+		 	text = document.createTextNode(cota.cota);
+		 	cel.appendChild(text);			 	
+		 	linha.appendChild(cel);
+		 	
+		 	var cel2 = document.createElement("TD");
+		 	cel2.align="right";
+		 	text2 = document.createTextNode(cota.nome);
+		 	cel2.appendChild(text2);			 	
+		 	linha.appendChild(cel2);
+		 	
+		 	tbody.appendChild(linha);
+			 
+			
+		 });		 		
+	}
+	
+	function sortGrid(table, order) {
+		// Remove all characters in c from s.
+		var stripChar = function(s, c) {
+			var r = "";
+			for ( var i = 0; i < s.length; i++) {
+				r += c.indexOf(s.charAt(i)) >= 0 ? "" : s.charAt(i);
+			}
+			return r;
+		}
+		// Test for characters accepted in numeric values.
+		var isNumeric = function(s) {
+			var valid = "0123456789.,- ";
+			var result = true;
+			var c;
+			for ( var i = 0; i < s.length && result; i++) {
+				c = s.charAt(i);
+				if (valid.indexOf(c) <= -1) {
+					result = false;
+				}
+			}
+			return result;
+		}
+		// Sort table rows.
+		var asc = order == "asc";
+		var rows = $(table).find("tbody > tr").get();
+		var column = $(table).parent(".bDiv").siblings(".hDiv").find("table tr th")
+				.index($("th.sorted", ".flexigrid:has(" + table + ")"));
+		rows.sort(function(a, b) {
+			var keyA = $(asc ? a : b).children("td").eq(column).text()
+					.toUpperCase();
+			var keyB = $(asc ? b : a).children("td").eq(column).text()
+					.toUpperCase();
+			if ((isNumeric(keyA) || keyA.length < 1)
+					&& (isNumeric(keyB) || keyB.length < 1)) {
+				keyA = stripChar(stripChar(keyA, ","), ".");
+				keyB = stripChar(stripChar(keyB, ","), ".");
+				if (keyA.length < 1)
+					keyA = 0;
+				if (keyB.length < 1)
+					keyB = 0;
+				keyA = new Number(parseFloat(keyA));
+				keyB = new Number(parseFloat(keyB));
+			}
+			return keyA > keyB ? 1 : keyA < keyB ? -1 : 0;
+		});
+		// Rebuild the table body.
+		$.each(rows, function(index, row) {
+			$(table).children("tbody").append(row);
+		});
+		// Fix styles
+		$(table).find("tr").removeClass("erow"); // Clear the striping.
+		$(table).find("tr:odd").addClass("erow"); // Add striping to odd numbered
+													// rows.
+		$(table).find("td.sorted").removeClass("sorted"); // Clear sortedclass
+															// from table cells.
+		$(table).find("tr").each(function() {
+			$(this).find("td:nth(" + column + ")").addClass("sorted"); // Add sorted class to sorted column cells.
+		});
 	}
 	
 </script>
