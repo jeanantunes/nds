@@ -1,6 +1,7 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -508,6 +510,14 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio Reparte");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -908,5 +918,21 @@ public class Fixture {
 		controleBaixaBancaria.setResponsavel(responsavel);
 		
 		return controleBaixaBancaria;
+	}
+	
+	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
+			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
+			BigDecimal valor, List<MovimentoEstoqueCota> lista) {
+		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
+		mfc.setAprovadoAutomaticamente(true);
+		mfc.setCota(cota);
+		mfc.setDataAprovacao(new Date());
+		mfc.setDataInclusao(new Date());
+		mfc.setMovimentos(lista);
+		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setTipoMovimento(tipoMovimento);
+		mfc.setUsuario(usuario);
+		mfc.setValor(new BigDecimal(200));
+		return mfc;
 	}
 }
