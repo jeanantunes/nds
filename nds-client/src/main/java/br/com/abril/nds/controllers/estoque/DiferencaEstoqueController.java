@@ -174,7 +174,7 @@ public class DiferencaEstoqueController {
 			
 			if (diferenca.getMovimentoEstoque() != null) {
 			
-				Date dataLancamento = diferenca.getMovimentoEstoque().getDataInclusao();
+				Date dataLancamento = diferenca.getMovimentoEstoque().getData();
 				
 				if (dataLancamento != null) {
 					
@@ -395,7 +395,7 @@ public class DiferencaEstoqueController {
 			
 			MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 			
-			movimentoEstoque.setDataInclusao(dataMovimento);
+			movimentoEstoque.setData(dataMovimento);
 			movimentoEstoque.setQtde(diferencaVO.getQuantidade());
 			movimentoEstoque.setProdutoEdicao(produtoEdicao);
 			movimentoEstoque.setStatus(StatusAprovacao.PENDENTE);
@@ -857,7 +857,7 @@ public class DiferencaEstoqueController {
 			
 			if (diferenca.getMovimentoEstoque() != null) {
 			
-				Date dataLancamento = diferenca.getMovimentoEstoque().getDataInclusao();
+				Date dataLancamento = diferenca.getMovimentoEstoque().getData();
 				
 				if (dataLancamento != null) {
 					
@@ -937,7 +937,7 @@ public class DiferencaEstoqueController {
 			
 			if (diferenca.getMovimentoEstoque() != null) {
 				
-				Date dataLancamento = diferenca.getMovimentoEstoque().getDataInclusao();
+				Date dataLancamento = diferenca.getMovimentoEstoque().getData();
 				
 				if (dataLancamento != null) {
 					
@@ -1006,7 +1006,7 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setId(diferenca.getId());
 			
 			consultaDiferencaVO.setDataLancamento(
-				DateUtil.formatarData(diferenca.getMovimentoEstoque().getDataInclusao(),
+				DateUtil.formatarData(diferenca.getMovimentoEstoque().getData(),
 									  Constantes.DATE_PATTERN_PT_BR));
 			
 			consultaDiferencaVO.setCodigoProduto(diferenca.getProdutoEdicao().getProduto().getCodigo());

@@ -34,8 +34,8 @@ public abstract class Movimento extends Aprovacao {
 	private Usuario usuario;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA_INCLUSAO", nullable = false)
-	private Date dataInclusao;
+	@Column(name = "DATA", nullable = false)
+	private Date data;
 	
 	public Long getId() {
 		return id;
@@ -53,12 +53,12 @@ public abstract class Movimento extends Aprovacao {
 		this.usuario = usuario;
 	}
 	
-	public Date getDataInclusao() {
-		return dataInclusao;
+	public Date getData() {
+		return data;
 	}
 	
-	public void setDataInclusao(Date dataInclusao) {
-		this.dataInclusao = dataInclusao;
+	public void setData(Date data) {
+		this.data = data;
 	}
 
 }
