@@ -19,7 +19,7 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	private Integer numeroCota;
 	private Date dataVencimentoDe;
 	private Date dataVencimentoAte;
-	private StatusCobranca statusCobranca;
+	private StatusCobranca status;
 	private PaginacaoVO paginacao;
 	private OrdenacaoColunaBoletos ordenacaoColuna;
 	
@@ -36,11 +36,11 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	public FiltroConsultaBoletosCotaDTO(Integer numeroCota,
 			                            Date dataVencimentoDe,
 			                            Date dataVencimentoAte,
-			                            StatusCobranca statusCobranca){
+			                            StatusCobranca status){
 		this.numeroCota=numeroCota;
 		this.dataVencimentoDe=dataVencimentoDe;
 		this.dataVencimentoAte=dataVencimentoAte;
-		this.statusCobranca=statusCobranca;
+		this.status=status;
 	}
 	
 	
@@ -59,7 +59,7 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		ENCARGOS("encargos"),
 		VALOR("valor"),
 		TIPO_BAIXA("tipoBaixa"),
-		STATUS("status"),
+		STATUS_COBRANCA("status"),
 		ACAO("acao");
 		
 		private String nomeColuna;
@@ -99,12 +99,12 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		this.dataVencimentoAte = dataVencimentoAte;
 	}
 	
-	public StatusCobranca getStatusCobranca() {
-		return statusCobranca;
+	public StatusCobranca getStatus() {
+		return status;
 	}
 	
-	public void setStatusCobranca(StatusCobranca statusCobranca) {
-		this.statusCobranca = statusCobranca;
+	public void setStatus(StatusCobranca status) {
+		this.status = status;
 	}
 	
 	public PaginacaoVO getPaginacao() {
@@ -143,7 +143,7 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
 		result = prime * result
-				+ ((statusCobranca == null) ? 0 : statusCobranca.hashCode());
+				+ ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
@@ -176,7 +176,7 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 				return false;
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
-		if (statusCobranca != other.statusCobranca)
+		if (status != other.status)
 			return false;
 		return true;
 	}

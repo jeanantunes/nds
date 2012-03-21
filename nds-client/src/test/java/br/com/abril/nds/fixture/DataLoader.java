@@ -2,6 +2,7 @@ package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,12 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -72,7 +79,7 @@ public class DataLoader {
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
-	private static PessoaJuridica juridicaDistrib;
+	private static PessoaJuridica juridicaValida;
 	private static PessoaFisica manoel;
 	private static PessoaFisica jose;
 	private static PessoaFisica maria;
@@ -87,7 +94,10 @@ public class DataLoader {
 	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte;
 	
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota;	
+
 	private static Carteira carteiraRegistrada;
 	private static Carteira carteiraSemRegistro;
 	
@@ -169,6 +179,17 @@ public class DataLoader {
 	
 	private static Banco bancoHSBC;
 
+	
+	private static Boleto boleto1;
+	private static Boleto boleto2;
+	private static Boleto boleto3;
+	private static Boleto boleto4;
+	private static Boleto boleto5;
+	private static Boleto boleto6;
+	private static Boleto boleto7;
+	private static Boleto boleto8;
+	private static Boleto boleto9;
+
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -180,12 +201,12 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
-
+			
 			//carregarDadosParaContagemdDevolucao(session);
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			carregarBoletos(session);
+			//carregarDadosInadimplencia(session);
 
 			commit = true;
 		} catch (Exception e) {
@@ -422,11 +443,11 @@ public class DataLoader {
 	}
 
 
-	
-	
-	
-	
+
 	private static void carregarDados(Session session) {
+
+		criarCarteira(session);
+		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
@@ -453,7 +474,7 @@ public class DataLoader {
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
 		criarParametroEmail(session);
-		criarCarteira(session);
+		criarDivida(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -523,6 +544,28 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
+		
+		
+		carregarBoletos(session);
+		
+	}
+
+	private static void criarDivida(Session session) {
+		ConsolidadoFinanceiroCota consolidado = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
+						new Date(), new BigDecimal(200));
+		save(session, consolidado);
+		
+		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(session, divida);
+		
+		Boleto boleto = Fixture.boleto("123", new Date(),
+				DateUtil.adicionarDias(new Date(), 2), null, null,
+				new BigDecimal(200), null, null, StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, divida);
+		save(session, boleto);
 	}
 
 	private static void criarTiposFornecedores(Session session) {
@@ -539,8 +582,14 @@ public class DataLoader {
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		save(session, mec);
+		
+		movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), new Date());
+
+		save(session, movimentoFinanceiroCota);
 	}
 	
 	private static void criarMovimentosEstoqueCotaConferenciaEncalhe(Session session) {
@@ -727,7 +776,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
-						new Date(), BigDecimal.TEN,  StatusLancamento.RECEBIDO,
+						new Date(), BigDecimal.TEN,  StatusLancamento.CONFIRMADO,
 						itemRecebimentoFisico);
 		session.save(lancamentoVeja1);
 		
@@ -751,7 +800,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
-								new Date(), new BigDecimal(100), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoSuper1);
 		
@@ -762,7 +811,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1000), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(1000), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoCapricho1);
 		
@@ -775,7 +824,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
-								new Date(), new BigDecimal(500), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(500), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoInfoExame1);
 		
@@ -786,7 +835,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1500), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(1500), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoQuatroRodas1);
 		
@@ -797,7 +846,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBoaForma1.getPeb()), new Date(),
-								new Date(), new BigDecimal(190), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(190), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoBoaForma1);
 		
@@ -808,7 +857,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBravo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(250), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoBravo1);
 		
@@ -819,7 +868,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCaras1.getPeb()), new Date(),
-								new Date(), new BigDecimal(290), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(290), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoBoaCaras1);
 		
@@ -830,7 +879,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(350), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(350), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoCasaClaudia1);
 		
@@ -841,7 +890,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(400), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(400), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoClaudia1);
 		
@@ -852,7 +901,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoContigo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(185), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(185), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoContigo1);
 		
@@ -863,7 +912,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoManequim1.getPeb()), new Date(),
-								new Date(), new BigDecimal(225), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(225), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoManequim1);
 		
@@ -874,7 +923,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoNatGeo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(75), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(75), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoNatGeo1);
 		
@@ -885,7 +934,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoPlacar1.getPeb()), new Date(),
-								new Date(), new BigDecimal(195), StatusLancamento.RECEBIDO,
+								new Date(), new BigDecimal(195), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoPlacar1);
 	}
@@ -1042,7 +1091,7 @@ public class DataLoader {
 
 	private static void criarDistribuidor(Session session) {
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
 		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date());
@@ -1099,12 +1148,13 @@ public class DataLoader {
 		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
+		tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
 				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
-				tipoMovimentoEnvioEncalhe);
+				tipoMovimentoEnvioEncalhe, tipoMovimentoFinenceiroReparte);
 
 	}
 
@@ -1420,11 +1470,11 @@ public class DataLoader {
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
 		juridicaFc = Fixture.pessoaJuridica("FC",
 				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
-		juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
+				"93.081.738/0001-01", "333.333.333.333", "distrib_acme@mail.com");
 		
-		manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");
+		manoel = Fixture.pessoaFisica("319.435.088-95",
+				"developertestermail@gmail.com", "Manoel da Silva");
 
 		jose = Fixture.pessoaFisica("123.456.789-01",
 				"jose@mail.com", "Jose da Silva");
@@ -1432,18 +1482,38 @@ public class DataLoader {
 		maria = Fixture.pessoaFisica("123.456.789-02",
 				"maria@mail.com", "Maria da Silva");
 		
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib,manoel,jose,maria);
+		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaValida,manoel,jose,maria);
 	}
 	
 	
 	//FINANCEIRO - CONSULTA BOLETOS
 	private static void carregarBoletos(Session session) {
 		
-		criarPessoas(session);
-		criarBox(session);
-		criarCotas(session);
-		criarBanco(session);
+		/*
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
 		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), new Date());
+		save(session,movimentoFinanceiroCota);
+		
+		ConsolidadoFinanceiroCota consolidado = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
+						new Date(), new BigDecimal(200));
+		save(session, consolidado);
+		
+		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(session, divida);
+
 		Boleto boleto0 = Fixture.boleto("1309309032012440",
 				                       new Date(), 
 				                       new Date(), 
@@ -1454,309 +1524,51 @@ public class DataLoader {
 				                       "ACAO", 
 				                       StatusCobranca.PAGO,
 				                       cotaManoel,
-				                       bancoHSBC);
+				                       bancoHSBC,
+				                       divida);
+		*/
+
 		
-		Boleto boleto1 = Fixture.boleto("1309709032012747",
+		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota2);
+		
+		MovimentoEstoqueCota mec2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota2,
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec2);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec2), new Date());
+		save(session,movimentoFinanceiroCota2);
+		
+		ConsolidadoFinanceiroCota consolidado2 = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota2), cotaManoel,
+						new Date(), new BigDecimal(200));
+		save(session, consolidado2);
+		
+		Divida divida2 = Fixture.divida(consolidado2, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(session, divida2);
+		
+		Boleto boleto1 = Fixture.boleto("130970903",
                                         new Date(), 
                                         new Date(), 
-                                        new Date(), 
+                                        null, 
                                         "ENCARGOS", 
-                                        new BigDecimal(100.35), 
+                                        new BigDecimal(200), 
                                         "TIPO_BAIXA",
                                         "ACAO", 
-                                        StatusCobranca.PAGO,
-                                        cotaMaria,
- 				                        bancoHSBC);
-		
-		Boleto boleto2 = Fixture.boleto("1310209032012740",
-                						new Date(), 
-                						new Date(), 
-                						null,
-                						"ENCARGOS", 
-                						new BigDecimal(376.07),
-                						"TIPO_BAIXA",
-                						"ACAO", 
-                						StatusCobranca.NAO_PAGO,
-                						cotaJose,
- 				                        bancoHSBC);
-		
-		Boleto boleto3 = Fixture.boleto("1310609032012041",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(200.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto4 = Fixture.boleto("1310809032012641",
-						                new Date(), 
-						                DateUtil.parseDataPTBR("12/03/2012"), 
-						                null, 
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto5 = Fixture.boleto("1311009032012840",
-						                new Date(), 
-						                DateUtil.parseDataPTBR("11/03/2012"), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(50.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto6 = Fixture.boleto("70000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(1002.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto7 = Fixture.boleto("80000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(1000.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		
-		Boleto boleto8 = Fixture.boleto("90000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto9 = Fixture.boleto("100000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto10 = Fixture.boleto("110000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		
-		Boleto boleto11 = Fixture.boleto("120000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto12 = Fixture.boleto("130000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto13 = Fixture.boleto("140000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		
-		Boleto boleto14 = Fixture.boleto("150000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto15 = Fixture.boleto("160000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto16 = Fixture.boleto("170000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto17 = Fixture.boleto("180000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto18 = Fixture.boleto("190000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto19 = Fixture.boleto("200000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto20 = Fixture.boleto("210000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto21 = Fixture.boleto("220000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto22 = Fixture.boleto("230000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto23 = Fixture.boleto("240000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
+                                        StatusCobranca.NAO_PAGO,
+                                        cotaManoel,
+ 				                        bancoHSBC,
+ 				                        divida2);
 		
 	    save(session,
-    		 boleto0,
-			 boleto1,
-			 boleto2,
-			 boleto3,
-			 boleto4,
-			 boleto5,
-			 boleto6,
-			 boleto7,
-			 boleto8,
-			 boleto9,
-			 boleto10,
-			 boleto11,
-			 boleto12,
-			 boleto13,
-			 boleto14,
-			 boleto15,
-			 boleto16,
-			 boleto17,
-			 boleto18,
-			 boleto19,
-			 boleto20,
-			 boleto21,
-			 boleto22,
-			 boleto23);    
+    		 /*boleto0,*/
+			 boleto1);    
 	    
 	}
 	
@@ -1789,8 +1601,8 @@ public class DataLoader {
 		enderecoCota2.setCota(cotaManoel);
 		enderecoCota2.setEndereco(endereco2);
 		enderecoCota2.setPrincipal(false);
-		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
-		
+		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);		
+
 		save(session, endereco, enderecoCota, endereco2, enderecoCota2);
 	}
 	
@@ -1861,7 +1673,7 @@ public class DataLoader {
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					new BigDecimal(100), 
-					StatusLancamento.RECEBIDO, 
+					StatusLancamento.CONFIRMADO, 
 					itemFisico);
 			lancamento.setReparte(new BigDecimal(10));
 			save(session,lancamento);
@@ -1901,6 +1713,89 @@ public class DataLoader {
 							  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399");
 		
 		save(session, bancoHSBC);
+	}
+	
+	public static void carregarDadosInadimplencia(Session session) {
+		carregarDados(session);
+		carregarBoletos(session);
+				
+		boleto1.setDataVencimento( Fixture.criarData(10, 3, 2012));
+		boleto2.setDataVencimento( Fixture.criarData(11, 2, 2012));
+		boleto3.setDataVencimento( Fixture.criarData(12, 3, 2012));
+		boleto4.setDataVencimento( Fixture.criarData(13, 3, 2012));
+		boleto5.setDataVencimento( Fixture.criarData(14, 2, 2012));
+		boleto6.setDataVencimento( Fixture.criarData(15, 3, 2012));
+		boleto7.setDataVencimento( Fixture.criarData(16, 3, 2012));
+		boleto8.setDataVencimento( Fixture.criarData(8, 1, 2012));
+		boleto8.setCota(cotaMaria);
+		boleto8.setStatusCobranca(StatusCobranca.NAO_PAGO);
+		boleto9.setDataVencimento( Fixture.criarData(18, 3, 2012));		
+		
+		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6, boleto7, boleto8, boleto9);
+		
+		HistoricoInadimplencia histInadimplencia1 = 
+				Fixture.criarHistoricoInadimplencia( boleto1, Fixture.criarData(10, 3, 2012), 
+						usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia1);
+	    HistoricoInadimplencia histInadimplencia2 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto2, Fixture.criarData(10, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia2);
+	    HistoricoInadimplencia histInadimplencia3 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto3, Fixture.criarData(11, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia3);
+	    HistoricoInadimplencia histInadimplencia4 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto4, Fixture.criarData(12, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia4);
+	    HistoricoInadimplencia histInadimplencia5 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto5, Fixture.criarData(13, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia5);
+	    HistoricoInadimplencia histInadimplencia6 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto6, Fixture.criarData(14, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia6);
+	    HistoricoInadimplencia histInadimplencia7 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto7, Fixture.criarData(15, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia7);
+	    HistoricoInadimplencia histInadimplencia8 = 
+	    		Fixture.criarHistoricoInadimplencia( boleto8, Fixture.criarData(16, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia8);
+	    HistoricoInadimplencia histInadimplencia = 
+	    		Fixture.criarHistoricoInadimplencia( boleto9, Fixture.criarData(17, 3, 2012), 
+	    				usuarioJoao, StatusInadimplencia.ATIVA);
+	    save(session, histInadimplencia);
+	    
+	    EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(
+				produtoEdicaoBravo1, cotaJose, new BigDecimal(10.77), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota2);
+		
+		EstoqueProdutoCota estoqueProdutoCota3 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(session, estoqueProdutoCota3);
+		
+		EstoqueProdutoCota estoqueProdutoCota4 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaMaria, new BigDecimal(186), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota4);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		MovimentoEstoqueCota mec2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(28), cotaMaria, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec2);
+	    
 	}
 	
 }

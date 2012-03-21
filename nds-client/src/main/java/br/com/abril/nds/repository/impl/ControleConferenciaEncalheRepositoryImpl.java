@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 
 @Repository
@@ -16,7 +17,7 @@ public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository
 	}
 	
 	/**
-	 * Obtém o ControleConferenciaEncalhe pela data de operação.
+	 * Obt�m o ControleConferenciaEncalhe pela data de opera��o.
 	 * 
 	 * @param dataOperacao
 	 * 
@@ -39,5 +40,21 @@ public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository
 		return (ControleConferenciaEncalhe) query.uniqueResult();
 		
 	}
+
+	@Override
+	public StatusOperacao obterStatusConferenciaDataOperacao() {
+		
+		StringBuilder hql = new StringBuilder("select cce.status ");
+		hql.append(" from ControleConferenciaEncalhe cce, Distribuidor d ")
+		   .append(" where cce.data = d.dataOperacao");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setMaxResults(1);
+		
+		return (StatusOperacao) query.uniqueResult();
+	}
+
+
+
 	
 }

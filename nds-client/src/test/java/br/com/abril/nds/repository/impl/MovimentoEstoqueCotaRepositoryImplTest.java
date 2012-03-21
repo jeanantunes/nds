@@ -208,7 +208,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.RECEBIDO, itemRecebimentoFisico1Veja);
+				StatusLancamento.PLANEJADO, itemRecebimentoFisico1Veja);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
