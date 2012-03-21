@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -55,8 +56,15 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -65,6 +73,9 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -317,6 +328,51 @@ public class Fixture {
 		return lancamento;
 	}
 	
+	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
+			Usuario usuario,
+			ProdutoEdicao produtoEdicao, 
+			StatusAprovacao statusAprovacao,
+			Date drd, 
+			Date dataStatus, 
+			BigDecimal qtde) {
+		
+		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
+		
+		conferenciaEncalheParcial.setDataConfEncalheParcial(dataStatus);
+		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(drd);
+		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
+		conferenciaEncalheParcial.setQtde(qtde);
+		conferenciaEncalheParcial.setResponsavel(usuario);
+		conferenciaEncalheParcial.setStatusAprovacao(statusAprovacao);
+		
+		return conferenciaEncalheParcial;
+	}
+	
+	
+	public static ControleConferenciaEncalhe controleConferenciaEncalhe (
+			StatusOperacao statusOperacao,
+			Date data) {
+		
+		ControleConferenciaEncalhe controleConferenciaEncalhe = new ControleConferenciaEncalhe();
+		
+		controleConferenciaEncalhe.setData(data);
+		controleConferenciaEncalhe.setStatus(statusOperacao);
+		
+		return controleConferenciaEncalhe;
+	}
+	
+	public static ControleContagemDevolucao controleContagemDevolucao (
+			StatusOperacao statusOperacao,
+			Date data) {
+		
+		ControleContagemDevolucao controleContagemDevolucao = new ControleContagemDevolucao();
+		
+		controleContagemDevolucao.setData(data);
+		controleContagemDevolucao.setStatus(statusOperacao);
+		
+		return controleContagemDevolucao;
+	}
+	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
 			Date dataStatus, BigDecimal reparte,
@@ -346,7 +402,7 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
-				TipoCobranca.BOLETO, new BigDecimal(200), true));
+				TipoCobranca.BOLETO, new BigDecimal(200), true,1));
 		return distribuidor;
 	}
 
@@ -508,6 +564,14 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio Reparte");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -593,7 +657,7 @@ public class Fixture {
 			StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setDataInclusao(new Date());
+		movimentoEstoque.setData(new Date());
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(new BigDecimal(1.0));
@@ -623,7 +687,7 @@ public class Fixture {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
-		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setData(dataInclusao);
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(qtde);
@@ -683,7 +747,7 @@ public class Fixture {
 			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
-		movimentoEstoque.setDataInclusao(new Date());
+		movimentoEstoque.setData(new Date());
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
@@ -715,7 +779,7 @@ public class Fixture {
 			String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
-		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setData(dataInclusao);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
@@ -802,7 +866,8 @@ public class Fixture {
 				                String acao,
 				                StatusCobranca status,
 				                Cota cota,
-				                Banco banco){
+				                Banco banco,
+				                Divida divida){
 			
 		Boleto boleto = new Boleto();
 		boleto.setNossoNumero(nossoNumero);
@@ -816,6 +881,7 @@ public class Fixture {
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
 		boleto.setBanco(banco);
+		boleto.setDivida(divida);
 		
 		return boleto;
 	}
@@ -830,13 +896,14 @@ public class Fixture {
 	
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, TipoCobranca tipo,
-			BigDecimal valorMinimo, boolean aceitaPagamentoDivergente) {
+			BigDecimal valorMinimo, boolean aceitaPagamentoDivergente, int inadimplenciasSuspencao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setTipoCobranca(tipo);
 		politicaCobranca.setValorMinino(valorMinimo);
 		politicaCobranca.setAceitaPagamentoDivergente(aceitaPagamentoDivergente);
 		politicaCobranca.setDistribuidor(distribuidor);
+		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
 		return politicaCobranca;
 	}
 	
@@ -909,4 +976,59 @@ public class Fixture {
 		
 		return controleBaixaBancaria;
 	}
+	
+	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
+			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
+			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
+		mfc.setAprovadoAutomaticamente(true);
+		mfc.setCota(cota);
+		mfc.setDataAprovacao(data);
+		mfc.setData(data);
+		mfc.setMovimentos(lista);
+		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setTipoMovimento(tipoMovimento);
+		mfc.setUsuario(usuario);
+		mfc.setValor(valor);
+		return mfc;
+	}
+
+
+
+	public static HistoricoInadimplencia criarHistoricoInadimplencia(
+			Cobranca cobranca, Date dataInclusao, Usuario usuario,
+			StatusInadimplencia status) {
+		HistoricoInadimplencia historicoInadimplencia = new HistoricoInadimplencia();
+		historicoInadimplencia.setCobranca(cobranca);
+		historicoInadimplencia.setDataInclusao(dataInclusao);
+		historicoInadimplencia.setResponsavel(usuario);
+		historicoInadimplencia.setStatus(status);
+		return historicoInadimplencia;
+	}
+	
+	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
+			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
+			BigDecimal valorConsolidado) {
+		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		consolidado.setConsignado(valorConsolidado);
+		consolidado.setMovimentos(movimentos);
+		consolidado.setCota(cota);
+		consolidado.setDataConsolidado(data);
+		consolidado.setTotal(valorConsolidado);
+		return consolidado;
+	}
+	
+	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
+			Cota cota, Date data, Usuario usuario, StatusDivida status,
+			BigDecimal valor) {
+		Divida divida = new Divida();
+		divida.setConsolidado(consolidado);
+		divida.setCota(cota);
+		divida.setData(data);
+		divida.setResponsavel(usuario);
+		divida.setStatus(status);
+		divida.setValor(valor);
+		return divida;
+	}
+	
 }

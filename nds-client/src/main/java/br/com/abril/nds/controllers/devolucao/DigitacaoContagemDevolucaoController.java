@@ -17,8 +17,10 @@ import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -31,6 +33,14 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+/**
+ * 
+ * Classe responsável por controlas as ações da pagina de Digitação de Contagem de Devolução.
+ * 
+ * @author Discover Technology
+ *
+ */
 
 @Resource
 @Path(value="/devolucao/digitacao/contagem")
@@ -45,10 +55,18 @@ public class DigitacaoContagemDevolucaoController  {
 	@Autowired
 	private HttpSession session;
 	
+	@Autowired
+	private ContagemDevolucaoService contagemDevolucaoService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisa";
 	
 	@Path("/")
 	public void index(){
+		
+		/**
+		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
+		 */
+		result.include("userProfileOperador",false);
 		
 		carregarComboFornecedores();
 	}
@@ -86,68 +104,23 @@ public class DigitacaoContagemDevolucaoController  {
 		efetuarPesquisa(filtro);
 	}
 	
-	private List<ContagemDevolucaoDTO> getMock(){
-		
-		List<ContagemDevolucaoDTO> list = new ArrayList<ContagemDevolucaoDTO>();
-		
-		for (int i = 0; i < 10; i++) {
-		
-			ContagemDevolucaoDTO xx = new ContagemDevolucaoDTO();
-			xx.setCodigoProduto("100");
-			xx.setIdConferenciaEncParcial(10L);
-			//xx.setIdMovimentoEstoqueCota(1L);
-			xx.setNomeProduto("Nome");
-			xx.setNumeroEdicao(10L);
-			xx.setPrecoVenda(new BigDecimal(20));
-			xx.setQtdDevolucao(new BigDecimal(25));
-			xx.setQtdNota(new BigDecimal(85));
-			xx.setValorTotal(new BigDecimal(52));
-			
-			list.add(xx);
-		}
-		return list;
-		
-	}
-	
 	/**
 	 * Executa a pesquisa de digitação de contagem de devolução 
 	 * @param filtro
 	 */
 	public void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
 		
-		Long quantidadeRegistros = 10L; //TODO chamar componente
+		InfoContagemDevolucaoDTO infoConatege = contagemDevolucaoService.obterInfoContagemDevolucao(filtro, null);
 		
-		InfoContagemDevolucaoDTO infoConatege = new InfoContagemDevolucaoDTO();//TODO chamar componente
-		
-		//List<ContagemDevolucaoDTO> listaResultados = infoConatege.getListaContagemDevolucao();
-		
-		List<ContagemDevolucaoDTO> listaResultados =  getMock();
+		List<ContagemDevolucaoDTO> listaResultados = infoConatege.getListaContagemDevolucao();
 		
 		if (listaResultados == null || listaResultados.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		List<DigitacaoContagemDevolucaoVO> listaResultadosVO = new ArrayList<DigitacaoContagemDevolucaoVO>();
+		Long quantidadeRegistros = infoConatege.getQtdTotalRegistro().longValue(); 
 		
-		DigitacaoContagemDevolucaoVO digitacaoContagemDevolucaoVO = null;
-		
-		for(ContagemDevolucaoDTO dto: listaResultados){
-			
-			digitacaoContagemDevolucaoVO = new DigitacaoContagemDevolucaoVO();
-			
-			digitacaoContagemDevolucaoVO.setCodigoProduto(dto.getCodigoProduto());
-			digitacaoContagemDevolucaoVO.setIdConferenciaEncParcial(String.valueOf(dto.getIdConferenciaEncParcial()) );
-			//digitacaoContagemDevolucaoVO.setIdMovimentoEstoqueCota(String.valueOf(dto.getIdMovimentoEstoqueCota()));
-			digitacaoContagemDevolucaoVO.setNomeProduto(dto.getNomeProduto());
-			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
-			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
-			digitacaoContagemDevolucaoVO.setQntDiferenca(null);
-			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf(dto.getQtdDevolucao()));
-			digitacaoContagemDevolucaoVO.setQtdNota(String.valueOf(dto.getQtdNota()));
-			digitacaoContagemDevolucaoVO.setValorTotal(CurrencyUtil.formatarValor(dto.getValorTotal()));
-			
-			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
-		}
+		List<DigitacaoContagemDevolucaoVO> listaResultadosVO = getListaDigitacaoContagemDevolucaoVO(listaResultados);
 		
 		TableModel<CellModelKeyValue<DigitacaoContagemDevolucaoVO>> tableModel = new TableModel<CellModelKeyValue<DigitacaoContagemDevolucaoVO>>();
 
@@ -162,6 +135,103 @@ public class DigitacaoContagemDevolucaoController  {
 		ResultadoDigitacaoContagemDevolucaoVO resultadoPesquisa = new ResultadoDigitacaoContagemDevolucaoVO(tableModel,valorTotalFormatado);
 
 		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
+	}
+	
+	
+	@Post
+	@Path("/salvar")
+	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao){
+		
+		if (listaDigitacaoContagemDevolucao == null 
+				|| listaDigitacaoContagemDevolucao.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+		}
+		
+		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		
+		//TODO efetuar chamada para salvar
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+										Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	
+	@Post
+	@Path("/confirmar")
+	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao){
+		
+		if (listaDigitacaoContagemDevolucao == null 
+				|| listaDigitacaoContagemDevolucao.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+		}
+		
+		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		
+		//TODO efetuar chamada da confirmação
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+										Constantes.PARAM_MSGS).recursive().serialize();
+		
+	}
+	
+	/**
+	 * Retorna uma lista de objetos ContagemDevolucaoDTO convertidos em DigitacaoContagemDevolucaoVO, 
+	 * para renderização das informações no grid da tela.
+	 * @param listaContagemDevolucaoDto
+	 * @return List<DigitacaoContagemDevolucaoVO>
+	 */
+	private List<DigitacaoContagemDevolucaoVO>getListaDigitacaoContagemDevolucaoVO(List<ContagemDevolucaoDTO> listaContagemDevolucaoDto){
+		
+		List<DigitacaoContagemDevolucaoVO> listaResultadosVO = new ArrayList<DigitacaoContagemDevolucaoVO>();
+		
+		DigitacaoContagemDevolucaoVO digitacaoContagemDevolucaoVO = null;
+		
+		for(ContagemDevolucaoDTO dto: listaContagemDevolucaoDto){
+			
+			digitacaoContagemDevolucaoVO = new DigitacaoContagemDevolucaoVO();
+			
+			digitacaoContagemDevolucaoVO.setCodigoProduto(dto.getCodigoProduto());
+			digitacaoContagemDevolucaoVO.setNomeProduto(dto.getNomeProduto());
+			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
+			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
+			digitacaoContagemDevolucaoVO.setDiferenca(String.valueOf( (dto.getDiferenca() == null)?BigDecimal.ZERO.intValue():dto.getDiferenca().intValue()));
+			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
+			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
+			digitacaoContagemDevolucaoVO.setValorTotal(CurrencyUtil.formatarValor(dto.getValorTotal()));
+			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataRecolhimentoDistribuidor())));
+			
+			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
+		}
+		
+		return listaResultadosVO;
+	}
+	
+	/**
+	 * Retorna uma lista de objetos ContagemDevolucaoDTO para execução de ações nos componentes de negócio.
+	 * @param listaContagemDevolucaoVOs
+	 * @return List<ContagemDevolucaoDTO>
+	 */
+	private List<ContagemDevolucaoDTO> getListaContagemDevolucaoDTO(List<DigitacaoContagemDevolucaoVO> listaContagemDevolucaoVOs){
+		
+		ContagemDevolucaoDTO contagemDevolucaoDTO = null;
+		List<ContagemDevolucaoDTO> listaResultadosDto = new ArrayList<ContagemDevolucaoDTO>();
+		
+		for(DigitacaoContagemDevolucaoVO vo: listaContagemDevolucaoVOs){
+			
+			contagemDevolucaoDTO = new ContagemDevolucaoDTO();
+			
+			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
+			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
+			contagemDevolucaoDTO.setQtdNota(new BigDecimal(vo.getQtdNota()));
+			contagemDevolucaoDTO.setDataRecolhimentoDistribuidor((vo.getDataRecolhimentoDistribuidor()==null)
+																?null:DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
+			
+			listaResultadosDto.add(contagemDevolucaoDTO);
+		}
+		
+		return listaResultadosDto;
 	}
 	
 	/**
@@ -253,15 +323,8 @@ public class DigitacaoContagemDevolucaoController  {
 		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
 				 								 DateUtil.parseDataPTBR(dataFinal))) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Período de] não pode ser maior que o campo [Até]!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "O campo Período de não pode ser maior que o campo Até!");
 		}
-		
-		if (!DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
-						 						 DateUtil.parseDataPTBR(dataFinal))) {
-		
-			throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Até] não pode ser menor que o campo [Período de]!");
-		}
-		
 	}
 	
 	/**
@@ -276,12 +339,12 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		if (!DateUtil.isValidDate(dataInicial, "dd/MM/yyyy")) {
 			
-			mensagens.add("O campo [Período de] é inválido");
+			mensagens.add("O campo Período de é inválido");
 		} 
 		
 		if (!DateUtil.isValidDate(dataFinal, "dd/MM/yyyy")) {
 			
-			mensagens.add ("O campo [Até] é inválido");
+			mensagens.add ("O campo Até é inválido");
 		}
 		
 		return mensagens;
@@ -299,12 +362,12 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		if (dataInicial == null || dataInicial.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo [Período de] é obrigatório");
+			mensagens.add("O preenchimento do campo Período de é obrigatório");
 		} 
 		
 		if (dataFinal == null || dataFinal.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo [Até] é obrigatório");
+			mensagens.add("O preenchimento do campo Até é obrigatório");
 		} 
 		
 		return mensagens;

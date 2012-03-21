@@ -119,7 +119,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);		
-		movimentoEstoque.setDataInclusao(new Date());
+		movimentoEstoque.setData(new Date());
 		movimentoEstoque.setUsuario(usuarioRepository.buscarPorId(idUsuario));
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
@@ -180,7 +180,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(estoqueProdutoCota.getCota());
-		movimentoEstoqueCota.setDataInclusao(new Date());
+		movimentoEstoqueCota.setData(new Date());
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());
 		movimentoEstoqueCota.setQtde(quantidade);

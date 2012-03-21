@@ -51,7 +51,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		Lancamento lancamento = 
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, 
-						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.RECEBIDO, null);
+						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.CONFIRMADO, null);
 		save(lancamento);
 		
 		Estudo estudo = 

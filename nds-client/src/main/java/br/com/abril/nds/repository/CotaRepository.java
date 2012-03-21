@@ -1,8 +1,10 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 
 /**
@@ -17,7 +19,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	/**
 	 * Obtém uma Cota pelo seu número.
 	 * 
-	 * @param numeroCota - número da cota
+	 * @param numeroCota - nÃºmero da cota
 	 * 
 	 * @return {@link Cota}
 	 */
@@ -53,10 +55,32 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	/**
 	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * @param paginacaoVO 
 	 * 
 	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
-	 * @return Cotasw
+	 * @param paginacaoVO - Dados referentes a paginação e ordenação
+	 * 
+	 * @return Cotas
 	 */
-	List<Cota> obterCotasSujeitasSuspensao(Integer limiteInadimplencia);
+	List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia);
+	
+	
+	/**
+	 * Obtém valor dos repartes Consignados a cota em determinado dia
+	 * 
+	 * @param idCota - código da cota
+	 * @param date - data
+	 * @return
+	 */
+	List<ProdutoValorDTO> obterReparteDaCotaNoDia(Long idCota, Date date);
+	
+	/**
+	 * Obtém valor total de consignados da cota
+	 * 
+	 * @param idCota
+	 * @return
+	 */	
+	List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota);
+	
 	
 }

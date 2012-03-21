@@ -13,7 +13,6 @@ public class ContagemDevolucaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Long idConferenciaEncParcial;
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
@@ -29,52 +28,53 @@ public class ContagemDevolucaoDTO implements Serializable {
 	
 	public ContagemDevolucaoDTO(){}
 	
-	public ContagemDevolucaoDTO(
+	public ContagemDevolucaoDTO (
 		
-			Long idConferenciaEncParcial,
 			String codigoProduto, 
 			String nomeProduto, 
 			Long numeroEdicao,
 			BigDecimal precoVenda, 
 			BigDecimal qtdDevolucao,
-			BigDecimal valorTotal,
 			BigDecimal qtdNota,
-			BigDecimal diferenca,
-			Date dataRecolhimentoDistribuidor, 
-			Date dataConfEncalheParcial,
-			Date dataAprovacao, 
-			StatusAprovacao statusAprovacao) {
+			Date dataRecolhimentoDistribuidor) {
 		
 		super();
-		this.idConferenciaEncParcial = idConferenciaEncParcial;
+		
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
 		this.precoVenda = precoVenda;
 		this.qtdDevolucao = qtdDevolucao;
-		this.valorTotal = valorTotal;
 		this.qtdNota = qtdNota;
-		this.diferenca = diferenca;
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
-		this.dataConfEncalheParcial = dataConfEncalheParcial;
-		this.dataAprovacao = dataAprovacao;
-		this.statusAprovacao = statusAprovacao;
 	}
 
-
+	public ContagemDevolucaoDTO (
+			
+			String codigoProduto, 
+			String nomeProduto, 
+			Long numeroEdicao,
+			BigDecimal precoVenda, 
+			Date dataRecolhimentoDistribuidor) {
+		
+		super();
+		
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
+		this.precoVenda = precoVenda;
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
 	
+
 	public BigDecimal getDiferenca() {
 		return diferenca;
 	}
+
 	public void setDiferenca(BigDecimal diferenca) {
 		this.diferenca = diferenca;
 	}
-	public Long getIdConferenciaEncParcial() {
-		return idConferenciaEncParcial;
-	}
-	public void setIdConferenciaEncParcial(Long idConferenciaEncParcial) {
-		this.idConferenciaEncParcial = idConferenciaEncParcial;
-	}
+
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}

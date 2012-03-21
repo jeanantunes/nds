@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -43,6 +44,9 @@ public class BaixaAutomatica {
 	
 	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = false)
 	private Integer numeroRegistroArquivo;
+	
+	@Column(name = "VALOR_PAGO" , nullable = false)
+	private BigDecimal valorPago;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "BOLETO_ID")
@@ -118,6 +122,20 @@ public class BaixaAutomatica {
 		this.numeroRegistroArquivo = numeroRegistroArquivo;
 	}
 
+	/**
+	 * @return the valorPago
+	 */
+	public BigDecimal getValorPago() {
+		return valorPago;
+	}
+
+	/**
+	 * @param valorPago the valorPago to set
+	 */
+	public void setValorPago(BigDecimal valorPago) {
+		this.valorPago = valorPago;
+	}
+	
 	/**
 	 * @return the boleto
 	 */

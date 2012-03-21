@@ -14,6 +14,7 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -35,7 +36,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
-import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -572,7 +572,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 			lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
 			
-			lancamento.setStatus(StatusLancamento.RECEBIDO);
+			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 			
 			lancamento.setDataStatus(dataAtual);
 			
@@ -588,10 +588,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			lancamentoRepository.adicionar(lancamento);
 			
+			inserirHistoricoLancamento(lancamento, dataAtual, usuarioLogado);
 		}
 
 		
-		inserirHistoricoLancamento(lancamento, dataAtual, usuarioLogado);
 		
 		
 	}
@@ -607,10 +607,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
 		
-		historicoLancamento.setData(dataAtual);
+		historicoLancamento.setDataEdicao(dataAtual);
 		historicoLancamento.setLancamento(lancamento);
 		historicoLancamento.setResponsavel(usuarioLogado);
 		historicoLancamento.setStatus(lancamento.getStatus());
+		historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
 		historicoLancamentoRepository.adicionar(historicoLancamento);
 		

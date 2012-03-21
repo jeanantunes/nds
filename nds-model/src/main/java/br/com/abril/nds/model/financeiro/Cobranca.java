@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -70,11 +72,16 @@ public abstract class Cobranca {
 	private boolean contemplacao;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_COBRANCA", nullable = false)
 	private StatusCobranca statusCobranca;
+	
+	@OneToOne(optional = false)
+	@JoinColumn(name = "DIVIDA_ID")
+	private Divida divida;
     
 	public Long getId() {
 		return id;
@@ -170,6 +177,14 @@ public abstract class Cobranca {
 
 	public void setStatusCobranca(StatusCobranca statusCobranca) {
 		this.statusCobranca = statusCobranca;
+	}
+	
+	public Divida getDivida() {
+		return divida;
+	}
+	
+	public void setDivida(Divida divida) {
+		this.divida = divida;
 	}
 	
 }

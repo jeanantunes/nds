@@ -24,7 +24,7 @@ public class ControleConferenciaEncalhe {
 	private Date data;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
-	private StatusConferenciaEncalhe status;
+	private StatusOperacao status;
 	
 	public Long getId() {
 		return id;
@@ -42,11 +42,11 @@ public class ControleConferenciaEncalhe {
 		this.data = data;
 	}
 	
-	public StatusConferenciaEncalhe getStatus() {
+	public StatusOperacao getStatus() {
 		return status;
 	}
 	
-	public void setStatus(StatusConferenciaEncalhe status) {
+	public void setStatus(StatusOperacao status) {
 		this.status = status;
 	}
 	

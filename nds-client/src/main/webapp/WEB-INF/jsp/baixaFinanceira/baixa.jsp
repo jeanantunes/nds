@@ -78,26 +78,25 @@
 		$(function() {
 			
 			if (${exibeCamposBaixaAutomatica}) {
-				$('#baixaAuto').show();
-			} else {
-				$('#baixaAuto').hide();
+				
+				$("#radioBaixaAuto").click();	
 			}
 			
 			$("#valorFinanceiro").numeric();
 	
 		});
 	
-		function mostraManual() {
+		function mostraBaixaManual() {
 	
 			$('#dadosArquivo').hide();
-			$('#baixaManual').show();
-			$('#baixaAuto').hide();
+			$('#tableBaixaManual').show();
+			$('#tableBaixaAuto').hide();
 		}
 	
-		function mostraAuto() {
+		function mostrarBaixaAuto() {
 	
-			$('#baixaAuto').show();
-			$('#baixaManual').hide();
+			$('#tableBaixaAuto').show();
+			$('#tableBaixaManual').hide();
 			$('#extratoBaixaManual').hide();
 		}
 		
@@ -122,8 +121,7 @@
 	
 	<style>
 		
-		
-		#baixaManual,#extratoBaixaManual,#nossoNumero,#porCota {
+		#tableBaixaManual,#tableBaixaAuto,#extratoBaixaManual,#nossoNumero,#porCota {
 			display: none;
 		}
 	</style>
@@ -135,22 +133,29 @@
 	</div>
 
 	<fieldset class="classFieldset">
+		
 		<legend> Baixa Financeira</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro">
+		
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="115">Tipo de Baixa:</td>
-				<td colspan="3"><table width="100%" border="0" cellspacing="0"
-						cellpadding="0">
+				<td colspan="3">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td width="7%"><input type="radio" name="baixa" id="radio"
-								value="radio" onclick="mostraManual();" /></td>
+							<td width="7%">
+								<input type="radio" name="radioBaixa" id="radioBaixaManual"
+									   value="radio" onclick="mostraBaixaManual();" />
+							</td>
 							<td width="22%">Manual</td>
-							<td width="8%"><input type="radio" name="baixa" id="radio2"
-								value="radio" onclick="mostraAuto();" /></td>
+							
+							<td width="8%">
+								<input type="radio" name="radioBaixa" id="radioBaixaAuto"
+									   value="radio" onclick="mostrarBaixaAuto();" />
+							</td>
 							<td width="63%">Automática</td>
 						</tr>
-					</table></td>
+					</table>
+				</td>
 				<td width="112">&nbsp;</td>
 				<td width="114">&nbsp;</td>
 				<td width="55">&nbsp;</td>
@@ -163,10 +168,10 @@
 			  method="post" enctype="multipart/form-data" >
 		
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
-				class="filtro" id="baixaAuto">
+				   class="filtro" id="tableBaixaAuto">
 				
 					<tr>
-						<td width="100">Nome Arquivo:</td>
+						<td width="65">Arquivo:</td>
 						<td colspan="3">
 							<input name="uploadedFile" type="file" id="uploadedFile" size="25" />
 						</td>
@@ -187,7 +192,7 @@
 		</form>
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro" id="baixaManual">
+			   class="filtro" id="tableBaixaManual">
 			<tr>
 				<td width="31">Cota:</td>
 				<td colspan="3"><input type="text"
