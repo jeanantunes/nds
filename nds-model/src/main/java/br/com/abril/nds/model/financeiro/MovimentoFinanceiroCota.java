@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -21,10 +22,21 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
 	@OneToMany
 	@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA", joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID")})
 	private List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
+	
+	@Column(name = "OBSERVACAO")
+	private String observacao;
+	
+	/**
+	 * Indica se o lançamento foi gerado manualmente ou pelo
+	 * sistema
+	 */
+	@Column(name = "LANCAMENTO_MANUAL", nullable = false)
+	private boolean lancamentoManual;
 	
 	public Cota getCota() {
 		return cota;
@@ -40,6 +52,22 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	public void setMovimentos(List<MovimentoEstoqueCota> movimentos) {
 		this.movimentos = movimentos;
+	}
+	
+	public String getObservacao() {
+		return observacao;
+	}
+	
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	
+	public boolean isLancamentoManual() {
+		return lancamentoManual;
+	}
+	
+	public void setLancamentoManual(boolean lancamentoManual) {
+		this.lancamentoManual = lancamentoManual;
 	}
 	
 	
