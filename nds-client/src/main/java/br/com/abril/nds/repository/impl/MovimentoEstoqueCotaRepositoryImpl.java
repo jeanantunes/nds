@@ -170,7 +170,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		.append(" from MovimentoEstoqueCota movimento 									")
 		.append(" where 																")
 		.append(" lancamento.produtoEdicao.id = movimento.produtoEdicao.id and 			")
-		.append(" lancamento.dataRecolhimentoDistribuidor = movimento.dataInclusao and 	")
+		.append(" lancamento.dataRecolhimentoDistribuidor = movimento.data and 	")
 		.append(" movimento.tipoMovimento = :tipoMovimentoEstoque )						");
 		
 		return hqlMovimento;
@@ -236,11 +236,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			hql.append(" movimento.produtoEdicao.id in " + getSubQueryEdicoesDeFornecedor() + " and "			);		
 		}
 
-		hql.append(" ( movimento.dataInclusao  																	");
+		hql.append(" ( movimento.data  																	");
 		hql.append(" between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) and	");
 		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque )											");
 		
-		hql.append(" group by movimento.dataInclusao, 															");
+		hql.append(" group by movimento.data, 															");
 		
 		hql.append(" movimento.produtoEdicao.precoVenda, 														");
 		

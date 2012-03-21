@@ -191,7 +191,7 @@ fieldset label {
 							<li><a href="Financeiro/baixa_manual_divida.htm">Baixa
 									Manual de Dívidas</a>
 							</li>
-							<li><a href="Financeiro/consulta_boletos_jornaleiros.htm">Consulta
+							<li><a href='<c:url value="/financeiro/boletos/consulta"/>'>Consulta
 									Boletos por Cota</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/contaCorrenteCota/index"/>'>Conta
@@ -333,7 +333,7 @@ fieldset label {
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
-							<li><a href="Devolucao/digitacao_contagem_devolucao.htm">Digitação
+							<li><a href="devolucao/digitacao/contagem/">Digitação
 									de Contagem para Devolução</a>
 							</li>
 							<li><a href="Devolucao/help_devolucao.htm">Help</a>

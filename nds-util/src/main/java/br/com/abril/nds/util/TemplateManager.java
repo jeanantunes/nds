@@ -2,6 +2,7 @@ package br.com.abril.nds.util;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,9 @@ public abstract class TemplateManager {
 				
 				try{
 					
-					file = new File ("src/main/resources/template/"+nomeAnexo);
+					URL url  =Thread.currentThread().getContextClassLoader().getResource("template/"+nomeAnexo);
+					
+					file = new File (url.toURI());
 					
 					if(file.exists()){
 						anexosTemplate.add(file);

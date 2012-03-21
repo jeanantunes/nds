@@ -608,7 +608,7 @@ public class Fixture {
 			StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setDataInclusao(new Date());
+		movimentoEstoque.setData(new Date());
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(new BigDecimal(1.0));
@@ -638,7 +638,7 @@ public class Fixture {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 		
-		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setData(dataInclusao);
 		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(qtde);
@@ -698,7 +698,7 @@ public class Fixture {
 			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
-		movimentoEstoque.setDataInclusao(new Date());
+		movimentoEstoque.setData(new Date());
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
@@ -730,7 +730,7 @@ public class Fixture {
 			String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
-		movimentoEstoque.setDataInclusao(dataInclusao);
+		movimentoEstoque.setData(dataInclusao);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
@@ -935,7 +935,7 @@ public class Fixture {
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
-		mfc.setDataInclusao(data);
+		mfc.setData(data);
 		mfc.setMovimentos(lista);
 		mfc.setStatus(StatusAprovacao.APROVADO);
 		mfc.setTipoMovimento(tipoMovimento);

@@ -37,6 +37,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -113,6 +114,56 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
 			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
 		save(bancoHSBC);
+		
+		
+		
+		
+		//AMARRAÇAO DIVIDA X BOLETO 
+		Usuario usuarioJoao = Fixture.usuarioJoao();
+		save(usuarioJoao);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
+		save(tipoMovimentoFinenceiroReparte);
+		
+		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovimentoRecReparte);
+
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+		save(mec);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), new Date());
+		save(movimentoFinanceiroCota);
+		
+		ConsolidadoFinanceiroCota consolidado = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cota,
+						new Date(), new BigDecimal(200));
+		save(consolidado);
+		
+		Divida divida1 = Fixture.divida(consolidado, cota, new Date(),
+				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida1);
+		
+		ConsolidadoFinanceiroCota consolidado2 = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cota,
+						new Date(), new BigDecimal(200));
+		save(consolidado);
+		
+		Divida divida2 = Fixture.divida(consolidado2, cota, new Date(),
+		        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+        save(divida2);
+		
+		
+		
 		
 		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
 		save(consolidado1);

@@ -190,7 +190,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			Diferenca diferenca = listaDiferencas.get(i);
 			
 			Assert.assertEquals(
-				this.dataMovimento, diferenca.getMovimentoEstoque().getDataInclusao());
+				this.dataMovimento, diferenca.getMovimentoEstoque().getData());
 			
 			Assert.assertEquals(
 				this.tipoDiferenca, diferenca.getTipoDiferenca());

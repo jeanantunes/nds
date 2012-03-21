@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -44,12 +45,14 @@ public class EmailServiceImpl implements EmailService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public void enviar(String assunto, String mensagem, String[] destinatarios)throws AutenticacaoEmailException {
 		
 		this.enviarEmail(assunto, mensagem, destinatarios, null,false);
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public void enviar(String assunto, String mensagem, String[] destinatarios,File[] anexo) throws AutenticacaoEmailException {
 		
 		this.enviarEmail(assunto, mensagem, destinatarios, Arrays.asList(anexo),false);
@@ -57,6 +60,7 @@ public class EmailServiceImpl implements EmailService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public void enviar(String assunto,String[] destinatarios,TemplateNames template,HashMap<String,Object> parametros) throws AutenticacaoEmailException {
 		
 		String mensagem = TemplateManager.getTemplate(template, parametros);
@@ -67,6 +71,7 @@ public class EmailServiceImpl implements EmailService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public void enviar(String assunto, String[] destinatarios, File[] anexo,TemplateNames template, HashMap<String, Object> parametros)throws AutenticacaoEmailException {
 		
 		String mensagem = TemplateManager.getTemplate(template, parametros);
