@@ -189,11 +189,7 @@ public class ConfirmacaoExpedicaoController {
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 				
-			} catch(ValidacaoException e) {
-				
-				mensagens = e.getValidacao().getListaMensagens();
-				status=e.getValidacao().getTipoMensagem().name();
-								
+			} catch(ValidacaoException e) {						
 			}catch(Exception e) {
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();
@@ -203,7 +199,6 @@ public class ConfirmacaoExpedicaoController {
 			if(grid==null) {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
-			//TODO
 			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);	
 			
 			Object[] retorno = new Object[3];
