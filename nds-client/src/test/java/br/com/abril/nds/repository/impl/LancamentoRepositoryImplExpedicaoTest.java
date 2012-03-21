@@ -114,7 +114,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					new BigDecimal(100), 
-					StatusLancamento.CONFIRMADO, 
+					StatusLancamento.ESTUDO_FECHADO, 
 					itemFisico);
 			lancamento.setReparte(new BigDecimal(10));
 			save(lancamento);

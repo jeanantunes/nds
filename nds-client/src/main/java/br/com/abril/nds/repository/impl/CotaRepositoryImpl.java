@@ -154,7 +154,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		criteria.createAlias("movimento.produtoEdicao", "produtoEdicao");
 		criteria.createAlias("movimento.tipoMovimento", "tipoMovimento");
 		
-		criteria.add(Restrictions.eq("dataInclusao", date));
+		criteria.add(Restrictions.eq("data", date));
 		criteria.add(Restrictions.eq("tipoMovimento.operacaoEstoque", OperacaoEstoque.ENTRADA));
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		

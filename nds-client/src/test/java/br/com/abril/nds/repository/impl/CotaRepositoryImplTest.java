@@ -142,28 +142,6 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				new BigDecimal(200), Arrays.asList(mec), new Date());
 		save(movimentoFinanceiroCota);
 		
-		ConsolidadoFinanceiroCota consolidado = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota), cota,
-						new Date(), new BigDecimal(200));
-		save(consolidado);
-		
-		Divida divida1 = Fixture.divida(consolidado, cota, new Date(),
-				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
-		save(divida1);
-		
-		ConsolidadoFinanceiroCota consolidado2 = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota), cota,
-						new Date(), new BigDecimal(200));
-		save(consolidado);
-		
-		Divida divida2 = Fixture.divida(consolidado2, cota, new Date(),
-		        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
-        save(divida2);
-		
-		
-		
 		
 		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
 		save(consolidado1);
