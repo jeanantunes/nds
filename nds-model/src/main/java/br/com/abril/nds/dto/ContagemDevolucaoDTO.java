@@ -67,13 +67,14 @@ public class ContagemDevolucaoDTO implements Serializable {
 	}
 	
 
-	
 	public BigDecimal getDiferenca() {
 		return diferenca;
 	}
+
 	public void setDiferenca(BigDecimal diferenca) {
 		this.diferenca = diferenca;
 	}
+
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}

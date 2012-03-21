@@ -9,7 +9,6 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String  idMovimentoEstoqueCota;
 	private String  idConferenciaEncParcial;
 	private String  codigoProduto;
 	private String  nomeProduto;
@@ -17,20 +16,11 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 	private String  precoVenda;
 	private String  qtdDevolucao;
 	private String  qtdNota;
-	private String  qntDiferenca;
 	private String  valorTotal;
-	/**
-	 * @return the idMovimentoEstoqueCota
-	 */
-	public String getIdMovimentoEstoqueCota() {
-		return idMovimentoEstoqueCota;
-	}
-	/**
-	 * @param idMovimentoEstoqueCota the idMovimentoEstoqueCota to set
-	 */
-	public void setIdMovimentoEstoqueCota(String idMovimentoEstoqueCota) {
-		this.idMovimentoEstoqueCota = idMovimentoEstoqueCota;
-	}
+	private String diferenca;
+	private String dataRecolhimentoDistribuidor;
+	
+	
 	/**
 	 * @return the idConferenciaEncParcial
 	 */
@@ -122,23 +112,36 @@ public class DigitacaoContagemDevolucaoVO implements Serializable {
 		return valorTotal;
 	}
 	/**
+	 * @return the diferenca
+	 */
+	public String getDiferenca() {
+		return diferenca;
+	}
+	/**
+	 * @param diferenca the diferenca to set
+	 */
+	public void setDiferenca(String diferenca) {
+		this.diferenca = diferenca;
+	}
+	/**
+	 * @return the dataRecolhimentoDistribuidor
+	 */
+	public String getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+	/**
+	 * @param dataRecolhimentoDistribuidor the dataRecolhimentoDistribuidor to set
+	 */
+	public void setDataRecolhimentoDistribuidor(String dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
+	/**
 	 * @param valorTotal the valorTotal to set
 	 */
 	public void setValorTotal(String valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	/**
-	 * @return the qntDiferenca
-	 */
-	public String getQntDiferenca() {
-		return qntDiferenca;
-	}
-	/**
-	 * @param qntDiferenca the qntDiferenca to set
-	 */
-	public void setQntDiferenca(String qntDiferenca) {
-		this.qntDiferenca = qntDiferenca;
-	}
+	
 	
 	
 	
