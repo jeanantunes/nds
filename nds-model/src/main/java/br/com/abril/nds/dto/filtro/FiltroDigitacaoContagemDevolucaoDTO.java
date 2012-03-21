@@ -43,9 +43,9 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	 */
 	public enum OrdenacaoColuna {
 		
-		CODIGO_PRODUTO("codigo"),
-		NOME_PRODUTO("produto"),
-		NUMERO_EDICAO("edicao"),
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODUTO("nomeProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
 		PRECO_CAPA("precoVenda"),
 		QTD_DEVOLUCAO("qtdDevolucao"),
 		VALOR_TOTAL("valorTotal"),

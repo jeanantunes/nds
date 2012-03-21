@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -14,6 +16,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 
+@Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	@Autowired
@@ -22,6 +25,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Autowired
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
+	@Transactional(readOnly=true)
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa) {
 		
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
