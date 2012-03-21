@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -61,11 +63,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		hql.append(" from ");		
 		
-		hql.append(" Lancamento lancamento ");		
+		hql.append(" Lancamento lancamento, ControleContagemDevolucao controleContagemDevolucao ");		
 		
 		hql.append(" where ");	
 		
-		hql.append(" ( lancamento.dataRecolhimentoDistribuidor between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) ");		
+		hql.append(" ( lancamento.dataRecolhimentoDistribuidor between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) and ");		
+
+		hql.append(" lancamento.dataRecolhimentoDistribuidor = controleContagemDevolucao.data and ");	
+		
+		hql.append(" controleContagemDevolucao.status = :statusOperacao ");	
+		
 		
 		if( filtro.getIdFornecedor() != null ) {
 			
@@ -125,9 +132,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		query.setParameter("dataRecolhimentoDistribuidorInicial", filtro.getPeriodo().getDataInicial());
 
 		query.setParameter("dataRecolhimentoDistribuidorFinal", filtro.getPeriodo().getDataFinal());
+
+		query.setParameter("statusOperacao", StatusOperacao.EM_ANDAMENTO);
 		
 		if(indBuscaTotalMovimentoEParcial && !indBuscaQtd) {
 			query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
+			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
@@ -159,7 +169,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	/**
-	 * Obtém subquery que retorna o total das qtds de movimento estoque cota.
+	 * Descreve subquery que retorna o total das qtds de movimento estoque cota.
 	 * 
 	 * @return SubQuery
 	 */
@@ -170,7 +180,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		.append(" from MovimentoEstoqueCota movimento 									")
 		.append(" where 																")
 		.append(" lancamento.produtoEdicao.id = movimento.produtoEdicao.id and 			")
-		.append(" lancamento.dataRecolhimentoDistribuidor = movimento.dataInclusao and 	")
+		.append(" lancamento.dataRecolhimentoDistribuidor = movimento.data and 	")
 		.append(" movimento.tipoMovimento = :tipoMovimentoEstoque )						");
 		
 		return hqlMovimento;
@@ -178,7 +188,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	/**
-	 * Obtém subquery que retorna o total das qtds de devolução parciais.
+	 * Descreve subquery que retorna a somatórias das qtds de devolução parciais.
 	 * 
 	 * @return SubQuery
 	 */
@@ -188,6 +198,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		.append(" ( select sum(parcial.qtde) 														")
 		.append(" from ConferenciaEncalheParcial parcial 											")
 		.append(" where 																			")
+		.append(" parcial.statusAprovacao = :statusAprovacao and									")
 		.append(" lancamento.produtoEdicao.id = parcial.produtoEdicao.id and 						")
 		.append(" lancamento.dataRecolhimentoDistribuidor = parcial.dataRecolhimentoDistribuidor )  ");
 		
@@ -196,7 +207,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	/**
-	 * Obtém subquery que retorna uma lista de idProdutoEdicao pertencentes a um fornecedor.
+	 * Descreve subquery que retorna uma lista de idProdutoEdicao pertencentes a um fornecedor.
 	 * 
 	 * @return SubQuery
 	 */
@@ -236,11 +247,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			hql.append(" movimento.produtoEdicao.id in " + getSubQueryEdicoesDeFornecedor() + " and "			);		
 		}
 
-		hql.append(" ( movimento.dataInclusao  																	");
+		hql.append(" ( movimento.data  																	");
 		hql.append(" between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) and	");
 		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque )											");
 		
-		hql.append(" group by movimento.dataInclusao, 															");
+		hql.append(" group by movimento.data, 															");
 		
 		hql.append(" movimento.produtoEdicao.precoVenda, 														");
 		

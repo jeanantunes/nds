@@ -36,6 +36,14 @@ public abstract class Movimento extends Aprovacao {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA", nullable = false)
 	private Date data;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_CRIACAO", nullable = false)
+	private Date dataCriacao;
+	
+	public Movimento() {
+		this.dataCriacao = new Date();
+	}
 	
 	public Long getId() {
 		return id;
@@ -59,6 +67,14 @@ public abstract class Movimento extends Aprovacao {
 	
 	public void setData(Date data) {
 		this.data = data;
+	}
+	
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+	
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 
 }
