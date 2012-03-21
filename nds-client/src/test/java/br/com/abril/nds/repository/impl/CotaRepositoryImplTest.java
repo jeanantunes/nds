@@ -37,10 +37,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
-<<<<<<< HEAD
-=======
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
->>>>>>> lhmarcilli/master
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
