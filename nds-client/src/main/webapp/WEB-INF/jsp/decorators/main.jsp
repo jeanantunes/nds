@@ -116,6 +116,8 @@ fieldset label {
 }
 
 .ui-datepicker-today a {	display:block !important; }
+
+#ui-datepicker-div { z-index: 99999 !important; }
 </style>
 
 <!-- DECORATOR HEAD -->
