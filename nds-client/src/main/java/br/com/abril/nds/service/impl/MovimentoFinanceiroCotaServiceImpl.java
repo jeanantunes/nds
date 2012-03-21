@@ -62,6 +62,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			movimentoFinanceiroCota.setData(calendarioService.obterProximoDiaUtil(dataOperacao));
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valor);
+			movimentoFinanceiroCota.setLancamentoManual(false);
 
 			movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}

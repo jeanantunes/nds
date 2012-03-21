@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -155,7 +154,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		criteria.createAlias("movimento.produtoEdicao", "produtoEdicao");
 		criteria.createAlias("movimento.tipoMovimento", "tipoMovimento");
 		
-		criteria.add(Restrictions.eq("dataInclusao", date));
+		criteria.add(Restrictions.eq("data", date));
 		criteria.add(Restrictions.eq("tipoMovimento.operacaoEstoque", OperacaoEstoque.ENTRADA));
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		
@@ -190,44 +189,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 				
 		return criteria.list();
 	}
-
-	public Double obterDividaAcumuladaCota(Long idCota) {		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
-		criteria.createAlias("cobranca.cota", "cota");
-		
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		criteria.setProjection(Projections.sum("valor"));
-		
-		BigDecimal dividaAcumulada = (BigDecimal) criteria.uniqueResult();
-		
-		return dividaAcumulada == null ? 0 : dividaAcumulada.doubleValue();				
-	}
-
-	@Override
-	public Date obterDataAberturaDividas(Long idCota) {
-		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
-		criteria.createAlias("cobranca.cota", "cota");
-		
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		criteria.setProjection(Projections.min("dataVencimento"));			
-		
-		return (Date) criteria.uniqueResult();
-	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {		
-		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
-		criteria.createAlias("cobranca.cota", "cota");
-		
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		
-		criteria.addOrder(Order.asc("dataVencimento"));
-		
-		return criteria.list();				
-	}
+	
 }
