@@ -87,6 +87,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	public void setupHistoricoInadimplencia() {
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte = Fixture
+				.tipoMovimentoFinanceiroReparte();
+		save(tipoMovimentoFinanceiroReparte);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
 		save(tipoProdutoRevista);

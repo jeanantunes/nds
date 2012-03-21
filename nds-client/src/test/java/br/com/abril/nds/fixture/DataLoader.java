@@ -269,6 +269,7 @@ public class DataLoader {
 
 	private static void carregarDados(Session session) {
 
+		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
@@ -296,7 +297,6 @@ public class DataLoader {
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
 		criarParametroEmail(session);
-		criarCarteira(session);
 		criarDivida(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
@@ -1312,7 +1312,7 @@ public class DataLoader {
 	//FINANCEIRO - CONSULTA BOLETOS
 	private static void carregarBoletos(Session session) {
 		
-		
+		/*
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
 		save(session, estoqueProdutoCota);
@@ -1349,310 +1349,49 @@ public class DataLoader {
 				                       cotaManoel,
 				                       bancoHSBC,
 				                       divida);
+		*/
+
 		
+		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota2);
 		
-		/*
-		Boleto boleto1 = Fixture.boleto("1309709032012747",
+		MovimentoEstoqueCota mec2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota2,
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec2);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec2), new Date());
+		save(session,movimentoFinanceiroCota2);
+		
+		ConsolidadoFinanceiroCota consolidado2 = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota2), cotaManoel,
+						new Date(), new BigDecimal(200));
+		save(session, consolidado2);
+		
+		Divida divida2 = Fixture.divida(consolidado2, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(session, divida2);
+		
+		Boleto boleto1 = Fixture.boleto("130970903",
                                         new Date(), 
                                         new Date(), 
-                                        new Date(), 
+                                        null, 
                                         "ENCARGOS", 
-                                        new BigDecimal(100.35), 
+                                        new BigDecimal(200), 
                                         "TIPO_BAIXA",
                                         "ACAO", 
-                                        StatusCobranca.PAGO,
-                                        cotaMaria,
- 				                        bancoHSBC);
+                                        StatusCobranca.NAO_PAGO,
+                                        cotaManoel,
+ 				                        bancoHSBC,
+ 				                        divida2);
 		
-		Boleto boleto2 = Fixture.boleto("1310209032012740",
-                						new Date(), 
-                						new Date(), 
-                						null,
-                						"ENCARGOS", 
-                						new BigDecimal(376.07),
-                						"TIPO_BAIXA",
-                						"ACAO", 
-                						StatusCobranca.NAO_PAGO,
-                						cotaJose,
- 				                        bancoHSBC);
-		
-		Boleto boleto3 = Fixture.boleto("1310609032012041",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(200.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto4 = Fixture.boleto("1310809032012641",
-						                new Date(), 
-						                DateUtil.parseDataPTBR("12/03/2012"), 
-						                null, 
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto5 = Fixture.boleto("1311009032012840",
-						                new Date(), 
-						                DateUtil.parseDataPTBR("11/03/2012"), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(50.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto6 = Fixture.boleto("70000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(1002.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto7 = Fixture.boleto("80000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(1000.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		
-		Boleto boleto8 = Fixture.boleto("90000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto9 = Fixture.boleto("100000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto10 = Fixture.boleto("110000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		
-		Boleto boleto11 = Fixture.boleto("120000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto12 = Fixture.boleto("130000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto13 = Fixture.boleto("140000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		
-		Boleto boleto14 = Fixture.boleto("150000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto15 = Fixture.boleto("160000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto16 = Fixture.boleto("170000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto17 = Fixture.boleto("180000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto18 = Fixture.boleto("190000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto19 = Fixture.boleto("200000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto20 = Fixture.boleto("210000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto21 = Fixture.boleto("220000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00),
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaMaria,
-					                    bancoHSBC);
-		
-		Boleto boleto22 = Fixture.boleto("230000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-					                    bancoHSBC);
-		
-		Boleto boleto23 = Fixture.boleto("240000",
-						                new Date(), 
-						                new Date(), 
-						                null,
-						                "ENCARGOS", 
-						                new BigDecimal(3500.00), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaJose,
-					                    bancoHSBC);
-		*/
 	    save(session,
-    		 boleto0/*,
-			 boleto1,
-			 boleto2,
-			 boleto3,
-			 boleto4,
-			 boleto5,
-			 boleto6,
-			 boleto7,
-			 boleto8,
-			 boleto9,
-			 boleto10,
-			 boleto11,
-			 boleto12,
-			 boleto13,
-			 boleto14,
-			 boleto15,
-			 boleto16,
-			 boleto17,
-			 boleto18,
-			 boleto19,
-			 boleto20,
-			 boleto21,
-			 boleto22,
-			 boleto23*/);    
+    		 /*boleto0,*/
+			 boleto1);    
 	    
 	}
 	
