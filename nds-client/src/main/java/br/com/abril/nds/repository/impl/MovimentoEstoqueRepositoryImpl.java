@@ -34,7 +34,7 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" select new " + ExtratoEdicaoDTO.class.getCanonicalName() );		
 		
-		hql.append(" ( m.id, m.dataInclusao, m.tipoMovimento.descricao, ");		
+		hql.append(" ( m.id, m.data, m.tipoMovimento.descricao, ");		
 		
 		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end), ");
 
@@ -51,9 +51,9 @@ implements MovimentoEstoqueRepository {
 			hql.append(" and m.status = :statusAprovacao  ");
 		}
 		
-		hql.append(" group by m.id, m.dataInclusao, m.tipoMovimento.id, m.tipoMovimento.descricao ");		
+		hql.append(" group by m.id, m.data, m.tipoMovimento.id, m.tipoMovimento.descricao ");		
 		
-		hql.append(" order by m.dataInclusao asc ");		
+		hql.append(" order by m.data asc ");		
 		
 		Query query = getSession().createQuery(hql.toString());
 		
