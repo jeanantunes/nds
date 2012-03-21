@@ -92,6 +92,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
 	
+	private static  TipoMovimento tipoMovimentoRecebimentoReparte;
+	private static  TipoMovimento tipoMovimentoEnvioJornaleiro;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte;
@@ -932,6 +935,11 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
 		
+		tipoMovimentoRecebimentoReparte = Fixture.tipoMovimentoRecebimentoReparte();	
+
+		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
+		save(session,tipoMovimentoRecebimentoReparte,tipoMovimentoEnvioJornaleiro);
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -1388,7 +1396,7 @@ public class DataLoader {
 		save(session, endereco, enderecoCota, endereco2, enderecoCota2);
 	}
 	
-	public static void dadosExpedicao(Session session) {
+	private static void dadosExpedicao(Session session) {
 		
 		Box box300Reparte = Fixture.boxReparte300();
 		save(session,box300Reparte);

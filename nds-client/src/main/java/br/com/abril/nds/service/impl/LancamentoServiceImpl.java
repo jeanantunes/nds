@@ -59,7 +59,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	}
 	
 	private LancamentoNaoExpedidoDTO montarDTOExpedicao(Lancamento lancamento) {
-		
+	
 		String fornecedor;
 		
 		if(lancamento.getProdutoEdicao().getProduto().getFornecedores().size()>1) {
@@ -95,7 +95,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
 				lancamento.getProdutoEdicao().getPrecoVenda().toString().replace(".", ","), 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
-				(lancamento.getEstudo()==null)? null : lancamento.getEstudo().getQtdeReparte().intValue(), 
+				lancamento.getReparte().intValue(), 
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),

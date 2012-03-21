@@ -6,7 +6,6 @@ import java.util.List;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.financeiro.Cobranca;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -20,7 +19,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	/**
 	 * Obtém uma Cota pelo seu número.
 	 * 
-	 * @param numeroCota - número da cota
+	 * @param numeroCota - nÃºmero da cota
 	 * 
 	 * @return {@link Cota}
 	 */
@@ -65,21 +64,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 */
 	List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia);
 	
-	/**
-	 * Obtém cobranças não pagas em nome da cota
-	 * 
-	 * @param idCota -  Código da cota
-	 * @return Lista de Cobranças
-	 */
-	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota);
-	
-	/**
-	 * Obtém data em que houve a primeira inadimplencia com cobrança ainda em aberto
-	 * 
-	 * @param idCota -  Código da Cota
-	 * @return dia
-	 */
-	Date obterDataAberturaDividas(Long idCota);
 	
 	/**
 	 * Obtém valor dos repartes Consignados a cota em determinado dia
@@ -98,11 +82,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 */	
 	List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota);
 	
-	/**
-	 * Obtém total de cobranças não pagas pela cota
-	 * 
-	 * @param idCota - Código da Cota
-	 * @return valor
-	 */
-	Double obterDividaAcumuladaCota(Long idCota);
+	
 }

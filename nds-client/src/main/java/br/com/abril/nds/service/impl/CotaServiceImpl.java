@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
@@ -57,6 +58,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private CobrancaRepository cobrancaRepository;
 
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
@@ -174,7 +178,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {	
-		return cotaRepository.obterCobrancasDaCotaEmAberto(idCota);
+		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota);
 	}
 
 	@Override
@@ -279,8 +283,8 @@ public class CotaServiceImpl implements CotaService {
 					nome, 
 					cotaRepository.obterValorConsignadoDaCota(cota.getId()), 
 					cotaRepository.obterReparteDaCotaNoDia(cota.getId(), new Date()), 
-					cotaRepository.obterDividaAcumuladaCota(cota.getId()),
-					cotaRepository.obterDataAberturaDividas(cota.getId()),
+					cobrancaRepository.obterDividaAcumuladaCota(cota.getId()),
+					cobrancaRepository.obterDataAberturaDividas(cota.getId()),
 					false);			
 			cotasDTO.add(cotaDTO);
 		}

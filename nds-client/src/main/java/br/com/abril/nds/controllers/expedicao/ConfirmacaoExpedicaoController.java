@@ -136,8 +136,9 @@ public class ConfirmacaoExpedicaoController {
 				}
 				
 				for ( LancamentoNaoExpedidoDTO lancamento : listaExpedicoes ) {
-									
+					if(lancamento.getEstudo() != null) {
 					selecionados.add(lancamento.getIdLancamento());
+					}
 				}
 				
 				session.setAttribute("selecionados", selecionados);
@@ -189,12 +190,9 @@ public class ConfirmacaoExpedicaoController {
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 				
-			} catch(ValidacaoException e) {
-				
-				mensagens = e.getValidacao().getListaMensagens();
-				status=e.getValidacao().getTipoMensagem().name();
-								
+			} catch(ValidacaoException e) {						
 			}catch(Exception e) {
+				mensagens.clear();
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();
 				LOG.error(ERRO_CONFIRMAR_EXPEDICOES, e);
@@ -203,7 +201,6 @@ public class ConfirmacaoExpedicaoController {
 			if(grid==null) {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
-			
 			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);	
 			
 			Object[] retorno = new Object[3];
@@ -289,6 +286,7 @@ public class ConfirmacaoExpedicaoController {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			
 			} catch (Exception e) {
+				mensagens.clear();
 				mensagens.add(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS);
 				status=TipoMensagem.ERROR.name();
 				LOG.error(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS, e);
