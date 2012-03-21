@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -72,6 +73,9 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -322,6 +326,51 @@ public class Fixture {
 			lancamento.addRecebimento(recebimento);
 		}
 		return lancamento;
+	}
+	
+	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
+			Usuario usuario,
+			ProdutoEdicao produtoEdicao, 
+			StatusAprovacao statusAprovacao,
+			Date drd, 
+			Date dataStatus, 
+			BigDecimal qtde) {
+		
+		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
+		
+		conferenciaEncalheParcial.setDataConfEncalheParcial(dataStatus);
+		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(drd);
+		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
+		conferenciaEncalheParcial.setQtde(qtde);
+		conferenciaEncalheParcial.setResponsavel(usuario);
+		conferenciaEncalheParcial.setStatusAprovacao(statusAprovacao);
+		
+		return conferenciaEncalheParcial;
+	}
+	
+	
+	public static ControleConferenciaEncalhe controleConferenciaEncalhe (
+			StatusOperacao statusOperacao,
+			Date data) {
+		
+		ControleConferenciaEncalhe controleConferenciaEncalhe = new ControleConferenciaEncalhe();
+		
+		controleConferenciaEncalhe.setData(data);
+		controleConferenciaEncalhe.setStatus(statusOperacao);
+		
+		return controleConferenciaEncalhe;
+	}
+	
+	public static ControleContagemDevolucao controleContagemDevolucao (
+			StatusOperacao statusOperacao,
+			Date data) {
+		
+		ControleContagemDevolucao controleContagemDevolucao = new ControleContagemDevolucao();
+		
+		controleContagemDevolucao.setData(data);
+		controleContagemDevolucao.setStatus(statusOperacao);
+		
+		return controleContagemDevolucao;
 	}
 	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,

@@ -110,7 +110,7 @@ public class DigitacaoContagemDevolucaoController  {
 	 */
 	public void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
 		
-		InfoContagemDevolucaoDTO infoConatege = contagemDevolucaoService.obterInfoContagemDevolucao(filtro);
+		InfoContagemDevolucaoDTO infoConatege = contagemDevolucaoService.obterInfoContagemDevolucao(filtro, null);
 		
 		List<ContagemDevolucaoDTO> listaResultados = infoConatege.getListaContagemDevolucao();
 		
