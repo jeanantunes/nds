@@ -396,7 +396,6 @@ public class BoletoServiceImpl implements BoletoService {
 			documentoSacado = ((PessoaJuridica) pessoa).getCnpj();
 		}
 	    
-        //BoletoDTO boletoDTO = new BoletoDTO();
 		GeradorBoleto geradorBoleto = new GeradorBoleto();
 		geradorBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
 		geradorBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
@@ -460,9 +459,9 @@ public class BoletoServiceImpl implements BoletoService {
         geradorBoleto.setTituloValorCobrado(BigDecimal.ZERO);
 
         //PARAMETROS ?
-        geradorBoleto.setBoletoLocalPagamento(   "Local do pagamento.");
+        geradorBoleto.setBoletoLocalPagamento("Local do pagamento.");
         geradorBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
-        geradorBoleto.setBoletoInstrucao1("Pagamento até a data de vencimento, não cobrar juros.");
+        geradorBoleto.setBoletoInstrucao1(boleto.getBanco().getInstrucoes());
         geradorBoleto.setBoletoInstrucao2("");
         geradorBoleto.setBoletoInstrucao3("");
         geradorBoleto.setBoletoInstrucao4("");
