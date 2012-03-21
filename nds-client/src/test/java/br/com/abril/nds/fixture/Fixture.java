@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -315,6 +316,26 @@ public class Fixture {
 			lancamento.addRecebimento(recebimento);
 		}
 		return lancamento;
+	}
+	
+	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
+			Usuario usuario,
+			ProdutoEdicao produtoEdicao, 
+			StatusAprovacao statusAprovacao,
+			Date drd, 
+			Date dataStatus, 
+			BigDecimal qtde) {
+		
+		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
+		
+		conferenciaEncalheParcial.setDataConfEncalheParcial(dataStatus);
+		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(drd);
+		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
+		conferenciaEncalheParcial.setQtde(qtde);
+		conferenciaEncalheParcial.setResponsavel(usuario);
+		conferenciaEncalheParcial.setStatusAprovacao(statusAprovacao);
+		
+		return conferenciaEncalheParcial;
 	}
 	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,

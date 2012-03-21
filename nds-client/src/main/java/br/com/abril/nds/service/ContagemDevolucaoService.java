@@ -15,6 +15,6 @@ public interface ContagemDevolucaoService {
 
 	public void inserirCorrecaoListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, MockPerfilUsuario mockPerfilUsuario);
 	
-	public void confirmarContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa);
+	public void confirmarContagemDevolucao();
 	
 }

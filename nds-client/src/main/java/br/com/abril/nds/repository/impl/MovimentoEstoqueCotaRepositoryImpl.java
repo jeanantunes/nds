@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -128,6 +129,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		if(indBuscaTotalMovimentoEParcial && !indBuscaQtd) {
 			query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
+			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
@@ -159,7 +161,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	/**
-	 * Obtém subquery que retorna o total das qtds de movimento estoque cota.
+	 * Descreve subquery que retorna o total das qtds de movimento estoque cota.
 	 * 
 	 * @return SubQuery
 	 */
@@ -178,7 +180,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	/**
-	 * Obtém subquery que retorna o total das qtds de devolução parciais.
+	 * Descreve subquery que retorna a somatórias das qtds de devolução parciais.
 	 * 
 	 * @return SubQuery
 	 */
@@ -188,6 +190,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		.append(" ( select sum(parcial.qtde) 														")
 		.append(" from ConferenciaEncalheParcial parcial 											")
 		.append(" where 																			")
+		.append(" parcial.statusAprovacao = :statusAprovacao and									")
 		.append(" lancamento.produtoEdicao.id = parcial.produtoEdicao.id and 						")
 		.append(" lancamento.dataRecolhimentoDistribuidor = parcial.dataRecolhimentoDistribuidor )  ");
 		
@@ -196,7 +199,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	}
 	
 	/**
-	 * Obtém subquery que retorna uma lista de idProdutoEdicao pertencentes a um fornecedor.
+	 * Descreve subquery que retorna uma lista de idProdutoEdicao pertencentes a um fornecedor.
 	 * 
 	 * @return SubQuery
 	 */

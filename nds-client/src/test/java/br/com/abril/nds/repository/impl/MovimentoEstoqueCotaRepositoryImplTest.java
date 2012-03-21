@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -271,6 +272,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
+		
+		
 		
 		
 	}
