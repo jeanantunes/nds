@@ -14,6 +14,7 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 
 	@Column(name = "VALOR", nullable = false)
 	private BigDecimal valor;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimentoFinanceiro tipoMovimento;

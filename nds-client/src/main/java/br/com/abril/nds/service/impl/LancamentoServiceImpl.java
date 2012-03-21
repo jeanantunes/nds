@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -131,11 +132,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 		lancamentoRepository.alterar(lancamento);
 		
 		HistoricoLancamento historico = new HistoricoLancamento();
-		historico.setData(new Date());
+		historico.setDataEdicao(new Date());
 		historico.setLancamento(lancamento);
 		
 		historico.setResponsavel(usuario);
 		historico.setStatus(lancamento.getStatus());
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
