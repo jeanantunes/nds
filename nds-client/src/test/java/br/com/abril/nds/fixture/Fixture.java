@@ -1,7 +1,6 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -818,7 +817,8 @@ public class Fixture {
 				                String acao,
 				                StatusCobranca status,
 				                Cota cota,
-				                Banco banco){
+				                Banco banco,
+				                Divida divida){
 			
 		Boleto boleto = new Boleto();
 		boleto.setNossoNumero(nossoNumero);
@@ -832,6 +832,7 @@ public class Fixture {
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
 		boleto.setBanco(banco);
+		boleto.setDivida(divida);
 		
 		return boleto;
 	}

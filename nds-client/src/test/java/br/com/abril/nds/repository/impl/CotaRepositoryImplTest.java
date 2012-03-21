@@ -109,9 +109,15 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(50), new BigDecimal(50), estudo, cota);
 		save(estudoCota);
 		
+				
 		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
 			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
 		save(bancoHSBC);
+		
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		save(consolidado1);
+		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(divida1);
 		
 		boleto1  = Fixture.boleto(
 				"123", 
@@ -124,9 +130,14 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				"acao", 
 				StatusCobranca.NAO_PAGO, 
 				cota, 
-				bancoHSBC);
+				bancoHSBC,
+				divida1);
 		save(boleto1);
 		
+		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		save(consolidado2);
+		Divida divida2 = Fixture.divida(consolidado2, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(divida2);
 
 		boleto2  = Fixture.boleto(
 				"1234", 
@@ -139,7 +150,8 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				"acao", 
 				StatusCobranca.NAO_PAGO, 
 				cota, 
-				bancoHSBC);
+				bancoHSBC,
+				divida2);
 		save(boleto2);
 		
 		
@@ -150,6 +162,8 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		histInadimplencia2 = Fixture.criarHistoricoInadimplencia(
 				boleto2, new Date(), usuario, StatusInadimplencia.ATIVA);
 		save(histInadimplencia2);
+		
+		
 	}
 	
 	public void setUpSuspensaoCota() {

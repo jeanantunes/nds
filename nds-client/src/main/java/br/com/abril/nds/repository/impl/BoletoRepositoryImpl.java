@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -11,18 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.BoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.repository.BoletoRepository;
-import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DistribuidorService;
-import br.com.abril.nds.service.impl.CotaServiceImpl;
-import br.com.abril.nds.service.impl.DistribuidorServiceImpl;
 
 
 /**
