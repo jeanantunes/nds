@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,27 +20,28 @@ import br.com.abril.nds.model.cadastro.Cota;
  * @created 16-mar-2012 14:00:00
  */
 @Entity
-@Table(name = "CONSOLIDADO_FINANCEIRO_COTA")
-@SequenceGenerator(name="CONSOLIDADO_SEQ", initialValue = 1, allocationSize = 1)
-public abstract class ConsolidadoFinanceiroCota {
+@Table(name = "VIEW_CONTA_CORRENTE_COTA")
+public class ViewContaCorrenteCota {
 	
-	@Id
-	@GeneratedValue(generator = "CONSOLIDADO_SEQ")
+	@Id	
 	@Column(name = "ID")
 	private Long id;
+	
+	@Column(name = "COTA_ID", nullable = false)
+	private Long cotaId;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_CONSOLIDADO", nullable = false)
 	private Date dataConsolidado;
+	
+	@Column(name = "NUMERO_COTA", nullable = false)
+	private Integer numeroCota;
 	
 	@Column(name = "VALOR_POSTERGADO", nullable = true)
 	private BigDecimal valorPostergado;
 
 	@Column(name = "NUMERO_ATRASADOS", nullable = false)
 	private BigDecimal numeroAtrasados;
-	
-	@Column(name = "NUMERO_COTA", nullable = false)
-	private Integer numeroCota;
 	
 	@Column(name = "CONSIGNADO", nullable = true)
 	private BigDecimal consignado;
@@ -154,14 +154,6 @@ public abstract class ConsolidadoFinanceiroCota {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-		
-	public Integer getNumeroCota() {
-		return numeroCota;
-	}
-
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
-	}
 
 	public Cota getCota() {
 		return cota;
@@ -170,5 +162,22 @@ public abstract class ConsolidadoFinanceiroCota {
 	public void setCota(Cota cota) {
 		this.cota = cota;
 	}
+
+	public Long getCotaId() {
+		return cotaId;
+	}
+
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
 	
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ConsolidadoFinanceiroCotaDTO implements Serializable {
+public class ViewContaCorrenteCotaDTO implements Serializable {
 	
 	private static final long serialVersionUID = -580201558784688016L;
 
@@ -30,26 +30,7 @@ public class ConsolidadoFinanceiroCotaDTO implements Serializable {
 	
 	private int lineId;
 	
-	public ConsolidadoFinanceiroCotaDTO(
-			Date dataConsolidado,
-			BigDecimal numeroAtrasado,
-			BigDecimal consignado,
-			BigDecimal encalhe,
-			BigDecimal vendaEncalhe,
-			BigDecimal debCred,
-			BigDecimal encargos,
-			BigDecimal pendente,
-			BigDecimal total) {
-		this.dataConsolidado = dataConsolidado;
-		this.numeroAtradao = numeroAtrasado;
-		this.consignado = consignado;
-		this.encalhe = encalhe;
-		this.vendaEncalhe = vendaEncalhe;
-		this.debCred = debCred;
-		this.encargos = encargos;
-		this.pendente = pendente;
-		this.total = total;
-		
+	public ViewContaCorrenteCotaDTO(){
 		
 	}
 	
@@ -194,10 +175,10 @@ public class ConsolidadoFinanceiroCotaDTO implements Serializable {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof ConsolidadoFinanceiroCotaDTO)) {
+		if (!(obj instanceof ViewContaCorrenteCotaDTO)) {
 			return false;
 		}
-		ConsolidadoFinanceiroCotaDTO other = (ConsolidadoFinanceiroCotaDTO) obj;
+		ViewContaCorrenteCotaDTO other = (ViewContaCorrenteCotaDTO) obj;
 		if (lineId != other.lineId) {
 			return false;
 		}
