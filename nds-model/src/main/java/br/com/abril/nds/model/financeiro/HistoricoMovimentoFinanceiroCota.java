@@ -42,6 +42,10 @@ public class HistoricoMovimentoFinanceiroCota extends HistoricoEdicao {
 	@JoinColumn(name = "COTA_ID")
     private Cota cota;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "MOVTO_FINANCEIRO_COTA_ID")
+	private MovimentoFinanceiroCota movimentoFinanceiroCota;
+	
 	
 	public Long getId() {
 		return id;
@@ -81,6 +85,15 @@ public class HistoricoMovimentoFinanceiroCota extends HistoricoEdicao {
 	
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+	
+	public MovimentoFinanceiroCota getMovimentoFinanceiroCota() {
+		return movimentoFinanceiroCota;
+	}
+	
+	public void setMovimentoFinanceiroCota(
+			MovimentoFinanceiroCota movimentoFinanceiroCota) {
+		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
 
 }

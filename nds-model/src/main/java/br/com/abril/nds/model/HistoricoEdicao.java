@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
@@ -19,8 +20,8 @@ public abstract class HistoricoEdicao {
 	@Column(name = "DATA_EDICAO", nullable = false)
 	private Date dataEdicao;
 	
-	@ManyToOne
-	@Column(name = "USUARIO_ID", nullable = false)
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
 	
 	@Enumerated(EnumType.STRING)
