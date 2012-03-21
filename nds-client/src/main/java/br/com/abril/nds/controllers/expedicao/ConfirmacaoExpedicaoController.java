@@ -136,8 +136,9 @@ public class ConfirmacaoExpedicaoController {
 				}
 				
 				for ( LancamentoNaoExpedidoDTO lancamento : listaExpedicoes ) {
-									
+					if(lancamento.getEstudo() != null) {
 					selecionados.add(lancamento.getIdLancamento());
+					}
 				}
 				
 				session.setAttribute("selecionados", selecionados);
@@ -191,6 +192,7 @@ public class ConfirmacaoExpedicaoController {
 				
 			} catch(ValidacaoException e) {						
 			}catch(Exception e) {
+				mensagens.clear();
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();
 				LOG.error(ERRO_CONFIRMAR_EXPEDICOES, e);
@@ -284,6 +286,7 @@ public class ConfirmacaoExpedicaoController {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			
 			} catch (Exception e) {
+				mensagens.clear();
 				mensagens.add(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS);
 				status=TipoMensagem.ERROR.name();
 				LOG.error(ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS, e);
