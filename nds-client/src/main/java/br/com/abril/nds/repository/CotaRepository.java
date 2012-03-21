@@ -1,9 +1,12 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.financeiro.Cobranca;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -53,10 +56,53 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	/**
 	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * @param paginacaoVO 
 	 * 
 	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
-	 * @return Cotasw
+	 * @param paginacaoVO - Dados referentes a paginação e ordenação
+	 * 
+	 * @return Cotas
 	 */
-	List<Cota> obterCotasSujeitasSuspensao(Integer limiteInadimplencia);
+	List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia);
 	
+	/**
+	 * Obtém cobranças não pagas em nome da cota
+	 * 
+	 * @param idCota -  Código da cota
+	 * @return Lista de Cobranças
+	 */
+	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota);
+	
+	/**
+	 * Obtém data em que houve a primeira inadimplencia com cobrança ainda em aberto
+	 * 
+	 * @param idCota -  Código da Cota
+	 * @return dia
+	 */
+	Date obterDataAberturaDividas(Long idCota);
+	
+	/**
+	 * Obtém valor dos repartes Consignados a cota em determinado dia
+	 * 
+	 * @param idCota - código da cota
+	 * @param date - data
+	 * @return
+	 */
+	List<ProdutoValorDTO> obterReparteDaCotaNoDia(Long idCota, Date date);
+	
+	/**
+	 * Obtém valor total de consignados da cota
+	 * 
+	 * @param idCota
+	 * @return
+	 */	
+	List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota);
+	
+	/**
+	 * Obtém total de cobranças não pagas pela cota
+	 * 
+	 * @param idCota - Código da Cota
+	 * @return valor
+	 */
+	Double obterDividaAcumuladaCota(Long idCota);
 }

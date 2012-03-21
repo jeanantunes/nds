@@ -1,14 +1,17 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.LinkedList;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
@@ -16,42 +19,91 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;  
 	
-	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao() {
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa) {
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
 		
-		//movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, tipoMovimentoEstoque, null);
+		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
+		info.setQtdTotalRegistro(qtdTotalRegistro);
+
+		TipoMovimentoEstoque tipoMovimentoEstoque = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		return null;
+		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+				filtroPesquisa, 
+				tipoMovimentoEstoque, 
+				true);
+		info.setListaContagemDevolucao(listaContagemDevolucao);
+		
+		BigDecimal valorTotalGeral = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
+		info.setValorTotalGeral(valorTotalGeral);
+		
+		carregarDadosAdicionais(info, listaContagemDevolucao);
+		
+		return info;
 	
 	}
 	
-	private List<ContagemDevolucaoDTO> getFromBD() {
+	/**
+	 * Calcula dados adicionais.
+	 * 
+	 * @param listaContagemDevolucao
+	 */
+	private void carregarDadosAdicionais(InfoContagemDevolucaoDTO info, List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		
-		List<ContagemDevolucaoDTO> lista = new LinkedList<ContagemDevolucaoDTO>();
-		
-		Long contador = 0L;
-		
-		Long max = 10L;
-		
-		ContagemDevolucaoDTO contagem = null;
-		
-		while(contador < max) {
-
-			contagem = new ContagemDevolucaoDTO();
-			contagem.setCodigoProduto(contador.toString());
-			contagem.setNomeProduto("PRODUTO_"+contador);
-			contagem.setNumeroEdicao(contador);
-			//contagem.setQtdDevolucao(new BigDecimal(val));
-			
-			contagem = new ContagemDevolucaoDTO();
-			
-			contador++;
-
+		if(listaContagemDevolucao == null || listaContagemDevolucao.isEmpty()) {
+			return;
 		}
 		
-		return lista;
+		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
+			
+			BigDecimal precoVenda = (contagem.getPrecoVenda() == null) ? new BigDecimal(0.0D) : contagem.getPrecoVenda();
+			
+			BigDecimal qtdMovimento = (contagem.getQtdDevolucao() == null) ? new BigDecimal(0.0D) : contagem.getQtdDevolucao();
+			
+			BigDecimal qtdNota = (contagem.getQtdNota() == null) ? new BigDecimal(0.0D) : contagem.getQtdNota();
+			
+			
+			BigDecimal diferenca = qtdMovimento.subtract(qtdNota);
+			contagem.setDiferenca(diferenca);
+			
+			BigDecimal valorTotal = qtdMovimento.multiply(precoVenda);
+			contagem.setValorTotal(valorTotal);
+			
+		}
+		
 		
 	}
+	
+
+	
+	/**
+	 * Carrega os valores de exemplar nota.
+	 *  
+	 * @param listaContagemDevolucao
+	 */
+	private void carregarValorExemplarNota(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+		
+		if(listaContagemDevolucao == null || listaContagemDevolucao.isEmpty()) {
+			return;
+		}
+		
+		//TODO: code
+		
+	}
+
+	/**
+	 * Salva os dados parciais de devolução digitados pelo usuario.
+	 * 
+	 * @param listaContagemDevolucao
+	 */
+	private void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+		
+	}
+	
 	
 }

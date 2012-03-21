@@ -266,7 +266,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" or lancamento.status=:statusBalanceado ");
 		hql.append(" or lancamento.status=:statusEstudoFechado) ");
 		
-		parametros.put("statusRecebido", StatusLancamento.RECEBIDO);
+		parametros.put("statusRecebido", StatusLancamento.CONFIRMADO);
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		parametros.put("statusEstudoFechado", StatusLancamento.ESTUDO_FECHADO);
 		

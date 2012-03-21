@@ -94,7 +94,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 			ContagemDevolucaoDTO xx = new ContagemDevolucaoDTO();
 			xx.setCodigoProduto("100");
-			xx.setIdConferenciaEncParcial(10L);
+			//xx.setIdConferenciaEncParcial(10L);
 			//xx.setIdMovimentoEstoqueCota(1L);
 			xx.setNomeProduto("Nome");
 			xx.setNumeroEdicao(10L);
@@ -136,7 +136,7 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO = new DigitacaoContagemDevolucaoVO();
 			
 			digitacaoContagemDevolucaoVO.setCodigoProduto(dto.getCodigoProduto());
-			digitacaoContagemDevolucaoVO.setIdConferenciaEncParcial(String.valueOf(dto.getIdConferenciaEncParcial()) );
+			//digitacaoContagemDevolucaoVO.setIdConferenciaEncParcial(String.valueOf(dto.getIdConferenciaEncParcial()) );
 			//digitacaoContagemDevolucaoVO.setIdMovimentoEstoqueCota(String.valueOf(dto.getIdMovimentoEstoqueCota()));
 			digitacaoContagemDevolucaoVO.setNomeProduto(dto.getNomeProduto());
 			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));

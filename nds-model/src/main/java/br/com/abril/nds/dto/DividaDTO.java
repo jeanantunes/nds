@@ -7,12 +7,12 @@ public class DividaDTO implements Serializable{
 	private static final long serialVersionUID = -5403191577161993585L;
 	
 	private String vencimento;
-	private Double valor;
+	private String valor;
 	
 	public DividaDTO() {
 	}
 	
-	public DividaDTO(String vencimento, Double valor) {
+	public DividaDTO(String vencimento, String valor) {
 		this.valor = valor;
 		this.vencimento = vencimento;
 	}
@@ -23,10 +23,10 @@ public class DividaDTO implements Serializable{
 	public void setVencimento(String vencimento) {
 		this.vencimento = vencimento;
 	}
-	public Double getValor() {
+	public String getValor() {
 		return valor;
 	}
-	public void setValor(Double valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 }

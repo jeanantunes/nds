@@ -2,7 +2,8 @@ package br.com.abril.nds.model.planejamento;
 
 public enum StatusLancamento {
 	
-	RECEBIDO, 
+	PLANEJADO, 
+	CONFIRMADO, 
 	BALANCEADO,
 	ESTUDO_FECHADO,
 	FURO, 

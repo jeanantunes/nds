@@ -108,8 +108,10 @@
 					$("#aguarde").dialog("close");
 					mostrar();
 				},
-				null,
-				true
+				function(result) {
+					$("#aguarde").dialog("close");
+				},
+				false
 			);
 		}
 	

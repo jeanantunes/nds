@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -13,14 +14,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -59,6 +73,55 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				  			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
 		save(bancoHSBC);
 		
+		
+		
+		//AMARRAÇAO DIVIDA X BOLETO
+		Usuario usuarioJoao = Fixture.usuarioJoao();
+		save(usuarioJoao);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
+		save(tipoMovimentoFinenceiroReparte);
+		
+		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovimentoRecReparte);
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		save(tipoProdutoRevista);
+		
+		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		save(produtoVeja);		
+				
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produtoVeja);
+		save(produtoEdicaoVeja1);
+		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+		save(mec);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), new Date());
+		save(movimentoFinanceiroCota);
+		
+		ConsolidadoFinanceiroCota consolidado = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cota,
+						new Date(), new BigDecimal(200));
+		save(consolidado);
+		
+		Divida divida = Fixture.divida(consolidado, cota, new Date(),
+				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida);
+		
+		
+		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES
 
 	    Boleto boleto = Fixture.boleto("5", 
@@ -71,7 +134,8 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   "1",
                 					   StatusCobranca.PAGO,
                 					   cota,
-                					   bancoHSBC);
+                					   bancoHSBC,
+                					   divida);
 		save(boleto);		
 	}
 	
