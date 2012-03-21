@@ -189,20 +189,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 				
 		return criteria.list();
 	}
-
 	
 	
-	@SuppressWarnings("unchecked")
-	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {		
-		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
-		criteria.createAlias("cobranca.cota", "cota");
-		
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		
-		criteria.addOrder(Order.asc("dataVencimento"));
-		
-		return criteria.list();				
-	}
 }

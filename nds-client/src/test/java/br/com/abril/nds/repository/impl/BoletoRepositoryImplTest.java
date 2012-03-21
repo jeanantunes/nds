@@ -21,6 +21,10 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -61,6 +65,15 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES
 
+		Usuario usuario = Fixture.usuarioJoao();
+		save(usuario);
+		
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		save(consolidado1);
+		
+		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(divida1);
+		
 	    Boleto boleto = Fixture.boleto("5", 
                 					   new Date(), 
                 					   new Date(), 
@@ -71,7 +84,8 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   "1",
                 					   StatusCobranca.PAGO,
                 					   cota,
-                					   bancoHSBC);
+                					   bancoHSBC,
+                					   divida1);
 		save(boleto);		
 	}
 	

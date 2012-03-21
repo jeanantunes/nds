@@ -71,7 +71,7 @@
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
-					
+								
 			if(cell.estudo) {
 				cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
 			} else {

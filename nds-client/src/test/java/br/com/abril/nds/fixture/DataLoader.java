@@ -92,6 +92,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
 	
+	private static  TipoMovimento tipoMovimentoRecebimentoReparte;
+	private static  TipoMovimento tipoMovimentoEnvioJornaleiro;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte;
@@ -205,7 +208,7 @@ public class DataLoader {
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			//carregarBoletos(session);
+			carregarBoletos(session);
 			//carregarDadosInadimplencia(session);
 
 
@@ -383,8 +386,7 @@ public class DataLoader {
 		Boleto boleto = Fixture.boleto("123", new Date(),
 				DateUtil.adicionarDias(new Date(), 2), null, null,
 				new BigDecimal(200), null, null, StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC);
-		boleto.setDivida(divida);
+				cotaManoel, bancoHSBC,divida);
 		save(session, boleto);
 	}
 
@@ -970,6 +972,11 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
 		
+		tipoMovimentoRecebimentoReparte = Fixture.tipoMovimentoRecebimentoReparte();	
+
+		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
+		save(session,tipoMovimentoRecebimentoReparte,tipoMovimentoEnvioJornaleiro);
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -1314,6 +1321,12 @@ public class DataLoader {
 		criarCotas(session);
 		criarBanco(session);
 		
+		ConsolidadoFinanceiroCota consolidado = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10));
+		save(session,consolidado);
+		
+		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(), usuarioJoao , StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(session,divida);
+		
 		Boleto boleto0 = Fixture.boleto("1309309032012440",
 				                       new Date(), 
 				                       new Date(), 
@@ -1324,7 +1337,14 @@ public class DataLoader {
 				                       "ACAO", 
 				                       StatusCobranca.PAGO,
 				                       cotaManoel,
-				                       bancoHSBC);
+				                       bancoHSBC,
+				                       divida);
+		
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10));
+		save(session,consolidado1);
+		
+		Divida divida1 = Fixture.divida(consolidado1, cotaMaria, new Date(), usuarioJoao , StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(session,divida1);
 		
 		Boleto boleto1 = Fixture.boleto("1309709032012747",
                                         new Date(), 
@@ -1336,7 +1356,14 @@ public class DataLoader {
                                         "ACAO", 
                                         StatusCobranca.PAGO,
                                         cotaMaria,
- 				                        bancoHSBC);
+ 				                        bancoHSBC,
+ 				                        divida1);
+		
+		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10));
+		save(session,consolidado2);
+		
+		Divida divida2 = Fixture.divida(consolidado2, cotaMaria, new Date(), usuarioJoao , StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(session,divida2);
 		
 		Boleto boleto2 = Fixture.boleto("1310209032012740",
                 						new Date(), 
@@ -1348,9 +1375,10 @@ public class DataLoader {
                 						"ACAO", 
                 						StatusCobranca.NAO_PAGO,
                 						cotaJose,
- 				                        bancoHSBC);
-		
-		Boleto boleto3 = Fixture.boleto("1310609032012041",
+ 				                        bancoHSBC,
+ 				                        divida2);
+		save(session, boleto0,boleto1,boleto2);
+		/*Boleto boleto3 = Fixture.boleto("1310609032012041",
 						                new Date(), 
 						                new Date(), 
 						                null,
@@ -1626,7 +1654,7 @@ public class DataLoader {
 			 boleto20,
 			 boleto21,
 			 boleto22,
-			 boleto23);    
+			 boleto23);    */
 	    
 	}
 	
@@ -1664,7 +1692,7 @@ public class DataLoader {
 		save(session, endereco, enderecoCota, endereco2, enderecoCota2);
 	}
 	
-	public static void dadosExpedicao(Session session) {
+	private static void dadosExpedicao(Session session) {
 		
 		Box box300Reparte = Fixture.boxReparte300();
 		save(session,box300Reparte);

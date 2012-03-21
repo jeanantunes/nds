@@ -95,7 +95,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
 				lancamento.getProdutoEdicao().getPrecoVenda().toString().replace(".", ","), 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
-				(lancamento.getEstudo()==null)? null : lancamento.getEstudo().getQtdeReparte().intValue(), 
+				(lancamento.getEstudo()==null)? null : lancamento.getReparte().intValue(), 
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),

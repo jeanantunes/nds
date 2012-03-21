@@ -263,48 +263,19 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterValorConsignadoDaCota() {
+	public void obterValorConsignadoReparteDaCota() {
 		
 		setUpSuspensaoCota();
 		
 		List<ProdutoValorDTO> valores =  cotaRepository.obterValorConsignadoDaCota(cota.getId());
-		
+				
 		Assert.assertEquals(valores.get(0).getTotal(),200.0);
 		
-	}
-	
-	@Test
-	public void obterReparteDaCotaNoDia() {
+		List<ProdutoValorDTO> valores2 =  cotaRepository.obterReparteDaCotaNoDia(cota.getId(), new Date());
 		
-		setUpSuspensaoCota();
-		
-		List<ProdutoValorDTO> valores =  cotaRepository.obterReparteDaCotaNoDia(cota.getId(), new Date());
-		
-		Assert.assertEquals(valores.get(0).getTotal(),400.0);
+		Assert.assertEquals(valores2.get(0).getTotal(),400.0);
 		
 	}
 	
-	@Test
-	public void obterDividaAcumuladaCota() {
-		
-		setupHistoricoInadimplencia();
-		
-		Double valores =  cotaRepository.obterDividaAcumuladaCota(cota.getId());
-		
-		Assert.assertEquals(valores,20.2);
-		
-	}
-	
-	@Test
-	public void obterDataAberturaDividas() {
-		
-		setupHistoricoInadimplencia();
-		
-		Date dataAbertura =  cotaRepository.obterDataAberturaDividas(cota.getId());
-		
-		Assert.assertEquals(dataAbertura, Fixture.criarData(10, 10, 2000));
-		
-		
-	}
 
 }
