@@ -15,7 +15,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.service.FeriadoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 
 @Service
@@ -29,7 +29,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Autowired
-	private FeriadoService feriadoService;
+	private CalendarioService calendarioService;
 	
 	@Override
 	@Transactional
@@ -59,7 +59,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 			movimentoFinanceiroCota.setCota(cota);
 			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setDataInclusao(feriadoService.obterProximoDiaUtil(dataOperacao));
+			movimentoFinanceiroCota.setData(calendarioService.obterProximoDiaUtil(dataOperacao));
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valor);
 

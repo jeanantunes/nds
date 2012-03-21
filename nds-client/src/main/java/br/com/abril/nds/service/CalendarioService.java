@@ -3,12 +3,12 @@ package br.com.abril.nds.service;
 import java.util.Date;
 
 /**
- * Interface que define serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Feriado}  
+ * Interface que define serviços referentes a 
+ * funcionalidades de calendário.
  * 
  * @author Discover Technology
  */
-public interface FeriadoService {
+public interface CalendarioService {
 	
 	/**
 	 * Adiciona dias úteis a uma data.

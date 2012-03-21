@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.repository.FeriadoRepository;
-import br.com.abril.nds.service.FeriadoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.util.DateUtil;
 
 /**
- * Classe de implementação de serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Feriado}  
+ * Classe de implementação de serviços referentes
+ * funcionalidades de calendário.
  * 
  * @author Discover Technology
  */
 @Service
-public class FeriadoServiceImpl implements FeriadoService {
+public class CalendarioServiceImpl implements CalendarioService {
 
 	@Autowired
 	private FeriadoRepository feriadoRepository;
