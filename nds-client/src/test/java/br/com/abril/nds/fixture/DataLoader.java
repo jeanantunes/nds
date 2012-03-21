@@ -1335,7 +1335,7 @@ public class DataLoader {
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		save(session, divida2);
 		
-		Boleto boleto1 = Fixture.boleto("130970903",
+		Boleto boleto1 = Fixture.boleto("1309309032012440",
                                         new Date(), 
                                         new Date(), 
                                         null, 

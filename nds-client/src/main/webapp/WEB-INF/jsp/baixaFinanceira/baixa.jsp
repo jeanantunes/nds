@@ -171,7 +171,7 @@
 				   class="filtro" id="tableBaixaAuto">
 				
 					<tr>
-						<td width="100">Nome Arquivo:</td>
+						<td width="65">Arquivo:</td>
 						<td colspan="3">
 							<input name="uploadedFile" type="file" id="uploadedFile" size="25" />
 						</td>
