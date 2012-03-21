@@ -29,7 +29,11 @@
 	}
 	
 	function adicionarSelecao(id, check) {
-				
+		
+		if(check.checked==false) {
+			$("#selecionarTodosID").attr("checked",false);
+		}
+		
 		$.postJSON("<c:url value='/confirmacaoExpedicao/selecionarLancamento'/>", 
 				"idLancamento="+id +"&selecionado="+check.checked, 
 				retornoSemAcao);				
@@ -87,6 +91,7 @@
 	
 	function cliquePesquisar() {
 		
+		$("#selecionarTodosID").attr("checked",false);
 		change= !change;
 		
 		var dataLancamento = $('#idDataLancamento').attr('value');
@@ -204,6 +209,7 @@
 			buttons : {
 				"Confirmar" : function() {
 					
+					$("#selecionarTodosID").attr("checked",false);
 					$(".confirmaExpedicaoGrid").flexOptions({			
 						url : '<c:url value="/confirmacaoExpedicao/confirmarExpedicao"/>',
 						dataType : 'json',
@@ -231,6 +237,7 @@
 							buttonImageOnly : true
 						});
 		$( "#idDataLancamento" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+		$("#idDataLancamento").mask("99/99/9999");
 
 	});
 	
@@ -324,7 +331,7 @@
 					<span class="bt_sellAll" style="float: right;">
 					<label for="sel">Selecionar Todos</label>					
 <!-- SELECIONAR TODOS -->	
-						<input type="checkbox" name="Todos" id="sel"onclick="selecionarTodos(this);" style="float: left;" /> </span>
+						<input type="checkbox" name="Todos" id="selecionarTodosID"onclick="selecionarTodos(this);" style="float: left;" /> </span>
 				
 				</div>
 
