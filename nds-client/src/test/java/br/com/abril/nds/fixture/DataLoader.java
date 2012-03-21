@@ -79,7 +79,7 @@ public class DataLoader {
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
-	private static PessoaJuridica juridicaDistrib;
+	private static PessoaJuridica juridicaValida;
 	private static PessoaFisica manoel;
 	private static PessoaFisica jose;
 	private static PessoaFisica maria;
@@ -201,13 +201,12 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();
+			
 			//carregarDadosParaContagemdDevolucao(session);
 			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
-			//carregarBoletos(session);
 			//carregarDadosInadimplencia(session);
-
 
 			commit = true;
 		} catch (Exception e) {
@@ -269,6 +268,7 @@ public class DataLoader {
 
 
 	private static void carregarDados(Session session) {
+
 		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
@@ -367,6 +367,10 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
+		
+		
+		carregarBoletos(session);
+		
 	}
 
 	private static void criarDivida(Session session) {
@@ -383,8 +387,7 @@ public class DataLoader {
 		Boleto boleto = Fixture.boleto("123", new Date(),
 				DateUtil.adicionarDias(new Date(), 2), null, null,
 				new BigDecimal(200), null, null, StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC);
-		boleto.setDivida(divida);
+				cotaManoel, bancoHSBC, divida);
 		save(session, boleto);
 	}
 
@@ -911,7 +914,7 @@ public class DataLoader {
 
 	private static void criarDistribuidor(Session session) {
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
 		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date());
@@ -1290,11 +1293,11 @@ public class DataLoader {
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
 		juridicaFc = Fixture.pessoaJuridica("FC",
 				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
-		juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
+		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
+				"93.081.738/0001-01", "333.333.333.333", "distrib_acme@mail.com");
 		
-		manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");
+		manoel = Fixture.pessoaFisica("319.435.088-95",
+				"developertestermail@gmail.com", "Manoel da Silva");
 
 		jose = Fixture.pessoaFisica("123.456.789-01",
 				"jose@mail.com", "Jose da Silva");
@@ -1302,18 +1305,38 @@ public class DataLoader {
 		maria = Fixture.pessoaFisica("123.456.789-02",
 				"maria@mail.com", "Maria da Silva");
 		
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaDistrib,manoel,jose,maria);
+		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaValida,manoel,jose,maria);
 	}
 	
 	
 	//FINANCEIRO - CONSULTA BOLETOS
 	private static void carregarBoletos(Session session) {
 		
-		criarPessoas(session);
-		criarBox(session);
-		criarCotas(session);
-		criarBanco(session);
 		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
+		save(session, estoqueProdutoCota);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		save(session, mec);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), new Date());
+		save(session,movimentoFinanceiroCota);
+		
+		ConsolidadoFinanceiroCota consolidado = Fixture
+				.consolidadoFinanceiroCota(
+						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
+						new Date(), new BigDecimal(200));
+		save(session, consolidado);
+		
+		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(session, divida);
+
 		Boleto boleto0 = Fixture.boleto("1309309032012440",
 				                       new Date(), 
 				                       new Date(), 
@@ -1324,8 +1347,11 @@ public class DataLoader {
 				                       "ACAO", 
 				                       StatusCobranca.PAGO,
 				                       cotaManoel,
-				                       bancoHSBC);
+				                       bancoHSBC,
+				                       divida);
 		
+		
+		/*
 		Boleto boleto1 = Fixture.boleto("1309709032012747",
                                         new Date(), 
                                         new Date(), 
@@ -1601,9 +1627,9 @@ public class DataLoader {
 						                StatusCobranca.NAO_PAGO,
 						                cotaJose,
 					                    bancoHSBC);
-		
+		*/
 	    save(session,
-    		 boleto0,
+    		 boleto0/*,
 			 boleto1,
 			 boleto2,
 			 boleto3,
@@ -1626,7 +1652,7 @@ public class DataLoader {
 			 boleto20,
 			 boleto21,
 			 boleto22,
-			 boleto23);    
+			 boleto23*/);    
 	    
 	}
 	
@@ -1659,8 +1685,8 @@ public class DataLoader {
 		enderecoCota2.setCota(cotaManoel);
 		enderecoCota2.setEndereco(endereco2);
 		enderecoCota2.setPrincipal(false);
-		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
-		
+		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);		
+
 		save(session, endereco, enderecoCota, endereco2, enderecoCota2);
 	}
 	

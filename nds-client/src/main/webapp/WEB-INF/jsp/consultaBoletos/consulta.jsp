@@ -1,6 +1,8 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+
 <script type="text/javascript">
 
 	$(function() {
@@ -86,7 +88,7 @@
 			buttonImageOnly: true
 		});
 		
-		
+		$("#numCota").numeric();
     }); 
 	
 	function mostrarGridConsulta() {
@@ -141,16 +143,19 @@
 			
 			         if (row.cell[3] == ''){
 			        	 
-						 var linkImpressao = '<a target="blank" href="${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
-						 					 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
-						 					 '</a>';
-			
-						 var linkImpressao = '<a target="blank" href="${pageContext.request.contextPath}/financeiro/boletos/enviaBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
-						 					 '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
-						 					 '</a>';
+						 var linkImpressao = '<a href="${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
+						 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
+						 					 '</a>';			
+					
+				         var linkEmail =     '<a href="javascript:;" onclick="enviaBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
+				                             '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
+	 					                     '</a>';		 					 
 										
 					     row.cell[8] = linkImpressao + linkEmail;
 					     
+			         }
+			         else{
+			        	 row.cell[8] = '';
 			         }
 			         
 		         }
@@ -160,7 +165,14 @@
 		return dadosPesquisa;
 	}
 		
-	
+	function enviaBoleto(nossoNumero) {
+		var data = [
+	   				   {
+	   					   name: 'nossoNumero', value: nossoNumero
+	   				   }
+	   			   ];
+		$.postJSON("<c:url value='/financeiro/boletos/enviaBoleto' />", data);
+	}
 	
 </script>
 
@@ -182,12 +194,27 @@
             <tr>
             
               <td width="29">Cota:</td>
-              <td width="260"><input name="numCota" id="numCota" type="text" style="width:80px; float:left; margin-right:5px;" />
-			      <span class="classPesquisar">
-			          <a href="javascript:;">&nbsp;</a>
-			      </span> - 
-			      <input name="descricaoCota" id="descricaoCota" type="text" class="nome_jornaleiro" style="width:130px;"/>
-			  
+              <td width="260">
+              	<input name="numCota" 
+              		   id="numCota" 
+              		   type="number"
+              		   maxlength="11"
+              		   style="width:80px; 
+              		   float:left; margin-right:5px;"
+              		   onchange="cota.limparCamposPesquisa('#descricaoCota')" />
+              	  
+              	  <span class="classPesquisar" title="Pesquisar Cota">
+              	  		<a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');">&nbsp;</a>
+              	  </span>
+			
+			      <input name="descricaoCota" 
+			      		 id="descricaoCota" 
+			      		 type="text" 
+			      		 class="nome_jornaleiro" 
+			      		 maxlength="255"
+			      		 style="width:130px;"
+			      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
+			      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
 			  </td>
               
               <td width="124">Data de Vencimento:</td>
