@@ -3,7 +3,7 @@ package br.com.abril.nds.util;
 public enum MockPerfilUsuario {
 
 	/**
-	 * FIXME: Apos definição de controle de usuarios
+	 * FIXME: Apos definicao de controle de usuarios
 	 * iremos remover este enum 
 	 */
 	
