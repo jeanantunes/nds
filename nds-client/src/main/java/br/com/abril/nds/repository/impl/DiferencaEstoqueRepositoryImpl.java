@@ -183,7 +183,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			
 			if (filtro.getDataMovimento() != null) {
 	
-				hql += " and movimentoEstoque.dataInclusao = :dataMovimento ";
+				hql += " and movimentoEstoque.data = :dataMovimento ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
@@ -205,11 +205,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case DATA_LANCAMENTO_NUMERO_EDICAO:
-					hql += "order by diferenca.movimentoEstoque.dataInclusao, "
+					hql += "order by diferenca.movimentoEstoque.data, "
 						 + " diferenca.produtoEdicao.numeroEdicao ";
 					break;
 				case DATA_LANCAMENTO:
-					hql += "order by diferenca.movimentoEstoque.dataInclusao ";
+					hql += "order by diferenca.movimentoEstoque.data ";
 					break;
 				case CODIGO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.codigo ";
@@ -357,7 +357,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				&& filtro.getPeriodoVO().getDataInicial() != null
 				&& filtro.getPeriodoVO().getDataFinal() != null) {
 			
-			hql += " and diferenca.movimentoEstoque.dataInclusao between :dataInicial and :dataFinal ";
+			hql += " and diferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
