@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -62,11 +63,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		hql.append(" from ");		
 		
-		hql.append(" Lancamento lancamento ");		
+		hql.append(" Lancamento lancamento, ControleContagemDevolucao controleContagemDevolucao ");		
 		
 		hql.append(" where ");	
 		
-		hql.append(" ( lancamento.dataRecolhimentoDistribuidor between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) ");		
+		hql.append(" ( lancamento.dataRecolhimentoDistribuidor between :dataRecolhimentoDistribuidorInicial and :dataRecolhimentoDistribuidorFinal ) and ");		
+
+		hql.append(" lancamento.dataRecolhimentoDistribuidor = controleContagemDevolucao.data and ");	
+		
+		hql.append(" controleContagemDevolucao.status = :statusOperacao ");	
+		
 		
 		if( filtro.getIdFornecedor() != null ) {
 			
@@ -126,6 +132,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		query.setParameter("dataRecolhimentoDistribuidorInicial", filtro.getPeriodo().getDataInicial());
 
 		query.setParameter("dataRecolhimentoDistribuidorFinal", filtro.getPeriodo().getDataFinal());
+
+		query.setParameter("statusOperacao", StatusOperacao.EM_ANDAMENTO);
 		
 		if(indBuscaTotalMovimentoEParcial && !indBuscaQtd) {
 			query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);

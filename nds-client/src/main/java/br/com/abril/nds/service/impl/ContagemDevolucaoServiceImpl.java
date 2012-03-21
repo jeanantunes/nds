@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,14 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.util.MockPerfilUsuario;
@@ -32,6 +38,16 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
+
+	@Autowired
+	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
+	
+	@Autowired
+	private ControleContagemDevolucaoRepository controleContagemDevolucaoRepository;
+
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, MockPerfilUsuario mockPerfilUsuario) {
@@ -92,12 +108,26 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	}
 
 	/**
+	 * Insere os dados parciais de devolução digitados pelo usuario.
+	 */
+	@Transactional
+	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, MockPerfilUsuario mockPerfilUsuario) {
+		
+		if(MockPerfilUsuario.USUARIO_ENCARREGADO.equals(mockPerfilUsuario)) {
+			inserirCorrecaoListaContagemDevolucao(listaContagemDevolucao);
+		} else {
+			inserirListaContagemDevolucao(listaContagemDevolucao);
+		}
+		
+	}
+	
+	
+	/**
 	 * Salva os dados parciais de devolução digitados pelo usuario.
 	 * 
 	 * @param listaContagemDevolucao
 	 */
-	@Transactional
-	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, MockPerfilUsuario mockPerfilUsuario) {
+	private void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		
 		if(listaContagemDevolucao == null || listaContagemDevolucao.isEmpty()) {
 			return;
@@ -119,7 +149,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * 
 	 * @param listaContagemDevolucao
 	 */
-	public void inserirCorrecaoListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, MockPerfilUsuario mockPerfilUsuario) {
+	private void inserirCorrecaoListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		
 		if(listaContagemDevolucao == null || listaContagemDevolucao.isEmpty()) {
 			return;
@@ -142,13 +172,16 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			return;
 		}
 		
-		ProdutoEdicao produtoEdicao = null;//TODO: find by codigoProduto e numeroEdicao
+		String codigoProduto = contagem.getCodigoProduto();
+		Long numeroEdicao	= contagem.getNumeroEdicao();
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
 		Usuario usuario = null; //TODO: //obter usuario resp.
 		
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
 		
-		conferenciaEncalheParcial.setDataConfEncalheParcial(new Date());
+		conferenciaEncalheParcial.setDataConfEncalheParcial(dataAtual);
 		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(contagem.getDataRecolhimentoDistribuidor());
 		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
 		conferenciaEncalheParcial.setQtde(contagem.getQtdNota());
@@ -193,14 +226,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			correcao = qtdTotalConferenciaEncalheParcialNew;
 			
 		}
-		
-		ProdutoEdicao produtoEdicao = null;//TODO: find by codigoProduto e numeroEdicao
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
 		Usuario usuario = null; //TODO: //obter usuario resp.
 		
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
 		
-		conferenciaEncalheParcial.setDataConfEncalheParcial(new Date());
+		conferenciaEncalheParcial.setDataConfEncalheParcial(dataAtual);
 		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(contagem.getDataRecolhimentoDistribuidor());
 		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
 		conferenciaEncalheParcial.setQtde(correcao);
@@ -211,30 +243,91 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	public void confirmarContagemDevolucao() {
+	@Transactional
+	public void confirmarContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) {
 		
-		//Obter lista conferenciaEncalheParcial referente ao filtro do usuario...
+		Date dataAtual = new Date();
 		
-		//Obs: Somente de registro que estejam com statusAprovacao = PENDENTE
+		List<ContagemDevolucaoDTO> listaContagemAgrupada =  new LinkedList<ContagemDevolucaoDTO>();
 		
-		//Iterar a lista flagndo os registros com statusAprovacao = APROVADO
+		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
+			
+			inserirCorrecaoContagemDevolucao(contagem, dataAtual);
+			
+			Date dataRecolhimentoDistribuidor = contagem.getDataRecolhimentoDistribuidor();
+			String codigoProduto = contagem.getCodigoProduto();
+			Long numeroEdicao = contagem.getNumeroEdicao();
+			
+			List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = 
+					conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(
+					StatusAprovacao.PENDENTE, 
+					dataRecolhimentoDistribuidor, 
+					codigoProduto, 
+					numeroEdicao);
+			
+			agruparListaConferenciaEncalheParcial(listaContagemAgrupada, listaConferenciaEncalheParcial);
+			
+			aprovarConferenciaEncalheParcial(listaConferenciaEncalheParcial, dataAtual, usuario);
+			
+		}
 		
-		//Usar a lista iterada para gerar os dados da notaFiscalParcial
-		
-		
-	}
-	
-	private void sinalizarContagemDevolucaoFinalizada() {
 		//TODO
+		
 	}
 	
-	private void gerarNotaFiscalParcial() {
+	/**
+	 * Agrupa os registro da lista de ConferenciaEncalheParcial
+	 * em um unico objeto ContagemDevolucaoDTO que será adicionado
+	 * a lista listaContagemAgrupada.
+	 * 
+	 * @param listaContagemAgrupada
+	 * @param listaConferenciaEncalheParcial
+	 */
+	private void agruparListaConferenciaEncalheParcial(
+			List<ContagemDevolucaoDTO> listaContagemAgrupada, 
+			List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial) {
+		
+		//TODO...
+		
+	}
+	
+	/**
+	 * Aprova os registros de Status Conferencia Encalhe Parcial.
+	 * 
+	 * @param listaConferenciaEncalheParcial
+	 * @param dataAtual
+	 * @param usuario
+	 */
+	private void aprovarConferenciaEncalheParcial(List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial, Date dataAtual, Usuario usuario) {
+		
+		for(ConferenciaEncalheParcial parcial :  listaConferenciaEncalheParcial) {
+			
+			parcial.setStatusAprovacao(StatusAprovacao.APROVADO);
+			parcial.setResponsavel(usuario);
+			parcial.setDataAprovacao(dataAtual);
+			
+			conferenciaEncalheParcialRepository.alterar(parcial);
+			
+		}
+		
+	}
+	
+	private void sinalizarControleContagemDevolucaoFinalizada() {
+		
+		ControleConferenciaEncalhe controleConferenciaEncalhe = 
+				controleConferenciaEncalheRepository.obterControleConferenciaEncalhe(null);
+		
+		//TODO
+		ControleContagemDevolucao controleContagemDevolucao = 
+				controleContagemDevolucaoRepository.obterControleContagemDevolucao(null);
+
+		
+	}
+	
+	private void gerarNotaFiscalParcial(List<ContagemDevolucaoDTO> listaContagemAgrupada) {
 		//TODO
 	}
 
-	private void gerarNotaFiscalFinal() {
-		//TODO
-	}
 
 	
 }

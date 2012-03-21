@@ -66,6 +66,9 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -336,6 +339,31 @@ public class Fixture {
 		conferenciaEncalheParcial.setStatusAprovacao(statusAprovacao);
 		
 		return conferenciaEncalheParcial;
+	}
+	
+	
+	public static ControleConferenciaEncalhe controleConferenciaEncalhe (
+			StatusOperacao statusOperacao,
+			Date data) {
+		
+		ControleConferenciaEncalhe controleConferenciaEncalhe = new ControleConferenciaEncalhe();
+		
+		controleConferenciaEncalhe.setData(data);
+		controleConferenciaEncalhe.setStatus(statusOperacao);
+		
+		return controleConferenciaEncalhe;
+	}
+	
+	public static ControleContagemDevolucao controleContagemDevolucao (
+			StatusOperacao statusOperacao,
+			Date data) {
+		
+		ControleContagemDevolucao controleContagemDevolucao = new ControleContagemDevolucao();
+		
+		controleContagemDevolucao.setData(data);
+		controleContagemDevolucao.setStatus(statusOperacao);
+		
+		return controleContagemDevolucao;
 	}
 	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,

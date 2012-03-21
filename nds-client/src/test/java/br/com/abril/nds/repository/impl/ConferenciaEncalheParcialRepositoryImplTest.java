@@ -26,7 +26,6 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	
 	@Autowired
 	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepositoryImpl;
-
 	
 	private Lancamento lancamentoVeja;
 	
