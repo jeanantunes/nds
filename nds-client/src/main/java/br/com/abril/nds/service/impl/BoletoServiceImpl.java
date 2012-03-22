@@ -504,4 +504,11 @@ public class BoletoServiceImpl implements BoletoService {
 		return email;
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public Boleto obterBoletoPorNossoNumero(String nossoNumero) {
+		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero);
+		return boleto;
+	}
+
 }

@@ -107,8 +107,8 @@ public class ConsultaBoletosController {
 		
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaBoletosCotaDTO filtroAtual = new FiltroConsultaBoletosCotaDTO(numCota,
-                															        /*DateUtil.parseDataPTBR(DateUtil.formatarData(*/dataDe/*,"dd/MM/yyyy"))*/,
-                															        /*DateUtil.parseDataPTBR(DateUtil.formatarData(*/dataAte/*,"dd/MM/yyyy"))*/,
+                															        dataDe,
+                															        dataAte,
                 															        status);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
@@ -135,24 +135,17 @@ public class ConsultaBoletosController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
-		String dtPagto;
 		for (Boleto boleto : boletos){	
-			
-			dtPagto="";
-			if (boleto.getDataPagamento()!=null){
-				dtPagto=DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy");
-			}
-			
 			listaModelo.add(new CellModel(1,
-										  boleto.getNossoNumero(),
-										  DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"),
-										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
-										  dtPagto,
-										  boleto.getEncargos(),
-										  boleto.getValor().toString(),
-										  boleto.getTipoBaixa(),
-										  boleto.getStatusCobranca().name(),
-										  boleto.getAcao()
+										  (boleto.getNossoNumero()!=null?boleto.getNossoNumero():""),
+										  (boleto.getDataEmissao()!=null?DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"):""),
+										  (boleto.getDataVencimento()!=null?DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"):""),
+										  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
+										  (boleto.getEncargos()!=null?boleto.getEncargos().toString():""),
+										  (boleto.getValor()!=null?boleto.getValor().toString():""),
+										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa():""),
+										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().name():""),
+										  ""
                       					)
               );
 		}	
@@ -202,7 +195,7 @@ public class ConsultaBoletosController {
 		
 		email.enviar("Assunto", "Mensagem", destinatarios, anexo);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	public void validar(Integer numCota,

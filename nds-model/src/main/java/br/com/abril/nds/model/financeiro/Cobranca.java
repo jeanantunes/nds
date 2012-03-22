@@ -57,16 +57,13 @@ public abstract class Cobranca {
 	private Date dataPagamento;
 	
 	@Column(name = "ENCARGOS", nullable = true)
-	private String encargos;
+	private BigDecimal encargos;
 
 	@Column(name = "VALOR", nullable = false)
 	private BigDecimal valor;
 	
 	@Column(name = "TIPO_BAIXA", nullable = true)
 	private String tipoBaixa;
-	
-	@Column(name = "ACAO", nullable = true)
-	private String acao;
 	
 	@Column(name = "CONTEMPLACAO", nullable = true)
 	private boolean contemplacao;
@@ -123,11 +120,11 @@ public abstract class Cobranca {
 		this.dataPagamento = dataPagamento;
 	}
 
-	public String getEncargos() {
+	public BigDecimal getEncargos() {
 		return encargos;
 	}
 
-	public void setEncargos(String encargos) {
+	public void setEncargos(BigDecimal encargos) {
 		this.encargos = encargos;
 	}
 
@@ -145,14 +142,6 @@ public abstract class Cobranca {
 
 	public void setTipoBaixa(String tipoBaixa) {
 		this.tipoBaixa = tipoBaixa;
-	}
-
-	public String getAcao() {
-		return acao;
-	}
-
-	public void setAcao(String acao) {
-		this.acao = acao;
 	}
 
 	public boolean isContemplacao() {

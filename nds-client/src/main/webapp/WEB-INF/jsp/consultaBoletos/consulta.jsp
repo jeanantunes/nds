@@ -134,7 +134,7 @@
 			  if(value[0] == "TblModelBoletos") {
 				  dadosPesquisa = value[1];
 			  }
-		});
+	    });
 		
 		
 		
@@ -218,9 +218,9 @@
 			  </td>
               
               <td width="124">Data de Vencimento:</td>
-              <td width="114"><input name="dataDe" id="dataDe" type="text" maxlength="10" id="dataDe" style="width:80px; float:left; margin-right:5px;" value="${dataDe}"/></td>
+              <td width="114"><input name="dataDe" id="dataDe" type="date" maxlength="10" style="width:80px; float:left; margin-right:5px;" value="${dataDe}"/></td>
               <td width="25">Até:</td>
-              <td width="110"><input name="dataAte" id="dataAte" type="text" maxlength="10" id="dataAte" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
+              <td width="110"><input name="dataAte" id="dataAte" type="date" maxlength="10" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
               
               <td width="40">Status:</td>
               <td width="98"><select name="status" id="status" style="width:100px;">
@@ -255,4 +255,3 @@
   </div>
 
 </body>
-</html>
