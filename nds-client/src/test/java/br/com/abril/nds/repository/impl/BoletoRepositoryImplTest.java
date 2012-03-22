@@ -31,6 +31,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
+
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -124,6 +125,15 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES
 
+		Usuario usuario = Fixture.usuarioJoao();
+		save(usuario);
+		
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		save(consolidado1);
+		
+		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		save(divida1);
+		
 	    Boleto boleto = Fixture.boleto("5", 
                 					   new Date(), 
                 					   new Date(), 

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -119,10 +120,11 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		furoProduto.setUsuario(usuario);
 		
 		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
-		historicoLancamento.setData(new Date());
+		historicoLancamento.setDataEdicao(new Date());
 		historicoLancamento.setLancamento(lancamento);
 		historicoLancamento.setResponsavel(usuario);
 		historicoLancamento.setStatus(lancamento.getStatus());
+		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
