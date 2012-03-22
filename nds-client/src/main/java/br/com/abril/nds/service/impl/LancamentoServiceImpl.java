@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -59,7 +60,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	}
 	
 	private LancamentoNaoExpedidoDTO montarDTOExpedicao(Lancamento lancamento) {
-		
+	
 		String fornecedor;
 		
 		if(lancamento.getProdutoEdicao().getProduto().getFornecedores().size()>1) {
@@ -95,7 +96,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
 				lancamento.getProdutoEdicao().getPrecoVenda().toString().replace(".", ","), 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
-				(lancamento.getEstudo()==null)? null : lancamento.getEstudo().getQtdeReparte().intValue(), 
+				lancamento.getReparte().intValue(), 
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
@@ -131,11 +132,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 		lancamentoRepository.alterar(lancamento);
 		
 		HistoricoLancamento historico = new HistoricoLancamento();
-		historico.setData(new Date());
+		historico.setDataEdicao(new Date());
 		historico.setLancamento(lancamento);
 		
 		historico.setResponsavel(usuario);
 		historico.setStatus(lancamento.getStatus());
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(

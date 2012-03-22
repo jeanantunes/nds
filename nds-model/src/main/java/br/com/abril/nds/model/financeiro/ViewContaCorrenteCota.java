@@ -1,19 +1,13 @@
 package br.com.abril.nds.model.financeiro;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,57 +20,52 @@ import br.com.abril.nds.model.cadastro.Cota;
  * @created 16-mar-2012 14:00:00
  */
 @Entity
-@Table(name = "CONSOLIDADO_FINANCEIRO_COTA")
-@SequenceGenerator(name="CONSOLIDADO_SEQ", initialValue = 1, allocationSize = 1)
-public class ConsolidadoFinanceiroCota {
+@Table(name = "VIEW_CONTA_CORRENTE_COTA")
+public class ViewContaCorrenteCota {
 	
-	@Id
-	@GeneratedValue(generator = "CONSOLIDADO_SEQ")
+	@Id	
 	@Column(name = "ID")
 	private Long id;
+	
+	@Column(name = "COTA_ID", nullable = false)
+	private Long cotaId;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_CONSOLIDADO", nullable = false)
 	private Date dataConsolidado;
 	
-	@Column(name = "VALOR_POSTERGADO")
+	@Column(name = "NUMERO_COTA", nullable = false)
+	private Integer numeroCota;
+	
+	@Column(name = "VALOR_POSTERGADO", nullable = true)
 	private BigDecimal valorPostergado;
 
-	@Column(name = "NUMERO_ATRASADOS")
+	@Column(name = "NUMERO_ATRASADOS", nullable = false)
 	private BigDecimal numeroAtrasados;
 	
-	@Column(name = "CONSIGNADO")
+	@Column(name = "CONSIGNADO", nullable = true)
 	private BigDecimal consignado;
-
-	@Column(name = "NUMERO_COTA", nullable = false)
-	private Integer numeroCota;	
-
-	@Column(name = "ENCALHE")
+	
+	@Column(name = "ENCALHE", nullable = true)
 	private BigDecimal encalhe;
 	
-	@Column(name = "VENDA_ENCALHE")
+	@Column(name = "VENDA_ENCALHE", nullable = true)
 	private BigDecimal vendaEncalhe;
 	
-	@Column(name = "DEBITO_CREDITO")
+	@Column(name = "DEBITO_CREDITO", nullable = true)
 	private BigDecimal debitoCredito;
 	
-	@Column(name = "ENCARGOS")
+	@Column(name = "ENCARGOS", nullable = true)
 	private BigDecimal encargos;
 	
-	@Column(name = "PENDENTE")
+	@Column(name = "PENDENTE", nullable = true)
 	private BigDecimal pendente;
 	
-	@Column(name = "TOTAL", nullable = false)
+	@Column(name = "TOTAL", nullable = true)
 	private BigDecimal total;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
+	@ManyToOne
 	private Cota cota;
-	
-	@OneToMany
-	@JoinTable(name = "	CONSOLIDADO_MVTO_FINANCEIRO_COTA", joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")})
-	private List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 
 	public Long getId() {
 		return id;
@@ -165,14 +154,6 @@ public class ConsolidadoFinanceiroCota {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-		
-	public Integer getNumeroCota() {
-		return numeroCota;
-	}
-
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
-	}
 
 	public Cota getCota() {
 		return cota;
@@ -181,13 +162,22 @@ public class ConsolidadoFinanceiroCota {
 	public void setCota(Cota cota) {
 		this.cota = cota;
 	}
-	
-	public List<MovimentoFinanceiroCota> getMovimentos() {
-		return movimentos;
+
+	public Long getCotaId() {
+		return cotaId;
 	}
-	
-	public void setMovimentos(List<MovimentoFinanceiroCota> movimentos) {
-		this.movimentos = movimentos;
+
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
 	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
 	
 }

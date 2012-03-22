@@ -37,42 +37,24 @@ function pesquisarPorCotaNome() {
 	$.postJSON("<c:url value='/financeiro/contaCorrenteCota/buscarCota'/>", "numeroCota=" + cota, 
 	function(result) {
 		$("#nomeCota").val(result.nome);
+		
 	});	
 
-}
-
-/**
- * SE A CONTA CORRENTE FOR ENCONTRADA, SERAO PESQUISADOS OS ITEM RELATIVOS A MESMA
- * E POPULADA A GRID
- */
-function confirmaContaCorrenteCotaEncontrada(result) {
-	
-	//jsonResposta = result;
-	
-	//if(result.tipoMensagem == "SUCCESS") {
-
-		//exibirMensagem(result.tipoMensagem, result.listaMensagens);
-		
-		pesquisarItemContaCorrenteCota();
-
-	//} else {
-		
-	//	$(".grids").hide();
-		
-	//} vai precis
-	
 }
 
 /**
  * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
  */
 function pesquisarItemContaCorrenteCota() {
-		
+	
+	var cota = $("#cota").val();
+
+	var parametroPesquisa = [{name:'filtroViewContaCorrenteCotaDTO.numeroCota', value:cota }];
+
 	$(".itemContaCorrenteCotaGrid").flexOptions({
 		
-		url: '<c:url value="/"/>financeiro/contaCorrenteCota/itemContaCorrenteCota',
-		preProcess: getDataFromResult,
-		dataType : 'json'
+		url : '<c:url value="/financeiro/contaCorrenteCota/consultarContaCorrenteCota" />', params: parametroPesquisa
+				
 	});
 
 	$(".itemContaCorrenteCotaGrid").flexReload();
@@ -83,7 +65,17 @@ function pesquisarItemContaCorrenteCota() {
  * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
  */
 function getDataFromResult(data) {
+	if (data.mensagens) {
+
+		exibirMensagem(
+				data.mensagens.tipoMensagem, 
+				data.mensagens.listaMensagens
+		);
 		
+		$("#grids").hide();
+
+		return data.tableModel;
+	}
 	$.each(data.rows, function(index, value) {
 		
 		var consignado = value.cell[3];
@@ -107,12 +99,14 @@ function getDataFromResult(data) {
 			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
 			value.cell[7] = '<a href="#"/>'+encargos+'</a>'+hiddeFields;
 			
+			
+			
 		
 	});
 
 	//data = destacarValorNegativo(data);
 	
-	
+	$("#cotanome").html($("#cota").val()+" "+$("#nomeCota").val());
 	$(".grids").show();
 	
 	return data;
@@ -135,82 +129,77 @@ $(function() {
 function carregarItemContaCorrenteCotaGrid() {
 	
 	$(".itemContaCorrenteCotaGrid").flexigrid({
-		
-			preProcess: getDataFromResult,
-			dataType : 'json',
-			colModel : [
-		{
+		preProcess: getDataFromResult,
+		dataType : 'json',
+		colModel : [ {
 			display : 'Data',
 			name : 'data',
-			width : 60,
-			sortable : false,
-			align : 'center'
-		}, {
-			display : 'Vlr.Postergado',
-			name : 'valorPostergado',
 			width : 70,
-			sortable : false,
+			sortable : true,
 			align : 'left'
 		}, {
-			display : 'NA',
-			name : 'NA',
+			display : 'Vlr. Postergado',
+			name : 'vlrpostergado',
 			width : 90,
-			sortable : false,
-			align : 'center'
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'NA',
+			name : 'na',
+			width : 70,
+			sortable : true,
+			align : 'right'
 		}, {
 			display : 'Consignado',
-			name : 'precoCapa',
-			width : 70,
-			sortable : false,
-			align : 'center'
+			name : 'consignadoaVencer',
+			width : 90,
+			sortable : true,
+			align : 'right'
 		}, {
 			display : 'Encalhe',
-			name : 'encalhe',
-			width : 90,
-			sortable : false,
-			align : 'center'
+			name : 'encalhe	',
+			width : 70,
+			sortable : true,
+			align : 'right'
 		}, {
 			display : 'Venda Encalhe',
 			name : 'vendaEncalhe',
 			width : 90,
-			sortable : false,
-			align : 'center'
+			sortable : true,
+			align : 'right',
 		}, {
-			
 			display : 'Déb/Cred.',
 			name : 'debCred',
-			width : 90,
-			sortable : false,
-			align : 'center'
-			
+			width : 80,
+			sortable : true,
+			align : 'right'
 		}, {
 			display : 'Encargos',
 			name : 'encargos',
-			width : 90,
-			sortable : false,
-			align : 'center'
-			
+			width : 80,
+			sortable : true,
+			align : 'right'
 		}, {
-			
 			display : 'Pendente',
 			name : 'pendente',
-			width : 90,
-			sortable : false,
-			align : 'center'
-			
-		},{
-			
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 90,
+			width : 105,
 			sortable : true,
-			align : 'center'
+			align : 'right'
 		}],
-		
-	
+		sortname : "data",
+		sortorder : "desc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
 		showTableToggleBtn : true,
 		width : 960,
-		height : 180
+		height : 255
 	});
 }
 
@@ -344,14 +333,14 @@ function popup_encargos() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="32">Cota:</td>
-              <td colspan="3"><input type="text" name="cota" id="cota" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar">
+              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar">
               		<a href="javascript:;" onclick="pesquisarPorCotaNome();">&nbsp;</a></span>
               </td>
               <td width="36">Nome:</td>
               <td width="263"><input type="text" name="nomeCota" id="nomeCota" style="width:230px;"/></td>
               <td width="72">&nbsp;</td>
               <td width="283">&nbsp;</td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="verificarContaCorrenteCotaExistente();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();">Pesquisar</a></span></td>
             </tr>
           </table>
 
@@ -361,9 +350,10 @@ function popup_encargos() {
        	  <legend>Conta-Corrente Selecionado</legend>
        
        <div class="grids" style="display: none;">
-          <strong> ------------ </strong>
+       
+          <strong><span id="cotanome"></span></strong>
           <br />
-
+			
        	  <table class="itemContaCorrenteCotaGrid"></table>
         
                 	<span class="bt_novos" title="Negociar Divida"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Negociar Divida</a></span>

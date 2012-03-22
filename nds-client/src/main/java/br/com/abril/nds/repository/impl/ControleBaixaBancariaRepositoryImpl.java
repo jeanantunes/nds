@@ -38,5 +38,5 @@ public class ControleBaixaBancariaRepositoryImpl extends AbstractRepository<Cont
 		
 		return (ControleBaixaBancaria) criteria.uniqueResult();
 	}
-
+	
 }
