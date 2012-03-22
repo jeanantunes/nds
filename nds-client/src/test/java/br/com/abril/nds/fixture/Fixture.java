@@ -1015,6 +1015,7 @@ public class Fixture {
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
 		consolidado.setTotal(valorConsolidado);
+		consolidado.setNumeroCota(cota.getNumeroCota());
 		return consolidado;
 	}
 	
