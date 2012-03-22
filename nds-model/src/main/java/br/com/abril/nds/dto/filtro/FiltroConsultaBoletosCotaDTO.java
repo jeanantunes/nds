@@ -52,9 +52,9 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	public enum OrdenacaoColunaBoletos{
 		
 		NOSSO_NUMERO("nossoNumero"),
-		DATA_EMISSAO("dataVencimento"),
-		DATA_VENCIMENTO("dataVencimento"),
-		DATA_PAGAMENTO("dataPagamento"),
+		DATA_EMISSAO("dtEmissao"),
+		DATA_VENCIMENTO("dtVencimento"),
+		DATA_PAGAMENTO("dtPagto"),
 		ENCARGOS("encargos"),
 		VALOR("valor"),
 		TIPO_BAIXA("tipoBaixa"),

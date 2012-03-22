@@ -66,7 +66,7 @@ public class ConsultaBoletosController {
 
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
 
-    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBoletos";
    
 	
 	public ConsultaBoletosController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
@@ -76,7 +76,7 @@ public class ConsultaBoletosController {
 	}
 	
 	@Get
-    public void consulta(){
+    public void consulta(){ 
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));

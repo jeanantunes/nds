@@ -2,9 +2,6 @@ package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import br.com.abril.nds.model.StatusCobranca;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.financeiro.Divida;
 
 public class CobrancaVO {
     

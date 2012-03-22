@@ -129,6 +129,8 @@
 		function setBoleto(result) {
 			var boleto = result;
 			$("#boleto").html(boleto);
+			
+			dividaManualNossoNumero();
 		}
 		
 		
