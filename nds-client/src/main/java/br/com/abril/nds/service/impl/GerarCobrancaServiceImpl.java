@@ -25,7 +25,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Override
 	@Transactional
-	public void gerarCobranca() {
+	public void gerarCobranca(Long idCota) {
 		
 		// verificar se a operação de conferencia ja foi concluida
 		StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
@@ -34,7 +34,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 			// buscar movimentos financeiros da cota para a data de operação em andamento
 			List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
-					this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao();
+					this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(idCota);
 			
 			if (listaMovimentoFinanceiroCota != null &&
 					!listaMovimentoFinanceiroCota.isEmpty()){

@@ -7,5 +7,5 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
 
-	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao();	
+	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota);	
 }
