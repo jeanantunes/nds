@@ -33,10 +33,12 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -193,6 +195,8 @@ public class DataLoader {
 	private static Boleto boleto8;
 	private static Boleto boleto9;	
 	
+	private static PoliticaCobranca politicaCobranca;
+	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -260,6 +264,7 @@ public class DataLoader {
 		criarEnderecoCotaPF(session);
 		criarParametroEmail(session);
 		criarDivida(session);
+		criarPoliticaCobranca(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -333,6 +338,11 @@ public class DataLoader {
 		
 		carregarBoletos(session);
 		
+	}
+
+	private static void criarPoliticaCobranca(Session session) {
+		politicaCobranca = Fixture.criarPoliticaCobranca(distribuidor, TipoCobranca.BOLETO, new BigDecimal(1), false, 1);
+		save(session, politicaCobranca);
 	}
 
 	private static void criarDivida(Session session) {

@@ -261,71 +261,7 @@
 </div> 
 </form>
 <script>	
-	$(function() {	
-		
-		$(".suspensaoGrid").flexigrid($.extend({},{
-			url : '<c:url value="/suspensaoCota/obterCotasSuspensaoJSON"/>',
-			dataType : 'json',
-			preProcess:processaRetornoPesquisa,
-			onChangeSort: function(name, order) { sortGrid(".suspensaoGrid", order);}, 
-			colModel : [  {
-				display : 'Cota',
-				name : 'cota',
-				width : 55,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome',
-				name : 'nome',
-				width : 210,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Valor Consignado Total R$',
-				name : 'vlrConsignado',
-				width : 150,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Valor Reparte do Dia R$',
-				name : 'vlrReparte',
-				width : 150,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Divida Acumulada R$',
-				name : 'dividaAcumulada',
-				width : 140,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Dias em Aberto',
-				name : 'diasAberto',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 40,
-				sortable : false,
-				align : 'center',
-			},{
-				display : '  ',
-				name : 'selecionado',
-				width : 20,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "name",
-			sortorder : "asc",
-			usepager : false,
-			useRp : false,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 260
-		})); 	
-	});
+	
 	
 	function processaRetornoPesquisa(data) {
 		
@@ -589,6 +525,72 @@
 			$(this).find("td:nth(" + column + ")").addClass("sorted"); // Add sorted class to sorted column cells.
 		});
 	}
+	
+	$(function() {	
+		
+		$(".suspensaoGrid").flexigrid($.extend({},{
+			url : '<c:url value="/suspensaoCota/obterCotasSuspensaoJSON"/>',
+			dataType : 'json',
+			preProcess:processaRetornoPesquisa,
+			onChangeSort: function(name, order) { sortGrid(".suspensaoGrid", order);}, 
+			colModel : [  {
+				display : 'Cota',
+				name : 'cota',
+				width : 55,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 210,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Valor Consignado Total R$',
+				name : 'vlrConsignado',
+				width : 150,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Valor Reparte do Dia R$',
+				name : 'vlrReparte',
+				width : 150,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Divida Acumulada R$',
+				name : 'dividaAcumulada',
+				width : 140,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dias em Aberto',
+				name : 'diasAberto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 40,
+				sortable : false,
+				align : 'center',
+			},{
+				display : '  ',
+				name : 'selecionado',
+				width : 20,
+				sortable : false,
+				align : 'center'
+			}],
+			sortname : "name",
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 260
+		})); 	
+	});
 	
 </script>
 </body>
