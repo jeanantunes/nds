@@ -8,7 +8,7 @@ import br.com.abril.nds.model.financeiro.Cobranca;
 public interface CobrancaRepository extends Repository<Cobranca, Long>{
 
 	/**
-	 * Obtém data em que houve a primeira inadimplência com cobrança ainda em aberto
+	 * Obtem data em que houve a primeira inadimplencia com cobrança ainda em aberto
 	 * 
 	 * @param idCota -  Código da Cota
 	 * @return dia
@@ -24,7 +24,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	Double obterDividaAcumuladaCota(Long idCota);
 	
 	/**
-	 * Obtér cobraças não pagas da cota
+	 * Obter cobraças não pagas da cota
 	 * 
 	 * @param idCota
 	 * @return

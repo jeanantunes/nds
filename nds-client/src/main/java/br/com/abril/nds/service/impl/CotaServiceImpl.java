@@ -12,6 +12,7 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -237,11 +238,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
 		historico.setCota(cota);
-		historico.setData(new Date());
+		historico.setDataEdicao(new Date());
 		historico.setNovaSituacao(SituacaoCadastro.SUSPENSO);
 		historico.setSituacaoAnterior(cota.getSituacaoCadastro());
 		historico.setResponsavel(usuario);
 		historico.setMotivo(MotivoAlteracaoSituacao.INADIMPLENCIA);
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoSituacaoCotaRepository.adicionar(historico);
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);

@@ -860,7 +860,7 @@ public class Fixture {
 				                Date dataEmissao,
 				                Date dataVencimento,
 				                Date dataPagamento,
-				                String encargos,
+				                BigDecimal encargos,
 				                BigDecimal valor,
 				                String tipoBaixa,
 				                String acao,
@@ -877,7 +877,6 @@ public class Fixture {
 		boleto.setEncargos(encargos);
 		boleto.setValor(valor);
 		boleto.setTipoBaixa(tipoBaixa);
-		boleto.setAcao(acao);
 		boleto.setStatusCobranca(status);
 		boleto.setCota(cota);
 		boleto.setBanco(banco);

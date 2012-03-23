@@ -2,11 +2,13 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -68,4 +70,15 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#obterMovimentosFinanceiroCota()
+	 */
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+
+		return this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(
+					filtroDebitoCreditoDTO
+				);
+	}
 }

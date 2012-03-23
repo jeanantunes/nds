@@ -16,7 +16,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Data Emissao',
+				display : 'Data Emiss&atilde;o',
 				name : 'dtEmissao',
 				width : 100,
 				sortable : true,
@@ -61,17 +61,17 @@
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left',
 			}],
-			sortname : "nossoNumero",
-			sortorder : "asc",
+			sortname : "dtVencimento",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 360
+			height : 180
 		});
     });
 		
@@ -134,7 +134,7 @@
 			  if(value[0] == "TblModelBoletos") {
 				  dadosPesquisa = value[1];
 			  }
-		});
+	    });
 		
 		
 		
@@ -197,7 +197,7 @@
               <td width="260">
               	<input name="numCota" 
               		   id="numCota" 
-              		   type="number"
+              		   type="text"
               		   maxlength="11"
               		   style="width:80px; 
               		   float:left; margin-right:5px;"
@@ -218,9 +218,9 @@
 			  </td>
               
               <td width="124">Data de Vencimento:</td>
-              <td width="114"><input name="dataDe" id="dataDe" type="text" maxlength="10" id="dataDe" style="width:80px; float:left; margin-right:5px;" value="${dataDe}"/></td>
+              <td width="114"><input name="dataDe" id="dataDe" type="date" style="width:80px; float:left; margin-right:5px;" value="${dataDe}"/></td>
               <td width="25">Até:</td>
-              <td width="110"><input name="dataAte" id="dataAte" type="text" maxlength="10" id="dataAte" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
+              <td width="110"><input name="dataAte" id="dataAte" type="date" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
               
               <td width="40">Status:</td>
               <td width="98"><select name="status" id="status" style="width:100px;">
@@ -255,4 +255,3 @@
   </div>
 
 </body>
-</html>

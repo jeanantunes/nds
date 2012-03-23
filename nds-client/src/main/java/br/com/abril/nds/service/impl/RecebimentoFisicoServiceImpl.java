@@ -14,6 +14,7 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -437,7 +438,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		String cnpj = notaFiscal.getEmitente().getCnpj();
 		
 		PessoaJuridica emitente = obterPessoaPorCNPJ(cnpj);
-		
+				
 		if(emitente == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
@@ -587,10 +588,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			lancamentoRepository.adicionar(lancamento);
 			
+			inserirHistoricoLancamento(lancamento, dataAtual, usuarioLogado);
 		}
 
 		
-		inserirHistoricoLancamento(lancamento, dataAtual, usuarioLogado);
 		
 		
 	}
@@ -606,10 +607,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
 		
-		historicoLancamento.setData(dataAtual);
+		historicoLancamento.setDataEdicao(dataAtual);
 		historicoLancamento.setLancamento(lancamento);
 		historicoLancamento.setResponsavel(usuarioLogado);
 		historicoLancamento.setStatus(lancamento.getStatus());
+		historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
 		historicoLancamentoRepository.adicionar(historicoLancamento);
 		

@@ -38,6 +38,9 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@Column(name = "LANCAMENTO_MANUAL", nullable = false)
 	private boolean lancamentoManual;
 	
+	@OneToMany(mappedBy = "movimentoFinanceiroCota")
+	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
+	
 	public Cota getCota() {
 		return cota;
 	}
@@ -68,6 +71,14 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	public void setLancamentoManual(boolean lancamentoManual) {
 		this.lancamentoManual = lancamentoManual;
+	}
+	
+	public List<HistoricoMovimentoFinanceiroCota> getHistoricos() {
+		return historicos;
+	}
+	
+	public void setHistoricos(List<HistoricoMovimentoFinanceiroCota> historicos) {
+		this.historicos = historicos;
 	}
 	
 	
