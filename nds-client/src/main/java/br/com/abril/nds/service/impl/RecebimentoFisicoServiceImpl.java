@@ -438,7 +438,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		String cnpj = notaFiscal.getEmitente().getCnpj();
 		
 		PessoaJuridica emitente = obterPessoaPorCNPJ(cnpj);
-		
+				
 		if(emitente == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
