@@ -48,9 +48,6 @@ public class ConsolidadoFinanceiroCota {
 	@Column(name = "CONSIGNADO")
 	private BigDecimal consignado;
 
-	@Column(name = "NUMERO_COTA", nullable = false)
-	private Integer numeroCota;	
-
 	@Column(name = "ENCALHE")
 	private BigDecimal encalhe;
 	
@@ -165,15 +162,7 @@ public class ConsolidadoFinanceiroCota {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-		
-	public Integer getNumeroCota() {
-		return numeroCota;
-	}
-
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
-	}
-
+	
 	public Cota getCota() {
 		return cota;
 	}
