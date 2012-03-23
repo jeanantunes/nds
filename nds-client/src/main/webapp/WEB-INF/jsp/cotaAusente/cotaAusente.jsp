@@ -24,7 +24,7 @@ function cliquePesquisar() {
 }
 
 function processaRetornoPesquisa(data) {
-	alert("_" + sdata[0]+data[1]+data[2]);	
+	alert("_" + data[0]+data[1]+data[2]);	
 }
 
 function popup() {
@@ -152,6 +152,9 @@ $(function() {
 			buttonImageOnly: true
 		});
 		
+		$( "#idData" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+		$("#idData").mask("99/99/9999");
+		
 	});		
 $(function() {
 		$( "#tabs-pop" ).tabs();
@@ -257,7 +260,10 @@ function mostra_grid(){
                 <td width="38">Cota:</td>
                 <td width="123">
 <!-- COTA -->                
-<input id="idCota" type="text" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar"><a href="javascript:;" onclick="popup_suplementar();">&nbsp;</a></span></td>
+<input id="idCota" type="text" style="width:80px; float:left; margin-right:5px;"/>
+
+<!-- PESQUISAR NOME COTA -->
+<span class="classPesquisar"><a href="javascript:;" onclick="cliqueBuscarNomeCota();">&nbsp;</a></span></td>
                 <td width="40">Nome:</td>
                 <td width="296">
 <!-- NOME -->            
