@@ -22,7 +22,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota){
 		
 		StringBuilder hql = new StringBuilder("from MovimentoFinanceiroCota mfc, Distribuidor d ");
-		hql.append(" where mfc.dataInclusao = d.dataOperacao ")
+		hql.append(" where mfc.data = d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){

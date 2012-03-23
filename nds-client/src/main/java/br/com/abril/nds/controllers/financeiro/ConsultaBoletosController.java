@@ -208,17 +208,17 @@ public class ConsultaBoletosController {
 			for (Message message : validator.getErrors()) {
 				mensagens.add(message.getMessage());
 			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, mensagens);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
 			throw new ValidacaoException(validacao);
 		}
 		
 		if (numCota==null || numCota<=0){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Digite o número da cota.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota.");
 		}
 		
 		if ( (dataDe!=null) && (dataAte!=null) ){
 		    if ( DateUtil.isDataInicialMaiorDataFinal( DateUtil.parseDataPTBR(DateUtil.formatarData(dataDe,"dd/MM/yyyy")) ,DateUtil.parseDataPTBR(DateUtil.formatarData(dataAte,"dd/MM/yyyy")) ) ) {
-			    throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve ser menor do que a data final.");
+			    throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve ser menor do que a data final.");
 		    }
 		}
 	}

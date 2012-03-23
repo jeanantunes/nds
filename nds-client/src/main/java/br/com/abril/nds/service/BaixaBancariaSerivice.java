@@ -2,7 +2,6 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 
-
 public interface BaixaBancariaSerivice {
 
 	/**
