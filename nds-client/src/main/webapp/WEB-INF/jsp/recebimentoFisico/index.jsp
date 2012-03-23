@@ -7,6 +7,8 @@
 
 <script type="text/javascript">
 
+var indNotaFiscalInterface = false;
+
 var jsDadosProduto = {
 
 exibirDetalhesProdutoEdicao : function() {
@@ -136,11 +138,21 @@ validarEdicaoCallBack : function() {
 	 */
 	function confirmaNotaFiscalEncontrada(result) {
 		
-		jsonResposta = result;
+		var validacao = result.validacao;
 		
-		if(result.tipoMensagem == "SUCCESS") {
+		indNotaFiscalInterface = result.indNotaInterface;
+		
+		if (indNotaFiscalInterface){
+    		carregarItemNotaGridNotaInterface();
+    		
+    	}else{
+    		carregarItemNotaGridNotaManual();
+    		
+    	}
+		
+		if(validacao.tipoMensagem == "SUCCESS") {
 
-			exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
 			
 			pesquisarItemNotaGrid();
 
@@ -450,8 +462,6 @@ validarEdicaoCallBack : function() {
 			});
 			
 			
-			carregarItemNotaGrid();
-			
 	});
 	
 	/**
@@ -469,15 +479,21 @@ validarEdicaoCallBack : function() {
 		}
 
 	};
-
+	
+	
+	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
 	 */
-	function carregarItemNotaGrid() {
+	function carregarItemNotaGridNotaInterface() {
+						
+		$(".gridWrapper").empty();
+		
+		$(".gridWrapper").append($("<table>").attr("class", "itemNotaGrid"));
 		
 		$(".itemNotaGrid").flexigrid({
 			
-				preProcess: getDataFromResult,
+				preProcess: getDataFromResultNotaInterface,
 				dataType : 'json',
 				colModel : [
 			{
@@ -527,7 +543,73 @@ validarEdicaoCallBack : function() {
 			}, {
 				display : 'Valor Total R$',
 				name : 'valorTotal',
+				width : 70,
+				sortable : false,
+				align : 'center'
+				
+			},{
+				display : 'Ação',
+				name : 'acao',
 				width : 60,
+				sortable : true,
+				align : 'center'
+			}],
+			
+		
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180
+		});
+	}
+	
+	/**
+	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
+	 */
+	function carregarItemNotaGridNotaManual() {
+				
+		$(".gridWrapper").empty();
+		
+		$(".gridWrapper").append($("<table>").attr("class", "itemNotaGrid"));
+		
+		$(".itemNotaGrid").flexigrid({
+			
+				preProcess: getDataFromResultNotaManual,
+				dataType : 'json',
+				colModel : [
+			{
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 200,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 120,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Reparte previsto',
+				name : 'repartePrevisto',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Valor Total R$',
+				name : 'valorTotal',
+				width : 70,
 				sortable : false,
 				align : 'center'
 				
@@ -546,14 +628,15 @@ validarEdicaoCallBack : function() {
 		});
 	}
 
+	
+	
     /**
      * FAZ A PESQUISA DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
 	function pesquisarItemNotaGrid() {
-	
+    	
 		$(".itemNotaGrid").flexOptions({
 			url: '<c:url value="/"/>estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
-			preProcess: getDataFromResult,
 			dataType : 'json'
 		});
 	
@@ -568,10 +651,9 @@ validarEdicaoCallBack : function() {
 	
 		$(".itemNotaGrid").flexOptions({
 			url: '<c:url value="/"/>estoque/recebimentoFisico/refreshListaItemRecebimentoFisico',
-			preProcess: getDataFromResult,
 			dataType : 'json'
 		});
-	
+			
 		$(".itemNotaGrid").flexReload();
 	
 	}
@@ -611,7 +693,11 @@ validarEdicaoCallBack : function() {
      */
 	function salvarDadosItensDaNotaFiscal() {
 		
-		var listaDeValores  = obterListaValores();
+		var listaDeValores  = "";
+		
+		if(indNotaFiscalInterface){
+			listaDeValores = obterListaValores();
+		}
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/salvarDadosItensDaNotaFiscal'/>", listaDeValores, 
 		function(result) {
@@ -627,7 +713,11 @@ validarEdicaoCallBack : function() {
      */
 	function confirmarRecebimentoFisico() {
 		
-		var listaDeValores  = obterListaValores();
+		var listaDeValores  = "";
+		
+		if(indNotaFiscalInterface){
+			listaDeValores = obterListaValores();
+		}
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/confirmarRecebimentoFisico'/>", listaDeValores, 
 		function(result) {
@@ -713,12 +803,39 @@ validarEdicaoCallBack : function() {
 
 	}
 
+	/**
+	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
+	 */
+	function getDataFromResultNotaManual(data) {
+				
+		$.each(data.rows, function(index, value) {
+			
+			var alteracaoPermitida = value.cell[6];
+			
+			var lineId = value.id;
+	
+			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+			
+			if(alteracaoPermitida == "S") {
+				value.cell[6] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+			} else {
+				value.cell[6] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
+			}
+			
+			
+		});
+		
+		$(".grids").show();
+		
+		return data;
+
+	}
 	
 	/**
-	 * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
+	 * PREPARA OS DADOS DA NOTA INTERFACE A SEREM APRESENTADOS NA GRID.
 	 */
-	function getDataFromResult(data) {
-		
+	function getDataFromResultNotaInterface(data) {		
+				
 		$.each(data.rows, function(index, value) {
 			
 			var qtdFisico = value.cell[5];
@@ -1049,7 +1166,11 @@ validarEdicaoCallBack : function() {
 				
 				<div class="grids" style="display: none;">
 				
-					<table class="itemNotaGrid"></table>
+					<div class="gridWrapper">
+					
+						<table class="itemNotaGrid"></table>
+					
+					</div>
 
 					<span class="bt_incluir_novo" title="Incluir Nova Linha"> 
 						<a href="javascript:;" onclick="popup_novo_item();"> 
