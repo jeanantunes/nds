@@ -70,7 +70,7 @@
 					name : 'quantidade',
 					width : 60,
 					sortable : true,
-					align : 'center'
+					align : 'right'
 				}, {
 					display : 'Status',
 					name : 'statusAprovacao',
@@ -192,14 +192,10 @@
 				<td colspan="3">
 					<input type="text" name="codigo" id="codigo"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.limparCamposPesquisa('#produto', '#edicao', pesquisarProdutosSuccessCallBack)" />
-					
-					<span class="classPesquisar" title="Pesquisar Produto">
-						<a href="javascript:;"
-						   onclick="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
+						   onchange="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
 								   									   pesquisarProdutosSuccessCallBack,
-								   									   pesquisarProdutosErrorCallBack);">&nbsp;</a>
-					</span>
+								   									   pesquisarProdutosErrorCallBack);" />
+					
 				</td>
 				<td width="60">Produto:</td>
 				<td width="220">

@@ -338,7 +338,7 @@
 				<td>N&uacute;mero:</td>
 				<td>
 					<input type="text" style="width:50px" 
-						   name="enderecoAssociacao.endereco.numero" id="numero" maxlength="11" />
+						   name="enderecoAssociacao.endereco.numero" id="numero" maxlength="9" />
 				</td>
 				<td>Complemento:</td>
 				<td>

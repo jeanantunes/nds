@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 
@@ -26,5 +27,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		return query.list();
+	}
+
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

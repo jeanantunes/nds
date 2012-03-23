@@ -27,15 +27,6 @@ exibirDetalhesProdutoEdicao : function() {
 	
 },
 
-limparCamposPesquisa : function() {
-
-	$("#precoCapa").val("");
-	$("#peso").val("");
-	$("#pacotePadrao").val("");
-	
-	produto.limparCamposPesquisa('#produto', '#edicao', true);	
-},
-
 pesquisarProdutoPorCodigo : function() {
 
 	$("#precoCapa").val("");
@@ -878,11 +869,7 @@ validarEdicaoCallBack : function() {
 					id="codigo"
 					maxlength="255"
 					style="width: 80px; float: left; margin-right: 5px;"
-					onchange="jsDadosProduto.limparCamposPesquisa();"/>
-					
-					<span class="classPesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="jsDadosProduto.pesquisarProdutoPorCodigo();">&nbsp;</a>
-					</span>
+					onchange="jsDadosProduto.pesquisarProdutoPorCodigo();"/>
 					
 				</td>
 			</tr>

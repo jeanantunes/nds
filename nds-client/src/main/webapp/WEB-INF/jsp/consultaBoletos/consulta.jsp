@@ -71,7 +71,7 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 360
+			height : 180
 		});
     });
 		

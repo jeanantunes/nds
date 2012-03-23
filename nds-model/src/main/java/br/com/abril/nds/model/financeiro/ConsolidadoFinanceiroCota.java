@@ -162,7 +162,7 @@ public class ConsolidadoFinanceiroCota {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-
+	
 	public Cota getCota() {
 		return cota;
 	}
