@@ -21,17 +21,25 @@ public class PoliticaCobranca {
 	@GeneratedValue(generator = "POLITICA_COBRANCA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COBRANCA", nullable = false)
 	private TipoCobranca tipoCobranca;
+	
 	@Column(name = "VALOR_MINIMO", nullable = false)
 	private BigDecimal valorMinino;
+	
 	@Column(name = "NUM_INADIMPLENCIA_SUSP", nullable = false)
 	private int inadimplenciasSuspencao;
+	
 	@OneToOne(mappedBy = "politicaCobranca")
 	private Distribuidor distribuidor;
+	
 	@Column(name = "ACEITA_PGTO_DIVERGENTE")
 	private boolean aceitaPagamentoDivergente;
+	
+	@Column(name = "ACUMULA_DIVIDA", nullable = false)
+	private boolean acumulaDivida;
 	
 	
 	public Long getId() {
@@ -80,6 +88,14 @@ public class PoliticaCobranca {
 
 	public void setAceitaPagamentoDivergente(boolean aceitaPagamentoDivergente) {
 		this.aceitaPagamentoDivergente = aceitaPagamentoDivergente;
+	}
+	
+	public boolean isAcumulaDivida() {
+		return acumulaDivida;
+	}
+	
+	public void setAcumulaDivida(boolean acumulaDivida) {
+		this.acumulaDivida = acumulaDivida;
 	}
 
 }
