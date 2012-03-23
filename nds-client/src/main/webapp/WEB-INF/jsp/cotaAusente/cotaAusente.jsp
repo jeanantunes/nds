@@ -2,6 +2,31 @@
 <head>
 <script language="javascript" type="text/javascript">
 
+
+function cliquePesquisar() {
+	
+	var dataAusencia = $('#idData').attr('value');
+	var numcota = $('#idCota').attr('value');
+	var nomeCota = $('#idNomeCota').attr('value');
+	var box = $('#idBox').attr('value');
+		
+	$(".ausentesGrid").flexOptions({			
+		url : '<c:url value="/cotaAusente/pesquisarCotasAusentes"/>',
+		dataType : 'json',
+		preProcess:processaRetornoPesquisa,
+		params:[{name:'dataAusencia',value:dataAusencia},
+		        {name:'numCota',value:numcota},
+		        {name:'nomeCota',value:nomeCota},
+		        {name:'box',value:box}]		
+	});
+	
+	$(".ausentesGrid").flexReload();
+}
+
+function processaRetornoPesquisa(data) {
+	alert("_" + sdata[0]+data[1]+data[2]);	
+}
+
 function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -116,12 +141,12 @@ function popup_excluir() {
 
 
 $(function() {
-		$( "#datepickerDe" ).datepicker({
+		$( "#idData" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerDe1" ).datepicker({
+		$( "#idData" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -227,23 +252,23 @@ function mostra_grid(){
               <td width="35">Data:</td>
               <td colspan="3">
 <!--DATA-->
-<input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" /></td>
+<input id="idData" type="text" name="datepickerDe" style="width:80px;" /></td>
               
                 <td width="38">Cota:</td>
                 <td width="123">
 <!-- COTA -->                
-<input type="text" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar"><a href="javascript:;" onclick="popup_suplementar();">&nbsp;</a></span></td>
+<input id="idCota" type="text" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar"><a href="javascript:;" onclick="popup_suplementar();">&nbsp;</a></span></td>
                 <td width="40">Nome:</td>
                 <td width="296">
 <!-- NOME -->            
-<input type="text" class="nome_jornaleiro" style="width:280px;"/></td>
+<input id="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;"/></td>
                 <td width="27">Box:</td>
                 <td width="111">
 <!-- BOX -->
-<input type="text" name="textfield" id="textfield" style="width:80px;"/></td>
+<input id="idBox" type="text" name="textfield" id="textfield" style="width:80px;"/></td>
               <td width="114"><span class="bt_pesquisar">
 <!-- PESQUISAR -->
-<a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+<a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a></span></td>
             </tr>
           </table>
 
@@ -278,55 +303,60 @@ function mostra_grid(){
 </div> 
 
 <script type="text/javascript">
-$(".ausentesGrid").flexigrid({
-	url : 'json',
-	dataType : 'xml',
-	colModel : [ {
-		display : 'Data',
-		name : 'data',
-		width : 80,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Box',
-		name : 'box',
-		width : 80,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Cota',
-		name : 'cota',
-		width : 60,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Nome',
-		name : 'nome',
-		width : 480,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Valor NE R$',
-		name : 'vlrNE',
-		width : 100,
-		sortable : true,
-		align : 'right'
-	}, {
-		display : 'Ação',
-		name : 'acao',
-		width : 60,
-		sortable : true,
-		align : 'center'
-	}],
-	sortname : "data",
-	sortorder : "asc",
-	usepager : true,
-	useRp : true,
-	rp : 15,
-	showTableToggleBtn : true,
-	width : 960,
-	height : 255
-});
+	
+	$(function() {	
+		$(".ausentesGrid").flexigrid($.extend({},{
+			colModel : [ {
+				display : 'Data',
+				name : 'data',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Box',
+				name : 'box',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cota',
+				name : 'cota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nome',
+				width : 480,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor NE R$',
+				name : 'vlrNE',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "data",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		})); 	
+		
+		$(".grids").show();		
+	});
+	
+
 </script>
 
 <jsp:include page="modalRateio.jsp"/>
