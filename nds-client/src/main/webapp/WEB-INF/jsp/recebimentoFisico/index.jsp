@@ -141,13 +141,13 @@ validarEdicaoCallBack : function() {
 		var validacao = result.validacao;
 		
 		indNotaFiscalInterface = result.indNotaInterface;
-		console.info("a nota e interface:" + indNotaFiscalInterface);
+		
 		if (indNotaFiscalInterface){
     		carregarItemNotaGridNotaInterface();
-    		console.info("carregando grid interface flag:" + indNotaFiscalInterface);
+    		
     	}else{
     		carregarItemNotaGridNotaManual();
-    		console.info("carregando grid manual flag:" + indNotaFiscalInterface);
+    		
     	}
 		
 		if(validacao.tipoMensagem == "SUCCESS") {
@@ -486,9 +486,7 @@ validarEdicaoCallBack : function() {
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
 	 */
 	function carregarItemNotaGridNotaInterface() {
-		
-		console.info("entrou carregarItemNotaGridNotaInterface");
-		
+						
 		$(".gridWrapper").empty();
 		
 		$(".gridWrapper").append($("<table>").attr("class", "itemNotaGrid"));
@@ -568,9 +566,7 @@ validarEdicaoCallBack : function() {
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
 	 */
 	function carregarItemNotaGridNotaManual() {
-		
-		console.info("eNTROU carregarItemNotaGridNotaManual");
-
+				
 		$(".gridWrapper").empty();
 		
 		$(".gridWrapper").append($("<table>").attr("class", "itemNotaGrid"));
@@ -811,9 +807,7 @@ validarEdicaoCallBack : function() {
 	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
 	 */
 	function getDataFromResultNotaManual(data) {
-		
-		console.info("executando  getDataFromResultNotaManual");
-	
+				
 		$.each(data.rows, function(index, value) {
 			
 			var alteracaoPermitida = value.cell[6];
@@ -840,10 +834,8 @@ validarEdicaoCallBack : function() {
 	/**
 	 * PREPARA OS DADOS DA NOTA INTERFACE A SEREM APRESENTADOS NA GRID.
 	 */
-	function getDataFromResultNotaInterface(data) {
-		
-		console.info("executando getDataFromResultNotaInterface");
-		
+	function getDataFromResultNotaInterface(data) {		
+				
 		$.each(data.rows, function(index, value) {
 			
 			var qtdFisico = value.cell[5];
