@@ -108,7 +108,7 @@ public class DiferencaEstoqueController {
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	
-	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaFaltasSobras";
 	
 	private static final String LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
 	

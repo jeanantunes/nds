@@ -1,7 +1,7 @@
 <head>
 	
-	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 	<script type="text/javascript">
 	
@@ -117,6 +117,23 @@
 			
 			$('#formBaixaAutomatica').submit();
 		}
+		
+		
+		
+		
+		function buscaBoleto() {
+			var data = [{name: 'nossoNumero', value: $("#filtroNossoNumero").val()}];
+			$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data, setBoleto);
+		}
+		
+		function setBoleto(result) {
+			var boleto = result;
+			$("#boleto").html(boleto);
+			
+			dividaManualNossoNumero();
+		}
+		
+		
 	</script>
 	
 	<style>
@@ -193,22 +210,40 @@
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			   class="filtro" id="tableBaixaManual">
-			<tr>
-				<td width="31">Cota:</td>
-				<td colspan="3"><input type="text"
-					style="width: 60px; float: left; margin-right: 5px;" /> <span
-					class="classPesquisar"><a href="javascript:;"
-						onclick="dividaManualCota();">&nbsp;</a></span></td>
-				<td width="39">Nome:</td>
-				<td width="210"><input type="text"
-					style="width: 200px; float: left; margin-right: 5px;" /></td>
+			  <tr>
+				<td width="29">Cota:</td>
+              <td width="260">
+              
+                  <input name="numCota" 
+              		   id="numCota" 
+              		   type="number"
+              		   maxlength="11"
+              		   style="width:80px; 
+              		   float:left; margin-right:5px;"
+              		   onchange="cota.limparCamposPesquisa('#descricaoCota')" />
+              	  
+              	  <span class="classPesquisar" title="Pesquisar Cota">
+              	  		<a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');">&nbsp;</a>
+              	  </span>
+			
+			      <input name="descricaoCota" 
+			      		 id="descricaoCota" 
+			      		 type="text" 
+			      		 class="nome_jornaleiro" 
+			      		 maxlength="255"
+			      		 style="width:130px;"
+			      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
+			      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
+			    </td>
+			  
 				<td width="97">Nosso Número:</td>
-				<td width="333"><input type="text" style="width: 300px;" /></td>
-				<td width="104"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="dividaManualNossoNumero();">Pesquisar</a></span></td>
+				<td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
+				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaBoleto();">Pesquisar</a></span></td>
 			</tr>
 		</table>
 	</fieldset>
+	
+	
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="classFieldset" id="extratoBaixaManual">
 		<legend>Baixa Manual</legend>
@@ -252,6 +287,8 @@
 							src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a></span></td>
 			</tr>
 		</table>
+		
+		
 		<table width="687" border="0" align="center" cellpadding="2"
 			cellspacing="2" id="porCota">
 			<tr>
@@ -334,6 +371,7 @@
 						</tr>
 					</table></td>
 			</tr>
+			
 			<tr>
 				<td align="center" valign="top"><span class="bt_confirmar_novo"
 					title="Confirmar"><a onclick="popup_excluir();"
@@ -342,7 +380,10 @@
 				<td valign="top">&nbsp;</td>
 				<td valign="top">&nbsp;</td>
 			</tr>
+			
 		</table>
+		
+		
 	</fieldset>
 
 

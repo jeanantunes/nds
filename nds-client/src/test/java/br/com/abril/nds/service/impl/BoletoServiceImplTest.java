@@ -109,9 +109,8 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		Divida divida = Fixture.divida(consolidado, cota, new Date(),
 				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		save(divida);
-		
-		
-		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), "0", 
+
+		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida);
 		save(boleto);
 
@@ -120,7 +119,6 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Test
 	@Ignore
 	public void teste() {
-		
 		boletoService.baixarBoletos(null, null, null);
 	}
 	
