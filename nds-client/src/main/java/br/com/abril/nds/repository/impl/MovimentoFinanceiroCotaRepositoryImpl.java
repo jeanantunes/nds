@@ -5,6 +5,8 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 
@@ -17,14 +19,32 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota){
 		
 		StringBuilder hql = new StringBuilder("from MovimentoFinanceiroCota mfc, Distribuidor d ");
 		hql.append(" where mfc.dataInclusao = d.dataOperacao ")
-		   .append(" order by mfc.cota ");
+		   .append(" and mfc.status = :statusAprovado ");
+		
+		if (idCota != null){
+			hql.append(" and mfc.cota = :idCota ");
+		}
+		
+		hql.append(" order by mfc.cota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		
+		if (idCota != null){
+			query.setParameter("idCota", idCota);
+		}
 		
 		return query.list();
+	}
+
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,27 +1,7 @@
 var produto = {
 	
-	//Limpar campos pesquisa
-	limparCamposPesquisa : function(idProduto, idEdicao, successCallBack) {
-		$(idProduto).val("");
-		$(idEdicao).val("");
-		$(idEdicao).attr("disabled", "disabled");
-		
-		if (successCallBack) {
-			successCallBack();
-		}
-	},
-		
 	//Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		
-		//Seta um timed out para esperar a execução da função que limpa os campos
-		//no momento que o codigo do produto é alterado na tela.
-		setTimeout(function() { produto.pesquisarPorCodigoProdutoAposTimedOut(idCodigo, idProduto,
-																	  		  idEdicao, isFromModal,
-																	  		  successCallBack, errorCallBack);  }, 100);
-	},
-	
-	pesquisarPorCodigoProdutoAposTimedOut : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo).val();
 		
 		codigoProduto = $.trim(codigoProduto);

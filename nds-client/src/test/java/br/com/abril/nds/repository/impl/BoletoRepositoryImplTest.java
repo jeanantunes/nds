@@ -37,17 +37,18 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-@Ignore
+
 public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Autowired
 	private BoletoRepository boletoRepository;
 	
-	private static final Integer NUMERO_COTA = 1000;
+	private static final Integer NUMERO_COTA = 123;
 	private static final Date    DT_VENCTO_DE = new Date();
-	private static final Date    DT_VENCTO_ATE = new Date();
+	private static final Date    DT_VENCTO_ATE = DateUtil.adicionarDias(new Date(),5);
 	private static final String  SORT_ORDER = "asc";
 	private static final Integer PAGINA = 1;
 	private static final Integer QTD_PAGINA = 15;
@@ -138,7 +139,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   new Date(), 
                 					   new Date(), 
                 					   new Date(), 
-                					   "0", 
+                					   BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), 
                 					   "1", 
                 					   "1",
@@ -149,8 +150,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(boleto);		
 	}
 	
-	
-	//TESTE DE EXECUCAO DO METODO A SER TESTADO
 	@Test
 	public void obterBoletosPorNumeroDaCota() {
 		
@@ -175,6 +174,24 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		}
 	}
 	
+	@Ignore
+	@Test
+	public void obterQuantidadeDeBoletosPorNumeroDaCota() {
+		
+		FiltroConsultaBoletosCotaDTO filtro = new FiltroConsultaBoletosCotaDTO(NUMERO_COTA,
+                															   DT_VENCTO_DE,
+                															   DT_VENCTO_ATE,
+                															   StatusCobranca.PAGO);
+		PaginacaoVO paginacao = new PaginacaoVO(PAGINA,QTD_PAGINA,SORT_ORDER);
+		filtro.setPaginacao(paginacao);
+		
+        long qtdBoletos = this.boletoRepository.obterQuantidadeBoletosPorCota(filtro);
+        
+       //VERIFICA SE A QUANTIDADE DE BOLETOS RETORNADOS E MAIOR QUE 0
+        Assert.assertTrue(qtdBoletos > 0l);
+	}
+	
+	@Ignore
 	@Test
 	public void obterPorNossoNumero() {
 		

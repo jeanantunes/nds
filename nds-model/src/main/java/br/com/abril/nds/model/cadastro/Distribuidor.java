@@ -33,16 +33,21 @@ public class Distribuidor {
 	@GeneratedValue(generator = "DISTRIB_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "PJ_ID")
 	private PessoaJuridica juridica;
+	
 	@OneToMany(mappedBy = "distribuidor")
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();
+	
 	@Column(name = "FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@OneToOne(optional = false)
 	@JoinColumn(name = "POLITICA_COBRANCA_ID")

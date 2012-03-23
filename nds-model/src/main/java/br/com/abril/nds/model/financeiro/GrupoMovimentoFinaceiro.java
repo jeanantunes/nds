@@ -6,7 +6,9 @@ public enum GrupoMovimentoFinaceiro {
 	ENVIO_ENCALHE(OperacaoFinaceira.CREDITO),
 	POSTERGADO(OperacaoFinaceira.DEBITO),
 	CREDITO(OperacaoFinaceira.CREDITO),
-	DEBITO(OperacaoFinaceira.DEBITO);
+	DEBITO(OperacaoFinaceira.DEBITO), 
+	JUROS(OperacaoFinaceira.DEBITO), 
+	MULTA(OperacaoFinaceira.DEBITO);
 	
 	private OperacaoFinaceira operacaoFinaceira;
 	

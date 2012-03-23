@@ -18,6 +18,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
@@ -31,6 +32,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro")
@@ -229,5 +231,36 @@ public class BaixaFinanceiraController {
 		
 		return usuario;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	@Post
+	@Path("/buscaBoleto")
+	public void buscaBoleto(String nossoNumero){
+
+		validarBuscaBoleto(nossoNumero);
+
+		Boleto boleto = this.boletoService.obterBoletoPorNossoNumero(nossoNumero);
+		
+		if (boleto==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		
+		result.use(Results.json()).from(boleto,"result").recursive().serialize();
+	}
+	
+	
+	public void validarBuscaBoleto(String nossoNumero){
+		if (nossoNumero==null || ("".equals(nossoNumero))){
+		    throw new ValidacaoException(TipoMensagem.ERROR, "Digite o número do boleto.");
+		}
+    }
+		
+	
 	
 }

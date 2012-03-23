@@ -27,6 +27,8 @@ public interface BoletoService {
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 	
+	Boleto obterBoletoPorNossoNumero(String nossoNumero);
+	
 	GeradorBoleto geraBoleto(String nossoNumero);
 	
 	String obterEmailCota(String nossoNumero);

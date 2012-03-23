@@ -203,18 +203,12 @@ public class TelefoneServiceImpl implements TelefoneService {
 	}
 	
 	private void removerTelefone(Collection<Long> listaTelefonesCota) {
-		for (Long idTelefone : listaTelefonesCota){
-			Telefone telefone = this.telefoneRepository.buscarPorId(idTelefone);
-			
-			if (telefone != null){
-				try {
-					this.telefoneRepository.remover(telefone);
-				} catch (Exception e) {
-					//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
-					//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer
-					//selects que terão que ser alterados até que todas as associações estejam definidas.
-				}
-			}
+		try {
+			this.telefoneRepository.removerTelefones(listaTelefonesCota);
+		} catch (Exception e) {
+			//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
+			//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer
+			//selects que terão que ser alterados até que todas as associações estejam definidas.
 		}
 	}
 }
