@@ -5,10 +5,12 @@ import java.util.List;
 
 public interface Exporter {
 	
-	<T, F, FT> void exportInOutputStream(F filter,
-										 FT footer,
-										 List<T> dataList, 
-										 Class<T> listClass,
-										 OutputStream outputStream);
+	<T, F, FT> void inOutputStream(String name,
+								   NDSFileHeader ndsFileHeader,
+								   F filter,
+								   FT footer,
+								   List<T> dataList, 
+								   Class<T> listClass,
+								   OutputStream outputStream);
 
 }

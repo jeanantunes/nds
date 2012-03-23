@@ -13,6 +13,8 @@ public @interface Export {
 	
 	Alignment alignment() default Alignment.LEFT;
 	
+	String alignWithHeader() default "";
+	
 	public enum Alignment {
 		
 		LEFT(0),
