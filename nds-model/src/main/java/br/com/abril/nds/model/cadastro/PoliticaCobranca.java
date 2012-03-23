@@ -35,12 +35,17 @@ public class PoliticaCobranca {
 	@OneToOne(mappedBy = "politicaCobranca")
 	private Distribuidor distribuidor;
 	
-	@Column(name = "ACEITA_PGTO_DIVERGENTE")
-	private boolean aceitaPagamentoDivergente;
-	
 	@Column(name = "ACUMULA_DIVIDA", nullable = false)
 	private boolean acumulaDivida;
 	
+	@Column(name = "ACEITA_BAIXA_PGTO_MAIOR")
+	private boolean aceitaBaixaPagamentoMaior;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_MENOR")
+	private boolean aceitaBaixaPagamentoMenor;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_VENCIDO")
+	private boolean aceitaBaixaPagamentoVencido;	
 	
 	public Long getId() {
 		return id;
@@ -81,14 +86,6 @@ public class PoliticaCobranca {
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
 	}
-
-	public boolean isAceitaPagamentoDivergente() {
-		return aceitaPagamentoDivergente;
-	}
-
-	public void setAceitaPagamentoDivergente(boolean aceitaPagamentoDivergente) {
-		this.aceitaPagamentoDivergente = aceitaPagamentoDivergente;
-	}
 	
 	public boolean isAcumulaDivida() {
 		return acumulaDivida;
@@ -98,4 +95,28 @@ public class PoliticaCobranca {
 		this.acumulaDivida = acumulaDivida;
 	}
 
+	public boolean isAceitaBaixaPagamentoMaior() {
+		return aceitaBaixaPagamentoMaior;
+	}
+
+	public void setAceitaBaixaPagamentoMaior(boolean aceitaBaixaPagamentoMaior) {
+		this.aceitaBaixaPagamentoMaior = aceitaBaixaPagamentoMaior;
+	}
+
+	public boolean isAceitaBaixaPagamentoMenor() {
+		return aceitaBaixaPagamentoMenor;
+	}
+
+	public void setAceitaBaixaPagamentoMenor(boolean aceitaBaixaPagamentoMenor) {
+		this.aceitaBaixaPagamentoMenor = aceitaBaixaPagamentoMenor;
+	}
+
+	public boolean isAceitaBaixaPagamentoVencido() {
+		return aceitaBaixaPagamentoVencido;
+	}
+
+	public void setAceitaBaixaPagamentoVencido(boolean aceitaBaixaPagamentoVencido) {
+		this.aceitaBaixaPagamentoVencido = aceitaBaixaPagamentoVencido;
+	}
+	
 }

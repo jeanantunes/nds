@@ -119,18 +119,28 @@
 		}
 		
 		
-		
-		
 		function buscaBoleto() {
 			var data = [{name: 'nossoNumero', value: $("#filtroNossoNumero").val()}];
 			$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data, setBoleto);
 		}
 		
 		function setBoleto(result) {
-			var boleto = result;
-			$("#boleto").html(boleto);
+			var cobranca = result;
 			
-			dividaManualNossoNumero();
+			$("#cota").html(cobranca.cota);
+			$("#banco").html(cobranca.banco);
+			$("#nossoNumero").html(cobranca.nossoNumero);
+			$("#dataEmissao").html(cobranca.dataEmissao);
+			$("#dataVencimento").html(cobranca.dataVencimento);
+			$("#valor").html(cobranca.valor);
+			
+			$("#dividaTotal").html(cobranca.dividaTotal);
+			$("#dataPagamento").html(cobranca.dataPagamento);
+			$("#desconto").html(cobranca.desconto);
+			$("#juros").html(cobranca.juros);
+			$("#valorTotal").html(cobranca.valorTotal);
+			
+			dividaManualCota();
 		}
 		
 		
@@ -257,27 +267,27 @@
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Num. Boleto:</strong></td>
-				<td class="linha_borda">987675433456675</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Cota:</strong></td>
-				<td class="linha_borda">9999 - José da Silva Pereira</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td width="81" class="linha_borda"><strong>Banco:</strong></td>
-				<td width="250" class="linha_borda">Santander</td>
+				<td width="250" class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Emissão:</strong></td>
-				<td class="linha_borda">12/11/2011</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Vencimento:</strong></td>
-				<td class="linha_borda">12/12/2011</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Valor R$:</strong></td>
-				<td class="linha_borda">1.000,00</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda">&nbsp;</td>
@@ -300,20 +310,19 @@
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Cota:</strong></td>
-							<td colspan="3" class="linha_borda">9999 - José da Silva
-								Pereira</td>
+							<td colspan="3" class="linha_borda" id="cota"><c:out value="cota"/></td>
 						</tr>
 						<tr>
 							<td width="85" class="linha_borda"><strong>Banco:</strong></td>
-							<td width="142" class="linha_borda">Santander</td>
+							<td width="142" class="linha_borda" id="banco"><c:out value="banco"/></td>
 							<td width="71" class="linha_borda"><strong>Emissão:</strong></td>
-							<td width="91" class="linha_borda">12/11/2011</td>
+							<td width="91" class="linha_borda" id="dataEmissao"><c:out value="dataEmissao"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Vencimento:</strong></td>
-							<td class="linha_borda">12/12/2011</td>
+							<td class="linha_borda" id="dataVencimento"><c:out value="dataVencimento"/></td>
 							<td class="linha_borda"><strong>Valor R$:</strong></td>
-							<td class="linha_borda">999.999,99</td>
+							<td class="linha_borda" id="valor"><c:out value="valor"/></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -351,23 +360,23 @@
 						<tr>
 							<td width="129" class="linha_borda"><strong>Dívida
 									Total R$:</strong></td>
-							<td width="110" class="linha_borda">12.000,00</td>
+							<td width="110" class="linha_borda" id="dividaTotal"><c:out value="dividaTotal"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Data Pagamento:</strong></td>
-							<td class="linha_borda">12/12/2011</td>
+							<td class="linha_borda" id="dataPagamento"><c:out value="dataPagamento"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Desconto R$:</strong></td>
-							<td class="linha_borda">0,00</td>
+							<td class="linha_borda" id="desconto"><c:out value="desconto"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Juros R$:</strong></td>
-							<td class="linha_borda">0,00</td>
+							<td class="linha_borda" id="juros"><c:out value="juros"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Valor Total R$:</strong></td>
-							<td class="linha_borda">11.000,00</td>
+							<td class="linha_borda" id="valorTotal"><c:out value="valorTotal"/></td>
 						</tr>
 					</table></td>
 			</tr>
