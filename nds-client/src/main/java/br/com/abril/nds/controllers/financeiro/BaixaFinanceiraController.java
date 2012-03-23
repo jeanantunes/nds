@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
@@ -245,13 +246,13 @@ public class BaixaFinanceiraController {
 
 		validarBuscaBoleto(nossoNumero);
 
-		Boleto boleto = this.boletoService.obterBoletoPorNossoNumero(nossoNumero);
+		CobrancaVO cobranca = this.boletoService.obterCobranca(nossoNumero);
 		
-		if (boleto==null) {
+		if (cobranca==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
-		result.use(Results.json()).from(boleto,"result").recursive().serialize();
+		result.use(Results.json()).from(cobranca,"result").recursive().serialize();
 	}
 	
 	

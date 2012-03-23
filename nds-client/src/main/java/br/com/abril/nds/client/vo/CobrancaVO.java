@@ -9,13 +9,13 @@ public class CobrancaVO {
 	private String cota;
 	private String banco;
 	private String nossoNumero;
-	private Date dataEmissao;
-	private Date dataVencimento;
+	private String dataEmissao;
+	private String dataVencimento;
 	private BigDecimal valor;
 	
 	//DIVIDA
 	private BigDecimal dividaTotal;
-	private Date dataPagamento;
+	private String dataPagamento;
 	private BigDecimal desconto;
 	private BigDecimal juros;
 	private BigDecimal valorTotal;
@@ -38,16 +38,16 @@ public class CobrancaVO {
 	public void setNossoNumero(String nossoNumero) {
 		this.nossoNumero = nossoNumero;
 	}
-	public Date getDataEmissao() {
+	public String getDataEmissao() {
 		return dataEmissao;
 	}
-	public void setDataEmissao(Date dataEmissao) {
+	public void setDataEmissao(String dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
-	public Date getDataVencimento() {
+	public String getDataVencimento() {
 		return dataVencimento;
 	}
-	public void setDataVencimento(Date dataVencimento) {
+	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
 	public BigDecimal getValor() {
@@ -62,10 +62,10 @@ public class CobrancaVO {
 	public void setDividaTotal(BigDecimal dividaTotal) {
 		this.dividaTotal = dividaTotal;
 	}
-	public Date getDataPagamento() {
+	public String getDataPagamento() {
 		return dataPagamento;
 	}
-	public void setDataPagamento(Date dataPagamento) {
+	public void setDataPagamento(String dataPagamento) {
 		this.dataPagamento = dataPagamento;
 	}
 	public BigDecimal getDesconto() {
@@ -86,6 +86,7 @@ public class CobrancaVO {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -110,6 +111,7 @@ public class CobrancaVO {
 				+ ((valorTotal == null) ? 0 : valorTotal.hashCode());
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -177,4 +179,6 @@ public class CobrancaVO {
 		return true;
 	}
 	
+	
 }
+	

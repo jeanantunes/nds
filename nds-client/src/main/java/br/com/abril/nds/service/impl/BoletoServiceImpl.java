@@ -10,6 +10,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
@@ -545,5 +547,39 @@ public class BoletoServiceImpl implements BoletoService {
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero);
 		return boleto;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public CobrancaVO obterCobranca(String nossoNumero) {
+		CobrancaVO cobranca=null;
+		Boleto boleto = this.obterBoletoPorNossoNumero(nossoNumero);
+		if (boleto!=null){
+			cobranca = new CobrancaVO();
+			
+			cobranca.setNossoNumero(boleto.getNossoNumero());	
+			String cota = "";
+			if ((boleto.getCota().getPessoa()) instanceof PessoaFisica){
+				cota = ((PessoaFisica) boleto.getCota().getPessoa()).getNome();
+			}
+			if ((boleto.getCota().getPessoa()) instanceof PessoaJuridica){
+				cota = ((PessoaJuridica) boleto.getCota().getPessoa()).getRazaoSocial();
+			}
+			cobranca.setCota(cota);
+			cobranca.setBanco(boleto.getBanco().getNome());
+			cobranca.setDataVencimento((boleto.getDataVencimento()!=null?DateUtil.formatarDataPTBR(boleto.getDataVencimento()):""));
+			cobranca.setDataEmissao((boleto.getDataEmissao()!=null?DateUtil.formatarDataPTBR(boleto.getDataEmissao()):""));
+			cobranca.setValor(boleto.getValor());
+			
+			cobranca.setDividaTotal(boleto.getDivida().getValor());
+			
+			cobranca.setDataPagamento((boleto.getDataPagamento()!=null?DateUtil.formatarDataPTBR(boleto.getDataPagamento()):""));//???
+			cobranca.setDesconto(BigDecimal.ZERO);//???
+			cobranca.setJuros(BigDecimal.ZERO);//???
+			
+			cobranca.setValorTotal(boleto.getDivida().getValor());
+		}
+		return cobranca;
+	}
+
 
 }
