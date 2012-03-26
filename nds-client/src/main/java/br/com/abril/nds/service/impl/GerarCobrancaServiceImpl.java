@@ -127,17 +127,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private void inserirConsolidadoFinanceiro(Cota cota, BigDecimal valorMovimentoFinanceiro, 
 			List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMinino){
 		
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
+		consolidadoFinanceiroCota.setCota(cota);
+		consolidadoFinanceiroCota.setDataConsolidado(new Date());
 		if (valorMovimentoFinanceiro.compareTo(valorMinino) >= 0){
 			//gerar consolidado
-			ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
-			consolidadoFinanceiroCota.setCota(cota);
-			consolidadoFinanceiroCota.setDataConsolidado(new Date());
 			consolidadoFinanceiroCota.setTotal(valorMovimentoFinanceiro);
-			consolidadoFinanceiroCota.setMovimentos(movimentos);
-			
-			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 		} else {
 			//gerar postergado
+			consolidadoFinanceiroCota.setValorPostergado(valorMovimentoFinanceiro);
 		}
+		consolidadoFinanceiroCota.setMovimentos(movimentos);
+		
+		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 	}
 }
