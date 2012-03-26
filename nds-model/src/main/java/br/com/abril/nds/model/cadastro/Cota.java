@@ -23,11 +23,6 @@ import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
-/**
- * @author francisco.garcia
- * @version 1.0
- * @created 14-fev-2012 11:35:31
- */
 @Entity
 @Table(name = "COTA")
 @SequenceGenerator(name="COTA_SEQ", initialValue = 1, allocationSize = 1)
@@ -77,14 +72,8 @@ public class Cota {
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
-	@Column(name = "FATOR_VENCIMENTO", nullable = false)
-	private int fatorVencimento;
-	
-	@Column(name = "VALOR_MINIMO_COBRANCA")
-	private BigDecimal valorMininoCobranca;
-	
-	@Column(name = "RECEBE_COBRANCA_EMAIL")
-	private boolean recebeCobrancaEmail;
+	@OneToOne(mappedBy = "cota")
+	private ParametroCobrancaCota parametroCobranca;
 	
 	public Long getId() {
 		return id;
@@ -182,28 +171,12 @@ public class Cota {
 		this.estudoCotas = estudoCotas;
 	}
 	
-	public int getFatorVencimento() {
-		return fatorVencimento;
+	public ParametroCobrancaCota getParametroCobranca() {
+		return parametroCobranca;
 	}
 	
-	public void setFatorVencimento(int fatorVencimento) {
-		this.fatorVencimento = fatorVencimento;
-	}
-	
-	public BigDecimal getValorMinino() {
-		return valorMininoCobranca;
-	}
-	
-	public void setValorMinino(BigDecimal valorMinino) {
-		this.valorMininoCobranca = valorMinino;
-	}
-	
-	public boolean isRecebeCobrancaEmail() {
-		return recebeCobrancaEmail;
-	}
-	
-	public void setRecebeCobrancaEmail(boolean recebeCobrancaEmail) {
-		this.recebeCobrancaEmail = recebeCobrancaEmail;
+	public void setParametroCobranca(ParametroCobrancaCota parametroCobranca) {
+		this.parametroCobranca = parametroCobranca;
 	}
 
 	/**

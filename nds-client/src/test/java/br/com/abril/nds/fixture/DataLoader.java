@@ -974,9 +974,10 @@ public class DataLoader {
 		save(session, formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1);
 		
 		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		distribuidor.getFormasCobranca().add(formaBoleto);
 		save(session, distribuidor);
 	}
 
