@@ -272,6 +272,7 @@ public class DataLoader {
 		criarParametroEmail(session);
 		criarDivida(session);
 		criarBoletos(session);
+		criarmovimentosFinanceiroCota(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -2450,5 +2451,50 @@ public class DataLoader {
 		save(session, mec);
 	
 		}
+	
+	private static void criarmovimentosFinanceiroCota(Session session) {
+
+		Pessoa pessoa = Fixture.juridicaAcme();
+		save(session, pessoa);
+
+		Box box = Fixture.boxReparte300();
+		save(session, box);
+		
+		Cota cota = Fixture.cota(123, pessoa, SituacaoCadastro.ATIVO, box);
+		save(session, cota);
+
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session, usuario);
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.add(Calendar.DATE, 10);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCotaCredito = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinanceiroCredito, usuario, new BigDecimal("225"), 
+					null, calendar.getTime()
+				);
+		
+		calendar.add(Calendar.DATE, 10);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCotaDebito = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinanceiroDebito, usuario, new BigDecimal("225"), 
+					null, calendar.getTime()
+				);
+
+		calendar.add(Calendar.DATE, 10);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCotaReparte = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinenceiroReparte, usuario, new BigDecimal("225"), 
+					null, calendar.getTime()
+				);
+
+		save(session, movimentoFinanceiroCotaCredito, movimentoFinanceiroCotaDebito, movimentoFinanceiroCotaReparte);
+	}
+	
+	
 	
 }
