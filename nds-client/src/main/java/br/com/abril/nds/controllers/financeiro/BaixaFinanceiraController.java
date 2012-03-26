@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -46,8 +45,6 @@ public class BaixaFinanceiraController {
 	@SuppressWarnings("unused")
 	private HttpSession httpSession;
 	
-	private HttpServletRequest request;
-	
 	private ServletContext servletContext;
 	
 	@Autowired
@@ -60,41 +57,22 @@ public class BaixaFinanceiraController {
 	
 	private static final String DIRETORIO_TEMPORARIO_ARQUIVO_BANCO = "temp/arquivos_banco/";
 	
-	private static final String EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE = "exibeCamposBaixaAutomatica";
-	
-	private static final String RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE = "resumoBaixaAutomaticaBoleto";
-	
 	public BaixaFinanceiraController(Result result, Localization localization,
-									 HttpSession httpSession, HttpServletRequest request,
-									 ServletContext servletContext) {
+									 HttpSession httpSession, ServletContext servletContext) {
 		
 		this.result = result;
 		this.localization = localization;
 		this.httpSession = httpSession;
-		this.request = request;
 		this.servletContext = servletContext;
 	}
 	
 	@Get
 	public void baixa() {
 		
-		if (request.getAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE) == null) {
-			
-			request.setAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, false);
-		}
-	}
-	
-	@Post
-	public void teste(UploadedFile uploadedFile) {
-		
-		result.use(Results.json()).from("aaa", "result").recursive().serialize();
-		
 	}
 	
 	@Post
 	public void baixa(UploadedFile uploadedFile, String valorFinanceiro) {
-		
-		request.setAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, true);
 		
 		validarEntradaDados(uploadedFile, valorFinanceiro);
 		
@@ -120,8 +98,6 @@ public class BaixaFinanceiraController {
 			//Deleta os arquivos dentro do diretório temporário
 			deletarArquivoTemporario();
 		}
-		
-		request.setAttribute(RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, resumoBaixaBoleto);
 		
 		result.use(Results.json()).from(resumoBaixaBoleto, "result").recursive().serialize();
 	}

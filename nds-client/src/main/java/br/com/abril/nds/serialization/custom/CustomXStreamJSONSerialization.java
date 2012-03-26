@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.financeiro;
+package br.com.abril.nds.serialization.custom;
 
 import javax.servlet.http.HttpServletResponse;
 

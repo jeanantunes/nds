@@ -1377,48 +1377,85 @@ public class DataLoader {
 	//FINANCEIRO - CONSULTA BOLETOS
 	private static void criarBoletos(Session session) {
 		
-		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaJose, new BigDecimal(10), BigDecimal.ZERO);
-		save(session, estoqueProdutoCota2);
-		
-		MovimentoEstoqueCota mec2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
-				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota2,
-				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
-		save(session, mec2);
-		
-		MovimentoFinanceiroCota movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
-				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec2), new Date());
-		save(session,movimentoFinanceiroCota2);
-		
-		ConsolidadoFinanceiroCota consolidado2 = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota2), cotaManoel,
-						new Date(), new BigDecimal(200));
-		save(session, consolidado2);
-		
-		Divida divida2 = Fixture.divida(consolidado2, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
-		save(session, divida2);
-
+		Boleto boleto1 = Fixture.boleto("1309309032012440",
+		                new Date(), 
+		                new Date(), 
+		                null, 
+		                BigDecimal.ZERO, 
+		                new BigDecimal(200), 
+		                "TIPO_BAIXA",
+		                "ACAO", 
+		                StatusCobranca.NAO_PAGO,
+		                cotaManoel,
+		                 bancoHSBC,
+		                 divida1);
 		
 		Boleto boleto2 = Fixture.boleto("1309309032012442",
-						                new Date(), 
-						                new Date(), 
-						                null, 
-						                BigDecimal.ZERO, 
-						                new BigDecimal(200), 
-						                "TIPO_BAIXA",
-						                "ACAO", 
-						                StatusCobranca.NAO_PAGO,
-						                cotaManoel,
-						                bancoHSBC,
-						                divida2);
+		                new Date(), 
+		                new Date(), 
+		                null, 
+		                BigDecimal.ZERO, 
+		                new BigDecimal(200), 
+		                "TIPO_BAIXA",
+		                "ACAO", 
+		                StatusCobranca.NAO_PAGO,
+		                cotaManoel,
+		                bancoHSBC,
+		                divida2);
 		
+		Boleto boleto3 = Fixture.boleto("1309309032012443",
+		                new Date(), 
+		                new Date(), 
+		                null, 
+		                BigDecimal.ZERO, 
+		                new BigDecimal(200), 
+		                "TIPO_BAIXA",
+		                "ACAO", 
+		                StatusCobranca.NAO_PAGO,
+		                cotaManoel,
+		                bancoHSBC,
+		                divida3);
 		
+		Boleto boleto4 = Fixture.boleto("1309309032012444",
+		                new Date(), 
+		                new Date(), 
+		                null, 
+		                BigDecimal.ZERO, 
+		                new BigDecimal(200), 
+		                "TIPO_BAIXA",
+		                "ACAO", 
+		                StatusCobranca.NAO_PAGO,
+		                cotaManoel,
+		                bancoHSBC,
+		                divida4);
 		
-	    save(session, boleto2);    
-	 
+		Boleto boleto5 = Fixture.boleto("1309309032012445",
+		                new Date(), 
+		                new Date(), 
+		                null, 
+		                BigDecimal.ZERO, 
+		                new BigDecimal(200), 
+		                "TIPO_BAIXA",
+		                "ACAO", 
+		                StatusCobranca.NAO_PAGO,
+		                cotaManoel,
+		                bancoHSBC,
+		                divida5);
+		
+		Boleto boleto6 = Fixture.boleto("1309309032012446",
+		                new Date(), 
+		                new Date(), 
+		                null, 
+		                BigDecimal.ZERO, 
+		                new BigDecimal(200), 
+		                "TIPO_BAIXA",
+		                "ACAO", 
+		                StatusCobranca.NAO_PAGO,
+		                cotaManoel,
+		                bancoHSBC,
+		                divida6);
+		
+		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6);	 
 	}
 	
 	private static void criarFeriado(Session session) {
