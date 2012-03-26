@@ -83,6 +83,9 @@ public class Cota {
 	@Column(name = "VALOR_MINIMO_COBRANCA")
 	private BigDecimal valorMininoCobranca;
 	
+	@Column(name = "RECEBE_COBRANCA_EMAIL")
+	private boolean recebeCobrancaEmail;
+	
 	public Long getId() {
 		return id;
 	}
@@ -193,6 +196,14 @@ public class Cota {
 	
 	public void setValorMinino(BigDecimal valorMinino) {
 		this.valorMininoCobranca = valorMinino;
+	}
+	
+	public boolean isRecebeCobrancaEmail() {
+		return recebeCobrancaEmail;
+	}
+	
+	public void setRecebeCobrancaEmail(boolean recebeCobrancaEmail) {
+		this.recebeCobrancaEmail = recebeCobrancaEmail;
 	}
 
 	/**

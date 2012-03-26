@@ -52,6 +52,10 @@ public class Distribuidor {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "POLITICA_COBRANCA_ID")
 	private PoliticaCobranca politicaCobranca;
+	
+	@OneToMany
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
+	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 
 	public Long getId() {
 		return id;
@@ -99,6 +103,14 @@ public class Distribuidor {
 	
 	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
 		this.politicaCobranca = politicaCobranca;
+	}
+	
+	public Set<FormaCobranca> getFormasCobranca() {
+		return formasCobranca;
+	}
+	
+	public void setFormasCobranca(Set<FormaCobranca> formasCobranca) {
+		this.formasCobranca = formasCobranca;
 	}
 
 }

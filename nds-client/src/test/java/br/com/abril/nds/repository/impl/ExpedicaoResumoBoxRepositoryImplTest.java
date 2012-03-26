@@ -16,18 +16,23 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -65,12 +70,23 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 	
 	@Before
 	public void setup() {
+		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		save(carteira);
+		
+		Banco banco = Fixture.hsbc(carteira); 
+		save(banco);
+		
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		save(formaBoleto);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
 				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
 		save(juridicaDistrib);
 
-		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date());
+		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
 		save(distribuidor);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
