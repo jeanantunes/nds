@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import br.com.abril.nds.model.HistoricoEdicao;
 
 @Entity
-@Table(name = "HISTORICO_SITUCAO_COTA")
+@Table(name = "HISTORICO_SITUACAO_COTA")
 @SequenceGenerator(name="HIST_SIT_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class HistoricoSituacaoCota extends HistoricoEdicao {
 	

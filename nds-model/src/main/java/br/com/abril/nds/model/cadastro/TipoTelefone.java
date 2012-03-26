@@ -13,6 +13,10 @@ public enum TipoTelefone {
 	RADIO;
 	
 	public static String getDescricao(TipoTelefone tipoTelefone){
+		if (tipoTelefone == null){
+			return "";
+		}
+		
 		switch(tipoTelefone){
 			case COMERCIAL:
 				return "Comercial";

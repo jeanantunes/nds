@@ -125,20 +125,14 @@
 
 				var hiddenId = '<input type="hidden" name="id" value="' + index + '" />';
 
-				var parametroLimparCamposPesquisa = '\'#descricaoProduto' + index + '\', \'#edicao' + index + '\',  function() {reprocessarDadosLancamento(' + index + ')}';
-								
-				var inputCodigoProduto = 
-					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="produto.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" />';
-
 				var parametroPesquisaProduto = '\'#codigoProduto' + index + '\', \'#descricaoProduto' + index + '\', \'#edicao' + index + '\', true, null, function() {reprocessarDadosLancamento(' + index + ')}';
+				
+				var inputCodigoProduto = 
+					'<input type="text" id="codigoProduto' + index + '" name="codigoProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="produto.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');" />';
 
 				var parametroAutoCompleteProduto = '\'#descricaoProduto' + index + '\', true';
 
 				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true, obterDadosProduto';
-
-				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Produto">'
-									+ '<a href="javascript:;" onclick="produto.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');">&nbsp;</a>'
-									+ '</span>';
 
 				var inputDescricaoProduto = 
 					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
@@ -157,7 +151,7 @@
 				var inputQuantidade = 
 					'<input type="text" name="qtdeDiferenca" style="width:60px;" maxlenght="20" />';
 
-				row.cell.codigoProduto = hiddenId + inputCodigoProduto + imgLupaPesquisa;
+				row.cell.codigoProduto = hiddenId + inputCodigoProduto;
 				row.cell.descricaoProduto = inputDescricaoProduto;
 				row.cell.numeroEdicao = inputNumeroEdicao;
 				row.cell.precoVenda = hiddenPrecoVenda + spanPrecoVenda;

@@ -78,7 +78,7 @@ public class ValidacaoInterceptor implements Interceptor {
 	 */
 	private void tratarExcecaoValidacao(ValidacaoException validacaoException) {
 
-		if (Util.isAjaxRequest(request)) {
+		if (Util.isAjaxRequest(request) || Util.isAjaxUploadIE(request)) {
 		
 			result.use(Results.json()).from(
 				validacaoException.getValidacao(), Constantes.PARAM_MSGS

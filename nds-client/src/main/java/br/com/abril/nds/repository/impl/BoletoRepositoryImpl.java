@@ -34,7 +34,7 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro){
 		long quantidade = 0;
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select count (b) from Boleto b where ");		
+		hql.append(" select count(b) from Boleto b where ");		
 		hql.append(" b.cota.numeroCota = :ncota ");
 		
 		if (filtro.getDataVencimentoDe()!=null){
@@ -51,10 +51,10 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		query.setParameter("ncota", filtro.getNumeroCota());
 		
 		if (filtro.getDataVencimentoDe()!=null){
-		    query.setParameter("vctode", filtro.getDataVencimentoDe());
+		    query.setDate("vctode", filtro.getDataVencimentoDe());
 		}
 		if (filtro.getDataVencimentoAte()!=null){
-		    query.setParameter("vctoate", filtro.getDataVencimentoAte());
+		    query.setDate("vctoate", filtro.getDataVencimentoAte());
 		}
 		if (filtro.getStatus()!=null){	
 		    query.setParameter("status", filtro.getStatus());
@@ -72,14 +72,13 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		StringBuilder hql = new StringBuilder();
 		hql.append(" from Boleto b where ");		
 		hql.append(" b.cota.numeroCota = :ncota ");
-		
+
 		if (filtro.getDataVencimentoDe()!=null){
 		    hql.append(" and b.dataVencimento >= :vctode ");
 		}
 		if (filtro.getDataVencimentoAte()!=null){
 		    hql.append(" and b.dataVencimento <= :vctoate ");
 		}
-		
 		if (filtro.getStatus()!=null){	  
 			hql.append(" and b.statusCobranca = :status");
 		}
@@ -110,9 +109,6 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 				case STATUS_COBRANCA:
 					hql.append(" order by b.statusCobranca ");
 					break;
-				case ACAO:
-					hql.append(" order by b.acao ");
-					break;	
 				default:
 					break;
 			}
@@ -125,10 +121,10 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		query.setParameter("ncota", filtro.getNumeroCota());
 		
 		if (filtro.getDataVencimentoDe()!=null){
-		    query.setParameter("vctode", filtro.getDataVencimentoDe());
+		    query.setDate("vctode", filtro.getDataVencimentoDe());
 		}
 		if (filtro.getDataVencimentoAte()!=null){
-		    query.setParameter("vctoate", filtro.getDataVencimentoAte());
+		    query.setDate("vctoate", filtro.getDataVencimentoAte());
 		}
 		if (filtro.getStatus()!=null){	
 		    query.setParameter("status", filtro.getStatus());
@@ -145,7 +141,6 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		}
 
 		return query.list();
-		
 	}
 	
 	

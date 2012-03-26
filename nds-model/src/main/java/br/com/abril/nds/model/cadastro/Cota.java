@@ -23,11 +23,6 @@ import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
-/**
- * @author francisco.garcia
- * @version 1.0
- * @created 14-fev-2012 11:35:31
- */
 @Entity
 @Table(name = "COTA")
 @SequenceGenerator(name="COTA_SEQ", initialValue = 1, allocationSize = 1)
@@ -37,37 +32,48 @@ public class Cota {
 	@GeneratedValue(generator = "COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
+	
 	@Column(name = "VIP", nullable = false)
 	private boolean vip;
+	
 	@OneToMany
 	@JoinColumn(name = "COTA_ID")
 	private List<PDV> pdvs = new ArrayList<PDV>();
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
+	
 	@Column(name  ="FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
+	
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@OneToOne(mappedBy = "cota")
 	private ContratoCota contratoCota;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Box box;
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
 	private List<HistoricoSituacaoCota> historicos = new ArrayList<HistoricoSituacaoCota>();
 	
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
-	@Column(name = "FATOR_VENCIMENTO", nullable = false)
-	private int fatorVencimento;
+	
+	@OneToOne(mappedBy = "cota")
+	private ParametroCobrancaCota parametroCobranca;
 	
 	public Long getId() {
 		return id;
@@ -165,12 +171,12 @@ public class Cota {
 		this.estudoCotas = estudoCotas;
 	}
 	
-	public int getFatorVencimento() {
-		return fatorVencimento;
+	public ParametroCobrancaCota getParametroCobranca() {
+		return parametroCobranca;
 	}
 	
-	public void setFatorVencimento(int fatorVencimento) {
-		this.fatorVencimento = fatorVencimento;
+	public void setParametroCobranca(ParametroCobrancaCota parametroCobranca) {
+		this.parametroCobranca = parametroCobranca;
 	}
 
 	/**

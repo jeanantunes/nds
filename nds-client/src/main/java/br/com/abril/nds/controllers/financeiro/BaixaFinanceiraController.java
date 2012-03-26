@@ -5,25 +5,34 @@ import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
+import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
+import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -31,6 +40,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro")
@@ -44,8 +54,6 @@ public class BaixaFinanceiraController {
 	@SuppressWarnings("unused")
 	private HttpSession httpSession;
 	
-	private HttpServletRequest request;
-	
 	private ServletContext servletContext;
 	
 	@Autowired
@@ -57,35 +65,25 @@ public class BaixaFinanceiraController {
 	private static final String FORMATO_DATA_DIRETORIO = "yyyy-MM-dd";
 	
 	private static final String DIRETORIO_TEMPORARIO_ARQUIVO_BANCO = "temp/arquivos_banco/";
-	
-	private static final String EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE = "exibeCamposBaixaAutomatica";
-	
-	private static final String RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE = "resumoBaixaAutomaticaBoleto";
-	
+
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBoletos";
+	   
 	public BaixaFinanceiraController(Result result, Localization localization,
-									 HttpSession httpSession, HttpServletRequest request,
-									 ServletContext servletContext) {
+									 HttpSession httpSession, ServletContext servletContext) {
 		
 		this.result = result;
 		this.localization = localization;
 		this.httpSession = httpSession;
-		this.request = request;
 		this.servletContext = servletContext;
 	}
 	
 	@Get
 	public void baixa() {
 		
-		if (request.getAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE) == null) {
-			
-			request.setAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, false);
-		}
 	}
 	
 	@Post
 	public void baixa(UploadedFile uploadedFile, String valorFinanceiro) {
-		
-		request.setAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, true);
 		
 		validarEntradaDados(uploadedFile, valorFinanceiro);
 		
@@ -112,9 +110,7 @@ public class BaixaFinanceiraController {
 			deletarArquivoTemporario();
 		}
 		
-		request.setAttribute(RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, resumoBaixaBoleto);
-		
-		result.forwardTo(BaixaFinanceiraController.class).baixa();
+		result.use(Results.json()).from(resumoBaixaBoleto, "result").recursive().serialize();
 	}
 	
 	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
@@ -230,4 +226,96 @@ public class BaixaFinanceiraController {
 		return usuario;
 	}
 	
+	
+	
+	
+
+	@Post
+	@Path("/buscaBoleto")
+	public void buscaBoleto(String nossoNumero){
+		
+		if ((nossoNumero==null)||("".equals(nossoNumero.trim()))){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número do boleto.");
+		}
+		
+		CobrancaVO cobranca = this.boletoService.obterCobranca(nossoNumero);
+		if (cobranca==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		result.use(Results.json()).from(cobranca,"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/buscaBoletos")
+	public void buscaBoletos(Integer numCota,
+			                 String sortorder, 
+			                 String sortname, 
+			                 int page, 
+			                 int rp){
+
+		if ((numCota==null)||(numCota<=0)){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota.");
+		}
+
+        //CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaBoletosCotaDTO filtroAtual = new FiltroConsultaBoletosCotaDTO(numCota);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtroAtual.setPaginacao(paginacao);
+		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBoletos.values(), sortname));
+	
+		FiltroConsultaBoletosCotaDTO filtroSessao = (FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
+
+		//BUSCA BOLETOS
+		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(filtroAtual);
+		
+		//CARREGA DIRETO DA ENTIDADE PARA A TABELA
+		List<CellModel> listaModelo = new LinkedList<CellModel>();
+		
+		if (boletos.size()==0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		
+		
+		for (Boleto boleto : boletos){	
+			listaModelo.add(new CellModel(1,
+										  (boleto.getNossoNumero()!=null?boleto.getNossoNumero():""),
+										  "",
+										  (boleto.getDataEmissao()!=null?DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"):""),
+										  (boleto.getDataVencimento()!=null?DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"):""),
+										  (boleto.getValor()!=null?boleto.getValor().toString():""),
+										  "",
+										  ""
+                      					  )
+                            );
+		}
+		
+		
+		TableModel<CellModel> tm = new TableModel<CellModel>();
+
+		//DEFINE TOTAL DE REGISTROS NO TABLEMODEL
+		tm.setTotal( (int) this.boletoService.obterQuantidadeBoletosPorCota(filtroAtual));
+		
+		//DEFINE CONTEUDO NO TABLEMODEL
+		tm.setRows(listaModelo);
+		
+		//DEFINE PAGINA ATUAL NO TABLEMODEL
+		tm.setPage(filtroAtual.getPaginacao().getPaginaAtual());
+		
+		
+		//PREPARA RESULTADO PARA A VIEW (HASHMAP)
+		Map<String, TableModel<CellModel>> resultado = new HashMap<String, TableModel<CellModel>>();
+		resultado.put("TblModelBoletos", tm);
+		
+		//RETORNA HASHMAP EM FORMATO JASON PARA A VIEW
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+	}
+	
+		
 }

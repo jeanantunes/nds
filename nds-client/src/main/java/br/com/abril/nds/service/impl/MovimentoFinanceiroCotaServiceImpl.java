@@ -2,13 +2,16 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -35,7 +38,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Transactional
 	public void gerarMovimentoFinanceiroDebitoCredito(
 								Cota cota, GrupoMovimentoFinaceiro grupoMovimentoFinanceiro,
-								Usuario usuario, BigDecimal valor, Date dataOperacao) {
+								Usuario usuario, BigDecimal valor, Date dataOperacao,
+								BaixaAutomatica baixaAutomatica) {
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
 			tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinanceiro);
@@ -63,9 +67,22 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valor);
 			movimentoFinanceiroCota.setLancamentoManual(false);
+			movimentoFinanceiroCota.setBaixaAutomatica(baixaAutomatica);
 
 			movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#obterMovimentosFinanceiroCota()
+	 */
+	@Override
+	@Transactional
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+
+		return this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(
+					filtroDebitoCreditoDTO
+				);
+	}
 }

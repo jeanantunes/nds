@@ -1,13 +1,16 @@
 package br.com.abril.nds.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
@@ -48,24 +51,27 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	@Transactional
 	@Override
 	public void efetuarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
 		if (codigoProduto == null || codigoProduto.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Código do produto é obrigatório.");
+			mensagensValidacao.add("Código do produto é obrigatório.");
 		}
 		
 		if (idProdutoEdicao == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Id produto edição é obrigatório.");
+			mensagensValidacao.add("Id produto edição é obrigatório.");
 		}
 		
 		if (idLancamento == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento é obrigatório.");
+			mensagensValidacao.add("Lançamento é obrigatório.");
 		}
 		
 		if (novaData == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data Lançamento é obrigatório.");
+			mensagensValidacao.add("Data Lançamento é obrigatório.");
 		}
 		
 		if (idUsuario == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Id usuário é obrigatório.");
+			mensagensValidacao.add("Id usuário é obrigatório.");
 		}
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
@@ -76,11 +82,15 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		if (novaData.equals(lancamento.getDataLancamentoDistribuidor()) 
 				|| novaData.before(lancamento.getDataLancamentoDistribuidor())){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nova data deve ser maior que a data de lançamento atual.");
+			mensagensValidacao.add("Nova data deve ser maior que a data de lançamento atual.");
 		}
 		
 		if (novaData.after(lancamento.getDataRecolhimentoDistribuidor())){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nova data não deve ser maior que data de recolhimento.");
+			mensagensValidacao.add("Nova data não deve ser maior que data de recolhimento.");
+		}
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
 		
 		//verificar se existe distribuição nesse dia da semana
@@ -94,7 +104,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		if (lancamento.getStatus().equals(StatusLancamento.EXPEDIDO)){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto já expedido não pode sofrer furo.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto já expedido não pode sofrer furo.");
 		}
 		
 		Estudo estudo = 

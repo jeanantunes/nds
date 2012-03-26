@@ -6,6 +6,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
  * @author luiz.marcili
@@ -13,8 +14,12 @@ import br.com.abril.nds.model.cadastro.Banco;
  * @created 02-mar-2012 09:25:00
  */
 @Entity
-@DiscriminatorValue(value = "B") //TIPO_DOCUMENTO = BOLETO
+@DiscriminatorValue(value = "BOLETO")
 public class Boleto extends Cobranca {
+	
+	public Boleto() {
+		this.tipoCobranca = TipoCobranca.BOLETO;
+	}
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "BANCO_ID")

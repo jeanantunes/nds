@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,20 +34,32 @@ public class Distribuidor {
 	@GeneratedValue(generator = "DISTRIB_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "PJ_ID")
 	private PessoaJuridica juridica;
+	
 	@OneToMany(mappedBy = "distribuidor")
 	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();
+	
 	@Column(name = "FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@OneToOne(optional = false)
 	@JoinColumn(name = "POLITICA_COBRANCA_ID")
 	private PoliticaCobranca politicaCobranca;
+	
+	@OneToMany
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
+	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+	
+	@Embedded
+	private PoliticaSuspensao politicaSuspensao;
 
 	public Long getId() {
 		return id;
@@ -94,6 +107,22 @@ public class Distribuidor {
 	
 	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
 		this.politicaCobranca = politicaCobranca;
+	}
+	
+	public Set<FormaCobranca> getFormasCobranca() {
+		return formasCobranca;
+	}
+	
+	public void setFormasCobranca(Set<FormaCobranca> formasCobranca) {
+		this.formasCobranca = formasCobranca;
+	}
+	
+	public PoliticaSuspensao getPoliticaSuspensao() {
+		return politicaSuspensao;
+	}
+	
+	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
+		this.politicaSuspensao = politicaSuspensao;
 	}
 
 }

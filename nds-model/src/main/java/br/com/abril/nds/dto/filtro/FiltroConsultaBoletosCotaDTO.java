@@ -2,7 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -43,6 +42,33 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		this.status=status;
 	}
 	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaBoletosCotaDTO(Integer numeroCota,
+			                            Date dataVencimentoDe,
+			                            Date dataVencimentoAte){
+		this.numeroCota=numeroCota;
+		this.dataVencimentoDe=dataVencimentoDe;
+		this.dataVencimentoAte=dataVencimentoAte;
+	}
+	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaBoletosCotaDTO(Integer numeroCota,
+			                            Date dataVencimentoDe){
+		this.numeroCota=numeroCota;
+		this.dataVencimentoDe=dataVencimentoDe;
+	}
+	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaBoletosCotaDTO(Integer numeroCota){
+		this.numeroCota=numeroCota;
+	}
+	
 	
 	/**
 	 * Enum para ordenação das colunas do filtro.
@@ -53,14 +79,13 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	public enum OrdenacaoColunaBoletos{
 		
 		NOSSO_NUMERO("nossoNumero"),
-		DATA_EMISSAO("dataVencimento"),
-		DATA_VENCIMENTO("dataVencimento"),
-		DATA_PAGAMENTO("dataPagamento"),
+		DATA_EMISSAO("dtEmissao"),
+		DATA_VENCIMENTO("dtVencimento"),
+		DATA_PAGAMENTO("dtPagto"),
 		ENCARGOS("encargos"),
 		VALOR("valor"),
 		TIPO_BAIXA("tipoBaixa"),
-		STATUS_COBRANCA("status"),
-		ACAO("acao");
+		STATUS_COBRANCA("status");
 		
 		private String nomeColuna;
 		

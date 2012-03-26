@@ -2,5 +2,5 @@ package br.com.abril.nds.service;
 
 public interface GerarCobrancaService {
 
-	void gerarCobranca();
+	void gerarCobranca(Long idCota);
 }

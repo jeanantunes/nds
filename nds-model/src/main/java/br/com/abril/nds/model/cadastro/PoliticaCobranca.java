@@ -1,13 +1,10 @@
 package br.com.abril.nds.model.cadastro;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -21,18 +18,34 @@ public class PoliticaCobranca {
 	@GeneratedValue(generator = "POLITICA_COBRANCA_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COBRANCA", nullable = false)
-	private TipoCobranca tipoCobranca;
-	@Column(name = "VALOR_MINIMO", nullable = false)
-	private BigDecimal valorMinino;
+	
+	@OneToOne
+	@JoinColumn(name = "FORMA_COBRANCA_ID")
+	private FormaCobranca formaCobranca;
+	
 	@Column(name = "NUM_INADIMPLENCIA_SUSP", nullable = false)
 	private int inadimplenciasSuspencao;
+	
 	@OneToOne(mappedBy = "politicaCobranca")
 	private Distribuidor distribuidor;
-	@Column(name = "ACEITA_PGTO_DIVERGENTE")
-	private boolean aceitaPagamentoDivergente;
 	
+	@Column(name = "ACUMULA_DIVIDA", nullable = false)
+	private boolean acumulaDivida;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_MAIOR")
+	private boolean aceitaBaixaPagamentoMaior;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_MENOR")
+	private boolean aceitaBaixaPagamentoMenor;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_VENCIDO")
+	private boolean aceitaBaixaPagamentoVencido;	
+	
+	@Column(name = "NUM_DIAS_NOVA_COBRANCA")
+	private int numeroDiasNovaCobranca;
+	
+	@Column(name = "NUM_DIAS_POSTERGADO")
+	private int numeroDiasPostergado;
 	
 	public Long getId() {
 		return id;
@@ -40,22 +53,6 @@ public class PoliticaCobranca {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public TipoCobranca getTipoCobranca() {
-		return tipoCobranca;
-	}
-	
-	public void setTipoCobranca(TipoCobranca tipoCobranca) {
-		this.tipoCobranca = tipoCobranca;
-	}
-	
-	public BigDecimal getValorMinino() {
-		return valorMinino;
-	}
-	
-	public void setValorMinino(BigDecimal valorMinino) {
-		this.valorMinino = valorMinino;
 	}
 	
 	public int getInadimplenciasSuspencao() {
@@ -73,13 +70,61 @@ public class PoliticaCobranca {
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
 	}
-
-	public boolean isAceitaPagamentoDivergente() {
-		return aceitaPagamentoDivergente;
+	
+	public boolean isAcumulaDivida() {
+		return acumulaDivida;
+	}
+	
+	public void setAcumulaDivida(boolean acumulaDivida) {
+		this.acumulaDivida = acumulaDivida;
 	}
 
-	public void setAceitaPagamentoDivergente(boolean aceitaPagamentoDivergente) {
-		this.aceitaPagamentoDivergente = aceitaPagamentoDivergente;
+	public boolean isAceitaBaixaPagamentoMaior() {
+		return aceitaBaixaPagamentoMaior;
 	}
 
+	public void setAceitaBaixaPagamentoMaior(boolean aceitaBaixaPagamentoMaior) {
+		this.aceitaBaixaPagamentoMaior = aceitaBaixaPagamentoMaior;
+	}
+
+	public boolean isAceitaBaixaPagamentoMenor() {
+		return aceitaBaixaPagamentoMenor;
+	}
+
+	public void setAceitaBaixaPagamentoMenor(boolean aceitaBaixaPagamentoMenor) {
+		this.aceitaBaixaPagamentoMenor = aceitaBaixaPagamentoMenor;
+	}
+
+	public boolean isAceitaBaixaPagamentoVencido() {
+		return aceitaBaixaPagamentoVencido;
+	}
+
+	public void setAceitaBaixaPagamentoVencido(boolean aceitaBaixaPagamentoVencido) {
+		this.aceitaBaixaPagamentoVencido = aceitaBaixaPagamentoVencido;
+	}
+	
+	public FormaCobranca getFormaCobranca() {
+		return formaCobranca;
+	}
+	
+	public void setFormaCobranca(FormaCobranca formaCobranca) {
+		this.formaCobranca = formaCobranca;
+	}
+	
+	public int getNumeroDiasNovaCobranca() {
+		return numeroDiasNovaCobranca;
+	}
+	
+	public void setNumeroDiasNovaCobranca(int numeroDiasNovaCobranca) {
+		this.numeroDiasNovaCobranca = numeroDiasNovaCobranca;
+	}
+	
+	public int getNumeroDiasPostergado() {
+		return numeroDiasPostergado;
+	}
+	
+	public void setNumeroDiasPostergado(int numeroDiasPostergado) {
+		this.numeroDiasPostergado = numeroDiasPostergado;
+	}
+	
 }

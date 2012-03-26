@@ -18,7 +18,10 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 
 	@Override
 	public void removerTelefones(Collection<Long> idsTelefones) {
-		StringBuilder hql = new StringBuilder("delete from Telefone where id in (:ids)");
+		StringBuilder hql = new StringBuilder("delete from Telefone t ");
+		hql.append(" where t.id in (:ids) ")
+		   .append(" and t.id not in (select tc.telefone.id from TelefoneCota tc where tc.telefone.id in (:ids)) ")
+		   .append(" and t.id not in (select tf.telefone.id from TelefoneFornecedor tf where tf.telefone.id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("ids", idsTelefones);
