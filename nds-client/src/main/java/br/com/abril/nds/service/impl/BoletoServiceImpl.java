@@ -610,7 +610,8 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional(readOnly=true)
 	public CobrancaVO obterCobranca(String nossoNumero) {
 		CobrancaVO cobranca=null;
-		Boleto boleto = this.obterBoletoPorNossoNumero(nossoNumero);
+		Boleto boleto=this.obterBoletoPorNossoNumero(nossoNumero);
+		
 		if (boleto!=null){
 			cobranca = new CobrancaVO();
 			
