@@ -8,17 +8,12 @@ import javax.persistence.ManyToOne;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
-/**
- * @author luiz.marcili
- * @version 1.0
- * @created 02-mar-2012 09:25:00
- */
 @Entity
-@DiscriminatorValue(value = "BOLETO")
-public class Boleto extends Cobranca {
+@DiscriminatorValue(value = "TRANSFERENCIA_BANCARIA")
+public class TransferenciaBancaria extends Cobranca {
 	
-	public Boleto() {
-		this.tipoCobranca = TipoCobranca.BOLETO;
+	public TransferenciaBancaria() {
+		this.tipoCobranca = TipoCobranca.TRANSFERENCIA_BANCARIA;
 	}
 	
 	@ManyToOne(optional = false)
