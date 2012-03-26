@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -65,12 +67,22 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota) {
 		
 		if (listaTelefonesCota != null){
+			boolean isTelefonePrincipal = false;
+			
 			for (TelefoneCota telefoneCota : listaTelefonesCota){
 				if (telefoneCota == null){
 					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone cota é obrigatório");
 				}
 				
 				this.valiadarTelefone(telefoneCota.getTelefone(), telefoneCota.getTipoTelefone());
+				
+				if (isTelefonePrincipal && telefoneCota.isPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				}
+				
+				if (telefoneCota.isPrincipal()){
+					isTelefonePrincipal = telefoneCota.isPrincipal();
+				}
 				
 				if (telefoneCota.getCota() == null || telefoneCota.getCota().getId() == null){
 					throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório");
@@ -135,15 +147,25 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor) {
 		
 		if (listaTelefonesFornecedor != null){
+			boolean isTelefonePrincipal = false;
+			
 			for (TelefoneFornecedor telefoneFornecedor : listaTelefonesFornecedor){
 				if (telefoneFornecedor == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone fornecedor é obrigatório");
+					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone fornecedor é obrigatório.");
 				}
 				
 				this.valiadarTelefone(telefoneFornecedor.getTelefone(), telefoneFornecedor.getTipoTelefone());
 				
+				if (isTelefonePrincipal && telefoneFornecedor.isPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				}
+				
+				if (telefoneFornecedor.isPrincipal()){
+					isTelefonePrincipal = telefoneFornecedor.isPrincipal();
+				}
+				
 				if (telefoneFornecedor.getFornecedor() == null || telefoneFornecedor.getFornecedor().getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório");
+					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório.");
 				}
 				
 				if (telefoneFornecedor.getTelefone().getId() == null){
@@ -173,32 +195,34 @@ public class TelefoneServiceImpl implements TelefoneService {
 	
 	private void valiadarTelefone(Telefone telefone, TipoTelefone tipoTelefone){
 		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
 		if (telefone == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Telefone é obrigatório");
+			mensagensValidacao.add("Telefone é obrigatório.");
 		}
 		
 		if (telefone.getDdd() == null || telefone.getDdd().trim().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "DDD é obrigatório");
+			mensagensValidacao.add("DDD é obrigatório.");
+		} else if (telefone.getDdd().trim().length() > 255){
+			mensagensValidacao.add("Valor maior que o permitido para o campo DDD.");
 		}
 		
 		if (telefone.getNumero() == null || telefone.getNumero().trim().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Número é obrigatório");
+			mensagensValidacao.add("Número é obrigatório.");
+		} else if (telefone.getNumero().trim().length() > 255){
+			mensagensValidacao.add("Valor maior que o permitido para o campo Número.");
 		}
 		
 		if (tipoTelefone == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo Telefone é obrigatório");
+			mensagensValidacao.add("Tipo Telefone é obrigatório.");
 		}
 		
-		if (telefone.getDdd().trim().length() > 255){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo DDD");
+		if (telefone.getRamal() != null && telefone.getRamal().trim().length() > 255){
+			mensagensValidacao.add("Valor maior que o permitido para o campo Ramal.");
 		}
 		
-		if (telefone.getNumero().trim().length() > 255){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Número");
-		}
-		
-		if (telefone.getRamal().trim().length() > 255){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Valor maior que o permitido para o campo Ramal");
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
 	}
 	

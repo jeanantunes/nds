@@ -66,7 +66,7 @@ public class TelefoneController {
 	public void adicionarTelefone(Integer referencia, String tipoTelefone, String ddd, 
 			String numero, String ramal, boolean principal){
 		
-		this.validarDadosEntrada(tipoTelefone, ddd, numero);
+		this.validarDadosEntrada(tipoTelefone, ddd, numero, principal);
 		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
@@ -167,9 +167,8 @@ public class TelefoneController {
 			TelefoneAssociacaoDTO telefoneAssociacao = listaEnderecoAssociacao.get(key);
 
 			CellModel cellModel = new CellModel(
-				telefoneAssociacao.getReferencia(),
-				telefoneAssociacao.getTipoTelefone() == null ? "" : 
-					TipoTelefone.getDescricao(telefoneAssociacao.getTipoTelefone()),
+				telefoneAssociacao.getReferencia(), 
+				TipoTelefone.getDescricao(telefoneAssociacao.getTipoTelefone()),
 				telefoneAssociacao.getTelefone().getDdd(),
 				telefoneAssociacao.getTelefone().getNumero(),
 				telefoneAssociacao.getTelefone().getRamal(),
@@ -186,7 +185,7 @@ public class TelefoneController {
 		return tableModel;
 	}
 	
-	private void validarDadosEntrada(String tipoTelefone, String ddd, String numero) {
+	private void validarDadosEntrada(String tipoTelefone, String ddd, String numero, boolean principal) {
 		List<String> listaValidacao = new ArrayList<String>();
 		
 		if (Util.getEnumByStringValue(TipoTelefone.values(), tipoTelefone) == null){
@@ -201,8 +200,19 @@ public class TelefoneController {
 			listaValidacao.add("Número é obrigatório");
 		}
 		
+		if (principal){
+			Map<Integer, TelefoneAssociacaoDTO> telefones = this.obterTelefonesSalvarSessao();
+			
+			for (Integer key : telefones.keySet()){
+				if (telefones.get(key).isPrincipal()){
+					listaValidacao.add("Já existe um telefone principal.");
+					break;
+				}
+			}
+		}
+		
 		if (!listaValidacao.isEmpty()){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaValidacao));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaValidacao));
 		}
 	}
 	
