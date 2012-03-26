@@ -15,4 +15,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
 
 
+	
+	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 }

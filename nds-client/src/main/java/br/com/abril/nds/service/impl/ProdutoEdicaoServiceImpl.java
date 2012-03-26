@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -51,16 +53,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public FuroProdutoDTO obterProdutoEdicaoPorCodigoEdicaoDataLancamento(
 			String codigo, String nomeProduto, Long edicao, Date dataLancamento) {
 		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
 		if (codigo == null || codigo.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
+			mensagensValidacao.add("Código é obrigatório.");
 		}
 		
 		if (edicao == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Edição é obrigatório.");
+			mensagensValidacao.add("Edição é obrigatório.");
 		}
 		
 		if (dataLancamento == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data Lançamento é obrigatório.");
+			mensagensValidacao.add("Data Lançamento é obrigatório.");
+		}
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
 		
 		FuroProdutoDTO furoProdutoDTO = produtoEdicaoRepository.
@@ -119,19 +127,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Transactional(readOnly = true)
 	public ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao) {
 
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
 		if (codigoProduto == null || codigoProduto.isEmpty()) {
 			
-			throw new IllegalArgumentException("Código é obrigatório.");
+			mensagensValidacao.add("Código é obrigatório.");
 		}
 		
 		if (numeroEdicao == null || numeroEdicao.isEmpty()) {
 			
-			throw new IllegalArgumentException("Número edição é obrigatório.");
+			mensagensValidacao.add("Número edição é obrigatório.");
 		}
 
 		if (!Util.isLong(numeroEdicao)) {
 
-			throw new IllegalArgumentException("Número edição é inválido.");
+			mensagensValidacao.add("Número edição é inválido.");
+		}
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(

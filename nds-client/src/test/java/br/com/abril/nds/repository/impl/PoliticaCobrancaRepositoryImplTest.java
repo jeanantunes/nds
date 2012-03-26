@@ -8,8 +8,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 
 public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -19,10 +23,17 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	@Before
 	public void setUp() {
+		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		save(carteira);
+		
+		Banco banco = Fixture.hsbc(carteira); 
+		save(banco);
+				
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, TipoCobranca.BOLETO,
-										  new BigDecimal(200), true, true, true, 1);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
 		
 		save(politicaCobranca);
 	}

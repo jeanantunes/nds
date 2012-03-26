@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -272,6 +274,7 @@ public class DataLoader {
 		criarParametroEmail(session);
 		criarDivida(session);
 		criarBoletos(session);
+		criarmovimentosFinanceiroCota(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -967,7 +970,13 @@ public class DataLoader {
 				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
-		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date());
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC);
+		save(session, formaBoleto);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+		
+		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
 		save(session, distribuidor);
 	}
 
@@ -2415,5 +2424,50 @@ public class DataLoader {
 		save(session, mec);
 	
 		}
+	
+	private static void criarmovimentosFinanceiroCota(Session session) {
+
+		Pessoa pessoa = Fixture.juridicaAcme();
+		save(session, pessoa);
+
+		Box box = Fixture.boxReparte300();
+		save(session, box);
+		
+		Cota cota = Fixture.cota(123, pessoa, SituacaoCadastro.ATIVO, box);
+		save(session, cota);
+
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session, usuario);
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.add(Calendar.DATE, 10);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCotaCredito = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinanceiroCredito, usuario, new BigDecimal("225"), 
+					null, calendar.getTime()
+				);
+		
+		calendar.add(Calendar.DATE, 10);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCotaDebito = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinanceiroDebito, usuario, new BigDecimal("225"), 
+					null, calendar.getTime()
+				);
+
+		calendar.add(Calendar.DATE, 10);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCotaReparte = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinenceiroReparte, usuario, new BigDecimal("225"), 
+					null, calendar.getTime()
+				);
+
+		save(session, movimentoFinanceiroCotaCredito, movimentoFinanceiroCotaDebito, movimentoFinanceiroCotaReparte);
+	}
+	
+	
 	
 }
