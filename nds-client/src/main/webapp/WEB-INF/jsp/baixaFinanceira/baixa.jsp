@@ -1,63 +1,85 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	
 	<script type="text/javascript">
 	
-		/*$(function() {
-		    
-			var options = {
-		        success:       showResponse,  // post-submit callback
-		        //url: contextPath + "/financeiro/baixarBoletosAutomatico",
-		 
-		        dataType: "json",
-		        
-				
-		        
-		        // other available options: 
-		        //url:       url         // override for form's 'action' attribute 
-		        //type:      type        // 'get' or 'post', override for form's 'method' attribute 
-		        //dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
-		        //clearForm: true        // clear all form fields after successful submit 
-		        //resetForm: true        // reset the form after successful submit 
-		 
-		        // $.ajax options can be used here too, for example: 
-		        //timeout:   3000 
-				
-				//contentType: "text/plain"
-		    };  
-		    
-		    $('#formBaixaAutomatica').submit(function() {
-		        $(this).ajaxSubmit(options);
-		        return false; 
-		    });
+		$(function() {
 			
-		});*/
+			var options = {
+				success: tratarRespostaBaixaAutomatica,
+		    };
+			
+			$('#formBaixaAutomatica').ajaxForm(options);
+			
+			$("#valorFinanceiro").numeric();
+			
+		});
 		
-		/*function showResponse(data, statusText, xhr, $form) {
-
-			alert("response");
+		function mostrarBaixaAuto() {
+			
+			limparCamposBaixaAutomatica();
+			
+			$('#tableBaixaAuto').show();
+			$('#tableBaixaManual').hide();
+			$('#extratoBaixaManual').hide();
+		}
 		
-			if (data.mensagens) {
+		function integrar() {
+			
+			$('#formBaixaAutomatica').submit();
+		}
+		
+		function tratarRespostaBaixaAutomatica(data) {
+			
+			data = replaceAll(data, "<pre>", "");
+			data = replaceAll(data, "</pre>", "");
+			
+			data = replaceAll(data, "<PRE>", "");
+			data = replaceAll(data, "</PRE>", "");
+			
+			var responseJson = jQuery.parseJSON(data);
+			
+			if (responseJson.mensagens) {
 
 				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					responseJson.mensagens.tipoMensagem, 
+					responseJson.mensagens.listaMensagens
 				);
 				
-				$('#dadosArquivo').hide();
-				
-				return;
+				$('#resultadoIntegracao').hide();
 			}
 			
-			$("#quantidadeLidos").html(data.result.quantidadeLidos);
+			if (responseJson.result) {
+				
+				$("#nomeArquivo").html(responseJson.result.nomeArquivo);
+				$("#dataCompetencia").html(responseJson.result.dataCompetencia);
+				$("#somaPagamentos").html(responseJson.result.somaPagamentos);
+				
+				$("#quantidadeLidos").html(responseJson.result.quantidadeLidos);
+				$("#quantidadeBaixados").html(responseJson.result.quantidadeBaixados);
+				$("#quantidadeRejeitados").html(responseJson.result.quantidadeRejeitados);
+				$("#quantidadeBaixadosComDivergencia").html(responseJson.result.quantidadeBaixadosComDivergencia);
+				
+				limparCamposBaixaAutomatica();
+				
+				$('#resultadoIntegracao').show();
+			}
+		}
+		
+		function limparCamposBaixaAutomatica() {
 			
-			$('#dadosArquivo').show();
-		}*/
+			$("#uploadedFile").replaceWith(
+				"<input name='uploadedFile' type='file' id='uploadedFile' size='25' />");
+			
+			$("#valorFinanceiro").val("");
+		}
 	
-	
-		function popup_excluir() {	
+		function popup_excluir() {
 			$("#dialog-excluir").dialog({
 				resizable : false,
 				height : 170,
@@ -74,30 +96,12 @@
 				}
 			});
 		};
-		
-		$(function() {
-			
-			if (${exibeCamposBaixaAutomatica}) {
-				
-				$("#radioBaixaAuto").click();	
-			}
-			
-			$("#valorFinanceiro").numeric();
-	
-		});
 	
 		function mostraBaixaManual() {
 	
-			$('#dadosArquivo').hide();
+			$('#resultadoIntegracao').hide();
 			$('#tableBaixaManual').show();
 			$('#tableBaixaAuto').hide();
-		}
-	
-		function mostrarBaixaAuto() {
-	
-			$('#tableBaixaAuto').show();
-			$('#tableBaixaManual').hide();
-			$('#extratoBaixaManual').hide();
 		}
 		
 		function dividaManualNossoNumero() {
@@ -110,14 +114,7 @@
 			$('#porCota').show();
 			$('#nossoNumero').hide();
 	
-		}
-		function mostrarArquivo() {
-			
-			$('#extratoBaixaManual').hide();
-			
-			$('#formBaixaAutomatica').submit();
-		}
-		
+		}		
 		
 		function buscaBoleto() {
 			var data = [{name: 'nossoNumero', value: $("#filtroNossoNumero").val()}];
@@ -148,7 +145,8 @@
 	
 	<style>
 		
-		#tableBaixaManual,#tableBaixaAuto,#extratoBaixaManual,#nossoNumero,#porCota {
+		#tableBaixaManual,#tableBaixaAuto, #resultadoIntegracao,
+		#extratoBaixaManual, #nossoNumero, #porCota {
 			display: none;
 		}
 	</style>
@@ -211,7 +209,7 @@
 						
 						<td width="111">
 							<span class="bt_integrar">
-								<a href="javascript:;" onclick="mostrarArquivo();">Integrar</a>
+								<a href="javascript:;" onclick="integrar();">Integrar</a>
 							</span>
 						</td>
 					</tr>			
@@ -395,9 +393,7 @@
 		
 	</fieldset>
 
-
-	<c:if test="${resumoBaixaAutomaticaBoleto != null}">
-		<fieldset class="classFieldset" id="dadosArquivo">
+		<fieldset class="classFieldset" id="resultadoIntegracao">
 			<legend> Baixa Financeira Integrada</legend>
 			<br />
 	
@@ -413,23 +409,17 @@
 							<tr>
 								<td width="121" align="left" class="linha_borda"><strong>Nome
 										do Arquivo:</strong></td>
-								<td width="137" align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.nomeArquivo}
-								</td>
+								<td id="nomeArquivo" width="137" align="right" class="linha_borda"></td>
 							</tr>
 							<tr>
 								<td align="left" class="linha_borda"><strong>Data
 										Competência:</strong></td>
-								<td align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.dataCompetencia}
-								</td>
+								<td id="dataCompetencia" align="right" class="linha_borda"></td>
 							</tr>
 							<tr>
 								<td align="left" class="linha_borda"><strong>Valor
 										R$:</strong></td>
-								<td align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.somaPagamentos}
-								</td>
+								<td id="somaPagamentos" align="right" class="linha_borda"></td>
 							</tr>
 							<tr>
 								<td align="left" class="linha_borda">&nbsp;</td>
@@ -453,30 +443,22 @@
 							<tr>
 								<td width="162" align="left" class="linha_borda"><strong>Registros
 										Lidos:</strong></td>
-								<td id="quantidadeLidos" width="102" align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.quantidadeLidos}
-								</td>
+								<td id="quantidadeLidos" width="102" align="right" class="linha_borda"></td>
 							</tr>
 							<tr>
 								<td align="left" class="linha_borda"><strong>Registros
 										Baixados:</strong></td>
-								<td align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.quantidadeBaixados}
-								</td>
+								<td id="quantidadeBaixados" align="right" class="linha_borda"></td>
 							</tr>
 							<tr>
 								<td align="left" class="linha_borda"><strong>Registros
 										Rejeitados:</strong></td>
-								<td align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.quantidadeRejeitados}
-								</td>
+								<td id="quantidadeRejeitados" align="right" class="linha_borda"></td>
 							</tr>
 							<tr>
 								<td align="left" class="linha_borda"><strong>Baixados
 										com Divergência:</strong></td>
-								<td align="right" class="linha_borda">
-									${resumoBaixaAutomaticaBoleto.quantidadeBaixadosComDivergencia}
-								</td>
+								<td id="quantidadeBaixadosComDivergencia" align="right" class="linha_borda"></td>
 							</tr>
 						</table></td>
 				</tr>
@@ -486,7 +468,7 @@
 			<br clear="all" />
 	
 		</fieldset>
-	</c:if>
+		
 	<div class="linha_separa_fields">&nbsp;</div>
 	
 </body>
