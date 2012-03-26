@@ -60,6 +60,7 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
@@ -108,7 +109,7 @@ public class DiferencaEstoqueController {
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	
-	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaFaltasSobras";
 	
 	private static final String LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE = "listaNovasDiferencas";
 	
@@ -132,8 +133,8 @@ public class DiferencaEstoqueController {
 	}
 
 	@Get
-	@Path("/lancamento/exportar/pdf")
-	public void exportarPDF() throws IOException {
+	@Path("/lancamento/exportar")
+	public void exportar(FileType fileType) throws IOException {
 		
 		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
@@ -198,14 +199,10 @@ public class DiferencaEstoqueController {
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(null, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
-		
-		this.httpServletResponse.setContentType("application/pdf");
 
-		this.httpServletResponse.addHeader("Content-Disposition", "attachment; filename=" + "teste.pdf");
-
-		FileExporter.to(FileType.PDF).exportInOutputStream(
-			filtroSessao, resultadoLancamentoDiferenca, listaLancamentosDiferenca,
-				DiferencaVO.class, this.httpServletResponse.getOutputStream());
+		FileExporter.to("teste", fileType)
+			.inHTTPResponse(new NDSFileHeader(), filtroSessao, resultadoLancamentoDiferenca, 
+				listaLancamentosDiferenca, DiferencaVO.class, this.httpServletResponse);
 	}
 	
 	@Get

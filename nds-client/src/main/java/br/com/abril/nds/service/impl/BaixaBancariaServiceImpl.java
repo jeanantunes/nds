@@ -8,11 +8,9 @@ import br.com.abril.nds.service.BaixaBancariaSerivice;
 
 @Service
 public class BaixaBancariaServiceImpl implements BaixaBancariaSerivice{
-	
 
 	@Override
 	public boolean verificarBaixaBancariaNaData(Date data) {
-		
 		return true;
 	}
 

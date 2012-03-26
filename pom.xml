@@ -97,7 +97,6 @@
 				<version>${org.springframework.version}</version>
 				<type>jar</type>
 			</dependency>
-
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
@@ -233,9 +232,14 @@
 				<version>5.2.0</version>
 			</dependency>
 			<dependency>
-				<groupId>poi</groupId>
+				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
-				<version>3.1-FINAL</version>
+				<version>3.8-beta5</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>4.5.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -272,6 +276,18 @@
 		<dependency>
 			<groupId>br.com.caelum.stella</groupId>
 			<artifactId>caelum-stella-boleto</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -2,7 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -53,14 +52,13 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	public enum OrdenacaoColunaBoletos{
 		
 		NOSSO_NUMERO("nossoNumero"),
-		DATA_EMISSAO("dataVencimento"),
-		DATA_VENCIMENTO("dataVencimento"),
-		DATA_PAGAMENTO("dataPagamento"),
+		DATA_EMISSAO("dtEmissao"),
+		DATA_VENCIMENTO("dtVencimento"),
+		DATA_PAGAMENTO("dtPagto"),
 		ENCARGOS("encargos"),
 		VALOR("valor"),
 		TIPO_BAIXA("tipoBaixa"),
-		STATUS_COBRANCA("status"),
-		ACAO("acao");
+		STATUS_COBRANCA("status");
 		
 		private String nomeColuna;
 		

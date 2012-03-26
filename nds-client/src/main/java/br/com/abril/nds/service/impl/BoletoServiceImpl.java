@@ -10,6 +10,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
@@ -172,16 +174,18 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		validarDadosEntrada(pagamento);
 		
+		BaixaAutomatica baixaAutomatica = null;
+		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero());
 		
 		if (boleto == null) {
 		
 			//Gera baixa com status de pago, porém o nosso número 
 			//referente ao pagamento não existe na base
-			gerarBaixaAutomatica(StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, null,
-								 dataOperacao, nomeArquivo,
-								 pagamento.getNumeroRegistro(),
-								 pagamento.getValorPagamento());
+			baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, null,
+												   dataOperacao, nomeArquivo,
+												   pagamento.getNumeroRegistro(),
+												   pagamento.getValorPagamento());
 
 			incrementarBoletosBaixados(resumoBaixaBoletos);
 			
@@ -189,13 +193,14 @@ public class BoletoServiceImpl implements BoletoService {
 			
 		} else {
 			
-			//Não paga o boleto o gera baixa com status de boleto pago anteriormente
+			//Não baixa o boleto, gera baixa com status de boleto pago anteriormente
+			//e gera movimento de crédito
 			if (boleto.getStatusCobranca().equals(StatusCobranca.PAGO)) {
 				
-				gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, null,
-									 dataOperacao, nomeArquivo,
-									 pagamento.getNumeroRegistro(),
-									 pagamento.getValorPagamento());
+				baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, null,
+									 				   dataOperacao, nomeArquivo,
+									 				   pagamento.getNumeroRegistro(),
+									 				   pagamento.getValorPagamento());
 				
 				incrementarBoletosRejeitados(resumoBaixaBoletos);
 				
@@ -203,20 +208,22 @@ public class BoletoServiceImpl implements BoletoService {
 					.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 													   	   GrupoMovimentoFinaceiro.CREDITO,
 													   	   usuario, pagamento.getValorPagamento(),
-													   	   dataOperacao);
+													   	   dataOperacao, baixaAutomatica);
 				
 				return;
 			}
 			
+			//TODO: verificar data util
 			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) < 0) {
 				
-				//Não paga o boleto o gera baixa com status de não pago por divergência de data
-				if (politicaCobranca == null || !politicaCobranca.isAceitaPagamentoDivergente()) {
+				//Não baixa o boleto o gera baixa com status de não pago por divergência de data
+				//e gera movimento de crédito
+				if (politicaCobranca == null || !politicaCobranca.isAceitaBaixaPagamentoVencido()) {
 					
-					gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA, null,
-										 dataOperacao, nomeArquivo,
-										 pagamento.getNumeroRegistro(),
-										 pagamento.getValorPagamento());
+					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA, null,
+										 				   dataOperacao, nomeArquivo,
+										 				   pagamento.getNumeroRegistro(),
+										 				   pagamento.getValorPagamento());
 
 					incrementarBoletosRejeitados(resumoBaixaBoletos);
 					
@@ -224,23 +231,32 @@ public class BoletoServiceImpl implements BoletoService {
 						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 															   GrupoMovimentoFinaceiro.CREDITO,
 														   	   usuario, pagamento.getValorPagamento(),
-														   	   dataOperacao);
+														   	   dataOperacao, baixaAutomatica);
 					
 					return;
 					
 				} else {
 					
-					//Paga o boleto o gera baixa com status de pago com divergência de data
-					gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_DATA, null,
-										 dataOperacao, nomeArquivo,
-										 pagamento.getNumeroRegistro(),
-										 pagamento.getValorPagamento());
+					//Baixa o boleto, gera baixa com status de pago com divergência de data,
+					//calcula multas e juros do valor que deveria ser pago e gera movimento de débito
+					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_DATA, null,
+										 				   dataOperacao, nomeArquivo,
+										 				   pagamento.getNumeroRegistro(),
+										 				   pagamento.getValorPagamento());
 			
 					efetivarBaixaCobranca(boleto, dataOperacao);
 					
 					incrementarBoletosBaixadosComDivergencia(resumoBaixaBoletos);
 					
-					//TODO: verificar valor
+					//TODO: calcular juros
+					
+					BigDecimal valorCalculado = BigDecimal.TEN;
+					
+					movimentoFinanceiroCotaService
+						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+														   GrupoMovimentoFinaceiro.DEBITO,
+													   	   usuario, valorCalculado,
+													   	   dataOperacao, baixaAutomatica);
 					
 					return;
 				}				
@@ -248,11 +264,11 @@ public class BoletoServiceImpl implements BoletoService {
 				
 				if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 0) {
 					
-					//Paga o boleto o gera baixa com status de pago
-					gerarBaixaAutomatica(StatusBaixa.PAGO, boleto,
-							 			 dataOperacao, nomeArquivo,
-										 pagamento.getNumeroRegistro(),
-										 pagamento.getValorPagamento());
+					//Baixa o boleto o gera baixa com status de pago
+					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO, boleto,
+							 			 				   dataOperacao, nomeArquivo,
+							 			 				   pagamento.getNumeroRegistro(),
+							 			 				   pagamento.getValorPagamento());
 					
 					efetivarBaixaCobranca(boleto, dataOperacao);
 					
@@ -260,61 +276,98 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					return;
 					
-				} else {
+				} else if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 1) {
 					
-					//Não paga o boleto e gera baixa com status de não pago por divergência de valor
-					if (politicaCobranca == null || !politicaCobranca.isAceitaPagamentoDivergente()) {
+					//Verifica o parâmetro para pagamento a maior, não baixa o boleto, gera baixa
+					//com status de não pago por divergência de valor e gera movimento de crédito
+					if (politicaCobranca == null || !politicaCobranca.isAceitaBaixaPagamentoMaior()) {
 						
-						gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, null,
-								 			 dataOperacao, nomeArquivo,
-											 pagamento.getNumeroRegistro(),
-											 pagamento.getValorPagamento());
-						
+						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, null,
+	 			 				   							   dataOperacao, nomeArquivo,
+	 			 				   							   pagamento.getNumeroRegistro(),
+	 			 				   							   pagamento.getValorPagamento());
+
 						incrementarBoletosRejeitados(resumoBaixaBoletos);
-						
+
 						movimentoFinanceiroCotaService
 							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
-																   GrupoMovimentoFinaceiro.CREDITO,
-															   	   usuario, pagamento.getValorPagamento(),
-															   	   dataOperacao);
+									   							   GrupoMovimentoFinaceiro.CREDITO,
+									   							   usuario, pagamento.getValorPagamento(),
+									   							   dataOperacao, baixaAutomatica);
 						
 						return;
 						
 					} else {
-					
-						//Paga o boleto o gera baixa com status de pago com divergência de valor
-						gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
-					 			 			 dataOperacao, nomeArquivo,
-											 pagamento.getNumeroRegistro(),
-											 pagamento.getValorPagamento());
+						
+						//Baixa o boleto, gera baixa com status de pago por divergência de valor
+						//e gera movimento de crédito da diferença
+						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
+	 			 				   dataOperacao, nomeArquivo,
+	 			 				   pagamento.getNumeroRegistro(),
+	 			 				   pagamento.getValorPagamento());
 						
 						efetivarBaixaCobranca(boleto, dataOperacao);
 						
 						incrementarBoletosBaixadosComDivergencia(resumoBaixaBoletos);
 						
-						BigDecimal valor = pagamento.getValorPagamento();
-						GrupoMovimentoFinaceiro grupoMovimento = null;
-						
-						if (boleto.getValor().compareTo(pagamento.getValorPagamento()) == 1) {
-							
-							valor = boleto.getValor().subtract(pagamento.getValorPagamento());
-							
-							grupoMovimento = GrupoMovimentoFinaceiro.DEBITO;
-							
-						} else {
-							
-							valor = pagamento.getValorPagamento().subtract(boleto.getValor());
-							
-							grupoMovimento = GrupoMovimentoFinaceiro.CREDITO;
-						}
+						BigDecimal valorCredito = pagamento.getValorPagamento().subtract(boleto.getValor());
 						
 						movimentoFinanceiroCotaService
-							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(), grupoMovimento,
-																   usuario, valor, dataOperacao);
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+																   GrupoMovimentoFinaceiro.CREDITO,
+															   	   usuario, valorCredito,
+															   	   dataOperacao, baixaAutomatica);
 						
 						return;
+						
 					}
-				}				
+					
+				} else {
+				
+					//Verifica o parâmetro para pagamento a menor, não baixa o boleto, gera baixa
+					//com status de não pago por divergência de valor e gera movimento de crédito
+					if (politicaCobranca == null || !politicaCobranca.isAceitaBaixaPagamentoMenor()) {
+						
+						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, null,
+	   							   							   dataOperacao, nomeArquivo,
+	   							   							   pagamento.getNumeroRegistro(),
+	   							   							   pagamento.getValorPagamento());
+
+						incrementarBoletosRejeitados(resumoBaixaBoletos);
+
+						movimentoFinanceiroCotaService
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+		   							   							   GrupoMovimentoFinaceiro.CREDITO,
+		   							   							   usuario, pagamento.getValorPagamento(),
+		   							   							   dataOperacao, baixaAutomatica);
+						
+						return;
+						
+					} else {
+						
+						//Baixa o boleto, gera baixa com status de pago por divergência de valor
+						//e gera movimento de débito da diferença
+						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
+	 			 				   dataOperacao, nomeArquivo,
+	 			 				   pagamento.getNumeroRegistro(),
+	 			 				   pagamento.getValorPagamento());
+						
+						efetivarBaixaCobranca(boleto, dataOperacao);
+						
+						incrementarBoletosBaixadosComDivergencia(resumoBaixaBoletos);
+						
+						BigDecimal valorDebito = boleto.getValor().subtract(pagamento.getValorPagamento());
+						
+						movimentoFinanceiroCotaService
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+																   GrupoMovimentoFinaceiro.DEBITO,
+															   	   usuario, valorDebito,
+															   	   dataOperacao, baixaAutomatica);
+						
+						return;
+						
+					}
+				}		
 			}
 		}
 	}
@@ -354,9 +407,9 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 
-	private void gerarBaixaAutomatica(StatusBaixa statusBaixa, Boleto boleto,
-									  Date dataBaixa, String nomeArquivo,
-									  Integer numeroLinhaArquivo, BigDecimal valoPago) {
+	private BaixaAutomatica gerarBaixaAutomatica(StatusBaixa statusBaixa, Boleto boleto,
+									  			 Date dataBaixa, String nomeArquivo,
+									  			 Integer numeroLinhaArquivo, BigDecimal valoPago) {
 		
 		BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
 		
@@ -368,6 +421,8 @@ public class BoletoServiceImpl implements BoletoService {
 		baixaAutomatica.setBoleto(boleto);
 		
 		baixaAutomaticaRepository.adicionar(baixaAutomatica);
+		
+		return baixaAutomatica;
 	}
 	
 	private void efetivarBaixaCobranca(Boleto boleto, Date dataOperacao) {
@@ -538,5 +593,46 @@ public class BoletoServiceImpl implements BoletoService {
 		String email=boleto.getCota().getPessoa().getEmail();
 		return email;
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Boleto obterBoletoPorNossoNumero(String nossoNumero) {
+		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero);
+		return boleto;
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public CobrancaVO obterCobranca(String nossoNumero) {
+		CobrancaVO cobranca=null;
+		Boleto boleto = this.obterBoletoPorNossoNumero(nossoNumero);
+		if (boleto!=null){
+			cobranca = new CobrancaVO();
+			
+			cobranca.setNossoNumero(boleto.getNossoNumero());	
+			String cota = "";
+			if ((boleto.getCota().getPessoa()) instanceof PessoaFisica){
+				cota = ((PessoaFisica) boleto.getCota().getPessoa()).getNome();
+			}
+			if ((boleto.getCota().getPessoa()) instanceof PessoaJuridica){
+				cota = ((PessoaJuridica) boleto.getCota().getPessoa()).getRazaoSocial();
+			}
+			cobranca.setCota(cota);
+			cobranca.setBanco(boleto.getBanco().getNome());
+			cobranca.setDataVencimento((boleto.getDataVencimento()!=null?DateUtil.formatarDataPTBR(boleto.getDataVencimento()):""));
+			cobranca.setDataEmissao((boleto.getDataEmissao()!=null?DateUtil.formatarDataPTBR(boleto.getDataEmissao()):""));
+			cobranca.setValor(boleto.getValor());
+			
+			cobranca.setDividaTotal(boleto.getDivida().getValor());
+			
+			cobranca.setDataPagamento((boleto.getDataPagamento()!=null?DateUtil.formatarDataPTBR(boleto.getDataPagamento()):""));//???
+			cobranca.setDesconto(BigDecimal.ZERO);//???
+			cobranca.setJuros(BigDecimal.ZERO);//???
+			
+			cobranca.setValorTotal(boleto.getDivida().getValor());
+		}
+		return cobranca;
+	}
+
 
 }

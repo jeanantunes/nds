@@ -87,7 +87,7 @@ public abstract class TemplateManager {
 					}
 
 				}catch (Exception e){
-					logger.fatal("Erro na leitura de anexo para template de e-mial", e);
+					logger.fatal("Erro na leitura de anexo para template de e-mail", e);
 				}
 				
 			}

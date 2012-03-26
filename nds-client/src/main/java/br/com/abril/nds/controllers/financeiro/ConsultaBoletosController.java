@@ -66,7 +66,7 @@ public class ConsultaBoletosController {
 
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
 
-    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisa";
+    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBoletos";
    
 	
 	public ConsultaBoletosController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
@@ -76,7 +76,7 @@ public class ConsultaBoletosController {
 	}
 	
 	@Get
-    public void consulta(){
+    public void consulta(){ 
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));
@@ -107,8 +107,8 @@ public class ConsultaBoletosController {
 		
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaBoletosCotaDTO filtroAtual = new FiltroConsultaBoletosCotaDTO(numCota,
-                															        /*DateUtil.parseDataPTBR(DateUtil.formatarData(*/dataDe/*,"dd/MM/yyyy"))*/,
-                															        /*DateUtil.parseDataPTBR(DateUtil.formatarData(*/dataAte/*,"dd/MM/yyyy"))*/,
+                															        dataDe,
+                															        dataAte,
                 															        status);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
@@ -135,24 +135,17 @@ public class ConsultaBoletosController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
-		String dtPagto;
 		for (Boleto boleto : boletos){	
-			
-			dtPagto="";
-			if (boleto.getDataPagamento()!=null){
-				dtPagto=DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy");
-			}
-			
 			listaModelo.add(new CellModel(1,
-										  boleto.getNossoNumero(),
-										  DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"),
-										  DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"),
-										  dtPagto,
-										  boleto.getEncargos(),
-										  boleto.getValor().toString(),
-										  boleto.getTipoBaixa(),
-										  boleto.getStatusCobranca().name(),
-										  boleto.getAcao()
+										  (boleto.getNossoNumero()!=null?boleto.getNossoNumero():""),
+										  (boleto.getDataEmissao()!=null?DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"):""),
+										  (boleto.getDataVencimento()!=null?DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"):""),
+										  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
+										  (boleto.getEncargos()!=null?boleto.getEncargos().toString():""),
+										  (boleto.getValor()!=null?boleto.getValor().toString():""),
+										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa():""),
+										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().name():""),
+										  ""
                       					)
               );
 		}	
@@ -202,7 +195,7 @@ public class ConsultaBoletosController {
 		
 		email.enviar("Assunto", "Mensagem", destinatarios, anexo);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	public void validar(Integer numCota,
@@ -215,17 +208,17 @@ public class ConsultaBoletosController {
 			for (Message message : validator.getErrors()) {
 				mensagens.add(message.getMessage());
 			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, mensagens);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
 			throw new ValidacaoException(validacao);
 		}
 		
 		if (numCota==null || numCota<=0){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Digite o número da cota.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota.");
 		}
 		
 		if ( (dataDe!=null) && (dataAte!=null) ){
 		    if ( DateUtil.isDataInicialMaiorDataFinal( DateUtil.parseDataPTBR(DateUtil.formatarData(dataDe,"dd/MM/yyyy")) ,DateUtil.parseDataPTBR(DateUtil.formatarData(dataAte,"dd/MM/yyyy")) ) ) {
-			    throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve ser menor do que a data final.");
+			    throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve ser menor do que a data final.");
 		    }
 		}
 	}

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,12 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 
 public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -37,9 +43,24 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setUp() {
+		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		save(carteira);
+		
+		Banco banco = Fixture.hsbc(carteira); 
+		save(banco);
+		
+		
 		PessoaJuridica pj = Fixture.pessoaJuridica("Distrib", "01.001.001/001-00",
 				"000.000.000.00", "distrib@mail.com");
-		distribuidor = Fixture.distribuidor(pj, new Date());
+		
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		save(formaBoleto);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+		
+		distribuidor = Fixture.distribuidor(pj, new Date(), politicaCobranca);
+
 		save(pj);
 		save(distribuidor);
 		

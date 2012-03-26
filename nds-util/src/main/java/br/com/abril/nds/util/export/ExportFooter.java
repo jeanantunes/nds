@@ -8,6 +8,8 @@ public class ExportFooter {
 	
 	private Export.Alignment alignment;
 	
+	private String headerToAlign;
+
 	/**
 	 * Construtor padrão.
 	 */
@@ -55,6 +57,20 @@ public class ExportFooter {
 	 */
 	public void setAlignment(Export.Alignment alignment) {
 		this.alignment = alignment;
+	}
+
+	/**
+	 * @return the headerToAlign
+	 */
+	public String getHeaderToAlign() {
+		return headerToAlign;
+	}
+
+	/**
+	 * @param headerToAlign the headerToAlign to set
+	 */
+	public void setHeaderToAlign(String headerToAlign) {
+		this.headerToAlign = headerToAlign;
 	}
 
 }

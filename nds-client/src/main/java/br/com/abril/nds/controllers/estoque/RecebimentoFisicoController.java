@@ -138,7 +138,11 @@ public class RecebimentoFisicoController {
 		
 		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
+		
+		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
@@ -182,7 +186,9 @@ public class RecebimentoFisicoController {
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession());
+		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
@@ -461,7 +467,13 @@ public class RecebimentoFisicoController {
 	@Post
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
-		atualizarItensRecebimentoEmSession(itensRecebimento);
+		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+		
+		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
+			
+			atualizarItensRecebimentoEmSession(itensRecebimento);
+		
+		}
 	
 		//TODO: capturar usuario logado
 		Usuario usuarioLogado = new Usuario();
@@ -550,21 +562,27 @@ public class RecebimentoFisicoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma nota fiscal cadastrada com estes valores.");
 		} 
 		
-		NotaFiscal notaFiscal = null;
+		NotaFiscalEntrada notaFiscal = null;
 		
 		if(listaNotaFiscal != null && !listaNotaFiscal.isEmpty()) {
 			notaFiscal = listaNotaFiscal.get(0);
 		} 
 		
 		if(notaFiscal == null){	
-
+						
 			List<String> msgs = new ArrayList<String>();
 			
 			msgs.add("Nota fiscal não encontrada");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 			
-			result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+			ResultadoNotaFiscalExistente resultadoNotaFiscalExistente = new ResultadoNotaFiscalExistente();			
+			
+			resultadoNotaFiscalExistente.validacao = validacao;
+			
+			resultadoNotaFiscalExistente.indNotaInterface = false;			
+			
+			result.use(Results.json()).from(resultadoNotaFiscalExistente, "result").include("validacao").include("validacao.listaMensagens").serialize();
 		
 		} else {
 			
@@ -576,21 +594,36 @@ public class RecebimentoFisicoController {
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
 			
-			result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
+			ResultadoNotaFiscalExistente resultadoNotaFiscalExistente = new ResultadoNotaFiscalExistente();			
+			
+			resultadoNotaFiscalExistente.validacao = validacao;
+			
+			resultadoNotaFiscalExistente.indNotaInterface =true;
+			
+			result.use(Results.json()).from(resultadoNotaFiscalExistente, "result").include("validacao").include("validacao.listaMensagens").serialize();
+
 
 		}
 				
 	}
 	
+	class ResultadoNotaFiscalExistente {
+		
+		ValidacaoVO validacao;
+		boolean indNotaInterface;
+		
+		
+	}
 	
 	/**
 	 * Obtem um tableModel com os dados da lista de itens de recebimento fisico.
 	 * 
 	 * @param listaExtratoEdicao
+	 * @param indNotaInterface
 	 * 
 	 * @return TableModel.
 	 */
-	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico) {
+	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico, boolean indNotaInterface) {
 					
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
@@ -613,20 +646,40 @@ public class RecebimentoFisicoController {
 			String alteracaoPermitida	 = (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
 			String destacarValorNegativo = (dto.getDiferenca() != null && dto.getDiferenca().doubleValue() < 0.0D) ? "S" : "N";
 			
-			listaModeloGenerico.add(
-					new CellModel( 	
-							dto.getLineId(), 
-							codigo, 
-							nomeProduto, 
-							edicao, 
-							precoCapa, 
-							repartePrevisto,
-							qtdeFisica,
-							diferenca,
-							valorTotal,
-							alteracaoPermitida,
-							destacarValorNegativo
-					));
+			if(indNotaInterface){
+				
+				listaModeloGenerico.add(
+						new CellModel( 	
+								dto.getLineId(), 
+								codigo, 
+								nomeProduto, 
+								edicao, 
+								precoCapa, 
+								repartePrevisto,
+								qtdeFisica,
+								diferenca,
+								valorTotal,
+								alteracaoPermitida,
+								destacarValorNegativo
+						));
+				
+			}else{
+				
+				listaModeloGenerico.add(
+						new CellModel( 	
+								dto.getLineId(), 
+								codigo, 
+								nomeProduto, 
+								edicao, 
+								precoCapa, 
+								diferenca,
+								valorTotal,
+								alteracaoPermitida,
+								destacarValorNegativo
+						));
+			}
+			
+			
 			
 			
 		}

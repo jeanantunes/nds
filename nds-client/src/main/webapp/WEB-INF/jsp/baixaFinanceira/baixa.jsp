@@ -1,7 +1,7 @@
 <head>
 	
-	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 	<script type="text/javascript">
 	
@@ -117,6 +117,33 @@
 			
 			$('#formBaixaAutomatica').submit();
 		}
+		
+		
+		function buscaBoleto() {
+			var data = [{name: 'nossoNumero', value: $("#filtroNossoNumero").val()}];
+			$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data, setBoleto);
+		}
+		
+		function setBoleto(result) {
+			var cobranca = result;
+			
+			$("#cota").html(cobranca.cota);
+			$("#banco").html(cobranca.banco);
+			$("#nossoNumero").html(cobranca.nossoNumero);
+			$("#dataEmissao").html(cobranca.dataEmissao);
+			$("#dataVencimento").html(cobranca.dataVencimento);
+			$("#valor").html(cobranca.valor);
+			
+			$("#dividaTotal").html(cobranca.dividaTotal);
+			$("#dataPagamento").html(cobranca.dataPagamento);
+			$("#desconto").html(cobranca.desconto);
+			$("#juros").html(cobranca.juros);
+			$("#valorTotal").html(cobranca.valorTotal);
+			
+			dividaManualCota();
+		}
+		
+		
 	</script>
 	
 	<style>
@@ -193,22 +220,40 @@
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			   class="filtro" id="tableBaixaManual">
-			<tr>
-				<td width="31">Cota:</td>
-				<td colspan="3"><input type="text"
-					style="width: 60px; float: left; margin-right: 5px;" /> <span
-					class="classPesquisar"><a href="javascript:;"
-						onclick="dividaManualCota();">&nbsp;</a></span></td>
-				<td width="39">Nome:</td>
-				<td width="210"><input type="text"
-					style="width: 200px; float: left; margin-right: 5px;" /></td>
+			  <tr>
+				<td width="29">Cota:</td>
+              <td width="260">
+              
+                  <input name="numCota" 
+              		   id="numCota" 
+              		   type="number"
+              		   maxlength="11"
+              		   style="width:80px; 
+              		   float:left; margin-right:5px;"
+              		   onchange="cota.limparCamposPesquisa('#descricaoCota')" />
+              	  
+              	  <span class="classPesquisar" title="Pesquisar Cota">
+              	  		<a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');">&nbsp;</a>
+              	  </span>
+			
+			      <input name="descricaoCota" 
+			      		 id="descricaoCota" 
+			      		 type="text" 
+			      		 class="nome_jornaleiro" 
+			      		 maxlength="255"
+			      		 style="width:130px;"
+			      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
+			      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
+			    </td>
+			  
 				<td width="97">Nosso Número:</td>
-				<td width="333"><input type="text" style="width: 300px;" /></td>
-				<td width="104"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="dividaManualNossoNumero();">Pesquisar</a></span></td>
+				<td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
+				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaBoleto();">Pesquisar</a></span></td>
 			</tr>
 		</table>
 	</fieldset>
+	
+	
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="classFieldset" id="extratoBaixaManual">
 		<legend>Baixa Manual</legend>
@@ -222,27 +267,27 @@
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Num. Boleto:</strong></td>
-				<td class="linha_borda">987675433456675</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Cota:</strong></td>
-				<td class="linha_borda">9999 - José da Silva Pereira</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td width="81" class="linha_borda"><strong>Banco:</strong></td>
-				<td width="250" class="linha_borda">Santander</td>
+				<td width="250" class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Emissão:</strong></td>
-				<td class="linha_borda">12/11/2011</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Vencimento:</strong></td>
-				<td class="linha_borda">12/12/2011</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda"><strong>Valor R$:</strong></td>
-				<td class="linha_borda">1.000,00</td>
+				<td class="linha_borda"></td>
 			</tr>
 			<tr>
 				<td class="linha_borda">&nbsp;</td>
@@ -252,6 +297,8 @@
 							src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a></span></td>
 			</tr>
 		</table>
+		
+		
 		<table width="687" border="0" align="center" cellpadding="2"
 			cellspacing="2" id="porCota">
 			<tr>
@@ -263,20 +310,19 @@
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Cota:</strong></td>
-							<td colspan="3" class="linha_borda">9999 - José da Silva
-								Pereira</td>
+							<td colspan="3" class="linha_borda" id="cota"><c:out value="cota"/></td>
 						</tr>
 						<tr>
 							<td width="85" class="linha_borda"><strong>Banco:</strong></td>
-							<td width="142" class="linha_borda">Santander</td>
+							<td width="142" class="linha_borda" id="banco"><c:out value="banco"/></td>
 							<td width="71" class="linha_borda"><strong>Emissão:</strong></td>
-							<td width="91" class="linha_borda">12/11/2011</td>
+							<td width="91" class="linha_borda" id="dataEmissao"><c:out value="dataEmissao"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Vencimento:</strong></td>
-							<td class="linha_borda">12/12/2011</td>
+							<td class="linha_borda" id="dataVencimento"><c:out value="dataVencimento"/></td>
 							<td class="linha_borda"><strong>Valor R$:</strong></td>
-							<td class="linha_borda">999.999,99</td>
+							<td class="linha_borda" id="valor"><c:out value="valor"/></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -314,26 +360,27 @@
 						<tr>
 							<td width="129" class="linha_borda"><strong>Dívida
 									Total R$:</strong></td>
-							<td width="110" class="linha_borda">12.000,00</td>
+							<td width="110" class="linha_borda" id="dividaTotal"><c:out value="dividaTotal"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Data Pagamento:</strong></td>
-							<td class="linha_borda">12/12/2011</td>
+							<td class="linha_borda" id="dataPagamento"><c:out value="dataPagamento"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Desconto R$:</strong></td>
-							<td class="linha_borda">0,00</td>
+							<td class="linha_borda" id="desconto"><c:out value="desconto"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Juros R$:</strong></td>
-							<td class="linha_borda">0,00</td>
+							<td class="linha_borda" id="juros"><c:out value="juros"/></td>
 						</tr>
 						<tr>
 							<td class="linha_borda"><strong>Valor Total R$:</strong></td>
-							<td class="linha_borda">11.000,00</td>
+							<td class="linha_borda" id="valorTotal"><c:out value="valorTotal"/></td>
 						</tr>
 					</table></td>
 			</tr>
+			
 			<tr>
 				<td align="center" valign="top"><span class="bt_confirmar_novo"
 					title="Confirmar"><a onclick="popup_excluir();"
@@ -342,7 +389,10 @@
 				<td valign="top">&nbsp;</td>
 				<td valign="top">&nbsp;</td>
 			</tr>
+			
 		</table>
+		
+		
 	</fieldset>
 
 

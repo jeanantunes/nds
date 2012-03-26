@@ -37,37 +37,54 @@ public class Cota {
 	@GeneratedValue(generator = "COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
+	
 	@Column(name = "VIP", nullable = false)
 	private boolean vip;
+	
 	@OneToMany
 	@JoinColumn(name = "COTA_ID")
 	private List<PDV> pdvs = new ArrayList<PDV>();
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
+	
 	@Column(name  ="FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
+	
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@OneToOne(mappedBy = "cota")
 	private ContratoCota contratoCota;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Box box;
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
 	private List<HistoricoSituacaoCota> historicos = new ArrayList<HistoricoSituacaoCota>();
 	
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
+	
 	@Column(name = "FATOR_VENCIMENTO", nullable = false)
 	private int fatorVencimento;
+	
+	@Column(name = "VALOR_MINIMO_COBRANCA")
+	private BigDecimal valorMininoCobranca;
+	
+	@Column(name = "RECEBE_COBRANCA_EMAIL")
+	private boolean recebeCobrancaEmail;
 	
 	public Long getId() {
 		return id;
@@ -171,6 +188,22 @@ public class Cota {
 	
 	public void setFatorVencimento(int fatorVencimento) {
 		this.fatorVencimento = fatorVencimento;
+	}
+	
+	public BigDecimal getValorMinino() {
+		return valorMininoCobranca;
+	}
+	
+	public void setValorMinino(BigDecimal valorMinino) {
+		this.valorMininoCobranca = valorMinino;
+	}
+	
+	public boolean isRecebeCobrancaEmail() {
+		return recebeCobrancaEmail;
+	}
+	
+	public void setRecebeCobrancaEmail(boolean recebeCobrancaEmail) {
+		this.recebeCobrancaEmail = recebeCobrancaEmail;
 	}
 
 	/**

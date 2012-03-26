@@ -37,7 +37,7 @@ public class ImpressaoBoletosController {
 			e.printStackTrace();
 		}
 		
-		this.gerarCobrancaService.gerarCobranca();
+		this.gerarCobrancaService.gerarCobranca(null);
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
