@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -967,7 +969,13 @@ public class DataLoader {
 				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
-		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date());
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC);
+		save(session, formaBoleto);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+		
+		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
 		save(session, distribuidor);
 	}
 
