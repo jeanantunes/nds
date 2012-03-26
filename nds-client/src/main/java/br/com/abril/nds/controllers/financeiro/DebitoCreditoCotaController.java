@@ -1,0 +1,147 @@
+package br.com.abril.nds.controllers.financeiro;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
+import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
+
+/**
+ * 
+ * 
+ * @author Discover Technology
+ *
+ */
+@Resource
+@Path("/financeiro/debitoCreditoCota")
+public class DebitoCreditoCotaController {
+
+	@Autowired
+	private Result result;
+	
+	@Autowired
+	private CotaService cotaService;
+
+	@Autowired
+	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+
+	@Path("/")
+	public void index() { 
+
+		preencherComboTipoMovimento();
+	}
+
+	private void preencherComboTipoMovimento() {
+
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiro = 
+				this.tipoMovimentoFinanceiroService.obterTodosTiposMovimento();
+
+		this.result.include("tiposMovimentoFinanceiro", tiposMovimentoFinanceiro);
+	}
+
+	public void buscarCotaPorNumero(Integer numeroCota) {
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota == null) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
+		}
+
+		Pessoa pessoa = cota.getPessoa();
+
+		String nomeCota = null;
+
+		if (pessoa instanceof PessoaFisica) {
+
+			nomeCota = ((PessoaFisica) pessoa).getNome();
+
+		} else if (pessoa instanceof PessoaJuridica) {
+
+			nomeCota = ((PessoaJuridica) pessoa).getRazaoSocial();
+		}
+
+		this.result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void pesquisarDebitoCredito(FiltroDebitoCreditoDTO filtroDebitoCredito, int page) {
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtroDebitoCredito);
+		
+		TableModel<CellModel> tableModel = getTableModel(listaMovimentoFinanceiroCota);
+		
+		tableModel.setPage(page);
+		
+		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	private TableModel<CellModel> getTableModel(List<MovimentoFinanceiroCota> listaDebitoCredito) {
+	
+		List<CellModel> listaCellModel = new ArrayList<CellModel>();
+		
+		for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaDebitoCredito) {
+			
+			String dataLancamento = formatField(movimentoFinanceiroCota.getDataCriacao());
+			String dataVencimento = formatField(movimentoFinanceiroCota.getData());
+			String numeroCota = formatField(movimentoFinanceiroCota.getCota().getNumeroCota());
+			String tipoMovimento = formatField(movimentoFinanceiroCota.getTipoMovimento().getDescricao());
+			String valor = formatField(movimentoFinanceiroCota.getValor());
+			String observacao = formatField(movimentoFinanceiroCota.getObservacao());
+			
+			Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
+			
+			String nomeCota = pessoa instanceof PessoaJuridica ? 
+							  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
+
+			CellModel cellModel = new CellModel(
+				movimentoFinanceiroCota.getId().intValue(),
+				formatField(dataLancamento),
+				formatField(dataVencimento),
+				formatField(numeroCota),
+				formatField(nomeCota),
+				formatField(tipoMovimento),
+				formatField(valor),
+				formatField(observacao)
+			);
+
+			listaCellModel.add(cellModel);
+		}
+		
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+		
+		tableModel.setRows(listaCellModel);
+		
+		tableModel.setTotal(listaCellModel.size());
+
+		return tableModel;
+	}
+
+	private String formatField(Object field) {
+		
+		return field == null ? "" : String.valueOf(field);
+	}
+}
+
