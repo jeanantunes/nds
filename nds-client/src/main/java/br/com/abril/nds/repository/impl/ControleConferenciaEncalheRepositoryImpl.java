@@ -17,7 +17,7 @@ public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository
 	}
 	
 	/**
-	 * Obt�m o ControleConferenciaEncalhe pela data de opera��o.
+	 * Obtem ControleConferenciaEncalhe pela data de operacao.
 	 * 
 	 * @param dataOperacao
 	 * 
