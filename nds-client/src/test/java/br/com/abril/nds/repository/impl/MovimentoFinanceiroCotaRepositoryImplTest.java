@@ -1,10 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Assert;
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -74,15 +78,42 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 				cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
 				new BigDecimal(200), null, new Date());
 		save(movimentoFinanceiroCota);
+		
+		
+		List<MovimentoFinanceiroCota> lista = new ArrayList<MovimentoFinanceiroCota>();
+		lista.add(movimentoFinanceiroCota);
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
+				Fixture.consolidadoFinanceiroCota(lista, cotaManoel, new Date(), BigDecimal.TEN);
+		save(consolidadoFinanceiroCota);
 	}
 	
 	@Test
 	public void obterMovimentoFinanceiroCotaDataOperacao() {
 		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(1L);
+		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiro =
-			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(null);
-			
+			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(null, calendar.getTime());
+		
 		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
+		
+		listaMovimentoFinanceiro =
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(1L, calendar.getTime());
+		
+		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
+		
+		calendar.setTime(new Date());
+		
+		listaMovimentoFinanceiro =
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(null, calendar.getTime());
+			
+		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
+		
+		listaMovimentoFinanceiro =
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(1L, calendar.getTime());
+		
+		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
 	}
 	
 }

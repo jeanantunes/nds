@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +38,14 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
 		criteria.setMaxResults(1);
 		
 		return (PoliticaCobranca) criteria.uniqueResult();
+	}
+
+	@Override
+	public PoliticaCobranca buscarPoliticaCobrancaPorDistribuidor() {
+		Query query = this.getSession().createQuery("select c.politicaCobranca from Colaborador c ");
+		query.setMaxResults(1);
+		
+		return (PoliticaCobranca) query.uniqueResult();
 	}
 
 }
