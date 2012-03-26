@@ -344,7 +344,7 @@ public class Fixture {
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
 		
 		conferenciaEncalheParcial.setDataConfEncalheParcial(dataStatus);
-		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(drd);
+		conferenciaEncalheParcial.setDataMovimento(drd);
 		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
 		conferenciaEncalheParcial.setQtde(qtde);
 		conferenciaEncalheParcial.setResponsavel(usuario);

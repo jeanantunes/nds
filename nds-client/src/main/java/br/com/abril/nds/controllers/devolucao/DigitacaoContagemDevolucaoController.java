@@ -200,7 +200,7 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
 			digitacaoContagemDevolucaoVO.setValorTotal(CurrencyUtil.formatarValor(dto.getValorTotal()));
-			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataRecolhimentoDistribuidor())));
+			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
 		}
@@ -225,8 +225,7 @@ public class DigitacaoContagemDevolucaoController  {
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigDecimal(vo.getQtdNota()));
-			contagemDevolucaoDTO.setDataRecolhimentoDistribuidor((vo.getDataRecolhimentoDistribuidor()==null)
-																?null:DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
+			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			
 			listaResultadosDto.add(contagemDevolucaoDTO);
 		}
