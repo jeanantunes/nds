@@ -11,3 +11,4 @@ target
 *.ldb
 /nds-client/src/main/webapp/capas/13.jpg
 /nds-client/src/main/java/applicationContext.xml
+/nds-client/velocity.log

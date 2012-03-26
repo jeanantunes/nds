@@ -17,7 +17,8 @@ public class ExportHandler {
 														 	 List<T> exportableList,
 														 	 Class<T> exportableListClass) {
 		
-		if (!exportableListClass.isAnnotationPresent(Exportable.class)) {
+		if (exportableListClass == null 
+				|| !exportableListClass.isAnnotationPresent(Exportable.class)) {
 		
 			throw new RuntimeException("A classe utilizada não é exportável!");
 		}
@@ -196,6 +197,8 @@ public class ExportHandler {
 		exportFooter.setValue(getExportValue(value));
 		
 		exportFooter.setAlignment(exportAnnotation.alignment());
+		
+		exportFooter.setHeaderToAlign(exportAnnotation.alignWithHeader());
 		
 		return exportFooter;
 	}

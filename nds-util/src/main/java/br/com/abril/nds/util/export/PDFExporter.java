@@ -13,11 +13,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFExporter implements Exporter {
 
-	public <T, F, FT> void exportInOutputStream(F filter,
-											    FT footer,
-											    List<T> dataList, 
-											    Class<T> listClass,
-											    OutputStream outputStream) {
+	public <T, F, FT> void inOutputStream(String name,
+										  NDSFileHeader ndsFileHeader,
+										  F filter,
+										  FT footer,
+										  List<T> dataList, 
+										  Class<T> listClass,
+										  OutputStream outputStream) {
 		
 		ExportModel exportModel = ExportHandler.generateExportModel(filter, footer, dataList, listClass);
 		
