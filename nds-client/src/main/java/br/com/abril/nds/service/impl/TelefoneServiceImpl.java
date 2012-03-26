@@ -206,12 +206,14 @@ public class TelefoneServiceImpl implements TelefoneService {
 		} else if (telefone.getDdd().trim().length() > 255){
 			mensagensValidacao.add("Valor maior que o permitido para o campo DDD.");
 		}
+		telefone.setDdd(telefone.getDdd() != null ? telefone.getDdd().trim() : null);
 		
 		if (telefone.getNumero() == null || telefone.getNumero().trim().isEmpty()){
 			mensagensValidacao.add("Número é obrigatório.");
 		} else if (telefone.getNumero().trim().length() > 255){
 			mensagensValidacao.add("Valor maior que o permitido para o campo Número.");
 		}
+		telefone.setNumero(telefone.getNumero() != null ? telefone.getNumero().trim() : null);
 		
 		if (tipoTelefone == null){
 			mensagensValidacao.add("Tipo Telefone é obrigatório.");
@@ -220,6 +222,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 		if (telefone.getRamal() != null && telefone.getRamal().trim().length() > 255){
 			mensagensValidacao.add("Valor maior que o permitido para o campo Ramal.");
 		}
+		telefone.setRamal(telefone.getRamal() != null ? telefone.getRamal().trim() : null);
 		
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
