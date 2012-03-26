@@ -13,7 +13,7 @@
 				preProcess: getDataFromResult,
 				dataType : 'json',
 				colModel : [ {
-					display : 'CÛdigo',
+					display : 'C√≥digo',
 					name : 'codigo',
 					width : 80,
 					sortable : true,
@@ -25,7 +25,7 @@
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Data Emiss„o',
+					display : 'Data Emiss√£o',
 					name : 'dtEmissao',
 					width : 90,
 					sortable : true,
@@ -88,7 +88,7 @@
 					sortable : true,
 					align : 'right'
 				},  {
-					display : 'ObservaÁ„o',
+					display : 'Observa√ß√£o',
 					name : 'observacao',
 					width : 320,
 					sortable : true,
@@ -108,6 +108,7 @@
 			
 			$("#valorFinanceiro").numeric();
 			
+			$("#radioBaixaManual").focus()
 		});
 		
 		function mostrarBaixaAuto() {
@@ -426,10 +427,10 @@
 		<p>Confirma a Baixa deste Valor?</p>
 	</div>	
 	
-	<div id="dialog-divida" title="Baixa Banc·ria">
+	<div id="dialog-divida" title="Baixa Banc√°ria">
 		<table width="414" border="0" cellpadding="2" cellspacing="2">
 	  <tr>
-	    <td width="114"><strong>Valor DÌvida R$:</strong>
+	    <td width="114"><strong>Valor D√≠vida R$:</strong>
 	    
 	    </td>
 	    <td width="114" align="right"><strong>1.000,00</strong></td>
@@ -466,7 +467,7 @@
 	    <td align="right"></td>
 	  </tr>
 	  <tr>
-	    <td><strong>ObservaÁ„o:</strong></td>
+	    <td><strong>Observa√ß√£o:</strong></td>
 	    <td colspan="2"><textarea name="textarea" id="textarea" cols="45" rows="3" style="width:280px;"></textarea></td>
 	  </tr>
 	</table>
@@ -478,12 +479,12 @@
 	    <td width="430" align="center"><table width="430" border="0" cellpadding="2" cellspacing="1" style="text-align:left;">
 	      <tr>
 	        <td><strong>Cota:</strong></td>
-	        <td colspan="3">9999 - JosÈ da Silva Pereira</td>
+	        <td colspan="3">9999 - Jos√© da Silva Pereira</td>
 	      </tr>
 	      <tr>
 	        <td width="85"><strong>Banco:</strong></td>
 	        <td width="142">Santander</td>
-	        <td width="71"><strong>Emiss„o:</strong></td>
+	        <td width="71"><strong>Emiss√£o:</strong></td>
 	        <td width="111">12/11/2011</td>
 	      </tr>
 	      <tr>
@@ -524,7 +525,7 @@
 	</table>
 	</div>
 	
-	<div id="dialog-novo" title="Detalhes da DÌvida">
+	<div id="dialog-novo" title="Detalhes da D√≠vida">
 		<table class="dadosDividaGrid"></table>
 	    <br />
 	    <strong>Saldo R$: -600,00</strong>
@@ -540,9 +541,9 @@
               <td width="115">Tipo de Baixa:</td>
               <td colspan="3"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="7%"><input type="radio" name="baixaFinanceira" id="radio" value="radio"  onclick="mostrarBaixaManual();"/></td>
+                  <td width="7%"><input type="radio" name="baixaFinanceira" id="radioBaixaManual" onclick="mostrarBaixaManual();"/></td>
                   <td width="22%">Manual</td>
-                  <td width="8%"><input type="radio" name="baixaFinanceira" id="radio2" value="radio" onclick="mostrarBaixaAuto();" /></td>
+                  <td width="8%"><input type="radio" name="baixaFinanceira" id="radioBaixaAutomatica" onclick="mostrarBaixaAuto();" /></td>
                   <td width="63%">Automatica</td>
                 </tr>
               </table></td>
@@ -560,6 +561,8 @@
 		<form action="<c:url value='/financeiro/baixa' />" id="formBaixaAutomatica"
 			  method="post" enctype="multipart/form-data" >
 		
+			<input type="hidden" name="formUploadAjax" value="true" />
+		
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				   class="filtro" id="tableBaixaAuto">
 				
@@ -576,7 +579,7 @@
 						</td>
 						
 						<td width="111">
-							<span class="bt_integrar">
+							<span class="bt_integrar" title="Integrar">
 								<a href="javascript:;" onclick="integrar();">Integrar</a>
 							</span>
 						</td>
@@ -632,19 +635,19 @@
       	    <td colspan="2" class="header_table" align="center">Dados Boleto</td>
    	      </tr>
       	  <tr>
-      	    <td class="linha_borda"><strong>N˙m. Boleto:</strong></td>
+      	    <td class="linha_borda"><strong>Num. Boleto:</strong></td>
       	    <td class="linha_borda">987675433456675</td>
    	      </tr>
       	  <tr>
       	    <td class="linha_borda"><strong>Cota:</strong></td>
-      	    <td class="linha_borda">9999 - JosÈ da Silva Pereira</td>
+      	    <td class="linha_borda">9999 - Jos√© da Silva Pereira</td>
    	      </tr>
       	  <tr>
       	    <td width="81" class="linha_borda"><strong>Banco:</strong></td>
       	    <td width="250" class="linha_borda">Santander</td>
    	      </tr>
       	  <tr>
-      	    <td class="linha_borda"><strong>Emiss„o:</strong></td>
+      	    <td class="linha_borda"><strong>Emiss√£o:</strong></td>
       	    <td class="linha_borda">12/11/2011</td>
    	      </tr>
       	  <tr>
@@ -674,7 +677,7 @@
                  <td width="47%">   
                     <span class="bt_confirmar_novo" title="Pagar Boleto"><a onclick="popup_divida();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span>
                     
-                    <span class="bt_confirmar_novo" title="Negociar DÌvida"><a href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+                    <span class="bt_confirmar_novo" title="Negociar D√≠vida"><a href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
 
 
                 </td>

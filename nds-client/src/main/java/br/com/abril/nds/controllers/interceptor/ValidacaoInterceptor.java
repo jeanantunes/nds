@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ExceptionUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -78,11 +79,15 @@ public class ValidacaoInterceptor implements Interceptor {
 	 */
 	private void tratarExcecaoValidacao(ValidacaoException validacaoException) {
 
-		if (Util.isAjaxRequest(request) || Util.isAjaxUploadIE(request)) {
+		if (Util.isAjaxUpload(request)) {
+			
+			result.use(PlainJSONSerialization.class).from(
+				validacaoException.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+		
+		} else  if (Util.isAjaxRequest(request)) {
 		
 			result.use(Results.json()).from(
-				validacaoException.getValidacao(), Constantes.PARAM_MSGS
-			).recursive().serialize();
+				validacaoException.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
 			
 		} else {
 
@@ -99,11 +104,15 @@ public class ValidacaoInterceptor implements Interceptor {
 	 */
 	private void tratarExecoesGenericas(Throwable throwable) {
 
-		if (Util.isAjaxRequest(request)) {
+		String message = "Ocorreu um erro inesperado: " + throwable.getMessage();
 
-			String message = "Ocorreu um erro inesperado: " + throwable.getMessage();
-
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, message);
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, message);
+		
+		if (Util.isAjaxUpload(request)) {
+			
+			result.use(PlainJSONSerialization.class).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();
+		
+		} else  if (Util.isAjaxRequest(request)) {
 			
 			result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();	
 		

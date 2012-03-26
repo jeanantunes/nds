@@ -107,14 +107,14 @@ public class BoletoServiceImpl implements BoletoService {
 		if (controleBaixa != null
 			&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, 
+			throw new ValidacaoException(TipoMensagem.WARNING, 
 				"Já foi realizada baixa automática na data de operação atual!");
 		}
 		
 		if (valorFinanceiro == null
 				|| !valorFinanceiro.equals(arquivoPagamento.getSomaPagamentos())) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, 
+			throw new ValidacaoException(TipoMensagem.WARNING, 
 				"Valor financeiro inválido! A soma dos valores dos boletos pagos " +
 				"deve ser igual ao valor informado!");
 		}
@@ -162,7 +162,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			} else {
 			
-				throw new ValidacaoException(TipoMensagem.ERROR, 
+				throw new ValidacaoException(TipoMensagem.WARNING, 
 											 "Falha ao processar a baixa automática: " + e.getMessage());
 			}
 		}
@@ -405,7 +405,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			ValidacaoVO validacao = new ValidacaoVO();
 			
-			validacao.setTipoMensagem(TipoMensagem.ERROR);
+			validacao.setTipoMensagem(TipoMensagem.WARNING);
 			validacao.setListaMensagens(listaMensagens);
 			
 			throw new ValidacaoException(validacao);

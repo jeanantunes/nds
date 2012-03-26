@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.util.CellModel;
@@ -110,7 +111,7 @@ public class BaixaFinanceiraController {
 			deletarArquivoTemporario();
 		}
 		
-		result.use(Results.json()).from(resumoBaixaBoleto, "result").recursive().serialize();
+		result.use(PlainJSONSerialization.class).from(resumoBaixaBoleto, "result").recursive().serialize();
 	}
 	
 	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
@@ -208,7 +209,7 @@ public class BaixaFinanceiraController {
 			
 			ValidacaoVO validacao = new ValidacaoVO();
 			
-			validacao.setTipoMensagem(TipoMensagem.ERROR);
+			validacao.setTipoMensagem(TipoMensagem.WARNING);
 			validacao.setListaMensagens(listaMensagens);
 			
 			throw new ValidacaoException(validacao);

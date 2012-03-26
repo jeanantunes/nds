@@ -3,7 +3,7 @@ package br.com.abril.nds.util;
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class Util {
-
+	
 	public static boolean isNumeric(String valor){
 		try {
 			Double.parseDouble(valor);
@@ -47,23 +47,22 @@ public abstract class Util {
 		return "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"));
 	}
 	
-	public static boolean isAjaxUploadIE(HttpServletRequest request) {
+	public static boolean isAjaxUpload(HttpServletRequest request) {
 		
 		if (request == null) {
 		
 			return false;
 		}
 		
-		String headerContentType = request.getHeader("Content-Type");
-		String headerUserAgent = request.getHeader("User-Agent");
+		boolean isUploadAjax = false;
 		
-		if (headerContentType != null && headerContentType.contains("multipart/form-data")
-				&& headerUserAgent != null && headerUserAgent.contains("MSIE")) {
-			
-			return true;
-		} else {
-			return false;
+		String formUploadAjax = request.getParameter(Constantes.UPLOAD_AJAX_REQUEST_ATTRIBUTE);
+		
+		if (formUploadAjax != null) {
+			isUploadAjax = new Boolean(formUploadAjax);
 		}
+		
+		return isUploadAjax;
 	}
 	
 }

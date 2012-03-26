@@ -99,28 +99,19 @@ public class ProdutoController {
 	public void validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
 		
 		boolean numEdicaoValida = false;
+			
+		ProdutoEdicao produtoEdicao =
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
-		try {
-			
-			ProdutoEdicao produtoEdicao =
-				produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
-			
-			numEdicaoValida = (produtoEdicao != null);
-			
-			if (!numEdicaoValida) {
+		numEdicaoValida = (produtoEdicao != null);
+		
+		if (!numEdicaoValida) {
 
-				throw new ValidacaoException(TipoMensagem.WARNING, "Edição \"" + numeroEdicao + "\" não encontrada para o produto!");
-				
-			} else {
-				
-				result.use(Results.json()).from("", "result").serialize();
-				
-			}
+			throw new ValidacaoException(TipoMensagem.WARNING, "Edição \"" + numeroEdicao + "\" não encontrada para o produto!");
 			
-		} catch (IllegalArgumentException e ) {
+		} else {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
-			
+			result.use(Results.json()).from("", "result").serialize();			
 		}
 	}
 	

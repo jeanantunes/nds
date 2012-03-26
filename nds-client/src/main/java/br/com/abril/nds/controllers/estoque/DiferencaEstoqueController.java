@@ -1229,36 +1229,36 @@ public class DiferencaEstoqueController {
 				|| dataInicial.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O preenchimento do campo [Data Inicial] é obrigatório!");
+				TipoMensagem.WARNING, "O preenchimento do campo [Data Inicial] é obrigatório!");
 		}
 		
 		if (dataFinal == null 
 				|| dataFinal.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O preenchimento do campo [Data Final] é obrigatório!");
+				TipoMensagem.WARNING, "O preenchimento do campo [Data Final] é obrigatório!");
 		}
 			
 		if (!DateUtil.isValidDatePTBR(dataInicial)) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data Inicial inválida");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data Inicial inválida");
 		}
 		
 		if (!DateUtil.isValidDatePTBR(dataFinal)) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data Final inválida");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data Final inválida");
 		}
 		
 		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
 												 DateUtil.parseDataPTBR(dataFinal))) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O campo [Data Incial] não pode ser maior que o campo [Data Final]!");
+				TipoMensagem.WARNING, "O campo [Data Incial] não pode ser maior que o campo [Data Final]!");
 		}
 		
 		if (numeroEdicao == null && idFornecedor == null && tipoDiferenca == null) {
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "Para realizar a pesquisa é necessário informar a edição, o fornecedor ou o tipo de diferença!");
+				TipoMensagem.WARNING, "Para realizar a pesquisa é necessário informar a edição, o fornecedor ou o tipo de diferença!");
 		}
 		
 	}

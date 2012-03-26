@@ -29,14 +29,5 @@ public interface CalendarioService {
 	 * @return nova data calculada
  	 */
 	Date subtrairDiasUteis(Date data, int numDias);
-	
-	/**
-	 * Obtém o próximo dia útil de acordo com a data informada.
-	 * 
-	 * @param data - data base
-	 * 
-	 * @return nova data obtida
- 	 */
-	Date obterProximoDiaUtil(Date data);
 
 }

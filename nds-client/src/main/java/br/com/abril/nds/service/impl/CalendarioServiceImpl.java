@@ -71,21 +71,6 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return cal.getTime();
 	}
 	
-	@Override
-	public Date obterProximoDiaUtil(Date data) {
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(data);
-		
-		cal.setTime(DateUtil.adicionarDias(data, 1));
-		
-		while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
-			cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
-		}
-		
-		return cal.getTime();
-	}
-	
 	private boolean isFeriado(Calendar cal) {
 		
 		Feriado feriado = null;
