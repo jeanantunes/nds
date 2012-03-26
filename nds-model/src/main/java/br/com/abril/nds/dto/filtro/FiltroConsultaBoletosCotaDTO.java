@@ -42,6 +42,33 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 		this.status=status;
 	}
 	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaBoletosCotaDTO(Integer numeroCota,
+			                            Date dataVencimentoDe,
+			                            Date dataVencimentoAte){
+		this.numeroCota=numeroCota;
+		this.dataVencimentoDe=dataVencimentoDe;
+		this.dataVencimentoAte=dataVencimentoAte;
+	}
+	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaBoletosCotaDTO(Integer numeroCota,
+			                            Date dataVencimentoDe){
+		this.numeroCota=numeroCota;
+		this.dataVencimentoDe=dataVencimentoDe;
+	}
+	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaBoletosCotaDTO(Integer numeroCota){
+		this.numeroCota=numeroCota;
+	}
+	
 	
 	/**
 	 * Enum para ordenação das colunas do filtro.

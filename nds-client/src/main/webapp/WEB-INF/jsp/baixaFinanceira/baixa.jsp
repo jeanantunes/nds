@@ -9,7 +9,97 @@
 	<script type="text/javascript">
 	
 		$(function() {
-			
+			$(".liberaDividaGrid").flexigrid({
+				preProcess: getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigo',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Nome',
+					name : 'nome',
+					width : 395,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Data Emissão',
+					name : 'dtEmissao',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Data Vencimento',
+					name : 'dtVencimento',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Valor Divida R$',
+					name : 'vlDivida',
+					width : 100,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Detalhes',
+					name : 'detalhe',
+					width : 60,
+					sortable : true,
+					align : 'center',
+				}, {
+					display : '',
+					name : 'sel',
+					width : 40,
+					sortable : true,
+					align : 'center',
+				}],
+				sortname : "Nome",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180
+			});
+		});
+		
+		$(function() {
+			$(".dadosDividaGrid").flexigrid({
+				dataType : 'json',
+				colModel : [ {
+					display : 'Data',
+					name : 'data',
+					width : 90,
+					sortable : true,
+					align : 'center'
+				},{
+					display : ' ',
+					name : 'tipo',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'R$',
+					name : 'valor',
+					width : 60,
+					sortable : true,
+					align : 'right'
+				},  {
+					display : 'Observação',
+					name : 'observacao',
+					width : 320,
+					sortable : true,
+					align : 'left'
+				}],
+				width : 620,
+				height : 160
+			});
+	    }); 
+	
+		$(function() {	
 			var options = {
 				success: tratarRespostaBaixaAutomatica,
 		    };
@@ -79,46 +169,194 @@
 			$("#valorFinanceiro").val("");
 		}
 	
-		function popup_excluir() {
-			$("#dialog-excluir").dialog({
-				resizable : false,
-				height : 170,
-				width : 380,
-				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").show("highlight", {}, 1000, callback);
+		function popup_manual() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-manual" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:470,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
 					},
-					"Cancelar" : function() {
-						$(this).dialog("close");
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
 					}
 				}
 			});
 		};
-	
-		function mostraBaixaManual() {
-	
-			$('#resultadoIntegracao').hide();
-			$('#tableBaixaManual').show();
-			$('#tableBaixaAuto').hide();
+		
+	    function popup() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-novo" ).dialog({
+				resizable: false,
+				height:280,
+				width:770,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						popup_excluir();
+						$( this ).dialog( "close" );
+						
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
+		
+		function popup_alterar() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-novo" ).dialog({
+				resizable: false,
+				height:350,
+				width:650,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+						
+					},
+					
+				}
+			});	
+			      
+		};
+		
+		function popup_excluir() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-excluir" ).dialog({
+				resizable: false,
+				height:170,
+				width:380,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						$("#effect").show("highlight", {}, 1000, callback);
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
+		
+		function popup_divida() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+			$( "#dialog-divida" ).dialog({
+				resizable: false,
+				height:370,
+				width:450,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						$("#effect").show("highlight", {}, 1000, callback);
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
+
+		
+		$(function() {
+			$( "#datepickerDe" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true
+			});
+			$( "#datepickerDe2" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true
+			});
+			$( "#datepickerAte" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true
+			});
+			
+			$("#numCota").numeric();
+		}); 
+
+		function mostrarBaixaManual(){
+			$( '#dadosArquivo' ).hide( );
+			$( '#tableBaixaManual' ).show( );
+			$( '#tableBaixaAuto' ).hide( );
 		}
 		
-		function dividaManualNossoNumero() {
-			$('#nossoNumero').show();
-			$('#porCota').hide();
-	
+		function dividaManual(){
+			$( '#extratoBaixaManual' ).show( );
+			$( '#dadosArquivo' ).hide( );
 		}
-		function dividaManualCota() {
-			$('#extratoBaixaManual').show();
-			$('#porCota').show();
-			$('#nossoNumero').hide();
-	
-		}		
 		
-		function buscaBoleto() {
-			var data = [{name: 'nossoNumero', value: $("#filtroNossoNumero").val()}];
-			$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data, setBoleto);
+		function dividaManualNossoNumero(){
+			$( '#nossoNumero' ).show( );
+			$( '#porCota' ).hide( );
+		}
+		
+		function dividaManualCota(){
+			$( '#extratoBaixaManual' ).show( );
+			$( '#porCota' ).show( );
+			$( '#nossoNumero' ).hide( );	
+		}	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		//BAIXA MANUAL POR NOSSO NUMERO
+		function buscaManual() {
+			
+			var nossoNumero = $("#filtroNossoNumero").val();
+			var numCota = $("#numCota").val();
+			
+			if (nossoNumero==''){
+				$(".liberaDividaGrid").flexOptions({
+					url: "<c:url value='/financeiro/buscaBoletos' />",
+					params: [
+					         {name:'numCota', value:$("#numCota").val()}
+					        ] ,
+				});
+				$(".liberaDividaGrid").flexReload();
+				$(".grids").show();
+				
+				dividaManualCota();
+				
+			}
+			else{
+				var data = "nossoNumero = " + nossoNumero;
+				$.postJSON("<c:url value='/financeiro/buscaBoleto' />",nossoNumero, setBoleto);
+			}
+			
 		}
 		
 		function setBoleto(result) {
@@ -137,57 +375,187 @@
 			$("#juros").html(cobranca.juros);
 			$("#valorTotal").html(cobranca.valorTotal);
 			
-			dividaManualCota();
+			dividaManualNossoNumero();
 		}
 		
+		function getDataFromResult(resultado) {
+			//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
+			if (resultado.mensagens) {
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".grids").hide();
+				return resultado.tableModel;
+			}
+
+			var dadosPesquisa;
+			$.each(resultado, function(index, value) {
+				  if(value[0] == "TblModelBoletos") {
+					  dadosPesquisa = value[1];
+				  }
+		    });
+			
+			return dadosPesquisa;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
 		
 	</script>
 	
 	<style>
-		
-		#tableBaixaManual,#tableBaixaAuto, #resultadoIntegracao,
-		#extratoBaixaManual, #nossoNumero, #porCota {
-			display: none;
-		}
+
+		#resultadoIntegracao{display:none;}
+        #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #nossoNumero, #porCota, #dialog-divida{display:none;}
+
 	</style>
-</head>
+	
+    </head>
 
 <body>
+
 	<div id="dialog-excluir" title="Baixa BancÃ¡ria">
 		<p>Confirma a Baixa deste Valor?</p>
+	</div>	
+	
+	<div id="dialog-divida" title="Baixa Bancária">
+		<table width="414" border="0" cellpadding="2" cellspacing="2">
+	  <tr>
+	    <td width="114"><strong>Valor Dívida R$:</strong>
+	    
+	    </td>
+	    <td width="114" align="right"><strong>1.000,00</strong></td>
+	    <td width="166" align="right">&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td>Juros:</td>
+	    <td align="right"><input type="text" style="width:80px; text-align:right;" /></td>
+	    <td align="right">&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td>Desconto:</td>
+	    <td align="right"><input type="text" style="width:80px; text-align:right;" /></td>
+	    <td align="right">&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td>Valor pago R$:</td>
+	    <td align="right"><input type="text" style="width:80px; text-align:right;" /></td>
+	    <td align="right">&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td>&nbsp;</td>
+	    <td align="right">------------------</td>
+	    <td align="right">&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td>Saldo R$:</td>
+	    <td align="right"><strong>600,00</strong></td>
+	    <td align="right">&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td>&nbsp;</td>
+	    <td align="right"></td>
+	    <td align="right"></td>
+	  </tr>
+	  <tr>
+	    <td><strong>Observação:</strong></td>
+	    <td colspan="2"><textarea name="textarea" id="textarea" cols="45" rows="3" style="width:280px;"></textarea></td>
+	  </tr>
+	</table>
 	</div>
+	
+	<div id="dialog-manual" title="Baixa de Boletos Manual">
+	  <table width="436" border="0" cellpadding="2" cellspacing="1">
+	  <tr>
+	    <td width="430" align="center"><table width="430" border="0" cellpadding="2" cellspacing="1" style="text-align:left;">
+	      <tr>
+	        <td><strong>Cota:</strong></td>
+	        <td colspan="3">9999 - José da Silva Pereira</td>
+	      </tr>
+	      <tr>
+	        <td width="85"><strong>Banco:</strong></td>
+	        <td width="142">Santander</td>
+	        <td width="71"><strong>Emissão:</strong></td>
+	        <td width="111">12/11/2011</td>
+	      </tr>
+	      <tr>
+	        <td><strong>Vencimento:</strong></td>
+	        <td>12/12/2011</td>
+	        <td><strong>Valor R$:</strong></td>
+	        <td>999.999,99</td>
+	      </tr>
+	    </table>
+	      <br />
+	      <table width="430" border="0" cellpadding="2" cellspacing="1" style="text-align:left;">
+	        <tr>
+	          <td width="120"><strong>Data Pagto</strong></td>
+	          <td width="15" align="center"><strong>&nbsp;&nbsp;</strong></td>
+	          <td width="155"><strong>Valor Desconto R$</strong></td>
+	          <td width="11" align="center"><strong>&nbsp;&nbsp;</strong></td>
+	          <td width="126"><strong>Valor Juros R$</strong></td>
+	        </tr>
+	        <tr>
+	          <td><input type="text" name="textfield12" id="datepickerDe" style="width:80px;"/></td>
+	          <td align="center">&nbsp;</td>
+	          <td><input type="text" name="textfield13" id="textfield13" style="width:80px; text-align:right;"/></td>
+	          <td align="center">&nbsp;</td>
+	          <td><input type="text" name="textfield14" id="textfield14" style="width:80px; text-align:right;"/></td>
+	        </tr>
+	      </table>
+	      <br />
+	      <table width="430" border="0" cellpadding="2" cellspacing="1" style="text-align:left;">
+	        <tr>
+	          <td><strong>Motivo:</strong></td>
+	        </tr>
+	        <tr>
+	          <td width="424"><textarea name="textfield6" rows="3" id="textfield7" style="width:410px;"></textarea></td>
+	        </tr>
+	    </table>      
+	    </td>
+	  </tr>
+	</table>
+	</div>
+	
+	<div id="dialog-novo" title="Detalhes da Dívida">
+		<table class="dadosDividaGrid"></table>
+	    <br />
+	    <strong>Saldo R$: -600,00</strong>
+	    <br /> 
+	</div>	
 
 	<fieldset class="classFieldset">
 		
 		<legend> Baixa Financeira</legend>
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-			<tr>
-				<td width="115">Tipo de Baixa:</td>
-				<td colspan="3">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<td width="7%">
-								<input type="radio" name="radioBaixa" id="radioBaixaManual"
-									   value="radio" onclick="mostraBaixaManual();" />
-							</td>
-							<td width="22%">Manual</td>
-							
-							<td width="8%">
-								<input type="radio" name="radioBaixa" id="radioBaixaAuto"
-									   value="radio" onclick="mostrarBaixaAuto();" />
-							</td>
-							<td width="63%">AutomÃ¡tica</td>
-						</tr>
-					</table>
-				</td>
-				<td width="112">&nbsp;</td>
-				<td width="114">&nbsp;</td>
-				<td width="55">&nbsp;</td>
-				<td width="102">&nbsp;</td>
-				<td width="104">&nbsp;</td>
-			</tr>
-		</table>
+            <tr>
+              <td width="115">Tipo de Baixa:</td>
+              <td colspan="3"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td width="7%"><input type="radio" name="baixaFinanceira" id="radio" value="radio"  onclick="mostrarBaixaManual();"/></td>
+                  <td width="22%">Manual</td>
+                  <td width="8%"><input type="radio" name="baixaFinanceira" id="radio2" value="radio" onclick="mostrarBaixaAuto();" /></td>
+                  <td width="63%">Automatica</td>
+                </tr>
+              </table></td>
+              <td width="112">&nbsp;</td>
+              <td width="114">&nbsp;</td>
+              <td width="55">&nbsp;</td>
+              <td width="102">&nbsp;</td>
+              <td width="104">&nbsp;</td>
+            </tr>
+        </table>
+		
+		
+		
 		
 		<form action="<c:url value='/financeiro/baixa' />" id="formBaixaAutomatica"
 			  method="post" enctype="multipart/form-data" >
@@ -216,258 +584,187 @@
 			</table>
 		</form>
 		
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			   class="filtro" id="tableBaixaManual">
-			  <tr>
+		
+		
+		
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableBaixaManual">
+            <tr>
 				<td width="29">Cota:</td>
-              <td width="260">
+                <td width="260">
               
-                  <input name="numCota" 
-              		   id="numCota" 
-              		   type="number"
-              		   maxlength="11"
-              		   style="width:80px; 
-              		   float:left; margin-right:5px;"
-              		   onchange="cota.limparCamposPesquisa('#descricaoCota')" />
-              	  
-              	  <span class="classPesquisar" title="Pesquisar Cota">
-              	  		<a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');">&nbsp;</a>
-              	  </span>
-			
-			      <input name="descricaoCota" 
-			      		 id="descricaoCota" 
-			      		 type="text" 
-			      		 class="nome_jornaleiro" 
-			      		 maxlength="255"
-			      		 style="width:130px;"
-			      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-			      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
-			    </td>
+                <input name="numCota" 
+             	    id="numCota" 
+             		type="number"
+             		maxlength="11"
+             		style="width:80px; 
+             		float:left; margin-right:5px;"
+             		onchange="cota.limparCamposPesquisa('#descricaoCota')" />
+             	  
+                 <span class="classPesquisar" title="Pesquisar Cota">
+             	     <a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');">&nbsp;</a>
+             	 </span>
+		
+		         <input name="descricaoCota" 
+		      		 id="descricaoCota" 
+		      		 type="text" 
+		      		 class="nome_jornaleiro" 
+		      		 maxlength="255"
+		      		 style="width:130px;"
+		      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
+		      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
+		         </td>
 			  
-				<td width="97">Nosso NÃºmero:</td>
-				<td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
-				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaBoleto();">Pesquisar</a></span></td>
+				 <td width="97">Nosso NÃºmero:</td>
+				 <td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
+				 <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaManual();">Pesquisar</a></span></td>
 			</tr>
-		</table>
+         </table>
 	</fieldset>
 	
-	
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="classFieldset" id="extratoBaixaManual">
-		<legend>Baixa Manual</legend>
+	
+	<fieldset class="classFieldset" id="extratoBaixaManual" >
+      	<legend>Baixa Manual</legend>
+        <br />
+
+      	<table width="342" border="0" align="center" cellpadding="2" cellspacing="1" style="text-align:left;" id="nossoNumero">
+      	  <tr>
+      	    <td colspan="2" class="header_table" align="center">Dados Boleto</td>
+   	      </tr>
+      	  <tr>
+      	    <td class="linha_borda"><strong>Núm. Boleto:</strong></td>
+      	    <td class="linha_borda">987675433456675</td>
+   	      </tr>
+      	  <tr>
+      	    <td class="linha_borda"><strong>Cota:</strong></td>
+      	    <td class="linha_borda">9999 - José da Silva Pereira</td>
+   	      </tr>
+      	  <tr>
+      	    <td width="81" class="linha_borda"><strong>Banco:</strong></td>
+      	    <td width="250" class="linha_borda">Santander</td>
+   	      </tr>
+      	  <tr>
+      	    <td class="linha_borda"><strong>Emissão:</strong></td>
+      	    <td class="linha_borda">12/11/2011</td>
+   	      </tr>
+      	  <tr>
+      	    <td class="linha_borda"><strong>Vencimento:</strong></td>
+      	    <td class="linha_borda">12/12/2011</td>
+   	      </tr>
+      	  <tr>
+      	    <td class="linha_borda"><strong>Valor R$:</strong></td>
+      	    <td class="linha_borda">1.000,00</td>
+   	      </tr>
+      	  <tr>
+      	    <td class="linha_borda">&nbsp;</td>
+      	    <td class="linha_borda"><span class="bt_confirmar_novo" title="Confirmar"><a onclick="popup_excluir();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a></span></td>
+   	      </tr>
+   	    </table>
+		
+      	<div  id="porCota">
+      	
+         <table class="liberaDividaGrid"></table>
+         
+         <table width="100%" border="0" cellspacing="2" cellpadding="2">
+              <tr>
+                <td width="24%"><span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+                 <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+                 </td>
+                 <td width="47%">   
+                    <span class="bt_confirmar_novo" title="Pagar Boleto"><a onclick="popup_divida();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span>
+                    
+                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+
+
+                </td>
+                <td width="7%"><strong>Total R$:</strong></td>
+                <td width="7%">10.567,00</td>
+                <td width="15%"><span class="bt_sellAll"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left;"/></span></td>
+              </tr>
+            </table>
+        </div>
+		
+    </fieldset>
+
+	<fieldset class="classFieldset" id="resultadoIntegracao">
+		<legend> Baixa Financeira Integrada</legend>
 		<br />
 
-		<table width="342" border="0" align="center" cellpadding="2"
-			cellspacing="1" style="text-align: left;" id="nossoNumero">
+		<table border="0" align="center" cellpadding="2" cellspacing="2">
 			<tr>
-				<td colspan="2" class="header_table" align="center">Dados
-					Boleto</td>
-			</tr>
-			<tr>
-				<td class="linha_borda"><strong>Num. Boleto:</strong></td>
-				<td class="linha_borda"></td>
-			</tr>
-			<tr>
-				<td class="linha_borda"><strong>Cota:</strong></td>
-				<td class="linha_borda"></td>
-			</tr>
-			<tr>
-				<td width="81" class="linha_borda"><strong>Banco:</strong></td>
-				<td width="250" class="linha_borda"></td>
-			</tr>
-			<tr>
-				<td class="linha_borda"><strong>EmissÃ£o:</strong></td>
-				<td class="linha_borda"></td>
-			</tr>
-			<tr>
-				<td class="linha_borda"><strong>Vencimento:</strong></td>
-				<td class="linha_borda"></td>
-			</tr>
-			<tr>
-				<td class="linha_borda"><strong>Valor R$:</strong></td>
-				<td class="linha_borda"></td>
-			</tr>
-			<tr>
-				<td class="linha_borda">&nbsp;</td>
-				<td class="linha_borda"><span class="bt_confirmar_novo"
-					title="Confirmar"><a onclick="popup_excluir();"
-						href="javascript:;"><img border="0" hspace="5"
-							src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a></span></td>
-			</tr>
-		</table>
-		
-		
-		<table width="687" border="0" align="center" cellpadding="2"
-			cellspacing="2" id="porCota">
-			<tr>
-				<td width="410" valign="top"><table width="410" border="0"
-						cellpadding="2" cellspacing="1">
+				<td valign="top">
+					<table width="269" border="0" align="center" cellpadding="2"
+						cellspacing="1" style="display: inline; margin-right: 15px;">
 						<tr>
-							<td colspan="4" align="center" class="header_table">Dados do
-								Boleto</td>
+							<td colspan="2" align="center" class="header_table">Dados do
+								Arquivo</td>
 						</tr>
 						<tr>
-							<td class="linha_borda"><strong>Cota:</strong></td>
-							<td colspan="3" class="linha_borda" id="cota"><c:out value="cota"/></td>
+							<td width="121" align="left" class="linha_borda"><strong>Nome
+									do Arquivo:</strong></td>
+							<td id="nomeArquivo" width="137" align="right" class="linha_borda"></td>
 						</tr>
 						<tr>
-							<td width="85" class="linha_borda"><strong>Banco:</strong></td>
-							<td width="142" class="linha_borda" id="banco"><c:out value="banco"/></td>
-							<td width="71" class="linha_borda"><strong>EmissÃ£o:</strong></td>
-							<td width="91" class="linha_borda" id="dataEmissao"><c:out value="dataEmissao"/></td>
+							<td align="left" class="linha_borda"><strong>Data
+									CompetÃªncia:</strong></td>
+							<td id="dataCompetencia" align="right" class="linha_borda"></td>
 						</tr>
 						<tr>
-							<td class="linha_borda"><strong>Vencimento:</strong></td>
-							<td class="linha_borda" id="dataVencimento"><c:out value="dataVencimento"/></td>
-							<td class="linha_borda"><strong>Valor R$:</strong></td>
-							<td class="linha_borda" id="valor"><c:out value="valor"/></td>
+							<td align="left" class="linha_borda"><strong>Valor
+									R$:</strong></td>
+							<td id="somaPagamentos" align="right" class="linha_borda"></td>
 						</tr>
 						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
+							<td align="left" class="linha_borda">&nbsp;</td>
+							<td align="right" class="linha_borda">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2" align="left"
+								style="line-height: 28px; border: 1px solid #0C0;"><img
+								src="${pageContext.request.contextPath}/images/bt_check.gif" width="22" height="22"
+								alt="Arquivo Integrado com Sucesso" align="left" /> <span><strong>Arquivo
+										Integrado com Sucesso!</strong></span></td>
 						</tr>
 					</table>
-					<table width="410" border="0" cellpadding="2" cellspacing="1">
+				</td>
+				<td valign="top"><table width="275" border="0" align="center"
+						cellpadding="2" cellspacing="1" style="display: inline;">
 						<tr>
-							<td width="187" align="center" class="header_table">Valor
-								Desconto R$</td>
-							<td width="8" align="center" class="linha_borda">&nbsp;&nbsp;</td>
-							<td width="199" align="center" class="header_table">Valor
-								Juros R$</td>
+							<td colspan="2" align="center" class="header_table"
+								class="linha_borda">Baixa AutomÃ¡tica</td>
 						</tr>
 						<tr>
-							<td align="center" class="linha_borda"><input type="text"
-								name="textfield2" id="textfield2"
-								style="width: 80px; text-align: right;" /></td>
-							<td align="center" class="linha_borda">&nbsp;</td>
-							<td align="center" class="linha_borda"><input type="text"
-								name="textfield2" id="textfield3"
-								style="width: 80px; text-align: right;" /></td>
-						</tr>
-					</table> <br clear="all" /> <strong>Motivo:</strong> <br clear="all" /> <textarea
-						name="" cols="" rows="3" style="width: 400px;"></textarea></td>
-				<td width="410" valign="top">&nbsp;&nbsp;</td>
-				<td width="249" valign="top"><table width="249" border="0"
-						cellspacing="2" cellpadding="1">
-						<tr>
-							<td colspan="2" align="center" class="header_table">Dados da
-								DÃ­vida</td>
+							<td width="162" align="left" class="linha_borda"><strong>Registros
+									Lidos:</strong></td>
+							<td id="quantidadeLidos" width="102" align="right" class="linha_borda"></td>
 						</tr>
 						<tr>
-							<td width="129" class="linha_borda"><strong>DÃ­vida
-									Total R$:</strong></td>
-							<td width="110" class="linha_borda" id="dividaTotal"><c:out value="dividaTotal"/></td>
+							<td align="left" class="linha_borda"><strong>Registros
+									Baixados:</strong></td>
+							<td id="quantidadeBaixados" align="right" class="linha_borda"></td>
 						</tr>
 						<tr>
-							<td class="linha_borda"><strong>Data Pagamento:</strong></td>
-							<td class="linha_borda" id="dataPagamento"><c:out value="dataPagamento"/></td>
+							<td align="left" class="linha_borda"><strong>Registros
+									Rejeitados:</strong></td>
+							<td id="quantidadeRejeitados" align="right" class="linha_borda"></td>
 						</tr>
 						<tr>
-							<td class="linha_borda"><strong>Desconto R$:</strong></td>
-							<td class="linha_borda" id="desconto"><c:out value="desconto"/></td>
-						</tr>
-						<tr>
-							<td class="linha_borda"><strong>Juros R$:</strong></td>
-							<td class="linha_borda" id="juros"><c:out value="juros"/></td>
-						</tr>
-						<tr>
-							<td class="linha_borda"><strong>Valor Total R$:</strong></td>
-							<td class="linha_borda" id="valorTotal"><c:out value="valorTotal"/></td>
+							<td align="left" class="linha_borda"><strong>Baixados
+									com DivergÃªncia:</strong></td>
+							<td id="quantidadeBaixadosComDivergencia" align="right" class="linha_borda"></td>
 						</tr>
 					</table></td>
 			</tr>
-			
-			<tr>
-				<td align="center" valign="top"><span class="bt_confirmar_novo"
-					title="Confirmar"><a onclick="popup_excluir();"
-						href="javascript:;"><img border="0" hspace="5"
-							src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a></span></td>
-				<td valign="top">&nbsp;</td>
-				<td valign="top">&nbsp;</td>
-			</tr>
-			
 		</table>
 		
+		<br /> <br />
 		
-	</fieldset>
+		<div class="linha_separa_fields">&nbsp;</div>
+		
+		<br clear="all" />
 
-		<fieldset class="classFieldset" id="resultadoIntegracao">
-			<legend> Baixa Financeira Integrada</legend>
-			<br />
-	
-			<table border="0" align="center" cellpadding="2" cellspacing="2">
-				<tr>
-					<td valign="top">
-						<table width="269" border="0" align="center" cellpadding="2"
-							cellspacing="1" style="display: inline; margin-right: 15px;">
-							<tr>
-								<td colspan="2" align="center" class="header_table">Dados do
-									Arquivo</td>
-							</tr>
-							<tr>
-								<td width="121" align="left" class="linha_borda"><strong>Nome
-										do Arquivo:</strong></td>
-								<td id="nomeArquivo" width="137" align="right" class="linha_borda"></td>
-							</tr>
-							<tr>
-								<td align="left" class="linha_borda"><strong>Data
-										CompetÃªncia:</strong></td>
-								<td id="dataCompetencia" align="right" class="linha_borda"></td>
-							</tr>
-							<tr>
-								<td align="left" class="linha_borda"><strong>Valor
-										R$:</strong></td>
-								<td id="somaPagamentos" align="right" class="linha_borda"></td>
-							</tr>
-							<tr>
-								<td align="left" class="linha_borda">&nbsp;</td>
-								<td align="right" class="linha_borda">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="2" align="left"
-									style="line-height: 28px; border: 1px solid #0C0;"><img
-									src="${pageContext.request.contextPath}/images/bt_check.gif" width="22" height="22"
-									alt="Arquivo Integrado com Sucesso" align="left" /> <span><strong>Arquivo
-											Integrado com Sucesso!</strong></span></td>
-							</tr>
-						</table>
-					</td>
-					<td valign="top"><table width="275" border="0" align="center"
-							cellpadding="2" cellspacing="1" style="display: inline;">
-							<tr>
-								<td colspan="2" align="center" class="header_table"
-									class="linha_borda">Baixa AutomÃ¡tica</td>
-							</tr>
-							<tr>
-								<td width="162" align="left" class="linha_borda"><strong>Registros
-										Lidos:</strong></td>
-								<td id="quantidadeLidos" width="102" align="right" class="linha_borda"></td>
-							</tr>
-							<tr>
-								<td align="left" class="linha_borda"><strong>Registros
-										Baixados:</strong></td>
-								<td id="quantidadeBaixados" align="right" class="linha_borda"></td>
-							</tr>
-							<tr>
-								<td align="left" class="linha_borda"><strong>Registros
-										Rejeitados:</strong></td>
-								<td id="quantidadeRejeitados" align="right" class="linha_borda"></td>
-							</tr>
-							<tr>
-								<td align="left" class="linha_borda"><strong>Baixados
-										com DivergÃªncia:</strong></td>
-								<td id="quantidadeBaixadosComDivergencia" align="right" class="linha_borda"></td>
-							</tr>
-						</table></td>
-				</tr>
-			</table>
-			<br /> <br />
-			<div class="linha_separa_fields">&nbsp;</div>
-			<br clear="all" />
-	
-		</fieldset>
+	</fieldset>
 		
 	<div class="linha_separa_fields">&nbsp;</div>
 	
