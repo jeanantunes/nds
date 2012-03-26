@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -56,6 +57,9 @@ public class Distribuidor {
 	@OneToMany
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+	
+	@Embedded
+	private PoliticaSuspensao politicaSuspensao;
 
 	public Long getId() {
 		return id;
@@ -111,6 +115,14 @@ public class Distribuidor {
 	
 	public void setFormasCobranca(Set<FormaCobranca> formasCobranca) {
 		this.formasCobranca = formasCobranca;
+	}
+	
+	public PoliticaSuspensao getPoliticaSuspensao() {
+		return politicaSuspensao;
+	}
+	
+	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
+		this.politicaSuspensao = politicaSuspensao;
 	}
 
 }
