@@ -23,6 +23,7 @@ import javax.persistence.ManyToOne;
 
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
  * @author luiz.marcili
@@ -39,46 +40,50 @@ public abstract class Cobranca {
 	@Id
 	@GeneratedValue(generator = "COBRANCA_SEQ")
 	@Column(name = "ID")
-	private Long id;
+	protected Long id;
 	
 	@Column(name = "NOSSO_NUMERO", nullable = false, unique = true)
-	private String nossoNumero;
+	protected String nossoNumero;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_EMISSAO", nullable = false)
-	private Date dataEmissao;
+	protected Date dataEmissao;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_VENCIMENTO", nullable = false)
-	private Date dataVencimento;
+	protected Date dataVencimento;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_PAGAMENTO", nullable = true)
-	private Date dataPagamento;
+	protected Date dataPagamento;
 	
 	@Column(name = "ENCARGOS", nullable = true)
-	private BigDecimal encargos;
+	protected BigDecimal encargos;
 
 	@Column(name = "VALOR", nullable = false)
-	private BigDecimal valor;
+	protected BigDecimal valor;
 	
 	@Column(name = "TIPO_BAIXA", nullable = true)
-	private String tipoBaixa;
+	protected String tipoBaixa;
 	
 	@Column(name = "CONTEMPLACAO", nullable = true)
-	private boolean contemplacao;
+	protected boolean contemplacao;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+	protected Cota cota;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_COBRANCA", nullable = false)
-	private StatusCobranca statusCobranca;
+	protected StatusCobranca statusCobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COBRANCA", nullable = false)
+	protected TipoCobranca tipoCobranca;
 	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "DIVIDA_ID")
-	private Divida divida;
+	protected Divida divida;
     
 	public Long getId() {
 		return id;
@@ -166,6 +171,14 @@ public abstract class Cobranca {
 
 	public void setStatusCobranca(StatusCobranca statusCobranca) {
 		this.statusCobranca = statusCobranca;
+	}
+	
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
+	}
+	
+	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
 	}
 	
 	public Divida getDivida() {

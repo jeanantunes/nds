@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,13 +14,18 @@ import org.mockito.Mockito;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 
@@ -45,9 +51,16 @@ public class MatrizLancamentoServiceImplTest {
 		service.lancamentoRepository = lancamentoRepository;
 		service.distribuidorRepository = distribuidorRepository;
 		
+		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		Banco banco = Fixture.hsbc(carteira); 
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
 				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
-		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date());
+		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
 		
 		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");

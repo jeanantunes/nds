@@ -30,7 +30,9 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
 		
 		Criteria criteria = super.getSession().createCriteria(PoliticaCobranca.class);
 		
-		criteria.add(Restrictions.eq("tipoCobranca", tipoCobranca));
+		criteria.createAlias("formaCobranca", "formaCobranca");
+		
+		criteria.add(Restrictions.eq("formaCobranca.tipoCobranca", tipoCobranca));
 		
 		criteria.setMaxResults(1);
 		
