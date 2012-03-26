@@ -43,6 +43,31 @@ function pesquisarPorCotaNome() {
 }
 
 /**
+ * UTILIZAR AUTOCOMPLETE PARA NOME DA COTA E SELECAO DE NUMERO COTA
+ */
+ function pesquisarPorNomeCota(){
+	    var nomeCota = $("#nomeCota").val();
+		
+		if (nomeCota && nomeCota.length > 0){
+			$.postJSON("<c:url value='/financeiro/contaCorrenteCota/buscarPorNomeCota'/>", "nomeCota=" + nomeCota, exibirAutoComplete);
+		}
+}
+	
+function exibirAutoComplete(result){
+	$("#nomeCota").autocomplete({
+		source: result,
+		select: function(event, ui){
+			completarPesquisa(ui.item.chave);
+		}
+	});
+}
+	
+function completarPesquisa(chave){
+	$("#cota").val(chave.$);		
+}
+ 
+
+/**
  * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
  */
 function pesquisarItemContaCorrenteCota() {
@@ -65,34 +90,27 @@ function pesquisarItemContaCorrenteCota() {
  * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
  */
 function getDataFromResult(data) {
-	if (data.mensagens) {
-
-		exibirMensagem(
-				data.mensagens.tipoMensagem, 
-				data.mensagens.listaMensagens
-		);
+	
+	if(typeof data.mensagens == "object") {
 		
-		$("#grids").hide();
-
-		return data.tableModel;
-	}
-	$.each(data.rows, function(index, value) {
+		$(".grids").hide();
+	
+		exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		
+	}else{
+		
+		$.each(data.rows, function(index, value) {
 		
 		var consignado = value.cell[3];
 		var encalhe = value.cell[4];
 		var vendaEncalhe = value.cell[5];
 		var debCred = value.cell[6];
 		var encargos = value.cell[7];
-		
-		//var alteracaoPermitida = value.cell[8];
-		
+				
 		var lineId = value.id;
 		
 		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 		
-		
-		//if(alteracaoPermitida == "S") {
-			
 			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
 			value.cell[4] = '<a href="#"/>'+encalhe+'</a>'+hiddeFields;
 			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
@@ -102,14 +120,14 @@ function getDataFromResult(data) {
 			
 			
 		
-	});
-
-	//data = destacarValorNegativo(data);
+		});
+		
 	
-	$("#cotanome").html($("#cota").val()+" "+$("#nomeCota").val());
-	$(".grids").show();
-	
-	return data;
+		$("#cotanome").html($("#cota").val()+" "+$("#nomeCota").val());
+		$(".grids").show();
+		
+		return data;
+	}	
 
 }
 
@@ -202,19 +220,6 @@ function carregarItemContaCorrenteCotaGrid() {
 		height : 255
 	});
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function popup_consignado() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -333,11 +338,10 @@ function popup_encargos() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="32">Cota:</td>
-              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar">
-              		<a href="javascript:;" onclick="pesquisarPorCotaNome();">&nbsp;</a></span>
+              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisarPorCotaNome();" style="width:80px; float:left; margin-right:5px;"/>
               </td>
               <td width="36">Nome:</td>
-              <td width="263"><input type="text" name="nomeCota" id="nomeCota" style="width:230px;"/></td>
+              <td width="263"><input type="text" name="nomeCota" onkeyup="pesquisarPorNomeCota();" id="nomeCota" style="width:230px;"/></td>
               <td width="72">&nbsp;</td>
               <td width="283">&nbsp;</td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();">Pesquisar</a></span></td>
