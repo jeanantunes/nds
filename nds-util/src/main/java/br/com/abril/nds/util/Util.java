@@ -46,4 +46,24 @@ public abstract class Util {
 		
 		return "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"));
 	}
+	
+	public static boolean isAjaxUploadIE(HttpServletRequest request) {
+		
+		if (request == null) {
+		
+			return false;
+		}
+		
+		String headerContentType = request.getHeader("Content-Type");
+		String headerUserAgent = request.getHeader("User-Agent");
+		
+		if (headerContentType != null && headerContentType.contains("multipart/form-data")
+				&& headerUserAgent != null && headerUserAgent.contains("MSIE")) {
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }

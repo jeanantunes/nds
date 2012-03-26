@@ -1,61 +1,54 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	
 	<script type="text/javascript">
 	
-		/*$(function() {
+		$(function() {
 		    
 			var options = {
-		        success:       showResponse,  // post-submit callback
-		        //url: contextPath + "/financeiro/baixarBoletosAutomatico",
-		 
-		        dataType: "json",
-		        
-				
-		        
-		        // other available options: 
-		        //url:       url         // override for form's 'action' attribute 
-		        //type:      type        // 'get' or 'post', override for form's 'method' attribute 
-		        //dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
-		        //clearForm: true        // clear all form fields after successful submit 
-		        //resetForm: true        // reset the form after successful submit 
-		 
-		        // $.ajax options can be used here too, for example: 
-		        //timeout:   3000 
-				
-				//contentType: "text/plain"
-		    };  
-		    
-		    $('#formBaixaAutomatica').submit(function() {
-		        $(this).ajaxSubmit(options);
-		        return false; 
-		    });
+				success: showResponse,
+		    };
 			
-		});*/
+			$('#formBaixaAutomatica').ajaxForm(options);
+			
+		});
 		
-		/*function showResponse(data, statusText, xhr, $form) {
-
-			alert("response");
-		
-			if (data.mensagens) {
+		function showResponse(data) {
+			
+			data = replaceAll(data, "<pre>", "");
+			data = replaceAll(data, "</pre>", "");
+			
+			data = replaceAll(data, "<PRE>", "");
+			data = replaceAll(data, "</PRE>", "");
+			
+			var responseJson = jQuery.parseJSON(data);
+			
+			if (responseJson.mensagens) {
 
 				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					responseJson.mensagens.tipoMensagem, 
+					responseJson.mensagens.listaMensagens
 				);
-				
-				$('#dadosArquivo').hide();
-				
-				return;
 			}
 			
-			$("#quantidadeLidos").html(data.result.quantidadeLidos);
-			
-			$('#dadosArquivo').show();
-		}*/
-	
+			if (responseJson.result) {
+				
+				alert(responseJson.result.nomeArquivo);
+				alert(responseJson.result.quantidadeLidos);				
+			}
+		}
+		
+		function replaceAll(string, token, newtoken) {
+			while (string.indexOf(token) != -1) {
+		 		string = string.replace(token, newtoken);
+			}
+			return string;
+		}	
 	
 		function popup_excluir() {	
 			$("#dialog-excluir").dialog({

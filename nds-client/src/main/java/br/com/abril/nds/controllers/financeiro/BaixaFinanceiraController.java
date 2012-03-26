@@ -19,7 +19,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
-import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
@@ -86,6 +85,13 @@ public class BaixaFinanceiraController {
 	}
 	
 	@Post
+	public void teste(UploadedFile uploadedFile) {
+		
+		result.use(Results.json()).from("aaa", "result").recursive().serialize();
+		
+	}
+	
+	@Post
 	public void baixa(UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		request.setAttribute(EXIBE_CAMPOS_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, true);
@@ -117,7 +123,7 @@ public class BaixaFinanceiraController {
 		
 		request.setAttribute(RESUMO_BAIXA_AUTOMATICA_REQUEST_ATTRIBUTE, resumoBaixaBoleto);
 		
-		result.forwardTo(BaixaFinanceiraController.class).baixa();
+		result.use(Results.json()).from(resumoBaixaBoleto, "result").recursive().serialize();
 	}
 	
 	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
