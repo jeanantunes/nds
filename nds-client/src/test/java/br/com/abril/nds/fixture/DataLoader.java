@@ -58,7 +58,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -1619,40 +1619,40 @@ public class DataLoader {
 		
 		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6, boleto7, boleto8, boleto9);
 		
-		HistoricoInadimplencia histInadimplencia1 = 
-				Fixture.criarHistoricoInadimplencia( boleto1, Fixture.criarData(10, 3, 2012), 
+		HistoricoAcumuloDivida histInadimplencia1 = 
+				Fixture.criarHistoricoAcumuloDivida( boleto1.getDivida(), Fixture.criarData(10, 3, 2012), 
 						usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia1);
-	    HistoricoInadimplencia histInadimplencia2 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto2, Fixture.criarData(10, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia2 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto2.getDivida(), Fixture.criarData(10, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia2);
-	    HistoricoInadimplencia histInadimplencia3 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto3, Fixture.criarData(11, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia3 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto3.getDivida(), Fixture.criarData(11, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia3);
-	    HistoricoInadimplencia histInadimplencia4 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto4, Fixture.criarData(12, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia4 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto4.getDivida(), Fixture.criarData(12, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia4);
-	    HistoricoInadimplencia histInadimplencia5 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto5, Fixture.criarData(13, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia5 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto5.getDivida(), Fixture.criarData(13, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia5);
-	    HistoricoInadimplencia histInadimplencia6 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto6, Fixture.criarData(14, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia6 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto6.getDivida(), Fixture.criarData(14, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia6);
-	    HistoricoInadimplencia histInadimplencia7 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto7, Fixture.criarData(15, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia7 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto7.getDivida(), Fixture.criarData(15, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia7);
-	    HistoricoInadimplencia histInadimplencia8 = 
-	    		Fixture.criarHistoricoInadimplencia( boleto8, Fixture.criarData(16, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia8 = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto8.getDivida(), Fixture.criarData(16, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia8);
-	    HistoricoInadimplencia histInadimplencia = 
-	    		Fixture.criarHistoricoInadimplencia( boleto9, Fixture.criarData(17, 3, 2012), 
+	    HistoricoAcumuloDivida histInadimplencia = 
+	    		Fixture.criarHistoricoAcumuloDivida( boleto9.getDivida(), Fixture.criarData(17, 3, 2012), 
 	    				usuarioJoao, StatusInadimplencia.ATIVA);
 	    save(session, histInadimplencia);
 	    

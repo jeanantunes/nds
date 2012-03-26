@@ -62,7 +62,7 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -1000,11 +1000,11 @@ public class Fixture {
 
 
 
-	public static HistoricoInadimplencia criarHistoricoInadimplencia(
-			Cobranca cobranca, Date dataInclusao, Usuario usuario,
+	public static HistoricoAcumuloDivida criarHistoricoAcumuloDivida(
+			Divida divida, Date dataInclusao, Usuario usuario,
 			StatusInadimplencia status) {
-		HistoricoInadimplencia historicoInadimplencia = new HistoricoInadimplencia();
-		historicoInadimplencia.setCobranca(cobranca);
+		HistoricoAcumuloDivida historicoInadimplencia = new HistoricoAcumuloDivida();
+		historicoInadimplencia.setDivida(divida);
 		historicoInadimplencia.setDataInclusao(dataInclusao);
 		historicoInadimplencia.setResponsavel(usuario);
 		historicoInadimplencia.setStatus(status);
