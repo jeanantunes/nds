@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -37,6 +38,9 @@ public class ParametroCobrancaCota {
 	
 	@Column(name = "FATOR_VENCIMENTO")
 	private int fatorVencimento;
+	
+	@Embedded
+	private PoliticaSuspensao politicaSuspensao;
 
 	public Long getId() {
 		return id;
@@ -84,6 +88,14 @@ public class ParametroCobrancaCota {
 
 	public void setFatorVencimento(int fatorVencimento) {
 		this.fatorVencimento = fatorVencimento;
+	}
+	
+	public PoliticaSuspensao getPoliticaSuspensao() {
+		return politicaSuspensao;
+	}
+	
+	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
+		this.politicaSuspensao = politicaSuspensao;
 	}
 
 }
