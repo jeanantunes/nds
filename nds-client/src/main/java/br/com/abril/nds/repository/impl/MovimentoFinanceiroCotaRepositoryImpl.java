@@ -41,10 +41,78 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		return query.list();
 	}
 
+	/**
+	 * @see br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository#obterMovimentosFinanceiroCota()
+	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
-		// TODO Auto-generated method stub
-		return null;
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
+
+		String conditions = "";
+
+		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
+
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
+		}
+
+		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataLancamentoFim() != null) {
+			
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
+		}
+		
+		if (filtroDebitoCreditoDTO.getDataVencimentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataVencimentoFim() != null) {
+			
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
+		}
+
+		if (filtroDebitoCreditoDTO.getNumeroCota() != null) {
+
+			conditions += conditions == "" ? " where " : " and ";
+
+			conditions += " movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
+		}
+		
+		hql.append(conditions);
+
+		Query query = getSession().createQuery(hql.toString());
+
+		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
+
+			query.setParameter("idTipoMovimento", filtroDebitoCreditoDTO.getIdTipoMovimento());
+		}
+
+		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataLancamentoFim() != null) {
+
+			query.setParameter("dataLancamentoInicio", filtroDebitoCreditoDTO.getDataLancamentoInicio());
+			query.setParameter("dataLancamentoFim", filtroDebitoCreditoDTO.getDataLancamentoFim());
+		}
+		
+		if (filtroDebitoCreditoDTO.getDataVencimentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataVencimentoFim() != null) {
+			
+			query.setParameter("dataVencimentoInicio", filtroDebitoCreditoDTO.getDataVencimentoInicio());
+			query.setParameter("dataVencimentoFim", filtroDebitoCreditoDTO.getDataVencimentoFim());
+		}
+
+		if (filtroDebitoCreditoDTO.getNumeroCota() != null) {
+
+			query.setParameter("numeroCota", filtroDebitoCreditoDTO.getNumeroCota());
+		}
+
+		return query.list();
 	}
 }
