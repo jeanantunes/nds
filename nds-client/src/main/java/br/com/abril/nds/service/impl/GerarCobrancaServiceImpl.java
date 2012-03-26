@@ -64,29 +64,29 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 		}
 		
+		//Buscar politica de cobrança e forma de cobrança do distribuidor
+		PoliticaCobranca politicaCobranca = this.politicaCobrancaRepository.buscarPoliticaCobrancaPorDistribuidor();
+		if (politicaCobranca == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada.");
+		} else if (politicaCobranca.getFormaCobranca() == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada.");
+		}
+		
+		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
+		if (politicaCobranca.getFormaCobranca().getTipoCobranca().equals(TipoCobranca.BOLETO)){
+			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
+			
+			if (!controleBaixaBancaria.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada.");
+			}
+		}
+		
 		// buscar movimentos financeiros da cota para a data de operação em andamento
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(idCota, new Date());
 		
 		if (listaMovimentoFinanceiroCota != null &&
 				!listaMovimentoFinanceiroCota.isEmpty()){
-			
-			//Buscar politica de cobrança e forma de cobrança do distribuidor
-			PoliticaCobranca politicaCobranca = this.politicaCobrancaRepository.buscarPoliticaCobrancaPorDistribuidor();
-			if (politicaCobranca == null){
-				throw new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada.");
-			} else if (politicaCobranca.getFormaCobranca() == null){
-				throw new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada.");
-			}
-			
-			//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
-			if (politicaCobranca.getFormaCobranca().getTipoCobranca().equals(TipoCobranca.BOLETO)){
-				ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
-				
-				if (!controleBaixaBancaria.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada.");
-				}
-			}
 			
 			//Varre todos os movimentos encontrados, agrupando por cota
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
