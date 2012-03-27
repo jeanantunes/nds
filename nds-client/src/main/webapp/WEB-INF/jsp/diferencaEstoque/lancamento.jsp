@@ -111,8 +111,15 @@
 						popupMensagemConfirmacao();
 						
 					} else {
-					
-						var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+
+						var formData = [
+			   				{
+			   					name: 'dataMovimentoFormatada', value: $("#datePickerDataMovimento").val()
+			   				},
+			   				{
+			   					name: 'tipoDiferenca', value: $("#selectTiposDiferenca").val()
+			   				}
+			   			];
 	
 						$("#gridLancamentos").flexOptions({
 							url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
@@ -366,44 +373,38 @@
 			<fieldset class="classFieldset">
 			
 				<legend>Lançamento Faltas e Sobras</legend>
-				
-				<form id="pesquisaLancamentoDiferencaForm"
-					  name="pesquisaLancamentoDiferencaForm" 
-					  action="estoque/diferenca/lancamento/pesquisa" 
-					  method="post">
 					  
-					<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-						<tr>
-							<td width="111">Data Movimento:</td>
-							<td width="124">
-								<input type="text" 
-									   name="dataMovimentoFormatada" 
-									   id="datePickerDataMovimento" 
-									   style="width: 70px; float: left; margin-right: 5px;"
-									   maxlength="10"
-									   value="${dataAtual}" />
-							</td>
-							<td width="115">Tipo de Diferença:</td>
-							<td width="294">
-								<select id="selectTiposDiferenca" 
-										name="tipoDiferenca"
-										 style="width: 220px;"
-										 onchange="exibirBotaoNovo(this.value);">
-										 
-									<option selected="selected"></option>
-									<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
-										<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
-									</c:forEach>
-								</select>
-							</td>
-							<td width="280">
-								<span class="bt_pesquisar">
-									<a href="javascript:;" onclick="pesquisar(false);">Pesquisar</a>
-								</span>
-							</td>
-						</tr>
-					</table>
-				</form>
+				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+					<tr>
+						<td width="111">Data Movimento:</td>
+						<td width="124">
+							<input type="text" 
+								   name="dataMovimentoFormatada" 
+								   id="datePickerDataMovimento" 
+								   style="width: 70px; float: left; margin-right: 5px;"
+								   maxlength="10"
+								   value="${dataAtual}" />
+						</td>
+						<td width="115">Tipo de Diferença:</td>
+						<td width="294">
+							<select id="selectTiposDiferenca" 
+									name="tipoDiferenca"
+									 style="width: 220px;"
+									 onchange="exibirBotaoNovo(this.value);">
+									 
+								<option selected="selected"></option>
+								<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
+									<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
+								</c:forEach>
+							</select>
+						</td>
+						<td width="280">
+							<span class="bt_pesquisar">
+								<a href="javascript:;" onclick="pesquisar(false);">Pesquisar</a>
+							</span>
+						</td>
+					</tr>
+				</table>
 			</fieldset>
 			
 			<div class="linha_separa_fields">&nbsp;</div>
