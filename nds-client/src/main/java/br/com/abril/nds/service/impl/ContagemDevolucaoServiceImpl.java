@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
@@ -28,6 +29,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.util.MockPerfilUsuario;
 
+@Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	@Autowired
@@ -51,12 +53,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
 		
-		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
-		info.setQtdTotalRegistro(qtdTotalRegistro);
-
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
+		info.setQtdTotalRegistro(qtdTotalRegistro);
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				filtroPesquisa, 

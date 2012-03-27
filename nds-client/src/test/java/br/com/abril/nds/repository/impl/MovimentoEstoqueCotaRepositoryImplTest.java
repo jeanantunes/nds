@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -44,8 +45,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -53,10 +52,10 @@ import br.com.abril.nds.vo.PeriodoVO;
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	private MovimentoEstoqueCotaRepositoryImpl movimentoEstoqueCotaRepository;
 	
 	@Autowired
-	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	private TipoMovimentoEstoqueRepositoryImpl tipoMovimentoEstoqueRepository;
 	
 	
 	private Lancamento lancamentoVeja;
@@ -231,6 +230,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
 		save(estoqueProdutoCota);
 		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				quatroRoda2, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
@@ -273,6 +276,22 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				Fixture.criarData(1, Calendar.MARCH, 2012),
+				veja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		
+		save(mec);
+		
+		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
+				Fixture.criarData(1, Calendar.MARCH, 2012),
+				quatroRoda2,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
+				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		
+		save(mec);
+		
 		ControleContagemDevolucao controleContagemDevolucao = Fixture.controleContagemDevolucao(
 				StatusOperacao.EM_ANDAMENTO, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012));
@@ -280,24 +299,12 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(controleContagemDevolucao);
 		
 	}
-	
+		
 
+	
 	@Test
-	public void testarTudo() {
-		
-		testarObterListaContagemDevolucaoComQtdMovimentoParcial();
-		
-		testarObterQuantidadeContagemDevolucao();
-		
-		testarObterListaContagemDevolucao();
-		
-		testarObterValorTotal();
-		
-	}
-
-	
-	
-	private void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
+	@DirtiesContext
+	public void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
 		
 		List<ContagemDevolucaoDTO> retorno = 
 				
@@ -307,15 +314,17 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				true);
 		
 		
-		Assert.assertTrue(retorno.size() == 1);
+		Assert.assertEquals(3, retorno.size());
 		
 		ContagemDevolucaoDTO contagem = retorno.get(0);
 		
-		Assert.assertTrue(contagem.getQtdDevolucao().intValue() == 70);
+		Assert.assertEquals(70, contagem.getQtdDevolucao().intValue());
 		
 	}
 	
-	private void testarObterValorTotal() {
+	@Test
+	@DirtiesContext
+	public void testarObterValorTotal() {
 		
 		
 		@SuppressWarnings("unused")
@@ -323,22 +332,28 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				obterFiltro(), 
 				obterTipoMovimento());
 		
-		Assert.assertTrue(total.intValue() == 1050);
+		Assert.assertEquals(1525, total.intValue());
 		
 	}
 	
-	private void testarObterListaContagemDevolucao() {
+	@Test
+	@DirtiesContext
+	public void testarObterListaContagemDevolucao() {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				obterFiltro(), 
 				obterTipoMovimento(),
 				false);
 	}
-
-	private void testarObterQuantidadeContagemDevolucao() {
+	
+	@Test
+	@DirtiesContext
+	public void testarObterQuantidadeContagemDevolucao() {
 		
-		movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
-				obterFiltro());
+		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
+				obterFiltro(), obterTipoMovimento());
+		
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	private FiltroDigitacaoContagemDevolucaoDTO obterFiltro() {
