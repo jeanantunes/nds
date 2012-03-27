@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -23,6 +24,7 @@ import javax.persistence.TemporalType;
 public abstract class BaixaCobranca {
 
 	@Id
+	@GeneratedValue(generator = "BAIXA_COBRANCA_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	

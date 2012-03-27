@@ -18,13 +18,13 @@ import javax.persistence.ManyToOne;
 public class BaixaAutomatica extends BaixaCobranca {
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS", nullable = false)
+	@Column(name = "STATUS", nullable = true)
 	private StatusBaixa status;
 	
-	@Column(name = "NOME_ARQUIVO", nullable = false)
+	@Column(name = "NOME_ARQUIVO", nullable = true)
 	private String nomeArquivo;
 	
-	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = false)
+	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = true)
 	private Integer numeroRegistroArquivo;
 	
 	@ManyToOne(optional = true)

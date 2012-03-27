@@ -33,11 +33,11 @@ public class FormaCobranca {
 	@Column(name = "VALOR_MINIMO_EMISSAO")
 	private BigDecimal valorMinimoEmissao;
 	
-	@Column(name = "MULTA")
-	private BigDecimal multa;
+	@Column(name = "TAXA_MULTA")
+	private BigDecimal taxaMulta;
 	
-	@Column(name = "JUROS")
-	private BigDecimal juros;
+	@Column(name = "TAXA_JUROS_MENSAL")
+	private BigDecimal taxaJurosMensal;
 	
 	@Column(name = "VENCIMENTO_DIA_UTIL", nullable = false)
 	private boolean vencimentoDiaUtil;
@@ -86,20 +86,20 @@ public class FormaCobranca {
 		this.valorMinimoEmissao = valorMinimoEmissao;
 	}
 	
-	public BigDecimal getMulta() {
-		return multa;
+	public BigDecimal getTaxaMulta() {
+		return taxaMulta;
 	}
 	
-	public void setMulta(BigDecimal multa) {
-		this.multa = multa;
+	public void setTaxaMulta(BigDecimal taxaMulta) {
+		this.taxaMulta = taxaMulta;
 	}
 	
-	public BigDecimal getJuros() {
-		return juros;
+	public BigDecimal getTaxaJurosMensal() {
+		return taxaJurosMensal;
 	}
-	
-	public void setJuros(BigDecimal juros) {
-		this.juros = juros;
+
+	public void setTaxaJurosMensal(BigDecimal taxaJurosMensal) {
+		this.taxaJurosMensal = taxaJurosMensal;
 	}
 	
 	public boolean isVencimentoDiaUtil() {

@@ -25,8 +25,10 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -35,11 +37,14 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
@@ -67,6 +72,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
+	
+	@Autowired
+	private CalendarioService calendarioService;
+	
+	@Autowired
+	private HistoricoAcumuloDividaRepository historicoAcumuloDividaRepository;
 	
 	@Override
 	@Transactional
@@ -164,7 +175,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Usuario usuario = new Usuario();
 		usuario.setId(idUsuario);
 		
+		Date dataVencimento = 
+				this.calendarioService.adicionarDiasUteis(
+						consolidadoFinanceiroCota.getDataConsolidado(), cota.getParametroCobranca().getFatorVencimento());
+		
 		Divida divida = null;
+		
+		HistoricoAcumuloDivida historicoAcumuloDivida = null;
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
@@ -184,6 +201,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					//caso não tenha divida anterior, ou tenha sido quitada
 					if (divida == null || StatusDivida.QUITADA.equals(divida.getStatus())){
 						divida = new Divida();
+					} else {
+						historicoAcumuloDivida = new HistoricoAcumuloDivida();
+						historicoAcumuloDivida.setDataInclusao(new Date());
+						historicoAcumuloDivida.setDivida(divida);
+						historicoAcumuloDivida.setResponsavel(usuario);
+						historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
 					}
 					
 					divida.setValor(
@@ -192,7 +215,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					//se o distribuidor não acumula divida cria uma nova
 					divida = new Divida();
 					divida.setValor(valorMovimentoFinanceiro);
-					divida.setData(new Date());
+					divida.setData(consolidadoFinanceiroCota.getDataConsolidado());
 				}
 				
 				divida.setConsolidado(consolidadoFinanceiroCota);
@@ -204,7 +227,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			//gera movimento financeiro cota
 			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
 			movimentoFinanceiroCota.setMotivo("Valor mínimo para dívida não atingido.");
-			movimentoFinanceiroCota.setData(new Date());
+			movimentoFinanceiroCota.setData(dataVencimento);
 			movimentoFinanceiroCota.setDataCriacao(new Date());
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valorMovimentoFinanceiro);
@@ -225,6 +248,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.dividaRepository.adicionar(divida);
 			} else {
 				this.dividaRepository.alterar(divida);
+			}
+			
+			if (historicoAcumuloDivida != null){
+				this.historicoAcumuloDividaRepository.adicionar(historicoAcumuloDivida);
 			}
 			
 			Cobranca cobranca = null;
@@ -251,6 +278,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobranca.setDataEmissao(new Date());
 				cobranca.setDivida(divida);
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+				cobranca.setDataVencimento(dataVencimento);
+				cobranca.setNossoNumero(Util.gerarNossoNumero(cota.getNumeroCota(), cobranca.getDataEmissao()));
 				
 				this.cobrancaRepository.adicionar(cobranca);
 			}

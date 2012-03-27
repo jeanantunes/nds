@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,6 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -43,6 +43,7 @@ import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -82,6 +83,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private CobrancaService cobrancaService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -208,7 +212,7 @@ public class BoletoServiceImpl implements BoletoService {
 			//e gera movimento de crédito
 			if (boleto.getStatusCobranca().equals(StatusCobranca.PAGO)) {
 				
-				baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, null,
+				baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, boleto,
 									 				   dataOperacao, nomeArquivo,
 									 				   pagamento.getNumeroRegistro(),
 									 				   pagamento.getValorPagamento());
@@ -233,7 +237,7 @@ public class BoletoServiceImpl implements BoletoService {
 				//e gera movimento de crédito
 				if (politicaCobranca == null || !politicaCobranca.isAceitaBaixaPagamentoVencido()) {
 					
-					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA, null,
+					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA, boleto,
 										 				   dataOperacao, nomeArquivo,
 										 				   pagamento.getNumeroRegistro(),
 										 				   pagamento.getValorPagamento());
@@ -253,7 +257,7 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					//Baixa o boleto, gera baixa com status de pago com divergência de data,
 					//calcula multas e juros do valor que deveria ser pago e gera movimento de débito
-					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_DATA, null,
+					baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
 										 				   dataOperacao, nomeArquivo,
 										 				   pagamento.getNumeroRegistro(),
 										 				   pagamento.getValorPagamento());
@@ -262,26 +266,59 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					incrementarBoletosBaixadosComDivergencia(resumoBaixaBoletos);
 					
-					//TODO: verificar diferenca valor
+					BigDecimal valorJurosCalculado = 
+							cobrancaService.calcularJuros(distribuidor, boleto.getCota(),
+														  boleto.getValor(), boleto.getDataVencimento(),
+														  pagamento.getDataPagamento());
 					
-					//TODO: calcular juros
+					if (valorJurosCalculado.compareTo(BigDecimal.ZERO) == 1) {
+						
+						movimentoFinanceiroCotaService
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+															   	   GrupoMovimentoFinaceiro.JUROS,
+															   	   usuario, valorJurosCalculado,
+															   	   dataOperacao, baixaAutomatica,
+															   	   dataNovoMovimento);
+					}
 					
-					BigDecimal diferencaValor = 
-						boleto.getValor().subtract(pagamento.getValorPagamento());
+					BigDecimal valorMultaCalculado = 
+							cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
+														  boleto.getValor());
 					
-					BigDecimal valorCalculado = 
-						calcularJuros(distribuidor, boleto.getCota(), diferencaValor,
-									  boleto.getDataVencimento(),
-									  dataNovoMovimento);
+					if (valorMultaCalculado.compareTo(BigDecimal.ZERO) == 1) {
+						
+						movimentoFinanceiroCotaService
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+															       GrupoMovimentoFinaceiro.MULTA,
+															       usuario, valorMultaCalculado,
+															       dataOperacao, baixaAutomatica,
+															       dataNovoMovimento);
+					}
 					
-					movimentoFinanceiroCotaService
-						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
-														   GrupoMovimentoFinaceiro.JUROS,
-													   	   usuario, valorCalculado,
-													   	   dataOperacao, baixaAutomatica,
-													   	   dataNovoMovimento);
+					BigDecimal diferencaValor = null;
 					
-					//TODO: calcular multa
+					if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 1) {
+					
+						diferencaValor = pagamento.getValorPagamento().subtract(boleto.getValor());
+						
+						movimentoFinanceiroCotaService
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+															   	   GrupoMovimentoFinaceiro.CREDITO,
+															   	   usuario, diferencaValor,
+															   	   dataOperacao, baixaAutomatica,
+															   	   dataNovoMovimento);
+						
+					} else if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == -1) {
+						
+						diferencaValor = boleto.getValor().subtract(pagamento.getValorPagamento());
+						
+						movimentoFinanceiroCotaService
+							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
+														   	   	   GrupoMovimentoFinaceiro.DEBITO,
+														   	   	   usuario, diferencaValor,
+														   	   	   dataOperacao, baixaAutomatica,
+														   	   	   dataNovoMovimento);
+					}
 					
 					return;
 				}				
@@ -307,7 +344,7 @@ public class BoletoServiceImpl implements BoletoService {
 					//com status de não pago por divergência de valor e gera movimento de crédito
 					if (politicaCobranca == null || !politicaCobranca.isAceitaBaixaPagamentoMaior()) {
 						
-						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, null,
+						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
 	 			 				   							   dataOperacao, nomeArquivo,
 	 			 				   							   pagamento.getNumeroRegistro(),
 	 			 				   							   pagamento.getValorPagamento());
@@ -355,7 +392,7 @@ public class BoletoServiceImpl implements BoletoService {
 					//com status de não pago por divergência de valor e gera movimento de crédito
 					if (politicaCobranca == null || !politicaCobranca.isAceitaBaixaPagamentoMenor()) {
 						
-						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, null,
+						baixaAutomatica = gerarBaixaAutomatica(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
 	   							   							   dataOperacao, nomeArquivo,
 	   							   							   pagamento.getNumeroRegistro(),
 	   							   							   pagamento.getValorPagamento());
@@ -399,37 +436,6 @@ public class BoletoServiceImpl implements BoletoService {
 				}		
 			}
 		}
-	}
-	
-	private BigDecimal calcularJuros(Distribuidor distribuidor, Cota cota, BigDecimal valor,
-									 Date dataVencimento, Date dataNovoMovimento) {
-		
-		BigDecimal juros = null;
-		
-		BigDecimal valorCalculadoJuros = null;
-		
-		if (cota.getParametroCobranca().getFormaCobranca().getJuros() != null) {
-			
-			juros = cota.getParametroCobranca().getFormaCobranca().getJuros();
-		
-		} else if (distribuidor.getPoliticaCobranca().getFormaCobranca().getJuros() != null) {
-			
-			juros = distribuidor.getPoliticaCobranca().getFormaCobranca().getJuros();
-		
-		} else {
-			//TODO:
-		}
-		
-		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataNovoMovimento);
-		
-		valorCalculadoJuros = valor.multiply(juros);
-		
-		return valorCalculadoJuros.multiply(new BigDecimal(quantidadeDias));
-	}
-	
-	private BigDecimal calcularMulta() {
-		
-		return null;
 	}
 	
 	private void validarDadosEntrada(PagamentoDTO pagamento) {
