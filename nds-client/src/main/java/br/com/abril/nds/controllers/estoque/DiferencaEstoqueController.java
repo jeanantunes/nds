@@ -340,7 +340,7 @@ public class DiferencaEstoqueController {
 		if (listaNovasDiferencas == null 
 				|| listaNovasDiferencas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para lançamento!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha os dados para lançamento!");
 		}
 		
 		this.validarPreenchimentoNovasDiferencas(listaNovasDiferencas);
@@ -551,7 +551,7 @@ public class DiferencaEstoqueController {
 		
 		if (estudo == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe Estudo na data deste lançamento!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe Estudo na data deste lançamento!");
 		}
 
 		result.use(Results.json()).from("", "result").serialize();
@@ -565,7 +565,7 @@ public class DiferencaEstoqueController {
 		if (listaNovosRateios == null 
 				|| listaNovosRateios.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para o rateio!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha os dados para o rateio!");
 		}
 		
 		this.validarPreenchimentoNovosRateios(listaNovosRateios);
@@ -728,7 +728,7 @@ public class DiferencaEstoqueController {
 				&& (listaNovasDiferencas == null
 						|| listaNovasDiferencas.isEmpty())) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamentos a confirmar!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há lançamentos a confirmar!");
 		}
 		
 		 Map<Long, List<RateioCotaVO>> mapaRateioCotas =
@@ -1208,11 +1208,11 @@ public class DiferencaEstoqueController {
 				|| dataMovimentoFormatada.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+				TipoMensagem.WARNING, "O preenchimento do campo [Data de Movimento] é obrigatório!");
 		}
 		
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Data de Movimento inválida");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Movimento inválida");
 		}
 	}
 	
@@ -1275,13 +1275,13 @@ public class DiferencaEstoqueController {
 				|| dataMovimentoFormatada.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+				TipoMensagem.WARNING, "O preenchimento do campo [Data de Movimento] é obrigatório!");
 		}
 		
 		if (tipoDiferenca == null) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+				TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
 	}
 	
@@ -1332,7 +1332,7 @@ public class DiferencaEstoqueController {
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = 
-				new ValidacaoVO(TipoMensagem.ERROR, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
+				new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) lançamento(s) preenchido(s) incorretamente!");
 			
 			validacao.setDados(linhasComErro);
 			
@@ -1384,7 +1384,7 @@ public class DiferencaEstoqueController {
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = 
-				new ValidacaoVO(TipoMensagem.ERROR, "Existe(m) rateio(s) preenchido(s) incorretamente!");
+				new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) rateio(s) preenchido(s) incorretamente!");
 			
 			validacao.setDados(linhasComErro);
 			
@@ -1413,7 +1413,7 @@ public class DiferencaEstoqueController {
 		if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) > 0) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "A somatória das quantidades de rateio (" 
+				TipoMensagem.WARNING, "A somatória das quantidades de rateio (" 
 					+ somaQtdeRateio + ") é maior que a quantidade da diferença (" 
 					+ diferencaVO.getQuantidade() + ")!");
 		}
@@ -1461,7 +1461,7 @@ public class DiferencaEstoqueController {
 		
 		if (!linhasComErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, "Existem cotas duplicadas para o rateio!");
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Existem cotas duplicadas para o rateio!");
 			
 			validacao.setDados(linhasComErro);
 		
@@ -1509,7 +1509,7 @@ public class DiferencaEstoqueController {
 		
 		if (!linhasComErro.isEmpty() && !listaMensagensErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, listaMensagensErro);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagensErro);
 		
 			validacao.setDados(linhasComErro);
 		
@@ -1565,7 +1565,7 @@ public class DiferencaEstoqueController {
 		
 		if (!linhasComErro.isEmpty() && !listaMensagensErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, listaMensagensErro);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagensErro);
 		
 			validacao.setDados(linhasComErro);
 		
@@ -1629,7 +1629,7 @@ public class DiferencaEstoqueController {
 		
 		if (!linhasComErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, "Existem produtos duplicados para o lançamento!");
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Existem produtos duplicados para o lançamento!");
 			
 			validacao.setDados(linhasComErro);
 		
@@ -1652,7 +1652,7 @@ public class DiferencaEstoqueController {
 		
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não existem lançamentos de diferença");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem lançamentos de diferença");
 		}
 		
 		for (DiferencaVO diferenca : listaDiferencas) {
