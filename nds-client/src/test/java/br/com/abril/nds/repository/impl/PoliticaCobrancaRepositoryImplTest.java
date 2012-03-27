@@ -29,7 +29,9 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 		Banco banco = Fixture.hsbc(carteira); 
 		save(banco);
 				
-		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		FormaCobranca formaBoleto =
+			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
+										BigDecimal.ONE, BigDecimal.ONE);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =

@@ -51,7 +51,9 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(juridicaDistrib);
 		
-		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		FormaCobranca formaBoleto =
+			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
+										BigDecimal.ONE, BigDecimal.ONE);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
