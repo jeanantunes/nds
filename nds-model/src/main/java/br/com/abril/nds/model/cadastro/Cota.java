@@ -62,7 +62,7 @@ public class Cota {
 	private ContratoCota contratoCota;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
+	@JoinColumn(name = "BOX_ID")
 	private Box box;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
