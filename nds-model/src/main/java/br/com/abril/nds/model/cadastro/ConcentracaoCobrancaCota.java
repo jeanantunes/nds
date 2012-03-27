@@ -2,8 +2,6 @@ package br.com.abril.nds.model.cadastro;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,9 +25,8 @@ public class ConcentracaoCobrancaCota {
 	@JoinColumn(name = "PARAM_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
 
-	@Column(name = "DIA_SEMANA")
-	@Enumerated(EnumType.STRING)
-	private DiaSemana diaSemana;
+	@Column(name = "DIA_SEMANA", nullable = false)
+	private int codigoDiaSemana;
 
 	public Long getId() {
 		return id;
@@ -49,11 +46,10 @@ public class ConcentracaoCobrancaCota {
 	}
 
 	public DiaSemana getDiaSemana() {
-		return diaSemana;
+		return DiaSemana.getByCodigoDiaSemana(codigoDiaSemana);
 	}
-
+	
 	public void setDiaSemana(DiaSemana diaSemana) {
-		this.diaSemana = diaSemana;
+		this.codigoDiaSemana = diaSemana.getCodigoDiaSemana();
 	}
-
 }
