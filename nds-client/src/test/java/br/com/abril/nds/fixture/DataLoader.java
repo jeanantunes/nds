@@ -275,6 +275,7 @@ public class DataLoader {
 		criarDivida(session);
 		criarBoletos(session);
 		criarmovimentosFinanceiroCota(session);
+		criarNotasFiscaisEntradaFornecedor(session);
 		
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -2504,8 +2505,43 @@ public class DataLoader {
 				);
 
 		save(session, movimentoFinanceiroCotaCredito, movimentoFinanceiroCotaDebito, movimentoFinanceiroCotaReparte);
+		
+		calendar.add(Calendar.DATE, 10);
+		
+		movimentoFinanceiroCotaCredito = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinanceiroCredito, usuario, new BigDecimal("650"), 
+					null, calendar.getTime()
+				);
+		
+		calendar.add(Calendar.DATE, 10);
+		
+		movimentoFinanceiroCotaDebito = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinanceiroDebito, usuario, new BigDecimal("650"), 
+					null, calendar.getTime()
+				);
+
+		calendar.add(Calendar.DATE, 10);
+		
+		movimentoFinanceiroCotaReparte = 
+				Fixture.movimentoFinanceiroCota(
+					cota, tipoMovimentoFinenceiroReparte, usuario, new BigDecimal("650"), 
+					null, calendar.getTime()
+				);
+
+		save(session, movimentoFinanceiroCotaCredito, movimentoFinanceiroCotaDebito, movimentoFinanceiroCotaReparte);
 	}
-	
-	
-	
+
+	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+
+		for (int i = 0; i < 50; i++) {
+
+			notaFiscalFornecedor = Fixture
+					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
+
+			session.save(notaFiscalFornecedor);
+		}
+	}	
 }

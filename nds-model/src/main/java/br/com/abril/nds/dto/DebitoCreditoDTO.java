@@ -2,25 +2,24 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
-import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public class DebitoCreditoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1687109964774922384L;
 	
-	private Integer id;
+	private Long id;
 
-	private Date dataLancamento;
+	private String dataLancamento;
 	
-	private Date dataVencimento;
+	private String dataVencimento;
 	
-	private String numeroCota;
+	private Integer numeroCota;
 	
 	private String nomeCota;
 	
-	private TipoLancamento tipoLancamento;
+	private TipoMovimentoFinanceiro tipoMovimentoFinanceiro;
 	
 	private BigDecimal valor;
 	
@@ -29,56 +28,56 @@ public class DebitoCreditoDTO implements Serializable {
 	/**
 	 * @return the id
 	 */
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
 	/**
 	 * @return the dataLancamento
 	 */
-	public Date getDataLancamento() {
+	public String getDataLancamento() {
 		return dataLancamento;
 	}
 
 	/**
 	 * @param dataLancamento the dataLancamento to set
 	 */
-	public void setDataLancamento(Date dataLancamento) {
+	public void setDataLancamento(String dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
 
 	/**
 	 * @return the dataVencimento
 	 */
-	public Date getDataVencimento() {
+	public String getDataVencimento() {
 		return dataVencimento;
 	}
 
 	/**
 	 * @param dataVencimento the dataVencimento to set
 	 */
-	public void setDataVencimento(Date dataVencimento) {
+	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
 
 	/**
 	 * @return the numeroCota
 	 */
-	public String getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
 	/**
 	 * @param numeroCota the numeroCota to set
 	 */
-	public void setNumeroCota(String numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
@@ -97,17 +96,18 @@ public class DebitoCreditoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the tipoLancamento
+	 * @return the tipoMovimentoFinanceiro
 	 */
-	public TipoLancamento getTipoLancamento() {
-		return tipoLancamento;
+	public TipoMovimentoFinanceiro getTipoMovimentoFinanceiro() {
+		return tipoMovimentoFinanceiro;
 	}
 
 	/**
-	 * @param tipoLancamento the tipoLancamento to set
+	 * @param tipoMovimentoFinanceiro the tipoMovimentoFinanceiro to set
 	 */
-	public void setTipoLancamento(TipoLancamento tipoLancamento) {
-		this.tipoLancamento = tipoLancamento;
+	public void setTipoMovimentoFinanceiro(
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro) {
+		this.tipoMovimentoFinanceiro = tipoMovimentoFinanceiro;
 	}
 
 	/**

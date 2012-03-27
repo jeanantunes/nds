@@ -34,13 +34,13 @@
 		return data;
 	}
 
-	function getAction(idEndereco) {
+	function getAction(idMovimento) {
 
-		return '<a href="javascript:;" onclick="editarEndereco(' + idEndereco + ')" ' +
+		return '<a href="javascript:;" onclick="editarMovimento(' + idMovimento + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
 				'</a>' +
-				'<a href="javascript:;" onclick="confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+				'<a href="javascript:;" onclick="confirmarExclusaoMovimento(' + idMovimento + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
@@ -109,6 +109,7 @@
 			useRp : true,
 			params: formData,
 			rp : 15,
+			singleSelect: true,
 			showTableToggleBtn : true,
 			width : 960,
 			height : 180
@@ -144,6 +145,31 @@
 		});
 	};
 	
+	function editarMovimento(idMovimento) {
+
+		$.postJSON(
+			'<c:url value="/financeiro/debitoCreditoCota/prepararMovimentoFinanceiroCotaParaEdicao" />',
+			{ "idMovimento" : idMovimento },
+			function(result) {
+
+				$("#edicaoTipoMovimento").val(result.tipoMovimentoFinanceiro.id);
+				$("#edicaoNumeroCota").val(result.numeroCota);
+				$("#edicaoNomeCota").val(result.nomeCota);
+				$("#edicaoDataLancamento").val(result.dataLancamento);
+				$("#edicaoDataVencimento").val(result.dataVencimento);
+				$("#edicaoValor").val(result.valor);
+				$("#edicaoObservacao").val(result.observacao);
+			},
+			function(result) {
+				
+				processarResultadoConsultaDebitosCreditos(result);
+			},
+			true
+		);
+		
+		popup_alterar();
+	}
+	
 	function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -154,6 +180,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					salvarMovimentoFinanceiro();
 					$( this ).dialog( "close" );
 					$("#effect").hide("highlight", {}, 1000, callback);
 					$( "#abaPdv" ).show( );
@@ -167,7 +194,39 @@
 		      
 	};
 	
-	function popup_excluir() {
+	function salvarMovimentoFinanceiro() {
+
+		var formData = $("#formEdicaoMovimentoFinanceiro").serializeArray();
+
+		$.postJSON(
+			'<c:url value="/financeiro/debitoCreditoCota/cadastrarMovimentoFincanceiroCota" />',
+			formData,
+			null,
+			function(result) {
+				
+				processarResultadoConsultaDebitosCreditos(result);
+			},
+			true
+		);
+	}
+
+	function removerMovimento(idMovimento) {
+
+		$.postJSON(
+			'<c:url value="/financeiro/debitoCreditoCota/removerMovimentoFinanceiroCota" />',
+			{ "idMovimento" : idMovimento },
+			null,
+			function(result) {
+				
+				processarResultadoConsultaDebitosCreditos(result);
+			},
+			true
+		);
+
+		popularGridDebitosCreditos();
+	}
+	
+	function confirmarExclusaoMovimento(idMovimento) {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-excluir" ).dialog({
@@ -177,6 +236,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					removerMovimento(idMovimento);
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 				},
@@ -186,6 +246,7 @@
 			}
 		});
 	};
+	
 	
  	function pesquisarCota() {
  		
@@ -228,13 +289,13 @@
 			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerEdit" ).datepicker({
+		$( "#edicaoDataLancamento" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$( "#datepickerEdit2" ).datepicker({
+		$( "#edicaoDataVencimento" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly: true
@@ -288,46 +349,57 @@
 
 
 <div id="dialog-editar" title="Editar Tipo de Movimento">
-    
+<form id="formEdicaoMovimentoFinanceiro">
 <table width="450" border="0" cellspacing="2" cellpadding="2">
   <tr>
     <td width="126">Tipo de Movimento:</td>
     <td width="310">
-    <select name="select" id="select" style="width:300px;">
-      <option selected="selected"> </option>
-      <option>344 - Crédito a Cota</option>
-	  <option>355 - Débito a Cota</option>
+    <select name="debitoCredito.tipoMovimentoFinanceiro" id="edicaoTipoMovimento" style="width:300px;">
+  		<option selected="selected"> </option>
+		<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
+			<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
+		</c:forEach>
     </select>
     </td>
   </tr>
   <tr>
     <td width="126">Cota:</td>
-    <td width="310"><input type="text" style="width:80px; float:left; margin-right:5px;"/>
-    	<span class="classPesquisar"><a href="javascript:;" onclick="pesquisarCota();">&nbsp;</a></span>
+    <td width="310">
+    <input type="text" style="width:80px; float:left; margin-right:5px;" name="debitoCredito.numeroCota" id="edicaoNumeroCota"/>
+   	<span class="classPesquisar"><a href="javascript:;" onclick="pesquisarCota();">&nbsp;</a></span>
     </td>
   </tr>
   <tr>
     <td width="126">Nome:</td>
-    <td width="310"><input type="text" style="width:300px;" /></td>
+    <td width="310">
+    <input type="text" style="width:300px;" name="debitoCredito.nomeCota" id="edicaoNomeCota" /></td>
   </tr>
   <tr>
     <td width="126">Data Lançamento:</td>
-    <td width="310"><input type="text" name="datepickerEdit" id="datepickerEdit" style="width:80px;" /></td>
+    <td width="310">
+    	<input type="text" name="debitoCredito.dataLancamento" id="edicaoDataLancamento" style="width:80px;" />
+    </td>
   </tr>
   <tr>
     <td>Data Vencimento:</td>
-    <td><input type="text" name="datepickerEdit2" id="datepickerEdit2" style="width:80px;" /></td>
+    <td>
+    	<input type="text" name="debitoCredito.dataVencimento" id="edicaoDataVencimento" style="width:80px;" />
+    </td>
   </tr>
   <tr>
     <td width="126">Valor R$:</td>
-    <td width="310"><input type="text" style="width:80px; text-align:right;" /></td>
+    <td width="310">
+    	<input type="text" style="width:80px; text-align:right;" name="debitoCredito.valor" id="edicaoValor" />
+    </td>
   </tr>
   <tr>
     <td width="126">Observação:</td>
-    <td width="310"><input type="text" style="width:300px;" /></td>
+    <td width="310">
+    	<input type="text" style="width:300px;" name="debitoCredito.observacao" id="edicaoObservacao" />
+    </td>
   </tr>
 </table>
-
+</form>
 </div>
 
 <br clear="all"/>
