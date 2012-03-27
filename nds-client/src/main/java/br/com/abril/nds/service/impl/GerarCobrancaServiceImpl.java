@@ -246,12 +246,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				break;
 			}
 			
-			cobranca.setCota(cota);
-			cobranca.setDataEmissao(new Date());
-			cobranca.setDivida(divida);
-			cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
-			
 			if (cobranca != null){
+				cobranca.setCota(cota);
+				cobranca.setDataEmissao(new Date());
+				cobranca.setDivida(divida);
+				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+				
 				this.cobrancaRepository.adicionar(cobranca);
 			}
 		}
