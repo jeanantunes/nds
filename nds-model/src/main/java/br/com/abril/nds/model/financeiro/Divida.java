@@ -30,24 +30,32 @@ public class Divida {
 	@GeneratedValue(generator = "DIVIDA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "DATA", nullable = false)
 	private Date data;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
 	@Column(name = "VALOR", nullable = false)
 	private BigDecimal valor;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)
 	private StatusDivida status;
+	
 	@OneToOne(mappedBy = "divida")
 	private Cobranca cobranca;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "CONSOLIDADO_ID")
 	private ConsolidadoFinanceiroCota consolidado;
+	
 	@OneToMany
 	private Set<Divida> acumulado = new HashSet<Divida>();
 	
@@ -122,7 +130,4 @@ public class Divida {
 	public void setAcumulado(Set<Divida> acumulado) {
 		this.acumulado = acumulado;
 	}
-	
-	
-
 }

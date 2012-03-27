@@ -357,7 +357,7 @@
     <td width="121">Tipo de Lançamento:</td>
     
     <td width="360">
-	    <select name="comboTipoMovimento" name="filtroDebitoCredito.idTipoMovimento" id="idTipoMovimento" style="width:250px;">
+	    <select name="filtroDebitoCredito.idTipoMovimento" id="idTipoMovimento" style="width:250px;">
 		  <option selected="selected"> </option>
 		  <c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 		  	<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>

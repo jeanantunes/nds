@@ -32,6 +32,12 @@ import org.apache.poi.util.IOUtils;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export.Alignment;
 
+/**
+ * Classe responsável pela exportação de arquivos XLS.
+ * 
+ * @author Discover Technology
+ *
+ */
 public class XLSExporter implements Exporter {
 	
 	private CellStyle headerColumnCellStyle;
@@ -720,8 +726,6 @@ public class XLSExporter implements Exporter {
 			
 		    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		}
-		
-		//style.setBorderLeft(border);
 		
 		style.setBorderTop(CellStyle.BORDER_THIN);
 	    style.setTopBorderColor(HSSFColor.BLUE.index);

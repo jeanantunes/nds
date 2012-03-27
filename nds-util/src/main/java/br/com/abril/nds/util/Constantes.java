@@ -32,6 +32,8 @@ public abstract class Constantes {
 	 */
 	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = "listaEnderecosRemoverSessao";
 	
+	public static final String UPLOAD_AJAX_REQUEST_ATTRIBUTE = "formUploadAjax";
+	
 }
 
 

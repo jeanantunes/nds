@@ -6,16 +6,33 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Classe responsável pela exportação de arquivos no sistema.
+ * 
+ * @author Discover Technology
+ *
+ */
 public class FileExporter {
 
 	private FileType fileType;
 	
 	private String fileName;
 	
+	/**
+	 * Construtor privado.
+	 */
 	private FileExporter() {
 		
 	}
 	
+	/**
+	 * Obtém uma instância para exportação.
+	 * 
+	 * @param fileName - nome do arquivo a ser exportado
+	 * @param fileType - tipo do arquivo a ser exportado
+	 * 
+	 * @return Instância de FileExporter
+	 */
 	public static FileExporter to(String fileName, FileType fileType) {
 		
 		FileExporter fileExporter = new FileExporter();
@@ -27,6 +44,16 @@ public class FileExporter {
 		return fileExporter;
 	}
 	
+	/**
+	 * Realiza a exportação do arquivo via OutputStream.
+	 * 
+	 * @param ndsFileHeader
+	 * @param filter
+	 * @param footer
+	 * @param dataList
+	 * @param listClass
+	 * @param outputStream
+	 */
 	public <T, F, FT> void inOutputStream(NDSFileHeader ndsFileHeader,
 										  F filter,
 										  FT footer,
@@ -50,6 +77,17 @@ public class FileExporter {
 		}
 	}
 	
+	/**
+	 * Realiza a exportação na resposta HTTP.
+	 * 
+	 * @param ndsFileHeader
+	 * @param filter
+	 * @param footer
+	 * @param dataList
+	 * @param listClass
+	 * @param httpServletResponse
+	 * @throws IOException
+	 */
 	public <T, F, FT> void inHTTPResponse(NDSFileHeader ndsFileHeader,
 										  F filter,
 										  FT footer,

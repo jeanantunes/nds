@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -19,20 +21,25 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota, Date dataAtual){
 		
-		StringBuilder hql = new StringBuilder("from MovimentoFinanceiroCota mfc, Distribuidor d ");
-		hql.append(" where mfc.data = d.dataOperacao ")
+		StringBuilder hql = new StringBuilder("select mfc ");
+		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
+		   .append(" where mfc.data = d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
-			hql.append(" and mfc.cota = :idCota ");
+			hql.append(" and mfc.cota.id = :idCota ");
 		}
 		
-		hql.append(" order by mfc.cota ");
+		hql.append(" and mfc.cota.id not in ")
+		   .append(" (select c.id from ConsolidadoFinanceiroCota c where c.dataConsolidado = :dataAtual) ");
+		
+		hql.append(" order by mfc.cota.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		query.setParameter("dataAtual", dataAtual);
 		
 		if (idCota != null){
 			query.setParameter("idCota", idCota);
@@ -41,6 +48,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		return query.list();
 	}
 
+	@Override
+	public Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		String hql = " select count(movimentoFinanceiroCota) " + 
+					 getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		return ((Long) query.uniqueResult()).intValue();
+	}
+	
 	/**
 	 * @see br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository#obterMovimentosFinanceiroCota()
 	 */
@@ -49,6 +67,20 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
+		String hql = getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO) +
+					 getOrderByObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO); 
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+		
+		query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
+	}
+	
+	private String getQueryObterMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
@@ -84,10 +116,15 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 			conditions += " movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
 		}
-		
-		hql.append(conditions);
 
-		Query query = getSession().createQuery(hql.toString());
+		hql.append(conditions);
+		
+		return hql.toString();
+	}
+
+	private Query criarQueryObterMovimentosFinanceiroCota(String hql, FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		Query query = getSession().createQuery(hql);
 
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
 
@@ -112,7 +149,46 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 			query.setParameter("numeroCota", filtroDebitoCreditoDTO.getNumeroCota());
 		}
+		
+		return query;
+	}
+	
+	private String getOrderByObterMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
-		return query.list();
+		ColunaOrdenacao colunaOrdenacao = filtroDebitoCreditoDTO.getColunaOrdenacao();
+		
+		String orderBy = " order by ";
+		
+		switch (colunaOrdenacao) {
+		
+		case DATA_LANCAMENTO:
+			orderBy += " movimentoFinanceiroCota.dataCriacao ";
+			break;
+		case DATA_VENCIMENTO:
+			orderBy += " movimentoFinanceiroCota.data ";
+			break;
+		case NOME_COTA:
+			orderBy += " nomeCota ";
+			break;
+		case NUMERO_COTA:
+			orderBy += " movimentoFinanceiroCota.cota.numeroCota ";
+			break;
+		case OBSERVACAO:
+			orderBy += " movimentoFinanceiroCota.observacao ";
+			break;
+		case TIPO_LANCAMENTO:
+			orderBy += " movimentoFinanceiroCota.tipoMovimento.descricao ";
+			break;
+		case VALOR:
+			orderBy += " movimentoFinanceiroCota.valor ";
+			break;
+		default:
+			orderBy += " movimentoFinanceiroCota.tipoMovimento.descricao ";
+			break;
+		}
+		
+		orderBy += filtroDebitoCreditoDTO.getPaginacao().getOrdenacao();
+
+		return orderBy;
 	}
 }

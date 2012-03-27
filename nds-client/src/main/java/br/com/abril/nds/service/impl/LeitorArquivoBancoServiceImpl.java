@@ -62,7 +62,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			
 		} catch (IOException e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao processar o arquivo!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Falha ao processar o arquivo!");
 		}
 		
 		validarConteudoLinhas(lines);
@@ -77,7 +77,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			//TODO: ler arquivo no padrão CNAB 240
 		} else {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo não está no padrão CNAB!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
 		}
 		
 		return arquivoPagamentoBanco;
@@ -130,7 +130,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				
 				} else {
 					
-					throw new ValidacaoException(TipoMensagem.ERROR,
+					throw new ValidacaoException(TipoMensagem.WARNING,
 						"Falha ao processar o arquivo: todas as linhas devem estar no padrão CNAB 400!");
 				}
 			}
@@ -148,20 +148,20 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	private void validarDadosEntrada(File file, String nomeArquivo) {
 		
 		if (nomeArquivo == null || nomeArquivo.trim().length() == 0) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nome do arquivo é obrigatório!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nome do arquivo é obrigatório!");
 		}
 		
 		if (nomeArquivo.trim().length() > 255) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
+			throw new ValidacaoException(TipoMensagem.WARNING,
 				"O nome do arquivo deve possuir até 255 caracteres!");
 		}
 		
 		if (!isExtensaoArquivoValida(nomeArquivo)) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Extensão do arquivo inválida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Extensão do arquivo inválida!");
 		}
 		
 		if (file == null || !file.isFile()) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo inválido!");
 		}
 	}
 	
@@ -173,13 +173,13 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		// 9 - Trailer
 		
 		if (lines.size() < 3) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo não está no padrão CNAB!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
 		}
 		
 		if (!lines.get(0).startsWith(REGISTRO_TIPO_HEADER)
 				|| !lines.get(lines.size() - 1).startsWith(REGISTRO_TIPO_TRAILER)) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo não está no padrão CNAB!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
 		}
 		
 		String line = null;
@@ -200,7 +200,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		if (!existeLinhaDetalhe) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo não está no padrão CNAB!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
 		}
 	}
 	
@@ -232,7 +232,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			
 			ValidacaoVO validacao = new ValidacaoVO();
 			
-			validacao.setTipoMensagem(TipoMensagem.ERROR);
+			validacao.setTipoMensagem(TipoMensagem.WARNING);
 			validacao.setListaMensagens(listaMensagens);
 			
 			throw new ValidacaoException(validacao);
