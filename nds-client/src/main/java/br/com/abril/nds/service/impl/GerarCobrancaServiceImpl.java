@@ -38,8 +38,10 @@ import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
@@ -67,6 +69,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Override
 	@Transactional
@@ -164,6 +169,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Usuario usuario = new Usuario();
 		usuario.setId(idUsuario);
 		
+		Date dataVencimento = 
+				this.calendarioService.adicionarDiasUteis(
+						consolidadoFinanceiroCota.getDataConsolidado(), cota.getParametroCobranca().getFatorVencimento());
+		
 		Divida divida = null;
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
@@ -192,7 +201,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					//se o distribuidor não acumula divida cria uma nova
 					divida = new Divida();
 					divida.setValor(valorMovimentoFinanceiro);
-					divida.setData(new Date());
+					divida.setData(consolidadoFinanceiroCota.getDataConsolidado());
 				}
 				
 				divida.setConsolidado(consolidadoFinanceiroCota);
@@ -204,7 +213,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			//gera movimento financeiro cota
 			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
 			movimentoFinanceiroCota.setMotivo("Valor mínimo para dívida não atingido.");
-			movimentoFinanceiroCota.setData(new Date());
+			movimentoFinanceiroCota.setData(dataVencimento);
 			movimentoFinanceiroCota.setDataCriacao(new Date());
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valorMovimentoFinanceiro);
@@ -251,6 +260,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobranca.setDataEmissao(new Date());
 				cobranca.setDivida(divida);
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+				cobranca.setDataVencimento(dataVencimento);
+				cobranca.setNossoNumero(Util.gerarNossoNumero(cota.getNumeroCota(), cobranca.getDataEmissao()));
 				
 				this.cobrancaRepository.adicionar(cobranca);
 			}
