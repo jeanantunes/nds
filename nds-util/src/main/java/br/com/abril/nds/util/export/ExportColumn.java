@@ -1,10 +1,12 @@
 package br.com.abril.nds.util.export;
 
-public class ExportColumn {
+public class ExportColumn implements Comparable<ExportColumn> {
 	
 	private String value;
 	
 	private Export.Alignment alignment;
+	
+	private Integer exhibitionOrder;
 	
 	public ExportColumn() {
 		
@@ -15,10 +17,11 @@ public class ExportColumn {
 		this.value = value;
 	}
 	
-	public ExportColumn(String value, Export.Alignment alignment) {
+	public ExportColumn(String value, Export.Alignment alignment, Integer exhibitionOrder) {
 		
 		this.value = value;
 		this.alignment = alignment;
+		this.exhibitionOrder = exhibitionOrder;
 	}
 
 	/**
@@ -47,6 +50,26 @@ public class ExportColumn {
 	 */
 	public void setAlignment(Export.Alignment alignment) {
 		this.alignment = alignment;
+	}
+
+	/**
+	 * @return the exhibitionOrder
+	 */
+	public Integer getExhibitionOrder() {
+		return exhibitionOrder;
+	}
+
+	/**
+	 * @param exhibitionOrder the exhibitionOrder to set
+	 */
+	public void setExhibitionOrder(Integer exhibitionOrder) {
+		this.exhibitionOrder = exhibitionOrder;
+	}
+
+	@Override
+	public int compareTo(ExportColumn exportColumn) {
+		
+		return this.exhibitionOrder.compareTo(exportColumn.exhibitionOrder);
 	}
 	
 }

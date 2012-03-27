@@ -2,9 +2,13 @@ package br.com.abril.nds.util.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 
 /**
  * Classe responsável pela exportação de arquivos no sistema.
@@ -36,6 +40,11 @@ public class FileExporter {
 	public static FileExporter to(String fileName, FileType fileType) {
 		
 		FileExporter fileExporter = new FileExporter();
+		
+		if (fileName != null) {
+			
+			fileName += "-" + DateUtil.formatarData(new Date(), Constantes.DATE_PATTERN_PT_BR_FOR_FILE);
+		}
 		
 		fileExporter.fileName = fileName;
 		

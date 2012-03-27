@@ -23,36 +23,38 @@ public class DiferencaVO implements Serializable {
 
 	private Long id;
 	
+	@Export(label = "Data", alignment = Alignment.CENTER, exhibitionOrder = 1)
 	private String dataLancamento;
 	
-	@Export(label = "Código")
+	@Export(label = "Código", alignment = Alignment.CENTER, exhibitionOrder = 2)
 	private String codigoProduto;
 	
-	@Export(label = "Produto")
+	@Export(label = "Produto", exhibitionOrder = 3)
 	private String descricaoProduto;
 	
-	@Export(label = "Edição", alignment = Alignment.CENTER)
+	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String numeroEdicao;
 	
-	@Export(label = "Preço Venda", alignment = Alignment.RIGHT)
+	@Export(label = "Preço Venda", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String precoVenda;
 	
-	@Export(label = "Pacote Padrão", alignment = Alignment.CENTER)
 	private String pacotePadrao;
 	
-	@Export(label = "Exemplares", alignment = Alignment.CENTER)
+	@Export(label = "Exemplar", alignment = Alignment.RIGHT, exhibitionOrder = 8)
 	private BigDecimal quantidade;
 	
-	@Export(label = "Tipo de Diferença")
+	@Export(label = "Tipo de Diferença", exhibitionOrder = 6)
 	private String tipoDiferenca;
 	
+	@Export(label = "Nota", exhibitionOrder = 7)
 	private String numeroNotaFiscal;
 	
+	@Export(label = "Status", exhibitionOrder = 9, alignment = Alignment.CENTER)
 	private String statusAprovacao;
 	
 	private String motivoAprovacao;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 10)
 	private String valorTotalDiferenca;
 	
 	private BigDecimal qtdeEstoqueAtual;
