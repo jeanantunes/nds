@@ -16,18 +16,18 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cheque;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.CobrancaCheque;
+import br.com.abril.nds.model.financeiro.CobrancaDeposito;
+import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
+import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
-import br.com.abril.nds.model.financeiro.Deposito;
-import br.com.abril.nds.model.financeiro.Dinheiro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.financeiro.TransferenciaBancaria;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -234,15 +234,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobranca = new Boleto();
 				break;
 				case CHEQUE:
-					cobranca = new Cheque();
+					cobranca = new CobrancaCheque();
 				break;
 				case DINHEIRO:
-					cobranca = new Dinheiro();
+					cobranca = new CobrancaDinheiro();
 				break;
 				case DEPOSITO:
-					cobranca = new Deposito();
+					cobranca = new CobrancaDeposito();
 				case TRANSFERENCIA_BANCARIA:
-					cobranca = new TransferenciaBancaria();
+					cobranca = new CobrancaTransferenciaBancaria();
 				break;
 			}
 			
