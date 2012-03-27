@@ -7,9 +7,9 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 @Entity
 @DiscriminatorValue(value = "CHEQUE")
-public class Cheque extends Cobranca {
+public class CobrancaCheque extends Cobranca {
 	
-	public Cheque() {
+	public CobrancaCheque() {
 		this.tipoCobranca = TipoCobranca.CHEQUE;
 	}
 	
