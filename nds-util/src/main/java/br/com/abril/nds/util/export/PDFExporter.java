@@ -123,7 +123,11 @@ public class PDFExporter implements Exporter {
 		String cnpjDistribuidor = StringUtils.defaultString(ndsFileHeader.getCnpjDistribuidor());
 		
 		dadosDistribuidorParagraph.add(new Paragraph(nomeDistribuidor, headerBoldFont));
-		dadosDistribuidorParagraph.add(new Paragraph("CNPJ: " + cnpjDistribuidor, headerFont));
+		
+		if (!cnpjDistribuidor.isEmpty()) {
+			
+			dadosDistribuidorParagraph.add(new Paragraph("CNPJ: " + cnpjDistribuidor, headerFont));
+		}
 		
 		dadosDistribuidorPdfCell.addElement(dadosDistribuidorParagraph);
 		
@@ -139,11 +143,20 @@ public class PDFExporter implements Exporter {
 		String dia = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader.getData());
 		String nomeUsuario = "\n"  + StringUtils.defaultString(ndsFileHeader.getNomeUsuario());
 		
-		Phrase diaPhrase = new Phrase("Dia: ", headerBoldFont);
+		Phrase diaPhrase = null;
+		
+		if (!dia.isEmpty()) {
+			
+			diaPhrase = new Phrase("Dia: ", headerBoldFont);
+		}
 		
 		Phrase dataPhrase = new Phrase(new Chunk(dia, headerFont));
 		
-		outrosDadosParagraph.add(diaPhrase);
+		if (diaPhrase != null) {
+			
+			outrosDadosParagraph.add(diaPhrase);
+		}
+		
 		outrosDadosParagraph.add(dataPhrase);
 		outrosDadosParagraph.add(new Paragraph(nomeUsuario, headerFont));
 		

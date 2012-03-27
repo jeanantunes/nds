@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 
@@ -13,6 +16,7 @@ import br.com.abril.nds.vo.PeriodoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 
 	/**
@@ -20,14 +24,23 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -2032477830142408298L;
 	
+	@Export(label = "Código", exhibitionOrder = 1)
 	private String codigoProduto;
 	
+	@Export(label = "Produto", exhibitionOrder = 2)
+	private String nomeProduto;
+	
+	@Export(label = "Edição", exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
 	private Long idFornecedor;
 	
+	@Export(label = "Fornecedor", exhibitionOrder = 4)
+	private String nomeFornecedor;
+
 	private PeriodoVO periodoVO;
 	
+	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
 	private TipoDiferenca tipoDiferenca;
 	
 	private PaginacaoVO paginacao;
@@ -186,6 +199,58 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	 */
 	public void setDataLimiteLancamentoDistribuidor(Date dataLimiteLancamentoDistribuidor) {
 		this.dataLimiteLancamentoDistribuidor = dataLimiteLancamentoDistribuidor;
+	}
+	
+	/**
+	 * @return the nomeFornecedor
+	 */
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	/**
+	 * @param nomeFornecedor the nomeFornecedor to set
+	 */
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
+	}
+	
+	/**
+	 * @return the nomeProduto
+	 */
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	/**
+	 * @param nomeProduto the nomeProduto to set
+	 */
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
+	
+	@Export(label = "Data Inicial", exhibitionOrder = 5)
+	public String getDataInicial() {
+		
+		if (this.periodoVO == null
+				|| this.periodoVO.getDataInicial() == null) {
+			
+			return "";
+		}
+		
+		return DateUtil.formatarDataPTBR(this.periodoVO.getDataInicial());
+	}
+	
+	@Export(label = "Data Final", exhibitionOrder = 6)
+	public String getDataFinal() {
+		
+		if (this.periodoVO == null
+				|| this.periodoVO.getDataFinal() == null) {
+			
+			return "";
+		}
+		
+		return DateUtil.formatarDataPTBR(this.periodoVO.getDataInicial());
 	}
 
 	/* (non-Javadoc)
