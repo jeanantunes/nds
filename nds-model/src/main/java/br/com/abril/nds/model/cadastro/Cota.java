@@ -40,8 +40,8 @@ public class Cota {
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
 	
-	@Column(name = "VIP", nullable = false)
-	private boolean vip;
+	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
+	private boolean sugereSuspensao;
 	
 	@OneToMany
 	@JoinColumn(name = "COTA_ID")
@@ -62,7 +62,7 @@ public class Cota {
 	private ContratoCota contratoCota;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
+	@JoinColumn(name = "BOX_ID")
 	private Box box;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
@@ -91,12 +91,12 @@ public class Cota {
 		this.pessoa = pessoa;
 	}
 	
-	public boolean isVip() {
-		return vip;
+	public boolean isSugereSuspensao() {
+		return sugereSuspensao;
 	}
 	
-	public void setVip(boolean vip) {
-		this.vip = vip;
+	public void setSugereSuspensao(boolean sugereSuspensao) {
+		this.sugereSuspensao = sugereSuspensao;
 	}
 	
 	public List<PDV> getPdvs() {

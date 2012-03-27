@@ -148,7 +148,7 @@ function executarPreProcessamento(resultado) {
  * Renderiza componente de data de lan�amento
  */
 $(function() {
-	
+
 	$("#dataLancamento").datepicker({
 		showOn : "button",
 		buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -166,9 +166,13 @@ $(function() {
  */
 function pesquisar () {
 		
-		var formData = $('#pesquisaResumoExpedicaoForm').serializeArray();
-		
+		var dataLancamento = $('#dataLancamento').val();
 		var tipoPesquisa = $('#tipoPesquisa').val();
+		
+		var formData = [
+		                {name:"dataLancamento",value:dataLancamento},
+		                {name:"tipoPesquisa",value:tipoPesquisa}
+						];
 		
 		if (tipoPesquisa === 'PRODUTO'){
 			carregarGridProduto(formData);
@@ -255,10 +259,6 @@ function getTituloFieldSetPesquisa(){
   
   <legend id="idFiledResumo"> Pesquisar Resumo  Expedição por Box </legend>
   
-  <form id="pesquisaResumoExpedicaoForm"
-		name="pesquisaResumoExpedicaoForm" 
-		method="post">
-  	
   	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  <tr>
 	    <td width="116">Data Lançamento:</td>
@@ -280,8 +280,7 @@ function getTituloFieldSetPesquisa(){
 	    </td>
 	  </tr>
   	</table>
-  
-  </form>
+
     
 </fieldset>
 

@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -100,6 +101,9 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte;
+	
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta;
 	
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota1;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota2;
@@ -204,7 +208,9 @@ public class DataLoader {
 	private static Boleto boleto6;
 	private static Boleto boleto7;
 	private static Boleto boleto8;
-	private static Boleto boleto9;	
+	private static Boleto boleto9;
+	
+	private static FormaCobranca formaBoleto;
 	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -971,7 +977,8 @@ public class DataLoader {
 				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
-		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC);
+		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+												  BigDecimal.ONE, BigDecimal.ONE);
 		save(session, formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
@@ -995,7 +1002,10 @@ public class DataLoader {
 		cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaMaria);
 		
-	
+		ParametroCobrancaCota parametroCobrancaConta = 
+			Fixture.parametroCobrancaCota(1, BigDecimal.TEN, cotaManoel, 1, 
+										  formaBoleto, true, BigDecimal.TEN);
+		save(session, parametroCobrancaConta);
 	}
 
 	private static void criarFornecedores(Session session) {
@@ -1033,6 +1043,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
+		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
+		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
 		
 		tipoMovimentoRecebimentoReparte = Fixture.tipoMovimentoRecebimentoReparte();	
 
@@ -1043,7 +1055,8 @@ public class DataLoader {
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
 				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
-				tipoMovimentoEnvioEncalhe, tipoMovimentoFinenceiroReparte);
+				tipoMovimentoEnvioEncalhe, tipoMovimentoFinenceiroReparte,
+				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta);
 
 	}
 
@@ -1381,7 +1394,7 @@ public class DataLoader {
 		
 		Boleto boleto1 = Fixture.boleto("1309309032012440",
 		                new Date(), 
-		                new Date(), 
+		                DateUtil.parseDataPTBR("09/03/2012"), 
 		                null, 
 		                BigDecimal.ZERO, 
 		                new BigDecimal(200), 
