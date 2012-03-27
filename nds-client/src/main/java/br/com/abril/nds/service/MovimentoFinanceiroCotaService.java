@@ -16,7 +16,7 @@ public interface MovimentoFinanceiroCotaService {
 	void gerarMovimentoFinanceiroDebitoCredito(
 							Cota cota, GrupoMovimentoFinaceiro grupoMovimentoFinanceiro,
 							Usuario usuario, BigDecimal valor, Date dataOperacao,
-							BaixaAutomatica baixaAutomatica);
+							BaixaAutomatica baixaAutomatica, Date dataNovoMovimento);
 	
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
