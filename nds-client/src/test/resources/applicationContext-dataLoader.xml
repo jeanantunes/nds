@@ -12,7 +12,7 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://10.10.50.39:3306/nds-client" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
 		<property name="suppressClose" value="true" />
