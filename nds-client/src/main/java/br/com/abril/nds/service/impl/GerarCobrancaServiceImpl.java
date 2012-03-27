@@ -10,19 +10,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cheque;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.Deposito;
+import br.com.abril.nds.model.financeiro.Dinheiro;
+import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.TransferenciaBancaria;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -44,9 +59,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Autowired
 	private ControleBaixaBancariaRepository controleBaixaBancariaRepository;
 	
+	@Autowired
+	private DividaRepository dividaRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private CobrancaRepository cobrancaRepository;
+	
 	@Override
 	@Transactional
-	public void gerarCobranca(Long idCota) {
+	public void gerarCobranca(Long idCota, Long idUsuario) {
 		
 		// verificar se a operação de conferencia ja foi concluida
 		StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
@@ -106,7 +130,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										politicaCobranca.getFormaCobranca().getValorMinimoEmissao();
 					
 					this.inserirConsolidadoFinanceiro(ultimaCota, valorMovimentoFinanceiro, movimentos,
-							valorMinimo);
+							valorMinimo, politicaCobranca.isAcumulaDivida(), idUsuario, 
+							politicaCobranca.getFormaCobranca().getTipoCobranca());
 					
 					//Limpa dados para contabilizar próxima cota
 					ultimaCota = movimentoFinanceiroCota.getCota();
@@ -121,25 +146,119 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							ultimaCota.getParametroCobranca().getValorMininoCobranca() :
 								politicaCobranca.getFormaCobranca().getValorMinimoEmissao();
 			
-			this.inserirConsolidadoFinanceiro(ultimaCota, valorMovimentoFinanceiro, movimentos, valorMinimo);
+			this.inserirConsolidadoFinanceiro(ultimaCota, valorMovimentoFinanceiro, movimentos, valorMinimo,
+					politicaCobranca.isAcumulaDivida(), idUsuario, politicaCobranca.getFormaCobranca().getTipoCobranca());
 		}
 	}
 	
 	private void inserirConsolidadoFinanceiro(Cota cota, BigDecimal valorMovimentoFinanceiro, 
-			List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMinino){
+			List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMinino, boolean acumulaDivida, Long idUsuario,
+			TipoCobranca tipoCobranca){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(new Date());
-		if (valorMovimentoFinanceiro.compareTo(valorMinino) >= 0){
-			//gerar consolidado
-			consolidadoFinanceiroCota.setTotal(valorMovimentoFinanceiro);
-		} else {
-			//gerar postergado
-			consolidadoFinanceiroCota.setValorPostergado(valorMovimentoFinanceiro);
-		}
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
+		consolidadoFinanceiroCota.setTotal(valorMovimentoFinanceiro);
+		
+		Usuario usuario = new Usuario();
+		usuario.setId(idUsuario);
+		
+		Divida divida = null;
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
+		
+		//se existe divida
+		if (valorMovimentoFinanceiro.compareTo(BigDecimal.ZERO) < 0){
+			
+			if (valorMovimentoFinanceiro.compareTo(valorMinino) < 0){
+				//gerar postergado
+				consolidadoFinanceiroCota.setValorPostergado(valorMovimentoFinanceiro);
+			} else {
+				//se o distribuidor acumula divida
+				if (acumulaDivida){
+					divida = this.dividaRepository.obterUltimaDividaPorCota(cota.getId());
+					
+					//caso não tenha divida anterior, ou tenha sido quitada
+					if (divida == null || StatusDivida.QUITADA.equals(divida.getStatus())){
+						divida = new Divida();
+					}
+					
+					divida.setValor(
+							valorMovimentoFinanceiro.add(divida.getValor() == null ? BigDecimal.ZERO : divida.getValor()));
+				} else {
+					//se o distribuidor não acumula divida cria uma nova
+					divida = new Divida();
+					divida.setValor(valorMovimentoFinanceiro);
+					divida.setData(new Date());
+				}
+				
+				divida.setConsolidado(consolidadoFinanceiroCota);
+				divida.setCota(cota);
+				divida.setStatus(StatusDivida.EM_ABERTO);
+				divida.setResponsavel(usuario);
+			}
+		} else {
+			//gera movimento financeiro cota
+			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+			movimentoFinanceiroCota.setMotivo("Valor mínimo para dívida não atingido.");
+			movimentoFinanceiroCota.setData(new Date());
+			movimentoFinanceiroCota.setDataCriacao(new Date());
+			movimentoFinanceiroCota.setUsuario(usuario);
+			movimentoFinanceiroCota.setValor(valorMovimentoFinanceiro);
+			movimentoFinanceiroCota.setLancamentoManual(false);
+			movimentoFinanceiroCota.setCota(cota);
+			
+			tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
+			tipoMovimentoFinanceiro.setAprovacaoAutomatica(false);
+			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+			
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+		}
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
+		
+		if (divida != null){
+			if (divida.getId() == null){
+				this.dividaRepository.adicionar(divida);
+			} else {
+				this.dividaRepository.alterar(divida);
+			}
+			
+			Cobranca cobranca = null;
+			
+			switch (tipoCobranca){
+				case BOLETO:
+					cobranca = new Boleto();
+				break;
+				case CHEQUE:
+					cobranca = new Cheque();
+				break;
+				case DINHEIRO:
+					cobranca = new Dinheiro();
+				break;
+				case DEPOSITO:
+					cobranca = new Deposito();
+				case TRANSFERENCIA_BANCARIA:
+					cobranca = new TransferenciaBancaria();
+				break;
+			}
+			
+			cobranca.setCota(cota);
+			cobranca.setDataEmissao(new Date());
+			cobranca.setDivida(divida);
+			cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+			
+			if (cobranca != null){
+				this.cobrancaRepository.adicionar(cobranca);
+			}
+		}
+		
+		if (movimentoFinanceiroCota != null){
+			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+		}
 	}
 }
