@@ -25,6 +25,10 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 	
 	private ColunaOrdenacao colunaOrdenacao;
 	
+	/**
+	 * @author Discover Technology
+	 *
+	 */
 	public enum ColunaOrdenacao {
 		
 		DATA_LANCAMENTO("dataLancamento"),
@@ -47,6 +51,11 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 		 */
 		public String getColunaOrdenacao() {
 			return colunaOrdenacao;
+		}
+		
+		@Override
+		public String toString() {
+			return this.colunaOrdenacao;
 		}
 	}
 
