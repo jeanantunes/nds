@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -99,7 +100,9 @@ public class BoletoServiceImpl implements BoletoService {
 	public ResumoBaixaBoletosDTO baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
 							  				   BigDecimal valorFinanceiro, Usuario usuario) {
 		
-		Date dataOperacao = obterDataOperacao();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
 		
 		ControleBaixaBancaria controleBaixa =
 				controleBaixaRepository.obterPorData(dataOperacao);
@@ -127,13 +130,16 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
 		
+		Date dataNovoMovimento = calendarioService.adicionarDiasUteis(dataOperacao, 1);
+		
 		try {
 			if (arquivoPagamento != null && arquivoPagamento.getListaPagemento() != null) {
 				
 				for (PagamentoDTO pagamento : arquivoPagamento.getListaPagemento()) {
 				
 					baixarBoleto(resumoBaixaBoletos, pagamento, dataOperacao, usuario,
-								 arquivoPagamento.getNomeArquivo(), politicaCobranca);
+								 arquivoPagamento.getNomeArquivo(), politicaCobranca,
+								 distribuidor, dataNovoMovimento);
 				}
 				
 				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO,
@@ -171,8 +177,9 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional
 	public void baixarBoleto(ResumoBaixaBoletosDTO resumoBaixaBoletos, PagamentoDTO pagamento,
-							 Date dataOperacao, Usuario usuario,
-							 String nomeArquivo, PoliticaCobranca politicaCobranca) {
+							 Date dataOperacao, Usuario usuario, String nomeArquivo,
+							 PoliticaCobranca politicaCobranca, Distribuidor distribuidor,
+							 Date dataNovoMovimento) {
 		
 		incrementarBoletosLidos(resumoBaixaBoletos);
 		
@@ -212,7 +219,8 @@ public class BoletoServiceImpl implements BoletoService {
 					.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 													   	   GrupoMovimentoFinaceiro.CREDITO,
 													   	   usuario, pagamento.getValorPagamento(),
-													   	   dataOperacao, baixaAutomatica);
+													   	   dataOperacao, baixaAutomatica,
+													   	   dataNovoMovimento);
 				
 				return;
 			}
@@ -236,7 +244,8 @@ public class BoletoServiceImpl implements BoletoService {
 						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 															   GrupoMovimentoFinaceiro.CREDITO,
 														   	   usuario, pagamento.getValorPagamento(),
-														   	   dataOperacao, baixaAutomatica);
+														   	   dataOperacao, baixaAutomatica,
+														   	   dataNovoMovimento);
 					
 					return;
 					
@@ -253,15 +262,26 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					incrementarBoletosBaixadosComDivergencia(resumoBaixaBoletos);
 					
+					//TODO: verificar diferenca valor
+					
 					//TODO: calcular juros
 					
-					BigDecimal valorCalculado = BigDecimal.TEN;
+					BigDecimal diferencaValor = 
+						boleto.getValor().subtract(pagamento.getValorPagamento());
+					
+					BigDecimal valorCalculado = 
+						calcularJuros(distribuidor, boleto.getCota(), diferencaValor,
+									  boleto.getDataVencimento(),
+									  dataNovoMovimento);
 					
 					movimentoFinanceiroCotaService
 						.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
-														   GrupoMovimentoFinaceiro.DEBITO,
+														   GrupoMovimentoFinaceiro.JUROS,
 													   	   usuario, valorCalculado,
-													   	   dataOperacao, baixaAutomatica);
+													   	   dataOperacao, baixaAutomatica,
+													   	   dataNovoMovimento);
+					
+					//TODO: calcular multa
 					
 					return;
 				}				
@@ -298,7 +318,8 @@ public class BoletoServiceImpl implements BoletoService {
 							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 									   							   GrupoMovimentoFinaceiro.CREDITO,
 									   							   usuario, pagamento.getValorPagamento(),
-									   							   dataOperacao, baixaAutomatica);
+									   							   dataOperacao, baixaAutomatica,
+															   	   dataNovoMovimento);
 						
 						return;
 						
@@ -321,7 +342,8 @@ public class BoletoServiceImpl implements BoletoService {
 							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 																   GrupoMovimentoFinaceiro.CREDITO,
 															   	   usuario, valorCredito,
-															   	   dataOperacao, baixaAutomatica);
+															   	   dataOperacao, baixaAutomatica,
+															   	   dataNovoMovimento);
 						
 						return;
 						
@@ -344,7 +366,8 @@ public class BoletoServiceImpl implements BoletoService {
 							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 		   							   							   GrupoMovimentoFinaceiro.CREDITO,
 		   							   							   usuario, pagamento.getValorPagamento(),
-		   							   							   dataOperacao, baixaAutomatica);
+		   							   							   dataOperacao, baixaAutomatica,
+															   	   dataNovoMovimento);
 						
 						return;
 						
@@ -367,7 +390,8 @@ public class BoletoServiceImpl implements BoletoService {
 							.gerarMovimentoFinanceiroDebitoCredito(boleto.getCota(),
 																   GrupoMovimentoFinaceiro.DEBITO,
 															   	   usuario, valorDebito,
-															   	   dataOperacao, baixaAutomatica);
+															   	   dataOperacao, baixaAutomatica,
+															   	   dataNovoMovimento);
 						
 						return;
 						
@@ -375,6 +399,37 @@ public class BoletoServiceImpl implements BoletoService {
 				}		
 			}
 		}
+	}
+	
+	private BigDecimal calcularJuros(Distribuidor distribuidor, Cota cota, BigDecimal valor,
+									 Date dataVencimento, Date dataNovoMovimento) {
+		
+		BigDecimal juros = null;
+		
+		BigDecimal valorCalculadoJuros = null;
+		
+		if (cota.getParametroCobranca().getFormaCobranca().getJuros() != null) {
+			
+			juros = cota.getParametroCobranca().getFormaCobranca().getJuros();
+		
+		} else if (distribuidor.getPoliticaCobranca().getFormaCobranca().getJuros() != null) {
+			
+			juros = distribuidor.getPoliticaCobranca().getFormaCobranca().getJuros();
+		
+		} else {
+			//TODO:
+		}
+		
+		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataNovoMovimento);
+		
+		valorCalculadoJuros = valor.multiply(juros);
+		
+		return valorCalculadoJuros.multiply(new BigDecimal(quantidadeDias));
+	}
+	
+	private BigDecimal calcularMulta() {
+		
+		return null;
 	}
 	
 	private void validarDadosEntrada(PagamentoDTO pagamento) {
@@ -464,13 +519,6 @@ public class BoletoServiceImpl implements BoletoService {
 				resumoBaixaBoletos.getQuantidadeBaixadosComDivergencia() + 1);
 	}
 	
-	private Date obterDataOperacao() {
-		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		return distribuidor.getDataOperacao();
-	}
-
     @Override
 	@Transactional(readOnly=true)
 	public GeradorBoleto geraBoleto(String nossoNumero){

@@ -431,7 +431,6 @@
 		<table width="414" border="0" cellpadding="2" cellspacing="2">
 	  <tr>
 	    <td width="114"><strong>Valor Dívida R$:</strong>
-	    
 	    </td>
 	    <td width="114" align="right"><strong>1.000,00</strong></td>
 	    <td width="166" align="right">&nbsp;</td>
@@ -558,7 +557,7 @@
 		
 		
 		
-		<form action="<c:url value='/financeiro/baixa' />" id="formBaixaAutomatica"
+		<form action="<c:url value='/financeiro/realizarBaixaAutomatica' />" id="formBaixaAutomatica"
 			  method="post" enctype="multipart/form-data" >
 		
 			<input type="hidden" name="formUploadAjax" value="true" />
@@ -678,8 +677,6 @@
                     <span class="bt_confirmar_novo" title="Pagar Boleto"><a onclick="popup_divida();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span>
                     
                     <span class="bt_confirmar_novo" title="Negociar Dívida"><a href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
-
-
                 </td>
                 <td width="7%"><strong>Total R$:</strong></td>
                 <td width="7%">10.567,00</td>

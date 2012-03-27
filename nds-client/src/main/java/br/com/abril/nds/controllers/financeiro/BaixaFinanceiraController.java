@@ -52,7 +52,6 @@ public class BaixaFinanceiraController {
 	@SuppressWarnings("unused")
 	private Localization localization;
 	
-	@SuppressWarnings("unused")
 	private HttpSession httpSession;
 	
 	private ServletContext servletContext;
@@ -84,7 +83,7 @@ public class BaixaFinanceiraController {
 	}
 	
 	@Post
-	public void baixa(UploadedFile uploadedFile, String valorFinanceiro) {
+	public void realizarBaixaAutomatica(UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		validarEntradaDados(uploadedFile, valorFinanceiro);
 		
@@ -111,7 +110,8 @@ public class BaixaFinanceiraController {
 			deletarArquivoTemporario();
 		}
 		
-		result.use(PlainJSONSerialization.class).from(resumoBaixaBoleto, "result").recursive().serialize();
+		result.use(PlainJSONSerialization.class)
+			.from(resumoBaixaBoleto, "result").recursive().serialize();
 	}
 	
 	private File gravarArquivoTemporario(UploadedFile uploadedFile) {

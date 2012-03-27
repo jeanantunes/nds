@@ -18,7 +18,6 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 
 @Service
@@ -31,15 +30,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
-	@Autowired
-	private CalendarioService calendarioService;
-	
 	@Override
 	@Transactional
 	public void gerarMovimentoFinanceiroDebitoCredito(
 								Cota cota, GrupoMovimentoFinaceiro grupoMovimentoFinanceiro,
 								Usuario usuario, BigDecimal valor, Date dataOperacao,
-								BaixaAutomatica baixaAutomatica) {
+								BaixaAutomatica baixaAutomatica, Date dataNovoMovimento) {
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
 			tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinanceiro);
@@ -63,7 +59,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 			movimentoFinanceiroCota.setCota(cota);
 			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setData(calendarioService.obterProximoDiaUtil(dataOperacao));
+			movimentoFinanceiroCota.setData(dataNovoMovimento);
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valor);
 			movimentoFinanceiroCota.setLancamentoManual(false);
