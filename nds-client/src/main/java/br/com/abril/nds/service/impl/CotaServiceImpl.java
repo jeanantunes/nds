@@ -29,6 +29,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
@@ -50,6 +51,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private EnderecoCotaRepository enderecoCotaRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -166,6 +170,8 @@ public class CotaServiceImpl implements CotaService {
 									  List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
 		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		
+		List<Long> idsEndereco = new ArrayList<Long>();
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
@@ -173,8 +179,12 @@ public class CotaServiceImpl implements CotaService {
 
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 			
+			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+
 			this.enderecoCotaRepository.remover(enderecoCota);
 		}
+		
+		this.enderecoRepository.removerEnderecos(idsEndereco);
 	}
 
 	@Transactional

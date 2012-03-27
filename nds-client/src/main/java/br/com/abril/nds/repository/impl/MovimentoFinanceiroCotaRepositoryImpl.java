@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -84,9 +85,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 			conditions += " movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
 		}
+
+		conditions += getOrderBy(filtroDebitoCreditoDTO);
 		
 		hql.append(conditions);
-
+		
 		Query query = getSession().createQuery(hql.toString());
 
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
@@ -113,6 +116,49 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 			query.setParameter("numeroCota", filtroDebitoCreditoDTO.getNumeroCota());
 		}
 
+		query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+		
+		query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		
 		return query.list();
+	}
+	
+	private String getOrderBy(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+
+		ColunaOrdenacao colunaOrdenacao = filtroDebitoCreditoDTO.getColunaOrdenacao();
+		
+		String orderBy = " order by ";
+		
+		switch (colunaOrdenacao) {
+		
+		case DATA_LANCAMENTO:
+			orderBy += " movimentoFinanceiroCota.dataCriacao ";
+			break;
+		case DATA_VENCIMENTO:
+			orderBy += " movimentoFinanceiroCota.data ";
+			break;
+		case NOME_COTA:
+			orderBy += " nomeCota ";
+			break;
+		case NUMERO_COTA:
+			orderBy += " movimentoFinanceiroCota.cota.numeroCota ";
+			break;
+		case OBSERVACAO:
+			orderBy += " movimentoFinanceiroCota.observacao ";
+			break;
+		case TIPO_LANCAMENTO:
+			orderBy += " movimentoFinanceiroCota.tipoMovimento.descricao ";
+			break;
+		case VALOR:
+			orderBy += " movimentoFinanceiroCota.valor ";
+			break;
+		default:
+			orderBy += " movimentoFinanceiroCota.tipoMovimento.descricao ";
+			break;
+		}
+		
+		orderBy += filtroDebitoCreditoDTO.getPaginacao().getOrdenacao();
+
+		return orderBy;
 	}
 }
