@@ -721,8 +721,6 @@ public class XLSExporter implements Exporter {
 		    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		}
 		
-		//style.setBorderLeft(border);
-		
 		style.setBorderTop(CellStyle.BORDER_THIN);
 	    style.setTopBorderColor(HSSFColor.BLUE.index);
 		style.setBorderBottom(CellStyle.BORDER_THIN);
