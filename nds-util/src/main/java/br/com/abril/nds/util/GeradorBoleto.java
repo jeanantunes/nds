@@ -579,7 +579,14 @@ public class GeradorBoleto {
         contaBancaria.setNumeroDaConta(new NumeroDaConta(getContaNumero(), "0"));
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(this.getContaCarteira());
-        carteira.setTipoCobranca(TipoDeCobranca.SEM_REGISTRO);
+        //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  
+        if (this.getContaCarteira()==1){
+            carteira.setTipoCobranca(TipoDeCobranca.SEM_REGISTRO);
+        }
+        if (this.getContaCarteira()==30){  
+        	carteira.setTipoCobranca(TipoDeCobranca.COM_REGISTRO);
+        }
+        
         contaBancaria.setCarteira(carteira);
         contaBancaria.setAgencia(new Agencia(getContaAgencia(), "1"));
         

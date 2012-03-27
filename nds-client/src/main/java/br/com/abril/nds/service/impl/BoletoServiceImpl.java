@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -574,7 +576,12 @@ public class BoletoServiceImpl implements BoletoService {
 			geradorBoleto.setEnderecoSacadoLogradouro("");
 			geradorBoleto.setEnderecoSacadoNumero("");
 		}
-                                            
+                           
+		
+		
+		
+		
+		//PROVISÓRIO: TRATAMENTOS DE TAMANHOS DE CAMPOS PARA TESTE DE BOLETOS
         String nomeBanco="BANCO_BRADESCO";
         String contaNumero=boleto.getBanco().getConta().toString();
         String contaNumeroDocumento="12345678910";
@@ -592,6 +599,52 @@ public class BoletoServiceImpl implements BoletoService {
                 contaNossoNumero=contaNossoNumero.substring(1, 9);         //HSBC = 9 DIGITOS 
             }    
         }
+        
+        if ("184".equals(boleto.getBanco().getNumeroBanco())){
+            nomeBanco="BANCO_ITAU";
+            if (contaNumero.length() > 5){
+                contaNumero=contaNumero.substring(1, 5);                   //HSBC = 5 DIGITOS 
+            }
+            if (contaNumeroDocumento.length() > 6){
+                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
+            }
+            if (contaNossoNumero.length() > 9){
+                contaNossoNumero=contaNossoNumero.substring(1, 9);         //HSBC = 9 DIGITOS 
+            }    
+        }
+        
+        if ("001".equals(boleto.getBanco().getNumeroBanco())){
+        	/*
+        	 10 posições(convênio com 7), 11 posições ou 17 posições(convênio com 6). 
+        	 */
+            nomeBanco="BANCO_DO_BRASIL";
+            if (contaNumero.length() > 6){
+                contaNumero=contaNumero.substring(1, 6);                   //HSBC = 6 DIGITOS 
+            }
+            if (contaNumeroDocumento.length() > 6){
+                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
+            }
+            if (contaNossoNumero.length() > 9){
+                contaNossoNumero=contaNossoNumero.substring(1, 9);         //HSBC = 9 DIGITOS 
+            }    
+        }
+        
+        if ("065".equals(boleto.getBanco().getNumeroBanco())){
+            nomeBanco="BANCO_BRADESCO";
+            if (contaNumero.length() > 6){
+                contaNumero=contaNumero.substring(1, 6);                   //HSBC = 6 DIGITOS 
+            }
+            if (contaNumeroDocumento.length() > 6){
+                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
+            }
+            if (contaNossoNumero.length() > 11){
+                contaNossoNumero=contaNossoNumero.substring(1, 11);         //HSBC = 11 DIGITOS 
+            }    
+        }
+        
+        
+        
+        
         
         geradorBoleto.setContaBanco(nomeBanco);                  
         geradorBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
@@ -662,11 +715,11 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public CobrancaVO obterCobranca(String nossoNumero) {
+	public CobrancaVO obterDadosCobranca(String nossoNumero) {
 		CobrancaVO cobranca=null;
 		Boleto boleto=this.obterBoletoPorNossoNumero(nossoNumero);
 		
-		if (boleto!=null){
+		if ((boleto!=null)&&(boleto.getDataPagamento()==null)){
 			cobranca = new CobrancaVO();
 			
 			cobranca.setNossoNumero(boleto.getNossoNumero());	
@@ -685,9 +738,23 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			cobranca.setDividaTotal(boleto.getDivida().getValor());
 			
-			cobranca.setDataPagamento((boleto.getDataPagamento()!=null?DateUtil.formatarDataPTBR(boleto.getDataPagamento()):""));//???
-			cobranca.setDesconto(BigDecimal.ZERO);//???
-			cobranca.setJuros(BigDecimal.ZERO);//???
+			cobranca.setDataPagamento(DateUtil.formatarDataPTBR(Calendar.getInstance().getTime()));
+			cobranca.setDesconto(BigDecimal.ZERO);
+				
+			
+			
+			
+			//PARAMETROS PARA CALCULO DE JUROS E MULTA
+			Distribuidor distribuidor = distribuidorService.obter();
+	        Date dataOperacao = distribuidor.getDataOperacao();
+	        
+	        //AQUI BUSCAR JUROS E MULTA
+			
+	        cobranca.setJuros(BigDecimal.ZERO);
+            cobranca.setMulta(BigDecimal.ZERO);
+            
+            
+            
 			
 			cobranca.setValorTotal(boleto.getDivida().getValor());
 		}
