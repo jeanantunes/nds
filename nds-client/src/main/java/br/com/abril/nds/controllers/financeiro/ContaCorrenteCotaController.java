@@ -22,6 +22,7 @@ import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -60,6 +61,8 @@ public class ContaCorrenteCotaController {
 	
 	public void buscarCota(Integer numeroCota){
 		
+		this.validarDadosEntradaPesquisa(numeroCota);
+		
 		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		if(cota != null){
 			result.use(Results.json()).from(cota.getPessoa(), "result").serialize();			 
@@ -97,9 +100,8 @@ public class ContaCorrenteCotaController {
 	
 	public void consultarContaCorrenteCota( FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,String sortname, String sortorder, int rp, int page) {
 			
-		if(filtroViewContaCorrenteCotaDTO.getNumeroCota() == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O Preenchimento do campo Cota é obrigatório.");
-		}
+				
+		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO.getNumeroCota());
 		
 		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname, page, rp);
 		
@@ -209,7 +211,7 @@ public class ContaCorrenteCotaController {
 		
 	}
 	
-	@Post
+	/*@Post
 	public void verificarContaCorrenteCotaExistente(String numeroCota) {
 		
 		List<String> msgs = new ArrayList<String>();
@@ -223,5 +225,22 @@ public class ContaCorrenteCotaController {
 			
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
 			
+	}*/
+	
+	private void validarDadosEntradaPesquisa(Integer numeroCota) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (numeroCota == null){
+			listaMensagemValidacao.add("O Preenchimento do campo Cota é obrigatório.");
+		}else{
+			if(!Util.isNumeric(numeroCota.toString())){
+				listaMensagemValidacao.add("A Cota permite apenas valores números.");
+			}
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()){
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
 	}
 }
