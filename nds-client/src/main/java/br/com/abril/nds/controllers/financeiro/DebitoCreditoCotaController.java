@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -19,6 +20,8 @@ import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -87,7 +90,15 @@ public class DebitoCreditoCotaController {
 	}
 	
 	@Post
-	public void pesquisarDebitoCredito(FiltroDebitoCreditoDTO filtroDebitoCredito, int page) {
+	public void pesquisarDebitoCredito(FiltroDebitoCreditoDTO filtroDebitoCredito, 
+									   String sortorder, String sortname, int page, int rp) {
+		
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		
+		ColunaOrdenacao colunaOrdenacao = Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname.trim());
+		
+		filtroDebitoCredito.setPaginacao(paginacao);
+		filtroDebitoCredito.setColunaOrdenacao(colunaOrdenacao);
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtroDebitoCredito);
 		

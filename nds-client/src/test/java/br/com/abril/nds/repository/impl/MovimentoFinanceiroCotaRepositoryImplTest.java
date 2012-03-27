@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -30,6 +32,7 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
@@ -116,4 +119,103 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
 	}
 	
+	@Test
+	public void obterMovimentosFinanceiroCotaSucesso() {
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+		
+		Assert.assertNotNull(listaMovimentoFinanceiroCota);
+		
+		Assert.assertFalse(listaMovimentoFinanceiroCota.isEmpty());
+		
+		int expectedListSize = 1;
+		int actualListSize = listaMovimentoFinanceiroCota.size();
+		
+		Assert.assertEquals(expectedListSize, actualListSize);
+	}
+
+	@Test
+	public void obterMovimentosFinanceiroCotaPaginadoSucesso() {
+
+		try {
+
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
+			
+			MovimentoFinanceiroCota movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository
+					.buscarTodos().get(0);
+
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = (TipoMovimentoFinanceiro) movimentoFinanceiroCota
+					.getTipoMovimento();
+
+			tipoMovimentoFinanceiro.setDescricao("nova descrição");
+
+			MovimentoFinanceiroCota novoMovimentoFinanceiroCota = Fixture
+					.movimentoFinanceiroCota(movimentoFinanceiroCota.getCota(),
+							tipoMovimentoFinanceiro,
+							movimentoFinanceiroCota.getUsuario(),
+							new BigDecimal("450"), null, new Date());
+
+			save(novoMovimentoFinanceiroCota);
+
+			tipoMovimentoFinanceiro.setDescricao("outra nova descrição");
+
+			novoMovimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+					movimentoFinanceiroCota.getCota(), tipoMovimentoFinanceiro,
+					movimentoFinanceiroCota.getUsuario(),
+					new BigDecimal("170"), null, new Date());
+
+			save(novoMovimentoFinanceiroCota);
+			
+			Integer quantidadeTotalRegistros = 
+					this.movimentoFinanceiroCotaRepository.obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);			
+
+			boolean condicaoRegistrosEncontrados = quantidadeTotalRegistros > 0;
+			
+			boolean condicaoQuantidadeRegistrosCorreta = quantidadeTotalRegistros == 3;
+
+			Assert.assertNotNull(quantidadeTotalRegistros);
+			
+			Assert.assertTrue(condicaoRegistrosEncontrados);
+			
+			Assert.assertTrue(condicaoQuantidadeRegistrosCorreta);
+			
+			List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+					this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+			
+			Assert.assertNotNull(listaMovimentoFinanceiroCota);
+			
+			Assert.assertFalse(listaMovimentoFinanceiroCota.isEmpty());
+			
+			int expectedListSize = 1; //Quantidade de registros retornados pela paginação.
+			int actualListSize = listaMovimentoFinanceiroCota.size();
+			
+			Assert.assertEquals(expectedListSize, actualListSize);
+			
+		} catch (Exception e) {
+
+			Assert.fail();
+		}
+	}
+	
+	private FiltroDebitoCreditoDTO getFiltroDebitoCredito() {
+
+		Calendar calendar = Calendar.getInstance();
+		
+		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
+		
+		filtroDebitoCreditoDTO.setColunaOrdenacao(ColunaOrdenacao.TIPO_LANCAMENTO);
+		
+		calendar.add(Calendar.DATE, -5);
+		filtroDebitoCreditoDTO.setDataVencimentoInicio(calendar.getTime());
+		
+		calendar.add(Calendar.DATE, 10);
+		filtroDebitoCreditoDTO.setDataVencimentoFim(calendar.getTime());
+		
+		filtroDebitoCreditoDTO.setPaginacao(new PaginacaoVO(1, 1, "asc"));
+
+		return filtroDebitoCreditoDTO;
+	}
 }

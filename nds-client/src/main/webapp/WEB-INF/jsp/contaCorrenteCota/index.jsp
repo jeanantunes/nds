@@ -1,6 +1,7 @@
 <head>
-<script language="javascript" type="text/javascript">
 
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+<script language="javascript" type="text/javascript">
 /**
  * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
  * COM OS PARÂMETROS DE PESQUISA
@@ -136,6 +137,8 @@ function getDataFromResult(data) {
  * QUANDO A PAGINA CARREGA.
  */
 $(function() {
+	
+	$("#cota").numeric();
 	
 	carregarItemContaCorrenteCotaGrid();
 	

@@ -32,7 +32,7 @@ public abstract class TemplateManager {
 	 */
 	public enum TemplateNames {
 
-		TESTE("template/templateTeste.vm","logo_sistema.png","logo_siste1.png");
+		TESTE("template/templateTeste.vm","template/logo_sistema.png","template/logo_siste1.png");
 		
 		private String nome;
 		private String[] anexos;
@@ -78,7 +78,7 @@ public abstract class TemplateManager {
 				
 				try{
 					
-					URL url  =Thread.currentThread().getContextClassLoader().getResource("template/"+nomeAnexo);
+					URL url  =Thread.currentThread().getContextClassLoader().getResource(nomeAnexo);
 					
 					file = new File (url.toURI());
 					
