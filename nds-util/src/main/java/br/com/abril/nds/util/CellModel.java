@@ -24,7 +24,15 @@ public class CellModel {
 	public CellModel(int idColumnValue, String... includeColumnValues ) {
 		
 		this.id = idColumnValue;
-		this.cell = new String[includeColumnValues.length];
+		
+		if (includeColumnValues != null){
+			for (int indice = 0 ; indice < includeColumnValues.length ; indice++){
+				if (includeColumnValues[indice] == null){
+					includeColumnValues[indice] = "";
+				}
+			}
+		}
+		
 		this.cell = includeColumnValues;
 		
 	}

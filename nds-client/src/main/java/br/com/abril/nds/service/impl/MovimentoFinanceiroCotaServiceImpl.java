@@ -77,6 +77,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#obterMovimentosFinanceiroCota()
 	 */
 	@Override
+	@Transactional
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 

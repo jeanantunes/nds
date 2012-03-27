@@ -17,7 +17,7 @@ public class FileExporterTest {
 	@Test
 	public void exportXLS() throws IOException {
 		
-		OutputStream outputStream = new FileOutputStream("test/teste" + new Date().getTime() + ".xls");
+		OutputStream outputStream = new FileOutputStream("target/teste" + new Date().getTime() + ".xls");
 		
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
 		
@@ -51,7 +51,7 @@ public class FileExporterTest {
 	@Test
 	public void exportSmallXLS() throws IOException {
 		
-		OutputStream outputStream = new FileOutputStream("test/testeSmall" + new Date().getTime() + ".xls");
+		OutputStream outputStream = new FileOutputStream("target/testeSmall" + new Date().getTime() + ".xls");
 		
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
 		

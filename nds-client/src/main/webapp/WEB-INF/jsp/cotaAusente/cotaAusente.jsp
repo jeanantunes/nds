@@ -1,5 +1,6 @@
 
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script language="javascript" type="text/javascript">
 
 
@@ -260,14 +261,20 @@ function mostra_grid(){
                 <td width="38">Cota:</td>
                 <td width="123">
 <!-- COTA -->                
-<input id="idCota" type="text" style="width:80px; float:left; margin-right:5px;"/>
+<input id="idCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+	onchange="cota.limparCamposPesquisa('#idNomeCota');"
+	onblur="cota.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
 
 <!-- PESQUISAR NOME COTA -->
-<span class="classPesquisar"><a href="javascript:;" onclick="cliqueBuscarNomeCota();">&nbsp;</a></span></td>
+<span class="classPesquisar"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#idCota', '#idNomeCota');">&nbsp;</a></span></td>
                 <td width="40">Nome:</td>
                 <td width="296">
 <!-- NOME -->            
-<input id="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;"/></td>
+<input id="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
+	onblur="cota.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
+	/>
+				</td>
                 <td width="27">Box:</td>
                 <td width="111">
 <!-- BOX -->

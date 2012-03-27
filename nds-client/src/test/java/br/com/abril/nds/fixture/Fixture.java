@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Feriado;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -61,7 +62,7 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -208,6 +209,10 @@ public class Fixture {
 		return criarBox("300", "Box 300", TipoBox.REPARTE);
 	}
 	
+	public static Banco hsbc(Carteira carteira) {
+		return Fixture.banco(10L, true, carteira, "1010",
+				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399");
+	}
 	
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -397,12 +402,11 @@ public class Fixture {
 	}
 
 	public static Distribuidor distribuidor(PessoaJuridica juridica,
-			Date dataOperacao) {
+			Date dataOperacao, PoliticaCobranca politicaCobranca) {
 		Distribuidor distribuidor = new Distribuidor();
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
-		distribuidor.setPoliticaCobranca(criarPoliticaCobranca(distribuidor,
-				TipoCobranca.BOLETO, new BigDecimal(200), true, true, true, 1));
+		distribuidor.setPoliticaCobranca(politicaCobranca);
 		return distribuidor;
 	}
 
@@ -894,18 +898,17 @@ public class Fixture {
 	}
 	
 	public static PoliticaCobranca criarPoliticaCobranca(
-			Distribuidor distribuidor, TipoCobranca tipo, BigDecimal valorMinimo, 
+			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
 			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
-		politicaCobranca.setTipoCobranca(tipo);
-		politicaCobranca.setValorMinino(valorMinimo);
 		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
 		politicaCobranca.setAceitaBaixaPagamentoMenor(aceitaBaixaPagamentoMenor);
 		politicaCobranca.setAceitaBaixaPagamentoVencido(aceitaBaixaPagamentoVencido);
 		politicaCobranca.setDistribuidor(distribuidor);
 		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
+		politicaCobranca.setFormaCobranca(formaCobranca);
 		return politicaCobranca;
 	}
 	
@@ -997,11 +1000,11 @@ public class Fixture {
 
 
 
-	public static HistoricoInadimplencia criarHistoricoInadimplencia(
-			Cobranca cobranca, Date dataInclusao, Usuario usuario,
+	public static HistoricoAcumuloDivida criarHistoricoAcumuloDivida(
+			Divida divida, Date dataInclusao, Usuario usuario,
 			StatusInadimplencia status) {
-		HistoricoInadimplencia historicoInadimplencia = new HistoricoInadimplencia();
-		historicoInadimplencia.setCobranca(cobranca);
+		HistoricoAcumuloDivida historicoInadimplencia = new HistoricoAcumuloDivida();
+		historicoInadimplencia.setDivida(divida);
 		historicoInadimplencia.setDataInclusao(dataInclusao);
 		historicoInadimplencia.setResponsavel(usuario);
 		historicoInadimplencia.setStatus(status);
@@ -1031,6 +1034,19 @@ public class Fixture {
 		divida.setStatus(status);
 		divida.setValor(valor);
 		return divida;
+	}
+	
+	public static FormaCobranca formaCobrancaBoleto(boolean enviaEmail,
+			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco) {
+		FormaCobranca formaBoleto = new FormaCobranca();
+		formaBoleto.setAtiva(true);
+		formaBoleto.setEnviaEmail(enviaEmail);
+		formaBoleto.setPrincipal(true);
+		formaBoleto.setTipoCobranca(TipoCobranca.BOLETO);
+		formaBoleto.setValorMinimoEmissao(valorMinimo);
+		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
+		formaBoleto.setBanco(banco);
+		return formaBoleto;
 	}
 	
 }
