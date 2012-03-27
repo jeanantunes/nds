@@ -26,13 +26,20 @@ public class EstoqueProduto {
 	@GeneratedValue(generator = "ESTOQUE_PROD_SEQ")
 	@Column(name = "ID")
 	private Long id;
+
 	@OneToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
+	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
+	
+	@Column(name = "QTDE_SUPLEMENTAR")
+	private BigDecimal qtdeSuplementar;
+	
 	@OneToMany(mappedBy = "estoqueProduto")
-	List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
+	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
+	
 	@Version
 	@Column(name = "VERSAO")
 	private Long versao = 0L;
@@ -59,6 +66,14 @@ public class EstoqueProduto {
 	
 	public void setQtde(BigDecimal qtde) {
 		this.qtde = qtde;
+	}
+	
+	public BigDecimal getQtdeSuplementar() {
+		return qtdeSuplementar;
+	}
+	
+	public void setQtdeSuplementar(BigDecimal qtdeSuplementar) {
+		this.qtdeSuplementar = qtdeSuplementar;
 	}
 	
 	public List<MovimentoEstoque> getMovimentos() {
