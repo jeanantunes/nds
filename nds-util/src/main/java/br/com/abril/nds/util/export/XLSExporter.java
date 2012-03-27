@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -174,7 +175,8 @@ public class XLSExporter implements Exporter {
 		
 		for (ExportFilter exportFilter : filters) {
 			
-			String filterString = exportFilter.getLabel() + ": " + exportFilter.getValue();
+			String filterString = 
+				exportFilter.getLabel() + ": " + StringUtils.defaultString(exportFilter.getValue());
 			
 			RichTextString richTextFiltro =
 				this.getRichTextString(
@@ -404,10 +406,15 @@ public class XLSExporter implements Exporter {
 		
 		textBoxDadosDistribuidor.setLineStyle(HSSFTextbox.LINESTYLE_NONE);
 	    
-	    String nomeDistribuidor = ndsFileHeader.getNomeDistribuidor() == null ? "" : ndsFileHeader.getNomeDistribuidor();
-	    String cnpjDistribuidor = ndsFileHeader.getCnpjDistribuidor() == null ? ""  : ndsFileHeader.getCnpjDistribuidor();
+	    String nomeDistribuidor = StringUtils.defaultString(ndsFileHeader.getNomeDistribuidor());
+	    String cnpjDistribuidor = StringUtils.defaultString(ndsFileHeader.getCnpjDistribuidor());
 	    
-	    String dadosDistribuidor = nomeDistribuidor + "\nCNPJ: " + cnpjDistribuidor;
+	    String dadosDistribuidor = nomeDistribuidor;
+	    
+	    if (!cnpjDistribuidor.isEmpty()) {
+	    	
+	    	dadosDistribuidor += "\nCNPJ: " + cnpjDistribuidor;
+	    }
 	    
 	    HSSFRichTextString richTextDadosDistribuidor = new HSSFRichTextString(dadosDistribuidor);
 
@@ -449,13 +456,25 @@ public class XLSExporter implements Exporter {
 	    
 	    String nomeUsuario = ndsFileHeader.getNomeUsuario() == null ? ""  : ndsFileHeader.getNomeUsuario();
 	    
-	    String outrosDados = labelDia + dataAtual + "\n" + nomeUsuario;
+	    String outrosDados;
+	    
+	    if (!dataAtual.isEmpty()) {
+	    	
+	    	outrosDados = labelDia + dataAtual + "\n" + nomeUsuario;
+	    	
+	    } else {
+	    	
+	    	outrosDados = "\n" + nomeUsuario;
+	    }
 	    
 	    HSSFRichTextString richTextDadosDistribuidor = new HSSFRichTextString(outrosDados);
 
 	    Font font = this.getFont(sheet, "Calibri", (short) 11, true, false);
 	    
-	    richTextDadosDistribuidor.applyFont(0, labelDia.length(), font);
+	    if (!dataAtual.isEmpty()) {
+	    	
+	    	richTextDadosDistribuidor.applyFont(0, labelDia.length(), font);
+	    }
 	    
 	    textBoxOutrosDados.setString(richTextDadosDistribuidor);
 	}

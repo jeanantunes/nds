@@ -200,7 +200,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		String hql = this.gerarQueryDiferencas(filtro, false);
 		
-		if (filtro.getOrdenacaoColuna() != null) {
+		if (filtro != null && filtro.getOrdenacaoColuna() != null) {
 			
 			switch (filtro.getOrdenacaoColuna()) {
 			
@@ -257,7 +257,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		aplicarParametrosParaPesquisaDiferencas(filtro, query);
 		
-		if (filtro.getPaginacao() != null) {
+		if (filtro != null && filtro.getPaginacao() != null) {
 			
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -328,40 +328,43 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal ";
 		
-		if (filtro.getIdFornecedor() != null) {
-			 
-			 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
-		}
-			 
-		hql += " where diferenca.movimentoEstoque is not null ";
+		if (filtro != null) {
 		
-		if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
-			hql += " and diferenca.produtoEdicao.id in " +
-				   " 	(select distinct lancamento.produtoEdicao.id from Lancamento lancamento " +
-				   " 		where lancamento.dataLancamentoDistribuidor >= :dataLimiteLancamentoDistribuidor) ";
-		}
+			if (filtro.getIdFornecedor() != null) {
+				 
+				 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
+			}
+				 
+			hql += " where diferenca.movimentoEstoque is not null ";
 			
-		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
-		}
-		
-		if (filtro.getNumeroEdicao() != null) {
-			hql += " and diferenca.produtoEdicao.numeroEdicao = :numeroEdicao ";
-		}
-		
-		if (filtro.getIdFornecedor() != null) {
-			hql += " and fornecedores.id = :idFornecedor ";
-		}
-		
-		if (filtro.getPeriodoVO() != null
-				&& filtro.getPeriodoVO().getDataInicial() != null
-				&& filtro.getPeriodoVO().getDataFinal() != null) {
+			if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
+				hql += " and diferenca.produtoEdicao.id in " +
+					   " 	(select distinct lancamento.produtoEdicao.id from Lancamento lancamento " +
+					   " 		where lancamento.dataLancamentoDistribuidor >= :dataLimiteLancamentoDistribuidor) ";
+			}
+				
+			if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
+				hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
+			}
 			
-			hql += " and diferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
-		}
-		
-		if (filtro.getTipoDiferenca() != null) {
-			hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+			if (filtro.getNumeroEdicao() != null) {
+				hql += " and diferenca.produtoEdicao.numeroEdicao = :numeroEdicao ";
+			}
+			
+			if (filtro.getIdFornecedor() != null) {
+				hql += " and fornecedores.id = :idFornecedor ";
+			}
+			
+			if (filtro.getPeriodoVO() != null
+					&& filtro.getPeriodoVO().getDataInicial() != null
+					&& filtro.getPeriodoVO().getDataFinal() != null) {
+				
+				hql += " and diferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
+			}
+			
+			if (filtro.getTipoDiferenca() != null) {
+				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+			}
 		}
 		
 		return hql;
@@ -375,6 +378,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	 */
 	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
 													 	 Query query) {
+		
+		if (filtro == null) {
+			
+			return;
+		}
 		
 		if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
 			query.setParameter("dataLimiteLancamentoDistribuidor", filtro.getDataLimiteLancamentoDistribuidor());

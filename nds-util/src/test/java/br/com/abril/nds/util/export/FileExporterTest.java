@@ -36,7 +36,7 @@ public class FileExporterTest {
 			
 			listaExportTestVOs.add(
 				new ExportTestVO("" + i, "" + i, "" + i, "" + i, "" + i,
-						"" + i, "" + i, "" + i, "" + i, "" + i));
+					"" + i, "" + i, "" + i, "" + i, "" + i));
 		}
 		
 		ExportFooterTestVO exportFooterTestVO = 
@@ -129,7 +129,7 @@ public class FileExporterTest {
 			
 			listaExportTestVOs.add(
 				new ExportTestVO("" + i, "" + i, "" + i, "" + i, "" + i,
-						"" + i, "" + i, "" + i, "" + i, "" + i));
+					"" + i, "" + i, "" + i, "" + i, "" + i));
 		}
 		
 		ExportFooterTestVO exportFooterTestVO = 
