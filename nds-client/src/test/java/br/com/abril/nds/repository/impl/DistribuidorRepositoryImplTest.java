@@ -53,7 +53,9 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		PessoaJuridica pj = Fixture.pessoaJuridica("Distrib", "01.001.001/001-00",
 				"000.000.000.00", "distrib@mail.com");
 		
-		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		FormaCobranca formaBoleto =
+			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
+										BigDecimal.ONE, BigDecimal.ONE);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =

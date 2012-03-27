@@ -158,7 +158,7 @@ public class DateUtil {
 			
 			if (dataInicial.compareTo(dataFinal) != 1) {
 			
-				long diferencaMilisegundos = dataInicial.getTime() - dataFinal.getTime();
+				long diferencaMilisegundos = dataFinal.getTime() - dataInicial.getTime();
 				
 				quantidadeDias = diferencaMilisegundos / (24 * 60 * 60 * 1000);
 			}

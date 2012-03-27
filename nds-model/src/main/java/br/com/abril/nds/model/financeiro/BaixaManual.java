@@ -11,11 +11,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @DiscriminatorValue(value = "MANUAL")
 public class BaixaManual extends BaixaCobranca {
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "COBRANCA_ID")
 	private Cobranca cobranca;
 
