@@ -1,11 +1,13 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -18,6 +20,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -100,13 +103,67 @@ public class DebitoCreditoCotaController {
 		filtroDebitoCredito.setPaginacao(paginacao);
 		filtroDebitoCredito.setColunaOrdenacao(colunaOrdenacao);
 		
-		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtroDebitoCredito);
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtroDebitoCredito);
+		
+		Integer quantidadeRegistros =  
+				this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
 		
 		TableModel<CellModel> tableModel = getTableModel(listaMovimentoFinanceiroCota);
 		
 		tableModel.setPage(page);
-		
+		tableModel.setTotal(quantidadeRegistros);
+
 		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	@Post
+	public void removerMovimentoFinanceiroCota(Long idMovimento) {
+
+		if (idMovimento == null) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "ID do movimento inválido.");
+		}
+
+		this.movimentoFinanceiroCotaService.removerMovimentoFinanceiroCota(idMovimento);
+
+		this.result.nothing();
+	}
+
+	@Post
+	public void cadastrarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
+		
+		this.result.nothing();
+	}
+	
+	@Post
+	public void prepararMovimentoFinanceiroCotaParaEdicao(Long idMovimento) {
+
+		if (idMovimento == null) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "ID do movimento inválido.");
+		}
+
+		MovimentoFinanceiroCota movimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
+
+		DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
+
+		Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
+
+		String nomeCota = pessoa instanceof PessoaJuridica ? 
+						  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
+
+		debitoCredito.setDataLancamento(formatField(movimentoFinanceiroCota.getDataCriacao()));
+		debitoCredito.setTipoMovimentoFinanceiro(movimentoFinanceiroCota.getTipoMovimento());
+		debitoCredito.setDataVencimento(formatField(movimentoFinanceiroCota.getData()));
+		debitoCredito.setNumeroCota(movimentoFinanceiroCota.getCota().getNumeroCota());
+		debitoCredito.setObservacao(movimentoFinanceiroCota.getObservacao());
+		debitoCredito.setValor(movimentoFinanceiroCota.getValor());
+		debitoCredito.setId(movimentoFinanceiroCota.getId());
+		debitoCredito.setNomeCota(nomeCota);
+
+		this.result.use(Results.json()).from(debitoCredito, "result").recursive().serialize();
 	}
 
 	private TableModel<CellModel> getTableModel(List<MovimentoFinanceiroCota> listaDebitoCredito) {
@@ -114,13 +171,19 @@ public class DebitoCreditoCotaController {
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
 		
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaDebitoCredito) {
-			
-			String dataLancamento = formatField(movimentoFinanceiroCota.getDataCriacao());
-			String dataVencimento = formatField(movimentoFinanceiroCota.getData());
-			String numeroCota = formatField(movimentoFinanceiroCota.getCota().getNumeroCota());
-			String tipoMovimento = formatField(movimentoFinanceiroCota.getTipoMovimento().getDescricao());
-			String valor = formatField(movimentoFinanceiroCota.getValor());
-			String observacao = formatField(movimentoFinanceiroCota.getObservacao());
+
+			String dataLancamento = 
+					formatField(movimentoFinanceiroCota.getDataCriacao());
+			String dataVencimento = 
+					formatField(movimentoFinanceiroCota.getData());
+			String numeroCota = 
+					formatField(movimentoFinanceiroCota.getCota().getNumeroCota());
+			String tipoMovimento = 
+					formatField(movimentoFinanceiroCota.getTipoMovimento().getDescricao());
+			String valor = 
+					formatField(movimentoFinanceiroCota.getValor());
+			String observacao = 
+					formatField(movimentoFinanceiroCota.getObservacao());
 			
 			Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 			
@@ -129,13 +192,13 @@ public class DebitoCreditoCotaController {
 
 			CellModel cellModel = new CellModel(
 				movimentoFinanceiroCota.getId().intValue(),
-				formatField(dataLancamento),
-				formatField(dataVencimento),
-				formatField(numeroCota),
-				formatField(nomeCota),
-				formatField(tipoMovimento),
-				formatField(valor),
-				formatField(observacao)
+				dataLancamento,
+				dataVencimento,
+				numeroCota,
+				nomeCota,
+				tipoMovimento,
+				valor,
+				observacao
 			);
 
 			listaCellModel.add(cellModel);
@@ -151,6 +214,11 @@ public class DebitoCreditoCotaController {
 	}
 
 	private String formatField(Object field) {
+		
+		if (field instanceof Date) {
+			
+			return field == null ? "" : DateUtil.formatarDataPTBR((Date) field);
+		}
 		
 		return field == null ? "" : String.valueOf(field);
 	}

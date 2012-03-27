@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
@@ -20,4 +21,12 @@ public interface MovimentoFinanceiroCotaService {
 	
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+	
+	Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+	
+	void removerMovimentoFinanceiroCota(Long idMovimento);
+	
+	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaPorId(Long idMovimento);
+	
+	void cadastrarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito);
 }
