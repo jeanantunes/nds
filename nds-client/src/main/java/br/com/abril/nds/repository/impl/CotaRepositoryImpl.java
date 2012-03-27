@@ -26,7 +26,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
-import br.com.abril.nds.model.financeiro.HistoricoInadimplencia;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.CotaRepository;
 
@@ -128,7 +128,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		criteria.add(Restrictions.eq("cota.vip", false));
 		criteria.add(Restrictions.eq("cota.situacaoCadastro", SituacaoCadastro.ATIVO));
 		
-		DetachedCriteria subQueryInadimplencia = DetachedCriteria.forClass(HistoricoInadimplencia.class, "historicoInadimplencia");
+		DetachedCriteria subQueryInadimplencia = DetachedCriteria.forClass(HistoricoAcumuloDivida.class, "historicoInadimplencia");
 		subQueryInadimplencia.createAlias("historicoInadimplencia.cobranca","cobranca");
 		subQueryInadimplencia.createAlias("cobranca.cota","cotaH");
 		subQueryInadimplencia.add(Restrictions.eqProperty("cotaH.id", "cota.id"));  

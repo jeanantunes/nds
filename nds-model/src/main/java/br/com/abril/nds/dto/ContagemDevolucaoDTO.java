@@ -13,6 +13,7 @@ public class ContagemDevolucaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Long idProdutoEdicao;
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
@@ -21,7 +22,7 @@ public class ContagemDevolucaoDTO implements Serializable {
 	private BigDecimal valorTotal;
 	private BigDecimal qtdNota;
 	private BigDecimal diferenca;
-	private Date dataRecolhimentoDistribuidor;
+	private Date dataMovimento;
 	private Date dataConfEncalheParcial;
 	private Date dataAprovacao;
 	private StatusAprovacao statusAprovacao;
@@ -36,7 +37,7 @@ public class ContagemDevolucaoDTO implements Serializable {
 			BigDecimal precoVenda, 
 			BigDecimal qtdDevolucao,
 			BigDecimal qtdNota,
-			Date dataRecolhimentoDistribuidor) {
+			Date dataMovimento) {
 		
 		super();
 		
@@ -46,16 +47,18 @@ public class ContagemDevolucaoDTO implements Serializable {
 		this.precoVenda = precoVenda;
 		this.qtdDevolucao = qtdDevolucao;
 		this.qtdNota = qtdNota;
-		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		this.dataMovimento = dataMovimento;
 	}
-
+	
+	
 	public ContagemDevolucaoDTO (
 			
 			String codigoProduto, 
 			String nomeProduto, 
 			Long numeroEdicao,
-			BigDecimal precoVenda, 
-			Date dataRecolhimentoDistribuidor) {
+			BigDecimal precoVenda,
+			BigDecimal qtdDevolucao,
+			Date dataMovimento) {
 		
 		super();
 		
@@ -63,18 +66,38 @@ public class ContagemDevolucaoDTO implements Serializable {
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
 		this.precoVenda = precoVenda;
-		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		this.qtdDevolucao = qtdDevolucao;
+		this.dataMovimento = dataMovimento;
+	}
+
+	
+	public ContagemDevolucaoDTO (
+			Long idProdutoEdicao, 
+			Date dataMovimento,
+			BigDecimal qtdDevolucao,
+			BigDecimal qtdNota ) {
+		
+		super();
+		
+		this.idProdutoEdicao = idProdutoEdicao;
+		this.dataMovimento	 = dataMovimento;
+		this.qtdDevolucao = qtdDevolucao;
+		this.qtdNota = qtdNota;
 	}
 	
-
+	
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
 	public BigDecimal getDiferenca() {
 		return diferenca;
 	}
-
 	public void setDiferenca(BigDecimal diferenca) {
 		this.diferenca = diferenca;
 	}
-
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -117,11 +140,11 @@ public class ContagemDevolucaoDTO implements Serializable {
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	public Date getDataRecolhimentoDistribuidor() {
-		return dataRecolhimentoDistribuidor;
+	public Date getDataMovimento() {
+		return dataMovimento;
 	}
-	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
-		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
 	}
 	public Date getDataConfEncalheParcial() {
 		return dataConfEncalheParcial;

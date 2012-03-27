@@ -27,8 +27,8 @@ public class ConferenciaEncalheParcial {
 	private Long id;
 	
 	@Temporal(value=TemporalType.DATE)
-	@Column(name = "DATA_REC_DISTRIB", nullable = false)
-	private Date dataRecolhimentoDistribuidor;
+	@Column(name = "DATA_MOVIMENTO", nullable = false)
+	private Date dataMovimento;
 	
 	@Column(name = "DATA_CONF_ENC_PARCIAL", nullable = false)
 	private Date dataConfEncalheParcial;
@@ -38,6 +38,12 @@ public class ConferenciaEncalheParcial {
 	
 	@Column(name="STATUS_APROVACAO", nullable=false)
 	private StatusAprovacao statusAprovacao;
+	
+	@Column(name = "DIFERENCA_APURADA")
+	private Boolean diferencaApurada = false;
+
+	@Column(name = "NF_PARCIAL_GERADA")
+	private Boolean nfParcialGerada = false;
 	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
@@ -104,13 +110,28 @@ public class ConferenciaEncalheParcial {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public Date getDataRecolhimentoDistribuidor() {
-		return dataRecolhimentoDistribuidor;
+	public Date getDataMovimento() {
+		return dataMovimento;
 	}
 
-	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
-		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
 	}
-	
+
+	public Boolean getDiferencaApurada() {
+		return diferencaApurada;
+	}
+
+	public void setDiferencaApurada(Boolean diferencaApurada) {
+		this.diferencaApurada = diferencaApurada;
+	}
+
+	public Boolean getNfParcialGerada() {
+		return nfParcialGerada;
+	}
+
+	public void setNfParcialGerada(Boolean nfParcialGerada) {
+		this.nfParcialGerada = nfParcialGerada;
+	}
 	
 }

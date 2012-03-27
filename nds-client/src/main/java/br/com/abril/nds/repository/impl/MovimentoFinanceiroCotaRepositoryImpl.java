@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -20,20 +21,25 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota, Date dataAtual){
 		
-		StringBuilder hql = new StringBuilder("from MovimentoFinanceiroCota mfc, Distribuidor d ");
-		hql.append(" where mfc.data = d.dataOperacao ")
+		StringBuilder hql = new StringBuilder("select mfc ");
+		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
+		   .append(" where mfc.data = d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
-			hql.append(" and mfc.cota = :idCota ");
+			hql.append(" and mfc.cota.id = :idCota ");
 		}
 		
-		hql.append(" order by mfc.cota ");
+		hql.append(" and mfc.cota.id not in ")
+		   .append(" (select c.id from ConsolidadoFinanceiroCota c where c.dataConsolidado = :dataAtual) ");
+		
+		hql.append(" order by mfc.cota.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		query.setParameter("dataAtual", dataAtual);
 		
 		if (idCota != null){
 			query.setParameter("idCota", idCota);

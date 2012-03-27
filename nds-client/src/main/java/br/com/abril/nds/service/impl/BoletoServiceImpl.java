@@ -41,6 +41,7 @@ import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -77,6 +78,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -213,8 +217,9 @@ public class BoletoServiceImpl implements BoletoService {
 				return;
 			}
 			
-			//TODO: verificar data util
-			if (boleto.getDataVencimento().compareTo(pagamento.getDataPagamento()) < 0) {
+			Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
+			
+			if (dataVencimentoUtil.compareTo(pagamento.getDataPagamento()) < 0) {
 				
 				//Não baixa o boleto o gera baixa com status de não pago por divergência de data
 				//e gera movimento de crédito
@@ -605,7 +610,8 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional(readOnly=true)
 	public CobrancaVO obterCobranca(String nossoNumero) {
 		CobrancaVO cobranca=null;
-		Boleto boleto = this.obterBoletoPorNossoNumero(nossoNumero);
+		Boleto boleto=this.obterBoletoPorNossoNumero(nossoNumero);
+		
 		if (boleto!=null){
 			cobranca = new CobrancaVO();
 			

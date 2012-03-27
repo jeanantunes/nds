@@ -19,23 +19,27 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_INADIMPLENCIA")
-@SequenceGenerator(name = "HIST_INADIMPLENCIA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoInadimplencia {
+@Table(name = "HISTORICO_ACUMULO_DIVIDA")
+@SequenceGenerator(name = "HIST_ACUMULO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
+public class HistoricoAcumuloDivida {
 	
 	@Id
-	@GeneratedValue(generator = "HIST_INADIMPLENCIA_SEQ")
+	@GeneratedValue(generator = "HIST_ACUMULO_DIVIDA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_INCLUSAO", nullable = false)
 	private Date dataInclusao;
+	
 	@OneToOne
-	@JoinColumn(name = "COBRANCA_ID", nullable = false)
-	private Cobranca cobranca;
+	@JoinColumn(name = "DIVIDA_ID", nullable = false)
+	private Divida divida;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)
 	private StatusInadimplencia status;
+	
 	@ManyToOne
 	@JoinColumn(name = "USUARIO_ID", nullable = false)
 	private Usuario responsavel;
@@ -56,12 +60,12 @@ public class HistoricoInadimplencia {
 		this.dataInclusao = dataInclusao;
 	}
 	
-	public Cobranca getCobranca() {
-		return cobranca;
+	public Divida getDivida() {
+		return divida;
 	}
 	
-	public void setCobranca(Cobranca cobranca) {
-		this.cobranca = cobranca;
+	public void setDivida(Divida divida) {
+		this.divida = divida;
 	}
 	
 	public StatusInadimplencia getStatus() {

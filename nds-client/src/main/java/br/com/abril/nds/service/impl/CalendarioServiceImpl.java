@@ -29,12 +29,24 @@ public class CalendarioServiceImpl implements CalendarioService {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
 		
-		for (int i = 0; i < numDias; i++) {
+		if (numDias == 0) {
 			
-			cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
-			
+			// Verifica se o dia informado é util.
+			// Caso não seja, incrementa até encontrar o primeiro dia útil.
 			while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
 				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
+			}
+			
+		} else {
+			
+			// Adiciona o número de dias úteis informado.
+			for (int i = 0; i < numDias; i++) {
+				
+				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
+				
+				while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
+					cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
+				}
 			}
 		}
 		

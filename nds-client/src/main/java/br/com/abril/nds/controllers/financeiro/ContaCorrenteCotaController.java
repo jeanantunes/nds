@@ -10,12 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
+import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -58,16 +65,40 @@ public class ContaCorrenteCotaController {
 			result.use(Results.json()).from(cota.getPessoa(), "result").serialize();			 
 		}else{
 			
-			throw new ValidacaoException(TipoMensagem.ERROR,"Cota não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não encontrado!");
 			
 		}
+	}
+	
+	@Post
+	public void buscarPorNomeCota(String nomeCota){
+			
+		List<Cota> listaDeCotas = cotaService.obterCotasPorNomePessoa(nomeCota);
+		
+		if (listaDeCotas != null && !listaDeCotas.isEmpty()){
+			List<ItemAutoComplete> listaDeNomesCota = new ArrayList<ItemAutoComplete>();
+			for (Cota cota : listaDeCotas){
+				PessoaFisica pessoa = (PessoaFisica) cota.getPessoa();
+							
+				listaDeNomesCota.add(new ItemAutoComplete(pessoa.getNome(),	null, cota.getNumeroCota()));
+			}
+			
+			result.use(Results.json()).from(listaDeNomesCota, "result").include("value", "chave").serialize();
+		} else {
+		
+			result.use(Results.json()).from("", "result").serialize();
+		}
+		
+		result.forwardTo(ContaCorrenteCotaController.class).index();
+		
+		
 	}
 	
 	
 	public void consultarContaCorrenteCota( FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,String sortname, String sortorder, int rp, int page) {
 			
 		if(filtroViewContaCorrenteCotaDTO.getNumeroCota() == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "O preenchimento do campo Cota é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O Preenchimento do campo Cota é obrigatório.");
 		}
 		
 		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname, page, rp);
