@@ -34,7 +34,7 @@ public class EstoqueProduto {
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
 	
-	@Column(name = "QTDE_SUPLEMENTAR", nullable = false)
+	@Column(name = "QTDE_SUPLEMENTAR")
 	private BigDecimal qtdeSuplementar;
 	
 	@OneToMany(mappedBy = "estoqueProduto")
