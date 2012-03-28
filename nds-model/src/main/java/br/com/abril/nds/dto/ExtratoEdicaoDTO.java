@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class ExtratoEdicaoDTO implements Serializable {
 	
 	/**
@@ -12,10 +17,20 @@ public class ExtratoEdicaoDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long idMovimento;
+	
+	@Export(label = "Data", alignment = Alignment.CENTER)
 	private Date dataMovimento;
+	
+	@Export(label = "Movimento")
 	private String descMovimento;
+	
+	@Export(label = "Entrada", alignment = Alignment.CENTER)
 	private BigDecimal qtdEdicaoEntrada ;
+	
+	@Export(label = "Saída", alignment = Alignment.CENTER)
 	private BigDecimal qtdEdicaoSaida ;
+	
+	@Export(label = "Parcial", alignment = Alignment.CENTER)
 	private BigDecimal qtdParcial;
 	
 	public ExtratoEdicaoDTO(Long idMovimento, Date dataMovimento,
