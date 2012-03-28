@@ -199,6 +199,11 @@ public class DataLoader {
 	private static Divida divida4;
 	private static Divida divida5;
 	private static Divida divida6;
+	private static Divida divida7;
+	private static Divida divida8;
+	private static Divida divida9;
+	private static Divida divida10;
+	private static Divida divida11;
 	
 	private static Boleto boleto1;
 	private static Boleto boleto2;
@@ -361,12 +366,12 @@ public class DataLoader {
 		
 		ConsolidadoFinanceiroCota consolidado2 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota2), cotaManoel,
+						Arrays.asList(movimentoFinanceiroCota2), cotaJose,
 						new Date(), new BigDecimal(200));
 		
 		ConsolidadoFinanceiroCota consolidado3 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota3), cotaManoel,
+						Arrays.asList(movimentoFinanceiroCota3), cotaMaria,
 						new Date(), new BigDecimal(200));
 		
 		ConsolidadoFinanceiroCota consolidado4 = Fixture
@@ -376,36 +381,79 @@ public class DataLoader {
 		
 		ConsolidadoFinanceiroCota consolidado5 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota5), cotaManoel,
+						Arrays.asList(movimentoFinanceiroCota5), cotaJose,
 						new Date(), new BigDecimal(200));
 		
 		ConsolidadoFinanceiroCota consolidado6 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota6), cotaManoel,
+						Arrays.asList(movimentoFinanceiroCota6), cotaMaria,
+						new Date(), new BigDecimal(200));
+		
+		ConsolidadoFinanceiroCota consolidado7 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaManoel,
+						new Date(), new BigDecimal(200));
+		
+		ConsolidadoFinanceiroCota consolidado8 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaJose,
+						new Date(), new BigDecimal(200));
+		
+		ConsolidadoFinanceiroCota consolidado9 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaMaria,
+						new Date(), new BigDecimal(200));
+		
+		ConsolidadoFinanceiroCota consolidado10 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaManoel,
+						new Date(), new BigDecimal(200));
+		
+		ConsolidadoFinanceiroCota consolidado11 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaJose,
 						new Date(), new BigDecimal(200));
 		
 		save(session, consolidado1, consolidado2, consolidado3,
-					  consolidado4, consolidado5, consolidado6);
+					  consolidado4, consolidado5, consolidado6,
+					  consolidado7, consolidado8, consolidado9,
+					  consolidado10, consolidado11);
 		
 		divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		
-		divida2 = Fixture.divida(consolidado2, cotaManoel, new Date(),
+		divida2 = Fixture.divida(consolidado2, cotaJose, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		
-		divida3 = Fixture.divida(consolidado3, cotaManoel, new Date(),
+		divida3 = Fixture.divida(consolidado3, cotaMaria, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		
 		divida4 = Fixture.divida(consolidado4, cotaManoel, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		
-		divida5 = Fixture.divida(consolidado5, cotaManoel, new Date(),
+		divida5 = Fixture.divida(consolidado5, cotaJose, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		
-		divida6 = Fixture.divida(consolidado6, cotaManoel, new Date(),
+		divida6 = Fixture.divida(consolidado6, cotaMaria, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		
-		save(session, divida1, divida2, divida3, divida4, divida5, divida6);
+		divida7 = Fixture.divida(consolidado7, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		
+		divida8 = Fixture.divida(consolidado8, cotaJose, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		
+		divida9 = Fixture.divida(consolidado9, cotaMaria, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		
+		divida10 = Fixture.divida(consolidado10, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		
+		divida11 = Fixture.divida(consolidado11, cotaJose, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		
+		save(session, divida1, divida2, divida3, divida4, divida5, divida6,
+					  divida7, divida8, divida9, divida10, divida11);
 	}
 
 	private static void criarTiposFornecedores(Session session) {
@@ -1392,85 +1440,67 @@ public class DataLoader {
 	//FINANCEIRO - CONSULTA BOLETOS
 	private static void criarBoletos(Session session) {
 		
-		Boleto boleto1 = Fixture.boleto("1309309032012440",
-		                new Date(), 
-		                DateUtil.parseDataPTBR("09/03/2012"), 
-		                null, 
-		                BigDecimal.ZERO, 
-		                new BigDecimal(200), 
-		                "TIPO_BAIXA",
-		                "ACAO", 
-		                StatusCobranca.NAO_PAGO,
-		                cotaManoel,
-		                 bancoHSBC,
-		                 divida1);
+		//Boletos já pagos
+		Boleto boleto1 = Fixture.boleto("1309309032012440", new Date(),  new Date(),
+										null, BigDecimal.ZERO, new BigDecimal(200),
+										"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+										cotaManoel, bancoHSBC, divida1);
 		
-		Boleto boleto2 = Fixture.boleto("1309309032012442",
-		                new Date(), 
-		                new Date(), 
-		                null, 
-		                BigDecimal.ZERO, 
-		                new BigDecimal(200), 
-		                "TIPO_BAIXA",
-		                "ACAO", 
-		                StatusCobranca.NAO_PAGO,
-		                cotaManoel,
-		                bancoHSBC,
-		                divida2);
+		Boleto boleto2 = Fixture.boleto("1309709032012747", new Date(), new Date(), 
+		                				null,  BigDecimal.ZERO, new BigDecimal(200), 
+		                				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+		                				cotaJose, bancoHSBC, divida2);
 		
-		Boleto boleto3 = Fixture.boleto("1309309032012443",
-		                new Date(), 
-		                new Date(), 
-		                null, 
-		                BigDecimal.ZERO, 
-		                new BigDecimal(200), 
-		                "TIPO_BAIXA",
-		                "ACAO", 
-		                StatusCobranca.NAO_PAGO,
-		                cotaManoel,
-		                bancoHSBC,
-		                divida3);
 		
-		Boleto boleto4 = Fixture.boleto("1309309032012444",
-		                new Date(), 
-		                new Date(), 
-		                null, 
-		                BigDecimal.ZERO, 
-		                new BigDecimal(200), 
-		                "TIPO_BAIXA",
-		                "ACAO", 
-		                StatusCobranca.NAO_PAGO,
-		                cotaManoel,
-		                bancoHSBC,
-		                divida4);
+		//Boletos vencidos
+		Boleto boleto3 = Fixture.boleto("1310209032012740", new Date(), DateUtil.parseDataPTBR("09/03/2012"),
+										null,  BigDecimal.ZERO, new BigDecimal(376.07), 
+										"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+										cotaMaria, bancoHSBC, divida3);
 		
-		Boleto boleto5 = Fixture.boleto("1309309032012445",
-		                new Date(), 
-		                new Date(), 
-		                null, 
-		                BigDecimal.ZERO, 
-		                new BigDecimal(200), 
-		                "TIPO_BAIXA",
-		                "ACAO", 
-		                StatusCobranca.NAO_PAGO,
-		                cotaManoel,
-		                bancoHSBC,
-		                divida5);
+		Boleto boleto4 = Fixture.boleto("1310609032012041", new Date(), DateUtil.parseDataPTBR("09/03/2012"), 
+		                				null, BigDecimal.ZERO, new BigDecimal(600.0), 
+		                				"TIPO_BAIXA", "ACAO",  StatusCobranca.NAO_PAGO,
+		                				cotaManoel, bancoHSBC, divida4);
 		
-		Boleto boleto6 = Fixture.boleto("1309309032012446",
-		                new Date(), 
-		                new Date(), 
-		                null, 
-		                BigDecimal.ZERO, 
-		                new BigDecimal(200), 
-		                "TIPO_BAIXA",
-		                "ACAO", 
-		                StatusCobranca.NAO_PAGO,
-		                cotaManoel,
-		                bancoHSBC,
-		                divida6);
+		Boleto boleto5 = Fixture.boleto("1310809032012641", new Date(), DateUtil.parseDataPTBR("09/03/2012"), 
+		                				null, BigDecimal.ZERO, new BigDecimal(400.0), "TIPO_BAIXA",
+		                				"ACAO", StatusCobranca.NAO_PAGO,
+		                				cotaJose, bancoHSBC, divida5);
 		
-		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6);	 
+		//Boletos não vencidos
+		Boleto boleto6 = Fixture.boleto("1311009032012840", new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+		                				null, BigDecimal.ZERO, new BigDecimal(2258.62),
+		                				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+		                				cotaMaria, bancoHSBC, divida6);
+		
+		Boleto boleto7 = Fixture.boleto("1311109032012642",new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+                						null, BigDecimal.ZERO, new BigDecimal(564.58), 
+                						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+                						cotaManoel, bancoHSBC, divida7);
+		
+		Boleto boleto8 = Fixture.boleto("1312309032012043", new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+                						null, BigDecimal.ZERO, new BigDecimal(500.0), 
+                						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+                						cotaJose, bancoHSBC, divida8);
+		
+		Boleto boleto9 = Fixture.boleto("1312409032012841", new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+                						null, BigDecimal.ZERO, new BigDecimal(500.0), 
+                						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+                						cotaMaria, bancoHSBC, divida9);
+		
+		Boleto boleto10 = Fixture.boleto("1312509032012643", new Date(), DateUtil.parseDataPTBR("12/03/2012"),
+                						null, BigDecimal.ZERO, new BigDecimal(300.0), 
+                						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+                						cotaManoel, bancoHSBC, divida10);
+		
+		Boleto boleto11 = Fixture.boleto("1313209032012941", new Date(), DateUtil.parseDataPTBR("12/03/2012"),
+                						 null, BigDecimal.ZERO, new BigDecimal(300.0), 
+                						 "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+                						 cotaJose, bancoHSBC, divida11);
+		
+		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6,
+					  boleto7, boleto8, boleto9, boleto10, boleto11);	 
 	}
 	
 	private static void criarFeriado(Session session) {
