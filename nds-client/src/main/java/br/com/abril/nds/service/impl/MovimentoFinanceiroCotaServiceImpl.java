@@ -12,7 +12,7 @@ import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.financeiro.BaixaAutomatica;
+import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -41,7 +41,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	public void gerarMovimentoFinanceiroDebitoCredito(
 								Cota cota, GrupoMovimentoFinaceiro grupoMovimentoFinanceiro,
 								Usuario usuario, BigDecimal valor, Date dataOperacao,
-								BaixaAutomatica baixaAutomatica, Date dataNovoMovimento) {
+								BaixaCobranca baixaCobranca, Date dataNovoMovimento) {
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
 			tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinanceiro);
@@ -69,7 +69,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(valor);
 			movimentoFinanceiroCota.setLancamentoManual(false);
-			movimentoFinanceiroCota.setBaixaAutomatica(baixaAutomatica);
+			movimentoFinanceiroCota.setBaixaCobranca(baixaCobranca);
 
 			movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}

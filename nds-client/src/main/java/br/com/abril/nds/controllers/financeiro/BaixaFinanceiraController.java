@@ -112,8 +112,8 @@ public class BaixaFinanceiraController {
 																   uploadedFile.getFileName());
 			
 			resumoBaixaBoleto = 
-				boletoService.baixarBoletos(arquivoPagamento, valorFinanceiroFormatado,
-											obterUsuario());
+				boletoService.baixarBoletosAutomatico(arquivoPagamento, valorFinanceiroFormatado,
+													  obterUsuario());
 		
 		} finally {
 			
