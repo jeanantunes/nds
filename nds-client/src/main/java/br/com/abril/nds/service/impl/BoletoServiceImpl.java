@@ -22,7 +22,6 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -637,17 +636,16 @@ public class BoletoServiceImpl implements BoletoService {
 	public GeradorBoleto geraBoleto(String nossoNumero){
     	
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero);		
+		GeradorBoleto geradorBoleto = new GeradorBoleto();
+		
+		
+		//DADOS DO CEDENTE
+		geradorBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
+		geradorBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
+		
+		
+		//DADOS DO SACADO
 		Pessoa pessoa = boleto.getCota().getPessoa();
-
-		Endereco endereco=new Endereco();
-		Set<EnderecoCota> enderecosCota = boleto.getCota().getEnderecos();
-		for(EnderecoCota enderecoCota : enderecosCota){
-			endereco = enderecoCota.getEndereco();
-			if (enderecoCota.getTipoEndereco() == TipoEndereco.COBRANCA){
-			    break;
-			}
-		}
-
 		String nomeSacado="";
 		String documentoSacado="";
 		if (pessoa instanceof PessoaFisica){
@@ -658,13 +656,19 @@ public class BoletoServiceImpl implements BoletoService {
 			nomeSacado = ((PessoaJuridica) pessoa).getNomeFantasia();
 			documentoSacado = ((PessoaJuridica) pessoa).getCnpj();
 		}
-	    
-		GeradorBoleto geradorBoleto = new GeradorBoleto();
-		geradorBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
-		geradorBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
 		geradorBoleto.setSacadoNome(nomeSacado);          
 		geradorBoleto.setSacadoDocumento(documentoSacado); 
 
+		
+		//ENDERECO DO SACADO
+		Endereco endereco=new Endereco();
+		Set<EnderecoCota> enderecosCota = boleto.getCota().getEnderecos();
+		for(EnderecoCota enderecoCota : enderecosCota){
+			endereco = enderecoCota.getEndereco();
+			if (enderecoCota.getTipoEndereco() == TipoEndereco.COBRANCA){
+			    break;
+			}
+		}
 		if (endereco!=null){
 			geradorBoleto.setEnderecoSacadoUf(endereco.getUf());            
 			geradorBoleto.setEnderecoSacadoLocalidade(endereco.getCidade());     
@@ -674,87 +678,32 @@ public class BoletoServiceImpl implements BoletoService {
 			geradorBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
 		}
 		else{
-			geradorBoleto.setEnderecoSacadoUf("SP");
+			geradorBoleto.setEnderecoSacadoUf("");
 			geradorBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
 			geradorBoleto.setEnderecoSacadoCep("");
 			geradorBoleto.setEnderecoSacadoBairro("");
 			geradorBoleto.setEnderecoSacadoLogradouro("");
 			geradorBoleto.setEnderecoSacadoNumero("");
 		}
-                           
-		
-		
-		
-		
-		//PROVISÓRIO: TRATAMENTOS DE TAMANHOS DE CAMPOS PARA TESTE DE BOLETOS
-        String nomeBanco="BANCO_BRADESCO";
+
         String contaNumero=boleto.getBanco().getConta().toString();
-        String contaNumeroDocumento="12345678910";
         String contaNossoNumero=boleto.getNossoNumero().toString();
+        String contaNumeroDocumento="123456";//???
         
-        if ("399".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="HSBC";
-            if (contaNumero.length() > 6){
-                contaNumero=contaNumero.substring(1, 6);                   //HSBC = 6 DIGITOS 
-            }
-            if (contaNumeroDocumento.length() > 6){
-                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
-            }
-            if (contaNossoNumero.length() > 9){
-                contaNossoNumero=contaNossoNumero.substring(1, 9);         //HSBC = 9 DIGITOS 
-            }    
-        }
-        
-        if ("184".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="BANCO_ITAU";
-            if (contaNumero.length() > 5){
-                contaNumero=contaNumero.substring(1, 5);                   //HSBC = 5 DIGITOS 
-            }
-            if (contaNumeroDocumento.length() > 6){
-                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
-            }
-            if (contaNossoNumero.length() > 9){
-                contaNossoNumero=contaNossoNumero.substring(1, 9);         //HSBC = 9 DIGITOS 
-            }    
-        }
-        
-        if ("001".equals(boleto.getBanco().getNumeroBanco())){
-        	/*
-        	 10 posições(convênio com 7), 11 posições ou 17 posições(convênio com 6). 
-        	 */
-            nomeBanco="BANCO_DO_BRASIL";
-            if (contaNumero.length() > 6){
-                contaNumero=contaNumero.substring(1, 6);                   //HSBC = 6 DIGITOS 
-            }
-            if (contaNumeroDocumento.length() > 6){
-                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
-            }
-            if (contaNossoNumero.length() > 9){
-                contaNossoNumero=contaNossoNumero.substring(1, 9);         //HSBC = 9 DIGITOS 
-            }    
-        }
-        
-        if ("065".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="BANCO_BRADESCO";
-            if (contaNumero.length() > 6){
-                contaNumero=contaNumero.substring(1, 6);                   //HSBC = 6 DIGITOS 
-            }
-            if (contaNumeroDocumento.length() > 6){
-                contaNumeroDocumento=contaNumeroDocumento.substring(1, 6); //HSBC = 6 DIGITOS 
-            }
-            if (contaNossoNumero.length() > 11){
-                contaNossoNumero=contaNossoNumero.substring(1, 11);         //HSBC = 11 DIGITOS 
-            }    
-        }
-        
-        
-        
-        
-        
-        geradorBoleto.setContaBanco(nomeBanco);                  
+        //INFORMACOES DA CONTA(BANCO)
+        geradorBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         geradorBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
+        if (boleto.getBanco().getCarteira().getCodigo()==1){
+        	geradorBoleto.setContaTipoDeCobranca("SEM_REGISTRO");
+        }
+        if (boleto.getBanco().getCarteira().getCodigo()==30){  
+        	geradorBoleto.setContaTipoDeCobranca("COM_REGISTRO");
+        }
         geradorBoleto.setContaAgencia(boleto.getBanco().getAgencia().intValue());    
         geradorBoleto.setContaNumero(Integer.parseInt(contaNumero));   
+        
+         
+        //INFORMACOES DO TITULO
         geradorBoleto.setTituloNumeroDoDocumento(contaNumeroDocumento);                      
         geradorBoleto.setTituloNossoNumero(contaNossoNumero);                    
         
@@ -762,6 +711,7 @@ public class BoletoServiceImpl implements BoletoService {
         geradorBoleto.setTituloDigitoDoNossoNumero("4");  
         geradorBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
         geradorBoleto.setTituloAceite("A");
+        geradorBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
         geradorBoleto.setTituloValor(boleto.getValor());   
         geradorBoleto.setTituloDataDoDocumento(boleto.getDataEmissao());   
@@ -771,7 +721,9 @@ public class BoletoServiceImpl implements BoletoService {
         geradorBoleto.setTituloMora(BigDecimal.ZERO);
         geradorBoleto.setTituloAcrecimo(BigDecimal.ZERO);
         geradorBoleto.setTituloValorCobrado(BigDecimal.ZERO);
+        
 
+        //INFORMAÇOES DO BOLETO
         //PARAMETROS ?
         geradorBoleto.setBoletoLocalPagamento("Local do pagamento.");
         geradorBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");

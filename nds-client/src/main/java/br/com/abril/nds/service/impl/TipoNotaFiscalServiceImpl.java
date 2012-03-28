@@ -21,4 +21,12 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	public List<TipoNotaFiscal> obterTiposNotasFiscais() {
 		return tipoNotaFiscalRepository.obterTiposNotasFiscais();
 	}
+
+	@Override
+	@Transactional
+	public TipoNotaFiscal obterPorId(Long id) {
+		
+		return this.tipoNotaFiscalRepository.buscarPorId(id);
+	}
+
 }

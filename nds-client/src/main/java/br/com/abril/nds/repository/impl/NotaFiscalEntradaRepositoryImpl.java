@@ -43,8 +43,18 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 		
 		Query query = criarQueryComParametrosObterNotasFiscaisCadastradas(hql, filtroConsultaNotaFiscal);
 		
-		query.setFirstResult(filtroConsultaNotaFiscal.getPaginacao().getPosicaoInicial());
-		query.setMaxResults(filtroConsultaNotaFiscal.getPaginacao().getQtdResultadosPorPagina());
+		if (filtroConsultaNotaFiscal.getPaginacao() != null) {
+			
+			if (filtroConsultaNotaFiscal.getPaginacao().getPosicaoInicial() != null) {
+				
+				query.setFirstResult(filtroConsultaNotaFiscal.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtroConsultaNotaFiscal.getPaginacao().getQtdResultadosPorPagina() != null) {
+				
+				query.setMaxResults(filtroConsultaNotaFiscal.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
 
 		return query.list();
 	}
