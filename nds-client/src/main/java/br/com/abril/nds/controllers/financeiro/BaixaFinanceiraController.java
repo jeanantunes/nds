@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,15 +21,20 @@ import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -77,10 +83,15 @@ public class BaixaFinanceiraController {
 		this.servletContext = servletContext;
 	}
 	
+	
+	
+	
 	@Get
 	public void baixa() {
 		
 	}
+	
+	
 	
 	@Post
 	public void realizarBaixaAutomatica(UploadedFile uploadedFile, String valorFinanceiro) {
@@ -101,8 +112,8 @@ public class BaixaFinanceiraController {
 																   uploadedFile.getFileName());
 			
 			resumoBaixaBoleto = 
-				boletoService.baixarBoletos(arquivoPagamento, valorFinanceiroFormatado,
-											obterUsuario());
+				boletoService.baixarBoletosAutomatico(arquivoPagamento, valorFinanceiroFormatado,
+													  obterUsuario());
 		
 		} finally {
 			
@@ -236,10 +247,10 @@ public class BaixaFinanceiraController {
 	public void buscaBoleto(String nossoNumero){
 		
 		if ((nossoNumero==null)||("".equals(nossoNumero.trim()))){
-		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número do boleto.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 		
-		CobrancaVO cobranca = this.boletoService.obterCobranca(nossoNumero);
+		CobrancaVO cobranca = this.boletoService.obterDadosCobranca(nossoNumero);
 		if (cobranca==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
@@ -255,7 +266,7 @@ public class BaixaFinanceiraController {
 			                 int rp){
 
 		if ((numCota==null)||(numCota<=0)){
-		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 
         //CONFIGURAR PAGINA DE PESQUISA
@@ -316,7 +327,41 @@ public class BaixaFinanceiraController {
 		
 		//RETORNA HASHMAP EM FORMATO JASON PARA A VIEW
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+	
 	}
 	
 		
+	@Post
+	@Path("/baixaManualBoleto")
+	public void baixaManualBoleto(String nossoNumero, 
+					              String valor, 
+					              String desconto, 
+					              Date dataVencimento,
+					              String juros,
+					              String multa
+					              ){
+		try{
+			
+		    Date dataPagamento = Calendar.getInstance().getTime();
+            BigDecimal valorFormatado = new BigDecimal(valor);
+            BigDecimal jurosFormatado = new BigDecimal(juros);
+            BigDecimal multaFormatado = new BigDecimal(multa);
+
+			PagamentoDTO pagamento = new PagamentoDTO();
+			pagamento.setDataPagamento(dataPagamento);
+			pagamento.setNossoNumero(nossoNumero);
+			pagamento.setNumeroRegistro(null);
+			pagamento.setValorPagamento(valorFormatado);
+			//pagamento.setJuros(jurosFormatado);
+			//pagamento.setMulta(multaFormatado);
+	
+			//boletoService.baixarBoleto(null,pagamento,null,obterUsuario(),null,null);
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.ERROR, "O boleto não foi baixado.");
+		}
+			
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
 }

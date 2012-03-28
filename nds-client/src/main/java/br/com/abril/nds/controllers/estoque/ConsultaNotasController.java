@@ -1,15 +1,18 @@
 package br.com.abril.nds.controllers.estoque;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -17,11 +20,14 @@ import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -30,8 +36,12 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -59,6 +69,9 @@ public class ConsultaNotasController {
 	private HttpSession session;
 	
 	@Autowired
+	private HttpServletResponse httpServletResponse;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
 
 	@Autowired
@@ -66,6 +79,9 @@ public class ConsultaNotasController {
 
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroConsultaNotaFiscal";
 	
@@ -75,6 +91,26 @@ public class ConsultaNotasController {
 		preencherCombos();
 		
 		inserirDataAtual();
+	}
+	
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		if (fileType == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+		}
+		
+		FiltroConsultaNotaFiscalDTO filtro = this.obterFiltroExportacao();
+		
+		List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
+			notaFiscalService.obterNotasFiscaisCadastradas(filtro);
+		
+		List<ConsultaNotaFiscalVO> listaConsultaNF = this.obterListaConsultaNotasFiscais(listaNotasFiscais);
+		
+		FileExporter.to("consulta-nota-fiscal", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listaConsultaNF, ConsultaNotaFiscalVO.class, this.httpServletResponse);
 	}
 	
 	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
@@ -131,7 +167,51 @@ public class ConsultaNotasController {
 
 		this.result.use(Results.json()).withoutRoot().from(resultadoConsultaDetallheNF).recursive().serialize();
 	}
-
+	
+	/**
+	 * Obtém o filtro de pesquisa para exportação.
+	 * 
+	 * @return FiltroConsultaNotaFiscalDTO
+	 */
+	private FiltroConsultaNotaFiscalDTO obterFiltroExportacao() {
+		
+		FiltroConsultaNotaFiscalDTO filtroSessao =
+			(FiltroConsultaNotaFiscalDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null) {
+			
+			if (filtroSessao.getPaginacao() != null) {
+				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtroSessao.getIdFornecedor() != null) {
+				
+				Fornecedor fornecedor = 
+					this.fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
+			
+				if (fornecedor != null) {
+					
+					filtroSessao.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
+				}
+			}
+			
+			if (filtroSessao.getIdTipoNotaFiscal() != null) {
+				
+				TipoNotaFiscal tipoNotaFiscal = 
+					this.tipoNotaFiscalService.obterPorId(filtroSessao.getIdTipoNotaFiscal());
+			
+				if (tipoNotaFiscal != null) {
+					
+					filtroSessao.setTipoNotaFiscal(tipoNotaFiscal.getDescricao());
+				}
+			}
+		}
+		
+		return filtroSessao;
+	}
+	
 	private void preencherCombos() {
 
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
@@ -146,13 +226,40 @@ public class ConsultaNotasController {
 		
 		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
 	}
+	
+	private List<ConsultaNotaFiscalVO> obterListaConsultaNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
+
+		List<ConsultaNotaFiscalVO> listaConsultasNF = new ArrayList<ConsultaNotaFiscalVO>();
+
+		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
+			
+			String notaRecebida = 
+				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ";
+			
+			ConsultaNotaFiscalVO consultaNotaFiscalVO = new ConsultaNotaFiscalVO();
+			
+			consultaNotaFiscalVO.setDataEmissao(notaFiscal.getDataEmissao());
+			consultaNotaFiscalVO.setDataExpedicao(notaFiscal.getDataExpedicao());
+			consultaNotaFiscalVO.setNomeFornecedor(notaFiscal.getFornecedor().getJuridica().getRazaoSocial());
+			consultaNotaFiscalVO.setNotaRecebida(notaRecebida);
+			consultaNotaFiscalVO.setNumeroNota(notaFiscal.getNumero());
+			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getTipoNotaFiscal().getDescricao());
+			
+			listaConsultasNF.add(consultaNotaFiscalVO);
+		}
+
+		return listaConsultasNF;
+	}
 
 	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
 
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
-
+			
+			String notaRecebida = 
+				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ";
+			
 			CellModel cellModel = 
 					new CellModel(
 							notaFiscal.getId().intValue(), 
@@ -161,7 +268,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
 							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
 							itemExibicaoToString(notaFiscal.getFornecedor().getJuridica().getRazaoSocial()),
-							StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ", 
+							notaRecebida, 
 							" ", 
 							itemExibicaoToString(notaFiscal.getId()));
 
@@ -169,6 +276,7 @@ public class ConsultaNotasController {
 		}
 		
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+		
 		tableModel.setRows(listaCellModels);
 
 		return tableModel;
@@ -310,4 +418,41 @@ public class ConsultaNotasController {
 		
 		return new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 	}
+	
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
+	}
+	
 }

@@ -4,18 +4,24 @@ import java.io.Serializable;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
-public class ResultadoResumoExpedicaoVO implements Serializable {
+@Exportable
+public class ResultadoResumoExpedicaoVO<T> implements Serializable {
 	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel;
+	private TableModel<CellModelKeyValue<T>> tableModel;
 	
+	@Export(label = "Total", alignWithHeader = "Reparte", alignment = Alignment.CENTER)
 	private int qtdeTotalReparte;
 	
+	@Export(label = "", alignWithHeader = "Valor Faturado R$", alignment = Alignment.RIGHT)
 	private String valorTotalFaturado;
 	
 	/**
@@ -30,20 +36,19 @@ public class ResultadoResumoExpedicaoVO implements Serializable {
 	 * @param qtdeTotalReparte
 	 * @param valorTotalFaturado
 	 */
-	public ResultadoResumoExpedicaoVO(
-			TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel,
-			int qtdeTotalReparte, String valorTotalFaturado) {
+	public ResultadoResumoExpedicaoVO(TableModel<CellModelKeyValue<T>> tableModel,
+									  int qtdeTotalReparte, 
+									  String valorTotalFaturado) {
 
 		this.tableModel = tableModel;
 		this.qtdeTotalReparte = qtdeTotalReparte;
 		this.valorTotalFaturado = valorTotalFaturado;
 	}
 
-
 	/**
 	 * @return the tableModel
 	 */
-	public TableModel<CellModelKeyValue<ResumoExpedicaoVO>> getTableModel() {
+	public TableModel<CellModelKeyValue<T>> getTableModel() {
 		return tableModel;
 	}
 
@@ -51,7 +56,7 @@ public class ResultadoResumoExpedicaoVO implements Serializable {
 	 * @param tableModel the tableModel to set
 	 */
 	public void setTableModel(
-			TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel) {
+			TableModel<CellModelKeyValue<T>> tableModel) {
 		this.tableModel = tableModel;
 	}
 

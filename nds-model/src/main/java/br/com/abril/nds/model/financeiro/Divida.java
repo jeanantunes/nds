@@ -59,6 +59,9 @@ public class Divida {
 	@OneToMany
 	private Set<Divida> acumulado = new HashSet<Divida>();
 	
+	@Column(name = "ACUMULADA")
+	private boolean acumulada;
+	
 	public Long getId() {
 		return id;
 	}
@@ -129,5 +132,13 @@ public class Divida {
 	
 	public void setAcumulado(Set<Divida> acumulado) {
 		this.acumulado = acumulado;
+	}
+
+	public boolean isAcumulada() {
+		return acumulada;
+	}
+
+	public void setAcumulada(boolean acumulada) {
+		this.acumulada = acumulada;
 	}
 }

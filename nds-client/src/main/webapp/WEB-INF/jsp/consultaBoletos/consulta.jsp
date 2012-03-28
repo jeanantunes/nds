@@ -10,13 +10,13 @@
 		    preProcess: getDataFromResult,
 		    dataType : 'json',
 			colModel : [ {
-				display : 'Nosso Numero',
+				display : 'Nosso Número',
 				name : 'nossoNumero',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Data Emiss&atilde;o',
+				display : 'Data Emissão',
 				name : 'dtEmissao',
 				width : 100,
 				sortable : true,
@@ -194,19 +194,17 @@
             <tr>
             
               <td width="29">Cota:</td>
-              <td width="260">
+              <td width="105">
               	<input name="numCota" 
               		   id="numCota" 
               		   type="text"
               		   maxlength="11"
               		   style="width:80px; 
               		   float:left; margin-right:5px;"
-              		   onchange="cota.limparCamposPesquisa('#descricaoCota')" />
-              	  
-              	  <span class="classPesquisar" title="Pesquisar Cota">
-              	  		<a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');">&nbsp;</a>
-              	  </span>
-			
+              		   onchange="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');" />
+			  </td>
+				
+			  <td>
 			      <input name="descricaoCota" 
 			      		 id="descricaoCota" 
 			      		 type="text" 

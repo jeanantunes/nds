@@ -308,5 +308,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 	}
 	
+	@Test
+	public void obterDiasConcentracaoPagamentoCota(){
+		this.cotaRepository.obterDiasConcentracaoPagamentoCota(1L);
+	}
 
 }

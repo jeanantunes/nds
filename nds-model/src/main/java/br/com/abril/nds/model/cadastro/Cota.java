@@ -75,6 +75,10 @@ public class Cota {
 	@OneToOne(mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
 	
+	@OneToMany
+	@JoinColumn( name="ID_COTA")
+	private List<RotaRoteiroOperacao> rotaRoteiroOperacao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -177,6 +181,16 @@ public class Cota {
 	
 	public void setParametroCobranca(ParametroCobrancaCota parametroCobranca) {
 		this.parametroCobranca = parametroCobranca;
+	}
+	
+	
+
+	public List<RotaRoteiroOperacao> getRotaRoteiroOperacao() {
+		return rotaRoteiroOperacao;
+	}
+
+	public void setRotaRoteiroOperacao(List<RotaRoteiroOperacao> rotaRoteiroOperacao) {
+		this.rotaRoteiroOperacao = rotaRoteiroOperacao;
 	}
 
 	/**
