@@ -3,6 +3,9 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 
@@ -11,6 +14,7 @@ import br.com.abril.nds.vo.PeriodoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroConsultaNotaFiscalDTO implements Serializable {
 
 	/**
@@ -22,7 +26,13 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idTipoNotaFiscal;
 	
+	@Export(label = "Tipo de Nota", exhibitionOrder = 4)
+	private String tipoNotaFiscal;
+	
 	private Long idFornecedor;
+	
+	@Export(label = "Fornecedor", exhibitionOrder = 1)
+	private String nomeFornecedor;
 
 	private String cnpj;
 	
@@ -127,6 +137,48 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	 */
 	public void setIsNotaRecebida(Boolean isNotaRecebida) {
 		this.isNotaRecebida = isNotaRecebida;
+	}
+	
+	@Export(label = "Data Inicial", exhibitionOrder = 2)
+	public String getDataInicial() {
+		
+		if (this.periodo == null
+				|| this.periodo.getDataInicial() == null) {
+			
+			return "";
+		}
+		
+		return DateUtil.formatarDataPTBR(this.periodo.getDataInicial());
+	}
+	
+	@Export(label = "Data Final", exhibitionOrder = 3)
+	public String getDataFinal() {
+		
+		if (this.periodo == null
+				|| this.periodo.getDataFinal() == null) {
+			
+			return "";
+		}
+		
+		return DateUtil.formatarDataPTBR(this.periodo.getDataFinal());
+	}
+	
+	@Export(label = "Nota Recebida", exhibitionOrder = 5)
+	public String getDescricaoNotaRecebida() {
+		
+		if (this.isNotaRecebida == null) {
+			
+			return "";
+		}
+		
+		if (this.isNotaRecebida) {
+			
+			return "Sim";
+			
+		} else {
+			
+			return "Não";
+		}
 	}
 
 	/* (non-Javadoc)
@@ -240,5 +292,33 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	 */
 	public void setListaColunaOrdenacao(List<ColunaOrdenacao> listaColunaOrdenacao) {
 		this.listaColunaOrdenacao = listaColunaOrdenacao;
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public String getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(String tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
+	}
+
+	/**
+	 * @return the nomeFornecedor
+	 */
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	/**
+	 * @param nomeFornecedor the nomeFornecedor to set
+	 */
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
 	}
 }

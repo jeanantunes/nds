@@ -350,8 +350,15 @@ fieldset label
 			<legend>Notas Cadastradas</legend>
 			<div class="grids" style="display: none;">
 				<table class="notasSemFisicoGrid" id="notasSemFisicoGrid"></table>
-				<span class="bt_arquivo"><a href="javascript:;">Arquivo</a></span> <span
-					class="bt_imprimir"><a href="javascript:;">Imprimir</a>
+				<span class="bt_arquivo">
+					<a href="${pageContext.request.contextPath}/estoque/consultaNotas/exportar?fileType=XLS">
+						Arquivo
+					</a>
+				</span>
+				<span class="bt_imprimir">
+					<a href="${pageContext.request.contextPath}/estoque/consultaNotas/exportar?fileType=PDF">
+						Imprimir
+					</a>
 				</span>
 			</div>
 		</fieldset>

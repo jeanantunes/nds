@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Interface que define serviços referentes a 
@@ -31,12 +32,14 @@ public interface CalendarioService {
 	Date subtrairDiasUteis(Date data, int numDias);
 	
 	/**
-	 * Obtém o próximo dia útil de acordo com a data informada.
+	 * Adiciona dias úteis a uma data.
 	 * 
-	 * @param data - data base
+	 * @param data - data a ser adicionada
+	 * @param numDias - número de dias
+	 * @param diasSemana - dias da semana onde a data deve cair
 	 * 
-	 * @return nova data obtida
+	 * @return nova data calculada
  	 */
-	Date obterProximoDiaUtil(Date data);
+	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemana);
 
 }

@@ -26,14 +26,20 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -57,7 +63,6 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -344,7 +349,7 @@ public class Fixture {
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
 		
 		conferenciaEncalheParcial.setDataConfEncalheParcial(dataStatus);
-		conferenciaEncalheParcial.setDataRecolhimentoDistribuidor(drd);
+		conferenciaEncalheParcial.setDataMovimento(drd);
 		conferenciaEncalheParcial.setProdutoEdicao(produtoEdicao);
 		conferenciaEncalheParcial.setQtde(qtde);
 		conferenciaEncalheParcial.setResponsavel(usuario);
@@ -573,6 +578,22 @@ public class Fixture {
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Envio Reparte");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Juros");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.JUROS);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Multa");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.MULTA);
 		return tipoMovimento;
 	}
 	
@@ -1037,7 +1058,9 @@ public class Fixture {
 	}
 	
 	public static FormaCobranca formaCobrancaBoleto(boolean enviaEmail,
-			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco) {
+			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+		
 		FormaCobranca formaBoleto = new FormaCobranca();
 		formaBoleto.setAtiva(true);
 		formaBoleto.setEnviaEmail(enviaEmail);
@@ -1046,7 +1069,57 @@ public class Fixture {
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
+		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
+		formaBoleto.setTaxaMulta(taxaMulta);
+		
 		return formaBoleto;
+	}
+	
+
+	public static ParametroCobrancaCota parametroCobrancaCota(
+							int numeroAcumuloDivida, BigDecimal valor, Cota cota,
+							int fatorVencimento, FormaCobranca formaCobranca,
+							boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+		
+		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
+		
+		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
+		
+		politicaSuspensao.setNumeroAcumuloDivida(numeroAcumuloDivida);
+		politicaSuspensao.setValor(valor);
+		
+		parametro.setCota(cota);
+		parametro.setFatorVencimento(fatorVencimento);
+		parametro.setFormaCobranca(formaCobranca);
+		parametro.setRecebeCobrancaEmail(recebeCobrancaEmail);
+		parametro.setValorMininoCobranca(valorMininoCobranca);
+		parametro.setPoliticaSuspensao(politicaSuspensao);
+		
+		return parametro;
+	}
+	public static Rota rota(String codigoRota){
+		Rota rota = new Rota();
+		rota.setCodigoRota(codigoRota);
+		return rota;
+	}
+	
+	public static Roteiro roteiro(String descricaoRoteiro){
+		Roteiro rota = new Roteiro();
+		rota.setDescricaoRoteiro(descricaoRoteiro);
+		return rota;
+	}
+	
+	public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
+		
+		RotaRoteiroOperacao rotaRoteiroOperacao = new RotaRoteiroOperacao();
+		rotaRoteiroOperacao.setRota(rota);
+		rotaRoteiroOperacao.setRoteiro(roteiro);
+		rotaRoteiroOperacao.setCota(cota);
+		rotaRoteiroOperacao.setTipoOperacao(tipoOperacao);
+		
+		return rotaRoteiroOperacao;
+
+
 	}
 	
 }

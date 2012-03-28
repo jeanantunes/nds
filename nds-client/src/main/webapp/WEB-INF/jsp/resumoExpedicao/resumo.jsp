@@ -113,62 +113,67 @@ $(function() {
 	});
 
 });
-/**
- * Executa o pr� processamento das informações retornadas da requisi��o de pesquisa.
- */
-function executarPreProcessamento(resultado) {
-	
-	if (resultado.mensagens) {
 
-		exibirMensagem(
-			resultado.mensagens.tipoMensagem, 
-			resultado.mensagens.listaMensagens
-		);
+	/**
+	 * Executa o pré processamento das informações retornadas da requisição de pesquisa.
+	 */
+	function executarPreProcessamento(resultado) {
 		
-		$("#grid").hide();
-
+		if (resultado.mensagens) {
+	
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$("#grid").hide();
+	
+			return resultado.tableModel;
+		}
+		
+		$("#totalReparte").html(resultado.qtdeTotalReparte);
+		
+		$("#totalValorFaturado").html(resultado.valorTotalFaturado);
+		
+	
+		$("#grid").show();
+		
+		mudarLegendaFielsSet('idFiledResultResumo','resumo');
+		
+		$("#dataLancamento").focus();
+		
 		return resultado.tableModel;
 	}
-	
-	$("#totalReparte").html(resultado.qtdeTotalReparte);
-	
-	$("#totalValorFaturado").html(resultado.valorTotalFaturado);
-	
 
-	$("#grid").show();
+	/**
+	 * Renderiza componente de data de lançamento
+	 */
+	$(function() {
 	
-	mudarLegendaFielsSet('idFiledResultResumo','resumo');
-	
-	$("#dataLancamento").focus();
-	
-	return resultado.tableModel;
-}
-
-/**
- * Renderiza componente de data de lan�amento
- */
-$(function() {
-	
-	$("#dataLancamento").datepicker({
-		showOn : "button",
-		buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-		buttonImageOnly : true,
-		dateFormat: 'dd/mm/yy',
-		defaultDate: new Date()
+		$("#dataLancamento").datepicker({
+			showOn : "button",
+			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat: 'dd/mm/yy',
+			defaultDate: new Date()
+		});
+		
+		$("#dataLancamento").mask("99/99/9999");
+		$("#dataLancamento").focus();
 	});
-	
-	$("#dataLancamento").mask("99/99/9999");
-	$("#dataLancamento").focus();
-});
 
-/**
- * Efetua a pesquisa de resumo de expedi��es, conforme tipo de pesquisa selecionado.
- */
-function pesquisar () {
+	/**
+	 * Efetua a pesquisa de resumo de expedições, conforme tipo de pesquisa selecionado.
+	 */
+	function pesquisar () {
 		
-		var formData = $('#pesquisaResumoExpedicaoForm').serializeArray();
-		
+		var dataLancamento = $('#dataLancamento').val();
 		var tipoPesquisa = $('#tipoPesquisa').val();
+		
+		var formData = [
+		                {name:"dataLancamento",value:dataLancamento},
+		                {name:"tipoPesquisa",value:tipoPesquisa}
+						];
 		
 		if (tipoPesquisa === 'PRODUTO'){
 			carregarGridProduto(formData);
@@ -182,69 +187,81 @@ function pesquisar () {
 		$("#dataLancamento").focus();
 	}
 
-/**
- * Efetua a busca das informa��es referente a Produto, e monta grid
- */
-function carregarGridProduto(formData){
+	/**
+	 * Efetua a busca das informações referente a Produto, e monta grid
+	 */
+	function carregarGridProduto(formData){
+	
+		$("#resumoExpedicaoGridProduto").flexOptions({
+			url: "<c:url value='/expedicao/resumo/pesquisar/produto' />",
+			params: formData
+		});
+		
+		$("#resumoExpedicaoGridProduto").flexReload();
+		
+		$("#gridProduto").show();
+	}
 
-	$("#resumoExpedicaoGridProduto").flexOptions({
-		url: "<c:url value='/expedicao/resumo/pesquisar/produto' />",
-		params: formData
-	});
+	/**
+	 * Efetua a busca das informações referente a Box, e monta o grid
+	 */
+	function carregarGridbox(formData){
 	
-	$("#resumoExpedicaoGridProduto").flexReload();
-	
-	$("#gridProduto").show();
-}
+		$("#resumoExpedicaoGridBox").flexOptions({
+			url: "<c:url value='/expedicao/resumo/pesquisar/box' />",
+			params: formData
+		});
+		
+		$("#resumoExpedicaoGridBox").flexReload();
+		
+		$("#gridBox").show();
+	}
 
-/**
- * Efetua a busca das informa��es referente a Box, e monta o grid
- */
-function carregarGridbox(formData){
+	/**
+	 * Altera o titulo do fieldset conforme tipo de pesquisa selecionado
+	 */
+	function mudarLegendaFielsSet(id, tipo){
+		
+		 if(tipo === "pesquisar"){
+			 document.getElementById (id).innerHTML = getTituloFieldSetPesquisa();
+		 }else{
+			 document.getElementById (id).innerHTML = getTituloFieldSet();
+		 }	 
+	}
 
-	$("#resumoExpedicaoGridBox").flexOptions({
-		url: "<c:url value='/expedicao/resumo/pesquisar/box' />",
-		params: formData
-	});
-	
-	$("#resumoExpedicaoGridBox").flexReload();
-	
-	$("#gridBox").show();
-}
-
-/**
- * Altera o titulo do fiels set conforme tipo de pesquisa selecionado
- */
-function mudarLegendaFielsSet(id,tipo){
-	
-	 if(tipo === "pesquisar"){
-		 document.getElementById (id).innerHTML = getTituloFieldSetPesquisa();
-	 }else{
-		 document.getElementById (id).innerHTML = getTituloFieldSet();
-	 }
-	 
-	
-	 
-}
-
-/**
- * Retorna o tirulo do fiels set conforme tipo de pesquisa selecionado
- */
-function getTituloFieldSetPesquisa(){
-	return ($('#tipoPesquisa').val() === 'BOX')
-			? 'Pesquisar Expedição por Box'
-					:'Pesquisar Expedição por Produto';
-}
+	/**
+	 * Retorna o tirulo do fieldset conforme tipo de pesquisa selecionado
+	 */
+	function getTituloFieldSetPesquisa(){
+		return ($('#tipoPesquisa').val() === 'BOX')
+				? 'Pesquisar Expedição por Box'
+						:'Pesquisar Expedição por Produto';
+	}
  
- /**
-  * Retorna o tirulo do fiels set conforme tipo de pesquisa selecionado
-  */
- function getTituloFieldSet(){
- 	return ($('#tipoPesquisa').val() === 'BOX')
- 			? 'Resumo  Expedição por Box'
- 					:'Resumo  Expedição por Produto';
- }
-	
+	/**
+	 * Retorna o tirulo do fieldset conforme tipo de pesquisa selecionado
+	 */
+	function getTituloFieldSet(){
+		return ($('#tipoPesquisa').val() === 'BOX')
+				? 'Resumo  Expedição por Box'
+						:'Resumo  Expedição por Produto';
+	}
+
+  	/**
+  	 * Efetua a exportação dos dados da pesquisa.
+  	 */
+	function exportar(fileType) {
+
+		var tipoPesquisa = $("#tipoPesquisa").val();
+
+		if (!tipoPesquisa || !fileType) {
+
+			return;
+		}
+
+		window.location = 
+			contextPath + "/expedicao/resumo/exportar?tipoConsulta=" + tipoPesquisa + "&fileType=" + fileType;
+	}
 </script>
 
 </head>
@@ -255,10 +272,6 @@ function getTituloFieldSetPesquisa(){
   
   <legend id="idFiledResumo"> Pesquisar Resumo  Expedição por Box </legend>
   
-  <form id="pesquisaResumoExpedicaoForm"
-		name="pesquisaResumoExpedicaoForm" 
-		method="post">
-  	
   	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  <tr>
 	    <td width="116">Data Lançamento:</td>
@@ -280,8 +293,7 @@ function getTituloFieldSetPesquisa(){
 	    </td>
 	  </tr>
   	</table>
-  
-  </form>
+
     
 </fieldset>
 
@@ -304,8 +316,19 @@ function getTituloFieldSetPesquisa(){
 			<table width="950" border="0" cellspacing="1" cellpadding="1">
 				  <tr>
 				  	<td width="658">
-				    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-				    <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span></td>
+					    <span class="bt_novos" title="Gerar Arquivo">
+					    	<a href="javascript:;" onclick="exportar('XLS');">
+					    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					    		Arquivo
+					    	</a>
+					    </span>
+					    <span class="bt_novos" title="Imprimir">
+					    	<a href="javascript:;" onclick="exportar('PDF');">
+					    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					    		Imprimir
+					    	</a>
+					    </span>
+				    </td>
 				    <td width="96"><strong>Total:</strong></td>
 				    <td width="134" id="totalReparte"></td>
 				    <td width="94"></td>

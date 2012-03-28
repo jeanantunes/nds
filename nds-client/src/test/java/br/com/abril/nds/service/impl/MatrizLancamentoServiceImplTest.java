@@ -53,7 +53,9 @@ public class MatrizLancamentoServiceImplTest {
 		
 		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
 		Banco banco = Fixture.hsbc(carteira); 
-		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco);
+		FormaCobranca formaBoleto =
+			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
+										BigDecimal.ONE, BigDecimal.ONE);
 		
 		PoliticaCobranca politicaCobranca =
 			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);

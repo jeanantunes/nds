@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -9,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -41,6 +44,9 @@ public class ParametroCobrancaCota {
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
+	
+	@OneToMany
+	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 
 	public Long getId() {
 		return id;
@@ -96,6 +102,15 @@ public class ParametroCobrancaCota {
 	
 	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
 		this.politicaSuspensao = politicaSuspensao;
+	}
+	
+	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
+		return concentracaoCobrancaCota;
+	}
+	
+	public void setConcentracaoCobrancaCota(
+			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
+		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
 	}
 
 }

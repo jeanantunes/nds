@@ -1,22 +1,30 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
+import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoExpedicao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -24,6 +32,9 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
@@ -51,25 +62,15 @@ public class ResumoExpedicaoController {
 	private HttpSession session;
 	
 	@Autowired
+	private HttpServletResponse httpServletResponse;
+	
+	@Autowired
 	private ExpedicaoService expedicaoService;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroResumo";
-	
-	private enum TipoPesquisaResumoExpedicao{
-		
-		PRODUTO("Produto"),
-		BOX("Box");
-		
-		private TipoPesquisaResumoExpedicao(String nome) {
-			this.nome = nome;
-		}
-		
-		public String getNome() {
-			return nome;
-		}
-		private String nome;
-	}
-	
 
 	/**
 	 * Carrega as informações default da tela de pesquisa.
@@ -132,7 +133,114 @@ public class ResumoExpedicaoController {
 		this.tratarFiltro(filtro);
 		
 		this.pesquisarResumoBox(filtro);
+	}
+	
+	@Get
+	@Path("/resumo/exportar")
+	public void exportar(FileType fileType, TipoPesquisaResumoExpedicao tipoConsulta) throws IOException {
 		
+		if (fileType == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+		}
+		
+		if (tipoConsulta == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de consulta não encontrado!");
+		}
+		
+		FiltroResumoExpedicaoDTO filtroSessao = 
+			(FiltroResumoExpedicaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null) { 
+				
+			if (filtroSessao.getPaginacao() != null) {
+			
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			filtroSessao.setTipoConsulta(tipoConsulta);
+		}
+		
+		if (TipoPesquisaResumoExpedicao.PRODUTO.equals(tipoConsulta)) {
+			
+			this.exportarResumoExpedicaoProduto(fileType, filtroSessao);
+			
+		} else if (TipoPesquisaResumoExpedicao.BOX.equals(tipoConsulta)) {
+			
+			this.exportarResumoExpedicaoBox(fileType, filtroSessao);
+			
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de consulta inválido!");
+		}
+	}
+	
+	private void exportarResumoExpedicaoProduto(FileType fileType, 
+												FiltroResumoExpedicaoDTO filtro) throws IOException {
+		
+		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		
+		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
+
+		List<ResumoExpedicaoVO> listaLancamentosExpedidos = 
+			this.getListaLancamentosExpedidosProduto(filtro, qtdeTotalReparte, valorTotalFaturado);
+		
+		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
+		
+		ResultadoResumoExpedicaoVO<ResumoExpedicaoVO> resultadoResumoExpedicao = 
+			new ResultadoResumoExpedicaoVO<ResumoExpedicaoVO>(
+				null, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
+		
+		FileExporter.to("resumo-expedicao-produto", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, resultadoResumoExpedicao, 
+				listaLancamentosExpedidos, ResumoExpedicaoVO.class, this.httpServletResponse);
+	}
+	
+	private void exportarResumoExpedicaoBox(FileType fileType, 
+											FiltroResumoExpedicaoDTO filtro) throws IOException {
+		
+		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		
+		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
+		
+		List<ResumoExpedicaoBoxVO> listaLancamentosExpedidos = 
+			this.getListaLancamentosExpedidosBox(filtro, qtdeTotalReparte, valorTotalFaturado);
+		
+		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
+		
+		ResultadoResumoExpedicaoVO<ResumoExpedicaoBoxVO> resultadoResumoExpedicao = 
+			new ResultadoResumoExpedicaoVO<ResumoExpedicaoBoxVO>(
+				null, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
+		
+		FileExporter.to("resumo-expedicao-box", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, resultadoResumoExpedicao, 
+				listaLancamentosExpedidos, ResumoExpedicaoBoxVO.class, this.httpServletResponse);
+	}
+	
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
 	}
 	
 	/**
@@ -169,7 +277,7 @@ public class ResumoExpedicaoController {
 		
 		if (!DateUtil.isValidDate(dataLancamento, "dd/MM/yyyy")) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR,"Data Lançamento inválida." );
+			throw new ValidacaoException(TipoMensagem.WARNING,"Data Lançamento inválida." );
 		}
 	}
 	
@@ -179,52 +287,80 @@ public class ResumoExpedicaoController {
 	 * @param page
 	 */
 	private void pesquisarResumoBox(FiltroResumoExpedicaoDTO filtro){
+
+		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		
+		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
+		
+		List<ResumoExpedicaoBoxVO> listaLancamentosExpedidosBox = 
+			this.getListaLancamentosExpedidosBox(filtro, qtdeTotalReparte, valorTotalFaturado);
+		
+		listaLancamentosExpedidosBox = 
+			ordenarEmMemoria(
+				listaLancamentosExpedidosBox, filtro.getPaginacao(), filtro.getOrdenacaoColunaBox().toString());
+		
+		TableModel<CellModelKeyValue<ResumoExpedicaoBoxVO>> tableModel = 
+			new TableModel<CellModelKeyValue<ResumoExpedicaoBoxVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidosBox));
+		
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaLancamentosExpedidosBox.size());
+
+		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
+ 
+		ResultadoResumoExpedicaoVO<ResumoExpedicaoBoxVO> resultadoResumoExpedicao = 
+			new ResultadoResumoExpedicaoVO<ResumoExpedicaoBoxVO>(
+				tableModel, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
+
+		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
+	}
+	
+	/**
+	 * Obtém a lista de lançamentos expedidos pro box.
+	 * 
+	 * @param filtro - filtro
+	 * @param qtdeTotalReparte - qtde total do reparte
+	 * @param valorTotalFaturado - valor total faturado
+	 * 
+	 * @return Lista de ResumoExpedicaoBoxVO
+	 */
+	private List<ResumoExpedicaoBoxVO> getListaLancamentosExpedidosBox(FiltroResumoExpedicaoDTO filtro, 
+																	   BigDecimal qtdeTotalReparte,
+																	   BigDecimal valorTotalFaturado) {
 		
 		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoPorBox(filtro);
 		
-		if (list == null || list.isEmpty()){
+		if (list == null || list.isEmpty()) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		List<ResumoExpedicaoVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoVO>();
+		List<ResumoExpedicaoBoxVO> listaLancamentosExpedidosBox = new LinkedList<ResumoExpedicaoBoxVO>();
 		
-		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
-		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
+		qtdeTotalReparte = BigDecimal.ZERO;
+		valorTotalFaturado = BigDecimal.ZERO;
 		
-		ResumoExpedicaoVO resumoExpedicaoVO = null;
+		ResumoExpedicaoBoxVO resumoExpedicaoBoxVO = null;
 		
 		for (ExpedicaoDTO expd  : list){
 			
-			resumoExpedicaoVO = new ResumoExpedicaoVO();
-			resumoExpedicaoVO.setCodigoBox(expd.getCodigoBox());
-			resumoExpedicaoVO.setDescricaoBox(expd.getNomeBox());
-			resumoExpedicaoVO.setQntProduto(getValor(expd.getQntProduto()));
-			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
-			resumoExpedicaoVO.setReparte(getValor(expd.getQntReparte()));
-			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
-			resumoExpedicaoVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
+			resumoExpedicaoBoxVO = new ResumoExpedicaoBoxVO();
+			resumoExpedicaoBoxVO.setCodigoBox(expd.getCodigoBox());
+			resumoExpedicaoBoxVO.setDescricaoBox(expd.getNomeBox());
+			resumoExpedicaoBoxVO.setQntProduto(getValor(expd.getQntProduto()));
+			resumoExpedicaoBoxVO.setReparte(getValor(expd.getQntReparte()));
+			resumoExpedicaoBoxVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
+			resumoExpedicaoBoxVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
 			
 			valorTotalFaturado = valorTotalFaturado.add(expd.getValorFaturado());
 			qtdeTotalReparte = qtdeTotalReparte.add(expd.getQntReparte());
 			
-			listaLancamentosExpedidos.add(resumoExpedicaoVO);
+			listaLancamentosExpedidosBox.add(resumoExpedicaoBoxVO);
 		}
 		
-		listaLancamentosExpedidos =  ordenarEmMemoria(listaLancamentosExpedidos, filtro.getPaginacao(), filtro.getOrdenacaoColunaBox().toString());
-		
-		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidos));
-		
-		tableModel.setPage(1);
-		
-		tableModel.setTotal(listaLancamentosExpedidos.size());
-
-		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
-
-		ResultadoResumoExpedicaoVO resultadoResumoExpedicao = new ResultadoResumoExpedicaoVO(tableModel, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
-
-		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
+		return listaLancamentosExpedidosBox;
 	}
 	
 	/**
@@ -234,7 +370,46 @@ public class ResumoExpedicaoController {
 	 */
 	private void pesquisarResumoProduto(FiltroResumoExpedicaoDTO filtro){
 		
+		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		
+		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
+		
+		List<ResumoExpedicaoVO> listaLancamentosExpedidos = 
+			this.getListaLancamentosExpedidosProduto(filtro, qtdeTotalReparte, valorTotalFaturado);
+		
 		Long quantidadeRegistros = expedicaoService.obterQuantidadeResumoExpedicaoPorProduto(filtro);
+		
+		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = 
+			new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidos));
+
+		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
+
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
+
+		ResultadoResumoExpedicaoVO<ResumoExpedicaoVO> resultadoResumoExpedicao = 
+			new ResultadoResumoExpedicaoVO<ResumoExpedicaoVO>(
+				tableModel, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
+
+		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
+
+	}
+	
+	/**
+	 * Obtém a lista de lançamentos expedidos por produto.
+	 * 
+	 * @param filtro - filtro
+	 * @param qtdeTotalReparte - qtde total do reparte
+	 * @param valorTotalFaturado - valor total faturado
+	 * 
+	 * @return Lista de ResumoExpedicaoBoxVO
+	 */
+	private List<ResumoExpedicaoVO> getListaLancamentosExpedidosProduto(FiltroResumoExpedicaoDTO filtro, 
+																    	BigDecimal qtdeTotalReparte,
+																    	BigDecimal valorTotalFaturado) {
 		
 		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoPorProduto(filtro);
 		
@@ -244,14 +419,15 @@ public class ResumoExpedicaoController {
 		
 		List<ResumoExpedicaoVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoVO>();
 		
-		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
-		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
+		qtdeTotalReparte = BigDecimal.ZERO;
+		valorTotalFaturado = BigDecimal.ZERO;
 		
 		ResumoExpedicaoVO resumoExpedicaoVO = null;
 		
 		for (ExpedicaoDTO expd  : list){
 			
 			resumoExpedicaoVO = new ResumoExpedicaoVO();
+			
 			resumoExpedicaoVO.setCodigoProduto(expd.getCodigoProduto());
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
@@ -266,22 +442,9 @@ public class ResumoExpedicaoController {
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}
 		
-		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidos));
-
-		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
-
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		String valorTotalFaturadoFormatado = CurrencyUtil.formatarValor(valorTotalFaturado);
-		
-		
-		ResultadoResumoExpedicaoVO resultadoResumoExpedicao = new ResultadoResumoExpedicaoVO(tableModel, qtdeTotalReparte.intValue(), valorTotalFaturadoFormatado);
-
-		result.use(Results.json()).withoutRoot().from(resultadoResumoExpedicao).recursive().serialize();
-
+		return listaLancamentosExpedidos;
 	}
+	
 	/**
 	 * Retorna um valor no formato de uma String
 	 * @param valor
@@ -375,6 +538,18 @@ public class ResumoExpedicaoController {
 		listaTipoResumo.add( new ItemDTO<TipoPesquisaResumoExpedicao, String>(TipoPesquisaResumoExpedicao.PRODUTO,TipoPesquisaResumoExpedicao.PRODUTO.getNome()));
 		
 		result.include("listaTipoResumo",listaTipoResumo );
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
 	}
 	
 }

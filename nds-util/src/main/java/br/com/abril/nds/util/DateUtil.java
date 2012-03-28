@@ -150,5 +150,22 @@ public class DateUtil {
 		return DateUtils.isSameDay(new Date(), data);
 	}
 	
+	public static long obterDiferencaDias(Date dataInicial, Date dataFinal) {
+		
+		long quantidadeDias = 0;
+		
+		if (dataInicial != null && dataFinal != null) {
+			
+			if (dataInicial.compareTo(dataFinal) != 1) {
+			
+				long diferencaMilisegundos = dataFinal.getTime() - dataInicial.getTime();
+				
+				quantidadeDias = diferencaMilisegundos / (24 * 60 * 60 * 1000);
+			}
+		}
+		
+		return quantidadeDias;
+	}
+	
 	
 }

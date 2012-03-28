@@ -18,10 +18,10 @@ public class ResultadoDiferencaVO implements Serializable {
 	
 	private TableModel<CellModelKeyValue<DiferencaVO>> tableModel;
 	
-	@Export(label = "Total Geral")
+	@Export(label = "Total", alignWithHeader = "Exemplar")
 	private BigDecimal qtdeTotalDiferencas;
 	
-	@Export(label = "")
+	@Export(label = "", alignWithHeader = "Total R$")
 	private String valorTotalDiferencas;
 	
 	/**

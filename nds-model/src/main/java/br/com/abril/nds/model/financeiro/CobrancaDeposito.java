@@ -8,12 +8,13 @@ import javax.persistence.ManyToOne;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
+
 @Entity
-@DiscriminatorValue(value = "TRANSFERENCIA_BANCARIA")
-public class TransferenciaBancaria extends Cobranca {
+@DiscriminatorValue(value = "DEPOSITO")
+public class CobrancaDeposito extends Cobranca {
 	
-	public TransferenciaBancaria() {
-		this.tipoCobranca = TipoCobranca.TRANSFERENCIA_BANCARIA;
+	public CobrancaDeposito() {
+		this.tipoCobranca = TipoCobranca.DEPOSITO;
 	}
 	
 	@ManyToOne(optional = false)

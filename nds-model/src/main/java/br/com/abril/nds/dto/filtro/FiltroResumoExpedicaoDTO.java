@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /** 
@@ -12,6 +14,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroResumoExpedicaoDTO implements Serializable {
 
 	/**
@@ -19,7 +22,11 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1821183862532025765L;
 	
+	@Export(label = "Data Lançamento")
 	private Date dataLancamento;
+	
+	@Export(label = "Tipo Consulta")
+	private TipoPesquisaResumoExpedicao tipoConsulta;
 	
 	private PaginacaoVO paginacao;
 	
@@ -92,7 +99,28 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 				return this.nomeColuna;
 			}
 	}
-
+	
+	public enum TipoPesquisaResumoExpedicao{
+		
+		PRODUTO("Produto"),
+		BOX("Box");
+		
+		private TipoPesquisaResumoExpedicao(String nome) {
+			this.nome = nome;
+		}
+		
+		public String getNome() {
+			return nome;
+		}
+		
+		private String nome;
+		
+		@Override
+		public String toString() {
+			
+			return this.nome;
+		}
+	}
 
 	/**
 	 * @return the dataLancamento
@@ -150,6 +178,20 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 	public void setOrdenacaoColunaBox(OrdenacaoColunaBox ordenacaoColunaBox) {
 		this.ordenacaoColunaBox = ordenacaoColunaBox;
 	}
+	
+	/**
+	 * @return the tipoConsulta
+	 */
+	public TipoPesquisaResumoExpedicao getTipoConsulta() {
+		return tipoConsulta;
+	}
+
+	/**
+	 * @param tipoConsulta the tipoConsulta to set
+	 */
+	public void setTipoConsulta(TipoPesquisaResumoExpedicao tipoConsulta) {
+		this.tipoConsulta = tipoConsulta;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -201,7 +243,5 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 			return false;
 		return true;
 	}
-
-	
 
 }

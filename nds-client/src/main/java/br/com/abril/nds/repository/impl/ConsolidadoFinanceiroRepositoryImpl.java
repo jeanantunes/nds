@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -55,6 +56,20 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		query.setParameter("numeroCota", numeroCota);
 		
 		return query.list();
+	}
+	
+	public boolean verificarConsodidadoCotaPorData(Long idCota, Date data){
+		StringBuilder hql = new StringBuilder("select count (c.id) from ConsolidadoFinanceiroCota c ");
+		hql.append(" where c.cota.id = :idCota ")
+		   .append(" and c.dataConsolidado = :data ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		query.setParameter("data", data);
+		
+		Long quant = (Long) query.uniqueResult();
+		
+		return quant == null ? false : quant > 0;
 	}
 	
 }

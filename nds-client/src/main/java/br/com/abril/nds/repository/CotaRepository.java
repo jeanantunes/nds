@@ -82,5 +82,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 */	
 	List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota);
 	
+	List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
 	
 }

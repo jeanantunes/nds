@@ -11,10 +11,12 @@ import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.GeradorBoleto;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 
 /**
@@ -35,16 +37,16 @@ public interface BoletoService {
 	
 	String obterEmailCota(String nossoNumero);
 
-	ResumoBaixaBoletosDTO baixarBoletos(ArquivoPagamentoBancoDTO arquivoPagamento,
-					   					BigDecimal valorFinanceiro, Usuario usuario);
+	ResumoBaixaBoletosDTO baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
+					   							  BigDecimal valorFinanceiro, Usuario usuario);
 	
-	void baixarBoleto(ResumoBaixaBoletosDTO resumoBaixaBoletos, PagamentoDTO pagamento,
-					  Date dataOperacao, Usuario usuario,
-					  String nomeArquivo, PoliticaCobranca politicaCobranca);
+	void baixarBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
+			 		  String nomeArquivo, PoliticaCobranca politicaCobranca, Distribuidor distribuidor,
+			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
 	File gerarAnexoBoleto(String nossoNumero) throws IOException;
 	
-	CobrancaVO obterCobranca(String nossoNumero);
+	CobrancaVO obterDadosCobranca(String nossoNumero);
 	
 }

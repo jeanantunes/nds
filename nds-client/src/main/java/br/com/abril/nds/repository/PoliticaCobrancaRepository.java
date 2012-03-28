@@ -20,5 +20,7 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	 * @return {@link PoliticaCobranca}
 	 */
 	PoliticaCobranca obterPorTipoCobranca(TipoCobranca tipoCobranca);
+	
+	PoliticaCobranca buscarPoliticaCobrancaPorDistribuidor();
 
 }

@@ -2,13 +2,51 @@ package br.com.abril.nds.model.financeiro;
 
 public enum GrupoMovimentoFinaceiro {
 	
+	/**
+	 * Recebimento do reparte cota
+	 */
 	RECEBIMENTO_REPARTE(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Envio do encalhe cota
+	 */
 	ENVIO_ENCALHE(OperacaoFinaceira.CREDITO),
+	
+	/**
+	 * Postergado da cota
+	 */
 	POSTERGADO(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Crédito cota
+	 */
 	CREDITO(OperacaoFinaceira.CREDITO),
+	
+	/**
+	 * Débito cota
+	 */
 	DEBITO(OperacaoFinaceira.DEBITO), 
+	
+	/**
+	 * Juros cota
+	 */
 	JUROS(OperacaoFinaceira.DEBITO), 
-	MULTA(OperacaoFinaceira.DEBITO);
+	
+	/**
+	 * Multa cota
+	 */
+	MULTA(OperacaoFinaceira.DEBITO), 
+	
+	/**
+	 * Estorno do reparte de cota ausente
+	 */
+	ESTORNO_REPARTE_COTA_AUSENTE(OperacaoFinaceira.CREDITO),
+	
+	/**
+	 * Recuperação do reparte de cota ausente
+	 */
+	RECUPERACAO_REPARTE_COTA_AUSENTE(OperacaoFinaceira.DEBITO);
+	
 	
 	private OperacaoFinaceira operacaoFinaceira;
 	

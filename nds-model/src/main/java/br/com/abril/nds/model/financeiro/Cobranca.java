@@ -84,6 +84,13 @@ public abstract class Cobranca {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "DIVIDA_ID")
 	protected Divida divida;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "BAIXA_COBRANCA_ID")
+	protected BaixaCobranca baixaCobranca;
+	
+	@Column(name="VIAS")
+	protected Integer vias;
     
 	public Long getId() {
 		return id;
@@ -188,5 +195,23 @@ public abstract class Cobranca {
 	public void setDivida(Divida divida) {
 		this.divida = divida;
 	}
+	
+	public BaixaCobranca getBaixaCobranca() {
+		return baixaCobranca;
+	}
+	
+	public void setBaixaCobranca(BaixaCobranca baixaCobranca) {
+		this.baixaCobranca = baixaCobranca;
+	}
+
+	public Integer getVias() {
+		return vias;
+	}
+
+	public void setVias(Integer vias) {
+		this.vias = vias;
+	}
+	
+	
 	
 }

@@ -1,8 +1,8 @@
 
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
-<script language="javascript" type="text/javascript">
 
+<script language="javascript" type="text/javascript">
 
 function cliquePesquisar() {
 	
@@ -317,7 +317,10 @@ function mostra_grid(){
 
 <script type="text/javascript">
 	
+	$("#idCota").mask("?99999999999999999999", {placeholder:""});
+	
 	$(function() {	
+		
 		$(".ausentesGrid").flexigrid($.extend({},{
 			colModel : [ {
 				display : 'Data',

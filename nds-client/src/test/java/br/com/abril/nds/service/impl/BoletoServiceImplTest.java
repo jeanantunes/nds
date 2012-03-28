@@ -119,7 +119,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Test
 	@Ignore
 	public void teste() {
-		boletoService.baixarBoletos(null, null, null);
+		boletoService.baixarBoletosAutomatico(null, null, null);
 	}
 	
 	@Test

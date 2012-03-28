@@ -5,19 +5,19 @@ import br.com.abril.nds.util.export.Export.Alignment;
 @Exportable
 public class ExportTestSmallVO {
 
-	@Export(label = "Column1", alignment = Alignment.CENTER)
+	@Export(label = "Column1", alignment = Alignment.CENTER, exhibitionOrder = 1)
 	private String Column1;
 	
-	@Export(label = "Column2", alignment = Alignment.RIGHT)
+	@Export(label = "Column2", alignment = Alignment.RIGHT, exhibitionOrder = 2)
 	private String Column2;
 	
-	@Export(label = "Column3", alignment = Alignment.LEFT)
+	@Export(label = "Column3", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private String Column3;
 	
-	@Export(label = "Column4", alignment = Alignment.CENTER)
+	@Export(label = "Column4", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String Column4;
 	
-	@Export(label = "Column5", alignment = Alignment.RIGHT)
+	@Export(label = "Column5", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String Column5;
 	
 	public ExportTestSmallVO(String column1, String column2, String column3,

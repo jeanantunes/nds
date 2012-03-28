@@ -78,7 +78,14 @@
 
 		function popupNovasDiferencas() {
 
-			var formData = $('#pesquisaLancamentoDiferencaForm').serializeArray();
+			var formData = [
+   				{
+   					name: 'dataMovimentoFormatada', value: $("#datePickerDataMovimento").val()
+   				},
+   				{
+   					name: 'tipoDiferenca', value: $("#selectTiposDiferenca").val()
+   				}
+   			];
 
 			$("#gridNovasDiferencas").flexOptions({
 				url : '<c:url value="/estoque/diferenca/lancamento/novo" />', 

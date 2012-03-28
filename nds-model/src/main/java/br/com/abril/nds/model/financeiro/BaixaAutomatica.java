@@ -1,20 +1,12 @@
 package br.com.abril.nds.model.financeiro;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * @author Discover Technology
@@ -22,63 +14,22 @@ import javax.persistence.TemporalType;
  * @created 15-mar-2012 10:00:00
  */
 @Entity
-@Table(name = "BAIXA_AUTOMATICA")
-@SequenceGenerator(name = "BAIXA_AUTOMATICA_SEQ", initialValue = 1, allocationSize = 1)
-public class BaixaAutomatica {
+@DiscriminatorValue(value = "AUTOMATICA")
+public class BaixaAutomatica extends BaixaCobranca {
 
-	@Id
-	@GeneratedValue(generator = "BAIXA_AUTOMATICA_SEQ")
-	@Column(name = "ID")
-	private Long id;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "DT_BAIXA", nullable = false)
-	private Date dataBaixa;
-	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS", nullable = false)
+	@Column(name = "STATUS", nullable = true)
 	private StatusBaixa status;
 	
-	@Column(name = "NOME_ARQUIVO", nullable = false)
+	@Column(name = "NOME_ARQUIVO", nullable = true)
 	private String nomeArquivo;
 	
-	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = false)
+	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = true)
 	private Integer numeroRegistroArquivo;
-	
-	@Column(name = "VALOR_PAGO" , nullable = false)
-	private BigDecimal valorPago;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "BOLETO_ID")
 	private Boleto boleto;
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the dataBaixa
-	 */
-	public Date getDataBaixa() {
-		return dataBaixa;
-	}
-
-	/**
-	 * @param dataBaixa the dataBaixa to set
-	 */
-	public void setDataBaixa(Date dataBaixa) {
-		this.dataBaixa = dataBaixa;
-	}
 
 	/**
 	 * @return the status
@@ -120,20 +71,6 @@ public class BaixaAutomatica {
 	 */
 	public void setNumeroRegistroArquivo(Integer numeroRegistroArquivo) {
 		this.numeroRegistroArquivo = numeroRegistroArquivo;
-	}
-
-	/**
-	 * @return the valorPago
-	 */
-	public BigDecimal getValorPago() {
-		return valorPago;
-	}
-
-	/**
-	 * @param valorPago the valorPago to set
-	 */
-	public void setValorPago(BigDecimal valorPago) {
-		this.valorPago = valorPago;
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,18 +73,28 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 	
 	@Override
-	public Date obterProximoDiaUtil(Date data) {
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(data);
-		
-		cal.setTime(DateUtil.adicionarDias(data, 1));
-		
-		while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
-			cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
+	public Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemana) {
+		if (diasSemana == null || diasSemana.isEmpty()){
+			return this.adicionarDiasUteis(data, numDias);
 		}
 		
-		return cal.getTime();
+		Calendar dataBase = Calendar.getInstance();
+		dataBase.setTime(data);
+		dataBase.add(Calendar.DAY_OF_MONTH, numDias);
+		
+		boolean dataValida = false;
+		
+		while (!dataValida){
+			while (!diasSemana.contains(dataBase.get(Calendar.DAY_OF_WEEK))){
+				dataBase.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			dataBase.setTime(this.adicionarDiasUteis(dataBase.getTime(), 0));
+			
+			dataValida = diasSemana.contains(dataBase.get(Calendar.DAY_OF_WEEK));
+		}
+		
+		return dataBase.getTime();
 	}
 	
 	private boolean isFeriado(Calendar cal) {

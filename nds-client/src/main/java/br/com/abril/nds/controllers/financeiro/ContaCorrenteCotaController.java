@@ -10,12 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
+import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -53,22 +61,47 @@ public class ContaCorrenteCotaController {
 	
 	public void buscarCota(Integer numeroCota){
 		
+		this.validarDadosEntradaPesquisa(numeroCota);
+		
 		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		if(cota != null){
 			result.use(Results.json()).from(cota.getPessoa(), "result").serialize();			 
 		}else{
 			
-			throw new ValidacaoException(TipoMensagem.ERROR,"Cota não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não encontrado!");
 			
 		}
+	}
+	
+	@Post
+	public void buscarPorNomeCota(String nomeCota){
+			
+		List<Cota> listaDeCotas = cotaService.obterCotasPorNomePessoa(nomeCota);
+		
+		if (listaDeCotas != null && !listaDeCotas.isEmpty()){
+			List<ItemAutoComplete> listaDeNomesCota = new ArrayList<ItemAutoComplete>();
+			for (Cota cota : listaDeCotas){
+				PessoaFisica pessoa = (PessoaFisica) cota.getPessoa();
+							
+				listaDeNomesCota.add(new ItemAutoComplete(pessoa.getNome(),	null, cota.getNumeroCota()));
+			}
+			
+			result.use(Results.json()).from(listaDeNomesCota, "result").include("value", "chave").serialize();
+		} else {
+		
+			result.use(Results.json()).from("", "result").serialize();
+		}
+		
+		result.forwardTo(ContaCorrenteCotaController.class).index();
+		
+		
 	}
 	
 	
 	public void consultarContaCorrenteCota( FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,String sortname, String sortorder, int rp, int page) {
 			
-		if(filtroViewContaCorrenteCotaDTO.getNumeroCota() == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "O preenchimento do campo Cota é obrigatório.");
-		}
+				
+		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO.getNumeroCota());
 		
 		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname, page, rp);
 		
@@ -178,7 +211,7 @@ public class ContaCorrenteCotaController {
 		
 	}
 	
-	@Post
+	/*@Post
 	public void verificarContaCorrenteCotaExistente(String numeroCota) {
 		
 		List<String> msgs = new ArrayList<String>();
@@ -192,5 +225,22 @@ public class ContaCorrenteCotaController {
 			
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
 			
+	}*/
+	
+	private void validarDadosEntradaPesquisa(Integer numeroCota) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (numeroCota == null){
+			listaMensagemValidacao.add("O Preenchimento do campo Cota é obrigatório.");
+		}else{
+			if(!Util.isNumeric(numeroCota.toString())){
+				listaMensagemValidacao.add("A Cota permite apenas valores números.");
+			}
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()){
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
 	}
 }

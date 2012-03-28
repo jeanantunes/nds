@@ -118,8 +118,6 @@
 
 				var quantidade = row.cell.quantidade ? row.cell.quantidade : ''; 
 
-				var parametroLimparCamposPesquisa = '\'#nomeCota' + index + '\',  function() {reprocessarDadosRateio(' + index + ')}';
-
 				var chamadaMetodoObterQuantidadeReparteCota = 'obterQuantidadeReparteCota(' + row.cell.idDiferenca + ', \'#numeroCota' + index  + '\', ' + index + ');';
 
 				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true, function() {' + chamadaMetodoObterQuantidadeReparteCota + '}, null';
@@ -130,9 +128,7 @@
 				
 				var inputIdDiferenca = '<input name="idDiferenca" type="hidden" value="' + row.cell.idDiferenca + '" />';
 				
-				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.limparCamposPesquisa(' + parametroLimparCamposPesquisa + ')" value="' + numeroCota + '" />';
-
-				var imgLupaPesquisa = '<span class="classPesquisar" title="Pesquisar Cota"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');">&nbsp;</a></span>';
+				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" value="' + numeroCota + '" />';
 
 				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" value="' + nomeCota + '" />';
 
@@ -142,7 +138,7 @@
 				
 				var inputQtdeRateio = '<input id="quantidadeRateio' + index + '" name="quantidadeRateio" type="text" style="width:60px; text-align:center;" value="' + quantidade + '" />';
 
-				row.cell.numeroCota = inputId + inputIdDiferenca + inputNumeroCota + imgLupaPesquisa;
+				row.cell.numeroCota = inputId + inputIdDiferenca + inputNumeroCota;
 				row.cell.nomeCota = inputNomeCota;
 				row.cell.reparteCota = inputReparteCota + spanReparteCota;
 				row.cell.quantidade = inputQtdeRateio;

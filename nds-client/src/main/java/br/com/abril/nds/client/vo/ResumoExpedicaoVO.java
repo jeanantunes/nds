@@ -2,14 +2,19 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
+
 /**
  * 
  * Classe responsável por armazenar os valores referente a 
- * consulta de resumo de edições expedidas agrupadas por produto e box
+ * consulta de resumo de edições expedidas agrupadas por produto.
  * 
  * @author Discover Technology
  *
  */
+@Exportable
 public class ResumoExpedicaoVO implements Serializable {
 	
 	/**
@@ -21,24 +26,25 @@ public class ResumoExpedicaoVO implements Serializable {
 	
 	private String dataLancamento;
 	
+	@Export(label = "Código", exhibitionOrder = 1)
 	private String codigoProduto;
 	
+	@Export(label = "Produto", exhibitionOrder = 2)
 	private String descricaoProduto;
 	
+	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 3)
 	private String edicaoProduto;
 	
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
 	private String precoCapa;
 	
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String reparte;
 	
+	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private String valorFaturado;
 	
-	private String codigoBox;
-	
-	private String descricaoBox;
-	
-	private String qntProduto;
-	
+	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String qntDiferenca;
 	
 	/**
@@ -136,42 +142,6 @@ public class ResumoExpedicaoVO implements Serializable {
 	 */
 	public void setValorFaturado(String valorFaturado) {
 		this.valorFaturado = valorFaturado;
-	}
-	/**
-	 * @return the codigoBox
-	 */
-	public String getCodigoBox() {
-		return codigoBox;
-	}
-	/**
-	 * @param codigoBox the codigoBox to set
-	 */
-	public void setCodigoBox(String codigoBox) {
-		this.codigoBox = codigoBox;
-	}
-	/**
-	 * @return the descricaoBox
-	 */
-	public String getDescricaoBox() {
-		return descricaoBox;
-	}
-	/**
-	 * @param descricaoBox the descricaoBox to set
-	 */
-	public void setDescricaoBox(String descricaoBox) {
-		this.descricaoBox = descricaoBox;
-	}
-	/**
-	 * @return the qntProduto
-	 */
-	public String getQntProduto() {
-		return qntProduto;
-	}
-	/**
-	 * @param qntProduto the qntProduto to set
-	 */
-	public void setQntProduto(String qntProduto) {
-		this.qntProduto = qntProduto;
 	}
 	/**
 	 * @return the qntDiferenca
