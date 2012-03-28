@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.movimentacao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -32,9 +35,12 @@ public class CotaAusente {
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;
 	
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
+	@OneToMany(mappedBy = "cotaAusente")
+	private List<RateioCotaAusente> rateios = new ArrayList<RateioCotaAusente>(); 
 
 	public Long getId() {
 		return id;
@@ -66,6 +72,14 @@ public class CotaAusente {
 	
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+	
+	public List<RateioCotaAusente> getRateios() {
+		return rateios;
+	}
+	
+	public void setRateios(List<RateioCotaAusente> rateios) {
+		this.rateios = rateios;
 	}
 
 }
