@@ -250,7 +250,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 			return "";
 		}
 		
-		return DateUtil.formatarDataPTBR(this.periodoVO.getDataInicial());
+		return DateUtil.formatarDataPTBR(this.periodoVO.getDataFinal());
 	}
 
 	/* (non-Javadoc)
