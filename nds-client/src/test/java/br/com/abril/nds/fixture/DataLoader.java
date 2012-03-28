@@ -1250,6 +1250,7 @@ public class DataLoader {
 		
 		criarDistribuidor(session);
 		criarParametrosSistema(session);
+		criarPessoas(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
 		criarFornecedores(session);
