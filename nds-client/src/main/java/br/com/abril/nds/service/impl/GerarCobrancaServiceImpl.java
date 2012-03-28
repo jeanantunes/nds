@@ -116,7 +116,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (TipoCobranca.BOLETO.equals(politicaCobranca.getFormaCobranca().getTipoCobranca())){
 			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
 			
-			if (!StatusControle.CONCLUIDO_SUCESSO.equals(controleBaixaBancaria.getStatus())){
+			if (controleBaixaBancaria == null || !StatusControle.CONCLUIDO_SUCESSO.equals(controleBaixaBancaria.getStatus())){
 				throw new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada.");
 			}
 		}
@@ -130,64 +130,93 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			//Varre todos os movimentos encontrados, agrupando por cota
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
-			BigDecimal valorMovimentoFinanceiro = BigDecimal.ZERO;
+			if (TipoCobranca.BOLETO.equals(politicaCobranca.getFormaCobranca().getTipoCobranca())){
+				this.verificarCotaTemBanco(ultimaCota);
+			}
+			
 			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
+			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				if (movimentoFinanceiroCota.getCota().equals(ultimaCota)){
-					valorMovimentoFinanceiro.add(this.calcularValorMovimento(movimentoFinanceiroCota));
+					
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
 					
+					if (TipoCobranca.BOLETO.equals(politicaCobranca.getFormaCobranca().getTipoCobranca())){
+						this.verificarCotaTemBanco(ultimaCota);
+					}
+					
 					//Decide se gera movimento consolidado ou postergado para a cota
 					BigDecimal valorMinimo = 
-							ultimaCota.getParametroCobranca().getValorMininoCobranca() != null ?
-									ultimaCota.getParametroCobranca().getValorMininoCobranca() :
-										politicaCobranca.getFormaCobranca().getValorMinimoEmissao();
+							this.obterValorMinino(ultimaCota, politicaCobranca.getFormaCobranca().getValorMinimoEmissao());
 					
-					this.inserirConsolidadoFinanceiro(ultimaCota, valorMovimentoFinanceiro, movimentos,
+					this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
 							valorMinimo, politicaCobranca.isAcumulaDivida(), idUsuario, 
 							politicaCobranca.getFormaCobranca().getTipoCobranca());
 					
 					//Limpa dados para contabilizar próxima cota
 					ultimaCota = movimentoFinanceiroCota.getCota();
-					valorMovimentoFinanceiro = BigDecimal.ZERO;
+					
 					movimentos = new ArrayList<MovimentoFinanceiroCota>();
+					
+					
+					movimentos.add(movimentoFinanceiroCota);
 				}
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
 			BigDecimal valorMinimo = 
-					ultimaCota.getParametroCobranca().getValorMininoCobranca() != null ?
-							ultimaCota.getParametroCobranca().getValorMininoCobranca() :
-								politicaCobranca.getFormaCobranca().getValorMinimoEmissao();
+					this.obterValorMinino(ultimaCota, politicaCobranca.getFormaCobranca().getValorMinimoEmissao());
 			
-			this.inserirConsolidadoFinanceiro(ultimaCota, valorMovimentoFinanceiro, movimentos, valorMinimo,
+			this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, valorMinimo,
 					politicaCobranca.isAcumulaDivida(), idUsuario, politicaCobranca.getFormaCobranca().getTipoCobranca());
 		}
 	}
 	
-	private BigDecimal calcularValorMovimento(MovimentoFinanceiroCota movimentoFinanceiroCota){
-		
-		switch(movimentoFinanceiroCota.getTipoMovimento().getOperacaoFinaceira()){
-			case CREDITO:
-				return movimentoFinanceiroCota.getValor();
+	private boolean verificarCotaTemBanco(Cota cota){
+		if (cota.getParametroCobranca() == null || cota.getParametroCobranca().getFormaCobranca() == null ||
+				cota.getParametroCobranca().getFormaCobranca().getBanco() == null){
 			
-			case DEBITO:
-				return movimentoFinanceiroCota.getValor().negate();
-			
-			default:
-				return BigDecimal.ZERO;
+			throw new ValidacaoException(
+					TipoMensagem.ERROR, 
+					"Para pagamento por boleto é necessário que a cota tenha um banco cadastrado. Número da cota sem banco: " + 
+							cota.getNumeroCota());
+		} else {
+			return true;
 		}
 	}
 	
-	private void inserirConsolidadoFinanceiro(Cota cota, BigDecimal valorMovimentoFinanceiro, 
-			List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMinino, boolean acumulaDivida, Long idUsuario,
-			TipoCobranca tipoCobranca){
+	private BigDecimal obterValorMinino(Cota cota, BigDecimal valorMininoDistribuidor){
+		BigDecimal valorMinimo = 
+				(cota.getParametroCobranca() != null && cota.getParametroCobranca().getValorMininoCobranca() != null) ?
+						cota.getParametroCobranca().getValorMininoCobranca() :
+							valorMininoDistribuidor;
+						
+		return valorMinimo;
+	}
+	
+	private void inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMinino,
+			boolean acumulaDivida, Long idUsuario, TipoCobranca tipoCobranca){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(new Date());
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
+		
+		BigDecimal valorMovimentoFinanceiro = BigDecimal.ZERO;
+		
+		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
+			switch (movimentoFinanceiroCota.getTipoMovimento().getGrupoMovimentoFinaceiro()){
+				case CREDITO:
+					valorMovimentoFinanceiro = valorMovimentoFinanceiro.add(movimentoFinanceiroCota.getValor());
+				break;
+				
+				case DEBITO:
+					valorMovimentoFinanceiro = 
+						valorMovimentoFinanceiro.add(movimentoFinanceiroCota.getValor() != null ? movimentoFinanceiroCota.getValor().negate() : BigDecimal.ZERO);
+				break;
+			}
+		}
 		consolidadoFinanceiroCota.setTotal(valorMovimentoFinanceiro);
 		
 		Usuario usuario = new Usuario();
@@ -197,9 +226,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		List<Integer> diasSemanaConcentracaoPagamento = 
 				this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
 		
+		int fatorVencimento = cota.getParametroCobranca() != null ? cota.getParametroCobranca().getFatorVencimento() : 0 ;
 		Date dataVencimento = 
 				this.calendarioService.adicionarDiasUteis(
-						consolidadoFinanceiroCota.getDataConsolidado(), cota.getParametroCobranca().getFatorVencimento(),
+						consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento,
 						diasSemanaConcentracaoPagamento);
 		
 		Divida novaDivida = null;
@@ -211,9 +241,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		
 		//se existe divida
-		if (valorMovimentoFinanceiro.compareTo(BigDecimal.ZERO) > 0){
+		if (valorMovimentoFinanceiro.compareTo(BigDecimal.ZERO) < 0){
 			
-			if (valorMovimentoFinanceiro.compareTo(valorMinino) > 0){
+			if (valorMovimentoFinanceiro.negate().compareTo(valorMinino) < 0){
 				//gerar postergado
 				consolidadoFinanceiroCota.setValorPostergado(valorMovimentoFinanceiro);
 			} else {
@@ -236,7 +266,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					} else {
 						
 						divida.setAcumulada(true);
-						novaDivida.setValor(divida.getValor());
 						novaDivida.getAcumulado().add(divida);
 						
 						historicoAcumuloDivida = new HistoricoAcumuloDivida();
@@ -264,6 +293,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
 			tipoMovimentoFinanceiro.setAprovacaoAutomatica(false);
 			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+			tipoMovimentoFinanceiro.setDescricao("Geração de dívida - Valor mínimo para dívida não atingido.");
 			
 			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
 		}
@@ -286,6 +316,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			switch (tipoCobranca){
 				case BOLETO:
 					cobranca = new Boleto();
+					((Boleto)(cobranca)).setBanco(cota.getParametroCobranca().getFormaCobranca().getBanco());
 				break;
 				case CHEQUE:
 					cobranca = new CobrancaCheque();
