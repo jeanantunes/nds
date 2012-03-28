@@ -51,6 +51,7 @@ public class GeradorBoleto {
 	private String enderecoSacadorAvalistaNumero;
 	
 	private String  contaBanco;
+	private String contaTipoDeCobranca;
 	private Integer contaNumero;
 	private Integer contaCarteira;
 	private Integer contaAgencia;
@@ -58,6 +59,7 @@ public class GeradorBoleto {
 	private String tituloNumeroDoDocumento;
 	private String tituloNossoNumero;
 	private String tituloDigitoDoNossoNumero;
+	private String tituloTipoIdentificadorCNR;
 	private BigDecimal tituloValor;
 	private Date tituloDataDoDocumento;
 	private Date tituloDataDoVencimento;
@@ -535,6 +537,26 @@ public class GeradorBoleto {
 	public void setBoletoInstrucao8(String boletoInstrucao8) {
 		this.boletoInstrucao8 = boletoInstrucao8;
 	}
+	
+
+	public String getContaTipoDeCobranca() {
+		return contaTipoDeCobranca;
+	}
+
+
+	public void setContaTipoDeCobranca(String contaTipoDeCobranca) {
+		this.contaTipoDeCobranca = contaTipoDeCobranca;
+	}
+
+
+	public String getTituloTipoIdentificadorCNR() {
+		return tituloTipoIdentificadorCNR;
+	}
+
+
+	public void setTituloTipoIdentificadorCNR(String tituloTipoIdentificadorCNR) {
+		this.tituloTipoIdentificadorCNR = tituloTipoIdentificadorCNR;
+	}
 
 
 	/**
@@ -580,13 +602,7 @@ public class GeradorBoleto {
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(this.getContaCarteira());
         //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  
-        if (this.getContaCarteira()==1){
-            carteira.setTipoCobranca(TipoDeCobranca.SEM_REGISTRO);
-        }
-        if (this.getContaCarteira()==30){  
-        	carteira.setTipoCobranca(TipoDeCobranca.COM_REGISTRO);
-        }
-        
+        carteira.setTipoCobranca(TipoDeCobranca.valueOf(this.getContaTipoDeCobranca()));   
         contaBancaria.setCarteira(carteira);
         contaBancaria.setAgencia(new Agencia(getContaAgencia(), "1"));
         
@@ -602,7 +618,7 @@ public class GeradorBoleto {
         ParametrosBancariosMap parametrosBancarios = new
         ParametrosBancariosMap();
         parametrosBancarios.adicione(TipoIdentificadorCNR.class.getName(),
-                                     TipoIdentificadorCNR.COM_VENCIMENTO);
+                                     TipoIdentificadorCNR.valueOf(this.getTituloTipoIdentificadorCNR()));
         titulo.setParametrosBancarios(parametrosBancarios);
         titulo.setNumeroDoDocumento(getTituloNumeroDoDocumento());
         titulo.setNossoNumero(getTituloNossoNumero());
