@@ -141,42 +141,12 @@ public class DiferencaEstoqueController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 				
-		FiltroConsultaDiferencaEstoqueDTO filtroSessao =
-			(FiltroConsultaDiferencaEstoqueDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null) {
+		if (fileType == null) {
 			
-			if (filtroSessao.getPaginacao() != null) {
-				
-				filtroSessao.getPaginacao().setPaginaAtual(null);
-				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
-			}
-			
-			if (filtroSessao.getCodigoProduto() != null
-				&& filtroSessao.getNumeroEdicao() != null) {
-		
-				ProdutoEdicao produtoEdicao =
-					this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-						filtroSessao.getCodigoProduto(), filtroSessao.getNumeroEdicao().toString());
-				
-				if (produtoEdicao != null) {
-					
-					filtroSessao.setNomeProduto(produtoEdicao.getProduto().getNome());
-				}
-			}
-			
-			if (filtroSessao.getIdFornecedor() != null) {
-				
-				Fornecedor fornecedor =
-					this.fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
-				
-				if (fornecedor != null) {
-					
-					filtroSessao.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
-				}
-			}
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
+		
+		FiltroConsultaDiferencaEstoqueDTO filtroSessao = this.obterFiltroParaExportacao();
 		
 		List<Diferenca> listaDiferencas = diferencaEstoqueService.obterDiferencas(filtroSessao);
 		
@@ -848,6 +818,51 @@ public class DiferencaEstoqueController {
 			carregarComboFornecedores(codigoProduto);
 		
 		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
+	}
+	
+	/*
+	 * Obtém o filtro de pesquisa para exportação.
+	 */
+	private FiltroConsultaDiferencaEstoqueDTO obterFiltroParaExportacao() {
+		
+		FiltroConsultaDiferencaEstoqueDTO filtroSessao =
+			(FiltroConsultaDiferencaEstoqueDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null) {
+			
+			if (filtroSessao.getPaginacao() != null) {
+				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtroSessao.getCodigoProduto() != null
+				&& filtroSessao.getNumeroEdicao() != null) {
+		
+				ProdutoEdicao produtoEdicao =
+					this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+						filtroSessao.getCodigoProduto(), filtroSessao.getNumeroEdicao().toString());
+				
+				if (produtoEdicao != null) {
+					
+					filtroSessao.setNomeProduto(produtoEdicao.getProduto().getNome());
+				}
+			}
+			
+			if (filtroSessao.getIdFornecedor() != null) {
+				
+				Fornecedor fornecedor =
+					this.fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
+				
+				if (fornecedor != null) {
+					
+					filtroSessao.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
+				}
+			}
+		}
+		
+		return filtroSessao;
 	}
 	
 	/*

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -151,6 +152,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	}
 	
 	@Test
+	@Ignore
 	public void consultaDividasGeradas(){
 		
 		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();

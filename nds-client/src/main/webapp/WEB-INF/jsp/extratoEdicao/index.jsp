@@ -15,14 +15,21 @@ var jsExtratoEdicao = {
 		
 		var numeroEdicao = jQuery("#edicao").val();
 		var codigoProduto = jQuery("#codigo").val();
+		var nomeProduto = jQuery("#produto").val();
+		var precoCapa = jQuery("#precoCapa").val();
+		var nomeFornecedor = jQuery("#nomeFornecedor").val();
 		
 		$(".extratoEdicaoGrid").flexOptions({
 			url: '<c:url value="/"/>estoque/extratoEdicao/pesquisaExtratoEdicao',
 			preProcess: jsExtratoEdicao.getDataFromResult,
 			dataType : 'json',
 			params:[
-			        {name:'numeroEdicao', value: numeroEdicao},
-			        {name:'codigoProduto', value: codigoProduto}]
+		        {name:'numeroEdicao', value: numeroEdicao},
+		        {name:'codigoProduto', value: codigoProduto},
+		        {name:'nomeProduto', value: nomeProduto},
+		        {name:'precoCapa', value: precoCapa},
+		        {name:'nomeFornecedor', value: nomeFornecedor}
+			]
 		});
 		
 		$(".extratoEdicaoGrid").flexReload();
@@ -319,13 +326,19 @@ $(function() {
 				<table class="extratoEdicaoGrid"></table>
 				<table width="950" border="0" cellspacing="2" cellpadding="2">
 					<tr>
-						<td width="689"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="javascript:;"><img src="../images/ico_excel.png"
-									hspace="5" border="0" />Arquivo</a>
-						</span> <span class="bt_novos" title="Imprimir"><a
-								href="javascript:;"><img src="../images/ico_impressora.gif"
-									alt="Imprimir" hspace="5" border="0" />Imprimir</a>
-						</span>
+						<td width="689">
+							<span class="bt_novos" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/estoque/extratoEdicao/exportar?fileType=XLS">
+									<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+									Arquivo
+								</a>
+							</span>
+							<span class="bt_novos" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/estoque/extratoEdicao/exportar?fileType=PDF">
+									<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+									Imprimir
+								</a>
+							</span>
 						</td>
 						<td width="115"><strong>Saldo em Estoque:</strong>
 						</td>
