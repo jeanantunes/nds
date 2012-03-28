@@ -2,10 +2,19 @@ package br.com.abril.nds.model.cadastro;
 
 public enum TipoCobranca {
 	
-	BOLETO, 
-	CHEQUE,
-	DINHEIRO, 
-	DEPOSITO, 
-	TRANSFERENCIA_BANCARIA;
-
+	BOLETO("Boleto"), 
+	CHEQUE("Cheque"),
+	DINHEIRO("Dinheiro"), 
+	DEPOSITO("Depósito"), 
+	TRANSFERENCIA_BANCARIA("Transferência  Bancaria ");
+	
+	private String descricao;
+	
+	private TipoCobranca(String descricao) {
+		this.descricao = descricao;
+	}
+	
+	public String getDescTipoCobranca(){
+		return this.descricao;
+	}
 }
