@@ -31,24 +31,35 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 						
 		StringBuilder queryNative = new StringBuilder();
 		
-		queryNative.append("SELECT ");		
-		queryNative.append("ca.DATA as data, ");	
-		queryNative.append("box.NOME as box, ");	
-		queryNative.append("cota.NUMERO_COTA as cota, ");	
-		queryNative.append("pessoa.NOME as nome, ");
-		queryNative.append("SUM(mec.QTDE*pe.PRECO_CUSTO) as valorNE ");
+		
+		queryNative.append("SELECT 																				"); 		
+		queryNative.append("ca.data, 																			");
+		
+		queryNative.append("box.nome as box, 																	");
+		queryNative.append("cota.numero_cota cota,																");
+		queryNative.append("pessoa.nome,																		");
+	    
+		queryNative.append("(SELECT SUM(movEstoque.QTDE*pe.PRECO_CUSTO) FROM MOVIMENTO_ESTOQUE_COTA movEstoque  ");
+		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
+		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID)													");
+		queryNative.append("as valorNE																			");
 
-		queryNative.append("FROM ");
+		queryNative.append("FROM COTA cota																		");
 
-		queryNative.append("MOVIMENTO_ESTOQUE_COTA mec "); 
-		queryNative.append("LEFT JOIN COTA cota ON (mec.COTA_ID = cota.ID) "); 
-		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID) ");   
-		queryNative.append("LEFT JOIN PRODUTO_EDICAO pe ON (mec.PRODUTO_EDICAO_ID=pe.ID) ");
-		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID) ");
-		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID) ");
-		queryNative.append("WHERE ");
-		queryNative.append("ca.DATA = :data ");
-		queryNative.append("cota.ID = :idCota ");
+		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
+		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
+		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
+		
+		queryNative.append("WHERE 																				");
+		
+		queryNative.append("ca.DATA = :data 																	");
+		
+		if(idCota != null){
+			
+			queryNative.append("cota.ID = :idCota 																");
+		}
+		
+		queryNative.append("group by cota.numero_cota															");
 		
 		PaginacaoVO paginacao = cotaAusenteDTO.getPaginacao();
 		

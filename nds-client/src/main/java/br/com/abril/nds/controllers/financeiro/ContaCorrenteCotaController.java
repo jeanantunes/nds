@@ -10,26 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
-import br.com.abril.nds.controllers.lancamento.FuroProdutoController;
-import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -58,46 +49,7 @@ public class ContaCorrenteCotaController {
 	
 	public void index() {	
 	}
-	
-	public void buscarCota(Integer numeroCota){
-		
-		this.validarDadosEntradaPesquisa(numeroCota);
-		
-		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
-		if(cota != null){
-			result.use(Results.json()).from(cota.getPessoa(), "result").serialize();			 
-		}else{
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não encontrado!");
-			
-		}
-	}
-	
-	@Post
-	public void buscarPorNomeCota(String nomeCota){
-			
-		List<Cota> listaDeCotas = cotaService.obterCotasPorNomePessoa(nomeCota);
-		
-		if (listaDeCotas != null && !listaDeCotas.isEmpty()){
-			List<ItemAutoComplete> listaDeNomesCota = new ArrayList<ItemAutoComplete>();
-			for (Cota cota : listaDeCotas){
-				PessoaFisica pessoa = (PessoaFisica) cota.getPessoa();
-							
-				listaDeNomesCota.add(new ItemAutoComplete(pessoa.getNome(),	null, cota.getNumeroCota()));
-			}
-			
-			result.use(Results.json()).from(listaDeNomesCota, "result").include("value", "chave").serialize();
-		} else {
-		
-			result.use(Results.json()).from("", "result").serialize();
-		}
-		
-		result.forwardTo(ContaCorrenteCotaController.class).index();
-		
-		
-	}
-	
-	
+					
 	public void consultarContaCorrenteCota( FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,String sortname, String sortorder, int rp, int page) {
 			
 				
@@ -210,23 +162,7 @@ public class ContaCorrenteCotaController {
 		return tableModel;
 		
 	}
-	
-	/*@Post
-	public void verificarContaCorrenteCotaExistente(String numeroCota) {
-		
-		List<String> msgs = new ArrayList<String>();
-
-		if(numeroCota == null || numeroCota.isEmpty()) {
-			msgs.add("O campo número da Cota é obrigatório");
-		}
-		
-		
-		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 			
-		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
-			
-	}*/
-	
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
