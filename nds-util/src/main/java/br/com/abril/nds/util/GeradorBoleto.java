@@ -50,7 +50,8 @@ public class GeradorBoleto {
 	private String enderecoSacadorAvalistaLogradouro;
 	private String enderecoSacadorAvalistaNumero;
 	
-	private String  contaBanco;
+
+	private String contaNumeroBanco;
 	private String contaTipoDeCobranca;
 	private Integer contaNumero;
 	private Integer contaCarteira;
@@ -269,16 +270,14 @@ public class GeradorBoleto {
 	}
 
 
-	public String getContaBanco() {
-		return contaBanco;
+	public String getContaNumeroBanco() {
+		return contaNumeroBanco;
 	}
-
-
-	public void setContaBanco(String contaBanco) {
-		this.contaBanco = contaBanco;
+	
+	public void setContaNumeroBanco(String contaNumeroBanco) {
+		this.contaNumeroBanco = contaNumeroBanco;
 	}
-
-
+	 
 	public Integer getContaNumero() {
 		return contaNumero;
 	}
@@ -597,7 +596,7 @@ public class GeradorBoleto {
         }
         
         //CONTA BANCARIA
-        ContaBancaria contaBancaria = new ContaBancaria(BancosSuportados.valueOf(getContaBanco()).create());
+        ContaBancaria contaBancaria = new ContaBancaria(getBancoByNumero(getContaNumeroBanco()).create());
         contaBancaria.setNumeroDaConta(new NumeroDaConta(getContaNumero(), "0"));
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(this.getContaCarteira());
@@ -701,5 +700,20 @@ public class GeradorBoleto {
  		viewer.getPdfAsFile(file);
  		return file;
      }
+	 
+	 /**
+	  * Recupera o banco suportado pelo número
+	  * @param número do banco
+	  * @return banco suportado que corresponde ao número do banco, ou null caso
+	  * o número do banco 
+	  */
+	 private static BancosSuportados getBancoByNumero(String numero) {
+		 for (BancosSuportados banco : BancosSuportados.values()) {
+			 if (banco.getCodigoDeCompensacao().equals(numero)) {
+				 return banco;
+			 }
+		 }
+		 return null;
+	 }
 
 }

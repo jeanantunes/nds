@@ -678,52 +678,20 @@ public class BoletoServiceImpl implements BoletoService {
 			geradorBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
 		}
 		else{
-			geradorBoleto.setEnderecoSacadoUf("SP");
+			geradorBoleto.setEnderecoSacadoUf("");
 			geradorBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
 			geradorBoleto.setEnderecoSacadoCep("");
 			geradorBoleto.setEnderecoSacadoBairro("");
 			geradorBoleto.setEnderecoSacadoLogradouro("");
 			geradorBoleto.setEnderecoSacadoNumero("");
 		}
-                           
-		
-		
-		
-		
-		//PROVISÓRIO: TRATAMENTOS DE TAMANHOS DE CAMPOS PARA TESTE DE BOLETOS
-		
-		//PADRAO
-        String nomeBanco="HSBC";
+
         String contaNumero=boleto.getBanco().getConta().toString();
         String contaNossoNumero=boleto.getNossoNumero().toString();
         String contaNumeroDocumento="123456";//???
         
-        // 13 posições(convênio com 6, numero documento com 6).
-        if ("399".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="HSBC";  
-        }
-        
-        // 9 posições(convênio com 5, numero documento com 6).
-        if ("184".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="BANCO_ITAU";  
-        }
-        
-        // 10 posições(convênio com 7, numero documento com 6), 11 posições ou 17 posições(convênio com 6, numero documento com 6).
-        if ("001".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="BANCO_DO_BRASIL";  
-        }
-        
-        // 11 posições(convênio com 6, numero documento com 6).
-        if ("065".equals(boleto.getBanco().getNumeroBanco())){
-            nomeBanco="BANCO_BRADESCO";  
-        }
-        
-        
-        
-        
-        
         //INFORMACOES DA CONTA(BANCO)
-        geradorBoleto.setContaBanco(nomeBanco);                  
+        geradorBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         geradorBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
         if (boleto.getBanco().getCarteira().getCodigo()==1){
         	geradorBoleto.setContaTipoDeCobranca("SEM_REGISTRO");
