@@ -36,6 +36,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -78,6 +79,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private HistoricoAcumuloDividaRepository historicoAcumuloDividaRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Override
 	@Transactional
@@ -130,7 +134,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				if (movimentoFinanceiroCota.getCota().equals(ultimaCota)){
-					valorMovimentoFinanceiro.add(movimentoFinanceiroCota.getValor());
+					valorMovimentoFinanceiro.add(this.calcularValorMovimento(movimentoFinanceiroCota));
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
 					
@@ -162,6 +166,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
+	private BigDecimal calcularValorMovimento(MovimentoFinanceiroCota movimentoFinanceiroCota){
+		
+		switch(movimentoFinanceiroCota.getTipoMovimento().getOperacaoFinaceira()){
+			case CREDITO:
+				return movimentoFinanceiroCota.getValor();
+			
+			case DEBITO:
+				return movimentoFinanceiroCota.getValor().negate();
+			
+			default:
+				return BigDecimal.ZERO;
+		}
+	}
+	
 	private void inserirConsolidadoFinanceiro(Cota cota, BigDecimal valorMovimentoFinanceiro, 
 			List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMinino, boolean acumulaDivida, Long idUsuario,
 			TipoCobranca tipoCobranca){
@@ -175,11 +193,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Usuario usuario = new Usuario();
 		usuario.setId(idUsuario);
 		
+		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
+		List<Integer> diasSemanaConcentracaoPagamento = 
+				this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
+		
 		Date dataVencimento = 
 				this.calendarioService.adicionarDiasUteis(
-						consolidadoFinanceiroCota.getDataConsolidado(), cota.getParametroCobranca().getFatorVencimento());
+						consolidadoFinanceiroCota.getDataConsolidado(), cota.getParametroCobranca().getFatorVencimento(),
+						diasSemanaConcentracaoPagamento);
 		
-		Divida divida = null;
+		Divida novaDivida = null;
 		
 		HistoricoAcumuloDivida historicoAcumuloDivida = null;
 		
@@ -188,20 +211,34 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		
 		//se existe divida
-		if (valorMovimentoFinanceiro.compareTo(BigDecimal.ZERO) < 0){
+		if (valorMovimentoFinanceiro.compareTo(BigDecimal.ZERO) > 0){
 			
-			if (valorMovimentoFinanceiro.compareTo(valorMinino) < 0){
+			if (valorMovimentoFinanceiro.compareTo(valorMinino) > 0){
 				//gerar postergado
 				consolidadoFinanceiroCota.setValorPostergado(valorMovimentoFinanceiro);
 			} else {
+				
+				novaDivida = new Divida();
+				novaDivida.setValor(valorMovimentoFinanceiro);
+				novaDivida.setData(consolidadoFinanceiroCota.getDataConsolidado());
+				novaDivida.setConsolidado(consolidadoFinanceiroCota);
+				novaDivida.setCota(cota);
+				novaDivida.setStatus(StatusDivida.EM_ABERTO);
+				novaDivida.setResponsavel(usuario);
+				
 				//se o distribuidor acumula divida
 				if (acumulaDivida){
-					divida = this.dividaRepository.obterUltimaDividaPorCota(cota.getId());
+					Divida divida = this.dividaRepository.obterUltimaDividaPorCota(cota.getId());
 					
 					//caso não tenha divida anterior, ou tenha sido quitada
 					if (divida == null || StatusDivida.QUITADA.equals(divida.getStatus())){
-						divida = new Divida();
+						divida = novaDivida;
 					} else {
+						
+						divida.setAcumulada(true);
+						novaDivida.setValor(divida.getValor());
+						novaDivida.getAcumulado().add(divida);
+						
 						historicoAcumuloDivida = new HistoricoAcumuloDivida();
 						historicoAcumuloDivida.setDataInclusao(new Date());
 						historicoAcumuloDivida.setDivida(divida);
@@ -209,19 +246,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
 					}
 					
-					divida.setValor(
-							valorMovimentoFinanceiro.add(divida.getValor() == null ? BigDecimal.ZERO : divida.getValor()));
-				} else {
-					//se o distribuidor não acumula divida cria uma nova
-					divida = new Divida();
-					divida.setValor(valorMovimentoFinanceiro);
-					divida.setData(consolidadoFinanceiroCota.getDataConsolidado());
+					novaDivida.setValor(
+							valorMovimentoFinanceiro.add(novaDivida.getValor() == null ? BigDecimal.ZERO : novaDivida.getValor()));
 				}
-				
-				divida.setConsolidado(consolidadoFinanceiroCota);
-				divida.setCota(cota);
-				divida.setStatus(StatusDivida.EM_ABERTO);
-				divida.setResponsavel(usuario);
 			}
 		} else {
 			//gera movimento financeiro cota
@@ -243,11 +270,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 		
-		if (divida != null){
-			if (divida.getId() == null){
-				this.dividaRepository.adicionar(divida);
+		if (novaDivida != null){
+			if (novaDivida.getId() == null){
+				this.dividaRepository.adicionar(novaDivida);
 			} else {
-				this.dividaRepository.alterar(divida);
+				this.dividaRepository.alterar(novaDivida);
 			}
 			
 			if (historicoAcumuloDivida != null){
@@ -276,10 +303,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (cobranca != null){
 				cobranca.setCota(cota);
 				cobranca.setDataEmissao(new Date());
-				cobranca.setDivida(divida);
+				cobranca.setDivida(novaDivida);
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 				cobranca.setDataVencimento(dataVencimento);
 				cobranca.setNossoNumero(Util.gerarNossoNumero(cota.getNumeroCota(), cobranca.getDataEmissao()));
+				cobranca.setValor(novaDivida.getValor());
 				
 				this.cobrancaRepository.adicionar(cobranca);
 			}

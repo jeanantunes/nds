@@ -8,4 +8,6 @@ public interface TipoNotaFiscalService {
 
 	List<TipoNotaFiscal> obterTiposNotasFiscais();
 	
+	TipoNotaFiscal obterPorId(Long id);
+	
 }

@@ -19,13 +19,11 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
-import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.CotaRepository;
@@ -189,6 +187,19 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 				
 		return criteria.list();
 	}
-	
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota) {
+		StringBuilder hql = new StringBuilder("select cc.codigoDiaSemana ");
+		hql.append(" from ConcentracaoCobrancaCota cc, Cota cota, ParametroCobrancaCota p ")
+		   .append(" where cota.id                     = p.cota.id ")
+		   .append(" and   cc.parametroCobrancaCota.id = p.id ")
+		   .append(" and   cota.id                     = :idCota");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+	}
 }
