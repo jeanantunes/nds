@@ -47,6 +47,6 @@ public interface BoletoService {
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
 	File gerarAnexoBoleto(String nossoNumero) throws IOException;
 	
-	CobrancaVO obterCobranca(String nossoNumero);
+	CobrancaVO obterDadosCobranca(String nossoNumero);
 	
 }
