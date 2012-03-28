@@ -21,8 +21,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public BigDecimal calcularJuros(Distribuidor distribuidor, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
-		// TODO: distribuidor set de formas de cobrança?
-
 		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoJuros = null;

@@ -616,33 +616,34 @@
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableBaixaManual">
             <tr>
 				<td width="29">Cota:</td>
-                <td width="260">
+                
+                <td>
               
                 <input name="filtroNumCota" 
              	    id="filtroNumCota" 
              		type="number"
              		maxlength="11"
-             		style="width:80px; 
+             		style="width:60px; 
              		float:left; margin-right:5px;"
-             		onchange="cota.limparCamposPesquisa('#descricaoCota')" />
-             	  
-                 <span class="classPesquisar" title="Pesquisar Cota">
-             	     <a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');">&nbsp;</a>
-             	 </span>
-		
-		         <input name="descricaoCota" 
-		      		 id="descricaoCota" 
-		      		 type="text" 
-		      		 class="nome_jornaleiro" 
-		      		 maxlength="255"
-		      		 style="width:130px;"
-		      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-		      		 onchange="cota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
-		         </td>
+             		onchange="cota.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+				</td>
+				
+				<td width="39">Nome:</td>
+             	
+             	<td width="210">
+		        	<input name="descricaoCota" 
+		      		 	   id="descricaoCota" 
+		      		 	   type="text"
+		      		 	   class="nome_jornaleiro" 
+		      		 	   maxlength="255"
+		      		 	   style="width:130px;"
+		      		 	   onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
+		      		 	   onchange="cota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
+		        </td>
 			  
-				 <td width="97">Nosso Número:</td>
-				 <td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
-				 <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaManual();">Pesquisar</a></span></td>
+				<td width="97">Nosso Número:</td>
+				<td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
+				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaManual();">Pesquisar</a></span></td>
 			</tr>
          </table>
 	</fieldset>
