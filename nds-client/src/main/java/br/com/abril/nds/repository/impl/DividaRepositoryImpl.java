@@ -1,10 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.repository.DividaRepository;
 
@@ -22,5 +26,10 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		criteria.setProjection(Projections.max("data"));
 		
 		return (Divida) criteria.uniqueResult();
+	}
+	
+	public List<GeraDividaDTO> obterDividasGeradas(FiltroDividaGeradaDTO filtro){
+		
+		return null;
 	}
 }

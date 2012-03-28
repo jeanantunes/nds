@@ -36,6 +36,10 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -1071,6 +1075,7 @@ public class Fixture {
 		return formaBoleto;
 	}
 	
+
 	public static ParametroCobrancaCota parametroCobrancaCota(
 							int numeroAcumuloDivida, BigDecimal valor, Cota cota,
 							int fatorVencimento, FormaCobranca formaCobranca,
@@ -1091,6 +1096,30 @@ public class Fixture {
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		
 		return parametro;
+	}
+	public static Rota rota(String codigoRota){
+		Rota rota = new Rota();
+		rota.setCodigoRota(codigoRota);
+		return rota;
+	}
+	
+	public static Roteiro roteiro(String descricaoRoteiro){
+		Roteiro rota = new Roteiro();
+		rota.setDescricaoRoteiro(descricaoRoteiro);
+		return rota;
+	}
+	
+	public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
+		
+		RotaRoteiroOperacao rotaRoteiroOperacao = new RotaRoteiroOperacao();
+		rotaRoteiroOperacao.setRota(rota);
+		rotaRoteiroOperacao.setRoteiro(roteiro);
+		rotaRoteiroOperacao.setCota(cota);
+		rotaRoteiroOperacao.setTipoOperacao(tipoOperacao);
+		
+		return rotaRoteiroOperacao;
+
+
 	}
 	
 }
