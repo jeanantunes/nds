@@ -10,13 +10,13 @@
 		    preProcess: getDataFromResult,
 		    dataType : 'json',
 			colModel : [ {
-				display : 'Nosso Numero',
+				display : 'Nosso Número',
 				name : 'nossoNumero',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Data Emiss&atilde;o',
+				display : 'Data Emissão',
 				name : 'dtEmissao',
 				width : 100,
 				sortable : true,
