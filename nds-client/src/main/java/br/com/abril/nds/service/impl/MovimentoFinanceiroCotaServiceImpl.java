@@ -127,6 +127,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#cadastrarMovimentoFincanceiroCota(br.com.abril.nds.dto.DebitoCreditoDTO)
 	 */
 	@Override
+	@Transactional
 	public void cadastrarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
 
 		Long idMovimento = debitoCredito.getId();
@@ -136,11 +137,18 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 		if (movimentoFinanceiroCota != null) {
 
-			movimentoFinanceiroCota.setDataCriacao(DateUtil.parseDataPTBR(debitoCredito.getDataLancamento()));
-			movimentoFinanceiroCota.setData(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
-			movimentoFinanceiroCota.setTipoMovimento(debitoCredito.getTipoMovimentoFinanceiro());
+			Date dataLancamento = DateUtil.parseDataPTBR(debitoCredito.getDataLancamento());
+			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
+			
+			movimentoFinanceiroCota.setDataCriacao(dataLancamento);
+			movimentoFinanceiroCota.setData(dataVencimento);
 			movimentoFinanceiroCota.setObservacao(debitoCredito.getObservacao());
 			movimentoFinanceiroCota.setValor(debitoCredito.getValor());
+
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
+					this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
+					
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
 			
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
 			

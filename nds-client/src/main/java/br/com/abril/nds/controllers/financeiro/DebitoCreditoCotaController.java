@@ -133,6 +133,8 @@ public class DebitoCreditoCotaController {
 	@Post
 	public void cadastrarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
 		
+		this.movimentoFinanceiroCotaService.cadastrarMovimentoFincanceiroCota(debitoCredito);
+		
 		this.result.nothing();
 	}
 	
