@@ -1,24 +1,38 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -39,7 +53,13 @@ public class ContaCorrenteCotaController {
 	private HttpSession session;
 	
 	@Autowired
+	private HttpServletResponse httpServletResponse;
+	
+	@Autowired
 	private ContaCorrenteCotaService contaCorrenteCotaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroContaCorrente";
 	
@@ -70,6 +90,75 @@ public class ContaCorrenteCotaController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
+		
+		List<ViewContaCorrenteCota> listaItensContaCorrenteCota =
+			contaCorrenteCotaService.obterListaConsolidadoPorCota(filtro);
+		
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCotaVO = new ArrayList<ContaCorrenteCotaVO>();
+		
+		for (ViewContaCorrenteCota contaCorrenteCota : listaItensContaCorrenteCota) {
+			
+			ContaCorrenteCotaVO contaCorrenteCotaVO = new ContaCorrenteCotaVO();
+			
+			contaCorrenteCotaVO.setConsignado(MathUtil.defaultValue(contaCorrenteCota.getConsignado()));
+			contaCorrenteCotaVO.setDataConsolidado(contaCorrenteCota.getDataConsolidado());
+			contaCorrenteCotaVO.setDebitoCredito(MathUtil.defaultValue(contaCorrenteCota.getDebitoCredito()));
+			contaCorrenteCotaVO.setEncalhe(MathUtil.defaultValue(contaCorrenteCota.getEncalhe()));
+			contaCorrenteCotaVO.setEncargos(MathUtil.defaultValue(contaCorrenteCota.getEncargos()));
+			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
+			contaCorrenteCotaVO.setPendente(MathUtil.defaultValue(contaCorrenteCota.getPendente()));
+			contaCorrenteCotaVO.setTotal(MathUtil.defaultValue(contaCorrenteCota.getTotal()));
+			contaCorrenteCotaVO.setValorPostergado(MathUtil.defaultValue(contaCorrenteCota.getValorPostergado()));
+			contaCorrenteCotaVO.setVendaEncalhe(MathUtil.defaultValue(contaCorrenteCota.getVendaEncalhe()));
+			
+			listaItensContaCorrenteCotaVO.add(contaCorrenteCotaVO);
+		}
+		
+		FileExporter.to("conta-corrente-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaItensContaCorrenteCotaVO, ContaCorrenteCotaVO.class, this.httpServletResponse);
+	}
+	
+	private FiltroViewContaCorrenteCotaDTO obterFiltroExportacao() {
+		
+		FiltroViewContaCorrenteCotaDTO filtro = 
+			(FiltroViewContaCorrenteCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtro.getNumeroCota() != null) {
+				
+				Cota cota =
+					this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+				
+				if (cota != null) {
+					
+					Pessoa pessoa = cota.getPessoa();
+					
+					if (pessoa instanceof PessoaFisica) {
+						
+						filtro.setNomeCota(((PessoaFisica) pessoa).getNome());
+												
+					} else if (pessoa instanceof PessoaJuridica) {
+						
+						filtro.setNomeCota(((PessoaJuridica) pessoa).getRazaoSocial());
+					}
+				}
+			}
+		}
+		
+		return filtro;
+	}
+	
 	private void prepararFiltro(FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,	String sortorder, String sortname, int page, int rp) {
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
@@ -79,8 +168,6 @@ public class ContaCorrenteCotaController {
 		paginacao.setPaginaAtual(page);
 		
 		filtroViewContaCorrenteCotaDTO.setColunaOrdenacao(Util.getEnumByStringValue(FiltroViewContaCorrenteCotaDTO.ColunaOrdenacao.values(), sortname));
-		
-		
 	}
 	
 	/**
@@ -179,4 +266,41 @@ public class ContaCorrenteCotaController {
 			throw new ValidacaoException(validacaoVO);
 		}
 	}
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
+	}
+	
 }
