@@ -17,4 +17,10 @@ public enum TipoCobranca {
 	public String getDescTipoCobranca(){
 		return this.descricao;
 	}
+	
+	@Override
+	public String toString() {
+		
+		return this.descricao;
+	}
 }
