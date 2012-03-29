@@ -892,7 +892,8 @@ public class Fixture {
 				                StatusCobranca status,
 				                Cota cota,
 				                Banco banco,
-				                Divida divida){
+				                Divida divida,
+				                Integer vias){
 			
 		Boleto boleto = new Boleto();
 		boleto.setNossoNumero(nossoNumero);
@@ -906,6 +907,7 @@ public class Fixture {
 		boleto.setCota(cota);
 		boleto.setBanco(banco);
 		boleto.setDivida(divida);
+		boleto.setVias(vias);
 		
 		return boleto;
 	}

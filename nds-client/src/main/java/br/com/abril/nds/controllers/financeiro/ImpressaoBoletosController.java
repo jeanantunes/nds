@@ -137,9 +137,20 @@ public class ImpressaoBoletosController {
 		RotaRoteiroVO rotaRoteiroVO = new RotaRoteiroVO();
 		
 		if(operacao!= null){
-			rotaRoteiroVO.setBox(operacao.getCota().getBox().getCodigo());
-			rotaRoteiroVO.setRota(operacao.getRota().getCodigoRota());
-			rotaRoteiroVO.setRoteiro(operacao.getRoteiro().getDescricaoRoteiro());
+			
+			rotaRoteiroVO.setBox( (operacao.getCota()!= null && operacao.getCota().getBox()!= null) 
+									? operacao.getCota().getBox().getCodigo():"");
+			
+			rotaRoteiroVO.setRota((operacao.getRota()!= null)
+									? operacao.getRota().getCodigoRota():"");
+			
+			rotaRoteiroVO.setRoteiro((operacao.getRoteiro()!= null)
+									?operacao.getRoteiro().getDescricaoRoteiro():"");
+			
+			rotaRoteiroVO.setTipoCobranca( ( operacao.getCota()!= null 
+											&& operacao.getCota().getParametroCobranca()!= null 
+											&& operacao.getCota().getParametroCobranca().getFormaCobranca()!= null)
+											? operacao.getCota().getParametroCobranca().getFormaCobranca().getTipoCobranca():null);
 		}
 		
 		result.use(Results.json()).from(rotaRoteiroVO,"result").serialize();
@@ -151,13 +162,13 @@ public class ImpressaoBoletosController {
 	 */
 	private void efetuarConsulta(FiltroDividaGeradaDTO filtro) {
 		
-		// TODO Efetua consulta no banco de dados
-		//List<GeraDividaDTO> listaDividasGeradas = new ArrayList<GeraDividaDTO>();
-		List<GeraDividaDTO> listaDividasGeradas = getMock();
+		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro) ;
 		
 		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		Long totalRegistros = dividaService.obterQuantidadeDividasGeradas(filtro);
 		
 		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas);
 
@@ -167,33 +178,12 @@ public class ImpressaoBoletosController {
 		
 		tableModel.setPage(1);
 		
-		tableModel.setTotal(listaDividasGeradasVO.size());
+		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
-	
-	private List<GeraDividaDTO> getMock(){
-		
-		List<GeraDividaDTO> listaGeraDividaDTO = new ArrayList<GeraDividaDTO>();
-		
-		GeraDividaDTO dividaDTO = null;
-		
-		for(int i=0; i<20; i++){
-			dividaDTO = new GeraDividaDTO("BOx" + i, "Rota"+i, "Roteiro"+i, i, "Nome Cota" + i, new Date(), new Date(), new BigDecimal(1000));
-			
-			if(i<2){
-				dividaDTO.setSuportaEmail(Boolean.TRUE.toString());
-			}else{
-				dividaDTO.setSuportaEmail(Boolean.FALSE.toString());
-			}
-			
-			listaGeraDividaDTO.add(dividaDTO);
-		}
-		
-		return listaGeraDividaDTO;
-	}
-	
+
 	/**
 	 * Retorna lista de dividas geradas 'VO'
 	 * @param listaGeraDividaDTO
@@ -215,7 +205,7 @@ public class ImpressaoBoletosController {
 			dividaGeradaVO.setNumeroCota(String.valueOf(divida.getNumeroCota()));
 			dividaGeradaVO.setRota(divida.getRota());
 			dividaGeradaVO.setRoteiro(divida.getRoteiro());
-			dividaGeradaVO.setSuportaEmail(divida.getSuportaEmail());
+			dividaGeradaVO.setSuportaEmail(divida.getSuportaEmail().toString());
 			dividaGeradaVO.setTipoCobranca( (divida.getTipoCobranca()!= null)? divida.getTipoCobranca().getDescTipoCobranca():"");
 			dividaGeradaVO.setValor( CurrencyUtil.formatarValor(divida.getValor()));
 			dividaGeradaVO.setVias(String.valueOf(divida.getVias()));
@@ -278,6 +268,26 @@ public class ImpressaoBoletosController {
 	public void imprimirDivida(String nossoNumero) throws Exception{
 		
 		byte[] arquivo = dividaService.gerarArquivoImpressao(nossoNumero);
+		
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename= Dividas Geradas.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
+	}
+	
+	@Get
+	@Path("/imprimirDividas")
+	public void imprimirDividas() throws Exception{
+		
+		FiltroDividaGeradaDTO filtroSession = (FiltroDividaGeradaDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		//filtroSession.setPaginacao(paginacao)
+		
+		byte[] arquivo =  dividaService.gerarArquivoImpressao(null);
 		
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename= Dividas Geradas.pdf");
