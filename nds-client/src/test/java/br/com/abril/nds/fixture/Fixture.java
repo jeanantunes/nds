@@ -81,6 +81,7 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
+import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -95,8 +96,17 @@ public class Fixture {
 		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
 				"fc@mail.com");
 	}
+	
+	public static CotaAusente cotaAusenteAtivo(){
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");	
+		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		return cotaAusente(criarData(10, 03, 2012), true, cotaManoel);
+		
+	}
 
-	public static PessoaJuridica juridicaDinap() {
+	public static PessoaJuridica juridicaDinap() {		
 		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
 				"dinap@mail.com");
 	}
@@ -261,6 +271,16 @@ public class Fixture {
 		juridica.setInscricaoEstadual(ie);
 		juridica.setEmail(email);
 		return juridica;
+	}
+	
+	public static CotaAusente cotaAusente(Date data,
+			boolean ativo,
+			Cota cota){
+		CotaAusente cotaAusente = new CotaAusente();
+		cotaAusente.setAtivo(ativo);
+		cotaAusente.setCota(cota);
+		cotaAusente.setData(data);
+		return cotaAusente;
 	}
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
