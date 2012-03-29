@@ -716,7 +716,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 		
 		//ENDERECO DO SACADO
-		Endereco endereco=new Endereco();
+		Endereco endereco = null;
 		Set<EnderecoCota> enderecosCota = boleto.getCota().getEnderecos();
 		for(EnderecoCota enderecoCota : enderecosCota){
 			endereco = enderecoCota.getEndereco();
