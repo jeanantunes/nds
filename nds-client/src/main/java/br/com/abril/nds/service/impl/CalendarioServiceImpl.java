@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.repository.FeriadoRepository;
@@ -25,6 +26,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	private FeriadoRepository feriadoRepository;
 	
 	@Override
+	@Transactional(readOnly=true)
 	public Date adicionarDiasUteis(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();
@@ -55,6 +57,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public Date subtrairDiasUteis(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();

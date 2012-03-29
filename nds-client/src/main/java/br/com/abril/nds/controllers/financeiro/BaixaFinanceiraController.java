@@ -31,12 +31,14 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -64,6 +66,12 @@ public class BaixaFinanceiraController {
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
@@ -340,26 +348,28 @@ public class BaixaFinanceiraController {
 					              String juros,
 					              String multa
 					              ){
-		try{
-			
-		    Date dataPagamento = Calendar.getInstance().getTime();
-            BigDecimal valorFormatado = new BigDecimal(valor);
-            BigDecimal jurosFormatado = new BigDecimal(juros);
-            BigDecimal multaFormatado = new BigDecimal(multa);
 
-			PagamentoDTO pagamento = new PagamentoDTO();
-			pagamento.setDataPagamento(dataPagamento);
-			pagamento.setNossoNumero(nossoNumero);
-			pagamento.setNumeroRegistro(null);
-			pagamento.setValorPagamento(valorFormatado);
-			//pagamento.setJuros(jurosFormatado);
-			//pagamento.setMulta(multaFormatado);
-	
-			//boletoService.baixarBoleto(null,pagamento,null,obterUsuario(),null,null);
-		}
-		catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.ERROR, "O boleto não foi baixado.");
-		}
+	    Date dataPagamento = Calendar.getInstance().getTime();
+        BigDecimal valorFormatado = new BigDecimal(valor);
+        BigDecimal jurosFormatado = new BigDecimal(juros);
+        BigDecimal multaFormatado = new BigDecimal(multa);
+
+		PagamentoDTO pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(dataPagamento);
+		pagamento.setNossoNumero(nossoNumero);
+		pagamento.setNumeroRegistro(null);
+		pagamento.setValorPagamento(valorFormatado);
+		//pagamento.setJuros(jurosFormatado);
+		//pagamento.setMulta(multaFormatado);
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataNovoMovimento =
+			calendarioService.adicionarDiasUteis(distribuidor.getDataOperacao(), 1);
+
+		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, obterUsuario(),
+								   null,distribuidor.getPoliticaCobranca() , distribuidor,
+								   dataNovoMovimento, null);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}

@@ -1,10 +1,17 @@
 package br.com.abril.nds.dto.filtro;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroViewContaCorrenteCotaDTO {
 	
+	@Export(label = "Cota")
 	private Integer numeroCota;
+	
+	@Export(label = "Nome")
+	private String nomeCota;
 	
 	private PaginacaoVO paginacao = new PaginacaoVO();
 	
@@ -35,7 +42,6 @@ public class FiltroViewContaCorrenteCotaDTO {
 		}
 	}
 
-
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -58,6 +64,20 @@ public class FiltroViewContaCorrenteCotaDTO {
 
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
+	}
+	
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
 
 	@Override
@@ -96,7 +116,5 @@ public class FiltroViewContaCorrenteCotaDTO {
 			return false;
 		return true;
 	}
-	
-	
 	
 }

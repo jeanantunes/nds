@@ -146,7 +146,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   StatusCobranca.PAGO,
                 					   cota,
                 					   bancoHSBC,
-                					   divida);
+                					   divida,0);
 		save(boleto);		
 	}
 	

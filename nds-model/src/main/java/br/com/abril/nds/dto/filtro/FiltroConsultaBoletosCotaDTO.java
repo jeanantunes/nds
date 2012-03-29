@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -11,15 +13,28 @@ import br.com.abril.nds.vo.PaginacaoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Export(label = "Cota")
 	private Integer numeroCota;
+	
+	@Export(label = "Nome da Cota")
+	private String nomeCota;
+	
+	@Export(label = "Data de Vencimento Inicial")
 	private Date dataVencimentoDe;
+	
+	@Export(label = "Data de Vencimento Final")
 	private Date dataVencimentoAte;
+	
+	@Export(label = "Status")
 	private StatusCobranca status;
+	
 	private PaginacaoVO paginacao;
+	
 	private OrdenacaoColunaBoletos ordenacaoColuna;
 	
 	/**
@@ -150,6 +165,20 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 
 	public void setOrdenacaoColuna(OrdenacaoColunaBoletos ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
+	}
+	
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
 
 	@Override
