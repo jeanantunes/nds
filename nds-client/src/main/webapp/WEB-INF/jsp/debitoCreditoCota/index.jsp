@@ -1,6 +1,9 @@
 <head>
-	<title>NDS - Novo Distrib</title>
 
+	<title>NDS - Novo Distrib</title>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 <script>
 
 	function processarResultadoConsultaDebitosCreditos(data) {
@@ -117,34 +120,13 @@
 
 		$(".debitosCreditosGrid").flexOptions({
 			url : '<c:url value="/financeiro/debitoCreditoCota/pesquisarDebitoCredito" />',
+			preProcess: processarResultadoConsultaDebitosCreditos,
 			params: formData
 		});
 
 		$(".debitosCreditosGrid").flexReload();
 	}
 
-	function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:450,
-			width:780,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
 	function editarMovimento(idMovimento) {
 
 		$.postJSON(
@@ -181,10 +163,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					salvarMovimentoFinanceiro();
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$( "#abaPdv" ).show( );
+					salvarMovimentoFinanceiro(true);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -193,22 +172,48 @@
 		});	
 	};
 	
-	function salvarMovimentoFinanceiro() {
+	function salvarMovimentoFinanceiro(isEdicao) {
 
-		var formData = $("#formEdicaoMovimentoFinanceiro").serializeArray();
+		var url;
+		var formData;
+		var dialogId = isEdicao ? "#dialog-editar" : "#dialog-novo";
+		
+		if (isEdicao) {
+			
+			formData = $("#formEdicaoMovimentoFinanceiro").serializeArray();
+			url = '<c:url value="/financeiro/debitoCreditoCota/editarMovimentoFincanceiroCota" />';
+		
+		} else {
+			
+			formData = obterListaMovimentos() + 'idTipoMovimento=' + $("#novoTipoMovimento").val();
+			url = '<c:url value="/financeiro/debitoCreditoCota/criarMovimentoFincanceiroCota" />';
+		}
 
 		$.postJSON(
-			'<c:url value="/financeiro/debitoCreditoCota/cadastrarMovimentoFincanceiroCota" />',
+			url,
 			formData,
-			null,
+			function(result) {
+
+				popularGridDebitosCreditos();
+
+				$(dialogId).dialog( "close" );
+				$(".grids").show();
+				
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+
+			},
 			function(result) {
 				
-				processarResultadoConsultaDebitosCreditos(result);
+				exibirMensagemDialog(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
 			},
 			true
 		);
-		
-		popularGridDebitosCreditos();
 	}
 
 	function removerMovimento(idMovimento) {
@@ -216,14 +221,25 @@
 		$.postJSON(
 			'<c:url value="/financeiro/debitoCreditoCota/removerMovimentoFinanceiroCota" />',
 			{ "idMovimento" : idMovimento },
-			null,
 			function(result) {
 
-				processarResultadoConsultaDebitosCreditos(result);
+				popularGridDebitosCreditos();
+
+				$("#dialog-excluir").dialog( "close" );
+				
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+			},
+			function(result) {
+
+				exibirMensagemDialog(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
 			}
 		);
-
-		popularGridDebitosCreditos();
 	}
 	
 	function confirmarExclusaoMovimento(idMovimento) {
@@ -237,8 +253,6 @@
 			buttons: {
 				"Confirmar": function() {
 					removerMovimento(idMovimento);
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -476,7 +490,7 @@
 <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
           <span style="float:right; margin-right:260px">Total: R$ 999.999,99</span>
  </div>
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+ <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popupNovoDialog();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 
 
       </fieldset>
