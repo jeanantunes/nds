@@ -42,7 +42,7 @@ UNION
 
 0 AS ID,
 
-cota.COTA_ID as COTA_ID,
+cota.id as COTA_ID,
 
 cota.NUMERO_COTA as NUMERO_COTA,
 

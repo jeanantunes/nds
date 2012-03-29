@@ -285,25 +285,25 @@ public class ExportHandler {
 	
 	private static String getExportValue(Object value) {
 		
-		String columnValue = null;
+		String exportValue = "";
 		
 		if (value != null) {
 
 			if (value instanceof BigDecimal) {
 				
-				columnValue = ((BigDecimal) value).toString();
+				exportValue = ((BigDecimal) value).toString();
 				
 			} else if (value instanceof Date) {
 				
-				columnValue = DateUtil.formatarDataPTBR((Date) value);
+				exportValue = DateUtil.formatarDataPTBR((Date) value);
 				
 			} else {
 				
-				columnValue = value.toString();
+				exportValue = value.toString();
 			}
 		}
 		
-		return columnValue;
+		return exportValue;
 	}
 	
 	private static void processHeader(Export exportAnnotation, 
