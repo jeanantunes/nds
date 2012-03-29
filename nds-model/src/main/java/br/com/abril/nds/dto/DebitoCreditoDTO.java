@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
@@ -21,7 +20,9 @@ public class DebitoCreditoDTO implements Serializable {
 	
 	private TipoMovimentoFinanceiro tipoMovimentoFinanceiro;
 	
-	private BigDecimal valor;
+	private Long idUsuario;
+	
+	private String valor;
 	
 	private String observacao;
 
@@ -109,18 +110,32 @@ public class DebitoCreditoDTO implements Serializable {
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro) {
 		this.tipoMovimentoFinanceiro = tipoMovimentoFinanceiro;
 	}
+	
+	/**
+	 * @return the idUsuario
+	 */
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	/**
+	 * @param idUsuario the idUsuario to set
+	 */
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
+	}
 
 	/**
 	 * @return the valor
 	 */
-	public BigDecimal getValor() {
+	public String getValor() {
 		return valor;
 	}
 
 	/**
 	 * @param valor the valor to set
 	 */
-	public void setValor(BigDecimal valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 
