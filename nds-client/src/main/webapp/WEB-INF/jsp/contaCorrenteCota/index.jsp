@@ -1,6 +1,7 @@
 <head>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+
 <script language="javascript" type="text/javascript">
 /**
  * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
@@ -21,52 +22,6 @@ function verificarContaCorrenteCotaExistente() {
 
 }
 
-
-
-/**
- * SELECIONA o NOME A PARTIR DA COTA DIGITADO.
- */
-function pesquisarPorCotaNome() {
-		
-	var cota = $("#cota").val();	
-	
-	if(cota == "") {
-		$("#nomeCota").val("");
-		return;
-	}
-	
-	$.postJSON("<c:url value='/financeiro/contaCorrenteCota/buscarCota'/>", "numeroCota=" + cota, 
-	function(result) {
-		$("#nomeCota").val(result.nome);
-		
-	});	
-
-}
-
-/**
- * UTILIZAR AUTOCOMPLETE PARA NOME DA COTA E SELECAO DE NUMERO COTA
- */
- function pesquisarPorNomeCota(){
-	    var nomeCota = $("#nomeCota").val();
-		
-		if (nomeCota && nomeCota.length > 0){
-			$.postJSON("<c:url value='/financeiro/contaCorrenteCota/buscarPorNomeCota'/>", "nomeCota=" + nomeCota, exibirAutoComplete);
-		}
-}
-	
-function exibirAutoComplete(result){
-	$("#nomeCota").autocomplete({
-		source: result,
-		select: function(event, ui){
-			completarPesquisa(ui.item.chave);
-		}
-	});
-}
-	
-function completarPesquisa(chave){
-	$("#cota").val(chave.$);		
-}
- 
 
 /**
  * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
@@ -341,10 +296,10 @@ function popup_encargos() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="32">Cota:</td>
-              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisarPorCotaNome();" style="width:80px; float:left; margin-right:5px;"/>
+              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="cota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
               </td>
               <td width="36">Nome:</td>
-              <td width="263"><input type="text" name="nomeCota" onkeyup="pesquisarPorNomeCota();" id="nomeCota" style="width:230px;"/></td>
+              <td width="263"><input type="text" name="nomeCota" id="nomeCota" onkeyup="cota.autoCompletarPorNome('#nomeCota');" onchange="cota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
               <td width="72">&nbsp;</td>
               <td width="283">&nbsp;</td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();">Pesquisar</a></span></td>

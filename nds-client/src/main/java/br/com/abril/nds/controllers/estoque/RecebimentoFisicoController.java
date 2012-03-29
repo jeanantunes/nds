@@ -575,16 +575,12 @@ public class RecebimentoFisicoController {
 			msgs.add("Nota fiscal não encontrada");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
-			
-			ResultadoNotaFiscalExistente resultadoNotaFiscalExistente = new ResultadoNotaFiscalExistente();			
-			
-			resultadoNotaFiscalExistente.validacao = validacao;
-			
-			resultadoNotaFiscalExistente.indNotaInterface = false;			
-			
-			result.use(Results.json()).from(resultadoNotaFiscalExistente, "result").include("validacao").include("validacao.listaMensagens").serialize();
+										
+			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false), "result").include("validacao").include("validacao.listaMensagens").serialize();
 		
 		} else {
+			
+			boolean indNotaInterface = false;
 			
 			setNotaFiscalToSession(notaFiscal);
 			
@@ -592,16 +588,13 @@ public class RecebimentoFisicoController {
 			
 			msgs.add("Nota fiscal encontrada com sucesso");
 			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);	
 			
-			ResultadoNotaFiscalExistente resultadoNotaFiscalExistente = new ResultadoNotaFiscalExistente();			
-			
-			resultadoNotaFiscalExistente.validacao = validacao;
-			
-			resultadoNotaFiscalExistente.indNotaInterface =true;
-			
-			result.use(Results.json()).from(resultadoNotaFiscalExistente, "result").include("validacao").include("validacao.listaMensagens").serialize();
-
+			if(notaFiscal.getOrigem().equals(Origem.INTERFACE)){
+				indNotaInterface = true;
+			}
+						
+			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface), "result").include("validacao").include("validacao.listaMensagens").serialize();
 
 		}
 				
@@ -609,8 +602,28 @@ public class RecebimentoFisicoController {
 	
 	class ResultadoNotaFiscalExistente {
 		
-		ValidacaoVO validacao;
-		boolean indNotaInterface;
+		private ValidacaoVO validacao;
+		private boolean indNotaInterface;		
+		
+		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
+				boolean indNotaInterface) {
+			super();
+			this.validacao = validacao;
+			this.indNotaInterface = indNotaInterface;
+		}
+		
+		public ValidacaoVO getValidacao() {
+			return validacao;
+		}
+		public void setValidacao(ValidacaoVO validacao) {
+			this.validacao = validacao;
+		}
+		public boolean isIndNotaInterface() {
+			return indNotaInterface;
+		}
+		public void setIndNotaInterface(boolean indNotaInterface) {
+			this.indNotaInterface = indNotaInterface;
+		}
 		
 		
 	}
