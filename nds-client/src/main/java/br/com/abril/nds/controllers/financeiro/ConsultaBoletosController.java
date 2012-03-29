@@ -214,7 +214,7 @@ public class ConsultaBoletosController {
 	@Path("/enviaBoleto")
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
-		File[] anexo = new File[]{boletoService.gerarAnexoBoleto(nossoNumero)};
+		File anexo = boletoService.gerarAnexoBoleto(nossoNumero);
 		String[] destinatarios = new String[]{boletoService.obterEmailCota(nossoNumero)};
 		
 		email.enviar("Assunto", "Mensagem", destinatarios, anexo);

@@ -11,6 +11,12 @@ public class PagamentoDTO {
 	
 	private BigDecimal valorPagamento;
 	
+	private BigDecimal valorMulta;
+	
+	private BigDecimal valorJuros;
+	
+	private BigDecimal valorDesconto;
+	
 	private Integer numeroRegistro;
 
 	/**
@@ -54,7 +60,49 @@ public class PagamentoDTO {
 	public void setValorPagamento(BigDecimal valorPagamento) {
 		this.valorPagamento = valorPagamento;
 	}
+	
+	/**
+	 * @return the valorMulta
+	 */
+	public BigDecimal getValorMulta() {
+		return valorMulta;
+	}
 
+	/**
+	 * @param valorMulta the valorMulta to set
+	 */
+	public void setValorMulta(BigDecimal valorMulta) {
+		this.valorMulta = valorMulta;
+	}
+
+	/**
+	 * @return the valorJuros
+	 */
+	public BigDecimal getValorJuros() {
+		return valorJuros;
+	}
+
+	/**
+	 * @param valorJuros the valorJuros to set
+	 */
+	public void setValorJuros(BigDecimal valorJuros) {
+		this.valorJuros = valorJuros;
+	}
+	
+	/**
+	 * @return the valorDesconto
+	 */
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	/**
+	 * @param valorDesconto the valorDesconto to set
+	 */
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+	
 	/**
 	 * @return the numeroRegistro
 	 */
