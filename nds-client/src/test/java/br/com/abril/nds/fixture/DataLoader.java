@@ -1511,75 +1511,90 @@ public class DataLoader {
 	private static void criarBoletos(Session session) {
 		
 		//Boletos já pagos
-		Boleto boleto1 = Fixture.boleto("1309309032012440", new Date(),  new Date(),
-										null, BigDecimal.ZERO, new BigDecimal(200),
+		Boleto boleto1 = Fixture.boleto("1309309032012440", 
+				                        new Date(),  new Date(),
+				                        new Date(), BigDecimal.ZERO, new BigDecimal(200),
 										"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 										cotaManoel, bancoHSBC, divida1);
 		
-		Boleto boleto2 = Fixture.boleto("1309709032012747", new Date(), new Date(), 
-		                				null,  BigDecimal.ZERO, new BigDecimal(200), 
+		Boleto boleto2 = Fixture.boleto("1309709032012747", 
+				                        new Date(), new Date(), 
+				                        new Date(),  BigDecimal.ZERO, new BigDecimal(200), 
 		                				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 		                				cotaJose, bancoHSBC, divida2);
 		
 		
 		//Boletos vencidos
-		Boleto boleto3 = Fixture.boleto("1310209032012740", new Date(), DateUtil.parseDataPTBR("09/03/2012"),
+		Boleto boleto3 = Fixture.boleto("1310209032012740", 
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("09/03/2012"),
 										null,  BigDecimal.ZERO, new BigDecimal(376.07), 
 										"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 										cotaMaria, bancoHSBC, divida3);
 		
-		Boleto boleto4 = Fixture.boleto("1310609032012041", new Date(), DateUtil.parseDataPTBR("09/03/2012"), 
+		Boleto boleto4 = Fixture.boleto("1310609032012041", 
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("09/03/2012"), 
 		                				null, BigDecimal.ZERO, new BigDecimal(600.0), 
 		                				"TIPO_BAIXA", "ACAO",  StatusCobranca.NAO_PAGO,
 		                				cotaManoel, bancoHSBC, divida4);
 		
-		Boleto boleto5 = Fixture.boleto("1310809032012641", new Date(), DateUtil.parseDataPTBR("09/03/2012"), 
+		Boleto boleto5 = Fixture.boleto("1310809032012641", 
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("09/03/2012"), 
 		                				null, BigDecimal.ZERO, new BigDecimal(400.0), "TIPO_BAIXA",
 		                				"ACAO", StatusCobranca.NAO_PAGO,
 		                				cotaJose, bancoHSBC, divida5);
 		
+		
 		//Boletos não vencidos
-		Boleto boleto6 = Fixture.boleto("1311009032012840", new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+		Boleto boleto6 = Fixture.boleto("1311009032012840", 
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
 		                				null, BigDecimal.ZERO, new BigDecimal(2258.62),
 		                				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 		                				cotaMaria, bancoHSBC, divida6);
 		
-		Boleto boleto7 = Fixture.boleto("1311109032012642",new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+		Boleto boleto7 = Fixture.boleto("1311109032012642",
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
                 						null, BigDecimal.ZERO, new BigDecimal(564.58), 
                 						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
                 						cotaManoel, bancoHSBC, divida7);
 		
-		Boleto boleto8 = Fixture.boleto("1312309032012043", new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+		Boleto boleto8 = Fixture.boleto("1312309032012043", 
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
                 						null, BigDecimal.ZERO, new BigDecimal(500.0), 
                 						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
                 						cotaJose, bancoHSBC, divida8);
 		
-		Boleto boleto9 = Fixture.boleto("1312409032012841", new Date(), DateUtil.parseDataPTBR("12/03/2012"), 
+		Boleto boleto9 = Fixture.boleto("1312409032012841", 
+				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
                 						null, BigDecimal.ZERO, new BigDecimal(500.0), 
                 						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
                 						cotaMaria, bancoHSBC, divida9);
 		
-		Boleto boleto10 = Fixture.boleto("1312509032012643", new Date(), DateUtil.parseDataPTBR("12/03/2012"),
-                						null, BigDecimal.ZERO, new BigDecimal(300.0), 
-                						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-                						cotaManoel, bancoHSBC, divida10);
+		Boleto boleto10 = Fixture.boleto("1312509032012643", 
+				                         DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"),
+                						 null, BigDecimal.ZERO, new BigDecimal(300.0), 
+                						 "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+                						 cotaManoel, bancoHSBC, divida10);
 		
-		Boleto boleto11 = Fixture.boleto("1313209032012941", new Date(), DateUtil.parseDataPTBR("12/03/2012"),
+		Boleto boleto11 = Fixture.boleto("1313209032012941", 
+				                         DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"),
                 						 null, BigDecimal.ZERO, new BigDecimal(300.0), 
                 						 "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
                 						 cotaJose, bancoHSBC, divida11);
 		
-		Boleto boleto12 = Fixture.boleto("12345678",new Date(),DateUtil.parseDataPTBR("09/03/2012"), 
+		Boleto boleto12 = Fixture.boleto("12345678",
+				                         DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("15/03/2012"), 
 						                 null,BigDecimal.ZERO,new BigDecimal(200), 
 						                 "TIPO_BAIXA","ACAO",StatusCobranca.NAO_PAGO,
 						                 cotaManoel,bancoITAU,divida12);
 
-		Boleto boleto13 = Fixture.boleto("10123456788125648",new Date(),new Date(), 
+		Boleto boleto13 = Fixture.boleto("10123456788125648",
+				                         new Date(),DateUtil.adicionarDias(new Date(), 30) , 
 							             null,BigDecimal.ZERO,new BigDecimal(200), 
 							             "TIPO_BAIXA","ACAO",StatusCobranca.NAO_PAGO,
 							             cotaManoel,bancoDOBRASIL,divida13);
 		
-		Boleto boleto14 = Fixture.boleto("12345678901",new Date(),new Date(), 
+		Boleto boleto14 = Fixture.boleto("12345678901",
+                                         DateUtil.parseDataPTBR("11/03/2012"), DateUtil.parseDataPTBR("15/03/2012"), 
 						                 null,BigDecimal.ZERO,new BigDecimal(200), 
 						                 "TIPO_BAIXA","ACAO",StatusCobranca.NAO_PAGO,
 						                 cotaManoel,bancoBRADESCO,divida14);

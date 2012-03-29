@@ -115,15 +115,18 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,	String sortColumn) {
 	
 		String sql = querySuspensaoCota;
 		
-		Query query = getSession().createSQLQuery(sql);
-		
-		List lista = query.list();
-		
-		//query.setResultTransformer(Transformers.aliasToBean(Cota.class));
+		Query query = getSession().createSQLQuery(sql)
+				.addScalar("")
+				.addScalar("")
+				.addScalar("")
+				.addScalar("");
+				
+		query.setResultTransformer(Transformers.aliasToBean(CotaSuspensaoDTO.class));
 		return query.list();
 	}	
 
