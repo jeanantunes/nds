@@ -6,9 +6,11 @@ package br.com.abril.nds.model.cadastro;
  * @created 14-fev-2012 11:35:31
  */
 public enum GrupoProduto {
+	
 	CROMO,
 	REVISTA,
 	LIVRO,
 	OUTROS,
-	JORNAL
+	JORNAL;
+	
 }
