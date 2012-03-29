@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
@@ -42,19 +43,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			
 		} else {
 
-			hql.append(" select new " + ContagemDevolucaoDTO.class.getCanonicalName() 	);		
+			hql.append(" select ");		
 			
-			hql.append(" ( 	movimento.produtoEdicao.produto.codigo,  					");		
-			hql.append(" 	movimento.produtoEdicao.produto.nome, 						");
-			hql.append(" 	movimento.produtoEdicao.numeroEdicao, 						");
-			hql.append(" 	movimento.produtoEdicao.precoVenda, 						");
-			hql.append(" 	sum(movimento.qtde) as qtdMovimento, 						");
+			hql.append(" movimento.produtoEdicao.produto.codigo as codigoProduto,  	");		
+			hql.append(" movimento.produtoEdicao.produto.nome as nomeProduto, 		");
+			hql.append(" movimento.produtoEdicao.numeroEdicao as numeroEdicao, 		");
+			hql.append(" movimento.produtoEdicao.precoVenda as precoVenda, 			");
+			hql.append(" sum(movimento.qtde) as qtdDevolucao, 						");
 			
 			if(indBuscaTotalParcial) {
-				hql.append( hqlConfEncParcial.toString() + "  as qtdParcial, 			");
+				hql.append( hqlConfEncParcial.toString() + "  as qtdNota, 			");
 			}
 			
-			hql.append(" movimento.data ) ");
+			hql.append(" movimento.data as dataMovimento  							");
 			
 		}
 		
@@ -110,10 +111,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 						orderByColumn = " movimento.produtoEdicao.precoVenda ";
 						break;
 					case QTD_DEVOLUCAO:
-						orderByColumn = " qtdMovimento ";
+						orderByColumn = " qtdDevolucao ";
 						break;
 					case QTD_NOTA:
-						orderByColumn = " qtdParcial ";
+						orderByColumn = " qtdNota ";
 						break;
 						
 					default:
@@ -139,12 +140,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	
 	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
 		
-		Query query = getSession().createQuery(hql.toString());
+		Query query = null;
+		
+		if(indBuscaQtd) {
+			query = getSession().createQuery(hql.toString());
+		} else {
+			query = getSession().createQuery(hql.toString()).setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
+		}
 		
 		query.setParameter("dataInicial", filtro.getPeriodo().getDataInicial());
-
 		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
-
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
 		if(indBuscaTotalParcial && !indBuscaQtd) {
@@ -154,7 +159,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		if(filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
-	
 		
 		return query;
 		

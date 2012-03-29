@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -307,7 +308,9 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	@DirtiesContext
 	public void testObterListaContagemDevolucao() {
 		
-		conferenciaEncalheParcialRepositoryImpl.obterListaContagemDevolucao(false, false, StatusAprovacao.APROVADO, null, null, null, null);
+		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepositoryImpl.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, null, null, null, null);
+		
+		Assert.assertEquals(1, result.size());
 		
 	}
 	

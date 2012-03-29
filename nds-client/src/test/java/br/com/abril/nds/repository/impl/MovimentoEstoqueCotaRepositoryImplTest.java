@@ -50,8 +50,6 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
-//TODO: RETIRAR ISSO
-@Ignore
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -314,7 +312,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		ControleContagemDevolucao controleContagemDevolucao = Fixture.controleContagemDevolucao(
 				StatusOperacao.EM_ANDAMENTO, 
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				veja1);
 
 		save(controleContagemDevolucao);
 		

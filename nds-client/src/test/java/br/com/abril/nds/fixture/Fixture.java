@@ -393,12 +393,14 @@ public class Fixture {
 	
 	public static ControleContagemDevolucao controleContagemDevolucao (
 			StatusOperacao statusOperacao,
-			Date data) {
+			Date data,
+			ProdutoEdicao produtoEdicao) {
 		
 		ControleContagemDevolucao controleContagemDevolucao = new ControleContagemDevolucao();
 		
 		controleContagemDevolucao.setData(data);
 		controleContagemDevolucao.setStatus(statusOperacao);
+		controleContagemDevolucao.setProdutoEdicao(produtoEdicao);
 		
 		return controleContagemDevolucao;
 	}

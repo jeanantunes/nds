@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
@@ -234,17 +235,13 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select new ");		
+		hql.append(" select ");		
 		
-		hql.append(ContagemDevolucaoDTO.class.getCanonicalName());
-		
-		hql.append(" ( ");
-		hql.append("  parcial.produtoEdicao.id, 										");
-		hql.append("  parcial.produtoEdicao.precoVenda, 								");
-		hql.append("  parcial.dataMovimento, 											");
+		hql.append("  parcial.produtoEdicao.id as idProdutoEdicao, 						");
+		hql.append("  parcial.produtoEdicao.precoVenda as precoVenda, 					");
+		hql.append("  parcial.dataMovimento as dataMovimento, 							");
 		hql.append( getSubQueryMovimentoEstoqueCota().toString() + " as qtdDevolucao, 	");
 		hql.append("  sum(parcial.qtde) as qtdNota 										");
-		hql.append(" ) ");
 		
 		hql.append(" from ConferenciaEncalheParcial parcial ");
 		
@@ -308,7 +305,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 		}
 		
 		
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString()).setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
 		
 		if(diferencaApurada != null) {
 			query.setParameter("diferencaApurada", diferencaApurada);
