@@ -52,7 +52,7 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		NUMERO_COTA("numeroCota"),
 		NOME_COTA("nomeCota"),
 		DATA_VENCIMENTO("dataVencimento"),
-		VIA("via"),
+		VIA("vias"),
 		DATA_EMISSAO("dataEmissao"),
 		VALOR("valor"),
 		TIPO_COBRANCA("tipoCobranca");
@@ -193,6 +193,82 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	 */
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((codigoBox == null) ? 0 : codigoBox.hashCode());
+		result = prime * result
+				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
+		result = prime * result
+				+ ((dataMovimento == null) ? 0 : dataMovimento.hashCode());
+		result = prime
+				* result
+				+ ((listaColunaOrdenacao == null) ? 0 : listaColunaOrdenacao
+						.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result + ((rota == null) ? 0 : rota.hashCode());
+		result = prime * result + ((roteiro == null) ? 0 : roteiro.hashCode());
+		result = prime * result
+				+ ((tipoCobranca == null) ? 0 : tipoCobranca.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroDividaGeradaDTO other = (FiltroDividaGeradaDTO) obj;
+		if (codigoBox == null) {
+			if (other.codigoBox != null)
+				return false;
+		} else if (!codigoBox.equals(other.codigoBox))
+			return false;
+		if (colunaOrdenacao != other.colunaOrdenacao)
+			return false;
+		if (dataMovimento == null) {
+			if (other.dataMovimento != null)
+				return false;
+		} else if (!dataMovimento.equals(other.dataMovimento))
+			return false;
+		if (listaColunaOrdenacao == null) {
+			if (other.listaColunaOrdenacao != null)
+				return false;
+		} else if (!listaColunaOrdenacao.equals(other.listaColunaOrdenacao))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (rota == null) {
+			if (other.rota != null)
+				return false;
+		} else if (!rota.equals(other.rota))
+			return false;
+		if (roteiro == null) {
+			if (other.roteiro != null)
+				return false;
+		} else if (!roteiro.equals(other.roteiro))
+			return false;
+		if (tipoCobranca != other.tipoCobranca)
+			return false;
+		return true;
 	}
 	
 	

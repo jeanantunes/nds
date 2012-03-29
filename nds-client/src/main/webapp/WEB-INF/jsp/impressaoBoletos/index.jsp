@@ -120,6 +120,7 @@
 				$("#box").val(result.box);
 				$("#rota").val(result.rota);
 				$("#roteiro").val(result.roteiro);
+				$("#tipoCobranca").val(result.tipoCobranca);
 			});
 			//Efetuar a pesquisa de box, rota roteiro
 		},
@@ -127,6 +128,7 @@
 			$("#box").val("");
 			$("#rota").val("");
 			$("#roteiro").val("");
+			$("#tipoCobranca").val("");
 		},
 		validarPesquisa:function(){
 			
@@ -157,7 +159,8 @@
 					}
 				}
 			});
-		}
+		},
+		
 	};
 	
 	$(function() {
@@ -210,7 +213,7 @@
 				align : 'center'
 			}, {
 				display : 'Via',
-				name : 'via',
+				name : 'vias',
 				width : 50,
 				sortable : true,
 				align : 'center'
@@ -350,16 +353,16 @@
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Boletos">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirBoletos">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir
+							Imprimir Boletos
 						</a>
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Dividas">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirDividas">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir
+							Imprimir Dividas
 						</a>
 					</span>
 					

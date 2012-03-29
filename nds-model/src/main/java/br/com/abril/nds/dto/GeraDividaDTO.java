@@ -21,7 +21,7 @@ public class GeraDividaDTO implements Serializable{
 	private Date dataEmissao;
 	private BigDecimal valor;
 	private TipoCobranca tipoCobranca;
-	private String suportaEmail;
+	private Boolean suportaEmail;
 	private Integer vias;
 	private String nossoNumero;
 	
@@ -30,7 +30,8 @@ public class GeraDividaDTO implements Serializable{
 	
 	public GeraDividaDTO(String box,String rota, String roteiro, 
 						 Integer numeroCota,String nomeCota, Date dataVencimento,
-						 Date dataEmissao,BigDecimal valor) {
+						 Date dataEmissao,BigDecimal valor,TipoCobranca tipoCobranca, 
+						 Integer vias, String nossoNumero,Boolean suportaEmail) {
 		
 		this.box = box;
 		this.rota = rota;
@@ -41,6 +42,9 @@ public class GeraDividaDTO implements Serializable{
 		this.dataEmissao = dataEmissao;
 		this.valor = valor;
 		this.tipoCobranca = tipoCobranca;
+		this.vias = vias;
+		this.nossoNumero = nossoNumero;
+		this.suportaEmail = suportaEmail;
 	}
 	
 	
@@ -182,13 +186,13 @@ public class GeraDividaDTO implements Serializable{
 	/**
 	 * @return the suportaEmail
 	 */
-	public String getSuportaEmail() {
+	public Boolean getSuportaEmail() {
 		return suportaEmail;
 	}
 	/**
 	 * @param suportaEmail the suportaEmail to set
 	 */
-	public void setSuportaEmail(String suportaEmail) {
+	public void setSuportaEmail(Boolean suportaEmail) {
 		this.suportaEmail = suportaEmail;
 	}
 	
