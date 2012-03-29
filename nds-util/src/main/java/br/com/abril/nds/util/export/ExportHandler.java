@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -75,12 +76,45 @@ public class ExportHandler {
 			
 			exportModel.setFooters(exportFooters);
 			
+			sortModel(exportModel);
+			
 			return exportModel;
 			
 		} catch (Exception e) {
 			
 			throw new RuntimeException("Erro ao exportar modelo!", e);
 		}
+	}
+	
+	private static void sortModel(ExportModel exportModel) {
+		
+		if (exportModel == null) {
+			
+			return;
+		}
+		
+		sortList(exportModel.getFilters());
+		sortList(exportModel.getHeaders());
+		
+		List<ExportRow> rows = exportModel.getRows();
+		
+		if (rows != null) {
+			
+			for (ExportRow row : rows) {
+				
+				sortList(row.getColumns());
+			}
+		}
+	}
+	
+	private static <T extends Comparable<T>> void sortList(List<T> list) {
+		
+		if (list == null) {
+			
+			return;
+		}
+		
+		Collections.sort(list);
 	}
 	
 	private static <F> List<ExportFilter> generateExportFilters(F filter) 
@@ -138,6 +172,8 @@ public class ExportHandler {
 		exportFilter.setValue(getExportValue(value));
 		
 		exportFilter.setAlignment(exportAnnotation.alignment());
+		
+		exportFilter.setExhibitionOrder(exportAnnotation.exhibitionOrder());
 	
 		return exportFilter;
 	}
@@ -218,7 +254,8 @@ public class ExportHandler {
 			
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
-			return new ExportColumn(getExportValue(methodReturn), exportAnnotation.alignment());
+			return new ExportColumn(
+				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder());
 		}
 		
 		return null;
@@ -239,7 +276,8 @@ public class ExportHandler {
 			
 			Object fieldValue = field.get(exportable);
 
-			return new ExportColumn(getExportValue(fieldValue), exportAnnotation.alignment());
+			return new ExportColumn(
+				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder());
 		}
 		
 		return null;
@@ -247,25 +285,25 @@ public class ExportHandler {
 	
 	private static String getExportValue(Object value) {
 		
-		String columnValue = null;
+		String exportValue = "";
 		
 		if (value != null) {
 
 			if (value instanceof BigDecimal) {
 				
-				columnValue = ((BigDecimal) value).toString();
+				exportValue = ((BigDecimal) value).toString();
 				
 			} else if (value instanceof Date) {
 				
-				columnValue = DateUtil.formatarDataPTBR((Date) value);
+				exportValue = DateUtil.formatarDataPTBR((Date) value);
 				
 			} else {
 				
-				columnValue = value.toString();
+				exportValue = value.toString();
 			}
 		}
 		
-		return columnValue;
+		return exportValue;
 	}
 	
 	private static void processHeader(Export exportAnnotation, 
@@ -276,6 +314,8 @@ public class ExportHandler {
 		if (!exportHeaders.contains(exportHeader)) {
 			
 			exportHeader.setAlignment(exportAnnotation.alignment());
+			
+			exportHeader.setExhibitionOrder(exportAnnotation.exhibitionOrder());
 			
 			exportHeaders.add(exportHeader);
 		}

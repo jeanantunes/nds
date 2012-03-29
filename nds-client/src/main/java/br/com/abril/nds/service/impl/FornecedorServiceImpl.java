@@ -60,4 +60,10 @@ public class FornecedorServiceImpl implements FornecedorService {
 		return fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, grupoFornecedor);
 	}
 	
+	@Transactional
+	public Fornecedor obterFornecedorPorId(Long id) {
+		
+		return this.fornecedorRepository.buscarPorId(id);
+	}
+	
 }

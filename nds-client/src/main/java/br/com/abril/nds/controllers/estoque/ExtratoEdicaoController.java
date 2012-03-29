@@ -1,13 +1,15 @@
 package br.com.abril.nds.controllers.estoque;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,11 +17,19 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ExtratoEdicaoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -35,26 +45,35 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/estoque/extratoEdicao")
 public class ExtratoEdicaoController {
 	
-	private Result result;
-	
 	private static final String GRID_RESULT = "gridResult";
 	private static final String SALDO_TOTAL_EXTRATO_EDICAO = "saldoTotalExtratoEdicao";
 	private static final String DESTACAR_SALDO_TOTAL_EXTRATO_EDICAO = "destacarSaldoTotalExtratoEdicao";
-	
-	
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaExtratoEdicao";
 	
 	@Autowired
 	private ExtratoEdicaoService extratoEdicaoService;
 	
-	private HttpServletRequest request;
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
-	public ExtratoEdicaoController(Result result, HttpServletRequest request) {
+	private HttpServletResponse response;
+	
+	private HttpSession session;
+	
+	private Result result;
+	
+	public ExtratoEdicaoController(Result result, 
+								   HttpServletResponse response,
+								   HttpSession session) {
+		
 		this.result = result;
-		this.request = request;
+		this.response = response;
+		this.session = session;
 	}
 	
 	public void index(){
 		
+		this.session.removeAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 	}
 	
 	/**
@@ -104,7 +123,13 @@ public class ExtratoEdicaoController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(String codigoProduto, Long numeroEdicao) throws ValidacaoException {
+	public void pesquisaExtratoEdicao(String codigoProduto, 
+									  Long numeroEdicao,
+									  String nomeProduto,
+									  BigDecimal precoCapa,
+									  String nomeFornecedor) throws ValidacaoException {
+		
+		this.montarFiltro(codigoProduto, nomeProduto, numeroEdicao, precoCapa, nomeFornecedor);
 		
 		TableModel<CellModel> tableModel = null;
 		
@@ -137,7 +162,104 @@ public class ExtratoEdicaoController {
 		resultado.put(DESTACAR_SALDO_TOTAL_EXTRATO_EDICAO, destacarValorSaldo);
 		
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	public void exportar(FileType fileType) throws IOException {
 		
+		FiltroExtratoEdicaoDTO filtro = 
+			(FiltroExtratoEdicaoDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = null;
+		
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = null;
+		
+		if (filtro != null) {
+		
+			infoGeralExtratoEdicao = 
+				extratoEdicaoService.obterInfoGeralExtratoEdicao(
+					filtro.getCodigoProduto(), filtro.getNumeroEdicao());
+			
+			listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+		}
+		
+		FileExporter.to("extrato-edicao", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, infoGeralExtratoEdicao, 
+				listaExtratoEdicao, ExtratoEdicaoDTO.class, this.response);
+	}
+	
+	/*
+	 * Monta o filtro com os dados da pesquisa.
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @param nomeProduto - nome do produto
+	 * @param numeroEdicao - número da edição
+	 * @param precoCapa - preço de capa
+	 * @param nomeFornecedor - nome do fornecedor
+	 */
+	private FiltroExtratoEdicaoDTO montarFiltro(String codigoProduto,
+											    String nomeProduto,
+											    Long numeroEdicao,
+											    BigDecimal precoCapa,
+											    String nomeFornecedor) {
+		
+		FiltroExtratoEdicaoDTO filtro = new FiltroExtratoEdicaoDTO();
+
+		filtro.setCodigoProduto(codigoProduto);
+		
+		filtro.setNumeroEdicao(numeroEdicao);
+		
+		filtro.setNomeProduto(nomeProduto);
+		
+		filtro.setPrecoCapa(precoCapa);
+		
+		filtro.setNomeFornecedor(nomeFornecedor);
+		
+		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
+	}
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
 	}
 	
 	private List<String> validarParametrosPesquisa(String codigoProduto, Long numeroEdicao) {
@@ -157,16 +279,14 @@ public class ExtratoEdicaoController {
 	}
 
 	private TableModel<CellModel> obterTableModelParaListaExtratoEdicao(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-		
+
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
 		for(ExtratoEdicaoDTO extrato : listaExtratoEdicao) {
 			
-			String dataMovimento 		= sdf.format(extrato.getDataMovimento());
+			String dataMovimento 		= DateUtil.formatarDataPTBR(extrato.getDataMovimento());
 			String descTipoMovimento 	= extrato.getDescMovimento();
 			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
 			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();

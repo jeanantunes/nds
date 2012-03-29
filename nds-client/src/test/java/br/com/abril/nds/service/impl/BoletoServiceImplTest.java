@@ -111,7 +111,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(divida);
 
 		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), BigDecimal.ZERO, 
-                					   new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida);
+                					   new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida,0);
 		save(boleto);
 
 	}
@@ -119,7 +119,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Test
 	@Ignore
 	public void teste() {
-		boletoService.baixarBoletos(null, null, null);
+		boletoService.baixarBoletosAutomatico(null, null, null);
 	}
 	
 	@Test

@@ -1,13 +1,15 @@
 package br.com.abril.nds.util.export;
 
 
-public class ExportFilter {
+public class ExportFilter implements Comparable<ExportFilter> {
 
 	private String label;
 	
 	private String value;
 	
 	private Export.Alignment alignment;
+	
+	private Integer exhibitionOrder;
 	
 	/**
 	 * Construtor padrão.
@@ -56,6 +58,26 @@ public class ExportFilter {
 	 */
 	public void setAlignment(Export.Alignment alignment) {
 		this.alignment = alignment;
+	}
+
+	/**
+	 * @return the exhibitionOrder
+	 */
+	public int getExhibitionOrder() {
+		return exhibitionOrder;
+	}
+
+	/**
+	 * @param exhibitionOrder the exhibitionOrder to set
+	 */
+	public void setExhibitionOrder(int exhibitionOrder) {
+		this.exhibitionOrder = exhibitionOrder;
+	}
+
+	@Override
+	public int compareTo(ExportFilter exportFilter) {
+		
+		return this.exhibitionOrder.compareTo(exportFilter.exhibitionOrder);
 	}
 
 }

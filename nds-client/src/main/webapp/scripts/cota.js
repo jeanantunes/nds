@@ -1,33 +1,7 @@
 var cota = {
 	
-	//Limpar campos pesquisa
-	limparCamposPesquisa : function(idCampoNumeroCota, idCampoNomeCota, callback) {
-		
-		$(idCampoNumeroCota).val("");
-		$(idCampoNomeCota).val("");
-		
-		if (callback) {
-			
-			callback();
-		}
-	},
-		
 	//Pesquisa por número da cota
 	pesquisarPorNumeroCota : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
-		
-		//Seta um time out para esperar a execução da função que limpa os campos
-		//no momento que o número da cota é alterado na tela.
-		setTimeout(
-			function() { 
-				cota.pesquisarPorNumeroCotaAposTimeOut(
-					idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack);
-			}, 
-			100
-		);
-	},
-	
-	//Pesquisa por número da cota após um time out
-	pesquisarPorNumeroCotaAposTimeOut : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
 		var numeroCota = $(idCampoNumeroCota).val();
 

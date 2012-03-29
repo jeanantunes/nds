@@ -15,6 +15,8 @@ public @interface Export {
 	
 	String alignWithHeader() default "";
 	
+	int exhibitionOrder() default 1000;
+	
 	public enum Alignment {
 		
 		LEFT(0),

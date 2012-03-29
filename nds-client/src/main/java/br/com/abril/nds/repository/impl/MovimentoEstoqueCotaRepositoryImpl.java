@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -277,6 +279,38 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		Long qtde = (Long) query.uniqueResult();
 		
 		return ((qtde == null) ? 0 : qtde.intValue());
+		
+	}
+	
+	/**
+	 * Obtém o Movimento de Estoque da cota pelo Tipo de Movimento 
+	 * @param data
+	 * @param idCota
+	 * @param grupoMovimentoEstoque
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" from MovimentoEstoqueCota movimento");			
+		
+		hql.append(" where movimento.cota.id = :idCota ");
+		
+		hql.append(" and movimento.data = :data ");
+		
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		
+		return query.list();
 		
 	}
 

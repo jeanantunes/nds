@@ -7,7 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import br.com.abril.nds.model.financeiro.BaixaAutomatica;
+import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 @MappedSuperclass
@@ -21,8 +21,8 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 	private TipoMovimentoFinanceiro tipoMovimento;
 	
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "BAIXA_AUTOMATICA_ID")
-	private BaixaAutomatica baixaAutomatica;
+	@JoinColumn(name = "BAIXA_COBRANCA_ID")
+	private BaixaCobranca baixaCobranca;
 	
 	public BigDecimal getValor() {
 		return valor;
@@ -40,12 +40,12 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 		this.tipoMovimento = tipoMovimento;
 	}
 
-	public BaixaAutomatica getBaixaAutomatica() {
-		return baixaAutomatica;
+	public BaixaCobranca getBaixaCobranca() {
+		return baixaCobranca;
 	}
 
-	public void setBaixaAutomatica(BaixaAutomatica baixaAutomatica) {
-		this.baixaAutomatica = baixaAutomatica;
+	public void setBaixaCobranca(BaixaCobranca baixaCobranca) {
+		this.baixaCobranca = baixaCobranca;
 	}
 	
 }

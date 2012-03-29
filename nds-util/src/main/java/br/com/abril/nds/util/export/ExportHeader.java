@@ -1,10 +1,12 @@
 package br.com.abril.nds.util.export;
 
-public class ExportHeader {
+public class ExportHeader implements Comparable<ExportHeader> {
 	
 	private String value;
 	
 	private Export.Alignment alignment;
+	
+	private Integer exhibitionOrder;
 	
 	public ExportHeader() {
 		
@@ -48,6 +50,20 @@ public class ExportHeader {
 	public void setAlignment(Export.Alignment alignment) {
 		this.alignment = alignment;
 	}
+	
+	/**
+	 * @return the exhibitionOrder
+	 */
+	public Integer getExhibitionOrder() {
+		return exhibitionOrder;
+	}
+
+	/**
+	 * @param exhibitionOrder the exhibitionOrder to set
+	 */
+	public void setExhibitionOrder(Integer exhibitionOrder) {
+		this.exhibitionOrder = exhibitionOrder;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -78,6 +94,12 @@ public class ExportHeader {
 		} else if (!value.equals(other.value))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ExportHeader exportHeader) {
+		
+		return this.exhibitionOrder.compareTo(exportHeader.exhibitionOrder);
 	}
 
 }

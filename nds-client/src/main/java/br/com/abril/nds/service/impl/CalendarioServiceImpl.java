@@ -2,9 +2,11 @@ package br.com.abril.nds.service.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.repository.FeriadoRepository;
@@ -24,6 +26,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	private FeriadoRepository feriadoRepository;
 	
 	@Override
+	@Transactional(readOnly=true)
 	public Date adicionarDiasUteis(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();
@@ -54,6 +57,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public Date subtrairDiasUteis(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();
@@ -69,6 +73,31 @@ public class CalendarioServiceImpl implements CalendarioService {
 		}
 		
 		return cal.getTime();
+	}
+	
+	@Override
+	public Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemana) {
+		if (diasSemana == null || diasSemana.isEmpty()){
+			return this.adicionarDiasUteis(data, numDias);
+		}
+		
+		Calendar dataBase = Calendar.getInstance();
+		dataBase.setTime(data);
+		dataBase.add(Calendar.DAY_OF_MONTH, numDias);
+		
+		boolean dataValida = false;
+		
+		while (!dataValida){
+			while (!diasSemana.contains(dataBase.get(Calendar.DAY_OF_WEEK))){
+				dataBase.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			dataBase.setTime(this.adicionarDiasUteis(dataBase.getTime(), 0));
+			
+			dataValida = diasSemana.contains(dataBase.get(Calendar.DAY_OF_WEEK));
+		}
+		
+		return dataBase.getTime();
 	}
 	
 	private boolean isFeriado(Calendar cal) {

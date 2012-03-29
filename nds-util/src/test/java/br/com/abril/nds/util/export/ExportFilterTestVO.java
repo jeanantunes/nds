@@ -15,13 +15,13 @@ public class ExportFilterTestVO {
 	@Export(label = "Filter Four")
 	private String filterFour;
 	
-	@Export(label = "Filter Five")
+	@Export(label = "Filter Five", exhibitionOrder = 1)
 	private String filterFive;
 	
 	@Export(label = "Filter Six")
 	private String filterSix;
 	
-	@Export(label = "Filter Seven")
+	@Export(label = "Filter Seven", exhibitionOrder = 2)
 	private String filterSeven;
 
 	public ExportFilterTestVO() {

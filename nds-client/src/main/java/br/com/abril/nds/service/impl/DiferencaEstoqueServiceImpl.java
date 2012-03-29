@@ -92,7 +92,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
 		
-		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
+		if (filtro != null) {
+			
+			filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
+		}
 		
 		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
 	}

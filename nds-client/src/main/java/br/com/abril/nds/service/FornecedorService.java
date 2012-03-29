@@ -37,4 +37,6 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedoresPorProduto(String codigoProduto,
 												 GrupoFornecedor grupoFornecedor);
 	
+	Fornecedor obterFornecedorPorId(Long id);
+	
 }
