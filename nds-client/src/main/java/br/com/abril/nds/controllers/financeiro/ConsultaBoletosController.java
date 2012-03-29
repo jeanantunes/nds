@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,24 +10,41 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.client.vo.BoletoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -54,6 +72,12 @@ public class ConsultaBoletosController {
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
     @Autowired
 	private Validator validator;
@@ -221,6 +245,118 @@ public class ConsultaBoletosController {
 			    throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve ser menor do que a data final.");
 		    }
 		}
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroConsultaBoletosCotaDTO filtro = this.obterFiltroExportacao();
+		
+		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(filtro);
+		
+		List<BoletoVO> listaBoletos = new ArrayList<BoletoVO>();
+		
+		for (Boleto boleto : boletos) {	
+			
+			BoletoVO boletoVO = new BoletoVO();
+			
+			boletoVO.setNossoNumero(StringUtils.defaultString(boleto.getNossoNumero()));
+			boletoVO.setDataEmissao(boleto.getDataEmissao());
+			boletoVO.setDataVencimento(boleto.getDataVencimento());
+			boletoVO.setDataPagamento(boleto.getDataPagamento());
+			boletoVO.setEncargos(MathUtil.defaultValue(boleto.getEncargos()));
+			boletoVO.setValor(MathUtil.defaultValue(boleto.getValor()));
+			boletoVO.setTipoBaixa(StringUtils.defaultString(boleto.getTipoBaixa()));
+			boletoVO.setStatus(boleto.getStatusCobranca());
+			
+			listaBoletos.add(boletoVO);
+		}
+		
+		FileExporter.to("boleto-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaBoletos, BoletoVO.class, this.httpResponse);
+	}
+	
+	/*
+	 * Obtém o filtro de pesquisa para exportação.
+	 */
+	private FiltroConsultaBoletosCotaDTO obterFiltroExportacao() {
+		
+		FiltroConsultaBoletosCotaDTO filtro = 
+			(FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtro.getNumeroCota() != null) {
+				
+				Cota cota =
+					this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+				
+				if (cota != null) {
+					
+					Pessoa pessoa = cota.getPessoa();
+					
+					if (pessoa instanceof PessoaFisica) {
+						
+						filtro.setNomeCota(((PessoaFisica) pessoa).getNome());
+												
+					} else if (pessoa instanceof PessoaJuridica) {
+						
+						filtro.setNomeCota(((PessoaJuridica) pessoa).getRazaoSocial());
+					}
+				}
+			}
+		}
+		
+		return filtro;
+	}
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
 	}
 	
 }

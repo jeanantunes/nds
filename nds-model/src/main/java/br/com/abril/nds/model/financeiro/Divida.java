@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -31,6 +33,7 @@ public class Divida {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA", nullable = false)
 	private Date data;
 	

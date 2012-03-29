@@ -48,5 +48,22 @@ public abstract class MathUtil {
 
 		return dividend.divide(divisor, new MathContext(TOTAL_CASAS_DECIMAIS, RoundingMode.HALF_EVEN));
 	}
+	
+	/**
+	 * Retorna um valor padrão caso o valor passado seja nulo.
+	 * 
+	 * @param value - valor
+	 * 
+	 * @return Valor ou valor padrão.
+	 */
+	public static BigDecimal defaultValue(BigDecimal value) {
+		
+		if (value == null) {
+			
+			return BigDecimal.ZERO;
+		}
+		
+		return value;
+	}
 
 }

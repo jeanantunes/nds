@@ -33,7 +33,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		}
 		
 		hql.append(" and mfc.cota.id not in ")
-		   .append(" (select c.id from ConsolidadoFinanceiroCota c where c.dataConsolidado = :dataAtual) ");
+		   .append(" (select distinct c.cota.id from ConsolidadoFinanceiroCota c where c.dataConsolidado <= :dataAtual) ");
 		
 		hql.append(" order by mfc.cota.id ");
 		
