@@ -6,6 +6,21 @@ package br.com.abril.nds.model;
  * @created 08-mar-2012 14:45:33
  */
 public enum StatusCobranca {
-	PAGO,
-	NAO_PAGO
+	
+	PAGO("Pago"),
+	NAO_PAGO("Não pago");
+	
+	private String descricao;
+	
+	private StatusCobranca(String descricao) {
+		
+		this.descricao = descricao;
+	}
+	
+	@Override
+	public String toString() {
+	
+		return this.descricao;
+	}
+	
 }
