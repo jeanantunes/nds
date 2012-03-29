@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
@@ -32,18 +33,18 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		StringBuilder queryNative = new StringBuilder();
 		
 		
-		queryNative.append("SELECT 																				"); 		
-		queryNative.append("ca.data, 																			");
 		
-		queryNative.append("box.nome as box, 																	");
-		queryNative.append("cota.numero_cota cota,																");
-		queryNative.append("pessoa.nome,																		");
-	    
-		queryNative.append("(SELECT SUM(movEstoque.QTDE*pe.PRECO_CUSTO) FROM MOVIMENTO_ESTOQUE_COTA movEstoque  ");
-		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
-		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID)													");
-		queryNative.append("as valorNE																			");
+		queryNative.append("SELECT 																				"); 		
 
+		queryNative.append("ca.DATA as data, 																	");
+		queryNative.append("box.NOME as box, 																	");
+		queryNative.append("cota.NUMERO_COTA as cota,															");
+		queryNative.append("pessoa.nome as nome,																	");
+	    
+		queryNative.append("( SELECT SUM(movEstoque.QTDE*pe.PRECO_CUSTO) FROM MOVIMENTO_ESTOQUE_COTA movEstoque ");
+		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
+		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID ) as valorNE 									");
+		
 		queryNative.append("FROM COTA cota																		");
 
 		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
@@ -56,11 +57,16 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		
 		if(idCota != null){
 			
-			queryNative.append("cota.ID = :idCota 																");
+			queryNative.append("and cota.ID = :idCota 															");
 		}
 		
-		queryNative.append("group by cota.numero_cota															");
+		queryNative.append("group by 		");
+		queryNative.append("ca.DATA, 			");
+		queryNative.append("box.NOME, 			");
+		queryNative.append("cota.NUMERO_COTA,			");
+		queryNative.append("pessoa.nome			");
 		
+				
 		PaginacaoVO paginacao = cotaAusenteDTO.getPaginacao();
 		
 		ColunaOrdenacao colunaOrdenacao = cotaAusenteDTO.getColunaOrdenacao();
@@ -85,18 +91,19 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 			}
 			queryNative.append(ordenacao);
 		}
-		
-		
-
-		Query query  = getSession().createSQLQuery(queryNative.toString());
-		
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(CotaAusenteDTO.class);
-		
-		query.setResultTransformer(resultTransformer);
-		
+				
+		Query query  = getSession().createSQLQuery(queryNative.toString()).addScalar("data").addScalar("box")
+				.addScalar("cota")
+				.addScalar("nome")
+				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
+			
 		query.setParameter("data", data);
 		
-		query.setParameter("idCota", idCota);
+		if(idCota != null){
+			query.setParameter("idCota", idCota);
+		}
+		
+		
 				
 		return query.list();
 		

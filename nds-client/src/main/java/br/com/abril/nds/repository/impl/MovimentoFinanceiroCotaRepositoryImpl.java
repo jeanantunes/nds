@@ -80,9 +80,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	private String getQueryObterMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
-		
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
 
 		String conditions = "";
@@ -168,7 +168,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 			orderBy += " movimentoFinanceiroCota.data ";
 			break;
 		case NOME_COTA:
-			orderBy += " nomeCota ";
+			orderBy += " case when movimentoFinanceiroCota.cota.pessoa.class = 'PessoaJuridica' " 
+					+ " then movimentoFinanceiroCota.cota.pessoa.razaoSocial " 
+					+ " else movimentoFinanceiroCota.cota.pessoa.nome  " 
+					+ " end ";
 			break;
 		case NUMERO_COTA:
 			orderBy += " movimentoFinanceiroCota.cota.numeroCota ";

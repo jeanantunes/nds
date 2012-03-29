@@ -195,7 +195,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void obterPorNossoNumero() {
 		
-		Boleto boleto = boletoRepository.obterPorNossoNumero("5");
+		Boleto boleto = boletoRepository.obterPorNossoNumero("5", null);
 		
 		Assert.assertNotNull(boleto);	
 	}

@@ -24,6 +24,18 @@ public class CotaAusenteDTO implements Serializable{
 	
 	private	ColunaOrdenacao colunaOrdenacao;
 	
+	
+	
+	public CotaAusenteDTO(Date data, String box, Integer cota, String nome,
+			BigDecimal valorNe, PaginacaoVO paginacao,
+			ColunaOrdenacao colunaOrdenacao) {
+		super();
+		this.data = data;
+		this.box = box;
+		this.cota = cota;
+		this.nome = nome;
+		this.valorNe = valorNe;		
+	}
 	public CotaAusenteDTO(){
 		
 	}
@@ -91,7 +103,7 @@ public class CotaAusenteDTO implements Serializable{
 		this.valorNe = valorNe;
 	}
 
-	@Override
+	/*@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -120,7 +132,7 @@ public class CotaAusenteDTO implements Serializable{
 		} else if (!cota.equals(other.cota))
 			return false;
 		return true;
-	}
+	}*/
 	
 	
 }
