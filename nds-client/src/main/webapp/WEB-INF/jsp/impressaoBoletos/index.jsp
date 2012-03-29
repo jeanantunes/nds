@@ -61,7 +61,7 @@
 				             {name:"box",value:$("#box").val()},
 				             {name:"rota",value:$("#rota").val()},
 				             {name:"roteiro",value:$("#roteiro").val()},
-				             {name:"numeroCota",value:$("#numCota").val()},
+				             {name:"numCota",value:$("#numCota").val()},
 				             {name:"tipoCobranca",value:$("#tipoCobranca").val()}
 				            ];
 			return formData;
@@ -340,13 +340,13 @@
 				<div class="grids" id="grids" style="display:none;">
 					<table class="impressosGrid" id="impressosGrid"></table>
           			<span class="bt_novos" title="Gerar Arquivo">
-          				<a href="javascript:;">
+          				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS">
           					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
           					Arquivo
           				</a>
           			</span>
 					<span class="bt_novos" title="Imprimir">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							Imprimir
 						</a>
