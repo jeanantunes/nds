@@ -48,6 +48,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
@@ -62,6 +63,9 @@ import br.com.abril.nds.util.TipoMensagem;
  */
 @Service
 public class BoletoServiceImpl implements BoletoService {
+	
+	@Autowired
+	private EmailService email;
 
 	@Autowired
 	private BoletoRepository boletoRepository;
@@ -684,11 +688,9 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
-    @Override
-	@Transactional(readOnly=true)
-	public GeradorBoleto geraBoleto(String nossoNumero){
-    	
-		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero, null);		
+	private GeradorBoleto geraBoleto(Boleto boleto){
+
+		
 		GeradorBoleto geradorBoleto = new GeradorBoleto();
 		
 		
@@ -731,7 +733,7 @@ public class BoletoServiceImpl implements BoletoService {
 			geradorBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
 		}
 		else{
-			geradorBoleto.setEnderecoSacadoUf("");
+			geradorBoleto.setEnderecoSacadoUf("SP");
 			geradorBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
 			geradorBoleto.setEnderecoSacadoCep("");
 			geradorBoleto.setEnderecoSacadoBairro("");
@@ -739,11 +741,11 @@ public class BoletoServiceImpl implements BoletoService {
 			geradorBoleto.setEnderecoSacadoNumero("");
 		}
 
+		
+		//INFORMACOES DA CONTA(BANCO)
         String contaNumero=boleto.getBanco().getConta().toString();
         String contaNossoNumero=boleto.getNossoNumero().toString();
         String contaNumeroDocumento="123456";//???
-        
-        //INFORMACOES DA CONTA(BANCO)
         geradorBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         geradorBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
         if (boleto.getBanco().getCarteira().getCodigo()==1){
@@ -792,36 +794,46 @@ public class BoletoServiceImpl implements BoletoService {
         return geradorBoleto;
 	}
 	
+	private File gerarAnexoBoleto(Boleto boleto) throws IOException {
+		GeradorBoleto geradorBoleto = this.geraBoleto(boleto);
+		File f = geradorBoleto.getFilePdf();
+        return f;
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public void enviarBoletoEmail(String nossoNumero) {
+		try{
+			
+			Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+			
+			File anexo = this.gerarAnexoBoleto(boleto);
+			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
+	
+			Distribuidor distribuidor = distribuidorService.obter();
+			String assunto=(distribuidor.getPoliticaCobranca()!=null?distribuidor.getPoliticaCobranca().getAssuntoEmailCobranca():"");
+			String mensagem=(distribuidor.getPoliticaCobranca()!=null?distribuidor.getPoliticaCobranca().getMensagemEmailCobranca():"");
+			email.enviar(assunto, 
+					     mensagem, 
+					     destinatarios, 
+					     anexo);
+		}
+		catch(Exception e){
+			e.getStackTrace();
+		}
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
-		GeradorBoleto boleto = this.geraBoleto(nossoNumero);
-		byte[] b = boleto.getBytePdf();
+		
+		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+		
+		GeradorBoleto geradorBoleto = this.geraBoleto(boleto);
+		byte[] b = geradorBoleto.getBytePdf();
         return b;
 	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public File gerarAnexoBoleto(String nossoNumero) throws IOException {
-		GeradorBoleto boleto = this.geraBoleto(nossoNumero);
-		File f = boleto.getFilePdf();
-        return f;
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public String obterEmailCota(String nossoNumero) {
-		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero, null);
-		String email=boleto.getCota().getPessoa().getEmail();
-		return email;
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public Boleto obterBoletoPorNossoNumero(String nossoNumero) {
-		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero, false);
-		return boleto;
-	}
+	
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -832,7 +844,8 @@ public class BoletoServiceImpl implements BoletoService {
         Date dataOperacao = distribuidor.getDataOperacao();
 		
 		CobrancaVO cobranca=null;
-		Boleto boleto=this.obterBoletoPorNossoNumero(nossoNumero);
+		
+		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
 		
 		if ((boleto!=null)&&(boleto.getDataPagamento()==null)){
 			cobranca = new CobrancaVO();
@@ -852,34 +865,33 @@ public class BoletoServiceImpl implements BoletoService {
 			cobranca.setValor(boleto.getValor());
 			cobranca.setDividaTotal(boleto.getDivida().getValor());
 			
+			//CALCULO DE JUROS E MULTA
 			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
 			BigDecimal valorMultaCalculado = BigDecimal.ZERO;
-			
 			Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
-			
 			if (dataVencimentoUtil.compareTo(dataOperacao) < 0) {
-				
 				//CALCULA JUROS
-				valorJurosCalculado = 
-						cobrancaService.calcularJuros(distribuidor, boleto.getCota(),
+				valorJurosCalculado = cobrancaService.calcularJuros(distribuidor, boleto.getCota(),
 													  boleto.getValor(), boleto.getDataVencimento(),
 													  dataOperacao);
 				//CALCULA MULTA
-				valorMultaCalculado = 
-						cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
+				valorMultaCalculado = cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
 													  boleto.getValor());
-				
 			}
 			
 			cobranca.setDataPagamento(DateUtil.formatarDataPTBR(dataOperacao));
-			cobranca.setDesconto(BigDecimal.ZERO);
+			cobranca.setDesconto( BigDecimal.ZERO );
 			cobranca.setJuros( valorJurosCalculado );
             cobranca.setMulta( valorMultaCalculado );
-
-			cobranca.setValorTotal(boleto.getDivida().getValor());
+            
+            //CALCULA VALOR TOTAL
+            Double valorTotal=(boleto.getValor().doubleValue() + 
+            		          valorJurosCalculado.doubleValue() +
+            		          valorMultaCalculado.doubleValue());
+            
+			cobranca.setValorTotal( new BigDecimal(valorTotal) );
 		}
 		return cobranca;
 	}
-
 
 }
