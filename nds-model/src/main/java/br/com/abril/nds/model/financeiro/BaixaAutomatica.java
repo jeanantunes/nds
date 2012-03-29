@@ -5,8 +5,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 /**
  * @author Discover Technology
@@ -27,9 +25,8 @@ public class BaixaAutomatica extends BaixaCobranca {
 	@Column(name = "NUM_REGISTRO_ARQUIVO", nullable = true)
 	private Integer numeroRegistroArquivo;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "BOLETO_ID")
-	private Boleto boleto;
+	@Column(name = "NOSSO_NUMERO", nullable = true)
+	private String nossoNumero;
 
 	/**
 	 * @return the status
@@ -74,17 +71,17 @@ public class BaixaAutomatica extends BaixaCobranca {
 	}
 	
 	/**
-	 * @return the boleto
+	 * @return the nossoNumero
 	 */
-	public Boleto getBoleto() {
-		return boleto;
+	public String getNossoNumero() {
+		return nossoNumero;
 	}
 
 	/**
-	 * @param boleto the boleto to set
+	 * @param nossoNumero the nossoNumero to set
 	 */
-	public void setBoleto(Boleto boleto) {
-		this.boleto = boleto;
+	public void setNossoNumero(String nossoNumero) {
+		this.nossoNumero = nossoNumero;
 	}
 
 }

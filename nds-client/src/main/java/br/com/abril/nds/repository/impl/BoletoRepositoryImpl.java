@@ -145,11 +145,18 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 	
 	
 	@Override
-	public Boleto obterPorNossoNumero(String nossoNumero) {
+	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
 		
 		Criteria criteria = super.getSession().createCriteria(Boleto.class);
 		
 		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
+		
+		if (dividaAcumulada != null) {
+			
+			criteria.createAlias("divida", "divida");
+			
+			criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+		}
 		
 		criteria.setMaxResults(1);
 		
