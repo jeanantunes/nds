@@ -81,6 +81,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 	 * @param nfParcialGerada
 	 * @param statusAprovacao
 	 * @param dataMovimento
+	 * @param idProdutoEdicao
 	 * @param codigoProduto
 	 * @param numeroEdicao
 	 * 
@@ -91,6 +92,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 			Boolean nfParcialGerada,
 			StatusAprovacao statusAprovacao, 
 			Date dataMovimento, 
+			Long idProdutoEdicao,
 			String codigoProduto, 
 			Long numeroEdicao) {
 		
@@ -146,6 +148,14 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 			hql.append(" parcial.dataMovimento = :dataMovimento ");
 		}
 		
+		if(idProdutoEdicao != null) {
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			indAnd = true;
+			hql.append(" parcial.produtoEdicao.id = :idProdutoEdicao");
+		}
+		
 		if(codigoProduto!=null && numeroEdicao!=null) {
 			if(indAnd) {
 				hql.append(" and ");
@@ -178,6 +188,9 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 			query.setParameter("numeroEdicao", numeroEdicao);
 		}
 		
+		if(idProdutoEdicao != null) {
+			query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		}
 		
 		return query.list();
 		
@@ -196,20 +209,28 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 		
 	}
 	
-
+	
 	/**
 	 * Obtém uma lista de ContagemDevolucao.
 	 * 
 	 * @param diferencaApurada
 	 * @param nfParcialGerada
 	 * @param statusAprovacao
+	 * @param idProdutoEdicao
+	 * @param codigoProduto
+	 * @param numeroEdicao
+	 * @param dataMovimento
 	 * 
-	 * @return List - ContagemDevolucaoDTO
+	 * @return List<ContagemDevolucaoDTO>
 	 */
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
-			StatusAprovacao statusAprovacao) {
+			StatusAprovacao statusAprovacao, 
+			Long idProdutoEdicao,
+			String codigoProduto,
+			Long numeroEdicao,
+			Date dataMovimento) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
@@ -219,6 +240,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 		
 		hql.append(" ( ");
 		hql.append("  parcial.produtoEdicao.id, 										");
+		hql.append("  parcial.produtoEdicao.precoVenda, 								");
 		hql.append("  parcial.dataMovimento, 											");
 		hql.append( getSubQueryMovimentoEstoqueCota().toString() + " as qtdDevolucao, 	");
 		hql.append("  sum(parcial.qtde) as qtdNota 										");
@@ -231,13 +253,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 		boolean indAnd = false;
 		
 		if(diferencaApurada != null) {
-			
-			if(indAnd) {
-				hql.append(" and ");
-			}
-			
 			indAnd = true;
-
 			hql.append(" parcial.diferencaApurada = :diferencaApurada ");
 		}
 		
@@ -263,9 +279,34 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 			hql.append(" parcial.statusAprovacao = :statusAprovacao ");
 		}
 		
-		hql.append(" group by ");
-		hql.append(" parcial.produtoEdicao.id, ");
-		hql.append(" parcial.dataMovimento ");
+		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) && 
+			dataMovimento != null) {
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			indAnd = true;
+			
+			if(idProdutoEdicao!=null) {
+				hql.append(" parcial.produtoEdicao.id = :idProdutoEdicao ");
+			} else {
+				hql.append(" parcial.produtoEdicao.id = ");
+				hql.append(" ( select pe.id from ProdutoEdicao pe where pe.numeroEdicao = :numeroEdicao and pe.produto.codigo = :codigoProduto ) ");
+			}
+			
+			hql.append(" and parcial.dataMovimento = :dataMovimento ");
+			
+			
+		} else {
+
+			hql.append(" group by ");
+			hql.append(" parcial.produtoEdicao.id, ");
+			hql.append(" parcial.produtoEdicao.precoVenda, ");
+			hql.append(" parcial.dataMovimento ");
+			
+		}
+		
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -279,6 +320,20 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<
 		
 		if(statusAprovacao != null) {
 			query.setParameter("statusAprovacao", statusAprovacao);
+		}
+
+		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) && 
+				dataMovimento != null) {
+
+			if(idProdutoEdicao!=null) {
+				query.setParameter("idProdutoEdicao", idProdutoEdicao);
+			}else {
+				query.setParameter("codigoProduto", codigoProduto);
+				query.setParameter("numeroEdicao", numeroEdicao);
+			}
+			
+			query.setParameter("dataMovimento", dataMovimento);
+			
 		}
 		
 		return query.list();

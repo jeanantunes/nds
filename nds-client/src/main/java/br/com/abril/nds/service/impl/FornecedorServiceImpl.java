@@ -19,6 +19,19 @@ public class FornecedorServiceImpl implements FornecedorService {
 	private FornecedorRepository fornecedorRepository;
 	
 	@Transactional
+	public Fornecedor obterFornecedorUnico(String codigoProduto) {
+		
+		List<Fornecedor> fornecedores =  fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
+		
+		if(fornecedores == null || fornecedores.size()!=1) {
+			throw new IllegalStateException("O produto não possui um único fornecedor");
+		}
+		
+		return fornecedores.get(0);
+		
+	}
+	
+	@Transactional
 	public List<Fornecedor> obterFornecedores() {
 		return fornecedorRepository.obterFornecedores();
 	}

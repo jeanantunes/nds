@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,20 +14,38 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.NotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
+import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.MockPerfilUsuario;
 
 @Service
@@ -44,9 +63,26 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Autowired
 	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
 	
+	@Autowired
+	private NotaFiscalSaidaRepository notaFiscalSaidaRepository;
+
+	@Autowired
+	private ItemNotaFiscalSaidaRepository itemNotaFiscalSaidaRepository;
+
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private ControleContagemDevolucaoRepository controleContagemDevolucaoRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, MockPerfilUsuario mockPerfilUsuario) {
@@ -268,7 +304,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					false, 
 					false,
 					StatusAprovacao.PENDENTE, 
-					dataMovimento, 
+					dataMovimento,
+					null,
 					codigoProduto, 
 					numeroEdicao);
 			
@@ -276,9 +313,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			
 		}
 		
-		gerarNotaFiscalParcial();
+		gerarNotasFiscaisPorFornecedor(listaContagemDevolucao);
 
-		verificarConferenciaEncalheFinalizada();
+		verificarConferenciaEncalheFinalizada(usuario);
 		
 	}
 	
@@ -304,20 +341,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	/**
-	 * Sinaliza nos registros de ConferenciaEncalheParcial pertinentes 
-	 * (statusAprovacao = APROVADO, nfParcialGerada = false, diferencaApurada = false)
-	 * que um registro de NF parcial foi gerado referente aos mesmos.	 
-	 */
-	private void sinalizarNFParcialGerada() {
+	
+	private void sinalizarItemNFParcialGerada(ContagemDevolucaoDTO contagem) {
 		
 		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = 
 				conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(
 				false, 
 				false, 
 				StatusAprovacao.APROVADO, 
-				null, 
-				null, 
+				contagem.getDataMovimento(), 
+				contagem.getIdProdutoEdicao(), 
+				null,
 				null);
 		
 		for(ConferenciaEncalheParcial parcial :  listaConferenciaEncalheParcial) {
@@ -330,28 +364,73 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	private void ajustarDiferencaConferenciaEncalheContagemDevolucao(ContagemDevolucaoDTO contagem) {
+	
+	private void ajustarDiferencaConferenciaEncalheContagemDevolucao(ContagemDevolucaoDTO contagem, Usuario usuario) {
 		
-		BigDecimal qtdMovimento = (contagem.getQtdDevolucao() == null) ? new BigDecimal(0.0D) : contagem.getQtdDevolucao();
+		if(contagem.getQtdDevolucao() == null) {
+			contagem.setQtdDevolucao(BigDecimal.ZERO);
+		}
 		
-		BigDecimal qtdNota = (contagem.getQtdNota() == null) ? new BigDecimal(0.0D) : contagem.getQtdNota();
+		if(contagem.getQtdNota() == null) {
+			contagem.setQtdNota(BigDecimal.ZERO);
+		}
 		
+		BigDecimal calculoQdeDiferenca = contagem.getQtdDevolucao().subtract(contagem.getQtdNota());
 		
-		BigDecimal diferenca = qtdMovimento.subtract(qtdNota);
-		
-		contagem.setDiferenca(diferenca);
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setId(contagem.getIdProdutoEdicao());					
 
-		//TODO: ajustar diferenca
+		Diferenca diferenca = new Diferenca();
+		
+		diferenca.setQtde(calculoQdeDiferenca.abs());
+		diferenca.setResponsavel(usuario);
+		diferenca.setProdutoEdicao(produtoEdicao);
+		diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+		
+		if( calculoQdeDiferenca.compareTo(new BigDecimal(0)) < 0 ) {
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
+			
+		} else if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) > 0) {
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
+			
+		}
+		
+		diferencaEstoqueService.lancarDiferenca(diferenca);
 		
 		sinalizarDiferencaApurada(contagem);
 		
-		//TODO: sinalizar nos registros de movimento estoque cota para 
-		// que não seja mais apresentados na grid de digitacao contagem devolucaso.
-		
 	}
 	
+	/**
+	 * Obtém os registro de ConferenciaEncalheParcial relativos 
+	 * a um objeto de contagem agrupado e sinaliza-os mesmo que
+	 * a diferenca foi apurada.
+	 * 
+	 * @param contagem
+	 */
 	private void sinalizarDiferencaApurada(ContagemDevolucaoDTO contagem) {
-		//TODO: sinalizar diferenca apurada...
+		
+		Date dataMovimento = contagem.getDataMovimento();
+		String codigoProduto = contagem.getCodigoProduto();
+		Long numeroEdicao = contagem.getNumeroEdicao();
+		
+		List<ConferenciaEncalheParcial> listaConferenciaEncalheParcial = 
+				conferenciaEncalheParcialRepository.obterListaConferenciaEncalhe(
+				false, 
+				null,
+				StatusAprovacao.APROVADO, 
+				dataMovimento,
+				null,
+				codigoProduto, 
+				numeroEdicao);
+		
+		for(ConferenciaEncalheParcial parcial : listaConferenciaEncalheParcial) {
+			parcial.setDiferencaApurada(true);
+			conferenciaEncalheParcialRepository.alterar(parcial);
+		}
+		
 	}
 	
 	private boolean verificarConferenciaEncalheFinalizadaParaData(Map<Date, StatusOperacao> mapaControleConferencia, Date dataMovimento) {
@@ -388,18 +467,23 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * do mesmo e a qtde conferenciaEncalheParcial para o mesmo.
 	 * 
 	 */
-	private void verificarConferenciaEncalheFinalizada() {
+	private void verificarConferenciaEncalheFinalizada(Usuario usuario) {
 		
 		Map<Date, StatusOperacao> mapaControleConferencia = new HashMap<Date, StatusOperacao>();
 
-		List<ContagemDevolucaoDTO> listaContagemDevolucao = conferenciaEncalheParcialRepository.obterListaContagemDevolucao(false, true, StatusAprovacao.APROVADO);
+		List<ContagemDevolucaoDTO> listaContagemDevolucao = 
+				conferenciaEncalheParcialRepository.obterListaContagemDevolucao(false, null, StatusAprovacao.APROVADO, null, null, null, null);
 		
 		for(ContagemDevolucaoDTO contagemDevolucaoDTO : listaContagemDevolucao) {
 			
 			boolean indConferenciaEncalheFinalizada = verificarConferenciaEncalheFinalizadaParaData(mapaControleConferencia, contagemDevolucaoDTO.getDataMovimento());
 			
 			if(indConferenciaEncalheFinalizada) {
-				ajustarDiferencaConferenciaEncalheContagemDevolucao(contagemDevolucaoDTO);
+				
+				ajustarDiferencaConferenciaEncalheContagemDevolucao(contagemDevolucaoDTO, usuario);
+				
+				sinalizarControleContagemDevolucaoFinalizada(contagemDevolucaoDTO);
+				
 			}
 			
 		}
@@ -407,16 +491,269 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	}
 	
-	private void gerarNotaFiscalParcial() {
+	private void sinalizarControleContagemDevolucaoFinalizada(ContagemDevolucaoDTO contagem) {
+		
+		Date dataMovimento = contagem.getDataMovimento();
+		Long idProdutoEdicao = contagem.getIdProdutoEdicao();
+		
+		ControleContagemDevolucao controleContagemDevolucao = 
+				controleContagemDevolucaoRepository.obterControleContagemDevolucao(dataMovimento, idProdutoEdicao);
+		
+		if(controleContagemDevolucao != null && StatusOperacao.CONCLUIDO.equals(controleContagemDevolucao.getStatus())) {
+			return;
+		}
+		
+		if(controleContagemDevolucao == null) {
 
-		List<ContagemDevolucaoDTO> listaContagemDevolucao = conferenciaEncalheParcialRepository.obterListaContagemDevolucao(false, false, StatusAprovacao.APROVADO);
-		
-		//TODO: gerar registro de nf parcial...
-		
-		sinalizarNFParcialGerada();
+			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+			
+			produtoEdicao.setId(idProdutoEdicao);
+			
+			controleContagemDevolucao = new ControleContagemDevolucao();
+			controleContagemDevolucao.setData(dataMovimento);
+			controleContagemDevolucao.setProdutoEdicao(produtoEdicao);
+			controleContagemDevolucao.setStatus(StatusOperacao.CONCLUIDO);
+			
+		} else {
+			controleContagemDevolucao.setStatus(StatusOperacao.CONCLUIDO);
+			controleContagemDevolucaoRepository.adicionar(controleContagemDevolucao);
+		}
 		
 	}
+	
+	/**
+	 * Separa os itens a serem utilizados na geração da NF por fornecedor, gerando assim 
+	 * um NF para cada grupo de produtos de um 
+	 * 
+	 * @param listaContagemDevolucaoAprovada
+	 */
+	private void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
+		
+		Map<Fornecedor, List<ContagemDevolucaoDTO>> mapaFornecedorListaContagemDevolucao = new HashMap<Fornecedor, List<ContagemDevolucaoDTO>>();
+		
+		Map<String, Fornecedor> mapaCodProdutoFornecedor = new HashMap<String, Fornecedor>();
+		
+		for(ContagemDevolucaoDTO contagem : listaContagemDevolucaoAprovada) {
+			
+			Fornecedor fornecedor = obterFornecedorPorCodigoProduto(mapaCodProdutoFornecedor, contagem.getCodigoProduto());
+			
+			if( mapaFornecedorListaContagemDevolucao.get(fornecedor) != null ) {
+				mapaFornecedorListaContagemDevolucao.get(fornecedor).add(contagem);
+			} else {
+				List<ContagemDevolucaoDTO> listaContagemDevolucao = new ArrayList<ContagemDevolucaoDTO>();
+				listaContagemDevolucao.add(contagem);
+				mapaFornecedorListaContagemDevolucao.put(fornecedor, listaContagemDevolucao);
+			}
+			
+		}
+		
+		for(Fornecedor fornecedor : mapaFornecedorListaContagemDevolucao.keySet()) {
+			
+			gerarNotaFiscalParcial(fornecedor, mapaFornecedorListaContagemDevolucao.get(fornecedor));
+			
+		}
+		
+		
+	}
+	
+	/**
+	 * Obtem o fornecedor correspondente ao código produto.
+	 * 
+	 * @param mapaCodProdutoFornecedor
+	 * @param codigoProduto
+	 * 
+	 * @return Fornecedor
+	 */
+	private Fornecedor obterFornecedorPorCodigoProduto(Map<String, Fornecedor> mapaCodProdutoFornecedor, String codigoProduto) {
+		
+		if(mapaCodProdutoFornecedor.get(codigoProduto) != null) {
+			return mapaCodProdutoFornecedor.get(codigoProduto);
+		}
+		
+		Fornecedor fornecedor = fornecedorService.obterFornecedorUnico(codigoProduto);
 
+		mapaCodProdutoFornecedor.put(codigoProduto, fornecedor);
+		
+		return fornecedor;
+		
+	}
+	
+	/**
+	 * Gera registro de nota fiscal saida fornecedor. 
+	 * 
+	 * @param fornecedor
+	 * @param listaContagemDevolucaoAprovada
+	 */
+	private void gerarNotaFiscalParcial( Fornecedor fornecedor, List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada ) {
+		
+		List<ContagemDevolucaoDTO> listaAgrupadaContagemDevolucao = obterListaContagemDevolucaoAprovadaTotalAgrupado(listaContagemDevolucaoAprovada);
+
+		if(listaAgrupadaContagemDevolucao == null || listaAgrupadaContagemDevolucao.isEmpty()) {
+			return;
+		}
+		
+		NotaFiscalSaidaFornecedor nfSaidaFornecedor = new NotaFiscalSaidaFornecedor();
+		List<ItemNotaFiscalSaida> itensNotaFiscalSaida = new ArrayList<ItemNotaFiscalSaida>();
+		
+		carregarDadosNFSaida(nfSaidaFornecedor, itensNotaFiscalSaida,  listaAgrupadaContagemDevolucao);
+		
+		if(itensNotaFiscalSaida.isEmpty()) {
+			return;
+		}
+		
+		
+		Date dataAtual = new Date();
+		
+		String numeroNF = "0";
+		String serie = "0";
+		
+		StatusNotaFiscalSaida statusNF = StatusNotaFiscalSaida.AGUARDANDO_GERACAO_NFE;
+		
+		TipoNotaFiscal tipoNF = null;
+
+		PessoaJuridica pessoaJuridica = null;
+
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		if(distribuidor!=null) {
+			pessoaJuridica = distribuidor.getJuridica();
+		}
+		
+		//TODO: Modelar amarracao de natureza da nota com CFOP
+		// para obtermos o cfop referente a esta nf.
+		CFOP cfop = new CFOP();
+		cfop.setId(1L);//Remover este codigo apos testes....
+		
+		nfSaidaFornecedor.setCfop(cfop);
+		nfSaidaFornecedor.setDataEmissao(dataAtual);
+		nfSaidaFornecedor.setDataExpedicao(dataAtual);
+		nfSaidaFornecedor.setEmitente(pessoaJuridica);
+		nfSaidaFornecedor.setFornecedor(fornecedor);
+
+		nfSaidaFornecedor.setNumero(numeroNF);
+		nfSaidaFornecedor.setSerie(serie);
+		nfSaidaFornecedor.setStatus(statusNF);
+		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
+		
+		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
+		
+		nfSaidaFornecedor.setNumero(nfSaidaFornecedor.getId().toString());
+		nfSaidaFornecedor.setSerie(nfSaidaFornecedor.getId().toString());
+		notaFiscalSaidaRepository.alterar(nfSaidaFornecedor);
+		
+		inserirItensNotaFiscalSaida(nfSaidaFornecedor, itensNotaFiscalSaida);
+		
+		
+	}
+	
+	/**
+	 * Gera e retorna uma lista de ContagemDevolucao, 
+	 * sendo que cada item da lista contem os seguintes valores:
+	 * 
+	 * precoVenda 		- preco do produtoEdicao.
+	 * 
+	 * dataMovimento 	- data do movimento 
+	 * 
+	 * qtdDevolucao     - qtd total registrada no movimento 
+	 * estoque cota para a dataMovimento e produtoEdicao
+	 * 
+	 * qtdNota			- qtd total confirmada em tela
+	 * para a dataMovimento e produtoEdicao
+	 * 
+	 * @param listaContagemDevolucaoAprovada
+	 * 
+	 * @return List<ContagemDevolucaoDTO>
+	 */
+	private List<ContagemDevolucaoDTO> obterListaContagemDevolucaoAprovadaTotalAgrupado(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
+		
+		List<ContagemDevolucaoDTO> listaAgrupadaContagemDevolucao = new ArrayList<ContagemDevolucaoDTO>();
+		
+		for(ContagemDevolucaoDTO contagemDevolucaoAprovada : listaContagemDevolucaoAprovada) {
+
+			List<ContagemDevolucaoDTO> contagemAgrupada = conferenciaEncalheParcialRepository.
+					obterListaContagemDevolucao(
+					false, 
+					false, 
+					StatusAprovacao.APROVADO, 
+					null,
+					contagemDevolucaoAprovada.getCodigoProduto(), 
+					contagemDevolucaoAprovada.getNumeroEdicao(),
+					contagemDevolucaoAprovada.getDataMovimento());
+
+			if(contagemAgrupada == null || contagemAgrupada.isEmpty()) {
+				continue;
+			}
+			
+			listaAgrupadaContagemDevolucao.addAll(contagemAgrupada);
+			
+		}
+		
+		return listaAgrupadaContagemDevolucao;
+		
+	}
+	
+	/**
+	 * Carrega os dados NFSaidaFornecedor(Valor Bruto, Liquido e Desconto) e 
+	 * ItensNFSaidaFornecedor a partir da lista de ContagemDevolucao.
+	 * 
+	 * @param nfSaidaFornecedor
+	 * @param itensNotaFiscalSaida
+	 * @param listaContagemDevolucao
+	 */
+	private void carregarDadosNFSaida(
+			NotaFiscalSaidaFornecedor nfSaidaFornecedor, 
+			List<ItemNotaFiscalSaida> itensNotaFiscalSaida,
+			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+		
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		
+		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
+			
+			if(contagem.getIdProdutoEdicao() == null || contagem.getQtdNota() != null || contagem.getQtdNota().doubleValue() > 0.0D) {
+				
+				if(contagem.getPrecoVenda()!=null) {
+					valorTotal = valorTotal.add( contagem.getPrecoVenda().multiply(contagem.getQtdNota()) );
+				}
+				
+				ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+				produtoEdicao.setId(contagem.getIdProdutoEdicao());
+				
+				ItemNotaFiscalSaida item = new ItemNotaFiscalSaida();
+				
+				item.setId(null);
+				item.setNotaFiscal(null);
+				item.setProdutoEdicao(produtoEdicao);
+				item.setQtde(contagem.getQtdNota());
+				
+				itensNotaFiscalSaida.add(item);
+				
+				sinalizarItemNFParcialGerada(contagem);
+				
+			}
+			
+		}
+		
+		nfSaidaFornecedor.setValorBruto(valorTotal);
+		nfSaidaFornecedor.setValorLiquido(valorTotal);
+		nfSaidaFornecedor.setValorDesconto(BigDecimal.ZERO);
+		
+	}
+	
+	/**
+	 * Insere os itens da Nota Fiscal Saida Fornecedor
+	 * 
+	 * @param nfSaidaFornecedor
+	 * @param itensNotaFiscalSaida
+	 */
+	private void inserirItensNotaFiscalSaida(NotaFiscalSaidaFornecedor nfSaidaFornecedor, List<ItemNotaFiscalSaida> itensNotaFiscalSaida) {
+		
+		for( ItemNotaFiscalSaida item : itensNotaFiscalSaida ) {
+			item.setNotaFiscal(nfSaidaFornecedor);
+			itemNotaFiscalSaidaRepository.adicionar(item);
+		}
+		
+	}
+	
 
 	
 }

@@ -299,8 +299,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(controleContagemDevolucao);
 		
 	}
-		
-
 	
 	@Test
 	@DirtiesContext

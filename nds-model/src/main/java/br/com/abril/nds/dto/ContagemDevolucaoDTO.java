@@ -72,17 +72,19 @@ public class ContagemDevolucaoDTO implements Serializable {
 
 	
 	public ContagemDevolucaoDTO (
-			Long idProdutoEdicao, 
+			Long idProdutoEdicao,
+			BigDecimal precoVenda,
 			Date dataMovimento,
 			BigDecimal qtdDevolucao,
 			BigDecimal qtdNota ) {
 		
 		super();
 		
-		this.idProdutoEdicao = idProdutoEdicao;
-		this.dataMovimento	 = dataMovimento;
-		this.qtdDevolucao = qtdDevolucao;
-		this.qtdNota = qtdNota;
+		this.idProdutoEdicao 	= idProdutoEdicao;
+		this.precoVenda			= precoVenda;
+		this.dataMovimento	 	= dataMovimento;
+		this.qtdDevolucao 		= qtdDevolucao;
+		this.qtdNota 			= qtdNota;
 	}
 	
 	

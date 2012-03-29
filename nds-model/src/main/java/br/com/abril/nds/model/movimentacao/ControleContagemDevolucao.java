@@ -8,11 +8,17 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
-@Table(name = "CONTROLE_CONTAGEM_DEVOLUCAO")
+@Table(name = "CONTROLE_CONTAGEM_DEVOLUCAO", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"DATA", "PRODUTO_EDICAO_ID" })})
 @SequenceGenerator(name="CTRL_CONT_DEVOLUCAO_SEQ", initialValue = 1, allocationSize = 1)
 public class ControleContagemDevolucao {
 	
@@ -20,8 +26,14 @@ public class ControleContagemDevolucao {
 	@GeneratedValue(generator = "CTRL_CONT_DEVOLUCAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "DATA", nullable = false)
 	private Date data;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	private ProdutoEdicao produtoEdicao;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusOperacao status;
@@ -49,6 +61,13 @@ public class ControleContagemDevolucao {
 	public void setStatus(StatusOperacao status) {
 		this.status = status;
 	}
-	
+
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
 
 }

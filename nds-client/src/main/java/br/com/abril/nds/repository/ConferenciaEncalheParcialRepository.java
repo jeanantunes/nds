@@ -12,17 +12,24 @@ public interface ConferenciaEncalheParcialRepository extends Repository<Conferen
 
 	public BigDecimal obterQtdTotalEncalheParcial(StatusAprovacao statusAprovacao, Date dataMovimento, String codigoProduto, Long numeroEdicao);
 	
+	
 	public List<ConferenciaEncalheParcial> obterListaConferenciaEncalhe(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
 			StatusAprovacao statusAprovacao, 
 			Date dataMovimento, 
+			Long idProdutoEdicao,
 			String codigoProduto, 
 			Long numeroEdicao);
 	
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
-			StatusAprovacao statusAprovacao);
+			StatusAprovacao statusAprovacao, 
+			Long idProdutoEdicao,
+			String codigoProduto,
+			Long numeroEdicao,
+			Date dataMovimento);
+	
 	
 }
