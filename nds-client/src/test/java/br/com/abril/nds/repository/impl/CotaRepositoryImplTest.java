@@ -233,16 +233,14 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore(value  = "Atualizar a consulta para acumulo de dividas")
+//	/@Ignore(value  = "Atualizar a consulta para acumulo de dividas")
 	public void obterCotasSujeitasSuspensao() throws Exception {
 		
 		setupHistoricoInadimplencia();
 		
 		try {
-			List<Cota> lista = cotaRepository.obterCotasSujeitasSuspensao(
-					"asc",
-					CotaSuspensaoDTO.Ordenacao.NOME.name(),
-					1);
+			@SuppressWarnings("rawtypes")
+			List lista = cotaRepository.obterCotasSujeitasSuspensao("asc",CotaSuspensaoDTO.Ordenacao.NOME.name());
 			Assert.assertEquals(lista.size(),1);			
 		}catch(Exception e) {
 			e.printStackTrace();

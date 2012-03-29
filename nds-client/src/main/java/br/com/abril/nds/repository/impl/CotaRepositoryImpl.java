@@ -5,27 +5,23 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.CotaRepository;
 
 /**
@@ -38,6 +34,9 @@ import br.com.abril.nds.repository.CotaRepository;
 @Repository
 public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implements CotaRepository {
 
+	@Value("#{queries.suspensaoCota}")
+	protected String querySuspensaoCota;
+	
 	/**
 	 * Construtor.
 	 */
@@ -116,32 +115,17 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia) {
-		
-		
-		Criteria criteria = getSession().createCriteria(Cota.class,"cota");
-		
-		criteria.add(Restrictions.eq("cota.vip", false));
-		criteria.add(Restrictions.eq("cota.situacaoCadastro", SituacaoCadastro.ATIVO));
-		
-		DetachedCriteria subQueryInadimplencia = DetachedCriteria.forClass(HistoricoAcumuloDivida.class, "historicoInadimplencia");
-		subQueryInadimplencia.createAlias("historicoInadimplencia.cobranca","cobranca");
-		subQueryInadimplencia.createAlias("cobranca.cota","cotaH");
-		subQueryInadimplencia.add(Restrictions.eqProperty("cotaH.id", "cota.id"));  
-		subQueryInadimplencia.add(Restrictions.eq("historicoInadimplencia.status", StatusInadimplencia.ATIVA)); 		
-		subQueryInadimplencia.setProjection(Projections.rowCount());
-				
-		criteria.add(Subqueries.le(limiteInadimplencia.longValue(), subQueryInadimplencia)); 
-		
-		criteria.addOrder(Order.asc("cota.numeroCota"));
-				
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
-		return criteria.list();
-	}
+	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,	String sortColumn) {
 	
+		String sql = querySuspensaoCota;
+		
+		Query query = getSession().createSQLQuery(sql);
+		
+		List lista = query.list();
+		
+		//query.setResultTransformer(Transformers.aliasToBean(Cota.class));
+		return query.list();
+	}	
 
 	@SuppressWarnings("unchecked")
 	@Override

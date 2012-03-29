@@ -274,7 +274,7 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn) {
 		
-		PoliticaCobranca politicaCobranca = distribuidorRepository.obter().getPoliticaCobranca();
+		/*PoliticaCobranca politicaCobranca = distribuidorRepository.obter().getPoliticaCobranca();
 		
 		Integer limiteInadimplencias = politicaCobranca.getInadimplenciasSuspencao();
 		
@@ -301,7 +301,7 @@ public class CotaServiceImpl implements CotaService {
 			cotasDTO.add(cotaDTO);
 		}
 				
-		return cotasDTO;
+		return cotasDTO;*/
 	}	
 	
 	private CotaSuspensaoDTO montarCotaSuspensaoDTO(

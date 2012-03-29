@@ -33,18 +33,6 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		return (Date) criteria.uniqueResult();
 	}
 	
-	public Double obterDividaAcumuladaCota(Long idCota) {		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
-		criteria.createAlias("cobranca.cota", "cota");
-		
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		criteria.setProjection(Projections.sum("valor"));
-		
-		BigDecimal dividaAcumulada = (BigDecimal) criteria.uniqueResult();
-		
-		return dividaAcumulada == null ? 0 : dividaAcumulada.doubleValue();				
-	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {		

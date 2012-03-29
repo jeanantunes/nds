@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -62,7 +63,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * 
 	 * @return Cotas
 	 */
-	List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia);
+	List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn);
 	
 	
 	/**
