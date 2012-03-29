@@ -30,12 +30,6 @@ public interface BoletoService {
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
-	
-	Boleto obterBoletoPorNossoNumero(String nossoNumero);
-	
-	GeradorBoleto geraBoleto(String nossoNumero);
-	
-	String obterEmailCota(String nossoNumero);
 
 	ResumoBaixaBoletosDTO baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
 					   							  BigDecimal valorFinanceiro, Usuario usuario);
@@ -45,7 +39,8 @@ public interface BoletoService {
 			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
-	File gerarAnexoBoleto(String nossoNumero) throws IOException;
+
+	void enviarBoletoEmail(String nossoNumero);
 	
 	CobrancaVO obterDadosCobranca(String nossoNumero);
 	
