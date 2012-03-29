@@ -125,7 +125,15 @@ public class Produto {
 	}
 	
 	public Fornecedor getFornecedor() {
-		return fornecedores.isEmpty() ? null : fornecedores.iterator().next();
+		Fornecedor fornecedor = fornecedores.isEmpty() ? null : fornecedores.iterator().next();
+		if (GrupoProduto.OUTROS.equals(tipoProduto.getGrupoProduto())) {
+			return fornecedor;
+		} else {
+			if (fornecedores.size() > 1) {
+				throw new IllegalStateException("PRODUTO PUBLICACAO COM MAIS DE UM FORNECEDOR!");
+			}
+			return fornecedor;
+		}
 	}
 	
 	@Override

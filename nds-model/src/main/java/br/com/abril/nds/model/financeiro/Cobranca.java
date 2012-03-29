@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.ManyToOne;
 
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -91,6 +92,10 @@ public abstract class Cobranca {
 	
 	@Column(name="VIAS")
 	protected Integer vias;
+
+	@ManyToOne
+	@JoinColumn(name = "BANCO_ID")
+	private Banco banco;
     
 	public Long getId() {
 		return id;
@@ -210,6 +215,14 @@ public abstract class Cobranca {
 
 	public void setVias(Integer vias) {
 		this.vias = vias;
+	}
+
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
 	}
 	
 	
