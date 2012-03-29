@@ -35,7 +35,7 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
 		
 		save(politicaCobranca);
 	}

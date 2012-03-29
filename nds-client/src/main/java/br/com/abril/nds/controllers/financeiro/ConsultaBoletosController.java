@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.financeiro;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
-import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -66,10 +64,6 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/financeiro/boletos")
 public class ConsultaBoletosController {
 
-    
-	@Autowired
-	private EmailService email;
-	
 	@Autowired
 	private BoletoService boletoService;
 	
@@ -190,7 +184,7 @@ public class ConsultaBoletosController {
 		Map<String, TableModel<CellModel>> resultado = new HashMap<String, TableModel<CellModel>>();
 		resultado.put("TblModelBoletos", tm);
 		
-		//RETORNA HASHMAP EM FORMATO JASON PARA A VIEW
+		//RETORNA HASHMAP EM FORMATO JSON PARA A VIEW
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
 	}
@@ -214,10 +208,7 @@ public class ConsultaBoletosController {
 	@Path("/enviaBoleto")
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
-		File anexo = boletoService.gerarAnexoBoleto(nossoNumero);
-		String[] destinatarios = new String[]{boletoService.obterEmailCota(nossoNumero)};
-		
-		email.enviar("Assunto", "Mensagem", destinatarios, anexo);
+		boletoService.enviarBoletoEmail(nossoNumero);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
