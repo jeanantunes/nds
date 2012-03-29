@@ -316,12 +316,12 @@ public class PDFExporter implements Exporter {
 		
 		List<ExportHeader> exportHeaders = exportModel.getHeaders();
 		
-		this.createFooterSeparationLine(pdfTable, exportHeaders);
-		
 		List<ExportFooter> exportFooters = exportModel.getFooters();
 
         if (exportFooters != null && !exportFooters.isEmpty()) {
     		
+        	this.createFooterSeparationLine(pdfTable, exportHeaders);
+        	
     		int cellNum = 0;
     		
     		int footerCellCount = 0;
