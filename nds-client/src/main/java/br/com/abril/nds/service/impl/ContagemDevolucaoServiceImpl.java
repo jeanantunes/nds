@@ -30,6 +30,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -42,6 +43,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -83,6 +85,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, MockPerfilUsuario mockPerfilUsuario) {
@@ -609,7 +614,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		StatusNotaFiscalSaida statusNF = StatusNotaFiscalSaida.AGUARDANDO_GERACAO_NFE;
 		
-		TipoNotaFiscal tipoNF = null;
+		//TODO: obter tipo nota...
+		TipoNotaFiscal tipoNF = null; //tipoNotaFiscalRepository.obterTiposNotasFiscais(TipoOperacao.SAIDA);
 
 		PessoaJuridica pessoaJuridica = null;
 
