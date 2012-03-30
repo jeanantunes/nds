@@ -432,7 +432,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobranca.setDivida(novaDivida);
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 				cobranca.setDataVencimento(dataVencimento);
-				cobranca.setNossoNumero(Util.gerarNossoNumero(cota.getNumeroCota(), cobranca.getDataEmissao()));
+				cobranca.setNossoNumero(
+						Util.gerarNossoNumero(
+								cota.getNumeroCota(), 
+								cobranca.getDataEmissao(), 
+								cota.getParametroCobranca().getFormaCobranca().getBanco().getNumeroBanco()));
 				cobranca.setValor(novaDivida.getValor());
 				
 				this.cobrancaRepository.adicionar(cobranca);
@@ -450,7 +454,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						
 						this.cobrancaRepository.incrementarVia(cobranca.getNossoNumero());
 					} catch (AutenticacaoEmailException e) {
-						
+						//TOOD o que fazer ao gerar erro no envio de email além de continuar a mandar demais emails? log? chama o nalista? põe fogo no jornaleiro?
 					}
 				}
 			}
