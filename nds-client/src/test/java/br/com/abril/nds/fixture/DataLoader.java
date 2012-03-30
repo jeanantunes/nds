@@ -2712,6 +2712,9 @@ public class DataLoader {
 					null, calendar.getTime()
 				);
 		
+		movimentoFinanceiroCotaCredito.setLancamentoManual(true);
+		movimentoFinanceiroCotaCredito.setStatus(null);
+		
 		calendar.add(Calendar.DATE, 10);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCotaDebito = 
@@ -2719,6 +2722,8 @@ public class DataLoader {
 					cota, tipoMovimentoFinanceiroDebito, usuario, new BigDecimal("225"), 
 					null, calendar.getTime()
 				);
+		
+		movimentoFinanceiroCotaDebito.setLancamentoManual(true);
 
 		calendar.add(Calendar.DATE, 10);
 		
@@ -2727,6 +2732,9 @@ public class DataLoader {
 					cota, tipoMovimentoFinenceiroReparte, usuario, new BigDecimal("225"), 
 					null, calendar.getTime()
 				);
+		
+		movimentoFinanceiroCotaReparte.setLancamentoManual(true);
+		movimentoFinanceiroCotaReparte.setStatus(null);
 
 		save(session, movimentoFinanceiroCotaCredito, movimentoFinanceiroCotaDebito, movimentoFinanceiroCotaReparte);
 		
@@ -2738,6 +2746,8 @@ public class DataLoader {
 					null, calendar.getTime()
 				);
 		
+		movimentoFinanceiroCotaCredito.setLancamentoManual(true);
+		
 		calendar.add(Calendar.DATE, 10);
 		
 		movimentoFinanceiroCotaDebito = 
@@ -2745,6 +2755,9 @@ public class DataLoader {
 					cota, tipoMovimentoFinanceiroDebito, usuario, new BigDecimal("650"), 
 					null, calendar.getTime()
 				);
+		
+		movimentoFinanceiroCotaDebito.setLancamentoManual(true);
+		movimentoFinanceiroCotaDebito.setStatus(null);
 
 		calendar.add(Calendar.DATE, 10);
 		
@@ -2754,6 +2767,8 @@ public class DataLoader {
 					null, calendar.getTime()
 				);
 
+		movimentoFinanceiroCotaReparte.setLancamentoManual(true);
+		
 		save(session, movimentoFinanceiroCotaCredito, movimentoFinanceiroCotaDebito, movimentoFinanceiroCotaReparte);
 	}
 
@@ -2761,10 +2776,16 @@ public class DataLoader {
 
 		for (int i = 0; i < 50; i++) {
 
+			Calendar calendar = Calendar.getInstance();
+			
 			notaFiscalFornecedor = Fixture
 					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
 							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
-
+			
+			calendar.add(Calendar.DATE, i * 3);
+			
+			notaFiscalFornecedor.setDataEmissao(calendar.getTime());
+			
 			session.save(notaFiscalFornecedor);
 		}
 	}	

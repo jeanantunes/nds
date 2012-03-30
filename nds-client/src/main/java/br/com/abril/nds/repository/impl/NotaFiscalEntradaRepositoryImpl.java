@@ -15,6 +15,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
 public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFiscalEntrada, Long> implements
@@ -65,27 +66,45 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 
 		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ")
 		   .append(" join notaFiscal.fornecedor ")
-		   .append(" join notaFiscal.tipoNotaFiscal ")
-		   .append(" where notaFiscal.dataEmissao between :dataInicio and :dataFim ");
+		   .append(" join notaFiscal.tipoNotaFiscal ");
 		
-		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
+		String condicoes = "";
+		
+		PeriodoVO periodo = filtroConsultaNotaFiscal.getPeriodo();
+		
+		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null) {
 
-			hql.append(" and notaFiscal.tipoNotaFiscal.id = :idTipoNotaFiscal ");
+			condicoes += "".equals(condicoes) ? " where " : " and ";
+			
+			condicoes += " notaFiscal.dataEmissao between :dataInicio and :dataFim ";
+		}
+
+		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
+			
+			condicoes += "".equals(condicoes) ? " where " : " and ";
+			
+			condicoes += " notaFiscal.tipoNotaFiscal.id = :idTipoNotaFiscal ";
 		}
 
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
 
-		   hql.append(" and notaFiscal.fornecedor.id = :idFornecedor ");
+			condicoes += "".equals(condicoes) ? " where " : " and ";
+			
+			condicoes += " notaFiscal.fornecedor.id = :idFornecedor ";
 		}
 
 		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
 
 			String condicaoNotaRecebida = filtroConsultaNotaFiscal.getIsNotaRecebida() ? " = " : " != ";
 
-			hql.append(" and notaFiscal.statusNotaFiscal ")
-			   .append(condicaoNotaRecebida) 
-			   .append(" :statusNotaFiscal ");
+			condicoes += "".equals(condicoes) ? " where " : " and ";
+			
+			condicoes += " notaFiscal.statusNotaFiscal " 
+					  + condicaoNotaRecebida 
+					  + " :statusNotaFiscal ";
 		}
+
+		hql.append(condicoes);
 
 		PaginacaoVO paginacao = filtroConsultaNotaFiscal.getPaginacao();
 
@@ -143,9 +162,15 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 	private Query criarQueryComParametrosObterNotasFiscaisCadastradas(String hql, FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
 		Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("dataInicio", filtroConsultaNotaFiscal.getPeriodo().getDataInicial());
-		query.setParameter("dataFim", filtroConsultaNotaFiscal.getPeriodo().getDataFinal());
+		
+		PeriodoVO periodo = filtroConsultaNotaFiscal.getPeriodo();
+		
+		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null) {
+			
+			query.setParameter("dataInicio", periodo.getDataInicial());
+			
+			query.setParameter("dataFim", periodo.getDataFinal());
+		}
 		
 		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
 			
