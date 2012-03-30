@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "CONTROLE_CONFERENCIA_ENCALHE")
@@ -20,8 +22,11 @@ public class ControleConferenciaEncalhe {
 	@GeneratedValue(generator = "CTRL_CONF_ENCALHE_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA", nullable = false)
 	private Date data;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusOperacao status;
