@@ -275,6 +275,21 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 			throw e;
 		}
 	}
+	
+	@Test
+	public void obterTotalCotasSujeitasSuspensao() throws Exception {
+		
+		setupHistoricoInadimplencia();
+		
+		try {			
+			
+			Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
+			Assert.assertTrue(total==1L);			
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
 		
 
 	
