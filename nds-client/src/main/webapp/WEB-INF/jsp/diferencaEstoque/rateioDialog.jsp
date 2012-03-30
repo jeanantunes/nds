@@ -1,4 +1,4 @@
-<div id="dialogRateioDiferencas" title="Lançamento Faltas e Sobras" style="display: none;">
+<div id="dialogRateioDiferencas" title="Incluir Novo Tipo de Movimento" style="display: none;">
 
 	<div class="effectDialog ui-state-highlight ui-corner-all" 
 		 style="display: none; position: absolute; z-index: 2000; width: 500px;">

@@ -5,7 +5,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
-	
+		
 	<script type="text/javascript">
 	
 		$(function() {
@@ -244,6 +244,9 @@
 					"Confirmar": function() {
 						$( this ).dialog( "close" );
 						$("#effect").show("highlight", {}, 1000, callback);
+						
+						baixaPorNossoNumero();
+						
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -291,6 +294,41 @@
 			});
 			
 			$("#filtroNumCota").numeric();
+
+			
+			
+			$("#juros").numeric();
+			$("#multa").numeric();
+			$("#desconto").numeric();
+			$("#valorTotal").numeric();
+			
+			
+			/*
+			$("#juros").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#multa").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#desconto").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#valorTotal").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			*/
+
 		}); 
 
 		function mostrarBaixaManual(){
@@ -341,27 +379,27 @@
 			else{
 				var data = [{name: 'nossoNumero', value: nossoNumero}];
 				$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data, getDataFromResultDivida);
-				dividaManualNossoNumero();
 			}	
 		}
 		
 		function getDataFromResultDivida(resultado) {
-			var cobranca = resultado;
-			$("#cota").html(cobranca.cota);
-			$("#banco").html(cobranca.banco);
-			$("#nossoNumero").html(cobranca.nossoNumero);
-			$("#dataEmissao").html(cobranca.dataEmissao);
-			$("#dataVencimento").html(cobranca.dataVencimento);
-			$("#valor").html(cobranca.valor);
 			
-			$("#dividaTotal").html(cobranca.dividaTotal);
-			$("#dataPagamento").html(cobranca.dataPagamento);
-			$("#desconto").html(cobranca.desconto);
-			$("#valorTotal").html(cobranca.valorTotal);
+			$("#cota").html(resultado.cota);
+			$("#banco").html(resultado.banco);
+			$("#nossoNumero").html(resultado.nossoNumero);
+			$("#dataEmissao").html(resultado.dataEmissao);
+			$("#dataVencimento").html(resultado.dataVencimento);
+			$("#valor").html(resultado.valor);
 			
-			$("#juros").val(cobranca.juros);
-			$("#multa").val(cobranca.multa);
-			return cobranca;
+			$("#dividaTotal").html(resultado.dividaTotal);
+			$("#dataPagamento").html(resultado.dataPagamento);
+			$("#valorTotal").html(resultado.valorTotal);
+			
+			$("#desconto").val(resultado.desconto);
+			$("#juros").val(resultado.juros);
+			$("#multa").val(resultado.multa);
+
+			dividaManualNossoNumero();
 		}
 		
 		function getDataFromResultDividas(resultado) {
@@ -396,18 +434,43 @@
 			
         	var nossoNumero = $("#nossoNumero").html();
 			var valor = $("#valor").html();
-			var desconto = $("#desconto").html();
 			var dataVencimento = $("#dataVencimento").html();
+			var desconto = $("#desconto").val();
 			var juros = $("#juros").val();
 			var multa = $("#multa").val();
 			
 			$.postJSON("<c:url value='/financeiro/baixaManualBoleto'/>",
 					   "nossoNumero="+nossoNumero+
 					   "&valor="+ valor +
-					   "&desconto="+ desconto +
 					   "&dataVencimento="+ dataVencimento+
+					   "&desconto="+ desconto +
 					   "&juros="+ juros+
 					   "&multa="+ multa);
+		}
+        
+        function calculaTotalManual() {
+        	
+        	
+        	if ($("#desconto").val()==''){
+        		$("#desconto").val(0);
+        	}
+        	if ($("#juros").val()==''){
+        		$("#juros").val(0);
+        	}
+        	if ($("#multa").val()==''){
+        		$("#multa").val(0);
+        	}
+        	
+        	
+			var valor = $("#valor").html();
+			var desconto = $("#desconto").val();
+			var juros = $("#juros").val();
+			var multa = $("#multa").val();
+			var total = (eval(valor) + eval(juros) + eval(multa) - eval(desconto));
+            
+            
+			$("#valorTotal").html(total);
+			
 		}
 
 		cont = 0;
@@ -686,21 +749,37 @@
 		      	    <td class="linha_borda" id="valor"><c:out value="${valor}" /></td>
 		   	      </tr>
 		   	      
-		   	      
+		   	      <tr>
+		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
+		      	    <td class="linha_borda">  <input onchange="calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
+		   	      </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Juros R$:</strong></td>
-		      	    <td class="linha_borda">  <input id="juros" type="text" />  </td>
+		      	    <td class="linha_borda">  <input onchange="calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
-		      	    <td class="linha_borda">  <input id="multa" type="text" />  </td>
+		      	    <td class="linha_borda">  <input onchange="calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      
-		   	      
+		   	      <tr>
+		      	    <td class="linha_borda">&nbsp;</td>
+		      	    <td class="linha_borda">&nbsp;</td>
+  				  </tr>
+      	          <tr>
+      	            <td class="linha_borda"><strong>Valor Total R$:</strong></td>
+      	            <td class="linha_borda" id="valorTotal" > <c:out value="${valorTotal}" /> </td>
+                  <tr>
+      	          <tr>
+      	            <td class="linha_borda">&nbsp;</td>
+      	            <td class="linha_borda">&nbsp;</td>
+                  </tr>
+
 		      	  <tr>
 		      	    <td class="linha_borda">&nbsp;</td>
-		      	    <td class="linha_borda"><span class="bt_confirmar_novo" title="Confirmar"><a onclick="baixaPorNossoNumero();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a></span></td>
+		      	    <td class="linha_borda"><span class="bt_confirmar_novo" title="Pagar"><a onclick="popup_excluir();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span></td>
 		   	      </tr>
+		   	      
 		   	    </table>
 			</div>
 			

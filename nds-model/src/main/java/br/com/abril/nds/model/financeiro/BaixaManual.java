@@ -14,10 +14,6 @@ public class BaixaManual extends BaixaCobranca {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
-	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "COBRANCA_ID")
-	private Cobranca cobranca;
 
 	public Usuario getResponsavel() {
 		return responsavel;
@@ -26,17 +22,5 @@ public class BaixaManual extends BaixaCobranca {
 	public void setResponsavel(Usuario responsavel) {
 		this.responsavel = responsavel;
 	}
-
-	public Cobranca getCobranca() {
-		return cobranca;
-	}
-
-	public void setCobranca(Cobranca cobranca) {
-		this.cobranca = cobranca;
-	}
-
-	
-	
-	
 
 }

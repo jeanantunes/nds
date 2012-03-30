@@ -54,7 +54,7 @@ public class EmailServiceImplTest extends AbstractRepositoryImplTest  {
 			
 			emailService.enviar("Assunto de Teste com Anexo", "Este e-mail é para teste de anexo", 
 						new String[]{"sys.discover@gmail.com"},
-						new File[]{file});
+						file);
 			
 			Assert.assertTrue("E-mail enviado com sucesso!", true);
 			

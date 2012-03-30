@@ -53,7 +53,15 @@ public class EmailServiceImpl implements EmailService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public void enviar(String assunto, String mensagem, String[] destinatarios,File[] anexo) throws AutenticacaoEmailException {
+	public void enviar(String assunto, String mensagem, String[] destinatarios,List<File> anexos) throws AutenticacaoEmailException {
+		
+		this.enviarEmail(assunto, mensagem, destinatarios, anexos,false);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public void enviar(String assunto, String mensagem, String[] destinatarios,File anexo) throws AutenticacaoEmailException {
 		
 		this.enviarEmail(assunto, mensagem, destinatarios, Arrays.asList(anexo),false);
 		
@@ -95,7 +103,8 @@ public class EmailServiceImpl implements EmailService {
 	 * @param assunto
 	 * @param mensagem
 	 * @param destinatarios
-	 * @param anexo
+	 * @param anexos
+	 * @param isHtml
 	 * @throws AutenticacaoEmailException
 	 */
 	private void enviarEmail(String assunto, String mensagem, String[] destinatarios,List<File> anexos, boolean isHtml) throws AutenticacaoEmailException{

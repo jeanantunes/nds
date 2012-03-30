@@ -47,6 +47,12 @@ public class PoliticaCobranca {
 	@Column(name = "NUM_DIAS_POSTERGADO")
 	private int numeroDiasPostergado;
 	
+	@Column(name = "ASSUNTO_EMAIL_COBRANCA")
+	private String assuntoEmailCobranca;
+	
+	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
+	private String mensagemEmailCobranca;
+	
 	public Long getId() {
 		return id;
 	}
@@ -125,6 +131,22 @@ public class PoliticaCobranca {
 	
 	public void setNumeroDiasPostergado(int numeroDiasPostergado) {
 		this.numeroDiasPostergado = numeroDiasPostergado;
+	}
+
+	public String getAssuntoEmailCobranca() {
+		return assuntoEmailCobranca;
+	}
+
+	public void setAssuntoEmailCobranca(String assuntoEmailCobranca) {
+		this.assuntoEmailCobranca = assuntoEmailCobranca;
+	}
+
+	public String getMensagemEmailCobranca() {
+		return mensagemEmailCobranca;
+	}
+
+	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
+		this.mensagemEmailCobranca = mensagemEmailCobranca;
 	}
 	
 }

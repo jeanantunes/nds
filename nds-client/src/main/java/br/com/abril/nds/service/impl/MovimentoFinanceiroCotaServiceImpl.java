@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -20,8 +21,10 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class MovimentoFinanceiroCotaServiceImpl implements
@@ -35,6 +38,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	@Override
 	@Transactional
@@ -127,26 +133,61 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#cadastrarMovimentoFincanceiroCota(br.com.abril.nds.dto.DebitoCreditoDTO)
 	 */
 	@Override
+	@Transactional
 	public void cadastrarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
 
 		Long idMovimento = debitoCredito.getId();
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
+		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+		
+		if (idMovimento != null) {
+		
+			movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
+		} 
 
-		if (movimentoFinanceiroCota != null) {
+		if (movimentoFinanceiroCota == null) {
 
-			movimentoFinanceiroCota.setDataCriacao(DateUtil.parseDataPTBR(debitoCredito.getDataLancamento()));
-			movimentoFinanceiroCota.setData(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
-			movimentoFinanceiroCota.setTipoMovimento(debitoCredito.getTipoMovimentoFinanceiro());
-			movimentoFinanceiroCota.setObservacao(debitoCredito.getObservacao());
-			movimentoFinanceiroCota.setValor(debitoCredito.getValor());
-			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
-			
-			movimentoFinanceiroCota.setCota(cota);
-
-			this.movimentoFinanceiroCotaRepository.alterar(movimentoFinanceiroCota);
+			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
 		}
+
+		if (debitoCredito.getDataLancamento() == null) {
+			
+			movimentoFinanceiroCota.setDataCriacao(DateUtil.removerTimestamp(new Date()));
+		}
+
+		if (debitoCredito.getDataVencimento() != null) {
+
+			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
+			
+			movimentoFinanceiroCota.setData(dataVencimento);
+		}
+
+		try {
+
+			BigDecimal valor = new BigDecimal(debitoCredito.getValor());
+
+			movimentoFinanceiroCota.setValor(valor);
+
+		} catch(NumberFormatException e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor inválido para o campo [Valor].");
+		}
+
+		movimentoFinanceiroCota.setObservacao(debitoCredito.getObservacao());
+
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
+				this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
+
+		movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+		
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
+		
+		movimentoFinanceiroCota.setCota(cota);
+
+		Usuario usuario = this.usuarioRepository.buscarPorId(debitoCredito.getIdUsuario());
+		
+		movimentoFinanceiroCota.setUsuario(usuario);
+		
+		this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 	}
 }

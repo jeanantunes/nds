@@ -373,8 +373,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(lancamentos);
 		Assert.assertEquals(3, lancamentos.size());
 
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(1).getId());
+		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
+		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
 		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
 	}
 	
@@ -445,9 +445,9 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(lancamentos);
 		Assert.assertEquals(3, lancamentos.size());
 
-		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(0).getId());
+		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
 		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(2).getId());
+		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
 	}
 	
 	@Test
