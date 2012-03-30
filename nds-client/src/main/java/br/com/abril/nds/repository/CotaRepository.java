@@ -56,6 +56,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	/**
 	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * @param rp 
+	 * @param page 
 	 * @param paginacaoVO 
 	 * 
 	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
@@ -63,7 +65,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * 
 	 * @return Cotas
 	 */
-	List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn);
+	List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer page, Integer rp);
 	
 	
 	/**
@@ -84,5 +86,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota);
 	
 	List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
+
+	Long obterTotalCotasSujeitasSuspensao();
 	
 }

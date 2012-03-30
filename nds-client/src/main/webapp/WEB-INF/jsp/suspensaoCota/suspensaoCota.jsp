@@ -427,15 +427,15 @@
 	 	cabecalho.className="header_table";
 	 	
 	 	var tdDia = document.createElement("TD");
-	 	tdDia.width="136";
+	 	tdDia.width="72";
 	 	tdDia.align="left";
-	 	tdDia.innerHTML="Dia Vencimento".bold();
+	 	tdDia.innerHTML="Cota".bold();
 	 	cabecalho.appendChild(tdDia);
 	 	
 	 	var tdValor = document.createElement("TD");
-	 	tdValor.width="157";
-	 	tdValor.align="right";
-	 	tdValor.innerHTML="Valor R$".bold();		 	
+	 	tdValor.width="251";
+	 	tdValor.align="left";
+	 	tdValor.innerHTML="Nome".bold();		 	
 	 	cabecalho.appendChild(tdValor);
 	 	
 	 	tbody.appendChild(cabecalho);
@@ -450,7 +450,7 @@
 	 	 
 		 	var cel = document.createElement("TD");
 		 	cel.align="left";
-		 	text = document.createTextNode(cota.cota);
+		 	text = document.createTextNode(cota.idCota);
 		 	cel.appendChild(text);			 	
 		 	linha.appendChild(cel);
 		 	
@@ -466,65 +466,7 @@
 		 });		 		
 	}
 	
-	function sortGrid(table, order) {
-		// Remove all characters in c from s.
-		var stripChar = function(s, c) {
-			var r = "";
-			for ( var i = 0; i < s.length; i++) {
-				r += c.indexOf(s.charAt(i)) >= 0 ? "" : s.charAt(i);
-			}
-			return r;
-		}
-		// Test for characters accepted in numeric values.
-		var isNumeric = function(s) {
-			var valid = "0123456789.,- ";
-			var result = true;
-			var c;
-			for ( var i = 0; i < s.length && result; i++) {
-				c = s.charAt(i);
-				if (valid.indexOf(c) <= -1) {
-					result = false;
-				}
-			}
-			return result;
-		}
-		// Sort table rows.
-		var asc = order == "asc";
-		var rows = $(table).find("tbody > tr").get();
-		var column = $(table).parent(".bDiv").siblings(".hDiv").find("table tr th")
-				.index($("th.sorted", ".flexigrid:has(" + table + ")"));
-		rows.sort(function(a, b) {
-			var keyA = $(asc ? a : b).children("td").eq(column).text()
-					.toUpperCase();
-			var keyB = $(asc ? b : a).children("td").eq(column).text()
-					.toUpperCase();
-			if ((isNumeric(keyA) || keyA.length < 1)
-					&& (isNumeric(keyB) || keyB.length < 1)) {
-				keyA = stripChar(stripChar(keyA, ","), ".");
-				keyB = stripChar(stripChar(keyB, ","), ".");
-				if (keyA.length < 1)
-					keyA = 0;
-				if (keyB.length < 1)
-					keyB = 0;
-				keyA = new Number(parseFloat(keyA));
-				keyB = new Number(parseFloat(keyB));
-			}
-			return keyA > keyB ? 1 : keyA < keyB ? -1 : 0;
-		});
-		// Rebuild the table body.
-		$.each(rows, function(index, row) {
-			$(table).children("tbody").append(row);
-		});
-		// Fix styles
-		$(table).find("tr").removeClass("erow"); // Clear the striping.
-		$(table).find("tr:odd").addClass("erow"); // Add striping to odd numbered
-													// rows.
-		$(table).find("td.sorted").removeClass("sorted"); // Clear sortedclass
-															// from table cells.
-		$(table).find("tr").each(function() {
-			$(this).find("td:nth(" + column + ")").addClass("sorted"); // Add sorted class to sorted column cells.
-		});
-	}
+	
 	
 	$(function() {	
 		
@@ -532,10 +474,9 @@
 			url : '<c:url value="/suspensaoCota/obterCotasSuspensaoJSON"/>',
 			dataType : 'json',
 			preProcess:processaRetornoPesquisa,
-			onChangeSort: function(name, order) { sortGrid(".suspensaoGrid", order);}, 
 			colModel : [  {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numCota',
 				width : 55,
 				sortable : true,
 				align : 'left'
@@ -582,10 +523,10 @@
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "name",
+			sortname : "nome",
 			sortorder : "asc",
-			usepager : false,
-			useRp : false,
+			usepager : true,
+			useRp : true,
 			showTableToggleBtn : true,
 			width : 960,
 			height : 260

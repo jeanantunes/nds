@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 
 	@Value("#{queries.suspensaoCota}")
 	protected String querySuspensaoCota;
+	
+	@Value("#{queries.countSuspensaoCota}")
+	protected String queryCountSuspensaoCota;
 	
 	/**
 	 * Construtor.
@@ -116,19 +120,61 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,	String sortColumn) {
+	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,	String sortColumn,Integer inicio, Integer rp) {
 	
-		String sql = querySuspensaoCota;
+		StringBuilder sql = new StringBuilder(querySuspensaoCota);
 		
-		Query query = getSession().createSQLQuery(sql)
-				.addScalar("")
-				.addScalar("")
-				.addScalar("")
-				.addScalar("");
+		sql.append(obterOrderByCotasSujeitasSuspensao(sortOrder, sortColumn));
+		
+		sql.append(" LIMIT :inicio,:qtdeResult");
 				
+		Query query = getSession().createSQLQuery(sql.toString())
+				.addScalar("idCota")
+				.addScalar("numCota")
+				.addScalar("vlrConsignado")
+				.addScalar("vlrReparte")
+				.addScalar("dividaAcumulada")
+				.addScalar("nome")
+				.addScalar("razaoSocial")
+				.addScalar("dataAbertura");
+			
+		query.setInteger("inicio", inicio);
+		query.setInteger("qtdeResult", rp);
+		
 		query.setResultTransformer(Transformers.aliasToBean(CotaSuspensaoDTO.class));
+				
 		return query.list();
 	}	
+
+	private String obterOrderByCotasSujeitasSuspensao(String sortOrder,String sortColumn) {
+		String sql = "";
+		
+		if(sortColumn == null || sortOrder == null) {
+			return sql;
+		}
+		
+		sql += " ORDER BY ";
+		
+		if(sortColumn.equalsIgnoreCase("numCota")) {
+			sql += "numCota";
+		} else if(sortColumn.equalsIgnoreCase("nome")) {
+			sql += "nome";
+		} else if(sortColumn.equalsIgnoreCase("vlrConsignado")) {
+			sql += "vlrConsignado";
+		} else if(sortColumn.equalsIgnoreCase("vlrReparte")) {
+			sql += "vlrReparte";
+		} else if(sortColumn.equalsIgnoreCase("dividaAcumulada")) {
+			sql += "dividaAcumulada";
+		} else if(sortColumn.equalsIgnoreCase("diasAberto")) {
+			sql += "dataAbertura";
+		} else {
+			return "";
+		}
+		
+		sql += sortOrder.equalsIgnoreCase("asc") ?  " ASC " : " DESC ";		
+		
+		return sql;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -188,5 +234,17 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		query.setParameter("idCota", idCota);
 		
 		return query.list();
+	}
+
+	@Override
+	public Long obterTotalCotasSujeitasSuspensao() {
+		
+		StringBuilder sql = new StringBuilder(queryCountSuspensaoCota);
+						
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		Long qtde = ((BigInteger) query.uniqueResult()).longValue();
+		
+		return qtde == null ? 0 : qtde;
 	}
 }

@@ -1077,7 +1077,7 @@ public class Fixture {
 	
 
 	public static ParametroCobrancaCota parametroCobrancaCota(
-							int numeroAcumuloDivida, BigDecimal valor, Cota cota,
+							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
 							int fatorVencimento, FormaCobranca formaCobranca,
 							boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
 		
