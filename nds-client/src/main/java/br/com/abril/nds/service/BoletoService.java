@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -8,14 +7,13 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
-import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 
 
@@ -30,12 +28,6 @@ public interface BoletoService {
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
-	
-	Boleto obterBoletoPorNossoNumero(String nossoNumero);
-	
-	GeradorBoleto geraBoleto(String nossoNumero);
-	
-	String obterEmailCota(String nossoNumero);
 
 	ResumoBaixaBoletosDTO baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
 					   							  BigDecimal valorFinanceiro, Usuario usuario);
@@ -45,7 +37,8 @@ public interface BoletoService {
 			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
-	File gerarAnexoBoleto(String nossoNumero) throws IOException;
+
+	void enviarBoletoEmail(String nossoNumero);
 	
 	CobrancaVO obterDadosCobranca(String nossoNumero);
 	

@@ -25,7 +25,6 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -333,7 +332,7 @@ public class BaixaFinanceiraController {
 		Map<String, TableModel<CellModel>> resultado = new HashMap<String, TableModel<CellModel>>();
 		resultado.put("TblModelBoletos", tm);
 		
-		//RETORNA HASHMAP EM FORMATO JASON PARA A VIEW
+		//RETORNA HASHMAP EM FORMATO JSON PARA A VIEW
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	
 	}
@@ -342,9 +341,9 @@ public class BaixaFinanceiraController {
 	@Post
 	@Path("/baixaManualBoleto")
 	public void baixaManualBoleto(String nossoNumero, 
-					              String valor, 
-					              String desconto, 
+					              String valor,
 					              Date dataVencimento,
+					              String desconto, 
 					              String juros,
 					              String multa
 					              ){
@@ -353,14 +352,16 @@ public class BaixaFinanceiraController {
         BigDecimal valorFormatado = new BigDecimal(valor);
         BigDecimal jurosFormatado = new BigDecimal(juros);
         BigDecimal multaFormatado = new BigDecimal(multa);
+        BigDecimal descontoFormatado = new BigDecimal(desconto);
 
 		PagamentoDTO pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(dataPagamento);
 		pagamento.setNossoNumero(nossoNumero);
 		pagamento.setNumeroRegistro(null);
 		pagamento.setValorPagamento(valorFormatado);
-		//pagamento.setJuros(jurosFormatado);
-		//pagamento.setMulta(multaFormatado);
+		pagamento.setValorJuros(jurosFormatado);
+		pagamento.setValorMulta(multaFormatado);
+		pagamento.setValorMulta(descontoFormatado);
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -374,4 +375,5 @@ public class BaixaFinanceiraController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+
 }

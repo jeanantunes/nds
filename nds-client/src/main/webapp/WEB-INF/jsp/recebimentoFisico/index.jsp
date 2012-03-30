@@ -446,19 +446,19 @@ validarEdicaoCallBack : function() {
 			$("#valorBruto").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
-				 precision:10
+				 precision:2
 			});
 
 			$("#valorLiquido").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
-				 precision:10
+				 precision:2
 			});
 			
 			$("#valorDesconto").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
-				 precision:10
+				 precision:2
 			});
 			
 			
@@ -802,6 +802,7 @@ validarEdicaoCallBack : function() {
 		return data;
 
 	}
+	
 
 	/**
 	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
@@ -824,8 +825,10 @@ validarEdicaoCallBack : function() {
 			
 			
 		});
-		
+					
 		$(".grids").show();
+		
+		document.getElementById('bt_novo_produto').style.display="";
 		
 		return data;
 
@@ -863,6 +866,8 @@ validarEdicaoCallBack : function() {
 		
 		
 		$(".grids").show();
+		
+		document.getElementById('bt_novo_produto').style.display="none";
 		
 		return data;
 
@@ -1171,14 +1176,14 @@ validarEdicaoCallBack : function() {
 						<table class="itemNotaGrid"></table>
 					
 					</div>
-
-					<span class="bt_incluir_novo" title="Incluir Nova Linha"> 
+									
+					<span class="bt_incluir_novo" id="bt_novo_produto" style="display: none;" title="Incluir Nova Linha"> 
 						<a href="javascript:;" onclick="popup_novo_item();"> 
 							<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
 							Novo Produto 
 						</a> 
 					</span> 
-					
+									
 					<span class="bt_novos" title="Salvar"> 
 						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
 							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />

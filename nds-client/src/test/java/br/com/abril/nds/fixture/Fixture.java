@@ -999,7 +999,8 @@ public class Fixture {
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
-			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao) {
+			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao,
+			String assuntoEmailCobranca, String mensagemEmailCobranca) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
@@ -1008,6 +1009,8 @@ public class Fixture {
 		politicaCobranca.setDistribuidor(distribuidor);
 		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
 		politicaCobranca.setFormaCobranca(formaCobranca);
+		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
+		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
 		return politicaCobranca;
 	}
 	
@@ -1155,7 +1158,7 @@ public class Fixture {
 	
 
 	public static ParametroCobrancaCota parametroCobrancaCota(
-							int numeroAcumuloDivida, BigDecimal valor, Cota cota,
+							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
 							int fatorVencimento, FormaCobranca formaCobranca,
 							boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
 		

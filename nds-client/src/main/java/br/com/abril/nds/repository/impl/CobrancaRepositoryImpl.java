@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -33,18 +34,6 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		return (Date) criteria.uniqueResult();
 	}
 	
-	public Double obterDividaAcumuladaCota(Long idCota) {		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
-		criteria.createAlias("cobranca.cota", "cota");
-		
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		criteria.setProjection(Projections.sum("valor"));
-		
-		BigDecimal dividaAcumulada = (BigDecimal) criteria.uniqueResult();
-		
-		return dividaAcumulada == null ? 0 : dividaAcumulada.doubleValue();				
-	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {		
@@ -58,5 +47,19 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		criteria.addOrder(Order.asc("dataVencimento"));
 		
 		return criteria.list();				
+	}
+	
+	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
+		
+		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
+		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
+		
+		return (Cobranca) criteria.uniqueResult();
+	}
+	
+	public void incrementarVia(String nossoNumero){
+		Query query = this.getSession().createQuery("update Cobranca set vias = vias + 1 where nossoNumero = :nossoNumero");
+		query.setParameter("nossoNumero", nossoNumero);
+		query.executeUpdate();
 	}
 }

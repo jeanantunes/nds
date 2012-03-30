@@ -1,8 +1,5 @@
 package br.com.abril.nds.client.vo;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class CobrancaVO {
     
 	//BOLETO
@@ -11,114 +8,114 @@ public class CobrancaVO {
 	private String nossoNumero;
 	private String dataEmissao;
 	private String dataVencimento;
-	private BigDecimal valor;
+	private String valor;
 	
 	//DIVIDA
-	private BigDecimal dividaTotal;
+	private String dividaTotal;
 	private String dataPagamento;
-	private BigDecimal desconto;
-	private BigDecimal juros;
-	private BigDecimal valorTotal;
+	private String desconto;
+	private String juros;
+	private String valorTotal;
 	
 	//MOVIMENTO FINANCEIRO
-	private BigDecimal multa;
-	
+	private String multa;
+
 	public String getCota() {
 		return cota;
 	}
-	
+
 	public void setCota(String cota) {
 		this.cota = cota;
 	}
-	
+
 	public String getBanco() {
 		return banco;
 	}
-	
+
 	public void setBanco(String banco) {
 		this.banco = banco;
 	}
-	
+
 	public String getNossoNumero() {
 		return nossoNumero;
 	}
-	
+
 	public void setNossoNumero(String nossoNumero) {
 		this.nossoNumero = nossoNumero;
 	}
-	
+
 	public String getDataEmissao() {
 		return dataEmissao;
 	}
-	
+
 	public void setDataEmissao(String dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
-	
+
 	public String getDataVencimento() {
 		return dataVencimento;
 	}
-	
+
 	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
-	
-	public BigDecimal getValor() {
+
+	public String getValor() {
 		return valor;
 	}
-	
-	public void setValor(BigDecimal valor) {
+
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
-	
-	public BigDecimal getDividaTotal() {
+
+	public String getDividaTotal() {
 		return dividaTotal;
 	}
-	
-	public void setDividaTotal(BigDecimal dividaTotal) {
+
+	public void setDividaTotal(String dividaTotal) {
 		this.dividaTotal = dividaTotal;
 	}
-	
+
 	public String getDataPagamento() {
 		return dataPagamento;
 	}
-	
+
 	public void setDataPagamento(String dataPagamento) {
 		this.dataPagamento = dataPagamento;
 	}
-	
-	public BigDecimal getDesconto() {
+
+	public String getDesconto() {
 		return desconto;
 	}
-	
-	public void setDesconto(BigDecimal desconto) {
+
+	public void setDesconto(String desconto) {
 		this.desconto = desconto;
 	}
-	
-	public BigDecimal getJuros() {
+
+	public String getJuros() {
 		return juros;
 	}
-	
-	public void setJuros(BigDecimal juros) {
+
+	public void setJuros(String juros) {
 		this.juros = juros;
 	}
-	
-	public BigDecimal getValorTotal() {
+
+	public String getValorTotal() {
 		return valorTotal;
 	}
-	
-	public void setValorTotal(BigDecimal valorTotal) {
+
+	public void setValorTotal(String valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	
-	public BigDecimal getMulta() {
+
+	public String getMulta() {
 		return multa;
 	}
-	
-	public void setMulta(BigDecimal multa) {
+
+	public void setMulta(String multa) {
 		this.multa = multa;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -144,7 +141,7 @@ public class CobrancaVO {
 				+ ((valorTotal == null) ? 0 : valorTotal.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -216,7 +213,6 @@ public class CobrancaVO {
 			return false;
 		return true;
 	}
-	
+
 	
 }
-	

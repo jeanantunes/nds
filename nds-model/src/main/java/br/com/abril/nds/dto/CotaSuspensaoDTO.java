@@ -1,13 +1,18 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class CotaSuspensaoDTO implements Serializable{
 
 	private static final long serialVersionUID = 6095689901379670370L;
 	
 	private Long idCota;
-	private Integer cota;
+	private Integer numCota;
 	private String nome;
 	private String vlrConsignado;
 	private String vlrReparte;
@@ -20,10 +25,10 @@ public class CotaSuspensaoDTO implements Serializable{
 		
 	}	
 	
-	public CotaSuspensaoDTO(Long idCota, Integer cota, String nome, String vlrConsignado, String vlrReparte, String dividaAcumulada, Long diasAberto, Boolean selecionado) {
+	public CotaSuspensaoDTO(Long idCota, Integer numCota, String nome, String vlrConsignado, String vlrReparte, String dividaAcumulada, Long diasAberto, Boolean selecionado) {
 		super();
 		this.idCota = idCota;
-		this.cota = cota;
+		this.numCota = numCota;
 		this.nome = nome;
 		this.vlrConsignado = vlrConsignado;
 		this.vlrReparte = vlrReparte;
@@ -36,48 +41,54 @@ public class CotaSuspensaoDTO implements Serializable{
 		return idCota;
 	}
 
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
+	public void setIdCota(BigInteger idCota) {
+		this.idCota = idCota.longValue();
 	}
-
-	public Integer getCota() {
-		return cota;
-	}
-
-	public void setCota(Integer cota) {
-		this.cota = cota;
-	}
+	
+//	public void setIdCota(Long idCota) {
+//		this.idCota = idCota;
+//	}
 
 	public String getNome() {
 		return nome;
 	}
 
 	public void setNome(String nome) {
+		if(nome==null)
+			return;
+		
 		this.nome = nome;
+	}
+	
+	public void setRazaoSocial(String razaoSocial) {
+		if(razaoSocial==null)
+			return;
+		
+		this.nome = razaoSocial;
 	}
 
 	public String getVlrConsignado() {
 		return vlrConsignado;
 	}
 
-	public void setVlrConsignado(String vlrConsignado) {
-		this.vlrConsignado = vlrConsignado;
+	public void setVlrConsignado(BigDecimal vlrConsignado) {
+		this.vlrConsignado = CurrencyUtil.formatarValor(vlrConsignado);
 	}
 
 	public String getVlrReparte() {
 		return vlrReparte;
 	}
 
-	public void setVlrReparte(String vlrReparte) {
-		this.vlrReparte = vlrReparte;
+	public void setVlrReparte(BigDecimal vlrReparte) {
+		this.vlrReparte = CurrencyUtil.formatarValor(vlrReparte);
 	}
 
 	public String getDividaAcumulada() {
 		return dividaAcumulada;
 	}
 
-	public void setDividaAcumulada(String dividaAcumulada) {
-		this.dividaAcumulada = dividaAcumulada;
+	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
+		this.dividaAcumulada = CurrencyUtil.formatarValor(dividaAcumulada);
 	}
 
 	public Long getDiasAberto() {
@@ -96,6 +107,19 @@ public class CotaSuspensaoDTO implements Serializable{
 		this.selecionado = selecionado;
 	}
 
+	public Integer getNumCota() {
+		return numCota;
+	}
+
+	public void setNumCota(Integer numCota) {
+		this.numCota = numCota;
+	}
+
+	public void setDataAbertura(Date dataInicioDivida) {
+		this.diasAberto = dataInicioDivida==null? 0L : (((new Date()).getTime() - dataInicioDivida.getTime()) / 86400000L);
+	}
+	
+	
 	public enum Ordenacao{
 		
 		COTA("cota"),
