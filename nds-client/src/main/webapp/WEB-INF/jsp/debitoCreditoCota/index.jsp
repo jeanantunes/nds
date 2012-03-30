@@ -1,6 +1,9 @@
 <head>
-	<title>NDS - Novo Distrib</title>
 
+	<title>NDS - Novo Distrib</title>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 <script>
 
 	function processarResultadoConsultaDebitosCreditos(data) {
@@ -117,34 +120,13 @@
 
 		$(".debitosCreditosGrid").flexOptions({
 			url : '<c:url value="/financeiro/debitoCreditoCota/pesquisarDebitoCredito" />',
+			preProcess: processarResultadoConsultaDebitosCreditos,
 			params: formData
 		});
 
 		$(".debitosCreditosGrid").flexReload();
 	}
 
-	function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:450,
-			width:780,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
 	function editarMovimento(idMovimento) {
 
 		$.postJSON(
@@ -152,6 +134,7 @@
 			{ "idMovimento" : idMovimento },
 			function(result) {
 
+				$("#edicaoId").val(result.id);
 				$("#edicaoTipoMovimento").val(result.tipoMovimentoFinanceiro.id);
 				$("#edicaoNumeroCota").val(result.numeroCota);
 				$("#edicaoNomeCota").val(result.nomeCota);
@@ -180,31 +163,54 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					salvarMovimentoFinanceiro();
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$( "#abaPdv" ).show( );
-					
+					salvarMovimentoFinanceiro(true);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			}
 		});	
-		      
 	};
 	
-	function salvarMovimentoFinanceiro() {
+	function salvarMovimentoFinanceiro(isEdicao) {
 
-		var formData = $("#formEdicaoMovimentoFinanceiro").serializeArray();
+		var url;
+		var formData;
+		var dialogId = isEdicao ? "#dialog-editar" : "#dialog-novo";
+		
+		if (isEdicao) {
+			
+			formData = $("#formEdicaoMovimentoFinanceiro").serializeArray();
+			url = '<c:url value="/financeiro/debitoCreditoCota/editarMovimentoFincanceiroCota" />';
+		
+		} else {
+			
+			formData = obterListaMovimentos() + 'idTipoMovimento=' + $("#novoTipoMovimento").val();
+			url = '<c:url value="/financeiro/debitoCreditoCota/criarMovimentoFincanceiroCota" />';
+		}
 
 		$.postJSON(
-			'<c:url value="/financeiro/debitoCreditoCota/cadastrarMovimentoFincanceiroCota" />',
+			url,
 			formData,
-			null,
+			function(result) {
+
+				popularGridDebitosCreditos();
+
+				$(dialogId).dialog( "close" );
+				$(".grids").show();
+				
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+
+			},
 			function(result) {
 				
-				processarResultadoConsultaDebitosCreditos(result);
+				exibirMensagemDialog(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
 			},
 			true
 		);
@@ -215,15 +221,25 @@
 		$.postJSON(
 			'<c:url value="/financeiro/debitoCreditoCota/removerMovimentoFinanceiroCota" />',
 			{ "idMovimento" : idMovimento },
-			null,
 			function(result) {
-				
-				processarResultadoConsultaDebitosCreditos(result);
-			},
-			true
-		);
 
-		popularGridDebitosCreditos();
+				popularGridDebitosCreditos();
+
+				$("#dialog-excluir").dialog( "close" );
+				
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+			},
+			function(result) {
+
+				exibirMensagemDialog(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+			}
+		);
 	}
 	
 	function confirmarExclusaoMovimento(idMovimento) {
@@ -237,8 +253,6 @@
 			buttons: {
 				"Confirmar": function() {
 					removerMovimento(idMovimento);
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -248,15 +262,32 @@
 	};
 	
 	
- 	function pesquisarCota() {
+ 	function pesquisarCota(isModalAlteracao) {
  		
- 		var numeroCota = $("#numeroCota").val();
+ 		var numeroCota;
+ 		
+ 		if (isModalAlteracao) {
+ 			
+ 			numeroCota = $("#edicaoNumeroCota").val();
+ 		
+ 		} else {
+ 			
+ 			numeroCota = $("#numeroCota").val();
+ 		}
  		
  		$.postJSON(
 			'<c:url value="/financeiro/debitoCreditoCota/buscarCotaPorNumero" />',
 			{ "numeroCota": numeroCota },
 			function(result) {
-				$("#nomeCota").html(result);
+
+				if (isModalAlteracao) {
+
+					$("#edicaoNomeCota").val(result);
+					
+				} else {
+
+					$("#nomeCota").html(result);
+				}
 			},
 			null,
 			true
@@ -330,31 +361,14 @@
 <p><strong>Confirma a exclusão deste Tipo de Movimento?</strong></p>
 </div>
 
-<div id="dialog-novo" title="Incluir Novo Tipo de Movimento">
-    
-<table width="650" border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td width="119">Tipo de Lançamento:</td>
-    <td width="517">
-    <select name="select" id="select" style="width:300px;">
-      <option>344 - Crédito a Cota</option>
-	  <option>355 - Débito a Cota</option>
-    </select>
-    </td>
-  </tr>
-</table>
-<br />
-<table class="debitosCreditosGrid_1"></table>
-</div>
-
-
 <div id="dialog-editar" title="Editar Tipo de Movimento">
 <form id="formEdicaoMovimentoFinanceiro">
+<input type="hidden" name="debitoCredito.id" id="edicaoId" />
 <table width="450" border="0" cellspacing="2" cellpadding="2">
   <tr>
     <td width="126">Tipo de Movimento:</td>
     <td width="310">
-    <select name="debitoCredito.tipoMovimentoFinanceiro" id="edicaoTipoMovimento" style="width:300px;">
+    <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;">
   		<option selected="selected"> </option>
 		<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 			<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
@@ -365,8 +379,8 @@
   <tr>
     <td width="126">Cota:</td>
     <td width="310">
-    <input type="text" style="width:80px; float:left; margin-right:5px;" name="debitoCredito.numeroCota" id="edicaoNumeroCota"/>
-   	<span class="classPesquisar"><a href="javascript:;" onclick="pesquisarCota();">&nbsp;</a></span>
+    <input type="text" style="width:80px; float:left; margin-right:5px;" 
+    	   name="debitoCredito.numeroCota" id="edicaoNumeroCota" onblur="pesquisarCota(true);"/>
     </td>
   </tr>
   <tr>
@@ -419,8 +433,7 @@
     
     <td width="92">
 	   <input type="text" style="width:60px; float:left; margin-right:5px;" 
-   			  name="filtroDebitoCredito.numeroCota" id="numeroCota"/>
-	   <span class="classPesquisar"><a href="javascript:;" onclick="pesquisarCota();">&nbsp;</a></span>
+   			  name="filtroDebitoCredito.numeroCota" id="numeroCota" onblur="pesquisarCota();"/>
     </td>
     <td width="38">Nome:</td>
     
@@ -477,7 +490,7 @@
 <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
           <span style="float:right; margin-right:260px">Total: R$ 999.999,99</span>
  </div>
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+ <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popupNovoDialog();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 
 
       </fieldset>
@@ -485,50 +498,7 @@
       
     </div>
 </div> 
-<script>
-		/*
-		$(".debitosCreditosGrid_1").flexigrid({
-			url : '../xml/debitosCreditos_1-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome',
-				name : 'nome',
-				width : 185,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data',
-				name : 'data',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Valor R$',
-				name : 'valor',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Observação',
-				name : 'observacao',
-				width : 220,
-				sortable : true,
-				align : 'left'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 760,
-			height : 230
-		});*/
-	</script>
+
+<jsp:include page="novoDialog.jsp" />
+
 </body>

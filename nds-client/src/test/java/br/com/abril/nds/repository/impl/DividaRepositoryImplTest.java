@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -147,20 +148,45 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   StatusCobranca.PAGO,
                 					   cota,
                 					   bancoHSBC,
-                					   divida);
+                					   divida,0);
 		save(boleto);		
 	}
 	
-	@Test
 	@Ignore
+	@Test
 	public void consultaDividasGeradas(){
 		
 		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
 		
 		List<GeraDividaDTO> lista = dividaRepository.obterDividasGeradas(filtro);
 		
 		Assert.assertNotNull(lista);
 		
 		Assert.assertTrue(!lista.isEmpty());
+	}
+	
+	@Ignore
+	@Test
+	public void consultaQuantidadeDividasGeradas(){
+		
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO();
+		filtro.setDataMovimento(new Date());
+		
+		Long quantidade = dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
+		
+		Assert.assertNotNull(quantidade);
+		
+		Assert.assertTrue(quantidade > 0);
+	}
+	@Ignore
+	@Test
+	public void consultaQuantidadeDividasGeradasPorData(){
+		
+		Long quantidade = dividaRepository.obterQunatidadeDividaGeradas(new Date());
+		
+		Assert.assertNotNull(quantidade);
+		
+		Assert.assertTrue(quantidade > 0);
 	}
 }

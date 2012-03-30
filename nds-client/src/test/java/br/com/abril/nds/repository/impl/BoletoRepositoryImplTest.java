@@ -146,7 +146,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   StatusCobranca.PAGO,
                 					   cota,
                 					   bancoHSBC,
-                					   divida);
+                					   divida,0);
 		save(boleto);		
 	}
 	
@@ -195,7 +195,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void obterPorNossoNumero() {
 		
-		Boleto boleto = boletoRepository.obterPorNossoNumero("5");
+		Boleto boleto = boletoRepository.obterPorNossoNumero("5", null);
 		
 		Assert.assertNotNull(boleto);	
 	}

@@ -705,7 +705,7 @@ public class GeradorBoleto {
 	  * Recupera o banco suportado pelo número
 	  * @param número do banco
 	  * @return banco suportado que corresponde ao número do banco, ou null caso
-	  * o número do banco 
+	  * o número do banco nao sera valido
 	  */
 	 private static BancosSuportados getBancoByNumero(String numero) {
 		 for (BancosSuportados banco : BancosSuportados.values()) {

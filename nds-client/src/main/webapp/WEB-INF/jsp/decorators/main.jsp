@@ -184,7 +184,7 @@ fieldset label {
 					<li><span class="classFinanceiro">&nbsp;</span><a
 						href="javascript:;">Financeiro</a>
 						<ul>
-							<li><a href="/financeiro/baixa">Baixa
+							<li><a href='<c:url value="/financeiro/baixa"/>'>Baixa
 									Bancária</a>
 							</li>
 							<li><a href="Financeiro/baixa_bancaria_manual.htm">Baixa
@@ -233,7 +233,7 @@ fieldset label {
 							<li><a href="<c:url value="estoque/consultaNotas"/>">Consulta
 									de Notas</a>
 							</li>
-							<li><a href="estoque/diferenca/consulta">Consulta
+							<li><a href='<c:url value="/estoque/diferenca/consulta"/>'>Consulta
 									Faltas e Sobras</a>
 							</li>
 							<li><a href='<c:url value="/estoque/extratoEdicao/index"/>'>Extrato de

@@ -23,4 +23,19 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 */
 	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota);
 	
+	/**
+	 * Obtém a cobrança pelo nosso numero
+	 * 
+	 * @param nossoNumero
+	 * @return Cobranca
+	 */
+	Cobranca obterCobrancaPorNossoNumero(String nossoNumero);
+	
+	/**
+	 * Incrementa o valor de vias
+	 * 
+	 * @param nossoNumero
+	 */
+	void incrementarVia(String nossoNumero);
+	
 }

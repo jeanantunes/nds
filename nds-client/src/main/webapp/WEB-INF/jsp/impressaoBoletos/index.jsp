@@ -61,7 +61,7 @@
 				             {name:"box",value:$("#box").val()},
 				             {name:"rota",value:$("#rota").val()},
 				             {name:"roteiro",value:$("#roteiro").val()},
-				             {name:"numeroCota",value:$("#numCota").val()},
+				             {name:"numCota",value:$("#numCota").val()},
 				             {name:"tipoCobranca",value:$("#tipoCobranca").val()}
 				            ];
 			return formData;
@@ -120,6 +120,7 @@
 				$("#box").val(result.box);
 				$("#rota").val(result.rota);
 				$("#roteiro").val(result.roteiro);
+				$("#tipoCobranca").val(result.tipoCobranca);
 			});
 			//Efetuar a pesquisa de box, rota roteiro
 		},
@@ -127,6 +128,7 @@
 			$("#box").val("");
 			$("#rota").val("");
 			$("#roteiro").val("");
+			$("#tipoCobranca").val("");
 		},
 		validarPesquisa:function(){
 			
@@ -157,7 +159,8 @@
 					}
 				}
 			});
-		}
+		},
+		
 	};
 	
 	$(function() {
@@ -210,7 +213,7 @@
 				align : 'center'
 			}, {
 				display : 'Via',
-				name : 'via',
+				name : 'vias',
 				width : 50,
 				sortable : true,
 				align : 'center'
@@ -337,29 +340,29 @@
 				<div class="grids" id="grids" style="display:none;">
 					<table class="impressosGrid" id="impressosGrid"></table>
           			<span class="bt_novos" title="Gerar Arquivo">
-          				<a href="javascript:;">
+          				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS">
           					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
           					Arquivo
           				</a>
           			</span>
 					<span class="bt_novos" title="Imprimir">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							Imprimir
 						</a>
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Boletos">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirBoletos">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir
+							Imprimir Boletos
 						</a>
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Dividas">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirDividas">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir
+							Imprimir Dividas
 						</a>
 					</span>
 					

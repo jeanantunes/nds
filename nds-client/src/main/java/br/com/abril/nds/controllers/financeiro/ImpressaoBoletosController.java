@@ -1,7 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -19,8 +19,16 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.RotaRoteiroOperacaoService;
@@ -31,6 +39,9 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -56,6 +67,12 @@ public class ImpressaoBoletosController {
 	
 	@Autowired
 	private ImpressaoDividaService dividaService;
+	
+	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private HttpSession session;
@@ -99,20 +116,15 @@ public class ImpressaoBoletosController {
 			e.printStackTrace();
 		}
 		
-		this.gerarCobrancaService.gerarCobranca(null, this.getIdUsuario());
+		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId());
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	private Long getIdUsuario() {
-		// TODO pendente
-		return 1L;
-	}
-	
 	@Post
-	@Path("financeiro/impressaoBoletos/consultar")
+	@Path("/consultar")
 	public void consultarDividas(String dataMovimento,String box, String rota,
-								 String roteiro,int numCota,TipoCobranca tipoCobranca, String sortorder, 
+								 String roteiro,Integer numCota,TipoCobranca tipoCobranca, String sortorder, 
 								 String sortname, int page, int rp){
 		
 		isDataMovimento(dataMovimento);
@@ -137,12 +149,82 @@ public class ImpressaoBoletosController {
 		RotaRoteiroVO rotaRoteiroVO = new RotaRoteiroVO();
 		
 		if(operacao!= null){
-			rotaRoteiroVO.setBox(operacao.getCota().getBox().getCodigo());
-			rotaRoteiroVO.setRota(operacao.getRota().getCodigoRota());
-			rotaRoteiroVO.setRoteiro(operacao.getRoteiro().getDescricaoRoteiro());
+			
+			rotaRoteiroVO.setBox( (operacao.getCota()!= null && operacao.getCota().getBox()!= null) 
+									? operacao.getCota().getBox().getCodigo():"");
+			
+			rotaRoteiroVO.setRota((operacao.getRota()!= null)
+									? operacao.getRota().getCodigoRota():"");
+			
+			rotaRoteiroVO.setRoteiro((operacao.getRoteiro()!= null)
+									?operacao.getRoteiro().getDescricaoRoteiro():"");
+			
+			rotaRoteiroVO.setTipoCobranca( ( operacao.getCota()!= null 
+											&& operacao.getCota().getParametroCobranca()!= null 
+											&& operacao.getCota().getParametroCobranca().getFormaCobranca()!= null)
+											? operacao.getCota().getParametroCobranca().getFormaCobranca().getTipoCobranca():null);
 		}
 		
 		result.use(Results.json()).from(rotaRoteiroVO,"result").serialize();
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroDividaGeradaDTO filtro = this.obterFiltroExportacao();
+		
+		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
+		
+		FileExporter.to("conta-corrente-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaDividasGeradas, GeraDividaDTO.class, this.httpResponse);
+	}
+	
+	/*
+	 * Obtém o filtro para exportação.
+	 */
+	private FiltroDividaGeradaDTO obterFiltroExportacao() {
+		
+		FiltroDividaGeradaDTO filtro = 
+			(FiltroDividaGeradaDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtro.getNumeroCota() != null) {
+				
+				Cota cota =
+					this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+				
+				if (cota != null) {
+					
+					Pessoa pessoa = cota.getPessoa();
+					
+					if (pessoa instanceof PessoaFisica) {
+						
+						filtro.setNomeCota(((PessoaFisica) pessoa).getNome());
+												
+					} else if (pessoa instanceof PessoaJuridica) {
+						
+						filtro.setNomeCota(((PessoaJuridica) pessoa).getRazaoSocial());
+					}
+				}
+			}
+		}
+		
+		return filtro;
 	}
 	
 	/**
@@ -151,13 +233,13 @@ public class ImpressaoBoletosController {
 	 */
 	private void efetuarConsulta(FiltroDividaGeradaDTO filtro) {
 		
-		// TODO Efetua consulta no banco de dados
-		//List<GeraDividaDTO> listaDividasGeradas = new ArrayList<GeraDividaDTO>();
-		List<GeraDividaDTO> listaDividasGeradas = getMock();
+		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro) ;
 		
 		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		Long totalRegistros = dividaService.obterQuantidadeDividasGeradas(filtro);
 		
 		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas);
 
@@ -167,33 +249,12 @@ public class ImpressaoBoletosController {
 		
 		tableModel.setPage(1);
 		
-		tableModel.setTotal(listaDividasGeradasVO.size());
+		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
-	
-	private List<GeraDividaDTO> getMock(){
-		
-		List<GeraDividaDTO> listaGeraDividaDTO = new ArrayList<GeraDividaDTO>();
-		
-		GeraDividaDTO dividaDTO = null;
-		
-		for(int i=0; i<20; i++){
-			dividaDTO = new GeraDividaDTO("BOx" + i, "Rota"+i, "Roteiro"+i, i, "Nome Cota" + i, new Date(), new Date(), new BigDecimal(1000));
-			
-			if(i<2){
-				dividaDTO.setSuportaEmail(Boolean.TRUE.toString());
-			}else{
-				dividaDTO.setSuportaEmail(Boolean.FALSE.toString());
-			}
-			
-			listaGeraDividaDTO.add(dividaDTO);
-		}
-		
-		return listaGeraDividaDTO;
-	}
-	
+
 	/**
 	 * Retorna lista de dividas geradas 'VO'
 	 * @param listaGeraDividaDTO
@@ -215,7 +276,7 @@ public class ImpressaoBoletosController {
 			dividaGeradaVO.setNumeroCota(String.valueOf(divida.getNumeroCota()));
 			dividaGeradaVO.setRota(divida.getRota());
 			dividaGeradaVO.setRoteiro(divida.getRoteiro());
-			dividaGeradaVO.setSuportaEmail(divida.getSuportaEmail());
+			dividaGeradaVO.setSuportaEmail(divida.getSuportaEmail().toString());
 			dividaGeradaVO.setTipoCobranca( (divida.getTipoCobranca()!= null)? divida.getTipoCobranca().getDescTipoCobranca():"");
 			dividaGeradaVO.setValor( CurrencyUtil.formatarValor(divida.getValor()));
 			dividaGeradaVO.setVias(String.valueOf(divida.getVias()));
@@ -288,6 +349,26 @@ public class ImpressaoBoletosController {
 		httpResponse.flushBuffer();
 	}
 	
+	@Get
+	@Path("/imprimirDividas")
+	public void imprimirDividas() throws Exception{
+		
+		FiltroDividaGeradaDTO filtroSession = (FiltroDividaGeradaDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		//filtroSession.setPaginacao(paginacao)
+		
+		byte[] arquivo =  dividaService.gerarArquivoImpressao(null);
+		
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename= Dividas Geradas.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
+	}
+	
 	@Post
 	@Path("/enviarDivida")
 	public void enviarDivida(String nossoNumero) throws Exception{
@@ -330,6 +411,43 @@ public class ImpressaoBoletosController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data inválida." );
 		}
 	}
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
+	}
+	
 }
 
 

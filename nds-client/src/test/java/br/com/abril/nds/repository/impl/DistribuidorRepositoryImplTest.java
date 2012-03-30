@@ -59,7 +59,7 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
 		
 		distribuidor = Fixture.distribuidor(pj, new Date(), politicaCobranca);
 

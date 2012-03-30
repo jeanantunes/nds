@@ -167,7 +167,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				StatusCobranca.NAO_PAGO, 
 				cota, 
 				bancoHSBC,
-				divida1);
+				divida1,0);
 		save(boleto1);
 		
 		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
@@ -187,7 +187,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				StatusCobranca.NAO_PAGO, 
 				cota, 
 				bancoHSBC,
-				divida2);
+				divida2,0);
 		save(boleto2);
 		
 		
@@ -206,7 +206,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1);
+				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
 		save(politicaCobranca);
 				
 		Distribuidor distribuidor = Fixture.distribuidor(pessoaJuridica, new Date(), politicaCobranca);
