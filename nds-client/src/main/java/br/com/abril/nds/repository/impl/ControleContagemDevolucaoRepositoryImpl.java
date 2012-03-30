@@ -34,7 +34,7 @@ public class ControleContagemDevolucaoRepositoryImpl extends AbstractRepository<
 		hql.append(" select controleContagemDevolucao 							  ");		
 		hql.append(" from ControleContagemDevolucao controleContagemDevolucao 	  ");
 		hql.append(" where controleContagemDevolucao.data = :dataOperacao and 	  ");
-		hql.append(" controleContagemDevolucao.produtEdicao.id = :idProdutoEdicao ");
+		hql.append(" controleContagemDevolucao.produtoEdicao.id = :idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());
 
