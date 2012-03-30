@@ -29,6 +29,8 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
+import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -62,6 +64,12 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
+	
+	@Autowired
+	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
 	
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
@@ -415,12 +423,16 @@ public class RecebimentoFisicoController {
 		for(RecebimentoFisicoDTO recebimento : itensRecebimentoFisico) {
 			
 			if(recebimento.getLineId() == lineId) {
+				
 				apagarReceb = recebimento;
+				
+				recebimentoFisicoService.apagarItemRecebimentoItemNota(recebimento);
+				
 				break;
 			}
 			
 		}
-		
+				
 		itensRecebimentoFisico.remove(apagarReceb);
 		
 		List<String> msgs = new ArrayList<String>();
@@ -430,6 +442,8 @@ public class RecebimentoFisicoController {
 		
 	}
 	
+
+
 	/**
 	 * Atualiza o campo qtdFisico da lista de itemRecebimentoFisico que se encontra em session.
 	 * 
