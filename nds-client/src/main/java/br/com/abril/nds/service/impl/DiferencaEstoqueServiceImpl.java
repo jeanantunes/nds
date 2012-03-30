@@ -126,8 +126,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
 		
-		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-		
 		this.diferencaEstoqueRepository.adicionar(diferenca);
 		
 		return diferenca;
@@ -285,6 +283,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		for (ItemRecebimentoFisico itemRecebimentoFisico : listaItensRecebimentoFisico) {
 			
 			Calendar dataConfirmacaoRecebimentoFisico = Calendar.getInstance();
+			
+			if (itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao() == null) {
+				
+				continue;
+			}
 			
 			dataConfirmacaoRecebimentoFisico.setTime(
 				DateUtil.removerTimestamp(

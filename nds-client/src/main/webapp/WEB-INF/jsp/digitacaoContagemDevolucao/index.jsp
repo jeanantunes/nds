@@ -482,7 +482,7 @@ $(function() {
 				    <td colspan="77">Fornecedor:</td>
 				    <td width="287">
 				    <select name="idFornecedor" id="idFornecedor" style="width:250px;">
-				      <option selected="selected">Todos</option>
+				      <option value="-1"  selected="selected">Todos</option>
 				      <c:forEach items="${listaFornecedores}" var="fornecedor">
 				      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
 				      </c:forEach>

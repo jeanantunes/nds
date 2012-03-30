@@ -802,6 +802,7 @@ validarEdicaoCallBack : function() {
 		return data;
 
 	}
+	
 
 	/**
 	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
@@ -818,14 +819,14 @@ validarEdicaoCallBack : function() {
 			
 			if(alteracaoPermitida == "S") {
 				value.cell[6] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
-			} else {
-				value.cell[6] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
-			}
+			} 
 			
 			
 		});
-		
+					
 		$(".grids").show();
+		
+		document.getElementById('bt_novo_produto').style.display="";
 		
 		return data;
 
@@ -850,7 +851,7 @@ validarEdicaoCallBack : function() {
 			
 			if(alteracaoPermitida == "S") {
 				value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
-				value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+				value.cell[8] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
 			} else {
 				value.cell[5] = '<input name="qtdFisico" disabled="disabled" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
 				value.cell[8] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
@@ -863,6 +864,8 @@ validarEdicaoCallBack : function() {
 		
 		
 		$(".grids").show();
+		
+		document.getElementById('bt_novo_produto').style.display="none";
 		
 		return data;
 
@@ -1171,14 +1174,14 @@ validarEdicaoCallBack : function() {
 						<table class="itemNotaGrid"></table>
 					
 					</div>
-
-					<span class="bt_incluir_novo" title="Incluir Nova Linha"> 
+									
+					<span class="bt_incluir_novo" id="bt_novo_produto" style="display: none;" title="Incluir Nova Linha"> 
 						<a href="javascript:;" onclick="popup_novo_item();"> 
 							<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
 							Novo Produto 
 						</a> 
 					</span> 
-					
+									
 					<span class="bt_novos" title="Salvar"> 
 						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
 							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
