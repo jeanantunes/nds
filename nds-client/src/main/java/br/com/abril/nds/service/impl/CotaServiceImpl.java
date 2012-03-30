@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
-import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -21,19 +20,16 @@ import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -60,9 +56,6 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
-	
-	@Autowired
-	private DistribuidorRepository distribuidorRepository;
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
@@ -223,7 +216,6 @@ public class CotaServiceImpl implements CotaService {
 		
 		return cotasDTO;
 	}
-
 	
 	
 	@Override
@@ -260,79 +252,18 @@ public class CotaServiceImpl implements CotaService {
 		cotaRepository.alterar(cota);
 		return cota;
 	}
+	
+	@Override
 	@Transactional
-	public List<Cota> obterCotasSujeitasSuspensao() {
-
-		PoliticaCobranca politicaCobranca = distribuidorRepository.obter().getPoliticaCobranca();
+	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
-		Integer limiteInadimplencias = politicaCobranca.getInadimplenciasSuspencao();
-		
-		return cotaRepository.obterCotasSujeitasSuspensao(null,null, limiteInadimplencias);
+		return cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);		
 	}
 
 	@Override
 	@Transactional
-	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn) {
-		
-		PoliticaCobranca politicaCobranca = distribuidorRepository.obter().getPoliticaCobranca();
-		
-		Integer limiteInadimplencias = politicaCobranca.getInadimplenciasSuspencao();
-		
-		List<Cota> cotasInadimplentes =  cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, limiteInadimplencias);
-		
-		List<CotaSuspensaoDTO> cotasDTO = new ArrayList<CotaSuspensaoDTO>();
-		
-		for(Cota cota : cotasInadimplentes) {
-			
-			Pessoa pessoa = cota.getPessoa();
-			
-			String nome = pessoa instanceof PessoaFisica ? 
-					((PessoaFisica)pessoa).getNome() : ((PessoaJuridica)pessoa).getRazaoSocial();
-			
-			CotaSuspensaoDTO cotaDTO = montarCotaSuspensaoDTO(
-					cota.getId(), 
-					cota.getNumeroCota(),
-					nome, 
-					cotaRepository.obterValorConsignadoDaCota(cota.getId()), 
-					cotaRepository.obterReparteDaCotaNoDia(cota.getId(), new Date()), 
-					cobrancaRepository.obterDividaAcumuladaCota(cota.getId()),
-					cobrancaRepository.obterDataAberturaDividas(cota.getId()),
-					false);			
-			cotasDTO.add(cotaDTO);
-		}
-				
-		return cotasDTO;
-	}	
-	
-	private CotaSuspensaoDTO montarCotaSuspensaoDTO(
-			Long idcota, Integer numeroCota, String nome, List<ProdutoValorDTO> valoresConsignadoDaCota, 
-			List<ProdutoValorDTO> repartesDaCotaNoDia, Double dividaAcumuladaCota, 
-			Date dataInicioDivida,boolean b) {
-			
-		Long diasEmAberto = dataInicioDivida==null? 
-				0L : (((new Date()).getTime() - dataInicioDivida.getTime()) / 86400000L);
-			
-		CotaSuspensaoDTO dto =  new CotaSuspensaoDTO(
-				idcota,
-				numeroCota, 
-				nome,
-				CurrencyUtil.formatarValor(obterValorPrecoQuantidade(valoresConsignadoDaCota)), 
-				CurrencyUtil.formatarValor(obterValorPrecoQuantidade(repartesDaCotaNoDia)), 
-				CurrencyUtil.formatarValor(dividaAcumuladaCota), 
-				diasEmAberto, 
-				false);
-		
-		return dto;		
-	}
-
-	private Double obterValorPrecoQuantidade(List<ProdutoValorDTO> itens) {
-		
-		Double total = 0.0;
-		
-		for(ProdutoValorDTO pv : itens) {
-			total+=pv.getTotal();
-		}				
-		return total;
-	}
+	public Long obterTotalCotasSujeitasSuspensao() {
+		return cotaRepository.obterTotalCotasSujeitasSuspensao();
+	}		
 	
 }
