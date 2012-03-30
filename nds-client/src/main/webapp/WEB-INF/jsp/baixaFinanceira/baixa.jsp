@@ -273,7 +273,6 @@
 				}
 			});
 		};
-
 		
 		$(function() {
 			$( "#datepickerDe" ).datepicker({
@@ -298,11 +297,12 @@
 		function mostrarBaixaManual() {
 			
 			limparCamposBaixaManual();
-			
+		
 			$('#resultadoIntegracao').hide();
 			$('#tableBaixaAuto').hide();
 			$('#extratoBaixaManual').hide();
 			$('#tableBaixaManual').show();
+
 		}
 		
 		function dividaManualNossoNumero() {
@@ -478,7 +478,7 @@
 
 			$("#valorTotal").html($("#valorTotalHidden").val());
 		}
-        
+
 		cont = 0;
 		function selecionarTodos(){
 			for (var i=0;i<document.formularioListaDividas.elements.length;i++) {
