@@ -14,15 +14,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @return dia
 	 */
 	Date obterDataAberturaDividas(Long idCota);
-	
-	/**
-	 * Obtém total de cobranças não pagas pela cota
-	 * 
-	 * @param idCota - Código da Cota
-	 * @return valor
-	 */
-	Double obterDividaAcumuladaCota(Long idCota);
-	
+
 	/**
 	 * Obter cobraças não pagas da cota
 	 * 
