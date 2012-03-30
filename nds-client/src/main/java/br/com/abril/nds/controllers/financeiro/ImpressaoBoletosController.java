@@ -108,14 +108,6 @@ public class ImpressaoBoletosController {
 	
 	@Post
 	public void gerarDivida(){
-		//trecho que simula possível demora no processamento dessa rotina
-		try {
-			Thread.sleep(5000L);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId());
 		
 		this.result.use(Results.json()).from("", "result").serialize();
