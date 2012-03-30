@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -88,12 +89,12 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		usuario = Fixture.usuarioJoao();
 		save(usuario);
-		
-		
 			
 	}
 	
 	public void setupHistoricoInadimplencia() {
+		
+		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte = Fixture
 				.tipoMovimentoFinanceiroReparte();
 		save(tipoMovimentoFinanceiroReparte);
@@ -261,6 +262,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void obterCotasSujeitasSuspensao() throws Exception {
 		
 		setupHistoricoInadimplencia();
