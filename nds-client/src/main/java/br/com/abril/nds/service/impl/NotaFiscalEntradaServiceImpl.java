@@ -52,25 +52,15 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 		if (periodo == null) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "O preenchimento do período é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do período é obrigatório.");
 		} 
 		
 		ValidacaoVO validacao = new ValidacaoVO();
 		
-		validacao.setTipoMensagem(TipoMensagem.ERROR);
+		validacao.setTipoMensagem(TipoMensagem.WARNING);
 		
 		List<String> mensagens = new ArrayList<String>();
 		
-		if (periodo.getDataInicial() == null) {
-		
-			mensagens.add("O preenchimento do campo \"Data Inicial\" é obrigatório");
-		} 
-		
-		if (periodo.getDataFinal() == null) {
-		
-			mensagens.add("O preenchimento do campo \"Data Final\" é obrigatório");
-		}
-
 		if (!mensagens.isEmpty()) {
 
 			validacao.setListaMensagens(mensagens);
@@ -78,9 +68,10 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			throw new ValidacaoException(validacao);
 		}
 		
-		if (DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
+		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null &&
+				DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "A data inicial deve anteceder a data final.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve anteceder a data final.");
 		}
 		
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
@@ -92,7 +83,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	public DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal) {
 		
 		if (idNotaFiscal == null) {
-			throw new IllegalArgumentException("Erro inesperado. ID da nota fiscal não pode ser nulo.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro inesperado. ID da nota fiscal não pode ser nulo.");
 		}
 
 		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalDAO.obterDetalhesNotaFical(idNotaFiscal);

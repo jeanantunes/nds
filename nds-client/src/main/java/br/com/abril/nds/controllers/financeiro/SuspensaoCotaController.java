@@ -14,7 +14,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BaixaBancariaSerivice;
@@ -91,7 +90,7 @@ public class SuspensaoCotaController {
 		try {
 			verificarBaixaBancariaNaData();
 			
-			grid = obterCotasSuspensao(sortname,sortorder);			
+			grid = obterCotasSuspensao(sortname,sortorder,page,rp);			
 				
 		} catch(ValidacaoException e) {
 			mensagens = e.getValidacao().getListaMensagens();
@@ -129,9 +128,16 @@ public class SuspensaoCotaController {
 	}
 	
 	private TableModel<CellModelKeyValue<CotaSuspensaoDTO>> obterCotasSuspensao(String sortname, 
-			String sortorder) {
-				
-		List<CotaSuspensaoDTO> listaCotaSuspensao = cotaService.obterDTOCotasSujeitasSuspensao(sortorder,sortname);
+			String sortorder, Integer page, Integer rp) {
+		
+		Long total = cotaService.obterTotalCotasSujeitasSuspensao();
+		Integer inicio = (page-1)*rp;
+		if(total.equals(0)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
+		}	
+		
+		List<CotaSuspensaoDTO> listaCotaSuspensao = cotaService.obterDTOCotasSujeitasSuspensao(sortorder,sortname,inicio,rp);
 				
 		List<CellModelKeyValue<CotaSuspensaoDTO>> listaCelula = new LinkedList<CellModelKeyValue<CotaSuspensaoDTO>>();
 		
@@ -140,11 +146,11 @@ public class SuspensaoCotaController {
 		
 		for(CotaSuspensaoDTO cota : listaCotaSuspensao) {						
 		
-			if( selecionados!=null && selecionados.contains(cota.getCota()) ) {
+			if( selecionados!=null && selecionados.contains(cota.getIdCota()) ) {
 				cota.setSelecionado(true);
 			}
 			
-			listaCelula.add(new CellModelKeyValue<CotaSuspensaoDTO>(cota.getCota().intValue(),cota));			
+			listaCelula.add(new CellModelKeyValue<CotaSuspensaoDTO>(cota.getIdCota().intValue(),cota));			
 		}
 		
 		if(listaCotaSuspensao.isEmpty()) {
@@ -154,7 +160,8 @@ public class SuspensaoCotaController {
 
 		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = new TableModel<CellModelKeyValue<CotaSuspensaoDTO>>();
 		
-		grid.setTotal(listaCelula.size());
+		grid.setPage(page);
+		grid.setTotal(total.intValue());
 		grid.setRows(listaCelula);
 		
 		return grid;
@@ -202,7 +209,7 @@ public class SuspensaoCotaController {
 			session.setAttribute("selecionados", null);
 		} else {
 			
-			List<Cota> lista= cotaService.obterCotasSujeitasSuspensao();
+			List<CotaSuspensaoDTO> lista= cotaService.obterDTOCotasSujeitasSuspensao("","",null, null);
 			
 			@SuppressWarnings("unchecked")
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
@@ -211,9 +218,9 @@ public class SuspensaoCotaController {
 				selecionados = new ArrayList<Long>();
 			}
 			
-			for ( Cota cota : lista ) {
+			for ( CotaSuspensaoDTO cota : lista ) {
 								
-				selecionados.add(cota.getId());
+				selecionados.add(cota.getIdCota());
 			}
 			
 			session.setAttribute("selecionados", selecionados);

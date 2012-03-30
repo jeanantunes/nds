@@ -13,6 +13,8 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<util:properties id="properties" location="classpath:/nds-client.properties" />
+	
+	<util:properties id="queries" location="classpath:/query.properties" />
 
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />

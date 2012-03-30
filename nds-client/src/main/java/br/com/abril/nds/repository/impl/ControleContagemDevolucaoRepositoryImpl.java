@@ -18,23 +18,28 @@ public class ControleContagemDevolucaoRepositoryImpl extends AbstractRepository<
 	}
 
 	/**
-	 * Obtém um registro de ControleContagemDevolucao referente a dataOperacao.
+	 * Obtém um registro de ControleContagemDevolucao 
+	 * referente a dataOperacao e idProdutoEdicao.
 	 * 
 	 * @param dataOperacao
+	 * @param idProdutoEdicao
 	 * 
 	 * @return ControleContagemDevolucao
 	 */
-	public ControleContagemDevolucao obterControleContagemDevolucao(Date dataOperacao) {
+	public ControleContagemDevolucao obterControleContagemDevolucao(
+			Date dataOperacao, Long idProdutoEdicao) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select controleContagemDevolucao 											");		
-		hql.append(" from ControleContagemDevolucao controleContagemDevolucao 					");
-		hql.append(" where controleContagemDevolucao.data = :dataOperacao						");
+		hql.append(" select controleContagemDevolucao 							  ");		
+		hql.append(" from ControleContagemDevolucao controleContagemDevolucao 	  ");
+		hql.append(" where controleContagemDevolucao.data = :dataOperacao and 	  ");
+		hql.append(" controleContagemDevolucao.produtEdicao.id = :idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return (ControleContagemDevolucao) query.uniqueResult();
 		

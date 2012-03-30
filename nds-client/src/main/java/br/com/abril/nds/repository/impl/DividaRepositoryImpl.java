@@ -2,13 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -26,10 +23,10 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		super(Divida.class);
 	}
 	
-	public Divida obterUltimaDividaPorCota(Long idCota){
+	public Divida obterDividaParaAcumuloPorCota(Long idCota, Date diaDivida){
 		Criteria criteria = this.getSession().createCriteria(Divida.class);
 		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.setProjection(Projections.max("data"));
+		criteria.add(Restrictions.eq("data", diaDivida));
 		
 		return (Divida) criteria.uniqueResult();
 	}

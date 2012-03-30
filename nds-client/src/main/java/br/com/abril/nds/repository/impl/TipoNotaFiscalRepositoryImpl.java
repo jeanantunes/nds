@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
@@ -38,6 +39,18 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 		query.setParameter("tipoOperacao", tipoOperacao);
 		
 		return query.list();
+	}
+
+	@Override
+	public TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+		
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal  ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		
+		return (TipoNotaFiscal) query.uniqueResult();
 	}
 }
 

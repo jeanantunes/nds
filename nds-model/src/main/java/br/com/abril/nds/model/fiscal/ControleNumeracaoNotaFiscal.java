@@ -5,8 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Entity;
+import javax.persistence.Entity;
 
 @Entity
 @Table(name = "CONTROLE_NUMERACAO_NF")

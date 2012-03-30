@@ -17,12 +17,14 @@ import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MockPerfilUsuario;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -60,13 +62,23 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisa";
 	
+	//TODO: funcionalidade de perfil mockado
+	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
+	
+	//TODO: funcionalidade de perfil mockado
+	private static final boolean IND_USUARIO_PERFIL_OPERADOR = false;
+
+	//TODO: funcionalidade de perfil mockado
+	private static final MockPerfilUsuario mockPerfilUsuario = MockPerfilUsuario.USUARIO_ENCARREGADO;
+	
+	
 	@Path("/")
 	public void index(){
 		
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include("userProfileOperador",false);
+		result.include(USUARIO_PERFIL_OPERADOR, IND_USUARIO_PERFIL_OPERADOR);
 		
 		carregarComboFornecedores();
 	}
@@ -77,7 +89,7 @@ public class DigitacaoContagemDevolucaoController  {
 	 */
 	private void carregarComboFornecedores() {
 		
-		List<Fornecedor> listaFornecedor =fornecedorService.obterFornecedoresAtivos();
+		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresAtivos();
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
 		
@@ -92,6 +104,10 @@ public class DigitacaoContagemDevolucaoController  {
 	@Post
 	@Path("/pesquisar")
 	public void pesquisar(String dataDe,String dataAte,Long idFornecedor,String sortorder, String sortname, int page, int rp){
+		
+		if(idFornecedor == null || idFornecedor < 0) {
+			idFornecedor = null;
+		}
 		
 		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
 		
@@ -108,7 +124,7 @@ public class DigitacaoContagemDevolucaoController  {
 	 * Executa a pesquisa de digitação de contagem de devolução 
 	 * @param filtro
 	 */
-	public void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
+	private void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
 		
 		InfoContagemDevolucaoDTO infoConatege = contagemDevolucaoService.obterInfoContagemDevolucao(filtro, null);
 		
@@ -140,17 +156,19 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/salvar")
-	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao){
+	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
 		
-		if (listaDigitacaoContagemDevolucao == null 
-				|| listaDigitacaoContagemDevolucao.isEmpty()) {
-			
+		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		//TODO efetuar chamada para salvar
+		//TODO: obter usuario da session
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		
+		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, usuario, mockPerfilUsuario);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -159,7 +177,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/confirmar")
-	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao){
+	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
 		
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
@@ -169,7 +187,11 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		//TODO efetuar chamada da confirmação
+		//TODO: obter usuario da session
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		
+		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, usuario);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();

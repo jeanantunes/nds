@@ -98,7 +98,7 @@ public class ConsultaNotasController {
 		
 		if (fileType == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
 		}
 		
 		FiltroConsultaNotaFiscalDTO filtro = this.obterFiltroExportacao();
@@ -140,7 +140,7 @@ public class ConsultaNotasController {
 
 		} catch (IllegalArgumentException e) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());			
 		}
 	}
 
@@ -378,37 +378,25 @@ public class ConsultaNotasController {
 		
 		ValidacaoVO validacao = new ValidacaoVO();
 		
-		validacao.setTipoMensagem(TipoMensagem.ERROR);
+		validacao.setTipoMensagem(TipoMensagem.WARNING);
 		
 		List<String> mensagens = new ArrayList<String>();
-		
-		if (dataInicial == null || dataInicial.isEmpty()) {
-		
-			mensagens.add("O preenchimento do campo \"Data Inicial\" é obrigatório");
-		} 
-		
-		if (dataFinal == null || dataFinal.isEmpty()) {
-			
-			mensagens.add("O preenchimento do campo \"Data Final\" é obrigatório");
-		} 
 
-		if (!mensagens.isEmpty()) {
-
-			validacao.setListaMensagens(mensagens);
-			
-			throw new ValidacaoException(validacao);
-		}
-		
-		if (!DateUtil.isValidDate(dataInicial, "dd/MM/yyyy")) {
+		if (dataInicial != null && !dataInicial.isEmpty() && !DateUtil.isValidDate(dataInicial, "dd/MM/yyyy")) {
 			
 			mensagens.add("Data inicial inválida");
 		} 
 		
-		if (!DateUtil.isValidDate(dataFinal, "dd/MM/yyyy")) {
+		if (dataFinal != null && !dataFinal.isEmpty() && !DateUtil.isValidDate(dataFinal, "dd/MM/yyyy")) {
 			
 			mensagens.add("Data final inválida");
 		}
-		
+
+		if ((dataInicial == null || dataInicial.isEmpty()) && dataFinal != null && !dataFinal.isEmpty()) {
+			
+			mensagens.add("Data inicial inválida");
+		}
+
 		if (!mensagens.isEmpty()) {
 
 			validacao.setListaMensagens(mensagens);
@@ -416,6 +404,15 @@ public class ConsultaNotasController {
 			throw new ValidacaoException(validacao);
 		}
 		
+		if ((dataInicial == null || dataInicial.isEmpty()) && (dataFinal == null || dataFinal.isEmpty())) {
+			
+			return new PeriodoVO();
+		
+		} else if (dataInicial != null && !dataInicial.isEmpty() && (dataFinal == null || dataFinal.isEmpty())) {
+			
+			return new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), DateUtil.removerTimestamp(new Date()));
+		} 
+
 		return new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 	}
 	

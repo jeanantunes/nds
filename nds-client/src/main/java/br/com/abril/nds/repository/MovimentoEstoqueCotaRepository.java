@@ -18,8 +18,9 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			TipoMovimentoEstoque tipoMovimentoEstoque, 
 			boolean indBuscaTotalMovimentoEParcial);
 	
-	public Integer obterQuantidadeContagemDevolucao( 
-			FiltroDigitacaoContagemDevolucaoDTO filtro);
+	public Integer obterQuantidadeContagemDevolucao(
+			FiltroDigitacaoContagemDevolucaoDTO filtro, 
+			TipoMovimentoEstoque tipoMovimentoEstoque);
 	
 	public BigDecimal obterValorTotalGeralContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 

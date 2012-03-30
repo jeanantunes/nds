@@ -288,7 +288,7 @@
 								<option value=""></option>
 								
 								<c:forEach items="${fornecedores}" var="fornecedor">				
-									<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
 								
 							</select>
