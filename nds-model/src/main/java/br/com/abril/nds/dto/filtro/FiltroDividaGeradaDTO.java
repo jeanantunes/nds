@@ -5,25 +5,37 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroDividaGeradaDTO implements Serializable {
 	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	@Export(label = "Data")
 	private Date dataMovimento;
 	
+	@Export(label = "Box")
 	private String codigoBox;
 	
+	@Export(label = "Rota")
 	private String rota;
 	
+	@Export(label = "Roteiro")
 	private String roteiro;
 	
+	@Export(label = "Cota")
 	private Integer numeroCota;
 	
+	@Export(label = "Nome da Cota")
+	private String nomeCota;
+	
+	@Export(label = "Tipo")
 	private TipoCobranca tipoCobranca;
 	
 	private PaginacaoVO paginacao;
@@ -194,6 +206,20 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
 	}
+	
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
 
 	@Override
 	public int hashCode() {
@@ -269,9 +295,6 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		if (tipoCobranca != other.tipoCobranca)
 			return false;
 		return true;
-	}
-	
-	
-	
+	}	
 	
 }

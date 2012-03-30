@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -55,6 +56,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	/**
 	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * @param rp 
+	 * @param page 
 	 * @param paginacaoVO 
 	 * 
 	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
@@ -62,7 +65,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * 
 	 * @return Cotas
 	 */
-	List<Cota> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer limiteInadimplencia);
+	List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer page, Integer rp);
 	
 	
 	/**
@@ -83,5 +86,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<ProdutoValorDTO> obterValorConsignadoDaCota(Long idCota);
 	
 	List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
+
+	Long obterTotalCotasSujeitasSuspensao();
 	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -342,7 +343,7 @@ public class RecebimentoFisicoController {
 		
 		
 	}
-	
+			
 	/**
 	 * Recalcula o campo valorTotal do itemRecebimentoFisico.
 	 * 
@@ -354,6 +355,8 @@ public class RecebimentoFisicoController {
 		
 		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
 		
+		 
+		
 		BigDecimal valorTotal = new BigDecimal(0.0D);
 		
 		if(qtdRepartePrevisto != null && precoCapa != null) {
@@ -361,11 +364,14 @@ public class RecebimentoFisicoController {
 			valorTotal = qtdRepartePrevisto.multiply(precoCapa);
 		
 		}
-		
-		itemRecebimento.setValorTotal(valorTotal);
+		  DecimalFormat df = new DecimalFormat("0.##");
+		  
+		  String dx = df.format(valorTotal);
+		  
+		  itemRecebimento.setValorTotal(new BigDecimal(dx.replace(',' , '.')));
 		
 	}
-	
+		
 	/**
 	 * Recalcula o campo valorDiferenca do itemRecebimentoFisico.
 	 * 

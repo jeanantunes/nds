@@ -5,27 +5,52 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class GeraDividaDTO implements Serializable{
 		
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Export(label = "Box")
 	private String box;
+	
+	@Export(label = "Rota")
 	private String rota;
+	
+	@Export(label = "Roteiro")
 	private String roteiro;
+	
+	@Export(label = "Cota")
 	private Integer numeroCota;
+	
+	@Export(label = "Nome")
 	private String nomeCota;
+	
+	@Export(label = "Vencimento", alignment = Alignment.CENTER)
 	private Date dataVencimento;
-	private Date dataEmissao;
-	private BigDecimal valor;
-	private TipoCobranca tipoCobranca;
-	private Boolean suportaEmail;
+	
+	@Export(label = "Via", alignment = Alignment.CENTER)
 	private Integer vias;
+	
+	@Export(label = "Emissão", alignment = Alignment.CENTER)
+	private Date dataEmissao;
+	
+	@Export(label = "Valor", alignment = Alignment.RIGHT)
+	private BigDecimal valor;
+	
+	@Export(label = "Tipo")
+	private TipoCobranca tipoCobranca;
+	
+	private Boolean suportaEmail;
+	
 	private String nossoNumero;
-	
-	
+
 	public GeraDividaDTO() {}
 	
 	public GeraDividaDTO(String box,String rota, String roteiro, 

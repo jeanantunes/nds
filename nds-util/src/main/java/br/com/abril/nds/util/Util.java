@@ -67,7 +67,7 @@ public abstract class Util {
 		return isUploadAjax;
 	}
 	
-	public static String gerarNossoNumero(Integer numeroCota, Date dtGeracao){
+	public static String gerarNossoNumero(Integer numeroCota, Date dtGeracao, String numeroBanco){
 		long n1;
 		long n2 = 4;
 		long n3;
@@ -86,18 +86,77 @@ public abstract class Util {
 			n1 = 0;
 		}
 		
-		String auxData = DateUtil.formatarData(dtGeracao, "ddMMyyyy");
+		String auxData = DateUtil.formatarData(dtGeracao, "ddMMyy");
 		
 		n3 = (x % 11);
 		if ((n3 == 0) || (n3 == 10)){
 			n3 = 0;
 		}
 		
-		return codSacado + auxData + n1 + n2 + n3;
+		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
+		
+		switch (nomeBanco) {
+		case BANCO_ABN_AMRO_REAL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_BRADESCO:
+			return codSacado + auxData + n1 + n2 + n3;
+		
+		case BANCO_DO_BRASIL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
+			return codSacado + auxData + n1 + n2 + n3;
+		
+		case BANCO_DO_ESTADO_DO_RIO_GRANDE_DO_SUL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_DO_NORDESTE_DO_BRASIL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_INTEMEDIUM:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_ITAU:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_RURAL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_SAFRA:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_SANTANDER:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCO_SICREDI:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case BANCOOB:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case CAIXA_ECONOMICA_FEDERAL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case HSBC:
+			return Util.padLeft(codSacado + auxData + n1 + n2 + n3, "0", 13);
+			
+		case MERCANTIL_DO_BRASIL:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case NOSSA_CAIXA:
+			return codSacado + auxData + n1 + n2 + n3;
+			
+		case UNIBANCO:
+			return codSacado + auxData + n1 + n2 + n3;
+
+		default:
+			return codSacado + auxData + n1 + n2 + n3;
+		}
 	}
 	
 	private static String padLeft(String valor, String caractere, int tamanho){
-		while (valor.length() < tamanho){
+		while (valor.length() < tamanho - 1){
 			valor = caractere + valor;
 		}
 		

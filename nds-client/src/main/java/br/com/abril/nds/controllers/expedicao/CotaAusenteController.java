@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 public class CotaAusenteController {
@@ -34,5 +35,36 @@ public class CotaAusenteController {
 	public void index() {
 		
 		result.forwardTo(CotaAusenteController.class).cotaAusente();
+	}
+	
+	/**
+	 * Realiza pesquisa de Cotas Ausentes
+	 * 
+	 * @param dataAusente
+	 * @param numCota
+	 * @param nomeCota
+	 * @param box
+	 */
+	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, String nomeCota, String box) {
+		
+		System.out.println("\n\n\n\n_____Guilherme" +
+				"\nDataAusente-" + dataAusencia+
+				"\numCota-"+numCota
+				+"\nnomeCota-" +nomeCota
+				+"\nbox-" +box);
+		
+		
+		//TODO  validar parametros
+		
+		//TODO gerar Grid
+		
+		//TODO retornar grid + mensagens
+		
+		Object[] retorno = new Object[3];
+		retorno[0] = "grid";
+		retorno[1] = "mensagens";
+		retorno[2] = "status";
+		
+		result.use(Results.json()).withoutRoot().from(retorno).serialize();		
 	}
 }

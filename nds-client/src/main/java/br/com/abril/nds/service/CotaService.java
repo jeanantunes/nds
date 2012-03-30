@@ -55,13 +55,6 @@ public interface CotaService {
 	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota);
 	
 	/**
-	 * Obtém sugestão de cotas a serem suspensas com base 
-	 * 
-	 * @return lista de Cotas
-	 */
-	List<Cota> obterCotasSujeitasSuspensao();
-
-	/**
 	 * Suspende lista de cotas
 	 * 
 	 * @param idCotas - código das cotas a serem suspensas
@@ -91,11 +84,15 @@ public interface CotaService {
 	
 	/**
 	 * Obtém sugestão de cotas a serem suspensas com base 
+	 * @param rp 
+	 * @param page 
 	 * 
 	 * @param limiteInadimplencia - Quantidade de inadimplencias que define a cota como sujeita a suspensão
 	 * 
 	 * @param paginacaoVO - Dados referentes a paginação e ordenação
 	 * @return lista de CotaSuspensaoDTO
 	 */
-	List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn);
+	List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp);
+
+	Long obterTotalCotasSujeitasSuspensao();
 }
