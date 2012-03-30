@@ -6,6 +6,8 @@
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 		
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+	
 	<script type="text/javascript">
 	
 		$(function() {
@@ -297,37 +299,37 @@
 
 			
 			
-			$("#juros").numeric();
-			$("#multa").numeric();
-			$("#desconto").numeric();
-			$("#valorTotal").numeric();
 			
+			$("#valor").priceFormat();
+			$("#juros").priceFormat();
+			$("#multa").priceFormat();
+			$("#desconto").priceFormat();
+			$("#valorTotal").priceFormat();
 			
 			/*
+			$("#valor").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
 			$("#juros").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
 				 precision:2
 			});
-			
 			$("#multa").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
 				 precision:2
 			});
-			
-			$("#desconto").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
 			$("#valorTotal").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
 				 precision:2
 			});
 			*/
+
+			
 
 		}); 
 
@@ -450,7 +452,6 @@
         
         function calculaTotalManual() {
         	
-        	
         	if ($("#desconto").val()==''){
         		$("#desconto").val(0);
         	}
@@ -461,16 +462,21 @@
         		$("#multa").val(0);
         	}
         	
-        	
 			var valor = $("#valor").html();
 			var desconto = $("#desconto").val();
 			var juros = $("#juros").val();
 			var multa = $("#multa").val();
-			var total = (eval(valor) + eval(juros) + eval(multa) - eval(desconto));
-            
-            
+
+        	valor = valor.replace(",", ".");
+        	
+        	desconto = desconto.replace(",", "");
+        	juros = juros.replace(",", "");
+        	multa = multa.replace(",", "");
+        	
+			var total = eval(valor) + eval(juros) + eval(multa) - eval(desconto);
+
 			$("#valorTotal").html(total);
-			
+			$("#valorTotal").priceFormat();
 		}
 
 		cont = 0;
@@ -494,7 +500,7 @@
 				cont = 0;
 			}
 		}
-
+		
 		
 	</script>
 	
