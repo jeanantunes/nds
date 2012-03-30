@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Entity;
+import javax.persistence.Entity;
 
 @Entity
 @Table(name = "PARAMETRO_EMISSAO_NOTA_FISCAL")

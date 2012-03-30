@@ -29,63 +29,6 @@ public class ContagemDevolucaoDTO implements Serializable {
 	
 	public ContagemDevolucaoDTO(){}
 	
-	public ContagemDevolucaoDTO (
-		
-			String codigoProduto, 
-			String nomeProduto, 
-			Long numeroEdicao,
-			BigDecimal precoVenda, 
-			BigDecimal qtdDevolucao,
-			BigDecimal qtdNota,
-			Date dataMovimento) {
-		
-		super();
-		
-		this.codigoProduto = codigoProduto;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-		this.precoVenda = precoVenda;
-		this.qtdDevolucao = qtdDevolucao;
-		this.qtdNota = qtdNota;
-		this.dataMovimento = dataMovimento;
-	}
-	
-	
-	public ContagemDevolucaoDTO (
-			
-			String codigoProduto, 
-			String nomeProduto, 
-			Long numeroEdicao,
-			BigDecimal precoVenda,
-			BigDecimal qtdDevolucao,
-			Date dataMovimento) {
-		
-		super();
-		
-		this.codigoProduto = codigoProduto;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-		this.precoVenda = precoVenda;
-		this.qtdDevolucao = qtdDevolucao;
-		this.dataMovimento = dataMovimento;
-	}
-
-	
-	public ContagemDevolucaoDTO (
-			Long idProdutoEdicao, 
-			Date dataMovimento,
-			BigDecimal qtdDevolucao,
-			BigDecimal qtdNota ) {
-		
-		super();
-		
-		this.idProdutoEdicao = idProdutoEdicao;
-		this.dataMovimento	 = dataMovimento;
-		this.qtdDevolucao = qtdDevolucao;
-		this.qtdNota = qtdNota;
-	}
-	
-	
 	public Long getIdProdutoEdicao() {
 		return idProdutoEdicao;
 	}

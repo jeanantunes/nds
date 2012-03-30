@@ -6,6 +6,6 @@ import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 
 public interface ControleContagemDevolucaoRepository  extends Repository<ControleContagemDevolucao,Long> { 
 
-	public ControleContagemDevolucao obterControleContagemDevolucao(Date dataOperacao);
+	public ControleContagemDevolucao obterControleContagemDevolucao(Date dataOperacao, Long idProdutoEdicao);
 	
 }

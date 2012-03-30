@@ -73,10 +73,12 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -393,12 +395,14 @@ public class Fixture {
 	
 	public static ControleContagemDevolucao controleContagemDevolucao (
 			StatusOperacao statusOperacao,
-			Date data) {
+			Date data,
+			ProdutoEdicao produtoEdicao) {
 		
 		ControleContagemDevolucao controleContagemDevolucao = new ControleContagemDevolucao();
 		
 		controleContagemDevolucao.setData(data);
 		controleContagemDevolucao.setStatus(statusOperacao);
+		controleContagemDevolucao.setProdutoEdicao(produtoEdicao);
 		
 		return controleContagemDevolucao;
 	}
@@ -504,6 +508,21 @@ public class Fixture {
 		return cfop;
 	}
 
+	public static CFOP cfop1209() {
+		CFOP cfop = new CFOP();
+		cfop.setCodigo("1209");
+		cfop.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência dentro do estado");
+		return cfop;
+	}
+
+	public static CFOP cfop1210() {
+		CFOP cfop = new CFOP();
+		cfop.setCodigo("1210");
+		cfop.setDescricao("Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência fora do estado");
+		return cfop;
+	}
+
+	
 	public static TipoMovimentoEstoque tipoMovimentoFaltaEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
@@ -638,6 +657,43 @@ public class Fixture {
 		return tipoNotaFiscal;
 	}
 
+	public static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscal(
+			CFOP cfopDentroEstado, 
+			CFOP cfopForaEstado, 
+			GrupoNotaFiscal grupoNotaFiscal,
+			String serieNF) {
+		
+		ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscal = new ParametroEmissaoNotaFiscal();
+		
+		parametroEmissaoNotaFiscal.setCfopDentroEstado(cfopDentroEstado);
+		parametroEmissaoNotaFiscal.setCfopForaEstado(cfopForaEstado);
+		parametroEmissaoNotaFiscal.setGrupoNotaFiscal(grupoNotaFiscal);
+		parametroEmissaoNotaFiscal.setSerieNF(serieNF);
+		
+		return parametroEmissaoNotaFiscal;
+		
+	}
+
+	
+	
+	public static ControleNumeracaoNotaFiscal controleNumeracaoNotaFiscal( Long proximoNumeroNF, String serieNF ) {
+		
+		ControleNumeracaoNotaFiscal controleNumeracaoNotaFiscal = new ControleNumeracaoNotaFiscal();
+		
+		controleNumeracaoNotaFiscal.setProximoNumeroNF(proximoNumeroNF);
+		controleNumeracaoNotaFiscal.setSerieNF(serieNF);
+		
+		return controleNumeracaoNotaFiscal;
+		
+	}
+
+	public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
+		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		tipoNotaFiscal.setDescricao("DEVOLUCAO");
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		return tipoNotaFiscal;
+	}
+	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(CFOP cfop,
 			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
