@@ -284,6 +284,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			Calendar dataConfirmacaoRecebimentoFisico = Calendar.getInstance();
 			
+			if (itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao() == null) {
+				
+				continue;
+			}
+			
 			dataConfirmacaoRecebimentoFisico.setTime(
 				DateUtil.removerTimestamp(
 					itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao()));
