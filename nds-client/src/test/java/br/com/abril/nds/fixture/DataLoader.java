@@ -2776,10 +2776,16 @@ public class DataLoader {
 
 		for (int i = 0; i < 50; i++) {
 
+			Calendar calendar = Calendar.getInstance();
+			
 			notaFiscalFornecedor = Fixture
 					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
 							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
-
+			
+			calendar.add(Calendar.DATE, i * 3);
+			
+			notaFiscalFornecedor.setDataEmissao(calendar.getTime());
+			
 			session.save(notaFiscalFornecedor);
 		}
 	}	
