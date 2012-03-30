@@ -156,7 +156,7 @@ public abstract class Util {
 	}
 	
 	private static String padLeft(String valor, String caractere, int tamanho){
-		while (valor.length() < tamanho){
+		while (valor.length() < tamanho - 1){
 			valor = caractere + valor;
 		}
 		

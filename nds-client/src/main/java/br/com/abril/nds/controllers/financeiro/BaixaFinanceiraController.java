@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,6 +34,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBaixaCobranca;
@@ -245,10 +245,6 @@ public class BaixaFinanceiraController {
 		return usuario;
 	}
 	
-	
-	
-	
-
 	@Post
 	@Path("/buscaBoleto")
 	public void buscaBoleto(String nossoNumero){
@@ -345,28 +341,33 @@ public class BaixaFinanceiraController {
 					              Date dataVencimento,
 					              String desconto, 
 					              String juros,
-					              String multa
-					              ){
+					              String multa) {        
+        
+       Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataNovoMovimento =
+			calendarioService.adicionarDiasUteis(distribuidor.getDataOperacao(), 1);
+		
+        BigDecimal valorFormatado = CurrencyUtil.converterValor(valor);
+        BigDecimal jurosFormatado = CurrencyUtil.converterValor(juros);
+        BigDecimal multaFormatado = CurrencyUtil.converterValor(multa);
+        BigDecimal descontoFormatado = CurrencyUtil.converterValor(desconto);
 
-	    Date dataPagamento = Calendar.getInstance().getTime();
-        BigDecimal valorFormatado = new BigDecimal(valor);
-        BigDecimal jurosFormatado = new BigDecimal(juros);
-        BigDecimal multaFormatado = new BigDecimal(multa);
-        BigDecimal descontoFormatado = new BigDecimal(desconto);
+        if (descontoFormatado.compareTo(
+        		valorFormatado.add(jurosFormatado).add(multaFormatado)) == 1) {
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING,
+        		"O desconto não deve ser maior do que o valor a pagar.");
+        }
 
-		PagamentoDTO pagamento = new PagamentoDTO();
-		pagamento.setDataPagamento(dataPagamento);
+        PagamentoDTO pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(dataNovoMovimento);
 		pagamento.setNossoNumero(nossoNumero);
 		pagamento.setNumeroRegistro(null);
 		pagamento.setValorPagamento(valorFormatado);
 		pagamento.setValorJuros(jurosFormatado);
 		pagamento.setValorMulta(multaFormatado);
-		pagamento.setValorMulta(descontoFormatado);
-		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataNovoMovimento =
-			calendarioService.adicionarDiasUteis(distribuidor.getDataOperacao(), 1);
+		pagamento.setValorDesconto(descontoFormatado);
 
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, obterUsuario(),
 								   null,distribuidor.getPoliticaCobranca() , distribuidor,

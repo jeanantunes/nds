@@ -111,16 +111,16 @@
 			
 			$("#valorFinanceiro").numeric();
 			
-			$("#radioBaixaManual").focus()
+			$("#radioBaixaManual").focus();
 		});
 		
 		function mostrarBaixaAuto() {
 			
 			limparCamposBaixaAutomatica();
 			
-			$('#tableBaixaAuto').show();
 			$('#tableBaixaManual').hide();
 			$('#extratoBaixaManual').hide();
+			$('#tableBaixaAuto').show();
 		}
 		
 		function integrar() {
@@ -172,7 +172,7 @@
 			
 			$("#valorFinanceiro").val("");
 		}
-	
+		
 		function popup_manual() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
@@ -234,8 +234,7 @@
 			      
 		};
 		
-		function popup_excluir() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		function mostrarPopupPagamento() {
 		
 			$( "#dialog-excluir" ).dialog({
 				resizable: false,
@@ -245,10 +244,8 @@
 				buttons: {
 					"Confirmar": function() {
 						$( this ).dialog( "close" );
-						$("#effect").show("highlight", {}, 1000, callback);
 						
 						baixaPorNossoNumero();
-						
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -295,71 +292,39 @@
 				buttonImageOnly: true
 			});
 			
-			$("#filtroNumCota").numeric();
-
-			
-			
-			
-			$("#valor").priceFormat();
-			$("#juros").priceFormat();
-			$("#multa").priceFormat();
-			$("#desconto").priceFormat();
-			$("#valorTotal").priceFormat();
-			
-			/*
-			$("#valor").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#juros").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#multa").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#valorTotal").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			*/
-
-			
-
+			$("#filtroNumCota").numeric();	
 		}); 
 
-		function mostrarBaixaManual(){
-			$( '#dadosArquivo' ).hide( );
-			$( '#tableBaixaManual' ).show( );
-			$( '#tableBaixaAuto' ).hide( );
+		function mostrarBaixaManual() {
+			
+			limparCamposBaixaManual();
+			
+			$('#resultadoIntegracao').hide();
+			$('#tableBaixaAuto').hide();
+			$('#extratoBaixaManual').hide();
+			$('#tableBaixaManual').show();
 		}
 		
-		function dividaManual(){
-			$( '#extratoBaixaManual' ).show( );
-			$( '#dadosArquivo' ).hide( );
+		function dividaManualNossoNumero() {
+			
+			$('#porCota').hide();
+			$('#extratoBaixaManual').show();
+			$('#porNossoNumero').show();
 		}
 		
-		function dividaManualNossoNumero(){
-			$( '#extratoBaixaManual' ).show( );
-			$( '#porNossoNumero' ).show( );
-			$( '#porCota' ).hide( );
+		function dividaManualCota() {
+			
+			$('#porNossoNumero').hide();
+			$('#extratoBaixaManual').show();
+			$('#porCota').show();
 		}
 		
-		function dividaManualCota(){
-			$( '#extratoBaixaManual' ).show( );
-			$( '#porCota' ).show( );
-			$( '#porNossoNumero' ).hide( );	
-		}	
-		
-
-
-
-
+		function limparCamposBaixaManual() {
+			
+			$('#filtroNumCota').val("");
+			$('#descricaoCota').val("");
+			$('#filtroNossoNumero').val("");
+		}
 
 		//BAIXA MANUAL POR NOSSO NUMERO
 		function buscaManual() {
@@ -380,28 +345,71 @@
 			
 			else{
 				var data = [{name: 'nossoNumero', value: nossoNumero}];
-				$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data, getDataFromResultDivida);
+				$.postJSON("<c:url value='/financeiro/buscaBoleto' />",data,
+						   sucessCallbackPesquisarBoleto, errorCallbackPesquisarBoleto);
 			}	
 		}
 		
-		function getDataFromResultDivida(resultado) {
+		function sucessCallbackPesquisarBoleto(resultado) {
 			
 			$("#cota").html(resultado.cota);
 			$("#banco").html(resultado.banco);
 			$("#nossoNumero").html(resultado.nossoNumero);
 			$("#dataEmissao").html(resultado.dataEmissao);
 			$("#dataVencimento").html(resultado.dataVencimento);
-			$("#valor").html(resultado.valor);
 			
 			$("#dividaTotal").html(resultado.dividaTotal);
 			$("#dataPagamento").html(resultado.dataPagamento);
-			$("#valorTotal").html(resultado.valorTotal);
 			
 			$("#desconto").val(resultado.desconto);
 			$("#juros").val(resultado.juros);
 			$("#multa").val(resultado.multa);
-
+			$("#valorTotalHidden").val(resultado.valorTotal);
+			$("#valorBoletoHidden").val(resultado.valor);
+			
+			$('#juros').priceFormat({
+				allowNegative: true,
+			    centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#multa').priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#desconto').priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#valorTotalHidden').priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#valorBoletoHidden').priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$("#valorTotal").html($("#valorTotalHidden").val());
+			$("#valorBoleto").html($("#valorBoletoHidden").val());
+			
 			dividaManualNossoNumero();
+		}
+		
+		function errorCallbackPesquisarBoleto() {
+			
+			$('#extratoBaixaManual').hide();
+		}
+		
+		function getDataFromResultDivida() {
+			
 		}
 		
 		function getDataFromResultDividas(resultado) {
@@ -435,8 +443,8 @@
         function baixaPorNossoNumero() {
 			
         	var nossoNumero = $("#nossoNumero").html();
-			var valor = $("#valor").html();
 			var dataVencimento = $("#dataVencimento").html();
+			var valor = $("#valorBoletoHidden").val();
 			var desconto = $("#desconto").val();
 			var juros = $("#juros").val();
 			var multa = $("#multa").val();
@@ -447,38 +455,30 @@
 					   "&dataVencimento="+ dataVencimento+
 					   "&desconto="+ desconto +
 					   "&juros="+ juros+
-					   "&multa="+ multa);
+					   "&multa="+ multa,
+					   function() {mostrarBaixaManual();});
 		}
         
-        function calculaTotalManual() {
+		function calculaTotalManual() {
         	
-        	if ($("#desconto").val()==''){
-        		$("#desconto").val(0);
-        	}
-        	if ($("#juros").val()==''){
-        		$("#juros").val(0);
-        	}
-        	if ($("#multa").val()==''){
-        		$("#multa").val(0);
-        	}
-        	
-			var valor = $("#valor").html();
-			var desconto = $("#desconto").val();
-			var juros = $("#juros").val();
-			var multa = $("#multa").val();
+			var valorBoleto = $("#valorBoletoHidden").unmask();
+			var desconto = $("#desconto").unmask();
+			var juros = $("#juros").unmask();
+			var multa = $("#multa").unmask();
+			
+			var total = intValue(valorBoleto) + intValue(juros) + intValue(multa) - intValue(desconto);
 
-        	valor = valor.replace(",", ".");
-        	
-        	desconto = desconto.replace(",", "");
-        	juros = juros.replace(",", "");
-        	multa = multa.replace(",", "");
-        	
-			var total = eval(valor) + eval(juros) + eval(multa) - eval(desconto);
+			$("#valorTotalHidden").val(total);
+			
+			$("#valorTotalHidden").priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 
-			$("#valorTotal").html(total);
-			$("#valorTotal").priceFormat();
+			$("#valorTotal").html($("#valorTotalHidden").val());
 		}
-
+        
 		cont = 0;
 		function selecionarTodos(){
 			for (var i=0;i<document.formularioListaDividas.elements.length;i++) {
@@ -721,6 +721,9 @@
 	
 	<form name="formularioListaDividas" id="formularioListaDividas">
 	
+		<input type="hidden" id="valorTotalHidden" />
+		<input type="hidden" id="valorBoletoHidden" />
+	
 		<fieldset class="classFieldset" id="extratoBaixaManual" >
 	      	<legend>Baixa Manual</legend>
 	        <br />
@@ -732,40 +735,40 @@
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Núm.Boleto:</strong></td>
-		      	    <td class="linha_borda" id="nossoNumero"><c:out value="${nossoNumero}" /></td>
+		      	    <td class="linha_borda" id="nossoNumero" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Cota:</strong></td>
-		      	    <td class="linha_borda" id="cota"><c:out value="${cota}" /></td>
+		      	    <td class="linha_borda" id="cota" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td width="81" class="linha_borda"><strong>Banco:</strong></td>
-		      	    <td width="250" class="linha_borda" id="banco"><c:out value="${banco}" /></td>
+		      	    <td width="250" class="linha_borda" id="banco" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Emissão:</strong></td>
-		      	    <td class="linha_borda" id="dataEmissao"><c:out value="${dataEmissao}" /></td>
+		      	    <td class="linha_borda" id="dataEmissao" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Vencimento:</strong></td>
-		      	    <td class="linha_borda" id="dataVencimento"><c:out value="${dataVencimento}" /></td>
+		      	    <td class="linha_borda" id="dataVencimento" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Valor R$:</strong></td>
-		      	    <td class="linha_borda" id="valor"><c:out value="${valor}" /></td>
+		      	    <td class="linha_borda" id="valorBoleto" />
 		   	      </tr>
 		   	      
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
-		      	    <td class="linha_borda">  <input onchange="calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda">  <input onblur="calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Juros R$:</strong></td>
-		      	    <td class="linha_borda">  <input onchange="calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda">  <input onblur="calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
-		      	    <td class="linha_borda">  <input onchange="calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda">  <input onblur="calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      
 		   	      <tr>
@@ -774,7 +777,7 @@
   				  </tr>
       	          <tr>
       	            <td class="linha_borda"><strong>Valor Total R$:</strong></td>
-      	            <td class="linha_borda" id="valorTotal" > <c:out value="${valorTotal}" /> </td>
+      	            <td class="linha_borda" id="valorTotal" />
                   <tr>
       	          <tr>
       	            <td class="linha_borda">&nbsp;</td>
@@ -783,7 +786,7 @@
 
 		      	  <tr>
 		      	    <td class="linha_borda">&nbsp;</td>
-		      	    <td class="linha_borda"><span class="bt_confirmar_novo" title="Pagar"><a onclick="popup_excluir();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span></td>
+		      	    <td class="linha_borda"><span class="bt_confirmar_novo" title="Pagar"><a onclick="mostrarPopupPagamento();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span></td>
 		   	      </tr>
 		   	      
 		   	    </table>

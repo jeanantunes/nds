@@ -9,7 +9,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 
 public interface DividaRepository extends Repository<Divida, Long>{
 
-	Divida obterUltimaDividaPorCota(Long idCota);
+	Divida obterDividaParaAcumuloPorCota(Long idCota, Date diaDivida);
 	
 	/**
 	 * Retorna as dividas geradas conforme parametros informados no filtro.
