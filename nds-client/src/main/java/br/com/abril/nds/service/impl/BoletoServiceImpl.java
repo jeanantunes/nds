@@ -875,7 +875,7 @@ public class BoletoServiceImpl implements BoletoService {
 													  boleto.getValor(), boleto.getDataVencimento(),
 													  dataOperacao);
 				//CALCULA MULTA
-				valorJurosCalculado = cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
+				valorMultaCalculado = cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
 													  boleto.getValor());
 			}
 			
