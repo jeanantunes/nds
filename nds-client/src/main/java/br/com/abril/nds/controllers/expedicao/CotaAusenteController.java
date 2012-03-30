@@ -4,7 +4,9 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -13,6 +15,10 @@ import br.com.caelum.vraptor.view.Results;
 public class CotaAusenteController {
 
 	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	
+	@Autowired
+	private CotaAusenteRepository cotaAusenteRepository;
+	
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CotaAusenteController.class);
