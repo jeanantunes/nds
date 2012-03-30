@@ -297,39 +297,32 @@
 			
 			$("#filtroNumCota").numeric();
 
-			
-			
-			
-			$("#valor").priceFormat();
-			$("#juros").priceFormat();
-			$("#multa").priceFormat();
-			$("#desconto").priceFormat();
-			$("#valorTotal").priceFormat();
-			
-			/*
-			$("#valor").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#juros").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#multa").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#valorTotal").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			*/
 
 			
+			
+			
+			
+
+			
+			$("#valor").priceFormat({
+				centsSeparator: ',',
+				thousandsSeparator: '.'});
+			$("#juros").priceFormat({
+				centsSeparator: ',',
+				thousandsSeparator: '.'});
+			$("#multa").priceFormat({
+				centsSeparator: ',',
+				thousandsSeparator: '.'});
+			$("#desconto").priceFormat({
+				centsSeparator: ',',
+				thousandsSeparator: '.'});
+			$("#valorTotal").priceFormat({
+				centsSeparator: ',',
+				thousandsSeparator: '.'});
+            
+            
+               
+            
 
 		}); 
 
@@ -358,6 +351,7 @@
 		
 
 
+		
 
 
 
@@ -450,6 +444,18 @@
 					   "&multa="+ multa);
 		}
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /*
         function calculaTotalManual() {
         	
         	if ($("#desconto").val()==''){
@@ -467,18 +473,59 @@
 			var juros = $("#juros").val();
 			var multa = $("#multa").val();
 
-        	valor = valor.replace(",", ".");
+			
+        	//valor = valor.replace(",", ".");
+        	//desconto = desconto.replace(",", "");
+        	//juros = juros.replace(",", "");
+        	//multa = multa.replace(",", "");
         	
-        	desconto = desconto.replace(",", "");
-        	juros = juros.replace(",", "");
-        	multa = multa.replace(",", "");
         	
 			var total = eval(valor) + eval(juros) + eval(multa) - eval(desconto);
 
 			$("#valorTotal").html(total);
-			$("#valorTotal").priceFormat();
 		}
-
+        */
+        
+        
+        
+        
+        
+        
+        
+        function calculaTotalManual(){
+			
+			var valor = $("#valor").html();
+			var desconto = $("#desconto").val();
+			var juros = $("#juros").val();
+			var multa = $("#multa").val();
+			
+			$.postJSON("<c:url value='/financeiro/calculaManual'/>",
+					   "&valor="+ valor +
+					   "&desconto="+ desconto +
+					   "&juros="+ juros+
+					   "&multa="+ multa,
+					   getValorTotalManual
+					   );
+			
+			
+		}
+        
+        function getValorTotalManual(resultado) {
+ 	       $("#valorTotal").html(resultado);
+ 	    }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 		cont = 0;
 		function selecionarTodos(){
 			for (var i=0;i<document.formularioListaDividas.elements.length;i++) {

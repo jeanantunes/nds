@@ -35,6 +35,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBaixaCobranca;
@@ -353,6 +354,12 @@ public class BaixaFinanceiraController {
         BigDecimal jurosFormatado = new BigDecimal(juros);
         BigDecimal multaFormatado = new BigDecimal(multa);
         BigDecimal descontoFormatado = new BigDecimal(desconto);
+        
+        
+        if (descontoFormatado.doubleValue() > (valorFormatado.doubleValue() + jurosFormatado.doubleValue() + multaFormatado.doubleValue())){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Desconto maior do que o valor a pagar.");
+        }
+        
 
 		PagamentoDTO pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(dataPagamento);
