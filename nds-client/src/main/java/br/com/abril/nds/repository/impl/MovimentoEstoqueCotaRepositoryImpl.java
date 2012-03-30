@@ -14,6 +14,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -27,11 +28,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	
 	private String getConsultaListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
 		
-		StringBuffer hqlEdicoes = new StringBuffer("");
+		StringBuffer hqlEdicoes = getSubQueryEdicoesDeFornecedor();
 		
-		if(filtro.getIdFornecedor() != null) {
-			hqlEdicoes = getSubQueryEdicoesDeFornecedor();
-		}
+		StringBuffer hqlControleContagemDevolucaoConcluido = getSubQueryControleContagemDevolucaoConcluido();
 		
 		StringBuffer hqlConfEncParcial = getSubQueryConfEncParc();
 		
@@ -65,8 +64,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		hql.append(" where ");	
 		
-		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and ");		
+		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and 		");		
 
+		hql.append( hqlControleContagemDevolucaoConcluido.toString() + " is null and 	");
+		
 		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque ");		
 		
 		if( filtro.getIdFornecedor() != null ) {
@@ -149,8 +150,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		}
 		
 		query.setParameter("dataInicial", filtro.getPeriodo().getDataInicial());
+		
 		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
+		
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
+		
+		query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
 		
 		if(indBuscaTotalParcial && !indBuscaQtd) {
 			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
@@ -202,6 +207,30 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return hqlConfEncParcial;
 		
 	}
+
+	
+	/**
+	 * Descreve subquery que retorna o id do registro de controleDevolucao caso encontra-lo 
+	 * com status CONCLUIDO
+	 * 
+	 * @return SubQuery
+	 */
+	private StringBuffer getSubQueryControleContagemDevolucaoConcluido() {
+		
+		StringBuffer hqlConfEncParcial = new StringBuffer("")
+		.append(" ( select													")
+		.append(" controleContagemDevolucao.id									")
+		.append(" from ControleContagemDevolucao controleContagemDevolucao 	")
+		.append(" where 													")
+		.append(" controleContagemDevolucao.status = :statusOperacao and	")
+		.append(" controleContagemDevolucao.produtoEdicao.id =  movimento.produtoEdicao.id and 	")
+		.append(" controleContagemDevolucao.data = movimento.data )  							");
+		
+		return hqlConfEncParcial;
+		
+	}
+
+	
 	
 	/**
 	 * Descreve subquery que retorna uma lista de idProdutoEdicao pertencentes a um fornecedor.
@@ -231,6 +260,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
+		StringBuffer hqlControleContagemDevolucaoConcluido = getSubQueryControleContagemDevolucaoConcluido();
+		
 		StringBuffer hql = new StringBuffer("");
 		
 		hql.append(" select sum( movimento.qtde * movimento.produtoEdicao.precoVenda ) ");		
@@ -245,7 +276,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and	");
 		
-		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque ");
+		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque and ");
+		
+		hql.append( hqlControleContagemDevolucaoConcluido.toString() + " is null " );
 		
 		Query query = getSession().createQuery(hql.toString());
 
@@ -254,6 +287,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
 
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
+		
+		query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
 		
 		if(filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());

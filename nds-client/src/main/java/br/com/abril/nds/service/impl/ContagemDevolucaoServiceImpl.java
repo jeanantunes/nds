@@ -26,11 +26,12 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
+import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -41,10 +42,12 @@ import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalSaidaRepository;
+import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
+import br.com.abril.nds.service.ControleNumeracaoNotaFiscalService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
@@ -87,7 +90,14 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
+	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
+	
+	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	
+	@Autowired
+	private ControleNumeracaoNotaFiscalService controleNumeracaoNotaFiscalService;
+	
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, MockPerfilUsuario mockPerfilUsuario) {
@@ -606,29 +616,34 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			return;
 		}
 		
-		
 		Date dataAtual = new Date();
-		
-		String numeroNF = "0";
-		String serie = "0";
 		
 		StatusNotaFiscalSaida statusNF = StatusNotaFiscalSaida.AGUARDANDO_GERACAO_NFE;
 		
-		//TODO: obter tipo nota...
-		TipoNotaFiscal tipoNF = null; //tipoNotaFiscalRepository.obterTiposNotasFiscais(TipoOperacao.SAIDA);
-
-		PessoaJuridica pessoaJuridica = null;
-
-		Distribuidor distribuidor = distribuidorService.obter();
+		ParametroEmissaoNotaFiscal parametroEmissaoNF = parametroEmissaoNotaFiscalRepository.obterParametroEmissaoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		
-		if(distribuidor!=null) {
-			pessoaJuridica = distribuidor.getJuridica();
+		if(parametroEmissaoNF == null) {
+			throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 		}
 		
-		//TODO: Modelar amarracao de natureza da nota com CFOP
-		// para obtermos o cfop referente a esta nf.
-		CFOP cfop = new CFOP();
-		cfop.setId(1L);//Remover este codigo apos testes....
+		CFOP cfop = parametroEmissaoNF.getCfopDentroEstado();
+		String serieNF = parametroEmissaoNF.getSerieNF();
+
+		Distribuidor distribuidor = distribuidorService.obter();
+
+		if(distribuidor == null) {
+			throw new IllegalStateException("Informações do distribuidor não encontradas");
+		}
+
+		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+
+		if(tipoNF == null) {
+			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
+		}
+		
+		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();
+		
+		Long numeroNF = controleNumeracaoNotaFiscalService.obterProximoNumeroNotaFiscal(serieNF);
 		
 		nfSaidaFornecedor.setCfop(cfop);
 		nfSaidaFornecedor.setDataEmissao(dataAtual);
@@ -636,8 +651,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		nfSaidaFornecedor.setEmitente(pessoaJuridica);
 		nfSaidaFornecedor.setFornecedor(fornecedor);
 
-		nfSaidaFornecedor.setNumero(numeroNF);
-		nfSaidaFornecedor.setSerie(serie);
+		nfSaidaFornecedor.setNumero(numeroNF.toString());
+		nfSaidaFornecedor.setSerie(serieNF);
 		nfSaidaFornecedor.setStatus(statusNF);
 		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
 		
@@ -649,8 +664,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		inserirItensNotaFiscalSaida(nfSaidaFornecedor, itensNotaFiscalSaida);
 		
-		
 	}
+	
+	
+	
 	
 	/**
 	 * Gera e retorna uma lista de ContagemDevolucao, 

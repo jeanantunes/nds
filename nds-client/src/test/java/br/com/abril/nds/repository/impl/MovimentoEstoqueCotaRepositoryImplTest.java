@@ -8,7 +8,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -257,8 +256,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mecJorn);
 		
-		
-		
+		//MOVIMENTOS DE ENVIO ENCALHE ABAIXO
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				veja1,
@@ -310,8 +308,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
+		
 		ControleContagemDevolucao controleContagemDevolucao = Fixture.controleContagemDevolucao(
-				StatusOperacao.EM_ANDAMENTO, 
+				StatusOperacao.CONCLUIDO, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				veja1);
 
@@ -330,11 +329,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				true);
 		
 		
-		Assert.assertEquals(3, retorno.size());
+		Assert.assertEquals(2, retorno.size());
 		
 		ContagemDevolucaoDTO contagem = retorno.get(0);
 		
-		Assert.assertEquals(70, contagem.getQtdDevolucao().intValue());
+		Assert.assertEquals(19, contagem.getQtdDevolucao().intValue());
 		
 	}
 	
@@ -348,7 +347,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				obterFiltro(), 
 				obterTipoMovimento());
 		
-		Assert.assertEquals(1525, total.intValue());
+		Assert.assertEquals(475, total.intValue());
 		
 	}
 	
@@ -356,10 +355,13 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	@DirtiesContext
 	public void testarObterListaContagemDevolucao() {
 		
+		@SuppressWarnings("unused")
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				obterFiltro(), 
 				obterTipoMovimento(),
 				false);
+		
+		Assert.assertNotNull(listaContagemDevolucao);
 	}
 	
 	@Test
@@ -369,7 +371,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
 				obterFiltro(), obterTipoMovimento());
 		
-		Assert.assertEquals(3, qtde.intValue());
+		Assert.assertEquals(2, qtde.intValue());
 	}
 	
 	private FiltroDigitacaoContagemDevolucaoDTO obterFiltro() {
@@ -395,7 +397,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
 		
-		filtro.setIdFornecedor(fornecedorDinap.getId());
+		//filtro.setIdFornecedor(fornecedorDinap.getId());
 		
 		return filtro;
 		
