@@ -25,7 +25,6 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -360,9 +359,9 @@ public class BaixaFinanceiraController {
 		pagamento.setNossoNumero(nossoNumero);
 		pagamento.setNumeroRegistro(null);
 		pagamento.setValorPagamento(valorFormatado);
-		//pagamento.setValorJuros(jurosFormatado);
-		//pagamento.setValorMulta(multaFormatado);
-		//pagamento.setValorMulta(descontoFormatado);
+		pagamento.setValorJuros(jurosFormatado);
+		pagamento.setValorMulta(multaFormatado);
+		pagamento.setValorMulta(descontoFormatado);
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -376,4 +375,5 @@ public class BaixaFinanceiraController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+
 }

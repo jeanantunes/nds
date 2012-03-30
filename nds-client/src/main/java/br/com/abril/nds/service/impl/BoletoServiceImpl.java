@@ -50,6 +50,7 @@ import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.TipoBaixaCobranca;
@@ -819,7 +820,7 @@ public class BoletoServiceImpl implements BoletoService {
 					     anexo);
 		}
 		catch(Exception e){
-			e.getStackTrace();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");
 		}
 	}
 	
@@ -833,7 +834,6 @@ public class BoletoServiceImpl implements BoletoService {
 		byte[] b = geradorBoleto.getBytePdf();
         return b;
 	}
-	
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -862,8 +862,8 @@ public class BoletoServiceImpl implements BoletoService {
 			cobranca.setBanco(boleto.getBanco().getNome());
 			cobranca.setDataVencimento((boleto.getDataVencimento()!=null?DateUtil.formatarDataPTBR(boleto.getDataVencimento()):""));
 			cobranca.setDataEmissao((boleto.getDataEmissao()!=null?DateUtil.formatarDataPTBR(boleto.getDataEmissao()):""));
-			cobranca.setValor(boleto.getValor());
-			cobranca.setDividaTotal(boleto.getDivida().getValor());
+			cobranca.setValor(CurrencyUtil.formatarValor(boleto.getValor()));
+			cobranca.setDividaTotal(CurrencyUtil.formatarValor(boleto.getDivida().getValor()));
 			
 			//CALCULO DE JUROS E MULTA
 			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
@@ -875,21 +875,21 @@ public class BoletoServiceImpl implements BoletoService {
 													  boleto.getValor(), boleto.getDataVencimento(),
 													  dataOperacao);
 				//CALCULA MULTA
-				valorMultaCalculado = cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
+				valorJurosCalculado = cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
 													  boleto.getValor());
 			}
 			
-			cobranca.setDataPagamento(DateUtil.formatarDataPTBR(dataOperacao));
-			cobranca.setDesconto( BigDecimal.ZERO );
-			cobranca.setJuros( valorJurosCalculado );
-            cobranca.setMulta( valorMultaCalculado );
+			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataOperacao) );
+			cobranca.setDesconto( CurrencyUtil.formatarValor(BigDecimal.ZERO) );
+			cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
+            cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
             
             //CALCULA VALOR TOTAL
             Double valorTotal=(boleto.getValor().doubleValue() + 
             		          valorJurosCalculado.doubleValue() +
             		          valorMultaCalculado.doubleValue());
             
-			cobranca.setValorTotal( new BigDecimal(valorTotal) );
+			cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
 		}
 		return cobranca;
 	}

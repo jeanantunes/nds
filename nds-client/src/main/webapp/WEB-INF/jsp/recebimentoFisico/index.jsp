@@ -446,19 +446,19 @@ validarEdicaoCallBack : function() {
 			$("#valorBruto").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
-				 precision:10
+				 precision:2
 			});
 
 			$("#valorLiquido").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
-				 precision:10
+				 precision:2
 			});
 			
 			$("#valorDesconto").maskMoney({
 				 thousands:'.', 
 				 decimal:',', 
-				 precision:10
+				 precision:2
 			});
 			
 			

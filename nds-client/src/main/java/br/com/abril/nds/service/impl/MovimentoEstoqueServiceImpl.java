@@ -93,6 +93,36 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
+	public void enviarSuplementarCotaAusente(Date data, Long idCota){
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+			
+			TipoMovimentoEstoque tipoMovimentoCota =
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		
+		List<MovimentoEstoqueCota> listaMovimentoCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, idCota, GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		
+		if(listaMovimentoCota != null){
+			
+			for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
+				
+				if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
+						&& movimentoCota.getUsuario() != null
+						&&  movimentoCota.getQtde() != null ){
+					
+					gerarMovimentoEstoque(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
+				
+					gerarMovimentoCota(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
+			
+				}
+			}
+		
+		}
+	}
+	
+	@Override
+	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
 

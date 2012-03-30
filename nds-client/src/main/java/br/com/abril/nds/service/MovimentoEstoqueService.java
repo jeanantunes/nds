@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
@@ -13,4 +14,6 @@ public interface MovimentoEstoqueService {
 	MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao,Long idUsuario,BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 	
 	void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
+	
+	void enviarSuplementarCotaAusente(Date data, Long idCota);
 }
