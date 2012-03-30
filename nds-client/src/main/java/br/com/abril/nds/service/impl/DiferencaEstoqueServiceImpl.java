@@ -126,8 +126,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
 		
-		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-		
 		this.diferencaEstoqueRepository.adicionar(diferenca);
 		
 		return diferenca;

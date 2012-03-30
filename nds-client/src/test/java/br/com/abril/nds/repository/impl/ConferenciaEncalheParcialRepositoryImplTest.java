@@ -3,14 +3,16 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
+import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -34,8 +36,6 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -55,7 +55,8 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
-	private void setUp() {
+	@Before
+	public void setUp() {
 		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
@@ -269,6 +270,24 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				new Date(), 
 				BigDecimal.TEN);
+		save(conferenciaEncalheParcial);
+		
+		conferenciaEncalheParcial = Fixture.conferenciaEncalheParcial(
+				usuarioJoao, 
+				veja1, 
+				StatusAprovacao.PENDENTE, 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				new Date(), 
+				BigDecimal.TEN);
+		save(conferenciaEncalheParcial);
+		
+		conferenciaEncalheParcial = Fixture.conferenciaEncalheParcial(
+				usuarioJoao, 
+				veja1, 
+				StatusAprovacao.PENDENTE, 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				new Date(), 
+				BigDecimal.TEN);
 		
 		save(conferenciaEncalheParcial);
 		
@@ -276,49 +295,78 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	
 	
 	@Test
+	@DirtiesContext
 	public void testObterQtdTotalEncalheParcial() {
-		
-		setUp();
 		
 		BigDecimal qtd = conferenciaEncalheParcialRepositoryImpl.obterQtdTotalEncalheParcial(StatusAprovacao.PENDENTE, Fixture.criarData(28, Calendar.FEBRUARY, 2012), "1" ,1L);
 		
-		Assert.assertTrue(qtd.intValue() == 10);
+		Assert.assertTrue(qtd.intValue() == 30);
 		
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testObterListaContagemDevolucao() {
 		
-		conferenciaEncalheParcialRepositoryImpl.obterListaContagemDevolucao(false, false, StatusAprovacao.APROVADO);
+		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepositoryImpl.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, null, null, null, null);
+		
+		Assert.assertEquals(1, result.size());
 		
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testObterListaConferenciaEncalhe() {
 		
-		conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
-				null, 
-				null, 
-				null, 
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				"1", 
-				1L);
+		boolean 			diferencaApurada 	= false;
+		boolean 			nfParcialGerada  	= false;
+		StatusAprovacao 	statusAprovacao 	= StatusAprovacao.PENDENTE;
+		Date 				dataMovimento 		= Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+		Long 				idProdutoEdicao 	= null;
+		String 				codigoProduto 		= "1";
+		Long 				numeroEdicao 		= 1L;
 		
-		conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
-				false, 
-				true, 
-				null, 
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				"1", 
-				1L);
+		List<ConferenciaEncalheParcial> result = null;
 		
-		conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
-				false, 
-				true, 
-				StatusAprovacao.APROVADO, 
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				"1", 
-				1L);
+		result = conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
+				diferencaApurada, 
+				nfParcialGerada, 
+				statusAprovacao, 
+				dataMovimento, 
+				idProdutoEdicao,
+				codigoProduto,
+				numeroEdicao);
+		
+		Assert.assertEquals(3, result.size());
+		
+		diferencaApurada 	= false;                      
+		nfParcialGerada  	= false;                      
+		statusAprovacao 	= StatusAprovacao.APROVADO;   
+		dataMovimento 		= null;                 
+		idProdutoEdicao 	= null;                         
+		codigoProduto 		= null;                         
+		numeroEdicao 		= null;                         
+
+		result = conferenciaEncalheParcialRepositoryImpl.obterListaConferenciaEncalhe(
+				diferencaApurada, 
+				nfParcialGerada, 
+				statusAprovacao, 
+				dataMovimento, 
+				idProdutoEdicao,
+				codigoProduto,
+				numeroEdicao);
+		
+		Assert.assertEquals(0, result.size());
+		
+		diferencaApurada 	= false;                      
+		nfParcialGerada  	= false;                      
+		statusAprovacao 	= StatusAprovacao.APROVADO;   
+		dataMovimento 		= Fixture.criarData(28, Calendar.FEBRUARY, 2012);       
+		idProdutoEdicao 	= null;                         
+		codigoProduto 		= "1";                         
+		numeroEdicao 		= 1L;                         
+		
+		
 		
 	}
 
