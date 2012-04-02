@@ -8,7 +8,7 @@ import br.com.abril.nds.model.movimentacao.RateioCotaAusente;
 
 public interface CotaAusenteService {
 	
-	void declararCotaAusente(Long idCota, Date data, List<RateioCotaAusente> listaDeRateio);
+	void declararCotaAusente(Long idCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario);
 	
 	List<CotaAusenteDTO> obterCotasAusentes(Date data, Long idCota, CotaAusenteDTO cotaAusenteDTO);
 
