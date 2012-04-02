@@ -819,9 +819,7 @@ validarEdicaoCallBack : function() {
 			
 			if(alteracaoPermitida == "S") {
 				value.cell[6] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
-			} else {
-				value.cell[6] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
-			}
+			} 
 			
 			
 		});
@@ -853,7 +851,7 @@ validarEdicaoCallBack : function() {
 			
 			if(alteracaoPermitida == "S") {
 				value.cell[5] = '<input name="qtdFisico" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
-				value.cell[8] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+				value.cell[8] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
 			} else {
 				value.cell[5] = '<input name="qtdFisico" disabled="disabled" style="width: 45px;" type="text" value="'+qtdFisico+'"/>'+hiddeFields;
 				value.cell[8] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';

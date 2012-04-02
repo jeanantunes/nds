@@ -130,3 +130,8 @@ function replaceAll(string, token, newtoken) {
 	}
 	return string;
 }
+
+function intValue(valor) {
+
+	return parseInt(valor, 10);
+}

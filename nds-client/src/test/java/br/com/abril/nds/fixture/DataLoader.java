@@ -70,8 +70,11 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -236,8 +239,8 @@ public class DataLoader {
 			session = sf.openSession();
 
 			tx = session.beginTransaction();			
-			//carregarDadosParaContagemdDevolucao(session);
-			carregarDados(session);
+			carregarDadosParaContagemdDevolucao(session);
+			//carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarDadosInadimplencia(session);
@@ -1917,6 +1920,27 @@ public class DataLoader {
 		TipoProduto tipoCromo = null;
 		TipoFornecedor tipoFornecedorPublicacao = null;
 
+		CFOP cfopDentroEstado = Fixture.cfop1209();
+		save(session, cfopDentroEstado);
+		
+		CFOP cfopForaEstado = Fixture.cfop1210();
+		save(session, cfopForaEstado);
+		
+		ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscal = Fixture.parametroEmissaoNotaFiscal(
+				cfopDentroEstado, 
+				cfopForaEstado, 
+				GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR, 
+				"0001");
+		
+		save(session, parametroEmissaoNotaFiscal);
+		
+		criarDistribuidor(session);
+		
+		criarTiposMovimento(session);
+		
+		ControleNumeracaoNotaFiscal controleNumeracaoNotaFiscal = Fixture.controleNumeracaoNotaFiscal(1L, "0001");
+		save(session, controleNumeracaoNotaFiscal);
+		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -2028,6 +2052,9 @@ public class DataLoader {
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(session, tipoNotaFiscal);
 
+		tipoNotaFiscal = Fixture.tipoNotaFiscalDevolucao();
+		save(session, tipoNotaFiscal);
+		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
 		.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
 		usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
@@ -2646,9 +2673,6 @@ public class DataLoader {
 
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(session, usuarioJoao);
-
-		TipoMovimentoEstoque tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-		save(session, tipoMovimentoEnvioEncalhe);
 
 
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(

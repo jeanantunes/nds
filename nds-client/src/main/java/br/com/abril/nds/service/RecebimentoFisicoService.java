@@ -24,4 +24,6 @@ public interface RecebimentoFisicoService {
 	 
 	 void cancelarNotaFiscal(Long idNotaFiscal);
 	 
+	 void apagarItemRecebimentoItemNota(RecebimentoFisicoDTO recebimento);
+	 
 }
