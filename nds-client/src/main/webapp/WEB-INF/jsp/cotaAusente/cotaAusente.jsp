@@ -24,8 +24,31 @@ function cliquePesquisar() {
 	$(".ausentesGrid").flexReload();
 }
 
-function processaRetornoPesquisa(data) {
-	alert("_" + data[0]+data[1]+data[2]);	
+function processaRetornoPesquisa(result) {
+	
+	//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
+	if (result.mensagens) {
+		exibirMensagem(
+				result.mensagens.tipoMensagem, 
+				result.mensagens.listaMensagens
+		);
+		$(".grids").hide();
+		return result.tableModel;
+	}
+	
+	$.each(result.rows, function(index, row) {
+		
+		row.cell.acao = gerarBotaoExcluir(row.cell.idCotaAusente);		
+		
+  	});
+	
+	return result;
+}
+
+function gerarBotaoExcluir(idCotaAusente) {
+	return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
+	 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+		
 }
 
 function popup() {
@@ -47,11 +70,11 @@ function popup() {
 				}
 			}
 		});
-	};
+}
 	
 	
 	
-	function popup_suplementar() {
+function popup_suplementar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-suplementar" ).dialog({
@@ -71,9 +94,9 @@ function popup() {
 				}
 			}
 		});
-	};
+}
 	
-	function popup_confirm() {
+function popup_confirm() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-confirm" ).dialog({
@@ -94,7 +117,7 @@ function popup() {
 				}
 			}
 		});
-	};
+}
 	
 function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -106,6 +129,9 @@ function popup_alterar() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
@@ -116,10 +142,15 @@ function popup_alterar() {
 				}
 			}
 		});
-	};	
+}	
 
-function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+function retornoExlusaoCotaAusente(result) {
+	alert("retorno exclusao cota ausente");
+}
+	
+function popup_excluir(idCotaAusente) {
+	
+		
 	
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -128,6 +159,11 @@ function popup_excluir() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/cancelarCotaAusente'/>", 
+							"idCotaAusente="+idCotaAusente, 
+							retornoExlusaoCotaAusente);
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
@@ -138,8 +174,9 @@ function popup_excluir() {
 				}
 			}
 		});
-	};	
+}
 
+	
 
 $(function() {
 		$( "#idData" ).datepicker({
@@ -156,10 +193,11 @@ $(function() {
 		$( "#idData" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
 		$("#idData").mask("99/99/9999");
 		
-	});		
+});	
+
 $(function() {
 		$( "#tabs-pop" ).tabs();
-	});
+});
 
 </script>
 <script>
@@ -348,7 +386,7 @@ function mostra_grid(){
 				align : 'left'
 			}, {
 				display : 'Valor NE R$',
-				name : 'vlrNE',
+				name : 'valorNe',
 				width : 100,
 				sortable : true,
 				align : 'right'

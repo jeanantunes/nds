@@ -80,6 +80,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -271,8 +272,7 @@ public class DataLoader {
 	private static Boleto cobrancaMariana1;
 	private static Boleto cobrancaMariana2;
 	private static CobrancaDeposito cobrancaOrlando;
-	
-	
+		
 	private static FormaCobranca formaBoleto;
 	
 	public static void main(String[] args) {
@@ -287,12 +287,13 @@ public class DataLoader {
 			session = sf.openSession();
 
 			tx = session.beginTransaction();			
-			carregarDadosParaContagemdDevolucao(session);
-			//carregarDados(session);
+			//carregarDadosParaContagemdDevolucao(session);
+			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarDadosInadimplencia(session);
-
+			gerarCotasAusentes(session);
+			
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -309,6 +310,15 @@ public class DataLoader {
 				sf.close();
 			}
 		}
+	}
+
+	private static void gerarCotasAusentes(Session session) {
+		CotaAusente cotaAusente1 = Fixture.cotaAusente(new Date(), true, cotaGuilherme);
+		CotaAusente cotaAusente2 = Fixture.cotaAusente(new Date(), true, cotaMurilo);
+		CotaAusente cotaAusente3 = Fixture.cotaAusente(new Date(), true, cotaMariana);
+		CotaAusente cotaAusente4 = Fixture.cotaAusente(new Date(), true, cotaOrlando);
+		
+		save(session, cotaAusente1, cotaAusente2, cotaAusente3, cotaAusente4);
 	}
 
 	private static void carregarDados(Session session) {
@@ -348,10 +358,9 @@ public class DataLoader {
 		criarBoletos(session);
 		criarmovimentosFinanceiroCota(session);
 		criarNotasFiscaisEntradaFornecedor(session);
-		criarRotaRoteiroCota(session);
-		
+		criarRotaRoteiroCota(session);		
 		criarParametrosCobrancaCota(session);
-		
+				
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
 		MovimentoEstoque movimentoEstoqueDiferenca =
