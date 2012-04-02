@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.repository.CotaAusenteRepository;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, Long> implements CotaAusenteRepository { 
@@ -33,7 +32,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		StringBuilder queryNative = new StringBuilder();
 		
 		queryNative.append("SELECT 																				"); 		
-		queryNative.append("ca.ID as idCotaAusente, 																	");
+		queryNative.append("ca.ID as idCotaAusente, 															");
 		queryNative.append("ca.DATA as data, 																	");
 		queryNative.append("box.NOME as box, 																	");
 		queryNative.append("cota.NUMERO_COTA as cota,															");
@@ -78,17 +77,18 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 				queryNative.append("order by cota.NUMERO_COTA ");
 			} else if (ColunaOrdenacao.nome == colunaOrdenacao) {
 				queryNative.append("order by pessoa.NOME ");
-			} else if (ColunaOrdenacao.valorNE == colunaOrdenacao) {
+			} else if (ColunaOrdenacao.valorNe == colunaOrdenacao) {
 				queryNative.append("order by valorNE ");
 			}	
 			
-			String ordenacao = "asc";
+			
 			if (filtro.getPaginacao() != null) {
-				if (filtro.getPaginacao().equals(Ordenacao.DESC)) {
-					ordenacao = "desc";
+				if ("DESC".equalsIgnoreCase(filtro.getPaginacao().getOrdenacao().name())) {
+					queryNative.append(" DESC ");
+				} else {
+					queryNative.append(" ASC ");
 				}
 			}
-			queryNative.append(ordenacao);
 		}
 		
 		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
