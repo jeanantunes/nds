@@ -320,7 +320,7 @@ public class DataLoader {
 		CotaAusente cotaAusente1 = Fixture.cotaAusente(new Date(), true, cotaGuilherme);
 		CotaAusente cotaAusente2 = Fixture.cotaAusente(new Date(), true, cotaMurilo);
 		CotaAusente cotaAusente3 = Fixture.cotaAusente(new Date(), true, cotaMariana);
-		CotaAusente cotaAusente4 = Fixture.cotaAusente(new Date(), true, cotaOrlando);
+		CotaAusente cotaAusente4 = Fixture.cotaAusente(Fixture.criarData(1, 1, 2001), true, cotaOrlando);
 		
 		save(session, cotaAusente1, cotaAusente2, cotaAusente3, cotaAusente4);
 	}

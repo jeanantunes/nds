@@ -46,9 +46,13 @@ function processaRetornoPesquisa(result) {
 }
 
 function gerarBotaoExcluir(idCotaAusente) {
-	return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
-	 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
-		
+	
+	if(idCotaAusente) {
+		return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
+		 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+	} else {
+		return  "<img style=\"opacity: 0.5\" src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
+	}
 }
 
 function popupNovaCotaAusente() {
@@ -78,7 +82,7 @@ function popupNovaCotaAusente() {
 }
 
 
-function popupConfirmaAusenciaCota(result) {
+function popupConfirmaAusenciaCota(numcota) {
 	
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
@@ -98,17 +102,23 @@ function popupConfirmaAusenciaCota(result) {
 					
 				},
 				"Não": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/carregarDadosRateio'/>", 
+							"numCota="+numcota, 
+							popupRateio);
+					
 					$( this ).dialog( "close" );
-					popup_suplementar();
 				}
 			}
 		});
 }
 	
+function retornoEnvioSuplementar(result) {
 	
+}
 
 	
-function popup_suplementar() {
+function popupRateio(result) {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-suplementar" ).dialog({
