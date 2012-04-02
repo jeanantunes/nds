@@ -1,10 +1,28 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.DividaGeradaVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.repository.CotaAusenteRepository;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -12,7 +30,17 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 public class CotaAusenteController {
 
-	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
+	
+	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	private static final String WARNING_CAMPO_DATA_OBRIGATORIO = "O campo \"Data\" é obrigatório.";
+	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
+	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
+	
+	
+	@Autowired
+	private CotaAusenteRepository cotaAusenteRepository;
+	
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CotaAusenteController.class);
@@ -45,26 +73,102 @@ public class CotaAusenteController {
 	 * @param nomeCota
 	 * @param box
 	 */
-	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, String nomeCota, String box) {
+	@Post
+	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, 
+			String box,String sortorder, String sortname, int page, int rp) {
 		
-		System.out.println("\n\n\n\n_____Guilherme" +
-				"\nDataAusente-" + dataAusencia+
-				"\numCota-"+numCota
-				+"\nnomeCota-" +nomeCota
-				+"\nbox-" +box);
+		Date data = validaData(dataAusencia);
+		
+		boolean isDataOperacao = isDataOperacao(data);
+				
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
+				data, 
+				(box==null || box.isEmpty()) ? null:box, 
+				numCota, 
+				new PaginacaoVO(page, rp, sortorder), 
+				ColunaOrdenacao.valueOf(sortname));
+				
+		tratarFiltro(filtro);
+		
+		efetuarConsulta(filtro);
+		
+	}
+	
+	/**
+	 * Efetua a consulta e monta a estrutura do grid de CotasAusentes.
+	 * @param filtro
+	 */
+	private void efetuarConsulta(FiltroCotaAusenteDTO filtro) {
+		
+		List<CotaAusenteDTO> listaCotasAusentes = cotaAusenteRepository.obterCotasAusentes(filtro) ;
 		
 		
-		//TODO  validar parametros
+		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
 		
-		//TODO gerar Grid
+		Long totalRegistros = cotaAusenteRepository.obterCountCotasAusentes(filtro);
 		
-		//TODO retornar grid + mensagens
+		TableModel<CellModelKeyValue<CotaAusenteDTO>> tableModel = new TableModel<CellModelKeyValue<CotaAusenteDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasAusentes));
 		
-		Object[] retorno = new Object[3];
-		retorno[0] = "grid";
-		retorno[1] = "mensagens";
-		retorno[2] = "status";
+		tableModel.setPage(1);
 		
-		result.use(Results.json()).withoutRoot().from(retorno).serialize();		
+		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+
+	private boolean isDataOperacao(Date data) {
+		
+		Long dia = 86400000L;
+		
+		if( (data.getTime()/dia) == (new Date().getTime()/dia) )
+			return true;
+		
+		return false;
+	}
+
+	private Date validaData(String dataAusencia) {
+
+		if ( dataAusencia == null || dataAusencia.isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_CAMPO_DATA_OBRIGATORIO );
+		
+		Date data = null;
+		
+		try {
+			data = DateUtil.parseDataPTBR(dataAusencia);
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_INFORMADA_INVALIDA);
+		}
+
+		if ( data.getTime() > (new Date().getTime()) )
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL );
+		
+		return data;
+	}
+	
+	/**
+	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
+	 * 
+	 * @param filtroResumoExpedicao
+	 */
+	private void tratarFiltro(FiltroCotaAusenteDTO filtro) {
+
+		FiltroCotaAusenteDTO filtroSession = (FiltroCotaAusenteDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtro)) {
+
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+	}
+	
+	public void cancelarCotaAusente(Long idCotaAusente) {
+		System.out.println("ID_COTA_AUSENTE" + idCotaAusente);
 	}
 }
