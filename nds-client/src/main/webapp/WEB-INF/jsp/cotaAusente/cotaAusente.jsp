@@ -51,28 +51,62 @@ function gerarBotaoExcluir(idCotaAusente) {
 		
 }
 
-function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+function popupNovaCotaAusente() {
 	
-		$( "#dialog-novo" ).dialog({
+	$( "#dialog-novo" ).dialog({
+		resizable: false,
+		height:'auto',
+		width:540,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				var numcota = $('#idNovaCota').attr('value');
+				
+				$.postJSON("<c:url value='/cotaAusente/gerarNovaCotaAusente'/>", 
+						"numCota="+numcota, 
+						popupConfirmaAusenciaCota);
+				
+				$( this ).dialog( "close" );
+				
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+}
+
+
+function popupConfirmaAusenciaCota(result) {
+	
+		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
-			width:540,
+			width:350,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Sim": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
+							"numCota="+numcota, 
+							retornoEnvioSuplementar);
+					
 					$( this ).dialog( "close" );
-					popup_confirm();
+					$(".grids").show();
+					
 					
 				},
-				"Cancelar": function() {
+				"Não": function() {
 					$( this ).dialog( "close" );
+					popup_suplementar();
 				}
 			}
 		});
 }
 	
 	
+
 	
 function popup_suplementar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -95,30 +129,7 @@ function popup_suplementar() {
 			}
 		});
 }
-	
-function popup_confirm() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-confirm" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:350,
-			modal: true,
-			buttons: {
-				"Sim": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-					
-					
-				},
-				"Não": function() {
-					$( this ).dialog( "close" );
-					popup_suplementar();
-				}
-			}
-		});
-}
-	
+		
 function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -275,7 +286,27 @@ function mostra_grid(){
     <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td>Cota:</td>
-              <td width="446" colspan="3"><input type="text" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar">&nbsp;</span><label style="margin-left:10px;">Nome:</label><input type="text" class="nome_jornaleiro" style="width:280px; margin-left:5px;"/></td>
+             
+              <td width="446" colspan="3">
+ <!-- NOVA COTA - NUM -->     
+<input id="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+	onchange="cota.limparCamposPesquisa('#idNomeNovaCota');"
+	onblur="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');"/>
+
+<!-- PESQUISAR NOVA COTA -->           
+<span class="classPesquisar"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');">&nbsp;</a></span>
+           		<label style="margin-left:10px;">
+           			Nome:
+           		
+           		</label>
+           		
+ <!-- NOVA COTA - NOME -->
+<input id="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
+	onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota');"
+	/>         		
+       			</td>
+            
             </tr>
           </table>
     </div>
@@ -341,7 +372,7 @@ function mostra_grid(){
         </div>
         <span class="bt_novos" title="Novo">
 <!-- NOVO -->
-<a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+<a href="javascript:;" onclick="popupNovaCotaAusente();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -394,7 +425,7 @@ function mostra_grid(){
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "data",

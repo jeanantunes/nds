@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -170,5 +173,12 @@ public class CotaAusenteController {
 	
 	public void cancelarCotaAusente(Long idCotaAusente) {
 		System.out.println("ID_COTA_AUSENTE" + idCotaAusente);
+	}
+		
+	@Post
+	public void gerarNovaCotaAusente(Integer numCota) {
+		List<Integer> lista = new ArrayList<Integer>();
+		lista.add(numCota);
+		result.use(Results.json()).from(lista, "result").serialize();
 	}
 }

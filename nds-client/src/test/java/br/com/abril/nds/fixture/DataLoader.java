@@ -16,6 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -67,6 +68,7 @@ import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -272,6 +274,8 @@ public class DataLoader {
 	private static Boleto cobrancaMariana1;
 	private static Boleto cobrancaMariana2;
 	private static CobrancaDeposito cobrancaOrlando;
+	
+	private static ControleBaixaBancaria baixaBancaria;
 		
 	private static FormaCobranca formaBoleto;
 	
@@ -360,6 +364,7 @@ public class DataLoader {
 		criarNotasFiscaisEntradaFornecedor(session);
 		criarRotaRoteiroCota(session);		
 		criarParametrosCobrancaCota(session);
+		criarControleBaixaBancaria(session);
 				
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -428,6 +433,12 @@ public class DataLoader {
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+		
+	}
+
+	private static void criarControleBaixaBancaria(Session session) {
+		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
+		save(session, baixaBancaria);
 		
 	}
 
