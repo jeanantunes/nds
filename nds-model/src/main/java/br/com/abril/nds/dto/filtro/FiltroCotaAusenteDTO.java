@@ -40,7 +40,7 @@ public class FiltroCotaAusenteDTO implements Serializable {
 		box("box"),
 		cota("cota"),
 		nome("nome"),
-		valorNE("valorNE");	
+		valorNe("valorNe");	
 
 		private String nomeColuna;
 		
