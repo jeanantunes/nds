@@ -701,6 +701,7 @@ public class GeradorBoleto {
  		return file;
      }
 	 
+	 
 	 /**
 	  * Recupera o banco suportado pelo número
 	  * @param número do banco
@@ -715,5 +716,5 @@ public class GeradorBoleto {
 		 }
 		 return null;
 	 }
-
+	 
 }

@@ -760,11 +760,12 @@ public class BoletoServiceImpl implements BoletoService {
 
 		
 		GeradorBoleto geradorBoleto = new GeradorBoleto();
-		
+
 		
 		//DADOS DO CEDENTE
-		geradorBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
-		geradorBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
+		PessoaJuridica distribuidor = distribuidorService.obter().getJuridica();
+		geradorBoleto.setCedenteNome(distribuidor.getRazaoSocial());         
+		geradorBoleto.setCedenteDocumento(distribuidor.getCnpj());
 		
 		
 		//DADOS DO SACADO
@@ -813,7 +814,7 @@ public class BoletoServiceImpl implements BoletoService {
 		//INFORMACOES DA CONTA(BANCO)
         String contaNumero=boleto.getBanco().getConta().toString();
         String contaNossoNumero=boleto.getNossoNumero().toString();
-        String contaNumeroDocumento="123456";//???
+        String contaNumeroDocumento="";//???
         geradorBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         geradorBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
         if (boleto.getBanco().getCarteira().getCodigo()==1){
