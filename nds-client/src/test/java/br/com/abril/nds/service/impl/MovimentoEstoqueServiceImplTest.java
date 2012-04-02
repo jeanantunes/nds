@@ -42,7 +42,7 @@ public class MovimentoEstoqueServiceImplTest extends AbstractRepositoryImplTest 
 	public void obterMovimentoPorTipo(){
 		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
 		
-		movimentoEstoqueService.enviarSuplementarCotaAusente(data, cotaManoel.getId());
+		//movimentoEstoqueService.enviarSuplementarCotaAusente(data, cotaManoel.getId());
 		
 		
 	}
