@@ -63,6 +63,8 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.CobrancaDeposito;
+import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -1201,6 +1203,68 @@ public class Fixture {
 		return rotaRoteiroOperacao;
 
 
+	}
+
+	public static CobrancaDinheiro criarCobrancaDinheiro(String nossoNumero,
+            Date dataEmissao,
+            Date dataVencimento,
+            Date dataPagamento,
+            BigDecimal encargos,
+            BigDecimal valor,
+            String tipoBaixa,
+            String acao,
+            StatusCobranca status,
+            Cota cota,
+            Banco banco,
+            Divida divida,
+            Integer vias) {
+		
+		CobrancaDinheiro cobrencaDinheiro= new CobrancaDinheiro();
+		cobrencaDinheiro.setNossoNumero(nossoNumero);
+		cobrencaDinheiro.setDataEmissao(dataEmissao);
+		cobrencaDinheiro.setDataVencimento(dataVencimento);
+		cobrencaDinheiro.setDataPagamento(dataPagamento);
+		cobrencaDinheiro.setEncargos(encargos);
+		cobrencaDinheiro.setValor(valor);
+		cobrencaDinheiro.setTipoBaixa(tipoBaixa);
+		cobrencaDinheiro.setStatusCobranca(status);
+		cobrencaDinheiro.setCota(cota);
+		cobrencaDinheiro.setBanco(banco);
+		cobrencaDinheiro.setDivida(divida);
+		cobrencaDinheiro.setVias(vias);
+		
+		return cobrencaDinheiro;
+	}
+	
+	public static CobrancaDeposito criarCobrancaDeposito(String nossoNumero,
+            Date dataEmissao,
+            Date dataVencimento,
+            Date dataPagamento,
+            BigDecimal encargos,
+            BigDecimal valor,
+            String tipoBaixa,
+            String acao,
+            StatusCobranca status,
+            Cota cota,
+            Banco banco,
+            Divida divida,
+            Integer vias) {
+		
+		CobrancaDeposito cobrencaDeposito= new CobrancaDeposito();
+		cobrencaDeposito.setNossoNumero(nossoNumero);
+		cobrencaDeposito.setDataEmissao(dataEmissao);
+		cobrencaDeposito.setDataVencimento(dataVencimento);
+		cobrencaDeposito.setDataPagamento(dataPagamento);
+		cobrencaDeposito.setEncargos(encargos);
+		cobrencaDeposito.setValor(valor);
+		cobrencaDeposito.setTipoBaixa(tipoBaixa);
+		cobrencaDeposito.setStatusCobranca(status);
+		cobrencaDeposito.setCota(cota);
+		cobrencaDeposito.setBanco(banco);
+		cobrencaDeposito.setDivida(divida);
+		cobrencaDeposito.setVias(vias);
+		
+		return cobrencaDeposito;
 	}
 	
 }

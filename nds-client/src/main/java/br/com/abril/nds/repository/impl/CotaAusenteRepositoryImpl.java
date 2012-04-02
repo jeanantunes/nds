@@ -1,20 +1,18 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Date;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
-import br.com.abril.nds.dto.CotaAusenteDTO.ColunaOrdenacao;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.repository.CotaAusenteRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, Long> implements CotaAusenteRepository { 
@@ -28,18 +26,17 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 	}
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaAusenteDTO> obterCotasAusentes(Date data, Long idCota, CotaAusenteDTO cotaAusenteDTO) {
+	@Transactional
+	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtro) {
 						
 		StringBuilder queryNative = new StringBuilder();
 		
-		
-		
 		queryNative.append("SELECT 																				"); 		
-
+		queryNative.append("ca.ID as idCotaAusente, 															");
 		queryNative.append("ca.DATA as data, 																	");
 		queryNative.append("box.NOME as box, 																	");
 		queryNative.append("cota.NUMERO_COTA as cota,															");
-		queryNative.append("pessoa.nome as nome,																	");
+		queryNative.append("pessoa.nome as nome,																");
 	    
 		queryNative.append("( SELECT SUM(movEstoque.QTDE*pe.PRECO_CUSTO) FROM MOVIMENTO_ESTOQUE_COTA movEstoque ");
 		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
@@ -55,9 +52,13 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		
 		queryNative.append("ca.DATA = :data 																	");
 		
-		if(idCota != null){
+		if(filtro.getNumCota() != null){			
+			queryNative.append("and cota.NUMERO_COTA = :numCota 												");
+		}
+		
+		if(filtro.getBox() != null){
 			
-			queryNative.append("and cota.ID = :idCota 															");
+			queryNative.append("and box.CODIGO = :box 															");
 		}
 		
 		queryNative.append("group by 		");
@@ -66,10 +67,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		queryNative.append("cota.NUMERO_COTA,			");
 		queryNative.append("pessoa.nome			");
 		
-				
-		PaginacaoVO paginacao = cotaAusenteDTO.getPaginacao();
-		
-		ColunaOrdenacao colunaOrdenacao = cotaAusenteDTO.getColunaOrdenacao();
+		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
 		if (colunaOrdenacao != null) {
 			if (ColunaOrdenacao.box == colunaOrdenacao) {
 				queryNative.append("order by box.NOME ");
@@ -79,17 +77,22 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 				queryNative.append("order by cota.NUMERO_COTA ");
 			} else if (ColunaOrdenacao.nome == colunaOrdenacao) {
 				queryNative.append("order by pessoa.NOME ");
-			} else if (ColunaOrdenacao.valorNE == colunaOrdenacao) {
+			} else if (ColunaOrdenacao.valorNe == colunaOrdenacao) {
 				queryNative.append("order by valorNE ");
 			}	
 			
-			String ordenacao = "asc";
-			if (paginacao != null) {
-				if (paginacao.getOrdenacao().equals(Ordenacao.DESC)) {
-					ordenacao = "desc";
+			
+			if (filtro.getPaginacao() != null) {
+				if ("DESC".equalsIgnoreCase(filtro.getPaginacao().getOrdenacao().name())) {
+					queryNative.append(" DESC ");
+				} else {
+					queryNative.append(" ASC ");
 				}
 			}
-			queryNative.append(ordenacao);
+		}
+		
+		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			queryNative.append(" limit :inicio,:qtdeResult ");
 		}
 				
 		Query query  = getSession().createSQLQuery(queryNative.toString()).addScalar("data").addScalar("box")
@@ -97,15 +100,64 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 				.addScalar("nome")
 				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
 			
-		query.setParameter("data", data);
+		query.setParameter("data", filtro.getData());
 		
-		if(idCota != null){
-			query.setParameter("idCota", idCota);
+		if(filtro.getNumCota() != null){
+			query.setParameter("numCota", filtro.getNumCota());
 		}
 		
+		if(filtro.getBox() != null){
+			query.setParameter("box", filtro.getBox());
+		}
 		
+		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			query.setParameter("inicio", filtro.getPaginacao().getPosicaoInicial());
+			query.setParameter("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 				
 		return query.list();
 		
+	}
+	@Override
+	@Transactional
+	public Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro) {
+
+		StringBuilder queryNative = new StringBuilder();
+		
+		queryNative.append("SELECT COUNT(cota.ID)																		"); 	
+		queryNative.append("FROM COTA cota																		");
+		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
+		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
+		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
+		
+		queryNative.append("WHERE ca.DATA = :data																");
+		
+		if(filtro.getNumCota() != null){			
+			queryNative.append("and cota.NUMERO_COTA = :numCota 												");
+		}
+		
+		if(filtro.getBox() != null){			
+			queryNative.append("and box.CODIGO = :box 															");
+		}
+		
+		queryNative.append("group by 		");
+		queryNative.append("ca.DATA, 			");
+		queryNative.append("box.NOME, 			");
+		queryNative.append("cota.NUMERO_COTA,			");
+		queryNative.append("pessoa.NOME			");		
+				
+		Query query  = getSession().createSQLQuery(queryNative.toString());
+			
+		query.setParameter("data", filtro.getData());
+		
+		if(filtro.getNumCota() != null){
+			query.setParameter("numCota", filtro.getNumCota());
+		}
+		
+		if(filtro.getBox() != null){
+			query.setParameter("box", filtro.getBox());
+		}
+		
+		return ( (BigInteger) query.uniqueResult() ).longValue();
 	}
 }

@@ -1,28 +1,39 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BaixaBancariaSerivice;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -42,22 +53,51 @@ public class SuspensaoCotaController {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SuspensaoCotaController.class);
 	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	private final Result result;
 	private final HttpSession session;
 	private BaixaBancariaSerivice baixaBancariaSerivice;
 	private CotaService cotaService;
+	private DistribuidorService distribuidorService;
 	
 	public SuspensaoCotaController(Result result,HttpSession session,
-			CotaService cotaService, BaixaBancariaSerivice baixaBancariaSerivice) {
+			CotaService cotaService, BaixaBancariaSerivice baixaBancariaSerivice, DistribuidorService distribuidorService) {
 		
 		this.result = result;
 		this.session = session;
 		this.cotaService = cotaService;
 		this.baixaBancariaSerivice = baixaBancariaSerivice;
+		this.distribuidorService = distribuidorService;
 	}
 	
 	public void suspensaoCota() {
 		
+	}
+	
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
 	}
 	
 	/**
@@ -276,4 +316,53 @@ public class SuspensaoCotaController {
 		usuario.setNome("Fake Usuario");
 		return usuario;
 	}
+		
+		
+	@Exportable
+	public class RodapeDTO {
+		@Export(label="Total de Cotas Sugeridas:", alignWithHeader="Nome")
+		private Integer qtde;
+		@Export(label="Total R$:", alignWithHeader="Divida Acumulada R$")
+		private String total;
+		
+		public RodapeDTO(Integer qtde, String total) {
+			this.qtde = qtde;
+			this.total = total;
+		}
+		
+		public Integer getQtde() {
+			return qtde;
+		}
+		public String getTotal() {
+			return total;
+		}
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+				
+		List<CotaSuspensaoDTO> listaDividasGeradas = cotaService.obterDTOCotasSujeitasSuspensao(null,null,null,null);
+		
+		Double total = 0.0;
+		
+		for(CotaSuspensaoDTO cota : listaDividasGeradas) {
+			total+= cota.getDoubleDividaAcumulada();
+		}
+			
+	
+		RodapeDTO rodape = new RodapeDTO(listaDividasGeradas.size(), CurrencyUtil.formatarValor(total));
+		
+		FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null, rodape, 
+				listaDividasGeradas, CotaSuspensaoDTO.class, this.httpResponse);
+		
+		result.nothing();
+	}
+
 }

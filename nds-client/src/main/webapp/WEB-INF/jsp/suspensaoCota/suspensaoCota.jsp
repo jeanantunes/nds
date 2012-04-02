@@ -201,14 +201,15 @@
                      </span>
 <!-- GERAR EXCEL -->
                      <span class="bt_novos" title="Gerar Arquivo">
-	                     <a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+	                     <a href="${pageContext.request.contextPath}/suspensaoCota/exportar?fileType=XLS">
+	                     	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 	                     	Arquivo
 	                     </a>
                      </span>
 
 				<span class="bt_novos" title="Imprimir">
 <!-- IMPRIMIR -->
-					<a href="javascript:;">
+					<a href="${pageContext.request.contextPath}/suspensaoCota/exportar?fileType=PDF">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir
 					</a>

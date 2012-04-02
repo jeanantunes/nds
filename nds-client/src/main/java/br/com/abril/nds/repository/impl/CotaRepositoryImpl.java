@@ -126,8 +126,10 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		sql.append(obterOrderByCotasSujeitasSuspensao(sortOrder, sortColumn));
 		
-		sql.append(" LIMIT :inicio,:qtdeResult");
-				
+		if(inicio!= null && rp!= null) {
+			sql.append(" LIMIT :inicio,:qtdeResult");
+		}
+		
 		Query query = getSession().createSQLQuery(sql.toString())
 				.addScalar("idCota")
 				.addScalar("numCota")
@@ -137,10 +139,12 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 				.addScalar("nome")
 				.addScalar("razaoSocial")
 				.addScalar("dataAbertura");
-			
-		query.setInteger("inicio", inicio);
-		query.setInteger("qtdeResult", rp);
 		
+		if(inicio!= null && rp!= null) {
+			query.setInteger("inicio", inicio);
+			query.setInteger("qtdeResult", rp);
+		}
+			
 		query.setResultTransformer(Transformers.aliasToBean(CotaSuspensaoDTO.class));
 				
 		return query.list();
