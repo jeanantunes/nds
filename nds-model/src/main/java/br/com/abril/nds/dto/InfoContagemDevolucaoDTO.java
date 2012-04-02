@@ -4,23 +4,31 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class InfoContagemDevolucaoDTO implements Serializable {
+
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private List<ContagemDevolucaoDTO> listaContagemDevolucao;
 	
 	private Integer qtdTotalRegistro;
 	
+	@Export(label="Valor Total Geral", alignWithHeader="Total R$")
 	private BigDecimal valorTotalGeral;
-
+	
 	public InfoContagemDevolucaoDTO() {}
 	
 	
 	public InfoContagemDevolucaoDTO(
-			List<ContagemDevolucaoDTO> listaContagemDevolucao,
-			BigDecimal valorTotalGeral) {
+			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		super();
 		this.listaContagemDevolucao = listaContagemDevolucao;
-		this.valorTotalGeral = valorTotalGeral;
 	}
 
 
@@ -32,14 +40,7 @@ public class InfoContagemDevolucaoDTO implements Serializable {
 			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		this.listaContagemDevolucao = listaContagemDevolucao;
 	}
-
-	public BigDecimal getValorTotalGeral() {
-		return valorTotalGeral;
-	}
-
-	public void setValorTotalGeral(BigDecimal valorTotalGeral) {
-		this.valorTotalGeral = valorTotalGeral;
-	}
+	
 
 	public Integer getQtdTotalRegistro() {
 		return qtdTotalRegistro;
@@ -48,5 +49,28 @@ public class InfoContagemDevolucaoDTO implements Serializable {
 	public void setQtdTotalRegistro(Integer qtdTotalRegistro) {
 		this.qtdTotalRegistro = qtdTotalRegistro;
 	}
+
+
+	/**
+	 * Obtém valorTotalGeral
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getValorTotalGeral() {
+		return valorTotalGeral;
+	}
+
+
+	/**
+	 * Atribuí valorTotalGeral
+	 * @param valorTotalGeral 
+	 */
+	public void setValorTotalGeral(BigDecimal valorTotalGeral) {
+		this.valorTotalGeral = valorTotalGeral;
+	}
+
+	
+
+	
 	
 }
