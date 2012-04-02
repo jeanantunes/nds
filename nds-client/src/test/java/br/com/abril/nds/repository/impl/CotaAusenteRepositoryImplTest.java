@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -23,6 +25,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -70,14 +73,37 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void buscarCotaAusente(){
+
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(),
+				new PaginacaoVO(1, 15, "ASC"), 
+				ColunaOrdenacao.valueOf("data"));
 		
-				
-		CotaAusenteDTO cotaAusenteDTO = new CotaAusenteDTO();
-				
-		List<CotaAusenteDTO> listaCotaAusenteDTO =cotaAusenteRepository.obterCotasAusentes(data, cotaManoel.getId(), cotaAusenteDTO);
+		try{
+		List<CotaAusenteDTO> listaCotaAusenteDTO =cotaAusenteRepository.obterCotasAusentes(filtro);
 		
 		Assert.assertTrue(listaCotaAusenteDTO.size() == 1);
 		
+	} catch (Exception e) {
+		e.printStackTrace();
+	}	
+	}
+	
+	@Test
+	public void obterCountCotasAusentes(){
+
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(),
+				new PaginacaoVO(0, 15, "ASC"), 
+				ColunaOrdenacao.valueOf("data"));		
+		
+		try {
+		
+			Long count = cotaAusenteRepository.obterCountCotasAusentes(filtro);
+		
+			Assert.assertTrue(count.equals(1L));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 
 }
