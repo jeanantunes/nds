@@ -2,6 +2,25 @@ package br.com.abril.nds.model.cadastro;
 
 public enum MotivoAlteracaoSituacao {
 	
-	INADIMPLENCIA;
+	INADIMPLENCIA("Inadimplência"),
+	REFORMA("Reforma"),
+	VENDA_PDF("Venda do PDV"),
+	DOENCA("Doença"),
+	INCIDENTES("Incidentes"),
+	RECESSO_ESTUDANTIL("Recesso Estudantil"),
+	OUTROS("Outros");
 
+	private String descricao;
+	
+	private MotivoAlteracaoSituacao(String descricao) {
+		
+		this.descricao = descricao;
+	}
+	
+	@Override
+	public String toString() {
+
+		return this.descricao;
+	}
+	
 }

@@ -18,9 +18,11 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
@@ -151,7 +153,9 @@ public class RecebimentoFisicoController {
 		
 		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface);
+		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
@@ -195,14 +199,32 @@ public class RecebimentoFisicoController {
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
-		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
+		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());		
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface);
+		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(idNotaFiscal);
+		
+				
+		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
+	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {
+		
+		if(idNotaFiscal == null){
+			return false;
+		}
+		
+		RecebimentoFisico recebimentoFisico = recebimentoFisicoService.obterRecebimentoFisicoPorNotaFiscal(idNotaFiscal);
+		
+		if(recebimentoFisico.getStatusConfirmacao().equals(StatusConfirmacao.CONFIRMADO)){
+			return true;
+		}
+		
+		return false;		
+	}
+
 	/**
 	 * Valida os dados da nova Nota Fiscal.
 	 * 
@@ -210,15 +232,17 @@ public class RecebimentoFisicoController {
 	 * @param numeroNotaFiscal
 	 * @param serie
 	 */
-	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie) {
+	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie, String fornecedor) {
 		
 		List<String> msgs = new ArrayList<String>();
 		
-		if(cnpj == null || cnpj.isEmpty()) {
-			msgs.add("O campo CNPJ é obrigatório");
-		} else if(!verificarValidadeCnpj(cnpj)) {
-			msgs.add("O campo cnpj esta inválido");
-		}
+		if(!fornecedor.equals("-1")){
+			if(cnpj == null || cnpj.isEmpty()) {
+				msgs.add("O campo CNPJ é obrigatório");
+			} else if(!verificarValidadeCnpj(cnpj)) {
+				msgs.add("O campo cnpj esta inválido");
+			}
+		}	
 		
 		if(numeroNotaFiscal == null || numeroNotaFiscal.isEmpty()) {
 			msgs.add("O campo Nota Fiscal é obrigatório");
@@ -426,14 +450,14 @@ public class RecebimentoFisicoController {
 				
 				apagarReceb = recebimento;
 				
-				recebimentoFisicoService.apagarItemRecebimentoItemNota(recebimento);
-				
 				break;
 			}
 			
 		}
 				
 		itensRecebimentoFisico.remove(apagarReceb);
+		
+		recebimentoFisicoService.apagarItemRecebimentoItemNota(apagarReceb);
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Item Nota fiscal removido com sucesso.");
@@ -552,7 +576,7 @@ public class RecebimentoFisicoController {
 	 * @param chaveAcesso
 	 */
 	@Post
-	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie,String indNFe, String chaveAcesso) {
+	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie,String indNFe,String fornecedor, String chaveAcesso) {
 
 		if(indNFe.equals("S")){
 			if(chaveAcesso == null || chaveAcesso.trim().isEmpty()){
@@ -560,7 +584,7 @@ public class RecebimentoFisicoController {
 			}
 		}
 		
-		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
+		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie, fornecedor);
 		
 		if(chaveAcesso == null || chaveAcesso.trim().isEmpty()) {
 			chaveAcesso = null;
@@ -574,6 +598,7 @@ public class RecebimentoFisicoController {
 		filtro.setNumeroNota(numeroNotaFiscal);
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
+		filtro.setNomeFornecedor(fornecedor);
 		
 		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
@@ -595,8 +620,8 @@ public class RecebimentoFisicoController {
 			msgs.add("Nota fiscal não encontrada");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
-										
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false), "result").include("validacao").include("validacao.listaMensagens").serialize();
+													
+			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false, false ), "result").include("validacao").include("validacao.listaMensagens").serialize();
 		
 		} else {
 			
@@ -613,8 +638,10 @@ public class RecebimentoFisicoController {
 			if(notaFiscal.getOrigem().equals(Origem.INTERFACE)){
 				indNotaInterface = true;
 			}
+			
+			boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 						
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface), "result").include("validacao").include("validacao.listaMensagens").serialize();
+			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface, indRecebimentoFisicoConfirmado ), "result").include("validacao").include("validacao.listaMensagens").serialize();
 
 		}
 				
@@ -624,17 +651,21 @@ public class RecebimentoFisicoController {
 		
 		private ValidacaoVO validacao;
 		private boolean indNotaInterface;		
-		
+        private boolean indRecebimentoFisicoConfirmado;
+			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
-				boolean indNotaInterface) {
+				boolean indNotaInterface,
+				boolean indRecebimentoFisicoConfirmado) {
 			super();
 			this.validacao = validacao;
 			this.indNotaInterface = indNotaInterface;
+			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
 		}
 		
 		public ValidacaoVO getValidacao() {
 			return validacao;
 		}
+		
 		public void setValidacao(ValidacaoVO validacao) {
 			this.validacao = validacao;
 		}
@@ -644,8 +675,15 @@ public class RecebimentoFisicoController {
 		public void setIndNotaInterface(boolean indNotaInterface) {
 			this.indNotaInterface = indNotaInterface;
 		}
-		
-		
+		public boolean isIndRecebimentoFisicoConfirmado() {
+			return indRecebimentoFisicoConfirmado;
+		}
+
+		public void setIndRecebimentoFisicoConfirmado(
+				boolean indRecebimentoFisicoConfirmado) {
+			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
+		}
+
 	}
 	
 	/**
@@ -656,7 +694,7 @@ public class RecebimentoFisicoController {
 	 * 
 	 * @return TableModel.
 	 */
-	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico, boolean indNotaInterface) {
+	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico, boolean indNotaInterface, boolean indRecebimentoFisicoConfirmado) {
 					
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 		
@@ -676,7 +714,14 @@ public class RecebimentoFisicoController {
 			String qtdeFisica		 	 = (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
 			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
 			String valorTotal		 	 = (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
-			String alteracaoPermitida	 = (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String alteracaoPermitida = "";
+			if(indRecebimentoFisicoConfirmado){
+				alteracaoPermitida	 = "N";
+			}else{
+				alteracaoPermitida	 = (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			}
+			
+			
 			String destacarValorNegativo = (dto.getDiferenca() != null && dto.getDiferenca().doubleValue() < 0.0D) ? "S" : "N";
 			
 			if(indNotaInterface){

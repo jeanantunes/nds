@@ -251,7 +251,12 @@
                 <artifactId>itext</artifactId>
                 <version>2.1.7</version>
 		    </dependency>  
-      </dependencies>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>2.1.2</version>
+			</dependency>
+		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
@@ -303,7 +308,10 @@
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports-fonts-nds</artifactId>
         </dependency>
-  
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
 	</dependencies>
 
 	<repositories>

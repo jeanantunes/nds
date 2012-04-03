@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +48,25 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		return query.list();
 	}
+	
+	@Override
+	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
+		
+		StringBuilder hql = new StringBuilder("select count(mfc.data) ");
+		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
+		   .append(" where mfc.data = d.dataOperacao ")
+		   .append(" and mfc.status = :statusAprovado ");
+		
+		hql.append(" and mfc.cota.id not in ")
+		   .append(" (select distinct c.cota.id from ConsolidadoFinanceiroCota c where c.dataConsolidado <= :dataAtual) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		query.setParameter("dataAtual", dataAtual);
+		
+		
+		return (Long) query.uniqueResult();
+	}
 
 	@Override
 	public Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
@@ -57,6 +77,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
 
 		return ((Long) query.uniqueResult()).intValue();
+	}
+
+	@Override
+	public BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		String hql = " select sum(movimentoFinanceiroCota.valor) " + 
+					 getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		return (BigDecimal) query.uniqueResult();
 	}
 	
 	/**
@@ -72,9 +103,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
 
-		query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
-		
-		query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		if (filtroDebitoCreditoDTO.getPaginacao() != null 
+				&& filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			
+			query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}

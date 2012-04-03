@@ -175,15 +175,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque,
-			boolean indBuscaTotalMovimentoEParcial) {
+			boolean indBuscaTotalParcial) {
 		
-		String hql = getConsultaListaContagemDevolucao(filtro, indBuscaTotalMovimentoEParcial, false);
+		String hql = getConsultaListaContagemDevolucao(filtro, indBuscaTotalParcial, false);
 		
-		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, tipoMovimentoEstoque, indBuscaTotalMovimentoEParcial, false);
+		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, tipoMovimentoEstoque, indBuscaTotalParcial, false);
 		
-		query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-
-		query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao()!=null) {
+			
+			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+			
+		}
+		
 		
 		return query.list();
 		

@@ -20,11 +20,13 @@ public class ValidacaoException extends RuntimeException implements Serializable
 
 	private ValidacaoVO validacao;	
 	
+	private String url;
+	
 	/**
 	 * Construtor.
 	 * 
-	 * @param tipoMensagem
-	 * @param mensagem
+	 * @param tipoMensagem - tipo de mensagem
+	 * @param mensagem - mensagem
 	 */
 	public ValidacaoException(TipoMensagem tipoMensagem, String mensagem) {
 		
@@ -34,10 +36,35 @@ public class ValidacaoException extends RuntimeException implements Serializable
 	/**
 	 * Construtor.
 	 * 
-	 * @param validacao
+	 * @param validacao - objeto de validação
 	 */
 	public ValidacaoException(ValidacaoVO validacao) {
 		
+		this.validacao = validacao;
+	}
+	
+	/**
+	 * Construtor.
+	 * 
+	 * @param url - url para forward
+	 * @param tipoMensagem - tipo de mensagem
+	 * @param mensagem - mensagem
+	 */
+	public ValidacaoException(String url, TipoMensagem tipoMensagem, String mensagem) {
+		
+		this.url = url; 
+		this.validacao = new ValidacaoVO(tipoMensagem, mensagem);
+	}
+	
+	/**
+	 * Construtor.
+	 * 
+	 * @param url - url para forward
+	 * @param validacao - objeto de validação
+	 */
+	public ValidacaoException(String url, ValidacaoVO validacao) {
+		
+		this.url = url;
 		this.validacao = validacao;
 	}
 	
@@ -52,4 +79,12 @@ public class ValidacaoException extends RuntimeException implements Serializable
 	public ValidacaoVO getValidacao() {
 		return validacao;
 	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+	
 }

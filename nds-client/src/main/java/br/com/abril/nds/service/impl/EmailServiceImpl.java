@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,6 +8,7 @@ import java.util.List;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TemplateManager;
 import br.com.abril.nds.util.TemplateManager.TemplateNames;
 
@@ -53,7 +54,7 @@ public class EmailServiceImpl implements EmailService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public void enviar(String assunto, String mensagem, String[] destinatarios,List<File> anexos) throws AutenticacaoEmailException {
+	public void enviar(String assunto, String mensagem, String[] destinatarios,List<AnexoEmail> anexos) throws AutenticacaoEmailException {
 		
 		this.enviarEmail(assunto, mensagem, destinatarios, anexos,false);
 		
@@ -61,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public void enviar(String assunto, String mensagem, String[] destinatarios,File anexo) throws AutenticacaoEmailException {
+	public void enviar(String assunto, String mensagem, String[] destinatarios,AnexoEmail anexo) throws AutenticacaoEmailException {
 		
 		this.enviarEmail(assunto, mensagem, destinatarios, Arrays.asList(anexo),false);
 		
@@ -73,20 +74,20 @@ public class EmailServiceImpl implements EmailService {
 		
 		String mensagem = TemplateManager.getTemplate(template, parametros);
 		
-		List<File> anexosTemplate = TemplateManager.getAnexosTemplate(template);
+		List<AnexoEmail> anexosTemplate = TemplateManager.getAnexosTemplate(template);
 		
 		enviarEmail(assunto, mensagem, destinatarios, anexosTemplate,true);
 	}
 	
 	@Override
 	@Transactional(readOnly=true)
-	public void enviar(String assunto, String[] destinatarios, File[] anexo,TemplateNames template, HashMap<String, Object> parametros)throws AutenticacaoEmailException {
+	public void enviar(String assunto, String[] destinatarios, AnexoEmail[] anexo,TemplateNames template, HashMap<String, Object> parametros)throws AutenticacaoEmailException {
 		
 		String mensagem = TemplateManager.getTemplate(template, parametros);
 		
-		List<File> anexosTemplate = TemplateManager.getAnexosTemplate(template);
+		List<AnexoEmail> anexosTemplate = TemplateManager.getAnexosTemplate(template);
 		
-		List<File> anexos = new ArrayList<File>();
+		List<AnexoEmail> anexos = new ArrayList<AnexoEmail>();
 	
 		if(anexosTemplate!= null && !anexosTemplate.isEmpty()){
 			anexos.addAll(anexosTemplate);
@@ -107,7 +108,7 @@ public class EmailServiceImpl implements EmailService {
 	 * @param isHtml
 	 * @throws AutenticacaoEmailException
 	 */
-	private void enviarEmail(String assunto, String mensagem, String[] destinatarios,List<File> anexos, boolean isHtml) throws AutenticacaoEmailException{
+	private void enviarEmail(String assunto, String mensagem, String[] destinatarios,List<AnexoEmail> anexos, boolean isHtml) throws AutenticacaoEmailException{
 		
 		autenticarSmtp();
 		
@@ -123,14 +124,15 @@ public class EmailServiceImpl implements EmailService {
 			
 			if(anexos!= null && !anexos.isEmpty()){
 				
-				for(File file : anexos){
+				for(AnexoEmail anexo : anexos){
 					
-					if(file.exists()){
-						mimeMessageHelper.addAttachment(file.getName(),file);
-					}
+					ByteArrayResource byteArrayResource = new ByteArrayResource(anexo.getAnexo());
+					
+					mimeMessageHelper.addAttachment(anexo.getNome(),byteArrayResource);
+					
 				}
 			}
-		
+			
 			mailSender.send(message);
 			
 		} catch (Exception e) {

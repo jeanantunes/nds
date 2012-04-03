@@ -9,6 +9,8 @@
 
 var indNotaFiscalInterface = false;
 
+var indRecebimentoFisicoConfirmado = false;
+
 var jsDadosProduto = {
 
 exibirDetalhesProdutoEdicao : function() {
@@ -89,9 +91,16 @@ validarEdicaoCallBack : function() {
 	 */
 	function exibirCnpjDoFornecedor() {
 			
-		var cnpjDoFornecedor = $("#fornecedor").val();		
+		var cnpjDoFornecedor = $("#fornecedor").val();	
+		
+		if(cnpjDoFornecedor == -1){
+			document.getElementById('cnpj').value="";
+			document.getElementById('cnpj').disabled=true;			
+		}else{
+			$("#cnpj").val(cnpjDoFornecedor);
+			document.getElementById('cnpj').disabled=false;
+		}
 	
-		$("#cnpj").val(cnpjDoFornecedor);
 	}
 	
 	
@@ -109,6 +118,7 @@ validarEdicaoCallBack : function() {
 		var notaFiscal 	= $("#notaFiscal").val();
 		var serie 		= $("#serie").val();		
 		var chaveAcesso = $("#chaveAcesso").val();
+		var fornecedor  = $("#fornecedor").val();
         var indNFe      = "N";
         
         if(checkBox.checked){
@@ -121,6 +131,7 @@ validarEdicaoCallBack : function() {
 			"numeroNotaFiscal=" + notaFiscal 	+ "&" + 
 		   	"serie=" 			+ serie			+ "&" +
 		 	"indNFe=" 			+ indNFe		+ "&" +
+		 	"fornecedor=" 		+ fornecedor	+ "&" +
 		    "chaveAcesso=" 		+ chaveAcesso;
 		
 		limparCampos();
@@ -142,6 +153,9 @@ validarEdicaoCallBack : function() {
 		
 		indNotaFiscalInterface = result.indNotaInterface;
 		
+		indRecebimentoFisicoConfirmado = result.indRecebimentoFisicoConfirmado;
+		
+				
 		if (indNotaFiscalInterface){
     		carregarItemNotaGridNotaInterface();
     		
@@ -461,7 +475,7 @@ validarEdicaoCallBack : function() {
 				 precision:2
 			});
 			
-			
+			$("#produto").autocomplete({source: ""});
 	});
 	
 	/**
@@ -807,8 +821,8 @@ validarEdicaoCallBack : function() {
 	/**
 	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
 	 */
-	function getDataFromResultNotaManual(data) {
-				
+	function getDataFromResultNotaManual(data) {	
+		
 		$.each(data.rows, function(index, value) {
 			
 			var alteracaoPermitida = value.cell[6];
@@ -817,16 +831,30 @@ validarEdicaoCallBack : function() {
 	
 			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
-			if(alteracaoPermitida == "S") {
+			if(alteracaoPermitida == "S") {				
 				value.cell[6] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+			} else{
+				value.cell[6] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
 			} 
 			
 			
 		});
+		
+		if(data.rows)
 					
 		$(".grids").show();
 		
-		document.getElementById('bt_novo_produto').style.display="";
+		if(!indRecebimentoFisicoConfirmado){
+			document.getElementById('botoesNormais').style.display="";			
+			document.getElementById('botoesOpacos').style.display="none";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
+			document.getElementById('botaoNovoProduto').style.display="";
+		}else{
+			document.getElementById('botoesOpacos').style.display="";
+			document.getElementById('botoesNormais').style.display="none";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoNovoProduto').style.display="none";
+		}
 		
 		return data;
 
@@ -865,7 +893,19 @@ validarEdicaoCallBack : function() {
 		
 		$(".grids").show();
 		
-		document.getElementById('bt_novo_produto').style.display="none";
+		if(!indRecebimentoFisicoConfirmado){
+			document.getElementById('botoesNormais').style.display="";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoNovoProduto').style.display="none";
+			document.getElementById('botoesOpacos').style.display="none";
+		}else{
+			document.getElementById('botoesOpacos').style.display="";
+			document.getElementById('botoesNormais').style.display="none";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoNovoProduto').style.display="none";
+			
+		}	
+		
 		
 		return data;
 
@@ -1002,7 +1042,7 @@ validarEdicaoCallBack : function() {
 						id="produto"
 						
 					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       	   onchange="jsDadosProduto.pesquisarProdutoPorNome();"/>
+					       	   onblur="jsDadosProduto.pesquisarProdutoPorNome();"/>
 				</td>
 			</tr>
 			<tr>
@@ -1107,21 +1147,23 @@ validarEdicaoCallBack : function() {
 				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 
 					<tr>
-						<td width="43" align="right">CNPJ:</td>
-						<td width="136"><input id="cnpj"
-							onblur="pesquisarPorCnpjFornecedor();" name="cnpj"
-							style="width: 130px;" />
-						</td>
 						<td width="86">Fornecedor:</td>
 						
 						<td width="254"><select id="fornecedor" name="fornecedor"
 							onblur="exibirCnpjDoFornecedor()" style="width: 250px;">
 								<option value=""></option>
+								<option value="-1">Todos</option>
 								<c:forEach var="fornecedor" items="${listafornecedores}">
 									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
 						</select></td>
 						
+						<td width="43" align="right">CNPJ:</td>
+						<td width="136"><input id="cnpj"
+							onblur="pesquisarPorCnpjFornecedor();" name="cnpj"
+							style="width: 130px;" />
+						</td>
+												
 						<td width="76">Nota Fiscal:</td>
 						<td width="123"><input type="text" id=notaFiscal
 							style="width: 100px;" />
@@ -1174,35 +1216,73 @@ validarEdicaoCallBack : function() {
 						<table class="itemNotaGrid"></table>
 					
 					</div>
-									
-					<span class="bt_incluir_novo" id="bt_novo_produto" style="display: none;" title="Incluir Nova Linha"> 
-						<a href="javascript:;" onclick="popup_novo_item();"> 
-							<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-							Novo Produto 
-						</a> 
-					</span> 
-									
-					<span class="bt_novos" title="Salvar"> 
-						<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
-							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-							Salvar 
-						</a> 
-					</span>
 					
-					<span class="bt_novos" title="Cancelar"> 
-						<a href="javascript:;" onclick="cancelarNotaRecebimentoFisico()">
-							<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-							Cancelar 
-						</a> 
-					</span>
+					<div id="botaoNovoProdutoOpaco">
+							<span class="bt_incluir_novo" id="bt_novo_produtoOpaco" title="Incluir Nova Linha"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Novo Produto 
+								</a> 
+							</span>
+					</div>
+					<div id="botaoNovoProduto">
+							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
+								<a href="javascript:;" onclick="popup_novo_item();"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Novo Produto 
+								</a> 
+							</span>
+					</div>	
 					
-					<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
-						<a href="javascript:;" onclick="confirmarRecebimentoFisico()">
-							<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
-							Confirmar
-						</a>
-					</span>
-
+					<div id="botoesNormais">	
+														
+						<span class="bt_novos" title="Salvar"> 
+							<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
+								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+								Salvar 
+							</a> 
+						</span>
+						
+						<span class="bt_novos" title="Cancelar"> 
+							<a href="javascript:;" onclick="cancelarNotaRecebimentoFisico()">
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+								Cancelar 
+							</a> 
+						</span>
+						
+						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
+							<a href="javascript:;" onclick="confirmarRecebimentoFisico()">
+								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
+								Confirmar
+							</a>
+						</span>
+					</div>	
+					
+					<div id="botoesOpacos">
+						
+						<span class="bt_novos" title="Salvar"> 
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+								Salvar 
+							</a> 
+						</span>
+						
+						<span class="bt_novos" title="Cancelar"> 
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+								Cancelar 
+							</a> 
+						</span>
+						
+						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
+								Confirmar
+							</a>
+						</span>						
+						 
+					</div>
+					
 				</div>
 
 			</fieldset>

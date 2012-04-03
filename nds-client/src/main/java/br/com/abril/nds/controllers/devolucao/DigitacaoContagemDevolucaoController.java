@@ -1,9 +1,12 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +19,26 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ContagemDevolucaoService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.MockPerfilUsuario;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -60,16 +69,16 @@ public class DigitacaoContagemDevolucaoController  {
 	@Autowired
 	private ContagemDevolucaoService contagemDevolucaoService;
 	
+	@Autowired
+	private HttpServletResponse httpResponse;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisa";
 	
-	//TODO: funcionalidade de perfil mockado
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
-	
-	//TODO: funcionalidade de perfil mockado
-	private static final boolean IND_USUARIO_PERFIL_OPERADOR = false;
 
-	//TODO: funcionalidade de perfil mockado
-	private static final MockPerfilUsuario mockPerfilUsuario = MockPerfilUsuario.USUARIO_ENCARREGADO;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	
 	@Path("/")
@@ -78,7 +87,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, IND_USUARIO_PERFIL_OPERADOR);
+		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -120,21 +129,125 @@ public class DigitacaoContagemDevolucaoController  {
 		efetuarPesquisa(filtro);
 	}
 	
+	/*
+	 * Obtém o filtro para exportação.
+	 */
+	private FiltroDigitacaoContagemDevolucaoDTO obterFiltroExportacao() {
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor()>0) {
+				
+				Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(filtro.getIdFornecedor());
+				
+				if (fornecedor != null) {
+					
+					PessoaJuridica juridica = fornecedor.getJuridica();
+					
+					if(juridica!=null) {
+						
+						filtro.setNomeFornecedor(juridica.getRazaoSocial());
+						
+					}
+												
+				}
+				
+			} else {
+				
+				filtro.setNomeFornecedor("TODOS");
+				
+			}
+		}
+		
+		return filtro;
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+
+		FiltroDigitacaoContagemDevolucaoDTO filtro = obterFiltroExportacao();
+
+		InfoContagemDevolucaoDTO info = contagemDevolucaoService
+				.obterInfoContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
+
+		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, info, info.getListaContagemDevolucao(),
+				ContagemDevolucaoDTO.class, this.httpResponse);
+		
+	}
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private boolean isPerfilUsuarioEncarregado() {
+		return true;
+	}
+	
 	/**
 	 * Executa a pesquisa de digitação de contagem de devolução 
 	 * @param filtro
 	 */
 	private void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
 		
-		InfoContagemDevolucaoDTO infoConatege = contagemDevolucaoService.obterInfoContagemDevolucao(filtro, null);
+		InfoContagemDevolucaoDTO infoContagem = contagemDevolucaoService.obterInfoContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
 		
-		List<ContagemDevolucaoDTO> listaResultados = infoConatege.getListaContagemDevolucao();
+		List<ContagemDevolucaoDTO> listaResultados = infoContagem.getListaContagemDevolucao();
 		
 		if (listaResultados == null || listaResultados.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		Long quantidadeRegistros = infoConatege.getQtdTotalRegistro().longValue(); 
+		Long quantidadeRegistros = infoContagem.getQtdTotalRegistro().longValue(); 
 		
 		List<DigitacaoContagemDevolucaoVO> listaResultadosVO = getListaDigitacaoContagemDevolucaoVO(listaResultados);
 		
@@ -145,8 +258,13 @@ public class DigitacaoContagemDevolucaoController  {
 		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
 
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		String valorTotalFormatado = CurrencyUtil.formatarValor(infoConatege.getValorTotalGeral());
+		
+		String valorTotalFormatado = "";
+		
+		if(	infoContagem!=null && infoContagem.getValorTotalGeral()!=null ) {
+			
+			valorTotalFormatado = CurrencyUtil.formatarValor(infoContagem.getValorTotalGeral());
+		}
 		
 		ResultadoDigitacaoContagemDevolucaoVO resultadoPesquisa = new ResultadoDigitacaoContagemDevolucaoVO(tableModel,valorTotalFormatado);
 
@@ -164,11 +282,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		//TODO: obter usuario da session
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		
-		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, usuario, mockPerfilUsuario);
+		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuario(), isPerfilUsuarioEncarregado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -187,11 +301,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		//TODO: obter usuario da session
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		
-		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, usuario);
+		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuario());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -221,7 +331,7 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO.setDiferenca(String.valueOf( (dto.getDiferenca() == null)?BigDecimal.ZERO.intValue():dto.getDiferenca().intValue()));
 			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
-			digitacaoContagemDevolucaoVO.setValorTotal(CurrencyUtil.formatarValor(dto.getValorTotal()));
+			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);

@@ -22,11 +22,13 @@
 
 		var i;
 
-		for (i = 0 ; i < data.rows.length; i++) {
+		for (i = 0 ; i < data.tableModel.rows.length; i++) {
 
-			var lastIndex = data.rows[i].cell.length;
+			var lastIndex = data.tableModel.rows[i].cell.length;
 
-			data.rows[i].cell[lastIndex] = getAction(data.rows[i].id);
+			var isLancamentoManual = data.tableModel.rows[i].cell[lastIndex - 1];
+			
+			data.tableModel.rows[i].cell[lastIndex - 1] = getAction(data.tableModel.rows[i].id, isLancamentoManual);
 		}
 
 		if ($(".grids").css('display') == 'none') {
@@ -34,12 +36,19 @@
 			$(".grids").show();
 		}
 
-		return data;
+		$("#footerValorTotal").html("Total: R$ " + data.valorTotal);
+		
+		return data.tableModel;
 	}
 
-	function getAction(idMovimento) {
+	function getAction(idMovimento, isLancamentoManual) {
 
-		return '<a href="javascript:;" onclick="editarMovimento(' + idMovimento + ')" ' +
+		var acoes;
+		
+		if (isLancamentoManual == "true") {
+			
+			acoes = 
+				'<a href="javascript:;" onclick="editarMovimento(' + idMovimento + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
 				'</a>' +
@@ -47,6 +56,19 @@
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
+			
+		} else {
+			
+			acoes = 
+				'<span style="border:0px;margin:5px">' +
+				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px" style="opacity:0.4"/>' +
+				'</span>' +
+				'<span style="border:0px;margin:5px">' +
+				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px" style="opacity:0.4"/>' +
+				'</span>';
+		}
+		
+		return acoes;		
 	}
 	
 	function popularGridDebitosCreditos() {
@@ -206,11 +228,12 @@
 
 			},
 			function(result) {
-				
+
 				exibirMensagemDialog(
-					result.tipoMensagem, 
-					result.listaMensagens
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
 				);
+
 			},
 			true
 		);
@@ -234,9 +257,11 @@
 			},
 			function(result) {
 
+				$("#dialog-excluir").dialog( "close" );
+				
 				exibirMensagemDialog(
-					result.tipoMensagem, 
-					result.listaMensagens
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
 				);
 			}
 		);
@@ -320,11 +345,8 @@
 			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#edicaoDataLancamento" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-			buttonImageOnly: true
-		});
+		
+		$('#edicaoDataLancamento').datepicker("option", {minDate:-1,maxDate:-2})
 		
 		$( "#edicaoDataVencimento" ).datepicker({
 			showOn: "button",
@@ -333,24 +355,6 @@
 		});
 		
 	});
-
-	$(function() {
-		var availableTags = [
-			"344 - Crédito ao Cota",
-			"344 - Crédito ao Cota Ausente"			
-		];
-		$( "#tipoMovimento" ).autocomplete({
-			source: availableTags
-		});
-		var availableTags_1 = [
-			"344 - Crédito ao Cota",
-			"344 - Crédito ao Cota Ausente"			
-		];
-		$( "#tipoMovimento_1" ).autocomplete({
-			source: availableTags_1
-		});
-	});
-	
 </script>
 
 </head>
@@ -362,6 +366,14 @@
 </div>
 
 <div id="dialog-editar" title="Editar Tipo de Movimento">
+<div class="effectDialog ui-state-highlight ui-corner-all" 
+	 style="display: none; position: absolute; z-index: 2000; width: 450px;">
+	 
+	<p>
+		<span style="float: left;" class="ui-icon ui-icon-info"></span>
+		<b class="effectDialogText"></b>
+	</p>
+</div>
 <form id="formEdicaoMovimentoFinanceiro">
 <input type="hidden" name="debitoCredito.id" id="edicaoId" />
 <table width="450" border="0" cellspacing="2" cellpadding="2">
@@ -391,7 +403,7 @@
   <tr>
     <td width="126">Data Lançamento:</td>
     <td width="310">
-    	<input type="text" name="debitoCredito.dataLancamento" id="edicaoDataLancamento" style="width:80px;" />
+    	<input type="text" name="debitoCredito.dataLancamento" id="edicaoDataLancamento" readonly="readonly" style="width:80px;" />
     </td>
   </tr>
   <tr>
@@ -484,13 +496,25 @@
        	  <table class="debitosCreditosGrid"></table>
          
           <br />
+	
+		<span class="bt_novos" title="Gerar Arquivo">
+			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=XLS">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
+					Arquivo
+			</a>
+		</span>
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=PDF">
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>
          
-          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-          <span style="float:right; margin-right:260px">Total: R$ 999.999,99</span>
+          <span style="float:right; margin-right:260px" id="footerValorTotal"></span>
  </div>
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popupNovoDialog();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+ <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popupNovoDialog();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" 
+ 	   hspace="5" border="0"/>Novo</a></span>
 
 
       </fieldset>
@@ -500,5 +524,14 @@
 </div> 
 
 <jsp:include page="novoDialog.jsp" />
+
+<script>
+
+$("input[id^='edicaoValor']").maskMoney({
+	 thousands:'.', 
+	 decimal:',', 
+	 precision:2
+});
+</script>
 
 </body>

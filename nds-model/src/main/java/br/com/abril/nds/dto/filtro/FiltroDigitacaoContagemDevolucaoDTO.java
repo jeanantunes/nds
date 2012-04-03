@@ -1,7 +1,10 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 
@@ -11,6 +14,7 @@ import br.com.abril.nds.vo.PeriodoVO;
  * @author Discover Technology
  *
  */
+@Exportable
 public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -18,6 +22,9 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	private PeriodoVO periodo;
 	
 	private Long idFornecedor;
+	
+	@Export(label="Fornecedor")
+	private String nomeFornecedor;
 	
 	private PaginacaoVO paginacao;
 	
@@ -64,6 +71,28 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		}
 		
 	}
+	
+	@Export(label="Data Inicial")
+	public Date getDataInicial(){
+		
+		if(periodo==null) {
+			return null;
+		}
+		return periodo.getDataInicial();
+		
+	}
+
+	@Export(label="Data Final")
+	public Date getDataFinal(){
+		
+		if(periodo==null) {
+			return null;
+		}
+		return periodo.getDataFinal();
+		
+	}
+
+	
 	/**
 	 * @return the idFornecedor
 	 */
@@ -119,6 +148,24 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	 */
 	public void setPeriodo(PeriodoVO periodo) {
 		this.periodo = periodo;
+	}
+
+	
+	/**
+	 * Obtém nomeFornecedor
+	 *
+	 * @return String
+	 */
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	/**
+	 * Atribuí nomeFornecedor
+	 * @param nomeFornecedor 
+	 */
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
 	}
 
 

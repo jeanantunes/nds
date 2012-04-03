@@ -24,34 +24,91 @@ function cliquePesquisar() {
 	$(".ausentesGrid").flexReload();
 }
 
-function processaRetornoPesquisa(data) {
-	alert("_" + data[0]+data[1]+data[2]);	
+function processaRetornoPesquisa(result) {
+	
+	//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
+	if (result.mensagens) {
+		exibirMensagem(
+				result.mensagens.tipoMensagem, 
+				result.mensagens.listaMensagens
+		);
+		$(".grids").hide();
+		return result.tableModel;
+	}
+	
+	$.each(result.rows, function(index, row) {
+		
+		row.cell.acao = gerarBotaoExcluir(row.cell.idCotaAusente);		
+		
+  	});
+	
+	return result;
 }
 
-function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+function gerarBotaoExcluir(idCotaAusente) {
+	return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
+	 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+		
+}
+
+function popupNovaCotaAusente() {
 	
-		$( "#dialog-novo" ).dialog({
+	$( "#dialog-novo" ).dialog({
+		resizable: false,
+		height:'auto',
+		width:540,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				var numcota = $('#idNovaCota').attr('value');
+				
+				$.postJSON("<c:url value='/cotaAusente/gerarNovaCotaAusente'/>", 
+						"numCota="+numcota, 
+						popupConfirmaAusenciaCota);
+				
+				$( this ).dialog( "close" );
+				
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+}
+
+
+function popupConfirmaAusenciaCota(result) {
+	
+		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
-			width:540,
+			width:350,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Sim": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
+							"numCota="+numcota, 
+							retornoEnvioSuplementar);
+					
 					$( this ).dialog( "close" );
-					popup_confirm();
+					$(".grids").show();
+					
 					
 				},
-				"Cancelar": function() {
+				"Não": function() {
 					$( this ).dialog( "close" );
+					popup_suplementar();
 				}
 			}
 		});
-	};
+}
 	
 	
+
 	
-	function popup_suplementar() {
+function popup_suplementar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-suplementar" ).dialog({
@@ -71,31 +128,8 @@ function popup() {
 				}
 			}
 		});
-	};
-	
-	function popup_confirm() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-confirm" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:350,
-			modal: true,
-			buttons: {
-				"Sim": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-					
-					
-				},
-				"Não": function() {
-					$( this ).dialog( "close" );
-					popup_suplementar();
-				}
-			}
-		});
-	};
-	
+}
+		
 function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -106,6 +140,9 @@ function popup_alterar() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
@@ -116,10 +153,15 @@ function popup_alterar() {
 				}
 			}
 		});
-	};	
+}	
 
-function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+function retornoExlusaoCotaAusente(result) {
+	alert("retorno exclusao cota ausente");
+}
+	
+function popup_excluir(idCotaAusente) {
+	
+		
 	
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -128,6 +170,11 @@ function popup_excluir() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/cancelarCotaAusente'/>", 
+							"idCotaAusente="+idCotaAusente, 
+							retornoExlusaoCotaAusente);
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
@@ -138,8 +185,9 @@ function popup_excluir() {
 				}
 			}
 		});
-	};	
+}
 
+	
 
 $(function() {
 		$( "#idData" ).datepicker({
@@ -156,10 +204,11 @@ $(function() {
 		$( "#idData" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
 		$("#idData").mask("99/99/9999");
 		
-	});		
+});	
+
 $(function() {
 		$( "#tabs-pop" ).tabs();
-	});
+});
 
 </script>
 <script>
@@ -237,7 +286,27 @@ function mostra_grid(){
     <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td>Cota:</td>
-              <td width="446" colspan="3"><input type="text" style="width:80px; float:left; margin-right:5px;"/><span class="classPesquisar">&nbsp;</span><label style="margin-left:10px;">Nome:</label><input type="text" class="nome_jornaleiro" style="width:280px; margin-left:5px;"/></td>
+             
+              <td width="446" colspan="3">
+ <!-- NOVA COTA - NUM -->     
+<input id="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+	onchange="cota.limparCamposPesquisa('#idNomeNovaCota');"
+	onblur="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');"/>
+
+<!-- PESQUISAR NOVA COTA -->           
+<span class="classPesquisar"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');">&nbsp;</a></span>
+           		<label style="margin-left:10px;">
+           			Nome:
+           		
+           		</label>
+           		
+ <!-- NOVA COTA - NOME -->
+<input id="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
+	onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota');"
+	/>         		
+       			</td>
+            
             </tr>
           </table>
     </div>
@@ -303,7 +372,7 @@ function mostra_grid(){
         </div>
         <span class="bt_novos" title="Novo">
 <!-- NOVO -->
-<a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+<a href="javascript:;" onclick="popupNovaCotaAusente();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -348,7 +417,7 @@ function mostra_grid(){
 				align : 'left'
 			}, {
 				display : 'Valor NE R$',
-				name : 'vlrNE',
+				name : 'valorNe',
 				width : 100,
 				sortable : true,
 				align : 'right'
@@ -356,7 +425,7 @@ function mostra_grid(){
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "data",
