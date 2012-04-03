@@ -42,4 +42,6 @@ public interface BoletoService {
 	
 	CobrancaVO obterDadosCobranca(String nossoNumero);
 	
+	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException;
+	
 }

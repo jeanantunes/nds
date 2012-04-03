@@ -6,8 +6,8 @@
     
     <fieldset>
     	<legend>Nota de Envio</legend>
-        <table width="350" border="0" cellspacing="2" cellpadding="2">
-      <tr>
+        <table id="idMovimentos" width="350" border="0" cellspacing="2" cellpadding="2">
+      <tr id="idCabecalhoMovimentos">
         <td width="49" bgcolor="#F5F5F5"><strong>Código</strong></td>
         <td width="112" bgcolor="#F5F5F5"><strong>Produto</strong></td>
         <td width="61" bgcolor="#F5F5F5"><strong>Edição</strong></td>

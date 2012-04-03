@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -38,7 +39,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@Column(name = "LANCAMENTO_MANUAL", nullable = false)
 	private boolean lancamentoManual;
 	
-	@OneToMany(mappedBy = "movimentoFinanceiroCota")
+	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
 	
 	public Cota getCota() {
