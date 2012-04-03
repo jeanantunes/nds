@@ -429,9 +429,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						historicoAcumuloDivida.setDivida(divida);
 						historicoAcumuloDivida.setResponsavel(usuario);
 						historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
+						
+						novaDivida.setValor(valorCalculadoJuros);
 					}
-					
-					novaDivida.setValor(valorCalculadoJuros);
 				}
 			}
 		}
@@ -497,6 +497,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						
 						this.cobrancaRepository.incrementarVia(cobranca.getNossoNumero());
 					} catch (AutenticacaoEmailException e) {
+						e.printStackTrace();
 						//TOOD o que fazer ao gerar erro no envio de email além de continuar a mandar demais emails? log? chama o nalista? põe fogo no jornaleiro?
 					}
 				}

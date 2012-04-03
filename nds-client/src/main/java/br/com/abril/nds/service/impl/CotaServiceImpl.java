@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,8 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -30,6 +33,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -59,6 +63,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
@@ -134,6 +141,39 @@ public class CotaServiceImpl implements CotaService {
 			
 			this.removerEnderecosCota(cota, listaEnderecoAssociacaoRemover);
 		}
+	}
+	
+	@Transactional
+	public void processarTelefones(Long idCota, 
+			List<TelefoneCota> listaTelefonesAdicionar, 
+			Collection<Long> listaTelefonesRemover){
+		
+		if (idCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+		}
+		
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		
+		if (cota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		}
+		
+		for (TelefoneCota tCota : listaTelefonesAdicionar){
+			tCota.setCota(cota);
+		}
+		
+		this.telefoneService.cadastrarTelefonesCota(listaTelefonesAdicionar, listaTelefonesRemover);
+		
+		List<Telefone> listaTelefone = new ArrayList<Telefone>();
+		
+		for (TelefoneCota telefoneCota : listaTelefonesAdicionar){
+			listaTelefone.add(telefoneCota.getTelefone());
+		}
+		
+		cota.getPessoa().setTelefones(listaTelefone);
+		
+		this.cotaRepository.alterar(cota);
+		
 	}
 	
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {

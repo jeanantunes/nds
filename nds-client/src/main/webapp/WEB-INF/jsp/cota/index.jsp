@@ -35,6 +35,8 @@
 		if (idCota) {
 			
 			popup_cpf(idCota);
+			
+			$("#_idCotaRef").val(idCota);
 		}
 	}
 	
@@ -88,7 +90,7 @@
 		$.ajax({
 			type: 'POST',
 			url: '<c:url value="/cadastro/cota/salvarCota" />',
-			data: { "idCota" : 8 }
+			data: { "idCota" : $("#_idCotaRef").val() }
 		});
 
 		limparFormsTabs();
@@ -155,7 +157,7 @@
 			<ul>
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
 			<li><a href="#tabpf-2" onclick="popularGridEnderecos()">Endereços</a></li>			
-			<li><a href="#tabpf-3">Telefones</a></li>
+			<li><a href="#tabpf-3" onclick="carregarTelefones()">Telefones</a></li>
 			<li><a href="#tabpf-4">PDV</a></li>
 			<li><a href="#tabpf-5">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
@@ -170,7 +172,9 @@
 	
 			</div>
 			
-			<div id="tabpf-3"> </div>
+			<div id="tabpf-3">
+				<jsp:include page="../telefone/index.jsp"></jsp:include>
+			</div>
 			<div id="tabpf-4"> </div>
 			<div id="tabpf-5"> </div>
 			<div id="tabpf-6"> </div>
@@ -179,5 +183,5 @@
 		</div>
 		
 	</div>
-	
+	<input type="hidden" id="_idCotaRef"/>
 </body>
