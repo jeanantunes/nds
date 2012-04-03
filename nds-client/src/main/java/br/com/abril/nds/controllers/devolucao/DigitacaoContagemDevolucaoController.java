@@ -72,7 +72,7 @@ public class DigitacaoContagemDevolucaoController  {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisa";
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
 
