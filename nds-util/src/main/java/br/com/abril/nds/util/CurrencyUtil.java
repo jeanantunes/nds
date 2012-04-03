@@ -6,6 +6,9 @@ import java.text.ParseException;
 import java.util.Currency;
 import java.util.Locale;
 
+import br.com.caelum.stella.inwords.FormatoDeReal;
+import br.com.caelum.stella.inwords.NumericToWordsConverter;
+
 /**
  * Classe utilitária para moedas.
  * 
@@ -25,7 +28,6 @@ public abstract class CurrencyUtil {
 	public static String formatarValor(Number valor, Locale locale) {
 		
 		if (valor == null) {
-			
 			return null;
 		}
 		
@@ -105,6 +107,11 @@ public abstract class CurrencyUtil {
 	public static BigDecimal converterValor(String valor) {
 
 		return converterValor(valor, null);
+	}
+	
+	public static String valorExtenso(BigDecimal valor) {
+		NumericToWordsConverter converter = new NumericToWordsConverter(new FormatoDeReal());  
+		return converter.toWords(valor.doubleValue());
 	}
 	
 }
