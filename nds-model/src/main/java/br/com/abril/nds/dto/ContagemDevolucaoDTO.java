@@ -5,7 +5,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class ContagemDevolucaoDTO implements Serializable {
 
 	/**
@@ -14,17 +17,37 @@ public class ContagemDevolucaoDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long idProdutoEdicao;
+	
+	@Export(label="Código")
 	private String codigoProduto;
+	
+	@Export(label="Produto")
 	private String nomeProduto;
+	
+	@Export(label="Edição")
 	private Long numeroEdicao;
+	
+	@Export(label="Preço Capa R$")
 	private BigDecimal precoVenda;
+	
+	@Export(label="Exemplar Devolução")
 	private BigDecimal qtdDevolucao;
+	
+	@Export(label="Total R$")
 	private BigDecimal valorTotal;
+	
+	@Export(label="Exemplar Nota")
 	private BigDecimal qtdNota;
+	
+	@Export(label="Diferença")
 	private BigDecimal diferenca;
+	
 	private Date dataMovimento;
+	
 	private Date dataConfEncalheParcial;
+	
 	private Date dataAprovacao;
+	
 	private StatusAprovacao statusAprovacao;
 	
 	public ContagemDevolucaoDTO(){}

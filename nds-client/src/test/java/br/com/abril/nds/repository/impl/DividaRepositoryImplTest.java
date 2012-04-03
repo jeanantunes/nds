@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -122,6 +121,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Divida divida = Fixture.divida(consolidado, cota, new Date(),
 				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		divida.setAcumulada(false);
 		save(divida);
 		
 		
@@ -135,6 +135,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(consolidado1);
 		
 		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		divida1.setAcumulada(false);
 		save(divida1);
 		
 	    Boleto boleto = Fixture.boleto("5", 
@@ -145,7 +146,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   new BigDecimal(100.00), 
                 					   "1", 
                 					   "1",
-                					   StatusCobranca.PAGO,
+                					   StatusCobranca.NAO_PAGO,
                 					   cota,
                 					   bancoHSBC,
                 					   divida,0);

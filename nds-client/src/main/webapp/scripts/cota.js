@@ -53,6 +53,8 @@ var cota = {
 	//Busca dados para o auto complete do nome da cota
 	autoCompletarPorNome : function(idCampoNomeCota, isFromModal) {
 		
+		cota.pesquisaRealizada = false;
+		
 		var nomeCota = $(idCampoNomeCota).val();
 		
 		nomeCota = $.trim(nomeCota);
@@ -70,29 +72,59 @@ var cota = {
 		}
 	},
 	
+	descricaoAtribuida : true,
+	
+	pesquisaRealizada : false,
+	
+	intervalo : null,
+	
 	//Exibe o auto complete no campo
 	exibirAutoComplete : function(result, idCampoNomeCota) {
 		
 		$(idCampoNomeCota).autocomplete({
 			source: result,
+			focus : function(event, ui) {
+				cota.descricaoAtribuida = false;
+			},
+			close : function(event, ui) {
+				cota.descricaoAtribuida = true;
+			},
+			select : function(event, ui) {
+				cota.descricaoAtribuida = true;
+			},
+			minLength: 4,
+			delay : 0,
 		});
 	},
 	
 	//Pesquisar por nome da cota
 	pesquisarPorNomeCota : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
-		//Seta um time out para esperar o auto complete do campo 
-		//de nome da cota a ser preenchido pelo jQuery
-		setTimeout(
-			function() {
-				cota.pesquisarPorNomeCotaAposTimedOut(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack); 
-			},  
-			200
-		);
+		setTimeout(function() { clearInterval(cota.intervalo); }, 10 * 1000);
+		
+		cota.intervalo = setInterval(function() {
+			
+			if (cota.descricaoAtribuida) {
+				
+				if (cota.pesquisaRealizada) {
+					
+					clearInterval(cota.intervalo);
+					
+					return;
+				}
+				
+				cota.pesquisarPorNomeCotaAposIntervalo(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack);
+			}
+			
+		}, 100);
 	},
 	
-	//Pesquisa por nome da cota após um time out
-	pesquisarPorNomeCotaAposTimedOut : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	//Pesquisa por nome da cota após o intervalo
+	pesquisarPorNomeCotaAposIntervalo : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+		
+		clearInterval(cota.intervalo);
+		
+		cota.pesquisaRealizada = true;
 		
 		var nomeCota = $(idCampoNomeCota).val();
 		

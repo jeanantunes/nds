@@ -234,7 +234,7 @@ var ContagemDevolucao = {
 			var listaDigitacaoContagemDevolucao = "";
 			
 			//Verifica o role do usuario para obter o indice da coluna com os valores do exemplar nota
-			var indexColunaExemplarNota = (ContagemDevolucao.isRoleOperador())?5:6;
+			var indexColunaExemplarNota = (ContagemDevolucao.isRoleOperador())?4:6;
 			
 			$.each(linhasDaGrid, function(index, value) {
 
@@ -423,12 +423,6 @@ function montarColunasPerfilOperador() {
 		width : 90,
 		sortable : true,
 		align : 'right'
-	},{
-		display : 'Total R$',
-		name : 'valorTotal',
-		width : 80,
-		sortable : false,
-		align : 'right'
 	}, {
 		display : 'Exemplar Nota',
 		name : 'qtdNota',
@@ -507,46 +501,65 @@ $(function() {
 		 <div class="grids" id="grids" style="display:none;">
 		 	
 		 	 <table class="contagemDevolucaoGrid" id="contagemDevolucaoGrid"></table>
-		 	
-		 	<table width="100%" border="0" cellspacing="2" cellpadding="2">
-				  <tr>
-				    <td width="51%">
-					    <span class="bt_novos" title="Gerar Arquivo">
-					    	<a href="javascript:;">
-					    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
-					    	</a>
-					    </span>
-					
-						<span class="bt_novos" title="Imprimir">
-							<a href="javascript:;">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
+
+			<table width="100%" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td width="51%">
+							
+							<span class="bt_novos" title="Gerar Arquivo">
+							
+							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=XLS">
+								<img src="${pageContext.request.contextPath}/images/ico_excel.png"
+								hspace="5" border="0" /> Arquivo </a> 
+							</span> 
+								
+							
+							<span class="bt_novos" title="Imprimir"> 
+							
+							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=PDF">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+								hspace="5" border="0" /> 
+								Imprimir 
 							</a>
-						</span>
+							 
+							</span> 
+							
+							<span id="btnSalvar" class="bt_novos" title="Salvar"> 
+						
+							<a href="javascript:ContagemDevolucao.salvar();"> 
+							<img border="0" hspace="5" alt="Salvar"
+								src="${pageContext.request.contextPath}/images/ico_salvar.gif" />
+								Salvar
+							</a> 
+							</span> 
+							
+							<span id="btnConfirmar" class="bt_confirmar_novo" title="Confirmar"> 
+							<a href="javascript:ContagemDevolucao.popupConfirmar();"> 
+								<img border="0" hspace="5" alt="Confirmar"
+								src="${pageContext.request.contextPath}/images/ico_check.gif">
+							Confirmar
+							</a> 
+							</span>
+							
+					</td>
 					
-						<span id="btnSalvar" class="bt_novos" title="Salvar">
-							<a href="javascript:ContagemDevolucao.salvar();">
-								<img border="0" hspace="5" alt="Salvar" src="${pageContext.request.contextPath}/images/ico_salvar.gif" />Salvar
-							</a>
-						</span>
+					<td width="17%">
+						<strong>Total Geral R$:</strong>
+					</td>
 					
-						<span id="btnConfirmar" class="bt_confirmar_novo" title="Confirmar">
-							<a  href="javascript:ContagemDevolucao.popupConfirmar();">
-								<img border="0" hspace="5" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar
-							</a>
+					<td width="14%" id="totalGeral"></td>
+					
+					<td width="18%">
+						<span id="bt_sellAll" class="bt_sellAll">
+							<label for="sel">Selecionar Todos</label> 
+							<input type="checkbox" name="Todos" id="sel" onclick="ContagemDevolucao.checkAllReplicarValor(this, 'checkgroup');"
+							style="float: left;" /> 
 						</span>
 					</td>
-				    <td width="17%"><strong>Total Geral R$:</strong></td>
-				    <td width="14%"id="totalGeral"></td>
-				    <td width="18%">
-				    	<span id="bt_sellAll" class="bt_sellAll">
-				    		<label for="sel">Selecionar Todos</label>
-				    		<input type="checkbox" name="Todos" id="sel" onclick="ContagemDevolucao.checkAllReplicarValor(this, 'checkgroup');" style="float:left;"/>
-				    	</span>
-				    </td>
-				  </tr>
-			</table>		 
-		 
-		 </div>
+				</tr>
+			</table>
+
+		</div>
 	</fieldset>
 </body>
 		

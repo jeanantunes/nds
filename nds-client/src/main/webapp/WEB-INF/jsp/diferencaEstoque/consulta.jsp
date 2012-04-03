@@ -16,7 +16,11 @@
 			});
 			
 			$('input[id^="data"]').mask("99/99/9999");
+			
 			$("#edicao").numeric();
+			
+			$("#produto").autocomplete({source: ""});
+			
 		});
 		
 		$(function() {
@@ -201,7 +205,7 @@
 				<td width="220">
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       onchange="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
+					       onblur="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
 					       											  pesquisarProdutosSuccessCallBack,
 					       											  pesquisarProdutosErrorCallBack);"/>
 				</td>
