@@ -93,7 +93,14 @@ public class ValidacaoInterceptor implements Interceptor {
 
 			result.include(Constantes.PARAM_MSGS, new Gson().toJson(validacaoException.getValidacao()));
 			
-			result.use(Results.page()).defaultView();
+			if (validacaoException.getUrl() != null) {
+				
+				result.use(Results.page()).forwardTo(validacaoException.getUrl());
+				
+			} else {
+				
+				result.use(Results.page()).defaultView();
+			}
 		}			
 	}
 

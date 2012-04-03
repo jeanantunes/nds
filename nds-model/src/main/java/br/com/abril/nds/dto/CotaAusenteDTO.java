@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
@@ -68,8 +69,12 @@ public class CotaAusenteDTO implements Serializable{
 		return idCotaAusente;
 	}
 
-	public void setIdCotaAusente(Long idCotaAusente) {
-		this.idCotaAusente = idCotaAusente;
+	public void setIdCotaAusente(BigInteger idCotaAusente) {
+		if(idCotaAusente == null)  {
+			this.idCotaAusente  = null;
+			return;
+		}
+		this.idCotaAusente = idCotaAusente.longValue();
 	}
 	
 }

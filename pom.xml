@@ -241,6 +241,11 @@
 				<artifactId>jasperreports</artifactId>
 				<version>4.5.1</version>
 			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>2.1.2</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -288,6 +293,10 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
 		</dependency>
 	</dependencies>
 

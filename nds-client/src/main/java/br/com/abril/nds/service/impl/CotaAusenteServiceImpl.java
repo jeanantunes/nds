@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -25,10 +26,11 @@ import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
 
+@Service
 public class CotaAusenteServiceImpl implements CotaAusenteService{
 	
 	@Autowired
-	CotaAusenteRepository cotaAusenterepository;
+	CotaAusenteRepository cotaAusenteRepository;
 	
 	@Autowired
 	CotaRepository cotaRepository;
@@ -46,22 +48,22 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Transactional
-	public void declararCotaAusente(Long idCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario){
+	public void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario){
 
+		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		
 		CotaAusente cotaAusente = new CotaAusente();
-		Cota cota = new Cota();
-		cota.setId(idCota);
-		cotaAusente.setAtivo(true);
 		cotaAusente.setCota(cota);
+		cotaAusente.setAtivo(true);
 		cotaAusente.setData(data);
 		
-		cotaAusenterepository.adicionar(cotaAusente);
+		cotaAusenteRepository.adicionar(cotaAusente);
 		
 		 List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
 		 movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		 
-		 gerarRateios(listaDeRateio, movimentosCota, data, idUsuario, idCota);
+		 gerarRateios(listaDeRateio, movimentosCota, data, idUsuario, cota.getId());
 	}
 	
 	private void gerarRateios(List<RateioCotaAusente> listaDeRateio, List<MovimentoEstoqueCota> movimentosCota, Date data, Long idUsuario, Long idCota) {
@@ -107,7 +109,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 
 	@Transactional
 	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO){
-		return cotaAusenterepository.obterCotasAusentes(filtroCotaAusenteDTO);
+		return cotaAusenteRepository.obterCotasAusentes(filtroCotaAusenteDTO);
+	}
+
+	@Override
+	public Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro) {
+		return cotaAusenteRepository.obterCountCotasAusentes(filtro);
 	}
 
 }
