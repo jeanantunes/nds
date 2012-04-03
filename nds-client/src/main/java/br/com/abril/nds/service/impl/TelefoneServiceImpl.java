@@ -131,6 +131,10 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		List<Telefone> listaTel = this.telefoneFornecedorRepository.buscarTelefonesPessoaPorFornecedor(idFornecedor);
 		
+		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
+			listaTel.remove(tDto.getTelefone());
+		}
+		
 		for (Telefone telefone : listaTel){
 			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
 			listaTelAssoc.add(telefoneAssociacaoDTO);
