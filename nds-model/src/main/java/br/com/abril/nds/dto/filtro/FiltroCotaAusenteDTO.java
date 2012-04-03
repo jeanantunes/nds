@@ -19,7 +19,7 @@ public class FiltroCotaAusenteDTO implements Serializable {
 	private PaginacaoVO paginacao;
 	
 	private	ColunaOrdenacao colunaOrdenacao;
-		
+			
 	public FiltroCotaAusenteDTO(){
 		
 	}
