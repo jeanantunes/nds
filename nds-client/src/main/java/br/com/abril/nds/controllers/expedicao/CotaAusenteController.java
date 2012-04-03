@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.expedicao;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,16 +9,16 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
-import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
-import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
-import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
-import br.com.abril.nds.repository.CotaAusenteRepository;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaAusenteService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -39,11 +38,15 @@ public class CotaAusenteController {
 	private static final String WARNING_CAMPO_DATA_OBRIGATORIO = "O campo \"Data\" é obrigatório.";
 	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
+	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
 	
 	
 	@Autowired
-	private CotaAusenteRepository cotaAusenteRepository;
+	private CotaAusenteService cotaAusenteService;
+	@Autowired
+	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
 	
+	@Autowired
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CotaAusenteController.class);
@@ -93,7 +96,7 @@ public class CotaAusenteController {
 				
 		tratarFiltro(filtro);
 		
-		efetuarConsulta(filtro);
+		efetuarConsulta(filtro, isDataOperacao);
 		
 	}
 	
@@ -101,16 +104,27 @@ public class CotaAusenteController {
 	 * Efetua a consulta e monta a estrutura do grid de CotasAusentes.
 	 * @param filtro
 	 */
-	private void efetuarConsulta(FiltroCotaAusenteDTO filtro) {
+	private void efetuarConsulta(FiltroCotaAusenteDTO filtro, boolean isDataOperacao) {
 		
-		List<CotaAusenteDTO> listaCotasAusentes = cotaAusenteRepository.obterCotasAusentes(filtro) ;
+		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
+		try {
+			listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		Long totalRegistros = cotaAusenteRepository.obterCountCotasAusentes(filtro);
+		if(!isDataOperacao) {
+			for(CotaAusenteDTO cotaAusenteDTO : listaCotasAusentes) {
+				cotaAusenteDTO.setIdCotaAusente(null);
+			}
+		}
+		
+		Long totalRegistros = cotaAusenteService.obterCountCotasAusentes(filtro);
 		
 		TableModel<CellModelKeyValue<CotaAusenteDTO>> tableModel = new TableModel<CellModelKeyValue<CotaAusenteDTO>>();
 
@@ -177,8 +191,45 @@ public class CotaAusenteController {
 		
 	@Post
 	public void gerarNovaCotaAusente(Integer numCota) {
+		
 		List<Integer> lista = new ArrayList<Integer>();
 		lista.add(numCota);
 		result.use(Results.json()).from(lista, "result").serialize();
+	}
+	
+	@Post
+	public void enviarParaSuplementar(Integer numCota) {
+	
+		if(numCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+		}
+		
+		cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+	}
+
+	@Post
+	public void carregarDadosRateio(Integer numCota) {
+		
+		List<MovimentoEstoqueCotaDTO> movimentos = 
+				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCota, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos) {
+		
+		
+	}
+	
+
+
+	//TODO getRealUsuario
+	public Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		usuario.setLogin("fakeUsuario");
+		usuario.setNome("Fake Usuario");
+		return usuario;
 	}
 }
