@@ -475,7 +475,7 @@ validarEdicaoCallBack : function() {
 				 precision:2
 			});
 			
-			
+			$("#produto").autocomplete({source: ""});
 	});
 	
 	/**
@@ -1042,7 +1042,7 @@ validarEdicaoCallBack : function() {
 						id="produto"
 						
 					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       	   onchange="jsDadosProduto.pesquisarProdutoPorNome();"/>
+					       	   onblur="jsDadosProduto.pesquisarProdutoPorNome();"/>
 				</td>
 			</tr>
 			<tr>
