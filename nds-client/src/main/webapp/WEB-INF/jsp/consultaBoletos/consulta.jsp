@@ -89,6 +89,9 @@
 		});
 		
 		$("#numCota").numeric();
+		
+		$("#descricaoCota").autocomplete({source: ""});
+		
     }); 
 	
 	function mostrarGridConsulta() {
@@ -212,7 +215,7 @@
 			      		 maxlength="255"
 			      		 style="width:130px;"
 			      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-			      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
+			      		 onblur="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
 			  </td>
               
               <td width="124">Data de Vencimento:</td>

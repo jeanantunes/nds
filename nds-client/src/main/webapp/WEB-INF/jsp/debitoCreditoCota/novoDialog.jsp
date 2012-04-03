@@ -82,6 +82,9 @@
 			});
 			
 			$("input[id^='numeroCota']").numeric();
+			
+			$("input[name='debitoCredito.nomeCota']").autocomplete({source: ""});
+			
 		}
 
 // 		function popupNovoDialog() {
@@ -153,7 +156,7 @@
 				
 				var inputNumeroCota = '<input id="numeroCota' + index + '" maxlength="9" name="debitoCredito.numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
 
-				var inputNomeCota = '<input id="nomeCota' + index + '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
+				var inputNomeCota = '<input id="nomeCota' + index + '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
 				
 				var inputData = '<input id="data' + index + '" name="debitoCredito.dataVencimento" type="text" style="width:70px;" />';
 				

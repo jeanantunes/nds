@@ -42,6 +42,9 @@ var produto = {
 	
 	//Mostrar auto complete por nome do produto
 	autoCompletarPorNomeProduto : function(idProduto, isFromModal) {
+		
+		produto.pesquisaRealizada = false;
+		
 		var nomeProduto = $(idProduto).val();
 		
 		if (nomeProduto && nomeProduto.length > 2) {
@@ -51,22 +54,59 @@ var produto = {
 		}
 	},
 	
+	descricaoAtribuida : true,
+	
+	pesquisaRealizada : false,
+	
+	intervalo : null,
+	
 	exibirAutoComplete : function(result, idProduto) {
+		
 		$(idProduto).autocomplete({
-			source: result,
+			source : result,
+			focus : function(event, ui) {
+				produto.descricaoAtribuida = false;
+			},
+			close : function(event, ui) {
+				produto.descricaoAtribuida = true;
+			},
+			select : function(event, ui) {
+				produto.descricaoAtribuida = true;
+			},
+			minLength: 4,
+			delay : 0,
 		});
 	},
 	
 	//Pesquisar por nome do produto
 	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		
-		//Seta um timed out para esperar o auto complet do campo 
-		//de nome do produto ser preenchido pelo jQuery
-		setTimeout(function() { produto.pesquisarPorNomeProdutoAposTimedOut(idCodigo, idProduto, idEdicao,
-																	        isFromModal, successCallBack, errorCallBack); },  200);
+		setTimeout(function() { clearInterval(produto.intervalo); }, 10 * 1000);
+		
+		produto.intervalo = setInterval(function() {
+			
+			if (produto.descricaoAtribuida) {
+				
+				if (produto.pesquisaRealizada) {
+					
+					clearInterval(produto.intervalo);
+					
+					return;
+				}
+				
+				produto.pesquisarPorNomeProdutoAposIntervalo(idCodigo, idProduto, idEdicao,
+															isFromModal, successCallBack, errorCallBack);
+			}
+			
+		}, 100);
 	},
 	
-	pesquisarPorNomeProdutoAposTimedOut : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+	pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		
+		clearInterval(produto.intervalo);
+		
+		produto.pesquisaRealizada = true;
+		
 		var nomeProduto = $(idProduto).val();
 		
 		nomeProduto = $.trim(nomeProduto);

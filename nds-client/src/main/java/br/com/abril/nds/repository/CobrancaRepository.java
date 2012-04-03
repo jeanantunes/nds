@@ -36,6 +36,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * 
 	 * @param nossoNumero
 	 */
-	void incrementarVia(String nossoNumero);
+	void incrementarVia(String... nossoNumero);
 	
 }

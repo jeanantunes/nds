@@ -31,7 +31,7 @@
 
 			$(".gridNovasDiferencas").flexigrid({
 				preProcess: executarPreProcessamentoNovo,
-				onSuccess: formatarCamposNumericos,
+				onSuccess: formatarCampos,
 				dataType : 'json',
 				colModel : [{
 					display : 'Código',
@@ -142,7 +142,7 @@
 				var parametroValidacaoEdicao = '\'#codigoProduto' + index + '\', \'#edicao' + index + '\', true, obterDadosProduto';
 
 				var inputDescricaoProduto = 
-					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onchange="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+					'<input type="text" id="descricaoProduto' + index + '" name="descricaoProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onblur="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
 
 				var inputNumeroEdicao = 
 					'<input type="text" id="edicao' + index + '"  name="numeroEdicao" style="width:40px;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + '); ultimaLinhaPreenchida=' + index + '" disabled="disabled" />';
@@ -348,11 +348,13 @@
 			}
 		}
 
-		function formatarCamposNumericos() {
+		function formatarCampos() {
 
 			$("input[name='codigoProduto']").numeric();
 			$("input[name='numeroEdicao']").numeric();
 			$("input[name='qtdeDiferenca']").numeric();
+			
+			$("input[name='descricaoProduto']").autocomplete({source: ""});
 		}
 
 		function reprocessarDadosLancamento(index) {
