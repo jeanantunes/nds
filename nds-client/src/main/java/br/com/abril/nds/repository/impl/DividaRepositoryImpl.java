@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.repository.DividaRepository;
 
@@ -47,7 +48,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(getSqldividas(true,filtro));
+		hql.append(getSqldividas(true,filtro,true));
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -57,7 +58,28 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 			query.setParameter(key, param.get(key));
 		}
 		
-		return (Long) query.uniqueResult();
+		return  (Long) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GeraDividaDTO> obterDividasGeradasSemBoleto(FiltroDividaGeradaDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(getSqldividas(false,filtro,false));
+		
+		hql.append(getOrdenacaoDivida(filtro));
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosConsultaDividas(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		return query.list();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -66,7 +88,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(getSqldividas(false,filtro));
+		hql.append(getSqldividas(false,filtro, true));
 		
 		hql.append(getOrdenacaoDivida(filtro));
 		
@@ -102,8 +124,10 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
 		param.put("data",filtro.getDataMovimento());
+		param.put("acumulaDivida", Boolean.FALSE);
+		param.put("statusCobranca",StatusCobranca.NAO_PAGO);
 		
-		if(filtro.getNumeroCota()!= null && filtro.getNumeroCota() > 0 ){
+		if(filtro.getNumeroCota()!= null ){
 			 param.put("numeroCota",filtro.getNumeroCota());
 		}
 		
@@ -132,12 +156,12 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 	 * @param filtro 
 	 * @return String
 	 */
-	private String getSqldividas(boolean count,FiltroDividaGeradaDTO filtro){
+	private String getSqldividas(boolean count,FiltroDividaGeradaDTO filtro, boolean isBoleto){
 		
 		StringBuilder hql = new StringBuilder();
 		
 		if(count){
-			hql.append(" SELECT COUNT (divida.id)");
+			hql.append(" SELECT count(divida.id )");
 		}else{
 			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
@@ -145,14 +169,14 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 				.append(" rota.codigoRota,")
 				.append(" roteiro.descricaoRoteiro,")
 				.append(" cota.numeroCota,")
-				.append(" cota.pessoa.nome,")
+				.append(" pessoa.nome,")
 				.append(" cobranca.dataVencimento,")
 				.append(" cobranca.dataEmissao,")
-				.append(" divida.valor,")
+				.append(" cobranca.valor,")
 				.append(" cobranca.tipoCobranca,")
 				.append(" cobranca.vias, ")
 				.append(" cobranca.nossoNumero, ")
-				.append(" cota.parametroCobranca.recebeCobrancaEmail ")
+				.append(" parametroCobranca.recebeCobrancaEmail ")
 			.append(")");
 		}
 		
@@ -160,6 +184,8 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		.append(" Divida divida ")
 		.append(" JOIN divida.cobranca cobranca ")
 		.append(" JOIN cobranca.cota cota ")
+		.append(" JOIN cota.pessoa pessoa ")
+		.append(" JOIN cota.parametroCobranca parametroCobranca ")
 		.append(" JOIN cota.box box")
 		.append(" LEFT JOIN cota.rotaRoteiroOperacao rotaRoteiroOperacao ")
 		.append(" LEFT JOIN rotaRoteiroOperacao.rota rota ")
@@ -167,14 +193,22 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		.append(" WHERE ")
 		
-		.append(" divida.data =:data ");
+		.append(" divida.data =:data ")
+		.append(" AND divida.acumulada =:acumulaDivida ")
+		.append(" AND cobranca.statusCobranca=:statusCobranca");
 		
-		if(filtro.getNumeroCota()!= null && filtro.getNumeroCota() > 0 ){
+		
+		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
 		}	
 		
 		if(filtro.getTipoCobranca()!= null){
-			hql.append(" AND cobranca.tipoCobranca =:tipoCobranca ");
+			
+			if(isBoleto){
+				hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
+			}else{
+				hql.append(" AND cobranca.tipoCobranca not in (:tipoCobranca ) ");
+			}
 		}
 		
 		if(filtro.getCodigoBox()!= null && !filtro.getCodigoBox().isEmpty()){
@@ -243,7 +277,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 					break;
 				case VALOR:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " divida.valor ";
+						orderByColumn += " cobranca.valor ";
 					break;
 				case VIA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";

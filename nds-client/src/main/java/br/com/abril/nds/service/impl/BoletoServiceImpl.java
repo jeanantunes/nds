@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -54,6 +53,8 @@ import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
@@ -780,6 +781,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
+
 	private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(Cota cota,
 			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro, Usuario usuario,
 			BigDecimal valorPagamento, Date dataOperacao,
@@ -807,15 +809,13 @@ public class BoletoServiceImpl implements BoletoService {
 		return movimentoFinanceiroCotaDTO;
 	}
 	
-	private GeradorBoleto geraBoleto(Boleto boleto){
+	private CorpoBoleto geraCorpoBoleto(Boleto boleto){
 
-		
-		GeradorBoleto geradorBoleto = new GeradorBoleto();
-		
+		CorpoBoleto corpoBoleto = new CorpoBoleto();
 		
 		//DADOS DO CEDENTE
-		geradorBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
-		geradorBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
+		corpoBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
+		corpoBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
 		
 		
 		//DADOS DO SACADO
@@ -830,8 +830,8 @@ public class BoletoServiceImpl implements BoletoService {
 			nomeSacado = ((PessoaJuridica) pessoa).getNomeFantasia();
 			documentoSacado = ((PessoaJuridica) pessoa).getCnpj();
 		}
-		geradorBoleto.setSacadoNome(nomeSacado);          
-		geradorBoleto.setSacadoDocumento(documentoSacado); 
+		corpoBoleto.setSacadoNome(nomeSacado);          
+		corpoBoleto.setSacadoDocumento(documentoSacado); 
 
 		
 		//ENDERECO DO SACADO
@@ -844,20 +844,20 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 		if (endereco!=null){
-			geradorBoleto.setEnderecoSacadoUf(endereco.getUf());            
-			geradorBoleto.setEnderecoSacadoLocalidade(endereco.getCidade());     
-			geradorBoleto.setEnderecoSacadoCep(endereco.getCep());         
-			geradorBoleto.setEnderecoSacadoBairro(endereco.getBairro()); 
-			geradorBoleto.setEnderecoSacadoLogradouro(endereco.getLogradouro()); 
-			geradorBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
+			corpoBoleto.setEnderecoSacadoUf(endereco.getUf());            
+			corpoBoleto.setEnderecoSacadoLocalidade(endereco.getCidade());     
+			corpoBoleto.setEnderecoSacadoCep(endereco.getCep());         
+			corpoBoleto.setEnderecoSacadoBairro(endereco.getBairro()); 
+			corpoBoleto.setEnderecoSacadoLogradouro(endereco.getLogradouro()); 
+			corpoBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
 		}
 		else{
-			geradorBoleto.setEnderecoSacadoUf("SP");
-			geradorBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
-			geradorBoleto.setEnderecoSacadoCep("");
-			geradorBoleto.setEnderecoSacadoBairro("");
-			geradorBoleto.setEnderecoSacadoLogradouro("");
-			geradorBoleto.setEnderecoSacadoNumero("");
+			corpoBoleto.setEnderecoSacadoUf("SP");
+			corpoBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
+			corpoBoleto.setEnderecoSacadoCep("");
+			corpoBoleto.setEnderecoSacadoBairro("");
+			corpoBoleto.setEnderecoSacadoLogradouro("");
+			corpoBoleto.setEnderecoSacadoNumero("");
 		}
 
 		
@@ -865,58 +865,58 @@ public class BoletoServiceImpl implements BoletoService {
         String contaNumero=boleto.getBanco().getConta().toString();
         String contaNossoNumero=boleto.getNossoNumero().toString();
         String contaNumeroDocumento="123456";//???
-        geradorBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
-        geradorBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
+        corpoBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
+        corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
         if (boleto.getBanco().getCarteira().getCodigo()==1){
-        	geradorBoleto.setContaTipoDeCobranca("SEM_REGISTRO");
+        	corpoBoleto.setContaTipoDeCobranca("SEM_REGISTRO");
         }
         if (boleto.getBanco().getCarteira().getCodigo()==30){  
-        	geradorBoleto.setContaTipoDeCobranca("COM_REGISTRO");
+        	corpoBoleto.setContaTipoDeCobranca("COM_REGISTRO");
         }
-        geradorBoleto.setContaAgencia(boleto.getBanco().getAgencia().intValue());    
-        geradorBoleto.setContaNumero(Integer.parseInt(contaNumero));   
+        corpoBoleto.setContaAgencia(boleto.getBanco().getAgencia().intValue());    
+        corpoBoleto.setContaNumero(Integer.parseInt(contaNumero));   
         
          
         //INFORMACOES DO TITULO
-        geradorBoleto.setTituloNumeroDoDocumento(contaNumeroDocumento);                      
-        geradorBoleto.setTituloNossoNumero(contaNossoNumero);                    
+        corpoBoleto.setTituloNumeroDoDocumento(contaNumeroDocumento);                      
+        corpoBoleto.setTituloNossoNumero(contaNossoNumero);                    
         
         //PARAMETROS ?
-        geradorBoleto.setTituloDigitoDoNossoNumero("4");  
-        geradorBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
-        geradorBoleto.setTituloAceite("A");
-        geradorBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
+        corpoBoleto.setTituloDigitoDoNossoNumero("4");  
+        corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
+        corpoBoleto.setTituloAceite("A");
+        corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
-        geradorBoleto.setTituloValor(boleto.getValor());   
-        geradorBoleto.setTituloDataDoDocumento(boleto.getDataEmissao());   
-        geradorBoleto.setTituloDataDoVencimento(boleto.getDataVencimento());  
-        geradorBoleto.setTituloDesconto(BigDecimal.ZERO);
-        geradorBoleto.setTituloDeducao(BigDecimal.ZERO);
-        geradorBoleto.setTituloMora(BigDecimal.ZERO);
-        geradorBoleto.setTituloAcrecimo(BigDecimal.ZERO);
-        geradorBoleto.setTituloValorCobrado(BigDecimal.ZERO);
+        corpoBoleto.setTituloValor(boleto.getValor());   
+        corpoBoleto.setTituloDataDoDocumento(boleto.getDataEmissao());   
+        corpoBoleto.setTituloDataDoVencimento(boleto.getDataVencimento());  
+        corpoBoleto.setTituloDesconto(BigDecimal.ZERO);
+        corpoBoleto.setTituloDeducao(BigDecimal.ZERO);
+        corpoBoleto.setTituloMora(BigDecimal.ZERO);
+        corpoBoleto.setTituloAcrecimo(BigDecimal.ZERO);
+        corpoBoleto.setTituloValorCobrado(BigDecimal.ZERO);
         
 
         //INFORMAÇOES DO BOLETO
         //PARAMETROS ?
-        geradorBoleto.setBoletoLocalPagamento("Local do pagamento.");
-        geradorBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
-        geradorBoleto.setBoletoInstrucao1(boleto.getBanco().getInstrucoes());
-        geradorBoleto.setBoletoInstrucao2("");
-        geradorBoleto.setBoletoInstrucao3("");
-        geradorBoleto.setBoletoInstrucao4("");
-        geradorBoleto.setBoletoInstrucao5("");
-        geradorBoleto.setBoletoInstrucao6("");
-        geradorBoleto.setBoletoInstrucao7("");
-        geradorBoleto.setBoletoInstrucao8("");
+        corpoBoleto.setBoletoLocalPagamento("Local do pagamento.");
+        corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
+        corpoBoleto.setBoletoInstrucao1(boleto.getBanco().getInstrucoes());
+        corpoBoleto.setBoletoInstrucao2("");
+        corpoBoleto.setBoletoInstrucao3("");
+        corpoBoleto.setBoletoInstrucao4("");
+        corpoBoleto.setBoletoInstrucao5("");
+        corpoBoleto.setBoletoInstrucao6("");
+        corpoBoleto.setBoletoInstrucao7("");
+        corpoBoleto.setBoletoInstrucao8("");
         
-        return geradorBoleto;
+        return corpoBoleto;
 	}
 	
-	private File gerarAnexoBoleto(Boleto boleto) throws IOException {
-		GeradorBoleto geradorBoleto = this.geraBoleto(boleto);
-		File f = geradorBoleto.getFilePdf();
-        return f;
+	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException {
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoleto(boleto));
+		byte[] b = geradorBoleto.getBytePdf();
+        return b;
 	}
 	
 	@Override
@@ -926,7 +926,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 			
-			File anexo = this.gerarAnexoBoleto(boleto);
+			byte[] anexo = this.gerarAnexoBoleto(boleto);
 			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
 	
 			Distribuidor distribuidor = distribuidorService.obter();
@@ -935,7 +935,7 @@ public class BoletoServiceImpl implements BoletoService {
 			email.enviar(assunto, 
 					     mensagem, 
 					     destinatarios, 
-					     anexo);
+					     new AnexoEmail("Boleto-"+nossoNumero+".pdf", anexo));
 		}
 		catch(Exception e){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");
@@ -947,12 +947,31 @@ public class BoletoServiceImpl implements BoletoService {
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
-		
-		GeradorBoleto geradorBoleto = this.geraBoleto(boleto);
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoleto(boleto)) ;
 		byte[] b = geradorBoleto.getBytePdf();
         return b;
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException {
+		
+		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
+		
+		Boleto boleto = null;
+		
+		for(String nossoNumero  : nossoNumeros){
+			
+			boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+			
+			corpos.add(this.geraCorpoBoleto(boleto));
+		}
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
+		byte[] b = geradorBoleto.getByteGroupPdf();
+        return b;
+	}
+
 	@Override
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosCobranca(String nossoNumero) {
