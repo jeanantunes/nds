@@ -118,10 +118,51 @@ function retornoEnvioSuplementar(result) {
 	
 }
 
+function gerarMovimentos(movimentos) {
 	
-function popupRateio(result) {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	var tabMovimentos = $("#idMovimentos");	
+	var cabecalho = $("#idCabecalhoMovimentos");
+		
+	tabMovimentos.clear();
 	
+	tabMovimentos.append(cabecalho);
+	
+	$.each(movimentos, function(index, movimento) {
+		var novaLinha = $(document.createElement("TR"));
+		
+		var codigo = document.createElement("TD");
+		var produto = document.createElement("TD");
+		var edicao = document.createElement("TD");
+		var reparte = document.createElement("TD");
+		var botao = document.createElement("TD");
+				
+		codigo.innerHTML = movimento.codigoProd;
+		produto.innerHTML = movimento.nomeProd;
+		edicao.innerHTML = movimento.edicaoProd;
+		reparte.innerHTML = movimento.qtdeReparte;
+		botao.innerHTML = "<a onclick=\"mostra_grid();\" href=\"javascript:;\"><img src=\"${pageContext.request.contextPath}/images/ico_negociar.png\" border=\"0\" /></a>";
+		
+		novaLinha.append(codigo);
+		novaLinha.append(produto);
+		novaLinha.append(edicao);
+		novaLinha.append(reparte);	
+		novaLinha.append(botao);
+		
+		if(index%2 == 0) {
+			novaLinha.attr("style", "background:#F8F8F8;");
+		}
+		
+		tabMovimentos.append(novaLinha);
+	});
+}
+
+var mov;
+var indice;
+	
+function popupRateio(movimentos) {
+	
+	gerarMovimentos(movimentos);
+		
 		$( "#dialog-suplementar" ).dialog({
 			resizable: false,
 			height:450,
@@ -130,12 +171,7 @@ function popupRateio(result) {
 			buttons: {
 				"Suplementar": function() {
 					
-					
-					var parametros = [];
-					parametros.push({name:'movimentos[0].idCota', value: 1});
-					parametros.push({name:'movimentos[1].idCota', value: 2});
-					
-					
+					var parametros = getParametrosFromMovimentos(movimentos);					
 					
 					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
 							parametros);
@@ -150,6 +186,32 @@ function popupRateio(result) {
 				}
 			}
 		});
+}
+
+function getParametrosFromMovimentos(movimentos) {
+	
+	var parametros = [];
+	
+	$.each(movimentos, function(index, movimento) {
+		
+		parametros.push({name:'movimentos['+ index +'].idCota', value: movimento.idCota});
+		parametros.push({name:'movimentos['+ index +'].idProdEd', value: movimento.idProdEd});
+		parametros.push({name:'movimentos['+ index +'].codigoProd', value: movimento.codigoProd});
+		parametros.push({name:'movimentos['+ index +'].edicaoProd', value: movimento.edicaoProd});
+		parametros.push({name:'movimentos['+ index +'].nomeProd', value: movimento.nomeProd});
+		parametros.push({name:'movimentos['+ index +'].qtdeReparte', value: movimento.qtdeReparte});
+		
+		if(movimento.rateios) {
+		
+			$.each(movimento.rateios, function(indexR, rateio) {
+				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].numCota', value: rateio.numCota});
+				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].nomeCota', value: rateio.nomeCota});
+				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].qtde', value: rateio.qtde});			
+			});		
+		}
+  	});
+	
+	return parametros;
 }
 		
 function popup_alterar() {

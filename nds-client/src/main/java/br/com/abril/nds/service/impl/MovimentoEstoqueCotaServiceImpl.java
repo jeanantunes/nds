@@ -55,9 +55,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		
 		for(MovimentoEstoqueCota movimento : movimentos) {
 			
-			List<RateioDTO> rateios = new ArrayList<RateioDTO>();
-			rateios.add(new RateioDTO(1, "Gui", 1));
-			
 			movimentosDTO.add(new MovimentoEstoqueCotaDTO(
 					cota.getId(), 
 					movimento.getProdutoEdicao().getId(), 
@@ -65,7 +62,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 					movimento.getProdutoEdicao().getNumeroEdicao(), 
 					movimento.getProdutoEdicao().getProduto().getNome(), 
 					movimento.getQtde().intValue(), 
-					rateios));
+					null));
 		}
 		
 		return movimentosDTO;

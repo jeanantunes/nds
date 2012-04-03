@@ -109,7 +109,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 
 	@Transactional
 	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO){
-		return cotaAusenterepository.obterCotasAusentes(filtroCotaAusenteDTO);
+		return cotaAusenteRepository.obterCotasAusentes(filtroCotaAusenteDTO);
 	}
 
 	@Override
