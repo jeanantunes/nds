@@ -8,4 +8,6 @@ public interface TipoMovimentoFinanceiroService {
 
 	List<TipoMovimentoFinanceiro> obterTodosTiposMovimento();
 	
+	TipoMovimentoFinanceiro obterTipoMovimentoFincanceiroPorId(Long idTipoMovimentoFinanceiro);
+	
 }

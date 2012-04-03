@@ -3,22 +3,35 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroDebitoCreditoDTO implements Serializable {
 
 	private static final long serialVersionUID = -8244798178959257323L;
 
 	private Integer numeroCota;
 	
+	@Export(label="Nome da Cota")
+	private String nomeCota;
+	
 	private Long idTipoMovimento;
 	
+	@Export(label="Tipo Movimento")
+	private String descricaoTipoMovimento;
+	
+	@Export(label="Data Lançamento Inicial")
 	private Date dataLancamentoInicio; 
-	
+
+	@Export(label="Data Lançamento Final")
 	private Date dataLancamentoFim;
-	
+
+	@Export(label="Data Vencimento Inicial")
 	private Date dataVencimentoInicio; 
 
+	@Export(label="Data Vencimento Final")
 	private Date dataVencimentoFim;
 	
 	private PaginacaoVO paginacao;
@@ -170,4 +183,33 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	/**
+	 * @return the descricaoTipoMovimento
+	 */
+	public String getDescricaoTipoMovimento() {
+		return descricaoTipoMovimento;
+	}
+
+	/**
+	 * @param descricaoTipoMovimento the descricaoTipoMovimento to set
+	 */
+	public void setDescricaoTipoMovimento(String descricaoTipoMovimento) {
+		this.descricaoTipoMovimento = descricaoTipoMovimento;
+	}
+	
 }
