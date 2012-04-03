@@ -130,8 +130,15 @@ function popupRateio(result) {
 			buttons: {
 				"Suplementar": function() {
 					
+					
+					var parametros = [];
+					parametros.push({name:'movimentos[0].idCota', value: 1});
+					parametros.push({name:'movimentos[1].idCota', value: 2});
+					
+					
+					
 					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
-							"movimentos="+result);
+							parametros);
 					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);

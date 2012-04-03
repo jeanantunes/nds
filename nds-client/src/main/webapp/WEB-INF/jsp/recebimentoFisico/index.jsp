@@ -9,6 +9,8 @@
 
 var indNotaFiscalInterface = false;
 
+var indRecebimentoFisicoConfirmado = false;
+
 var jsDadosProduto = {
 
 exibirDetalhesProdutoEdicao : function() {
@@ -142,6 +144,9 @@ validarEdicaoCallBack : function() {
 		
 		indNotaFiscalInterface = result.indNotaInterface;
 		
+		indRecebimentoFisicoConfirmado = result.indRecebimentoFisicoConfirmado;
+		
+				
 		if (indNotaFiscalInterface){
     		carregarItemNotaGridNotaInterface();
     		
@@ -807,9 +812,7 @@ validarEdicaoCallBack : function() {
 	/**
 	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
 	 */
-	function getDataFromResultNotaManual(data) {
-				
-		var verificaBotaoNovoproduto = false;
+	function getDataFromResultNotaManual(data) {	
 		
 		$.each(data.rows, function(index, value) {
 			
@@ -819,8 +822,7 @@ validarEdicaoCallBack : function() {
 	
 			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
-			if(alteracaoPermitida == "S") {
-				verificaBotaoNovoproduto = true;
+			if(alteracaoPermitida == "S") {				
 				value.cell[6] = '<a href="javascript:;" onclick="excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
 			} else{
 				value.cell[6] = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >'+imgExclusao+'</a>';
@@ -833,13 +835,16 @@ validarEdicaoCallBack : function() {
 					
 		$(".grids").show();
 		
-		if(verificaBotaoNovoproduto){
-			document.getElementById('botoesNormais').style.display="";
-			document.getElementById('bt_novo_produto').style.display="";
+		if(!indRecebimentoFisicoConfirmado){
+			document.getElementById('botoesNormais').style.display="";			
 			document.getElementById('botoesOpacos').style.display="none";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
+			document.getElementById('botaoNovoProduto').style.display="";
 		}else{
 			document.getElementById('botoesOpacos').style.display="";
 			document.getElementById('botoesNormais').style.display="none";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoNovoProduto').style.display="none";
 		}
 		
 		return data;
@@ -879,10 +884,18 @@ validarEdicaoCallBack : function() {
 		
 		$(".grids").show();
 		
-		
-		document.getElementById('botoesNormais').style.display="";
-		document.getElementById('bt_novo_produto').style.display="none";
-		document.getElementById('botoesOpacos').style.display="none";
+		if(!indRecebimentoFisicoConfirmado){
+			document.getElementById('botoesNormais').style.display="";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoNovoProduto').style.display="none";
+			document.getElementById('botoesOpacos').style.display="none";
+		}else{
+			document.getElementById('botoesOpacos').style.display="";
+			document.getElementById('botoesNormais').style.display="none";
+			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoNovoProduto').style.display="none";
+			
+		}	
 		
 		
 		return data;
@@ -1193,14 +1206,25 @@ validarEdicaoCallBack : function() {
 					
 					</div>
 					
-					<div id="botoesNormais">			
-						<span class="bt_incluir_novo" id="bt_novo_produto" style="display: none;" title="Incluir Nova Linha"> 
-							<a href="javascript:;" onclick="popup_novo_item();"> 
-								<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-								Novo Produto 
-							</a> 
-						</span>
-									
+					<div id="botaoNovoProdutoOpaco">
+							<span class="bt_incluir_novo" id="bt_novo_produtoOpaco" title="Incluir Nova Linha"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Novo Produto 
+								</a> 
+							</span>
+					</div>
+					<div id="botaoNovoProduto">
+							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
+								<a href="javascript:;" onclick="popup_novo_item();"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Novo Produto 
+								</a> 
+							</span>
+					</div>	
+					
+					<div id="botoesNormais">	
+														
 						<span class="bt_novos" title="Salvar"> 
 							<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
@@ -1224,13 +1248,6 @@ validarEdicaoCallBack : function() {
 					</div>	
 					
 					<div id="botoesOpacos">
-					
-						<span class="bt_incluir_novo" id="bt_novo_produtoOpaco" style="display: none;" title="Incluir Nova Linha"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-								<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-								Novo Produto 
-							</a> 
-						</span>
 						
 						<span class="bt_novos" title="Salvar"> 
 							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 

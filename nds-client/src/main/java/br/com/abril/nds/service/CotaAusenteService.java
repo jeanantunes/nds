@@ -11,7 +11,7 @@ public interface CotaAusenteService {
 	
 	void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario);
 	
-	List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtro);
+	List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO);
 	
 	Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro);
 

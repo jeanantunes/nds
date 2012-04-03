@@ -217,7 +217,7 @@ public class CotaAusenteController {
 	}
 	
 	@Post
-	public void realizarRateio(MovimentoEstoqueCotaDTO[] movimentos) {
+	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos) {
 		
 		
 	}
