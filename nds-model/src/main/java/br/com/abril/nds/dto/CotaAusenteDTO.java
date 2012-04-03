@@ -4,13 +4,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 
 public class CotaAusenteDTO implements Serializable{
 	
 	private static final long serialVersionUID = -5403191577161993585L;
 	
-	private Date data;
+	private Long idCotaAusente;
+	
+	private String data;
 	
 	private String box;
 	
@@ -18,65 +22,17 @@ public class CotaAusenteDTO implements Serializable{
 	
 	private String nome;
 	
-	private BigDecimal valorNe;
+	private String valorNe;
 	
-	private PaginacaoVO paginacao = new PaginacaoVO();
-	
-	private	ColunaOrdenacao colunaOrdenacao;
-	
-	
-	
-	public CotaAusenteDTO(Date data, String box, Integer cota, String nome,
-			BigDecimal valorNe, PaginacaoVO paginacao,
-			ColunaOrdenacao colunaOrdenacao) {
-		super();
-		this.data = data;
-		this.box = box;
-		this.cota = cota;
-		this.nome = nome;
-		this.valorNe = valorNe;		
-	}
 	public CotaAusenteDTO(){
 		
 	}
 	
-	public enum ColunaOrdenacao {
-
-		data("data"),
-		box("box"),
-		cota("cota"),
-		nome("nome"),
-		valorNE("valorNE");	
-
-		private String nomeColuna;
-		
-		private ColunaOrdenacao(String nomeColuna) {
-			this.nomeColuna = nomeColuna;
-		}
-		
-		@Override
-		public String toString() {
-			return this.nomeColuna;
-		}
-	}
-			
-	public PaginacaoVO getPaginacao() {
-		return paginacao;
-	}
-	public void setPaginacao(PaginacaoVO paginacao) {
-		this.paginacao = paginacao;
-	}
-	public ColunaOrdenacao getColunaOrdenacao() {
-		return colunaOrdenacao;
-	}
-	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
-		this.colunaOrdenacao = colunaOrdenacao;
-	}
-	public Date getData() {
+	public String getData() {
 		return data;
 	}
-	public void setData(Date data) {
-		this.data = data;
+	public void setData(Date data) {		
+		this.data = DateUtil.formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
 	public String getBox() {
 		return box;
@@ -96,43 +52,24 @@ public class CotaAusenteDTO implements Serializable{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public BigDecimal getValorNe() {
+	public String getValorNe() {
 		return valorNe;
 	}
 	public void setValorNe(BigDecimal valorNe) {
-		this.valorNe = valorNe;
+		
+		if(valorNe == null) {
+			this.valorNe = CurrencyUtil.formatarValor(0);
+			return;
+		}
+		this.valorNe = CurrencyUtil.formatarValor(valorNe);
 	}
 
-	/*@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((box == null) ? 0 : box.hashCode());
-		result = prime * result + ((cota == null) ? 0 : cota.hashCode());
-		return result;
+	public Long getIdCotaAusente() {
+		return idCotaAusente;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CotaAusenteDTO other = (CotaAusenteDTO) obj;
-		if (box == null) {
-			if (other.box != null)
-				return false;
-		} else if (!box.equals(other.box))
-			return false;
-		if (cota == null) {
-			if (other.cota != null)
-				return false;
-		} else if (!cota.equals(other.cota))
-			return false;
-		return true;
-	}*/
-	
+	public void setIdCotaAusente(Long idCotaAusente) {
+		this.idCotaAusente = idCotaAusente;
+	}
 	
 }
