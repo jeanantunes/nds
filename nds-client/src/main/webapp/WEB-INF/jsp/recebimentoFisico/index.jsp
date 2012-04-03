@@ -91,9 +91,16 @@ validarEdicaoCallBack : function() {
 	 */
 	function exibirCnpjDoFornecedor() {
 			
-		var cnpjDoFornecedor = $("#fornecedor").val();		
+		var cnpjDoFornecedor = $("#fornecedor").val();	
+		
+		if(cnpjDoFornecedor == -1){
+			document.getElementById('cnpj').value="";
+			document.getElementById('cnpj').disabled=true;			
+		}else{
+			$("#cnpj").val(cnpjDoFornecedor);
+			document.getElementById('cnpj').disabled=false;
+		}
 	
-		$("#cnpj").val(cnpjDoFornecedor);
 	}
 	
 	
@@ -111,6 +118,7 @@ validarEdicaoCallBack : function() {
 		var notaFiscal 	= $("#notaFiscal").val();
 		var serie 		= $("#serie").val();		
 		var chaveAcesso = $("#chaveAcesso").val();
+		var fornecedor  = $("#fornecedor").val();
         var indNFe      = "N";
         
         if(checkBox.checked){
@@ -123,6 +131,7 @@ validarEdicaoCallBack : function() {
 			"numeroNotaFiscal=" + notaFiscal 	+ "&" + 
 		   	"serie=" 			+ serie			+ "&" +
 		 	"indNFe=" 			+ indNFe		+ "&" +
+		 	"fornecedor=" 		+ fornecedor	+ "&" +
 		    "chaveAcesso=" 		+ chaveAcesso;
 		
 		limparCampos();
@@ -1138,21 +1147,23 @@ validarEdicaoCallBack : function() {
 				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 
 					<tr>
-						<td width="43" align="right">CNPJ:</td>
-						<td width="136"><input id="cnpj"
-							onblur="pesquisarPorCnpjFornecedor();" name="cnpj"
-							style="width: 130px;" />
-						</td>
 						<td width="86">Fornecedor:</td>
 						
 						<td width="254"><select id="fornecedor" name="fornecedor"
 							onblur="exibirCnpjDoFornecedor()" style="width: 250px;">
 								<option value=""></option>
+								<option value="-1">Todos</option>
 								<c:forEach var="fornecedor" items="${listafornecedores}">
 									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
 						</select></td>
 						
+						<td width="43" align="right">CNPJ:</td>
+						<td width="136"><input id="cnpj"
+							onblur="pesquisarPorCnpjFornecedor();" name="cnpj"
+							style="width: 130px;" />
+						</td>
+												
 						<td width="76">Nota Fiscal:</td>
 						<td width="123"><input type="text" id=notaFiscal
 							style="width: 100px;" />

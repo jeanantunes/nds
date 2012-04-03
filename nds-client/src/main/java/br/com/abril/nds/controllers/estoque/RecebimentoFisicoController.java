@@ -232,15 +232,17 @@ public class RecebimentoFisicoController {
 	 * @param numeroNotaFiscal
 	 * @param serie
 	 */
-	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie) {
+	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie, String fornecedor) {
 		
 		List<String> msgs = new ArrayList<String>();
 		
-		if(cnpj == null || cnpj.isEmpty()) {
-			msgs.add("O campo CNPJ é obrigatório");
-		} else if(!verificarValidadeCnpj(cnpj)) {
-			msgs.add("O campo cnpj esta inválido");
-		}
+		if(!fornecedor.equals("-1")){
+			if(cnpj == null || cnpj.isEmpty()) {
+				msgs.add("O campo CNPJ é obrigatório");
+			} else if(!verificarValidadeCnpj(cnpj)) {
+				msgs.add("O campo cnpj esta inválido");
+			}
+		}	
 		
 		if(numeroNotaFiscal == null || numeroNotaFiscal.isEmpty()) {
 			msgs.add("O campo Nota Fiscal é obrigatório");
@@ -574,7 +576,7 @@ public class RecebimentoFisicoController {
 	 * @param chaveAcesso
 	 */
 	@Post
-	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie,String indNFe, String chaveAcesso) {
+	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie,String indNFe,String fornecedor, String chaveAcesso) {
 
 		if(indNFe.equals("S")){
 			if(chaveAcesso == null || chaveAcesso.trim().isEmpty()){
@@ -582,7 +584,7 @@ public class RecebimentoFisicoController {
 			}
 		}
 		
-		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie);
+		validarDadosNotaFiscal(cnpj, numeroNotaFiscal, serie, fornecedor);
 		
 		if(chaveAcesso == null || chaveAcesso.trim().isEmpty()) {
 			chaveAcesso = null;
@@ -596,6 +598,7 @@ public class RecebimentoFisicoController {
 		filtro.setNumeroNota(numeroNotaFiscal);
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
+		filtro.setNomeFornecedor(fornecedor);
 		
 		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
