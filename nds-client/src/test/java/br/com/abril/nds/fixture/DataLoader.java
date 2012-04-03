@@ -239,8 +239,8 @@ public class DataLoader {
 			session = sf.openSession();
 
 			tx = session.beginTransaction();			
-			carregarDadosParaContagemdDevolucao(session);
-			//carregarDados(session);
+			//carregarDadosParaContagemdDevolucao(session);
+			carregarDados(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarDadosInadimplencia(session);
