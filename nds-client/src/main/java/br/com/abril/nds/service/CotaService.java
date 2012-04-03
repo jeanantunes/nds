@@ -44,7 +44,7 @@ public interface CotaService {
 	 * 
 	 * @param listaEnderecoAssociacaoRemover
 	 */
-	void processarEnderecos(Cota cota, 
+	void processarEnderecos(Long idCota, 
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar, 
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
 	

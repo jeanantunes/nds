@@ -26,6 +26,7 @@
 	function limparFormsTabs() {
 		
 		limparFormEndereco();
+		limparCamposTelefone();
 	}
 
 	function editarCota() {
@@ -71,9 +72,17 @@
 					
 				},
 				"Cancelar": function() {
-					limparFormsTabs();
-					$("#tabpf").tabs('select', 0);
-					$( this ).dialog( "close" );
+					$.postJSON(
+						'<c:url value="/cadastro/cota/cancelar" />',
+						null,
+						function() {
+							limparFormsTabs();
+							$("#tabpf").tabs('select', 0);
+							$( this ).dialog( "close" );
+						},
+						null, 
+						true
+					);
 				}
 			}
 		});
