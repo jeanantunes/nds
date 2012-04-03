@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +50,7 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
@@ -485,15 +485,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.cobrancaRepository.adicionar(cobranca);
 				
 				if (cota.getParametroCobranca().isRecebeCobrancaEmail()){
-					File documentoCobranca = 
-							this.documentoCobrancaService.gerarDocumentoCobranca(cobranca.getNossoNumero());
+					byte[]anexo = this.documentoCobrancaService.gerarDocumentoCobranca(cobranca.getNossoNumero());
 					
 					try {
 						this.emailService.enviar(
 								"Cobrança", 
 								"Segue documento de cobrança em anexo.", 
 								new String[]{cota.getPessoa().getEmail()}, 
-								documentoCobranca);
+								new AnexoEmail("Cobranca.pdf",anexo));
 						
 						this.cobrancaRepository.incrementarVia(cobranca.getNossoNumero());
 					} catch (AutenticacaoEmailException e) {
@@ -508,4 +507,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
 	}
+	
+	
+	@Transactional(readOnly=true)
+	@Override
+	public Boolean validarDividaGeradaDataOperacao() {
+		
+		Long quantidadeRegistro = movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(new Date()); 
+		
+		return (quantidadeRegistro == null || quantidadeRegistro == 0) ? Boolean.FALSE : Boolean.TRUE;
+	}
+
 }

@@ -72,7 +72,7 @@
 		pesquisar: function (){
 			
 			$("#impressosGrid").flexOptions({
-				url: "<c:url value='financeiro/impressaoBoletos/consultar' />",
+				url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
 				params: GeraDivida.formData()
 			});
 			
@@ -160,6 +160,20 @@
 				}
 			});
 		},
+		
+		imprimirDividas:function(tipoImpressao){
+			
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDivida' />",
+					[{name:"tipoImpressao",value:tipoImpressao}], function(result){
+				
+				if("BOLETO" == result){
+					window.location ="<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>" ;
+				}
+				else if ("DIVIDA" == result) {
+					window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>";
+				}	
+			});
+		}
 		
 	};
 	
@@ -353,14 +367,14 @@
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Boletos">
-						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirBoletos">
+						<a href="javascript:GeraDivida.imprimirDividas('BOLETO')">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							Imprimir Boletos
 						</a>
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Dividas">
-						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirDividas">
+						<a href="javascript:GeraDivida.imprimirDividas('DIVIDA')">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							Imprimir Dividas
 						</a>

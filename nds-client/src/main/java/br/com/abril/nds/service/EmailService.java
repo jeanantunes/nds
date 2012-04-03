@@ -1,10 +1,10 @@
 package br.com.abril.nds.service;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TemplateManager.TemplateNames;
 
 /**
@@ -32,7 +32,7 @@ public interface EmailService {
 	 * @param anexos
 	 * @throws AutenticacaoEmailException
 	 */
-	void enviar(String assunto, String mensagem, String[] destinatarios,List<File> anexos) throws AutenticacaoEmailException;
+	void enviar(String assunto, String mensagem, String[] destinatarios,List<AnexoEmail> anexos) throws AutenticacaoEmailException;
 	
 	/**
 	 * Envia e-mail com mensagem e anexos
@@ -42,7 +42,7 @@ public interface EmailService {
 	 * @param anexo
 	 * @throws AutenticacaoEmailException
 	 */
-	void enviar(String assunto, String mensagem, String[] destinatarios, File anexo) throws AutenticacaoEmailException;
+	void enviar(String assunto, String mensagem, String[] destinatarios, AnexoEmail anexo) throws AutenticacaoEmailException;
 	
 	/**
 	 * Envia e-mail de um determinado template
@@ -63,6 +63,6 @@ public interface EmailService {
 	 * @param parametros
 	 * @throws AutenticacaoEmailException
 	 */
-	void enviar(String assunto,String[] destinatarios,File[] anexo,TemplateNames template,HashMap<String,Object> parametros)throws AutenticacaoEmailException;
+	void enviar(String assunto,String[] destinatarios,AnexoEmail[] anexo,TemplateNames template,HashMap<String,Object> parametros)throws AutenticacaoEmailException;
 	
 }

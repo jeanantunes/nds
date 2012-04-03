@@ -1,13 +1,12 @@
 package br.com.abril.nds.util;
 
-import java.io.File;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.util.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -66,25 +65,25 @@ public abstract class TemplateManager {
 	 * @param templateNames
 	 * @return List<File>
 	 */
-	public static List<File> getAnexosTemplate(TemplateNames templateNames){
+	public static List<AnexoEmail> getAnexosTemplate(TemplateNames templateNames){
 		
-		List<File> anexosTemplate = new ArrayList<File>();
+		List<AnexoEmail> anexosTemplate = new ArrayList<AnexoEmail>();
 		
 		if(templateNames.getAnexos()!= null){
 			
-			File file = null;
+			AnexoEmail anexoEmail = null;
 			
 			for(String nomeAnexo : templateNames.getAnexos()){
 				
 				try{
 					
-					URL url  =Thread.currentThread().getContextClassLoader().getResource(nomeAnexo);
+					byte[] anexo = IOUtils.toByteArray(Thread.currentThread().getContextClassLoader().getResourceAsStream(nomeAnexo));
 					
-					file = new File (url.toURI());
+					anexoEmail = new AnexoEmail();
+					anexoEmail.setNome(nomeAnexo);
+					anexoEmail.setAnexo(anexo);
 					
-					if(file.exists()){
-						anexosTemplate.add(file);
-					}
+					anexosTemplate.add(anexoEmail);
 
 				}catch (Exception e){
 					logger.fatal("Erro na leitura de anexo para template de e-mail", e);

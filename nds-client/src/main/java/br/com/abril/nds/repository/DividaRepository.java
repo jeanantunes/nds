@@ -19,6 +19,13 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	List<GeraDividaDTO> obterDividasGeradas(FiltroDividaGeradaDTO filtro);
 	
 	/**
+	 *  Retorna as dividas geradas conforme parametros informados no filtro, sem dividas do tipo Boleto.
+	 * @param filtro
+	 * @return
+	 */
+	List<GeraDividaDTO> obterDividasGeradasSemBoleto(FiltroDividaGeradaDTO filtro);
+	
+	/**
 	 * Retorna a quantidade de registros da consulta de dividas geradas, conforme filtro informado.
 	 * @param filtro
 	 * @return Long

@@ -63,8 +63,10 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
+import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -104,7 +106,7 @@ public class Fixture {
 	public static CotaAusente cotaAusenteAtivo(){
 		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");	
+				"sys.discover@gmail.com", "Manoel da Silva");	
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
 		return cotaAusente(criarData(10, 03, 2012), true, cotaManoel);
 		
@@ -1158,6 +1160,77 @@ public class Fixture {
 		return formaBoleto;
 	}
 	
+	public static FormaCobranca formaCobrancaDinheiro(boolean enviaEmail,
+			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+		
+		FormaCobranca formaBoleto = new FormaCobranca();
+		formaBoleto.setAtiva(true);
+		formaBoleto.setEnviaEmail(enviaEmail);
+		formaBoleto.setPrincipal(true);
+		formaBoleto.setTipoCobranca(TipoCobranca.DINHEIRO);
+		formaBoleto.setValorMinimoEmissao(valorMinimo);
+		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
+		formaBoleto.setBanco(banco);
+		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
+		formaBoleto.setTaxaMulta(taxaMulta);
+		
+		return formaBoleto;
+	}
+	
+	public static FormaCobranca formaCobrancaCheque(boolean enviaEmail,
+			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+		
+		FormaCobranca formaBoleto = new FormaCobranca();
+		formaBoleto.setAtiva(true);
+		formaBoleto.setEnviaEmail(enviaEmail);
+		formaBoleto.setPrincipal(true);
+		formaBoleto.setTipoCobranca(TipoCobranca.CHEQUE);
+		formaBoleto.setValorMinimoEmissao(valorMinimo);
+		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
+		formaBoleto.setBanco(banco);
+		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
+		formaBoleto.setTaxaMulta(taxaMulta);
+		
+		return formaBoleto;
+	}
+	
+	public static FormaCobranca formaCobrancaDeposito(boolean enviaEmail,
+			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+		
+		FormaCobranca formaBoleto = new FormaCobranca();
+		formaBoleto.setAtiva(true);
+		formaBoleto.setEnviaEmail(enviaEmail);
+		formaBoleto.setPrincipal(true);
+		formaBoleto.setTipoCobranca(TipoCobranca.DEPOSITO);
+		formaBoleto.setValorMinimoEmissao(valorMinimo);
+		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
+		formaBoleto.setBanco(banco);
+		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
+		formaBoleto.setTaxaMulta(taxaMulta);
+		
+		return formaBoleto;
+	}
+	
+	public static FormaCobranca formaCobrancaTransferencia(boolean enviaEmail,
+			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+		
+		FormaCobranca formaBoleto = new FormaCobranca();
+		formaBoleto.setAtiva(true);
+		formaBoleto.setEnviaEmail(enviaEmail);
+		formaBoleto.setPrincipal(true);
+		formaBoleto.setTipoCobranca(TipoCobranca.TRANSFERENCIA_BANCARIA);
+		formaBoleto.setValorMinimoEmissao(valorMinimo);
+		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
+		formaBoleto.setBanco(banco);
+		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
+		formaBoleto.setTaxaMulta(taxaMulta);
+		
+		return formaBoleto;
+	}
 
 	public static ParametroCobrancaCota parametroCobrancaCota(
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
@@ -1267,4 +1340,129 @@ public class Fixture {
 		return cobrencaDeposito;
 	}
 	
+	public static CobrancaCheque cobrancaCheque(String nossoNumero,
+									            Date dataEmissao,
+									            Date dataVencimento,
+									            Date dataPagamento,
+									            BigDecimal encargos,
+									            BigDecimal valor,
+									            String tipoBaixa,
+									            String acao,
+									            StatusCobranca status,
+									            Cota cota,
+									            Divida divida,
+									            Integer vias){
+		
+		CobrancaCheque cobrancaCheque = new CobrancaCheque();
+		cobrancaCheque.setNossoNumero(nossoNumero);
+		cobrancaCheque.setDataEmissao(dataEmissao);
+		cobrancaCheque.setDataVencimento(dataVencimento);
+		cobrancaCheque.setDataPagamento(dataPagamento);
+		cobrancaCheque.setEncargos(encargos);
+		cobrancaCheque.setValor(valor);
+		cobrancaCheque.setTipoBaixa(tipoBaixa);
+		cobrancaCheque.setStatusCobranca(status);
+		cobrancaCheque.setCota(cota);
+		cobrancaCheque.setDivida(divida);
+		cobrancaCheque.setVias(vias);
+		
+		
+		return cobrancaCheque;
+	}
+	
+	public static CobrancaDeposito cobrancaDeposito(String nossoNumero,
+									            Date dataEmissao,
+									            Date dataVencimento,
+									            Date dataPagamento,
+									            BigDecimal encargos,
+									            BigDecimal valor,
+									            String tipoBaixa,
+									            String acao,
+									            StatusCobranca status,
+									            Cota cota,
+									            Banco banco,
+									            Divida divida,
+									            Integer vias
+									            ){
+
+		CobrancaDeposito cobrancaDeposito = new CobrancaDeposito();
+		cobrancaDeposito.setNossoNumero(nossoNumero);
+		cobrancaDeposito.setDataEmissao(dataEmissao);
+		cobrancaDeposito.setDataVencimento(dataVencimento);
+		cobrancaDeposito.setDataPagamento(dataPagamento);
+		cobrancaDeposito.setEncargos(encargos);
+		cobrancaDeposito.setValor(valor);
+		cobrancaDeposito.setTipoBaixa(tipoBaixa);
+		cobrancaDeposito.setStatusCobranca(status);
+		cobrancaDeposito.setCota(cota);
+		cobrancaDeposito.setDivida(divida);
+		cobrancaDeposito.setVias(vias);
+		cobrancaDeposito.setBanco(banco);
+		
+		return cobrancaDeposito;
+	}
+	
+	
+	public static CobrancaDinheiro cobrancaDinheiro(String nossoNumero,
+										            Date dataEmissao,
+										            Date dataVencimento,
+										            Date dataPagamento,
+										            BigDecimal encargos,
+										            BigDecimal valor,
+										            String tipoBaixa,
+										            String acao,
+										            StatusCobranca status,
+										            Cota cota,
+										            Banco banco,
+										            Divida divida,
+										            Integer vias
+										            ){
+		
+		CobrancaDinheiro cobrancaDinheiro = new CobrancaDinheiro();
+		cobrancaDinheiro.setNossoNumero(nossoNumero);
+		cobrancaDinheiro.setDataEmissao(dataEmissao);
+		cobrancaDinheiro.setDataVencimento(dataVencimento);
+		cobrancaDinheiro.setDataPagamento(dataPagamento);
+		cobrancaDinheiro.setEncargos(encargos);
+		cobrancaDinheiro.setValor(valor);
+		cobrancaDinheiro.setTipoBaixa(tipoBaixa);
+		cobrancaDinheiro.setStatusCobranca(status);
+		cobrancaDinheiro.setCota(cota);
+		cobrancaDinheiro.setDivida(divida);
+		cobrancaDinheiro.setVias(vias);
+		
+		return cobrancaDinheiro;
+	}
+	
+	public static CobrancaTransferenciaBancaria cobrancaTransferencaiBancaria(String nossoNumero,
+										            Date dataEmissao,
+										            Date dataVencimento,
+										            Date dataPagamento,
+										            BigDecimal encargos,
+										            BigDecimal valor,
+										            String tipoBaixa,
+										            String acao,
+										            StatusCobranca status,
+										            Cota cota,
+										            Banco banco,
+										            Divida divida,
+										            Integer vias
+										            ){
+
+	CobrancaTransferenciaBancaria cobrancaTransferenciaBancaria = new CobrancaTransferenciaBancaria();
+	cobrancaTransferenciaBancaria.setNossoNumero(nossoNumero);
+	cobrancaTransferenciaBancaria.setDataEmissao(dataEmissao);
+	cobrancaTransferenciaBancaria.setDataVencimento(dataVencimento);
+	cobrancaTransferenciaBancaria.setDataPagamento(dataPagamento);
+	cobrancaTransferenciaBancaria.setEncargos(encargos);
+	cobrancaTransferenciaBancaria.setValor(valor);
+	cobrancaTransferenciaBancaria.setTipoBaixa(tipoBaixa);
+	cobrancaTransferenciaBancaria.setStatusCobranca(status);
+	cobrancaTransferenciaBancaria.setCota(cota);
+	cobrancaTransferenciaBancaria.setDivida(divida);
+	cobrancaTransferenciaBancaria.setVias(vias);
+	
+	return cobrancaTransferenciaBancaria;
+}
+
 }

@@ -47,6 +47,25 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		return query.list();
 	}
+	
+	@Override
+	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
+		
+		StringBuilder hql = new StringBuilder("select count(mfc.data) ");
+		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
+		   .append(" where mfc.data = d.dataOperacao ")
+		   .append(" and mfc.status = :statusAprovado ");
+		
+		hql.append(" and mfc.cota.id not in ")
+		   .append(" (select distinct c.cota.id from ConsolidadoFinanceiroCota c where c.dataConsolidado <= :dataAtual) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		query.setParameter("dataAtual", dataAtual);
+		
+		
+		return (Long) query.uniqueResult();
+	}
 
 	@Override
 	public Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
