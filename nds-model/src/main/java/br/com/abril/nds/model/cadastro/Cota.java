@@ -79,6 +79,10 @@ public class Cota {
 	@JoinColumn( name="ID_COTA")
 	private List<RotaRoteiroOperacao> rotaRoteiroOperacao;
 	
+	@ManyToOne
+	@JoinColumn(name="ID_FIADOR")
+	private Fiador fiador;
+	
 	public Long getId() {
 		return id;
 	}
@@ -191,6 +195,14 @@ public class Cota {
 
 	public void setRotaRoteiroOperacao(List<RotaRoteiroOperacao> rotaRoteiroOperacao) {
 		this.rotaRoteiroOperacao = rotaRoteiroOperacao;
+	}
+	
+	public Fiador getFiador() {
+		return fiador;
+	}
+
+	public void setFiador(Fiador fiador) {
+		this.fiador = fiador;
 	}
 
 	/**

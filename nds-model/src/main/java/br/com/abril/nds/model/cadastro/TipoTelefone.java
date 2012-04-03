@@ -32,4 +32,8 @@ public enum TipoTelefone {
 				return "";
 		}
 	}
+	
+	public String toString(){
+		return this.name();
+	}
 }
