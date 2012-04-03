@@ -1,7 +1,11 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -10,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
@@ -39,6 +46,9 @@ public class CotaController {
 
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 
 	public CotaController(Result result) {
 
@@ -66,10 +76,21 @@ public class CotaController {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
 				this.cotaService.obterEnderecosPorIdCota(idCota);
-
+		
 		this.session.setAttribute(
 			Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
 		);
+		
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
+				this.telefoneService.buscarTelefonesCota(idCota, null);
+		
+		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
+		
+		for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefoneAssociacao){
+			map.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
+		}
+		
+		this.session.setAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO, map);
 		
 		this.result.nothing();
 	}
@@ -80,6 +101,8 @@ public class CotaController {
 		Cota cota = this.cotaService.obterPorId(idCota);
 
 		processarEnderecosCota(cota);
+		
+		processarTelefonesCota(idCota);
 		
 		this.result.nothing();
 	}
@@ -96,6 +119,50 @@ public class CotaController {
 						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 		
 		this.cotaService.processarEnderecos(cota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
+	}
+	
+	private void processarTelefonesCota(Long idCota){
+		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+		
+		List<TelefoneCota> lista = new ArrayList<TelefoneCota>();
+		for (Integer key : map.keySet()){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
+				TelefoneCota telefoneCota = new TelefoneCota();
+				telefoneCota.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
+				telefoneCota.setTelefone(telefoneAssociacaoDTO.getTelefone());
+				telefoneCota.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
+				
+				lista.add(telefoneCota);
+			}
+		}
+		
+		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+		this.cotaService.processarTelefones(idCota, lista, telefonesRemover);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
+		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
+				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		if (telefonesSessao == null){
+			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
+		}
+		
+		return telefonesSessao;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Set<Long> obterTelefonesRemoverSessao(){
+		Set<Long> telefonesSessao = (Set<Long>) 
+				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		if (telefonesSessao == null){
+			telefonesSessao = new HashSet<Long>();
+		}
+		
+		return telefonesSessao;
 	}
 
 	@Post

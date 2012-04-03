@@ -30,7 +30,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		try {
 			switch (cobranca.getTipoCobranca()) {
 				case BOLETO:
-					File arquivo = new File("_boleto");
+					File arquivo = new File("_boleto.pdf");
 					FileOutputStream out = new FileOutputStream(arquivo);
 					out.write(this.boletoService.gerarImpressaoBoleto(nossoNumero));
 					out.flush();

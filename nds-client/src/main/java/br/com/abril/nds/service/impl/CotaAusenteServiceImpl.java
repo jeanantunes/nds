@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -105,8 +106,8 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	}
 
 	@Transactional
-	public List<CotaAusenteDTO> obterCotasAusentes(Date data, Long idCota, CotaAusenteDTO cotaAusenteDTO){
-		return cotaAusenterepository.obterCotasAusentes(data, idCota, cotaAusenteDTO);
+	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO){
+		return cotaAusenterepository.obterCotasAusentes(filtroCotaAusenteDTO);
 	}
 
 }

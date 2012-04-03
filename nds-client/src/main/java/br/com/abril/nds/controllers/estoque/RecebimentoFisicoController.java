@@ -617,10 +617,8 @@ public class RecebimentoFisicoController {
 			msgs.add("Nota fiscal não encontrada");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
-			
-			
-										
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false ), "result").include("validacao").include("validacao.listaMensagens").serialize();
+													
+			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false, false ), "result").include("validacao").include("validacao.listaMensagens").serialize();
 		
 		} else {
 			
@@ -637,8 +635,10 @@ public class RecebimentoFisicoController {
 			if(notaFiscal.getOrigem().equals(Origem.INTERFACE)){
 				indNotaInterface = true;
 			}
+			
+			boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 						
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface), "result").include("validacao").include("validacao.listaMensagens").serialize();
+			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface, indRecebimentoFisicoConfirmado ), "result").include("validacao").include("validacao.listaMensagens").serialize();
 
 		}
 				
@@ -649,10 +649,10 @@ public class RecebimentoFisicoController {
 		private ValidacaoVO validacao;
 		private boolean indNotaInterface;		
         private boolean indRecebimentoFisicoConfirmado;
-		
+			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
-				boolean indNotaInterface
-				) {
+				boolean indNotaInterface,
+				boolean indRecebimentoFisicoConfirmado) {
 			super();
 			this.validacao = validacao;
 			this.indNotaInterface = indNotaInterface;
@@ -661,6 +661,16 @@ public class RecebimentoFisicoController {
 		
 		public ValidacaoVO getValidacao() {
 			return validacao;
+		}
+		
+		public void setValidacao(ValidacaoVO validacao) {
+			this.validacao = validacao;
+		}
+		public boolean isIndNotaInterface() {
+			return indNotaInterface;
+		}
+		public void setIndNotaInterface(boolean indNotaInterface) {
+			this.indNotaInterface = indNotaInterface;
 		}
 		public boolean isIndRecebimentoFisicoConfirmado() {
 			return indRecebimentoFisicoConfirmado;
@@ -671,17 +681,6 @@ public class RecebimentoFisicoController {
 			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
 		}
 
-		public void setValidacao(ValidacaoVO validacao) {
-			this.validacao = validacao;
-		}
-		public boolean isIndNotaInterface() {
-			return indNotaInterface;
-		}
-		public void setIndNotaInterface(boolean indNotaInterface) {
-			this.indNotaInterface = indNotaInterface;
-		}
-		
-		
 	}
 	
 	/**
