@@ -216,7 +216,7 @@
 				<li><a href="#tab-1">Dados Cadastrais</a></li>
 				<li id="tabSocio"><a href="#tab-2">Sócios</a></li>
 	            <li><a href="#tab-3">Endereços</a></li>
-	            <li><a href="#tab-4">Telefones</a></li>
+	            <li><a href="#tab-4" onclick="carregarTelefones();">Telefones</a></li>
 	            <li><a href="#tab-5">Garantia</a></li>
 				<li><a href="#tab-6">Cotas Associadas</a></li>
 			</ul>
@@ -376,11 +376,11 @@
 			</div>
 	        
 			<div id="tab-3">
-				
+				<jsp:include page="../endereco/index.jsp"></jsp:include>
 	    	</div>
 	    	
 	        <div id="tab-4">
-	        	
+	        	<jsp:include page="../telefone/index.jsp"></jsp:include>
 			</div>
 			
 			<div id="tab-5">
