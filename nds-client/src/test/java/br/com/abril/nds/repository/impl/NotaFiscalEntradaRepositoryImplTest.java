@@ -66,7 +66,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryImplT
 		filtro.setCnpj(cnpj);
 		filtro.setChave(chave);
 		filtro.setNumeroNota(numeroNota);
-		filtro.setSerie(serie);
+		filtro.setSerie(serie);		
 		
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtro);
 		
