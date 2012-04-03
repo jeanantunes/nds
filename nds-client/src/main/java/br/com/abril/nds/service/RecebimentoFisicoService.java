@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -23,5 +24,9 @@ public interface RecebimentoFisicoService {
 	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual);
 	 
 	 void cancelarNotaFiscal(Long idNotaFiscal);
+	 
+	 void apagarItemRecebimentoItemNota(RecebimentoFisicoDTO recebimento);
+	 
+	 RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal);
 	 
 }

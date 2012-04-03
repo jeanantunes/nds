@@ -397,20 +397,28 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 		Diferenca diferenca = new Diferenca();
 		
+		if( calculoQdeDiferenca.compareTo(BigDecimal.ZERO) < 0 ) {
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
+			
+		} else if(calculoQdeDiferenca.compareTo(BigDecimal.ZERO) > 0) {
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
+			
+		} else if(calculoQdeDiferenca.compareTo(BigDecimal.ZERO) == 0) {
+			
+			sinalizarDiferencaApurada(contagem);
+			
+			return;
+			
+		}
+		
 		diferenca.setQtde(calculoQdeDiferenca.abs());
 		diferenca.setResponsavel(usuario);
 		diferenca.setProdutoEdicao(produtoEdicao);
 		diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 		
-		if( calculoQdeDiferenca.compareTo(new BigDecimal(0)) < 0 ) {
-			
-			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
-			
-		} else if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) > 0) {
-			
-			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
-			
-		}
+		
 		
 		diferencaEstoqueService.lancarDiferenca(diferenca);
 		
@@ -529,9 +537,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			controleContagemDevolucao.setProdutoEdicao(produtoEdicao);
 			controleContagemDevolucao.setStatus(StatusOperacao.CONCLUIDO);
 			
+			controleContagemDevolucaoRepository.adicionar(controleContagemDevolucao);
+			
 		} else {
 			controleContagemDevolucao.setStatus(StatusOperacao.CONCLUIDO);
-			controleContagemDevolucaoRepository.adicionar(controleContagemDevolucao);
+			controleContagemDevolucaoRepository.alterar(controleContagemDevolucao);
 		}
 		
 	}

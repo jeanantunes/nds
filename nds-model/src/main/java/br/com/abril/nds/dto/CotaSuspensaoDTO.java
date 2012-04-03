@@ -6,18 +6,37 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class CotaSuspensaoDTO implements Serializable{
 
 	private static final long serialVersionUID = 6095689901379670370L;
 	
 	private Long idCota;
+	
+	@Export(label = "Cota", alignment=Alignment.LEFT)
 	private Integer numCota;
+	
+	@Export(label = "Nome", alignment=Alignment.LEFT)
 	private String nome;
+	
+	@Export(label = "Valor Consignado TotalR$", alignment=Alignment.RIGHT)
 	private String vlrConsignado;
+	
+	@Export(label = "Valor Reparte do Dia R$", alignment=Alignment.RIGHT)
 	private String vlrReparte;
+	
+	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT)
 	private String dividaAcumulada;
+	
+	private Double doubleDividaAcumulada;
+	
+	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER)
 	private Long diasAberto;
+	
 	private Boolean selecionado;
 	
 	
@@ -88,6 +107,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
+		this.doubleDividaAcumulada = dividaAcumulada.doubleValue();
 		this.dividaAcumulada = CurrencyUtil.formatarValor(dividaAcumulada);
 	}
 
@@ -120,6 +140,10 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 	
 	
+	public Double getDoubleDividaAcumulada() {
+		return doubleDividaAcumulada;
+	}
+
 	public enum Ordenacao{
 		
 		COTA("cota"),

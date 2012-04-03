@@ -93,6 +93,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Autowired
 	private DiferencaEstoqueService diferencaEstoqueService;
 	
+	@Autowired
+	ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
+	
 		
 	/**
 	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
@@ -295,6 +298,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
 		
+	}
+	
+	@Transactional
+	public RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal){
+		return recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(idNotaFiscal);
 	}
 	
 	/**
@@ -793,6 +801,24 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		}
 		
+	}
+	
+	@Transactional
+	public void apagarItemRecebimentoItemNota(RecebimentoFisicoDTO recebimento) {
+		try{
+			
+			
+			if(recebimento.getIdItemRecebimentoFisico() != null && recebimento.getIdItemNota() != null){
+				
+				ItemRecebimentoFisico itemRecebimentoFisico = itemRecebimentoFisicoRepository.buscarPorId(recebimento.getIdItemRecebimentoFisico());				
+				itemRecebimentoFisicoRepository.remover(itemRecebimentoFisico);
+				
+				ItemNotaFiscalEntrada itemNotaFiscalEntrada = itemNotaFiscalEntradaRepository.buscarPorId(recebimento.getIdItemNota());
+				itemNotaFiscalEntradaRepository.remover(itemNotaFiscalEntrada);
+			}
+		}catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Problema ao Excluir Itens da Nota.");
+		}
 	}
 	
 }

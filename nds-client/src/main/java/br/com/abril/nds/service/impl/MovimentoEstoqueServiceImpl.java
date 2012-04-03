@@ -93,15 +93,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
-	public void enviarSuplementarCotaAusente(Date data, Long idCota){
+	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota){
 		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 			
 			TipoMovimentoEstoque tipoMovimentoCota =
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
-		
-		List<MovimentoEstoqueCota> listaMovimentoCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, idCota, GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
 		if(listaMovimentoCota != null){
 			
