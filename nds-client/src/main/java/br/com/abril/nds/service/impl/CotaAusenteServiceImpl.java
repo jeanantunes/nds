@@ -81,7 +81,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		
 		Date dataAtual = new Date();
 		
-		CotaAusente cotaAusente = cotaAusenterepository.buscarPorId(idCotaAusente);
+		CotaAusente cotaAusente = cotaAusenteRepository.buscarPorId(idCotaAusente);
 	
 		alterarStatusCotaAusente(cotaAusente);
 		
@@ -117,7 +117,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	 */
 	private void alterarStatusCotaAusente(CotaAusente cotaAusente) {
 		cotaAusente.setAtivo(false);
-		cotaAusenterepository.alterar(cotaAusente);		
+		cotaAusenteRepository.alterar(cotaAusente);		
 	}
 
 
