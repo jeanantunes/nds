@@ -300,6 +300,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 	}
 	
+	@Transactional
+	public RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal){
+		return recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(idNotaFiscal);
+	}
+	
 	/**
 	 * Exclui Itens da Nota e RecebimentoFisico
 	 */	
