@@ -95,6 +95,8 @@ $(function() {
 	
 	$("#cota").numeric();
 	
+	$("#nomeCota").autocomplete({source: ""});
+	
 	carregarItemContaCorrenteCotaGrid();
 	
 });
@@ -299,7 +301,7 @@ function popup_encargos() {
               <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="cota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
               </td>
               <td width="36">Nome:</td>
-              <td width="263"><input type="text" name="nomeCota" id="nomeCota" onkeyup="cota.autoCompletarPorNome('#nomeCota');" onchange="cota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
+              <td width="263"><input type="text" name="nomeCota" id="nomeCota" onkeyup="cota.autoCompletarPorNome('#nomeCota');" onblur="cota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
               <td width="72">&nbsp;</td>
               <td width="283">&nbsp;</td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();">Pesquisar</a></span></td>

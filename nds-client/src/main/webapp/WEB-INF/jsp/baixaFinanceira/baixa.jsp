@@ -292,7 +292,10 @@
 				buttonImageOnly: true
 			});
 			
-			$("#filtroNumCota").numeric();	
+			$("#filtroNumCota").numeric();
+			
+			$("#descricaoCota").autocomplete({source: ""});
+			
 		}); 
 
 		function mostrarBaixaManual() {
@@ -707,7 +710,7 @@
 		      		 	   maxlength="255"
 		      		 	   style="width:130px;"
 		      		 	   onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-		      		 	   onchange="cota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
+		      		 	   onblur="cota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 			  
 				<td width="97">Nosso Número:</td>

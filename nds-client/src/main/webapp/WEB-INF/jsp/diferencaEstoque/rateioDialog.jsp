@@ -28,7 +28,7 @@
 			
 			$(".gridRateioDiferencas").flexigrid({
 				preProcess: executarPreProcessamentoRateio,
-				onSuccess: formatarCamposNumericosRateio,
+				onSuccess: formatarCamposRateio,
 				dataType : 'json',
 				colModel : [{
 					display : 'Cota',
@@ -130,7 +130,7 @@
 				
 				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" value="' + numeroCota + '" />';
 
-				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" value="' + nomeCota + '" />';
+				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" value="' + nomeCota + '" />';
 
 				var inputReparteCota = '<input id="qtdeReparteCota' + index + '" name="qtdeReparteCota" type="hidden" value="' + reparteCota + '" />';
 				
@@ -327,10 +327,12 @@
 			}
 		}
 
-		function formatarCamposNumericosRateio() {
+		function formatarCamposRateio() {
 
 			$("input[name='numeroCota']").numeric();
 			$("input[name='quantidadeRateio']").numeric();
+			
+			$("input[name='nomeCota']").autocomplete({source: ""});
 		}
 	</script>
 	

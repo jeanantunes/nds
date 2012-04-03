@@ -172,6 +172,8 @@
 			dateFormat: "dd/mm/yy"
 		});
 		
+		$("#descricaoCota").autocomplete({source: ""});
+		
 		$("#impressosGrid").flexigrid({
 			preProcess:GeraDivida.executarPreProcessamento,
 			dataType : 'json',
@@ -302,7 +304,7 @@
 							      		 maxlength="255"
 							      		 style="width:130px;"
 							      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-							      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
+							      		 onblur="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
 							      		 									GeraDivida.pesquisarCotaSuccessCallBack,
 							      		 									GeraDivida.pesquisarCotaErrorCallBack);" />
 	    					</td>
