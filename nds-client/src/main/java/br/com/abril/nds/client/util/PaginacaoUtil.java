@@ -1,9 +1,11 @@
 package br.com.abril.nds.client.util;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.NullComparator;
 
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -92,7 +94,7 @@ public class PaginacaoUtil {
 	 * @return Lista ordenada
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Object> List<T> ordenarEmMemoria(List<T> listaAOrdenar,
+	public static <T extends Object> Collection<T> ordenarEmMemoria(List<T> listaAOrdenar,
 															  Ordenacao ordenacao,
 															  String nomeAtributoOrdenacao) {
 		
@@ -112,7 +114,7 @@ public class PaginacaoUtil {
 		}
 		
 		Collections.sort(
-			listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao));
+				listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
 
 		if (Ordenacao.DESC.equals(ordenacao)) {
 

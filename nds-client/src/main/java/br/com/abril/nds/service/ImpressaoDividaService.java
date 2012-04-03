@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -12,9 +11,16 @@ public interface ImpressaoDividaService {
 	/**
 	 * Retorna um arquivo no formato pdf de uma divida para ser impresso.
 	 * @param nossoNumero
-	 * @return File
+	 * @return byte[]
 	 */
 	byte[] gerarArquivoImpressao(String nossoNumero);
+	
+	/**
+	 * Retorna um arquivo no formato pdf de todas as dividas para ser impresso.
+	 * @param filtro
+	 * @return byte[]
+	 */
+	byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro);
 	
 	/**
 	 * Envia uma divida por e-mail
@@ -42,12 +48,5 @@ public interface ImpressaoDividaService {
 	 * @return Boolean
 	 */
 	Boolean validarDividaGerada(Date dataMovimento);
-	
-	/**
-	 * Retorna arquivo de todas as dividas para impressão.
-	 * @param filtro
-	 * @return File
-	 */
-	File gerarArquivoDividas(FiltroDividaGeradaDTO filtro);
 
 }

@@ -245,9 +245,12 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");
+		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");		
 		hql.append("and nf.serie = :serie ");
-		hql.append("and nf.emitente.cnpj = :cnpj ");		
+		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
+			hql.append("and nf.emitente.cnpj = :cnpj ");	
+		}
+			
 		if(filtroConsultaNotaFiscal.getChave() == null){
 			hql.append("and nf.chaveAcesso is null ");	
 		}else{
@@ -257,7 +260,9 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 		
 		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
 		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
-		query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
+		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
+			query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
+		}	
 		
 		if(filtroConsultaNotaFiscal.getChave() != null){
 			query.setParameter("chaveAcesso", filtroConsultaNotaFiscal.getChave());

@@ -4,6 +4,9 @@
 
 <script language="javascript" type="text/javascript">
 
+var mov;
+var indiceAtual;
+
 function cliquePesquisar() {
 	
 	var dataAusencia = $('#idData').attr('value');
@@ -46,9 +49,13 @@ function processaRetornoPesquisa(result) {
 }
 
 function gerarBotaoExcluir(idCotaAusente) {
-	return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
-	 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
-		
+	
+	if(idCotaAusente) {
+		return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
+		 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+	} else {
+		return  "<img style=\"opacity: 0.5\" src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
+	}
 }
 
 function popupNovaCotaAusente() {
@@ -78,7 +85,7 @@ function popupNovaCotaAusente() {
 }
 
 
-function popupConfirmaAusenciaCota(result) {
+function popupConfirmaAusenciaCota(numcota) {
 	
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
@@ -98,19 +105,103 @@ function popupConfirmaAusenciaCota(result) {
 					
 				},
 				"Não": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/carregarDadosRateio'/>", 
+							"numCota="+numcota, 
+							popupRateio);
+					
 					$( this ).dialog( "close" );
-					popup_suplementar();
 				}
 			}
 		});
 }
 	
+function retornoEnvioSuplementar(result) {
 	
+	
+}
 
+function gerarMovimentos(movimentos) {
 	
-function popup_suplementar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	var tabMovimentos = $("#idMovimentos");	
+	var cabecalho = $("#idCabecalhoMovimentos");
+		
+	tabMovimentos.clear();
 	
+	tabMovimentos.append(cabecalho);
+	
+	$.each(movimentos, function(index, movimento) {
+		var novaLinha = $(document.createElement("TR"));
+		
+		var codigo = document.createElement("TD");
+		var produto = document.createElement("TD");
+		var edicao = document.createElement("TD");
+		var reparte = document.createElement("TD");
+		var botao = document.createElement("TD");
+				
+		codigo.innerHTML = movimento.codigoProd;
+		produto.innerHTML = movimento.nomeProd;
+		edicao.innerHTML = movimento.edicaoProd;
+		reparte.innerHTML = movimento.qtdeReparte;
+		botao.innerHTML = "<a onclick=\"gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"${pageContext.request.contextPath}/images/ico_negociar.png\" border=\"0\" /></a>";
+		
+		novaLinha.append(codigo);
+		novaLinha.append(produto);
+		novaLinha.append(edicao);
+		novaLinha.append(reparte);	
+		novaLinha.append(botao);
+		
+		if(index%2 == 0) {
+			novaLinha.attr("style", "background:#F8F8F8;");
+		}
+		
+		tabMovimentos.append(novaLinha);
+	});
+}
+
+function gerarGridRateios(indice) {
+	
+	indiceAtual = indice;
+	
+	var tabRateios = $("#idRateios");	
+	var cabecalho = $("#idCabecalhoRateios");
+		
+	tabRateios.clear();
+	
+	tabRateios.append(cabecalho);
+	
+	if(movimentos[i].rateios) {
+	
+		$.each(movimentos[i].rateios, function(index, rateio) {
+			var novaLinha = $(document.createElement("TR"));
+			
+			var numCota = document.createElement("TD");
+			var nomeCota = document.createElement("TD");
+			var qtde = document.createElement("TD");
+					
+			numCota.innerHTML = rateio.numCota;
+			nomeCota.innerHTML = rateio.nomeCota;
+			qtde.innerHTML = rateio.qtde;
+			
+			novaLinha.append(codigo);
+			novaLinha.append(produto);
+			novaLinha.append(edicao);
+			
+			if(index%2 == 0) {
+				novaLinha.attr("style", "background:#F8F8F8;");
+			}
+			
+			tabMovimentos.append(novaLinha);
+		});
+	}
+}
+	
+function popupRateio(movimentos) {
+	
+	mov = movimentos;
+	
+	gerarMovimentos(movimentos);
+		
 		$( "#dialog-suplementar" ).dialog({
 			resizable: false,
 			height:450,
@@ -118,6 +209,12 @@ function popup_suplementar() {
 			modal: true,
 			buttons: {
 				"Suplementar": function() {
+					
+					var parametros = getParametrosFromMovimentos(movimentos);					
+					
+					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
+							parametros);
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
@@ -128,6 +225,32 @@ function popup_suplementar() {
 				}
 			}
 		});
+}
+
+function getParametrosFromMovimentos(movimentos) {
+	
+	var parametros = [];
+	
+	$.each(movimentos, function(index, movimento) {
+		
+		parametros.push({name:'movimentos['+ index +'].idCota', value: movimento.idCota});
+		parametros.push({name:'movimentos['+ index +'].idProdEd', value: movimento.idProdEd});
+		parametros.push({name:'movimentos['+ index +'].codigoProd', value: movimento.codigoProd});
+		parametros.push({name:'movimentos['+ index +'].edicaoProd', value: movimento.edicaoProd});
+		parametros.push({name:'movimentos['+ index +'].nomeProd', value: movimento.nomeProd});
+		parametros.push({name:'movimentos['+ index +'].qtdeReparte', value: movimento.qtdeReparte});
+		
+		if(movimento.rateios) {
+		
+			$.each(movimento.rateios, function(indexR, rateio) {
+				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].numCota', value: rateio.numCota});
+				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].nomeCota', value: rateio.nomeCota});
+				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].qtde', value: rateio.qtde});			
+			});		
+		}
+  	});
+	
+	return parametros;
 }
 		
 function popup_alterar() {

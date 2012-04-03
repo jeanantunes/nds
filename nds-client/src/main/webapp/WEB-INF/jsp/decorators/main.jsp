@@ -199,7 +199,7 @@ fieldset label {
 							<li><a href='<c:url value="/financeiro/contaCorrenteCota/index"/>'>Conta
 									Corrente</a>
 							</li>
-							<li><a href="Financeiro/debitos_creditos.htm">Débitos /
+							<li><a href='<c:url value="/financeiro/debitoCreditoCota"/>'>Débitos /
 									Créditos Cota</a>
 							</li>
 
@@ -209,7 +209,7 @@ fieldset label {
 							<li><a href="Financeiro/historico_inadimplencia.htm">Histórico
 									de Inadimplência</a>
 							</li>
-							<li><a href="Financeiro/impressao_boletos.htm">Impressão
+							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
 									de Boletos</a>
 							</li>
 							<li><a href="Financeiro/cadastro_manutencao_status.htm">Manutenção

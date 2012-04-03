@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,6 +36,12 @@ public class HistoricoSituacaoCota extends HistoricoEdicao {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MOTIVO", nullable = false)
 	private MotivoAlteracaoSituacao motivo;
+	@Column(name = "DATA_INICIO_VALIDADE")
+	private Date dataInicioValidade;
+	@Column(name = "DATA_FIM_VALIDADE")
+	private Date dataFimValidade;
+	@Column(name = "DESCRICAO")
+	private String descricao;
 	
 	public Long getId() {
 		return id;
@@ -73,6 +81,48 @@ public class HistoricoSituacaoCota extends HistoricoEdicao {
 	
 	public void setMotivo(MotivoAlteracaoSituacao motivo) {
 		this.motivo = motivo;
+	}
+
+	/**
+	 * @return the dataInicioValidade
+	 */
+	public Date getDataInicioValidade() {
+		return dataInicioValidade;
+	}
+
+	/**
+	 * @param dataInicioValidade the dataInicioValidade to set
+	 */
+	public void setDataInicioValidade(Date dataInicioValidade) {
+		this.dataInicioValidade = dataInicioValidade;
+	}
+
+	/**
+	 * @return the dataFimValidade
+	 */
+	public Date getDataFimValidade() {
+		return dataFimValidade;
+	}
+
+	/**
+	 * @param dataFimValidade the dataFimValidade to set
+	 */
+	public void setDataFimValidade(Date dataFimValidade) {
+		this.dataFimValidade = dataFimValidade;
+	}
+
+	/**
+	 * @return the descricao
+	 */
+	public String getDescricao() {
+		return descricao;
+	}
+
+	/**
+	 * @param descricao the descricao to set
+	 */
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 }
