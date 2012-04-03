@@ -4,12 +4,15 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.model.movimentacao.RateioCotaAusente;
 
 public interface CotaAusenteService {
 	
-	void declararCotaAusente(Long idCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario);
+	void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario);
 	
-	List<CotaAusenteDTO> obterCotasAusentes(Date data, Long idCota, CotaAusenteDTO cotaAusenteDTO);
+	List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtro);
+	
+	Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro);
 
 }

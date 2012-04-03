@@ -12,9 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
-import br.com.abril.nds.repository.CotaAusenteRepository;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -39,11 +42,11 @@ public class CotaAusenteController {
 	
 	
 	@Autowired
-	private CotaAusenteRepository cotaAusenteRepository;
-	
+	private CotaAusenteService cotaAusenteService;
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
 	
+	@Autowired
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CotaAusenteController.class);
@@ -106,7 +109,7 @@ public class CotaAusenteController {
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
 		try {
-			listaCotasAusentes = cotaAusenteRepository.obterCotasAusentes(filtro) ;
+			listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,7 +124,7 @@ public class CotaAusenteController {
 			}
 		}
 		
-		Long totalRegistros = cotaAusenteRepository.obterCountCotasAusentes(filtro);
+		Long totalRegistros = cotaAusenteService.obterCountCotasAusentes(filtro);
 		
 		TableModel<CellModelKeyValue<CotaAusenteDTO>> tableModel = new TableModel<CellModelKeyValue<CotaAusenteDTO>>();
 
@@ -201,11 +204,32 @@ public class CotaAusenteController {
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 		}
 		
-		//movimentoEstoqueCotaService.obterMovimentoCotaPorTipoMovimento(new Date(), numCota, grupoMovimentoEstoque)
+		cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
 	}
-	
+
 	@Post
 	public void carregarDadosRateio(Integer numCota) {
 		
+		List<MovimentoEstoqueCotaDTO> movimentos = 
+				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCota, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void realizarRateio(MovimentoEstoqueCotaDTO[] movimentos) {
+		
+		
+	}
+	
+
+
+	//TODO getRealUsuario
+	public Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		usuario.setLogin("fakeUsuario");
+		usuario.setNome("Fake Usuario");
+		return usuario;
 	}
 }

@@ -115,6 +115,7 @@ function popupConfirmaAusenciaCota(numcota) {
 	
 function retornoEnvioSuplementar(result) {
 	
+	
 }
 
 	
@@ -128,6 +129,10 @@ function popupRateio(result) {
 			modal: true,
 			buttons: {
 				"Suplementar": function() {
+					
+					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
+							"movimentos="+result);
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
