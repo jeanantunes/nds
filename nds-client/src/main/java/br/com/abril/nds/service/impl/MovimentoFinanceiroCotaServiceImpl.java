@@ -8,76 +8,88 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
-import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.financeiro.BaixaCobranca;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class MovimentoFinanceiroCotaServiceImpl implements
 		MovimentoFinanceiroCotaService {
 
 	@Autowired
-	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
-	
-	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
-	
+
 	@Autowired
-	private CotaRepository cotaRepository;
-	
-	@Autowired
-	private UsuarioRepository usuarioRepository;
-	
+	private HistoricoMovimentoFinanceiroCotaRepository historicoMovimentoFinanceiroCotaRepository;
+
 	@Override
 	@Transactional
 	public void gerarMovimentoFinanceiroDebitoCredito(
-								Cota cota, GrupoMovimentoFinaceiro grupoMovimentoFinanceiro,
-								Usuario usuario, BigDecimal valor, Date dataOperacao,
-								BaixaCobranca baixaCobranca, Date dataNovoMovimento) {
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
+
+		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+
+		if (movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota() != null) {
+
+			movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.buscarPorId(
+					movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota());
+		
+		} else {
+
+			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+		}
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
-			tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinanceiro);
+					movimentoFinanceiroCotaDTO.getTipoMovimentoFinanceiro();
 
 		if (tipoMovimentoFinanceiro != null) {
 
-			MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-
 			if (tipoMovimentoFinanceiro.isAprovacaoAutomatica()) {
 
-				movimentoFinanceiroCota.setAprovadoAutomaticamente(true);
-				movimentoFinanceiroCota.setAprovador(usuario);
-				movimentoFinanceiroCota.setDataAprovacao(new Date());
-				
-				movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
+				movimentoFinanceiroCota.setAprovadoAutomaticamente(
+						movimentoFinanceiroCotaDTO.isAprovacaoAutomatica());
+				movimentoFinanceiroCota.setAprovador(
+						movimentoFinanceiroCotaDTO.getUsuario());
+				movimentoFinanceiroCota.setDataAprovacao(
+						movimentoFinanceiroCotaDTO.getDataAprovacao());
+				movimentoFinanceiroCota.setStatus(
+						StatusAprovacao.APROVADO);
 
 			} else {
 
 				movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
 			}
 
-			movimentoFinanceiroCota.setCota(cota);
-			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setData(dataNovoMovimento);
-			movimentoFinanceiroCota.setUsuario(usuario);
-			movimentoFinanceiroCota.setValor(valor);
-			movimentoFinanceiroCota.setLancamentoManual(false);
-			movimentoFinanceiroCota.setBaixaCobranca(baixaCobranca);
+			movimentoFinanceiroCota.setCota(
+					movimentoFinanceiroCotaDTO.getCota());
+			movimentoFinanceiroCota.setTipoMovimento(
+					tipoMovimentoFinanceiro);
+			movimentoFinanceiroCota.setData(
+					movimentoFinanceiroCotaDTO.getDataVencimento());
+			movimentoFinanceiroCota.setDataCriacao(
+					movimentoFinanceiroCotaDTO.getDataCriacao());
+			movimentoFinanceiroCota.setUsuario(
+					movimentoFinanceiroCotaDTO.getUsuario());
+			movimentoFinanceiroCota.setValor(
+					movimentoFinanceiroCotaDTO.getValor());
+			movimentoFinanceiroCota.setLancamentoManual(
+					movimentoFinanceiroCotaDTO.isLancamentoManual());
+			movimentoFinanceiroCota.setBaixaCobranca(
+					movimentoFinanceiroCotaDTO.getBaixaCobranca());
+			movimentoFinanceiroCota.setObservacao(
+					movimentoFinanceiroCotaDTO.getObservacao());
+			
+			MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = 
+					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 
-			movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+			gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
 		}
 	}
 
@@ -128,66 +140,32 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		return this.movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
 	}
-
+	
 	/**
-	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#cadastrarMovimentoFincanceiroCota(br.com.abril.nds.dto.DebitoCreditoDTO)
+	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#obterSomatorioValorMovimentosFinanceiroCota(br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO)
 	 */
 	@Override
 	@Transactional
-	public void cadastrarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
+	public BigDecimal obterSomatorioValorMovimentosFinanceiroCota(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
-		Long idMovimento = debitoCredito.getId();
+		return this.movimentoFinanceiroCotaRepository.obterSomatorioValorMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+	}
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+	private void gerarHistoricoMovimentoFinanceiroCota(MovimentoFinanceiroCota movimentoFinanceiroCota, TipoEdicao tipoEdicao) {
 		
-		if (idMovimento != null) {
+		HistoricoMovimentoFinanceiroCota historicoMovimentoFinanceiroCota = 
+				new HistoricoMovimentoFinanceiroCota();
+
+		historicoMovimentoFinanceiroCota.setCota(movimentoFinanceiroCota.getCota());
+		historicoMovimentoFinanceiroCota.setResponsavel(movimentoFinanceiroCota.getUsuario());
+		historicoMovimentoFinanceiroCota.setTipoEdicao(tipoEdicao);
+		historicoMovimentoFinanceiroCota.setTipoMovimento(movimentoFinanceiroCota.getTipoMovimento());
+		historicoMovimentoFinanceiroCota.setValor(movimentoFinanceiroCota.getValor());
+		historicoMovimentoFinanceiroCota.setMovimentoFinanceiroCota(movimentoFinanceiroCota);
+		historicoMovimentoFinanceiroCota.setDataEdicao(new Date());
+		historicoMovimentoFinanceiroCota.setData(movimentoFinanceiroCota.getData());
 		
-			movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
-		} 
-
-		if (movimentoFinanceiroCota == null) {
-
-			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-		}
-
-		if (debitoCredito.getDataLancamento() == null) {
-			
-			movimentoFinanceiroCota.setDataCriacao(DateUtil.removerTimestamp(new Date()));
-		}
-
-		if (debitoCredito.getDataVencimento() != null) {
-
-			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
-			
-			movimentoFinanceiroCota.setData(dataVencimento);
-		}
-
-		try {
-
-			BigDecimal valor = new BigDecimal(debitoCredito.getValor());
-
-			movimentoFinanceiroCota.setValor(valor);
-
-		} catch(NumberFormatException e) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor inválido para o campo [Valor].");
-		}
-
-		movimentoFinanceiroCota.setObservacao(debitoCredito.getObservacao());
-
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
-				this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
-
-		movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
-		
-		movimentoFinanceiroCota.setCota(cota);
-
-		Usuario usuario = this.usuarioRepository.buscarPorId(debitoCredito.getIdUsuario());
-		
-		movimentoFinanceiroCota.setUsuario(usuario);
-		
-		this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
+		this.historicoMovimentoFinanceiroCotaRepository.adicionar(historicoMovimentoFinanceiroCota);
 	}
 }

@@ -23,4 +23,13 @@ public class TipoMovimentoFinanceiroServiceImpl implements TipoMovimentoFinancei
 		return this.tipoMovimentoFinanceiroRepository.buscarTodos();
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.TipoMovimentoFinanceiroService#obterTipoMovimentoFincanceiroPorId(java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public TipoMovimentoFinanceiro obterTipoMovimentoFincanceiroPorId(
+			Long idTipoMovimentoFinanceiro) {
+		return this.tipoMovimentoFinanceiroRepository.buscarPorId(idTipoMovimentoFinanceiro);
+	}
 }

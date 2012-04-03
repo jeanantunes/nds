@@ -1,23 +1,41 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.util.CellModel;
@@ -26,7 +44,11 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -54,6 +76,20 @@ public class DebitoCreditoCotaController {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private DebitoCreditoCotaService debitoCreditoCotaService;
+
+	@Autowired
+	private HttpSession session;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+
+	@Autowired
+	private HttpServletResponse httpResponse;
+
+	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaDebitoCreditoCota";
 
 	@Path("/")
 	public void index() { 
@@ -94,29 +130,235 @@ public class DebitoCreditoCotaController {
 		this.result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
+	 * 
+	 * @param filtroResumoExpedicao
+	 */
+	private void tratarFiltro(FiltroDebitoCreditoDTO filtro) {
+
+		FiltroDebitoCreditoDTO filtroSession = (FiltroDebitoCreditoDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtro)) {
+
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroDebitoCreditoDTO filtro = this.obterFiltroExportacao();
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtro);
+		
+		List<MovimentoFinanceiroCotaDTO> listaExport = obterListaMovimentoFinanceiroCotaExportacao(listaMovimentoFinanceiroCota);
+		
+		BigDecimal valorSumarizado = 
+				this.movimentoFinanceiroCotaService.obterSomatorioValorMovimentosFinanceiroCota(filtro);
+		
+		DebitoCreditoVO debitoCreditoVO = new DebitoCreditoVO();
+
+		if (valorSumarizado != null) {
+		
+			debitoCreditoVO.setValorTotal(new DecimalFormat("#,###.00").format(valorSumarizado));
+		}
+
+		FileExporter.to("debito-credito-cota", fileType)
+			.inHTTPResponse(
+					this.getNDSFileHeader(), filtro, debitoCreditoVO, 
+					listaExport, MovimentoFinanceiroCotaDTO.class, this.httpResponse);
+	}
+	
+	private List<MovimentoFinanceiroCotaDTO> obterListaMovimentoFinanceiroCotaExportacao(List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota) {
+		
+		List<MovimentoFinanceiroCotaDTO> listaExport = new LinkedList<MovimentoFinanceiroCotaDTO>();
+		
+		if (listaMovimentoFinanceiroCota == null || listaMovimentoFinanceiroCota.isEmpty()) {
+			
+			return listaExport;
+		}
+		
+		for (MovimentoFinanceiroCota movimeto : listaMovimentoFinanceiroCota) {
+			
+			MovimentoFinanceiroCotaDTO itemExport = new MovimentoFinanceiroCotaDTO();
+			
+			itemExport.setAprovacaoAutomatica(movimeto.isAprovadoAutomaticamente());
+			
+			itemExport.setCota(movimeto.getCota());
+			
+			itemExport.setDataCriacao(movimeto.getDataCriacao());
+			
+			itemExport.setDataVencimento(movimeto.getData());
+			
+			itemExport.setLancamentoManual(movimeto.isLancamentoManual());
+			
+			itemExport.setObservacao(movimeto.getObservacao());
+			
+			itemExport.setTipoMovimentoFinanceiro(movimeto.getTipoMovimento());
+			
+			itemExport.setUsuario(movimeto.getUsuario());
+			
+			itemExport.setValor(movimeto.getValor());
+			
+			listaExport.add(itemExport);
+			
+		}
+		
+		return listaExport;		
+	}
+	
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}	
+	/*
+	 * Obtém o filtro para exportação.
+	 */
+	private FiltroDebitoCreditoDTO obterFiltroExportacao() {
+		
+		FiltroDebitoCreditoDTO filtro = 
+			(FiltroDebitoCreditoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			carregarDescricoesFiltro(filtro);
+			
+		}
+		
+		return filtro;
+	}
+	
+	private void carregarDescricoesFiltro(FiltroDebitoCreditoDTO filtro) {
+		
+		filtro.setDescricaoTipoMovimento("");
+		
+		filtro.setNomeCota("");
+		
+		if (filtro.getIdTipoMovimento() != null) {
+			
+			TipoMovimentoFinanceiro tipoMovimentoFinac =  
+					tipoMovimentoFinanceiroService.
+					obterTipoMovimentoFincanceiroPorId(filtro.getIdTipoMovimento());
+			
+			if(tipoMovimentoFinac!=null) {
+				filtro.setDescricaoTipoMovimento(tipoMovimentoFinac.getDescricao());
+			}
+			
+			
+		}
+
+		if (filtro.getNumeroCota() != null) {
+			
+			Cota cota = cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+			
+			if(cota!=null) {
+				
+				String descricao = "";
+				
+				if(cota.getPessoa() instanceof PessoaJuridica) {
+					descricao = ((PessoaJuridica)cota.getPessoa()).getRazaoSocial();
+				} else {
+					descricao = ((PessoaFisica)cota.getPessoa()).getNome();
+				}
+				
+				filtro.setNomeCota(descricao);
+			}
+		}
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+			
+		Usuario usuario = new Usuario();
+			
+		usuario.setId(1L);
+			
+		usuario.setNome("Jornaleiro da Silva");
+			
+		return usuario;
+	}
+	
 	@Post
 	public void pesquisarDebitoCredito(FiltroDebitoCreditoDTO filtroDebitoCredito, 
 									   String sortorder, String sortname, int page, int rp) {
-		
+
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-		
+
 		ColunaOrdenacao colunaOrdenacao = Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname.trim());
-		
+
 		filtroDebitoCredito.setPaginacao(paginacao);
 		filtroDebitoCredito.setColunaOrdenacao(colunaOrdenacao);
+
+		validarFiltroDebitoCredito(filtroDebitoCredito);
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
 				this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtroDebitoCredito);
 		
+		if (listaMovimentoFinanceiroCota == null || listaMovimentoFinanceiroCota.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+
 		Integer quantidadeRegistros =  
 				this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
-		
+
+		BigDecimal valorSumarizado = 
+				this.movimentoFinanceiroCotaService.obterSomatorioValorMovimentosFinanceiroCota(filtroDebitoCredito);
+
+		tratarFiltro(filtroDebitoCredito);
+
 		TableModel<CellModel> tableModel = getTableModel(listaMovimentoFinanceiroCota);
-		
+
 		tableModel.setPage(page);
 		tableModel.setTotal(quantidadeRegistros);
 
-		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		DebitoCreditoVO debitoCreditoVO = new DebitoCreditoVO();
+
+		debitoCreditoVO.setTableModel(tableModel);
+		
+		if (valorSumarizado != null) {
+			
+			debitoCreditoVO.setValorTotal(new DecimalFormat("#,###.00").format(valorSumarizado));
+		}
+
+		this.result.use(Results.json()).withoutRoot().from(debitoCreditoVO).recursive().serialize();
 	}
 
 	@Post
@@ -138,11 +380,17 @@ public class DebitoCreditoCotaController {
 
 	@Post
 	public void criarMovimentoFincanceiroCota(List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
+
+		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
+		
+		validarMovimentosDuplicados(listaNovosDebitoCredito);
+		
+		existeMovimentoFinanceiroCota(listaNovosDebitoCredito, idTipoMovimento);
 		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
-			
+
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-			
+
 			tipoMovimentoFinanceiro.setId(idTipoMovimento);
 
 			debitoCredito.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
@@ -152,7 +400,14 @@ public class DebitoCreditoCotaController {
 			//TODO: remover mock de usuário.
 			debitoCredito.setIdUsuario(1L);
 			
-			this.movimentoFinanceiroCotaService.cadastrarMovimentoFincanceiroCota(debitoCredito);
+			debitoCredito.setId(null);
+			
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = 
+					debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+			
+			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			
+			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
 		}
 		
 		List<String> listaMensagens = new ArrayList<String>();
@@ -165,11 +420,20 @@ public class DebitoCreditoCotaController {
 	@Post
 	public void editarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
 		
+		validarPreenchimentoCamposEdicao(debitoCredito);
+		
 		//TODO: remover mock de usuário.
 		debitoCredito.setIdUsuario(1L);
-
-		this.movimentoFinanceiroCotaService.cadastrarMovimentoFincanceiroCota(debitoCredito);
 		
+		debitoCredito.setValor(getValorSemMascara(debitoCredito.getValor()));
+
+		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = 
+				debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+
+		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.ALTERACAO);
+		
+		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		listaMensagens.add("Alteração realizada com sucesso.");
@@ -183,9 +447,13 @@ public class DebitoCreditoCotaController {
 
 		List<DebitoCreditoDTO> listaDebitoCredito = new ArrayList<DebitoCreditoDTO>();
 		
-		for (int i = 0; i < 50; i++) {
+		for (int indice = 0; indice < 50; indice++) {
 			
-			listaDebitoCredito.add(new DebitoCreditoDTO());
+			DebitoCreditoDTO debitoCreditoDTO = new DebitoCreditoDTO();
+			
+			debitoCreditoDTO.setId(Long.valueOf(indice));
+			
+			listaDebitoCredito.add(debitoCreditoDTO);
 		}
 		
 		TableModel<CellModelKeyValue<DebitoCreditoDTO>> tableModel =
@@ -229,12 +497,65 @@ public class DebitoCreditoCotaController {
 
 		this.result.use(Results.json()).from(debitoCredito, "result").recursive().serialize();
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void validarMovimentosDuplicados(List<DebitoCreditoDTO> listaNovosDebitoCredito) {
+
+		Collections.sort(listaNovosDebitoCredito, new BeanComparator("numeroCota"));
+		
+		List<Long> linhasComErro = new ArrayList<Long>();
+		
+		DebitoCreditoDTO ultimoDebitoCreditoDTO = null;
+		
+		for (DebitoCreditoDTO debitoCreditoDTO : listaNovosDebitoCredito) {
+			
+			Integer numeroCota = debitoCreditoDTO.getNumeroCota();
+			String dataVencimento = debitoCreditoDTO.getDataVencimento();
+			
+			if (numeroCota == null || dataVencimento == null) {
+				
+				continue;
+			}
+			
+			if (ultimoDebitoCreditoDTO != null) {
+				
+				if (numeroCota.equals(ultimoDebitoCreditoDTO.getNumeroCota()) 
+						&& dataVencimento.equals(ultimoDebitoCreditoDTO.getDataVencimento())) {
+					
+					linhasComErro.add(ultimoDebitoCreditoDTO.getId());
+					linhasComErro.add(debitoCreditoDTO.getId());
+				}
+			}
+			
+			ultimoDebitoCreditoDTO = debitoCreditoDTO;
+		}
+
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Existem movimentos duplicados!");
+			
+			validacao.setDados(linhasComErro);
+		
+			throw new ValidacaoException(validacao);
+		}
+	}
 
 	private TableModel<CellModel> getTableModel(List<MovimentoFinanceiroCota> listaDebitoCredito) {
-	
+
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
-		
+
+		DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaDebitoCredito) {
+
+			String isEditavel =
+					movimentoFinanceiroCota.isLancamentoManual() ?
+							"true" : "false";
+
+			if ("true".equals(isEditavel) && StatusAprovacao.APROVADO == movimentoFinanceiroCota.getStatus()) {
+
+				isEditavel = "false"; 
+			}
 
 			String dataLancamento = 
 					formatField(movimentoFinanceiroCota.getDataCriacao());
@@ -245,10 +566,11 @@ public class DebitoCreditoCotaController {
 			String tipoMovimento = 
 					formatField(movimentoFinanceiroCota.getTipoMovimento().getDescricao());
 			String valor = 
-					formatField(movimentoFinanceiroCota.getValor());
+					movimentoFinanceiroCota.getValor() == null ? 
+							"" : decimalFormat.format(movimentoFinanceiroCota.getValor());
 			String observacao = 
 					formatField(movimentoFinanceiroCota.getObservacao());
-			
+
 			Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 			
 			String nomeCota = pessoa instanceof PessoaJuridica ? 
@@ -262,7 +584,8 @@ public class DebitoCreditoCotaController {
 				nomeCota,
 				tipoMovimento,
 				valor,
-				observacao
+				observacao,
+				isEditavel
 			);
 
 			listaCellModel.add(cellModel);
@@ -283,8 +606,194 @@ public class DebitoCreditoCotaController {
 			
 			return field == null ? "" : DateUtil.formatarDataPTBR((Date) field);
 		}
-		
+
 		return field == null ? "" : String.valueOf(field);
+	}
+
+	private void validarFiltroDebitoCredito(FiltroDebitoCreditoDTO filtroDebitoCredito) {		
+
+		List<String> listaMensagens = new ArrayList<String>();
+
+		if (filtroDebitoCredito.getDataLancamentoInicio() != null 
+				&& filtroDebitoCredito.getDataLancamentoFim() != null
+				&& DateUtil.isDataInicialMaiorDataFinal(
+						filtroDebitoCredito.getDataLancamentoInicio(), 
+						filtroDebitoCredito.getDataLancamentoFim())) {
+
+			listaMensagens.add("A data de lançamento inicial deve ser menor que a data de lançamento final.");
+
+		} else if (filtroDebitoCredito.getDataLancamentoInicio() != null 
+				&& filtroDebitoCredito.getDataLancamentoFim() == null) {
+			
+			listaMensagens.add("O preenchimento da data de lançamento final é obrigatória.");
+		
+		}  else if (filtroDebitoCredito.getDataLancamentoInicio() == null 
+				&& filtroDebitoCredito.getDataLancamentoFim() != null) {
+			
+			listaMensagens.add("O preenchimento da data de lançamento inicial é obrigatória.");
+		}
+
+		if (filtroDebitoCredito.getDataVencimentoInicio() != null 
+				&& filtroDebitoCredito.getDataVencimentoFim() != null
+				&& DateUtil.isDataInicialMaiorDataFinal(
+						filtroDebitoCredito.getDataVencimentoInicio(), 
+						filtroDebitoCredito.getDataVencimentoFim())) {
+
+			listaMensagens.add("A data de vencimento inicial deve ser menor que a data de vencimento final.");
+		
+		} else if (filtroDebitoCredito.getDataVencimentoInicio() != null 
+				&& filtroDebitoCredito.getDataVencimentoFim() == null) {
+			
+			listaMensagens.add("O preenchimento da data de vencimento final é obrigatória.");
+		
+		} else if (filtroDebitoCredito.getDataVencimentoInicio() == null 
+				&& filtroDebitoCredito.getDataVencimentoFim() != null) {
+			
+			listaMensagens.add("O preenchimento da data de vencimento inicial é obrigatória.");
+		}
+
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
+		}
+	}	
+
+	private void validarPreenchimentoCamposEdicao(DebitoCreditoDTO debitoCredito) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+	
+		
+		Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
+		
+		if (debitoCredito.getNumeroCota() == null) {
+			
+			listaMensagens.add("O preenchimento do campo [Número da Cota] é obrigatório.");
+		}
+		
+		if (dataVencimento == null) {
+
+			listaMensagens.add("O preenchimento do campo [Data de Vencimento] é obrigatório.");
+		
+		} else if (DateUtil.isDataInicialMaiorDataFinal(new Date(), dataVencimento)) {
+
+			listaMensagens.add("A data de vencimento deve suceder a data atual.");
+		}
+
+		if (debitoCredito.getValor() == null) {
+			
+			listaMensagens.add("O preenchimento do campo [Valor] é obrigatório.");
+		
+		} else {
+
+			try {
+
+				new BigDecimal(getValorSemMascara(debitoCredito.getValor()));
+
+			} catch(NumberFormatException e) {
+
+				listaMensagens.add("O preenchimento do campo [Valor] é inválido.");
+			}
+		}
+
+		if (!listaMensagens.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	private void validarPreenchimentoCampos(List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
+		
+		if (idTipoMovimento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo Movimento] é obrigatório.");
+		}
+		
+		List<Long> linhasComErro = new ArrayList<Long>();
+		
+		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
+			
+			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
+			
+			if (debitoCredito.getNumeroCota() == null) {
+				
+				linhasComErro.add(debitoCredito.getId());
+			}
+			
+			if (dataVencimento == null) {
+
+				linhasComErro.add(debitoCredito.getId());
+			
+			} else if (DateUtil.isDataInicialMaiorDataFinal(new Date(), dataVencimento)) {
+
+				linhasComErro.add(debitoCredito.getId());
+			}
+
+			if (debitoCredito.getValor() == null) {
+				
+				linhasComErro.add(debitoCredito.getId());
+			
+			} else {
+
+				try {
+
+					new BigDecimal(getValorSemMascara(debitoCredito.getValor()));
+
+				} catch(NumberFormatException e) {
+
+					linhasComErro.add(debitoCredito.getId());
+				}
+			}			
+		}
+
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(
+					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.");
+					
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
+
+	private void existeMovimentoFinanceiroCota(
+			List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
+		
+		List<Long> linhasComErro = new ArrayList<Long>();
+		
+		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
+			
+			FiltroDebitoCreditoDTO filtroDebitoCredito = new FiltroDebitoCreditoDTO();
+			
+			Calendar calendar = Calendar.getInstance();
+			
+			calendar.setTime(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
+			calendar.add(Calendar.DATE, -1);
+			Date dataVencimentoInicio = DateUtil.removerTimestamp(calendar.getTime());
+			
+			filtroDebitoCredito.setDataVencimentoInicio(dataVencimentoInicio);
+			filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
+			filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
+			filtroDebitoCredito.setIdTipoMovimento(idTipoMovimento);
+			
+			Integer contagem = this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
+			
+			if (contagem > 0) {
+				
+				linhasComErro.add(debitoCredito.getId());
+			}	
+		}
+		
+		if (!linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Já existe um movimento para esta cota, nesta data.");
+			
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
+		}
 	}
 	
 	private String getValorSemMascara(String valor) {

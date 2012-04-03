@@ -1518,6 +1518,9 @@ public class DataLoader {
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
 		save(session,tipoMovimentoRecebimentoReparte,tipoMovimentoEnvioJornaleiro);
 		
+		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
+		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -3057,7 +3060,7 @@ public class DataLoader {
 
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session, usuario);
-		
+
 		Calendar calendar = Calendar.getInstance();
 		
 		calendar.add(Calendar.DATE, 10);
