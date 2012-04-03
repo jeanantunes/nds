@@ -25,7 +25,7 @@
 				
 				var nossoNumero  = row.cell.nossoNumero;
 				
-				var linkImpressao = '<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirDivida?nossoNumero=' + nossoNumero + '" style="cursor:pointer">' +
+				var linkImpressao = '<a href="javascript:GeraDivida.imprimirDivida(' + nossoNumero + ')" style="cursor:pointer">' +
 					 '<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
 					 '</a>';			
 				
@@ -52,7 +52,9 @@
 		enviarDivida:function(nossoNumero) {
 			var data = [{ name: 'nossoNumero', value: nossoNumero}];
 			
-			$.postJSON("<c:url value='/financeiro/impressaoBoletos/enviarDivida' />", data);
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/enviarDivida' />", data,function(){
+				GeraDivida.pesquisar();	
+			});
 		},
 		
 		formData: function(){
@@ -163,7 +165,7 @@
 		
 		imprimirDividas:function(tipoImpressao){
 			
-			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDivida' />",
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDividas' />",
 					[{name:"tipoImpressao",value:tipoImpressao}], function(result){
 				
 				if("BOLETO" == result){
@@ -171,6 +173,26 @@
 				}
 				else if ("DIVIDA" == result) {
 					window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>";
+				}	
+			});
+		},
+		
+		imprimirDivida:function(nossoNumero){
+			
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDivida' />",
+					[{name:"nossoNumero",value:nossoNumero}], function(result){
+				
+				if(result == "true"){
+					
+					$("#impressosGrid").flexOptions({
+						url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
+						params: GeraDivida.formData(),
+						onSuccess:function(){
+							window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>";		
+						}
+					});
+					
+					$("#impressosGrid").flexReload();
 				}	
 			});
 		}

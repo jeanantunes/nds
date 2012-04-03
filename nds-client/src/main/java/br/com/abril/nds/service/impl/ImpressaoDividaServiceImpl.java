@@ -23,14 +23,14 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
-	@Transactional(readOnly=true)
+	@Transactional
 	@Override
 	public byte[] gerarArquivoImpressao(String nossoNumero) {
 		
 		return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 	}
 	
-	@Transactional(readOnly=true)
+	@Transactional
 	@Override
 	public byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro) {
 		

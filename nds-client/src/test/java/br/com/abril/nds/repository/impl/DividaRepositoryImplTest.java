@@ -153,7 +153,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(boleto);		
 	}
 	
-
+	@Ignore
 	@Test
 	public void consultaDividasGeradas(){
 		

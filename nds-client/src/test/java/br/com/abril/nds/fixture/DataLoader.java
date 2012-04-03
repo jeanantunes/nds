@@ -1953,13 +1953,13 @@ public class DataLoader {
 				                        new Date(),  new Date(),
 				                        new Date(), BigDecimal.ZERO, new BigDecimal(100),
 										"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
-										cotaManoel, bancoHSBC, divida1,1);
+										cotaManoel, bancoHSBC, divida1,0);
 		
 		Boleto boleto2 = Fixture.boleto("1309709032013", 
 				                        new Date(), new Date(), 
 				                        new Date(),  BigDecimal.ZERO, new BigDecimal(200), 
 		                				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
-		                				cotaManoel, bancoHSBC, divida2,1);
+		                				cotaManoel, bancoHSBC, divida2,0);
 		
 		
 		//Boletos vencidos
@@ -1967,19 +1967,19 @@ public class DataLoader {
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("09/03/2012"),
 										null,  BigDecimal.ZERO, new BigDecimal(300), 
 										"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-										cotaManoel, bancoHSBC, divida3,2);
+										cotaManoel, bancoHSBC, divida3,0);
 		
 		Boleto boleto4 = Fixture.boleto("310609020128", 
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("09/03/2012"), 
 		                				null, BigDecimal.ZERO, new BigDecimal(400), 
 		                				"TIPO_BAIXA", "ACAO",  StatusCobranca.NAO_PAGO,
-		                				cotaManoel, bancoHSBC, divida4,3);
+		                				cotaManoel, bancoHSBC, divida4,0);
 		
-		Boleto boleto5 = Fixture.boleto("080903201261", 
+		Boleto boleto5 = Fixture.boleto("7080903201261", 
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("09/03/2012"), 
 		                				null, BigDecimal.ZERO, new BigDecimal(500), "TIPO_BAIXA",
 		                				"ACAO", StatusCobranca.NAO_PAGO,
-		                				cotaManoel, bancoHSBC, divida5,1);
+		                				cotaManoel, bancoHSBC, divida5,0);
 		
 		
 		//Boletos não vencidos
@@ -1993,13 +1993,13 @@ public class DataLoader {
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
                 						null, BigDecimal.ZERO, new BigDecimal(700), 
                 						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-                						cotaManoel, bancoHSBC, divida7,2);
+                						cotaManoel, bancoHSBC, divida7,0);
 		
 		Boleto boleto8 = Fixture.boleto("131309032012", 
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
                 						null, BigDecimal.ZERO, new BigDecimal(800), 
                 						"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-                						cotaManoel, bancoHSBC, divida8,3);
+                						cotaManoel, bancoHSBC, divida8,0);
 		
 		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6, 
 				      boleto7, boleto8);	
@@ -2013,13 +2013,13 @@ public class DataLoader {
                 DateUtil.parseDataPTBR("11/03/2012"), DateUtil.parseDataPTBR("15/03/2012"), 
                 null,BigDecimal.ZERO,new BigDecimal(900), 
                 "TIPO_BAIXA","ACAO",StatusCobranca.NAO_PAGO,
-                cotaJose,divida14,8);
+                cotaJose,divida14,0);
 		
 		CobrancaCheque cobranca1 = Fixture.cobrancaCheque("10123456788125619",
                 new Date(),DateUtil.adicionarDias(new Date(), 30) , 
 	             null,BigDecimal.ZERO,new BigDecimal(1000), 
 	             "TIPO_BAIXA","ACAO",StatusCobranca.NAO_PAGO,
-	             cotaJose,divida13,3);
+	             cotaJose,divida13,0);
 		
 		save(session, cobranca,cobranca1);
 	}
@@ -2031,7 +2031,7 @@ public class DataLoader {
                 DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"),
 				 null, BigDecimal.ZERO, new BigDecimal(1100), 
 				 "TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				 cotaLuis, bancoHSBC, divida11,10);
+				 cotaLuis, bancoHSBC, divida11,0);
 		
 		save(session, cobranca);
 	}
@@ -2043,7 +2043,7 @@ public class DataLoader {
                 DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("15/03/2012"), 
                 null,BigDecimal.ZERO,new BigDecimal(1200), 
                 "TIPO_BAIXA","ACAO",StatusCobranca.NAO_PAGO,
-                cotaJoao,bancoITAU,divida12,1);
+                cotaJoao,bancoITAU,divida12,0);
 		
 		save(session, cobranca1);
 	}
@@ -2054,7 +2054,7 @@ public class DataLoader {
                 DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
 				null, BigDecimal.ZERO, new BigDecimal(1300), 
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaMaria, bancoHSBC, divida9,5);
+				cotaMaria, bancoHSBC, divida9,0);
 
 		CobrancaDeposito cobranca1 = Fixture.cobrancaDeposito("1312509032012623", 
                  DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"),

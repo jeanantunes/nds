@@ -345,13 +345,33 @@ public class ImpressaoBoletosController {
 	@Path("/imprimirDivida")
 	public void imprimirDivida(String nossoNumero) throws Exception{
 		
-		byte[] arquivo = dividaService.gerarArquivoImpressao(nossoNumero);
+		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
 		
-		imprimirDividas(arquivo,nossoNumero);
+		if(arquivo!= null){
+			imprimirDividas(arquivo,nossoNumero);
+		}
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, null);
 	}
 	
 	@Post
 	@Path("/validarImpressaoDivida")
+	public void validarImpressaoDivida(String nossoNumero) throws Exception{
+		
+		byte[] arquivo = dividaService.gerarArquivoImpressao(nossoNumero);
+		
+		if(arquivo == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Divida não encontrado para impressão");
+		}
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
+		
+		result.use(Results.json()).from(Boolean.TRUE.toString(),"result").serialize();
+	}
+
+	
+	@Post
+	@Path("/validarImpressaoDividas")
 	public void validarImpressaoDividaEmMassa(String tipoImpressao) throws Exception{
 		
 		FiltroDividaGeradaDTO filtro = obterFiltroExportacao();
