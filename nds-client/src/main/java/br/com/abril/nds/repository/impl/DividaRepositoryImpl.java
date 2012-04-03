@@ -205,7 +205,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		if(filtro.getTipoCobranca()!= null){
 			
 			if(isBoleto){
-				hql.append(" AND cobranca.tipoCobranca =:tipoCobranca ) ");
+				hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
 			}else{
 				hql.append(" AND cobranca.tipoCobranca not in (:tipoCobranca ) ");
 			}

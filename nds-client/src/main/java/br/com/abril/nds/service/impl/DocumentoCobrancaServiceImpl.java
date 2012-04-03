@@ -72,8 +72,10 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		try {
 			switch (cobranca.getTipoCobranca()) {
 				case BOLETO:
+
 					boletoService.enviarBoletoEmail(nossoNumero);
 					break;
+
 				default:
 					enviarDocumentoPorEmail(cobranca);
 				

@@ -51,7 +51,6 @@ import br.com.abril.nds.service.ControleNumeracaoNotaFiscalService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.util.MockPerfilUsuario;
 
 @Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
@@ -100,7 +99,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	
 	@Transactional
-	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, MockPerfilUsuario mockPerfilUsuario) {
+	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
 		
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
 		
@@ -114,13 +113,16 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				filtroPesquisa, 
 				tipoMovimentoEstoque, 
-				true);
+				indPerfilUsuarioEncarregado);
+		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
 		BigDecimal valorTotalGeral = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
 		info.setValorTotalGeral(valorTotalGeral);
 		
-		carregarDadosAdicionais(info, listaContagemDevolucao);
+		if(indPerfilUsuarioEncarregado) {
+			carregarDadosAdicionais(info, listaContagemDevolucao);
+		}
 		
 		return info;
 	
@@ -165,9 +167,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * @param mockPerfilUsuario
 	 */
 	@Transactional
-	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario, MockPerfilUsuario mockPerfilUsuario) {
+	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario, boolean indPerfilUsuarioEncarregado) {
 		
-		if(MockPerfilUsuario.USUARIO_ENCARREGADO.equals(mockPerfilUsuario)) {
+		if(indPerfilUsuarioEncarregado) {
 			inserirCorrecaoListaContagemDevolucao(listaContagemDevolucao, usuario);
 		} else {
 			inserirListaContagemDevolucao(listaContagemDevolucao, usuario);

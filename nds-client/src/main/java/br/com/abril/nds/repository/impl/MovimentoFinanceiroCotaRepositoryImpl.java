@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -77,6 +78,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 		return ((Long) query.uniqueResult()).intValue();
 	}
+
+	@Override
+	public BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+		
+		String hql = " select sum(movimentoFinanceiroCota.valor) " + 
+					 getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		return (BigDecimal) query.uniqueResult();
+	}
 	
 	/**
 	 * @see br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository#obterMovimentosFinanceiroCota()
@@ -91,9 +103,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
 
-		query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
-		
-		query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		if (filtroDebitoCreditoDTO.getPaginacao() != null 
+				&& filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			
+			query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
