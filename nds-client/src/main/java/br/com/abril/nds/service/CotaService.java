@@ -1,10 +1,12 @@
 package br.com.abril.nds.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -45,6 +47,10 @@ public interface CotaService {
 	void processarEnderecos(Cota cota, 
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar, 
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
+	
+	void processarTelefones(Long idCota, 
+			List<TelefoneCota> listaTelefonesAdicionar, 
+			Collection<Long> listaTelefonesRemover);
 	
 	/**
 	 * Obtém cobranças não pagas em nome da cota

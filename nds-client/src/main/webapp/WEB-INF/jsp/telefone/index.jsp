@@ -115,8 +115,8 @@
 		function adicionarTelefone(){
 			
 			var data = "referencia=" + $("#referenciaHidden").val() + "&tipoTelefone=" + $("#tipoTelefone").val() + 
-				"&ddd=" + $("#ddd").val() + "&numero=" + $("#numero").val() + "&ramal=" + $("#ramal").val() + 
-				"&principal=" + ("" + $("#principal").attr("checked") == 'checked');
+				"&ddd=" + $("#ddd").val() + "&numero=" + $("#numeroTelefone").val() + "&ramal=" + $("#ramal").val() + 
+				"&principal=" + ("" + $("#telefonePrincipal").attr("checked") == 'checked');
 			
 			$.postJSON(
 				'/nds-client/cadastro/telefone/adicionarTelefone',
@@ -188,9 +188,9 @@
 					if (result != ''){
 						$("#tipoTelefone").val(result.tipoTelefone);
 						$("#ddd").val(result.telefone.ddd);
-						$("#numero").val(result.telefone.numero);
+						$("#numeroTelefone").val(result.telefone.numero);
 						$("#ramal").val(result.telefone.ramal);
-						$("#principal").attr("checked", result.principal);
+						$("#telefonePrincipal").attr("checked", result.principal);
 						
 						$("#referenciaHidden").val(referenciaTelefone);
 						
@@ -207,9 +207,9 @@
 		function limparCampos(){
 			$("#tipoTelefone").val("");
 			$("#ddd").val("");
-			$("#numero").val("");
+			$("#numeroTelefone").val("");
 			$("#ramal").val("");
-			$("#principal").attr("checked", false);
+			$("#telefonePrincipal").attr("checked", false);
 		}
 		
 		function opcaoTel(opcao, idDiv, idLbl, idCampo) {
@@ -236,6 +236,28 @@
 			}
 		}
 		
+		function carregarTelefones() {
+			popularGrid();
+			
+			$.postJSON(
+				'/nds-client/cadastro/telefone/pesquisarTelefones',
+				null,
+				function(result) {
+					$("#telefonesGrid").flexAddData({
+						page: result.page, total: result.total, rows: result.rows
+					});
+					
+					limparCampos();
+					
+					$("#referenciaHidden").val("");
+					
+					$("#botaoAddEditar").text("Incluir Novo");
+				},
+				null,
+				true
+			);
+		}
+		
 		//OS MÉTODOS A BAIXO FORAM CRIADOS APENAS PARA TESTE, JA QUE ESSA TELA SERÁ INCLUDE PARA OUTRAS
 		function salvar(){
 			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
@@ -249,7 +271,7 @@
 							result.listaMensagens
 						);
 						
-						cadastrar();
+						cadastrarTelefone();
 					}
 				},
 				null,
@@ -257,7 +279,7 @@
 			);
 		}
 		
-		function cadastrar(){
+		function cadastrarTelefone(){
 			limparCampos();
 			$("#referenciaHidden").val("");
 			$("#botaoAddEditar").text("Incluir Novo");
@@ -278,25 +300,7 @@
 		}
 	</script>
 </head>
-ID Cota:
-<br/>
-<input type="text" id="idCota"/>
-<br/><br/>
-ID Fornecedor:
-<br/>
-<input type="text" id="idFornecedor"/>
-<br/><br/>
-<button onclick="cadastrar();">Cadastrar</button>
-<div class="container">
-	<div id="manutencaoTelefones" style="display:none" title="Telefones">
-		<div class="effectDialog ui-state-highlight ui-corner-all" 
-			 style="display: none; position: absolute; z-index: 2000; width: 600px;">
-			 
-			<p>
-				<span style="float: left;" class="ui-icon ui-icon-info"></span>
-				<b class="effectDialogText"></b>
-			</p>
-		</div>
+	<div id="manutencaoTelefones" title="Telefones">
 		
 		<div id="dialog-excluir" title="Telefones">
 			<p>Confirma esta Exclusão?</p>
@@ -318,7 +322,7 @@ ID Fornecedor:
 			<tr>
 				<td>Telefone: </td>
 				<td>
-					<input type="text" style="width:40px" id="ddd" maxlength="255" />-<input type="text" style="width:110px" id="numero" maxlength="255"/>
+					<input type="text" style="width:40px" id="ddd" maxlength="255" />-<input type="text" style="width:110px" id="numeroTelefone" maxlength="255"/>
 				</td>
 			</tr>
 			<tr id="trRamalId">
@@ -332,7 +336,7 @@ ID Fornecedor:
 					<label for="principal1">Principal:</label>
 				</td>
 				<td class="complementar">
-					<input type="checkbox" name="principal1" id="principal" />
+					<input type="checkbox" name="principal1" id="telefonePrincipal" />
 				</td>
 			</tr>
 			<tr>
@@ -351,8 +355,5 @@ ID Fornecedor:
 		
 		<br/>
 		
-		<button onclick="salvar();">Salvar</button>
-		
 		<input type="hidden" id="referenciaHidden"/>
-	</div>
 </div>
