@@ -856,7 +856,7 @@ public class RecebimentoFisicoController {
 	private void validarNovaNotaFiscal(
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor, String dataEmissao,
 			String dataEntrada, String valorLiquido, String valorBruto,
-			String valorDesconto) throws ValidacaoException {
+			String valorDesconto, String fornecedor) throws ValidacaoException {
 
 		List<String> msgs = new ArrayList<String>();
 
@@ -865,14 +865,15 @@ public class RecebimentoFisicoController {
 			msgs.add("Os campos da Nota Fiscal devem ser informados");
 			
 		} else {
-			
-			if (	notaFiscalFornecedor.getEmitente() == null || 
-					notaFiscalFornecedor.getEmitente().getCnpj() == null || 
-					notaFiscalFornecedor.getEmitente().getCnpj().isEmpty()) {
-				
-				msgs.add("O campo Emitente dever ser informado");
-				
-			}
+			if(!fornecedor.equals("-1")){
+				if (	notaFiscalFornecedor.getEmitente() == null || 
+						notaFiscalFornecedor.getEmitente().getCnpj() == null || 
+						notaFiscalFornecedor.getEmitente().getCnpj().isEmpty()) {
+					
+					msgs.add("O campo Emitente dever ser informado");
+					
+				}
+			}	
 
 			if (	notaFiscalFornecedor.getNumero() == null || 
 					notaFiscalFornecedor.getNumero().isEmpty()) {
@@ -1012,7 +1013,8 @@ public class RecebimentoFisicoController {
 			String dataEntrada,
 			String valorLiquido,
 			String valorBruto,
-			String valorDesconto)  {
+			String valorDesconto,
+			String fornecedor)  {
 		
 		validarNovaNotaFiscal(
 				notaFiscalFornecedor, 
@@ -1020,7 +1022,8 @@ public class RecebimentoFisicoController {
 				dataEntrada,
 				valorLiquido,
 				valorBruto,
-				valorDesconto);
+				valorDesconto,
+				fornecedor);
 	
 		if(notaFiscalFornecedor.getChaveAcesso() == null || notaFiscalFornecedor.getChaveAcesso().trim().isEmpty()) {
 			notaFiscalFornecedor.setChaveAcesso(null);
