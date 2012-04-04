@@ -696,7 +696,7 @@
               
                 <input name="filtroNumCota" 
              	    id="filtroNumCota" 
-             		type="number"
+             		type="text"
              		maxlength="11"
              		style="width:60px; 
              		float:left; margin-right:5px;"

@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
@@ -21,6 +19,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -28,6 +27,13 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
+
+/**
+ * Controller responsável pela tela de consulta, cadastro e alteração de Bancos. 
+ * 
+ * @author Discover Technology
+ *
+ */
 
 @Resource
 @Path("/banco")
@@ -42,16 +48,46 @@ public class BancoController {
     private Result result;
     
     private HttpSession httpSession;
-
-    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBoletos";
+    
+    private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBancos";
+    
+    
+    /**
+	 * Construtor da classe
+	 * @param result
+	 * @param httpSession
+	 * @param httpResponse
+	 */
+	public BancoController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
+		this.result = result;
+		this.httpSession = httpSession;
+	}
    
+    /**
+     * Método de chamada da página
+     */
+    @Get
+    public void bancos(){ 
 
+	}
+
+    /**
+     * Método de consulta de bancos
+     * @param nome
+     * @param numero
+     * @param cedente
+     * @param status
+     * @param sortorder
+     * @param sortname
+     * @param page
+     * @param rp
+     */
 	@Post
 	@Path("/consultaBancos")
 	public void consultaBancos(String nome,
 			                   String numero,
 			                   String cedente,
-			                   String status,
+			                   boolean ativo,
 			                   String sortorder, 
 							   String sortname, 
 							   int page, 
@@ -60,8 +96,7 @@ public class BancoController {
 		//VALIDACOES
 		validar(nome,
                 numero,
-                cedente,
-                status);
+                cedente);
 		
 
 		
@@ -69,7 +104,7 @@ public class BancoController {
 		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome,
 														                  numero,
 														                  cedente,
-														                  status);
+														                  ativo);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
@@ -83,11 +118,7 @@ public class BancoController {
 		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 		
 		
-		
-		
-		
-		
-		
+
 		
 		//BUSCA BOLETOS
 		List<Banco> bancos = this.bancoService.obterBancos(filtroAtual);
@@ -138,11 +169,15 @@ public class BancoController {
 	
 	
 	
-	
+	/**
+	 * Validação dos parâmetros para a busca de boletos
+	 * @param nome
+	 * @param numero
+	 * @param cedente
+	 */
 	public void validar(String nome,
             			String numero,
-            			String cedente,
-            			String status){
+            			String cedente){
 		//VALIDACOES
 		if (validator.hasErrors()) {
 			List<String> mensagens = new ArrayList<String>();
@@ -154,9 +189,8 @@ public class BancoController {
 		}
 		/*
 		if ((nome==null || !"".equals(nome))&&
-		    (nome==null || !"".equals(numero))&&
-		    (nome==null || !"".equals(cedente))&&
-		    (nome==null || !"".equals(status))){
+		    (numero==null || !"".equals(numero))&&
+		    (cedente==null || !"".equals(cedente))){
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite um parâmetro de busca.");
 		}
 		*/

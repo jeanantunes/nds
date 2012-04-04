@@ -26,7 +26,7 @@ public class FiltroConsultaBancosDTO implements Serializable {
 	private String cedente;
 	
 	@Export(label = "Status")
-	private String ativo;
+	private boolean ativo;
 	
 	private PaginacaoVO paginacao;
 	
@@ -45,7 +45,7 @@ public class FiltroConsultaBancosDTO implements Serializable {
 	public FiltroConsultaBancosDTO(String nome,
 						           String numero,
 						           String cedente,
-						           String ativo){
+						           boolean ativo){
 		this.nome=nome;
 		this.numero=numero;
 		this.cedente=cedente;
@@ -138,11 +138,11 @@ public class FiltroConsultaBancosDTO implements Serializable {
 		this.cedente = cedente;
 	}
 
-	public String getAtivo() {
+	public boolean getAtivo() {
 		return ativo;
 	}
 
-	public void setAtivo(String ativo) {
+	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
 	}
 
@@ -170,6 +170,7 @@ public class FiltroConsultaBancosDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (ativo ? 1231 : 1237);
 		result = prime * result + ((cedente == null) ? 0 : cedente.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
 		result = prime * result + ((numero == null) ? 0 : numero.hashCode());
@@ -177,7 +178,6 @@ public class FiltroConsultaBancosDTO implements Serializable {
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
-		result = prime * result + ((ativo == null) ? 0 : ativo.hashCode());
 		return result;
 	}
 
@@ -190,6 +190,8 @@ public class FiltroConsultaBancosDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroConsultaBancosDTO other = (FiltroConsultaBancosDTO) obj;
+		if (ativo != other.ativo)
+			return false;
 		if (cedente == null) {
 			if (other.cedente != null)
 				return false;
@@ -211,11 +213,6 @@ public class FiltroConsultaBancosDTO implements Serializable {
 			if (other.paginacao != null)
 				return false;
 		} else if (!paginacao.equals(other.paginacao))
-			return false;
-		if (ativo == null) {
-			if (other.ativo != null)
-				return false;
-		} else if (!ativo.equals(other.ativo))
 			return false;
 		return true;
 	}

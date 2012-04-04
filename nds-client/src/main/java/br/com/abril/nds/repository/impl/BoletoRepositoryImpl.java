@@ -29,7 +29,11 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		super(Boleto.class);
 	}
 
-	
+	/**
+	 * Método responsável por obter a quantidade de boletos
+	 * @param filtro
+	 * @return quantidade: quantidade de boletos
+	 */
 	@Override
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro){
 		long quantidade = 0;
@@ -64,7 +68,11 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		return quantidade;
 	}
 	
-	
+	/**
+	 * Método responsável por obter uma lista de boletos
+	 * @param filtro
+	 * @return query.list(): lista de boletos
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
@@ -143,7 +151,11 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		return query.list();
 	}
 	
-	
+	/**
+	 * Método responsável por obter Boleto individual 
+	 * @param nossoNumero
+	 * @param dividaAcumulada
+	 */
 	@Override
 	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
 		

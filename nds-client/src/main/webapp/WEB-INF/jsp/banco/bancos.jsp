@@ -1,79 +1,81 @@
 <head>
 <script language="javascript" type="text/javascript">
 
-$(".bancosGrid").flexigrid({
-	preProcess: getDataFromResult,
-	dataType : 'json',
-	colModel : [ {
-		display : 'Código',
-		name : 'codigo',
-		width : 50,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Banco',
-		name : 'banco',
-		width : 50,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Nome',
-		name : 'nome',
-		width : 120,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Agência / Dígito',
-		name : 'agencia',
-		width : 90,
-		sortable : true,
-		align : 'left',
-	}, {
-		display : 'Conta-Corrente / Dígito',
-		name : 'contaCorrente',
-		width : 130,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Cedente',
-		name : 'cedente',
-		width : 70,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Moeda',
-		name : 'moeda',
-		width : 50,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Carteira',
-		name : 'carteira',
-		width : 130,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Status',
-		name : 'status',
-		width : 70,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Ação',
-		name : 'acao',
-		width : 60,
-		sortable : true,
-		align : 'center'
-	}],
-	sortname : "Nome",
-	sortorder : "asc",
-	usepager : true,
-	useRp : true,
-	rp : 15,
-	showTableToggleBtn : true,
-	width : 960,
-	height : 255
-});
+$(function() {
+	$(".bancosGrid").flexigrid({
+		preProcess: getDataFromResult,
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigo',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Banco',
+			name : 'banco',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nome',
+			width : 120,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Agência / Dígito',
+			name : 'agencia',
+			width : 90,
+			sortable : true,
+			align : 'left',
+		}, {
+			display : 'Conta-Corrente / Dígito',
+			name : 'contaCorrente',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Cedente',
+			name : 'cedente',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Moeda',
+			name : 'moeda',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Carteira',
+			name : 'carteira',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Status',
+			name : 'status',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "Nome",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	});
+});	
 
 function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -157,7 +159,7 @@ function mostrarGridConsulta() {
 			         {name:'nome', value:$("#nome").val()},
 			         {name:'numero', value:$("#numero").val()},
 			         {name:'cedente', value:$("#cedente").val()},
-			         {name:'status', value:$("#status").val()}
+			         {name:'ativo', value:$("#ativo").val()}
 			        ] ,
 		});
 		
@@ -334,12 +336,11 @@ label {
 				<td width="163"><input type="text" name="cedente"
 					id="cedente" style="width: 150px;" />
 				</td>
-				<td width="158"><input name="status" type="checkbox"
-					id="status" style="float: left;" value="" checked="checked" /><label
-					for="status">Ativo</label>
+				<td width="158"><input name="ativo" type="checkbox"
+					id="ativo" style="float: left;" value="" checked="checked" /><label
+					for="ativo">Ativo</label>
 				</td>
-				<td width="108"><span class="bt_pesquisar"><a
-						href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
+				<td width="108"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
 				</span>
 				</td>
 			</tr>

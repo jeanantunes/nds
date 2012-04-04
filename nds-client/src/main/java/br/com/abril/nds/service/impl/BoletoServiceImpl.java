@@ -95,12 +95,22 @@ public class BoletoServiceImpl implements BoletoService {
 	@Autowired
 	private CobrancaService cobrancaService;
 	
+	/**
+	 * Método responsável por obter boletos por numero da cota
+	 * @param filtro
+	 * @return Lista de boletos encontrados
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
 		return this.boletoRepository.obterBoletosPorCota(filtro);
 	}
 	
+	/**
+	 * Método responsável por obter a quantidade de boletos por numero da cota
+	 * @param filtro
+	 * @return Quantidade de boletos encontrados
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
@@ -756,6 +766,11 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
+	/**
+	 * Método responsável por gerar boleto com os atributos definidos
+	 * @param boleto
+	 * @return GeradorBoleto: boleto carregado
+	 */
 	private GeradorBoleto geraBoleto(Boleto boleto){
 
 		
@@ -863,12 +878,23 @@ public class BoletoServiceImpl implements BoletoService {
         return geradorBoleto;
 	}
 	
+	/**
+	 * 
+	 * @param boleto
+	 * @return f: Boleto PDF em File.
+	 * @throws IOException
+	 */
 	private File gerarAnexoBoleto(Boleto boleto) throws IOException {
 		GeradorBoleto geradorBoleto = this.geraBoleto(boleto);
 		File f = geradorBoleto.getFilePdf();
         return f;
 	}
 	
+	/**
+	 * Metodo responsavel por enviar boleto por email em formato PDF
+	 * @param nossoNumero
+	 * @throws erro ao enviar
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public void enviarBoletoEmail(String nossoNumero) {
@@ -892,6 +918,12 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
+	/**
+	 * Método responsável por gerar impressao em formato PDF
+	 * @param nossoNumero
+	 * @return b: Boleto PDF em Array de bytes
+	 * @throws IOException
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
@@ -903,6 +935,11 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 	
+	/**
+	 * Método responsável pela busca de dados referentes à cobrança
+	 * @param nossoNumero
+	 * @return CobrancaVO: dados da cobrança
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosCobranca(String nossoNumero) {
@@ -915,7 +952,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
 		
-		if ((boleto!=null)&&(boleto.getDataPagamento()==null)){
+		if ((boleto!=null)&&(boleto.getStatusCobranca()==StatusCobranca.NAO_PAGO)){
 			
 			cobranca = new CobrancaVO();
 			
