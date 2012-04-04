@@ -1,8 +1,17 @@
 
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 
 <script language="javascript" type="text/javascript">
+
+$(function() {
+	$("#idNovaCota").numeric();
+	$("#idNomeNovaCota").autocomplete({source: ""});
+	
+	$("#idCota").numeric();
+	$("#idNomeCota").autocomplete({source: ""});
+});
 
 var mov;
 var indiceAtual;
@@ -163,37 +172,184 @@ function gerarGridRateios(indice) {
 	
 	indiceAtual = indice;
 	
+	$("#idFieldRateios").attr("style","");
+
+	document.getElementById("idLegendRateios").innerHTML= "Redistribuição - "+mov[indice].nomeProd;
+	
 	var tabRateios = $("#idRateios");	
 	var cabecalho = $("#idCabecalhoRateios");
 		
 	tabRateios.clear();
-	
 	tabRateios.append(cabecalho);
 	
-	if(movimentos[i].rateios) {
+	var proxIndice;
 	
-		$.each(movimentos[i].rateios, function(index, rateio) {
-			var novaLinha = $(document.createElement("TR"));
+	if(mov[indice].rateios) {
+	
+		proxIndice = mov[indice].rateios.length;
+		
+		$.each(mov[indice].rateios, function(index, rateio) {
 			
-			var numCota = document.createElement("TD");
-			var nomeCota = document.createElement("TD");
-			var qtde = document.createElement("TD");
-					
-			numCota.innerHTML = rateio.numCota;
-			nomeCota.innerHTML = rateio.nomeCota;
-			qtde.innerHTML = rateio.qtde;
-			
-			novaLinha.append(codigo);
-			novaLinha.append(produto);
-			novaLinha.append(edicao);
-			
-			if(index%2 == 0) {
-				novaLinha.attr("style", "background:#F8F8F8;");
-			}
-			
-			tabMovimentos.append(novaLinha);
+			gerarLinhaNova(index,rateio.numCota,rateio.nomeCota,rateio.qtde);
 		});
+		
+	}  else {
+		mov[indice]["rateios"] = new Array();
+		proxIndice = 0;
+	}	
+	
+	gerarLinhaNova(proxIndice,"","","");
+	
+	var qtdeRateios = mov[indiceAtual].rateios.length;
+	document.getElementById('idNum'+ qtdeRateios).focus();
+}
+	
+function gerarNovoRateio(indiceLinhaAlterada) {
+	
+	var numCota = $("#idNum" + indiceLinhaAlterada).attr("value");
+	var nomeCota = $("#idNom" + indiceLinhaAlterada).attr("value");
+	var qtde = $("#idQtde" + indiceLinhaAlterada).attr("value");
+	
+		
+	var totalRateado = 0 * 1;
+	$.each(mov[indiceAtual].rateios, function(index, rateio) {		
+		totalRateado = totalRateado*1 + rateio.qtde*1;
+	});
+	
+	var soma = totalRateado*1 + qtde*1; 
+	
+	if( soma > mov[indiceAtual].qtdeReparte) {
+		exibirMensagemDialog("WARNING",["N&atildeo h&aacute reparte suficiente."]);	
+		
+		alterarEvento(
+				"idQtde"+indiceLinhaAlterada,
+				'idQtde'+ indiceLinhaAlterada, 
+				"onblur");
+		
+		$("#idQtde" + indiceLinhaAlterada).attr("value","");
+		return;
 	}
+	
+	
+	var qtdeRateios = mov[indiceAtual].rateios.length;
+	
+	if( indiceLinhaAlterada == (qtdeRateios) ) {
+		
+		mov[indiceAtual].rateios.push({"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde});
+				
+		gerarLinhaNova( (qtdeRateios + 1) ,"","","");
+				
+		alterarEvento(
+				"idQtde"+indiceLinhaAlterada,
+				'idNum'+ (qtdeRateios +1), 
+				"onblur");
+		
+	} else {
+		
+		mov[indiceAtual].rateios[indiceLinhaAlterada] = {"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde};
+		
+		alterarEvento(
+				"idQtde"+indiceLinhaAlterada,
+				'idNum'+ qtdeRateios, 
+				"onblur");
+		
+	}
+		
+	if($.trim(numCota) == "" || $.trim(nomeCota) == "" || $.trim(qtde) == "" || $.trim(qtde) == "0") {
+		
+		mov[indiceAtual].rateios.splice(indiceLinhaAlterada,indiceLinhaAlterada + 1);
+		
+		gerarGridRateios(indiceAtual);
+		return;
+	}
+}
+
+function alterarEvento(idFocoAtual, idNovoFoco, evento) {
+	
+	var elemAtual = document.getElementById(idFocoAtual);	
+	var elemNovoFoco = document.getElementById(idNovoFoco);	
+	
+	var valorEvento = elemAtual.getAttribute(evento);
+	
+	elemAtual.setAttribute(evento,null);
+		
+	elemNovoFoco.focus();
+	
+	elemAtual.setAttribute(evento,valorEvento);	
+}
+	
+function gerarLinhaNova(indice,num, nome, qtd) {
+		
+	var tabRateios = $("#idRateios");	
+	
+	var novaLinha = $(document.createElement("TR"));
+	
+	var numCota = $(document.createElement("TD"));
+	var nomeCota = $(document.createElement("TD"));
+	var qtde = $(document.createElement("TD"));
+			
+	numCota.append(getInput(
+			num,
+			"idNum"+indice ,
+			"60px",
+			null,
+			null,
+			"cota.pesquisarPorNumeroCota('#idNum"+indice+"', '#idNom"+indice+"',true)"));
+	
+	nomeCota.append(getInput(
+			nome,
+			"idNom"+indice ,
+			"180px",
+			null,
+			"cota.pesquisarPorNomeCota('#idNum"+indice+"', '#idNom"+indice+"',true)", 
+			null,
+			"cota.autoCompletarPorNome('#idNom"+indice+"')"));
+	
+	qtde.append(getInput(
+			qtd,
+			"idQtde"+indice ,
+			"60px",
+			"center",
+			"gerarNovoRateio("+indice+");"));
+	
+	novaLinha.append(numCota);
+	novaLinha.append(nomeCota);
+	novaLinha.append(qtde);
+	novaLinha.append("<td><input type=\"hidden\" value=\""+indice+"\"></td>");
+	
+	tabRateios.append(novaLinha);
+	
+	$("#idNum"+indice).numeric();
+	$("#idQtde"+indice).numeric();
+	$("#idNom"+indice).autocomplete({source: ""});
+}
+
+function getInput(value,id, width,textAlign,onblur,onchange,onkeyup) {
+	
+	var input = document.createElement("INPUT");
+	input.type="text";
+	input.name=id;
+	input.id=id;
+	input.value=value;
+	input.style.setProperty("width",width);
+	
+	if(textAlign) {
+		input.style.setProperty("text-align",textAlign);
+	}
+	
+	if(onblur) {
+		input.setAttribute("onblur",onblur);
+	}
+	
+	if(onchange) {
+		input.setAttribute("onchange",onchange);
+	}
+	
+	if(onkeyup) {
+		input.setAttribute("onkeyup",onkeyup);
+	}
+		
+	return input;
 }
 	
 function popupRateio(movimentos) {
@@ -210,7 +366,11 @@ function popupRateio(movimentos) {
 			buttons: {
 				"Suplementar": function() {
 					
-					var parametros = getParametrosFromMovimentos(movimentos);					
+					var parametros = getParametrosFromMovimentos();
+					
+					if(!parametros) {
+						return;
+					}
 					
 					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
 							parametros);
@@ -227,11 +387,11 @@ function popupRateio(movimentos) {
 		});
 }
 
-function getParametrosFromMovimentos(movimentos) {
+function getParametrosFromMovimentos() {
 	
 	var parametros = [];
 	
-	$.each(movimentos, function(index, movimento) {
+	$.each(mov, function(index, movimento) {
 		
 		parametros.push({name:'movimentos['+ index +'].idCota', value: movimento.idCota});
 		parametros.push({name:'movimentos['+ index +'].idProdEd', value: movimento.idProdEd});
@@ -241,7 +401,7 @@ function getParametrosFromMovimentos(movimentos) {
 		parametros.push({name:'movimentos['+ index +'].qtdeReparte', value: movimento.qtdeReparte});
 		
 		if(movimento.rateios) {
-		
+						
 			$.each(movimento.rateios, function(indexR, rateio) {
 				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].numCota', value: rateio.numCota});
 				parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].nomeCota', value: rateio.nomeCota});
@@ -412,22 +572,20 @@ function mostra_grid(){
              
               <td width="446" colspan="3">
  <!-- NOVA COTA - NUM -->     
-<input id="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="cota.limparCamposPesquisa('#idNomeNovaCota');"
-	onblur="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');"/>
-
+<input id="idNovaCota" name="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+	onchange="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');" />
+	
 <!-- PESQUISAR NOVA COTA -->           
-<span class="classPesquisar"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');">&nbsp;</a></span>
-           		<label style="margin-left:10px;">
+	<label style="margin-left:10px;">
            			Nome:
            		
            		</label>
            		
  <!-- NOVA COTA - NOME -->
-<input id="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+<input id="idNomeNovaCota" name="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
 	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
-	onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota');"
-	/>         		
+		 	   onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota');" />
+		 	   
        			</td>
             
             </tr>
@@ -453,18 +611,16 @@ function mostra_grid(){
                 <td width="38">Cota:</td>
                 <td width="123">
 <!-- COTA -->                
-<input id="idCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="cota.limparCamposPesquisa('#idNomeCota');"
-	onblur="cota.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
-
+<input id="idCota" name="idCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+	onchange="cota.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
+	
 <!-- PESQUISAR NOME COTA -->
-<span class="classPesquisar"><a href="javascript:;" onclick="cota.pesquisarPorNumeroCota('#idCota', '#idNomeCota');">&nbsp;</a></span></td>
-                <td width="40">Nome:</td>
+<td width="40">Nome:</td>
                 <td width="296">
 <!-- NOME -->            
-<input id="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
-	onblur="cota.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
+<input id="idNomeCota" name="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
+		 	   onblur="cota.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
 	/>
 				</td>
                 <td width="27">Box:</td>
