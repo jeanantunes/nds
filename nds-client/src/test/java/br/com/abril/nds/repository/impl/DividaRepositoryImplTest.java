@@ -170,7 +170,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		divida1.setAcumulada(false);
 		save(divida1);
 		
-	    Boleto boleto = Fixture.boleto("5", 
+	    Boleto boleto = Fixture.boleto("5", "5", "5",
                 					   new Date(), 
                 					   new Date(), 
                 					   new Date(), 

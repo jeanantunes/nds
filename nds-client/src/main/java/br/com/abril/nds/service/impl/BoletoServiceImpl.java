@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -213,7 +214,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
-		Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
+		Boleto boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
 		
 		// Boleto não encontrado na base
 		if (boleto == null) {
@@ -803,8 +804,12 @@ public class BoletoServiceImpl implements BoletoService {
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimento);
 
 		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+		
+		movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
 
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataNovoMovimento);
+		
+		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 
 		return movimentoFinanceiroCotaDTO;
 	}
@@ -863,7 +868,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		//INFORMACOES DA CONTA(BANCO)
         String contaNumero=boleto.getBanco().getConta().toString();
-        String contaNossoNumero=boleto.getNossoNumero().toString();
+        
         String contaNumeroDocumento="123456";//???
         corpoBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
@@ -879,10 +884,10 @@ public class BoletoServiceImpl implements BoletoService {
          
         //INFORMACOES DO TITULO
         corpoBoleto.setTituloNumeroDoDocumento(contaNumeroDocumento);                      
-        corpoBoleto.setTituloNossoNumero(contaNossoNumero);                    
+        corpoBoleto.setTituloNossoNumero(boleto.getNossoNumero());                    
         
         //PARAMETROS ?
-        corpoBoleto.setTituloDigitoDoNossoNumero("4");  
+        corpoBoleto.setTituloDigitoDoNossoNumero(boleto.getDigitoNossoNumero());  
         corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
         corpoBoleto.setTituloAceite("A");
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
