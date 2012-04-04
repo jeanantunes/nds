@@ -157,7 +157,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(divida1);
 		
 		boleto1  = Fixture.boleto(
-				"123", 
+				"123", "123", "123123",
 				new Date(), 
 				Fixture.criarData(10, 10, 2000), 
 				new Date(), 
@@ -177,7 +177,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(divida2);
 
 		boleto2  = Fixture.boleto(
-				"1234", 
+				"124", "123", "124123",
 				new Date(), 
 				Fixture.criarData(1, 10, 2010), 
 				new Date(), 

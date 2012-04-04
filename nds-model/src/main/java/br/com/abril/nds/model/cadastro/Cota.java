@@ -33,7 +33,7 @@ public class Cota {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "NUMERO_COTA", nullable = false)
+	@Column(name = "NUMERO_COTA", nullable = false, unique=true)
 	private Integer numeroCota;
 	
 	@ManyToOne(optional = false)
@@ -78,6 +78,10 @@ public class Cota {
 	@OneToMany
 	@JoinColumn( name="ID_COTA")
 	private List<RotaRoteiroOperacao> rotaRoteiroOperacao;
+	
+	@ManyToOne
+	@JoinColumn(name="ID_FIADOR")
+	private Fiador fiador;
 	
 	public Long getId() {
 		return id;
@@ -191,6 +195,14 @@ public class Cota {
 
 	public void setRotaRoteiroOperacao(List<RotaRoteiroOperacao> rotaRoteiroOperacao) {
 		this.rotaRoteiroOperacao = rotaRoteiroOperacao;
+	}
+	
+	public Fiador getFiador() {
+		return fiador;
+	}
+
+	public void setFiador(Fiador fiador) {
+		this.fiador = fiador;
 	}
 
 	/**

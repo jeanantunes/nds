@@ -110,11 +110,11 @@ function clearMessageDialogTimeout() {
 	$('.effectDialog').hide();
 }
 
-function montarComboBox(result, linhaEmBranco) {
+function montarComboBox(result, incluirTodos) {
 	var options = "";
 	
-	if (linhaEmBranco) {
-		options += "<option selected='selected'></option>";
+	if (incluirTodos) {
+		options += "<option selected='selected'  value=''>Todos</option>";
 	}
 	
 	$.each(result, function(index, row) {

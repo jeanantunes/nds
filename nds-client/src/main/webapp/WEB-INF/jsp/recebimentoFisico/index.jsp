@@ -11,6 +11,8 @@ var indNotaFiscalInterface = false;
 
 var indRecebimentoFisicoConfirmado = false;
 
+var indTodosFornecedor = false;
+
 var jsDadosProduto = {
 
 exibirDetalhesProdutoEdicao : function() {
@@ -185,8 +187,15 @@ validarEdicaoCallBack : function() {
 	 */
 	function popup_novo_item() {
 		
-		limparCamposNovoItem();
+		var fornecedor = $("#fornecedor").val();
 		
+		if(fornecedor == "-1"){
+			exibirMensagem('WARNING', ['Não é possível Adicionar Novo Produto para opção TODOS em Fornecedor']);
+			return;
+		}
+		
+		limparCamposNovoItem();
+		w
 		$("#dialog-novo-item").dialog({
 			resizable: false,
 			height:480,
@@ -326,6 +335,7 @@ validarEdicaoCallBack : function() {
 		var valorDesconto 	= $("#valorDesconto").val();
 		var cfopId 			= $("#cfop").val();
 		var tipoNotaFiscal  = $("#tipoNotaFiscal").val();
+		var fornecedor      = $("#fornecedor").val();
 		
 		var dadosCadastro = 
 
@@ -338,6 +348,7 @@ validarEdicaoCallBack : function() {
 			"valorBruto=" 								+ valorBruto	+ "&" +
 			"valorLiquido=" 							+ valorLiquido	+ "&" +
 			"valorDesconto=" 							+ valorDesconto	+ "&" + 
+			"fornecedor=" 							    + fornecedor	+ "&" + 
 			"notaFiscalFornecedor.cfop.id=" 			+ cfopId		+ "&" +
 			"notaFiscalFornecedor.tipoNotaFiscal.id="   + tipoNotaFiscal;
 		
@@ -1151,7 +1162,6 @@ validarEdicaoCallBack : function() {
 						
 						<td width="254"><select id="fornecedor" name="fornecedor"
 							onblur="exibirCnpjDoFornecedor()" style="width: 250px;">
-								<option value=""></option>
 								<option value="-1">Todos</option>
 								<c:forEach var="fornecedor" items="${listafornecedores}">
 									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
@@ -1160,7 +1170,7 @@ validarEdicaoCallBack : function() {
 						
 						<td width="43" align="right">CNPJ:</td>
 						<td width="136"><input id="cnpj"
-							onblur="pesquisarPorCnpjFornecedor();" name="cnpj"
+							onblur="pesquisarPorCnpjFornecedor();" disabled="disabled" name="cnpj"
 							style="width: 130px;" />
 						</td>
 												

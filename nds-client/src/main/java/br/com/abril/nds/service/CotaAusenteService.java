@@ -14,5 +14,7 @@ public interface CotaAusenteService {
 	List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO);
 	
 	Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro);
+	
+	void cancelarCotaAusente(Long idCotaAusente, Long idUsuario);
 
 }

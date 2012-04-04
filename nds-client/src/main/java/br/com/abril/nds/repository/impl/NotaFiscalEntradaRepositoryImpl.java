@@ -247,7 +247,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 		
 		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");		
 		hql.append("and nf.serie = :serie ");
-		if(!filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
+		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
 			hql.append("and nf.emitente.cnpj = :cnpj ");	
 		}
 			
@@ -260,7 +260,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepository<NotaFisc
 		
 		query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
 		query.setParameter("serie", filtroConsultaNotaFiscal.getSerie());
-		if(!filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
+		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
 			query.setParameter("cnpj", filtroConsultaNotaFiscal.getCnpj());
 		}	
 		

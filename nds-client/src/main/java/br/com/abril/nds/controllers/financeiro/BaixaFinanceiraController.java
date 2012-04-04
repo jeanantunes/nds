@@ -245,6 +245,10 @@ public class BaixaFinanceiraController {
 		return usuario;
 	}
 	
+	/**
+	 * Método responsavel pela busca de boleto individual
+	 * @param nossoNumero
+	 */
 	@Post
 	@Path("/buscaBoleto")
 	public void buscaBoleto(String nossoNumero){
@@ -260,6 +264,15 @@ public class BaixaFinanceiraController {
 		result.use(Results.json()).from(cobranca,"result").recursive().serialize();
 	}
 	
+	//TODO: EMS-019(Ainda virá) - Necessário refatoração do método conforme necessidades.
+	/**
+	 * Método responsável pela busca de dívidas
+	 * @param numCota
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	@Post
 	@Path("/buscaBoletos")
 	public void buscaBoletos(Integer numCota,
@@ -330,10 +343,18 @@ public class BaixaFinanceiraController {
 		
 		//RETORNA HASHMAP EM FORMATO JSON PARA A VIEW
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-	
+
 	}
 	
-		
+	/**
+	 * Método responsável pela baixa de boleto individual manualmente.	
+	 * @param nossoNumero
+	 * @param valor
+	 * @param dataVencimento
+	 * @param desconto
+	 * @param juros
+	 * @param multa
+	 */
 	@Post
 	@Path("/baixaManualBoleto")
 	public void baixaManualBoleto(String nossoNumero, 
