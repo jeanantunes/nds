@@ -38,8 +38,8 @@
     <fieldset>
     <legend>Redistribuição</legend>
     
-    <table border="0" cellspacing="1" cellpadding="1" style="display:none; width:350px;" id="grid_1">
-      <tr>
+    <table id="idRateios" border="0" cellspacing="1" cellpadding="1" style="display:none; width:350px;" id="grid_1">
+      <tr id="idCabecalhoRateios">
         <td bgcolor="#F5F5F5"><strong>Cota</strong></td>
         <td bgcolor="#F5F5F5"><strong>Nome</strong></td>
         <td align="center" bgcolor="#F5F5F5"><strong>Quantidade</strong></td>

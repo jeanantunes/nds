@@ -286,6 +286,7 @@
 							<select id="idFornecedor" name="fornecedor" id="select" style="width: 350px;">
 								
 								<option value=""></option>
+								<option value="">Todos</option>
 								
 								<c:forEach items="${fornecedores}" var="fornecedor">				
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>

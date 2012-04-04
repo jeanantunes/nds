@@ -18,9 +18,15 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -30,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -51,17 +58,52 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	public void setUp() {
 		
 		
-		//CRIA UM OBJETO PESSOA NA SESSAO PARA TESTES
-		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
-		save(pessoaJuridica);
+		Carteira carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
+	    
+		save(carteiraRegistrada);
 		
-		//CRIA UM OBJETO BOX NA SESSAO PARA TESTES
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.REPARTE);
-		save(box);
+		Banco bancoHSBC = Fixture.banco(10L, true, carteiraRegistrada, "1010",
+				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399");
 		
-		//CRIA UM OBJETO COTA NA SESSAO PARA TESTES
-		Cota cota = Fixture.cota(123, pessoaJuridica, SituacaoCadastro.ATIVO,box);
-		save(cota);
+		save(bancoHSBC);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
+				"sys.discover@gmail.com", "Manoel da Silva");
+		save(manoel);
+		
+		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
+				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
+		
+		save(juridicaDistrib);
+		
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+				  												BigDecimal.ONE, BigDecimal.ONE);
+		save(formaBoleto);
+		
+		Distribuidor distribuidor = null; 
+		
+		PoliticaCobranca politicaCobranca =
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
+		
+		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		distribuidor.getFormasCobranca().add(formaBoleto);
+		
+		save(distribuidor);
+		
+		Usuario usuarioJoao = Fixture.usuarioJoao();
+		save(usuarioJoao);
+		
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		save(box1);
+		
+		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		save(cotaManoel);
+		
+		ParametroCobrancaCota parametroCobrancaConta = 
+				Fixture.parametroCobrancaCota(1, BigDecimal.TEN, cotaManoel, 1, 
+											  formaBoleto, true, BigDecimal.TEN);
+		
+		save(parametroCobrancaConta);
 		
 		Rota rota = Fixture.rota("Rota1232");
 		save(rota);
@@ -69,18 +111,8 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
 		save(roteiro);
 		
-		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cota, TipoOperacao.IMPRESSAO_DIVIDA);
+		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		save(rotaRoteiroOperacao);
-		
-		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
-				  			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
-		save(bancoHSBC);
-		
-		
-		
-		//AMARRAÇAO DIVIDA X BOLETO
-		Usuario usuarioJoao = Fixture.usuarioJoao();
-		save(usuarioJoao);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
 		save(tipoMovimentoFinenceiroReparte);
@@ -100,26 +132,26 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
 		save(estoqueProdutoCota);
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+				new BigDecimal(100.56), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
 				new BigDecimal(200), Arrays.asList(mec), new Date());
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota), cota,
+						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
 						new Date(), new BigDecimal(200));
 		save(consolidado);
 		
-		Divida divida = Fixture.divida(consolidado, cota, new Date(),
+		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
 				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		divida.setAcumulada(false);
 		save(divida);
@@ -131,10 +163,10 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10));
 		save(consolidado1);
 		
-		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		Divida divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
 		divida1.setAcumulada(false);
 		save(divida1);
 		
@@ -147,7 +179,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   "1", 
                 					   "1",
                 					   StatusCobranca.NAO_PAGO,
-                					   cota,
+                					   cotaManoel,
                 					   bancoHSBC,
                 					   divida,0);
 		save(boleto);		
@@ -180,7 +212,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Assert.assertTrue(quantidade > 0);
 	}
-	@Ignore
+
 	@Test
 	public void consultaQuantidadeDividasGeradasPorData(){
 		
