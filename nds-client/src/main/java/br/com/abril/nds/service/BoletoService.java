@@ -19,7 +19,7 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
 
 /**
  * Interface que define serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Boleto}
+ * {@link br.com.abril.nds.model.financeiro.Boleto}
  * 
  * @author Discover Technology
  */

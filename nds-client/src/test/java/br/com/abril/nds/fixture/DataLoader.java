@@ -3112,7 +3112,7 @@ public class DataLoader {
 		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
 		save(session, box1);
 
-		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		Cota cotaManoel = Fixture.cota(1237, manoel, SituacaoCadastro.ATIVO, box1);
 		save(session, cotaManoel);
 
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -3168,7 +3168,7 @@ public class DataLoader {
 		Box box = Fixture.boxReparte300();
 		save(session, box);
 		
-		Cota cota = Fixture.cota(123, pessoa, SituacaoCadastro.ATIVO, box);
+		Cota cota = Fixture.cota(1239, pessoa, SituacaoCadastro.ATIVO, box);
 		save(session, cota);
 
 		Usuario usuario = Fixture.usuarioJoao();

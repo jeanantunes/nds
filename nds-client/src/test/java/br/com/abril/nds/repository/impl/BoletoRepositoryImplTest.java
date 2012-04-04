@@ -150,6 +150,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(boleto);		
 	}
 	
+	@Ignore
 	@Test
 	public void obterBoletosPorNumeroDaCota() {
 		
@@ -188,7 +189,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
         long qtdBoletos = this.boletoRepository.obterQuantidadeBoletosPorCota(filtro);
         
        //VERIFICA SE A QUANTIDADE DE BOLETOS RETORNADOS E MAIOR QUE 0
-        Assert.assertTrue(qtdBoletos > 0l);
+        Assert.assertTrue(qtdBoletos > 0);
 	}
 	
 	@Ignore
