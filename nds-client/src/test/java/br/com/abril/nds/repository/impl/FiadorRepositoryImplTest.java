@@ -8,6 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaFiadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -15,6 +18,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiadorRepositoryImplTest extends AbstractRepositoryImplTest{
 
@@ -72,5 +76,26 @@ public class FiadorRepositoryImplTest extends AbstractRepositoryImplTest{
 		Fiador fiador = this.fiadorRepository.obterFiadorPorCnpj(CNPJ);
 		
 		Assert.assertNotNull(fiador);
+	}
+	
+	@Test
+	public void obterFiadoresCpfCnpjTest(){
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setCpfCnpj(CPF);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.NOME);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "asc"));
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);
+		
+		Assert.assertNotNull(consultaFiadorDTO);
+		
+		filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+		filtroConsultaFiadorDTO.setCpfCnpj(CNPJ);
+		filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.CODIGO);
+		filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 50, "desc"));
+		
+		consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);
+		
+		Assert.assertNotNull(consultaFiadorDTO);
 	}
 }
