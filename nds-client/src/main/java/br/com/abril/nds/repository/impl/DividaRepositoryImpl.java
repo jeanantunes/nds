@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.repository.DividaRepository;
 
@@ -52,7 +53,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = getParametrosConsultaDividas(filtro);
+		HashMap<String, Object> param = getParametrosConsultaDividas(filtro,true);
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
@@ -73,12 +74,12 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = getParametrosConsultaDividas(filtro);
+		HashMap<String, Object> param = getParametrosConsultaDividas(filtro,false);
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		
+	
 		return query.list();
 	}
 	
@@ -94,7 +95,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = getParametrosConsultaDividas(filtro);
+		HashMap<String, Object> param = getParametrosConsultaDividas(filtro,true);
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
@@ -119,13 +120,17 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
-	private HashMap<String,Object> getParametrosConsultaDividas(FiltroDividaGeradaDTO filtro){
+	private HashMap<String,Object> getParametrosConsultaDividas(FiltroDividaGeradaDTO filtro,boolean isBoleto){
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
 		param.put("data",filtro.getDataMovimento());
 		param.put("acumulaDivida", Boolean.FALSE);
 		param.put("statusCobranca",StatusCobranca.NAO_PAGO);
+		
+		if(!isBoleto){
+			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
+		}
 		
 		if(filtro.getNumeroCota()!= null ){
 			 param.put("numeroCota",filtro.getNumeroCota());
@@ -204,11 +209,11 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		if(filtro.getTipoCobranca()!= null){
 			
-			if(isBoleto){
-				hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
-			}else{
-				hql.append(" AND cobranca.tipoCobranca not in (:tipoCobranca ) ");
-			}
+			hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
+		}
+		
+		if(!isBoleto){
+			hql.append(" AND cobranca.tipoCobranca not in (:tipoCobrancaBoleto ) ");
 		}
 		
 		if(filtro.getCodigoBox()!= null && !filtro.getCodigoBox().isEmpty()){

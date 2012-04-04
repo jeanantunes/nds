@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.client.vo.RotaRoteiroVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -33,7 +32,6 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.RotaRoteiroOperacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -341,19 +339,6 @@ public class ImpressaoBoletosController {
 		}
 	}
 	
-	@Get
-	@Path("/imprimirDivida")
-	public void imprimirDivida(String nossoNumero) throws Exception{
-		
-		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
-		
-		if(arquivo!= null){
-			imprimirDividas(arquivo,nossoNumero);
-		}
-		
-		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, null);
-	}
-	
 	@Post
 	@Path("/validarImpressaoDivida")
 	public void validarImpressaoDivida(String nossoNumero) throws Exception{
@@ -412,6 +397,17 @@ public class ImpressaoBoletosController {
 	}
 	
 	@Get
+	@Path("/imprimirDivida")
+	public void imprimirDivida(String nossoNumero) throws Exception{
+		
+		byte[]arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
+		
+		imprimirDividas(arquivo,nossoNumero);
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE,null);
+	}
+	
+	@Get
 	@Path("/imprimirBoletosEmMassa")
 	public void imprimirBoletosEmMassa() throws Exception{
 		
@@ -446,7 +442,9 @@ public class ImpressaoBoletosController {
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
 
-		httpResponse.flushBuffer();
+		httpResponse.getOutputStream().close();
+		
+		result.use(Results.nothing());
 	}
 
 	@Post
@@ -455,7 +453,10 @@ public class ImpressaoBoletosController {
 		
 		dividaService.enviarArquivoPorEmail(nossoNumero);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Divida "+nossoNumero+" enviada com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.nothing());
+		
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "Divida "+nossoNumero+" enviada com sucesso.");
+		
 	}
 
 	
