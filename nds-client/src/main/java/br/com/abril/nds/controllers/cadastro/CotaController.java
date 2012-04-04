@@ -182,6 +182,11 @@ public class CotaController {
 			
 			CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 			
+			if (cota.getBox() != null) {
+			
+				cotaVO.setCodigoBox(cota.getBox().getCodigo());
+			}
+			
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 		}		
 	}

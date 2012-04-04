@@ -174,6 +174,25 @@ public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implem
 		
 		return (Boleto) criteria.uniqueResult();
 	}
+	
+	@Override
+	public Boleto obterPorNossoNumeroCompleto(String nossoNumeroCompleto, Boolean dividaAcumulada) {
+		
+		Criteria criteria = super.getSession().createCriteria(Boleto.class);
+		
+		criteria.add(Restrictions.eq("nossoNumeroCompleto", nossoNumeroCompleto));
+		
+		if (dividaAcumulada != null) {
+			
+			criteria.createAlias("divida", "divida");
+			
+			criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+		}
+		
+		criteria.setMaxResults(1);
+		
+		return (Boleto) criteria.uniqueResult();
+	}
 
 	
 }

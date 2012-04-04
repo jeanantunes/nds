@@ -24,6 +24,8 @@ public class CotaVO implements Serializable {
 	
 	private BigDecimal qtdeRateio;
 	
+	private String codigoBox;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -98,6 +100,20 @@ public class CotaVO implements Serializable {
 	 */
 	public void setQtdeRateio(BigDecimal qtdeRateio) {
 		this.qtdeRateio = qtdeRateio;
+	}
+	
+	/**
+	 * @return the codigoBox
+	 */
+	public String getCodigoBox() {
+		return codigoBox;
+	}
+
+	/**
+	 * @param codigoBox the codigoBox to set
+	 */
+	public void setCodigoBox(String codigoBox) {
+		this.codigoBox = codigoBox;
 	}
 
 	/* (non-Javadoc)

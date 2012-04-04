@@ -1,8 +1,10 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -60,6 +62,9 @@ public class Distribuidor {
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
+	
+	@OneToMany(mappedBy = "distribuidor")
+	private List<EnderecoDistribuidor> enderecos = new ArrayList<EnderecoDistribuidor>();
 
 	public Long getId() {
 		return id;
@@ -123,6 +128,14 @@ public class Distribuidor {
 	
 	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
 		this.politicaSuspensao = politicaSuspensao;
+	}
+	
+	public List<EnderecoDistribuidor> getEnderecos() {
+		return enderecos;
+	}
+	
+	public void setEnderecos(List<EnderecoDistribuidor> enderecos) {
+		this.enderecos = enderecos;
 	}
 
 }

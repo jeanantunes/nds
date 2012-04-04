@@ -110,7 +110,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
 		save(divida);
 
-		Boleto boleto = Fixture.boleto("5", new Date(), new Date(), new Date(), BigDecimal.ZERO, 
+		Boleto boleto = Fixture.boleto("5", "5", "5", new Date(), new Date(), new Date(), BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida,0);
 		save(boleto);
 
