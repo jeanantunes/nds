@@ -1,10 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.util.Date;
-
-import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
  * Value Object de histórico de situação da cota.
@@ -19,15 +15,15 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4573189935810707316L;
 	
-	private Date data;
+	private String data;
 
-	private SituacaoCadastro statusAnterior;
+	private String statusAnterior;
 	
-	private SituacaoCadastro statusAtualizado;
+	private String statusAtualizado;
 	
 	private String usuario;
 	
-	private MotivoAlteracaoSituacao motivo;
+	private String motivo;
 	
 	private String descricao;
 	
@@ -41,42 +37,42 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	/**
 	 * @return the data
 	 */
-	public Date getData() {
+	public String getData() {
 		return data;
 	}
 
 	/**
 	 * @param data the data to set
 	 */
-	public void setData(Date data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 
 	/**
 	 * @return the statusAnterior
 	 */
-	public SituacaoCadastro getStatusAnterior() {
+	public String getStatusAnterior() {
 		return statusAnterior;
 	}
 
 	/**
 	 * @param statusAnterior the statusAnterior to set
 	 */
-	public void setStatusAnterior(SituacaoCadastro statusAnterior) {
+	public void setStatusAnterior(String statusAnterior) {
 		this.statusAnterior = statusAnterior;
 	}
 
 	/**
 	 * @return the statusAtualizado
 	 */
-	public SituacaoCadastro getStatusAtualizado() {
+	public String getStatusAtualizado() {
 		return statusAtualizado;
 	}
 
 	/**
 	 * @param statusAtualizado the statusAtualizado to set
 	 */
-	public void setStatusAtualizado(SituacaoCadastro statusAtualizado) {
+	public void setStatusAtualizado(String statusAtualizado) {
 		this.statusAtualizado = statusAtualizado;
 	}
 
@@ -97,14 +93,14 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	/**
 	 * @return the motivo
 	 */
-	public MotivoAlteracaoSituacao getMotivo() {
+	public String getMotivo() {
 		return motivo;
 	}
 
 	/**
 	 * @param motivo the motivo to set
 	 */
-	public void setMotivo(MotivoAlteracaoSituacao motivo) {
+	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
 
@@ -164,11 +160,20 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 				return false;
 		} else if (!descricao.equals(other.descricao))
 			return false;
-		if (motivo != other.motivo)
+		if (motivo == null) {
+			if (other.motivo != null)
+				return false;
+		} else if (!motivo.equals(other.motivo))
 			return false;
-		if (statusAnterior != other.statusAnterior)
+		if (statusAnterior == null) {
+			if (other.statusAnterior != null)
+				return false;
+		} else if (!statusAnterior.equals(other.statusAnterior))
 			return false;
-		if (statusAtualizado != other.statusAtualizado)
+		if (statusAtualizado == null) {
+			if (other.statusAtualizado != null)
+				return false;
+		} else if (!statusAtualizado.equals(other.statusAtualizado))
 			return false;
 		if (usuario == null) {
 			if (other.usuario != null)

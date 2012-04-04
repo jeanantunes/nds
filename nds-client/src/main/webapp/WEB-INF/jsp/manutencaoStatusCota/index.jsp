@@ -73,17 +73,12 @@
 				return;
 			}
 
-			if (!data.tableModel) {
-
-				return;
-			}
-
 			if ($(".grids").css('display') == 'none') {	
 
 				$(".grids").show();
 			}
 
-			return data.tableModel;
+			return data.result;
 		}
 
 		function configurarCamposData() {
