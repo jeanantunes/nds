@@ -7,7 +7,7 @@
 			$("#cadastroCnpj").hide();
 			$("#cadastroCpf").show();
 			
-			modalCadastroFiador();
+			modalCadastroFiador("CPF");
 		};
 	
 		function popup_cnpj() {
@@ -17,10 +17,10 @@
 			$("#cadastroCnpj").show();
 			$("#cadastroCpf").hide();
 			
-			modalCadastroFiador();
+			modalCadastroFiador("CNPJ");
 		};
 		
-		function modalCadastroFiador(){
+		function modalCadastroFiador(paramCpfCnpj){
 			$("#dialog-fiador").dialog({
 				resizable: false,
 				height:610,
@@ -28,7 +28,11 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						cadastrarFiadorCpf(this);
+						if (paramCpfCnpj == "CPF") {
+							cadastrarFiadorCpf(this);
+						} else {
+							cadastrarFiadorCnpj(this);
+						}
 					},
 					"Cancelar": function() {
 						$(this).dialog("close");
@@ -134,7 +138,7 @@
 				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();" >Sócios</a></li>
 	            <li><a href="#tab-3">Endereços</a></li>
 	            <li><a href="#tab-4" onclick="carregarTelefones();">Telefones</a></li>
-	            <li><a href="#tab-5">Garantia</a></li>
+	            <li><a href="#tab-5" onclick="pesquisarGarantias();">Garantia</a></li>
 				<li><a href="#tab-6">Cotas Associadas</a></li>
 			</ul>
 			

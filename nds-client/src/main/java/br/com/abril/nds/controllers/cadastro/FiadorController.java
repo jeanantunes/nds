@@ -21,6 +21,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cadastro/fiador")
 public class FiadorController {
 
+	public static final String ID_FIADOR_EDICAO = "idFiadorEdicaoSessao";
+	
 	private Result result;
 	
 	public FiadorController(Result result){
