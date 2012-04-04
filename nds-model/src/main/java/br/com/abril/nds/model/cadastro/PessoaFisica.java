@@ -51,6 +51,9 @@ public class PessoaFisica extends Pessoa {
 	
 	@Column(name = "NATURAL")
 	private String natural;
+	
+	@Column(name = "APELIDO")
+	private String apelido;
 
 	public String getNome() {
 		return nome;
@@ -114,6 +117,14 @@ public class PessoaFisica extends Pessoa {
 
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
+	}
+	
+	public String getApelido() {
+		return apelido;
+	}
+	
+	public void setApelido(String apelido) {
+		this.apelido = apelido;
 	}
 
 	public String getNacionalidade() {

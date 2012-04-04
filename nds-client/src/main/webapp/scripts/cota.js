@@ -59,6 +59,8 @@ var cota = {
 		
 		nomeCota = $.trim(nomeCota);
 		
+		$(idCampoNomeCota).autocomplete({source: ""});
+		
 		if (nomeCota && nomeCota.length > 2) {
 			
 			$.postJSON(
@@ -172,6 +174,24 @@ var cota = {
 		if (errorCallBack) {
 			
 			errorCallBack();
+		}
+	},
+	
+	//Obtém uma cota pelo número
+	obterPorNumeroCota : function(numeroCota, isFromModal, successCallback, errorCallBack) {
+		
+		if (numeroCota && numeroCota.length > 0) {
+
+			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
+				"numeroCota=" + numeroCota,
+				function(result) { 
+					successCallback(result); 
+				},
+				function() {
+					errorCallBack();
+				}, 
+				isFromModal
+			);
 		}
 	}
 	

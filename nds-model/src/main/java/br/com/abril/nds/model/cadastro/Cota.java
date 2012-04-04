@@ -33,7 +33,7 @@ public class Cota {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "NUMERO_COTA", nullable = false)
+	@Column(name = "NUMERO_COTA", nullable = false, unique=true)
 	private Integer numeroCota;
 	
 	@ManyToOne(optional = false)

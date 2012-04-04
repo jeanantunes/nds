@@ -144,7 +144,7 @@
 		$.each(dadosPesquisa.rows, 
 				function(index, row) {
 			
-			         if (row.cell[3] == ''){
+			         if (row.cell[7] == 'Não pago'){
 			        	 
 						 var linkImpressao = '<a href="${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
 						 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
@@ -224,11 +224,13 @@
               <td width="110"><input name="dataAte" id="dataAte" type="date" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
               
               <td width="40">Status:</td>
-              <td width="98"><select name="status" id="status" style="width:100px;">
-                <c:forEach varStatus="counter" var="status" items="${listaStatusCombo}">
-				    <option value="${status.key}">${status.value}</option>
-				</c:forEach>
-              </select></td>
+              <td width="98">
+                 <select name="status" id="status" style="width:100px;">
+                    <c:forEach varStatus="counter" var="status" items="${listaStatusCombo}">
+				       <option value="${status.key}">${status.value}</option>
+				    </c:forEach>
+                 </select>
+              </td>
               
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a></span></td>
             </tr>

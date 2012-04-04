@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -103,12 +104,22 @@ public class BoletoServiceImpl implements BoletoService {
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
+	/**
+	 * Método responsável por obter boletos por numero da cota
+	 * @param filtro
+	 * @return Lista de boletos encontrados
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
 		return this.boletoRepository.obterBoletosPorCota(filtro);
 	}
 	
+	/**
+	 * Método responsável por obter a quantidade de boletos por numero da cota
+	 * @param filtro
+	 * @return Quantidade de boletos encontrados
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
@@ -213,7 +224,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
-		Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
+		Boleto boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
 		
 		// Boleto não encontrado na base
 		if (boleto == null) {
@@ -780,7 +791,6 @@ public class BoletoServiceImpl implements BoletoService {
 			
 		}
 	}
-	
 
 	private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(Cota cota,
 			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro, Usuario usuario,
@@ -803,20 +813,31 @@ public class BoletoServiceImpl implements BoletoService {
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimento);
 
 		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+		
+		movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
 
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataNovoMovimento);
+		
+		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 
 		return movimentoFinanceiroCotaDTO;
 	}
 	
+	/**
+	 * Método responsável por gerar corpo do boleto com os atributos definidos
+	 * @param boleto
+	 * @return GeradorBoleto: corpo do boleto carregado
+	 */
 	private CorpoBoleto geraCorpoBoleto(Boleto boleto){
 
 		CorpoBoleto corpoBoleto = new CorpoBoleto();
+		PessoaJuridica distribuidor = distribuidorService.obter().getJuridica();
+		
 		
 		//DADOS DO CEDENTE
-		corpoBoleto.setCedenteNome(distribuidorService.obter().getJuridica().getRazaoSocial());         
-		corpoBoleto.setCedenteDocumento(distribuidorService.obter().getJuridica().getCnpj());
-		
+		corpoBoleto.setCedenteNome(distribuidor.getRazaoSocial());         
+		corpoBoleto.setCedenteDocumento(distribuidor.getCnpj());
+
 		
 		//DADOS DO SACADO
 		Pessoa pessoa = boleto.getCota().getPessoa();
@@ -863,10 +884,10 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		//INFORMACOES DA CONTA(BANCO)
         String contaNumero=boleto.getBanco().getConta().toString();
-        String contaNossoNumero=boleto.getNossoNumero().toString();
-        String contaNumeroDocumento="123456";//???
+        String contaNumeroDocumento=boleto.getNossoNumero();
         corpoBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
         corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
+
         if (boleto.getBanco().getCarteira().getCodigo()==1){
         	corpoBoleto.setContaTipoDeCobranca("SEM_REGISTRO");
         }
@@ -879,10 +900,11 @@ public class BoletoServiceImpl implements BoletoService {
          
         //INFORMACOES DO TITULO
         corpoBoleto.setTituloNumeroDoDocumento(contaNumeroDocumento);                      
-        corpoBoleto.setTituloNossoNumero(contaNossoNumero);                    
+        corpoBoleto.setTituloNossoNumero(boleto.getNossoNumero());                    
+        
         
         //PARAMETROS ?
-        corpoBoleto.setTituloDigitoDoNossoNumero("4");  
+        corpoBoleto.setTituloDigitoDoNossoNumero(boleto.getDigitoNossoNumero());  
         corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
         corpoBoleto.setTituloAceite("A");
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
@@ -913,12 +935,23 @@ public class BoletoServiceImpl implements BoletoService {
         return corpoBoleto;
 	}
 	
+	/**
+	 * 
+	 * @param boleto
+	 * @return f: Boleto PDF em File.
+	 * @throws IOException
+	 */
 	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException {
 		GeradorBoleto geradorBoleto = new GeradorBoleto(this.geraCorpoBoleto(boleto));
 		byte[] b = geradorBoleto.getBytePdf();
         return b;
 	}
 	
+	/**
+	 * Metodo responsavel por enviar boleto por email em formato PDF
+	 * @param nossoNumero
+	 * @throws erro ao enviar
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public void enviarBoletoEmail(String nossoNumero) {
@@ -942,6 +975,12 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
+	/**
+	 * Método responsável por gerar impressao em formato PDF
+	 * @param nossoNumero
+	 * @return b: Boleto PDF em Array de bytes
+	 * @throws IOException
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
@@ -952,6 +991,11 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 	
+	/**
+	 * Método responsável pela busca de dados referentes à cobrança
+	 * @param nossoNumero
+	 * @return CobrancaVO: dados da cobrança
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException {
@@ -972,6 +1016,11 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 
+	/**
+	 * Método responsável por obter os dados de uma cobrança
+	 * @param nossoNumero
+	 * @return CobrancaVO: dados da cobrança
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosCobranca(String nossoNumero) {
@@ -984,7 +1033,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
 		
-		if ((boleto!=null)&&(boleto.getDataPagamento()==null)){
+		if ((boleto!=null)&&(boleto.getStatusCobranca()==StatusCobranca.NAO_PAGO)){
 			
 			cobranca = new CobrancaVO();
 			
