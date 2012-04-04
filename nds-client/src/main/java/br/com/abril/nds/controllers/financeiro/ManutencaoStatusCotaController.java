@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -104,12 +105,18 @@ public class ManutencaoStatusCotaController {
 			
 			HistoricoSituacaoCotaVO historicoSituacaoCotaVO = new HistoricoSituacaoCotaVO();
 			
-			historicoSituacaoCotaVO.setData(historicoSituacaoCota.getDataInicioValidade());
+			historicoSituacaoCotaVO.setData(
+				DateUtil.formatarDataPTBR(historicoSituacaoCota.getDataInicioValidade()));
+			
 			historicoSituacaoCotaVO.setDescricao(historicoSituacaoCota.getDescricao());
-			historicoSituacaoCotaVO.setMotivo(historicoSituacaoCota.getMotivo());
+			
+			historicoSituacaoCotaVO.setMotivo(historicoSituacaoCota.getMotivo().toString());
+			
 			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
-			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior());
-			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao());
+			
+			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			
+			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
 		
 			listaHistoricoSituacaoCotaVO.add(historicoSituacaoCotaVO);
 		}
@@ -128,7 +135,7 @@ public class ManutencaoStatusCotaController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 	
-		result.use(Results.json()).from(listaHistoricoSituacaoCotaVO, "result").recursive().serialize();
+		result.use(Results.json()).from(tableModel, "result").recursive().serialize();
 	}
 	
 	/*

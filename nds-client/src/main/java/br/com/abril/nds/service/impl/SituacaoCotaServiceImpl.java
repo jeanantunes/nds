@@ -40,7 +40,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	@Transactional(readOnly = true)
 	public Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 
-		return this.obterTotalHistoricoStatusCota(filtro);
+		return this.historicoSituacaoCotaRepository.obterTotalHistoricoStatusCota(filtro);
 	}
 
 }

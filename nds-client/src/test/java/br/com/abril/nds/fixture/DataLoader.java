@@ -16,6 +16,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -29,7 +30,9 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -472,6 +475,8 @@ public class DataLoader {
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+		
+		gerarCargaHistoricoSituacaoCota(session, 100);
 		
 	}
 
@@ -3261,4 +3266,28 @@ public class DataLoader {
 			session.save(notaFiscalFornecedor);
 		}
 	}	
+	
+	private static void gerarCargaHistoricoSituacaoCota(Session session, int quantidade) {
+		
+		Date dataAtual = new Date();
+		
+		for (int i = 1; i <= quantidade; i++) {
+			
+			HistoricoSituacaoCota historicoSituacaoCota = new HistoricoSituacaoCota();
+			
+			historicoSituacaoCota.setCota(cotaManoel);
+			historicoSituacaoCota.setDataEdicao(new Date());
+			historicoSituacaoCota.setDescricao("Descrição " + i);
+			historicoSituacaoCota.setMotivo(MotivoAlteracaoSituacao.INADIMPLENCIA);
+			historicoSituacaoCota.setNovaSituacao(SituacaoCadastro.ATIVO);
+			historicoSituacaoCota.setSituacaoAnterior(SituacaoCadastro.SUSPENSO);
+			historicoSituacaoCota.setTipoEdicao(TipoEdicao.ALTERACAO);
+			historicoSituacaoCota.setDataInicioValidade(DateUtil.adicionarDias(dataAtual, i));
+			historicoSituacaoCota.setDataFimValidade(DateUtil.adicionarDias(dataAtual, i));
+			historicoSituacaoCota.setResponsavel(usuarioJoao);
+			
+			session.save(historicoSituacaoCota);
+		}
+	}
+	
 }

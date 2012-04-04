@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.HistoricoEdicao;
 
@@ -36,8 +38,10 @@ public class HistoricoSituacaoCota extends HistoricoEdicao {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MOTIVO", nullable = false)
 	private MotivoAlteracaoSituacao motivo;
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_INICIO_VALIDADE")
 	private Date dataInicioValidade;
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_FIM_VALIDADE")
 	private Date dataFimValidade;
 	@Column(name = "DESCRICAO")
