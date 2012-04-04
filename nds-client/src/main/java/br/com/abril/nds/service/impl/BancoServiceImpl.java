@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -26,6 +27,7 @@ public class BancoServiceImpl implements BancoService {
 	 * Método responsavel por obter bancos cadastrados
 	 * @param filtro: parametros de busca
 	 */
+	@Transactional(readOnly=true)
 	@Override
 	public List<Banco> obterBancos(FiltroConsultaBancosDTO filtro) {
 		return bancoRepository.obterBancos(filtro);
@@ -35,6 +37,7 @@ public class BancoServiceImpl implements BancoService {
 	 * Método responsavel por obter a quantidade bancos cadastrados
 	 * @param filtro: parametros de busca
 	 */
+	@Transactional(readOnly=true)
 	@Override
 	public long obterQuantidadeBancos(FiltroConsultaBancosDTO filtro) {
 		return bancoRepository.obterQuantidadeBancos(filtro);

@@ -144,7 +144,7 @@
 		$.each(dadosPesquisa.rows, 
 				function(index, row) {
 			
-			         if (row.cell[7] == 'Não Pago'){
+			         if (row.cell[7] == 'Não pago'){
 			        	 
 						 var linkImpressao = '<a href="${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
 						 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
