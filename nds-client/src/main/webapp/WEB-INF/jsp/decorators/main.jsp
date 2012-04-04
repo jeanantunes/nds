@@ -345,6 +345,11 @@ fieldset label {
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
 						<ul>
+							<li>
+								<a href='<c:url value="/administracao/controleAprovacao"/>'>
+									Controle Aprovação
+								</a>
+							</li>
 							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
 									Tipos de Movimento</a>
 							</li>
