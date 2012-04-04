@@ -11,6 +11,7 @@ import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO.OrdenacaoColunaControleAprovacao;
 import br.com.abril.nds.model.aprovacao.Aprovacao;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.util.DateUtil;
@@ -48,15 +49,18 @@ public class ControleAprovacaoController {
 	}
 	
 	@Path("/pesquisarAprovacoes")
-	public void pesquisarAprovacoes(TipoMovimento tipoMovimento, String dataMovimentoFormatada,
+	public void pesquisarAprovacoes(String tipoMovimento, String dataMovimentoFormatada,
 			 						String sortorder, String sortname, int page, int rp) {
 		
 		this.validarEntradaDadosPesquisa(dataMovimentoFormatada);
 		
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
+		
+		//TODO:
 		FiltroControleAprovacaoDTO filtro  = 
-			this.carregarFiltroPesquisa(tipoMovimento, dataMovimento, sortorder,
+			this.carregarFiltroPesquisa(tipoMovimentoFinanceiro, dataMovimento, sortorder,
 										sortname, page, rp);
 		
 		List<Aprovacao> listaAprovacao =

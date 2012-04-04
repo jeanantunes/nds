@@ -79,7 +79,7 @@
 	
 	function iniciarData() {
 		
-		$("#data").datepicker({
+		$("#dataMovimento").datepicker({
 			showOn : "button",
 			buttonImage : "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly : true
@@ -134,14 +134,14 @@
 	function pesquisar() {
 		
 		var tipoMovimento = $("#tipoMovimento").val();
-		var data = $("#data").val();
+		var dataMovimento = $("#dataMovimento").val();
 		
 		$(".solicitacoesAprovacao").flexOptions({
 			url: "<c:url value='/administracao/controleAprovacao/pesquisarAprovacoes' />",
 			onSuccess: executarAposProcessamento,
 			params: [
 		         {name:'tipoMovimento', value: tipoMovimento},
-		         {name:'data', value: data}
+		         {name:'dataMovimentoFormatada', value: dataMovimento}
 		    ],
 		});
 		
@@ -183,13 +183,13 @@
 				<td width="72">Movimento:</td>
 				<td width="271">
 					<select name="tipoMovimento" id="tipoMovimento" style="width: 250px;">
-						<option>Todos</option>
+						<option value="" selected="selected">Todos</option>
 					</select>
 				</td>
 				
 				<td colspan="3">Data:</td>
 				<td width="118">
-					<input name="data" type="text" id="data"
+					<input name="dataMovimento" type="text" id="dataMovimento"
 						   style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
