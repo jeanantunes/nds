@@ -981,6 +981,8 @@ public class Fixture {
 	}
 	
 	public static Boleto boleto(String nossoNumero,
+								String digitoNossoNumero,
+								String nossoNumeroCompleto,
 				                Date dataEmissao,
 				                Date dataVencimento,
 				                Date dataPagamento,
@@ -996,6 +998,8 @@ public class Fixture {
 			
 		Boleto boleto = new Boleto();
 		boleto.setNossoNumero(nossoNumero);
+		boleto.setDigitoNossoNumero(digitoNossoNumero);
+		boleto.setNossoNumeroCompleto(nossoNumeroCompleto);
 		boleto.setDataEmissao(dataEmissao);
 		boleto.setDataVencimento(dataVencimento);
 		boleto.setDataPagamento(dataPagamento);

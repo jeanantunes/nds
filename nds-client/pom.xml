@@ -160,7 +160,6 @@
                 <configuration>
                   <outputDirectory>${project.build.directory}/classes/reports</outputDirectory>  
                   <sourceDirectory>src/main/resources/reports</sourceDirectory>
-                	<keepJava>true</keepJava>
                 </configuration>
                 <executions>
                   <execution>

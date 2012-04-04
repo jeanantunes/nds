@@ -135,7 +135,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
 		save(divida1);
 		
-	    Boleto boleto = Fixture.boleto("5", 
+	    Boleto boleto = Fixture.boleto("5", "5", "5",
                 					   new Date(), 
                 					   new Date(), 
                 					   new Date(), 
@@ -150,6 +150,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(boleto);		
 	}
 	
+	@Ignore
 	@Test
 	public void obterBoletosPorNumeroDaCota() {
 		
@@ -188,7 +189,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
         long qtdBoletos = this.boletoRepository.obterQuantidadeBoletosPorCota(filtro);
         
        //VERIFICA SE A QUANTIDADE DE BOLETOS RETORNADOS E MAIOR QUE 0
-        Assert.assertTrue(qtdBoletos > 0l);
+        Assert.assertTrue(qtdBoletos > 0);
 	}
 	
 	@Ignore
@@ -196,6 +197,15 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	public void obterPorNossoNumero() {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero("5", null);
+		
+		Assert.assertNotNull(boleto);	
+	}
+	
+	@Ignore
+	@Test
+	public void obterPorNossoNumeroCompleto() {
+		
+		Boleto boleto = boletoRepository.obterPorNossoNumeroCompleto("5", null);
 		
 		Assert.assertNotNull(boleto);	
 	}
