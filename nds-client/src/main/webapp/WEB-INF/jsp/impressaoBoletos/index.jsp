@@ -168,13 +168,24 @@
 			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDividas' />",
 					[{name:"tipoImpressao",value:tipoImpressao}], function(result){
 				
-				if("BOLETO" == result){
-					window.location ="<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>" ;
-				}
-				else if ("DIVIDA" == result) {
-					window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>";
-				}	
+				$("#impressosGrid").flexOptions({
+					url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
+					params: GeraDivida.formData(),
+					onSuccess:GeraDivida.renderizarArquivo(result)
+				});	
+				
+				$("#impressosGrid").flexReload();
 			});
+		},
+		
+		renderizarArquivo:function(result){
+			
+			if("BOLETO" == result){
+				window.location ="<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>" ;
+			}
+			else if ("DIVIDA" == result) {
+				window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>";
+			}
 		},
 		
 		imprimirDivida:function(nossoNumero){

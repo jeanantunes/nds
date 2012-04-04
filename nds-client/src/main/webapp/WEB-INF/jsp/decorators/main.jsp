@@ -199,7 +199,7 @@ fieldset label {
 							<li><a href='<c:url value="/financeiro/contaCorrenteCota/index"/>'>Conta
 									Corrente</a>
 							</li>
-							<li><a href="Financeiro/debitos_creditos.htm">Débitos /
+							<li><a href='<c:url value="/financeiro/debitoCreditoCota"/>'>Débitos /
 									Créditos Cota</a>
 							</li>
 

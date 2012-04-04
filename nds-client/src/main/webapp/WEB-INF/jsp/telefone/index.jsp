@@ -16,28 +16,29 @@
 			
 			$("#telefonesGrid").flexigrid({
 				preProcess: processarResultado,
+				
 				dataType : 'json',
 				colModel : [  {
 					display : 'Tipo Telefone',
-					name : 'tipotelefone',
+					name : 'tipoTelefone',
 					width : 165,
 					sortable : true,
 					align : 'left'
 				},{
 					display : 'DDD',
-					name : 'ddd',
+					name : 'telefone.ddd',
 					width : 100,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Número',
-					name : 'numero',
+					name : 'telefone.numero',
 					width : 150,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Ramal / ID',
-					name : 'ramal',
+					name : 'telefone.ramal',
 					width : 100,
 					sortable : true,
 					align : 'center'
@@ -51,12 +52,14 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				width : 770,
 				height : 150,
-				disableSelect: true
+				disableSelect: true,
+				sortorder: "asc",
+				sortname: "tipoTelefone"
 			});
 		}
 		
@@ -126,7 +129,7 @@
 						page: 1, total: 1, rows: result.rows
 					});	
 					
-					limparCampos();
+					limparCamposTelefone();
 					
 					$("#referenciaHidden").val("");
 					
@@ -157,7 +160,7 @@
 									page: 1, total: 1, rows: result.rows
 								});
 								
-								limparCampos();
+								limparCamposTelefone();
 								
 								$("#referenciaHidden").val("");
 								
@@ -177,7 +180,7 @@
 		}
 		
 		function editarTelefone(referenciaTelefone){
-			limparCampos();
+			limparCamposTelefone();
 			
 			var data = "referencia=" + referenciaTelefone;
 		
@@ -204,7 +207,7 @@
 			);
 		}
 		
-		function limparCampos(){
+		function limparCamposTelefone(){
 			$("#tipoTelefone").val("");
 			$("#ddd").val("");
 			$("#numeroTelefone").val("");
@@ -247,7 +250,7 @@
 						page: result.page, total: result.total, rows: result.rows
 					});
 					
-					limparCampos();
+					limparCamposTelefone();
 					
 					$("#referenciaHidden").val("");
 					
@@ -280,7 +283,7 @@
 		}
 		
 		function cadastrarTelefone(){
-			limparCampos();
+			limparCamposTelefone();
 			$("#referenciaHidden").val("");
 			$("#botaoAddEditar").text("Incluir Novo");
 			

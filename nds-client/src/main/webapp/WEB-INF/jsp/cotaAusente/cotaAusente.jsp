@@ -4,6 +4,9 @@
 
 <script language="javascript" type="text/javascript">
 
+var mov;
+var indiceAtual;
+
 function cliquePesquisar() {
 	
 	var dataAusencia = $('#idData').attr('value');
@@ -140,7 +143,7 @@ function gerarMovimentos(movimentos) {
 		produto.innerHTML = movimento.nomeProd;
 		edicao.innerHTML = movimento.edicaoProd;
 		reparte.innerHTML = movimento.qtdeReparte;
-		botao.innerHTML = "<a onclick=\"mostra_grid();\" href=\"javascript:;\"><img src=\"${pageContext.request.contextPath}/images/ico_negociar.png\" border=\"0\" /></a>";
+		botao.innerHTML = "<a onclick=\"gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"${pageContext.request.contextPath}/images/ico_negociar.png\" border=\"0\" /></a>";
 		
 		novaLinha.append(codigo);
 		novaLinha.append(produto);
@@ -156,10 +159,46 @@ function gerarMovimentos(movimentos) {
 	});
 }
 
-var mov;
-var indice;
+function gerarGridRateios(indice) {
+	
+	indiceAtual = indice;
+	
+	var tabRateios = $("#idRateios");	
+	var cabecalho = $("#idCabecalhoRateios");
+		
+	tabRateios.clear();
+	
+	tabRateios.append(cabecalho);
+	
+	if(movimentos[i].rateios) {
+	
+		$.each(movimentos[i].rateios, function(index, rateio) {
+			var novaLinha = $(document.createElement("TR"));
+			
+			var numCota = document.createElement("TD");
+			var nomeCota = document.createElement("TD");
+			var qtde = document.createElement("TD");
+					
+			numCota.innerHTML = rateio.numCota;
+			nomeCota.innerHTML = rateio.nomeCota;
+			qtde.innerHTML = rateio.qtde;
+			
+			novaLinha.append(codigo);
+			novaLinha.append(produto);
+			novaLinha.append(edicao);
+			
+			if(index%2 == 0) {
+				novaLinha.attr("style", "background:#F8F8F8;");
+			}
+			
+			tabMovimentos.append(novaLinha);
+		});
+	}
+}
 	
 function popupRateio(movimentos) {
+	
+	mov = movimentos;
 	
 	gerarMovimentos(movimentos);
 		

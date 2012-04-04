@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -151,6 +152,7 @@ public class DataLoader {
 	private static Fornecedor fornecedorFc;
 	private static Distribuidor distribuidor;
 	private static TipoProduto tipoProdutoRevista;
+	private static TipoProduto tipoRefrigerante;
 	
 	private static Produto produtoVeja;
 	private static Produto produtoSuper;
@@ -166,6 +168,7 @@ public class DataLoader {
 	private static Produto produtoManequim;
 	private static Produto produtoNatGeo;
 	private static Produto produtoPlacar;
+	private static Produto cocaCola;
 	
 	private static ProdutoEdicao produtoEdicaoVeja1;
 	private static ProdutoEdicao produtoEdicaoVeja2;
@@ -184,11 +187,13 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoManequim1;
 	private static ProdutoEdicao produtoEdicaoNatGeo1;
 	private static ProdutoEdicao produtoEdicaoPlacar1;
-	
+	private static ProdutoEdicao cocaColaLight;
+		
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
+	private static Lancamento lancamentoCocaCola;
 
 	private static NotaFiscalEntradaFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscalEntrada itemNotaFiscalFornecedor;
@@ -198,6 +203,9 @@ public class DataLoader {
 	private static MovimentoEstoque movimentoRecFisicoVeja1;
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
+	
+	private static ItemNotaFiscalEntrada itemNotaFiscalCoca;
+	private static ItemRecebimentoFisico itemCocaRecebimentoFisico;
 	
 	private static Cota cotaJose;
 	private static Cota cotaManoel;
@@ -1012,6 +1020,11 @@ public class DataLoader {
 		
 		itemRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscalFornecedor, recebimentoFisico, BigDecimal.TEN);
 		session.save(itemRecebimentoFisico);
+		
+		itemCocaRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscalCoca, recebimentoFisico, new BigDecimal(50));
+		session.save(itemCocaRecebimentoFisico);
+		
+		//TODO
 	}
 
 	private static void criarNotasFiscais(Session session) {
@@ -1023,6 +1036,11 @@ public class DataLoader {
 		itemNotaFiscalFornecedor = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
 				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		session.save(itemNotaFiscalFornecedor);
+		
+		//TODO
+		itemNotaFiscalCoca= Fixture.itemNotaFiscal(cocaColaLight,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaFiscalCoca);
 	}
 
 	private static void criarEstudos(Session session) {
@@ -1120,7 +1138,8 @@ public class DataLoader {
 								produtoEdicaoCapricho1.getPeb()), new Date(),
 								new Date(), new BigDecimal(1000), StatusLancamento.EXPEDIDO,
 								null,expedicao);
-		session.save(lancamentoCapricho1);		
+		session.save(lancamentoCapricho1);			
+	
 		
 	}
 	
@@ -1134,7 +1153,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
-						new Date(), BigDecimal.TEN,  StatusLancamento.CONFIRMADO,
+						new Date(), BigDecimal.TEN,  StatusLancamento.ESTUDO_FECHADO,
 						itemRecebimentoFisico);
 		session.save(lancamentoVeja1);
 		
@@ -1295,6 +1314,10 @@ public class DataLoader {
 								new Date(), new BigDecimal(195), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoPlacar1);
+		
+		lancamentoCocaCola = Fixture.lancamento(TipoLancamento.LANCAMENTO,cocaColaLight , 
+				new Date(), new Date(), new Date(), new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico);
+		save(session, lancamentoCocaCola);
 	}
 
 	private static void criarProdutosEdicao(Session session) {
@@ -1382,6 +1405,11 @@ public class DataLoader {
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
 				produtoPlacar);
 		session.save(produtoEdicaoPlacar1);
+		
+		cocaColaLight = Fixture.produtoEdicao(1L, 10, 30,
+				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
+				cocaCola);
+		session.save(cocaColaLight);
 	}
 
 	private static void criarProdutos(Session session) {
@@ -1440,11 +1468,20 @@ public class DataLoader {
 		produtoPlacar = Fixture.produtoPlacar(tipoProdutoRevista);
 		produtoPlacar.addFornecedor(fornecedorDinap);
 		session.save(produtoPlacar);
+		
+		//TODO
+		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante);
+		cocaCola.addFornecedor(fornecedorFc);
+		cocaCola.addFornecedor(fornecedorAcme);
+		save(session, cocaCola);
 	}
 
 	private static void criarTiposProduto(Session session) {
 		tipoProdutoRevista = Fixture.tipoRevista();
 		session.save(tipoProdutoRevista);
+		
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
+		session.save(tipoRefrigerante);
 	}
 
 	private static void criarDistribuidor(Session session) {

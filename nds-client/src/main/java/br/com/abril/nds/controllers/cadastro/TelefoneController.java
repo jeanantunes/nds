@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -26,6 +28,7 @@ import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -56,9 +59,28 @@ public class TelefoneController {
 	public void index(){}
 	
 	@Post
-	public void pesquisarTelefones(){
+	public void pesquisarTelefones(String sortname, String sortorder){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
+		if (sortname != null) {
+
+			sortorder = sortorder == null ? "asc" : sortorder;
+
+			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+			
+			LinkedList<TelefoneAssociacaoDTO> lista = new LinkedList<TelefoneAssociacaoDTO>();
+			for (Integer key : telefonesSessao.keySet()){
+				lista.add(telefonesSessao.get(key));
+			}
+			
+			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
+			
+			for (Object dto : PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname)){
+				TelefoneAssociacaoDTO ref = (TelefoneAssociacaoDTO) dto;
+				telefonesSessao.put(ref.getReferencia(), ref);
+			}
+		}
+
 		this.result.use(Results.json()).from(this.getTableModelListaEndereco(telefonesSessao), "result").recursive().serialize();
 	}
 	
@@ -94,7 +116,7 @@ public class TelefoneController {
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSessao);
 		
-		this.pesquisarTelefones();
+		this.pesquisarTelefones(null, null);
 	}
 
 	@Post
@@ -116,7 +138,7 @@ public class TelefoneController {
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSalvarSessao);
 		
-		this.pesquisarTelefones();
+		this.pesquisarTelefones(null, null);
 	}
 	
 	@Post
@@ -237,7 +259,7 @@ public class TelefoneController {
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
 		
-		this.pesquisarTelefones();
+		this.pesquisarTelefones(null, null);
 	}
 	
 	@Post

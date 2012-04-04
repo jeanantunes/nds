@@ -53,6 +53,7 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		documentoCobrancaService.enviarDocumentoCobrancaPorEmail(nossoNumero);
 	}
 	
+	
 	@Transactional(readOnly=true)
 	@Override
 	public List<GeraDividaDTO> obterDividasGeradas(FiltroDividaGeradaDTO filtro) {
