@@ -5,12 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -18,6 +20,7 @@ import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.RateioCotaAusente;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.RateioCotaAusenteRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -25,10 +28,11 @@ import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
 
+@Service
 public class CotaAusenteServiceImpl implements CotaAusenteService{
 	
 	@Autowired
-	CotaAusenteRepository cotaAusenterepository;
+	CotaAusenteRepository cotaAusenteRepository;
 	
 	@Autowired
 	CotaRepository cotaRepository;
@@ -45,23 +49,84 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	@Autowired
 	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
+	@Autowired
+	EstoqueProdutoRespository estoqueProdutoRepository;
+	
 	@Transactional
-	public void declararCotaAusente(Long idCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario){
+	public void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario){
 
+		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		
 		CotaAusente cotaAusente = new CotaAusente();
-		Cota cota = new Cota();
-		cota.setId(idCota);
-		cotaAusente.setAtivo(true);
 		cotaAusente.setCota(cota);
+		cotaAusente.setAtivo(true);
 		cotaAusente.setData(data);
 		
-		cotaAusenterepository.adicionar(cotaAusente);
+		cotaAusenteRepository.adicionar(cotaAusente);
 		
 		 List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
 		 movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		 
-		 gerarRateios(listaDeRateio, movimentosCota, data, idUsuario, idCota);
+		 gerarRateios(listaDeRateio, movimentosCota, data, idUsuario, cota.getId());
+	}
+	
+
+
+	/**
+	 * Método que cancela uma Cota Ausente e reajusta os movimentos
+	 * @param idCotaAusente
+	 */
+	public void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) {
+		
+		Date dataAtual = new Date();
+		
+		CotaAusente cotaAusente = cotaAusenteRepository.buscarPorId(idCotaAusente);
+	
+		alterarStatusCotaAusente(cotaAusente);
+		
+		List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(dataAtual, cotaAusente.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+			
+		for(MovimentoEstoqueCota movimento : movimentosCota) {
+			if(movimento.getProdutoEdicao() != null){
+				BigDecimal qtdeExistente = obterQuantidadeSuplementarExistente(movimento.getProdutoEdicao().getId());
+				BigDecimal qtdeARetirar;
+				
+				if( obterQuantidadeSuplementarExistente(movimento.getProdutoEdicao().getId()).compareTo(movimento.getQtde()) > 0) {
+					qtdeARetirar = movimento.getQtde();
+				} else {
+					qtdeARetirar = qtdeExistente;
+				}
+				
+				TipoMovimentoEstoque tipoMovimento = 
+						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
+					
+					TipoMovimentoEstoque tipoMovimentoCota =
+						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
+				
+			
+				movimentoEstoqueService.gerarMovimentoEstoque(dataAtual,movimento.getProdutoEdicao().getId(),idUsuario,qtdeARetirar,tipoMovimento);
+				movimentoEstoqueService.gerarMovimentoCota(dataAtual, movimento.getProdutoEdicao().getId(), idCotaAusente, idUsuario, qtdeARetirar, tipoMovimentoCota); 
+			}	
+		}
+	}
+	
+	/**
+	 * Modificar o Status de Cota para Inativo 
+	 * @param cotaAusente
+	 */
+	private void alterarStatusCotaAusente(CotaAusente cotaAusente) {
+		cotaAusente.setAtivo(false);
+		cotaAusenteRepository.alterar(cotaAusente);		
+	}
+
+
+
+	private BigDecimal obterQuantidadeSuplementarExistente(Long idProdutoEdicao) {
+	
+		EstoqueProduto ep = estoqueProdutoRepository.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		return ep.getQtdeSuplementar();
 	}
 	
 	private void gerarRateios(List<RateioCotaAusente> listaDeRateio, List<MovimentoEstoqueCota> movimentosCota, Date data, Long idUsuario, Long idCota) {
@@ -107,7 +172,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 
 	@Transactional
 	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO){
-		return cotaAusenterepository.obterCotasAusentes(filtroCotaAusenteDTO);
+		return cotaAusenteRepository.obterCotasAusentes(filtroCotaAusenteDTO);
+	}
+
+	@Override
+	public Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro) {
+		return cotaAusenteRepository.obterCountCotasAusentes(filtro);
 	}
 
 }

@@ -15,10 +15,13 @@ public class PessoaJuridica extends Pessoa {
 
 	@Column(name = "RAZAO_SOCIAL")
 	private String razaoSocial;
+	
 	@Column(name = "NOME_FANTASIA")
 	private String nomeFantasia;
+	
 	@Column(name = "CNPJ")
 	private String cnpj;
+	
 	@Column(name = "INSC_ESTADUAL")
 	private String inscricaoEstadual;
 

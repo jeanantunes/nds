@@ -51,10 +51,16 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path("financeiro/impressaoBoletos")
+@Path("/financeiro/impressaoBoletos")
 public class ImpressaoBoletosController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaGeraDivida";
+
+	private static final String BOLETO = "Boletos";
+
+	private static final String DIVIDAS = "Dividas";
+
+	private static final String DIVIDA_SESSION_ATTRIBUTE = "arquivoDivida";
 	
 	@Autowired
 	private Result result;
@@ -80,6 +86,10 @@ public class ImpressaoBoletosController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	public enum TipoImpressao{
+		BOLETO,DIVIDA
+	}
+	
 	public ImpressaoBoletosController(){
 	}
 	
@@ -89,7 +99,6 @@ public class ImpressaoBoletosController {
 		
 		carregarTiposCobranca();
 	}
-	
 	
 	/**
 	 * Carrega as os tipos de cobrança no combo da tela.
@@ -108,9 +117,15 @@ public class ImpressaoBoletosController {
 	
 	@Post
 	public void gerarDivida(){
+
+		if(!gerarCobrancaService.validarDividaGeradaDataOperacao()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dividas para data de operação.");
+		}
+		
+
 		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId());
 		
-		this.result.use(Results.json()).from("", "result").serialize();
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "As dividas foram geradas com sucesso.");
 	}
 	
 	@Post
@@ -239,7 +254,7 @@ public class ImpressaoBoletosController {
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDividasGeradasVO));
 		
-		tableModel.setPage(1);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
 		
@@ -266,8 +281,8 @@ public class ImpressaoBoletosController {
 			dividaGeradaVO.setDataVencimento(DateUtil.formatarDataPTBR(divida.getDataVencimento()));
 			dividaGeradaVO.setNomeCota(divida.getNomeCota());
 			dividaGeradaVO.setNumeroCota(String.valueOf(divida.getNumeroCota()));
-			dividaGeradaVO.setRota(divida.getRota());
-			dividaGeradaVO.setRoteiro(divida.getRoteiro());
+			dividaGeradaVO.setRota((divida.getRota()== null)?"": divida.getRota());
+			dividaGeradaVO.setRoteiro((divida.getRoteiro()==null)?"": divida.getRoteiro());
 			dividaGeradaVO.setSuportaEmail(divida.getSuportaEmail().toString());
 			dividaGeradaVO.setTipoCobranca( (divida.getTipoCobranca()!= null)? divida.getTipoCobranca().getDescTipoCobranca():"");
 			dividaGeradaVO.setValor( CurrencyUtil.formatarValor(divida.getValor()));
@@ -330,44 +345,117 @@ public class ImpressaoBoletosController {
 	@Path("/imprimirDivida")
 	public void imprimirDivida(String nossoNumero) throws Exception{
 		
+		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
+		
+		if(arquivo!= null){
+			imprimirDividas(arquivo,nossoNumero);
+		}
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, null);
+	}
+	
+	@Post
+	@Path("/validarImpressaoDivida")
+	public void validarImpressaoDivida(String nossoNumero) throws Exception{
+		
 		byte[] arquivo = dividaService.gerarArquivoImpressao(nossoNumero);
 		
-		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename= Dividas Geradas.pdf");
+		if(arquivo == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Divida não encontrado para impressão");
+		}
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
+		
+		result.use(Results.json()).from(Boolean.TRUE.toString(),"result").serialize();
+	}
 
-		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(arquivo);
-
-		httpResponse.flushBuffer();
+	
+	@Post
+	@Path("/validarImpressaoDividas")
+	public void validarImpressaoDividaEmMassa(String tipoImpressao) throws Exception{
+		
+		FiltroDividaGeradaDTO filtro = obterFiltroExportacao();
+		
+		TipoCobranca tipoCobranca = filtro.getTipoCobranca();
+		
+		String message = "Não foi encontrado Dividas para impressão.";
+		
+		byte[] arquivo = null;
+		
+		if("BOLETO".equals(tipoImpressao)){
+			
+			message = "Não foi encontrado Boletos para impressão.";
+			
+			if(tipoCobranca != null && !TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
+				throw new ValidacaoException(TipoMensagem.WARNING, message);
+			}
+			
+			filtro.setTipoCobranca(TipoCobranca.BOLETO);
+		}
+		else{
+			if(TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
+				throw new ValidacaoException(TipoMensagem.WARNING, message);
+			}
+		}
+	
+		arquivo = dividaService.gerarArquivoImpressao(filtro);
+		
+		if(arquivo == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, message);
+		}
+		
+		filtro.setTipoCobranca(tipoCobranca);
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
+		
+		result.use(Results.json()).from(tipoImpressao,"result").serialize();
 	}
 	
 	@Get
-	@Path("/imprimirDividas")
-	public void imprimirDividas() throws Exception{
+	@Path("/imprimirBoletosEmMassa")
+	public void imprimirBoletosEmMassa() throws Exception{
 		
-		FiltroDividaGeradaDTO filtroSession = (FiltroDividaGeradaDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		byte[]arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
 		
-		//filtroSession.setPaginacao(paginacao)
+		imprimirDividas(arquivo,BOLETO);
 		
-		byte[] arquivo =  dividaService.gerarArquivoImpressao(null);
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE,null);
+	}
+	
+	@Get
+	@Path("/imprimirDividasEmMassa")
+	public void imprimirDividasEmMassa() throws Exception{
+		
+		byte[]arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
+		
+		imprimirDividas(arquivo,DIVIDAS);
+		
+		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE,null);
+	}
+	
+	/**
+	 * Renderiza o arquivo de impressão de dividas
+	 * @param filtro
+	 * @throws IOException
+	 */
+	private void imprimirDividas(byte[] arquivo,String nameArquivo) throws IOException{
 		
 		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename= Dividas Geradas.pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nameArquivo +".pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
 
 		httpResponse.flushBuffer();
 	}
-	
+
 	@Post
 	@Path("/enviarDivida")
 	public void enviarDivida(String nossoNumero) throws Exception{
 		
 		dividaService.enviarArquivoPorEmail(nossoNumero);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Divida "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Divida "+nossoNumero+" enviada com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
 	

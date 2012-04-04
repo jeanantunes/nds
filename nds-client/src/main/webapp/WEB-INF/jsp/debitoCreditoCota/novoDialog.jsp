@@ -1,7 +1,7 @@
 <div id="dialog-novo" title="Incluir Novo Tipo de Movimento" style="display: none;">
 
 	<div class="effectDialog ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 2000; width: 750px;">
+		 style="display: none; position: absolute; z-index: 2000; width: 600px;">
 		 
 		<p>
 			<span style="float: left;" class="ui-icon ui-icon-info"></span>
@@ -30,7 +30,7 @@
 	<script language="javascript" type="text/javascript">
 
 		$(".debitosCreditosGrid_1").flexigrid({
-			preProcess: executarPreProcessamentoRateio,
+			preProcess: executarPreProcessamentoMovimento,
 			onSuccess: configurarCampos,
 			dataType : 'json',
 			colModel : [ {
@@ -82,10 +82,12 @@
 			});
 			
 			$("input[id^='numeroCota']").numeric();
+			
+			$("input[name='debitoCredito.nomeCota']").autocomplete({source: ""});
+			
 		}
 
 // 		function popupNovoDialog() {
-		
 // 			$( "#dialog-novo" ).dialog({
 // 				resizable: false,
 // 				height:450,
@@ -96,7 +98,6 @@
 // 						$( this ).dialog( "close" );
 // 						$("#effect").show("highlight", {}, 1000, callback);
 // 						$(".grids").show();
-						
 // 					},
 // 					"Cancelar": function() {
 // 						$( this ).dialog( "close" );
@@ -133,7 +134,7 @@
 			});     
 		}
 
-		function executarPreProcessamentoRateio(resultado) {
+		function executarPreProcessamentoMovimento(resultado) {
 
 			if (resultado.mensagens) {
 
@@ -147,21 +148,23 @@
 
 			$.each(resultado.rows, function(index, row) {
 
+				var hiddenId = '<input type="hidden" name="idMovimento" value="' + index + '" />';
+				
 				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true';
 
 				var parametroAutoCompleteCota = '\'#nomeCota' + index + '\', true';
 				
 				var inputNumeroCota = '<input id="numeroCota' + index + '" maxlength="9" name="debitoCredito.numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
 
-				var inputNomeCota = '<input id="nomeCota' + index + '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onchange="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
+				var inputNomeCota = '<input id="nomeCota' + index + '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
 				
-				var inputData = '<input id="data' + index + '" name="debitoCredito.dataLancamento" type="text" style="width:70px;" />';
+				var inputData = '<input id="data' + index + '" name="debitoCredito.dataVencimento" type="text" style="width:70px;" />';
 				
 				var inputValor = '<input id="valor' + index + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
 				
 				var inputObservacao = '<input id="observacao' + index + '" name="debitoCredito.observacao" type="text" style="width:220px;" />';
 
-				row.cell[0] = inputNumeroCota;
+				row.cell[0] = hiddenId + inputNumeroCota;
 				row.cell[1] = inputNomeCota;
 				row.cell[2] = inputData;
 				row.cell[3] = inputValor;
@@ -171,64 +174,7 @@
 			return resultado;
 		}
 
-		function reprocessarDadosRateio(index, limpar) {
-
-			var campoQtdeRateio = $('#quantidadeRateio' + index);
-			
-			if (campoQtdeRateio && limpar) {
-
-				campoQtdeRateio.val("");
-
-				campoQtdeRateio.focus();
-			}
-
-			var campoQtdeReparteCota = $('#qtdeReparteCota' + index);
-
-			if (campoQtdeReparteCota && limpar) {
-
-				campoQtdeReparteCota.val("");
-			}
-
-			var campoSpanQtdeReparteCota = $('#spanQtdeReparteCota' + index);
-
-			if (campoSpanQtdeReparteCota && limpar) {
-
-				campoSpanQtdeReparteCota.text("");
-			}
-
-			var linhaDaGrid = $(".gridRateioDiferencas tr").eq(index);
-
-			if (linhaDaGrid) {
-
-				linhaDaGrid.removeClass('linhaComErro');
-			}
-			
-			var somaQtdeRateio = $("input[id^='qtdeReparteCota']").sum();
-			
-			$("#totalRateio").text(somaQtdeRateio);
-			
-			if (somaQtdeRateio == 0) {
-			
-				$("#totalRateio").text("");
-			}
-		}
-
-		function cadastrasRateioCotas() {
-
-			var listaRateioCotas = obterListaRateioCotas();
-
-			$.postJSON(
-				"<c:url value='/estoque/diferenca/lancamento/cadastrarRateioCotas' />", 
-				listaRateioCotas + 'idDiferenca=' + idDiferencaAtual,
-				function(result) {
-					$("#dialogRateioDiferencas").dialog("close");
-				},
-				tratarErroCadastroNovosRateios, 
-				true
-			);
-		}
-
-		function tratarErroCadastroNovosRateios(jsonData) {
+		function tratarErroCadastroNovosMovimentos(jsonData) {
 
 			if (!jsonData || !jsonData.mensagens) {
 
@@ -237,7 +183,7 @@
 
 			var dadosValidacao = jsonData.mensagens.dados;
 			
-			var linhasDaGrid = $(".gridRateioDiferencas tr");
+			var linhasDaGrid = $(".debitosCreditosGrid_1 tr");
 
 			$.each(linhasDaGrid, function(index, value) {
 
@@ -270,7 +216,8 @@
 				var colunaData = linha.find("td")[2];
 				var colunaValor = linha.find("td")[3];
 				var colunaObservacao = linha.find("td")[4];
-
+				var colunaIdMovimento = linha.find("td")[5];
+				
 				var numeroCota = 
 					$(colunaNumeroCota).find("div").find('input[name="debitoCredito.numeroCota"]').val();
 				
@@ -278,13 +225,16 @@
 					$(colunaNomeCota).find("div").find('input[name="debitoCredito.nomeCota"]').val();
 
 				var data = 
-					$(colunaData).find("div").find('input[name="debitoCredito.dataLancamento"]').val();
+					$(colunaData).find("div").find('input[name="debitoCredito.dataVencimento"]').val();
 
 				var valor =
 					$(colunaValor).find("div").find('input[name="debitoCredito.valor"]').val();
 				
 				var observacao =
 					$(colunaObservacao).find("div").find('input[name="debitoCredito.observacao"]').val();
+				
+				var idMovimento =
+					$(colunaNumeroCota).find("div").find('input[name="idMovimento"]').val();
 				
 				if (isAtributosMovimentoVazios(numeroCota, nomeCota, data, valor, observacao)) {
 
@@ -301,6 +251,8 @@
 				
 				movimento += 'listaNovosDebitoCredito[' + index + '].observacao=' + observacao + '&';
 
+				movimento += 'listaNovosDebitoCredito[' + index + '].id=' + idMovimento + '&';
+				
 				listaMovimentos = (listaMovimentos + movimento);
 			});
 

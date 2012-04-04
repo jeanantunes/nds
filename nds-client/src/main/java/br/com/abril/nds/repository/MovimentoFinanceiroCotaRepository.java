@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -16,5 +17,11 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
 	
 	Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+	
+
+	Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual);
+
+
+	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 
 }

@@ -95,7 +95,10 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 			queryNative.append(" limit :inicio,:qtdeResult ");
 		}
 				
-		Query query  = getSession().createSQLQuery(queryNative.toString()).addScalar("data").addScalar("box")
+		Query query  = getSession().createSQLQuery(queryNative.toString())
+				.addScalar("idCotaAusente")
+				.addScalar("data")
+				.addScalar("box")
 				.addScalar("cota")
 				.addScalar("nome")
 				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));

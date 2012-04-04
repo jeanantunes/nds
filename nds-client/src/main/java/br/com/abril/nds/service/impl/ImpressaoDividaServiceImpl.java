@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 
 @Service
@@ -19,17 +20,39 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Autowired
 	private DividaRepository dividaRepository;
 	
+	@Autowired
+	private DocumentoCobrancaService documentoCobrancaService;
+	
+	@Transactional
 	@Override
 	public byte[] gerarArquivoImpressao(String nossoNumero) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+	}
+	
+	@Transactional
+	@Override
+	public byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro) {
+		
+		List<GeraDividaDTO> dividas = null;
+		
+		if( TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
+			dividas = dividaRepository.obterDividasGeradas(filtro);
+		}
+		else {
+			dividas = dividaRepository.obterDividasGeradasSemBoleto(filtro);
+		}
+		
+		return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
 	}
 
+	@Transactional
 	@Override
 	public void enviarArquivoPorEmail(String nossoNumero) {
-		// TODO Auto-generated method stub
 		
+		documentoCobrancaService.enviarDocumentoCobrancaPorEmail(nossoNumero);
 	}
+	
 	
 	@Transactional(readOnly=true)
 	@Override
@@ -52,12 +75,6 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		Long quantidadeRegistro = dividaRepository.obterQunatidadeDividaGeradas(dataMovimento);
 		
 		return (quantidadeRegistro == null || quantidadeRegistro == 0) ? Boolean.FALSE : Boolean.TRUE;
-	}
-
-	@Override
-	public File gerarArquivoDividas(FiltroDividaGeradaDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

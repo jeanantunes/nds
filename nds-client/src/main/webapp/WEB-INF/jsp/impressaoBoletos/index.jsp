@@ -25,7 +25,7 @@
 				
 				var nossoNumero  = row.cell.nossoNumero;
 				
-				var linkImpressao = '<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirDivida?nossoNumero=' + nossoNumero + '" style="cursor:pointer">' +
+				var linkImpressao = '<a href="javascript:GeraDivida.imprimirDivida(' + nossoNumero + ')" style="cursor:pointer">' +
 					 '<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
 					 '</a>';			
 				
@@ -52,7 +52,9 @@
 		enviarDivida:function(nossoNumero) {
 			var data = [{ name: 'nossoNumero', value: nossoNumero}];
 			
-			$.postJSON("<c:url value='/financeiro/impressaoBoletos/enviarDivida' />", data);
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/enviarDivida' />", data,function(){
+				GeraDivida.pesquisar();	
+			});
 		},
 		
 		formData: function(){
@@ -72,7 +74,7 @@
 		pesquisar: function (){
 			
 			$("#impressosGrid").flexOptions({
-				url: "<c:url value='financeiro/impressaoBoletos/consultar' />",
+				url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
 				params: GeraDivida.formData()
 			});
 			
@@ -161,6 +163,51 @@
 			});
 		},
 		
+		imprimirDividas:function(tipoImpressao){
+			
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDividas' />",
+					[{name:"tipoImpressao",value:tipoImpressao}], function(result){
+				
+				$("#impressosGrid").flexOptions({
+					url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
+					params: GeraDivida.formData(),
+					onSuccess:GeraDivida.renderizarArquivo(result)
+				});	
+				
+				$("#impressosGrid").flexReload();
+			});
+		},
+		
+		renderizarArquivo:function(result){
+			
+			if("BOLETO" == result){
+				window.location ="<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>" ;
+			}
+			else if ("DIVIDA" == result) {
+				window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>";
+			}
+		},
+		
+		imprimirDivida:function(nossoNumero){
+			
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/validarImpressaoDivida' />",
+					[{name:"nossoNumero",value:nossoNumero}], function(result){
+				
+				if(result == "true"){
+					
+					$("#impressosGrid").flexOptions({
+						url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
+						params: GeraDivida.formData(),
+						onSuccess:function(){
+							window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>";		
+						}
+					});
+					
+					$("#impressosGrid").flexReload();
+				}	
+			});
+		}
+		
 	};
 	
 	$(function() {
@@ -171,6 +218,8 @@
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
+		
+		$("#descricaoCota").autocomplete({source: ""});
 		
 		$("#impressosGrid").flexigrid({
 			preProcess:GeraDivida.executarPreProcessamento,
@@ -302,7 +351,7 @@
 							      		 maxlength="255"
 							      		 style="width:130px;"
 							      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-							      		 onchange="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
+							      		 onblur="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
 							      		 									GeraDivida.pesquisarCotaSuccessCallBack,
 							      		 									GeraDivida.pesquisarCotaErrorCallBack);" />
 	    					</td>
@@ -353,14 +402,14 @@
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Boletos">
-						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirBoletos">
+						<a href="javascript:GeraDivida.imprimirDividas('BOLETO')">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							Imprimir Boletos
 						</a>
 					</span>
 					
 					<span class="bt_novos" title="Imprimir Dividas">
-						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/imprimirDividas">
+						<a href="javascript:GeraDivida.imprimirDividas('DIVIDA')">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							Imprimir Dividas
 						</a>

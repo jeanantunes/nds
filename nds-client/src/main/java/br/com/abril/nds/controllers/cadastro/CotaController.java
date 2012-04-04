@@ -97,10 +97,8 @@ public class CotaController {
 	
 	@Post
 	public void salvarCota(Long idCota) {
-		
-		Cota cota = this.cotaService.obterPorId(idCota);
 
-		processarEnderecosCota(cota);
+		processarEnderecosCota(idCota);
 		
 		processarTelefonesCota(idCota);
 		
@@ -108,7 +106,7 @@ public class CotaController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void processarEnderecosCota(Cota cota) {
+	private void processarEnderecosCota(Long idCota) {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
@@ -118,7 +116,7 @@ public class CotaController {
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
 						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 		
-		this.cotaService.processarEnderecos(cota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
+		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 	}
 	
 	private void processarTelefonesCota(Long idCota){
@@ -139,6 +137,9 @@ public class CotaController {
 		
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
 		this.cotaService.processarTelefones(idCota, lista, telefonesRemover);
+		
+		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -228,6 +229,14 @@ public class CotaController {
 		CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 			
 		this.result.use(Results.json()).from(cotaVO, "result").serialize();
+	}
+	
+	@Post
+	public void cancelar(){
+		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	/*

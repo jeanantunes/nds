@@ -124,14 +124,24 @@ public class CotaServiceImpl implements CotaService {
 	}
 
 	/**
-	 * @see br.com.abril.nds.service.CotaService#processarEnderecos(br.com.abril.nds.model.cadastro.Cota, java.util.List, java.util.List)
+	 * @see br.com.abril.nds.service.CotaService#processarEnderecos(java.util.Long, java.util.List, java.util.List)
 	 */
 	@Override
 	@Transactional
-	public void processarEnderecos(Cota cota,
+	public void processarEnderecos(Long idCota,
 								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
 								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
 
+		if (idCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+		}
+		
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		
+		if (cota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		}
+		
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
 
 			this.salvarEnderecosCota(cota, listaEnderecoAssociacaoSalvar);

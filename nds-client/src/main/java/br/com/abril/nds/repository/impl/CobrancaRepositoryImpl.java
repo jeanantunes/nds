@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -53,13 +52,14 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		
 		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
 		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
-		
+		criteria.setMaxResults(1);
+	
 		return (Cobranca) criteria.uniqueResult();
 	}
 	
-	public void incrementarVia(String nossoNumero){
-		Query query = this.getSession().createQuery("update Cobranca set vias = vias + 1 where nossoNumero = :nossoNumero");
-		query.setParameter("nossoNumero", nossoNumero);
+	public void incrementarVia(String... nossoNumero){
+		Query query = this.getSession().createQuery("update Cobranca set vias = vias + 1 where nossoNumero IN (:nossoNumero)");
+		query.setParameterList("nossoNumero", nossoNumero);
 		query.executeUpdate();
 	}
 }
