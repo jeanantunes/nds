@@ -65,6 +65,9 @@ public class Distribuidor {
 	
 	@OneToMany(mappedBy = "distribuidor")
 	private List<EnderecoDistribuidor> enderecos = new ArrayList<EnderecoDistribuidor>();
+	
+	@OneToMany(mappedBy = "distribuidor")
+	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
 
 	public Long getId() {
 		return id;
@@ -137,5 +140,13 @@ public class Distribuidor {
 	public void setEnderecos(List<EnderecoDistribuidor> enderecos) {
 		this.enderecos = enderecos;
 	}
-
+	
+	public List<TelefoneDistribuidor> getTelefones() {
+		return telefones;
+	}
+	
+	public void setTelefones(List<TelefoneDistribuidor> telefones) {
+		this.telefones = telefones;
+	}
+	
 }
