@@ -278,6 +278,7 @@ public class DataLoader {
 	private static EstoqueProdutoCota estoque4RodasOrlando;
 	
 	private static MovimentoEstoqueCota movimentoVejaGuilherme;
+	private static MovimentoEstoqueCota movimentoInfoGuilherme;
 	private static MovimentoEstoqueCota movimentoSuperMurilo;
 	private static MovimentoEstoqueCota movimentoCaprichoMariana;
 	private static MovimentoEstoqueCota movimento4RodasOrlando;
@@ -876,6 +877,10 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueVejaGuilherme,
 				BigDecimal.TEN, cotaGuilherme, StatusAprovacao.APROVADO, null);
 		
+		movimentoInfoGuilherme = Fixture.movimentoEstoqueCota(produtoEdicaoInfoExame1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueVejaGuilherme,
+				new BigDecimal(55), cotaGuilherme, StatusAprovacao.APROVADO, null);
+		
 		movimentoSuperMurilo = Fixture.movimentoEstoqueCota(produtoEdicaoSuper1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueSuperMurilo,
 				BigDecimal.TEN, cotaMurilo, StatusAprovacao.APROVADO, null);
@@ -889,7 +894,7 @@ public class DataLoader {
 				BigDecimal.TEN, cotaOrlando, StatusAprovacao.APROVADO, null);
 		
 		save(session, mec1, mec2, mec3, mec4, mec5, mec6, mec12, mec13, mec14,
-				movimentoVejaGuilherme, movimentoSuperMurilo, movimentoCaprichoMariana, movimento4RodasOrlando);
+				movimentoVejaGuilherme,movimentoInfoGuilherme, movimentoSuperMurilo, movimentoCaprichoMariana, movimento4RodasOrlando);
 		
 		movimentoFinanceiroCota1 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
@@ -1537,7 +1542,7 @@ public class DataLoader {
 		cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaMaria);
 		
-		cotaGuilherme = Fixture.cota(12345289, guilherme, SituacaoCadastro.ATIVO,box2);
+		cotaGuilherme = Fixture.cota(333, guilherme, SituacaoCadastro.ATIVO,box2);
 		cotaGuilherme.setSugereSuspensao(true);
 		save(session, cotaGuilherme);
 		
