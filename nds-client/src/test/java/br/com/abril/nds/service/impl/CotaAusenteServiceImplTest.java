@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -85,10 +84,8 @@ public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 		
 	}
 	
-	@Test
-	@Ignore
-	public void cancelarCotaAusente(){
-		
+	@Test	
+	public void cancelarCotaAusente(){		
 		cotaAusenteCotaService.cancelarCotaAusente(cotaAusente.getId(), user.getId());
 	}
 
