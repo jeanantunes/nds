@@ -9,6 +9,7 @@
 		function configurarFlexiGrid() {
 			
 			$(".manutencaoStatusCotaGrid").flexigrid({
+				preProcess: executarPreProcessamento,
 				dataType : 'json',
 				colModel : [{
 					display : 'Data',
@@ -56,6 +57,33 @@
 				width : 960,
 				height : 255
 			});
+		}
+
+		function executarPreProcessamento(data) {
+			
+			if (data.mensagens) {
+
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return;
+			}
+
+			if (!data.tableModel) {
+
+				return;
+			}
+
+			if ($(".grids").css('display') == 'none') {	
+
+				$(".grids").show();
+			}
+
+			return data.tableModel;
 		}
 
 		function configurarCamposData() {
@@ -120,6 +148,47 @@
 				}
 			});	    
 		}
+
+		function carregarCodigoBox() {
+
+			cota.obterPorNumeroCota($("#numeroCota").val(), false, function(result) {
+
+				if (!result) {
+
+					return;
+				}
+
+				$("#box").val(result.codigoBox);
+			});
+		}
+
+		function pesquisarHistoricoStatusCota() {
+
+			var filtro = [
+   				{
+   					name: 'filtro.numeroCota', value: $("#numeroCota").val()
+   				},
+   				{
+   					name: 'filtro.statusCota', value: $("#statusCota").val()
+   				},
+   				{
+   					name: 'filtro.periodo.dataInicial', value: $("#dataInicialStatusCota").val()
+   				},
+   				{
+   					name: 'filtro.periodo.dataFinal', value: $("#dataFinalStatusCota").val()
+   				},
+   				{
+   					name: 'filtro.motivoStatusCota', value: $("#motivo").val()
+   				}
+   			];
+
+			$(".manutencaoStatusCotaGrid").flexOptions({
+				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
+				params: filtro
+			});
+			
+			$(".manutencaoStatusCotaGrid").flexReload();
+		}
 		
 		function inicializar() {
 
@@ -150,11 +219,18 @@
 						   type="text"
 						   id="numeroCota"
 						   maxlength="255"
-						   style="width: 80px; margin-right: 5px; float: left;" />
+						   style="width: 80px; margin-right: 5px; float: left;"
+						   onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
 				</td>
 				<td width="42">Nome:</td>
 				<td width="240">
-					<input name="nomeCota" type="text" id="nomeCota" maxlength="255" style="width: 200px;" />
+					<input name="nomeCota" 
+						   type="text"
+						   id="nomeCota" 
+						   maxlength="255" 
+						   style="width: 200px;"
+						   onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
+		      		 	   onblur="cota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">
@@ -197,7 +273,7 @@
 				<td>&nbsp;</td>
 				<td>
 					<span class="bt_pesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="mostrar();">Pesquisar</a>
+						<a href="javascript:;" onclick="pesquisarHistoricoStatusCota();">Pesquisar</a>
 					</span>
 				</td>
 				<td>&nbsp;</td>
