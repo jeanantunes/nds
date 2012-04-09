@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.fiscal;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -25,7 +26,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "ITEM_NOTA_FISCAL_ENTRADA")
 @SequenceGenerator(name="ITEM_NF_ENTRADA_SEQ", initialValue = 1, allocationSize = 1)
-public class ItemNotaFiscalEntrada {
+public class ItemNotaFiscalEntrada implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1875057047416707211L;
 
 	@Id
 	@GeneratedValue(generator = "ITEM_NF_ENTRADA_SEQ")

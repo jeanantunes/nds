@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.estoque;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -26,7 +27,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "DIFERENCA")
 @SequenceGenerator(name="DIFERENCA_SEQ", initialValue = 1, allocationSize = 1)
-public class Diferenca {
+public class Diferenca implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1707768328291865384L;
 
 	@Id
 	@GeneratedValue(generator = "DIFERENCA_SEQ")

@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.estoque;
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -22,8 +23,13 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "RECEBIMENTO_FISICO")
 @SequenceGenerator(name="REC_FISICO_SEQ", initialValue = 1, allocationSize = 1)
-public class RecebimentoFisico {
+public class RecebimentoFisico implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -1901557922790741971L;
+	
 	@Id
 	@GeneratedValue(generator = "REC_FISICO_SEQ")
 	@Column(name = "ID")

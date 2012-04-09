@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -16,8 +17,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "FORMA_COBRANCA")
 @SequenceGenerator(name="FORMA_COBRANCA_SEQ", initialValue = 1, allocationSize = 1)
-public class FormaCobranca {
+public class FormaCobranca implements Serializable {
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2405188133540434339L;
+
 	@Id
 	@GeneratedValue(generator = "FORMA_COBRANCA_SEQ")
 	private Long id;

@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +27,12 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 @Entity
 @Table(name = "COTA")
 @SequenceGenerator(name="COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class Cota {
+public class Cota implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 4962347006238498224L;
 
 	@Id
 	@GeneratedValue(generator = "COTA_SEQ")
