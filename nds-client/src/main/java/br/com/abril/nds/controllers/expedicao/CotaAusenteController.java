@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
@@ -35,12 +37,13 @@ public class CotaAusenteController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
 	
 	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente na data.";
 	private static final String WARNING_CAMPO_DATA_OBRIGATORIO = "O campo \"Data\" é obrigatório.";
 	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
-	
-	
+	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
+	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
 	@Autowired
@@ -83,20 +86,24 @@ public class CotaAusenteController {
 	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, 
 			String box,String sortorder, String sortname, int page, int rp) {
 		
-		Date data = validaData(dataAusencia);
+		//try {
+			Date data = validaData(dataAusencia);
+			
+			boolean isDataOperacao = isDataOperacao(data);
+					
+			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
+					data, 
+					(box==null || box.isEmpty()) ? null:box, 
+					numCota, 
+					new PaginacaoVO(page, rp, sortorder), 
+					ColunaOrdenacao.valueOf(sortname));
+					
+			tratarFiltro(filtro);
+			
+			efetuarConsulta(filtro, isDataOperacao);
+		//}
 		
-		boolean isDataOperacao = isDataOperacao(data);
-				
-		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
-				data, 
-				(box==null || box.isEmpty()) ? null:box, 
-				numCota, 
-				new PaginacaoVO(page, rp, sortorder), 
-				ColunaOrdenacao.valueOf(sortname));
-				
-		tratarFiltro(filtro);
-		
-		efetuarConsulta(filtro, isDataOperacao);
+		//TODO WARNING_PESQUISA_SEM_RESULTADO
 		
 	}
 	
@@ -200,11 +207,40 @@ public class CotaAusenteController {
 	@Post
 	public void enviarParaSuplementar(Integer numCota) {
 	
-		if(numCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		try {
+			
+			if(numCota == null) 
+				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+						
+			cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+			
+			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
+			
+		} catch(ValidacaoException e) {
+			mensagens.clear();
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;
+		
+		} catch(InvalidParameterException e) {
+			mensagens.clear();
+			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
+			status=TipoMensagem.WARNING;			
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_ENVIO_SUPLEMENTAR);
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_ENVIO_SUPLEMENTAR, e);
 		}
 		
-		cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+		Object[] retorno = new Object[2];
+		retorno[0] = mensagens;
+		retorno[1] = status.name();		
+		
+		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 
 	@Post

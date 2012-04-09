@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -48,7 +49,7 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
-	
+		
 	@Autowired
 	private EnderecoCotaRepository enderecoCotaRepository;
 	
@@ -285,8 +286,12 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional
 	public Cota suspenderCota(Long idCota, Usuario usuario) {
-		
+				
 		Cota cota = obterPorId(idCota);
+		
+		if(SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
+			throw new InvalidParameterException();
+		}
 		
 		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
 		historico.setCota(cota);

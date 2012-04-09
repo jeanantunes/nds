@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +56,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	@Transactional
 	public void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario){
 
+		
+		
+		if(isCotaAusenteNaData(numCota,data)) {
+			throw new InvalidParameterException();
+		}
+		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
 		
 		CotaAusente cotaAusente = new CotaAusente();
@@ -68,9 +75,27 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		
 		 movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		 
+		 if(listaDeRateio == null || listaDeRateio.size()==0) {
+				return;
+		 }
+		 
 		 gerarRateios(listaDeRateio, movimentosCota, data, idUsuario, cota.getId());
 	}
 	
+
+
+	private boolean isCotaAusenteNaData(Integer numCota, Date data) {
+		
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO();
+		filtro.setData(data);
+		filtro.setNumCota(numCota);
+		
+		if(cotaAusenteRepository.obterCountCotasAusentes(filtro) > 0) {
+			return true;
+		}
+		return false;
+	}
+
 
 
 	/**
@@ -131,11 +156,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	}
 	
 	private void gerarRateios(List<RateioCotaAusente> listaDeRateio, List<MovimentoEstoqueCota> movimentosCota, Date data, Long idUsuario, Long idCota) {
-		
-		if(listaDeRateio == null || listaDeRateio.size()==0) {
-			return;
-		}
-				
+		 		
 		for(MovimentoEstoqueCota movimentoEstoqueCota : movimentosCota) {
 		
 			BigDecimal total = new BigDecimal(0);

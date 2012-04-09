@@ -163,15 +163,40 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 				
-				 novaQuantidade = estoqueProduto.getQtde().add(quantidade);
-				 
-				 estoqueProduto.setQtde(novaQuantidade);
+				 if(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+					 
+					 novaQuantidade = estoqueProduto.getQtdeSuplementar().add(quantidade);
+					 
+					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
+					 
+				 } else {
+					 
+					 novaQuantidade = estoqueProduto.getQtde().add(quantidade);
+					 
+					 estoqueProduto.setQtde(novaQuantidade);
+					 
+				 }
+				
 				 
 			} else {
 				
 				novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
 				
-				estoqueProduto.setQtde(novaQuantidade);			
+				estoqueProduto.setQtde(novaQuantidade);	
+				
+				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+					 
+					novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+					
+					estoqueProduto.setQtde(novaQuantidade);	
+					 
+				 } else {
+					 
+					 novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+						
+					 estoqueProduto.setQtde(novaQuantidade);	
+					 
+				 }
 			}
 		
 			estoqueProdutoRespository.alterar(estoqueProduto);
