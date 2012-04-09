@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -53,6 +54,9 @@ public class Entregador {
 	
 	@Column(name = "PROCURACAO", nullable = false)
 	private boolean procuracao;
+	
+	@OneToOne(mappedBy = "entregador")
+	private ProcuracaoEntregador procuracaoEntregador;
 	
 	@OneToMany(mappedBy = "entregador")
 	private Set<EnderecoEntregador> enderecos = new HashSet<EnderecoEntregador>();
@@ -158,6 +162,20 @@ public class Entregador {
 		this.procuracao = procuracao;
 	}
 	
+	/**
+	 * @return the procuracaoEntregador
+	 */
+	public ProcuracaoEntregador getProcuracaoEntregador() {
+		return procuracaoEntregador;
+	}
+
+	/**
+	 * @param procuracaoEntregador the procuracaoEntregador to set
+	 */
+	public void setProcuracaoEntregador(ProcuracaoEntregador procuracaoEntregador) {
+		this.procuracaoEntregador = procuracaoEntregador;
+	}
+
 	/**
 	 * @return the enderecos
 	 */
