@@ -116,6 +116,18 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	/**
+	 * Método responsável por obter boleto por nossoNumero
+	 * @param nossoNumero
+	 * @return Boletos encontrado
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
+		return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada);
+	}
+
+	
+	/**
 	 * Método responsável por obter a quantidade de boletos por numero da cota
 	 * @param filtro
 	 * @return Quantidade de boletos encontrados
@@ -1109,4 +1121,5 @@ public class BoletoServiceImpl implements BoletoService {
 		return cobranca;
 	}
 
+	
 }

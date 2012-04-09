@@ -120,6 +120,7 @@ public class ConsultaBoletosController {
      * @param sortname
      * @param page
      * @param rp
+     * @throws ValidacaoException(): caso não encontre boletos para os parâmetros
      */
 	@Post
 	@Path("/consultaBoletos")
@@ -213,9 +214,9 @@ public class ConsultaBoletosController {
 	@Get
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto(String nossoNumero) throws Exception{
-		
+
 		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-        
+
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
 
@@ -223,6 +224,21 @@ public class ConsultaBoletosController {
 		output.write(b);
 
 		httpResponse.flushBuffer();
+	}
+	
+	/**
+	 * Retorna a informação de boleto pago ou não pago para a tela.
+	 * @param nossoNumero
+	 * @throws Exception
+	 */
+	@Post
+	@Path("/verificaBoleto")
+	public void verificaBoleto(String nossoNumero) throws Exception{
+		if(validarBoletoPago(nossoNumero)){
+			result.use(Results.json()).from(nossoNumero,"result").recursive().serialize();
+	    }else{
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
+	    }
 	}
 	
 	/**
@@ -234,6 +250,10 @@ public class ConsultaBoletosController {
 	@Path("/enviaBoleto")
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
+		if (!validarBoletoPago(nossoNumero)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
+		}
+		
 		boletoService.enviarBoletoEmail(nossoNumero);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -245,7 +265,7 @@ public class ConsultaBoletosController {
 	 * @param dataDe
 	 * @param dataAte
 	 * @param status
-	 * @throws no caso de parâmetros invalidos
+	 * @throws ValidacaoException() no caso de parâmetros invalidos
 	 */
 	public void validar(Integer numCota,
 					    Date dataDe,
@@ -270,6 +290,15 @@ public class ConsultaBoletosController {
 			    throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve ser menor do que a data final.");
 		    }
 		}
+	}
+	
+	/**
+	 * Método responsável por verificar se o boleto está pago ou não pago.
+	 * @param nossoNumero
+	 */
+	public boolean validarBoletoPago(String nossoNumero){
+		Boleto boleto = boletoService.obterBoletoPorNossoNumero(nossoNumero,null);
+		return (boleto.getStatusCobranca()==StatusCobranca.NAO_PAGO);
 	}
 	
 	/**

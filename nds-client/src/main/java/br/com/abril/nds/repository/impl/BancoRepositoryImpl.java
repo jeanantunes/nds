@@ -21,30 +21,31 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 	public long obterQuantidadeBancos(FiltroConsultaBancosDTO filtro) {
 		long quantidade = 0;
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select count(b) from Banco b where ");		
-		hql.append(" b.ativo = :ativo ");
+		hql.append(" select count(b) from Banco b ");		
+		hql.append(" where b.ativo = :ativo ");
 		
-		if (filtro.getNome()!=null){
+		if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome()))){
 		    hql.append(" and b.nome = :nome ");
 		}
-		if (filtro.getNumero()!=null){
+		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero()))){
 		    hql.append(" and b.numeroBanco = :numero ");
 		}
-		if (filtro.getCedente()!=null){	  
+		if ((filtro.getCedente()!=null)&&(!"".equals(filtro.getCedente()))){	  
 			hql.append(" and b.codigoCedente = :cedente");
 		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("ativo", /*filtro.getAtivo()*/false);
-		if (filtro.getNome()!=null){
+		query.setParameter("ativo", filtro.getAtivo());
+		
+		if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome().trim()))){
 			query.setParameter("nome", filtro.getNome());
 		}
-		if (filtro.getNumero()!=null){
-		    query.setParameter("numero", filtro.getNumero());
+		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero().trim()))){
+			query.setParameter("numero", filtro.getNumero());
 		}
-		if (filtro.getCedente()!=null){
-		    query.setParameter("cedente", filtro.getCedente());
+		if ((filtro.getCedente()!=null)&&(!"".equals(filtro.getCedente().trim()))){	  
+			query.setParameter("cedente", filtro.getCedente());
 		}
 		
 		quantidade = (Long) query.uniqueResult();
@@ -55,19 +56,19 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 	@Override
 	public List<Banco> obterBancos(FiltroConsultaBancosDTO filtro) {
 		StringBuilder hql = new StringBuilder();
-		hql.append(" from Banco b where ");		
-		hql.append(" b.ativo = :ativo ");
+		hql.append(" from Banco b ");		
+		hql.append(" where b.ativo = :ativo ");
 		
-		if (filtro.getNome()!=null){
+		if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome()))){
 		    hql.append(" and b.nome = :nome ");
 		}
-		if (filtro.getNumero()!=null){
+		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero()))){
 		    hql.append(" and b.numeroBanco = :numero ");
 		}
-		if (filtro.getCedente()!=null){	  
+		if ((filtro.getCedente()!=null)&&(!"".equals(filtro.getCedente()))){	  
 			hql.append(" and b.codigoCedente = :cedente");
 		}
-
+		
 		if (filtro.getOrdenacaoColuna() != null) {
 			switch (filtro.getOrdenacaoColuna()) {
 				case CODIGO_BANCO:
@@ -107,17 +108,18 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 		
         Query query = super.getSession().createQuery(hql.toString());
 		
-        query.setParameter("ativo", /*filtro.getAtivo()*/false);
-		if (filtro.getNome()!=null){
+        query.setParameter("ativo", filtro.getAtivo());
+        
+        if ((filtro.getNome()!=null)&&(!"".equals(filtro.getNome().trim()))){
 			query.setParameter("nome", filtro.getNome());
 		}
-		if (filtro.getNumero()!=null){
-		    query.setParameter("numero", filtro.getNumero());
+		if ((filtro.getNumero()!=null)&&(!"".equals(filtro.getNumero().trim()))){
+			query.setParameter("numero", filtro.getNumero());
 		}
-		if (filtro.getCedente()!=null){
-		    query.setParameter("cedente", filtro.getCedente());
+		if ((filtro.getCedente()!=null)&&(!"".equals(filtro.getCedente().trim()))){	  
+			query.setParameter("cedente", filtro.getCedente());
 		}
-
+		
         if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());

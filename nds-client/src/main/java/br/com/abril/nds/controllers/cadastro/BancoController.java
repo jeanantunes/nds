@@ -104,7 +104,7 @@ public class BancoController {
 		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome,
 														                  numero,
 														                  cedente,
-														                  ativo);
+														                  true/*ativo*/);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
@@ -140,7 +140,7 @@ public class BancoController {
 										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
 										  (banco.getMoeda()!=null?banco.getMoeda().name():""),
 										  (banco.getCarteira()!=null?banco.getCarteira().getTipoRegistroCobranca().name():""),
-										  (banco.isAtivo()?"Ativo":"Desativado"),
+										  (banco.isAtivo()==true?"Ativo":"Desativado"),
 										  ""
                       					)
               );

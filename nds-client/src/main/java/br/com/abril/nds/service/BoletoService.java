@@ -26,6 +26,8 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
 public interface BoletoService {
     
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
+	
+	Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada);
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 
