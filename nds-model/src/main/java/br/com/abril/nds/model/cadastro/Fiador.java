@@ -45,6 +45,9 @@ public class Fiador implements Serializable {
 	
 	@OneToMany(mappedBy = "fiador")
 	private List<Garantia> garantias;
+	
+	@OneToMany(mappedBy = "fiador")
+	private List<Pessoa> socios;
 
 	public Long getId() {
 		return id;
@@ -92,5 +95,13 @@ public class Fiador implements Serializable {
 
 	public void setGarantias(List<Garantia> garantias) {
 		this.garantias = garantias;
+	}
+
+	public List<Pessoa> getSocios() {
+		return socios;
+	}
+
+	public void setSocios(List<Pessoa> socios) {
+		this.socios = socios;
 	}
 }
