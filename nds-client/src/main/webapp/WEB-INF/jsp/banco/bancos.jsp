@@ -63,7 +63,7 @@ $(function() {
 			display : 'Ação',
 			name : 'acao',
 			width : 60,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}],
 		sortname : "Nome",
@@ -205,7 +205,7 @@ function mostrarGridConsulta() {
 			                             '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
  					                     '</a>';		 					 
 									
-				     row.cell[8] = linkImpressao + linkEmail;
+				     row.cell[9] = linkImpressao + linkEmail;
 
 		         }
 		);
