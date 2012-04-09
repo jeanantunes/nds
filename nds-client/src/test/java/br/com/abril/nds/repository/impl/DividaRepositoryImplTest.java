@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -185,7 +184,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(boleto);		
 	}
 	
-	@Ignore
 	@Test
 	public void consultaDividasGeradas(){
 		
@@ -199,7 +197,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertTrue(!lista.isEmpty());
 	}
 	
-	@Ignore
 	@Test
 	public void consultaQuantidadeDividasGeradas(){
 		
