@@ -49,7 +49,7 @@ public class PessoaFisica extends Pessoa {
 	@Column(name = "NACIONALIDADE")
 	private String nacionalidade;
 	
-	@Column(name = "NATURAL")
+	@Column(name = "NATURALIDADE")
 	private String natural;
 	
 	@Column(name = "APELIDO")
