@@ -2035,7 +2035,7 @@ public class DataLoader {
 		//Boletos não vencidos
 		Boleto boleto6 = Fixture.boleto("1311009032012", "840", "1311009032012840",
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
-		                				null, BigDecimal.ZERO, new BigDecimal(600),
+		                				null, BigDecimal.ZERO, new BigDecimal(2258.62),
 		                				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 		                				cotaManoel, bancoHSBC, divida6,0);
 		
