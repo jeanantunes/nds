@@ -8,7 +8,9 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 
@@ -70,6 +72,49 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		Long quant = (Long) query.uniqueResult();
 		
 		return quant == null ? false : quant > 0;
+	}
+	
+	/**
+	 * Método que obtém uma lista de encalhe por produto e cota
+	 */
+	@SuppressWarnings("unchecked")
+	public List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(Integer numeroCota, Date dataConsolidado){
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select ");
+		hql.append("p.codigo as codigoProduto, ");
+		hql.append("p.nome as nomeProduto, ");
+		hql.append("pe.numeroEdicao as numeroEdicao, ");
+		hql.append("pe.precoVenda as precoCapa, ");		
+		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
+		hql.append("mec.qtde as encalhe ");		
+		
+		hql.append("FROM ConsolidadoFinanceiroCota consolidado ");
+		
+		hql.append("LEFT JOIN MovimentoFinanceiroCota mfc ");
+		hql.append("LEFT JOIN MovimentoEstoqueCota mec ");
+		hql.append("LEFT JOIN EstoqueProdutoCota epc ");
+		hql.append("LEFT JOIN ProdutoEdicao pe ");
+		hql.append("LEFT JOIN Produto p ");
+		
+		
+		hql.append(" WHERE consolidado.cota.numeroCota = :numeroCota ");
+		
+		hql.append(" and consolidado.dataConsolidado = :dataConsolidado ");		
+		hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque = : grupoMovimentoEstoque");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);		
+		query.setParameter("data", dataConsolidado);		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				EncalheCotaDTO.class));
+		
+		return query.list();
+		
 	}
 	
 }
