@@ -9,6 +9,7 @@
 		function configurarFlexiGrid() {
 			
 			$(".manutencaoStatusCotaGrid").flexigrid({
+				preProcess: executarPreProcessamento,
 				dataType : 'json',
 				colModel : [{
 					display : 'Data',
@@ -58,6 +59,28 @@
 			});
 		}
 
+		function executarPreProcessamento(data) {
+			
+			if (data.mensagens) {
+
+				exibirMensagem(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return;
+			}
+
+			if ($(".grids").css('display') == 'none') {	
+
+				$(".grids").show();
+			}
+
+			return data.result;
+		}
+
 		function configurarCamposData() {
 
 			$("#dataInicialStatusCota").datepicker({
@@ -103,6 +126,30 @@
 			$("input[id='numeroCota']").numeric();
 		}
 
+		function novo() {
+
+			var filtro = obterDadosFiltro();
+			
+			$.postJSON(
+				"<c:url value='/financeiro/manutencaoStatusCota/novo' />", 
+				filtro,
+				function(result) {
+
+					$("#numeroCotaNovo").html(result.numero);
+					$("#boxNovo").html(result.codigoBox);
+					$("#novoNomeCota").html(result.nome);
+
+					$("#novoStatusCota").val("");
+   					$("#novaDataInicialStatusCota").val("");
+   					$("#novaDataFinalStatusCota").val("");
+   					$("#novoMotivo").val("");
+   					$("#novaDescricao").val("");
+					
+					popupDialogNovo();
+				}
+			);    
+		}
+
 		function popupDialogNovo() {
 
 			$("#dialog-novo").dialog({
@@ -112,13 +159,101 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$(this).dialog("close");
+						confirmarNovo();
 					},
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
 				}
-			});	    
+			});
+		}
+
+		function carregarCodigoBox() {
+			
+			cota.obterPorNumeroCota($("#numeroCota").val(), false, function(result) {
+
+				if (!result) {
+
+					return;
+				}
+
+				$("#box").val(result.codigoBox);
+			});
+		}
+
+		function pesquisarHistoricoStatusCota() {
+
+			var filtro = obterDadosFiltro();
+
+			$(".manutencaoStatusCotaGrid").flexOptions({
+				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
+				params: filtro
+			});
+			
+			$(".manutencaoStatusCotaGrid").flexReload();
+		}
+
+		function obterDadosFiltro() {
+
+			var filtro = [
+   				{
+   					name: 'filtro.numeroCota', value: $("#numeroCota").val()
+   				},
+   				{
+   					name: 'filtro.statusCota', value: $("#statusCota").val()
+   				},
+   				{
+   					name: 'filtro.periodo.dataInicial', value: $("#dataInicialStatusCota").val()
+   				},
+   				{
+   					name: 'filtro.periodo.dataFinal', value: $("#dataFinalStatusCota").val()
+   				},
+   				{
+   					name: 'filtro.motivoStatusCota', value: $("#motivo").val()
+   				}
+   			];
+
+   			return filtro;
+		}
+
+		function confirmarNovo() {
+
+			var novoHistoricoSituacaoCota = [
+   				{
+   					name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.novaSituacao', value: $("#novoStatusCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.dataInicioValidade', value: $("#novaDataInicialStatusCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.dataFimValidade', value: $("#novaDataFinalStatusCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.motivo', value: $("#novoMotivo").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.descricao', value: $("#novaDescricao").val()
+   				}
+   			];
+
+			$.postJSON(
+				"<c:url value='/financeiro/manutencaoStatusCota/novo/confirmar' />", 
+				novoHistoricoSituacaoCota,
+				function(result) {
+
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+					
+					$("#dialog-novo").dialog("close");
+				},
+				null,
+				true
+			); 	
 		}
 		
 		function inicializar() {
@@ -150,11 +285,18 @@
 						   type="text"
 						   id="numeroCota"
 						   maxlength="255"
-						   style="width: 80px; margin-right: 5px; float: left;" />
+						   style="width: 80px; margin-right: 5px; float: left;"
+						   onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
 				</td>
 				<td width="42">Nome:</td>
 				<td width="240">
-					<input name="nomeCota" type="text" id="nomeCota" maxlength="255" style="width: 200px;" />
+					<input name="nomeCota" 
+						   type="text"
+						   id="nomeCota" 
+						   maxlength="255" 
+						   style="width: 200px;"
+						   onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
+		      		 	   onblur="cota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">
@@ -197,7 +339,7 @@
 				<td>&nbsp;</td>
 				<td>
 					<span class="bt_pesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="mostrar();">Pesquisar</a>
+						<a href="javascript:;" onclick="pesquisarHistoricoStatusCota();">Pesquisar</a>
 					</span>
 				</td>
 				<td>&nbsp;</td>
@@ -217,7 +359,7 @@
 		</div>
 		
 		<span class="bt_novo" title="Novo">
-			<a href="javascript:;" onclick="popupDialogNovo();">Novo</a>
+			<a href="javascript:;" onclick="novo();">Novo</a>
 		</span>
 	</fieldset>
 	

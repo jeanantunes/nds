@@ -219,7 +219,7 @@
 				<td width="73">Fornecedor:</td>
 				<td width="230" colspan="2">
 					<select name="fornecedor" id="fornecedor" style="width: 200px;">
-						<option selected="selected"></option>
+						<option selected="selected" value="">Todos</option>
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
 						</c:forEach>
@@ -241,7 +241,7 @@
 				<td width="134" align="right">Tipo de Diferença:</td>
 				<td width="169">
 					<select name="tipoDiferenca" id="tipoDiferenca" style="width: 120px;">
-						<option selected="selected"></option>
+						<option selected="selected" value="">Todos</option>
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>

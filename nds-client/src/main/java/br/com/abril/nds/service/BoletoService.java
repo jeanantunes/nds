@@ -19,13 +19,15 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
 
 /**
  * Interface que define serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Boleto}
+ * {@link br.com.abril.nds.model.financeiro.Boleto}
  * 
  * @author Discover Technology
  */
 public interface BoletoService {
     
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
+	
+	Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada);
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 

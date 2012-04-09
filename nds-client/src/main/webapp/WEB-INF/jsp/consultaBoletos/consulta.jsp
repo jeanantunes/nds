@@ -116,8 +116,6 @@
 		$(".grids").show();
 	}	
 	
-	
-    
 	function getDataFromResult(resultado) {
 		
 		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
@@ -130,8 +128,6 @@
 			return resultado.tableModel;
 		}
 		
-		
-		
 		var dadosPesquisa;
 		$.each(resultado, function(index, value) {
 			  if(value[0] == "TblModelBoletos") {
@@ -139,31 +135,23 @@
 			  }
 	    });
 		
-		
-		
 		$.each(dadosPesquisa.rows, 
 				function(index, row) {
-			
-			         if (row.cell[3] == ''){
-			        	 
-						 var linkImpressao = '<a href="${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero=' + row.cell[0] + '" style="cursor:pointer">' +
-						 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
-						 					 '</a>';			
-					
-				         var linkEmail =     '<a href="javascript:;" onclick="enviaBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
-				                             '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
-	 					                     '</a>';		 					 
-										
-					     row.cell[8] = linkImpressao + linkEmail;
-					     
-			         }
-			         else{
-			        	 row.cell[8] = '';
-			         }
+
+			         var linkEmail='';
+			         var linkImpressao='';
 			         
+		        	 linkImpressao = '<a href="javascript:;" onclick="imprimeBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
+				 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
+				 					 '</a>';
+			         			 					     
+			         linkEmail = '<a href="javascript:;" onclick="enviaBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
+			                     '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
+ 					             '</a>';		 					 
+									
+				     row.cell[8] = linkImpressao + linkEmail;
 		         }
 		);
-		
 		
 		return dadosPesquisa;
 	}
@@ -175,6 +163,21 @@
 	   				   }
 	   			   ];
 		$.postJSON("<c:url value='/financeiro/boletos/enviaBoleto' />", data);
+	}
+	
+	function imprimeBoleto(nossoNumero) {
+		var data = [
+	   				   {
+	   					   name: 'nossoNumero', value: nossoNumero
+	   				   }
+	   			   ];
+		$.postJSON("<c:url value='/financeiro/boletos/verificaBoleto' />", data, imprimirBoleto );
+	}
+	
+	function imprimirBoleto(result){
+		if (result!=''){
+			document.location.assign("${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero="+ result);
+		}
 	}
 	
 </script>
@@ -224,11 +227,13 @@
               <td width="110"><input name="dataAte" id="dataAte" type="date" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
               
               <td width="40">Status:</td>
-              <td width="98"><select name="status" id="status" style="width:100px;">
-                <c:forEach varStatus="counter" var="status" items="${listaStatusCombo}">
-				    <option value="${status.key}">${status.value}</option>
-				</c:forEach>
-              </select></td>
+              <td width="98">
+                 <select name="status" id="status" style="width:100px;">
+                    <c:forEach varStatus="counter" var="status" items="${listaStatusCombo}">
+				       <option value="${status.key}">${status.value}</option>
+				    </c:forEach>
+                 </select>
+              </td>
               
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a></span></td>
             </tr>

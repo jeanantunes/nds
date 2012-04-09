@@ -109,7 +109,10 @@
 			
 			$('#formBaixaAutomatica').ajaxForm(options);
 			
-			$("#valorFinanceiro").numeric();
+			$("#valorFinanceiro").priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 			
 			$("#radioBaixaManual").focus();
 		});
@@ -462,15 +465,21 @@
 					   function() {mostrarBaixaManual();});
 		}
         
+        function removeMascaraPriceFormat(field){
+        	field = replaceAll(field, ",", "");
+        	field = replaceAll(field, ".", "");
+    		return field;
+    	};
+        
 		function calculaTotalManual() {
         	
-			var valorBoleto = $("#valorBoletoHidden").unmask();
-			var desconto = $("#desconto").unmask();
-			var juros = $("#juros").unmask();
-			var multa = $("#multa").unmask();
+			var valorBoleto = removeMascaraPriceFormat($("#valorBoletoHidden").val());
+			var desconto = removeMascaraPriceFormat($("#desconto").val());
+			var juros = removeMascaraPriceFormat($("#juros").val());
+			var multa = removeMascaraPriceFormat($("#multa").val());
 			
 			var total = intValue(valorBoleto) + intValue(juros) + intValue(multa) - intValue(desconto);
-
+            
 			$("#valorTotalHidden").val(total);
 			
 			$("#valorTotalHidden").priceFormat({
@@ -693,7 +702,7 @@
               
                 <input name="filtroNumCota" 
              	    id="filtroNumCota" 
-             		type="number"
+             		type="text"
              		maxlength="11"
              		style="width:60px; 
              		float:left; margin-right:5px;"

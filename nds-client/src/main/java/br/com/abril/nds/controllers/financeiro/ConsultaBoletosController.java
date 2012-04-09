@@ -9,13 +9,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.vo.BoletoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
@@ -59,7 +56,6 @@ import br.com.caelum.vraptor.view.Results;
  * @author Discover Technology
  *
  */
-
 @Resource
 @Path("/financeiro/boletos")
 public class ConsultaBoletosController {
@@ -86,13 +82,22 @@ public class ConsultaBoletosController {
 
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBoletos";
    
-	
+	/**
+	 * Construtor da classe
+	 * @param result
+	 * @param httpSession
+	 * @param httpResponse
+	 */
 	public ConsultaBoletosController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
 		this.result = result;
 		this.httpSession = httpSession;
 		this.httpResponse = httpResponse;
 	}
 	
+	/**
+	 * Método de chamada da página
+	 * Pré-carrega itens da pagina com informações default.
+	 */
 	@Get
     public void consulta(){ 
 		listaStatusCombo.clear();
@@ -105,6 +110,18 @@ public class ConsultaBoletosController {
 		result.include("dataAte",DateUtil.formatarData(Calendar.getInstance().getTime(), "dd/MM/yyyy"));
 	}
 
+    /**
+     * Método de Consulta de boletos
+     * @param numCota
+     * @param dataDe
+     * @param dataAte
+     * @param status
+     * @param sortorder
+     * @param sortname
+     * @param page
+     * @param rp
+     * @throws ValidacaoException(): caso não encontre boletos para os parâmetros
+     */
 	@Post
 	@Path("/consultaBoletos")
 	public void consultaBoletos(Integer numCota,
@@ -162,7 +179,7 @@ public class ConsultaBoletosController {
 										  (boleto.getEncargos()!=null?boleto.getEncargos().toString():""),
 										  (boleto.getValor()!=null?boleto.getValor().toString():""),
 										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa():""),
-										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().name():""),
+										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
 										  ""
                       					)
               );
@@ -189,12 +206,17 @@ public class ConsultaBoletosController {
 
 	}
 	
+	/**
+	 * Exibe o boleto em formato PDF.
+	 * @param nossoNumero
+	 * @throws Exception
+	 */
 	@Get
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto(String nossoNumero) throws Exception{
-		
+
 		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-        
+
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
 
@@ -204,15 +226,47 @@ public class ConsultaBoletosController {
 		httpResponse.flushBuffer();
 	}
 	
+	/**
+	 * Retorna a informação de boleto pago ou não pago para a tela.
+	 * @param nossoNumero
+	 * @throws Exception
+	 */
+	@Post
+	@Path("/verificaBoleto")
+	public void verificaBoleto(String nossoNumero) throws Exception{
+		if(validarBoletoPago(nossoNumero)){
+			result.use(Results.json()).from(nossoNumero,"result").recursive().serialize();
+	    }else{
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
+	    }
+	}
+	
+	/**
+	 * Envio de boleto por email no formato PDF.
+	 * @param nossoNumero
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/enviaBoleto")
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
+		if (!validarBoletoPago(nossoNumero)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O boleto "+nossoNumero+" já está pago.");
+		}
+		
 		boletoService.enviarBoletoEmail(nossoNumero);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	/**
+	 * Valida os parâmetros de entrada para a consulta de boletos.
+	 * @param numCota
+	 * @param dataDe
+	 * @param dataAte
+	 * @param status
+	 * @throws ValidacaoException() no caso de parâmetros invalidos
+	 */
 	public void validar(Integer numCota,
 					    Date dataDe,
 					    Date dataAte, 
@@ -236,6 +290,15 @@ public class ConsultaBoletosController {
 			    throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve ser menor do que a data final.");
 		    }
 		}
+	}
+	
+	/**
+	 * Método responsável por verificar se o boleto está pago ou não pago.
+	 * @param nossoNumero
+	 */
+	public boolean validarBoletoPago(String nossoNumero){
+		Boleto boleto = boletoService.obterBoletoPorNossoNumero(nossoNumero,null);
+		return (boleto.getStatusCobranca()==StatusCobranca.NAO_PAGO);
 	}
 	
 	/**

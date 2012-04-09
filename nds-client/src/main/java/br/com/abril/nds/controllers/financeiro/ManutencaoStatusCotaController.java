@@ -1,21 +1,42 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
+import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Controller responsável pela Manutenção do Status da Cota.
@@ -34,7 +55,12 @@ public class ManutencaoStatusCotaController {
 	private HttpSession httpSession;
 	
 	@Autowired
-	private HttpServletResponse httpServletResponse;
+	private SituacaoCotaService situacaoCotaService;
+	
+	@Autowired
+	private CotaService cotaService;
+	
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaManutencaoStatusCota";
 	
 	@Get
 	@Path("/")
@@ -45,23 +71,168 @@ public class ManutencaoStatusCotaController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar() {
+	public void pesquisar(FiltroStatusCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
+		this.validarDadosCota(filtro);
 		
+		this.validarPeriodoHistoricoStatusCota(filtro.getPeriodo());
+		
+		this.configurarFiltroPesquisa(filtro, sortorder, sortname, page, rp);
+		
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota =
+			this.situacaoCotaService.obterHistoricoStatusCota(filtro);
+		
+		if (listaHistoricoStatusCota == null || listaHistoricoStatusCota.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			
+		} else {
+
+			this.processarHistoricoStatusCota(listaHistoricoStatusCota, filtro);
+		}
 	}
 	
 	@Post
 	@Path("/novo")
-	public void novo() {
+	public void novo(FiltroStatusCotaDTO filtro) {
 		
-		
+		 Cota cota = this.validarDadosCota(filtro);
+		 
+		 CotaVO cotaVO = 
+			new CotaVO(cota.getNumeroCota(), PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa()));
+		 
+		 cotaVO.setCodigoBox(cota.getBox().getCodigo());
+		 
+		 result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
 	
 	@Post
 	@Path("/novo/confirmar")
-	public void confirmarNovo() {
+	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) {
 		
+		this.validarAlteracaoStatus(novoHistoricoSituacaoCota);
 		
+		novoHistoricoSituacaoCota.setDataEdicao(new Date());
+		
+		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+		
+		novoHistoricoSituacaoCota.setResponsavel(this.getUsuario());
+		
+		novoHistoricoSituacaoCota.setSituacaoAnterior(
+			novoHistoricoSituacaoCota.getCota().getSituacaoCadastro());
+		
+		//TODO: Criar Job no quartz para alterar para novo status
+		
+		//TODO: Criar Job no quartz para alterar para status anterior
+		
+		ValidacaoVO validacao = 
+			new ValidacaoVO(TipoMensagem.SUCCESS, "A alteração do Status da Cota foi agendada com sucesso!");
+		
+		result.use(Results.json()).from(validacao, "result").recursive().serialize();
+	}
+	
+	/*
+	 * Processa o histórico da situação da cota.
+	 *  
+	 * @param listaHistoricoStatusCota - lista de histórico
+	 * @param filtro - filtro de pesquisa
+	 */
+	private void processarHistoricoStatusCota(List<HistoricoSituacaoCota> listaHistoricoStatusCota,
+											  FiltroStatusCotaDTO filtro) {
+		
+		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCotaVO = new ArrayList<HistoricoSituacaoCotaVO>();
+		
+		for (HistoricoSituacaoCota historicoSituacaoCota : listaHistoricoStatusCota) {
+			
+			HistoricoSituacaoCotaVO historicoSituacaoCotaVO = new HistoricoSituacaoCotaVO();
+			
+			historicoSituacaoCotaVO.setData(
+				DateUtil.formatarDataPTBR(historicoSituacaoCota.getDataInicioValidade()));
+			
+			historicoSituacaoCotaVO.setDescricao(historicoSituacaoCota.getDescricao());
+			
+			historicoSituacaoCotaVO.setMotivo(historicoSituacaoCota.getMotivo().toString());
+			
+			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
+			
+			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
+			
+			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
+		
+			listaHistoricoSituacaoCotaVO.add(historicoSituacaoCotaVO);
+		}
+		
+		TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>> tableModel =
+			new TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoSituacaoCotaVO));
+
+		Long qtdeTotalRegistros = this.situacaoCotaService.obterTotalHistoricoStatusCota(filtro);
+		
+		if (qtdeTotalRegistros != null) {
+		
+			tableModel.setTotal(qtdeTotalRegistros.intValue());
+		}
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+	
+		result.use(Results.json()).from(tableModel, "result").recursive().serialize();
+	}
+	
+	/*
+	 * Configura o filtro da pesquisa.
+	 * 
+	 * @param filtroAtual - filtro de pesquisa atual
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 * 
+	 * @return Filtro
+	 */
+	private void configurarFiltroPesquisa(FiltroStatusCotaDTO filtroAtual, 
+										  String sortorder, 
+										  String sortname, 
+										  int page, 
+										  int rp) {
+
+		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
+		
+		FiltroStatusCotaDTO filtroSessao =
+			(FiltroStatusCotaDTO) 
+				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
+	}
+	
+	/*
+	 * Configura a paginação do filtro de pesquisa.
+	 * 
+	 * @param filtro - filtro da pesquisa
+	 * @param sortorder - ordenação
+	 * @param sortname - coluna para ordenação
+	 * @param page - página atual
+	 * @param rp - quantidade de registros para exibição
+	 */
+	private void configurarPaginacaoPesquisa(FiltroStatusCotaDTO filtro, 
+											 String sortorder,
+											 String sortname, 
+											 int page, 
+											 int rp) {
+		
+		if (filtro != null) {
+			
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+	
+			filtro.setPaginacao(paginacao);
+
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunasStatusCota.values(), sortname));
+		}
 	}
 	
 	/*
@@ -108,6 +279,147 @@ public class ManutencaoStatusCotaController {
 		}
 		
 		result.include("listaMotivosStatusCota", listaMotivosStatusCota);
+	}
+	
+	/*
+	 * Valida os dados da cota vindos do filtro de pesquisa.
+	 *  
+	 * @param filtro - filtro de pesquisa
+	 * 
+	 * @return Cota
+	 */
+	private Cota validarDadosCota(FiltroStatusCotaDTO filtro) {
+		
+		if (filtro == null
+				|| filtro.getNumeroCota() == null) {
+			 
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Preencha as informações da cota!");
+		 }
+		 
+		 Cota cota = this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+		 
+		 if (cota == null) {
+			 
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
+		 }
+		 
+		 return cota;
+	}
+	
+	/*
+	 * Valida o período do histórico do status da cota.
+	 *  
+	 * @param periodo - período
+	 */
+	private void validarPeriodoHistoricoStatusCota(PeriodoVO periodo) {
+		
+		if (periodo == null 
+				|| periodo.getDataInicial() == null 
+				|| periodo.getDataFinal() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe o período!");
+		}
+		
+		if (DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe um período válido!");
+		}
+	}
+	
+	/*
+	 * Valida a alteração no status da cota ser inserida no histórico.
+	 * 
+	 * @param novoHistoricoSituacaoCota - nova histórico da situação da cota
+	 */
+	private void validarAlteracaoStatus(HistoricoSituacaoCota novoHistoricoSituacaoCota) {
+		
+		if (novoHistoricoSituacaoCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha as informações do Status da Cota");
+		}
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
+			
+			listaMensagens.add("Informe o Status!");
+		}
+		
+		if (novoHistoricoSituacaoCota.getCota() == null
+				|| novoHistoricoSituacaoCota.getCota().getNumeroCota() == null) {
+			
+			listaMensagens.add("Informações da cota inválidas!");
+			
+		} else {
+			
+			Cota cota = 
+				this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota());
+			
+			if (cota == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
+			}
+			
+			novoHistoricoSituacaoCota.setCota(cota);
+		}
+		
+		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null
+				&& novoHistoricoSituacaoCota.getDataFimValidade() == null) {
+			
+			listaMensagens.add("Informe o período ou apenas a data inicial!");
+			
+		} else {
+			
+			if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
+				
+				listaMensagens.add("Informe a data inicial do período!");
+				
+			} else {
+			
+				if (DateUtil.isDataInicialMaiorDataFinal(
+						novoHistoricoSituacaoCota.getDataInicioValidade(), novoHistoricoSituacaoCota.getDataFimValidade())) {
+					
+					listaMensagens.add("Informe um período válido!");
+				}
+				
+				Date dataAtual = DateUtil.removerTimestamp(new Date());
+				
+				if (novoHistoricoSituacaoCota.getDataInicioValidade().compareTo(dataAtual) < 0) {
+					
+					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data atual!");
+				}
+			}
+		}
+		
+		if (novoHistoricoSituacaoCota.getMotivo() == null) {
+			
+			listaMensagens.add("Informe o Motivo!");
+		}
+		
+		if (novoHistoricoSituacaoCota.getDescricao() == null
+				|| novoHistoricoSituacaoCota.getDescricao().trim().isEmpty()) {
+			
+			listaMensagens.add("Informe a Descrição!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
 	}
 	
 }

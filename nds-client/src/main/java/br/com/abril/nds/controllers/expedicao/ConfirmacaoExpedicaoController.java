@@ -190,7 +190,17 @@ public class ConfirmacaoExpedicaoController {
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 				
-			} catch(ValidacaoException e) {						
+				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+				
+			} catch(ValidacaoException e) {
+				
+				mensagens.clear();
+				
+				if(e.getUrl() == null) {
+					mensagens.addAll(e.getValidacao().getListaMensagens());
+					status=TipoMensagem.WARNING.name();
+				}
+				
 			}catch(Exception e) {
 				mensagens.clear();
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
@@ -201,7 +211,7 @@ public class ConfirmacaoExpedicaoController {
 			if(grid==null) {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
-			mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);	
+				
 			
 			Object[] retorno = new Object[3];
 			retorno[0] = grid;
@@ -293,7 +303,7 @@ public class ConfirmacaoExpedicaoController {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
 			
-			if (isNewSearch) {
+			if (!isNewSearch) {
 				mensagens = new ArrayList<String>();
 			}
 			
@@ -333,7 +343,7 @@ public class ConfirmacaoExpedicaoController {
 			session.setAttribute("estudo",estudo);
 			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
+				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
@@ -356,7 +366,7 @@ public class ConfirmacaoExpedicaoController {
 				}
 				
 				if(listaExpedicoes.isEmpty()) {
-					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
+					throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
 				}
 							
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();

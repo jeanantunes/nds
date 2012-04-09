@@ -88,11 +88,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(dataAtual, cotaAusente.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 			
 		for(MovimentoEstoqueCota movimento : movimentosCota) {
+			
 			if(movimento.getProdutoEdicao() != null){
 				BigDecimal qtdeExistente = obterQuantidadeSuplementarExistente(movimento.getProdutoEdicao().getId());
 				BigDecimal qtdeARetirar;
 				
-				if( obterQuantidadeSuplementarExistente(movimento.getProdutoEdicao().getId()).compareTo(movimento.getQtde()) > 0) {
+				if(qtdeExistente.compareTo(movimento.getQtde()) > 0) {
 					qtdeARetirar = movimento.getQtde();
 				} else {
 					qtdeARetirar = qtdeExistente;

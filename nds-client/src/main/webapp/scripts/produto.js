@@ -22,9 +22,12 @@ var produto = {
 	},
 
 	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, idEdicao, successCallBack) {
+		
 		$(idEdicao).removeAttr("disabled");
 		$(idProduto).val(result.nome);
 		$(idEdicao).focus();
+		
+		produto.pesquisaRealizada = true;
 		
 		if (successCallBack) {
 			successCallBack();
