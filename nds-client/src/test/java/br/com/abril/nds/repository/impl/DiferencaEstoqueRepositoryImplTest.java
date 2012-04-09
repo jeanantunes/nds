@@ -7,10 +7,8 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -43,7 +41,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
-@DirtiesContext
 public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
@@ -160,7 +157,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -198,7 +194,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterTotalDiferencasLancamento() {
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
@@ -214,7 +209,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterDiferencas() {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		
@@ -238,7 +232,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@DirtiesContext
 	public void obterTotalDiferencas() {
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
@@ -275,7 +268,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 	@Test
-	@Ignore//TODO: corrigir
 	public void buscarStatusDiferencaLancadaAutomaticamente(){
 		Boolean flag = null;
 		
