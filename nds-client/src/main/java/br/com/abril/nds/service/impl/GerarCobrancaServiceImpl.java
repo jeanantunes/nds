@@ -53,6 +53,7 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
@@ -492,7 +493,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								"Cobrança", 
 								"Segue documento de cobrança em anexo.", 
 								new String[]{cota.getPessoa().getEmail()}, 
-								new AnexoEmail("Cobranca.pdf",anexo));
+								new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));
 						
 						this.cobrancaRepository.incrementarVia(cobranca.getNossoNumero());
 					} catch (AutenticacaoEmailException e) {

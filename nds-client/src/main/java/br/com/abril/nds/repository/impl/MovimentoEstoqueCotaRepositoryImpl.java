@@ -1,14 +1,19 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -24,6 +29,271 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	public MovimentoEstoqueCotaRepositoryImpl() {
 		super(MovimentoEstoqueCota.class);
 	}
+
+	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
+
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select count(*) from  ( select	");
+
+		sql.append("	distinct(lancamento.produto_edicao_id)	");
+		
+		sql.append("	from	");
+		
+		sql.append("	lancamento ");
+
+		sql.append("	where	");
+		
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor  	 ");
+		
+		sql.append(" ) as idEdicoes ");
+		
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
+		
+		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+
+		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+		
+		return ((qtde == null) ? 0 : qtde.intValue());
+		
+	}
+
+	public Integer obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
+
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select	");
+
+		sql.append("	sum(movimento_estoque_cota.qtde) ");
+
+		sql.append("	from	");
+		
+		sql.append("	lancamento left join movimento_estoque_cota on ");
+		sql.append("	(lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id) ");
+
+		sql.append("	where	");
+		
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and ");
+		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or  movimento_estoque_cota.tipo_movimento_id is null ) ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and ( movimento_estoque_cota.cota_id is null or movimento_estoque_cota.cota_id = :idCota )  ");
+		}
+
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
+		
+		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
+
+		if(filtro.getIdCota()!=null) {
+			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+
+		
+		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+		
+		return ((qtde == null) ? 0 : qtde.intValue());		
+	}
+
+	
+	
+	/**
+	 * Obtém a quantidade de resultados para a consulta encalhe.
+	 * 
+	 * @param filtro
+	 * @param idTipoMovimento
+	 * 
+	 * @return qtde
+	 */
+	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento) {
+		
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select count(*) from  ( select	");
+
+		sql.append("	lancamento.data_rec_distrib as dataDoRecolhimentoDistribuidor,  ");
+		sql.append("	movimento_estoque_cota.data as dataMovimento,                   ");
+		sql.append("	estoque_produto_cota.qtde_recebida as reparte                   ");
+
+		sql.append("	from	");
+		sql.append("	lancamento left join movimento_estoque_cota on                              ");
+		sql.append("	(lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id)   ");
+
+		sql.append("	left join estoque_produto_cota on                                           ");
+		sql.append("	(movimento_estoque_cota.estoque_prod_cota_id =  estoque_produto_cota.id)    ");
+
+		sql.append("	where	");
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and             ");
+		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or  movimento_estoque_cota.tipo_movimento_id is null ) ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and ( movimento_estoque_cota.cota_id is null or movimento_estoque_cota.cota_id = :idCota )  ");
+		}
+		
+		sql.append("	group by  ");
+		sql.append("	lancamento.data_rec_distrib,             ");
+		sql.append("	movimento_estoque_cota.data,             ");
+		sql.append("	estoque_produto_cota.qtde_recebida ) as recolhimentos ");
+
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
+		
+		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
+		
+		if(filtro.getIdCota()!=null) {
+			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+
+		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+		
+		return ((qtde == null) ? 0 : qtde.intValue());
+		
+	}
+	
+	/**
+	 * Obtém uma lista de consulta encalhe
+	 * 
+	 * @param filtro
+	 * @param idTipoMovimento
+	 * 
+	 * @return List - ConsultaEncalheDTO
+	 */
+	public List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento) {
+
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select	");
+
+		sql.append("	lancamento.data_rec_distrib as dataDoRecolhimentoDistribuidor,    ");
+		sql.append("	movimento_estoque_cota.data as dataMovimento,                     ");
+		sql.append("	produto.codigo as codigoProduto,                                  ");
+		sql.append("	produto.nome as nomeProduto,                                      ");
+		sql.append("	produto_edicao.numero_edicao as numeroEdicao,                     ");
+		sql.append("	produto_edicao.preco_venda as precoVenda,                         ");
+		sql.append("	(produto_edicao.preco_venda - produto_edicao.desconto ) as precoComDesconto,  ");
+		sql.append("	estoque_produto_cota.qtde_recebida as reparte, ");
+		sql.append("	sum(movimento_estoque_cota.qtde) as encalhe,   ");
+		
+		//sql.append(" ( select   ) as fornecedor  ");
+		
+		sql.append("	sum(		");
+		sql.append("	    movimento_estoque_cota.qtde * (produto_edicao.preco_venda -  produto_edicao.desconto)      		");
+		sql.append("	) as total, ");
+		sql.append("	((TO_DAYS(movimento_estoque_cota.data) - TO_DAYS(lancamento.data_rec_distrib)) + 1) as recolhimento ");
+
+		sql.append("	from	");
+		
+		sql.append("	produto_edicao,  ");
+		sql.append("	produto,         ");
+		sql.append("	lancamento left join movimento_estoque_cota on ");
+		sql.append("	(lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id) ");
+		sql.append("	left join estoque_produto_cota on                                         ");
+		sql.append("	(movimento_estoque_cota.estoque_prod_cota_id =  estoque_produto_cota.id)  ");
+
+		sql.append("	where	");
+		
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and  ");
+		sql.append("	lancamento.produto_edicao_id = produto_edicao.id and             ");
+		sql.append("	produto_edicao.produto_id = produto.id and                       ");
+		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or  movimento_estoque_cota.tipo_movimento_id is null ) ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and ( movimento_estoque_cota.cota_id is null or movimento_estoque_cota.cota_id = :idCota )  ");
+		}
+		
+		sql.append("	group by	");
+
+		sql.append("	lancamento.data_rec_distrib,       ");
+		sql.append("	movimento_estoque_cota.data,       ");
+		sql.append("	produto.codigo,                    ");
+		sql.append("	produto.nome,                      ");
+		sql.append("	produto_edicao.numero_edicao,      ");
+		sql.append("	produto_edicao.preco_venda,        ");
+		sql.append("	produto_edicao.desconto,           ");
+		sql.append("	estoque_produto_cota.qtde_recebida ");
+		
+		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+
+		if (filtro.getOrdenacaoColuna() != null) {
+
+			sql.append(" order by ");
+			
+			String orderByColumn = "";
+			
+				switch (filtro.getOrdenacaoColuna()) {
+				
+					case CODIGO_PRODUTO:
+						orderByColumn = " codigoProduto ";
+						break;
+					case NOME_PRODUTO:
+						orderByColumn = " nomeProduto ";
+						break;
+					case NUMERO_EDICAO:
+						orderByColumn = " numeroEdicao ";
+						break;
+					case PRECO_CAPA:
+						orderByColumn = " precoVenda ";
+						break;
+					case PRECO_COM_DESCONTO:
+						orderByColumn = " precoComDesconto ";
+						break;
+					case REPARTE:
+						orderByColumn = " reparte ";
+						break;
+					case ENCALHE:
+						orderByColumn = " encalhe ";
+						break;
+					case FORNECEDOR:
+						orderByColumn = " fornecedor ";
+						break;
+					case TOTAL:
+						orderByColumn = " total ";
+						break;
+					case RECOLHIMENTO:
+						orderByColumn = " recolhimento ";
+						break;
+					default:
+						break;
+				}
+			
+			sql.append(orderByColumn);
+			
+			if (paginacao.getOrdenacao() != null) {
+				
+				sql.append(paginacao.getOrdenacao().toString());
+				
+			}
+			
+		}
+
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
+		
+		sqlquery.addScalar("codigoProduto");
+		sqlquery.addScalar("nomeProduto");
+		sqlquery.addScalar("numeroEdicao");
+		sqlquery.addScalar("precoVenda");
+		sqlquery.addScalar("precoComDesconto");
+		sqlquery.addScalar("reparte");
+		sqlquery.addScalar("encalhe");
+		sqlquery.addScalar("total");
+		sqlquery.addScalar("recolhimento");
+		
+		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));
+		
+		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
+		
+		if(filtro.getIdCota()!=null) {
+			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+
+		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+
+		return sqlquery.list();
+		
+	}	
 	
 	
 	private String getConsultaListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
