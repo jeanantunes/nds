@@ -3,18 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
-import br.com.abril.nds.dto.ContagemDevolucaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
+import br.com.abril.nds.dto.CotaSuspensaoDTO.Ordenacao;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -46,8 +41,6 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
-import br.com.abril.nds.vo.PeriodoVO;
 
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -69,6 +62,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 
 	@Before
 	public void setUp() {
+		
 		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
@@ -256,7 +250,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mecJorn);
 		
-		//MOVIMENTOS DE ENVIO ENCALHE ABAIXO
+		/**
+		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
+		 */
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				veja1,
@@ -308,7 +304,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
-		
 		ControleContagemDevolucao controleContagemDevolucao = Fixture.controleContagemDevolucao(
 				StatusOperacao.CONCLUIDO, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
@@ -319,116 +314,214 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	@DirtiesContext
-	public void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
-		List<ContagemDevolucaoDTO> retorno = 
-				
-				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				obterFiltro(), 
-				obterTipoMovimento(),
-				true);
+	public void testarTudo() {
 		
+		testObterQtdProdutoEdicaoEncalhePrimeiroDia();
 		
-		Assert.assertEquals(2, retorno.size());
+		testObterQtdItemProdutoEdicaoEncalhePrimeiroDia();
 		
-		ContagemDevolucaoDTO contagem = retorno.get(0);
+		testObterQtdProdutoEdicaoEncalheAposPrimeiroDia();
 		
-		Assert.assertEquals(19, contagem.getQtdDevolucao().intValue());
+		testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia();
+		
+		testObterQtdConsultaEncalhe();
+		
+		testObterListaConsultaEncalhe();
 		
 	}
 	
-	@Test
-	@DirtiesContext
-	public void testarObterValorTotal() {
+	public void testObterQtdProdutoEdicaoEncalhePrimeiroDia() {
 		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
 		
-		@SuppressWarnings("unused")
-		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
-				obterFiltro(), 
-				obterTipoMovimento());
+		movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), false);
+	}
+
+	public void testObterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
 		
-		Assert.assertEquals(475, total.intValue());
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), false);
 		
 	}
-	
-	@Test
-	@DirtiesContext
-	public void testarObterListaContagemDevolucao() {
+
+	public void testObterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
+
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
 		
-		@SuppressWarnings("unused")
-		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-				obterFiltro(), 
-				obterTipoMovimento(),
-				false);
+		movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), true);
+	}
+
+	public void testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
 		
-		Assert.assertNotNull(listaContagemDevolucao);
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), true);
 	}
 	
-	@Test
-	@DirtiesContext
-	public void testarObterQuantidadeContagemDevolucao() {
+	public void testObterQtdConsultaEncalhe() {
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
-				obterFiltro(), obterTipoMovimento());
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
 		
-		Assert.assertEquals(2, qtde.intValue());
+		movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro, tipoMovimentoEstoque.getId());
 	}
 	
-	private FiltroDigitacaoContagemDevolucaoDTO obterFiltro() {
+	public void testObterListaConsultaEncalhe() {
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro, tipoMovimentoEstoque.getId());
+	}
+
+	private FiltroConsultaEncalheDTO obterFiltroConsultaEncalhe() {
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		filtro.setDataRecolhimento(Fixture.criarData(28, 2, 2012));
+		filtro.setIdCota(1L);
+		filtro.setIdFornecedor(1L);
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.CODIGO_PRODUTO);
 		
 		PaginacaoVO paginacao = new PaginacaoVO();
-
-		paginacao.setOrdenacao(Ordenacao.ASC);
+		
+		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
+		
 		paginacao.setPaginaAtual(1);
-		paginacao.setQtdResultadosPorPagina(500);
-
+		
+		paginacao.setQtdResultadosPorPagina(1000);
+		
 		filtro.setPaginacao(paginacao);
-
-		Date dataInicial = Fixture.criarData(27, Calendar.FEBRUARY, 2012);
-		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
-		
-	
-		PeriodoVO periodo = new PeriodoVO();
-		periodo.setDataInicial(dataInicial);
-		periodo.setDataFinal(dataFinal);
-		filtro.setPeriodo(periodo);
-		
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
-		
-		//filtro.setIdFornecedor(fornecedorDinap.getId());
 		
 		return filtro;
-		
 	}
 	
-	
 	private TipoMovimentoEstoque obterTipoMovimento() {
-		
+	
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		return tipoMovimentoEstoque;
-		
+	
 	}
 	
-	private void obterMovimentoPorTipo(){
-		
-		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
-		
-		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
-				"manoel@mail.com", "Manoel da Silva");
-		save(manoel);
-		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
-		save(box1);
-		
-		
-		List<MovimentoEstoqueCota> listaMovimento = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cotaManoel.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-		
-		Assert.assertTrue(listaMovimento.size() == 1);
-	}
+//	@Test
+//	@DirtiesContext
+//	public void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
+//		List<ContagemDevolucaoDTO> retorno = 
+//				
+//				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+//				obterFiltro(), 
+//				obterTipoMovimento(),
+//				true);
+//		
+//		
+//		Assert.assertEquals(2, retorno.size());
+//		
+//		ContagemDevolucaoDTO contagem = retorno.get(0);
+//		
+//		Assert.assertEquals(19, contagem.getQtdDevolucao().intValue());
+//		
+//	}
+//	
+//	@Test
+//	@DirtiesContext
+//	public void testarObterValorTotal() {
+//		
+//		
+//		@SuppressWarnings("unused")
+//		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
+//				obterFiltro(), 
+//				obterTipoMovimento());
+//		
+//		Assert.assertEquals(475, total.intValue());
+//		
+//	}
+//	
+//	@Test
+//	@DirtiesContext
+//	public void testarObterListaContagemDevolucao() {
+//		
+//		@SuppressWarnings("unused")
+//		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+//				obterFiltro(), 
+//				obterTipoMovimento(),
+//				false);
+//		
+//		Assert.assertNotNull(listaContagemDevolucao);
+//	}
+//	
+//	@Test
+//	@DirtiesContext
+//	public void testarObterQuantidadeContagemDevolucao() {
+//		
+//		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
+//				obterFiltro(), obterTipoMovimento());
+//		
+//		Assert.assertEquals(2, qtde.intValue());
+//	}
+//	
+//	private FiltroDigitacaoContagemDevolucaoDTO obterFiltro() {
+//		
+//		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+//		
+//		PaginacaoVO paginacao = new PaginacaoVO();
+//
+//		paginacao.setOrdenacao(Ordenacao.ASC);
+//		paginacao.setPaginaAtual(1);
+//		paginacao.setQtdResultadosPorPagina(500);
+//
+//		filtro.setPaginacao(paginacao);
+//
+//		Date dataInicial = Fixture.criarData(27, Calendar.FEBRUARY, 2012);
+//		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
+//		
+//	
+//		PeriodoVO periodo = new PeriodoVO();
+//		periodo.setDataInicial(dataInicial);
+//		periodo.setDataFinal(dataFinal);
+//		filtro.setPeriodo(periodo);
+//		
+//		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
+//		
+//		//filtro.setIdFornecedor(fornecedorDinap.getId());
+//		
+//		return filtro;
+//		
+//	}
+//	
+//	
+//	private TipoMovimentoEstoque obterTipoMovimento() {
+//		
+//		TipoMovimentoEstoque tipoMovimentoEstoque = 
+//				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+//					GrupoMovimentoEstoque.ENVIO_ENCALHE);
+//		
+//		return tipoMovimentoEstoque;
+//		
+//	}
+//	
+//	private void obterMovimentoPorTipo(){
+//		
+//		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+//		
+//		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+//				"manoel@mail.com", "Manoel da Silva");
+//		save(manoel);
+//		
+//		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+//		save(box1);
+//		
+//		
+//		List<MovimentoEstoqueCota> listaMovimento = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cotaManoel.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+//		
+//		Assert.assertTrue(listaMovimento.size() == 1);
+//	}
 	
 }
