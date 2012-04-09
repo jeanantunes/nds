@@ -3,13 +3,17 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.CotaSuspensaoDTO.Ordenacao;
+import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -41,6 +45,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -50,9 +55,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	@Autowired
 	private TipoMovimentoEstoqueRepositoryImpl tipoMovimentoEstoqueRepository;
 	
-	
 	private Lancamento lancamentoVeja;
-	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
@@ -62,8 +65,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 
 	@Before
 	public void setUp() {
-		
-		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -314,22 +315,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void testarTudo() {
-		
-		testObterQtdProdutoEdicaoEncalhePrimeiroDia();
-		
-		testObterQtdItemProdutoEdicaoEncalhePrimeiroDia();
-		
-		testObterQtdProdutoEdicaoEncalheAposPrimeiroDia();
-		
-		testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia();
-		
-		testObterQtdConsultaEncalhe();
-		
-		testObterListaConsultaEncalhe();
-		
-	}
-	
 	public void testObterQtdProdutoEdicaoEncalhePrimeiroDia() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -338,6 +323,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), false);
 	}
 
+	@Test
 	public void testObterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -347,6 +333,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 	}
 
+	@Test
 	public void testObterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
 
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -355,6 +342,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), true);
 	}
 
+	@Test
 	public void testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -363,6 +351,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), true);
 	}
 	
+	@Test
 	public void testObterQtdConsultaEncalhe() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -371,6 +360,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro, tipoMovimentoEstoque.getId());
 	}
 	
+	@Test
 	public void testObterListaConsultaEncalhe() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -401,127 +391,105 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		return filtro;
 	}
 	
-	private TipoMovimentoEstoque obterTipoMovimento() {
+	@Test
+	public void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
+		List<ContagemDevolucaoDTO> retorno = 
+				
+				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+				obterFiltro(), 
+				obterTipoMovimento(),
+				true);
+		
+		
+		Assert.assertEquals(2, retorno.size());
+		
+		ContagemDevolucaoDTO contagem = retorno.get(0);
+		
+		Assert.assertEquals(19, contagem.getQtdDevolucao().intValue());
+		
+	}
 	
+	@Test
+	public void testarObterValorTotal() {
+		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
+				obterFiltro(), 
+				obterTipoMovimento());
+		
+		Assert.assertEquals(475, total.intValue());
+	}
+	
+	@Test
+	public void testarObterListaContagemDevolucao() {
+		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+				obterFiltro(), 
+				obterTipoMovimento(),
+				false);
+		
+		Assert.assertNotNull(listaContagemDevolucao);
+	}
+	
+	@Test
+	public void testarObterQuantidadeContagemDevolucao() {
+		
+		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
+				obterFiltro(), obterTipoMovimento());
+		
+		Assert.assertEquals(2, qtde.intValue());
+	}
+	
+	private FiltroDigitacaoContagemDevolucaoDTO obterFiltro() {
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+
+		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(500);
+
+		filtro.setPaginacao(paginacao);
+
+		Date dataInicial = Fixture.criarData(27, Calendar.FEBRUARY, 2012);
+		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
+		
+	
+		PeriodoVO periodo = new PeriodoVO();
+		periodo.setDataInicial(dataInicial);
+		periodo.setDataFinal(dataFinal);
+		filtro.setPeriodo(periodo);
+		
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
+		
+		filtro.setIdFornecedor(fornecedorDinap.getId());
+		
+		return filtro;
+		
+	}
+	
+	
+	private TipoMovimentoEstoque obterTipoMovimento() {
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		return tipoMovimentoEstoque;
-	
 	}
 	
-//	@Test
-//	@DirtiesContext
-//	public void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
-//		List<ContagemDevolucaoDTO> retorno = 
-//				
-//				movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-//				obterFiltro(), 
-//				obterTipoMovimento(),
-//				true);
-//		
-//		
-//		Assert.assertEquals(2, retorno.size());
-//		
-//		ContagemDevolucaoDTO contagem = retorno.get(0);
-//		
-//		Assert.assertEquals(19, contagem.getQtdDevolucao().intValue());
-//		
-//	}
-//	
-//	@Test
-//	@DirtiesContext
-//	public void testarObterValorTotal() {
-//		
-//		
-//		@SuppressWarnings("unused")
-//		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
-//				obterFiltro(), 
-//				obterTipoMovimento());
-//		
-//		Assert.assertEquals(475, total.intValue());
-//		
-//	}
-//	
-//	@Test
-//	@DirtiesContext
-//	public void testarObterListaContagemDevolucao() {
-//		
-//		@SuppressWarnings("unused")
-//		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
-//				obterFiltro(), 
-//				obterTipoMovimento(),
-//				false);
-//		
-//		Assert.assertNotNull(listaContagemDevolucao);
-//	}
-//	
-//	@Test
-//	@DirtiesContext
-//	public void testarObterQuantidadeContagemDevolucao() {
-//		
-//		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
-//				obterFiltro(), obterTipoMovimento());
-//		
-//		Assert.assertEquals(2, qtde.intValue());
-//	}
-//	
-//	private FiltroDigitacaoContagemDevolucaoDTO obterFiltro() {
-//		
-//		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO();
-//		
-//		PaginacaoVO paginacao = new PaginacaoVO();
-//
-//		paginacao.setOrdenacao(Ordenacao.ASC);
-//		paginacao.setPaginaAtual(1);
-//		paginacao.setQtdResultadosPorPagina(500);
-//
-//		filtro.setPaginacao(paginacao);
-//
-//		Date dataInicial = Fixture.criarData(27, Calendar.FEBRUARY, 2012);
-//		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
-//		
-//	
-//		PeriodoVO periodo = new PeriodoVO();
-//		periodo.setDataInicial(dataInicial);
-//		periodo.setDataFinal(dataFinal);
-//		filtro.setPeriodo(periodo);
-//		
-//		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
-//		
-//		//filtro.setIdFornecedor(fornecedorDinap.getId());
-//		
-//		return filtro;
-//		
-//	}
-//	
-//	
-//	private TipoMovimentoEstoque obterTipoMovimento() {
-//		
-//		TipoMovimentoEstoque tipoMovimentoEstoque = 
-//				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-//					GrupoMovimentoEstoque.ENVIO_ENCALHE);
-//		
-//		return tipoMovimentoEstoque;
-//		
-//	}
-//	
-//	private void obterMovimentoPorTipo(){
-//		
-//		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
-//		
-//		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
-//				"manoel@mail.com", "Manoel da Silva");
-//		save(manoel);
-//		
-//		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
-//		save(box1);
-//		
-//		
-//		List<MovimentoEstoqueCota> listaMovimento = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cotaManoel.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-//		
-//		Assert.assertTrue(listaMovimento.size() == 1);
-//	}
+	@Test
+	public void obterMovimentoPorTipo(){
+		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+		save(manoel);
+		
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		save(box1);
+		
+		
+		List<MovimentoEstoqueCota> listaMovimento = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cotaManoel.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		
+		Assert.assertTrue(listaMovimento.size() == 1);
+	}
 	
 }

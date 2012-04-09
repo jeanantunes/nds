@@ -122,7 +122,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		
 		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
 		
-		recebimentoDTO.setIdProdutoEdicao(1L);
+		recebimentoDTO.setIdProdutoEdicao(produtoEdicao.getId());
 		recebimentoDTO.setQtdFisico(new BigDecimal(50));
 		recebimentoDTO.setDataLancamento(new Date(System.currentTimeMillis()));
 		recebimentoDTO.setDataRecolhimento(new Date(System.currentTimeMillis()));
