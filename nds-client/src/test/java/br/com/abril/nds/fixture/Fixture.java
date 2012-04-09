@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -38,6 +39,8 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -48,6 +51,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -1484,21 +1488,55 @@ public class Fixture {
 										            Divida divida,
 										            Integer vias
 										            ){
-
-	CobrancaTransferenciaBancaria cobrancaTransferenciaBancaria = new CobrancaTransferenciaBancaria();
-	cobrancaTransferenciaBancaria.setNossoNumero(nossoNumero);
-	cobrancaTransferenciaBancaria.setDataEmissao(dataEmissao);
-	cobrancaTransferenciaBancaria.setDataVencimento(dataVencimento);
-	cobrancaTransferenciaBancaria.setDataPagamento(dataPagamento);
-	cobrancaTransferenciaBancaria.setEncargos(encargos);
-	cobrancaTransferenciaBancaria.setValor(valor);
-	cobrancaTransferenciaBancaria.setTipoBaixa(tipoBaixa);
-	cobrancaTransferenciaBancaria.setStatusCobranca(status);
-	cobrancaTransferenciaBancaria.setCota(cota);
-	cobrancaTransferenciaBancaria.setDivida(divida);
-	cobrancaTransferenciaBancaria.setVias(vias);
 	
-	return cobrancaTransferenciaBancaria;
-}
-
+		CobrancaTransferenciaBancaria cobrancaTransferenciaBancaria = new CobrancaTransferenciaBancaria();
+		cobrancaTransferenciaBancaria.setNossoNumero(nossoNumero);
+		cobrancaTransferenciaBancaria.setDataEmissao(dataEmissao);
+		cobrancaTransferenciaBancaria.setDataVencimento(dataVencimento);
+		cobrancaTransferenciaBancaria.setDataPagamento(dataPagamento);
+		cobrancaTransferenciaBancaria.setEncargos(encargos);
+		cobrancaTransferenciaBancaria.setValor(valor);
+		cobrancaTransferenciaBancaria.setTipoBaixa(tipoBaixa);
+		cobrancaTransferenciaBancaria.setStatusCobranca(status);
+		cobrancaTransferenciaBancaria.setCota(cota);
+		cobrancaTransferenciaBancaria.setDivida(divida);
+		cobrancaTransferenciaBancaria.setVias(vias);
+		
+		return cobrancaTransferenciaBancaria;
+	}
+	
+	public static EnderecoDistribuidor enderecoDistribuidor(Distribuidor distribuidor, Endereco endereco, boolean isPrincipal,TipoEndereco tipoEndereco){
+		
+		EnderecoDistribuidor enderecoDistribuidor = new EnderecoDistribuidor();
+		enderecoDistribuidor.setEndereco(endereco);
+		enderecoDistribuidor.setDistribuidor(distribuidor);
+		enderecoDistribuidor.setPrincipal(isPrincipal);
+		enderecoDistribuidor.setTipoEndereco(tipoEndereco);
+		
+		return enderecoDistribuidor;
+	}
+	
+	public static TelefoneDistribuidor telefoneDistribuidor(Distribuidor distribuidor, boolean principal, Telefone telefone, TipoTelefone tipoTelefone){
+		
+		TelefoneDistribuidor telefoneDistribuidor = new TelefoneDistribuidor();
+		telefoneDistribuidor.setDistribuidor(distribuidor);
+		telefoneDistribuidor.setPrincipal(principal);
+		telefoneDistribuidor.setTelefone(telefone);
+		telefoneDistribuidor.setTipoTelefone(tipoTelefone);
+		
+		return telefoneDistribuidor;
+		
+	}
+	
+	public static Telefone telefone(String ddd, String numero, String ramal){
+		
+		Telefone telefone = new Telefone();
+		telefone.setDdd(ddd);
+		telefone.setNumero(numero);
+		telefone.setRamal(ramal);
+		
+		return telefone;
+		
+	}
+	
 }

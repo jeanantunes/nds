@@ -25,7 +25,7 @@
 				
 				var nossoNumero  = row.cell.nossoNumero;
 				
-				var linkImpressao = '<a href="javascript:GeraDivida.imprimirDivida(' + nossoNumero + ')" style="cursor:pointer">' +
+				var linkImpressao = '<a href="javascript:;" onclick="GeraDivida.imprimirDivida(' + nossoNumero + ');" style="cursor:pointer">' +
 					 '<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
 					 '</a>';			
 				
@@ -150,7 +150,7 @@
 		dialogPesquisaInvalida:function(){
 			
 			$("#pesquisaInvalida").dialog({
-				title: 'Atenção',
+				title: 'Aten��o',
 				resizable: false,
 				height:120,
 				width:330,
@@ -171,14 +171,14 @@
 				$("#impressosGrid").flexOptions({
 					url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
 					params: GeraDivida.formData(),
-					onSuccess:GeraDivida.renderizarArquivo(result)
+					onSuccess:GeraDivida.renderizarArquivos(result)
 				});	
 				
 				$("#impressosGrid").flexReload();
 			});
 		},
 		
-		renderizarArquivo:function(result){
+		renderizarArquivos:function(result){
 			
 			if("BOLETO" == result){
 				window.location ="<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>" ;
@@ -198,14 +198,17 @@
 					$("#impressosGrid").flexOptions({
 						url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
 						params: GeraDivida.formData(),
-						onSuccess:function(){
-							window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>";		
-						}
+						onSuccess:GeraDivida.renderizarArquivo(nossoNumero)
 					});
 					
 					$("#impressosGrid").flexReload();
 				}	
 			});
+		},
+		
+		renderizarArquivo: function (nossoNumero){
+			
+			window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>";
 		}
 		
 	};
@@ -310,12 +313,11 @@
 <body>
 	<div style="display: none;" id="aguarde">Aguarde...</div>
 	<div style="display: none;heigth:200px;  min-height:0px;" id="pesquisaInvalida">
-		Não foi feita a Geração de Dívida para esta data.
+		Não foi feita a Geração de Dívidas para esta data.
 	</div>	
 		<form id="pesquisaDividasForm"
 				name="pesquisaDividasForm" 
 				method="post">
-		
 			<fieldset class="classFieldset">
 		   	    <legend> Gerar Divida</legend>
 		   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -358,7 +360,7 @@
 						    <td>Tipo</td>
 						    <td>
 						    	<select name="tipoCobranca" id="tipoCobranca" style="width: 200px;">
-									<option selected="selected"></option>
+									<option selected="selected" value="">Todos</option>
 									<c:forEach var="tipo" items="${listaTipoCobranca}">
 										<option value="${tipo.key}">${tipo.value}</option>
 									</c:forEach>
@@ -368,10 +370,10 @@
 						    <td>&nbsp;</td>
 						    <td>
 						    	<span class="bt_pesquisar">
-						    		<a href="javascript:;" onclick="GeraDivida.validarPesquisa();">Pesquisar</a>
+						    		<a href="javascript:GeraDivida.validarPesquisa();">Pesquisar</a>
 						    	</span>
 	    						<span  class="bt_novos" title="Gerar Dívida" style="margin-left:20px;">
-	    							<a href="javascript:;" id="btnGerarDivida" onclick="GeraDivida.gerarDivida();">
+	    							<a href="javascript:GeraDivida.gerarDivida();" id="btnGerarDivida">
 	    								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
 	    								Gerar Divida
 	    							</a>
@@ -380,8 +382,8 @@
 	    				</tr>
 		  		</table>
 		    </fieldset>
-		    
-		</form>
+		 </form>
+		 
 		<div class="linha_separa_fields">&nbsp;</div>
 			
 		<fieldset class="classFieldset">

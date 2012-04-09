@@ -1,8 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CobrancaImpressaoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -30,6 +36,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -61,8 +68,10 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			switch (cobranca.getTipoCobranca()) {
 				case BOLETO:
 					retorno = boletoService.gerarImpressaoBoleto(nossoNumero);
+					break;
+					
 				default:
-					retorno = gerarDocumentoCobranca(cobranca);
+					retorno = getDocumentoCobranca(cobranca);
 			}
 			
 		} catch (Exception e) {
@@ -75,6 +84,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	@Transactional
+	@Override
 	public void enviarDocumentoCobrancaPorEmail(String nossoNumero){
 		
 		Cobranca cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
@@ -97,29 +107,71 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		this.cobrancaRepository.incrementarVia(nossoNumero);
 	}
 	
+	/**
+	 * @see 
+	 */
+	@Transactional
+	@Override
 	public byte[] gerarDocumentoCobranca(List<GeraDividaDTO> dividas, TipoCobranca tipoCobranca) {
 		
-		List<String> listNossoNumero = getNossoNumerosBoleto(dividas); 
+		List<String> listNossoNumero = getNossoNumeros(dividas); 
 		
 		byte[] arquivo = null;
 		
-		if(TipoCobranca.BOLETO.equals(tipoCobranca)){
-			try {
-				
+		try {
+		
+			if(TipoCobranca.BOLETO.equals(tipoCobranca)){
+	
 				arquivo =boletoService.gerarImpressaoBoletos(listNossoNumero);
-				
-				this.cobrancaRepository.incrementarVia( listNossoNumero.toArray(new String[] {}) );
-				
-			} catch (IOException e) {
-				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			}
+			else{
+				
+				arquivo = gerarDocumentoCobrancas(listNossoNumero);
+			}
+			
+			this.cobrancaRepository.incrementarVia( listNossoNumero.toArray(new String[] {}) );
+		
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
 		
 		return arquivo;
 		
 	}
 	
-	private List<String> getNossoNumerosBoleto(List<GeraDividaDTO> dividas){
+	/**
+	 * Retorna um grupo de documentos de cobrança. 
+	 * @param listNossoNumero
+	 * @return byte[]
+	 * @throws JRException
+	 */
+	
+	private byte[] gerarDocumentoCobrancas(List<String> listNossoNumero) throws JRException {
+		
+		List<CobrancaImpressaoDTO> cobrancas = new ArrayList<CobrancaImpressaoDTO>();
+		
+		Cobranca cobranca = null;
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		for(String nossoNumero : listNossoNumero) {
+			
+			cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+			
+			cobrancas.add( obterCobrancaImpressaoDTO(cobranca, distribuidor));
+		}
+		
+		byte[] arquivo = gerarDocumentoIreport(cobrancas);
+		
+		return arquivo ;
+	}
+	
+	/**
+	 * Retorna uma lista com os nosso número referente as cobranças.
+	 * @param dividas
+	 * @return List<String>
+	 */
+	private List<String> getNossoNumeros(List<GeraDividaDTO> dividas){
 		
 		List<String> list = new ArrayList<String>();
 		
@@ -134,8 +186,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 * Envia um tipo de cobrança por email.
 	 * @param cobranca
 	 * @throws AutenticacaoEmailException
+	 * @throws JRException 
 	 */
-	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException {
+	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, JRException {
 
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -148,49 +201,144 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		String emailCota = cobranca.getCota().getPessoa().getEmail();
 		String[] destinatarios = new String[]{emailCota};
 		
-		File anexo = null; //Obter do Ireport
+		byte[] arquivo = getDocumentoCobranca(cobranca);
 		
-		/*emailService.enviar(assunto,mensagem,destinatarios,anexo);*/
+		AnexoEmail anexoEmail = new AnexoEmail();
+		anexoEmail.setNome(cobranca.getNossoNumero());
+		anexoEmail.setAnexo(arquivo);
+		anexoEmail.setTipoAnexo(AnexoEmail.TipoAnexo.PDF);
+		
+		emailService.enviar(assunto,mensagem,destinatarios,anexoEmail);
 	}
 	
-	private byte[] gerarDocumentoCobranca(Cobranca cobranca) throws JRException{
+	/**
+	 * Retorna o documento de cobrança gerado pelo Ireport
+	 * @param cobrancas
+	 * @return byte[]
+	 * @throws JRException
+	 */
+	private byte[] getDocumentoCobranca(Cobranca... cobrancas) throws JRException{
+		
+		Distribuidor distribuidor  = distribuidorService.obter();
+		
+		List<CobrancaImpressaoDTO> list = new ArrayList<CobrancaImpressaoDTO>();
+		
+		for(Cobranca cobranca : cobrancas){
+			list.add(obterCobrancaImpressaoDTO(cobranca,distribuidor));
+		}
+		
+		return gerarDocumentoIreport(list);
+	}
+	
+	/**
+	 * Retorna um grupo de documentos de cobrança gerado pelo Ireport
+	 * @param list
+	 * @return  byte[] 
+	 * @throws JRException
+	 */
+	private byte[] gerarDocumentoIreport(List<CobrancaImpressaoDTO> list) throws JRException{
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		
+		 Map<String, Object> map = getInformacoesDistribuido();
+		 
+		 return  JasperRunManager.runReportToPdf(Thread.currentThread().getContextClassLoader()
+				 	.getResource("/reports/cobranca.jasper").getFile(), map, jrDataSource);
+	}
+	
+	/**
+	 * Retorna as informações do distribuidor para montagem dos parâmetros do Ireport
+	 * @return Map<String, Object>
+	 */
+	private Map<String, Object> getInformacoesDistribuido(){
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		for(EnderecoDistribuidor endereco : distribuidor.getEnderecos()){
+			
+			if(endereco.isPrincipal()){
+				map.put("cidade",(endereco.getEndereco()==null)?"": endereco.getEndereco().getCidade());
+				map.put("enderecoDistribuidor", (endereco.getEndereco()==null)?"":endereco.getEndereco().getLogradouro() );
+				break;
+			}
+		}
+		
+		for(TelefoneDistribuidor telefone : distribuidor.getTelefones()){
+			
+			if(telefone.isPrincipal()){
+				map.put("telefoneDistribuidor", (telefone.getTelefone()== null)?""
+						:telefone.getTelefone().getDdd() + " - " +
+							telefone.getTelefone().getNumero());
+				break;
+			}
+		}
+		
+		map.put("data", new Date());
+		map.put("nomeDistribuidor",distribuidor.getJuridica().getRazaoSocial());
+		
+		return map;
+	}
+	
+	/**
+	 * Monta a estrutura do objeto para impressão no Ireport
+	 * @param cobranca 
+	 * @param distribuidor
+	 * @return CobrancaImpressaoDTO
+	 */
+	private CobrancaImpressaoDTO obterCobrancaImpressaoDTO(Cobranca cobranca,Distribuidor distribuidor){
 		
 		CobrancaImpressaoDTO impressaoDTO = new CobrancaImpressaoDTO();
 		
-		/*
-		Long agencia = cobranca.getBanco().getAgencia();
-		Long conta  = cobranca.getBanco().getConta();
-		String nomeConta = cobranca.getBanco().getNome();
+		Banco banco  = cobranca.getBanco();
 		
-		String box = cobranca.getCota().getBox().getCodigo();
+		if(banco!= null){
+			impressaoDTO.setAgencia(banco.getAgencia().intValue());
+			impressaoDTO.setConta(banco.getConta().toString());
+			impressaoDTO.setNomeBanco(banco.getNome());
+		}
 		
-		*/
-		impressaoDTO.setAgencia(1);
-		impressaoDTO.setBox("BOX");
-		impressaoDTO.setConta("12");
-		impressaoDTO.setNomeBanco("Banco xx");
-		impressaoDTO.setNomeCota("NomeConta");
-		impressaoDTO.setNomeFavorecido("NomeFavorecido");
-		impressaoDTO.setNumeroCota(12);
-		impressaoDTO.setRota("004");
-		impressaoDTO.setRoteiro("Pinheiros");
-		impressaoDTO.setTipoCobranca(TipoCobranca.CHEQUE);
-		impressaoDTO.setValor(new BigDecimal(1000));
-		impressaoDTO.setVencimento(new Date());
+		Cota cota  = cobranca.getCota();
 		
-		List<CobrancaImpressaoDTO> list = new ArrayList<CobrancaImpressaoDTO>();
-		list.add(impressaoDTO);
+		if(cota!= null){
+			
+			Pessoa pessoa  = cota.getPessoa();
+			
+			if (pessoa instanceof PessoaFisica){
+				impressaoDTO.setNomeCota(((PessoaFisica) pessoa).getNome());
+			}
+			else if(pessoa instanceof PessoaJuridica){
+				impressaoDTO.setNomeCota(((PessoaJuridica) pessoa).getRazaoSocial()); 
+			}
+			
+			impressaoDTO.setNomeFavorecido(distribuidor.getJuridica().getRazaoSocial());
+			impressaoDTO.setNumeroCota(cota.getNumeroCota());
+			
+			impressaoDTO.setBox((cota.getBox()!= null)?cota.getBox().getCodigo():"");
+			
+			if(cota.getRotaRoteiroOperacao()!= null && !cota.getRotaRoteiroOperacao().isEmpty() ){
+				
+				for(RotaRoteiroOperacao rotaRoteiro : cota.getRotaRoteiroOperacao()){
+					
+					if(TipoOperacao.IMPRESSAO_DIVIDA.equals(rotaRoteiro.getTipoOperacao())){
+						
+						impressaoDTO.setRota( (rotaRoteiro.getRota()!= null)? rotaRoteiro.getRota().getCodigoRota():"");
+						impressaoDTO.setRoteiro( (rotaRoteiro.getRoteiro()!= null)? rotaRoteiro.getRoteiro().getDescricaoRoteiro():"");
+						break;
+					}
+				}
+			}
+			else{
+				impressaoDTO.setRota("");
+				impressaoDTO.setRoteiro("");
+			}	
+		}
 		
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("cidade", "Cidade");
-		map.put("data", new Date());
-		map.put("nomeDistribuidor", "Distribuidor");
-		map.put("enderecoDistribuidor", "Endereço");
-		map.put("telefoneDistribuidor", "12121212");
+		impressaoDTO.setTipoCobranca(cobranca.getTipoCobranca());
+		impressaoDTO.setValor(cobranca.getValor());
+		impressaoDTO.setVencimento(cobranca.getDataVencimento());
 		
-		 return  JasperRunManager.runReportToPdf(Thread.currentThread().getContextClassLoader()
-				 	.getResource("/reports/cobranca.jasper").getFile(), map, jrDataSource);
-		
+		return impressaoDTO;
 	}
 }

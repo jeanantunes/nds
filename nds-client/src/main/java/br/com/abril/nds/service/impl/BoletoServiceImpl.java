@@ -55,6 +55,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -1003,7 +1004,7 @@ public class BoletoServiceImpl implements BoletoService {
 			email.enviar(assunto, 
 					     mensagem, 
 					     destinatarios, 
-					     new AnexoEmail("Boleto-"+nossoNumero+".pdf", anexo));
+					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF));
 		}
 		catch(Exception e){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");

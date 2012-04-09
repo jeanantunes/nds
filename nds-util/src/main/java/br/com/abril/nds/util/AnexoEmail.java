@@ -5,19 +5,41 @@ public class AnexoEmail {
 	
 	private String nome;
 	private byte[] anexo;
+	private TipoAnexo tipoAnexo;
+	
+	public enum TipoAnexo{
+		PDF(".pdf"),
+		XLS(".xsl");
+		
+		private String tipo;
+		
+		private TipoAnexo(String tipo) {
+			this.tipo = tipo;
+		}
+		
+		public String getTipoAnexo(){
+			return tipo;
+		}
+		
+		@Override
+		public String toString() {
+			return this.tipo;
+		}
+	}
 	
 	public AnexoEmail() {}
 	
-	public AnexoEmail(String nome, byte[] anexo) {
+	public AnexoEmail(String nome, byte[] anexo,TipoAnexo tipoAnexo) {
 		this.nome = nome;
 		this.anexo = anexo;
+		this.tipoAnexo = tipoAnexo;
 	}
 
 	/**
 	 * @return the nome
 	 */
 	public String getNome() {
-		return nome;
+		return nome+tipoAnexo;
 	}
 
 	/**
@@ -40,6 +62,21 @@ public class AnexoEmail {
 	public void setAnexo(byte[] anexo) {
 		this.anexo = anexo;
 	}
+
+	/**
+	 * @return the tipoAnexo
+	 */
+	public TipoAnexo getTipoAnexo() {
+		return tipoAnexo;
+	}
+
+	/**
+	 * @param tipoAnexo the tipoAnexo to set
+	 */
+	public void setTipoAnexo(TipoAnexo tipoAnexo) {
+		this.tipoAnexo = tipoAnexo;
+	}
+	
 	
 	
 }
