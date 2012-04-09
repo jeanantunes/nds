@@ -132,7 +132,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save(pessoa,cota,estudoCota);		
 			
 			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
-			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
+			Cota cota2 = Fixture.cota(i+3000, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);
 			save( pessoa2,cota2,estudoCota2);		

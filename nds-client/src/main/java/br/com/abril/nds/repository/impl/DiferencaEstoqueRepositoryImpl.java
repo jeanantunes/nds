@@ -421,7 +421,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				this.getSession().createQuery("select d.automatica from Diferenca d where d.id = :idDiferenca");
 		query.setParameter("idDiferenca", idDiferenca);
 		
-		return (Boolean) query.uniqueResult();
+		Boolean resultado = (Boolean) query.uniqueResult();
+		return resultado == null ? Boolean.FALSE : resultado;
 	}
 
 }

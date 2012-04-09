@@ -1,16 +1,22 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.PagamentoDTO;
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -18,12 +24,16 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -32,25 +42,51 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.seguranca.Usuario;
-
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
-@Ignore //TODO: Henrique, corrigir a fixture banco para incluir a carteira
 public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private BoletoService boletoService;
+	private BoletoServiceImpl boletoServiceImpl;
+	
+	@Mock
+	private PoliticaCobrancaRepository politicaCobrancaRepository;
+	
+	private Usuario usuarioJoao;
+	private Distribuidor distribuidor;
 	
 	@Before
 	public void setup() {
 		
+		MockitoAnnotations.initMocks(this);
+		
+		Carteira carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		save(carteiraSemRegistro);
+		
+		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+		save(bancoHSBC);
+		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
 		save(pessoaJuridica);
+		
+		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+			  BigDecimal.ONE, BigDecimal.ONE);
+		save(formaBoleto);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
+		save(politicaCobranca);
+		
+		distribuidor = Fixture.distribuidor(pessoaJuridica, new Date(), politicaCobranca);
+		save(distribuidor);
 		
 		Box box = Fixture.criarBox("300", "Box 300", TipoBox.REPARTE);
 		save(box);
@@ -58,15 +94,8 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		Cota cota = Fixture.cota(1000, pessoaJuridica, SituacaoCadastro.ATIVO,box);
 		save(cota);
 		
-		Carteira carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		
-		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
-		save(bancoHSBC);
-
-		
 		//AMARRAÇAO DIVIDA X BOLETO
-		Usuario usuarioJoao = Fixture.usuarioJoao();
+		usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
@@ -100,32 +129,206 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 				new BigDecimal(200), Arrays.asList(mec), new Date());
 		save(movimentoFinanceiroCota);
 		
-		ConsolidadoFinanceiroCota consolidado = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota), cota,
-						new Date(), new BigDecimal(200));
-		save(consolidado);
+		ConsolidadoFinanceiroCota consolidado1 =
+			Fixture.consolidadoFinanceiroCota(Arrays.asList(movimentoFinanceiroCota),
+										      cota, new Date(), new BigDecimal(200));
+		save(consolidado1);
 		
-		Divida divida = Fixture.divida(consolidado, cota, new Date(),
-				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
-		save(divida);
+		ConsolidadoFinanceiroCota consolidado2 =
+			Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200));
+		save(consolidado2);
+		
+		ConsolidadoFinanceiroCota consolidado3 =
+				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200));
+			save(consolidado3);
+		
+		ConsolidadoFinanceiroCota consolidado4 =
+				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200));
+		save(consolidado4);
+		
+		ConsolidadoFinanceiroCota consolidado5 =
+				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200));
+		save(consolidado5);
+			
+		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(),
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida1);
 
-		Boleto boleto = Fixture.boleto("5", "5", "5", new Date(), new Date(), new Date(), BigDecimal.ZERO, 
-                					   new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida,0);
-		save(boleto);
-
+		Divida divida2 = Fixture.divida(consolidado2, cota, new Date(),
+		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida2);
+		
+		Divida divida3 = Fixture.divida(consolidado3, cota, new Date(),
+		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida3);
+		
+		Divida divida4 = Fixture.divida(consolidado4, cota, new Date(),
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida4);
+		
+		Divida divida5 = Fixture.divida(consolidado5, cota, new Date(),
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		save(divida5);
+		
+		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),
+									    new Date(), new Date(), BigDecimal.ZERO, 
+                					    new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO,
+                					    cota, bancoHSBC, divida1, 0);
+		save(boleto1);
+		
+		Boleto boleto2 = Fixture.boleto("1234567890124", "456", "1234567890124456", new Date(),
+										new Date(), new Date(), BigDecimal.ZERO, 
+				   						new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+				   						cota, bancoHSBC, divida2, 0);
+		save(boleto2);
+		
+		Boleto boleto3 = Fixture.boleto("1234567890125", "456", "1234567890125456", new Date(),
+										new Date(), new Date(), BigDecimal.ZERO, 
+										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										cota, bancoHSBC, divida3, 0);
+		save(boleto3);
+		
+		Boleto boleto4 = Fixture.boleto("1234567890126", "456", "1234567890126456", new Date(),
+										new Date(), new Date(), BigDecimal.ZERO, 
+										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										cota, bancoHSBC, divida4, 0);
+		save(boleto4);
+		
+		Boleto boleto5 = Fixture.boleto("1234567890127", "456", "1234567890127456", new Date(),
+										new Date(), new Date(), BigDecimal.ZERO, 
+										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										cota, bancoHSBC, divida5, 0);
+		save(boleto5);
 	}
 	
 	@Test
-	@Ignore
-	public void teste() {
-		boletoService.baixarBoletosAutomatico(null, null, null);
+	public void testeBaixaAutomaticaPermiteDivergencia() {
+		
+		PoliticaCobranca politicaCobranca =
+				Fixture.criarPoliticaCobranca(null, null, true, true, true, 1, null, null);
+		
+		Mockito.when(politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO))
+			.thenReturn(politicaCobranca);
+		
+		ArquivoPagamentoBancoDTO arquivo = criarArquivoPagamentoBanco();
+		
+		ResumoBaixaBoletosDTO resumo = 
+			boletoServiceImpl.baixarBoletosAutomatico(arquivo, new BigDecimal(200), usuarioJoao);
+		
+		Assert.assertTrue(resumo.getQuantidadeLidos() == 6);
+		
+		Assert.assertTrue(resumo.getQuantidadeBaixados() == 2);
+		
+		Assert.assertTrue(resumo.getQuantidadeRejeitados() == 1);
+		
+		Assert.assertTrue(resumo.getQuantidadeBaixadosComDivergencia() == 3);
 	}
 	
 	@Test
-	public void testeImpressao() throws IOException {
-		byte[] b = boletoService.gerarImpressaoBoleto("123");
-		Assert.assertTrue(b.length > 0);
+	public void testeBaixaAutomaticaNaoPermiteDivergencia() {
+		
+		PoliticaCobranca politicaCobranca =
+				Fixture.criarPoliticaCobranca(null, null, false, false, false, 1, null, null);
+		
+		Mockito.when(politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO))
+			.thenReturn(politicaCobranca);
+		
+		ArquivoPagamentoBancoDTO arquivo = criarArquivoPagamentoBanco();
+		
+		boletoServiceImpl.politicaCobrancaRepository = politicaCobrancaRepository;
+		
+		ResumoBaixaBoletosDTO resumo = 
+			boletoServiceImpl.baixarBoletosAutomatico(arquivo, new BigDecimal(200), usuarioJoao);
+		
+		Assert.assertTrue(resumo.getQuantidadeLidos() == 6);
+		
+		Assert.assertTrue(resumo.getQuantidadeBaixados() == 2);
+		
+		Assert.assertTrue(resumo.getQuantidadeRejeitados() == 4);
+		
+		Assert.assertTrue(resumo.getQuantidadeBaixadosComDivergencia() == 0);
+	}
+	
+	@Test
+	public void testeBaixaManual() {
+		
+		PagamentoDTO pagamento = new PagamentoDTO();
+		
+		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
+		pagamento.setNossoNumero("1234567890127");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(10.00));
+		
+		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
+									   null, distribuidor.getPoliticaCobranca(), distribuidor,
+									   DateUtil.adicionarDias(new Date(), 1), null);
+	}
+	
+	private ArquivoPagamentoBancoDTO criarArquivoPagamentoBanco() {
+		
+		List<PagamentoDTO> listaPagemento = new ArrayList<PagamentoDTO>();
+		
+		// Boleto já foi pago
+		PagamentoDTO pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(new Date());
+		pagamento.setNossoNumero("1234567890123456");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(10.0));
+		
+		listaPagemento.add(pagamento);
+		
+		// Valor correto
+		pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(new Date());
+		pagamento.setNossoNumero("1234567890124456");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(100.00));
+		
+		listaPagemento.add(pagamento);
+		
+		// Valor acima
+		pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(new Date());
+		pagamento.setNossoNumero("1234567890125456");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(200.00));
+		
+		listaPagemento.add(pagamento);
+		
+		// Valor abaixo
+		pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(new Date());
+		pagamento.setNossoNumero("1234567890126456");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(10.00));
+		
+		listaPagemento.add(pagamento);
+		
+		// Valor abaixo
+		pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
+		pagamento.setNossoNumero("1234567890127456");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(10.00));
+		
+		listaPagemento.add(pagamento);
+		
+		// Boleto não existe na base
+		pagamento = new PagamentoDTO();
+		pagamento.setDataPagamento(new Date());
+		pagamento.setNossoNumero("1111111111111111");
+		pagamento.setNumeroRegistro(1);
+		pagamento.setValorPagamento(new BigDecimal(10.0));
+		
+		listaPagemento.add(pagamento);
+		
+		ArquivoPagamentoBancoDTO arquivo = new ArquivoPagamentoBancoDTO();
+		
+		arquivo.setSomaPagamentos(new BigDecimal(200));
+		arquivo.setNomeArquivo("arquivo.dat");
+		arquivo.setListaPagemento(listaPagemento);
+		
+		return arquivo;
 	}
 	
 }

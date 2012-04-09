@@ -126,6 +126,30 @@
 			$("input[id='numeroCota']").numeric();
 		}
 
+		function novo() {
+
+			var filtro = obterDadosFiltro();
+			
+			$.postJSON(
+				"<c:url value='/financeiro/manutencaoStatusCota/novo' />", 
+				filtro,
+				function(result) {
+
+					$("#numeroCotaNovo").html(result.numero);
+					$("#boxNovo").html(result.codigoBox);
+					$("#novoNomeCota").html(result.nome);
+
+					$("#novoStatusCota").val("");
+   					$("#novaDataInicialStatusCota").val("");
+   					$("#novaDataFinalStatusCota").val("");
+   					$("#novoMotivo").val("");
+   					$("#novaDescricao").val("");
+					
+					popupDialogNovo();
+				}
+			);    
+		}
+
 		function popupDialogNovo() {
 
 			$("#dialog-novo").dialog({
@@ -135,17 +159,17 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$(this).dialog("close");
+						confirmarNovo();
 					},
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
 				}
-			});	    
+			});
 		}
 
 		function carregarCodigoBox() {
-
+			
 			cota.obterPorNumeroCota($("#numeroCota").val(), false, function(result) {
 
 				if (!result) {
@@ -158,6 +182,18 @@
 		}
 
 		function pesquisarHistoricoStatusCota() {
+
+			var filtro = obterDadosFiltro();
+
+			$(".manutencaoStatusCotaGrid").flexOptions({
+				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
+				params: filtro
+			});
+			
+			$(".manutencaoStatusCotaGrid").flexReload();
+		}
+
+		function obterDadosFiltro() {
 
 			var filtro = [
    				{
@@ -177,12 +213,47 @@
    				}
    			];
 
-			$(".manutencaoStatusCotaGrid").flexOptions({
-				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
-				params: filtro
-			});
-			
-			$(".manutencaoStatusCotaGrid").flexReload();
+   			return filtro;
+		}
+
+		function confirmarNovo() {
+
+			var novoHistoricoSituacaoCota = [
+   				{
+   					name: 'novoHistoricoSituacaoCota.cota.numeroCota', value: $("#numeroCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.novaSituacao', value: $("#novoStatusCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.dataInicioValidade', value: $("#novaDataInicialStatusCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.dataFimValidade', value: $("#novaDataFinalStatusCota").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.motivo', value: $("#novoMotivo").val()
+   				},
+   				{
+   					name: 'novoHistoricoSituacaoCota.descricao', value: $("#novaDescricao").val()
+   				}
+   			];
+
+			$.postJSON(
+				"<c:url value='/financeiro/manutencaoStatusCota/novo/confirmar' />", 
+				novoHistoricoSituacaoCota,
+				function(result) {
+
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+					
+					$("#dialog-novo").dialog("close");
+				},
+				null,
+				true
+			); 	
 		}
 		
 		function inicializar() {
@@ -288,7 +359,7 @@
 		</div>
 		
 		<span class="bt_novo" title="Novo">
-			<a href="javascript:;" onclick="popupDialogNovo();">Novo</a>
+			<a href="javascript:;" onclick="novo();">Novo</a>
 		</span>
 	</fieldset>
 	

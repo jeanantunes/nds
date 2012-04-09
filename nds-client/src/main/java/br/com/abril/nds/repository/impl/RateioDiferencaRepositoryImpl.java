@@ -13,19 +13,6 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepository<RateioDife
 	public RateioDiferencaRepositoryImpl() {
 		super(RateioDiferenca.class);
 	}
-
-	@Override
-	public boolean verificarExistenciaRateioDiferenca(Long idDiferenca) {
-		StringBuilder hql = new StringBuilder("select count(rateioDiferenca.id) ");
-		hql.append(" from RateioDiferenca reateioDiferenca, Diferenca diferenca ")
-		   .append(" where rateioDiferenca.diferenca.id = diferenca.id ")
-		   .append(" and diferenca.id = :idDiferenca ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("idDiferenca", idDiferenca);
-		
-		return ((Long)query.uniqueResult()) > 0;
-	}
 	
 	public RateioDiferenca obterRateioDiferencaPorDiferenca(Long idDiferenca){
 		StringBuilder hql = new StringBuilder("select new ");

@@ -1,15 +1,24 @@
 <div id="dialog-novo" title="Alteração de Status">
 
+	<div class="effectDialog ui-state-highlight ui-corner-all" 
+		 style="display: none; position: absolute; z-index: 2000; width: 580px;">
+		 
+		<p>
+			<span style="float: left;" class="ui-icon ui-icon-info"></span>
+			<b class="effectDialogText"></b>
+		</p>
+	</div>
+
 	<table width="535" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		<tr>
 			<td width="64">Cota:</td>
-			<td width="173">${numeroCota}</td>
+			<td id="numeroCotaNovo" width="173"></td>
 			<td width="46">Box:</td>
-			<td width="231">${box}</td>
+			<td id="boxNovo" width="231"></td>
 		</tr>
 		<tr>
 			<td>Nome:</td>
-			<td>${nomeCota}</td>
+			<td id="novoNomeCota"></td>
 			<td>Status:</td>
 			<td>
 				<select name="novoStatusCota" id="novoStatusCota" style="width: 230px;">

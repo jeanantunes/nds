@@ -9,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
@@ -59,14 +58,14 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
-
-
 public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
 	
 	private Date dataLancamento = new Date();
+
+	private Box box1;
 	
 	@Before
 	public void setup() {
@@ -100,7 +99,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		Fornecedor fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorDinap);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
 		save(box1);
 		
 		Box box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.REPARTE);
@@ -374,8 +373,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 
 	
 	@Test
-	@DirtiesContext
-	public void cosnultarResumoExpedicaoPorBox(){
+	public void consultarResumoExpedicaoPorBox(){
 		
 		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
 		filtro.setDataLancamento(dataLancamento);
@@ -390,15 +388,13 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 	}
 	
 	@Test
-	@DirtiesContext
-	public void cosnultarQuantidadeResumoExpedicaoPorBox(){
-		
-		Long idBox = 1L;
+	public void consultarQuantidadeResumoExpedicaoPorBox() {
+		Long quantidade = expedicaoRepository
+				.obterQuantidadeResumoExpedicaoPorBox(box1.getId(),
+						dataLancamento);
 
-		Long quantidade =  expedicaoRepository.obterQuantidadeResumoExpedicaoPorBox(idBox,dataLancamento);
-		
 		Assert.assertNotNull(quantidade);
-		
+
 		Assert.assertTrue(quantidade != 0);
 	}
 	

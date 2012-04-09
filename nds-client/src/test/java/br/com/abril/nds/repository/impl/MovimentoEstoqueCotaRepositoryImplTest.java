@@ -5,14 +5,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -46,7 +45,6 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -57,9 +55,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	@Autowired
 	private TipoMovimentoEstoqueRepositoryImpl tipoMovimentoEstoqueRepository;
 	
-	
 	private Lancamento lancamentoVeja;
-	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
@@ -69,7 +65,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 
 	@Before
 	public void setUp() {
-		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -256,7 +251,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mecJorn);
 		
-		//MOVIMENTOS DE ENVIO ENCALHE ABAIXO
+		/**
+		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
+		 */
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				veja1,
@@ -308,7 +305,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
-		
 		ControleContagemDevolucao controleContagemDevolucao = Fixture.controleContagemDevolucao(
 				StatusOperacao.CONCLUIDO, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
@@ -319,7 +315,83 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	@DirtiesContext
+	public void testObterQtdProdutoEdicaoEncalhePrimeiroDia() {
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), false);
+	}
+
+	@Test
+	public void testObterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), false);
+		
+	}
+
+	@Test
+	public void testObterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
+
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), true);
+	}
+
+	@Test
+	public void testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, tipoMovimentoEstoque.getId(), true);
+	}
+	
+	@Test
+	public void testObterQtdConsultaEncalhe() {
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro, tipoMovimentoEstoque.getId());
+	}
+	
+	@Test
+	public void testObterListaConsultaEncalhe() {
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		TipoMovimentoEstoque tipoMovimentoEstoque = obterTipoMovimento();
+		
+		movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro, tipoMovimentoEstoque.getId());
+	}
+
+	private FiltroConsultaEncalheDTO obterFiltroConsultaEncalhe() {
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		filtro.setDataRecolhimento(Fixture.criarData(28, 2, 2012));
+		filtro.setIdCota(1L);
+		filtro.setIdFornecedor(1L);
+		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.CODIGO_PRODUTO);
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+		
+		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
+		
+		paginacao.setPaginaAtual(1);
+		
+		paginacao.setQtdResultadosPorPagina(1000);
+		
+		filtro.setPaginacao(paginacao);
+		
+		return filtro;
+	}
+	
+	@Test
 	public void testarObterListaContagemDevolucaoComQtdMovimentoParcial() {
 		List<ContagemDevolucaoDTO> retorno = 
 				
@@ -338,24 +410,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testarObterValorTotal() {
-		
-		
-		@SuppressWarnings("unused")
 		BigDecimal total = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(
 				obterFiltro(), 
 				obterTipoMovimento());
 		
 		Assert.assertEquals(475, total.intValue());
-		
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testarObterListaContagemDevolucao() {
-		
-		@SuppressWarnings("unused")
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				obterFiltro(), 
 				obterTipoMovimento(),
@@ -365,7 +429,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testarObterQuantidadeContagemDevolucao() {
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
@@ -380,7 +443,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		PaginacaoVO paginacao = new PaginacaoVO();
 
-		paginacao.setOrdenacao(Ordenacao.ASC);
+		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
 		paginacao.setPaginaAtual(1);
 		paginacao.setQtdResultadosPorPagina(500);
 
@@ -397,7 +460,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
 		
-		//filtro.setIdFornecedor(fornecedorDinap.getId());
+		filtro.setIdFornecedor(fornecedorDinap.getId());
 		
 		return filtro;
 		
@@ -405,17 +468,15 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	
 	
 	private TipoMovimentoEstoque obterTipoMovimento() {
-		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		return tipoMovimentoEstoque;
-		
 	}
 	
-	private void obterMovimentoPorTipo(){
-		
+	@Test
+	public void obterMovimentoPorTipo(){
 		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",

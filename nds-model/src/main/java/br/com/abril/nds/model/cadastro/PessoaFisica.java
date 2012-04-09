@@ -31,6 +31,9 @@ public class PessoaFisica extends Pessoa {
 	@Column(name = "ORGAO_EMISSOR")
 	private String orgaoEmissor;
 	
+	@Column(name = "UF_ORGAO_EMISSOR")
+	private String ufOrgaoEmissor;
+	
 	@Column(name = "DATA_NASCIMENTO")
 	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
@@ -42,6 +45,15 @@ public class PessoaFisica extends Pessoa {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SEXO")
 	private Sexo sexo;
+	
+	@Column(name = "NACIONALIDADE")
+	private String nacionalidade;
+	
+	@Column(name = "NATURALIDADE")
+	private String natural;
+	
+	@Column(name = "APELIDO")
+	private String apelido;
 
 	public String getNome() {
 		return nome;
@@ -75,6 +87,14 @@ public class PessoaFisica extends Pessoa {
 		this.orgaoEmissor = orgaoEmissor;
 	}
 
+	public String getUfOrgaoEmissor() {
+		return ufOrgaoEmissor;
+	}
+
+	public void setUfOrgaoEmissor(String ufOrgaoEmissor) {
+		this.ufOrgaoEmissor = ufOrgaoEmissor;
+	}
+
 	public Date getDataNascimento() {
 		return dataNascimento;
 	}
@@ -97,6 +117,30 @@ public class PessoaFisica extends Pessoa {
 
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
+	}
+	
+	public String getApelido() {
+		return apelido;
+	}
+	
+	public void setApelido(String apelido) {
+		this.apelido = apelido;
+	}
+
+	public String getNacionalidade() {
+		return nacionalidade;
+	}
+
+	public void setNacionalidade(String nacionalidade) {
+		this.nacionalidade = nacionalidade;
+	}
+
+	public String getNatural() {
+		return natural;
+	}
+
+	public void setNatural(String natural) {
+		this.natural = natural;
 	}
 
 	@Override
