@@ -297,7 +297,7 @@ fieldset label
 						<td>Fornecedor:</td>
 						<td>
 							<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
-								<option selected="selected" value="-1"></option>
+								<option selected="selected" value="-1">Todos</option>
 								<c:forEach items="${fornecedores}" var="fornecedor">
 									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 								</c:forEach>
@@ -320,7 +320,7 @@ fieldset label
 						<td width="107">Tipo de Nota:</td>
 						<td width="293">
 						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
-							<option selected="selected" value="-1"></option>
+							<option selected="selected" value="-1">Todos</option>
 							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
 							</c:forEach>
@@ -330,7 +330,7 @@ fieldset label
 						<td colspan="2">
 						<select name="isNotaRecebida" id="selectNotaRecebida"
 								style="width: 135px;">
-								<option value="-1"></option>
+								<option value="-1">Todos</option>
 								<option value="1">Sim</option>
 								<option value="0">Não</option>
 						</select></td>
