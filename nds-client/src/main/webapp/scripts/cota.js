@@ -27,9 +27,9 @@ var cota = {
 	//Success callback para pesquisa por número da cota
 	pesquisarPorNumeroSuccessCallBack : function(result, idCampoNomeCota, successCallBack) {
 
-		$(idCampoNomeCota).val(result.nome);
+		cota.pesquisaRealizada = true;
 		
-		$(idCampoNomeCota).focus();
+		$(idCampoNomeCota).val(result.nome);
 		
 		if (successCallBack) {
 			
