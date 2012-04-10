@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +27,12 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 @Table(name = "PRODUTO_EDICAO", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"NUMERO_EDICAO", "PRODUTO_ID" })})
 @SequenceGenerator(name="PROD_ED_SEQ", initialValue = 1, allocationSize = 1)
-public class ProdutoEdicao {
+public class ProdutoEdicao implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1035863865037866666L;
 
 	@Id
 	@GeneratedValue(generator = "PROD_ED_SEQ")

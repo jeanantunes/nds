@@ -69,16 +69,17 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		produto.addFornecedor(dinap);
 		save(produto);
 		
+
 		ProdutoEdicao produtoEdicao =
 				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);		
 		save(produtoEdicao);
+
+		CFOP cfop = Fixture.cfop5102();
+		save(cfop);
+
 		
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();		
 		save(tipoNotaFiscal);
-		
-		CFOP cfop = new CFOP();
-		cfop = Fixture.cfop1209();
-		save(cfop);
 		
 		
 		PessoaJuridica emitente= Fixture.juridicaDinap(); 

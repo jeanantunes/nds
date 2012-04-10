@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +18,12 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @DiscriminatorValue(value = "F")
-public class PessoaFisica extends Pessoa {
+public class PessoaFisica extends Pessoa implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 526487374913437567L;
 
 	@Column(name = "NOME")
 	private String nome;

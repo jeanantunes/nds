@@ -14,7 +14,7 @@
 	    <td width="119">Tipo de Lançamento:</td>
 	    <td width="517">
 			<select name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
-		  		<option selected="selected"> </option>
+		  		<option selected="selected">Todos</option>
 				<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 					<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
 				</c:forEach>

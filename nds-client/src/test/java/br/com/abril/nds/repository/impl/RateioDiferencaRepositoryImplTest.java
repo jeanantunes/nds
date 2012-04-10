@@ -6,10 +6,8 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -139,17 +137,8 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(rateioDiferenca);
 	}
 	
-	@Test
-	@DirtiesContext
-	@Ignore //TODO: corrigir
-	public void verificarExistenciaRateioDiferencaTest(){
-		boolean test = this.rateioDiferencaRepositoryImpl.verificarExistenciaRateioDiferenca(diferenca.getId());
-		
-		Assert.assertTrue(test);
-	}
 	
 	@Test
-	@DirtiesContext
 	public void obterRateioDiferencaPorDiferencaTest(){
 		RateioDiferenca rateioDiferenca = this.rateioDiferencaRepositoryImpl.obterRateioDiferencaPorDiferenca(diferenca.getId());
 		

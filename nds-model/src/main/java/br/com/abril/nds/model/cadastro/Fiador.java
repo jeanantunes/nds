@@ -21,6 +21,9 @@ import javax.persistence.TemporalType;
 @SequenceGenerator(name="FIADOR_SEQ", initialValue = 1, allocationSize = 1)
 public class Fiador implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
 	private static final long serialVersionUID = -1574679595779557L;
 	
 	@Id

@@ -10,7 +10,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.fixture.Fixture;
@@ -295,27 +294,22 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	
 	
 	@Test
-	@DirtiesContext
 	public void testObterQtdTotalEncalheParcial() {
 		
 		BigDecimal qtd = conferenciaEncalheParcialRepositoryImpl.obterQtdTotalEncalheParcial(StatusAprovacao.PENDENTE, Fixture.criarData(28, Calendar.FEBRUARY, 2012), "1" ,1L);
 		
 		Assert.assertTrue(qtd.intValue() == 30);
-		
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testObterListaContagemDevolucao() {
 		
 		List<ContagemDevolucaoDTO> result = conferenciaEncalheParcialRepositoryImpl.obterListaContagemDevolucao(false, false, StatusAprovacao.PENDENTE, null, null, null, null);
 		
 		Assert.assertEquals(1, result.size());
-		
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testObterListaConferenciaEncalhe() {
 		
 		boolean 			diferencaApurada 	= false;
@@ -365,9 +359,6 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		idProdutoEdicao 	= null;                         
 		codigoProduto 		= "1";                         
 		numeroEdicao 		= 1L;                         
-		
-		
-		
 	}
 
 }

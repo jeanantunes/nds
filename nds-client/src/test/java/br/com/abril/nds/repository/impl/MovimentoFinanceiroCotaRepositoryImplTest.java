@@ -37,7 +37,9 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Autowired
-	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;	
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	private Cota cotaManoel;	
 	
 	@Before
 	public void setup() {
@@ -76,7 +78,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 				"developertestermail@gmail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box);
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box);
 		save(cotaManoel);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
@@ -104,7 +106,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
 		
 		listaMovimentoFinanceiro =
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(1L, calendar.getTime());
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(cotaManoel.getId(), calendar.getTime());
 		
 		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
 		
@@ -116,7 +118,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
 		
 		listaMovimentoFinanceiro =
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(1L, calendar.getTime());
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(cotaManoel.getId(), calendar.getTime());
 		
 		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
 	}

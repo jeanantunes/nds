@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -20,7 +21,12 @@ import br.com.abril.nds.model.HistoricoEdicao;
 @Entity
 @Table(name = "HISTORICO_SITUACAO_COTA")
 @SequenceGenerator(name="HIST_SIT_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoSituacaoCota extends HistoricoEdicao {
+public class HistoricoSituacaoCota extends HistoricoEdicao implements Serializable {
+	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -1015863608070260283L;
 	
 	@Id
 	@GeneratedValue(generator = "HIST_SIT_COTA_SEQ")
@@ -36,7 +42,7 @@ public class HistoricoSituacaoCota extends HistoricoEdicao {
 	@Column(name = "NOVA_SITUACAO", nullable = false)
 	private SituacaoCadastro novaSituacao;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MOTIVO", nullable = false)
+	@Column(name = "MOTIVO", nullable = true)
 	private MotivoAlteracaoSituacao motivo;
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_INICIO_VALIDADE")
@@ -44,7 +50,7 @@ public class HistoricoSituacaoCota extends HistoricoEdicao {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_FIM_VALIDADE")
 	private Date dataFimValidade;
-	@Column(name = "DESCRICAO")
+	@Column(name = "DESCRICAO", nullable = true)
 	private String descricao;
 	
 	public Long getId() {

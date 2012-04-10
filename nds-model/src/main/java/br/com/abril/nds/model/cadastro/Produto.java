@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +26,12 @@ import br.com.abril.nds.model.Origem;
 @Entity
 @Table(name = "PRODUTO")
 @SequenceGenerator(name="PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
-public class Produto {
+public class Produto implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 6632216954435821598L;
 
 	@Id
 	@GeneratedValue(generator = "PRODUTO_SEQ")
