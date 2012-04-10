@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,7 +30,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -150,7 +148,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(boleto);		
 	}
 	
-	@Ignore
 	@Test
 	public void obterBoletosPorNumeroDaCota() {
 		
@@ -174,8 +171,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		    Assert.assertEquals(NUMERO_COTA, boletos.get(i).getCota().getNumeroCota());
 		}
 	}
-	
-	@Ignore
+
 	@Test
 	public void obterQuantidadeDeBoletosPorNumeroDaCota() {
 		
@@ -192,7 +188,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
         Assert.assertTrue(qtdBoletos > 0);
 	}
 	
-	@Ignore
 	@Test
 	public void obterPorNossoNumero() {
 		
@@ -201,7 +196,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertNotNull(boleto);	
 	}
 	
-	@Ignore
 	@Test
 	public void obterPorNossoNumeroCompleto() {
 		

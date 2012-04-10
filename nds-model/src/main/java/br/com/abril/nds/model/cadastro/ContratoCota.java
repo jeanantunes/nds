@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -8,7 +10,12 @@ import javax.persistence.OneToOne;
 
 @Entity
 @DiscriminatorValue(value = "COTA")
-public class ContratoCota extends Contrato {
+public class ContratoCota extends Contrato implements Serializable {
+	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2620583362349546771L;
 	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")

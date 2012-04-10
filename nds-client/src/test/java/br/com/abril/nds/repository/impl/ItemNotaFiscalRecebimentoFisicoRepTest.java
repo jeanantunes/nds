@@ -49,11 +49,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		//salvei a pessoa Juridica
 		save(pj);
 		
-		CFOP cfop =new CFOP();
-		cfop.setCodigo("1");
-		cfop.setDescricao("cfop desc");
-		cfop.setId(1L);
-		//slavei o CFOP
+		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();

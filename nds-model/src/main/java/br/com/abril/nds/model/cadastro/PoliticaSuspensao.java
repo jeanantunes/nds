@@ -1,13 +1,19 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class PoliticaSuspensao {
+public class PoliticaSuspensao implements Serializable {
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 5431807534550378907L;
+
 	@Column(name = "NUM_ACUMULO_DIVIDA",nullable=true)
 	private Integer numeroAcumuloDivida;
 	

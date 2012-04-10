@@ -31,5 +31,12 @@ public interface SituacaoCotaService {
 	 * @return Total de registros
 	 */
 	Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro);
+	
+	/**
+	 * Atualiza a situação da cota baseando-se no histórico passado como parâmetro.
+	 * 
+	 * @param historicoSituacaoCota - histórico situação da cota 
+	 */
+	void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota); 
 
 }

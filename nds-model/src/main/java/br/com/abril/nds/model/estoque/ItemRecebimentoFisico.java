@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.estoque;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -16,8 +17,13 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 @Entity
 @Table(name = "ITEM_RECEB_FISICO")
 @SequenceGenerator(name="ITEM_REC_FISICO_SEQ", initialValue = 1, allocationSize = 1)
-public class ItemRecebimentoFisico {
+public class ItemRecebimentoFisico implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -6607298060913283881L;
+	
 	@Id
 	@GeneratedValue(generator = "ITEM_REC_FISICO_SEQ")
 	@Column(name = "ID")
