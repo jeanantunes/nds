@@ -777,6 +777,19 @@ public class Fixture {
 		estoqueProduto.setQtdeSuplementar(qtde);
 		return estoqueProduto;
 	}
+	
+	public static EstoqueProdutoCota estoqueProdutoCota(ProdutoEdicao produtoEdicao, BigDecimal qtde,
+			Cota cota, List<MovimentoEstoqueCota> movimentos) {
+		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
+		estoqueProdutoCota.setCota(cota);
+		estoqueProdutoCota.setMovimentos(movimentos);
+		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
+		estoqueProdutoCota.setQtdeDevolvida(qtde);
+		estoqueProdutoCota.setQtdeRecebida(qtde);
+		estoqueProdutoCota.setVersao(2L);
+		
+		return estoqueProdutoCota;
+	}
 
 	public static MovimentoEstoque movimentoEstoque(
 			ItemRecebimentoFisico itemRecebimentoFisico,

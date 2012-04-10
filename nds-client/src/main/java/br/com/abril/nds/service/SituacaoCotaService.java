@@ -38,5 +38,12 @@ public interface SituacaoCotaService {
 	 * @param historicoSituacaoCota - histórico situação da cota 
 	 */
 	void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota); 
+	
+	/**
+	 * Remove todos os agendamentos de alteração de status para esta cota.
+	 * 
+	 * @param idCota - id da cota
+	 */
+	void removerAgendamentosAlteracaoSituacaoCota(Long idCota);
 
 }
