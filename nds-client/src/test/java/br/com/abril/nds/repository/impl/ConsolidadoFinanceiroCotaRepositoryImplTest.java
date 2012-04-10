@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -100,6 +101,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 	}
 	
 	
+	@Ignore
 	@Test
 	public void obterEncalhedaCota(){
 		
@@ -107,7 +109,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 		Assert.assertTrue(lista.size() >0);
 		
-		
+		//TODO - Implementar
 		
 	}
 

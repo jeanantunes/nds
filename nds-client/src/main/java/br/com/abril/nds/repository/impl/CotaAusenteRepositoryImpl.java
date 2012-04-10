@@ -82,7 +82,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 			}	
 			
 			
-			if (filtro.getPaginacao() != null) {
+			if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null) {
 				if ("DESC".equalsIgnoreCase(filtro.getPaginacao().getOrdenacao().name())) {
 					queryNative.append(" DESC ");
 				} else {
