@@ -212,7 +212,7 @@ fieldset label {
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
 									de Boletos</a>
 							</li>
-							<li><a href="Financeiro/cadastro_manutencao_status.htm">Manutenção
+							<li><a href='<c:url value="/financeiro/manutencaoStatusCota"/>'>Manutenção
 									de Status Cota</a>
 							</li>
 							<li><a href="Financeiro/parametros_cobranca.htm">Parâmetros
