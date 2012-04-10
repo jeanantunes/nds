@@ -36,10 +36,6 @@ public class Fiador implements Serializable {
 	@Column(name = "INICIO_ATIVIDADE")
 	private Date inicioAtividade;
 	
-	@OneToOne
-	@JoinColumn(name = "PESSOA_ID_CONJUGE")
-	private Pessoa conjuge;
-	
 	@OneToMany(mappedBy = "fiador")
 	private List<Cota> cotasAssociadas;
 	
@@ -47,7 +43,7 @@ public class Fiador implements Serializable {
 	private List<Garantia> garantias;
 	
 	@OneToMany(mappedBy = "fiador")
-	private List<Pessoa> socios;
+	private List<PessoaFisica> socios;
 
 	public Long getId() {
 		return id;
@@ -73,14 +69,6 @@ public class Fiador implements Serializable {
 		this.inicioAtividade = inicioAtividade;
 	}
 
-	public Pessoa getConjuge() {
-		return conjuge;
-	}
-
-	public void setConjuge(Pessoa conjuge) {
-		this.conjuge = conjuge;
-	}
-
 	public List<Cota> getCotasAssociadas() {
 		return cotasAssociadas;
 	}
@@ -97,11 +85,11 @@ public class Fiador implements Serializable {
 		this.garantias = garantias;
 	}
 
-	public List<Pessoa> getSocios() {
+	public List<PessoaFisica> getSocios() {
 		return socios;
 	}
 
-	public void setSocios(List<Pessoa> socios) {
+	public void setSocios(List<PessoaFisica> socios) {
 		this.socios = socios;
 	}
 }

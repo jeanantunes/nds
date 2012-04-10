@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -45,10 +44,6 @@ public abstract class Pessoa {
 	@JoinColumn(name = "PESSOA_ID")
 	public List<Telefone> telefones = new ArrayList<Telefone>();
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_FIADOR")
-	private Fiador fiador;
-	
 	public Long getId() {
 		return id;
 	}
@@ -80,13 +75,4 @@ public abstract class Pessoa {
 	public void setTelefones(List<Telefone> telefones) {
 		this.telefones = telefones;
 	}
-
-	public Fiador getFiador() {
-		return fiador;
-	}
-
-	public void setFiador(Fiador fiador) {
-		this.fiador = fiador;
-	}
-
 }

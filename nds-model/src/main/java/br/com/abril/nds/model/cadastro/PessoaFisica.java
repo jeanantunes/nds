@@ -7,6 +7,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -54,6 +57,17 @@ public class PessoaFisica extends Pessoa {
 	
 	@Column(name = "APELIDO")
 	private String apelido;
+	
+	@OneToOne
+	@JoinColumn(name = "PESSOA_ID_CONJUGE")
+	private PessoaFisica conjuge;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_FIADOR")
+	private Fiador fiador;
+	
+	@Column(name = "SOCIO_PRINCIPAL")
+	private boolean socioPrincipal;
 
 	public String getNome() {
 		return nome;
@@ -141,6 +155,30 @@ public class PessoaFisica extends Pessoa {
 
 	public void setNatural(String natural) {
 		this.natural = natural;
+	}
+
+	public PessoaFisica getConjuge() {
+		return conjuge;
+	}
+
+	public void setConjuge(PessoaFisica conjuge) {
+		this.conjuge = conjuge;
+	}
+
+	public Fiador getFiador() {
+		return fiador;
+	}
+
+	public void setFiador(Fiador fiador) {
+		this.fiador = fiador;
+	}
+
+	public boolean isSocioPrincipal() {
+		return socioPrincipal;
+	}
+
+	public void setSocioPrincipal(boolean socioPrincipal) {
+		this.socioPrincipal = socioPrincipal;
 	}
 
 	@Override

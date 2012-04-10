@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -31,6 +33,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.TelefoneService;
@@ -63,6 +66,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
+	
+	@Autowired
+	private TelefoneCotaRepository telefoneCotaRepository;
 	
 	@Autowired
 	private TelefoneService telefoneService;
@@ -153,39 +159,6 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	@Transactional
-	public void processarTelefones(Long idCota, 
-			List<TelefoneCota> listaTelefonesAdicionar, 
-			Collection<Long> listaTelefonesRemover){
-		
-		if (idCota == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
-		}
-		
-		Cota cota = this.cotaRepository.buscarPorId(idCota);
-		
-		if (cota == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
-		}
-		
-		for (TelefoneCota tCota : listaTelefonesAdicionar){
-			tCota.setCota(cota);
-		}
-		
-		this.telefoneService.cadastrarTelefonesCota(listaTelefonesAdicionar, listaTelefonesRemover);
-		
-		List<Telefone> listaTelefone = new ArrayList<Telefone>();
-		
-		for (TelefoneCota telefoneCota : listaTelefonesAdicionar){
-			listaTelefone.add(telefoneCota.getTelefone());
-		}
-		
-		cota.getPessoa().setTelefones(listaTelefone);
-		
-		this.cotaRepository.alterar(cota);
-		
-	}
-	
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
@@ -228,6 +201,99 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		this.enderecoRepository.removerEnderecos(idsEndereco);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
+		
+		if (idCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		}
+		
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneCotaRepository.buscarTelefonesPessoaPorCota(idCota);
+		
+		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
+			listaTel.remove(tDto.getTelefone());
+		}
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
+	
+	@Transactional
+	public void processarTelefones(Long idCota, 
+			List<TelefoneAssociacaoDTO> listaTelefonesAdicionar, 
+			Collection<Long> listaTelefonesRemover){
+		
+		if (idCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+		}
+		
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		
+		if (cota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		}
+		
+		this.salvarTelefonesCota(cota, listaTelefonesAdicionar);
+		
+		this.removerTelefonesCota(listaTelefonesRemover);
+		
+		List<Telefone> listaTelefone = new ArrayList<Telefone>();
+		
+		for (TelefoneAssociacaoDTO telefoneCota : listaTelefonesAdicionar){
+			listaTelefone.add(telefoneCota.getTelefone());
+		}
+		
+		cota.getPessoa().setTelefones(listaTelefone);
+		
+		this.cotaRepository.alterar(cota);
+		
+	}
+
+	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
+		
+		this.telefoneService.cadastrarTelefone(listaTelefonesCota);
+		
+		if (listaTelefonesCota != null){
+			boolean isTelefonePrincipal = false;
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefonesCota){
+				
+				if (isTelefonePrincipal && dto.isPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				}
+				
+				if (dto.isPrincipal()){
+					isTelefonePrincipal = dto.isPrincipal();
+				}
+				
+				TelefoneCota telefoneCota = new TelefoneCota();
+				telefoneCota.setCota(cota);
+				telefoneCota.setPrincipal(dto.isPrincipal());
+				telefoneCota.setTelefone(dto.getTelefone());
+				telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneCotaRepository.adicionar(telefoneCota);
+			}
+		}
+	}
+
+	private void removerTelefonesCota(Collection<Long> listaTelefonesCota) {
+		
+		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
+			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
+			
+			this.telefoneService.removerTelefones(listaTelefonesCota);
+		}
 	}
 
 	@Transactional
@@ -314,6 +380,27 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public Long obterTotalCotasSujeitasSuspensao() {
 		return cotaRepository.obterTotalCotasSujeitasSuspensao();
-	}		
+	}
 	
+	@Override
+	@Transactional
+	public String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota){
+		Cota cota = this.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota != null){
+			if (cota.getPessoa() instanceof PessoaFisica){
+				return ((PessoaFisica) cota.getPessoa()).getNome();
+			} else {
+				return ((PessoaJuridica) cota.getPessoa()).getRazaoSocial();
+			}
+		}
+		
+		return "";
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotaAssociadaFiador(Long idFiador){
+		return this.cotaRepository.obterCotaAssociadaFiador(idFiador);
+	}
 }

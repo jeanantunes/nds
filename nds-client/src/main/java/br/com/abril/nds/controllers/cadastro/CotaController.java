@@ -19,9 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
@@ -47,9 +45,6 @@ public class CotaController {
 	@Autowired
 	private HttpSession session;
 	
-	@Autowired
-	private TelefoneService telefoneService;
-
 	public CotaController(Result result) {
 
 		this.result = result;
@@ -82,7 +77,7 @@ public class CotaController {
 		);
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
-				this.telefoneService.buscarTelefonesCota(idCota, null);
+				this.cotaService.buscarTelefonesCota(idCota, null);
 		
 		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
 		
@@ -122,17 +117,10 @@ public class CotaController {
 	private void processarTelefonesCota(Long idCota){
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
-		List<TelefoneCota> lista = new ArrayList<TelefoneCota>();
+		List<TelefoneAssociacaoDTO> lista = new ArrayList<TelefoneAssociacaoDTO>();
 		for (Integer key : map.keySet()){
 			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
-				TelefoneCota telefoneCota = new TelefoneCota();
-				telefoneCota.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-				telefoneCota.setTelefone(telefoneAssociacaoDTO.getTelefone());
-				telefoneCota.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
-				
-				lista.add(telefoneCota);
-			}
+			lista.add(telefoneAssociacaoDTO);
 		}
 		
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
