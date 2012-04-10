@@ -1,13 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -16,21 +17,32 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.RecebimentoFisicoService;
+import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 
-@Ignore
+
 public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryImplTest{
 	
-	@Autowired
-	private ItemNotaFiscalEntradaRepositoryImpl itemNotaRepository;
+	ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
+	Usuario usuario = new Usuario();
+	TipoProduto tipoProduto = new TipoProduto();
+	TipoFornecedor tipoFornecedorPublicacao = new TipoFornecedor();
+	TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+	ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
+	NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
+	RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
 	
+	Date dataAtual = new Date();
+		
 	@Autowired
-	private RecebimentoFisicoService recebimentoFisicoService;
+	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
 	
 	String cnpj = "00.000.000/0001-00";
 	String chave = "11111";
@@ -39,74 +51,65 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 	
 	@Before
 	public void setup() {
+		
+				
+		Usuario usuario = Fixture.usuarioJoao();
+		save(usuario);
+		
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
+		save(tipoProduto);
+		
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 		
 		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 		
-		PessoaJuridica pj = Fixture.juridicaFC();
-		//salvei a pessoa Juridica
-		save(pj);
-		
-		CFOP cfop =new CFOP();
-		cfop.setCodigo("1");
-		cfop.setDescricao("cfop desc");
-		cfop.setId(1L);
-		//slavei o CFOP
-		save(cfop);
-		
-		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-		//Salvei Tipo
-		save(tipoNotaFiscal);
-		//notaFiscal = Fixture.notaFiscalFornecedor(cfop, pj, Fixture.fornecedorFC(), tipoNotaFiscal, Fixture.usuarioJoao());
-	
-	
-		
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
-		//Salvei a Nota Fiscal
-		save(notaFiscal);		
-		
-		
-		Usuario usuario = Fixture.usuarioJoao();
-		usuario.setId(4L);
-		//salvei o usuario
-		save(usuario);
-		
-							
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
-		save(tipoProduto);
-		
 		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		produto.addFornecedor(dinap);
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao =
-				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
-		produtoEdicao.setId(1L);
-		save(produtoEdicao);	
+				Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);		
+		save(produtoEdicao);
+		
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();		
+		save(tipoNotaFiscal);
+		
+		CFOP cfop = new CFOP();
+		cfop = Fixture.cfop1209();
+		save(cfop);
+		
+		
+		PessoaJuridica emitente= Fixture.juridicaDinap(); 
+		save(emitente);
+		
+				
+		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();	
+		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, emitente, dinap, tipoNotaFiscal, usuario, new BigDecimal(12), new BigDecimal(33), new BigDecimal(11));
+		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);	
+		save(notaFiscal);
+		
+			
+		
+		itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscal, dataAtual, dataAtual, TipoLancamento.LANCAMENTO, new BigDecimal(23));
+		save(itemNotaFiscal);
+		
+		recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, dataAtual, dataAtual, StatusConfirmacao.PENDENTE);
+		save(recebimentoFisico);
 	}
 		
 	@Test
-	public void inserirItemNotaComDTO() {
-	
-		
-		/*//teste para analisar um item de Nota sem ItemRecebimento e sem RecebimentoFisico
-		ItemNotaRecebimentoFisicoDTO dto = new ItemNotaRecebimentoFisicoDTO(
-				Fixture.criarData(12, 12, 1983), 
-				Fixture.criarData(12, 03, 1983),  
-				new BigDecimal(0.1),
-				TipoLancamento.LANCAMENTO,
-				1L,null,null,1L,1L);
-		*/
-		
-		NotaFiscal notaFiscal= new NotaFiscalEntradaFornecedor();
-		//List<ItemNotaRecebimentoFisicoDTO> listaItensNota = new ArrayList<ItemNotaRecebimentoFisicoDTO>();
+	public void inserirItemNotaRecebimento() {					
 		
 		
-		//recebimentoFisicoService.inserirDadosRecebimentoFisico(notaFiscal, listaItensNota);
-		System.out.println("");
+		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
+		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
+		itemRecebimento.setQtdeFisico(new BigDecimal(12));
+		
+		itemRecebimento.setRecebimentoFisico(recebimentoFisico);
+		
+		itemRecebimentoFisicoRepository.adicionar(itemRecebimento);		
 		
 		
 	}
