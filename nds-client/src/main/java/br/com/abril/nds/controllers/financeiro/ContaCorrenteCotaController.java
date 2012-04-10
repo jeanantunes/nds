@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -22,6 +25,8 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -48,6 +53,9 @@ public class ContaCorrenteCotaController {
 
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
 	
 	@Autowired
 	private HttpSession session;
@@ -88,6 +96,45 @@ public class ContaCorrenteCotaController {
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	/**
+	 * Consulta os encalhes da cota em uma determinada data
+	 * @param filtroConsolidadoEncalheDTO
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 */
+	public void consultarEncalheCota(FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO, String sortname, String sortorder, int rp, int page ){
+		
+		//TODO: chamar o service do consolidado
+		List<EncalheCotaDTO> listaEncalheCota = mockLista();//consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
+		
+		TableModel<CellModel> tableModel =  obterTableModelParaEncalheCota(listaEncalheCota);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	public List<EncalheCotaDTO> mockLista(){
+		
+		List<EncalheCotaDTO> listaEncalheCota = new ArrayList<EncalheCotaDTO>();
+		
+		EncalheCotaDTO encalheDTO = new EncalheCotaDTO();
+		encalheDTO.setCodigoProduto("458");
+		encalheDTO.setNomeProduto("Turma Monica");
+		encalheDTO.setNumeroEdicao(2323L);
+		encalheDTO.setPrecoCapa(new BigDecimal(10));
+		encalheDTO.setPrecoComDesconto(new BigDecimal(20));
+		encalheDTO.setEncalhe(new BigDecimal(8));
+		encalheDTO.setNomeFornecedor("ACME");
+		encalheDTO.setTotal(new BigDecimal(123456));
+		
+		listaEncalheCota.add(encalheDTO);
+		
+		return listaEncalheCota;		
+		
 	}
 	
 	public void exportar(FileType fileType) throws IOException {
@@ -248,6 +295,55 @@ public class ContaCorrenteCotaController {
 		
 		return tableModel;
 		
+	}
+	
+	/**
+	 * Obtem uma lista de Encalhe da cota no dia selecionado e prepara o Grid para receber os valores
+	 * @param itensContaCorrenteCota
+	 * @return
+	 */
+	private TableModel<CellModel> obterTableModelParaEncalheCota(List<EncalheCotaDTO> listaEncalheCota) {
+					
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+		
+		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();		
+			
+		int counter = 1;
+		
+		for(EncalheCotaDTO dto : listaEncalheCota) {		
+			
+			String codigoProduto 		 = dto.getCodigoProduto().toString();
+			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
+			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
+			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
+			String encalhe		 	 	 = (dto.getEncalhe()		    == null) 	? "0.0" : dto.getEncalhe().toString();
+			String nomeFornecedor	 	 = (dto.getNomeFornecedor() 	== null) 	? "0.0" : dto.getNomeFornecedor();
+			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
+					
+			listaModeloGenerico.add(
+					new CellModel( 	
+							counter, 
+							codigoProduto, 
+							nomeProduto, 
+							numeroEdicao, 
+							precoCapa, 
+							precoComDesconto,
+							encalhe,
+							nomeFornecedor,
+							total
+					));
+			
+			counter++;
+		}
+						
+		//result.include("cotaNome",cota.getNumeroCota()+" "+cota.getPessoa() );
+		
+		tableModel.setPage(1);
+		tableModel.setTotal(listaModeloGenerico.size());
+		tableModel.setRows(listaModeloGenerico);
+		
+		return tableModel;		
 	}
 			
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {

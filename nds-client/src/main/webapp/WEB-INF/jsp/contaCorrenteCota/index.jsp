@@ -43,6 +43,32 @@ function pesquisarItemContaCorrenteCota() {
 }
 
 /**
+ * FAZ A PESQUISA DE ENCALHE DA COTA EM UMA DETERMINADA DATA
+ */
+function pesquisarEncalheCota(){
+	
+	
+	//***************************************************
+	
+	var numeroCota = $("#cota").val();
+	
+	//como passar a data pelo click no link do GRID ?
+
+	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota }];
+	
+	$(".encalheCotaGrid").flexOptions({
+		
+		url : '<c:url value="/financeiro/contaCorrenteCota/consultarEncalheCota" />', params: parametroPesquisa
+				
+	});
+
+	$(".encalheCotaGrid").flexReload();
+	
+	//***************************************************
+	
+}
+
+/**
  * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
  */
 function getDataFromResult(data) {
@@ -68,14 +94,11 @@ function getDataFromResult(data) {
 		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 		
 			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
-			value.cell[4] = '<a href="#"/>'+encalhe+'</a>'+hiddeFields;
+			value.cell[4] = '<a href="javascript:;" onclick="popup_encalhe();"/>'+encalhe+'</a>'+hiddeFields;
 			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
 			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
 			value.cell[7] = '<a href="#"/>'+encargos+'</a>'+hiddeFields;
-			
-			
-			
-		
+					
 		});
 		
 	
@@ -181,6 +204,74 @@ function carregarItemContaCorrenteCotaGrid() {
 	});
 }
 
+/**
+ * ESTRUTURA DE COLUNAS DA GRID ENCALHE COTA.
+ */
+function carregarEncalheCotaGrid() {
+	
+	$(".encalheCotaGrid").flexigrid({
+		preProcess: getDataFromResult,
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 90,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Edição',
+			name : 'numeroEdicao',
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoVenda',
+			width : 90,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Preço c/ Desc. R$',
+			name : 'precoComDesconto',
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Encalhe',
+			name : 'encalhe',
+			width : 90,
+			sortable : true,
+			align : 'right',
+		}, {
+			display : 'Fornecedor',
+			name : 'nomeFornecedor',
+			width : 80,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Total R$',
+			name : 'total',
+			width : 80,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	});
+}
+
 function popup_consignado() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -213,7 +304,7 @@ function popup_encalhe() {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					
-					$(".grids").show();
+					$(".gridsEncalhe").show();
 					
 				}
 			}
@@ -284,6 +375,22 @@ function popup_encargos() {
 
 <body>
 
+<div id="dialog-encalhe" title="Encalhe da Cota">
+	<fieldset>
+    	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revista</legend>
+        
+        <div class="gridsEncalhe" style="display: none;">      
+        
+	        <table class="encalheCotaGrid"></table>
+	        
+	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	       		       	
+	    </div>   
+    </fieldset>
+
+</div>
+
 <div class="corpo">
  
      <div class="container">
@@ -314,7 +421,7 @@ function popup_encargos() {
        	  <legend>Conta-Corrente Selecionado</legend>
        
        <div class="grids" style="display: none;">
-       
+      
           <strong><span id="cotanome"></span></strong>
           <br />
 			

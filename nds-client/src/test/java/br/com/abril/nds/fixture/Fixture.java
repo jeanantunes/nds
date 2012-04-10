@@ -619,6 +619,14 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.CREDITO);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio do Encalhe");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
