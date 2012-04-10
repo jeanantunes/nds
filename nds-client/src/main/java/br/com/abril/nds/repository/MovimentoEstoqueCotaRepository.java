@@ -15,6 +15,10 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
 
+	public BigDecimal obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
+	
+	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
+	
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque, 

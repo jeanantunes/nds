@@ -434,7 +434,7 @@ public class ManutencaoStatusCotaController {
 		
 		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
 			
-			listaMensagens.add("Informe o Status!");
+			listaMensagens.add("O preenchimento do campo [Status] é obrigatório!");
 		}
 		
 		if (novoHistoricoSituacaoCota.getCota() == null
@@ -485,13 +485,13 @@ public class ManutencaoStatusCotaController {
 		
 		if (novoHistoricoSituacaoCota.getMotivo() == null) {
 			
-			listaMensagens.add("Informe o Motivo!");
+			listaMensagens.add("O preenchimento do campo [Motivo] é obrigatório!");
 		}
 		
 		if (novoHistoricoSituacaoCota.getDescricao() == null
 				|| novoHistoricoSituacaoCota.getDescricao().trim().isEmpty()) {
 			
-			listaMensagens.add("Informe a Descrição!");
+			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
