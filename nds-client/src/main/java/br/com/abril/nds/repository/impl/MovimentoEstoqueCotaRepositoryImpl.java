@@ -30,7 +30,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		super(MovimentoEstoqueCota.class);
 	}
 
-	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
+	public BigDecimal obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
 
 		StringBuffer sql = new StringBuffer();
 
@@ -52,13 +52,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
 
-		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+		BigDecimal qtde = (BigDecimal) sqlquery.uniqueResult();
 		
-		return ((qtde == null) ? 0 : qtde.intValue());
+		return ((qtde == null) ? BigDecimal.ZERO : qtde);
 		
 	}
 
-	public Integer obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
+	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
 
 		StringBuffer sql = new StringBuffer();
 
@@ -89,11 +89,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		}
 		
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
-
 		
-		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+		BigDecimal qtde = (BigDecimal) sqlquery.uniqueResult();
 		
-		return ((qtde == null) ? 0 : qtde.intValue());		
+		return ((qtde == null) ? BigDecimal.ZERO : qtde);		
 	}
 
 	

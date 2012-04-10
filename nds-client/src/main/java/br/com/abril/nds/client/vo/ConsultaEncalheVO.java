@@ -1,38 +1,47 @@
-package br.com.abril.nds.dto;
+package br.com.abril.nds.client.vo;
 
-import java.math.BigDecimal;
+import br.com.abril.nds.util.export.Export;
 
-public class ConsultaEncalheDTO {
+public class ConsultaEncalheVO {
 
-	private Long idProdutoEdicao;
+	private String idProdutoEdicao;
 	
+	@Export(label="Código")
 	private String codigoProduto;
 	
+	@Export(label="Produto")
 	private String nomeProduto;
 	
-	private Long numeroEdicao;
+	@Export(label="Edição")
+	private String numeroEdicao;
 	
-	private BigDecimal precoVenda;
+	@Export(label="Preço Capa R$")
+	private String precoVenda;
 	
-	private BigDecimal precoComDesconto;
+	@Export(label="Preço com Desc. R$")
+	private String precoComDesconto;
 	
-	private BigDecimal reparte;
+	@Export(label="Reparte")
+	private String reparte;
 	
-	private BigDecimal encalhe;
+	@Export(label="Encalhe")
+	private String encalhe;
 	
+	@Export(label="Fornecedor")
 	private String fornecedor;
 	
-	private BigDecimal total;
+	@Export(label="Total R$")
+	private String total;
 	
-	private Integer recolhimento;
-	
+	@Export(label="Recolhimento")
+	private String recolhimento;
 
 	/**
 	 * Obtém idProdutoEdicao
 	 *
-	 * @return Long
+	 * @return String
 	 */
-	public Long getIdProdutoEdicao() {
+	public String getIdProdutoEdicao() {
 		return idProdutoEdicao;
 	}
 
@@ -40,7 +49,7 @@ public class ConsultaEncalheDTO {
 	 * Atribuí idProdutoEdicao
 	 * @param idProdutoEdicao 
 	 */
-	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+	public void setIdProdutoEdicao(String idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
@@ -81,9 +90,9 @@ public class ConsultaEncalheDTO {
 	/**
 	 * Obtém numeroEdicao
 	 *
-	 * @return Long
+	 * @return String
 	 */
-	public Long getNumeroEdicao() {
+	public String getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
@@ -91,16 +100,16 @@ public class ConsultaEncalheDTO {
 	 * Atribuí numeroEdicao
 	 * @param numeroEdicao 
 	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
+	public void setNumeroEdicao(String numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
 
 	/**
 	 * Obtém precoVenda
 	 *
-	 * @return BigDecimal
+	 * @return String
 	 */
-	public BigDecimal getPrecoVenda() {
+	public String getPrecoVenda() {
 		return precoVenda;
 	}
 
@@ -108,16 +117,16 @@ public class ConsultaEncalheDTO {
 	 * Atribuí precoVenda
 	 * @param precoVenda 
 	 */
-	public void setPrecoVenda(BigDecimal precoVenda) {
+	public void setPrecoVenda(String precoVenda) {
 		this.precoVenda = precoVenda;
 	}
 
 	/**
 	 * Obtém precoComDesconto
 	 *
-	 * @return BigDecimal
+	 * @return String
 	 */
-	public BigDecimal getPrecoComDesconto() {
+	public String getPrecoComDesconto() {
 		return precoComDesconto;
 	}
 
@@ -125,16 +134,16 @@ public class ConsultaEncalheDTO {
 	 * Atribuí precoComDesconto
 	 * @param precoComDesconto 
 	 */
-	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+	public void setPrecoComDesconto(String precoComDesconto) {
 		this.precoComDesconto = precoComDesconto;
 	}
 
 	/**
 	 * Obtém reparte
 	 *
-	 * @return BigDecimal
+	 * @return String
 	 */
-	public BigDecimal getReparte() {
+	public String getReparte() {
 		return reparte;
 	}
 
@@ -142,16 +151,16 @@ public class ConsultaEncalheDTO {
 	 * Atribuí reparte
 	 * @param reparte 
 	 */
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(String reparte) {
 		this.reparte = reparte;
 	}
 
 	/**
 	 * Obtém encalhe
 	 *
-	 * @return BigDecimal
+	 * @return String
 	 */
-	public BigDecimal getEncalhe() {
+	public String getEncalhe() {
 		return encalhe;
 	}
 
@@ -159,7 +168,7 @@ public class ConsultaEncalheDTO {
 	 * Atribuí encalhe
 	 * @param encalhe 
 	 */
-	public void setEncalhe(BigDecimal encalhe) {
+	public void setEncalhe(String encalhe) {
 		this.encalhe = encalhe;
 	}
 
@@ -183,9 +192,9 @@ public class ConsultaEncalheDTO {
 	/**
 	 * Obtém total
 	 *
-	 * @return BigDecimal
+	 * @return String
 	 */
-	public BigDecimal getTotal() {
+	public String getTotal() {
 		return total;
 	}
 
@@ -193,16 +202,16 @@ public class ConsultaEncalheDTO {
 	 * Atribuí total
 	 * @param total 
 	 */
-	public void setTotal(BigDecimal total) {
+	public void setTotal(String total) {
 		this.total = total;
 	}
 
 	/**
 	 * Obtém recolhimento
 	 *
-	 * @return Integer
+	 * @return String
 	 */
-	public Integer getRecolhimento() {
+	public String getRecolhimento() {
 		return recolhimento;
 	}
 
@@ -210,8 +219,9 @@ public class ConsultaEncalheDTO {
 	 * Atribuí recolhimento
 	 * @param recolhimento 
 	 */
-	public void setRecolhimento(Integer recolhimento) {
+	public void setRecolhimento(String recolhimento) {
 		this.recolhimento = recolhimento;
 	}
+
 	
 }
