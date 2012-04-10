@@ -9,6 +9,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * Listener do contexto da aplicação.
@@ -33,17 +36,31 @@ public class ApplicationContextListener implements ServletContextListener {
             	
                 DriverManager.deregisterDriver(driver);
                 
-                logger.info(String.format("Deregistering jdbc driver: %s", driver));
+                logger.info(String.format("Desregistrando driver JDBC: %s", driver));
                 
             } catch (SQLException e) {
             	
-            	logger.error(String.format("Error deregistering driver %s", driver), e);
+            	logger.error(String.format("Erro desregistrando driver JDBC:  %s", driver), e);
             }
 
         }
 	}
 
 	@Override
-	public void contextInitialized(ServletContextEvent servletContextEvent) { }
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		
+		try {
+			
+            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+            scheduler.start();
+
+        } catch (SchedulerException se) {
+        	
+        	logger.fatal("Falha ao inicializar agendador do Quartz", se);
+        	
+            throw new RuntimeException(se);
+        }
+	}
 
 }

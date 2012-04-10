@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,12 @@ import br.com.abril.nds.model.DiaSemana;
 @Entity
 @Table(name = "CONCENTRACAO_COBRANCA_COTA")
 @SequenceGenerator(name = "CONCENTRACAO_COBRANCA_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class ConcentracaoCobrancaCota {
+public class ConcentracaoCobrancaCota implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2853089015516318425L;
 
 	@Id
 	@Column(name = "ID")

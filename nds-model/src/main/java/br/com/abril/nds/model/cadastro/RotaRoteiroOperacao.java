@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,8 +18,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ROTA_ROTEIRO_OPERACAO")
 @SequenceGenerator(name="ROTA_ROTEIRO_OPERACAO_SEQ", initialValue = 1, allocationSize = 1)
-public class RotaRoteiroOperacao {
+public class RotaRoteiroOperacao implements Serializable {
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(generator = "ROTA_ROTEIRO_OPERACAO_SEQ")
 	@Column(name = "ID")

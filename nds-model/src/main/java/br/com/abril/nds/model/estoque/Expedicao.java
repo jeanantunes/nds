@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.estoque;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,9 +23,14 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "EXPEDICAO")
 @SequenceGenerator(name = "EXPEDICAO_SEQ", initialValue = 1, allocationSize = 1)
-public class Expedicao {
+public class Expedicao implements Serializable {
 
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -8509202379247048936L;
+
 	@Id
 	@GeneratedValue(generator = "EXPEDICAO_SEQ")
 	@Column(name = "ID")
