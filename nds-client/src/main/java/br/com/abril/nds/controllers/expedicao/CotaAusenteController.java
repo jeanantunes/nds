@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -43,6 +44,7 @@ public class CotaAusenteController {
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
 	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
+	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
 	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
@@ -86,7 +88,13 @@ public class CotaAusenteController {
 	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, 
 			String box,String sortorder, String sortname, int page, int rp) {
 		
-		//try {
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+
+		TableModel<CellModelKeyValue<CotaAusenteDTO>> grid = null;
+		
+		try {
 			Date data = validaData(dataAusencia);
 			
 			boolean isDataOperacao = isDataOperacao(data);
@@ -100,10 +108,30 @@ public class CotaAusenteController {
 					
 			tratarFiltro(filtro);
 			
-			efetuarConsulta(filtro, isDataOperacao);
-		//}
+			grid = efetuarConsulta(filtro, isDataOperacao);
+		} catch(ValidacaoException e) {
 		
-		//TODO WARNING_PESQUISA_SEM_RESULTADO
+			mensagens.clear();
+		
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;	
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_PESQUISAR_COTAS_AUSENTES);
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_PESQUISAR_COTAS_AUSENTES, e);
+		}
+	
+		if(grid==null) {
+			grid = new TableModel<CellModelKeyValue<CotaAusenteDTO>>();
+		}
+		
+		Object[] retorno = new Object[3];
+		retorno[0] = grid;
+		retorno[1] = mensagens;
+		retorno[2] = status.name();
+	
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		
 	}
 	
@@ -111,7 +139,7 @@ public class CotaAusenteController {
 	 * Efetua a consulta e monta a estrutura do grid de CotasAusentes.
 	 * @param filtro
 	 */
-	private void efetuarConsulta(FiltroCotaAusenteDTO filtro, boolean isDataOperacao) {
+	private TableModel<CellModelKeyValue<CotaAusenteDTO>> efetuarConsulta(FiltroCotaAusenteDTO filtro, boolean isDataOperacao) {
 		
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
@@ -122,7 +150,7 @@ public class CotaAusenteController {
 		}
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
 		}
 		
 		if(!isDataOperacao) {
@@ -141,8 +169,7 @@ public class CotaAusenteController {
 		
 		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+		return tableModel;
 	}
 
 	private boolean isDataOperacao(Date data) {
@@ -229,16 +256,20 @@ public class CotaAusenteController {
 			mensagens.clear();
 			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
 			status=TipoMensagem.WARNING;			
-		}catch(Exception e) {
+		}catch(TipoMovimentoEstoqueInexistente e) {
 			mensagens.clear();
-			mensagens.add(ERRO_ENVIO_SUPLEMENTAR);
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.WARNING;
+		} catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_ENVIO_SUPLEMENTAR );
 			status=TipoMensagem.ERROR;
 			LOG.error(ERRO_ENVIO_SUPLEMENTAR, e);
 		}
 		
 		Object[] retorno = new Object[2];
 		retorno[0] = mensagens;
-		retorno[1] = status.name();		
+		retorno[1] = status;		
 		
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}

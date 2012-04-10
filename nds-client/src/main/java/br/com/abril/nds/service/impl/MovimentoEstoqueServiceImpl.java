@@ -31,6 +31,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 
 @Service
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
@@ -93,13 +94,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
-	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota){
+	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistente{
 		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 			
-			TipoMovimentoEstoque tipoMovimentoCota =
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		TipoMovimentoEstoque tipoMovimentoCota =
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		
+		if ( tipoMovimento == null ) {
+		 	throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);		
+		} 
+		
+		if ( tipoMovimentoCota == null ) {
+			throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		}
 		
 		if(listaMovimentoCota != null){
 			

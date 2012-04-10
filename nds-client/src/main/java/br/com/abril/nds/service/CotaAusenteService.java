@@ -6,10 +6,11 @@ import java.util.List;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.model.movimentacao.RateioCotaAusente;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 
 public interface CotaAusenteService {
 	
-	void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario);
+	void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario) throws TipoMovimentoEstoqueInexistente;
 	
 	List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO);
 	

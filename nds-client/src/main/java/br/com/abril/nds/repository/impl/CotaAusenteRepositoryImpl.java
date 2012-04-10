@@ -121,13 +121,15 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		return query.list();
 		
 	}
+	
+	
 	@Override
 	@Transactional
 	public Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro) {
 
 		StringBuilder queryNative = new StringBuilder();
 		
-		queryNative.append("SELECT COUNT(cota.ID)																		"); 	
+		queryNative.append("SELECT COUNT(*)																		"); 	
 		queryNative.append("FROM COTA cota																		");
 		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
 		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
@@ -142,12 +144,6 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		if(filtro.getBox() != null){			
 			queryNative.append("and box.CODIGO = :box 															");
 		}
-		
-		queryNative.append("group by 		");
-		queryNative.append("ca.DATA, 			");
-		queryNative.append("box.NOME, 			");
-		queryNative.append("cota.NUMERO_COTA,			");
-		queryNative.append("pessoa.NOME			");		
 				
 		Query query  = getSession().createSQLQuery(queryNative.toString());
 			

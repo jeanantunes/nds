@@ -38,23 +38,25 @@ function cliquePesquisar() {
 
 function processaRetornoPesquisa(result) {
 	
-	//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
-	if (result.mensagens) {
-		exibirMensagem(
-				result.mensagens.tipoMensagem, 
-				result.mensagens.listaMensagens
-		);
-		$(".grids").hide();
-		return result.tableModel;
+	var grid = result[0];
+	var mensagens = result[1];
+	var status = result[2];
+	
+	if(mensagens!=null && mensagens.length!=0) {
+		exibirMensagem(status,mensagens);
 	}
 	
-	$.each(result.rows, function(index, row) {
+	if(!grid.rows) {
+		return grid;
+	}
+	
+	$.each(grid.rows, function(index, row) {
 		
 		row.cell.acao = gerarBotaoExcluir(row.cell.idCotaAusente);		
 		
   	});
 	
-	return result;
+	return grid;
 }
 
 function gerarBotaoExcluir(idCotaAusente) {
@@ -130,15 +132,15 @@ function popupConfirmaAusenciaCota(numcota) {
 			}
 		});
 }
-var gui;
+
 function retornoEnvioSuplementar(result) {
-	gui = result;
-	var status = result[0];
-	var mensagens = result[1];
 	
-	exibirMensagem(status, [mensagens]);
+	var mensagens = result[0];
+	var status = result[1];
 	
-	$( "#dialog-confirm" ).close;
+	exibirMensagem(status, mensagens);
+	
+	$( "#dialog-confirm" ).dialog("close");
 	
 }
 
