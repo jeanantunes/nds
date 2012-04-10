@@ -34,6 +34,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -46,6 +47,9 @@ import br.com.abril.nds.util.TipoMensagem;
  */
 @Service
 public class CotaServiceImpl implements CotaService {
+	
+	@Autowired
+	private SituacaoCotaService situacaoCotaService; 
 	
 	@Autowired
 	private CotaRepository cotaRepository;
@@ -305,6 +309,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 		cotaRepository.alterar(cota);
+		
+		situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
+		
 		return cota;
 	}
 	
