@@ -470,7 +470,7 @@
         	field = replaceAll(field, ".", "");
     		return field;
     	};
-        
+
 		function calculaTotalManual() {
         	
 			var valorBoleto = removeMascaraPriceFormat($("#valorBoletoHidden").val());

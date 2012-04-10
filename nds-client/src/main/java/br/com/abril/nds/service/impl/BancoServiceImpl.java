@@ -1,15 +1,16 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.client.vo.BancoVO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.service.BancoService;
 
@@ -28,6 +29,7 @@ public class BancoServiceImpl implements BancoService {
 	/**
 	 * Método responsavel por obter bancos cadastrados
 	 * @param filtro: parametros de busca
+	 * @return {@link List<Banco>}
 	 */
 	@Transactional(readOnly=true)
 	@Override
@@ -38,6 +40,7 @@ public class BancoServiceImpl implements BancoService {
 	/**
 	 * Método responsavel por obter a quantidade bancos cadastrados
 	 * @param filtro: parametros de busca
+	 * @return Quantidade de bancos para filtro
 	 */
 	@Transactional(readOnly=true)
 	@Override
@@ -45,24 +48,44 @@ public class BancoServiceImpl implements BancoService {
 		return bancoRepository.obterQuantidadeBancos(filtro);
 	}
 	
+	/**
+	 * Método responsável por obter banco por numero
+	 * @param numero
+	 * @return  {@link br.com.abril.nds.model.cadastro.Banco} 
+	 */
 	@Transactional(readOnly=true)
 	@Override
 	public Banco obterbancoPorNumero(String numero) {
 		return bancoRepository.obterbancoPorNumero(numero);
 	}
 
+	/**
+	 * Método responsável por obter banco por nome
+	 * @param nome
+	 * @return  {@link br.com.abril.nds.model.cadastro.Banco} 
+	 */
 	@Transactional(readOnly=true)
 	@Override
 	public Banco obterbancoPorNome(String nome) {
 		return bancoRepository.obterbancoPorNome(nome);
 	}
 	
+	/**
+	 * Método responsável por obter banco por id
+	 * @param idbanco
+	 * @return  {@link br.com.abril.nds.model.cadastro.Banco} 
+	 */
 	@Transactional(readOnly=true)
 	@Override
 	public Banco obterBancoPorId(long idBanco) {
 		return bancoRepository.buscarPorId(idBanco);
 	}
 
+	/**
+	 * Método responsável por obter dados do banco
+	 * @param idBanco
+	 * @return  Value Object com os dados do banco
+	 */
 	@Transactional(readOnly=true)
 	@Override
 	public BancoVO obterDadosBanco(long idBanco) {
@@ -77,44 +100,80 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setAgencia(banco.getAgencia());
 			bancoVO.setConta(banco.getConta());
 			bancoVO.setDigito(banco.getDvConta());
-			bancoVO.setMoeda(banco.getMoeda().name());
-			bancoVO.setCarteira(banco.getCarteira().getTipoRegistroCobranca().name());
-			bancoVO.setJuros(BigDecimal.ZERO);
+			bancoVO.setMoeda(banco.getMoeda());
+			bancoVO.setCarteira(banco.getCarteira());
+			bancoVO.setJuros(banco.getJuros());
 			bancoVO.setAtivo(banco.isAtivo());
-			bancoVO.setMulta(BigDecimal.ZERO);
+			bancoVO.setMulta(banco.getMulta());
 			bancoVO.setInstrucoes(banco.getInstrucoes());
 		}
 		return bancoVO; 
 	}
 	
+	/**
+	 * Método responsável por incluir banco
+	 * @param {@link br.com.abril.nds.model.cadastro.Banco} 
+	 */
 	@Transactional
 	@Override
 	public void incluirBanco(Banco banco) {
 		bancoRepository.adicionar(banco);
 	}
 	
+	/**
+	 * Método responsável por alterar banco
+	 * @param {@link br.com.abril.nds.model.cadastro.Banco} 
+	 */
 	@Transactional
 	@Override
 	public void alterarBanco(Banco banco) {
 		bancoRepository.merge(banco);
 	}
 	
-	
-
-	
-	//VERIFICAR SE BANCO POSSUI PENDENCIAS (DIVIDAS, BOLETOS...ETC)
+	/**
+	 * Método responsável por verificar pendencias do banco
+	 * @param idBanco
+	 * @return boolean: true, caso o banco esteja relacionado com alguma cobranca em aberto
+	 */
 	@Transactional(readOnly=true)
 	@Override
 	public boolean verificarPendencias(long idBanco) {
 		return bancoRepository.verificarPedencias(idBanco);
 	}
 	
-	
-
+	/**
+	 * Método responsável por desativar banco
+	 * @param idbanco
+	 */
 	@Transactional
 	@Override
 	public void dasativarBanco(long idBanco) {
 		bancoRepository.desativarBanco(idBanco);
 	}
 	
+	/**
+	 * Método responsável por obter carteiras para preencher combo da camada view
+	 * @return comboCarteiras: carteiras cadastradas
+	 */
+	@Transactional(readOnly=true)
+	@Override
+	public List<ItemDTO<Carteira, String>> getComboCarteiras() {
+		List<ItemDTO<Carteira,String>> comboCarteiras =  new ArrayList<ItemDTO<Carteira,String>>();
+		List<Carteira> carteiras = bancoRepository.obterCarteiras();
+		for (Carteira itemCarteira : carteiras){
+			comboCarteiras.add(new ItemDTO<Carteira,String>(itemCarteira,itemCarteira.getTipoRegistroCobranca().toString()));
+		}
+		return comboCarteiras;
+	}
+	
+	/**
+	 * Método responsável por obter moedas para preencher combo da camada view
+	 * @return comboMoedas: moedas parametrizadas
+	 */
+	@Override
+	public List<ItemDTO<Moeda, String>> getComboMoedas() {
+		List<ItemDTO<Moeda,String>> comboMoedas = new ArrayList<ItemDTO<Moeda,String>>();
+		comboMoedas.add(new ItemDTO<Moeda,String>(Moeda.REAL,"Real"));
+		return comboMoedas;
+	}
 }

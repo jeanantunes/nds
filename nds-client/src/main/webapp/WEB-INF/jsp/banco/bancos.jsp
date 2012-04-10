@@ -192,11 +192,11 @@
 				function(index, row) {
 
 					 var linkEditar = '<a href="javascript:;" onclick="editarBanco(' + row.cell[0] + ');" style="cursor:pointer">' +
-                                      '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Altera banco" />' +
+                                      '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
 	                                  '</a>';			
 				
 			         var linkExcluir =    '<a href="javascript:;" onclick="desativarBanco(' + row.cell[0] + ');" style="cursor:pointer">' +
-			                              '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Exclui banco" />' +
+			                              '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" title="Exclui banco" />' +
 						                  '</a>';		 					 
 									
 				     row.cell[9] = linkEditar + linkExcluir;
@@ -364,25 +364,37 @@ label {
 					style="width: 150px;" />
 				</td>
 				<td>Agência:</td>
-				<td><input type="text" name="newAgencia" id="newAgencia"
+				<td><input maxlength="20" type="text" name="newAgencia" id="newAgencia"
 					style="width: 177px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Conta / Digito:</td>
-				<td><input type="text" name="newConta" id="newConta"
-					style="width: 97px;" /> - <input type="text" name="newDigito"
+				<td><input maxlength="20" type="text" name="newConta" id="newConta"
+					style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
 					id="newDigito" style="width: 37px;" />
 				</td>
 				<td>Moeda:</td>
-				<td><input type="text" name="newMoeda" id="newMoeda"
-					style="width: 80px;" />
+				<td>
+				
+				<select name="newMoeda" id="newMoeda"  style="width:80px;">
+                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
+				       <option value="${moeda.key}">${moeda.value}</option>
+				    </c:forEach>
+                </select>
+				
 				</td>
 			</tr>
 			<tr>
 				<td>Carteira:</td>
-				<td><input type="text" name="newCarteira" id="newCarteira"
-					style="width: 150px;" />
+				<td>
+
+				<select name="newCarteira" id="newCarteira" style="width:150px;">
+                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
+				       <option value="${carteira.key}">${carteira.value}</option>
+				    </c:forEach>
+                </select>
+				
 				</td>
 				<td>Juros %:</td>
 				<td><input type="text" name="newJuros" id="newJuros"
@@ -433,25 +445,37 @@ label {
 					style="width: 150px;" />
 				</td>
 				<td>Agência:</td>
-				<td><input type="text" name="alterAgencia" id="alterAgencia"
+				<td><input maxlength="20" type="text" name="alterAgencia" id="alterAgencia"
 					style="width: 177px;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Conta / Digito:</td>
-				<td><input type="text" name="alterConta" id="alterConta"
-					style="width: 97px;" /> - <input type="text" name="alterDigito"
+				<td><input maxlength="20" type="text" name="alterConta" id="alterConta"
+					style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
 					id="alterDigito" style="width: 37px;" />
 				</td>
 				<td>Moeda:</td>
-				<td><input type="text" name="alterMoeda" id="alterMoeda"
-					style="width: 80px;" />
+				<td>
+				
+				<select name="alterMoeda" id="alterMoeda"  style="width:80px;">
+                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
+				       <option value="${moeda.key}">${moeda.value}</option>
+				    </c:forEach>
+                </select>
+				
 				</td>
 			</tr>
 			<tr>
 				<td>Carteira:</td>
-				<td><input type="text" name="alterCarteira" id="alterCarteira"
-					style="width: 150px;" />
+				<td>
+				
+					<select name="alterCarteira" id="alterCarteira" style="width:150px;">
+	                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
+					       <option value="${carteira.key}">${carteira.value}</option>
+					    </c:forEach>
+	                </select>
+	                
 				</td>
 				<td>Juros %:</td>
 				<td><input type="text" name="alterJuros" id="alterJuros"

@@ -91,15 +91,15 @@ public class FiltroConsultaBancosDTO implements Serializable {
 	 */
 	public enum OrdenacaoColunaBancos{
 		
-		CODIGO_BANCO("codigoBanco"),
-		NUMERO_BANCO("numeroBanco"),
-		NOME_BANCO("nomeBanco"),
-		AGENCIA_DIGITO("agenciaDigito"),
-		CONTA_CORRENTE_DIGITO("contaCorrenteDigito"),
-		CEDENTE("cedente"),
-		MOEDA("moeda"),
-		CARTEIRA("carteira"),
-		ATIVO("ativo");
+		CODIGO_BANCO("codigo"),
+		NUMERO_BANCO("banco"),
+		NOME_BANCO("nome"),
+		AGENCIA_BANCO("agencia"),
+		CONTA_CORRENTE_BANCO("contaCorrente"),
+		CEDENTE_BANCO("cedente"),
+		MOEDA_BANCO("moeda"),
+		CARTEIRA_BANCO("carteira"),
+		ATIVO_BANCO("status");
 		
 		private String nomeColuna;
 		
