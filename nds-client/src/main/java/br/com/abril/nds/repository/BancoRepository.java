@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository;
 
 import java.util.List;
-
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 
@@ -31,5 +30,33 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	 * @return quantidade
 	 */
 	long obterQuantidadeBancos(FiltroConsultaBancosDTO filtro);
+	
+	/**
+	 * Obtém Banco por numero
+	 * @param numero
+	 * @return
+	 */
+    Banco obterbancoPorNumero(String numero);
+	
+    /**
+     * Obtém Banco por nome
+     * @param nome
+     * @return
+     */
+	Banco obterbancoPorNome(String nome);
+	
+	/**
+	 * Desativa o Banco
+	 * @param idBanco
+	 * @return 
+	 * @return
+	 */
+	void desativarBanco(long idBanco);
+	
+	/**
+	 * Método responsável por verificar se o banco possui documentos pendentes relacionados
+	 * @return True se possuir pendências
+	 */
+	boolean verificarPedencias(long idBanco);
 	
 }

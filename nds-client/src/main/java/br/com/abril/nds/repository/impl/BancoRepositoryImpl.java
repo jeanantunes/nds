@@ -1,9 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
+
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.repository.BancoRepository;
 
@@ -131,6 +136,47 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 		}
 
 		return query.list();
+	}
+	
+	@Override
+	public Banco obterbancoPorNumero(String numero) {
+		Criteria criteria = super.getSession().createCriteria(Banco.class);
+		criteria.add(Restrictions.eq("numeroBanco", numero));
+		criteria.setMaxResults(1);
+		return (Banco) criteria.uniqueResult();
+	}
+
+	@Override
+	public Banco obterbancoPorNome(String nome) {
+		Criteria criteria = super.getSession().createCriteria(Banco.class);
+		criteria.add(Restrictions.eq("nome", nome));
+		criteria.setMaxResults(1);
+		return (Banco) criteria.uniqueResult();
+	}
+
+	@Override
+	public void desativarBanco(long idBanco) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" update Banco b ");		
+		hql.append(" set b.ativo = :ativo ");
+		hql.append(" where b.id = :idBanco ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("ativo", false);
+        query.setParameter("idBanco", idBanco);
+		query.executeUpdate();
+	}
+
+	@Override
+	public boolean verificarPedencias(long idBanco) {
+		Banco banco = this.buscarPorId(idBanco);
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Cobranca c ");		
+		hql.append(" where c.banco = :banco ");
+		hql.append(" and c.statusCobranca = :status ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("banco", banco);
+        query.setParameter("status", StatusCobranca.NAO_PAGO);
+		return (query.list().size() > 0);
 	}
 	
 }
