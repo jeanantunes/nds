@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,8 +17,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ENDERECO")
 @SequenceGenerator(name="ENDERECO_SEQ", initialValue = 1, allocationSize = 1)
-public class Endereco {
+public class Endereco implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 321277267597116429L;
+	
 	@Id
 	@GeneratedValue(generator = "ENDERECO_SEQ")
 	@Column(name = "ID")

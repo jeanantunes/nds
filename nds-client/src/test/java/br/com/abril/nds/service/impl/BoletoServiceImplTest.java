@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,13 +8,11 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -205,7 +202,6 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testeBaixaAutomaticaPermiteDivergencia() {
 		
 		PoliticaCobranca politicaCobranca =
@@ -229,7 +225,6 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testeBaixaAutomaticaNaoPermiteDivergencia() {
 		
 		PoliticaCobranca politicaCobranca =
@@ -255,7 +250,6 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void testeBaixaManual() {
 		
 		PagamentoDTO pagamento = new PagamentoDTO();
@@ -335,13 +329,6 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		arquivo.setListaPagemento(listaPagemento);
 		
 		return arquivo;
-	}
-	
-	@Test
-	@Ignore
-	public void testeImpressao() throws IOException {
-		byte[] b = boletoServiceImpl.gerarImpressaoBoleto("123");
-		Assert.assertTrue(b.length > 0);
 	}
 	
 }

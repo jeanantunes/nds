@@ -337,8 +337,7 @@ public class DataLoader {
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarDadosInadimplencia(session);
-			gerarCotasAusentes(session);
-			
+						
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -414,6 +413,7 @@ public class DataLoader {
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
 		criarNotasFiscaisEntradaFornecedor(session);
+		gerarCotasAusentes(session);
 
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -1584,8 +1584,8 @@ public class DataLoader {
 		cotaMariana.setSugereSuspensao(true);
 		save(session, cotaMariana);
 		
-		cotaOrlando = Fixture.cota(42345, orlando, SituacaoCadastro.ATIVO,box1);
-		cotaOrlando.setSugereSuspensao(true);
+		cotaOrlando = Fixture.cota(4444, orlando, SituacaoCadastro.INATIVO,box1);
+		cotaOrlando.setSugereSuspensao(false);
 		save(session, cotaOrlando);
 
 		cotaJoao = Fixture.cota(9999, joao, SituacaoCadastro.ATIVO,box2);

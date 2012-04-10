@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,8 +18,13 @@ import br.com.abril.nds.model.HistoricoEdicao;
 @Entity
 @Table(name = "HISTORICO_LANCAMENTO")
 @SequenceGenerator(name = "HIST_LANC_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoLancamento extends HistoricoEdicao {
+public class HistoricoLancamento extends HistoricoEdicao implements Serializable {
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 943959304324380002L;
+
 	@Id
 	@GeneratedValue(generator = "HIST_LANC_SEQ")
 	@Column(name = "ID")

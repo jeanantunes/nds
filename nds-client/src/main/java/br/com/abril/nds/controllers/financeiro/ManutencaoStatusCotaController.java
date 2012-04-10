@@ -1,13 +1,24 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.job.StatusCotaJob;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
@@ -108,11 +119,9 @@ public class ManutencaoStatusCotaController {
 	
 	@Post
 	@Path("/novo/confirmar")
-	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) {
+	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
 		
 		this.validarAlteracaoStatus(novoHistoricoSituacaoCota);
-		
-		novoHistoricoSituacaoCota.setDataEdicao(new Date());
 		
 		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
@@ -121,14 +130,91 @@ public class ManutencaoStatusCotaController {
 		novoHistoricoSituacaoCota.setSituacaoAnterior(
 			novoHistoricoSituacaoCota.getCota().getSituacaoCadastro());
 		
-		//TODO: Criar Job no quartz para alterar para novo status
+		this.criarJobAtualizacaoNovaSituacaoCota(novoHistoricoSituacaoCota);
 		
-		//TODO: Criar Job no quartz para alterar para status anterior
-		
+		this.criarJobAtualizacaoSituacaoAnteriorCota(novoHistoricoSituacaoCota);
+
 		ValidacaoVO validacao = 
 			new ValidacaoVO(TipoMensagem.SUCCESS, "A alteração do Status da Cota foi agendada com sucesso!");
 		
 		result.use(Results.json()).from(validacao, "result").recursive().serialize();
+	}
+	
+	/*
+	 * Cria o job para atualização da nova situação da cota.
+	 *  
+	 * @param novoHistoricoSituacaoCota - novo histórico de situação da cota
+	 * 
+	 * @throws SchedulerException Exceção de agendamento
+	 */
+	private void criarJobAtualizacaoNovaSituacaoCota(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
+		
+		JobDataMap jobDataMap = new JobDataMap();
+
+		jobDataMap.put(StatusCotaJob.HISTORICO_SITUACAO_COTA_DATA_KEY, novoHistoricoSituacaoCota);
+		
+		jobDataMap.put(StatusCotaJob.FIM_PERIODO_VALIDADE_SITUACAO_COTA_DATA_KEY, false);
+		
+	    this.criarJobQuartz(
+	    	novoHistoricoSituacaoCota, novoHistoricoSituacaoCota.getDataInicioValidade(), jobDataMap);
+	}
+	
+	/*
+	 * Cria o job para atualização da situação anterior da cota.
+	 *  
+	 * @param novoHistoricoSituacaoCota - novo histórico de situação da cota
+	 * 
+	 * @throws SchedulerException Exceção de agendamento
+	 */
+	private void criarJobAtualizacaoSituacaoAnteriorCota(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
+		
+		if (novoHistoricoSituacaoCota.getDataFimValidade() == null) {
+			
+			return;
+		}
+		
+		JobDataMap jobDataMap = new JobDataMap();
+
+		jobDataMap.put(StatusCotaJob.HISTORICO_SITUACAO_COTA_DATA_KEY, novoHistoricoSituacaoCota);
+		
+		jobDataMap.put(StatusCotaJob.FIM_PERIODO_VALIDADE_SITUACAO_COTA_DATA_KEY, true);
+		
+	    this.criarJobQuartz(
+	    	novoHistoricoSituacaoCota, novoHistoricoSituacaoCota.getDataFimValidade(), jobDataMap);
+	}
+	
+	/*
+	 * Cria um job do quartz.
+	 * 
+	 * @param novoHistoricoSituacaoCota - novo histórico de situação da cota
+	 * @param dataInicio - data de início do agendamento
+	 * @param jobDataMap - dados para o agendamento
+	 * 
+	 * @throws SchedulerException Exceção de agendamento
+	 */
+	private void criarJobQuartz(HistoricoSituacaoCota novoHistoricoSituacaoCota, 
+								Date dataInicio,
+								JobDataMap jobDataMap) throws SchedulerException {
+	
+		String jobKey = String.valueOf(new Date().getTime());
+	    
+	    String jobGroup = novoHistoricoSituacaoCota.getCota().getId().toString();
+		
+	    JobDetail job = 
+	    	newJob(StatusCotaJob.class).withIdentity(jobKey, jobGroup).usingJobData(jobDataMap).build();
+
+	    Trigger trigger =
+	    	newTrigger()
+	    		.startAt(dataInicio)
+	    		.endAt(dataInicio)
+	    		.withSchedule(
+	    			simpleSchedule()
+		    			.withMisfireHandlingInstructionFireNow()
+		    	).build();
+
+	    Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+	    
+	    scheduler.scheduleJob(job, trigger);
 	}
 	
 	/*
@@ -149,9 +235,15 @@ public class ManutencaoStatusCotaController {
 			historicoSituacaoCotaVO.setData(
 				DateUtil.formatarDataPTBR(historicoSituacaoCota.getDataInicioValidade()));
 			
-			historicoSituacaoCotaVO.setDescricao(historicoSituacaoCota.getDescricao());
+			String descricao = 
+				historicoSituacaoCota.getDescricao() == null ? "" : historicoSituacaoCota.getDescricao();
 			
-			historicoSituacaoCotaVO.setMotivo(historicoSituacaoCota.getMotivo().toString());
+			historicoSituacaoCotaVO.setDescricao(descricao);
+			
+			String motivo = 
+				historicoSituacaoCota.getMotivo() == null ? "" : historicoSituacaoCota.getMotivo().toString();
+
+			historicoSituacaoCotaVO.setMotivo(motivo);
 			
 			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
 			
@@ -342,7 +434,7 @@ public class ManutencaoStatusCotaController {
 		
 		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
 			
-			listaMensagens.add("Informe o Status!");
+			listaMensagens.add("O preenchimento do campo [Status] é obrigatório!");
 		}
 		
 		if (novoHistoricoSituacaoCota.getCota() == null
@@ -393,13 +485,13 @@ public class ManutencaoStatusCotaController {
 		
 		if (novoHistoricoSituacaoCota.getMotivo() == null) {
 			
-			listaMensagens.add("Informe o Motivo!");
+			listaMensagens.add("O preenchimento do campo [Motivo] é obrigatório!");
 		}
 		
 		if (novoHistoricoSituacaoCota.getDescricao() == null
 				|| novoHistoricoSituacaoCota.getDescricao().trim().isEmpty()) {
 			
-			listaMensagens.add("Informe a Descrição!");
+			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
