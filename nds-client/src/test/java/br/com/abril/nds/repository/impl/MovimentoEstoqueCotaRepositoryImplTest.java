@@ -326,6 +326,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
+	@Ignore
 	public void testObterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -346,6 +347,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
+	@Ignore
 	public void testObterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -355,6 +357,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	@Ignore
 	public void testObterQtdConsultaEncalhe() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -364,6 +367,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	@Ignore
 	public void testObterListaConsultaEncalhe() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
