@@ -191,8 +191,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
 		
 		for (Diferenca diferenca : listaDiferencas) {
-
-			this.processarMovimentoEstoque(diferenca, idUsuario);
 			
 			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
 			
