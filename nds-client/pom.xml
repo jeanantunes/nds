@@ -132,15 +132,21 @@
 
 	</dependencies>
 
-	<build>
+	<build>	
+		<testResources>
+			<testResource>				
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>				
+			</testResource>
+		</testResources>
         <resources>
             <resource>
         	   <directory>src/main/resources</directory>
+        	   <filtering>true</filtering>		
                <excludes>
                   <exclude>reports/*.jrxml</exclude>
                </excludes>
             </resource>
-          
         </resources>
   
 		<finalName>nds-client</finalName>
@@ -207,5 +213,30 @@
 		  </plugins>
 		</pluginManagement>
 	</build>
+	
+	
+		<profiles>
+		<profile>
+			<id>desenvolvimento</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<testDataSourceURL>jdbc:mysql://localhost:3306/nds-client-test</testDataSourceURL>
+				<testDataSourceUsername>root</testDataSourceUsername>
+				<testDataSourcePassword>root</testDataSourcePassword>
+			</properties>
+		</profile>
+		<profile>
+			<id>integracaoContinua</id>
+			<properties>
+				<testDataSourceURL>jdbc:mysql://10.10.50.105:3306/NDS</testDataSourceURL>
+				<testDataSourceUsername>nds</testDataSourceUsername>
+				<testDataSourcePassword>nds</testDataSourcePassword>
+			</properties>
+		</profile>
+
+
+	</profiles>
 
 </project>
