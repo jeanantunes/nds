@@ -21,6 +21,12 @@ var cota = {
 				}, 
 				isFromModal
 			);
+		
+		} else {
+			
+			if (errorCallBack) {
+				errorCallBack();
+			}
 		}
 	},
 	
@@ -146,6 +152,11 @@ var cota = {
 				}, 
 				isFromModal
 			);
+		} else {
+			
+			if (errorCallBack) {
+				errorCallBack();
+			}
 		}
 	},
 	
