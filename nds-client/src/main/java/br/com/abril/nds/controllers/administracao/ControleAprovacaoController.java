@@ -7,9 +7,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO.OrdenacaoColunaControleAprovacao;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.Aprovacao;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
