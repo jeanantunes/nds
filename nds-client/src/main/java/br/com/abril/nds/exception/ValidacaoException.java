@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.exception;
+package br.com.abril.nds.exception;
 
 import java.io.Serializable;
 

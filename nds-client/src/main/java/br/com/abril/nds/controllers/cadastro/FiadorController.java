@@ -2,9 +2,9 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.util.Date;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.util.DateUtil;

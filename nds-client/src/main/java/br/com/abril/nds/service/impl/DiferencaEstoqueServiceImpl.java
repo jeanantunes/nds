@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RateioCotaVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;

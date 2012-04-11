@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -315,6 +316,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	@Ignore
 	public void testObterQtdProdutoEdicaoEncalhePrimeiroDia() {
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
@@ -334,6 +336,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 
 	@Test
+	@Ignore
 	public void testObterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
 
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
