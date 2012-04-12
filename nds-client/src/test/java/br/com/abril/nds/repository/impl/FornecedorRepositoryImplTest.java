@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -23,11 +24,13 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Fornecedor fornecedor1;
 	private Fornecedor fornecedor2;
 	private Fornecedor fornecedor3;
-
 	private Produto produto;
+	private Editor abril;
 
 	@Before
 	public void setUp() {
+		abril = Fixture.editoraAbril();
+		save(abril);
 		TipoFornecedor fornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		TipoFornecedor fornecedorOutros = Fixture.tipoFornecedorOutros();
 		save(fornecedorPublicacao, fornecedorOutros);
@@ -44,8 +47,8 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		produto = Fixture.produtoCapricho(tipoProduto);
 		produto.addFornecedor(fornecedor1);
 		produto.addFornecedor(fornecedor3);
+		produto.setEditor(abril);
 		save(produto);
-		
 	}
 
 	@Test
