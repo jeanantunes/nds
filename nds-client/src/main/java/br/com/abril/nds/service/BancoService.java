@@ -37,7 +37,9 @@ public interface BancoService {
 	
 	void dasativarBanco(long idBanco);
 	
-	List<ItemDTO<Carteira, String>> getComboCarteiras();
+	List<ItemDTO<Integer, String>> getComboCarteiras();
 	
 	List<ItemDTO<Moeda, String>> getComboMoedas();
+	
+	Carteira obterCarteiraPorCodigo(Integer codigoCarteira);
 }

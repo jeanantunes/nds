@@ -1,4 +1,9 @@
 <head>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+
 <script language="javascript" type="text/javascript">
 
 	$(function() {
@@ -76,6 +81,25 @@
 			height : 255
 		});
 	});	
+	
+	$(function() {
+		$("#numero").numeric();	
+		$("#cedente").numeric();	
+		
+		$("#newNumero").numeric();	
+		$("#newCodigoCedente").numeric();	
+		$("#newAgencia").numeric();	
+		$("#newConta").numeric();	
+		$("#newDigito").numeric();	
+		$("#newJuros").numeric();	
+		
+		$("#alterNumero").numeric();	
+		$("#alterCodigoCedente").numeric();	
+		$("#alterAgencia").numeric();	
+		$("#alterConta").numeric();	
+		$("#alterDigito").numeric();	
+		$("#alterJuros").numeric();	
+    }); 
 
     function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -88,10 +112,6 @@
 			buttons: {
 				"Confirmar": function() {
 					novoBanco();
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -111,20 +131,19 @@
 			buttons: {
 				"Confirmar": function() {
 					alterarBanco();
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$( "#abaPdv" ).show( );
-					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
+		    }
 		});	
 		      
 	};
 	
-	function popup_excluir() {
+	function popup_excluir(idBanco) {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-excluir" ).dialog({
@@ -134,30 +153,34 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					desativarBanco(idBanco);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
+		    }
 		});
 	};
 	
-	
-	
     function mostrarGridConsulta() {
-		
+    	
+    	$("#ativo").val(0);
+    	if (document.formularioFiltro.ativo.checked){
+    		$("#ativo").val(1);
+		}
+    	
 		/*PASSAGEM DE PARAMETROS*/
 		$(".bancosGrid").flexOptions({
-			
 			/*METODO QUE RECEBERA OS PARAMETROS*/
 			url: "<c:url value='/banco/consultaBancos' />",
 			params: [
 			         {name:'nome', value:$("#nome").val()},
 			         {name:'numero', value:$("#numero").val()},
 			         {name:'cedente', value:$("#cedente").val()},
-			         {name:'ativo', value:$("#ativo").val()}
+			         {name:'ativo', value:$("#ativo").val() }
 			        ] ,
 		});
 		
@@ -167,8 +190,6 @@
 		$(".grids").show();
 	}	
 	
-	
-    
 	function getDataFromResult(resultado) {
 		
 		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
@@ -195,7 +216,7 @@
                                       '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
 	                                  '</a>';			
 				
-			         var linkExcluir =    '<a href="javascript:;" onclick="desativarBanco(' + row.cell[0] + ');" style="cursor:pointer">' +
+			         var linkExcluir =    '<a href="javascript:;" onclick="popup_excluir(' + row.cell[0] + ');" style="cursor:pointer">' +
 			                              '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" title="Exclui banco" />' +
 						                  '</a>';		 					 
 									
@@ -207,7 +228,11 @@
 		return dadosPesquisa;
 	}
 	
-	
+	function fecharDialogs() {
+		$( "#dialog-novo" ).dialog( "close" );
+	    $( "#dialog-alterar" ).dialog( "close" );
+	    $( "#dialog-excluir" ).dialog( "close" );
+	}
 	
     function novoBanco() {
 		
@@ -220,10 +245,16 @@
 		var moeda      = $("#newMoeda").val();
 		var carteira   = $("#newCarteira").val();
 		var juros      = $("#newJuros").val();
+		
+		$("#newAtivo").val(0);
+    	if (document.formularioNovoBanco.newAtivo.checked){
+    		$("#newAtivo").val(1);
+		}
 		var ativo      = $("#newAtivo").val();
+		
 		var multa      = $("#newMulta").val();
 		var instrucoes = $("#newInstrucoes").val();
-		
+
 		$.postJSON("<c:url value='/banco/novoBanco'/>",
 				   "numero="+numero+
 				   "&nome="+ nome +
@@ -232,16 +263,24 @@
 				   "&conta="+ conta+
 				   "&digito="+ digito+
 				   "&moeda="+ moeda+
-				   "&carteira="+ carteira+
+				   "&codigoCarteira="+ carteira+
 				   "&juros="+ juros+
 				   "&ativo="+ ativo+
 				   "&multa="+ multa+
 				   "&instrucoes="+ instrucoes,
-				   function() {mostrarGridConsulta();}, errorCallbackCadastroBanco);
+				   function(result) {
+			           fecharDialogs();
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+	                   mostrarGridConsulta();
+	               },
+				   null,
+				   true);
 	}
 	
-    
-    
 	function alterarBanco() {
 		
 		var idBanco    = $("#idBanco").val();
@@ -254,7 +293,13 @@
 		var moeda      = $("#alterMoeda").val();
 		var carteira   = $("#alterCarteira").val();
 		var juros      = $("#alterJuros").val();
+		
+		$("#alterAtivo").val(0);
+    	if (document.formularioAlteraBanco.alterAtivo.checked){
+    		$("#alterAtivo").val(1);
+		}
 		var ativo      = $("#alterAtivo").val();
+		
 		var multa      = $("#alterMulta").val();
 		var instrucoes = $("#alterInstrucoes").val();
 
@@ -267,25 +312,31 @@
 				   "&conta="+ conta+
 				   "&digito="+ digito+
 				   "&moeda="+ moeda+
-				   "&carteira="+ carteira+
+				   "&codigoCarteira="+ carteira+
 				   "&juros="+ juros+
 				   "&ativo="+ ativo+
 				   "&multa="+ multa+
 				   "&instrucoes="+ instrucoes,
-				   function() {mostrarGridConsulta();}, errorCallbackCadastroBanco);
+				   function(result) {
+					   fecharDialogs();
+				       var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+			           mostrarGridConsulta();
+			       },
+				   null,
+				   true);
 	}
-	
-	
 	
 	function editarBanco(idBanco){
 		var data = [{name: 'idBanco', value: idBanco}];
 		$.postJSON("<c:url value='/banco/buscaBanco' />",
 				   data,
-				   sucessCallbackCadastroBanco, errorCallbackCadastroBanco);
-
+				   sucessCallbackCadastroBanco, 
+				   fecharDialogs);
 	}
-	
-	
 	
 	function sucessCallbackCadastroBanco(resultado) {
 		
@@ -297,29 +348,30 @@
 		$("#alterConta").val(resultado.conta);
 		$("#alterDigito").val(resultado.digito);
 		$("#alterMoeda").val(resultado.moeda);
-		$("#alterCarteira").val(resultado.carteira);
+		$("#alterCarteira").val(resultado.codigoCarteira);
 		$("#alterJuros").val(resultado.juros);
+		
 		$("#alterAtivo").val(resultado.ativo);
+		document.formularioAlteraBanco.alterAtivo.checked = resultado.ativo;
+		
 		$("#alterMulta").val(resultado.multa);
 		$("#alterInstrucoes").val(resultado.instrucoes);
 		
 		popup_alterar();
 	}
 	
-	
-	
-	function errorCallbackCadastroBanco() {
-		$('#dialog-novo').hide();
-		$('#dialog-alterar').hide();
-	}
-	
-	
-	
     function desativarBanco(idBanco) {
     	var data = [{name: 'idBanco', value: idBanco}];
 		$.postJSON("<c:url value='/banco/desativaBanco'/>",
 				   data,
-				   function() {mostrarGridConsulta();});
+				   function(result) {
+					   fecharDialogs();
+			           mostrarGridConsulta();
+			       },
+			       function(result) {
+					   fecharDialogs();
+			           mostrarGridConsulta();
+			       });
 	}
 	
 
@@ -337,168 +389,191 @@ label {
 	<div id="dialog-excluir" title="Excluir Banco">
 		<p>Confirma a exclusão deste Banco?</p>
 	</div>
-
-
-
-
+	
 
 	<div id="dialog-novo" title="Incluir Novo Banco">
 
-		<label><strong>Dados de Bancos</strong>
-		</label>
+        <div id="effect-novo" name="effect-novo" class="effectDialog ui-state-highlight ui-corner-all" 
+	        style="display: none; position: absolute; z-index: 2000; width: 600px;">
+	        <p>
+		        <span style="float: left;" class="ui-icon ui-icon-info"></span>
+		        <b class="effectDialogText"></b>
+	        </p>
+        </div>
 
-		<table width="626" border="0" cellpadding="2" cellspacing="1">
-			<tr>
-				<td width="111">Número Banco:</td>
-				<td width="216"><input type="text" name="newNumero"
-					id="newNumero" style="width: 150px;" />
-				</td>
-				<td width="73">Nome:</td>
-				<td width="205"><input type="text" name="newNome"
-					id="newNome" style="width: 177px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Código Cedente:</td>
-				<td><input type="text" name="newCodigoCedente" id="newCodigoCedente"
-					style="width: 150px;" />
-				</td>
-				<td>Agência:</td>
-				<td><input maxlength="20" type="text" name="newAgencia" id="newAgencia"
-					style="width: 177px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Conta / Digito:</td>
-				<td><input maxlength="20" type="text" name="newConta" id="newConta"
-					style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
-					id="newDigito" style="width: 37px;" />
-				</td>
-				<td>Moeda:</td>
-				<td>
-				
-				<select name="newMoeda" id="newMoeda"  style="width:80px;">
-                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
-				       <option value="${moeda.key}">${moeda.value}</option>
-				    </c:forEach>
-                </select>
-				
-				</td>
-			</tr>
-			<tr>
-				<td>Carteira:</td>
-				<td>
+        <form name="formularioNovoBanco" id="formularioNovoBanco"> 
 
-				<select name="newCarteira" id="newCarteira" style="width:150px;">
-                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
-				       <option value="${carteira.key}">${carteira.value}</option>
-				    </c:forEach>
-                </select>
-				
-				</td>
-				<td>Juros %:</td>
-				<td><input type="text" name="newJuros" id="newJuros"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Status:</td>
-				<td><input name="newAtivo" type="checkbox" value=""
-					checked="checked" id="newAtivo" /><label for="statusBco">Ativo</label>
-				</td>
-				<td>Multa %:</td>
-				<td><input type="text" name="newMulta" id="newMulta"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Instruções:</td>
-				<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes"
-						style="width: 477px;"></textarea>
-				</td>
-			</tr>
-		</table>
-	</div>
+			<label><strong>Dados de Bancos</strong>
+			</label>
 
-
-    <div id="dialog-alterar" title="Alterar Banco">
-
-		<label><strong>Dados de Bancos</strong>
-		</label>
-
-        <input type="hidden" id="idBanco" name="idBanco" />
-
-		<table width="626" border="0" cellpadding="2" cellspacing="1">
-			<tr>
-				<td width="111">Número Banco:</td>
-				<td width="216"><input type="text" name="alterNumero"
-					id="alterNumero" style="width: 150px;" />
-				</td>
-				<td width="73">Nome:</td>
-				<td width="205"><input type="text" name="alterNome"
-					id="alterNome" style="width: 177px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Código Cedente:</td>
-				<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente"
-					style="width: 150px;" />
-				</td>
-				<td>Agência:</td>
-				<td><input maxlength="20" type="text" name="alterAgencia" id="alterAgencia"
-					style="width: 177px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Conta / Digito:</td>
-				<td><input maxlength="20" type="text" name="alterConta" id="alterConta"
-					style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
-					id="alterDigito" style="width: 37px;" />
-				</td>
-				<td>Moeda:</td>
-				<td>
-				
-				<select name="alterMoeda" id="alterMoeda"  style="width:80px;">
-                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
-				       <option value="${moeda.key}">${moeda.value}</option>
-				    </c:forEach>
-                </select>
-				
-				</td>
-			</tr>
-			<tr>
-				<td>Carteira:</td>
-				<td>
-				
-					<select name="alterCarteira" id="alterCarteira" style="width:150px;">
-	                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
-					       <option value="${carteira.key}">${carteira.value}</option>
+			<table width="626" border="0" cellpadding="2" cellspacing="1">
+				<tr>
+					<td width="111">Número Banco:</td>
+					<td width="216"><input type="text" name="newNumero"
+						id="newNumero" style="width: 150px;" />
+					</td>
+					<td width="73">Nome:</td>
+					<td width="205"><input type="text" name="newNome"
+						id="newNome" style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Código Cedente:</td>
+					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente"
+						style="width: 150px;" />
+					</td>
+					<td>Agência:</td>
+					<td><input maxlength="20" type="text" name="newAgencia" id="newAgencia"
+						style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Conta / Digito:</td>
+					<td><input maxlength="20" type="text" name="newConta" id="newConta"
+						style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
+						id="newDigito" style="width: 37px;" />
+					</td>
+					<td>Moeda:</td>
+					<td>
+					
+					<select name="newMoeda" id="newMoeda"  style="width:80px;">
+	                    <c:forEach varStatus="counter" var="newMoeda" items="${listaMoedas}">
+					       <option value="${newMoeda.key}">${newMoeda.value}</option>
 					    </c:forEach>
 	                </select>
-	                
-				</td>
-				<td>Juros %:</td>
-				<td><input type="text" name="alterJuros" id="alterJuros"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Status:</td>
-				<td><input name="alterAtivo" type="checkbox" value=""
-					checked="checked" id="alterAtivo" /><label for="statusBco">Ativo</label>
-				</td>
-				<td>Multa %:</td>
-				<td><input type="text" name="alterMulta" id="alterMulta"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Instruções:</td>
-				<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes"
-						style="width: 477px;"></textarea>
-				</td>
-			</tr>
-		</table>
+					
+					</td>
+				</tr>
+				<tr>
+					<td>Carteira:</td>
+					<td>
+	
+					<select name="newCarteira" id="newCarteira" style="width:150px;">
+	                    <c:forEach varStatus="counter" var="newCarteira" items="${listaCarteiras}">
+					       <option value="${newCarteira.key}">${newCarteira.value}</option>
+					    </c:forEach>
+	                </select>
+					
+					</td>
+					<td>Juros %:</td>
+					<td><input maxlength="19" type="text" name="newJuros" id="newJuros"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Status:</td>
+					<td><input name="newAtivo" type="checkbox" value=""
+						checked="checked" id="newAtivo" /><label for="statusBco">Ativo</label>
+					</td>
+					<td>Multa %:</td>
+					<td><input maxlength="19" type="text" name="newMulta" id="newMulta"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções:</td>
+					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes"
+							style="width: 477px;"></textarea>
+					</td>
+				</tr>
+			</table>
+			
+		</form>
+		
+	</div>
+    
+    
+    <div id="dialog-alterar" title="Alterar Banco">
+    
+        <div id="effect-alterar" name="effect-alterar" class="effectDialog ui-state-highlight ui-corner-all" 
+	        style="display: none; position: absolute; z-index: 2000; width: 600px;">
+	        <p>
+		        <span style="float: left;" class="ui-icon ui-icon-info"></span>
+		        <b class="effectDialogText"></b>
+	        </p>
+        </div>
+
+	    <form name="formularioAlteraBanco" id="formularioAlteraBanco"> 
+	
+			<label><strong>Dados de Bancos</strong>
+			</label>
+	
+	        <input type="hidden" id="idBanco" name="idBanco" />
+	
+			<table width="626" border="0" cellpadding="2" cellspacing="1">
+				<tr>
+					<td width="111">Número Banco:</td>
+					<td width="216"><input type="text" name="alterNumero"
+						id="alterNumero" style="width: 150px;" />
+					</td>
+					<td width="73">Nome:</td>
+					<td width="205"><input type="text" name="alterNome"
+						id="alterNome" style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Código Cedente:</td>
+					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente"
+						style="width: 150px;" />
+					</td>
+					<td>Agência:</td>
+					<td><input maxlength="20" type="text" name="alterAgencia" id="alterAgencia"
+						style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Conta / Digito:</td>
+					<td><input maxlength="20" type="text" name="alterConta" id="alterConta"
+						style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
+						id="alterDigito" style="width: 37px;" />
+					</td>
+					<td>Moeda:</td>
+					<td>
+					
+					<select name="alterMoeda" id="alterMoeda"  style="width:80px;">
+	                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
+					       <option value="${moeda.key}">${moeda.value}</option>
+					    </c:forEach>
+	                </select>
+					
+					</td>
+				</tr>
+				<tr>
+					<td>Carteira:</td>
+					<td>
+					
+						<select name="alterCarteira" id="alterCarteira" style="width:150px;">
+		                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
+						       <option value="${carteira.key}">${carteira.value}</option>
+						    </c:forEach>
+		                </select>
+		                
+					</td>
+					<td>Juros %:</td>
+					<td><input maxlength="19" type="text" name="alterJuros" id="alterJuros"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Status:</td>
+					<td><input name="alterAtivo" type="checkbox" value=""
+						checked="checked" id="alterAtivo" /><label for="statusBco">Ativo</label>
+					</td>
+					<td>Multa %:</td>
+					<td><input maxlength="19" type="text" name="alterMulta" id="alterMulta"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções:</td>
+					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes"
+							style="width: 477px;"></textarea>
+					</td>
+				</tr>
+			</table>
+			
+		</form>
+		
 	</div>
 
 
@@ -508,50 +583,60 @@ label {
 		class="ui-state-highlight ui-corner-all">
 		<p>
 			<span style="float: left; margin-right: .3em;"
-				class="ui-icon ui-icon-info"></span> <b>Banco < evento > com <
-				status >.</b>
+				class="ui-icon ui-icon-info">
+		    </span> 
+		    <b>
+		        Banco < evento > com < status >.
+		    </b>
 		</p>
 	</div>
 
-	<fieldset class="classFieldset">
-		<legend> Pesquisar Bancos</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro">
-			<tr>
-				<td width="42">Nome:</td>
-				<td colspan="3"><input type="text" name="nome"
-					id="nome" style="width: 180px;" />
-				</td>
-				<td width="55">Número:</td>
-				<td width="146"><input type="text" name="numero"
-					id="numero" style="width: 130px;" />
-				</td>
-				<td width="57">Cedente:</td>
-				<td width="163"><input type="text" name="cedente"
-					id="cedente" style="width: 150px;" />
-				</td>
-				<td width="158"><input name="ativo" type="checkbox"
-					id="ativo" style="float: left;" value="" checked="checked" /><label
-					for="ativo">Ativo</label>
-				</td>
-				<td width="108"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
-				</span>
-				</td>
-			</tr>
-		</table>
+    <form name="formularioFiltro" id="formularioFiltro"> 
 
-	</fieldset>
+		<fieldset class="classFieldset">
+			<legend> Pesquisar Bancos</legend>
+			<table width="950" border="0" cellpadding="2" cellspacing="1"
+				class="filtro">
+				<tr>
+					<td width="42">Nome:</td>
+					<td colspan="3"><input type="text" name="nome"
+						id="nome" style="width: 180px;" />
+					</td>
+					<td width="55">Número:</td>
+					<td width="146"><input type="text" name="numero"
+						id="numero" style="width: 130px;" />
+					</td>
+					<td width="57">Cedente:</td>
+					<td width="163"><input type="text" name="cedente"
+						id="cedente" style="width: 150px;" />
+					</td>
+					<td width="158"><input name="ativo" type="checkbox"
+						id="ativo" style="float: left;" value="" checked="checked" /><label
+						for="ativo">Ativo</label>
+					</td>
+					<td width="108"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
+					</span>
+					</td>
+				</tr>
+			</table>
+	
+		</fieldset>
+	
+	</form>
+	
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="classFieldset">
-		<legend>Bancos Cadastrados</legend>
-		<div class="grids" style="display: none;">
-			<table class="bancosGrid"></table>
-		</div>
-
-		<span class="bt_novo"><a href="javascript:;" onclick="popup();">Novo</a>
-		</span>
-
-	</fieldset>
+	
+		<fieldset class="classFieldset">
+			<legend>Bancos Cadastrados</legend>
+			<div class="grids" style="display: none;">
+				<table class="bancosGrid"></table>
+			</div>
+	
+			<span class="bt_novo"><a href="javascript:;" onclick="popup();">Novo</a>
+			</span>
+	
+		</fieldset>
+		
 	<div class="linha_separa_fields">&nbsp;</div>
 
 

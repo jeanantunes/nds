@@ -23,7 +23,6 @@ import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -58,7 +57,7 @@ public class BancoController {
     
     private HttpSession httpSession;
     
-    private static List<ItemDTO<Carteira,String>> listaCarteiras =  new ArrayList<ItemDTO<Carteira,String>>();
+    private static List<ItemDTO<Integer,String>> listaCarteiras =  new ArrayList<ItemDTO<Integer,String>>();
 
     private static List<ItemDTO<Moeda,String>> listaMoedas =  new ArrayList<ItemDTO<Moeda,String>>();
     
@@ -113,17 +112,17 @@ public class BancoController {
 	public void consultaBancos(String nome,
 			                   String numero,
 			                   String cedente,
-			                   boolean ativo,
+			                   int ativo,
 			                   String sortorder, 
 							   String sortname, 
 							   int page, 
 							   int rp){
 		
 		//CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome,
-														                  numero,
-														                  cedente,
-														                  /*ativo*/true);
+		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome.trim(),
+														                  numero.trim(),
+														                  cedente.trim(),
+														                  (ativo==1));
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
@@ -154,9 +153,9 @@ public class BancoController {
 										  (banco.getAgencia()!=null?banco.getAgencia().toString():""),
 										  (banco.getConta()!=null?banco.getConta().toString():""),
 										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
-										  (banco.getMoeda()!=null?banco.getMoeda().name():""),
-										  (banco.getCarteira()!=null?banco.getCarteira().getTipoRegistroCobranca().name():""),
-										  (banco.isAtivo()==true?"Ativo":"Desativado"),
+										  (banco.getMoeda()!=null?banco.getMoeda().toString():""),
+										  (banco.getCarteira()!=null?banco.getCarteira().getTipoRegistroCobranca().toString():""),
+										  (banco.isAtivo()?"Ativo":"Desativado"),
 										  ""
                       					)
               );
@@ -205,47 +204,40 @@ public class BancoController {
 	public void novoBanco(String numero,
 						  String nome,
 						  String codigoCedente,
-						  Long agencia,
-						  Long conta,
+						  String agencia,
+						  String conta,
 						  String digito,
 						  Moeda moeda,
-						  Carteira carteira,
+						  Integer codigoCarteira,
 						  BigDecimal juros,
-						  boolean ativo,
+						  int ativo,
 						  BigDecimal multa,
 						  String instrucoes){
+		
+		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 
-		validarCadastroBanco(0,
-				             numero,
-						     nome,
-						     codigoCedente,
-						     agencia,
-						     conta,
-						     digito,
-						     moeda,
-						     carteira,
-						     juros,
-						     ativo,
-						  	 multa,
-						  	 instrucoes);
+		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,juros,multa,instrucoes);
+		
+		long lAgencia = Long.parseLong(agencia);
+		long lConta = Long.parseLong(conta);
 		
 	    Banco banco = new Banco();	
         banco.setNumeroBanco(numero);
         banco.setNome(nome);
         banco.setCodigoCedente(codigoCedente);
-        banco.setAgencia(agencia);
-        banco.setConta(conta);
+        banco.setAgencia(lAgencia);
+        banco.setConta(lConta);
         banco.setDvConta(digito);
-        banco.setMoeda( moeda);
-        banco.setCarteira( carteira );
+        banco.setMoeda(moeda);
+        banco.setCarteira(carteira);
         banco.setJuros(juros);
-        banco.setAtivo(ativo);
+        banco.setAtivo(ativo==1);
         banco.setMulta(multa);
         banco.setInstrucoes(instrucoes);
 	
         this.bancoService.incluirBanco(banco);
         
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" cadastrado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" cadastrado com sucesso."),"result").recursive().serialize();
 	}
 	
 	
@@ -282,54 +274,54 @@ public class BancoController {
 	 * @param ativo
 	 * @param multa
 	 * @param instrucoes
+	 * @throws Mensagem de pendencias financeiras do banco
 	 */
 	@Post
 	@Path("/alteraBanco")
 	public void alteraBanco(long idBanco,
-			                String numero,
-						    String nome,
-						    String codigoCedente,
-						    Long agencia,
-						    Long conta,
-						    String digito,
-						    Moeda moeda,
-						    Carteira carteira,
-						    BigDecimal juros,
-						    boolean ativo,
-						    BigDecimal multa,
+						  	String numero,
+						  	String nome,
+						  	String codigoCedente,
+						  	String agencia,
+						  	String conta,
+						  	String digito,
+						  	Moeda moeda,
+						  	Integer codigoCarteira,
+						  	BigDecimal juros,
+						  	int ativo,
+						  	BigDecimal multa,
 						  	String instrucoes){
-
-		validarCadastroBanco(idBanco,
-				             numero,
-						     nome,
-						     codigoCedente,
-						     agencia,
-						     conta,
-						     digito,
-						     moeda,
-						     carteira,
-						     juros,
-						     ativo,
-						  	 multa,
-						  	 instrucoes);
+		
+		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
+		
+		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,juros,multa,instrucoes);
+		
+		if (ativo==0){
+			if (this.bancoService.verificarPendencias(idBanco)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "O banco "+nome+" possui pendências e não pode ser desativado.");
+			}
+		}
+        		
+		long lAgencia = Long.parseLong(agencia);
+		long lConta = Long.parseLong(conta);
 		
 		Banco banco = this.bancoService.obterBancoPorId(idBanco);
 		banco.setNumeroBanco(numero);
 		banco.setNome(nome);
 		banco.setCodigoCedente(codigoCedente);
-		banco.setAgencia(agencia);
-		banco.setConta(conta);
+		banco.setAgencia(lAgencia);
+		banco.setConta(lConta);
 		banco.setDvConta(digito);
 		banco.setMoeda(moeda);
-		banco.setCarteira( carteira );
+		banco.setCarteira(carteira);
 		banco.setJuros(juros);
-		banco.setAtivo(ativo);
+		banco.setAtivo(ativo==1);
 		banco.setMulta(multa);
 		banco.setInstrucoes(instrucoes);
 
 		this.bancoService.alterarBanco(banco);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" alterado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nome+" alterado com sucesso."),"result").recursive().serialize();
     }
 	
 	
@@ -345,26 +337,23 @@ public class BancoController {
 	 * @param moeda
 	 * @param carteira
 	 * @param juros
-	 * @param ativo
 	 * @param multa
 	 * @param instrucoes
 	 * @throws Mensagens de validações de campos
 	 */
 	private void validarCadastroBanco(long idBanco,
-			                          String numero,
-									  String nome,
-									  String codigoCedente,
-									  Long agencia,
-									  Long conta,
-									  String digito,
-									  Moeda moeda,
-									  Carteira carteira,
-									  BigDecimal juros,
-									  boolean ativo,
-									  BigDecimal multa,
-									  String instrucoes){
+								  	  String numero,
+								  	  String nome,
+								  	  String codigoCedente,
+								  	  String agencia,
+								  	  String conta,
+								  	  String digito,
+								  	  Moeda moeda,
+								  	  Carteira carteira,
+								  	  BigDecimal juros,
+								  	  BigDecimal multa,
+								  	  String instrucoes){
 		
-		//VALIDACOES
 		if (validator.hasErrors()) {
 			List<String> mensagens = new ArrayList<String>();
 			for (Message message : validator.getErrors()) {
@@ -416,18 +405,7 @@ public class BancoController {
 		if (carteira==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo carteira.");
 		}
-		
-		if ((juros==null)||("".equals(juros))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo juros.");
-		}
-		
-		if ("".equals(ativo)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo status.");
-		}
-		
-		if ((multa==null)||("".equals(multa))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo multa.");
-		}
+
 		if ((instrucoes==null)||("".equals(instrucoes))){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Digite as intruções.");
 		}
@@ -457,7 +435,7 @@ public class BancoController {
 		}
 
 		this.bancoService.dasativarBanco(idBanco);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nomebanco+" desativado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Banco "+nomebanco+" desativado com sucesso."),"result").recursive().serialize();
     }
 	
 }

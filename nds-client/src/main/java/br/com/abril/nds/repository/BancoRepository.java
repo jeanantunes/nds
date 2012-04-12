@@ -62,4 +62,10 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	 */
 	List<Carteira> obterCarteiras();
 	
+	/**
+	 * Método responsável por obter Carteira por id.
+	 * @return {@link br.com.abril.nds.model.cadastro.Carteira} 
+	 */
+	Carteira obterCarteiraPorCodigo(Integer codigoCarteira);
+	
 }

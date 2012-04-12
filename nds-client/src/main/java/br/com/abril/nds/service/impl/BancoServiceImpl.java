@@ -101,7 +101,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setConta(banco.getConta());
 			bancoVO.setDigito(banco.getDvConta());
 			bancoVO.setMoeda(banco.getMoeda());
-			bancoVO.setCarteira(banco.getCarteira());
+			bancoVO.setCodigoCarteira(banco.getCarteira().getCodigo());
 			bancoVO.setJuros(banco.getJuros());
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());
@@ -157,11 +157,11 @@ public class BancoServiceImpl implements BancoService {
 	 */
 	@Transactional(readOnly=true)
 	@Override
-	public List<ItemDTO<Carteira, String>> getComboCarteiras() {
-		List<ItemDTO<Carteira,String>> comboCarteiras =  new ArrayList<ItemDTO<Carteira,String>>();
+	public List<ItemDTO<Integer, String>> getComboCarteiras() {
+		List<ItemDTO<Integer,String>> comboCarteiras =  new ArrayList<ItemDTO<Integer,String>>();
 		List<Carteira> carteiras = bancoRepository.obterCarteiras();
 		for (Carteira itemCarteira : carteiras){
-			comboCarteiras.add(new ItemDTO<Carteira,String>(itemCarteira,itemCarteira.getTipoRegistroCobranca().toString()));
+			comboCarteiras.add(new ItemDTO<Integer,String>(itemCarteira.getCodigo(),itemCarteira.getTipoRegistroCobranca().toString()));
 		}
 		return comboCarteiras;
 	}
@@ -175,5 +175,15 @@ public class BancoServiceImpl implements BancoService {
 		List<ItemDTO<Moeda,String>> comboMoedas = new ArrayList<ItemDTO<Moeda,String>>();
 		comboMoedas.add(new ItemDTO<Moeda,String>(Moeda.REAL,"Real"));
 		return comboMoedas;
+	}
+
+	/**
+	 * Método responsável por obter carteira por id.
+	 * @return {@link br.com.abril.nds.model.cadastro.Carteira} 
+	 */
+	@Transactional(readOnly=true)
+	@Override
+	public Carteira obterCarteiraPorCodigo(Integer codigoCarteira) {
+		return this.bancoRepository.obterCarteiraPorCodigo(codigoCarteira);
 	}
 }

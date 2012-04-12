@@ -174,7 +174,7 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 		hql.append(" where c.banco.id = :idBanco ");
 		hql.append(" and c.statusCobranca = :status ");
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("banco", idBanco);
+        query.setParameter("idBanco", idBanco);
         query.setParameter("status", StatusCobranca.NAO_PAGO);
 		return (query.list().size() > 0);
 	}
@@ -186,6 +186,14 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 		hql.append(" from Carteira c ");		
         Query query = super.getSession().createQuery(hql.toString());
 		return query.list();
+	}
+
+	@Override
+	public Carteira obterCarteiraPorCodigo(Integer codigoCarteira) {
+		Criteria criteria = super.getSession().createCriteria(Carteira.class);
+		criteria.add(Restrictions.eq("codigo", codigoCarteira));
+		criteria.setMaxResults(1);
+		return (Carteira) criteria.uniqueResult();
 	}
 	
 }
