@@ -219,11 +219,8 @@ public class DataLoader {
 	private static Cota cotaJose;
 	private static Cota cotaManoel;
 	private static Cota cotaMaria;
-
 	private static Cota cotaLuis;
 	private static Cota cotaJoao;
-
-
 	private static Cota cotaGuilherme;
 	private static Cota cotaMurilo;
 	private static Cota cotaMariana;
@@ -323,8 +320,6 @@ public class DataLoader {
 	private static FormaCobranca formaTransferenciBancaria;
 	
 	private static Editor editoraAbril;
-	private static Editor theCocaColaCompany;
-	
 	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -1599,18 +1594,12 @@ public class DataLoader {
 		
 		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante);
 		cocaCola.addFornecedor(fornecedorAcme);
-		cocaCola.setEditor(theCocaColaCompany);
 		save(session, cocaCola);
 	}
 	
 	private static void criarEditores(Session session) {
-		editoraAbril = new Editor();
-		editoraAbril.setNome("Editora Abril");
+		editoraAbril = Fixture.editoraAbril();
 		save(session, editoraAbril);
-		
-		theCocaColaCompany = new Editor();
-		theCocaColaCompany.setNome("The Coca Cola Company");
-		save(session, theCocaColaCompany);
 	}
 
 	private static void criarTiposProduto(Session session) {

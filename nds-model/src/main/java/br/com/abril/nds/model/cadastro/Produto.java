@@ -62,7 +62,7 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
 	

@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -91,8 +92,12 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		save(tipoProduto);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		produto.addFornecedor(dinap);
+		produto.setEditor(abril);
 		save(produto);
 		
 		produtoEdicao =
