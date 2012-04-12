@@ -1,12 +1,12 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -25,7 +25,6 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
@@ -71,6 +70,11 @@ public class ContaCorrenteCotaController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroContaCorrente";
 	
+	@Autowired
+	private HttpServletRequest request;
+	
+	private static final String ITENS_ENCALHE = "itensEncalhe";
+	
 		
 	public ContaCorrenteCotaController(){		
 	}
@@ -78,6 +82,14 @@ public class ContaCorrenteCotaController {
 	public void index() {	
 	}
 					
+	/**
+	 * Método que consulta a conta corrente da Cota selecionada
+	 * @param filtroViewContaCorrenteCotaDTO
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 */
 	public void consultarContaCorrenteCota( FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,String sortname, String sortorder, int rp, int page) {
 			
 				
@@ -88,10 +100,12 @@ public class ContaCorrenteCotaController {
 		tratarFiltro(filtroViewContaCorrenteCotaDTO);
 		
 		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);
-			
+							
 		if (listaItensContaCorrenteCota == null || listaItensContaCorrenteCota.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		request.getSession().setAttribute(ITENS_ENCALHE, listaItensContaCorrenteCota);
 		
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
 		
@@ -107,36 +121,48 @@ public class ContaCorrenteCotaController {
 	 * @param page
 	 */
 	public void consultarEncalheCota(FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO, String sortname, String sortorder, int rp, int page ){
+				
 		
-		//TODO: chamar o service do consolidado
-		List<EncalheCotaDTO> listaEncalheCota = mockLista();//consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
+		ViewContaCorrenteCota contaCorrente = obterListaEncalheSessao(filtroConsolidadoEncalheDTO.getLineId());
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaEncalheCota(listaEncalheCota);
+		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente.getDataConsolidado());	
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.include("dataescolhida",contaCorrente.getDataConsolidado());
 		
-	}
-	
-	public List<EncalheCotaDTO> mockLista(){
+		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
 		
-		List<EncalheCotaDTO> listaEncalheCota = new ArrayList<EncalheCotaDTO>();
-		
-		EncalheCotaDTO encalheDTO = new EncalheCotaDTO();
-		encalheDTO.setCodigoProduto("458");
-		encalheDTO.setNomeProduto("Turma Monica");
-		encalheDTO.setNumeroEdicao(2323L);
-		encalheDTO.setPrecoCapa(new BigDecimal(10));
-		encalheDTO.setPrecoComDesconto(new BigDecimal(20));
-		encalheDTO.setEncalhe(new BigDecimal(8));
-		encalheDTO.setNomeFornecedor("ACME");
-		encalheDTO.setTotal(new BigDecimal(123456));
-		
-		listaEncalheCota.add(encalheDTO);
-		
-		return listaEncalheCota;		
+		if(listaEncalheCota != null){
+						
+			TableModel<CellModel> tableModel =  obterTableModelParaEncalheCota(listaEncalheCota);
+			
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Encalhe não encontrado.");
+		}
 		
 	}
-	
+		
+	/**
+	 * Obtém lista de conta corrente da sessão para localizar data selecionada
+	 * @param lineId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private ViewContaCorrenteCota obterListaEncalheSessao(Long lineId) {
+		List<ViewContaCorrenteCota> listaContaCorrente =  (List<ViewContaCorrenteCota>) request.getSession().getAttribute(ITENS_ENCALHE);
+		
+		if(listaContaCorrente != null){
+			for(ViewContaCorrenteCota contaCorrente : listaContaCorrente){
+				
+				if(contaCorrente.getId().equals(lineId)){
+					return contaCorrente;
+				}
+			}
+		}		
+		return null;
+		
+	}
+
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
@@ -253,7 +279,6 @@ public class ContaCorrenteCotaController {
 		Integer codCota = null;
 		
 		for(ViewContaCorrenteCota dto : itensContaCorrenteCota) {
-			
 			
 			codCota = dto.getNumeroCota();
 			String data 		     	 = dto.getDataConsolidado().toString();

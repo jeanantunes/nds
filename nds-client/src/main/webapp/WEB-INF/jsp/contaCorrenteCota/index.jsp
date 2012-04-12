@@ -45,26 +45,29 @@ function pesquisarItemContaCorrenteCota() {
 /**
  * FAZ A PESQUISA DE ENCALHE DA COTA EM UMA DETERMINADA DATA
  */
-function pesquisarEncalheCota(){
+function pesquisarEncalheCota(lineId){
+		
+	var numeroCota = $("#cota").val();		
 	
-	
-	//***************************************************
-	
-	var numeroCota = $("#cota").val();
-	
-	//como passar a data pelo click no link do GRID ?
-
-	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota }];
+	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota },
+	                         {name:'filtroConsolidadoEncalheDTO.lineId', value:lineId }];
 	
 	$(".encalheCotaGrid").flexOptions({
 		
 		url : '<c:url value="/financeiro/contaCorrenteCota/consultarEncalheCota" />', params: parametroPesquisa
 				
 	});
-
-	$(".encalheCotaGrid").flexReload();
 	
-	//***************************************************
+	//$("#datacotanome").html($dataescolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+	
+	carregarEncalheCotaGrid();
+	
+	$(".encalheCotaGrid").flexReload();
+	popup_encalhe();
+	
+	
+	
+	
 	
 }
 
@@ -94,7 +97,7 @@ function getDataFromResult(data) {
 		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 		
 			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
-			value.cell[4] = '<a href="javascript:;" onclick="popup_encalhe();"/>'+encalhe+'</a>'+hiddeFields;
+			value.cell[4] = '<a href="javascript:;" onclick="pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
 			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
 			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
 			value.cell[7] = '<a href="#"/>'+encargos+'</a>'+hiddeFields;
@@ -104,6 +107,23 @@ function getDataFromResult(data) {
 	
 		$("#cotanome").html($("#cota").val()+" "+$("#nomeCota").val());
 		$(".grids").show();
+		
+		return data;
+	}	
+
+}
+
+function getDataFromResult2(data) {
+	
+	if(typeof data.mensagens == "object") {
+		
+		$(".gridsEncalhe").hide();
+	
+		exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		
+	}else{
+		
+		$(".gridsEncalhe").show();
 		
 		return data;
 	}	
@@ -120,7 +140,7 @@ $(function() {
 	
 	$("#nomeCota").autocomplete({source: ""});
 	
-	carregarItemContaCorrenteCotaGrid();
+	carregarItemContaCorrenteCotaGrid();	
 	
 });
 
@@ -210,18 +230,18 @@ function carregarItemContaCorrenteCotaGrid() {
 function carregarEncalheCotaGrid() {
 	
 	$(".encalheCotaGrid").flexigrid({
-		preProcess: getDataFromResult,
+		preProcess: getDataFromResult2,
 		dataType : 'json',
 		colModel : [ {
 			display : 'Código',
 			name : 'codigoProduto',
-			width : 70,
+			width : 50,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Produto',
 			name : 'nomeProduto',
-			width : 90,
+			width : 130,
 			sortable : true,
 			align : 'right'
 		}, {
@@ -233,7 +253,7 @@ function carregarEncalheCotaGrid() {
 		}, {
 			display : 'Preço Capa R$',
 			name : 'precoVenda',
-			width : 90,
+			width : 95,
 			sortable : true,
 			align : 'right'
 		}, {
@@ -245,30 +265,27 @@ function carregarEncalheCotaGrid() {
 		}, {
 			display : 'Encalhe',
 			name : 'encalhe',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'right',
 		}, {
 			display : 'Fornecedor',
 			name : 'nomeFornecedor',
-			width : 80,
-			sortable : true,
+			width : 100,
+			sortable : false,
 			align : 'right'
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 80,
+			width : 75,
 			sortable : true,
 			align : 'right'
 		}],
-		sortname : "codigoProduto",
+		sortname : "Nome",
 		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 960,
-		height : 255
+		width : 800,
+		height : 200
+
 	});
 }
 
@@ -378,13 +395,14 @@ function popup_encargos() {
 <div id="dialog-encalhe" title="Encalhe da Cota">
 	<fieldset>
     	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revista</legend>
+    	 <strong><span id="datacotanome"></span></strong>
         
         <div class="gridsEncalhe" style="display: none;">      
         
 	        <table class="encalheCotaGrid"></table>
 	        
-	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 	       		       	
 	    </div>   
     </fieldset>

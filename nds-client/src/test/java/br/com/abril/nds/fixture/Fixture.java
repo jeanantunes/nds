@@ -1177,6 +1177,19 @@ public class Fixture {
 		return consolidado;
 	}
 	
+	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCotaEncalhe(
+			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
+			BigDecimal valorConsolidado, BigDecimal valorEncalhe) {
+		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		consolidado.setConsignado(valorConsolidado);
+		consolidado.setEncalhe(valorEncalhe);
+		consolidado.setMovimentos(movimentos);
+		consolidado.setCota(cota);
+		consolidado.setDataConsolidado(data);
+		consolidado.setTotal(valorConsolidado);
+		return consolidado;
+	}
+	
 	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
 			Cota cota, Date data, Usuario usuario, StatusDivida status,
 			BigDecimal valor) {

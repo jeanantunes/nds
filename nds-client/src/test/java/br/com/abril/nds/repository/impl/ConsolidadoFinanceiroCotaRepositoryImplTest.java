@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +18,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -46,12 +46,12 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 
 public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest {
-	
+			
 	@Autowired
-	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
 	
 	Cota cotaManoel;
 	Date dataAtual = new Date();
@@ -81,16 +81,20 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		TipoProduto tipoProduto = Fixture.tipoRevista();
 		save(tipoProduto);
 		
+		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
+		save(tipoFornecedor);
 		
 		Produto produto = Fixture.produtoBravo(tipoProduto);
+		Fornecedor fornecedor = Fixture.fornecedorAcme(tipoFornecedor);
+		save(fornecedor);
+		produto.addFornecedor(fornecedor);
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
 				new BigDecimal(10), produto);
 		//produtoEdicao.setDesconto(new BigDecimal(1));
 		save(produtoEdicao);
-		
-		
+				
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 				
@@ -99,14 +103,10 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
-		
-		
+				
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
-				
-		Fornecedor fornecedor = Fixture.fornecedorAcme(tipoFornecedorPublicacao);
-		save(fornecedor);
-		
+					
 		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(notaFiscal);
 		
@@ -164,8 +164,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 	}
 	
-	
-	@Ignore
+		
 	@Test
 	public void obterEncalhedaCota(){
 		
@@ -174,11 +173,9 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		filtro.setDataConsolidado(dataAtual);
 		filtro.setNumeroCota(cotaManoel.getNumeroCota());
 		
-		List<EncalheCotaDTO> lista = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaEncalhe(filtro);
+		List<EncalheCotaDTO> lista = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtro);
 		
 		Assert.assertEquals(1, lista.size());
-		
-		//TODO - Implementar
 		
 	}
 

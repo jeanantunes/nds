@@ -86,9 +86,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		StringBuffer hql = new StringBuffer("");
 		
 		hql.append(" select ");
-		hql.append(" p.codigo as codigoProduto, ");
+		hql.append(" p.codigo as codigoProduto, ");	
 		hql.append(" p.nome as nomeProduto, ");
-		//hql.append("f.juridica.razaoSocial as nomefornecedor, ");
+		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");				
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");		
 		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
@@ -104,7 +104,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		hql.append(" LEFT JOIN mec.estoqueProdutoCota epc ");
 		hql.append(" LEFT JOIN epc.produtoEdicao pe ");
 		hql.append(" LEFT JOIN pe.produto p ");
-		//hql.append(" LEFT JOIN p.fornecedores f ");
+		hql.append(" LEFT JOIN p.fornecedores f ");
 						
 		hql.append(" WHERE c.numeroCota =:numeroCota ");
 		
@@ -118,7 +118,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" pe.desconto ");
+		hql.append(" pe.desconto, ");
+		hql.append(" f.juridica.razaoSocial ");
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
