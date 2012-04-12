@@ -69,4 +69,9 @@ public class Telefone implements Serializable {
 	public void setDdd(String ddd) {
 		this.ddd = ddd;
 	}
+	
+	public String toString(){
+		
+		return ddd + " - " + numero;
+	}
 }

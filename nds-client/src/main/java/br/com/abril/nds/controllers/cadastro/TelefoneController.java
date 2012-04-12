@@ -20,10 +20,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
-import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
-import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -48,7 +46,7 @@ public class TelefoneController {
 	private HttpSession httpSession;
 	
 	@Autowired
-	private TelefoneService telefoneService;
+	private FiadorService fiadorService;
 	
 	public TelefoneController(Result result, HttpSession httpSession){
 		this.result = result;
@@ -61,6 +59,20 @@ public class TelefoneController {
 	@Post
 	public void pesquisarTelefones(String sortname, String sortorder){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
+		
+		List<TelefoneAssociacaoDTO> listaTelefones = null;
+		
+		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+		
+		if (idFiador != null){
+			listaTelefones = this.fiadorService.buscarTelefonesFiador(idFiador, null);
+		}
+		
+		if (listaTelefones != null){
+			for (TelefoneAssociacaoDTO tDto : listaTelefones){
+				telefonesSessao.put(tDto.getReferencia(), tDto);
+			}
+		}
 		
 		if (sortname != null) {
 
@@ -236,84 +248,5 @@ public class TelefoneController {
 		if (!listaValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaValidacao));
 		}
-	}
-	
-	//OS MÉTODOS A BAIXO FORAM CRIADOS APENAS PARA TESTE, JA QUE ESSA TELA SERÁ INCLUDE PARA OUTRAS
-	@Post
-	public void cadastrar(Long idCota, Long idFornecedor){
-		List<TelefoneAssociacaoDTO> lista = null;
-		
-		if (idCota != null){
-			lista = this.telefoneService.buscarTelefonesCota(idCota, null);
-		} else if (idFornecedor != null){
-			lista = this.telefoneService.buscarTelefonesFornecedor(idFornecedor, null);
-		}
-		
-		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
-		
-		for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : lista){
-			map.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
-		}
-		
-		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
-		
-		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
-		
-		this.pesquisarTelefones(null, null);
-	}
-	
-	@Post
-	public void salvar(Long idCota, Long idFornecedor){
-		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
-		
-		if (idCota != null){
-			Cota cota = new Cota();
-			cota.setId(idCota);
-			List<TelefoneCota> lista = new ArrayList<TelefoneCota>();
-			for (Integer key : map.keySet()){
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-				if (telefoneAssociacaoDTO.getTipoTelefone() != null){
-					TelefoneCota telefoneCota = new TelefoneCota();
-					telefoneCota.setCota(cota);
-					telefoneCota.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-					telefoneCota.setTelefone(telefoneAssociacaoDTO.getTelefone());
-					telefoneCota.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
-					
-					lista.add(telefoneCota);
-				}
-			}
-			
-			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
-			
-			this.telefoneService.cadastrarTelefonesCota(lista, telefonesRemover);
-		} else if (idFornecedor != null){
-			Fornecedor fornecedor = new Fornecedor();
-			fornecedor.setId(idFornecedor);
-			List<TelefoneFornecedor> lista = new ArrayList<TelefoneFornecedor>();
-			for (Integer key : map.keySet()){
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-				if (telefoneAssociacaoDTO.getTipoTelefone() != null){
-					TelefoneFornecedor telefoneFornecedor = new TelefoneFornecedor();
-					telefoneFornecedor.setFornecedor(fornecedor);
-					telefoneFornecedor.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-					telefoneFornecedor.setTelefone(telefoneAssociacaoDTO.getTelefone());
-					telefoneFornecedor.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
-					
-					lista.add(telefoneFornecedor);
-				}
-			}
-			
-			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
-			
-			this.telefoneService.cadastrarTelefonesFornecedor(lista, telefonesRemover);
-		}
-		
-		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
-		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
-		
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
-		
-		//this.pesquisarTelefones();
 	}
 }

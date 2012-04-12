@@ -89,4 +89,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	Long obterTotalCotasSujeitasSuspensao();
 	
+	List<Cota> obterCotaAssociadaFiador(Long idFiador);
 }
