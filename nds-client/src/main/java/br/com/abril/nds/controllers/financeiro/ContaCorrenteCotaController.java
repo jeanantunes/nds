@@ -274,11 +274,13 @@ public class ContaCorrenteCotaController {
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		int counter = 1;
+		///int counter = 1;
 		
 		Integer codCota = null;
 		
 		for(ViewContaCorrenteCota dto : itensContaCorrenteCota) {
+			
+			
 			
 			codCota = dto.getNumeroCota();
 			String data 		     	 = dto.getDataConsolidado().toString();
@@ -294,7 +296,7 @@ public class ContaCorrenteCotaController {
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
-							counter, 
+							dto.getId().intValue(), 
 							data, 
 							valorPostergado, 
 							NA, 
@@ -307,7 +309,7 @@ public class ContaCorrenteCotaController {
 							total
 					));
 			
-			counter++;
+			//counter++;
 		}
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(codCota);

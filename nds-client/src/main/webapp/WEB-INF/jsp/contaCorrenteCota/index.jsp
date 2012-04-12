@@ -52,6 +52,8 @@ function pesquisarEncalheCota(lineId){
 	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota },
 	                         {name:'filtroConsolidadoEncalheDTO.lineId', value:lineId }];
 	
+	carregarEncalheCotaGrid();
+	
 	$(".encalheCotaGrid").flexOptions({
 		
 		url : '<c:url value="/financeiro/contaCorrenteCota/consultarEncalheCota" />', params: parametroPesquisa
@@ -59,8 +61,6 @@ function pesquisarEncalheCota(lineId){
 	});
 	
 	//$("#datacotanome").html($dataescolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
-	
-	carregarEncalheCotaGrid();
 	
 	$(".encalheCotaGrid").flexReload();
 	popup_encalhe();
