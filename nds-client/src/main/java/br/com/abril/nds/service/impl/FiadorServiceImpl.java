@@ -1,21 +1,474 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ConsultaFiadorDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.Garantia;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneFiador;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EnderecoFiadorRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.repository.FiadorRepository;
+import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.repository.TelefoneFiadorRepository;
 import br.com.abril.nds.service.FiadorService;
+import br.com.abril.nds.service.GarantiaService;
+import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class FiadorServiceImpl implements FiadorService {
 
+	@Autowired
+	private FiadorRepository fiadorRepository;
+	
+	@Autowired
+	private EnderecoFiadorRepository enderecoFiadorRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private TelefoneService telefoneService;
+	
+	@Autowired
+	private TelefoneFiadorRepository telefoneFiadorRepository;
+	
+	@Autowired
+	private GarantiaService garantiaService;
+	
+	@Autowired
+	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
+	
 	@Override
-	public List<Fiador> obterFiadores(
-			FiltroConsultaFiadorDTO filtroConsultaFiadorDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly = true)
+	public ConsultaFiadorDTO obterFiadores(FiltroConsultaFiadorDTO filtroConsultaFiadorDTO) {
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);
+		
+		for (Fiador fiador : consultaFiadorDTO.getListaFiadores()){
+			
+			List<Telefone> telefones = new ArrayList<Telefone>();
+			
+			Telefone telefone = this.telefoneFiadorRepository.pesquisarTelefonePrincipalFiador(fiador.getId());
+			
+			if (telefone != null){
+				telefones.add(telefone);
+			}
+			
+			fiador.getPessoa().setTelefones(telefones);
+		}
+		
+		return consultaFiadorDTO;
 	}
 
+	@Override
+	@Transactional
+	public void cadastrarFiador(Fiador fiador,
+			List<Pessoa> sociosAdicionar,
+			Set<Long> sociosRemover,
+			List<EnderecoAssociacaoDTO> listaEnderecosAdicionar,
+			List<EnderecoAssociacaoDTO> listaEnderecosRemover,
+			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
+			Set<Long> listaTelefoneRemover,
+			List<Garantia> listaGarantiaAdicionar,
+			Set<Long> listaGarantiaRemover, 
+			List<Integer> listaCotasAssociar,
+			Set<Integer> listaCotasDesassociar) {
+		
+		this.validarDadosFiador(fiador, sociosAdicionar);
+		
+		if (fiador.getId() != null && fiador.getPessoa().getId() == null){
+		
+			fiador.getPessoa().setId(this.fiadorRepository.buscarIdPessoaFiador(fiador.getId()));
+		}
+		
+		List<Endereco> listaEnderecos = new ArrayList<Endereco>();
+		if (listaEnderecosAdicionar != null){
+			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEnderecosAdicionar){
+				listaEnderecos.add(enderecoAssociacaoDTO.getEndereco());
+			}
+		}
+		
+		if (!listaEnderecos.isEmpty()){
+			fiador.getPessoa().setEnderecos(listaEnderecos);
+		}
+		
+		List<Telefone> listaTelefones = new ArrayList<Telefone>();
+		if (listaTelefoneAdicionar != null){
+			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefoneAdicionar){
+				listaTelefones.add(telefoneAssociacaoDTO.getTelefone());
+			}
+		}
+		
+		if (!listaTelefones.isEmpty()){
+			fiador.getPessoa().setTelefones(listaTelefones);
+		}
+		
+		if (!listaGarantiaAdicionar.isEmpty()){
+			fiador.setGarantias(listaGarantiaAdicionar);
+		}
+		
+		List<Cota> listaCotas = new ArrayList<Cota>();
+		if (listaCotasAssociar != null){
+			for (Integer numeroCota : listaCotasAssociar){
+				listaCotas.add(this.cotaRepository.obterPorNumerDaCota(numeroCota));
+			}
+		}
+		
+		if (!listaCotas.isEmpty()){
+			fiador.setCotasAssociadas(listaCotas);
+		}
+		
+		if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
+			fiador.setSocios(sociosAdicionar);
+		}
+		
+		if (fiador.getPessoa() instanceof PessoaFisica){
+			PessoaFisica conjuge = ((PessoaFisica)fiador.getPessoa()).getConjuge();
+			
+			if (conjuge != null){
+				if (conjuge.getId() == null){
+					this.pessoaRepository.adicionar(conjuge);
+				} else {
+					this.pessoaRepository.alterar(conjuge);
+				}
+			}
+		}
+		
+		if (fiador.getId() != null){
+			
+			List<Pessoa> sociosBanco = this.fiadorRepository.buscarSociosFiador(fiador.getId());
+			
+			if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
+				
+				for (Pessoa socio : sociosAdicionar){
+					if (!sociosBanco.contains(socio)){
+						sociosBanco.add(socio);
+					}
+				}
+			}
+			
+			if (sociosRemover != null && !sociosRemover.isEmpty()){
+				
+				for (int index = 0 ; index < sociosBanco.size() ; index++){
+					
+					for (Long idRemover : sociosRemover){
+						
+						if (sociosBanco.get(index).getId().equals(idRemover)){
+							sociosBanco.remove(index);
+						}
+					}
+				}
+			}
+			
+			fiador.setSocios(sociosAdicionar);
+		}
+		
+		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
+		
+		if (fiador.getPessoa().getId() == null){
+			
+			this.pessoaRepository.adicionar(fiador.getPessoa());
+		} else {
+			
+			this.pessoaRepository.alterar(fiador.getPessoa());
+		}
+		
+		if (fiador.getId() == null){
+			
+			this.fiadorRepository.adicionar(fiador);
+		} else {
+			
+			this.fiadorRepository.alterar(fiador);
+		}
+		
+		this.processarTelefones(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
+		
+		this.processarGarantias(fiador, listaGarantiaAdicionar, listaGarantiaRemover);
+		
+		this.processarCotasAssociadas(fiador, listaCotas, listaCotasDesassociar);
+	}
+
+	private void processarEnderecos(Fiador fiador,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
+		
+		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
+
+			this.salvarEnderecosFiador(fiador, listaEnderecoAssociacaoSalvar);
+		}
+
+		if (listaEnderecoAssociacaoRemover != null && !listaEnderecoAssociacaoRemover.isEmpty()) {
+			
+			this.removerEnderecosFiador(fiador, listaEnderecoAssociacaoRemover);
+		}
+	}
+	
+	private void salvarEnderecosFiador(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+
+			this.enderecoRepository.merge(enderecoAssociacao.getEndereco());
+			
+			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
+
+			if (enderecoFiador == null) {
+
+				enderecoFiador = new EnderecoFiador();
+				enderecoFiador.setFiador(fiador);
+			}
+
+			enderecoFiador.setEndereco(enderecoAssociacao.getEndereco());
+			enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+			enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+
+			this.enderecoFiadorRepository.merge(enderecoFiador);
+		}
+	}
+
+	private void removerEnderecosFiador(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+		
+		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		
+		List<Long> idsEndereco = new ArrayList<Long>();
+
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+
+			listaEndereco.add(enderecoAssociacao.getEndereco());
+
+			EnderecoFiador enderecoCota = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
+			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+
+			this.enderecoFiadorRepository.remover(enderecoCota);
+		}
+		
+		this.enderecoRepository.removerEnderecos(idsEndereco);
+	}
+	
+	private void processarTelefones(Fiador fiador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
+			Set<Long> listaTelefoneRemover){
+		
+		this.salvarTelefonesFiador(fiador, listaTelefoneAdicionar);
+		
+		this.removerTelefonesFiador(listaTelefoneRemover);
+	}
+
+	private void salvarTelefonesFiador(Fiador fiador, List<TelefoneAssociacaoDTO> listaTelefones) {
+		
+		this.telefoneService.cadastrarTelefone(listaTelefones);
+		
+		if (listaTelefones != null){
+			boolean isTelefonePrincipal = false;
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefones){
+				
+				if (isTelefonePrincipal && dto.isPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				}
+				
+				if (dto.isPrincipal()){
+					isTelefonePrincipal = dto.isPrincipal();
+				}
+				
+				TelefoneFiador telefoneFiador = new TelefoneFiador();
+				telefoneFiador.setFiador(fiador);
+				telefoneFiador.setPrincipal(dto.isPrincipal());
+				telefoneFiador.setTelefone(dto.getTelefone());
+				telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
+				
+				this.telefoneFiadorRepository.adicionar(telefoneFiador);
+			}
+		}
+	}
+
+	private void removerTelefonesFiador(Collection<Long> listaTelefones) {
+		
+		if (listaTelefones != null && !listaTelefones.isEmpty()){
+			this.telefoneFiadorRepository.removerTelefonesFiador(listaTelefones);
+			
+			this.telefoneService.removerTelefones(listaTelefones);
+		}
+	}
+	
+	private void processarGarantias(Fiador fiador, List<Garantia> listaGarantias, Set<Long> idsGarantiasRemover){
+		
+		this.garantiaService.salvarGarantias(listaGarantias, fiador);
+		
+		this.garantiaService.removerGarantias(idsGarantiasRemover);
+	}
+	
+	private void processarCotasAssociadas(Fiador fiador,
+			List<Cota> listaCotasAssociar, Set<Integer> listaCotasDesassociar) {
+		
+		if (listaCotasDesassociar != null){
+			for (Integer numeroCota : listaCotasDesassociar){
+				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+				
+				if (cota != null){
+					cota.setFiador(null);
+					
+					this.cotaRepository.alterar(cota);
+				}
+			}
+		}
+		
+		if (listaCotasAssociar != null){
+			for (Cota cota : listaCotasAssociar){
+				
+				if (cota != null){
+					
+					cota.setFiador(fiador);
+					this.cotaRepository.alterar(cota);
+				}
+			}
+		}
+	}
+	
+	private void validarDadosFiador(Fiador fiador, List<Pessoa> socios){
+		
+		List<String> msgsValidacao = new ArrayList<String>();
+		
+		if (fiador == null || fiador.getPessoa() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório");
+		}
+		
+		if (fiador.getPessoa() instanceof PessoaFisica){
+			PessoaFisica pessoa = (PessoaFisica) fiador.getPessoa();
+			
+			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+				msgsValidacao.add("Nome é obrigatório.");
+			}
+			
+			if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+				msgsValidacao.add("E-mail é obrigatório.");
+			}
+			
+			if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+				msgsValidacao.add("CPF é obrigatório.");
+			}
+			
+			if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+				msgsValidacao.add("R.G. é obrigatório.");
+			}
+			
+			if (pessoa.getDataNascimento() == null){
+				msgsValidacao.add("Data Nascimento é obrigatório.");
+			}
+			
+			if (pessoa.getEstadoCivil() == null){
+				msgsValidacao.add("Estado Civil é obrigatório.");
+			}
+			
+			if (pessoa.getSexo() == null){
+				msgsValidacao.add("Sexo é obrigatório.");
+			}
+			
+			//dados do conjuge
+			if (pessoa.getConjuge() != null){
+				pessoa = pessoa.getConjuge();
+				
+				if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+					msgsValidacao.add("Nome do conjuge é obrigatório.");
+				}
+				
+				if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+					msgsValidacao.add("E-mail do conjuge é obrigatório.");
+				}
+				
+				if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+					msgsValidacao.add("CPF do conjuge é obrigatório.");
+				}
+				
+				if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+					msgsValidacao.add("R.G. do conjuge é obrigatório.");
+				}
+				
+				if (pessoa.getDataNascimento() == null){
+					msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
+				}
+				
+				if (pessoa.getSexo() == null){
+					msgsValidacao.add("Sexo do conjuge é obrigatório.");
+				}
+			}
+		} else {
+			//TODO validar dados pessoa juridica
+		}
+			
+		if (!msgsValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Pessoa buscarPessoaFiadorPorId(Long idFiador) {
+		
+		Pessoa pessoa = this.fiadorRepository.buscarPessoaFiadorPorId(idFiador);
+		
+		if (pessoa instanceof PessoaFisica){
+			((PessoaFisica) pessoa).getConjuge();
+		}
+		
+		return pessoa;
+	}
+	
+	@Override
+	@Transactional
+	public void excluirFiador(Long idFiador){
+		
+		Fiador fiador = this.fiadorRepository.buscarPorId(idFiador);
+		
+		if (fiador != null){
+			this.fiadorRepository.remover(fiador);
+		}
+	}
+
+	@Transactional
+	@Override
+	public List<TelefoneAssociacaoDTO> buscarTelefonesFiador(Long idFiador,	Set<Long> idsIgnorar) {
+		
+		if (idFiador == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdFiador é obrigatório");
+		}
+		
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneFiadorRepository.buscarTelefonesFiador(idFiador, idsIgnorar);
+		
+		List<Telefone> listaTel = this.telefoneFiadorRepository.buscarTelefonesPessoaPorFiador(idFiador);
+		
+		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
+			listaTel.remove(tDto.getTelefone());
+		}
+		
+		for (Telefone telefone : listaTel){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			listaTelAssoc.add(telefoneAssociacaoDTO);
+		}
+		
+		return listaTelAssoc;
+	}
 }

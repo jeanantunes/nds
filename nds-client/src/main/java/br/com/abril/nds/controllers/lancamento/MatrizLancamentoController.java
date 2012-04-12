@@ -7,11 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;

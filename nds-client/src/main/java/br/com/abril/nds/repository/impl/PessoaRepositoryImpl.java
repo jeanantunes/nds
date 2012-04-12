@@ -2,10 +2,13 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.PessoaRepository;
 
@@ -44,5 +47,11 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 		return query.list();
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	public List<PessoaFisica> obterSociosPorFiador(Long idFiador){
+		Criteria criteria = this.getSession().createCriteria(PessoaFisica.class);
+		criteria.add(Restrictions.eq("fiador.id", idFiador));
+		
+		return criteria.list();
+	}
 }

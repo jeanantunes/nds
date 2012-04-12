@@ -2,40 +2,28 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 
-import br.com.abril.nds.util.export.Export;
-
 public class ConsultaEncalheDTO {
 
 	private Long idProdutoEdicao;
 	
-	@Export(label="Código")
 	private String codigoProduto;
 	
-	@Export(label="Produto")
 	private String nomeProduto;
 	
-	@Export(label="Edição")
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$")
 	private BigDecimal precoVenda;
 	
-	@Export(label="Preço com Desc. R$")
 	private BigDecimal precoComDesconto;
 	
-	@Export(label="Reparte")
 	private BigDecimal reparte;
 	
-	@Export(label="Encalhe")
 	private BigDecimal encalhe;
 	
-	@Export(label="Fornecedor")
 	private String fornecedor;
 	
-	@Export(label="Total R$")
 	private BigDecimal total;
 	
-	@Export(label="Recolhimento")
 	private Integer recolhimento;
 	
 

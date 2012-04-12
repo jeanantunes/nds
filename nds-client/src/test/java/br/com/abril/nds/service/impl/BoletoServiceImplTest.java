@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -107,7 +108,11 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
 		save(tipoProdutoRevista);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
@@ -121,7 +126,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+				new BigDecimal("100.56"), cota, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
@@ -172,19 +177,19 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),
 									    new Date(), new Date(), BigDecimal.ZERO, 
-                					    new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO,
+                					    new BigDecimal(100), "1", "1", StatusCobranca.PAGO,
                 					    cota, bancoHSBC, divida1, 0);
 		save(boleto1);
 		
 		Boleto boleto2 = Fixture.boleto("1234567890124", "456", "1234567890124456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-				   						new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+				   						new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
 				   						cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 		
 		Boleto boleto3 = Fixture.boleto("1234567890125", "456", "1234567890125456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 		

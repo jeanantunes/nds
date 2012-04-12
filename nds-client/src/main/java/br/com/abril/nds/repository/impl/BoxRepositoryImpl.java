@@ -1,0 +1,56 @@
+package br.com.abril.nds.repository.impl;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.repository.BoxRepository;
+
+
+/**
+ * Classe de implementação referente ao acesso a dados da entidade 
+ * {@link br.com.abril.nds.model.cadastro.Box}
+ * 
+ * @author Discover Technology
+ *
+ */
+@Repository
+public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements BoxRepository {
+
+	/**
+	 * Construtor padrão
+	 */
+	public BoxRepositoryImpl() {
+		super(Box.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Box> obterBoxPorProduto(String codigoProduto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select box from Box box ")
+			.append(" join box.cotas cota ")
+			.append(" join cota.estudoCotas estudoCota ")
+			.append(" join estudoCota.estudo estudo ")
+			.append(" join estudo.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+		
+			.append(" where ")
+			.append(" produto.codigo = :codigoProduto")
+		
+			.append(" group by box.codigo ")
+			
+			.append(" order by box.codigo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigoProduto", codigoProduto);
+	
+		
+		return query.list();
+	}
+
+}

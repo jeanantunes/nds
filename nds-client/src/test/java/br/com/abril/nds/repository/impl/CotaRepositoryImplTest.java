@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -66,8 +67,12 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Usuario usuario;
 	private PessoaJuridica pessoaJuridica;
 	
+	private Editor abril;
+	
 	@Before
 	public void setup() {
+		abril = Fixture.editoraAbril();
+		save(abril);
 		
 		pessoaJuridica = 
 			Fixture.pessoaJuridica("FC", "01.001.001/001-00", "000.000.000.00", "fc@mail.com");
@@ -102,6 +107,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoProdutoRevista);
 		
 		Produto produto = Fixture.produtoBoaForma(tipoProdutoRevista);
+		produto.setEditor(abril);
 		save(produto);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
@@ -230,6 +236,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoProdutoRevista);
 		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		produtoVeja.setEditor(abril);
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
@@ -262,33 +269,16 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterCotasSujeitasSuspensao() throws Exception {
-		
 		setupHistoricoInadimplencia();
-		
-		try {			
-			
-			@SuppressWarnings("rawtypes")
-			List lista = cotaRepository.obterCotasSujeitasSuspensao("asc",CotaSuspensaoDTO.Ordenacao.NOME.name(),0,50);
-			Assert.assertEquals(lista.size(),1);			
-		}catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao("asc",CotaSuspensaoDTO.Ordenacao.NOME.name(),0,50);
+		Assert.assertEquals(lista.size(),1);			
 	}
 	
 	@Test
 	public void obterTotalCotasSujeitasSuspensao() throws Exception {
-		
 		setupHistoricoInadimplencia();
-		
-		try {			
-			
-			Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
-			Assert.assertTrue(total==1L);			
-		}catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
+		Assert.assertTrue(total==1L);			
 	}
 		
 

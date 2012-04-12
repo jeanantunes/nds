@@ -14,10 +14,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;

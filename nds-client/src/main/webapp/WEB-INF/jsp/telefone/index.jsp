@@ -1,4 +1,7 @@
 <head>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 	<script type="text/javascript">
 		function popupTelefone() {
 			
@@ -261,6 +264,12 @@
 			);
 		}
 		
+		$(function() {
+			$("#ddd").numeric();
+			$("#numeroTelefone").numeric();
+			$("#ramal").numeric();
+		});
+		
 		//OS MÉTODOS A BAIXO FORAM CRIADOS APENAS PARA TESTE, JA QUE ESSA TELA SERÁ INCLUDE PARA OUTRAS
 		function salvar(){
 			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
@@ -302,6 +311,8 @@
 			);
 		}
 	</script>
+	
+	
 </head>
 	<div id="manutencaoTelefones" title="Telefones">
 		

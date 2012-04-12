@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -22,6 +25,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -50,6 +54,9 @@ public class ContaCorrenteCotaController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
+	
+	@Autowired
 	private HttpSession session;
 	
 	@Autowired
@@ -63,6 +70,13 @@ public class ContaCorrenteCotaController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroContaCorrente";
 	
+	private static final String FILTRO_SESSION_ATTRIBUTE_ENCALHE = "filtroContaCorrenteEncalhe";
+	
+	@Autowired
+	private HttpServletRequest request;
+	
+	private static final String ITENS_ENCALHE = "itensEncalhe";
+	
 		
 	public ContaCorrenteCotaController(){		
 	}
@@ -70,6 +84,14 @@ public class ContaCorrenteCotaController {
 	public void index() {	
 	}
 					
+	/**
+	 * Método que consulta a conta corrente da Cota selecionada
+	 * @param filtroViewContaCorrenteCotaDTO
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 */
 	public void consultarContaCorrenteCota( FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,String sortname, String sortorder, int rp, int page) {
 			
 				
@@ -79,17 +101,111 @@ public class ContaCorrenteCotaController {
 		
 		tratarFiltro(filtroViewContaCorrenteCotaDTO);
 		
+	
+		
 		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);
-			
+							
 		if (listaItensContaCorrenteCota == null || listaItensContaCorrenteCota.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		request.getSession().setAttribute(ITENS_ENCALHE, listaItensContaCorrenteCota);
 		
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
+	/**
+	 * Consulta os encalhes da cota em uma determinada data
+	 * @param filtroConsolidadoEncalheDTO
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 */
+	public void consultarEncalheCota(FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO, String sortname, String sortorder, int rp, int page ){
+				
+		
+		ViewContaCorrenteCota contaCorrente = obterListaEncalheSessao(filtroConsolidadoEncalheDTO.getLineId());
+		
+		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente.getDataConsolidado());	
+		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE, filtroConsolidadoEncalheDTO);
+		
+		result.include("dataescolhida",contaCorrente.getDataConsolidado());
+		
+		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
+		
+		if(listaEncalheCota != null){
+						
+			TableModel<CellModel> tableModel =  obterTableModelParaEncalheCota(listaEncalheCota);
+			
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Encalhe não encontrado.");
+		}
+		
+	}
+		
+	/**
+	 * Obtém lista de conta corrente da sessão para localizar data selecionada
+	 * @param lineId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private ViewContaCorrenteCota obterListaEncalheSessao(Long lineId) {
+		List<ViewContaCorrenteCota> listaContaCorrente =  (List<ViewContaCorrenteCota>) request.getSession().getAttribute(ITENS_ENCALHE);
+		
+		if(listaContaCorrente != null){
+			for(ViewContaCorrenteCota contaCorrente : listaContaCorrente){
+				
+				if(contaCorrente.getId().equals(lineId)){
+					return contaCorrente;
+				}
+			}
+		}		
+		return null;
+		
+	}
+	
+	
+	public void exportarEncalhe(FileType fileType) throws IOException{
+		
+		FiltroConsolidadoEncalheCotaDTO filtro = this.obterFiltroExportacaoEncalhe();
+		
+		
+		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtro);		
+		
+		
+		FileExporter.to("encalhe-cota", fileType)
+		.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaEncalheCota, EncalheCotaDTO.class, this.httpServletResponse);
+		
+		result.use(Results.nothing());
+		
+	}
+	
+	
+	
+	private FiltroConsolidadoEncalheCotaDTO obterFiltroExportacaoEncalhe() {
+		
+		FiltroConsolidadoEncalheCotaDTO filtro = 
+			(FiltroConsolidadoEncalheCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}			
+			
+		}
+		
+		return filtro;
+	}
+	
+
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
@@ -201,11 +317,12 @@ public class ContaCorrenteCotaController {
 		
 		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
 		
-		int counter = 1;
+		///int counter = 1;
 		
 		Integer codCota = null;
 		
 		for(ViewContaCorrenteCota dto : itensContaCorrenteCota) {
+			
 			
 			
 			codCota = dto.getNumeroCota();
@@ -222,7 +339,7 @@ public class ContaCorrenteCotaController {
 			
 			listaModeloGenerico.add(
 					new CellModel( 	
-							counter, 
+							dto.getId().intValue(), 
 							data, 
 							valorPostergado, 
 							NA, 
@@ -235,7 +352,7 @@ public class ContaCorrenteCotaController {
 							total
 					));
 			
-			counter++;
+			//counter++;
 		}
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(codCota);
@@ -248,6 +365,55 @@ public class ContaCorrenteCotaController {
 		
 		return tableModel;
 		
+	}
+	
+	/**
+	 * Obtem uma lista de Encalhe da cota no dia selecionado e prepara o Grid para receber os valores
+	 * @param itensContaCorrenteCota
+	 * @return
+	 */
+	private TableModel<CellModel> obterTableModelParaEncalheCota(List<EncalheCotaDTO> listaEncalheCota) {
+					
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+		
+		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();		
+			
+		int counter = 1;
+		
+		for(EncalheCotaDTO dto : listaEncalheCota) {		
+			
+			String codigoProduto 		 = dto.getCodigoProduto().toString();
+			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
+			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
+			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
+			String encalhe		 	 	 = (dto.getEncalhe()		    == null) 	? "0.0" : dto.getEncalhe().toString();
+			String nomeFornecedor	 	 = (dto.getNomeFornecedor() 	== null) 	? "0.0" : dto.getNomeFornecedor();
+			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
+					
+			listaModeloGenerico.add(
+					new CellModel( 	
+							counter, 
+							codigoProduto, 
+							nomeProduto, 
+							numeroEdicao, 
+							precoCapa, 
+							precoComDesconto,
+							encalhe,
+							nomeFornecedor,
+							total
+					));
+			
+			counter++;
+		}
+						
+		//result.include("cotaNome",cota.getNumeroCota()+" "+cota.getPessoa() );
+		
+		tableModel.setPage(1);
+		tableModel.setTotal(listaModeloGenerico.size());
+		tableModel.setRows(listaModeloGenerico);
+		
+		return tableModel;		
 	}
 			
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {

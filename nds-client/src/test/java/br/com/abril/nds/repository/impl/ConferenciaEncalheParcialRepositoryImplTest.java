@@ -17,6 +17,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -53,10 +54,13 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
+	private Editor abril;
+	
 	
 	@Before
 	public void setUp() {
-		
+		abril = Fixture.editoraAbril();
+		save(abril);
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -67,19 +71,24 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);
+		veja.setEditor(abril);
 		veja.addFornecedor(fornecedorDinap);
 
 		Produto quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
+		quatroRodas.setEditor(abril);
 		quatroRodas.addFornecedor(fornecedorDinap);
 
 		Produto infoExame = Fixture.produtoInfoExame(tipoRevista);
+		infoExame.setEditor(abril);
 		infoExame.addFornecedor(fornecedorDinap);
 
 		Produto capricho = Fixture.produtoCapricho(tipoRevista);
+		capricho.setEditor(abril);
 		capricho.addFornecedor(fornecedorDinap);
 		save(veja, quatroRodas, infoExame, capricho);
 		
 		Produto cromoReiLeao = Fixture.produtoCromoReiLeao(tipoCromo);
+		cromoReiLeao.setEditor(abril);
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 

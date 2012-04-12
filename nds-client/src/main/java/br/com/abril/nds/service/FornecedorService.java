@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -38,5 +40,6 @@ public interface FornecedorService {
 												 GrupoFornecedor grupoFornecedor);
 	
 	Fornecedor obterFornecedorPorId(Long id);
-	
+
+	List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar);
 }

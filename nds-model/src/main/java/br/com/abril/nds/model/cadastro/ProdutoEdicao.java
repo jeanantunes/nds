@@ -46,7 +46,7 @@ public class ProdutoEdicao implements Serializable {
 	private BigDecimal precoVenda;
 	
 	@Column(name = "DESCONTO")
-	private BigDecimal desconto;
+	private BigDecimal desconto = BigDecimal.ZERO;
 	
 	@Column(name = "PACOTE_PADRAO", nullable = false)
 	private int pacotePadrao;
