@@ -552,7 +552,7 @@ public class Fixture {
 	public static TipoMovimentoEstoque tipoMovimentoSobraEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
-		tipoMovimento.setDescricao("SObra EM");
+		tipoMovimento.setDescricao("Sobra EM");
 		tipoMovimento.setIncideDivida(false);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
 		return tipoMovimento;
