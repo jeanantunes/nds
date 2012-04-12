@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.planejamento;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +25,12 @@ import br.com.abril.nds.model.estoque.RateioDiferenca;
 @Entity
 @Table(name = "ESTUDO_COTA")
 @SequenceGenerator(name="ESTUDO_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class EstudoCota {
+public class EstudoCota implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2730755900853136814L;
 	@Id
 	@GeneratedValue(generator = "ESTUDO_COTA_SEQ")
 	@Column(name = "ID")

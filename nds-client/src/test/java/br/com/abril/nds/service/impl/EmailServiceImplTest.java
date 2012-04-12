@@ -18,6 +18,7 @@ import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.TemplateManager.TemplateNames;
 
 public class EmailServiceImplTest extends AbstractRepositoryImplTest  {
@@ -54,7 +55,7 @@ public class EmailServiceImplTest extends AbstractRepositoryImplTest  {
 			
 			byte[] anexo = IOUtils.toByteArray(file);
 			
-			AnexoEmail anexoEmail = new AnexoEmail("testeAnexoEnviodeEmail.pdf",anexo);
+			AnexoEmail anexoEmail = new AnexoEmail("testeAnexoEnviodeEmail.pdf",anexo,TipoAnexo.PDF);
 			
 			emailService.enviar("Assunto de Teste com Anexo", "Este e-mail é para teste de anexo", 
 						new String[]{"sys.discover@gmail.com"},
@@ -97,7 +98,7 @@ public class EmailServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		byte[] anexo = IOUtils.toByteArray(file);
 		
-		AnexoEmail anexoEmail = new AnexoEmail("testeAnexoEnviodeEmail.pdf",anexo);
+		AnexoEmail anexoEmail = new AnexoEmail("testeAnexoEnviodeEmail.pdf",anexo,TipoAnexo.PDF);
 	
 		
 		try {

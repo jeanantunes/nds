@@ -109,7 +109,10 @@
 			
 			$('#formBaixaAutomatica').ajaxForm(options);
 			
-			$("#valorFinanceiro").numeric();
+			$("#valorFinanceiro").priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 			
 			$("#radioBaixaManual").focus();
 		});

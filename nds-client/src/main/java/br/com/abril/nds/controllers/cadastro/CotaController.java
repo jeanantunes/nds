@@ -11,14 +11,12 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -34,10 +32,6 @@ import br.com.caelum.vraptor.view.Results;
 public class CotaController {
 	
 	private Result result;
-	
-	private static final String SUFIXO_PESSOA_FISICA = " (PF)";
-	
-	private static final String SUFIXO_PESSOA_JURIDICA = " (PJ)";
 
 	@Autowired
 	private CotaService cotaService;
@@ -165,8 +159,7 @@ public class CotaController {
 			
 		} else {
 			
-			String nomeExibicao =
-				this.obterNomeExibicaoCotaPeloTipoPessoa(cota.getPessoa());
+			String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 			
 			CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 			
@@ -182,7 +175,7 @@ public class CotaController {
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
-		nomeCota = this.removerSufixoTipoPessoa(nomeCota);
+		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
 		List<Cota> listaCotas = this.cotaService.obterCotasPorNomePessoa(nomeCota);
 		
@@ -192,8 +185,7 @@ public class CotaController {
 			
 			for (Cota cota : listaCotas) {
 				
-				String nomeExibicao =
-					this.obterNomeExibicaoCotaPeloTipoPessoa(cota.getPessoa());
+				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 					
 				CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 	
@@ -207,7 +199,7 @@ public class CotaController {
 	@Post
 	public void pesquisarPorNome(String nomeCota) {
 		
-		nomeCota = this.removerSufixoTipoPessoa(nomeCota);
+		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
 		Cota cota = this.cotaService.obterPorNome(nomeCota);
 		
@@ -216,8 +208,7 @@ public class CotaController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + nomeCota + "\" não encontrada!");
 		}
 		
-		String nomeExibicao =
-			this.obterNomeExibicaoCotaPeloTipoPessoa(cota.getPessoa());
+		String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 				
 		CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 			
@@ -232,60 +223,4 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	/*
-	 * Obtém o nome de exibição da cota de acordo com o tipo de pessoa.
-	 * 
-	 * Se for Física retorna o nome e se for jurídica retorna a Razão Social.
-	 * 
-	 * @param pessoa - pessoa
-	 * 
-	 * @return Nome para exibição
-	 */
-	private String obterNomeExibicaoCotaPeloTipoPessoa(Pessoa pessoa) {
-
-		String nomeExibicao = "";
-		
-		if (pessoa != null) {
-			
-			if (pessoa instanceof PessoaJuridica) {
-				
-				String razaoSocial = ((PessoaJuridica) pessoa).getRazaoSocial();
-
-				nomeExibicao = razaoSocial != null ? razaoSocial + SUFIXO_PESSOA_JURIDICA : razaoSocial;
-
-				
-			} else if (pessoa instanceof PessoaFisica) {
-				
-				String nome = ((PessoaFisica) pessoa).getNome();
-
-				nomeExibicao = nome != null ? nome + SUFIXO_PESSOA_FISICA : nome;
-			}
-		}
-		
-		return nomeExibicao;
-	}
-	
-	/*
-	 * Remove o sufixo do tipo de pessoa.
-	 * 
-	 * @param nomeCota - nome da cota
-	 * 
-	 * @return Nome da cota sem sufixo
-	 */
-	private String removerSufixoTipoPessoa(String nomeCota) {
-		
-		if (nomeCota != null && !nomeCota.trim().isEmpty()) {
-			
-			if (nomeCota.contains(SUFIXO_PESSOA_FISICA)) {
-				
-				return nomeCota.replace(SUFIXO_PESSOA_FISICA, "");
-				
-			} else if (nomeCota.contains(SUFIXO_PESSOA_JURIDICA)) {
-				
-				return nomeCota.replace(SUFIXO_PESSOA_JURIDICA, "");
-			}
-		}
-		
-		return nomeCota;
-	}
 }

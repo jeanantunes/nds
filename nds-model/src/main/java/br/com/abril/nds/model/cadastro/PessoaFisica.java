@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,7 +20,12 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @DiscriminatorValue(value = "F")
-public class PessoaFisica extends Pessoa {
+public class PessoaFisica extends Pessoa implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 526487374913437567L;
 
 	@Column(name = "NOME")
 	private String nome;
@@ -52,19 +57,15 @@ public class PessoaFisica extends Pessoa {
 	@Column(name = "NACIONALIDADE")
 	private String nacionalidade;
 	
-	@Column(name = "NATURAL")
+	@Column(name = "NATURALIDADE")
 	private String natural;
 	
 	@Column(name = "APELIDO")
 	private String apelido;
 	
 	@OneToOne
-	@JoinColumn(name = "PESSOA_ID_CONJUGE")
+	@JoinColumn(name = "PESSOA_ID_CONJUGE", nullable = true)
 	private PessoaFisica conjuge;
-	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_FIADOR")
-	private Fiador fiador;
 	
 	@Column(name = "SOCIO_PRINCIPAL")
 	private boolean socioPrincipal;
@@ -163,14 +164,6 @@ public class PessoaFisica extends Pessoa {
 
 	public void setConjuge(PessoaFisica conjuge) {
 		this.conjuge = conjuge;
-	}
-
-	public Fiador getFiador() {
-		return fiador;
-	}
-
-	public void setFiador(Fiador fiador) {
-		this.fiador = fiador;
 	}
 
 	public boolean isSocioPrincipal() {

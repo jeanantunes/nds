@@ -31,6 +31,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 
 @Service
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
@@ -93,13 +94,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
-	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota){
+	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistente{
 		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 			
-			TipoMovimentoEstoque tipoMovimentoCota =
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		TipoMovimentoEstoque tipoMovimentoCota =
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		
+		if ( tipoMovimento == null ) {
+		 	throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);		
+		} 
+		
+		if ( tipoMovimentoCota == null ) {
+			throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		}
 		
 		if(listaMovimentoCota != null){
 			
@@ -163,15 +172,40 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 				
-				 novaQuantidade = estoqueProduto.getQtde().add(quantidade);
-				 
-				 estoqueProduto.setQtde(novaQuantidade);
+				 if(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+					 
+					 novaQuantidade = estoqueProduto.getQtdeSuplementar().add(quantidade);
+					 
+					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
+					 
+				 } else {
+					 
+					 novaQuantidade = estoqueProduto.getQtde().add(quantidade);
+					 
+					 estoqueProduto.setQtde(novaQuantidade);
+					 
+				 }
+				
 				 
 			} else {
 				
 				novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
 				
-				estoqueProduto.setQtde(novaQuantidade);			
+				estoqueProduto.setQtde(novaQuantidade);	
+				
+				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+					 
+					novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+					
+					estoqueProduto.setQtde(novaQuantidade);	
+					 
+				 } else {
+					 
+					 novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+						
+					 estoqueProduto.setQtde(novaQuantidade);	
+					 
+				 }
 			}
 		
 			estoqueProdutoRespository.alterar(estoqueProduto);

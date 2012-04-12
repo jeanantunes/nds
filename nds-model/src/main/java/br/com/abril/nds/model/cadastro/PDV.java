@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,8 +19,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PDV")
 @SequenceGenerator(name="PDV_SEQ", initialValue = 1, allocationSize = 1)
-public class PDV {
+public class PDV implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -5121689715572569495L;
+	
 	@Id
 	@GeneratedValue(generator = "PDV_SEQ")
 	@Column(name = "ID")

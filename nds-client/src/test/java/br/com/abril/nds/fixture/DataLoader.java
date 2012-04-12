@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -49,12 +50,15 @@ import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -333,8 +337,7 @@ public class DataLoader {
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarDadosInadimplencia(session);
-			gerarCotasAusentes(session);
-			
+						
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -368,6 +371,8 @@ public class DataLoader {
 		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
+		criarEnderecoDistribuidor(session);
+		criarTelefoneDistribuidor(session);
 		criarParametrosSistema(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
@@ -408,6 +413,7 @@ public class DataLoader {
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
 		criarNotasFiscaisEntradaFornecedor(session);
+		gerarCotasAusentes(session);
 
 		// Inicio dos inserts na tabela MOVIMENTO_ESTOQUE
 		
@@ -1531,8 +1537,27 @@ public class DataLoader {
 		distribuidor.getFormasCobranca().add(formaDeposito);
 		distribuidor.getFormasCobranca().add(formaDinheiro);
 		distribuidor.getFormasCobranca().add(formaTransferenciBancaria);
-
+		
 		save(session, distribuidor);
+	}
+	
+	private static void criarEnderecoDistribuidor(Session session){
+		
+		Endereco endereco = Fixture.criarEndereco(
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+		
+		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
+		
+		save(session,endereco,enderecoDistribuidor);
+	}
+	
+	private static void criarTelefoneDistribuidor(Session session){
+		
+		Telefone telefone = Fixture.telefone("019", "259633", "012");
+		
+		TelefoneDistribuidor teDistribuidor = Fixture.telefoneDistribuidor(distribuidor, true, telefone, TipoTelefone.COMERCIAL);
+		
+		save(session, telefone,teDistribuidor);
 	}
 
 	private static void criarCotas(Session session) {
@@ -1559,8 +1584,8 @@ public class DataLoader {
 		cotaMariana.setSugereSuspensao(true);
 		save(session, cotaMariana);
 		
-		cotaOrlando = Fixture.cota(42345, orlando, SituacaoCadastro.ATIVO,box1);
-		cotaOrlando.setSugereSuspensao(true);
+		cotaOrlando = Fixture.cota(4444, orlando, SituacaoCadastro.INATIVO,box1);
+		cotaOrlando.setSugereSuspensao(false);
 		save(session, cotaOrlando);
 
 		cotaJoao = Fixture.cota(9999, joao, SituacaoCadastro.ATIVO,box2);
@@ -2035,7 +2060,7 @@ public class DataLoader {
 		//Boletos não vencidos
 		Boleto boleto6 = Fixture.boleto("1311009032012", "840", "1311009032012840",
 				                        DateUtil.parseDataPTBR("09/03/2012"), DateUtil.parseDataPTBR("12/03/2012"), 
-		                				null, BigDecimal.ZERO, new BigDecimal(600),
+		                				null, BigDecimal.ZERO, new BigDecimal(2258.62),
 		                				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 		                				cotaManoel, bancoHSBC, divida6,0);
 		

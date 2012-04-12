@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.seguranca;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "USUARIO")
 @SequenceGenerator(name="USUARIO_SEQ", initialValue = 1, allocationSize = 1)
-public class Usuario {
+public class Usuario implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -574506866277940279L;
+	
 	@Id
 	@GeneratedValue(generator = "USUARIO_SEQ")
 	@Column(name = "ID")

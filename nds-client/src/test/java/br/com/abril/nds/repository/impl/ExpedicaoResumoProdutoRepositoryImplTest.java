@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
@@ -166,7 +165,6 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 	}
 	
 	@Test 
-	@DirtiesContext
 	public void consultarResumoExpedicaoPorProdutos(){
 		
 		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
@@ -182,7 +180,6 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 	}
 		
 	@Test
-	@DirtiesContext
 	public void consultarQuantidadeResumoExpedicaoPorProdutos(){
 		
 		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();

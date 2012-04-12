@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -36,6 +37,7 @@ import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -50,8 +52,11 @@ import br.com.abril.nds.util.TipoMensagem;
 public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
-	private CotaRepository cotaRepository;
+	private SituacaoCotaService situacaoCotaService; 
 	
+	@Autowired
+	private CotaRepository cotaRepository;
+		
 	@Autowired
 	private EnderecoCotaRepository enderecoCotaRepository;
 	
@@ -351,8 +356,12 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional
 	public Cota suspenderCota(Long idCota, Usuario usuario) {
-		
+				
 		Cota cota = obterPorId(idCota);
+		
+		if(SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
+			throw new InvalidParameterException();
+		}
 		
 		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
 		historico.setCota(cota);
@@ -366,6 +375,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 		cotaRepository.alterar(cota);
+		
+		situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
+		
 		return cota;
 	}
 	
@@ -385,6 +397,11 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional
 	public String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota){
+		
+		if (numeroCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório");
+		}
+		
 		Cota cota = this.obterPorNumeroDaCota(numeroCota);
 		
 		if (cota != null){
@@ -395,7 +412,7 @@ public class CotaServiceImpl implements CotaService {
 			}
 		}
 		
-		return "";
+		return null;
 	}
 	
 	@Override

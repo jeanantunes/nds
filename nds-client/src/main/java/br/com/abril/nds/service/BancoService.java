@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 import java.util.List;
+
+import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 
@@ -16,4 +18,19 @@ public interface BancoService {
 
 	long obterQuantidadeBancos(FiltroConsultaBancosDTO filtro);
 	
+	Banco obterbancoPorNumero(String numero);
+	
+	Banco obterbancoPorNome(String nome);
+	
+	Banco obterBancoPorId(long idBanco);
+
+	BancoVO obterDadosBanco(long idBanco);
+	
+	void incluirBanco(Banco banco);
+	
+	void alterarBanco(Banco banco);
+	
+	boolean verificarPendencias(long idBanco);
+	
+	void dasativarBanco(long idBanco);
 }

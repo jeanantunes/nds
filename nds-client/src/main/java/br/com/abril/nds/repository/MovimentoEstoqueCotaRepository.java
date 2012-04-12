@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -28,5 +30,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
+	
+	
+	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento);
+	
+	public  List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento);
 	
 }

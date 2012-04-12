@@ -89,23 +89,19 @@ public class BaixaFinanceiraController {
 		this.httpSession = httpSession;
 		this.servletContext = servletContext;
 	}
-	
-	
-	
-	
+		
 	@Get
+	@Path("/baixa")
 	public void baixa() {
 		
 	}
-	
-	
 	
 	@Post
 	public void realizarBaixaAutomatica(UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		validarEntradaDados(uploadedFile, valorFinanceiro);
 		
-		BigDecimal valorFinanceiroFormatado = new BigDecimal(valorFinanceiro);
+		BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
 		
 		ResumoBaixaBoletosDTO resumoBaixaBoleto = null;
 		
@@ -119,7 +115,7 @@ public class BaixaFinanceiraController {
 																   uploadedFile.getFileName());
 			
 			resumoBaixaBoleto = 
-				boletoService.baixarBoletosAutomatico(arquivoPagamento, valorFinanceiroFormatado,
+				boletoService.baixarBoletosAutomatico(arquivoPagamento, valorFinanceiroConvertido,
 													  obterUsuario());
 		
 		} finally {
@@ -215,12 +211,19 @@ public class BaixaFinanceiraController {
 			listaMensagens.add("O preenchimento do campo [Valor Financeiro] é obrigatório!");
 		} else {
 			
+			BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
+			
 			//Valida se o valor financeiro é numérico
-			if (!Util.isNumeric(valorFinanceiro)) {
+			if (valorFinanceiroConvertido == null) {
 			
 				listaMensagens.add("O campo [Valor Financeiro] deve ser numérico!");
 			}
 			
+			//Valida se o valor financeiro é maior que 0
+			if (valorFinanceiroConvertido.compareTo(BigDecimal.ZERO) == 0) {
+			
+				listaMensagens.add("O campo [Valor Financeiro] deve ser maior que 0!");
+			}
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -364,18 +367,18 @@ public class BaixaFinanceiraController {
 					              String juros,
 					              String multa) {        
         
-       Distribuidor distribuidor = distribuidorService.obter();
+		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Date dataNovoMovimento =
 			calendarioService.adicionarDiasUteis(distribuidor.getDataOperacao(), 1);
 		
-        BigDecimal valorFormatado = CurrencyUtil.converterValor(valor);
-        BigDecimal jurosFormatado = CurrencyUtil.converterValor(juros);
-        BigDecimal multaFormatado = CurrencyUtil.converterValor(multa);
-        BigDecimal descontoFormatado = CurrencyUtil.converterValor(desconto);
+        BigDecimal valorConvertido = CurrencyUtil.converterValor(valor);
+        BigDecimal jurosConvertido = CurrencyUtil.converterValor(juros);
+        BigDecimal multaConvertida = CurrencyUtil.converterValor(multa);
+        BigDecimal descontoConvertido = CurrencyUtil.converterValor(desconto);
 
-        if (descontoFormatado.compareTo(
-        		valorFormatado.add(jurosFormatado).add(multaFormatado)) == 1) {
+        if (descontoConvertido.compareTo(
+        		valorConvertido.add(jurosConvertido).add(multaConvertida)) == 1) {
         	
         	throw new ValidacaoException(TipoMensagem.WARNING,
         		"O desconto não deve ser maior do que o valor a pagar.");
@@ -385,10 +388,10 @@ public class BaixaFinanceiraController {
 		pagamento.setDataPagamento(dataNovoMovimento);
 		pagamento.setNossoNumero(nossoNumero);
 		pagamento.setNumeroRegistro(null);
-		pagamento.setValorPagamento(valorFormatado);
-		pagamento.setValorJuros(jurosFormatado);
-		pagamento.setValorMulta(multaFormatado);
-		pagamento.setValorDesconto(descontoFormatado);
+		pagamento.setValorPagamento(valorConvertido);
+		pagamento.setValorJuros(jurosConvertido);
+		pagamento.setValorMulta(multaConvertida);
+		pagamento.setValorDesconto(descontoConvertido);
 
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, obterUsuario(),
 								   null,distribuidor.getPoliticaCobranca() , distribuidor,
@@ -397,5 +400,4 @@ public class BaixaFinanceiraController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
-
 }

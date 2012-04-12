@@ -1,16 +1,17 @@
 <script type="text/javascript">
 	$(function() {
-		$(".cotasCadastradasGrid").flexigrid({
+		$(".cotasAssociadasGrid").flexigrid({
+			preProcess: processarResultadoCotasAssociadas,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 620,
 				sortable : true,
 				align : 'left'
@@ -18,33 +19,142 @@
 				display : '',
 				name : 'sel',
 				width : 30,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
 			width : 770,
 			height : 150
 		});
+		
+		$("#numeroCota").numeric();
 	});
+	
+	function processarResultadoCotasAssociadas(data){
+		if (data.mensagens) {
+
+			exibirMensagemDialog(
+				data.mensagens.tipoMensagem, 
+				data.mensagens.listaMensagens
+			);
+			
+			return;
+		}
+		
+		if (data.result){
+			data.rows = data.result.rows;
+		}
+		
+		var i;
+
+		for (i = 0 ; i < data.rows.length; i++) {
+
+			var lastIndex = data.rows[i].cell.length;
+
+			data.rows[i].cell[lastIndex] = getActionCotaCadastrada(data.rows[i].id);
+		}
+
+		$('.cotasAssociadasGrid').show();
+		
+		if (data.result){
+			return data.result;
+		}
+		return data;
+	}
+	
+	function getActionCotaCadastrada(referencia){
+		return '<a href="javascript:;" onclick="removerAssociacaoCota(' + referencia + ')" ' +
+		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Associação">' +
+		'<img src="/nds-client/images/ico_excluir.gif" border="0px"/>' +
+		'</a>';
+	}
+	
+	function carregarCotasAssociadas(){
+		$.postJSON("<c:url value='/cadastro/fiador/obterAssociacoesCotaFiador' />", null, 
+			function(result) {
+				$(".cotasAssociadasGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});
+				
+				$("#numeroCota").val("");
+				$("#nomeCota").val("");
+			},
+			null,
+			true
+		);
+	}
+	
+	function adicionarAssociacaoCota(){
+		var data = "numeroCota=" + $("#numeroCota").val() + "&nomeCota=" + $("#nomeCota").val();
+		
+		$.postJSON("<c:url value='/cadastro/fiador/adicionarAssociacaoCota' />", data, 
+			function(result) {
+				$(".cotasAssociadasGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});
+				
+				$("#numeroCota").val("");
+				$("#nomeCota").val("");
+			},
+			null,
+			true
+		);
+	}
+	
+	function removerAssociacaoCota(referencia){
+		$.postJSON("<c:url value='/cadastro/fiador/removerAssociacaoCota' />", "referencia=" + referencia, 
+			function(result) {
+				$(".cotasAssociadasGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});
+				
+				$("#numeroCota").val("");
+				$("#nomeCota").val("");
+			},
+			null,
+			true
+		);
+	}
+	
+	function limparCamposCotasAssociadas(){
+		$("#numeroCota").val("");
+		$("#nomeCota").val("");
+	}
+	
+	function buscarNomeCota(){
+		
+		var numeroCota = $("#numeroCota").val();
+		
+		if (numeroCota.length > 0){
+		
+			$.postJSON("<c:url value='/cadastro/fiador/pesquisarNomeCotaPorNumeroCota' />", "numeroCota=" + numeroCota, 
+				function(result) {
+					
+					$("#nomeCota").val(result);
+				},
+				null,
+				true
+			);
+		}
+	}
 </script>
 <table width="280" cellpadding="2" cellspacing="2"
 	style="text-align: left;">
 	<tr>
 		<td width="46">Cota:</td>
-		<td width="218"><input type="text"
-			style="width: 80px; float: left; margin-right: 5px;" /><span
-			class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+		<td width="218">
+			<input type="text" style="width: 80px; float: left; margin-right: 5px;" id="numeroCota" maxlength="11" onblur="buscarNomeCota();"/>
+		</td>
 	</tr>
 	<tr>
 		<td>Nome:</td>
-		<td><input type="text" style="width: 200px" /></td>
+		<td><input type="text" style="width: 200px" id="nomeCota" readonly="readonly"/></td>
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td><span class="bt_add"><a href="javascript:;">Incluir
-					Novo</a></span></td>
+		<td><span class="bt_add"><a href="javascript:adicionarAssociacaoCota();">Incluir Novo</a></span></td>
 	</tr>
 </table>
 <br />
 <label><strong>Cotas Cadastradas</strong></label>
 <br />
-<table class="cotasCadastradasGrid"></table>
+<table class="cotasAssociadasGrid"></table>

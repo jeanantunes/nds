@@ -74,6 +74,7 @@
 		}
 		
 		if(status=="ERROR" || status=="WARNING") {
+			$(".suspensaoGrid").flexReload();
 			return null;
 		}
 		
@@ -271,18 +272,19 @@
 		var status = data[2];
 		
 		var checkTodos = document.getElementById("sel");
-		
-		if(checkTodos.checked==true) {
-			
-		}
-		
+				
 		if(mensagens != null && mensagens.length!=0 && checkTodos.checked!=true) {
 			exibirMensagem(status,mensagens);
-			checkTodos.checked=false;
+			checkTodos.checked=false;			
 		}
 				
 		if(!grid.rows || status=="error") {
+			
+			document.getElementById("total").innerText = "0,00";
+			document.getElementById("totalSugerida").innerText = "0";	
+			
 			return grid;
+			
 		} else {
 			$(".corpo").show();	
 		}
@@ -295,7 +297,7 @@
 			
 			var cell = grid.rows[i].cell;
 			
-			total += parseFloat(cell.vlrConsignado.replace(".","").replace(",","."));
+			total += parseFloat(cell.dividaAcumulada.replace(".","").replace(",","."));
 			
 			cell.acao = gerarAcoes(cell.idCota,cell.dividas,cell.nome);
 			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
@@ -524,7 +526,7 @@
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "nome",
+			sortname : "numCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

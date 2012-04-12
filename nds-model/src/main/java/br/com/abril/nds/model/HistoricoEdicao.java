@@ -1,5 +1,6 @@
 package br.com.abril.nds.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,8 +15,13 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @MappedSuperclass
-public abstract class HistoricoEdicao {
-	
+public abstract class HistoricoEdicao implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -6324406820354733337L;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_EDICAO", nullable = false)
 	private Date dataEdicao;

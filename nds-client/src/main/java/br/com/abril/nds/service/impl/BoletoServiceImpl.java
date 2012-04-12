@@ -55,6 +55,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -72,37 +73,37 @@ import br.com.abril.nds.util.TipoMensagem;
 public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
-	private EmailService email;
+	protected EmailService email;
 
 	@Autowired
-	private BoletoRepository boletoRepository;
+	protected BoletoRepository boletoRepository;
 	
 	@Autowired
-	private PoliticaCobrancaRepository politicaCobrancaRepository;
+	protected PoliticaCobrancaRepository politicaCobrancaRepository;
 	
 	@Autowired
-	private BaixaCobrancaRepository baixaCobrancaRepository;
+	protected BaixaCobrancaRepository baixaCobrancaRepository;
 	
 	@Autowired
-	private ControleBaixaBancariaRepository controleBaixaRepository;
+	protected ControleBaixaBancariaRepository controleBaixaRepository;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
+	protected DistribuidorService distribuidorService;
 	
 	@Autowired
-	private ControleBaixaBancariaService controleBaixaService;
+	protected ControleBaixaBancariaService controleBaixaService;
 	
 	@Autowired
-	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	protected MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Autowired
-	private CalendarioService calendarioService;
+	protected CalendarioService calendarioService;
 	
 	@Autowired
-	private CobrancaService cobrancaService;
+	protected CobrancaService cobrancaService;
 
 	@Autowired
-	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	protected TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	/**
 	 * Método responsável por obter boletos por numero da cota
@@ -114,6 +115,18 @@ public class BoletoServiceImpl implements BoletoService {
 	public List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
 		return this.boletoRepository.obterBoletosPorCota(filtro);
 	}
+	
+	/**
+	 * Método responsável por obter boleto por nossoNumero
+	 * @param nossoNumero
+	 * @return Boletos encontrado
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
+		return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada);
+	}
+
 	
 	/**
 	 * Método responsável por obter a quantidade de boletos por numero da cota
@@ -133,6 +146,12 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
+		if (distribuidor == null) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+					"Parâmetros do distribuidor não encontrados!");
+		}
+		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
 		ControleBaixaBancaria controleBaixa =
@@ -145,7 +164,7 @@ public class BoletoServiceImpl implements BoletoService {
 				"Já foi realizada baixa automática na data de operação atual!");
 		}
 		
-		if (valorFinanceiro == null
+		if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
 				|| valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
@@ -155,6 +174,12 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		PoliticaCobranca politicaCobranca =
 			politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO);
+		
+		if (politicaCobranca == null) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+					"Política de cobrança para boletos não encontrada!");
+		}
 		
 		controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,
 												  dataOperacao, usuario);
@@ -224,7 +249,16 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
-		Boleto boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
+		Boleto boleto = null;
+		
+		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
+			
+			boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
+			
+		} else {
+		
+			boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
+		}		
 		
 		// Boleto não encontrado na base
 		if (boleto == null) {
@@ -260,8 +294,10 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
 		
+		Date dataPagamento = DateUtil.removerTimestamp(pagamento.getDataPagamento());
+		
 		// Boleto vencido
-		if (dataVencimentoUtil.compareTo(pagamento.getDataPagamento()) < 0) {
+		if (dataVencimentoUtil.compareTo(dataPagamento) < 0) {
 			
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
@@ -968,7 +1004,7 @@ public class BoletoServiceImpl implements BoletoService {
 			email.enviar(assunto, 
 					     mensagem, 
 					     destinatarios, 
-					     new AnexoEmail("Boleto-"+nossoNumero+".pdf", anexo));
+					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF));
 		}
 		catch(Exception e){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");
@@ -1086,4 +1122,5 @@ public class BoletoServiceImpl implements BoletoService {
 		return cobranca;
 	}
 
+	
 }

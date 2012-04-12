@@ -13,12 +13,11 @@
 
 	<util:properties id="queries" location="classpath:/query.properties" />
 	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost:3306/nds-client-test" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
-		<property name="suppressClose" value="true" />
 	</bean>
 
 	<bean id="sessionFactory"
@@ -27,7 +26,7 @@
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
 		<property name="hibernateProperties">
 			<props>
-	        	<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+	        	<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">create</prop>

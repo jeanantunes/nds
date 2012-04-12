@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -21,6 +22,9 @@ import javax.persistence.TemporalType;
 @SequenceGenerator(name="FIADOR_SEQ", initialValue = 1, allocationSize = 1)
 public class Fiador implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
 	private static final long serialVersionUID = -1574679595779557L;
 	
 	@Id
@@ -42,8 +46,10 @@ public class Fiador implements Serializable {
 	@OneToMany(mappedBy = "fiador")
 	private List<Garantia> garantias;
 	
-	@OneToMany(mappedBy = "fiador")
-	private List<PessoaFisica> socios;
+	@OneToMany
+	@JoinTable(name = "FIADOR_SOCIO", joinColumns = {@JoinColumn(name = "FIADOR_ID")}, 
+									  inverseJoinColumns = {@JoinColumn(name = "SOCIO_ID")})
+	private List<Pessoa> socios;
 
 	public Long getId() {
 		return id;
@@ -85,11 +91,11 @@ public class Fiador implements Serializable {
 		this.garantias = garantias;
 	}
 
-	public List<PessoaFisica> getSocios() {
+	public List<Pessoa> getSocios() {
 		return socios;
 	}
 
-	public void setSocios(List<PessoaFisica> socios) {
+	public void setSocios(List<Pessoa> socios) {
 		this.socios = socios;
 	}
 }
