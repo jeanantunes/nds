@@ -1,5 +1,12 @@
 package br.com.abril.nds.model.cadastro;
 
+/**
+ * Representa o domínio de moedas, utilizado
+ * principalmente para a geração de boletos
+ * 
+ * @author francisco.garcia
+ *
+ */
 public enum Moeda {
 	
 	REAL(9);
@@ -10,7 +17,10 @@ public enum Moeda {
 	
 	private int codigo;
 	
-	public int getCodigo(int codigo) {
+	/**
+	 * @return código da moeda
+	 */
+	public int getCodigo() {
 		return codigo;
 	}
 

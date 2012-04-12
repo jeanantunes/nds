@@ -8,7 +8,7 @@ public class EncalheCotaDTO implements Serializable {
 	private static final long serialVersionUID = 2186060384671120600L;
 	
 	private String codigoProduto;
-	
+			
 	private String nomeProduto;
 	
 	private Long numeroEdicao;
@@ -86,5 +86,5 @@ public class EncalheCotaDTO implements Serializable {
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
 	}
-	
+
 }

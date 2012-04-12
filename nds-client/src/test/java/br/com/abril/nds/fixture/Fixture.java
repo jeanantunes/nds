@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
@@ -241,6 +242,9 @@ public class Fixture {
 				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399");
 	}
 	
+	public static Editor editoraAbril() {
+		return criarEditor("Editora Abril");
+	}
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -463,6 +467,8 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);
+		distribuidor.setCapacidadeDistribuicao(10000);
+		distribuidor.setCapacidadeRecolhimento(10000L);
 		return distribuidor;
 	}
 
@@ -636,6 +642,14 @@ public class Fixture {
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Crédito");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.CREDITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio do Encalhe");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		return tipoMovimento;
 	}
 
@@ -1188,6 +1202,19 @@ public class Fixture {
 		return consolidado;
 	}
 	
+	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCotaEncalhe(
+			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
+			BigDecimal valorConsolidado, BigDecimal valorEncalhe) {
+		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		consolidado.setConsignado(valorConsolidado);
+		consolidado.setEncalhe(valorEncalhe);
+		consolidado.setMovimentos(movimentos);
+		consolidado.setCota(cota);
+		consolidado.setDataConsolidado(data);
+		consolidado.setTotal(valorConsolidado);
+		return consolidado;
+	}
+	
 	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
 			Cota cota, Date data, Usuario usuario, StatusDivida status,
 			BigDecimal valor) {
@@ -1548,14 +1575,17 @@ public class Fixture {
 	}
 	
 	public static Telefone telefone(String ddd, String numero, String ramal){
-		
 		Telefone telefone = new Telefone();
 		telefone.setDdd(ddd);
 		telefone.setNumero(numero);
 		telefone.setRamal(ramal);
-		
 		return telefone;
-		
+	}
+	
+	public static Editor criarEditor(String nome) {
+		Editor editor = new Editor();
+		editor.setNome(nome);
+		return editor;
 	}
 	
 }
