@@ -12,7 +12,7 @@ public class CellModel {
 	
 	private int id;
 	
-	private String[] cell;
+	private Object[] cell;
 	
 	/**
 	 * Construtor que recebe o id a ser atribuido a linha no flexiGrid e um 
@@ -21,7 +21,7 @@ public class CellModel {
 	 * @param idColumnValue
 	 * @param includeColumnValues
 	 */
-	public CellModel(int idColumnValue, String... includeColumnValues ) {
+	public CellModel(int idColumnValue, Object... includeColumnValues ) {
 		
 		this.id = idColumnValue;
 		
@@ -29,6 +29,8 @@ public class CellModel {
 			for (int indice = 0 ; indice < includeColumnValues.length ; indice++){
 				if (includeColumnValues[indice] == null){
 					includeColumnValues[indice] = "";
+				} else {
+					includeColumnValues[indice] = includeColumnValues[indice].toString();
 				}
 			}
 		}
@@ -58,7 +60,7 @@ public class CellModel {
 	 * 
 	 * @return
 	 */
-	public String[] getCell() {
+	public Object[] getCell() {
 		return cell;
 	}
 

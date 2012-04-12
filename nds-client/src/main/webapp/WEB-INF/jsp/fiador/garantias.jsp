@@ -1,7 +1,7 @@
 <script type="text/javascript">
 	$(function() {
 		$(".imoveisGrid").flexigrid({
-			preProcess: processarResultado,
+			preProcess: processarResultadoGarantias,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Descrição',
@@ -23,28 +23,31 @@
 				align : 'center'
 			} ],
 			width : 770,
-			height : 150
+			height : 150,
+			disableSelect: true
 		});
+		
+		$("#valorGarantia").numeric();
 	});
 	
-	function pesquisarGarantias(){
+	function carregarGarantias(){
 		$.postJSON("<c:url value='/cadastro/fiador/obterGarantiasFiador' />", null, 
-				function(result) {
-					$(".imoveisGrid").flexAddData({
-						page: 1, total: 1, rows: result.rows
-					});	
-					
-					$("#botaoAddEditar").text("Incluir Novo");
-					
-					$("#valorGarantia").val("");
-					$("#descricaoGarantia").val("");
-				},
-				null,
-				true
+			function(result) {
+				$(".imoveisGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});	
+				
+				$("#botaoAddEditarGarantia").text("Incluir Novo");
+				
+				$("#valorGarantia").val("");
+				$("#descricaoGarantia").val("");
+			},
+			null,
+			true
 		);
 	}
 	
-	function processarResultado(data){
+	function processarResultadoGarantias(data){
 		if (data.mensagens) {
 
 			exibirMensagemDialog(
@@ -64,13 +67,8 @@
 		for (i = 0 ; i < data.rows.length; i++) {
 
 			var lastIndex = data.rows[i].cell.length;
-			
-			data.rows[i].cell[lastIndex - 1] =					
-				data.rows[i].cell[lastIndex - 1] == "true" 
-						? '<img src="/nds-client/images/ico_check.gif" border="0px"/>'
-						: '&nbsp;';
 
-			data.rows[i].cell[lastIndex] = getActions(data.rows[i].id);
+			data.rows[i].cell[lastIndex] = getActionsGarantia(data.rows[i].id);
 		}
 
 		$('.imoveisGrid').show();
@@ -81,7 +79,7 @@
 		return data;
 	}
 	
-	function getActions(idGarantia) {
+	function getActionsGarantia(idGarantia) {
 
 		return '<a href="javascript:;" onclick="editarGarantia(' + idGarantia + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Editar Garantia">' +
@@ -95,32 +93,86 @@
 	
 	function adicionarEditarGarantia(){
 		var data = "garantia.valor=" + $("#valorGarantia").val() + "&" +
-        		   "garantia.descricao=" + $("#descricaoGarantia").val();
+        		   "garantia.descricao=" + $("#descricaoGarantia").val() + "&" +
+        		   "referencia=" + $("#referenciaGarantia").val();
 		
 		$.postJSON("<c:url value='/cadastro/fiador/adicionarGarantia' />", data, 
-				function(result) {
-					$(".imoveisGrid").flexAddData({
-						page: 1, total: 1, rows: result.rows
-					});	
-					
-					$("#botaoAddEditar").text("Incluir Novo");
-					
-					$("#valorGarantia").val("");
-					$("#descricaoGarantia").val("");
-				},
-				null,
-				true
+			function(result) {
+				$(".imoveisGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});	
+				
+				$("#botaoAddEditarGarantia").text("Incluir Novo");
+				
+				$("#valorGarantia").val("");
+				$("#descricaoGarantia").val("");
+				$("#referenciaGarantia").val("");
+			},
+			null,
+			true
 		);
 	}
 	
-	function editarGarantia(idGarantia){
-		
+	function editarGarantia(referencia){
+		$.postJSON("<c:url value='/cadastro/fiador/editarGarantia' />", "referencia=" + referencia, 
+			function(result) {
+				
+				$("#botaoAddEditarGarantia").text("Editar");
+				
+				$("#valorGarantia").val(result.valor);
+				$("#descricaoGarantia").val(result.descricao);
+				$("#referenciaGarantia").val(referencia);
+			},
+			null,
+			true
+		);
 	}
 	
-	function removerGarantia(idGarantia){
+	function removerGarantia(referencia){
+		$("#dialog-excluir-garantia").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$(this).dialog("close");
+					
+					$.postJSON("<c:url value='/cadastro/fiador/excluirGarantia' />", "referencia=" + referencia, 
+						function(result) {
+							
+							$(".imoveisGrid").flexAddData({
+								page: 1, total: 1, rows: result.rows
+							});
+							
+							$("#botaoAddEditarGarantia").text("Incluir Novo");
+							
+							$("#valorGarantia").val("");
+							$("#descricaoGarantia").val("");
+							$("#referenciaGarantia").val("");
+						},
+						null,
+						true
+					);
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
 		
+		$("#dialog-excluir-garantia").show();
+	}
+	
+	function limparCamposGarantias(){
+		$("#valorGarantia").val("");
+		$("#descricaoGarantia").val("");
 	}
 </script>
+
+<div id="dialog-excluir-garantia" title="Garantias" style="display: none;">
+	<p>Confirma esta Exclusão?</p>
+</div>
 <table width="750" cellpadding="2" cellspacing="2"
 	style="text-align: left; display: s;" class="fiadorPF">
 	<tr>
@@ -136,7 +188,9 @@
 	<tr>
 		<td>&nbsp;</td>
 		<td>
-			<span class="bt_add" id="botaoAddEditar"><a href="javascript:adicionarEditarGarantia();">Incluir Novo</a></span>
+			<span class="bt_add">
+				<a href="javascript:adicionarEditarGarantia();" id="botaoAddEditarGarantia">Incluir Novo</a>
+			</span>
 		</td>
 	</tr>
 </table>
@@ -144,3 +198,4 @@
 <label><strong>Garantias Cadastradas</strong></label>
 <br />
 <table class="imoveisGrid"></table>
+<input type="hidden" id="referenciaGarantia"/>

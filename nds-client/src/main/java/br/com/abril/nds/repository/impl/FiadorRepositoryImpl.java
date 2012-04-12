@@ -1,11 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.repository.FiadorRepository;
 
 @Repository
@@ -69,9 +72,12 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 			hql.append(" (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
 		}
 		
+		Long qtdRegistros = 
+				this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO);
+		
 		ConsultaFiadorDTO consultaFiadorDTO = new ConsultaFiadorDTO();
 		consultaFiadorDTO.setQuantidadePaginas(
-				(this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO) / filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina()) + 1);
+				(qtdRegistros / filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina()) + 1);
 		
 		switch (filtroConsultaFiadorDTO.getOrdenacaoColunaFiador()){
 			case CODIGO:
@@ -107,11 +113,25 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		}
 		
 		query.setMaxResults(filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina());
-		query.setFirstResult(filtroConsultaFiadorDTO.getPaginacaoVO().getPaginaAtual());
+		
+		query.setFirstResult(
+				(filtroConsultaFiadorDTO.getPaginacaoVO().getPaginaAtual() -1) * filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina());
 		
 		consultaFiadorDTO.setListaFiadores(query.list());
 		
 		return consultaFiadorDTO;
+	}
+	
+	@Override
+	public Pessoa buscarPessoaFiadorPorId(Long idFiador){
+		
+		StringBuilder hql = new StringBuilder("select f.pessoa from Fiador f ");
+		hql.append(" where f.id = :idFiador");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return (Pessoa) query.uniqueResult();
 	}
 	
 	private Long obterQuantidadeRegistros(String sql, FiltroConsultaFiadorDTO filtroConsultaFiadorDTO){
@@ -132,5 +152,29 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		}
 		
 		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long buscarIdPessoaFiador(Long idFiador){
+		
+		StringBuilder hql = new StringBuilder("select f.pessoa.id from Fiador f");
+		hql.append(" where f.id = :idFiador");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Pessoa> buscarSociosFiador(Long idFiador){
+		
+		StringBuilder hql = new StringBuilder("socios from Fiador ");
+		hql.append(" where id = :idFiador");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return query.list();
 	}
 }
