@@ -30,44 +30,46 @@
 			
 			fecharModalCadastroFiador = false;
 			
-			$.postJSON("<c:url value='/cadastro/fiador/cancelarCadastro'/>", null, 
-				function(result){
-					limparCamposCadastroFiador();
-				
-					$("#dialog-fiador").dialog({
-						resizable: false,
-						height:610,
-						width:840,
-						modal: true,
-						buttons: {
-							"Confirmar": function() {
-								
-								if (paramCpfCnpj == "CPF") {
-									cadastrarFiadorCpf(this);
-								} else {
-									cadastrarFiadorCnpj(this);
-								}
-							},
-							"Cancelar": function() {
-								
-								$(this).dialog("close");
-							}
-						},
-						beforeClose: function(event, ui) {
-							
-							if (!fecharModalCadastroFiador){
-								cancelarCadastro();
-								
-								return fecharModalCadastroFiador;
-							}
-							
-							return fecharModalCadastroFiador;
+			limparCamposCadastroFiador();
+			
+			$("#dialog-fiador").dialog({
+				resizable: false,
+				height:610,
+				width:840,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						if (paramCpfCnpj == "CPF") {
+							cadastrarFiadorCpf(this);
+						} else {
+							cadastrarFiadorCnpj(this);
 						}
-					});
-				
-					$(".trSocioPrincipal").hide();
+					},
+					"Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
+				},
+				beforeClose: function(event, ui) {
+					
+					if (!fecharModalCadastroFiador){
+						cancelarCadastro();
+						
+						return fecharModalCadastroFiador;
+					}
+					
+					return fecharModalCadastroFiador;
 				}
-			);
+			});
+		
+			$(".trSocioPrincipal").hide();
+			
+			//$.postJSON("<c:url value='/cadastro/fiador/cancelarCadastro'/>", null, 
+			//	function(result){
+					
+			//	}
+			//);
 		}
 		
 		function cancelarCadastro(){
@@ -280,7 +282,14 @@
 					        $("#naturalConjugeCpf").val(result[21]);
 						}
 					} else {
+						
 						popupCadastroFiadorCNPJ();
+						
+						$("#razaoSocialFiador").val(result[1]);
+						$("#nomeFantasiaFiador").val(result[2]);
+						$("#inscricaoEstadualFiador").val(result[3]);
+						$("#cnpjFiador").val(result[4]);
+						$("#emailFiadorCnpj").val(result[5]);
 					}
 				}
 			);

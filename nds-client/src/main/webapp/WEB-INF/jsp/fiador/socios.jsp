@@ -118,23 +118,23 @@
 		$.postJSON("<c:url value='/cadastro/fiador/adicionarSocio'/>", data, 
 			function(result){
 		
-				if (result[0].tipoMensagem){
-					exibirMensagemDialog(result[0].tipoMensagem, result[0].listaMensagens);
-				}
+				//if (result[0].tipoMensagem){
+				//	exibirMensagemDialog(result[0].tipoMensagem, result[0].listaMensagens);
+				//}
 				
-				if (result[1] != ""){
-					$(".pessoasGrid").flexAddData({
-						page: result[1].page, total: result[1].total, rows: result[1].rows
+				if (result != ""){
+					$(".sociosGrid").flexAddData({
+						page: result.page, total: result.total, rows: result.rows
 					});
 					
-					$("#gridFiadoresCadastrados").show();
-				} else {
-					$("#gridFiadoresCadastrados").hide();
-				}
+					//$("#gridFiadoresCadastrados").show();
+				} //else {
+					//$("#gridFiadoresCadastrados").hide();
+				//}
 				
-				if (result[0].tipoMensagem == "SUCCESS"){
-					$(janela).dialog("close");
-				}
+				//if (result[0].tipoMensagem == "SUCCESS"){
+				//	$(janela).dialog("close");
+				//}
 			},
 			null,
 			true

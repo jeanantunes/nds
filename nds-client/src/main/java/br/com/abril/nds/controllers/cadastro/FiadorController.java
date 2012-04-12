@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.service.FiadorService;
+import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -60,6 +61,9 @@ public class FiadorController {
 	
 	@Autowired
 	private FiadorService fiadorService;
+	
+	@Autowired
+	private PessoaService pessoaService;
 	
 	public FiadorController(Result result, HttpSession httpSession, Validator validator){
 		this.result = result;
@@ -161,15 +165,68 @@ public class FiadorController {
 		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
 	}
 	
+	public void buscarPessoaCPF(String cpf){
+		
+		List<String> dados = null;
+		
+		if (cpf != null){
+			
+			cpf = cpf.replace("-", "").replace(".", "");
+			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf);
+			
+			dados = new ArrayList<String>();
+			
+			dados.add(fisica.getNome());
+			dados.add(fisica.getEmail());
+			dados.add(this.adicionarMascaraCNPJ(fisica.getCpf()));
+			dados.add(fisica.getRg());
+			dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
+			dados.add(fisica.getOrgaoEmissor());
+			dados.add(fisica.getUfOrgaoEmissor());
+			dados.add(fisica.getEstadoCivil().name());
+			dados.add(fisica.getSexo().name());
+			dados.add(fisica.getNacionalidade());
+			dados.add(fisica.getNatural());
+			
+			PessoaFisica conjuge = fisica.getConjuge();
+			
+			if (conjuge != null){
+				dados.add(conjuge.getNome());
+				dados.add(conjuge.getEmail());
+				dados.add(this.adicionarMascaraCNPJ(conjuge.getCpf()));
+				dados.add(conjuge.getRg());
+				dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
+				dados.add(conjuge.getOrgaoEmissor());
+				dados.add(conjuge.getUfOrgaoEmissor());
+				dados.add(conjuge.getSexo().name());
+				dados.add(conjuge.getNacionalidade());
+				dados.add(conjuge.getNatural());
+			}
+		}
+		
+		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void preencherDadosFiador(Pessoa pessoa) {
 		
 		List<Pessoa> sociosAdicionar = null;
 		if (pessoa instanceof PessoaFisica){
-			if (((PessoaFisica) pessoa).getConjuge() != null){
-				((PessoaFisica) pessoa).getConjuge().setEstadoCivil(EstadoCivil.CASADO);
+			
+			PessoaFisica p = (PessoaFisica) pessoa;
+			if (p.getConjuge() != null){
+				
+				p.getConjuge().setEstadoCivil(EstadoCivil.CASADO);
+				p.getConjuge().setCpf(p.getCpf().replace(".", "").replace("-", ""));
+				p.getConjuge().setRg(p.getRg().replace("-", "").replace(".", ""));
 			}
+			
+			p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
+			p.setRg(p.getRg().replace("-", "").replace(".", ""));
 		} else {
+			
+			((PessoaJuridica) pessoa).setCnpj(((PessoaJuridica) pessoa).getCnpj().replace("-", "").replace(".", ""));
+			
 			List<SocioCadastrado> sociosCadastrados = (List<SocioCadastrado>)
 					this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 			
@@ -179,6 +236,17 @@ public class FiadorController {
 				
 				for (SocioCadastrado cadastrado : sociosCadastrados){
 					sociosAdicionar.add(cadastrado.getPessoa());
+					
+					PessoaFisica p = (PessoaFisica) cadastrado.getPessoa();
+					if (p.getConjuge() != null){
+						
+						p.getConjuge().setEstadoCivil(EstadoCivil.CASADO);
+						p.getConjuge().setCpf(p.getCpf().replace(".", "").replace("-", ""));
+						p.getConjuge().setRg(p.getRg().replace("-", "").replace(".", ""));
+					}
+					
+					p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
+					p.setRg(p.getRg().replace("-", "").replace(".", ""));
 				}
 			}
 		}
@@ -289,14 +357,16 @@ public class FiadorController {
 			
 			this.httpSession.setAttribute(ID_FIADOR_EDICAO, idFiador);
 			
+			List<String> dados = new ArrayList<String>();
+			
 			if (fiador instanceof PessoaFisica){
+				
 				PessoaFisica fisica =  (PessoaFisica) fiador;
-				List<String> dados = new ArrayList<String>();
 				
 				dados.add("CPF");
 				dados.add(fisica.getNome());
 				dados.add(fisica.getEmail());
-				dados.add(fisica.getCpf());
+				dados.add(this.adicionarMascaraCNPJ(fisica.getCpf()));
 				dados.add(fisica.getRg());
 				dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
 				dados.add(fisica.getOrgaoEmissor());
@@ -311,7 +381,7 @@ public class FiadorController {
 				if (conjuge != null){
 					dados.add(conjuge.getNome());
 					dados.add(conjuge.getEmail());
-					dados.add(conjuge.getCpf());
+					dados.add(this.adicionarMascaraCNPJ(conjuge.getCpf()));
 					dados.add(conjuge.getRg());
 					dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
 					dados.add(conjuge.getOrgaoEmissor());
@@ -325,9 +395,25 @@ public class FiadorController {
 			} else {
 				
 				PessoaJuridica pessoaJuridica = (PessoaJuridica) fiador;
-				result.use(Results.json()).from(pessoaJuridica, "result").serialize();
+				
+				dados.add("CNPJ");
+				dados.add(pessoaJuridica.getRazaoSocial());
+				dados.add(pessoaJuridica.getNomeFantasia());
+				dados.add(pessoaJuridica.getInscricaoEstadual());
+				dados.add(this.adicionarMascaraCNPJ(pessoaJuridica.getCnpj()));
+				dados.add(pessoaJuridica.getEmail());
+				
+				result.use(Results.json()).from(dados, "result").serialize();
 			}
 		}
+	}
+	
+	private String adicionarMascaraCNPJ(String cnpj){
+		
+		StringBuilder formatado = new StringBuilder();
+		formatado.append(cnpj.substring(0, 2)).append(".").append(cnpj.substring(3, 5)).append(".").append(cnpj.substring(5, 8)).append("-").append(cnpj.substring(8, 10));
+		
+		return formatado.toString();
 	}
 	
 	private void limparDadosSessao(){

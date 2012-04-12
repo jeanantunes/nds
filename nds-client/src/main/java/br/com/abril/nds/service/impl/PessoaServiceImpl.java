@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.service.PessoaService;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class PessoaServiceImpl implements PessoaService {
@@ -42,5 +44,18 @@ public class PessoaServiceImpl implements PessoaService {
 		} else {
 			return null;
 		}
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public PessoaFisica buscarPessoaPorCPF(String cpf){
+		
+		if (cpf == null || cpf.trim().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório.");
+		}
+		
+		cpf = cpf.trim();
+		
+		return this.pessoaRepository.buscarPorCPF(cpf);
 	}
 }
