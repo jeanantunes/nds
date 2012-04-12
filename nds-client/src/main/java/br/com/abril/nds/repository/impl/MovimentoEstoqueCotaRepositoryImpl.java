@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -30,65 +31,139 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		super(MovimentoEstoqueCota.class);
 	}
 
-	public BigDecimal obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
+	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
 
 		StringBuffer sql = new StringBuffer();
 
 		sql.append("	select count(*) from  ( select	");
 
-		sql.append("	distinct(lancamento.produto_edicao_id)	");
+		sql.append("	distinct(movimento_estoque_cota.produto_edicao_id)	");
 		
 		sql.append("	from	");
 		
-		sql.append("	lancamento ");
+		sql.append("	movimento_estoque_cota inner join chamada_encalhe on ");
+		sql.append("	( movimento_estoque_cota.produto_edicao_id = chamada_encalhe.produto_edicao_id ) ");
 
+		sql.append("	inner join lancamento on ");
+		sql.append("	( chamada_encalhe.produto_edicao_id = lancamento.produto_edicao_id and  ");
+		sql.append("	chamada_encalhe.inicio_recolhimento = lancamento.data_rec_distrib )		");
+		
+		sql.append("	inner join produto_edicao on ");
+		sql.append("	( produto_edicao.id = lancamento.produto_edicao_id ) ");
+		
+		sql.append("	inner join produto on ");
+		sql.append("	( produto_edicao.produto_id = produto.id ) ");
+		
+		sql.append("	inner join produto_fornecedor on ");
+		sql.append("	( produto_fornecedor.produto_id = produto.id ) ");
+		
+		sql.append("	inner join fornecedor on ");
+		sql.append("	( produto_fornecedor.fornecedores_id = fornecedor.id ) ");
+		
 		sql.append("	where	");
 		
-		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor  	 ");
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor ");
+		sql.append("	and movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento ");
+		sql.append(" 	and ( movimento_estoque_cota.data between chamada_encalhe.inicio_recolhimento and chamada_encalhe.final_recolhimento ) ");
+
+		if(indQtdEncalheAposPrimeiroDia) {
+			sql.append(" and movimento_estoque_cota.data > :dataRecolhimentoDistribuidor 	");
+		} else {
+			sql.append(" and movimento_estoque_cota.data = :dataRecolhimentoDistribuidor	");
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and fornecedor.id =  :idFornecedor ");
+		}
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and  movimento_estoque_cota.cota_id = :idCota ");
+		}
 		
 		sql.append(" ) as idEdicoes ");
 		
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
-		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
 
-		BigDecimal qtde = (BigDecimal) sqlquery.uniqueResult();
+		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
 		
-		return ((qtde == null) ? BigDecimal.ZERO : qtde);
+		if(filtro.getIdCota()!=null) {
+			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
+		
+		return ((qtde == null) ? 0 : qtde.intValue());
 		
 	}
 
 	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
 
 		StringBuffer sql = new StringBuffer();
-
+		
 		sql.append("	select	");
 
 		sql.append("	sum(movimento_estoque_cota.qtde) ");
 
 		sql.append("	from	");
 		
-		sql.append("	lancamento left join movimento_estoque_cota on ");
-		sql.append("	(lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id) ");
+		sql.append("	movimento_estoque_cota inner join chamada_encalhe on ");
+		sql.append("	( movimento_estoque_cota.produto_edicao_id = chamada_encalhe.produto_edicao_id ) ");
 
+		sql.append("	inner join lancamento on ");
+		sql.append("	( chamada_encalhe.produto_edicao_id = lancamento.produto_edicao_id and  ");
+		sql.append("	chamada_encalhe.inicio_recolhimento = lancamento.data_rec_distrib )		");
+		
+		sql.append("	inner join produto_edicao on ");
+		sql.append("	( produto_edicao.id = lancamento.produto_edicao_id ) ");
+		
+		sql.append("	inner join produto on ");
+		sql.append("	( produto_edicao.produto_id = produto.id ) ");
+		
+		sql.append("	inner join produto_fornecedor on ");
+		sql.append("	( produto_fornecedor.produto_id = produto.id ) ");
+		
+		sql.append("	inner join fornecedor on ");
+		sql.append("	( produto_fornecedor.fornecedores_id = fornecedor.id ) ");
+		
 		sql.append("	where	");
 		
-		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and ");
-		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or  movimento_estoque_cota.tipo_movimento_id is null ) ");
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor ");
+		sql.append("	and movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento ");
+		sql.append(" 	and ( movimento_estoque_cota.data between chamada_encalhe.inicio_recolhimento and chamada_encalhe.final_recolhimento ) ");
+
+		if(indQtdEncalheAposPrimeiroDia) {
+			sql.append(" and movimento_estoque_cota.data > :dataRecolhimentoDistribuidor 	");
+		} else {
+			sql.append(" and movimento_estoque_cota.data = :dataRecolhimentoDistribuidor	");
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and fornecedor.id =  :idFornecedor ");
+		}
 		
 		if(filtro.getIdCota()!=null) {
-			sql.append(" and ( movimento_estoque_cota.cota_id is null or movimento_estoque_cota.cota_id = :idCota )  ");
+			sql.append(" and  movimento_estoque_cota.cota_id = :idCota ");
 		}
-
+		
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
 
+		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
 		}
 		
-		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		if(filtro.getIdFornecedor() != null) {
+			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
 		
 		BigDecimal qtde = (BigDecimal) sqlquery.uniqueResult();
 		
@@ -116,23 +191,54 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append("	estoque_produto_cota.qtde_recebida as reparte                   ");
 
 		sql.append("	from	");
-		sql.append("	lancamento left join movimento_estoque_cota on                              ");
+
+		sql.append("	lancamento inner join chamada_encalhe on ");
+		sql.append("	( lancamento.produto_edicao_id = chamada_encalhe.produto_edicao_id and  ");
+		sql.append("	lancamento.data_rec_distrib = chamada_encalhe.inicio_recolhimento ) ");
+		
+		sql.append("	left join movimento_estoque_cota on                              ");
 		sql.append("	(lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id)   ");
 
 		sql.append("	left join estoque_produto_cota on                                           ");
-		sql.append("	(movimento_estoque_cota.estoque_prod_cota_id =  estoque_produto_cota.id)    ");
+		sql.append("	(movimento_estoque_cota.estoque_prod_cota_id = estoque_produto_cota.id)    ");
 
+		sql.append("	inner join produto_edicao on ");
+		sql.append("	( produto_edicao.id = lancamento.produto_edicao_id ) ");
+		
+		sql.append("	inner join produto on ");
+		sql.append("	( produto_edicao.produto_id = produto.id ) ");
+		
+		sql.append("	inner join produto_fornecedor on ");
+		sql.append("	( produto_fornecedor.produto_id = produto.id ) ");
+		
+		sql.append("	inner join fornecedor on ");
+		sql.append("	( produto_fornecedor.fornecedores_id = fornecedor.id ) ");
+		
+		sql.append("	inner join pessoa on                   	");
+		sql.append("	( pessoa.id = fornecedor.juridica_id )	");
+		
 		sql.append("	where	");
+
 		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and             ");
-		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or  movimento_estoque_cota.tipo_movimento_id is null ) ");
+		
+		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or ");
+		sql.append("	movimento_estoque_cota.tipo_movimento_id is null ) and	");
+		
+		sql.append(" 	( movimento_estoque_cota.data is null or ");
+		sql.append(" 	( movimento_estoque_cota.data between chamada_encalhe.inicio_recolhimento and chamada_encalhe.final_recolhimento) ) ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and ( movimento_estoque_cota.cota_id is null or movimento_estoque_cota.cota_id = :idCota )  ");
 		}
 		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and fornecedor.id =  :idFornecedor ");
+		}
+		
 		sql.append("	group by  ");
-		sql.append("	lancamento.data_rec_distrib,             ");
-		sql.append("	movimento_estoque_cota.data,             ");
+		sql.append("	pessoa.id,							");
+		sql.append("	lancamento.data_rec_distrib,        ");
+		sql.append("	movimento_estoque_cota.data,        ");
 		sql.append("	estoque_produto_cota.qtde_recebida ) as recolhimentos ");
 
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
@@ -141,6 +247,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 		
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
@@ -172,11 +282,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append("	produto_edicao.numero_edicao as numeroEdicao,                     ");
 		sql.append("	produto_edicao.preco_venda as precoVenda,                         ");
 		sql.append("	(produto_edicao.preco_venda - produto_edicao.desconto ) as precoComDesconto,  ");
-		sql.append("	estoque_produto_cota.qtde_recebida as reparte, ");
-		sql.append("	sum(movimento_estoque_cota.qtde) as encalhe,   ");
-		
-		//sql.append(" ( select   ) as fornecedor  ");
-		
+		sql.append("	estoque_produto_cota.qtde_recebida as reparte,  ");
+		sql.append("	sum(movimento_estoque_cota.qtde) as encalhe,    ");
+		sql.append(" 	pessoa.razao_social as fornecedor,  			");
 		sql.append("	sum(		");
 		sql.append("	    movimento_estoque_cota.qtde * (produto_edicao.preco_venda -  produto_edicao.desconto)      		");
 		sql.append("	) as total, ");
@@ -184,34 +292,63 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 
 		sql.append("	from	");
 		
-		sql.append("	produto_edicao,  ");
-		sql.append("	produto,         ");
-		sql.append("	lancamento left join movimento_estoque_cota on ");
-		sql.append("	(lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id) ");
+		sql.append("	lancamento inner join chamada_encalhe on ");
+		sql.append("	( lancamento.produto_edicao_id = chamada_encalhe.produto_edicao_id and  ");
+		sql.append("	lancamento.data_rec_distrib = chamada_encalhe.inicio_recolhimento ) ");
+		
+		sql.append("	left join movimento_estoque_cota on ");
+		sql.append("	( lancamento.produto_edicao_id = movimento_estoque_cota.produto_edicao_id	) ");
+		
 		sql.append("	left join estoque_produto_cota on                                         ");
-		sql.append("	(movimento_estoque_cota.estoque_prod_cota_id =  estoque_produto_cota.id)  ");
-
+		sql.append("	(movimento_estoque_cota.estoque_prod_cota_id = estoque_produto_cota.id)  ");
+		
+		sql.append("	inner join produto_edicao on ");
+		sql.append("	( produto_edicao.id = lancamento.produto_edicao_id ) ");
+		
+		sql.append("	inner join produto on ");
+		sql.append("	( produto_edicao.produto_id = produto.id ) ");
+		
+		sql.append("	inner join produto_fornecedor on ");
+		sql.append("	( produto_fornecedor.produto_id = produto.id ) ");
+		
+		sql.append("	inner join fornecedor on ");
+		sql.append("	( produto_fornecedor.fornecedores_id = fornecedor.id ) ");
+		
+		sql.append("	inner join pessoa on                   	");
+		sql.append("	( pessoa.id = fornecedor.juridica_id )	");
+		
 		sql.append("	where	");
 		
-		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and  ");
-		sql.append("	lancamento.produto_edicao_id = produto_edicao.id and             ");
-		sql.append("	produto_edicao.produto_id = produto.id and                       ");
-		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or  movimento_estoque_cota.tipo_movimento_id is null ) ");
+		sql.append("	lancamento.data_rec_distrib = :dataRecolhimentoDistribuidor and ");
+		
+		sql.append("	( movimento_estoque_cota.tipo_movimento_id = :idTipoMovimento or   ");
+		sql.append("	movimento_estoque_cota.tipo_movimento_id is null ) 	and ");
+		
+		sql.append(" 	( movimento_estoque_cota.data is null or ");
+		sql.append(" 	( movimento_estoque_cota.data between chamada_encalhe.inicio_recolhimento and chamada_encalhe.final_recolhimento) ) ");
+		
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and ( movimento_estoque_cota.cota_id is null or movimento_estoque_cota.cota_id = :idCota )  ");
 		}
 		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and fornecedor.id =  :idFornecedor ");
+		}
+		
+
 		sql.append("	group by	");
 
-		sql.append("	lancamento.data_rec_distrib,       ");
-		sql.append("	movimento_estoque_cota.data,       ");
-		sql.append("	produto.codigo,                    ");
-		sql.append("	produto.nome,                      ");
-		sql.append("	produto_edicao.numero_edicao,      ");
-		sql.append("	produto_edicao.preco_venda,        ");
-		sql.append("	produto_edicao.desconto,           ");
-		sql.append("	estoque_produto_cota.qtde_recebida ");
+		sql.append("	lancamento.data_rec_distrib,        ");
+		sql.append("	movimento_estoque_cota.data,        ");
+		sql.append("	produto.codigo,                     ");
+		sql.append("	produto.nome,                       ");
+		sql.append("	produto_edicao.numero_edicao,       ");
+		sql.append("	produto_edicao.preco_venda,         ");
+		sql.append("	produto_edicao.desconto,            ");
+		sql.append("	estoque_produto_cota.qtde_recebida, ");
+		sql.append("    pessoa.razao_social, 				");
+		sql.append("    pessoa.id							");
 		
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -268,17 +405,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			
 		}
 
-		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
-		
-		sqlquery.addScalar("codigoProduto");
-		sqlquery.addScalar("nomeProduto");
-		sqlquery.addScalar("numeroEdicao");
-		sqlquery.addScalar("precoVenda");
-		sqlquery.addScalar("precoComDesconto");
-		sqlquery.addScalar("reparte");
-		sqlquery.addScalar("encalhe");
-		sqlquery.addScalar("total");
-		sqlquery.addScalar("recolhimento");
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString())
+
+		.addScalar("dataDoRecolhimentoDistribuidor")
+		.addScalar("dataMovimento")
+		.addScalar("codigoProduto")
+		.addScalar("nomeProduto")
+		.addScalar("numeroEdicao", Hibernate.LONG)
+		.addScalar("precoVenda")
+		.addScalar("precoComDesconto")
+		.addScalar("reparte")
+		.addScalar("encalhe")
+		.addScalar("total")
+		.addScalar("recolhimento");
 		
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));
 		
@@ -288,8 +427,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 			sqlquery.setParameter("idCota", filtro.getIdCota());
 		}
 
+		if(filtro.getIdFornecedor() != null) {
+			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
 
+		if(filtro.getPaginacao()!=null) {
+			
+			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
+				sqlquery.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
+				sqlquery.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+			
+		}
+		
 		return sqlquery.list();
 		
 	}	

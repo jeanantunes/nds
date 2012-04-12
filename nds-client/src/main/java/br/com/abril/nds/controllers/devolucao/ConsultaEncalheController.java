@@ -321,10 +321,10 @@ public class ConsultaEncalheController {
 	
 	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, InfoConsultaEncalheDTO infoConsultaEncalhe) {
 		
-		String qtdExemplarDemaisRec 	= getValorQtdeFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos());
-		String qtdExemplarPrimeiroRec 	= getValorQtdeFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento());
-		String qtdProdutoDemaisRec 		= getValorQtdeFormatado(infoConsultaEncalhe.getQtdProdutoDemaisRecolhimentos());
-		String qtdProdutoPrimeiroRec 	= getValorQtdeFormatado(infoConsultaEncalhe.getQtdProdutoPrimeiroRecolhimento());
+		String qtdExemplarDemaisRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos());
+		String qtdExemplarPrimeiroRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento());
+		String qtdProdutoDemaisRec 		= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoDemaisRecolhimentos());
+		String qtdProdutoPrimeiroRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoPrimeiroRecolhimento());
 		
 		resultadoPesquisa.setQtdExemplarDemaisRecolhimentos(qtdExemplarDemaisRec);
 		resultadoPesquisa.setQtdExemplarPrimeiroRecolhimento(qtdExemplarPrimeiroRec);
@@ -340,7 +340,18 @@ public class ConsultaEncalheController {
 	 * 
 	 * @return String
 	 */
-	private String getValorQtdeFormatado(BigDecimal qtde) {
+	private String getValorQtdeBigDecimalFormatado(BigDecimal qtde) {
+		return (qtde != null) ? qtde.toString() : "";
+	}
+	
+	/**
+	 * Obtém valor qtde formatada.
+	 * 
+	 * @param qtde
+	 * 
+	 * @return String
+	 */
+	private String getValorQtdeIntegerFormatado(Integer qtde) {
 		return (qtde != null) ? qtde.toString() : "";
 	}
 	
@@ -382,14 +393,14 @@ public class ConsultaEncalheController {
 		
 		for(ConsultaEncalheDTO consultaEncalheDTO : listaConsultaEncalheDTO) {
 			
-			idProdutoEdicao 	= (consultaEncalheDTO.getIdProdutoEdicao() != null) ? consultaEncalheDTO.getIdProdutoEdicao().toString() : "";
+			idProdutoEdicao 	= "";//TODO: remover apos testes//(consultaEncalheDTO.getIdProdutoEdicao() != null) ? consultaEncalheDTO.getIdProdutoEdicao().toString() : "";
 			codigoProduto 		= (consultaEncalheDTO.getCodigoProduto() != null) ? consultaEncalheDTO.getCodigoProduto() : "";
 			nomeProduto 		= (consultaEncalheDTO.getNomeProduto() != null) ? consultaEncalheDTO.getNomeProduto() : "";
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
 			precoVenda 			= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoVenda());
 			precoComDesconto 	= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoComDesconto());
-			reparte 			= getValorQtdeFormatado(consultaEncalheDTO.getReparte());
-			encalhe 			= getValorQtdeFormatado(consultaEncalheDTO.getEncalhe());
+			reparte 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getReparte());
+			encalhe 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getEncalhe());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
 			total 				= getValorMonetarioFormatado(consultaEncalheDTO.getTotal());
 			recolhimento 		= (consultaEncalheDTO.getRecolhimento()!=null) ? consultaEncalheDTO.getRecolhimento().toString() : "";
