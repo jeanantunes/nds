@@ -43,6 +43,35 @@ function pesquisarItemContaCorrenteCota() {
 }
 
 /**
+ * FAZ A PESQUISA DE ENCALHE DA COTA EM UMA DETERMINADA DATA
+ */
+function pesquisarEncalheCota(lineId){
+		
+	var numeroCota = $("#cota").val();		
+	
+	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota },
+	                         {name:'filtroConsolidadoEncalheDTO.lineId', value:lineId }];
+	
+	carregarEncalheCotaGrid();
+	
+	$(".encalheCotaGrid").flexOptions({
+		
+		url : '<c:url value="/financeiro/contaCorrenteCota/consultarEncalheCota" />', params: parametroPesquisa
+				
+	});
+	
+	//$("#datacotanome").html($dataescolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+	
+	$(".encalheCotaGrid").flexReload();
+	popup_encalhe();
+	
+	
+	
+	
+	
+}
+
+/**
  * PREPARA OS DADOS A SEREM APRESENTADOS NA GRID.
  */
 function getDataFromResult(data) {
@@ -68,19 +97,33 @@ function getDataFromResult(data) {
 		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 		
 			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
-			value.cell[4] = '<a href="#"/>'+encalhe+'</a>'+hiddeFields;
+			value.cell[4] = '<a href="javascript:;" onclick="pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
 			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
 			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
 			value.cell[7] = '<a href="#"/>'+encargos+'</a>'+hiddeFields;
-			
-			
-			
-		
+					
 		});
 		
 	
 		$("#cotanome").html($("#cota").val()+" "+$("#nomeCota").val());
 		$(".grids").show();
+		
+		return data;
+	}	
+
+}
+
+function getDataFromResult2(data) {
+	
+	if(typeof data.mensagens == "object") {
+		
+		$(".gridsEncalhe").hide();
+	
+		exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		
+	}else{
+		
+		$(".gridsEncalhe").show();
 		
 		return data;
 	}	
@@ -97,7 +140,7 @@ $(function() {
 	
 	$("#nomeCota").autocomplete({source: ""});
 	
-	carregarItemContaCorrenteCotaGrid();
+	carregarItemContaCorrenteCotaGrid();	
 	
 });
 
@@ -181,6 +224,71 @@ function carregarItemContaCorrenteCotaGrid() {
 	});
 }
 
+/**
+ * ESTRUTURA DE COLUNAS DA GRID ENCALHE COTA.
+ */
+function carregarEncalheCotaGrid() {
+	
+	$(".encalheCotaGrid").flexigrid({
+		preProcess: getDataFromResult2,
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 130,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Edição',
+			name : 'numeroEdicao',
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoVenda',
+			width : 95,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Preço c/ Desc. R$',
+			name : 'precoComDesconto',
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Encalhe',
+			name : 'encalhe',
+			width : 70,
+			sortable : true,
+			align : 'right',
+		}, {
+			display : 'Fornecedor',
+			name : 'nomeFornecedor',
+			width : 100,
+			sortable : false,
+			align : 'right'
+		}, {
+			display : 'Total R$',
+			name : 'total',
+			width : 75,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "Nome",
+		sortorder : "asc",
+		width : 800,
+		height : 200
+
+	});
+}
+
 function popup_consignado() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -213,7 +321,7 @@ function popup_encalhe() {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					
-					$(".grids").show();
+					$(".gridsEncalhe").show();
 					
 				}
 			}
@@ -284,6 +392,23 @@ function popup_encargos() {
 
 <body>
 
+<div id="dialog-encalhe" title="Encalhe da Cota">
+	<fieldset>
+    	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revista</legend>
+    	 <strong><span id="datacotanome"></span></strong>
+        
+        <div class="gridsEncalhe" style="display: none;">      
+        
+	        <table class="encalheCotaGrid"></table>
+	        
+	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	       		       	
+	    </div>   
+    </fieldset>
+
+</div>
+
 <div class="corpo">
  
      <div class="container">
@@ -314,7 +439,7 @@ function popup_encargos() {
        	  <legend>Conta-Corrente Selecionado</legend>
        
        <div class="grids" style="display: none;">
-       
+      
           <strong><span id="cotanome"></span></strong>
           <br />
 			

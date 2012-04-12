@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -62,7 +63,11 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, "sdsd");
 		save(t);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t);
+		produto.setEditor(abril);
 		save(produto);
 		
 		ProdutoEdicao pe = Fixture.produtoEdicao(12L, 3, 2, new BigDecimal(12), new BigDecimal(120),new BigDecimal(35), produto);

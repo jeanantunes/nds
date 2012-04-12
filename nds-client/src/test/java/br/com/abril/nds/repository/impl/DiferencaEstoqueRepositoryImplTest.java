@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.Ordenacao
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -58,8 +59,13 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
+	private Editor abril;
+	
 	@Before
 	public void setup() {
+		abril = Fixture.editoraAbril();
+		save(abril);
+		
 		
 		this.dataMovimento = Fixture.criarData(01, 2, 2012);
 		
@@ -253,6 +259,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(tipoProduto);
 		
 		Produto produto = Fixture.produtoVeja(tipoProduto);
+		produto.setEditor(abril);
 		save(produto);
 		
 		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);

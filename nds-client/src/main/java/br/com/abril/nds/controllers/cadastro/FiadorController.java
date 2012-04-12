@@ -14,12 +14,12 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.cadastro.CotasAssociadasController.AssociacaoCota;
 import br.com.abril.nds.controllers.cadastro.GarantiasController.GarantiaCadastrada;
 import br.com.abril.nds.controllers.cadastro.SociosController.SocioCadastrado;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Garantia;
@@ -82,6 +82,10 @@ public class FiadorController {
 		
 		if (rp == null){
 			rp = 15;
+		}
+		
+		if (filtro == null){
+			filtro = new FiltroConsultaFiadorDTO();
 		}
 		
 		OrdenacaoColunaFiador orderName = Util.getEnumByStringValue(OrdenacaoColunaFiador.values(), sortname);
@@ -497,7 +501,11 @@ public class FiadorController {
 		}
 		
 		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
-			msgsValidacao.add("CNPJ é obrigatório");
+			msgsValidacao.add("E-mail é obrigatório");
+		}
+		
+		if (!msgsValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
 		}
 	}
 }
