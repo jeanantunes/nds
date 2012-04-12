@@ -20,6 +20,8 @@ public class FiltroConsolidadoEncalheCotaDTO {
 	
 	private OrdenacaoColuna ordenacaoColuna;
 	
+	private Long lineId;
+	
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 	
@@ -78,6 +80,14 @@ public class FiltroConsolidadoEncalheCotaDTO {
 
 	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
+	}
+	
+	public Long getLineId() {
+		return lineId;
+	}
+
+	public void setLineId(Long lineId) {
+		this.lineId = lineId;
 	}
 
 	@Override
