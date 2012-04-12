@@ -511,10 +511,12 @@ public class RecebimentoFisicoController {
 	@Post
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
+		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			
+			validarItensRecebimento(itensRecebimento);
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		
 		}
@@ -531,6 +533,15 @@ public class RecebimentoFisicoController {
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	}
 	
+	private void validarItensRecebimento(List<RecebimentoFisicoDTO> itensRecebimento) {
+		for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimento){
+			if( recebimentoDTO.getQtdFisico() == null ){
+				throw new ValidacaoException(TipoMensagem.WARNING, "NF interface com Itens sem quantidade física informada.");
+			}
+		}
+		
+	}
+
 	/**
 	 * Limpa os dados mantidos em session.
 	 */
