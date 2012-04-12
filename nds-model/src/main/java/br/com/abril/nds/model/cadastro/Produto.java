@@ -62,6 +62,10 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "EDITOR_ID")
+	private Editor editor;
+	
 	public Long getId() {
 		return id;
 	}
@@ -128,6 +132,14 @@ public class Produto implements Serializable {
 
 	public void setTipoProduto(TipoProduto tipoProduto) {
 		this.tipoProduto = tipoProduto;
+	}
+	
+	public Editor getEditor() {
+		return editor;
+	}
+	
+	public void setEditor(Editor editor) {
+		this.editor = editor;
 	}
 	
 	public Fornecedor getFornecedor() {

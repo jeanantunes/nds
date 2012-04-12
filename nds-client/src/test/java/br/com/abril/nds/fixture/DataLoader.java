@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
@@ -320,6 +321,10 @@ public class DataLoader {
 	private static FormaCobranca formaDeposito;
 	private static FormaCobranca formaTransferenciBancaria;
 	
+	private static Editor editoraAbril;
+	private static Editor theCocaColaCompany;
+	
+	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -330,14 +335,8 @@ public class DataLoader {
 		try {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
-
 			tx = session.beginTransaction();			
-			//carregarDadosParaContagemdDevolucao(session);
 			carregarDados(session);
-			//carregarDadosParaResumoExpedicao(session);
-			//carregarDadosParaResumoExpedicaoBox(session);
-			//carregarDadosInadimplencia(session);
-						
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -366,7 +365,6 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
-
 		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
@@ -380,6 +378,7 @@ public class DataLoader {
 		criarFornecedores(session);
 		criarDiasDistribuicaoFornecedores(session);
 		criarCotas(session);
+		criarEditores(session);
 		criarTiposProduto(session);
 		criarProdutos(session);
 		criarProdutosEdicao(session);
@@ -1431,65 +1430,88 @@ public class DataLoader {
 	private static void criarProdutos(Session session) {
 		produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
 		produtoVeja.addFornecedor(fornecedorDinap);
+		produtoVeja.setEditor(editoraAbril);
 		session.save(produtoVeja);
 
 		produtoSuper = Fixture.produtoSuperInteressante(tipoProdutoRevista);
 		produtoSuper.addFornecedor(fornecedorDinap);
+		produtoSuper.setEditor(editoraAbril);
 		session.save(produtoSuper);
 		
 		produtoCapricho = Fixture.produtoCapricho(tipoProdutoRevista);
 		produtoCapricho.addFornecedor(fornecedorDinap);
+		produtoCapricho.setEditor(editoraAbril);
 		session.save(produtoCapricho);
 		
 		produtoInfoExame = Fixture.produtoInfoExame(tipoProdutoRevista);
 		produtoInfoExame.addFornecedor(fornecedorDinap);
+		produtoInfoExame.setEditor(editoraAbril);
 		session.save(produtoInfoExame);
 		
 		produtoQuatroRodas = Fixture.produtoQuatroRodas(tipoProdutoRevista);
 		produtoQuatroRodas.addFornecedor(fornecedorDinap);
+		produtoQuatroRodas.setEditor(editoraAbril);
 		session.save(produtoQuatroRodas);
 		
 		produtoBoaForma = Fixture.produtoBoaForma(tipoProdutoRevista);
 		produtoBoaForma.addFornecedor(fornecedorDinap);
+		produtoBoaForma.setEditor(editoraAbril);
 		session.save(produtoBoaForma);
 		
 		produtoBravo = Fixture.produtoBravo(tipoProdutoRevista);
 		produtoBravo.addFornecedor(fornecedorDinap);
+		produtoBravo.setEditor(editoraAbril);
 		session.save(produtoBravo);
 		
 		produtoCaras = Fixture.produtoCaras(tipoProdutoRevista);
 		produtoCaras.addFornecedor(fornecedorDinap);
+		produtoCaras.setEditor(editoraAbril);
 		session.save(produtoCaras);
 		
 		produtoCasaClaudia = Fixture.produtoCasaClaudia(tipoProdutoRevista);
 		produtoCasaClaudia.addFornecedor(fornecedorDinap);
+		produtoCasaClaudia.setEditor(editoraAbril);
 		session.save(produtoCasaClaudia);
 		
 		produtoClaudia = Fixture.produtoClaudia(tipoProdutoRevista);
 		produtoClaudia.addFornecedor(fornecedorDinap);
+		produtoClaudia.setEditor(editoraAbril);
 		session.save(produtoClaudia);
 		
 		produtoContigo = Fixture.produtoContigo(tipoProdutoRevista);
 		produtoContigo.addFornecedor(fornecedorDinap);
+		produtoContigo.setEditor(editoraAbril);
 		session.save(produtoContigo);
 		
 		produtoManequim = Fixture.produtoManequim(tipoProdutoRevista);
 		produtoManequim.addFornecedor(fornecedorDinap);
+		produtoManequim.setEditor(editoraAbril);
 		session.save(produtoManequim);
 		
 		produtoNatGeo = Fixture.produtoNationalGeographic(tipoProdutoRevista);
 		produtoNatGeo.addFornecedor(fornecedorDinap);
+		produtoNatGeo.setEditor(editoraAbril);
 		session.save(produtoNatGeo);
 		
 		produtoPlacar = Fixture.produtoPlacar(tipoProdutoRevista);
 		produtoPlacar.addFornecedor(fornecedorDinap);
+		produtoPlacar.setEditor(editoraAbril);
 		session.save(produtoPlacar);
 		
-		//TODO
 		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante);
-		cocaCola.addFornecedor(fornecedorFc);
 		cocaCola.addFornecedor(fornecedorAcme);
+		cocaCola.setEditor(theCocaColaCompany);
 		save(session, cocaCola);
+	}
+	
+	private static void criarEditores(Session session) {
+		editoraAbril = new Editor();
+		editoraAbril.setNome("Editora Abril");
+		save(session, editoraAbril);
+		
+		theCocaColaCompany = new Editor();
+		theCocaColaCompany.setNome("The Coca Cola Company");
+		save(session, theCocaColaCompany);
 	}
 
 	private static void criarTiposProduto(Session session) {

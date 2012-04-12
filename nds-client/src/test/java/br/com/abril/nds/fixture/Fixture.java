@@ -444,6 +444,8 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);
+		distribuidor.setCapacidadeDistribuicao(10000);
+		distribuidor.setCapacidadeRecolhimento(10000L);
 		return distribuidor;
 	}
 
