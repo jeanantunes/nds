@@ -49,7 +49,7 @@
 					align : 'left'
 				}],
 				sortname : "data",
-				sortorder : "asc",
+				sortorder : "desc",
 				usepager : true,
 				useRp : true,
 				rp : 15,
