@@ -7,13 +7,42 @@
 		           "fiador.email=" + $("#emailFiadorCnpj").val();
 		
 		$.postJSON("<c:url value='/cadastro/fiador/cadastrarFiadorCnpj' />", data, 
-				function(){
-					$(janela).dialog("close");
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
+			function(result){
+		
+				if (result[0].tipoMensagem){
+					exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
 				}
+				
+				if (result[1] != ""){
+					$(".pessoasGrid").flexAddData({
+						page: result[1].page, total: result[1].total, rows: result[1].rows
+					});
+					
+					$("#gridFiadoresCadastrados").show();
+				} else {
+					$("#gridFiadoresCadastrados").hide();
+				}
+				
+				if (result[0].tipoMensagem == "SUCCESS"){
+					$(janela).dialog("close");
+				}
+			},
+			null,
+			true
 		);
 	}
+	
+	function limparDadosCadastraisCNPJ(){
+		$("#razaoSocialFiador").val("");
+		$("#nomeFantasiaFiador").val("");
+		$("#inscricaoEstadualFiador").val("");
+		$("#cnpjFiador").val("");
+		$("#emailFiadorCnpj").val("");
+	}
+	
+	$(function(){
+		$("#cnpjFiador").mask("999.999.999-99");
+	});
 </script>
 <table width="754" cellpadding="2" cellspacing="2" style="text-align:left;">
 	<tr>

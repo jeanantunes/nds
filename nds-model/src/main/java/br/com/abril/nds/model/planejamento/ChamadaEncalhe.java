@@ -1,9 +1,12 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,13 +18,22 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
+/**
+ * Entidades para as possíveis chamadas de encalhe
+ * dos produtos
+ * 
+ * @author francisco.garcia
+ *
+ */
 @Entity
-@Table(name = "CONTROLE_RECOLHIMENTO")
-@SequenceGenerator(name="CONTROLE_RECOLHIMENTO_SEQ", initialValue = 1, allocationSize = 1)
-public class ControleRecolhimento {
+@Table(name = "CHAMADA_ENCALHE")
+@SequenceGenerator(name="CHAMADA_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
+public class ChamadaEncalhe implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
-	@GeneratedValue(generator = "CONTROLE_RECOLHIMENTO_SEQ")
+	@GeneratedValue(generator = "CHAMADA_ENCALHE_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
@@ -37,8 +49,9 @@ public class ControleRecolhimento {
 	@Column(name = "FINAL_RECOLHIMENTO", nullable = false)
 	private Date finalRecolhimento;
 	
-	@Column(name = "RECOLHIMENTO_ANTECIPADO", nullable = false)
-	private boolean recolhimentoAntecipado;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_CHAMADA_ENCALHE", nullable = false)
+	private TipoChamadaEncalhe tipoChamadaEncalhe;
 	
 	/**
 	 * @return the id
@@ -95,21 +108,13 @@ public class ControleRecolhimento {
 	public void setFinalRecolhimento(Date finalRecolhimento) {
 		this.finalRecolhimento = finalRecolhimento;
 	}
-	
-	/**
-	 * @return the recolhimentoAntecipado
-	 */
-	public boolean isRecolhimentoAntecipado() {
-		return recolhimentoAntecipado;
+
+	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
 	}
 	
-	/**
-	 * @param recolhimentoAntecipado the recolhimentoAntecipado to set
-	 */
-	public void setRecolhimentoAntecipado(boolean recolhimentoAntecipado) {
-		this.recolhimentoAntecipado = recolhimentoAntecipado;
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
 	}
-	
-	
 
 }

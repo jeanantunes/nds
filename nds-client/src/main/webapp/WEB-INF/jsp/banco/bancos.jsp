@@ -1,83 +1,107 @@
 <head>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+
 <script language="javascript" type="text/javascript">
 
-$(function() {
-	$(".bancosGrid").flexigrid({
-		preProcess: getDataFromResult,
-		dataType : 'json',
-		colModel : [ {
-			display : 'Código',
-			name : 'codigo',
-			width : 50,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Banco',
-			name : 'banco',
-			width : 50,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Nome',
-			name : 'nome',
-			width : 120,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Agência / Dígito',
-			name : 'agencia',
-			width : 90,
-			sortable : true,
-			align : 'left',
-		}, {
-			display : 'Conta-Corrente / Dígito',
-			name : 'contaCorrente',
-			width : 130,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Cedente',
-			name : 'cedente',
-			width : 70,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Moeda',
-			name : 'moeda',
-			width : 50,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Carteira',
-			name : 'carteira',
-			width : 130,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Status',
-			name : 'status',
-			width : 70,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Ação',
-			name : 'acao',
-			width : 60,
-			sortable : false,
-			align : 'center'
-		}],
-		sortname : "Nome",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 960,
-		height : 255
-	});
-});	
+	$(function() {
+		$(".bancosGrid").flexigrid({
+			preProcess: getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Banco',
+				name : 'banco',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nome',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Agência / Dígito',
+				name : 'agencia',
+				width : 90,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : 'Conta-Corrente / Dígito',
+				name : 'contaCorrente',
+				width : 130,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cedente',
+				name : 'cedente',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Moeda',
+				name : 'moeda',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Carteira',
+				name : 'carteira',
+				width : 130,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Status',
+				name : 'status',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			}],
+			sortname : "Nome",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		});
+	});	
+	
+	$(function() {
+		$("#numero").numeric();	
+		$("#cedente").numeric();	
+		
+		$("#newNumero").numeric();	
+		$("#newCodigoCedente").numeric();	
+		$("#newAgencia").numeric();	
+		$("#newConta").numeric();	
+		$("#newDigito").numeric();	
+		$("#newJuros").numeric();	
+		
+		$("#alterNumero").numeric();	
+		$("#alterCodigoCedente").numeric();	
+		$("#alterAgencia").numeric();	
+		$("#alterConta").numeric();	
+		$("#alterDigito").numeric();	
+		$("#alterJuros").numeric();	
+    }); 
 
-function popup() {
+    function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-novo" ).dialog({
@@ -87,10 +111,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
+					novoBanco();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -102,27 +123,27 @@ function popup() {
 	function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
-		$( "#dialog-novo" ).dialog({
+		$( "#dialog-alterar" ).dialog({
 			resizable: false,
 			height:350,
 			width:655,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$( "#abaPdv" ).show( );
-					
+					alterarBanco();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
+		    }
 		});	
 		      
 	};
 	
-	function popup_excluir() {
+	function popup_excluir(idBanco) {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-excluir" ).dialog({
@@ -132,34 +153,34 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					desativarBanco(idBanco);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
+		    }
 		});
 	};
 	
-	
-	
-	
-	
-	
-	
-function mostrarGridConsulta() {
-		
+    function mostrarGridConsulta() {
+    	
+    	$("#ativo").val(0);
+    	if (document.formularioFiltro.ativo.checked){
+    		$("#ativo").val(1);
+		}
+    	
 		/*PASSAGEM DE PARAMETROS*/
 		$(".bancosGrid").flexOptions({
-			
 			/*METODO QUE RECEBERA OS PARAMETROS*/
 			url: "<c:url value='/banco/consultaBancos' />",
 			params: [
 			         {name:'nome', value:$("#nome").val()},
 			         {name:'numero', value:$("#numero").val()},
 			         {name:'cedente', value:$("#cedente").val()},
-			         {name:'ativo', value:$("#ativo").val()}
+			         {name:'ativo', value:$("#ativo").val() }
 			        ] ,
 		});
 		
@@ -169,8 +190,6 @@ function mostrarGridConsulta() {
 		$(".grids").show();
 	}	
 	
-	
-    
 	function getDataFromResult(resultado) {
 		
 		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
@@ -183,42 +202,179 @@ function mostrarGridConsulta() {
 			return resultado.tableModel;
 		}
 		
-		
-		
 		var dadosPesquisa;
 		$.each(resultado, function(index, value) {
 			  if(value[0] == "TblModelBancos") {
 				  dadosPesquisa = value[1];
 			  }
 	    });
-		
-		
-		
+
 		$.each(dadosPesquisa.rows, 
 				function(index, row) {
 
-					 var linkImpressao = '<a href="${pageContext.request.contextPath}/banco/editarBanco?codigo=' + row.cell[9] + '" style="cursor:pointer">' +
-					 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
-					 					 '</a>';			
+					 var linkEditar = '<a href="javascript:;" onclick="editarBanco(' + row.cell[0] + ');" style="cursor:pointer">' +
+                                      '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
+	                                  '</a>';			
 				
-			         var linkEmail =     '<a href="javascript:;" onclick="excluirBanco(' + row.cell[9] + ');" style="cursor:pointer">' +
-			                             '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
- 					                     '</a>';		 					 
+			         var linkExcluir =    '<a href="javascript:;" onclick="popup_excluir(' + row.cell[0] + ');" style="cursor:pointer">' +
+			                              '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" title="Exclui banco" />' +
+						                  '</a>';		 					 
 									
-				     row.cell[9] = linkImpressao + linkEmail;
+				     row.cell[9] = linkEditar + linkExcluir;
 
 		         }
 		);
 		
-		
 		return dadosPesquisa;
 	}
 	
+	function fecharDialogs() {
+		$( "#dialog-novo" ).dialog( "close" );
+	    $( "#dialog-alterar" ).dialog( "close" );
+	    $( "#dialog-excluir" ).dialog( "close" );
+	}
 	
+    function novoBanco() {
+		
+    	var numero     = $("#newNumero").val();
+		var nome       = $("#newNome").val();
+		var cedente    = $("#newCodigoCedente").val();
+		var agencia    = $("#newAgencia").val();
+		var conta      = $("#newConta").val();
+		var digito     = $("#newDigito").val();
+		var moeda      = $("#newMoeda").val();
+		var carteira   = $("#newCarteira").val();
+		var juros      = $("#newJuros").val();
+		
+		$("#newAtivo").val(0);
+    	if (document.formularioNovoBanco.newAtivo.checked){
+    		$("#newAtivo").val(1);
+		}
+		var ativo      = $("#newAtivo").val();
+		
+		var multa      = $("#newMulta").val();
+		var instrucoes = $("#newInstrucoes").val();
+
+		$.postJSON("<c:url value='/banco/novoBanco'/>",
+				   "numero="+numero+
+				   "&nome="+ nome +
+				   "&codigoCedente="+ cedente+
+				   "&agencia="+ agencia +
+				   "&conta="+ conta+
+				   "&digito="+ digito+
+				   "&moeda="+ moeda+
+				   "&codigoCarteira="+ carteira+
+				   "&juros="+ juros+
+				   "&ativo="+ ativo+
+				   "&multa="+ multa+
+				   "&instrucoes="+ instrucoes,
+				   function(result) {
+			           fecharDialogs();
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+	                   mostrarGridConsulta();
+	               },
+				   null,
+				   true);
+	}
 	
+	function alterarBanco() {
+		
+		var idBanco    = $("#idBanco").val();
+    	var numero     = $("#alterNumero").val();
+		var nome       = $("#alterNome").val();
+		var cedente    = $("#alterCodigoCedente").val();
+		var agencia    = $("#alterAgencia").val();
+		var conta      = $("#alterConta").val();
+		var digito     = $("#alterDigito").val();
+		var moeda      = $("#alterMoeda").val();
+		var carteira   = $("#alterCarteira").val();
+		var juros      = $("#alterJuros").val();
+		
+		$("#alterAtivo").val(0);
+    	if (document.formularioAlteraBanco.alterAtivo.checked){
+    		$("#alterAtivo").val(1);
+		}
+		var ativo      = $("#alterAtivo").val();
+		
+		var multa      = $("#alterMulta").val();
+		var instrucoes = $("#alterInstrucoes").val();
+
+		$.postJSON("<c:url value='/banco/alteraBanco'/>",
+				   "idBanco="+idBanco+
+				   "&numero="+numero+
+				   "&nome="+ nome +
+				   "&codigoCedente="+ cedente+
+				   "&agencia="+ agencia +
+				   "&conta="+ conta+
+				   "&digito="+ digito+
+				   "&moeda="+ moeda+
+				   "&codigoCarteira="+ carteira+
+				   "&juros="+ juros+
+				   "&ativo="+ ativo+
+				   "&multa="+ multa+
+				   "&instrucoes="+ instrucoes,
+				   function(result) {
+					   fecharDialogs();
+				       var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+			           mostrarGridConsulta();
+			       },
+				   null,
+				   true);
+	}
 	
+	function editarBanco(idBanco){
+		var data = [{name: 'idBanco', value: idBanco}];
+		$.postJSON("<c:url value='/banco/buscaBanco' />",
+				   data,
+				   sucessCallbackCadastroBanco, 
+				   fecharDialogs);
+	}
 	
+	function sucessCallbackCadastroBanco(resultado) {
+		
+		$("#idBanco").val(resultado.idBanco);
+		$("#alterNumero").val(resultado.numero);
+		$("#alterNome").val(resultado.nome);
+		$("#alterCodigoCedente").val(resultado.codigoCedente);
+		$("#alterAgencia").val(resultado.agencia);
+		$("#alterConta").val(resultado.conta);
+		$("#alterDigito").val(resultado.digito);
+		$("#alterMoeda").val(resultado.moeda);
+		$("#alterCarteira").val(resultado.codigoCarteira);
+		$("#alterJuros").val(resultado.juros);
+		
+		$("#alterAtivo").val(resultado.ativo);
+		document.formularioAlteraBanco.alterAtivo.checked = resultado.ativo;
+		
+		$("#alterMulta").val(resultado.multa);
+		$("#alterInstrucoes").val(resultado.instrucoes);
+		
+		popup_alterar();
+	}
 	
+    function desativarBanco(idBanco) {
+    	var data = [{name: 'idBanco', value: idBanco}];
+		$.postJSON("<c:url value='/banco/desativaBanco'/>",
+				   data,
+				   function(result) {
+					   fecharDialogs();
+			           mostrarGridConsulta();
+			       },
+			       function(result) {
+					   fecharDialogs();
+			           mostrarGridConsulta();
+			       });
+	}
+	
+
 	
 </script>
 <style>
@@ -233,79 +389,192 @@ label {
 	<div id="dialog-excluir" title="Excluir Banco">
 		<p>Confirma a exclusão deste Banco?</p>
 	</div>
-
-
-
-
+	
 
 	<div id="dialog-novo" title="Incluir Novo Banco">
 
-		<label><strong>Dados de Bancos</strong>
-		</label>
+        <div id="effect-novo" name="effect-novo" class="effectDialog ui-state-highlight ui-corner-all" 
+	        style="display: none; position: absolute; z-index: 2000; width: 600px;">
+	        <p>
+		        <span style="float: left;" class="ui-icon ui-icon-info"></span>
+		        <b class="effectDialogText"></b>
+	        </p>
+        </div>
 
-		<table width="626" border="0" cellpadding="2" cellspacing="1">
-			<tr>
-				<td width="111">Número Banco:</td>
-				<td width="216"><input type="text" name="textfield31"
-					id="textfield32" style="width: 150px;" />
-				</td>
-				<td width="73">Nome:</td>
-				<td width="205"><input type="text" name="textfield29"
-					id="textfield30" style="width: 177px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Código Cedente:</td>
-				<td><input type="text" name="textfield30" id="textfield31"
-					style="width: 150px;" />
-				</td>
-				<td>Agência:</td>
-				<td><input type="text" name="textfield32" id="textfield33"
-					style="width: 177px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Conta / Digito:</td>
-				<td><input type="text" name="textfield28" id="textfield28"
-					style="width: 97px;" /> - <input type="text" name="textfield28"
-					id="textfield29" style="width: 37px;" />
-				</td>
-				<td>Moeda:</td>
-				<td><input type="text" name="textfield15" id="textfield15"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Carteira:</td>
-				<td><input type="text" name="textfield33" id="textfield34"
-					style="width: 150px;" />
-				</td>
-				<td>Juros %:</td>
-				<td><input type="text" name="textfield16" id="textfield16"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Status:</td>
-				<td><input name="statusBco" type="checkbox" value=""
-					checked="checked" id="statusBco" /><label for="statusBco">Ativo</label>
-				</td>
-				<td>Multa %:</td>
-				<td><input type="text" name="textfield17" id="textfield17"
-					style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Instruções:</td>
-				<td colspan="3"><textarea name="textfield18" id="textfield18"
-						style="width: 477px;"></textarea>
-				</td>
-			</tr>
-		</table>
+        <form name="formularioNovoBanco" id="formularioNovoBanco"> 
+
+			<label><strong>Dados de Bancos</strong>
+			</label>
+
+			<table width="626" border="0" cellpadding="2" cellspacing="1">
+				<tr>
+					<td width="111">Número Banco:</td>
+					<td width="216"><input type="text" name="newNumero"
+						id="newNumero" style="width: 150px;" />
+					</td>
+					<td width="73">Nome:</td>
+					<td width="205"><input type="text" name="newNome"
+						id="newNome" style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Código Cedente:</td>
+					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente"
+						style="width: 150px;" />
+					</td>
+					<td>Agência:</td>
+					<td><input maxlength="20" type="text" name="newAgencia" id="newAgencia"
+						style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Conta / Digito:</td>
+					<td><input maxlength="20" type="text" name="newConta" id="newConta"
+						style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
+						id="newDigito" style="width: 37px;" />
+					</td>
+					<td>Moeda:</td>
+					<td>
+					
+					<select name="newMoeda" id="newMoeda"  style="width:80px;">
+	                    <c:forEach varStatus="counter" var="newMoeda" items="${listaMoedas}">
+					       <option value="${newMoeda.key}">${newMoeda.value}</option>
+					    </c:forEach>
+	                </select>
+					
+					</td>
+				</tr>
+				<tr>
+					<td>Carteira:</td>
+					<td>
+	
+					<select name="newCarteira" id="newCarteira" style="width:150px;">
+	                    <c:forEach varStatus="counter" var="newCarteira" items="${listaCarteiras}">
+					       <option value="${newCarteira.key}">${newCarteira.value}</option>
+					    </c:forEach>
+	                </select>
+					
+					</td>
+					<td>Juros %:</td>
+					<td><input maxlength="19" type="text" name="newJuros" id="newJuros"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Status:</td>
+					<td><input name="newAtivo" type="checkbox" value=""
+						checked="checked" id="newAtivo" /><label for="statusBco">Ativo</label>
+					</td>
+					<td>Multa %:</td>
+					<td><input maxlength="19" type="text" name="newMulta" id="newMulta"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções:</td>
+					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes"
+							style="width: 477px;"></textarea>
+					</td>
+				</tr>
+			</table>
+			
+		</form>
+		
 	</div>
+    
+    
+    <div id="dialog-alterar" title="Alterar Banco">
+    
+        <div id="effect-alterar" name="effect-alterar" class="effectDialog ui-state-highlight ui-corner-all" 
+	        style="display: none; position: absolute; z-index: 2000; width: 600px;">
+	        <p>
+		        <span style="float: left;" class="ui-icon ui-icon-info"></span>
+		        <b class="effectDialogText"></b>
+	        </p>
+        </div>
 
-
-
+	    <form name="formularioAlteraBanco" id="formularioAlteraBanco"> 
+	
+			<label><strong>Dados de Bancos</strong>
+			</label>
+	
+	        <input type="hidden" id="idBanco" name="idBanco" />
+	
+			<table width="626" border="0" cellpadding="2" cellspacing="1">
+				<tr>
+					<td width="111">Número Banco:</td>
+					<td width="216"><input type="text" name="alterNumero"
+						id="alterNumero" style="width: 150px;" />
+					</td>
+					<td width="73">Nome:</td>
+					<td width="205"><input type="text" name="alterNome"
+						id="alterNome" style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Código Cedente:</td>
+					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente"
+						style="width: 150px;" />
+					</td>
+					<td>Agência:</td>
+					<td><input maxlength="20" type="text" name="alterAgencia" id="alterAgencia"
+						style="width: 177px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Conta / Digito:</td>
+					<td><input maxlength="20" type="text" name="alterConta" id="alterConta"
+						style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
+						id="alterDigito" style="width: 37px;" />
+					</td>
+					<td>Moeda:</td>
+					<td>
+					
+					<select name="alterMoeda" id="alterMoeda"  style="width:80px;">
+	                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
+					       <option value="${moeda.key}">${moeda.value}</option>
+					    </c:forEach>
+	                </select>
+					
+					</td>
+				</tr>
+				<tr>
+					<td>Carteira:</td>
+					<td>
+					
+						<select name="alterCarteira" id="alterCarteira" style="width:150px;">
+		                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
+						       <option value="${carteira.key}">${carteira.value}</option>
+						    </c:forEach>
+		                </select>
+		                
+					</td>
+					<td>Juros %:</td>
+					<td><input maxlength="19" type="text" name="alterJuros" id="alterJuros"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Status:</td>
+					<td><input name="alterAtivo" type="checkbox" value=""
+						checked="checked" id="alterAtivo" /><label for="statusBco">Ativo</label>
+					</td>
+					<td>Multa %:</td>
+					<td><input maxlength="19" type="text" name="alterMulta" id="alterMulta"
+						style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções:</td>
+					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes"
+							style="width: 477px;"></textarea>
+					</td>
+				</tr>
+			</table>
+			
+		</form>
+		
+	</div>
 
 
 
@@ -314,50 +583,60 @@ label {
 		class="ui-state-highlight ui-corner-all">
 		<p>
 			<span style="float: left; margin-right: .3em;"
-				class="ui-icon ui-icon-info"></span> <b>Banco < evento > com <
-				status >.</b>
+				class="ui-icon ui-icon-info">
+		    </span> 
+		    <b>
+		        Banco < evento > com < status >.
+		    </b>
 		</p>
 	</div>
 
-	<fieldset class="classFieldset">
-		<legend> Pesquisar Bancos</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro">
-			<tr>
-				<td width="42">Nome:</td>
-				<td colspan="3"><input type="text" name="nome"
-					id="nome" style="width: 180px;" />
-				</td>
-				<td width="55">Número:</td>
-				<td width="146"><input type="text" name="numero"
-					id="numero" style="width: 130px;" />
-				</td>
-				<td width="57">Cedente:</td>
-				<td width="163"><input type="text" name="cedente"
-					id="cedente" style="width: 150px;" />
-				</td>
-				<td width="158"><input name="ativo" type="checkbox"
-					id="ativo" style="float: left;" value="" checked="checked" /><label
-					for="ativo">Ativo</label>
-				</td>
-				<td width="108"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
-				</span>
-				</td>
-			</tr>
-		</table>
+    <form name="formularioFiltro" id="formularioFiltro"> 
 
-	</fieldset>
+		<fieldset class="classFieldset">
+			<legend> Pesquisar Bancos</legend>
+			<table width="950" border="0" cellpadding="2" cellspacing="1"
+				class="filtro">
+				<tr>
+					<td width="42">Nome:</td>
+					<td colspan="3"><input type="text" name="nome"
+						id="nome" style="width: 180px;" />
+					</td>
+					<td width="55">Número:</td>
+					<td width="146"><input type="text" name="numero"
+						id="numero" style="width: 130px;" />
+					</td>
+					<td width="57">Cedente:</td>
+					<td width="163"><input type="text" name="cedente"
+						id="cedente" style="width: 150px;" />
+					</td>
+					<td width="158"><input name="ativo" type="checkbox"
+						id="ativo" style="float: left;" value="" checked="checked" /><label
+						for="ativo">Ativo</label>
+					</td>
+					<td width="108"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrarGridConsulta();">Pesquisar</a>
+					</span>
+					</td>
+				</tr>
+			</table>
+	
+		</fieldset>
+	
+	</form>
+	
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="classFieldset">
-		<legend>Bancos Cadastrados</legend>
-		<div class="grids" style="display: none;">
-			<table class="bancosGrid"></table>
-		</div>
-
-		<span class="bt_novo"><a href="javascript:;" onclick="popup();">Novo</a>
-		</span>
-
-	</fieldset>
+	
+		<fieldset class="classFieldset">
+			<legend>Bancos Cadastrados</legend>
+			<div class="grids" style="display: none;">
+				<table class="bancosGrid"></table>
+			</div>
+	
+			<span class="bt_novo"><a href="javascript:;" onclick="popup();">Novo</a>
+			</span>
+	
+		</fieldset>
+		
 	<div class="linha_separa_fields">&nbsp;</div>
 
 

@@ -1,43 +1,72 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
-
-import br.com.abril.nds.util.export.Export;
+import java.util.Date;
 
 public class ConsultaEncalheDTO {
 
+	private Date dataDoRecolhimentoDistribuidor;
+	
+	private Date dataMovimento;
+	
 	private Long idProdutoEdicao;
 	
-	@Export(label="Código")
 	private String codigoProduto;
 	
-	@Export(label="Produto")
 	private String nomeProduto;
 	
-	@Export(label="Edição")
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$")
 	private BigDecimal precoVenda;
 	
-	@Export(label="Preço com Desc. R$")
 	private BigDecimal precoComDesconto;
 	
-	@Export(label="Reparte")
 	private BigDecimal reparte;
 	
-	@Export(label="Encalhe")
 	private BigDecimal encalhe;
 	
-	@Export(label="Fornecedor")
 	private String fornecedor;
 	
-	@Export(label="Total R$")
 	private BigDecimal total;
 	
-	@Export(label="Recolhimento")
 	private Integer recolhimento;
 	
+	public ConsultaEncalheDTO() {}
+
+	/**
+	 * Obtém dataDoRecolhimentoDistribuidor
+	 *
+	 * @return Date
+	 */
+	public Date getDataDoRecolhimentoDistribuidor() {
+		return dataDoRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * Atribuí dataDoRecolhimentoDistribuidor
+	 * @param dataDoRecolhimentoDistribuidor 
+	 */
+	public void setDataDoRecolhimentoDistribuidor(
+			Date dataDoRecolhimentoDistribuidor) {
+		this.dataDoRecolhimentoDistribuidor = dataDoRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * Obtém dataMovimento
+	 *
+	 * @return Date
+	 */
+	public Date getDataMovimento() {
+		return dataMovimento;
+	}
+
+	/**
+	 * Atribuí dataMovimento
+	 * @param dataMovimento 
+	 */
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
+	}
 
 	/**
 	 * Obtém idProdutoEdicao
@@ -225,5 +254,8 @@ public class ConsultaEncalheDTO {
 	public void setRecolhimento(Integer recolhimento) {
 		this.recolhimento = recolhimento;
 	}
+
+	
+	
 	
 }

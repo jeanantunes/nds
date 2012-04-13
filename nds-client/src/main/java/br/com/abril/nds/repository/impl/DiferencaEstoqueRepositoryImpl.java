@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -84,6 +85,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		
 		if (filtro != null) {
 		
 			if (filtro.getDataMovimento() != null) {
@@ -134,6 +137,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -177,7 +182,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 					
 		hql += " from Diferenca diferenca "
 			+  " join diferenca.movimentoEstoque movimentoEstoque "
-			+  " where diferenca.statusConfirmacao = :statusConfirmacao ";
+			+  " where diferenca.statusConfirmacao = :statusConfirmacao "
+			+  " and movimentoEstoque.status = :statusAprovacao ";
 		
 		if (filtro != null) {
 			
@@ -335,7 +341,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
 			}
 				 
-			hql += " where diferenca.movimentoEstoque is not null ";
+			hql += " where diferenca.movimentoEstoque is not null "
+				+ " and diferenca.statusConfirmacao = :statusConfirmacao ";
 			
 			if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
 				hql += " and diferenca.produtoEdicao.id in " +
@@ -383,6 +390,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			
 			return;
 		}
+		
+		query.setParameter("statusConfirmacao", StatusConfirmacao.CONFIRMADO);
 		
 		if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
 			query.setParameter("dataLimiteLancamentoDistribuidor", filtro.getDataLimiteLancamentoDistribuidor());

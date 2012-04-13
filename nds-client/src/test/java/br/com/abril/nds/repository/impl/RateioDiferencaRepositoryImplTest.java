@@ -14,6 +14,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -58,7 +59,11 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		TipoProduto tipoProduto = Fixture.tipoRevista();
 		save(tipoProduto);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		Produto produto = Fixture.produto("jkgfhfhjgh", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipoProduto);
+		produto.setEditor(abril);
 		save(produto);
 				
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);

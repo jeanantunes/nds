@@ -313,7 +313,8 @@ fieldset label {
 								href="Recolhimento/conferencia_encalhe_jornaleiro_contingencia.htm">Conferência
 									de Encalhe Cota Contingência</a>
 							</li>
-							<li><a href="Recolhimento/consulta_encalhe_jornaleiro.htm">Consulta
+							<li>
+								<a href='<c:url value="/devolucao/consultaEncalhe"/>'>Consulta
 									Encalhe Cota</a>
 							</li>
 

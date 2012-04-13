@@ -1,20 +1,48 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.cadastro.CotasAssociadasController.AssociacaoCota;
+import br.com.abril.nds.controllers.cadastro.GarantiasController.GarantiaCadastrada;
+import br.com.abril.nds.controllers.cadastro.SociosController.SocioCadastrado;
+import br.com.abril.nds.dto.ConsultaFiadorDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
+import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.Garantia;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.service.FiadorService;
+import br.com.abril.nds.service.PessoaService;
+import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -23,10 +51,24 @@ public class FiadorController {
 
 	public static final String ID_FIADOR_EDICAO = "idFiadorEdicaoSessao";
 	
+	public static final String FILTRO_ULTIMA_PESQUISA_FIADOR = "filtroUltimaPesquisaFiador";
+	
 	private Result result;
 	
-	public FiadorController(Result result){
+	private HttpSession httpSession;
+	
+	private Validator validator;
+	
+	@Autowired
+	private FiadorService fiadorService;
+	
+	@Autowired
+	private PessoaService pessoaService;
+	
+	public FiadorController(Result result, HttpSession httpSession, Validator validator){
 		this.result = result;
+		this.httpSession = httpSession;
+		this.validator = validator;
 	}
 	
 	@Path("/")
@@ -35,37 +77,521 @@ public class FiadorController {
 	}
 	
 	@Post
-	public void pesquisarFiador(String nome, String cpfCnpj, String sortorder, String sortname, int page, int rp){
+	public void pesquisarFiador(FiltroConsultaFiadorDTO filtro, String sortorder, 
+			String sortname, Integer page, Integer rp, ValidacaoVO validacaoVO){
 		
-		FiltroConsultaFiadorDTO filtro = new FiltroConsultaFiadorDTO();
-		filtro.setCpfCnpj(cpfCnpj);
-		filtro.setNome(nome);
-		filtro.setOrdenacaoColunaFiador(Util.getEnumByStringValue(OrdenacaoColunaFiador.values(), sortname));
-		filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
+		if (page == null){
+			page = 1;
+		}
 		
-		if ((nome == null || nome.trim().isEmpty()) && 
-				(cpfCnpj == null || cpfCnpj.trim().isEmpty())){
+		if (rp == null){
+			rp = 15;
+		}
+		
+		if (filtro == null){
+			filtro = new FiltroConsultaFiadorDTO();
+		}
+		
+		OrdenacaoColunaFiador orderName = Util.getEnumByStringValue(OrdenacaoColunaFiador.values(), sortname);
+		if (orderName == null){
+			orderName = OrdenacaoColunaFiador.CODIGO;
+		}
+		
+		if (orderName != null){
+			filtro.setOrdenacaoColunaFiador(orderName);
+		}
+		
+		if (filtro.getPaginacaoVO() == null){
+			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
+		}
+		
+		if (filtro.getPaginacaoVO().getOrdenacao() == null){
+			filtro.getPaginacaoVO().setOrdenacao(Ordenacao.ASC);
+		}
+		
+		if ((filtro.getNome() == null || filtro.getNome().trim().isEmpty()) && 
+				(filtro.getCpfCnpj() == null || filtro.getCpfCnpj().trim().isEmpty())){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nome ou CPF/CNPJ são obrigatórios.");
 		}
 		
-		if (cpfCnpj != null){
-			cpfCnpj = cpfCnpj.replace(".", "").replace("-", "");
+		if (filtro.getCpfCnpj() != null){
+			filtro.setCpfCnpj(filtro.getCpfCnpj().replace(".", "").replace("-", ""));
+		}
+		
+		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorService.obterFiadores(filtro);
+		
+		this.httpSession.setAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR, filtro);
+		
+		Object[] result = new Object[2];
+		result[1] = "";
+		
+		if (validacaoVO != null){
+			
+			result[0] = validacaoVO;
+		}
+		
+		if (consultaFiadorDTO.getListaFiadores().isEmpty()){
+			if (result[0] == null){
+				result[0] = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			} else {
+				ValidacaoVO vo = (ValidacaoVO) result[0];
+				vo.getListaMensagens().add("Nenhum registro encontrado.");
+			}
+			
+			this.result.use(Results.json()).from(result, "result").recursive().serialize();
+		} else {
+			if (result[0] == null){
+				result[0] = "";
+			}
+			
+			result[1] = this.getTableModelFiadores(consultaFiadorDTO, page);
+			this.result.use(Results.json()).from(result, "result").recursive().serialize();
 		}
 	}
 	
-	//public void cadastrarFiadorCpf(String nome, String email, String cpf, String rg, String dataNasc, String orgaoEmissor,
-	//		String uf, String estadoCivil, String sexo, String nacionalidade, String natural){
+	@Post
+	public void cadastrarFiadorCpf(PessoaFisica pessoa){
 		
-	//}
+		this.validarDadosEntradaPessoaFisica(pessoa);
+		
+		this.preencherDadosFiador(pessoa);
+		
+		ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso.");
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = (FiltroConsultaFiadorDTO) 
+				this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
+		
+		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
+	}
 	
-	public void cadastrarFiadorCpf(PessoaFisica fiador, PessoaFisica conjuge){
+	public void buscarPessoaCPF(String cpf){
+		
+		List<String> dados = null;
+		
+		if (cpf != null){
+			
+			cpf = cpf.replace("-", "").replace(".", "");
+			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf);
+			
+			dados = new ArrayList<String>();
+			
+			dados.add(fisica.getNome());
+			dados.add(fisica.getEmail());
+			dados.add(this.adicionarMascaraCNPJ(fisica.getCpf()));
+			dados.add(fisica.getRg());
+			dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
+			dados.add(fisica.getOrgaoEmissor());
+			dados.add(fisica.getUfOrgaoEmissor());
+			dados.add(fisica.getEstadoCivil().name());
+			dados.add(fisica.getSexo().name());
+			dados.add(fisica.getNacionalidade());
+			dados.add(fisica.getNatural());
+			
+			PessoaFisica conjuge = fisica.getConjuge();
+			
+			if (conjuge != null){
+				dados.add(conjuge.getNome());
+				dados.add(conjuge.getEmail());
+				dados.add(this.adicionarMascaraCNPJ(conjuge.getCpf()));
+				dados.add(conjuge.getRg());
+				dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
+				dados.add(conjuge.getOrgaoEmissor());
+				dados.add(conjuge.getUfOrgaoEmissor());
+				dados.add(conjuge.getSexo().name());
+				dados.add(conjuge.getNacionalidade());
+				dados.add(conjuge.getNatural());
+			}
+		}
+		
+		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void preencherDadosFiador(Pessoa pessoa) {
+		
+		List<Pessoa> sociosAdicionar = null;
+		if (pessoa instanceof PessoaFisica){
+			
+			PessoaFisica p = (PessoaFisica) pessoa;
+			if (p.getConjuge() != null){
+				
+				p.getConjuge().setEstadoCivil(EstadoCivil.CASADO);
+				p.getConjuge().setCpf(p.getCpf().replace(".", "").replace("-", ""));
+				p.getConjuge().setRg(p.getRg().replace("-", "").replace(".", ""));
+			}
+			
+			p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
+			p.setRg(p.getRg().replace("-", "").replace(".", ""));
+		} else {
+			
+			((PessoaJuridica) pessoa).setCnpj(((PessoaJuridica) pessoa).getCnpj().replace("-", "").replace(".", ""));
+			
+			List<SocioCadastrado> sociosCadastrados = (List<SocioCadastrado>)
+					this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
+			
+			if (sociosCadastrados != null && !sociosCadastrados.isEmpty()){
+				
+				sociosAdicionar = new ArrayList<Pessoa>();
+				
+				for (SocioCadastrado cadastrado : sociosCadastrados){
+					sociosAdicionar.add(cadastrado.getPessoa());
+					
+					PessoaFisica p = (PessoaFisica) cadastrado.getPessoa();
+					if (p.getConjuge() != null){
+						
+						p.getConjuge().setEstadoCivil(EstadoCivil.CASADO);
+						p.getConjuge().setCpf(p.getCpf().replace(".", "").replace("-", ""));
+						p.getConjuge().setRg(p.getRg().replace("-", "").replace(".", ""));
+					}
+					
+					p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
+					p.setRg(p.getRg().replace("-", "").replace(".", ""));
+				}
+			}
+		}
+		
+		Set<Long> sociosRemover = (Set<Long>) 
+				this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosAdicionar = (List<EnderecoAssociacaoDTO>) 
+				this.httpSession.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosRemover = (List<EnderecoAssociacaoDTO>) 
+				this.httpSession.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		
+		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
+				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		List<TelefoneAssociacaoDTO> listaTelefoneAdicionar = new ArrayList<TelefoneAssociacaoDTO>();
+		if (listaTelefone != null){
+			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefone.values()){
+				listaTelefoneAdicionar.add(telefoneAssociacaoDTO);
+			}
+		}
+		
+		Set<Long> listaTelefoneRemover = (Set<Long>) 
+				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		List<GarantiaCadastrada> listaGarantiaSessao = (List<GarantiaCadastrada>) 
+				this.httpSession.getAttribute(GarantiasController.LISTA_GARANTIAS_SALVAR_SESSAO);
+		
+		List<Garantia> listaGarantiaAdicionar = new ArrayList<Garantia>();
+		if (listaGarantiaSessao != null){
+			for (GarantiaCadastrada garantiaCadastrada : listaGarantiaSessao){
+				listaGarantiaAdicionar.add(garantiaCadastrada.getGarantia());
+			}
+		}
+		
+		Set<Long> listaGarantiaRemover = (Set<Long>) 
+				this.httpSession.getAttribute(GarantiasController.LISTA_GARANTIAS_REMOVER_SESSAO);
+		
+		List<AssociacaoCota> listaCotasSessao = (List<AssociacaoCota>) 
+				this.httpSession.getAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO);
+		
+		List<Integer> listaCotasAssociar = new ArrayList<Integer>();
+		if (listaCotasSessao != null){
+			for (AssociacaoCota associacaoCota : listaCotasSessao){
+				listaCotasAssociar.add(associacaoCota.getNumeroCota());
+			}
+		}
+		
+		Set<Integer> listaCotasDesassociar = (Set<Integer>) 
+				this.httpSession.getAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
+		
+		Fiador fiador = new Fiador();
+		fiador.setId((Long) this.httpSession.getAttribute(ID_FIADOR_EDICAO));
+		fiador.setInicioAtividade(new Date());
+		fiador.setPessoa(pessoa);
+		
+		this.fiadorService.cadastrarFiador(fiador, sociosAdicionar, sociosRemover, listaEnderecosAdicionar, 
+				listaEnderecosRemover, listaTelefoneAdicionar, listaTelefoneRemover, 
+				listaGarantiaAdicionar, listaGarantiaRemover, listaCotasAssociar, listaCotasDesassociar);
+		
+		this.limparDadosSessao();
+	}
+
+	@Post
+	public void cadastrarFiadorCnpj(PessoaJuridica fiador){
+		
+		this.validarDadosEntradaPessoJuridica(fiador);
+		
+		this.preencherDadosFiador(fiador);
+		
+		ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso.");
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = (FiltroConsultaFiadorDTO) 
+				this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
+		
+		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
+	}
+	
+	@Post
+	public void cancelarCadastro(){
+		this.limparDadosSessao();
 		
 		result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	public void cadastrarFiadorCnpj(PessoaJuridica fiador){
+	@Post
+	public void excluirFiador(Long idFiador){
 		
-		result.use(Results.json()).from("", "result").serialize();
+		this.fiadorService.excluirFiador(idFiador);
+		
+		ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso.");
+		
+		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = (FiltroConsultaFiadorDTO) 
+				this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
+		
+		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
+	}
+	
+	@Post
+	public void editarFiador(Long idFiador){
+		
+		limparDadosSessao();
+		
+		Pessoa fiador = this.fiadorService.buscarPessoaFiadorPorId(idFiador);
+		
+		if (fiador != null){
+			
+			this.httpSession.setAttribute(ID_FIADOR_EDICAO, idFiador);
+			
+			List<String> dados = new ArrayList<String>();
+			
+			if (fiador instanceof PessoaFisica){
+				
+				PessoaFisica fisica =  (PessoaFisica) fiador;
+				
+				dados.add("CPF");
+				dados.add(fisica.getNome());
+				dados.add(fisica.getEmail());
+				dados.add(this.adicionarMascaraCNPJ(fisica.getCpf()));
+				dados.add(fisica.getRg());
+				dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
+				dados.add(fisica.getOrgaoEmissor());
+				dados.add(fisica.getUfOrgaoEmissor());
+				dados.add(fisica.getEstadoCivil().name());
+				dados.add(fisica.getSexo().name());
+				dados.add(fisica.getNacionalidade());
+				dados.add(fisica.getNatural());
+				
+				PessoaFisica conjuge = fisica.getConjuge();
+				
+				if (conjuge != null){
+					dados.add(conjuge.getNome());
+					dados.add(conjuge.getEmail());
+					dados.add(this.adicionarMascaraCNPJ(conjuge.getCpf()));
+					dados.add(conjuge.getRg());
+					dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
+					dados.add(conjuge.getOrgaoEmissor());
+					dados.add(conjuge.getUfOrgaoEmissor());
+					dados.add(conjuge.getSexo().name());
+					dados.add(conjuge.getNacionalidade());
+					dados.add(conjuge.getNatural());
+				}
+				
+				result.use(Results.json()).from(dados, "result").serialize();
+			} else {
+				
+				PessoaJuridica pessoaJuridica = (PessoaJuridica) fiador;
+				
+				dados.add("CNPJ");
+				dados.add(pessoaJuridica.getRazaoSocial());
+				dados.add(pessoaJuridica.getNomeFantasia());
+				dados.add(pessoaJuridica.getInscricaoEstadual());
+				dados.add(this.adicionarMascaraCNPJ(pessoaJuridica.getCnpj()));
+				dados.add(pessoaJuridica.getEmail());
+				
+				result.use(Results.json()).from(dados, "result").serialize();
+			}
+		}
+	}
+	
+	private String adicionarMascaraCNPJ(String cnpj){
+		
+		StringBuilder formatado = new StringBuilder();
+		formatado.append(cnpj.substring(0, 2)).append(".").append(cnpj.substring(3, 5)).append(".").append(cnpj.substring(5, 8)).append("-").append(cnpj.substring(8, 10));
+		
+		return formatado.toString();
+	}
+	
+	private void limparDadosSessao(){
+		this.httpSession.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.httpSession.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(GarantiasController.LISTA_GARANTIAS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(GarantiasController.LISTA_GARANTIAS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(ID_FIADOR_EDICAO);
+	}
+	
+	private TableModel<CellModel> getTableModelFiadores(ConsultaFiadorDTO consulta, Integer page) {
+		
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+
+		List<CellModel> listaCellModel = new ArrayList<CellModel>();
+
+		for (Fiador fiador : consulta.getListaFiadores()) {
+			
+			String nomeFiador = null;
+			String cpfCnpjFiador = null;
+			String rgInscricaoEstadualFiador = null;
+			
+			if (fiador.getPessoa() instanceof PessoaFisica){
+				
+				PessoaFisica pessoaFisica = (PessoaFisica)fiador.getPessoa();
+				
+				nomeFiador = pessoaFisica.getNome();
+				cpfCnpjFiador = pessoaFisica.getCpf();
+				rgInscricaoEstadualFiador = pessoaFisica.getRg();
+			} else {
+				
+				PessoaJuridica pessoaJuridica = (PessoaJuridica)fiador.getPessoa();
+				
+				nomeFiador = pessoaJuridica.getRazaoSocial();
+				cpfCnpjFiador = pessoaJuridica.getCnpj();
+				rgInscricaoEstadualFiador = pessoaJuridica.getInscricaoEstadual();
+			}
+			
+			Telefone telefone = fiador.getPessoa().getTelefones().isEmpty() ? null : fiador.getPessoa().getTelefones().get(0);
+			
+			CellModel cellModel = new CellModel(
+				fiador.getId().intValue(),
+				fiador.getId(),
+				nomeFiador,
+				cpfCnpjFiador,
+				rgInscricaoEstadualFiador,
+				telefone,
+				fiador.getPessoa().getEmail()
+			);
+
+			listaCellModel.add(cellModel);
+		}
+
+		tableModel.setPage(page);
+		tableModel.setRows(listaCellModel);
+		tableModel.setTotal(consulta.getQuantidadePaginas().intValue()); 
+		
+		return tableModel;
+	}
+	
+	private void validarDadosEntradaPessoaFisica(PessoaFisica pessoa){
+		List<String> msgsValidacao = new ArrayList<String>();
+		
+		if (pessoa == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório.");
+		}
+		
+		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+			msgsValidacao.add("Nome é obrigatório.");
+		}
+		
+		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+			msgsValidacao.add("E-mail é obrigatório.");
+		}
+		
+		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+			msgsValidacao.add("CPF é obrigatório.");
+		}
+		
+		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+			msgsValidacao.add("R.G. é obrigatório.");
+		}
+		
+		if (pessoa.getDataNascimento() == null){
+			msgsValidacao.add("Data Nascimento é obrigatório.");
+		}
+		
+		if (pessoa.getEstadoCivil() == null){
+			msgsValidacao.add("Estado Civil é obrigatório.");
+		}
+		
+		if (pessoa.getSexo() == null){
+			msgsValidacao.add("Sexo é obrigatório.");
+		}
+		
+		//dados do conjuge
+		if (pessoa.getConjuge() != null){
+			pessoa = pessoa.getConjuge();
+			
+			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+				msgsValidacao.add("Nome do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+				msgsValidacao.add("E-mail do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+				msgsValidacao.add("CPF do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+				msgsValidacao.add("R.G. do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getDataNascimento() == null){
+				msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getSexo() == null){
+				msgsValidacao.add("Sexo do conjuge é obrigatório.");
+			}
+		}
+		
+		if (validator.hasErrors()) {
+			
+			for (Message message : validator.getErrors()) {
+				if (message.getCategory().equals("dataNascimento")){
+					msgsValidacao.add("Data de nascimento do sócio inválida.");
+				}
+				
+				if (message.getCategory().equals("conjuge.dataNascimento")){
+					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
+				}
+			}
+		}
+		
+		if (!msgsValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
+		}
+	}
+	
+	private void validarDadosEntradaPessoJuridica(PessoaJuridica pessoa){
+		
+		List<String> msgsValidacao = new ArrayList<String>();
+		
+		if (pessoa == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "CNPJ é obrigatório"));
+		}
+		
+		if (pessoa.getRazaoSocial() == null || pessoa.getRazaoSocial().trim().isEmpty()){
+			msgsValidacao.add("Razão social é obrigatório");
+		}
+		
+		if (pessoa.getNomeFantasia() == null || pessoa.getNomeFantasia().trim().isEmpty()){
+			msgsValidacao.add("Nome fantasia é obrigatório");
+		}
+		
+		if (pessoa.getInscricaoEstadual() == null || pessoa.getInscricaoEstadual().trim().isEmpty()){
+			msgsValidacao.add("Inscrição estadual é obrigatório");
+		}
+		
+		if (pessoa.getCnpj() == null || pessoa.getCnpj().trim().isEmpty()){
+			msgsValidacao.add("CNPJ é obrigatório");
+		}
+		
+		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+			msgsValidacao.add("E-mail é obrigatório");
+		}
+		
+		if (!msgsValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
+		}
 	}
 }

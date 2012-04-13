@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
@@ -1078,11 +1078,11 @@ public class BoletoServiceImpl implements BoletoService {
 			String cota = "";
 			
 			if ((boleto.getCota().getPessoa()) instanceof PessoaFisica){
-				cota = ((PessoaFisica) boleto.getCota().getPessoa()).getNome();
+				cota = boleto.getCota().getNumeroCota()+"-"+((PessoaFisica) boleto.getCota().getPessoa()).getNome();
 			}
 			
 			if ((boleto.getCota().getPessoa()) instanceof PessoaJuridica){
-				cota = ((PessoaJuridica) boleto.getCota().getPessoa()).getRazaoSocial();
+				cota = boleto.getCota().getNumeroCota()+"-"+((PessoaJuridica) boleto.getCota().getPessoa()).getRazaoSocial();
 			}
 			
 			cobranca.setCota(cota);
@@ -1100,11 +1100,11 @@ public class BoletoServiceImpl implements BoletoService {
 			if (dataVencimentoUtil.compareTo(dataOperacao) < 0) {
 				
 				//CALCULA JUROS
-				valorJurosCalculado = cobrancaService.calcularJuros(distribuidor, boleto.getCota(),
+				valorJurosCalculado = cobrancaService.calcularJurosBanco(boleto.getBanco(),distribuidor, boleto.getCota(),
 													  boleto.getValor(), boleto.getDataVencimento(),
 													  dataOperacao);
 				//CALCULA MULTA
-				valorMultaCalculado = cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
+				valorMultaCalculado = cobrancaService.calcularMultaBanco(boleto.getBanco(),distribuidor, boleto.getCota(),
 													  boleto.getValor());
 			}
 			
