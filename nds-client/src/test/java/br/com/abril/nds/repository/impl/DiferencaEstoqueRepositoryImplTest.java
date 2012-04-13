@@ -18,7 +18,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
@@ -62,6 +61,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
 	private Editor abril;
+
+	private Fornecedor fornecedor;
 	
 	@Before
 	public void setup() {
@@ -104,19 +105,12 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
-	
 		
-		PessoaJuridica pessoaJuridica = Fixture.juridicaDinap();
-		
-		save(pessoaJuridica);
-		
-		
-		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		
+		fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedor);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
-			Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal,
+			Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor.getJuridica(), fornecedor, tipoNotaFiscal,
 										 usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		
 		save(notaFiscalFornecedor);
@@ -286,10 +280,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Produto produto = Fixture.produtoVeja(tipoProduto);
 		produto.setEditor(abril);
 		save(produto);
-		
-		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		
-		save(fornecedor);
 		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
