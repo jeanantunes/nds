@@ -243,7 +243,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril");
+		return criarEditor("Editora Abril", 10L);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -1580,9 +1580,10 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome) {
+	public static Editor criarEditor(String nome, Long codigo) {
 		Editor editor = new Editor();
 		editor.setNome(nome);
+		editor.setCodigo(10L);
 		return editor;
 	}
 	

@@ -67,6 +67,9 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
+	@Column(name = "POSSUI_BRINDE", nullable = false)
+	private boolean possuiBrinde;
+	
 	public Long getId() {
 		return id;
 	}
@@ -146,6 +149,14 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setLancamentos(Set<Lancamento> lancamentos) {
 		this.lancamentos = lancamentos;
+	}
+	
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
+	}
+	
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
 	}
 
 	@Override
