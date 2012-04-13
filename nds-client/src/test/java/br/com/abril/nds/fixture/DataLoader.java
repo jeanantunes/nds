@@ -118,12 +118,9 @@ public class DataLoader {
 	private static PessoaFisica murilo;
 	private static PessoaFisica mariana;
 	private static PessoaFisica orlando;
-
 	private static PessoaFisica joao;
 	private static PessoaFisica luis;
 
-	
-	
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
 	private static TipoMovimentoEstoque tipoMovimentoSobraEm;
