@@ -52,7 +52,9 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	private TipoDiferenca tipoDiferenca;
 	
-	private long qtdeMovimentos;
+	private long qtdeMovimentosLancamento;
+	
+	private long qtdeMovimentosConsulta;
 	
 	private int qtdResultadoPorPagina;
 
@@ -72,7 +74,9 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.quantidadeDiferenca = new BigDecimal("1.0");
 		
-		this.qtdeMovimentos = 30;
+		this.qtdeMovimentosLancamento = 30;
+		
+		this.qtdeMovimentosConsulta = 30;
 		
 		this.qtdResultadoPorPagina = 15;
 		
@@ -91,7 +95,9 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.tipoDiferenca = TipoDiferenca.FALTA_EM;
 		
-		StatusConfirmacao statusConfirmacao = StatusConfirmacao.PENDENTE;
+		StatusConfirmacao statusConfirmado = StatusConfirmacao.CONFIRMADO;
+		
+		StatusConfirmacao statusPendente = StatusConfirmacao.PENDENTE;
 		
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		
@@ -136,24 +142,43 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 							   itemRecebimentoFisico);
 		save(lancamentoVeja);
 		
-		for (int i = 0; i < this.qtdeMovimentos; i++) {
+		for (int i = 0; i < this.qtdeMovimentosLancamento; i++) {
 			
 			MovimentoEstoque movimentoEstoque =
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE, "Pendente.");
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.APROVADO, null);
 			
 			save(movimentoEstoque);
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque, true);
+								  tipoDiferenca, statusConfirmado, null, movimentoEstoque, true);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
 			save(diferenca);
-		}		
+		}
+		
+		for (int i = 0; i < this.qtdeMovimentosConsulta; i++) {
+			
+			MovimentoEstoque movimentoEstoque =
+				Fixture.movimentoEstoque(
+					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
+						estoqueProduto, dataMovimento, 
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.APROVADO, null);
+			
+			save(movimentoEstoque);
+			
+			Diferenca diferenca = 
+				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
+								  tipoDiferenca, statusPendente, null, movimentoEstoque, true);
+			
+			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+			
+			save(diferenca);
+		}
 	}
 	
 	@Test
@@ -201,11 +226,11 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.setDataMovimento(this.dataMovimento);
 		filtro.setTipoDiferenca(this.tipoDiferenca);
 		
-		long quantidadeTotal = this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+		Long quantidadeTotal = this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
 		
 		Assert.assertNotNull(quantidadeTotal);
 		
-		Assert.assertEquals(this.qtdeMovimentos, quantidadeTotal);
+		Assert.assertEquals(this.qtdeMovimentosLancamento, quantidadeTotal.longValue());
 	}
 	
 	@Test
@@ -239,11 +264,11 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.setNumeroEdicao(1L);
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
-		long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
 		
 		Assert.assertNotNull(quantidadeTotal);
 		
-		Assert.assertTrue(quantidadeTotal != 0);
+		Assert.assertEquals(this.qtdeMovimentosConsulta, quantidadeTotal.longValue());
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {

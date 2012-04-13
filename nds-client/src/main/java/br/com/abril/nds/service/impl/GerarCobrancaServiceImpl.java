@@ -234,7 +234,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
 		
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
-			switch (movimentoFinanceiroCota.getTipoMovimento().getGrupoMovimentoFinaceiro()){
+			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
 				case CREDITO:
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
 					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
@@ -407,7 +407,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						if (consolidadoDivida != null){
 							List<MovimentoFinanceiroCota> movimentoFinanceiroDivida = consolidadoDivida.getMovimentos();
 							for (MovimentoFinanceiroCota m : movimentoFinanceiroDivida){
-								if (m.getTipoMovimento().getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
+								if (((TipoMovimentoFinanceiro) m.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
 									valorMulta = m.getValor();
 									break;
 								}

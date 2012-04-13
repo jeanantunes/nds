@@ -926,6 +926,7 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
+		
 		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
 			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
 					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
@@ -934,6 +935,7 @@ public class Fixture {
 					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
 		}
 		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
+		
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -958,14 +960,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -1165,17 +1159,19 @@ public class Fixture {
 	
 	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
 			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
-			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+			BigDecimal valor, List<MovimentoEstoqueCota> lista,
+			StatusAprovacao statusAprovacao, Date data, boolean lancamentoManual) {
 		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
 		mfc.setData(data);
 		mfc.setMovimentos(lista);
-		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setStatus(statusAprovacao);
 		mfc.setTipoMovimento(tipoMovimento);
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
+		mfc.setLancamentoManual(lancamentoManual);
 		return mfc;
 	}
 
