@@ -25,6 +25,10 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	@Autowired
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConsultaEncalheService#pesquisarEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO)
+	 */
 	@Transactional
 	public InfoConsultaEncalheDTO pesquisarEncalhe(FiltroConsultaEncalheDTO filtro) {
 		
@@ -59,71 +63,5 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		return info;
 	}
 
-//	private InfoConsultaEncalheDTO getInfoMockada() {
-//		
-//		List<ConsultaEncalheDTO> listaConsultaEncalhe = new LinkedList<ConsultaEncalheDTO>();
-//		
-//		int contador = 0;
-//		
-//		Long idProdutoEdicao 		= null;
-//		String codigoProduto 		= null;
-//		String nomeProduto 			= null;
-//		Long numeroEdicao 			= null;
-//		BigDecimal precoVenda 		= null;
-//		BigDecimal precoComDesconto = null;
-//		BigDecimal reparte 			= null;
-//		BigDecimal encalhe 			= null;
-//		String fornecedor			= null;
-//		BigDecimal total 			= null;
-//		Integer recolhimento 		= null;
-//		
-//		while(contador++<50) {
-//			
-//			idProdutoEdicao 		= 0L;
-//			codigoProduto 			= "000";
-//			nomeProduto 			= "Produto_";
-//			numeroEdicao 			= 0L;
-//			precoVenda 				= BigDecimal.ZERO;
-//			precoComDesconto 		= BigDecimal.ZERO;
-//			reparte 				= BigDecimal.ZERO;
-//			encalhe 				= BigDecimal.ZERO;
-//			fornecedor				= "Fornecedor_";
-//			total 					= BigDecimal.ZERO;
-//			recolhimento 			= 0;
-//
-//			
-//			ConsultaEncalheDTO consultaEncalheDTO = new ConsultaEncalheDTO();
-//			
-//			consultaEncalheDTO.setIdProdutoEdicao(idProdutoEdicao+contador);
-//			consultaEncalheDTO.setCodigoProduto(codigoProduto+contador);
-//			consultaEncalheDTO.setNomeProduto(nomeProduto+contador);
-//			consultaEncalheDTO.setNumeroEdicao(numeroEdicao+contador);
-//			consultaEncalheDTO.setPrecoVenda(precoVenda.add(new BigDecimal(contador)));
-//			consultaEncalheDTO.setPrecoComDesconto(precoComDesconto.add(new BigDecimal(contador)));
-//			consultaEncalheDTO.setReparte(reparte.add(new BigDecimal(contador)));
-//			consultaEncalheDTO.setEncalhe(encalhe.add(new BigDecimal(contador)));
-//			consultaEncalheDTO.setFornecedor(fornecedor+contador);
-//			consultaEncalheDTO.setTotal(total.add(new BigDecimal(contador)));
-//			consultaEncalheDTO.setRecolhimento(recolhimento+contador);
-//			
-//			listaConsultaEncalhe.add(consultaEncalheDTO);
-//			
-//		}
-//		
-//		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
-//		
-//		info.setListaConsultaEncalhe(listaConsultaEncalhe);
-//		
-//		info.setQtdeConsultaEncalhe(listaConsultaEncalhe.size());
-//		
-//		info.setQtdExemplarDemaisRecolhimentos(new BigDecimal(12));
-//		info.setQtdProdutoDemaisRecolhimentos(34);
-//		info.setQtdExemplarPrimeiroRecolhimento(new BigDecimal(45));
-//		info.setQtdProdutoPrimeiroRecolhimento(56);
-//		
-//		return info;
-//		
-//	}
-	
 	
 }

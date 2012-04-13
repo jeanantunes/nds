@@ -5,7 +5,10 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class ResultadoConsultaEncalheVO implements Serializable {
 
 	/**
@@ -14,9 +17,17 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel;
+	
+	@Export(label="Qtde de Tipos de Produto Recolhidos no Primeiro Dia")
 	private String qtdProdutoPrimeiroRecolhimento;
+	
+	@Export(label="Qtde de Exemplares Recolhidos no Primeiro Dia")
 	private String qtdExemplarPrimeiroRecolhimento;
+	
+	@Export(label="Qtde de Tipos de Produto Recolhidos no Após Primeiro Dia")
 	private String qtdProdutoDemaisRecolhimentos;
+	
+	@Export(label="Qtde de Exemplares Recolhidos Após Primeiro Dia")
 	private String qtdExemplarDemaisRecolhimentos;
 	
 

@@ -31,6 +31,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		super(MovimentoEstoqueCota.class);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdProdutoEdicaoEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO, java.lang.Long, boolean)
+	 */
 	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
 
 		StringBuffer sql = new StringBuffer();
@@ -102,6 +106,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdItemProdutoEdicaoEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO, java.lang.Long, boolean)
+	 */
 	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia) {
 
 		StringBuffer sql = new StringBuffer();
@@ -172,13 +180,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 
 	
 	
-	/**
-	 * Obtém a quantidade de resultados para a consulta encalhe.
-	 * 
-	 * @param filtro
-	 * @param idTipoMovimento
-	 * 
-	 * @return qtde
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdConsultaEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO, java.lang.Long)
 	 */
 	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento) {
 		
@@ -261,13 +265,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}
 	
-	/**
-	 * Obtém uma lista de consulta encalhe
-	 * 
-	 * @param filtro
-	 * @param idTipoMovimento
-	 * 
-	 * @return List - ConsultaEncalheDTO
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaConsultaEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO, java.lang.Long)
 	 */
 	public List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento) {
 
@@ -416,6 +416,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		.addScalar("precoComDesconto")
 		.addScalar("reparte")
 		.addScalar("encalhe")
+		.addScalar("fornecedor")
 		.addScalar("total")
 		.addScalar("recolhimento");
 		
@@ -449,7 +450,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}	
 	
-	
+	/**
+	 * Obtém hql para pesquisa de ContagemDevolucao.
+	 * 
+	 * @param filtro
+	 * @param indBuscaTotalParcial
+	 * @param indBuscaQtd
+	 * 
+	 * @return String - hql
+	 */
 	private String getConsultaListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
 		
 		StringBuffer hqlEdicoes = getSubQueryEdicoesDeFornecedor();
@@ -563,6 +572,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return hql.toString();
 	}
 	
+	/**
+	 * Carrega os parâmetros da pesquisa de ContagemDevolucao e retorna
+	 * o objeto Query.
+	 * 
+	 * @param hql
+	 * @param filtro
+	 * @param tipoMovimentoEstoque
+	 * @param indBuscaTotalParcial
+	 * @param indBuscaQtd
+	 * 
+	 * @return Query
+	 */
 	private Query criarQueryComParametrosObterListaContagemDevolucao(String hql, FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque, boolean indBuscaTotalParcial, boolean indBuscaQtd) {
 		
 		Query query = null;
@@ -593,8 +614,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}
 	
-	/**
-	 * Obtém a lista de contagem devolução.
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque, boolean)
 	 */
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
@@ -682,12 +704,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}
 	
-	/**
-	 * Obtém a o valor total geral que é igual a somatória da seguinte expressão 
-	 * (qtdMovimentoEncalhe * precoVendoProdutoEdicao) de todos
-	 * os registros resultantes dos parâmetros de pesquisa utilizadoss.
-	 * 
-	 * @return valorTotalGeral
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterValorTotalGeralContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque)
 	 */
 	public BigDecimal obterValorTotalGeralContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
@@ -733,14 +752,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}
 	
-	/**
-	 * Obtém a quantidade de registro referente a contagem devolução de acordo com 
-	 * parâmetros de pesquisa.
-	 * 
-	 * @param filtro
-	 * @param tipoMovimentoEstoque
-	 * 
-	 * @return qtdRegistro
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQuantidadeContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque)
 	 */
 	public Integer obterQuantidadeContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
@@ -754,12 +768,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 	}
 	
-	/**
-	 * Obtém o Movimento de Estoque da cota pelo Tipo de Movimento 
-	 * @param data
-	 * @param idCota
-	 * @param grupoMovimentoEstoque
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterMovimentoCotaPorTipoMovimento(java.util.Date, java.lang.Long, br.com.abril.nds.model.estoque.GrupoMovimentoEstoque)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
