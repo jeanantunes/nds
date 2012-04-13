@@ -12,6 +12,9 @@
 	}
 	
 	function cadastrarFiadorCpf(janela){
+		
+		fecharModalCadastroFiador = true;
+		
 		var data = "pessoa.nome=" + $("#nomeFiadorCpf").val() + "&" +
 		           "pessoa.email=" + $("#emailFiadorCpf").val() + "&" +
 		           "pessoa.cpf=" + $("#cpfFiador").val() + "&" +
@@ -100,7 +103,7 @@
 		
 		var refAba = $("#tab-1").css("display") == "block" ? 0 : 1;
 		
-		if (cpf.length > 0){
+		if (cpf != "___.___.___-__"){
 			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", "cpf=" + cpf, 
 				function(result) {
 					

@@ -7,9 +7,11 @@ import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.TelefoneFiador;
 
 public interface FiadorService {
 
@@ -32,4 +34,10 @@ public interface FiadorService {
 	void excluirFiador(Long idFiador);
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesFiador(Long idFiador, Set<Long> idsIgnorar);
+
+	List<EnderecoAssociacaoDTO> buscarEnderecosFiador(Long idFiador, Set<Long> idsIgnorar);
+
+	TelefoneFiador buscarTelefonePorTelefoneFiador(Long idFiador, Long idTelefone);
+
+	EnderecoFiador buscarEnderecoPorEnderecoFiador(Long idFiador, Long idEndereco);
 }

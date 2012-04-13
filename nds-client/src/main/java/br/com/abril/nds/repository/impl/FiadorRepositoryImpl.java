@@ -169,8 +169,8 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	@SuppressWarnings("unchecked")
 	public List<Pessoa> buscarSociosFiador(Long idFiador){
 		
-		StringBuilder hql = new StringBuilder("socios from Fiador ");
-		hql.append(" where id = :idFiador");
+		StringBuilder hql = new StringBuilder("select f.socios from Fiador f ");
+		hql.append(" where f.id = :idFiador");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idFiador", idFiador);

@@ -219,17 +219,6 @@ public class CotaServiceImpl implements CotaService {
 		List<TelefoneAssociacaoDTO> listaTelAssoc =
 				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
 		
-		List<Telefone> listaTel = this.telefoneCotaRepository.buscarTelefonesPessoaPorCota(idCota);
-		
-		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
-			listaTel.remove(tDto.getTelefone());
-		}
-		
-		for (Telefone telefone : listaTel){
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
-			listaTelAssoc.add(telefoneAssociacaoDTO);
-		}
-		
 		return listaTelAssoc;
 	}
 	

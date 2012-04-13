@@ -1,5 +1,8 @@
 <script>
 	function cadastrarFiadorCnpj(janela){
+		
+		fecharModalCadastroFiador = true;
+		
 		var data = "fiador.razaoSocial=" + $("#razaoSocialFiador").val() + "&" +
 		           "fiador.nomeFantasia=" + $("#nomeFantasiaFiador").val() + "&" +
 		           "fiador.inscricaoEstadual=" + $("#inscricaoEstadualFiador").val() + "&" +
@@ -41,7 +44,7 @@
 	}
 	
 	$(function(){
-		$("#cnpjFiador").mask("999.999.999-99");
+		$("#cnpjFiador").mask("99.999.999/9999-99");
 	});
 </script>
 <table width="754" cellpadding="2" cellspacing="2" style="text-align:left;">

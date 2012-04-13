@@ -70,8 +70,25 @@
 	}
 
 	function popularGridEnderecos() {
-
-		$(".enderecosGrid").flexReload();
+		
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
+			null,
+			function(result) {
+				$(".enderecosGrid").flexAddData({
+					page: result.page, total: result.total, rows: result.rows
+				});	
+				
+				limparFormEndereco();
+				
+				$("#tipoEndereco").focus();
+			},
+			function(result) {
+				
+				processarResultadoConsultaEndereco(result);
+			},
+			true
+		);
 	}		
 	
 	function incluirNovoEndereco() {
@@ -231,7 +248,7 @@
 		
 		$(".enderecosGrid").flexigrid({
 			preProcess: processarResultadoConsultaEndereco,
-			url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
+			//url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
 			dataType : 'json',
 			colModel : [  {
 				display : 'Tipo Endereço',
