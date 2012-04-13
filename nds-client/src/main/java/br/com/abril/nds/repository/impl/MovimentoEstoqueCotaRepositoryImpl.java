@@ -240,11 +240,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		}
 		
 		sql.append("	group by  ");
-		sql.append("	PESSOA.ID,							");
+		
+		
+		sql.append("    PESSOA.ID,							");
 		sql.append("	LANCAMENTO.DATA_REC_DISTRIB,        ");
 		sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA,        ");
-		sql.append("	ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA ) as recolhimentos ");
+		sql.append("	ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA, ");
+		sql.append("	PRODUTO.CODIGO,                     ");
+		sql.append("	PRODUTO.NOME,                       ");
+		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO,       ");
+		sql.append("	PRODUTO_EDICAO.PRECO_VENDA,         ");
+		sql.append("	PRODUTO_EDICAO.DESCONTO             ");
 
+		sql.append(" )	as encalhes ");
+		
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
