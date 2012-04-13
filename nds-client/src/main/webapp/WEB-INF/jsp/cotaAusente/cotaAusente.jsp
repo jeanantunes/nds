@@ -91,6 +91,9 @@ function popupNovaCotaAusente() {
 						"numCota="+numCota, 
 						popupConfirmaAusenciaCota);
 				
+
+				$("#idNovaCota").attr("value","");
+				$("#idNomeNovaCota").attr("value",""); 
 				$( this ).dialog( "close" );
 				
 			},

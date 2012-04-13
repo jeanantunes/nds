@@ -127,6 +127,8 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	
 	private static  TipoMovimento tipoMovimentoRecebimentoReparte;
 	private static  TipoMovimento tipoMovimentoEnvioJornaleiro;
@@ -334,6 +336,7 @@ public class DataLoader {
 			tx = session.beginTransaction();			
 			//carregarDadosParaContagemdDevolucao(session);
 			carregarDados(session);
+			//carregarDadosInadimplencia(session);
 			//carregarDadosParaResumoExpedicao(session);
 			//carregarDadosParaResumoExpedicaoBox(session);
 			//carregarDadosInadimplencia(session);
@@ -1648,8 +1651,11 @@ public class DataLoader {
 		tipoMovimentoSobraDe = Fixture.tipoMovimentoSobraDe();
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		
+		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoEnvioEncalhe();
 
-		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
+		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
@@ -1658,9 +1664,10 @@ public class DataLoader {
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
 		
 		tipoMovimentoRecebimentoReparte = Fixture.tipoMovimentoRecebimentoReparte();	
-
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
-		save(session,tipoMovimentoRecebimentoReparte,tipoMovimentoEnvioJornaleiro);
+		
+		save(session,tipoMovimentoRecebimentoReparte,tipoMovimentoEnvioJornaleiro, 
+				tipoMovimentoEstornoCotaAusente, tipoMovimentoEnvioEncalhe);
 		
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);

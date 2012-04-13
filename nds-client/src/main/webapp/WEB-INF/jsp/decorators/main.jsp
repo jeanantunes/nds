@@ -206,7 +206,7 @@ fieldset label {
 							<li><a href="Financeiro/geracao_cobranca.htm">Geração
 									Cobrança</a>
 							</li>
-							<li><a href="Financeiro/historico_inadimplencia.htm">Histórico
+							<li><a href="<c:url value="/inadimplencia/index"/>">Histórico
 									de Inadimplência</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
