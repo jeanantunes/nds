@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -71,7 +72,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(carteiraSemRegistro);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
@@ -107,7 +108,11 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
 		save(tipoProdutoRevista);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,

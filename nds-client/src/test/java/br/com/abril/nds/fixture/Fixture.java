@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
@@ -93,10 +94,12 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -236,9 +239,12 @@ public class Fixture {
 	
 	public static Banco hsbc(Carteira carteira) {
 		return Fixture.banco(10L, true, carteira, "1010",
-				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399");
+				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
+	public static Editor editoraAbril() {
+		return criarEditor("Editora Abril");
+	}
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -368,6 +374,23 @@ public class Fixture {
 		return lancamento;
 	}
 	
+	public static ChamadaEncalhe chamadaEncalhe(
+			Date inicioRecolhimento, 
+			Date finalRecolhimento, 
+			ProdutoEdicao produtoEdicao, 
+			TipoChamadaEncalhe tipoChamadaEncalhe) {
+		
+		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
+		
+		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
+		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
+		
+		return chamadaEncalhe;
+		
+	}
+	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
 			Usuario usuario,
 			ProdutoEdicao produtoEdicao, 
@@ -444,6 +467,8 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);
+		distribuidor.setCapacidadeDistribuicao(10000);
+		distribuidor.setCapacidadeRecolhimento(10000L);
 		return distribuidor;
 	}
 
@@ -552,7 +577,7 @@ public class Fixture {
 	public static TipoMovimentoEstoque tipoMovimentoSobraEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
-		tipoMovimento.setDescricao("SObra EM");
+		tipoMovimento.setDescricao("Sobra EM");
 		tipoMovimento.setIncideDivida(false);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
 		return tipoMovimento;
@@ -1106,7 +1131,7 @@ public class Fixture {
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
-								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco) {
+								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();
 		
@@ -1121,6 +1146,8 @@ public class Fixture {
 		banco.setMoeda(moeda);
 		banco.setNome(nome);
 		banco.setNumeroBanco(numeroBanco);
+		banco.setJuros(juros);
+		banco.setMulta(multa);
 		
 		return banco;
 	}
@@ -1550,14 +1577,17 @@ public class Fixture {
 	}
 	
 	public static Telefone telefone(String ddd, String numero, String ramal){
-		
 		Telefone telefone = new Telefone();
 		telefone.setDdd(ddd);
 		telefone.setNumero(numero);
 		telefone.setRamal(ramal);
-		
 		return telefone;
-		
+	}
+	
+	public static Editor criarEditor(String nome) {
+		Editor editor = new Editor();
+		editor.setNome(nome);
+		return editor;
 	}
 	
 }

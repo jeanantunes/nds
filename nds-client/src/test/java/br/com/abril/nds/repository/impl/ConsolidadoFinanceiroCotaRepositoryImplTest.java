@@ -17,6 +17,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -61,6 +62,8 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 	
 	@Before
 	public void setUp() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
 				"manoel@mail.com", "Manoel da Silva");
@@ -81,18 +84,18 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		TipoProduto tipoProduto = Fixture.tipoRevista();
 		save(tipoProduto);
 		
-		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
+		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedor);
 		
 		Produto produto = Fixture.produtoBravo(tipoProduto);
 		Fornecedor fornecedor = Fixture.fornecedorAcme(tipoFornecedor);
+		produto.setEditor(abril);
 		save(fornecedor);
 		produto.addFornecedor(fornecedor);
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
 				new BigDecimal(10), produto);
-		//produtoEdicao.setDesconto(new BigDecimal(1));
 		save(produtoEdicao);
 				
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();

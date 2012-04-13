@@ -470,7 +470,7 @@
         	field = replaceAll(field, ".", "");
     		return field;
     	};
-        
+
 		function calculaTotalManual() {
         	
 			var valorBoleto = removeMascaraPriceFormat($("#valorBoletoHidden").val());
@@ -772,15 +772,15 @@
 		   	      
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
-		      	    <td class="linha_borda">  <input onblur="calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Juros R$:</strong></td>
-		      	    <td class="linha_borda">  <input onblur="calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
-		      	    <td class="linha_borda">  <input onblur="calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      
 		   	      <tr>

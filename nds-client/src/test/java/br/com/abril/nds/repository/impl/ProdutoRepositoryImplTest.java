@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -21,12 +22,16 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setUp() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		TipoProduto tipoProduto =
 			Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		save(tipoProduto);
 		
 		Produto produto =
 			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		produto.setEditor(abril);
 		save(produto);
 	}
 	

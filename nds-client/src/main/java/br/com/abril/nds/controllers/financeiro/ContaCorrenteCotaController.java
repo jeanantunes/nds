@@ -73,6 +73,8 @@ public class ContaCorrenteCotaController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroContaCorrente";
 	
+	private static final String FILTRO_SESSION_ATTRIBUTE_ENCALHE = "filtroContaCorrenteEncalhe";
+	
 	@Autowired
 	private HttpServletRequest request;
 	
@@ -102,6 +104,8 @@ public class ContaCorrenteCotaController {
 		
 		tratarFiltro(filtroViewContaCorrenteCotaDTO);
 		
+	
+		
 		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);
 							
 		if (listaItensContaCorrenteCota == null || listaItensContaCorrenteCota.isEmpty()){
@@ -129,6 +133,7 @@ public class ContaCorrenteCotaController {
 		ViewContaCorrenteCota contaCorrente = obterListaEncalheSessao(filtroConsolidadoEncalheDTO.getLineId());
 		
 		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente.getDataConsolidado());	
+		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE, filtroConsolidadoEncalheDTO);
 						
 		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);		
 		
@@ -217,6 +222,44 @@ public class ContaCorrenteCotaController {
 		return null;
 		
 	}
+	
+	
+	public void exportarEncalhe(FileType fileType) throws IOException{
+		
+		FiltroConsolidadoEncalheCotaDTO filtro = this.obterFiltroExportacaoEncalhe();
+		
+		
+		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtro);		
+		
+		
+		FileExporter.to("encalhe-cota", fileType)
+		.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaEncalheCota, EncalheCotaDTO.class, this.httpServletResponse);
+		
+		result.use(Results.nothing());
+		
+	}
+	
+	
+	
+	private FiltroConsolidadoEncalheCotaDTO obterFiltroExportacaoEncalhe() {
+		
+		FiltroConsolidadoEncalheCotaDTO filtro = 
+			(FiltroConsolidadoEncalheCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}			
+			
+		}
+		
+		return filtro;
+	}
+	
 
 	public void exportar(FileType fileType) throws IOException {
 		

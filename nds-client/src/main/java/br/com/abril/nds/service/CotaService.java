@@ -2,11 +2,12 @@ package br.com.abril.nds.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -49,7 +50,7 @@ public interface CotaService {
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
 	
 	void processarTelefones(Long idCota, 
-			List<TelefoneCota> listaTelefonesAdicionar, 
+			List<TelefoneAssociacaoDTO> listaTelefonesAdicionar, 
 			Collection<Long> listaTelefonesRemover);
 	
 	/**
@@ -101,4 +102,12 @@ public interface CotaService {
 	List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp);
 
 	Long obterTotalCotasSujeitasSuspensao();
+	
+	String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota);
+	
+	List<Cota> obterCotaAssociadaFiador(Long idFiador);
+
+	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
+	
+	//void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
 }

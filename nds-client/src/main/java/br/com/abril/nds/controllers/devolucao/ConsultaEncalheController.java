@@ -19,11 +19,13 @@ import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -57,6 +59,9 @@ public class ConsultaEncalheController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -72,6 +77,8 @@ public class ConsultaEncalheController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	private static final String SUFIXO_DIA = "º Dia";
 	
 	@Path("/")
 	public void index(){
@@ -261,20 +268,40 @@ public class ConsultaEncalheController {
 		}
 	}
 	
+	/**
+	 * Faz a pesquisa de ConsultaEncalhe.
+	 * 
+	 * @param dataRecolhimento
+	 * @param idFornecedor
+	 * @param numeroCota
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataRecolhimento, Long idFornecedor, Long idCota,  String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataRecolhimento, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
 		}
 		
-		Date dataRecDistribuidor =  validarDataRecolhimento(dataRecolhimento);
+		Date dataRecDistribuidor = validarDataRecolhimento(dataRecolhimento);
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
 		filtro.setDataRecolhimento(dataRecDistribuidor);
+		
 		filtro.setIdFornecedor(idFornecedor);
-		filtro.setIdCota(idCota);
+		
+		if(numeroCota != null) {
+			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+			if(cota!=null) {
+				filtro.setIdCota(cota.getId());
+			}
+			
+		}
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -319,12 +346,18 @@ public class ConsultaEncalheController {
 		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
 	}
 	
+	/**
+	 * Carrega os dados sumarizados da pesquisa no objeto ResultadoConsultaEncalheVO.
+	 * 
+	 * @param resultadoPesquisa
+	 * @param infoConsultaEncalhe
+	 */
 	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, InfoConsultaEncalheDTO infoConsultaEncalhe) {
 		
-		String qtdExemplarDemaisRec 	= getValorQtdeFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos());
-		String qtdExemplarPrimeiroRec 	= getValorQtdeFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento());
-		String qtdProdutoDemaisRec 		= getValorQtdeFormatado(infoConsultaEncalhe.getQtdProdutoDemaisRecolhimentos());
-		String qtdProdutoPrimeiroRec 	= getValorQtdeFormatado(infoConsultaEncalhe.getQtdProdutoPrimeiroRecolhimento());
+		String qtdExemplarDemaisRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos());
+		String qtdExemplarPrimeiroRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento());
+		String qtdProdutoDemaisRec 		= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoDemaisRecolhimentos());
+		String qtdProdutoPrimeiroRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoPrimeiroRecolhimento());
 		
 		resultadoPesquisa.setQtdExemplarDemaisRecolhimentos(qtdExemplarDemaisRec);
 		resultadoPesquisa.setQtdExemplarPrimeiroRecolhimento(qtdExemplarPrimeiroRec);
@@ -340,7 +373,18 @@ public class ConsultaEncalheController {
 	 * 
 	 * @return String
 	 */
-	private String getValorQtdeFormatado(BigDecimal qtde) {
+	private String getValorQtdeBigDecimalFormatado(BigDecimal qtde) {
+		return (qtde != null) ? qtde.toString() : "";
+	}
+	
+	/**
+	 * Obtém valor qtde formatada.
+	 * 
+	 * @param qtde
+	 * 
+	 * @return String
+	 */
+	private String getValorQtdeIntegerFormatado(Integer qtde) {
 		return (qtde != null) ? qtde.toString() : "";
 	}
 	
@@ -382,14 +426,14 @@ public class ConsultaEncalheController {
 		
 		for(ConsultaEncalheDTO consultaEncalheDTO : listaConsultaEncalheDTO) {
 			
-			idProdutoEdicao 	= (consultaEncalheDTO.getIdProdutoEdicao() != null) ? consultaEncalheDTO.getIdProdutoEdicao().toString() : "";
+			idProdutoEdicao 	= "";//TODO: remover apos testes//(consultaEncalheDTO.getIdProdutoEdicao() != null) ? consultaEncalheDTO.getIdProdutoEdicao().toString() : "";
 			codigoProduto 		= (consultaEncalheDTO.getCodigoProduto() != null) ? consultaEncalheDTO.getCodigoProduto() : "";
 			nomeProduto 		= (consultaEncalheDTO.getNomeProduto() != null) ? consultaEncalheDTO.getNomeProduto() : "";
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
 			precoVenda 			= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoVenda());
 			precoComDesconto 	= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoComDesconto());
-			reparte 			= getValorQtdeFormatado(consultaEncalheDTO.getReparte());
-			encalhe 			= getValorQtdeFormatado(consultaEncalheDTO.getEncalhe());
+			reparte 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getReparte());
+			encalhe 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getEncalhe());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
 			total 				= getValorMonetarioFormatado(consultaEncalheDTO.getTotal());
 			recolhimento 		= (consultaEncalheDTO.getRecolhimento()!=null) ? consultaEncalheDTO.getRecolhimento().toString() : "";
@@ -406,7 +450,7 @@ public class ConsultaEncalheController {
 			consultaEncalheVO.setEncalhe(encalhe);
 			consultaEncalheVO.setFornecedor(fornecedor);
 			consultaEncalheVO.setTotal(total);
-			consultaEncalheVO.setRecolhimento(recolhimento);
+			consultaEncalheVO.setRecolhimento(recolhimento + SUFIXO_DIA);
 			
 			
 			listaResultadosVO.add(consultaEncalheVO);
@@ -429,6 +473,20 @@ public class ConsultaEncalheController {
 				
 				filtro.getPaginacao().setPaginaAtual(null);
 				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if(filtro.getIdCota() != null) {
+				
+				Cota cota = cotaService.obterPorId(filtro.getIdCota());
+				
+				if(cota!=null) {
+					
+					String nomeResp = cotaService.obterNomeResponsavelPorNumeroDaCota(cota.getNumeroCota());
+
+					filtro.setNomeCota(nomeResp);
+					
+				}
+				
 			}
 			
 			if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor()>0) {

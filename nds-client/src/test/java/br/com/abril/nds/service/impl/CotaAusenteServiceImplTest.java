@@ -10,6 +10,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -33,9 +34,9 @@ public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 	
 	Usuario user;
 	
+	
 	@Before
 	public void setup() {
-		
 		Pessoa pessoa = Fixture.pessoaFisica("232.234.12", "w@s.com.br", "Joao");
 		save(pessoa);
 		

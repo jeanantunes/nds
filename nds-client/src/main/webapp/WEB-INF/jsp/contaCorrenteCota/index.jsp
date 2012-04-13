@@ -32,7 +32,6 @@ function pesquisarItemContaCorrenteCota() {
 
 	var parametroPesquisa = [{name:'filtroViewContaCorrenteCotaDTO.numeroCota', value:cota }];
 
-		
 	$(".itemContaCorrenteCotaGrid").flexOptions({
 		
 		url : '<c:url value="/financeiro/contaCorrenteCota/consultarContaCorrenteCota" />', params: parametroPesquisa
@@ -60,7 +59,9 @@ function pesquisarEncalheCota(lineId){
 		url : '<c:url value="/financeiro/contaCorrenteCota/consultarEncalheCota" />', params: parametroPesquisa
 				
 	});
-			
+	
+	//$("#datacotanome").html($dataescolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+	
 	$(".encalheCotaGrid").flexReload();
 	popup_encalhe();
 	
@@ -113,7 +114,7 @@ function getDataFromResult(data) {
 }
 
 function getDataFromResult2(data) {
-			
+	
 	if(typeof data.mensagens == "object") {
 		
 		$(".gridsEncalhe").hide();
@@ -124,19 +125,7 @@ function getDataFromResult2(data) {
 		
 		$(".gridsEncalhe").show();
 		
-		$("#datacotanome").html(data.dataEscolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
-		
-		$.each(data.listaInfoFornecedores, function(index, value) {
-			
-			var conteudoSpan = $("#listaInfoEncalhe").html();
-			
-			$("#listaInfoEncalhe").html(conteudoSpan + value.nomeFornecedor+":      "+value.valorTotal+"<br><br>");
-			
-		});
-	
-	
-		
-		return data.tableModel;
+		return data;
 	}	
 
 }
@@ -405,27 +394,26 @@ function popup_encargos() {
 
 <div id="dialog-encalhe" title="Encalhe da Cota">
 	<fieldset>
-    	
+    	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revista</legend>
     	 <strong><span id="datacotanome"></span></strong>
         
         <div class="gridsEncalhe" style="display: none;">      
         
 	        <table class="encalheCotaGrid"></table>
 	        
-	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-	       	 <br>
-	       	 <div align="right">
-	       	 	<table>
-	       	 		<tr>
-	       	 			<td width="100"><strong>Total R$:</strong></td>
-	       	 			<td><strong><span id="listaInfoEncalhe"></span></strong></td>
-	       	 			
-	       	 		</tr>
-	       	 	
-	       	 	</table>
-	       	 	
-	       	 </div>		       	
+	        <span class="bt_novos" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarEncalhe?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+			</span>
+			
+			<span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarEncalhe?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir
+				</a>
+			</span>       	
 	    </div>   
     </fieldset>
 

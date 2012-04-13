@@ -9,11 +9,11 @@ public class InfoConsultaEncalheDTO {
 	
 	private Integer qtdeConsultaEncalhe;
 	
-	private BigDecimal qtdProdutoPrimeiroRecolhimento;
+	private Integer qtdProdutoPrimeiroRecolhimento;
 	
 	private BigDecimal qtdExemplarPrimeiroRecolhimento;
 
-	private BigDecimal qtdProdutoDemaisRecolhimentos;
+	private Integer qtdProdutoDemaisRecolhimentos;
 	
 	private BigDecimal qtdExemplarDemaisRecolhimentos;
 
@@ -55,9 +55,9 @@ public class InfoConsultaEncalheDTO {
 	/**
 	 * Obtém qtdProdutoPrimeiroRecolhimento
 	 *
-	 * @return BigDecimal
+	 * @return Integer
 	 */
-	public BigDecimal getQtdProdutoPrimeiroRecolhimento() {
+	public Integer getQtdProdutoPrimeiroRecolhimento() {
 		return qtdProdutoPrimeiroRecolhimento;
 	}
 
@@ -66,7 +66,7 @@ public class InfoConsultaEncalheDTO {
 	 * @param qtdProdutoPrimeiroRecolhimento 
 	 */
 	public void setQtdProdutoPrimeiroRecolhimento(
-			BigDecimal qtdProdutoPrimeiroRecolhimento) {
+			Integer qtdProdutoPrimeiroRecolhimento) {
 		this.qtdProdutoPrimeiroRecolhimento = qtdProdutoPrimeiroRecolhimento;
 	}
 
@@ -91,9 +91,9 @@ public class InfoConsultaEncalheDTO {
 	/**
 	 * Obtém qtdProdutoDemaisRecolhimentos
 	 *
-	 * @return BigDecimal
+	 * @return Integer
 	 */
-	public BigDecimal getQtdProdutoDemaisRecolhimentos() {
+	public Integer getQtdProdutoDemaisRecolhimentos() {
 		return qtdProdutoDemaisRecolhimentos;
 	}
 
@@ -102,7 +102,7 @@ public class InfoConsultaEncalheDTO {
 	 * @param qtdProdutoDemaisRecolhimentos 
 	 */
 	public void setQtdProdutoDemaisRecolhimentos(
-			BigDecimal qtdProdutoDemaisRecolhimentos) {
+			Integer qtdProdutoDemaisRecolhimentos) {
 		this.qtdProdutoDemaisRecolhimentos = qtdProdutoDemaisRecolhimentos;
 	}
 
@@ -123,9 +123,7 @@ public class InfoConsultaEncalheDTO {
 			BigDecimal qtdExemplarDemaisRecolhimentos) {
 		this.qtdExemplarDemaisRecolhimentos = qtdExemplarDemaisRecolhimentos;
 	}
-	
-	
-	
+
 	
 
 	

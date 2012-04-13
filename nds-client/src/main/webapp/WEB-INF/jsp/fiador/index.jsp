@@ -1,26 +1,37 @@
 <head>
 	<script language="javascript" type="text/javascript">
-		function popup_cpf() {
+		var fecharModalCadastroFiador = false;
+	
+		function popupCadastroFiadorCPF() {
+			
 			$("#tabSocio").hide();
 			$('#tabs').tabs('select', 0);
 			
 			$("#cadastroCnpj").hide();
 			$("#cadastroCpf").show();
+			$(".inicioAtividade").show();
 			
 			modalCadastroFiador("CPF");
 		};
 	
-		function popup_cnpj() {
+		function popupCadastroFiadorCNPJ() {
+			
 			$("#tabSocio").show();
 			$('#tabs').tabs('select', 0);
 			
 			$("#cadastroCnpj").show();
 			$("#cadastroCpf").hide();
+			$(".inicioAtividade").hide();
 			
 			modalCadastroFiador("CNPJ");
 		};
 		
 		function modalCadastroFiador(paramCpfCnpj){
+			
+			fecharModalCadastroFiador = false;
+			
+			limparCamposCadastroFiador();
+			
 			$("#dialog-fiador").dialog({
 				resizable: false,
 				height:610,
@@ -28,6 +39,7 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						
 						if (paramCpfCnpj == "CPF") {
 							cadastrarFiadorCpf(this);
 						} else {
@@ -35,12 +47,57 @@
 						}
 					},
 					"Cancelar": function() {
+						
 						$(this).dialog("close");
+					}
+				},
+				beforeClose: function(event, ui) {
+					
+					if (!fecharModalCadastroFiador){
+						cancelarCadastro();
+						
+						return fecharModalCadastroFiador;
+					}
+					
+					return fecharModalCadastroFiador;
+				}
+			});
+		
+			$(".trSocioPrincipal").hide();
+			
+			//$.postJSON("<c:url value='/cadastro/fiador/cancelarCadastro'/>", null, 
+			//	function(result){
+					
+			//	}
+			//);
+		}
+		
+		function cancelarCadastro(){
+			$("#dialog-cancelar-cadastro-fiador").dialog({
+				resizable: false,
+				height:150,
+				width:600,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$.postJSON("<c:url value='/cadastro/fiador/cancelarCadastro'/>", null, 
+							function(result){
+								fecharModalCadastroFiador = true;
+								$("#dialog-close").dialog("close");
+								$("#dialog-fiador").dialog("close");
+								$("#dialog-cancelar-cadastro-fiador").dialog("close");
+								
+								limparCamposCadastroFiador();
+							}
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+						fecharModalCadastroFiador = false;
 					}
 				}
 			});
-			
-			$(".trSocioPrincipal").hide();
 		}
 	
 		function popup_excluir() {
@@ -54,20 +111,40 @@
 						cadastrarFiadorCnpj(this);
 					},
 					"Cancelar": function() {
-						$( this ).dialog( "close" );
+						$(this).dialog( "close" );
 					}
 				}
 			});
 		};
 		
 		function exibirGridFiadoresCadastrados(){
-			$("#gridFiadoresCadastrados").show();
+			
+			var data = "filtro.nome=" + $("#nomeFiadorPesquisa").val() + "&filtro.cpfCnpj=" + $("#cpfCnpjFiadorPesquisa").val();
+			$.postJSON("<c:url value='/cadastro/fiador/pesquisarFiador'/>", data, 
+				function(result){
+					
+					if (result[0].tipoMensagem){
+						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+					}
+					
+					if (result[1] != ""){
+						$(".pessoasGrid").flexAddData({
+							page: result[1].page, total: result[1].total, rows: result[1].rows
+						});
+						
+						$("#gridFiadoresCadastrados").show();
+					} else {
+						$("#gridFiadoresCadastrados").hide();
+					}
+				}
+			);
 		}
 		
 		$(function() {
 			$("#tabs").tabs();
 			
 			$(".pessoasGrid").flexigrid({
+				preProcess: processarResultadoConsultaFiadores,
 				dataType : 'json',
 				colModel : [  {
 					display : 'Código',
@@ -112,8 +189,9 @@
 					sortable : true,
 					align : 'center'
 				}],
-				sortname : "nome",
+				sortname : "codigo",
 				sortorder : "asc",
+				disableSelect: true,
 				usepager : true,
 				useRp : true,
 				rp : 15,
@@ -122,7 +200,163 @@
 				height : 255
 			});
 		});
+		
+		function processarResultadoConsultaFiadores(data){
+			if (data.mensagens) {
+
+				exibirMensagemDialog(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				return;
+			}
+			
+			if (data.result){
+				data.rows = data.result.rows;
+			}
+			
+			var i;
+
+			for (i = 0 ; i < data.rows.length; i++) {
+
+				var lastIndex = data.rows[i].cell.length;
+
+				data.rows[i].cell[lastIndex] = getActionsConsultaFiadores(data.rows[i].id);
+			}
+
+			$('.imoveisGrid').show();
+			
+			if (data.result){
+				return data.result;
+			}
+			return data;
+		}
+		
+		function getActionsConsultaFiadores(idFiador){
+			return '<a href="javascript:;" onclick="editarFiador(' + idFiador + ')" ' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Editar Fiador">' +
+					'<img src="/nds-client/images/ico_editar.gif" border="0px"/>' +
+					'</a>' +
+					'<a href="javascript:;" onclick="excluirFiador(' + idFiador + ')" ' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fiador">' +
+					'<img src="/nds-client/images/ico_excluir.gif" border="0px"/>' +
+					'</a>';
+		}
+		
+		function editarFiador(idFiador){
+			$.postJSON("<c:url value='/cadastro/fiador/editarFiador' />", "idFiador=" + idFiador, 
+				function(result) {
+					
+					limparCamposCadastroFiador();
+				
+					if (result[0] == "CPF"){
+						
+						popupCadastroFiadorCPF();
+						
+						$("#nomeFiadorCpf").val(result[1]);
+						$("#emailFiadorCpf").val(result[2]);
+						$("#cpfFiador").val(result[3]);
+						$("#rgFiador").val(result[4]);
+						$("#dataNascimentoFiadorCpf").val(result[5]);
+						$("#orgaoEmissorFiadorCpf").val(result[6]);
+						$("#selectUfOrgaoEmiCpf").val(result[7]);
+						$("#estadoCivilFiadorCpf").val(result[8]);
+						$("#selectSexoFiador").val(result[9]);
+						$("#nacionalidadeFiadorCpf").val(result[10]);
+						$("#naturalFiadorCpf").val(result[11]);
+						
+						if ($("#estadoCivilFiadorCpf").val() == "CASADO"){
+							
+							opcaoCivilPf("CASADO");
+							
+							$("#nomeConjugeCpf").val(result[12]);
+					        $("#emailConjugeCpf").val(result[13]);
+					        $("#cpfConjuge").val(result[14]);
+					        $("#rgConjuge").val(result[15]);
+					        $("#dataNascimentoConjugeCpf").val(result[16]);
+					        $("#orgaoEmissorConjugeCpf").val(result[17]);
+					        $("#selectUfOrgaoEmiConjugeCpf").val(result[18]);
+					        $("#selectSexoConjuge").val(result[19]);
+					        $("#nacionalidadeConjugeCpf").val(result[20]);
+					        $("#naturalConjugeCpf").val(result[21]);
+						}
+					} else {
+						
+						popupCadastroFiadorCNPJ();
+						
+						$("#razaoSocialFiador").val(result[1]);
+						$("#nomeFantasiaFiador").val(result[2]);
+						$("#inscricaoEstadualFiador").val(result[3]);
+						$("#cnpjFiador").val(result[4]);
+						$("#emailFiadorCnpj").val(result[5]);
+					}
+				}
+			);
+		}
+		
+		function excluirFiador(idFiador){
+			$("#dialog-excluir-fiador").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/fiador/excluirFiador' />", "idFiador=" + idFiador, 
+							function(result) {
+								
+								if (result[0].tipoMensagem){
+									exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+								}
+								
+								if (result[1] != ""){
+									$(".pessoasGrid").flexAddData({
+										page: result[1].page, total: result[1].total, rows: result[1].rows
+									});
+									
+									$("#gridFiadoresCadastrados").show();
+								} else {
+									$("#gridFiadoresCadastrados").hide();
+								}
+							}
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#dialog-excluir-fiador").show();
+		}
+		
+		function limparCamposCadastroFiador(){
+			//dados cadastrais cpf
+			limparDadosCadastraisCPF();
+	        
+	        //dados cadastrais cnpj
+			limparDadosCadastraisCNPJ();
+		    
+		    //endereços
+			limparFormEndereco();
+		    
+		    //telefones
+		    limparCamposTelefone();
+		    
+		    //garantias
+		    limparCamposGarantias();
+		    
+		    //cotas associadas
+		    limparCamposCotasAssociadas();
+		    
+		    opcaoCivilPf("");
+		}
 	</script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<style>
 		.diasFunc label, .finceiro label{ vertical-align:super;}
@@ -130,16 +364,33 @@
 </head>
 
 <body>
+	
+	<div id="dialog-excluir-fiador" title="Fiadores" style="display: none;">
+		<p>Confirma esta Exclusão?</p>
+	</div>
+	
+	<div id="dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
+		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+	</div>
 	<div id="dialog-fiador" title="Novo Fiador" style="display: none;">
+	
+		<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 600px;">
+			 
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b class="effectDialogText"></b>
+			</p>
+		</div>
 	
 		<div id="tabs">
 			<ul>
 				<li><a href="#tab-1">Dados Cadastrais</a></li>
-				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();" >Sócios</a></li>
-	            <li><a href="#tab-3">Endereços</a></li>
+				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >Sócios</a></li>
+	            <li><a href="#tab-3" onclick="popularGridEnderecos();">Endereços</a></li>
 	            <li><a href="#tab-4" onclick="carregarTelefones();">Telefones</a></li>
-	            <li><a href="#tab-5" onclick="pesquisarGarantias();">Garantia</a></li>
-				<li><a href="#tab-6">Cotas Associadas</a></li>
+	            <li><a href="#tab-5" onclick="carregarGarantias();">Garantia</a></li>
+				<li><a href="#tab-6" onclick="carregarCotasAssociadas();">Cotas Associadas</a></li>
 			</ul>
 			
 	        <div id="tab-1">
@@ -180,12 +431,14 @@
 				<tr>
 					<td width="41">Nome:</td>
               		<td colspan="3">
-              			<input type="text" name="textfield2" id="textfield2" style="width:180px;"/>
+              			<input type="text" name="textfield2" id="nomeFiadorPesquisa" style="width:180px;"/>
               		</td>
                 	<td width="68">CPF/CNPJ:</td>
-                	<td width="477"><input type="text" name="textfield" id="textfield" style="width:130px;"/></td>
+                	<td width="477">
+                		<input type="text" name="textfield" id="cpfCnpjFiadorPesquisa" style="width:130px;"/>
+                	</td>
               		<td width="104">
-              			<span class="bt_pesquisar"><a href="javascript:;" onclick="exibirGridFiadoresCadastrados();">Pesquisar</a></span>
+              			<span class="bt_pesquisar"><a href="javascript:exibirGridFiadoresCadastrados();">Pesquisar</a></span>
               		</td>
             	</tr>
           	</table>
@@ -200,11 +453,11 @@
         	</div>
 
             <span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick="popup_cpf();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
+            	<a href="javascript:;" onclick="popupCadastroFiadorCPF();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
             </span>
         	
         	<span class="bt_novos" title="Novo">
-        		<a href="javascript:;" onclick="popup_cnpj();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
+        		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
         	</span>
 	</fieldset>
 	

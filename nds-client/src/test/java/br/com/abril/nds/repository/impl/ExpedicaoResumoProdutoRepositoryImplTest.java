@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -54,6 +55,8 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 	
 	@Before
 	public void setup() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
 		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		save(tipoRevista);
@@ -87,6 +90,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
 			produto.addFornecedor(fornecedor);
+			produto.setEditor(abril);
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 

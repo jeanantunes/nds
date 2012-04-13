@@ -15,13 +15,13 @@ var ConsultaEncalhe = {
 			
 			var dataRecolhimento 	= $("#dataRecolhimento").val();
 			var idFornecedor		= $("#idFornecedor").val();
-			var idCota				= $("#cota").val();
+			var numeroCota			= $("#cota").val();
 			
 			var formData = [
 			        
 			        {name:'dataRecolhimento', value: dataRecolhimento},
 			        {name:'idFornecedor', value: idFornecedor},
-			        {name:'idCota', value: idCota}
+			        {name:'numeroCota', value: numeroCota }
 			];
 			
 			
@@ -140,6 +140,8 @@ var ConsultaEncalhe = {
 $(function() {
 	
 	var colunas = ConsultaEncalhe.obterColModel();
+	
+	$("#cota").numeric();
 	
 	$("#gridConsultaEncalhe").flexigrid({
 		
