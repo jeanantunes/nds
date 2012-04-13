@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
+import br.com.abril.nds.dto.ResultadosEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -126,22 +129,74 @@ public class ContaCorrenteCotaController {
 		ViewContaCorrenteCota contaCorrente = obterListaEncalheSessao(filtroConsolidadoEncalheDTO.getLineId());
 		
 		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente.getDataConsolidado());	
+						
+		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);		
 		
-		result.include("dataescolhida",contaCorrente.getDataConsolidado());
-		
-		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
-		
+		List<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedores(listaEncalheCota);
+				
 		if(listaEncalheCota != null){
 						
 			TableModel<CellModel> tableModel =  obterTableModelParaEncalheCota(listaEncalheCota);
 			
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+			ResultadosEncalheCotaDTO resultado = new ResultadosEncalheCotaDTO(
+					tableModel,
+					contaCorrente.getDataConsolidado().toString(),
+					listaInfoTotalFornecedor );
+						
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		}else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Encalhe não encontrado.");
 		}
 		
 	}
+	
 		
+	/**
+	 * Método que armazena informações para exibição do nome fornecedor e o total por fornecedor
+	 * @param listaEncalheCota
+	 */
+	private List<InfoTotalFornecedorDTO> mostrarInfoTotalForncedores(List<EncalheCotaDTO> listaEncalheCota){
+		
+		List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
+				
+		String nomeFornecedor ="";
+		BigDecimal total = new BigDecimal(0);
+		InfoTotalFornecedorDTO info = new InfoTotalFornecedorDTO();
+		int count = 1;
+		
+		for(EncalheCotaDTO encalhe : listaEncalheCota){
+			
+			if(nomeFornecedor.equals("")){
+				nomeFornecedor = encalhe.getNomeFornecedor();
+			}
+			
+			if(encalhe.getNomeFornecedor().equals(nomeFornecedor)){				
+				total = total.add(encalhe.getTotal());
+				
+			}else{
+				info = new InfoTotalFornecedorDTO();
+				info.setNomeFornecedor(nomeFornecedor);
+				info.setValorTotal(total.toString());
+				listaInfoFornecedores.add(info);				
+				nomeFornecedor = encalhe.getNomeFornecedor();
+				total = new BigDecimal(0);
+				
+			}
+			
+			if(count == listaEncalheCota.size()){
+				info = new InfoTotalFornecedorDTO();
+				info.setNomeFornecedor(encalhe.getNomeFornecedor());				
+				info.setValorTotal(total.add(encalhe.getTotal()).toString());	
+				listaInfoFornecedores.add(info);
+			}
+						
+			count++;
+		}
+		
+		return listaInfoFornecedores;
+		
+	}
+
 	/**
 	 * Obtém lista de conta corrente da sessão para localizar data selecionada
 	 * @param lineId
