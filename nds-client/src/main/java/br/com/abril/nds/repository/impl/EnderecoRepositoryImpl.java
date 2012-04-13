@@ -20,8 +20,9 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		
 		StringBuilder hql = new StringBuilder("delete from Endereco e ");
 		hql.append(" where e.id in (:ids) ")
-		   .append(" and e.id not in (select id from EnderecoCota tc where id in (:ids)) ")
-		   .append(" and e.id not in (select id from EnderecoFornecedor where id in (:ids)) ");
+		   .append(" and e.id not in (select tc.endereco.id from EnderecoCota tc where tc.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select td.endereco.id from EnderecoFornecedor td where td.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select tf.endereco.id from EnderecoFiador tf where tf.endereco.id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("ids", idsEndereco);

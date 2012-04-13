@@ -30,6 +30,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TelefoneFiadorRepository;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.service.TelefoneService;
@@ -61,6 +62,9 @@ public class FiadorServiceImpl implements FiadorService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private EnderecoService enderecoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -255,23 +259,47 @@ public class FiadorServiceImpl implements FiadorService {
 	
 	private void salvarEnderecosFiador(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-
-			this.enderecoRepository.merge(enderecoAssociacao.getEndereco());
+		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao);
+		
+		if (listaEnderecoAssociacao != null){
+		
+			boolean isEnderecoPrincipal = false;
 			
-			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
-
-			if (enderecoFiador == null) {
-
-				enderecoFiador = new EnderecoFiador();
-				enderecoFiador.setFiador(fiador);
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao){
+				
+				if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
+				}
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()){
+					isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
+				}
 			}
-
-			enderecoFiador.setEndereco(enderecoAssociacao.getEndereco());
-			enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-			enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-
-			this.enderecoFiadorRepository.merge(enderecoFiador);
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+	
+				EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
+	
+				if (enderecoFiador == null) {
+	
+					enderecoFiador = new EnderecoFiador();
+					enderecoFiador.setFiador(fiador);
+					
+					enderecoFiador.setEndereco(enderecoAssociacao.getEndereco());
+					enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+					enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+					
+					this.enderecoFiadorRepository.adicionar(enderecoFiador);
+				} else {
+					
+					enderecoFiador.setEndereco(enderecoAssociacao.getEndereco());
+					enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+					enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+					
+					this.enderecoFiadorRepository.alterar(enderecoFiador);
+				}
+			}
 		}
 	}
 
@@ -285,7 +313,7 @@ public class FiadorServiceImpl implements FiadorService {
 
 			listaEndereco.add(enderecoAssociacao.getEndereco());
 
-			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
+			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 			
 			if (enderecoFiador != null){
 				idsEndereco.add(enderecoFiador.getEndereco().getId());
@@ -321,14 +349,28 @@ public class FiadorServiceImpl implements FiadorService {
 				if (dto.isPrincipal()){
 					isTelefonePrincipal = dto.isPrincipal();
 				}
+			}
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefones){
 				
-				TelefoneFiador telefoneFiador = new TelefoneFiador();
-				telefoneFiador.setFiador(fiador);
-				telefoneFiador.setPrincipal(dto.isPrincipal());
-				telefoneFiador.setTelefone(dto.getTelefone());
-				telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
+				TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(dto.getTelefone().getId(), fiador.getId());
 				
-				this.telefoneFiadorRepository.adicionar(telefoneFiador);
+				if (telefoneFiador == null){
+					telefoneFiador = new TelefoneFiador();
+					
+					telefoneFiador.setFiador(fiador);
+					telefoneFiador.setPrincipal(dto.isPrincipal());
+					telefoneFiador.setTelefone(dto.getTelefone());
+					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefoneFiadorRepository.adicionar(telefoneFiador);
+				} else {
+					
+					telefoneFiador.setPrincipal(dto.isPrincipal());
+					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefoneFiadorRepository.alterar(telefoneFiador);
+				}
 			}
 		}
 	}
@@ -487,17 +529,34 @@ public class FiadorServiceImpl implements FiadorService {
 		List<TelefoneAssociacaoDTO> listaTelAssoc =
 				this.telefoneFiadorRepository.buscarTelefonesFiador(idFiador, idsIgnorar);
 		
-		List<Telefone> listaTel = this.telefoneFiadorRepository.buscarTelefonesPessoaPorFiador(idFiador);
-		
-		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
-			listaTel.remove(tDto.getTelefone());
-		}
-		
-		for (Telefone telefone : listaTel){
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
-			listaTelAssoc.add(telefoneAssociacaoDTO);
-		}
-		
 		return listaTelAssoc;
+	}
+	
+	@Transactional
+	@Override
+	public List<EnderecoAssociacaoDTO> buscarEnderecosFiador(Long idFiador,	Set<Long> idsIgnorar) {
+		
+		if (idFiador == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdFiador é obrigatório");
+		}
+		
+		List<EnderecoAssociacaoDTO> listaEndAssoc =
+				this.enderecoFiadorRepository.buscaEnderecosFiador(idFiador, idsIgnorar);
+		
+		return listaEndAssoc;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public TelefoneFiador buscarTelefonePorTelefoneFiador(Long idFiador, Long idTelefone) {
+		
+		return this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(idTelefone, idFiador);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EnderecoFiador buscarEnderecoPorEnderecoFiador(Long idFiador, Long idEndereco) {
+		
+		return this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(idEndereco, idFiador);
 	}
 }
