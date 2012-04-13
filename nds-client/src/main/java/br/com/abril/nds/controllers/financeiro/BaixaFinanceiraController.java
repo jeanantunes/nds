@@ -357,6 +357,7 @@ public class BaixaFinanceiraController {
 	 * @param desconto
 	 * @param juros
 	 * @param multa
+	 * @throws Mensagem de validação
 	 */
 	@Post
 	@Path("/baixaManualBoleto")

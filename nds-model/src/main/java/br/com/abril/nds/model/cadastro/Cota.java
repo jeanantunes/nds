@@ -49,8 +49,7 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao;
 	
-	@OneToMany
-	@JoinColumn(name = "COTA_ID")
+	@OneToMany(mappedBy = "cota")
 	private List<PDV> pdvs = new ArrayList<PDV>();
 
 	@Enumerated(EnumType.STRING)

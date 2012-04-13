@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,9 +35,20 @@ public class PDV implements Serializable {
 	@GeneratedValue(generator = "PDV_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_PDV", nullable = false)
 	private TipoPDV tipoPDV;
+	
+	@Column(name = "PRINCIPAL", nullable = false)
+	private boolean principal;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
+	private Cota cota;
+	
+	@OneToMany(mappedBy = "pdv")
+	private Set<EnderecoPDV> enderecos = new HashSet<EnderecoPDV>();
 	
 	public Long getId() {
 		return id;
@@ -48,6 +64,30 @@ public class PDV implements Serializable {
 	
 	public void setTipoPDV(TipoPDV tipoPDV) {
 		this.tipoPDV = tipoPDV;
+	}
+	
+	public boolean isPrincipal() {
+		return principal;
+	}
+	
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
+	
+	public Cota getCota() {
+		return cota;
+	}
+	
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+	
+	public Set<EnderecoPDV> getEnderecos() {
+		return enderecos;
+	}
+	
+	public void setEnderecos(Set<EnderecoPDV> enderecos) {
+		this.enderecos = enderecos;
 	}
 
 }

@@ -94,10 +94,12 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -237,7 +239,7 @@ public class Fixture {
 	
 	public static Banco hsbc(Carteira carteira) {
 		return Fixture.banco(10L, true, carteira, "1010",
-				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399");
+				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
 	public static Editor editoraAbril() {
@@ -370,6 +372,23 @@ public class Fixture {
 			lancamento.addRecebimento(recebimento);
 		}
 		return lancamento;
+	}
+	
+	public static ChamadaEncalhe chamadaEncalhe(
+			Date inicioRecolhimento, 
+			Date finalRecolhimento, 
+			ProdutoEdicao produtoEdicao, 
+			TipoChamadaEncalhe tipoChamadaEncalhe) {
+		
+		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
+		
+		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
+		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
+		
+		return chamadaEncalhe;
+		
 	}
 	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
@@ -907,6 +926,7 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
+		
 		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
 			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
 					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
@@ -915,6 +935,7 @@ public class Fixture {
 					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
 		}
 		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
+		
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -939,14 +960,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -1112,7 +1125,7 @@ public class Fixture {
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
-								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco) {
+								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();
 		
@@ -1127,6 +1140,8 @@ public class Fixture {
 		banco.setMoeda(moeda);
 		banco.setNome(nome);
 		banco.setNumeroBanco(numeroBanco);
+		banco.setJuros(juros);
+		banco.setMulta(multa);
 		
 		return banco;
 	}
@@ -1144,17 +1159,19 @@ public class Fixture {
 	
 	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
 			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
-			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+			BigDecimal valor, List<MovimentoEstoqueCota> lista,
+			StatusAprovacao statusAprovacao, Date data, boolean lancamentoManual) {
 		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
 		mfc.setData(data);
 		mfc.setMovimentos(lista);
-		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setStatus(statusAprovacao);
 		mfc.setTipoMovimento(tipoMovimento);
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
+		mfc.setLancamentoManual(lancamentoManual);
 		return mfc;
 	}
 

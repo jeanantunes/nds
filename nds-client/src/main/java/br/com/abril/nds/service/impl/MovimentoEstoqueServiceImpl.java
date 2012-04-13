@@ -20,6 +20,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -30,6 +31,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 
@@ -65,6 +67,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Autowired
 	ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	ControleAprovacaoService controleAprovacaoService;
 
 	@Override
 	@Transactional
@@ -161,59 +166,68 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
 		
+		movimentoEstoqueRepository.adicionar(movimentoEstoque);
+		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {		
 			
-			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
+			Usuario usuario = new Usuario();
+			
+			usuario.setId(1L);
+			
+			//TODO: usuario
+			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 		
-		if (StatusAprovacao.APROVADO.equals(movimentoEstoque.getStatus())) {
+		return movimentoEstoque;
+	}
+	
+	@Override
+	@Transactional
+	public void atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
+			 							MovimentoEstoque movimentoEstoque) {
 		
+		if (StatusAprovacao.APROVADO.equals(movimentoEstoque.getStatus())) {
+			
+			EstoqueProduto estoqueProduto = movimentoEstoque.getEstoqueProduto();
+			
 			BigDecimal novaQuantidade;
 			
 			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 				
-				 if(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+				 if(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE
+						 .equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
 					 
-					 novaQuantidade = estoqueProduto.getQtdeSuplementar().add(quantidade);
+					 novaQuantidade = estoqueProduto.getQtdeSuplementar().add(movimentoEstoque.getQtde());
 					 
 					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
 				 } else {
 					 
-					 novaQuantidade = estoqueProduto.getQtde().add(quantidade);
+					 novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());
 					 
 					 estoqueProduto.setQtde(novaQuantidade);
-					 
 				 }
 				
-				 
 			} else {
 				
-				novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
-				
-				estoqueProduto.setQtde(novaQuantidade);	
-				
-				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE
+						.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
 					 
-					novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+					novaQuantidade = estoqueProduto.getQtdeSuplementar().subtract(movimentoEstoque.getQtde());
 					
-					estoqueProduto.setQtde(novaQuantidade);	
+					estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
 				 } else {
 					 
-					 novaQuantidade = estoqueProduto.getQtde().subtract(quantidade); 
+					 novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
 						
-					 estoqueProduto.setQtde(novaQuantidade);	
-					 
+					 estoqueProduto.setQtde(novaQuantidade);
 				 }
 			}
 		
 			estoqueProdutoRespository.alterar(estoqueProduto);
 		}
 		
-		movimentoEstoqueRepository.adicionar(movimentoEstoque);
-		
-		return movimentoEstoque;
 	}
 	
 	@Override
@@ -231,8 +245,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			estoqueProdutoCota = new EstoqueProdutoCota();
 			estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
-			estoqueProdutoCota.setQtdeDevolvida(new BigDecimal(0));
-			estoqueProdutoCota.setQtdeRecebida(new BigDecimal(0));
+			estoqueProdutoCota.setQtdeDevolvida(BigDecimal.ZERO);
+			estoqueProdutoCota.setQtdeRecebida(BigDecimal.ZERO);
 			estoqueProdutoCota.setCota(cota);
 			
 			estoqueProdutoCotaRepository.adicionar(estoqueProdutoCota);
@@ -248,30 +262,54 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setQtde(quantidade);
 		movimentoEstoqueCota.setUsuario(usuarioRepository.buscarPorId(idUsuario));
 		
+		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
+		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {	
 			
-			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
+			Usuario usuario = new Usuario();
+			
+			usuario.setId(1L);
+			
+			//TODO: usuario
+			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoqueCota,
+																usuario);
 		}
+	}
+	
+	@Override
+	@Transactional
+	public void atualizarEstoqueProdutoCota(TipoMovimentoEstoque tipoMovimentoEstoque,
+											MovimentoEstoqueCota movimentoEstoqueCota) {
 		
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
-		
+			
+			EstoqueProdutoCota estoqueProdutoCota = movimentoEstoqueCota.getEstoqueProdutoCota();
+			
 			BigDecimal novaQuantidade;
+			
+			BigDecimal quantidadeRecebida;
+			
+			BigDecimal quantidadeDevolvida;
 			
 			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 				
-				 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().add(quantidade); 
-				 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
+				quantidadeRecebida = (estoqueProdutoCota.getQtdeRecebida() != null) 
+									  ? estoqueProdutoCota.getQtdeRecebida() : BigDecimal.ZERO;
+				
+				novaQuantidade = quantidadeRecebida.add(movimentoEstoqueCota.getQtde());
+				estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
 				 
 			} else {
 				
-				 novaQuantidade = estoqueProdutoCota.getQtdeRecebida().subtract(quantidade); 
-				 estoqueProdutoCota.setQtdeRecebida(novaQuantidade);			
+				quantidadeDevolvida = (estoqueProdutoCota.getQtdeDevolvida() != null) 
+						 			  ? estoqueProdutoCota.getQtdeDevolvida() : BigDecimal.ZERO;
+				
+				novaQuantidade = quantidadeDevolvida.add(movimentoEstoqueCota.getQtde());
+				estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
 			}
 			
 			estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 		}
-		
-		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
 	}
 
 }

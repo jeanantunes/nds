@@ -30,7 +30,7 @@ public class PessoaFisica extends Pessoa implements Serializable {
 	@Column(name = "NOME")
 	private String nome;
 	
-	@Column(name = "CPF")
+	@Column(name = "CPF", unique = true)
 	private String cpf;
 	
 	@Column(name = "RG")
@@ -63,8 +63,8 @@ public class PessoaFisica extends Pessoa implements Serializable {
 	@Column(name = "APELIDO")
 	private String apelido;
 	
-	@OneToOne
-	@JoinColumn(name = "PESSOA_ID_CONJUGE", nullable = true)
+	@OneToOne(optional = true)
+	@JoinColumn(name = "PESSOA_ID_CONJUGE")
 	private PessoaFisica conjuge;
 	
 	@Column(name = "SOCIO_PRINCIPAL")

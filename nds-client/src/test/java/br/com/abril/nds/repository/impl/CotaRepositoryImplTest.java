@@ -125,7 +125,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 				
 		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
-			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		
@@ -152,7 +152,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), new Date());
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		

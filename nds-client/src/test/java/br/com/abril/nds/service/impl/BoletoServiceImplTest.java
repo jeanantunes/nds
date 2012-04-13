@@ -72,7 +72,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(carteiraSemRegistro);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
@@ -131,7 +131,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), new Date());
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado1 =
