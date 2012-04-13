@@ -72,7 +72,7 @@
 		$.postJSON("<c:url value='/cadastro/fiador/obterAssociacoesCotaFiador' />", null, 
 			function(result) {
 				$(".cotasAssociadasGrid").flexAddData({
-					page: 1, total: 1, rows: result.rows
+					page: result.page, total: result.total, rows: result.rows
 				});
 				
 				$("#numeroCota").val("");

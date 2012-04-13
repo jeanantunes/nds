@@ -12,4 +12,6 @@ public interface PessoaService {
 	List<PessoaFisica> obterSociosPorFiador(Long idFiador);
 	
 	PessoaFisica buscarPessoaFisicaPorId(Long idPessoa);
+
+	PessoaFisica buscarPessoaPorCPF(String cpf);
 }

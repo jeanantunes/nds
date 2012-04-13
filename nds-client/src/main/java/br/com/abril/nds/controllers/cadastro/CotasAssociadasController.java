@@ -12,12 +12,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
@@ -127,6 +129,11 @@ public class CotasAssociadasController {
 	
 	@Post
 	public void adicionarAssociacaoCota(Integer numeroCota, String nomeCota){
+		
+		if (numeroCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota é obrigatório.");
+		}
+		
 		List<AssociacaoCota> listaAssociacao = this.obterListaAssociacaoSalvar();
 		
 		boolean add = true;

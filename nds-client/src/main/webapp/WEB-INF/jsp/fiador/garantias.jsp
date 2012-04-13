@@ -34,7 +34,7 @@
 		$.postJSON("<c:url value='/cadastro/fiador/obterGarantiasFiador' />", null, 
 			function(result) {
 				$(".imoveisGrid").flexAddData({
-					page: 1, total: 1, rows: result.rows
+					page: result.page, total: result.total, rows: result.rows
 				});	
 				
 				$("#botaoAddEditarGarantia").text("Incluir Novo");

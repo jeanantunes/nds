@@ -95,6 +95,50 @@
 		$('[name="dataNascimentoFiadorCpf"]').mask("99/99/9999");
 		$('[name="dataNascimentoConjugeCpf"]').mask("99/99/9999");
 	});
+	
+	function buscarPessoaCPF(cpf){
+		
+		var refAba = $("#tab-1").css("display") == "block" ? 0 : 1;
+		
+		if (cpf.length > 0){
+			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", "cpf=" + cpf, 
+				function(result) {
+					
+					if (result){
+						$('[name="nomeFiadorCpf"]:eq(' + refAba + ')').val(result[0]);
+						$('[name="emailFiadorCpf"]:eq(' + refAba + ')').val(result[1]);
+						$('[name="cpfFiador"]:eq(' + refAba + ')').val(result[2]);
+						$('[name="rgFiador"]:eq(' + refAba + ')').val(result[3]);
+						$('[name="dataNascimentoFiadorCpf"]:eq(' + refAba + ')').val(result[4]);
+						$('[name="orgaoEmissorFiadorCpf"]:eq(' + refAba + ')').val(result[5]);
+						$('[name="selectUfOrgaoEmiCpf"]:eq(' + refAba + ')').val(result[6]);
+						$('[name="estadoCivilFiadorCpf"]:eq(' + refAba + ')').val(result[7]);
+						$('[name="selectSexoFiador"]:eq(' + refAba + ')').val(result[8]);
+						$('[name="nacionalidadeFiadorCpf"]:eq(' + refAba + ')').val(result[9]);
+						$('[name="naturalFiadorCpf"]:eq(' + refAba + ')').val(result[10]);
+						
+						if (result[7] == "CASADO"){
+							
+							opcaoCivilPf(result[7]);
+							
+							$('[name="nomeConjugeCpf"]:eq(' + refAba + ')').val(result[11]);
+							$('[name="emailConjugeCpf"]:eq(' + refAba + ')').val(result[12]);
+							$('[name="cpfConjuge"]:eq(' + refAba + ')').val(result[13]);
+							$('[name="rgConjuge"]:eq(' + refAba + ')').val(result[14]);
+							$('[name="dataNascimentoConjugeCpf"]:eq(' + refAba + ')').val(result[15]);
+							$('[name="orgaoEmissorConjugeCpf"]:eq(' + refAba + ')').val(result[16]);
+							$('[name="selectUfOrgaoEmiConjugeCpf"]:eq(' + refAba + ')').val(result[17]);
+							$('[name="selectSexoConjuge"]:eq(' + refAba + ')').val(result[18]);
+							$('[name="nacionalidadeConjugeCpf"]:eq(' + refAba + ')').val(result[19]);
+							$('[name="naturalConjugeCpf"]:eq(' + refAba + ')').val(result[20]);
+						}
+					}
+				},
+				null,
+				true
+			);
+		}
+	}
 </script>
 
 <table width="754" cellpadding="2" cellspacing="2" style="text-align: left;">
@@ -112,15 +156,21 @@
 	</tr>
 	<tr>
 		<td>CPF:</td>
-		<td><input type="text" style="width: 150px" id="cpfFiador" name="cpfFiador" /></td>
+		<td>
+			<input type="text" style="width: 150px" id="cpfFiador" name="cpfFiador" onblur="buscarPessoaCPF(this.value);"/>
+		</td>
 		<td>R. G.:</td>
 		<td colspan="3"><input type="text" style="width: 150px" id="rgFiador" name="rgFiador" /></td>
 	</tr>
 	<tr>
 		<td>Data Nascimento:</td>
-		<td><input type="text" style="width: 150px" id="dataNascimentoFiadorCpf" name="dataNascimentoFiadorCpf" /></td>
+		<td>
+			<input type="text" style="width: 150px" id="dataNascimentoFiadorCpf" name="dataNascimentoFiadorCpf" />
+		</td>
 		<td>Orgão Emissor:</td>
-		<td width="59"><input type="text" style="width: 50px" id="orgaoEmissorFiadorCpf" name="orgaoEmissorFiadorCpf" /></td>
+		<td width="59">
+			<input type="text" style="width: 50px" id="orgaoEmissorFiadorCpf" name="orgaoEmissorFiadorCpf" />
+		</td>
 		<td width="31">UF:</td>
 		<td width="135">
 			<select name="selectUfOrgaoEmiCpf" id="selectUfOrgaoEmiCpf" style="width: 50px">
@@ -152,9 +202,13 @@
 	</tr>
 	<tr>
 		<td>Nacionalidade:</td>
-		<td><input type="text" style="width: 150px" id="nacionalidadeFiadorCpf" name="nacionalidadeFiadorCpf" /></td>
+		<td>
+			<input type="text" style="width: 150px" id="nacionalidadeFiadorCpf" name="nacionalidadeFiadorCpf" />
+		</td>
 		<td>Natural:</td>
-		<td colspan="3"><input type="text" style="width: 150px" id="naturalFiadorCpf" name="naturalFiadorCpf" /></td>
+		<td colspan="3">
+			<input type="text" style="width: 150px" id="naturalFiadorCpf" name="naturalFiadorCpf" />
+		</td>
 	</tr>
 	<tr class="trSocioPrincipal" style="display: none;">
 		<td>Principal:</td>

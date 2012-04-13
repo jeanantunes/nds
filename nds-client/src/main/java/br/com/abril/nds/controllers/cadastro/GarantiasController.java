@@ -11,10 +11,13 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
@@ -98,6 +101,9 @@ public class GarantiasController {
 	
 	@Post
 	public void adicionarGarantia(Garantia garantia, Integer referencia){
+		
+		this.validarDadosEntrada(garantia);
+		
 		List<GarantiaCadastrada> listaGarantiasSessao = this.obterListaGarantiasSessao();
 		
 		boolean novaGarantia = true;
@@ -122,6 +128,27 @@ public class GarantiasController {
 		this.obterGarantiasFiador(null, null);
 	}
 	
+	private void validarDadosEntrada(Garantia garantia) {
+		
+		List<String> msgsValidacao = new ArrayList<String>();
+		
+		if (garantia == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor R$ é obrigatório.");
+		}
+		
+		if (garantia.getValor() == null){
+			msgsValidacao.add("Valor R$ é obrigatório.");
+		}
+		
+		if (garantia.getDescricao() == null || garantia.getDescricao().trim().isEmpty()){
+			msgsValidacao.add("Descrição é obrigatório.");
+		}
+		
+		if (!msgsValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
+		}
+	}
+
 	@Post
 	public void editarGarantia(Integer referencia){
 		

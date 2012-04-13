@@ -142,10 +142,6 @@ public class FiadorServiceImpl implements FiadorService {
 			fiador.setCotasAssociadas(listaCotas);
 		}
 		
-		if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
-			fiador.setSocios(sociosAdicionar);
-		}
-		
 		if (fiador.getPessoa() instanceof PessoaFisica){
 			PessoaFisica conjuge = ((PessoaFisica)fiador.getPessoa()).getConjuge();
 			
@@ -154,6 +150,33 @@ public class FiadorServiceImpl implements FiadorService {
 					this.pessoaRepository.adicionar(conjuge);
 				} else {
 					this.pessoaRepository.alterar(conjuge);
+				}
+			}
+		}
+		
+		if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
+			
+			for (Pessoa socio : sociosAdicionar){
+				
+				if (socio instanceof PessoaFisica){
+					
+					if (((PessoaFisica) socio).getConjuge() != null){
+						
+						PessoaFisica conjuge = ((PessoaFisica) socio).getConjuge();
+						
+						if (conjuge.getId() == null){
+							this.pessoaRepository.adicionar(conjuge);
+						} else {
+							this.pessoaRepository.alterar(conjuge);
+						}
+					}
+				}
+				
+				
+				if (socio.getId() == null){
+					this.pessoaRepository.adicionar(socio);
+				} else {
+					this.pessoaRepository.alterar(socio);
 				}
 			}
 		}
@@ -185,9 +208,10 @@ public class FiadorServiceImpl implements FiadorService {
 			}
 			
 			fiador.setSocios(sociosAdicionar);
+		} else {
+			
+			fiador.setSocios(sociosAdicionar);
 		}
-		
-		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
 		if (fiador.getPessoa().getId() == null){
 			
@@ -204,6 +228,8 @@ public class FiadorServiceImpl implements FiadorService {
 			
 			this.fiadorRepository.alterar(fiador);
 		}
+		
+		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
 		this.processarTelefones(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
 		
@@ -259,10 +285,13 @@ public class FiadorServiceImpl implements FiadorService {
 
 			listaEndereco.add(enderecoAssociacao.getEndereco());
 
-			EnderecoFiador enderecoCota = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
-			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
-
-			this.enderecoFiadorRepository.remover(enderecoCota);
+			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
+			
+			if (enderecoFiador != null){
+				idsEndereco.add(enderecoFiador.getEndereco().getId());
+				
+				this.enderecoFiadorRepository.remover(enderecoFiador);
+			}
 		}
 		
 		this.enderecoRepository.removerEnderecos(idsEndereco);
