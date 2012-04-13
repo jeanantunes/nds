@@ -573,7 +573,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 						orderByColumn = " movimento.produtoEdicao.precoVenda ";
 						break;
 					case QTD_DEVOLUCAO:
-						orderByColumn = " qtdDevolucao ";
+						orderByColumn = " sum(movimento.qtde) ";
 						break;
 					case QTD_NOTA:
 						orderByColumn = " qtdNota ";
