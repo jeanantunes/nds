@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 @MappedSuperclass
 public abstract class AbstractMovimentoFinanceiro extends Movimento {
@@ -26,10 +25,6 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 	
 	@Column(name = "PRAZO", nullable = true)
 	private Integer prazo;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
-	private TipoMovimentoFinanceiro tipoMovimento;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "BAIXA_COBRANCA_ID")
@@ -57,14 +52,6 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 
 	public void setPrazo(Integer prazo) {
 		this.prazo = prazo;
-	}
-
-	public TipoMovimentoFinanceiro getTipoMovimento() {
-		return tipoMovimento;
-	}
-	
-	public void setTipoMovimento(TipoMovimentoFinanceiro tipoMovimento) {
-		this.tipoMovimento = tipoMovimento;
 	}
 
 	public BaixaCobranca getBaixaCobranca() {

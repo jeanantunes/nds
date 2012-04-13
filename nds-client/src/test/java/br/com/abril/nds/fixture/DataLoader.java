@@ -536,13 +536,10 @@ public class DataLoader {
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(session, tipoFornecedorPublicacao);
 				
-		PessoaJuridica pj = Fixture.juridicaDinap();		
-		save(session, pj);
-		
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(session, tipoNotaFiscal);
 					
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, pj, fornecedorAcme, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaDinap, fornecedorAcme, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(session, notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -2126,7 +2123,7 @@ public class DataLoader {
 	
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"00.000.000/0001-00", "000.000.000.000", "sys.discover@gmail.com");
+				"10.000.000/0001-00", "000.000.000.000", "sys.discover@gmail.com");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11.111.111/0001-11", "111.111.111.111", "sys.discover@gmail.com");
 		juridicaFc = Fixture.pessoaJuridica("FC",
@@ -2359,7 +2356,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com");
 			save(session,juridica);
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
@@ -3605,13 +3602,12 @@ public class DataLoader {
 		
 		
 		
-		Pessoa pessoa = Fixture.juridicaAcme();
-		save(session, pessoa);
+		
 
 		Box box = Fixture.boxReparte300();
 		save(session, box);
 		
-		Cota cota = Fixture.cota(1239, pessoa, SituacaoCadastro.ATIVO, box);
+		Cota cota = Fixture.cota(1239, juridicaAcme, SituacaoCadastro.ATIVO, box);
 		save(session, cota);
 
 		Usuario usuario = Fixture.usuarioJoao();

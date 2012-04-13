@@ -926,6 +926,16 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
+		
+		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
+			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
+					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
+		} else {
+			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
+					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
+		}
+		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
+		
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);

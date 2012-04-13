@@ -160,7 +160,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		historicoMovimentoFinanceiroCota.setCota(movimentoFinanceiroCota.getCota());
 		historicoMovimentoFinanceiroCota.setResponsavel(movimentoFinanceiroCota.getUsuario());
 		historicoMovimentoFinanceiroCota.setTipoEdicao(tipoEdicao);
-		historicoMovimentoFinanceiroCota.setTipoMovimento(movimentoFinanceiroCota.getTipoMovimento());
+		historicoMovimentoFinanceiroCota.setTipoMovimento((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento());
 		historicoMovimentoFinanceiroCota.setValor(movimentoFinanceiroCota.getValor());
 		historicoMovimentoFinanceiroCota.setMovimentoFinanceiroCota(movimentoFinanceiroCota);
 		historicoMovimentoFinanceiroCota.setDataEdicao(new Date());

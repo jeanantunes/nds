@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 @MappedSuperclass
 public abstract class AbstractMovimentoEstoque extends Movimento {
@@ -18,9 +17,6 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	protected ProdutoEdicao produtoEdicao;
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
-	protected TipoMovimentoEstoque tipoMovimento;
 	
 	public BigDecimal getQtde() {
 		return qtde;
@@ -38,14 +34,4 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	public TipoMovimentoEstoque getTipoMovimento() {
-		return tipoMovimento;
-	}
-	
-	public void setTipoMovimento(TipoMovimentoEstoque tipoMovimento) {
-		this.tipoMovimento = tipoMovimento;
-	}
-	
-	
-
 }

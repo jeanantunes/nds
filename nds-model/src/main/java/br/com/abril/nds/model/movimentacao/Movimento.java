@@ -42,7 +42,7 @@ public abstract class Movimento extends Aprovacao {
 	private Date dataCriacao;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_MOVIMENTO_ID", insertable = false, updatable = false)
+	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
 	
 	public Movimento() {
