@@ -170,8 +170,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {		
 			
+			Usuario usuario = new Usuario();
+			
+			usuario.setId(1L);
+			
 			//TODO: usuario
-			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, new Usuario());
+			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 		
 		return movimentoEstoque;
@@ -262,9 +266,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {	
 			
+			Usuario usuario = new Usuario();
+			
+			usuario.setId(1L);
+			
 			//TODO: usuario
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoqueCota,
-																new Usuario());
+																usuario);
 		}
 	}
 	
