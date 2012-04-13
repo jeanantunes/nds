@@ -94,10 +94,12 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -370,6 +372,23 @@ public class Fixture {
 			lancamento.addRecebimento(recebimento);
 		}
 		return lancamento;
+	}
+	
+	public static ChamadaEncalhe chamadaEncalhe(
+			Date inicioRecolhimento, 
+			Date finalRecolhimento, 
+			ProdutoEdicao produtoEdicao, 
+			TipoChamadaEncalhe tipoChamadaEncalhe) {
+		
+		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
+		
+		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
+		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
+		
+		return chamadaEncalhe;
+		
 	}
 	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(

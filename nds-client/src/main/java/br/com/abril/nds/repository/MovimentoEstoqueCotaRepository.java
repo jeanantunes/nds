@@ -14,30 +14,105 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
-
-	public BigDecimal obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
 	
+	/**
+	 * Obtém a quantidade de tipos de produtoEdicao da consulta de encalhe.
+	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
+	 * a quantidade de tipos de produtoEdicao do encalhe sumarizada do primeiro dia.
+	 * 
+	 * 
+	 * @param filtro
+	 * @param idTipoMovimento
+	 * @param indQtdEncalheAposPrimeiroDia
+	 * 
+	 * @return Qtde - Integer
+	 */
+	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
+	
+	/**
+	 * Obtém a quantidade de itens da consulta de encalhe.
+	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
+	 * a quantidade de itens do encalhe sumarizada do primeiro dia.
+	 * 
+	 * @param filtro
+	 * @param idTipoMovimento
+	 * @param indQtdEncalheAposPrimeiroDia
+	 * 
+	 * @return Qtde -  BigDecimal
+	 */
 	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
 	
+	/**
+	 * Pesquisa uma lista de ContagemDevolucao.
+	 * 
+	 * @param filtro
+	 * @param tipoMovimentoEstoque
+	 * @param indBuscaTotalParcial
+	 * 
+	 * @return List - ContagemDevolucao
+	 */
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque, 
 			boolean indBuscaTotalParcial);
 	
+	/**
+	 * Obtém a quantidade de registros da pesquisa de ContagemDevolucao.
+	 * 
+	 * @param filtro
+	 * @param tipoMovimentoEstoque
+	 * 
+	 * @return Qtde - Integer
+	 */
 	public Integer obterQuantidadeContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque);
 	
+	
+	/**
+	 * Obtém o valorTotalGeral da pesquisa de contagemDevolucao 
+	 * que corresponde a somatória da seguinte expressão 
+	 * (qtdMovimentoEncalhe * precoVendoProdutoEdicao).
+	 * 
+	 * @param filtro
+	 * @param tipoMovimentoEstoque
+	 * 
+	 * @return valorTotalGeral - BigDecimal
+	 */
 	public BigDecimal obterValorTotalGeralContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque);
 	
+	/**
+	 * Obtém o Movimento de Estoque da cota pelo Tipo de Movimento.
+	 * 
+	 * @param data
+	 * @param idCota
+	 * @param grupoMovimentoEstoque
+	 * 
+	 * @return List - MovimentoEstoqueCota
+	 */
 	List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
-	
+	/**
+	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
+	 * 
+	 * @param filtro
+	 * @param idTipoMovimento
+	 * 
+	 * @return Qtde - Integer
+	 */
 	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento);
 	
+	/**
+	 * Pesquisa lista de ConsultaEncalhe.
+	 * 
+	 * @param filtro
+	 * @param idTipoMovimento
+	 * 
+	 * @return List - ConsultaEncalhe
+	 */
 	public  List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento);
 	
 }
