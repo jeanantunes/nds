@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -70,6 +71,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append("	and MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID = :idTipoMovimento ");
 		sql.append(" 	and ( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO ) ");
 
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
+		
 		if(indQtdEncalheAposPrimeiroDia) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.DATA > :dataRecolhimentoDistribuidor 	");
 		} else {
@@ -91,6 +94,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
 
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
@@ -145,6 +150,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append("	and MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID = :idTipoMovimento ");
 		sql.append(" 	and ( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO ) ");
 
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
+		
 		if(indQtdEncalheAposPrimeiroDia) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.DATA > :dataRecolhimentoDistribuidor 	");
 		} else {
@@ -164,6 +171,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
 
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
+
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
@@ -231,6 +241,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA is null or ");
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO) ) ");
 		
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
+
+		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and ( MOVIMENTO_ESTOQUE_COTA.COTA_ID is null or MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota )  ");
 		}
@@ -265,6 +278,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		if(filtro.getIdFornecedor() != null) {
 			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
 		
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
 
@@ -335,6 +350,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA is null or ");
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO) ) ");
+		
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
 		
 		
 		if(filtro.getIdCota()!=null) {
@@ -432,6 +449,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));
 		
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
