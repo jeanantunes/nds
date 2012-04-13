@@ -1159,17 +1159,19 @@ public class Fixture {
 	
 	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
 			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
-			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+			BigDecimal valor, List<MovimentoEstoqueCota> lista,
+			StatusAprovacao statusAprovacao, Date data, boolean lancamentoManual) {
 		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
 		mfc.setData(data);
 		mfc.setMovimentos(lista);
-		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setStatus(statusAprovacao);
 		mfc.setTipoMovimento(tipoMovimento);
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
+		mfc.setLancamentoManual(lancamentoManual);
 		return mfc;
 	}
 
