@@ -41,6 +41,10 @@ public abstract class Movimento extends Aprovacao {
 	@Column(name = "DATA_CRIACAO", nullable = false)
 	private Date dataCriacao;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TIPO_MOVIMENTO_ID", insertable = false, updatable = false)
+	private TipoMovimento tipoMovimento;
+	
 	public Movimento() {
 		this.dataCriacao = new Date();
 	}
@@ -75,6 +79,14 @@ public abstract class Movimento extends Aprovacao {
 	
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
+	}
+
+	public TipoMovimento getTipoMovimento() {
+		return tipoMovimento;
+	}
+
+	public void setTipoMovimento(TipoMovimento tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
 	}
 
 }

@@ -16,6 +16,17 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 	@Column(name = "VALOR", nullable = false)
 	private BigDecimal valor;
 	
+	/*
+	 * TODO: Aguardando definições referente a negociação.
+	 * Campos afetados: parcelas e prazo
+	 * 
+	 */
+	@Column(name = "PARCELAS", nullable = true)
+	private Integer parcelas;
+	
+	@Column(name = "PRAZO", nullable = true)
+	private Integer prazo;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimentoFinanceiro tipoMovimento;
@@ -32,6 +43,22 @@ public abstract class AbstractMovimentoFinanceiro extends Movimento {
 		this.valor = valor;
 	}
 	
+	public Integer getParcelas() {
+		return parcelas;
+	}
+
+	public void setParcelas(Integer parcelas) {
+		this.parcelas = parcelas;
+	}
+
+	public Integer getPrazo() {
+		return prazo;
+	}
+
+	public void setPrazo(Integer prazo) {
+		this.prazo = prazo;
+	}
+
 	public TipoMovimentoFinanceiro getTipoMovimento() {
 		return tipoMovimento;
 	}

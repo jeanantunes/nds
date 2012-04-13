@@ -10,7 +10,8 @@
 	function iniciarGrid() {
 		
 		$(".solicitacoesAprovacao").flexigrid({
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Movimento',
 				name : 'tipoMovimento',
@@ -63,17 +64,18 @@
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "Nome",
+			sortname : "tipoMovimento",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			singleSelect : true
 		});
 	}
 	
@@ -91,9 +93,11 @@
 		iniciarGrid();
 		
 		iniciarData();
+		
+		$("#tipoMovimento").focus();
 	}
 		
-	function popup_confirm() {
+	function aprovarMovimento(idMovimento) {
 
 		$("#dialog-confirm").dialog({
 			resizable : false,
@@ -102,17 +106,38 @@
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					$(this).dialog("close");
-					$("#effect").hide("highlight", {}, 1000, callback);
+					
+					$.postJSON("<c:url value='/administracao/controleAprovacao/aprovarMovimento' />", 
+							   "idMovimento=" + idMovimento,
+							   function(result) {
+							   		
+									$("#dialog-confirm").dialog("close");
+									
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+									
+									pesquisar();
+							   },
+							   null,
+							   true
+					);
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
 			}
 		});
 	}
 
-	function popup_rejeitar() {
+	function rejeitarMovimento(idMovimento) {
 		
 		$("#dialog-rejeitar").dialog({
 			resizable : false,
@@ -121,33 +146,93 @@
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					$(this).dialog("close");
-					$("#effect").show("highlight", {}, 1000, callback);
+					
+					var motivoRejeicao = $("#motivoRejeicao").val();
+					
+					$("#motivoRejeicao").val(motivoRejeicao.trim());
+					
+					$.postJSON("<c:url value='/administracao/controleAprovacao/rejeitarMovimento' />", 
+							   "idMovimento=" + idMovimento +
+							   "&motivo=" + motivoRejeicao,
+							   function(result) {
+							   		
+									$("#dialog-rejeitar").dialog("close");
+									
+									$("#motivoRejeicao").val("");
+									
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+									
+									pesquisar();
+							   },
+							   null,
+							   true
+					);
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
+					
+					$("#motivoRejeicao").val("");
 				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
 			}
 		});
 	}
 
 	function pesquisar() {
 		
-		var tipoMovimento = $("#tipoMovimento").val();
+		var idTipoMovimento = $("#tipoMovimento").val();
 		var dataMovimento = $("#dataMovimento").val();
 		
 		$(".solicitacoesAprovacao").flexOptions({
 			url: "<c:url value='/administracao/controleAprovacao/pesquisarAprovacoes' />",
 			onSuccess: executarAposProcessamento,
 			params: [
-		         {name:'tipoMovimento', value: tipoMovimento},
+		         {name:'idTipoMovimento', value: idTipoMovimento},
 		         {name:'dataMovimentoFormatada', value: dataMovimento}
 		    ],
 		});
 		
 		$(".solicitacoesAprovacao").flexReload();
+	}
+	
+	function executarPreProcessamento(resultado) {
 		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids").hide();
+
+			return resultado;
+		}
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
+					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
+					  		  '</a>';
+			
+			var linkRejeitar = '<a href="javascript:;" onclick="rejeitarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
+							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+							   '</a>';
+			
+			row.cell.acao = linkAprovar + linkRejeitar;
+		});
+			
 		$(".grids").show();
+		
+		return resultado;
 	}
 	
 	function executarAposProcessamento() {
@@ -161,17 +246,37 @@
 <body>
 
 	<div id="dialog-confirm" title="Aprovar Solicitação">
+		
+		<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 250px;">
+			 
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b class="effectDialogText"></b>
+			</p>
+		</div>
+		
 		<p>Confirmar Aprovação?</p>
 	</div>
 
 	<div id="dialog-rejeitar" title="Rejeitar Solicitação">
+		
+		<div class="effectDialog ui-state-highlight ui-corner-all" 
+			 style="display: none; position: absolute; z-index: 2000; width: 420px;">
+			 
+			<p>
+				<span style="float: left;" class="ui-icon ui-icon-info"></span>
+				<b class="effectDialogText"></b>
+			</p>
+		</div>
+		
 		<p>
 			<strong>Confirmar Rejeição?</strong>
 		</p>
 		<p>
 			<strong>Motivo:</strong>
 		</p>
-		<textarea rows="4" style="width: 420px;"></textarea>
+		<textarea id=motivoRejeicao rows="4" style="width: 420px;"></textarea>
 	</div>
 
 	<fieldset class="classFieldset">
@@ -184,6 +289,9 @@
 				<td width="271">
 					<select name="tipoMovimento" id="tipoMovimento" style="width: 250px;">
 						<option value="" selected="selected">Todos</option>
+						<c:forEach var="tipoMovimento" items="${listaTipoMovimentoCombo}">
+							<option value="${tipoMovimento.key}">${tipoMovimento.value}</option>
+						</c:forEach>
 					</select>
 				</td>
 				
