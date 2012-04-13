@@ -8,13 +8,11 @@ public enum TipoRegistroCobranca {
     private String descricao;
 	
 	private TipoRegistroCobranca(String descricao) {
-		
 		this.descricao = descricao;
 	}
 	
 	@Override
 	public String toString() {
-	
 		return this.descricao;
 	}
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.repository.BancoRepository;
 
 @Repository
@@ -85,22 +86,22 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 				case NOME_BANCO:
 					hql.append(" order by b.nome ");
 					break;
-				case AGENCIA_DIGITO:
+				case AGENCIA_BANCO:
 					hql.append(" order by b.agencia ");
 					break;
-				case CONTA_CORRENTE_DIGITO:
+				case CONTA_CORRENTE_BANCO:
 					hql.append(" order by b.conta ");
 					break;
-				case CEDENTE:
+				case CEDENTE_BANCO:
 					hql.append(" order by b.codigoCedente ");
 					break;
-				case MOEDA:
+				case MOEDA_BANCO:
 					hql.append(" order by b.moeda ");
 					break;
-				case CARTEIRA:
+				case CARTEIRA_BANCO:
 					hql.append(" order by b.carteira.tipoRegistroCobranca ");
 					break;
-				case ATIVO:
+				case ATIVO_BANCO:
 					hql.append(" order by b.ativo ");
 					break;
 				default:
@@ -168,15 +169,31 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 
 	@Override
 	public boolean verificarPedencias(long idBanco) {
-		Banco banco = this.buscarPorId(idBanco);
 		StringBuilder hql = new StringBuilder();
 		hql.append(" from Cobranca c ");		
-		hql.append(" where c.banco = :banco ");
+		hql.append(" where c.banco.id = :idBanco ");
 		hql.append(" and c.statusCobranca = :status ");
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("banco", banco);
+        query.setParameter("idBanco", idBanco);
         query.setParameter("status", StatusCobranca.NAO_PAGO);
 		return (query.list().size() > 0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Carteira> obterCarteiras() {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Carteira c ");		
+        Query query = super.getSession().createQuery(hql.toString());
+		return query.list();
+	}
+
+	@Override
+	public Carteira obterCarteiraPorCodigo(Integer codigoCarteira) {
+		Criteria criteria = super.getSession().createCriteria(Carteira.class);
+		criteria.add(Restrictions.eq("codigo", codigoCarteira));
+		criteria.setMaxResults(1);
+		return (Carteira) criteria.uniqueResult();
 	}
 	
 }

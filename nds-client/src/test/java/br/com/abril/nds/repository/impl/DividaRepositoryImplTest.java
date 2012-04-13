@@ -64,7 +64,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(carteiraRegistrada);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraRegistrada, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399");
+				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);
 		

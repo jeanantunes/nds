@@ -125,7 +125,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 				
 		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
-			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		

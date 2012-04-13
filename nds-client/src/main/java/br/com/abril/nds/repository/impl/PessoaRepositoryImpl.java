@@ -49,9 +49,23 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 
 	@SuppressWarnings("unchecked")
 	public List<PessoaFisica> obterSociosPorFiador(Long idFiador){
-		Criteria criteria = this.getSession().createCriteria(PessoaFisica.class);
-		criteria.add(Restrictions.eq("fiador.id", idFiador));
 		
-		return criteria.list();
+		StringBuilder hql = new StringBuilder("select f.socios from Fiador f ");
+		hql.append(" where f.id = :idFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return query.list();
+	}
+
+	@Override
+	public PessoaFisica buscarPorCPF(String cpf) {
+		
+		Criteria criteria = this.getSession().createCriteria(PessoaFisica.class);
+		criteria.add(Restrictions.eq("cpf", cpf));
+		criteria.setMaxResults(1);
+		
+		return (PessoaFisica) criteria.uniqueResult();
 	}
 }

@@ -239,7 +239,7 @@ public class Fixture {
 	
 	public static Banco hsbc(Carteira carteira) {
 		return Fixture.banco(10L, true, carteira, "1010",
-				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399");
+				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
 	public static Editor editoraAbril() {
@@ -1131,7 +1131,7 @@ public class Fixture {
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
-								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco) {
+								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();
 		
@@ -1146,6 +1146,8 @@ public class Fixture {
 		banco.setMoeda(moeda);
 		banco.setNome(nome);
 		banco.setNumeroBanco(numeroBanco);
+		banco.setJuros(juros);
+		banco.setMulta(multa);
 		
 		return banco;
 	}

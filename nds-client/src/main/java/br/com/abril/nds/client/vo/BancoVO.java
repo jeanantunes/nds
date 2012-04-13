@@ -1,6 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
+import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.Moeda;
 
 public class BancoVO {
 
@@ -11,8 +13,8 @@ public class BancoVO {
     Long agencia;
     Long conta;
     String digito;
-    String moeda;
-    String carteira;
+    Moeda moeda;
+    Integer codigoCarteira;
     BigDecimal juros;
     boolean ativo;
     BigDecimal multa;
@@ -23,9 +25,10 @@ public class BancoVO {
     }
     
 
+
 	public BancoVO(long idBanco, String numero, String nome,
 			String codigoCedente, Long agencia, Long conta, String digito,
-			String moeda, String carteira, BigDecimal juros, boolean ativo,
+			Moeda moeda, Integer codigoCarteira, BigDecimal juros, boolean ativo,
 			BigDecimal multa, String instrucoes) {
 		super();
 		this.idBanco = idBanco;
@@ -36,12 +39,13 @@ public class BancoVO {
 		this.conta = conta;
 		this.digito = digito;
 		this.moeda = moeda;
-		this.carteira = carteira;
+		this.codigoCarteira = codigoCarteira;
 		this.juros = juros;
 		this.ativo = ativo;
 		this.multa = multa;
 		this.instrucoes = instrucoes;
 	}
+
 
 
 	public long getIdBanco() {
@@ -100,20 +104,20 @@ public class BancoVO {
 		this.digito = digito;
 	}
 
-	public String getMoeda() {
+	public Moeda getMoeda() {
 		return moeda;
 	}
 
-	public void setMoeda(String moeda) {
+	public void setMoeda(Moeda moeda) {
 		this.moeda = moeda;
 	}
 
-	public String getCarteira() {
-		return carteira;
+	public Integer getCodigoCarteira() {
+		return codigoCarteira;
 	}
 
-	public void setCarteira(String carteira) {
-		this.carteira = carteira;
+	public void setCodigoCarteira(Integer codigoCarteira) {
+		this.codigoCarteira = codigoCarteira;
 	}
 
 	public BigDecimal getJuros() {
@@ -148,28 +152,17 @@ public class BancoVO {
 		this.instrucoes = instrucoes;
 	}
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((agencia == null) ? 0 : agencia.hashCode());
-		result = prime * result + (ativo ? 1231 : 1237);
-		result = prime * result
-				+ ((carteira == null) ? 0 : carteira.hashCode());
-		result = prime * result
-				+ ((codigoCedente == null) ? 0 : codigoCedente.hashCode());
-		result = prime * result + ((conta == null) ? 0 : conta.hashCode());
-		result = prime * result + ((digito == null) ? 0 : digito.hashCode());
-		result = prime * result + (int) (idBanco ^ (idBanco >>> 32));
-		result = prime * result
-				+ ((instrucoes == null) ? 0 : instrucoes.hashCode());
-		result = prime * result + ((juros == null) ? 0 : juros.hashCode());
-		result = prime * result + ((moeda == null) ? 0 : moeda.hashCode());
-		result = prime * result + ((multa == null) ? 0 : multa.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
 		result = prime * result + ((numero == null) ? 0 : numero.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -185,50 +178,6 @@ public class BancoVO {
 				return false;
 		} else if (!agencia.equals(other.agencia))
 			return false;
-		if (ativo != other.ativo)
-			return false;
-		if (carteira == null) {
-			if (other.carteira != null)
-				return false;
-		} else if (!carteira.equals(other.carteira))
-			return false;
-		if (codigoCedente == null) {
-			if (other.codigoCedente != null)
-				return false;
-		} else if (!codigoCedente.equals(other.codigoCedente))
-			return false;
-		if (conta == null) {
-			if (other.conta != null)
-				return false;
-		} else if (!conta.equals(other.conta))
-			return false;
-		if (digito == null) {
-			if (other.digito != null)
-				return false;
-		} else if (!digito.equals(other.digito))
-			return false;
-		if (idBanco != other.idBanco)
-			return false;
-		if (instrucoes == null) {
-			if (other.instrucoes != null)
-				return false;
-		} else if (!instrucoes.equals(other.instrucoes))
-			return false;
-		if (juros == null) {
-			if (other.juros != null)
-				return false;
-		} else if (!juros.equals(other.juros))
-			return false;
-		if (moeda == null) {
-			if (other.moeda != null)
-				return false;
-		} else if (!moeda.equals(other.moeda))
-			return false;
-		if (multa == null) {
-			if (other.multa != null)
-				return false;
-		} else if (!multa.equals(other.multa))
-			return false;
 		if (nome == null) {
 			if (other.nome != null)
 				return false;
@@ -242,7 +191,4 @@ public class BancoVO {
 		return true;
 	}
 
-    
-    
-    
 }
