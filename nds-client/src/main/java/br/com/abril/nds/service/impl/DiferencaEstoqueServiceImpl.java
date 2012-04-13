@@ -255,7 +255,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				diferenca.getMovimentoEstoque().getData(),
 					diferenca.getProdutoEdicao().getId(),
 						cota.getId(), idUsuario, rateioCotaVO.getQuantidade(), 
-							diferenca.getMovimentoEstoque().getTipoMovimento());
+							(TipoMovimentoEstoque) diferenca.getMovimentoEstoque().getTipoMovimento());
 		}
 	}
 

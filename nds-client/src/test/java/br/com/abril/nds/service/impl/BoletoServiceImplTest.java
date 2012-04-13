@@ -131,7 +131,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), new Date());
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado1 =
