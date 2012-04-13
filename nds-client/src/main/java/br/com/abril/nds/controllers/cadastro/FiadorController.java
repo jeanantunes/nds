@@ -116,7 +116,7 @@ public class FiadorController {
 		}
 		
 		if (filtro.getCpfCnpj() != null){
-			filtro.setCpfCnpj(filtro.getCpfCnpj().replace(".", "").replace("-", ""));
+			filtro.setCpfCnpj(filtro.getCpfCnpj().replace(".", "").replace("-", "").replace("/", ""));
 		}
 		
 		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorService.obterFiadores(filtro);
@@ -174,33 +174,35 @@ public class FiadorController {
 			cpf = cpf.replace("-", "").replace(".", "");
 			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf);
 			
-			dados = new ArrayList<String>();
-			
-			dados.add(fisica.getNome());
-			dados.add(fisica.getEmail());
-			dados.add(this.adicionarMascaraCNPJ(fisica.getCpf()));
-			dados.add(fisica.getRg());
-			dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
-			dados.add(fisica.getOrgaoEmissor());
-			dados.add(fisica.getUfOrgaoEmissor());
-			dados.add(fisica.getEstadoCivil().name());
-			dados.add(fisica.getSexo().name());
-			dados.add(fisica.getNacionalidade());
-			dados.add(fisica.getNatural());
-			
-			PessoaFisica conjuge = fisica.getConjuge();
-			
-			if (conjuge != null){
-				dados.add(conjuge.getNome());
-				dados.add(conjuge.getEmail());
-				dados.add(this.adicionarMascaraCNPJ(conjuge.getCpf()));
-				dados.add(conjuge.getRg());
-				dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
-				dados.add(conjuge.getOrgaoEmissor());
-				dados.add(conjuge.getUfOrgaoEmissor());
-				dados.add(conjuge.getSexo().name());
-				dados.add(conjuge.getNacionalidade());
-				dados.add(conjuge.getNatural());
+			if (fisica != null){
+				dados = new ArrayList<String>();
+				
+				dados.add(fisica.getNome());
+				dados.add(fisica.getEmail());
+				dados.add(Util.adicionarMascaraCPF(fisica.getCpf()));
+				dados.add(Util.adicionarMascaraRG(fisica.getRg()));
+				dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
+				dados.add(fisica.getOrgaoEmissor());
+				dados.add(fisica.getUfOrgaoEmissor());
+				dados.add(fisica.getEstadoCivil().name());
+				dados.add(fisica.getSexo().name());
+				dados.add(fisica.getNacionalidade());
+				dados.add(fisica.getNatural());
+				
+				PessoaFisica conjuge = fisica.getConjuge();
+				
+				if (conjuge != null){
+					dados.add(conjuge.getNome());
+					dados.add(conjuge.getEmail());
+					dados.add(Util.adicionarMascaraCPF(conjuge.getCpf()));
+					dados.add(Util.adicionarMascaraRG(conjuge.getRg()));
+					dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
+					dados.add(conjuge.getOrgaoEmissor());
+					dados.add(conjuge.getUfOrgaoEmissor());
+					dados.add(conjuge.getSexo().name());
+					dados.add(conjuge.getNacionalidade());
+					dados.add(conjuge.getNatural());
+				}
 			}
 		}
 		
@@ -225,7 +227,7 @@ public class FiadorController {
 			p.setRg(p.getRg().replace("-", "").replace(".", ""));
 		} else {
 			
-			((PessoaJuridica) pessoa).setCnpj(((PessoaJuridica) pessoa).getCnpj().replace("-", "").replace(".", ""));
+			((PessoaJuridica) pessoa).setCnpj(((PessoaJuridica) pessoa).getCnpj().replace("-", "").replace(".", "").replace("/", ""));
 			
 			List<SocioCadastrado> sociosCadastrados = (List<SocioCadastrado>)
 					this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
@@ -353,11 +355,11 @@ public class FiadorController {
 		
 		Pessoa fiador = this.fiadorService.buscarPessoaFiadorPorId(idFiador);
 		
+		List<String> dados = new ArrayList<String>();
+		
 		if (fiador != null){
 			
 			this.httpSession.setAttribute(ID_FIADOR_EDICAO, idFiador);
-			
-			List<String> dados = new ArrayList<String>();
 			
 			if (fiador instanceof PessoaFisica){
 				
@@ -366,8 +368,8 @@ public class FiadorController {
 				dados.add("CPF");
 				dados.add(fisica.getNome());
 				dados.add(fisica.getEmail());
-				dados.add(this.adicionarMascaraCNPJ(fisica.getCpf()));
-				dados.add(fisica.getRg());
+				dados.add(Util.adicionarMascaraCPF(fisica.getCpf()));
+				dados.add(Util.adicionarMascaraRG(fisica.getRg()));
 				dados.add(DateUtil.formatarDataPTBR(fisica.getDataNascimento()));
 				dados.add(fisica.getOrgaoEmissor());
 				dados.add(fisica.getUfOrgaoEmissor());
@@ -381,8 +383,8 @@ public class FiadorController {
 				if (conjuge != null){
 					dados.add(conjuge.getNome());
 					dados.add(conjuge.getEmail());
-					dados.add(this.adicionarMascaraCNPJ(conjuge.getCpf()));
-					dados.add(conjuge.getRg());
+					dados.add(Util.adicionarMascaraCPF(conjuge.getCpf()));
+					dados.add(Util.adicionarMascaraRG(conjuge.getRg()));
 					dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
 					dados.add(conjuge.getOrgaoEmissor());
 					dados.add(conjuge.getUfOrgaoEmissor());
@@ -390,8 +392,6 @@ public class FiadorController {
 					dados.add(conjuge.getNacionalidade());
 					dados.add(conjuge.getNatural());
 				}
-				
-				result.use(Results.json()).from(dados, "result").serialize();
 			} else {
 				
 				PessoaJuridica pessoaJuridica = (PessoaJuridica) fiador;
@@ -400,20 +400,12 @@ public class FiadorController {
 				dados.add(pessoaJuridica.getRazaoSocial());
 				dados.add(pessoaJuridica.getNomeFantasia());
 				dados.add(pessoaJuridica.getInscricaoEstadual());
-				dados.add(this.adicionarMascaraCNPJ(pessoaJuridica.getCnpj()));
+				dados.add(Util.adicionarMascaraCNPJ(pessoaJuridica.getCnpj()));
 				dados.add(pessoaJuridica.getEmail());
-				
-				result.use(Results.json()).from(dados, "result").serialize();
 			}
 		}
-	}
-	
-	private String adicionarMascaraCNPJ(String cnpj){
 		
-		StringBuilder formatado = new StringBuilder();
-		formatado.append(cnpj.substring(0, 2)).append(".").append(cnpj.substring(3, 5)).append(".").append(cnpj.substring(5, 8)).append("-").append(cnpj.substring(8, 10));
-		
-		return formatado.toString();
+		result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
 	private void limparDadosSessao(){
@@ -447,14 +439,14 @@ public class FiadorController {
 				PessoaFisica pessoaFisica = (PessoaFisica)fiador.getPessoa();
 				
 				nomeFiador = pessoaFisica.getNome();
-				cpfCnpjFiador = pessoaFisica.getCpf();
-				rgInscricaoEstadualFiador = pessoaFisica.getRg();
+				cpfCnpjFiador = Util.adicionarMascaraCPF(pessoaFisica.getCpf());
+				rgInscricaoEstadualFiador = Util.adicionarMascaraRG(pessoaFisica.getRg());
 			} else {
 				
 				PessoaJuridica pessoaJuridica = (PessoaJuridica)fiador.getPessoa();
 				
 				nomeFiador = pessoaJuridica.getRazaoSocial();
-				cpfCnpjFiador = pessoaJuridica.getCnpj();
+				cpfCnpjFiador = Util.adicionarMascaraCNPJ(pessoaJuridica.getCnpj());
 				rgInscricaoEstadualFiador = pessoaJuridica.getInscricaoEstadual();
 			}
 			

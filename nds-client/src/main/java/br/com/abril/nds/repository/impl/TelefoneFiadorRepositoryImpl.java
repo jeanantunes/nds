@@ -61,9 +61,10 @@ public class TelefoneFiadorRepositoryImpl extends AbstractRepository<TelefoneFia
 	public List<TelefoneAssociacaoDTO> buscarTelefonesFiador(Long idFiador, Set<Long> idsIgnorar) {
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
-		   .append(" (t.principal, t.telefone, t.tipoTelefone) ")
-		   .append(" from TelefoneFiador t ")
-		   .append(" where t.fiador.id = :idFiador ");
+		   .append(" (t.principal, t.telefone, t.tipoTelefone, telefonePessoa) ")
+		   .append(" from TelefoneFiador t, Telefone telefonePessoa ")
+		   .append(" where t.fiador.id = :idFiador ")
+		   .append("   and t.telefone.id = telefonePessoa.id ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			hql.append(" and t.telefone.id not in (:idsIgnorar) ");
@@ -92,5 +93,20 @@ public class TelefoneFiadorRepositoryImpl extends AbstractRepository<TelefoneFia
 		query.setParameter("idFiador", idFiador);
 		
 		return query.list();
+	}
+	
+	@Override
+	public TelefoneFiador obterTelefonePorTelefoneFiador(Long idTelefone, Long idFiador){
+		
+		StringBuilder hql = new StringBuilder("select t from TelefoneFiador t ");
+		hql.append(" where t.telefone.id = :idTelefone ")
+		   .append(" and   t.fiador.id   = :idFiador");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idTelefone", idTelefone);
+		query.setParameter("idFiador", idFiador);
+		query.setMaxResults(1);
+		
+		return (TelefoneFiador) query.uniqueResult();
 	}
 }

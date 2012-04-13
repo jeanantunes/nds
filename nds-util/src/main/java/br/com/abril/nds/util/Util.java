@@ -162,4 +162,28 @@ public abstract class Util {
 		
 		return valor;
 	}
+	
+	public static String adicionarMascaraCNPJ(String cnpj){
+		
+		StringBuilder formatado = new StringBuilder();
+		formatado.append(cnpj.substring(0, 2)).append(".").append(cnpj.substring(2, 5)).append(".").append(cnpj.substring(5, 8)).append("/").append(cnpj.substring(8, 12)).append("-").append(cnpj.substring(12, 14));
+		
+		return formatado.toString();
+	}
+	
+	public static String adicionarMascaraCPF(String cpf){
+		
+		StringBuilder formatado = new StringBuilder();
+		formatado.append(cpf.substring(0, 3)).append(".").append(cpf.substring(3, 6)).append(".").append(cpf.substring(6, 9)).append("-").append(cpf.substring(9, 11));
+		
+		return formatado.toString();
+	}
+	
+	public static String adicionarMascaraRG(String rg){
+		
+		StringBuilder formatado = new StringBuilder();
+		formatado.append(rg.substring(0, 2)).append(".").append(rg.substring(2, 5)).append(".").append(rg.substring(5, 8)).append("-").append(rg.substring(8, 9));
+		
+		return formatado.toString();
+	}
 }
