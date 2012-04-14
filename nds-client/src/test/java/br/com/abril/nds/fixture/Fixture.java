@@ -648,7 +648,7 @@ public class Fixture {
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio do Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Financeiro");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		return tipoMovimento;
 	}
@@ -656,7 +656,7 @@ public class Fixture {
 	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Estoque");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
@@ -671,11 +671,11 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte() {
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Reparte");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		tipoMovimento.setDescricao("Recebimento Reparte");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
 	

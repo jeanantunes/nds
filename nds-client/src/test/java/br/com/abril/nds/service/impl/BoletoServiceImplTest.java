@@ -99,8 +99,9 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinenceiroReparte);
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
+			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(tipoMovimentoFinenceiroRecebimentoReparte);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
@@ -130,7 +131,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				cota, tipoMovimentoFinenceiroRecebimentoReparte, usuarioJoao,
 				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
@@ -262,7 +263,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
 		pagamento.setNossoNumero("1234567890127");
 		pagamento.setNumeroRegistro(1);
-		pagamento.setValorPagamento(new BigDecimal(10.00));
+		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
 									   null, distribuidor.getPoliticaCobranca(), distribuidor,
