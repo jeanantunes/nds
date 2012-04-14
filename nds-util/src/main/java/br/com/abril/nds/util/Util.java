@@ -165,6 +165,16 @@ public abstract class Util {
 	
 	public static String adicionarMascaraCNPJ(String cnpj){
 		
+		if (cnpj == null){
+			return "";
+		}
+		
+		cnpj = cnpj.replace("-", "").replace(".", "").replace("/", "");
+		
+		if (cnpj.length() < 12){
+			cnpj = Util.padLeft(cnpj, "0", 12);
+		}
+		
 		StringBuilder formatado = new StringBuilder();
 		formatado.append(cnpj.substring(0, 2)).append(".").append(cnpj.substring(2, 5)).append(".").append(cnpj.substring(5, 8)).append("/").append(cnpj.substring(8, 12)).append("-").append(cnpj.substring(12, 14));
 		
@@ -173,6 +183,16 @@ public abstract class Util {
 	
 	public static String adicionarMascaraCPF(String cpf){
 		
+		if (cpf == null){
+			return "";
+		}
+		
+		cpf = cpf.replace("-", "").replace(".", "");
+		
+		if (cpf.length() < 11){
+			cpf = Util.padLeft(cpf, "0", 11);
+		}
+		
 		StringBuilder formatado = new StringBuilder();
 		formatado.append(cpf.substring(0, 3)).append(".").append(cpf.substring(3, 6)).append(".").append(cpf.substring(6, 9)).append("-").append(cpf.substring(9, 11));
 		
@@ -180,6 +200,16 @@ public abstract class Util {
 	}
 	
 	public static String adicionarMascaraRG(String rg){
+		
+		if (rg == null){
+			return "";
+		}
+		
+		rg = rg.replace("-", "").replace(".", "");
+		
+		if (rg.length() < 9){
+			rg = Util.padLeft(rg, "0", 9);
+		}
 		
 		StringBuilder formatado = new StringBuilder();
 		formatado.append(rg.substring(0, 2)).append(".").append(rg.substring(2, 5)).append(".").append(rg.substring(5, 8)).append("-").append(rg.substring(8, 9));
