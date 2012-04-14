@@ -123,9 +123,23 @@ function getDataFromResult2(data) {
 		
 	}else{
 		
+				
 		$(".gridsEncalhe").show();
 		
-		return data;
+		$("#datacotanome").html(data.dataEscolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+		
+		var conteudoSpan = $("#listaInfoEncalhe").html("");
+			 	 	
+	    $.each(data.listaInfoFornecedores, function(index, value) {
+	 	 	
+	      conteudoSpan = $("#listaInfoEncalhe").html();
+	 	 	
+	
+	      $("#listaInfoEncalhe").html(conteudoSpan + value.nomeFornecedor+":      "+value.valorTotal+"<br><br>");
+	 		
+	   });
+	 	 	   
+		return data.tableModel;
 	}	
 
 }
@@ -394,8 +408,8 @@ function popup_encargos() {
 
 <div id="dialog-encalhe" title="Encalhe da Cota">
 	<fieldset>
-    	<legend>14/12/2011 - Cota: 26 1335 - CGB Distribuidora de Jornais e Revista</legend>
-    	 <strong><span id="datacotanome"></span></strong>
+    
+      	<strong><span id="datacotanome"></span></strong>
         
         <div class="gridsEncalhe" style="display: none;">      
         
@@ -413,7 +427,24 @@ function popup_encargos() {
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 					Imprimir
 				</a>
-			</span>       	
+			</span>
+			
+			<div align="right">
+								
+				<table>
+					<tr>
+						<td><strong>Total R$:</strong></td>
+						<td> </td>
+					</tr>				
+					<tr>
+						<td></td>													
+						<td><span id="listaInfoEncalhe"></span></td>
+					</tr>						
+				</table>
+			
+			
+			
+			</div>       	
 	    </div>   
     </fieldset>
 
