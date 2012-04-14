@@ -178,6 +178,7 @@ public class FiadorController {
 		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
 	}
 	
+	@Post
 	public void buscarPessoaCPF(String cpf){
 		
 		List<String> dados = null;
