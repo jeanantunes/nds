@@ -179,14 +179,20 @@ public class FiadorController {
 	}
 	
 	@Post
-	public void buscarPessoaCPF(String cpf){
+	public void buscarPessoaCPF(String cpf, boolean isFiador, String cpfConjuge){
 		
 		List<String> dados = null;
 		
 		if (cpf != null){
 			
 			cpf = cpf.replace("-", "").replace(".", "");
-			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf);
+			
+			if (cpfConjuge != null){
+				cpfConjuge = cpfConjuge.replace("-", "").replace(".", "");
+			}
+			
+			
+			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
 			
 			if (fisica != null){
 				dados = new ArrayList<String>();

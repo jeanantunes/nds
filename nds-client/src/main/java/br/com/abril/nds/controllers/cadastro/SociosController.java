@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -169,6 +170,11 @@ public class SociosController {
 		
 		//dados do conjuge
 		if (pessoa.getConjuge() != null){
+			
+			if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
+				msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
+			}
+			
 			pessoa = pessoa.getConjuge();
 			
 			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
@@ -193,6 +199,19 @@ public class SociosController {
 			
 			if (pessoa.getSexo() == null){
 				msgsValidacao.add("Sexo do conjuge é obrigatório.");
+			}
+		}
+		
+		List<SocioCadastrado> listaSociosSessao = this.obterListaSociosSalvarSessao();
+		
+		if (!listaSociosSessao.isEmpty()){
+			
+			for (SocioCadastrado socioCadastrado : listaSociosSessao){
+				
+				if (socioCadastrado.getPessoa().getCpf().equals(pessoa.getCpf())){
+					
+					msgsValidacao.add("Sócio com o CPF " + Util.adicionarMascaraCPF(pessoa.getCpf()) + " já adicionado.");
+				}
 			}
 		}
 		
@@ -254,7 +273,42 @@ public class SociosController {
 			socio = this.pessoaService.buscarPessoaFisicaPorId(referencia.longValue());
 		}
 		
-		this.result.use(Results.json()).from(socio != null ? socio : "", "result").recursive().serialize();
+		List<String> dados = null;
+		if (socio != null){
+			
+			dados = new ArrayList<String>();
+			
+			dados.add(socio.getNome());
+			dados.add(socio.getEmail());
+			dados.add(Util.adicionarMascaraCPF(socio.getCpf()));
+			dados.add(Util.adicionarMascaraRG(socio.getRg()));
+			dados.add(DateUtil.formatarDataPTBR(socio.getDataNascimento()));
+			dados.add(socio.getOrgaoEmissor());
+			dados.add(socio.getUfOrgaoEmissor());
+			dados.add(socio.getEstadoCivil().name());
+			dados.add(socio.getSexo().name());
+			dados.add(socio.getNacionalidade());
+			dados.add(socio.getNatural());
+			
+			PessoaFisica conjuge = socio.getConjuge();
+			
+			if (conjuge != null){
+				dados.add(conjuge.getNome());
+				dados.add(conjuge.getEmail());
+				dados.add(Util.adicionarMascaraCPF(conjuge.getCpf()));
+				dados.add(Util.adicionarMascaraRG(conjuge.getRg()));
+				dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
+				dados.add(conjuge.getOrgaoEmissor());
+				dados.add(conjuge.getUfOrgaoEmissor());
+				dados.add(conjuge.getSexo().name());
+				dados.add(conjuge.getNacionalidade());
+				dados.add(conjuge.getNatural());
+			}
+			
+			dados.add(String.valueOf(socio.isSocioPrincipal()));
+		}
+		
+		this.result.use(Results.json()).from(dados != null ? dados : "", "result").recursive().serialize();
 	}
 	
 	@SuppressWarnings("unchecked")
