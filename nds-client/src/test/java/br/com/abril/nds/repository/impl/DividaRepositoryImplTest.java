@@ -115,8 +115,10 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		save(rotaRoteiroOperacao);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinenceiroReparte);
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
+			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		
+		save(tipoMovimentoFinenceiroRecebimentoReparte);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
@@ -143,7 +145,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				cotaManoel, tipoMovimentoFinenceiroRecebimentoReparte, usuarioJoao,
 				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
