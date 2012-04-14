@@ -58,4 +58,17 @@ public class PessoaServiceImpl implements PessoaService {
 		
 		return this.pessoaRepository.buscarPorCPF(cpf);
 	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public PessoaJuridica buscarPessoaPorCNPJ(String cnpj) {
+		
+		if (cnpj == null || cnpj.trim().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "CNPJ é obrigatório.");
+		}
+		
+		cnpj = cnpj.trim();
+		
+		return this.pessoaRepository.buscarPorCNPJ(cnpj);
+	}
 }
