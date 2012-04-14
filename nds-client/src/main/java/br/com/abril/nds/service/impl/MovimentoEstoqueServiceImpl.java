@@ -143,6 +143,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
+		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
+		
 		EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
 		
 		if (estoqueProduto == null) {
@@ -162,7 +164,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);		
 		movimentoEstoque.setData(new Date());
-		movimentoEstoque.setUsuario(usuarioRepository.buscarPorId(idUsuario));
+		movimentoEstoque.setUsuario(usuario);
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
 		
@@ -170,11 +172,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {		
 			
-			Usuario usuario = new Usuario();
-			
-			usuario.setId(1L);
-			
-			//TODO: usuario
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 		
@@ -236,7 +233,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 						
 		EstoqueProdutoCota estoqueProdutoCota = 
 			estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
-				
+		
+		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
+		
 		if (estoqueProdutoCota == null) {
 			
 			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
@@ -260,17 +259,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());
 		movimentoEstoqueCota.setQtde(quantidade);
-		movimentoEstoqueCota.setUsuario(usuarioRepository.buscarPorId(idUsuario));
+		movimentoEstoqueCota.setUsuario(usuario);
 		
 		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
 		
-		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {	
+		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {
 			
-			Usuario usuario = new Usuario();
-			
-			usuario.setId(1L);
-			
-			//TODO: usuario
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoqueCota,
 																usuario);
 		}
