@@ -1837,6 +1837,22 @@ public class DataLoader {
 			
 			session.save(diferenca);
 		}
+		
+		for (int i = 1; i <= quantidadeRegistros; i++) {
+			
+			MovimentoEstoque movimentoEstoqueDiferenca = 
+				Fixture.movimentoEstoque(
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, null);
+			
+			session.save(movimentoEstoqueDiferenca);
+			
+			Diferenca diferenca = 
+				Fixture.diferenca(
+					new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
+						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true);
+			
+			session.save(diferenca);
+		}
 	}
 	
 	
