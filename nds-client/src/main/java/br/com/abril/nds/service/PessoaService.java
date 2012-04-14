@@ -14,4 +14,6 @@ public interface PessoaService {
 	PessoaFisica buscarPessoaFisicaPorId(Long idPessoa);
 
 	PessoaFisica buscarPessoaPorCPF(String cpf);
+
+	PessoaJuridica buscarPessoaPorCNPJ(String cnpj);
 }

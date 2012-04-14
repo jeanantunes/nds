@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
 import br.com.abril.nds.repository.CotaRepository;
@@ -150,9 +151,15 @@ public class FiadorServiceImpl implements FiadorService {
 			PessoaFisica conjuge = ((PessoaFisica)fiador.getPessoa()).getConjuge();
 			
 			if (conjuge != null){
+				
+				Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(conjuge.getCpf());
+				conjuge.setId(idPessoa);
+				
 				if (conjuge.getId() == null){
+					
 					this.pessoaRepository.adicionar(conjuge);
 				} else {
+					
 					this.pessoaRepository.alterar(conjuge);
 				}
 			}
@@ -215,6 +222,16 @@ public class FiadorServiceImpl implements FiadorService {
 		} else {
 			
 			fiador.setSocios(sociosAdicionar);
+		}
+		
+		if (fiador.getPessoa() instanceof PessoaFisica){
+			
+			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaFisica) fiador.getPessoa()).getCpf());
+			fiador.getPessoa().setId(idPessoa);
+		} else {
+			
+			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaJuridica) fiador.getPessoa()).getCnpj());
+			fiador.getPessoa().setId(idPessoa);
 		}
 		
 		if (fiador.getPessoa().getId() == null){
@@ -423,74 +440,118 @@ public class FiadorServiceImpl implements FiadorService {
 		List<String> msgsValidacao = new ArrayList<String>();
 		
 		if (fiador == null || fiador.getPessoa() == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório");
+			throw new ValidacaoException(TipoMensagem.WARNING, "CPF/CNPJ é obrigatório");
 		}
 		
 		if (fiador.getPessoa() instanceof PessoaFisica){
 			PessoaFisica pessoa = (PessoaFisica) fiador.getPessoa();
 			
-			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
-				msgsValidacao.add("Nome é obrigatório.");
+			this.validarDadosPessoaFisica(pessoa, msgsValidacao);
+		} else {
+			
+			PessoaJuridica pessoa = (PessoaJuridica) fiador.getPessoa();
+			
+			if (pessoa == null){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "CNPJ é obrigatório"));
+			}
+			
+			if (pessoa.getRazaoSocial() == null || pessoa.getRazaoSocial().trim().isEmpty()){
+				msgsValidacao.add("Razão social é obrigatório");
+			}
+			
+			if (pessoa.getNomeFantasia() == null || pessoa.getNomeFantasia().trim().isEmpty()){
+				msgsValidacao.add("Nome fantasia é obrigatório");
+			}
+			
+			if (pessoa.getInscricaoEstadual() == null || pessoa.getInscricaoEstadual().trim().isEmpty()){
+				msgsValidacao.add("Inscrição estadual é obrigatório");
+			}
+			
+			if (pessoa.getCnpj() == null || pessoa.getCnpj().trim().isEmpty()){
+				msgsValidacao.add("CNPJ é obrigatório");
 			}
 			
 			if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
-				msgsValidacao.add("E-mail é obrigatório.");
+				msgsValidacao.add("E-mail é obrigatório");
 			}
-			
-			if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
-				msgsValidacao.add("CPF é obrigatório.");
-			}
-			
-			if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
-				msgsValidacao.add("R.G. é obrigatório.");
-			}
-			
-			if (pessoa.getDataNascimento() == null){
-				msgsValidacao.add("Data Nascimento é obrigatório.");
-			}
-			
-			if (pessoa.getEstadoCivil() == null){
-				msgsValidacao.add("Estado Civil é obrigatório.");
-			}
-			
-			if (pessoa.getSexo() == null){
-				msgsValidacao.add("Sexo é obrigatório.");
-			}
-			
-			//dados do conjuge
-			if (pessoa.getConjuge() != null){
-				pessoa = pessoa.getConjuge();
+		}
+		
+		if (socios != null){
+			for (Pessoa pessoa : socios){
 				
-				if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
-					msgsValidacao.add("Nome do conjuge é obrigatório.");
-				}
-				
-				if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
-					msgsValidacao.add("E-mail do conjuge é obrigatório.");
-				}
-				
-				if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
-					msgsValidacao.add("CPF do conjuge é obrigatório.");
-				}
-				
-				if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
-					msgsValidacao.add("R.G. do conjuge é obrigatório.");
-				}
-				
-				if (pessoa.getDataNascimento() == null){
-					msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
-				}
-				
-				if (pessoa.getSexo() == null){
-					msgsValidacao.add("Sexo do conjuge é obrigatório.");
+				if (pessoa instanceof PessoaFisica){
+					
+					this.validarDadosPessoaFisica((PessoaFisica) pessoa, msgsValidacao);
 				}
 			}
-		} else {
-			//TODO validar dados pessoa juridica
 		}
 			
 		if (!msgsValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
+		}
+	}
+
+	private void validarDadosPessoaFisica(PessoaFisica pessoa, List<String> msgsValidacao) {
+		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+			msgsValidacao.add("Nome é obrigatório.");
+		}
+		
+		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+			msgsValidacao.add("E-mail é obrigatório.");
+		}
+		
+		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+			msgsValidacao.add("CPF é obrigatório.");
+		}
+		
+		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+			msgsValidacao.add("R.G. é obrigatório.");
+		}
+		
+		if (pessoa.getDataNascimento() == null){
+			msgsValidacao.add("Data Nascimento é obrigatório.");
+		}
+		
+		if (pessoa.getEstadoCivil() == null){
+			msgsValidacao.add("Estado Civil é obrigatório.");
+		}
+		
+		if (pessoa.getSexo() == null){
+			msgsValidacao.add("Sexo é obrigatório.");
+		}
+		
+		//dados do conjuge
+		if (pessoa.getConjuge() != null){
+			
+			if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
+				msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
+			}
+			
+			pessoa = pessoa.getConjuge();
+			
+			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+				msgsValidacao.add("Nome do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+				msgsValidacao.add("E-mail do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+				msgsValidacao.add("CPF do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+				msgsValidacao.add("R.G. do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getDataNascimento() == null){
+				msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
+			}
+			
+			if (pessoa.getSexo() == null){
+				msgsValidacao.add("Sexo do conjuge é obrigatório.");
+			}
 		}
 	}
 

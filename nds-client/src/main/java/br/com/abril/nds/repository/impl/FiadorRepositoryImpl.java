@@ -76,8 +76,11 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 				this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO);
 		
 		ConsultaFiadorDTO consultaFiadorDTO = new ConsultaFiadorDTO();
-		consultaFiadorDTO.setQuantidadePaginas(
-				(qtdRegistros / filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina()) + 1);
+		
+		long qtdPaginas = 
+				(qtdRegistros / filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina());
+		
+		consultaFiadorDTO.setQuantidadePaginas(qtdPaginas == 0 ? 1 : qtdPaginas);
 		
 		switch (filtroConsultaFiadorDTO.getOrdenacaoColunaFiador()){
 			case CODIGO:

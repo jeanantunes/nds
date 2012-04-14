@@ -119,6 +119,8 @@
 		
 		function exibirGridFiadoresCadastrados(){
 			
+			$(".pessoasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarFiador'/>"});
+			
 			var data = "filtro.nome=" + $("#nomeFiadorPesquisa").val() + "&filtro.cpfCnpj=" + $("#cpfCnpjFiadorPesquisa").val();
 			$.postJSON("<c:url value='/cadastro/fiador/pesquisarFiador'/>", data, 
 				function(result){
@@ -160,7 +162,7 @@
 					align : 'left'
 				}, {
 					display : 'CPF / CNPJ',
-					name : 'cpf',
+					name : 'cpfCnpj',
 					width : 120,
 					sortable : true,
 					align : 'left'
@@ -186,11 +188,11 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "codigo",
-				sortorder : "asc",
+				sortorder : "desc",
 				disableSelect: true,
 				usepager : true,
 				useRp : true,
@@ -213,7 +215,7 @@
 			}
 			
 			if (data.result){
-				data.rows = data.result.rows;
+				data.rows = data.result[1].rows;
 			}
 			
 			var i;
@@ -228,7 +230,7 @@
 			$('.imoveisGrid').show();
 			
 			if (data.result){
-				return data.result;
+				return data.result[1];
 			}
 			return data;
 		}

@@ -46,6 +46,27 @@
 	$(function(){
 		$("#cnpjFiador").mask("99.999.999/9999-99");
 	});
+	
+	function buscarPessoaCNPJ(cnpj){
+		
+		if (cnpj != "__.___.___/____-__"){
+			
+			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCNPJ' />", "cnpj=" + cnpj, 
+				function(result) {
+					
+					if (result){
+						$("#razaoSocialFiador").val(result[0]);
+						$("#nomeFantasiaFiador").val(result[1]);
+						$("#inscricaoEstadualFiador").val(result[2]);
+						$("#cnpjFiador").val(result[3]);
+						$("#emailFiadorCnpj").val(result[4]);
+					}
+				},
+				null,
+				true
+			);
+		}
+	}
 </script>
 <table width="754" cellpadding="2" cellspacing="2" style="text-align:left;">
 	<tr>
@@ -64,7 +85,7 @@
 		<td>Inscrição Estadual:</td>
 		<td><input type="text" style="width:230px " id="inscricaoEstadualFiador" /></td>
 		<td>CNPJ:</td>
-		<td><input type="text" style="width:230px " id="cnpjFiador" /></td>
+		<td><input type="text" style="width:230px " id="cnpjFiador" onblur="buscarPessoaCNPJ(this.value);" /></td>
 	</tr>
 	<tr>
 		<td>E-mail:</td>
