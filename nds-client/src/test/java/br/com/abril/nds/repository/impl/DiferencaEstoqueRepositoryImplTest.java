@@ -249,7 +249,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		filtro.setPaginacao(paginacao);
 		
-		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro);
+		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro, null);
 		
 		Assert.assertNotNull(lista);
 		
@@ -264,7 +264,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.setNumeroEdicao(1L);
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
-		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro, null);
 		
 		Assert.assertNotNull(quantidadeTotal);
 		
