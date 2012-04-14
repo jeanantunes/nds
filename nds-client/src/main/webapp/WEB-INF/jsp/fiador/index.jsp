@@ -337,10 +337,13 @@
 		
 		function limparCamposCadastroFiador(){
 			//dados cadastrais cpf
-			limparDadosCadastraisCPF();
+			limparDadosCadastraisCPF(0);
 	        
 	        //dados cadastrais cnpj
 			limparDadosCadastraisCNPJ();
+	        
+			//dados cadastrais socios
+			limparDadosCadastraisCPF(1);
 		    
 		    //endereços
 			limparFormEndereco();
@@ -433,11 +436,11 @@
 				<tr>
 					<td width="41">Nome:</td>
               		<td colspan="3">
-              			<input type="text" name="textfield2" id="nomeFiadorPesquisa" style="width:180px;"/>
+              			<input type="text" name="textfield2" id="nomeFiadorPesquisa" style="width:180px;" maxlength="255"/>
               		</td>
                 	<td width="68">CPF/CNPJ:</td>
                 	<td width="477">
-                		<input type="text" name="textfield" id="cpfCnpjFiadorPesquisa" style="width:130px;"/>
+                		<input type="text" name="textfield" id="cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
                 	</td>
               		<td width="104">
               			<span class="bt_pesquisar"><a href="javascript:exibirGridFiadoresCadastrados();">Pesquisar</a></span>

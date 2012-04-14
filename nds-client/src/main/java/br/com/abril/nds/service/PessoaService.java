@@ -13,7 +13,7 @@ public interface PessoaService {
 	
 	PessoaFisica buscarPessoaFisicaPorId(Long idPessoa);
 
-	PessoaFisica buscarPessoaPorCPF(String cpf);
+	PessoaFisica buscarPessoaPorCPF(String cpf, boolean isFiador, String cpfConjuge);
 
 	PessoaJuridica buscarPessoaPorCNPJ(String cnpj);
 }

@@ -77,19 +77,19 @@
 	</tr>
 	<tr>
 		<td width="120">Razão Social:</td>
-		<td width="240"><input type="text" style="width:230px " id="razaoSocialFiador" /></td>
+		<td width="240"><input type="text" style="width:230px " id="razaoSocialFiador" maxlength="255" /></td>
 		<td width="136">Nome Fantasia:</td>
-		<td width="230"><input type="text" style="width:230px " id="nomeFantasiaFiador" /></td>
+		<td width="230"><input type="text" style="width:230px " id="nomeFantasiaFiador" maxlength="255"/></td>
 	</tr>
 	<tr>
 		<td>Inscrição Estadual:</td>
-		<td><input type="text" style="width:230px " id="inscricaoEstadualFiador" /></td>
+		<td><input type="text" style="width:230px " id="inscricaoEstadualFiador" maxlength="255"/></td>
 		<td>CNPJ:</td>
 		<td><input type="text" style="width:230px " id="cnpjFiador" onblur="buscarPessoaCNPJ(this.value);" /></td>
 	</tr>
 	<tr>
 		<td>E-mail:</td>
-		<td><input type="text" style="width:230px" id="emailFiadorCnpj" /></td>
+		<td><input type="text" style="width:230px" id="emailFiadorCnpj" maxlength="255"/></td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 	</tr>

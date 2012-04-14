@@ -234,6 +234,12 @@ public class FiadorServiceImpl implements FiadorService {
 			fiador.getPessoa().setId(idPessoa);
 		}
 		
+		if (fiador.getPessoa() instanceof PessoaFisica){
+			if (((PessoaFisica) fiador.getPessoa()).getConjuge() != null){
+				((PessoaFisica) fiador.getPessoa()).getConjuge().setConjuge((PessoaFisica) fiador.getPessoa());
+			}
+		}
+		
 		if (fiador.getPessoa().getId() == null){
 			
 			this.pessoaRepository.adicionar(fiador.getPessoa());
