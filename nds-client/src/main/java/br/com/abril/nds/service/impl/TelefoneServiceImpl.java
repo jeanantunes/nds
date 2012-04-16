@@ -12,13 +12,9 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
-import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
-import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneEntregadorRepository;
-import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -27,13 +23,7 @@ import br.com.abril.nds.util.TipoMensagem;
 public class TelefoneServiceImpl implements TelefoneService {
 
 	@Autowired
-	private TelefoneCotaRepository telefoneCotaRepository;
-	
-	@Autowired
 	private TelefoneEntregadorRepository telefoneEntregadorRepository;
-	
-	@Autowired
-	private TelefoneFornecedorRepository telefoneFornecedorRepository;
 	
 	@Autowired
 	private TelefoneRepository telefoneRepository;
@@ -180,7 +170,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 			
 			this.telefoneEntregadorRepository.removerTelefonesEntregador(listaTelefonesEntregador);
 			
-			this.removerTelefone(listaTelefonesEntregador);
+			this.removerTelefones(listaTelefonesEntregador);
 		}
 	}
 	
