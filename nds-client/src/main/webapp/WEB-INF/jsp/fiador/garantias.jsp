@@ -5,13 +5,13 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Descrição',
-				name : 'descricao',
+				name : 'garantia.descricao',
 				width : 510,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'valor',
+				name : 'garantia.valor',
 				width : 130,
 				sortable : true,
 				align : 'right'
@@ -24,8 +24,12 @@
 			} ],
 			width : 770,
 			height : 150,
+			sortname : "garantia.descricao",
+			sortorder : "asc",
 			disableSelect: true
 		});
+		
+		$(".imoveisGrid").flexOptions({url: "<c:url value='/cadastro/fiador/obterGarantiasFiador'/>"});
 		
 		$("#valorGarantia").numeric();
 	});

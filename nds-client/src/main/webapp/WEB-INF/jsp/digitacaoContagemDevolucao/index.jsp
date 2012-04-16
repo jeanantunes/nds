@@ -65,11 +65,11 @@ var ContagemDevolucao = {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" type="text" style="width:80px; text-align: center;"  maxlength="20" value="'+row.cell.qtdNota+'"/>';
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
 				
 				if(!ContagemDevolucao.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="20" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="ContagemDevolucao.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="ContagemDevolucao.limparCheck(\'ch'+index+'\')"/>';
 					
 					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="ContagemDevolucao.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
 					
@@ -105,6 +105,13 @@ var ContagemDevolucao = {
 			valor = (input.checked == false)?"":valor;
 			
 			$('#'+id).val(valor);
+			
+			if(input.checked == false) {
+				$('#'+id).prop('disabled', false);
+			} else {
+				$('#'+id).prop('disabled', true);
+			}
+			
 		},
 		/**
 			Limpa os valores do checked. 
@@ -130,8 +137,10 @@ var ContagemDevolucao = {
 				var colunaReplicarValor = linha.find("td")[8];
 				
 				var vlQntDevolucao = $(colunaExemplarDevolucao).find("div").html();
-					
+				
 				$(colunaExemplarNota).find("div").find('input[name="qtdNota"]').val(vlQntDevolucao);
+				
+				$(colunaExemplarNota).find("div").find('input[name="qtdNota"]').prop('disabled', true);
 				
 				$(colunaReplicarValor).find("div").find('input[name="checkgroup"]').attr("checked",true);
 				
@@ -288,7 +297,10 @@ var ContagemDevolucao = {
 				
 				if(inputReplicarValor.attr('checked')){
 					
-					$(colunaExemplarNota).find("div").find('input[name="qtdNota"]').val("");		
+					$(colunaExemplarNota).find("div").find('input[name="qtdNota"]').val("");
+					
+					$(colunaExemplarNota).find("div").find('input[name="qtdNota"]').prop('disabled', false);
+					
 				}
 				
 				$(colunaReplicarValor).find("div").find('input[name="checkgroup"]').attr("checked",false);
