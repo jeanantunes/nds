@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.service.PessoaService;
@@ -21,5 +22,14 @@ public class PessoaServiceImpl implements PessoaService {
 	public List<PessoaJuridica> buscarPorCnpj(String cnpj) {
 		return pessoaRepository.buscarPorCnpj(cnpj);
 	}
-	
+
+	/**
+	 * @see br.com.abril.nds.service.PessoaService#salvarPessoa(br.com.abril.nds.model.cadastro.Pessoa)
+	 */
+	@Override
+	@Transactional
+	public void salvarPessoa(Pessoa pessoa) {
+
+		this.pessoaRepository.adicionar(pessoa);
+	}
 }

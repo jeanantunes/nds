@@ -21,6 +21,7 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 		StringBuilder hql = new StringBuilder("delete from Telefone t ");
 		hql.append(" where t.id in (:ids) ")
 		   .append(" and t.id not in (select tc.telefone.id from TelefoneCota tc where tc.telefone.id in (:ids)) ")
+		   .append(" and t.id not in (select te.telefone.id from TelefoneEntregador te where te.telefone.id in (:ids)) ")
 		   .append(" and t.id not in (select tf.telefone.id from TelefoneFornecedor tf where tf.telefone.id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());

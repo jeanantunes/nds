@@ -71,6 +71,10 @@
 
 	function popularGridEnderecos() {
 
+		$(".enderecosGrid").flexOptions({
+			url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
+		});
+
 		$(".enderecosGrid").flexReload();
 	}		
 	
@@ -231,7 +235,6 @@
 		
 		$(".enderecosGrid").flexigrid({
 			preProcess: processarResultadoConsultaEndereco,
-			url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
 			dataType : 'json',
 			colModel : [  {
 				display : 'Tipo Endereço',
