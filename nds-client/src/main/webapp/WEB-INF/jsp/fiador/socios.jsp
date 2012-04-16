@@ -25,6 +25,8 @@
 			width : 770,
 			height : 160
 		});
+		
+		$(".cotasAssociadasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarSociosFiador'/>"});
 	});
 	
 	function carregarSocios(){

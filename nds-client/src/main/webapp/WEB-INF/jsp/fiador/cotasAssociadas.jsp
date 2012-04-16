@@ -23,10 +23,15 @@
 				align : 'center'
 			} ],
 			width : 770,
-			height : 150
+			height : 150,
+			sortname : "numeroCota",
+			sortorder : "asc",
+			disableSelect: true
 		});
 		
 		$("#numeroCota").numeric();
+		
+		$(".cotasAssociadasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/obterAssociacoesCotaFiador'/>"});
 	});
 	
 	function processarResultadoCotasAssociadas(data){
