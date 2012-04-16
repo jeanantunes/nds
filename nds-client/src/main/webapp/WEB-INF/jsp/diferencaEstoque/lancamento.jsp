@@ -123,7 +123,8 @@
 	
 						$("#gridLancamentos").flexOptions({
 							url : '<c:url value="/estoque/diferenca/lancamento/pesquisa" />', 
-							params: formData
+							params: formData,
+							newp: 1
 						});
 						
 						$("#gridLancamentos").flexReload();
