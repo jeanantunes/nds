@@ -132,8 +132,6 @@ public class FiltroConsolidadoEncalheCotaDTO {
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
 		return true;
-	}
-	
-	
+	}	
 
 }

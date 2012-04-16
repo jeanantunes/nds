@@ -99,9 +99,64 @@ function pesquisarEncalheCota(lineId){
 			
 	popup_encalhe();
 	
+}
+
+/**
+ * FAZ A PESQUISA DE CONSIGNADO DA COTA EM UMA DETERMINADA DATA
+ */
+function pesquisarConsignadoCota(lineId){
+		
+	var numeroCota = $("#cota").val();		
 	
+	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota },
+	                         {name:'filtroConsolidadoEncalheDTO.lineId', value:lineId }];
 	
-	
+	$.postJSON(
+			'<c:url value="/financeiro/contaCorrenteCota/consultarConsignadoCota" />', 
+			parametroPesquisa,
+			function(result){
+				
+				if(result[0] == true){
+					montarColunaComFornecedor();
+					
+				}else{
+					montarColunaSemFornecedor();
+				}
+				
+				//$(".encalheCotaGrid").flexOptions({colModel: colunas});
+				
+				$(".consignadoCotaGrid").flexAddData({
+					page: 1, total: 1, rows: result[1].tableModel.rows
+				});
+				
+				
+				/////////////////////////////////////
+				
+				var data = result[1];
+				
+				$("#datacotanome").html(data.dataEscolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+		
+				var conteudoSpan = $("#listaInfoConsignado").html("");
+				
+				$.each(data.listaInfoFornecedores, function(index, value) {
+			 	 	
+			      conteudoSpan = $("#listaInfoConsignado").html();
+			 	 	
+			
+			      $("#listaInfoConsigando").html(conteudoSpan + value.nomeFornecedor+":      "+value.valorTotal+"<br><br>");
+			    });
+				
+				
+				////////////////////////////////////
+				
+				$(".consignadoCotaGrid").show();
+				
+							
+				$(".popup_consignado").show();
+				
+			});	
+			
+	popup_consolidado();
 	
 }
 
@@ -130,7 +185,7 @@ function getDataFromResult(data) {
 		
 		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 		
-			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
+			value.cell[3] = '<a href="javascript:;" onclick="pesquisarConsignadoCota('+[lineId]+');"/>'+consignado+'</a>'+hiddeFields;
 			value.cell[4] = '<a href="javascript:;" onclick="pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
 			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
 			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
@@ -305,6 +360,85 @@ function montarColunaComFornecedor(){
 	});
 }
 
+function montarColunaConsignadoComFornecedor(){
+
+$(".consignadoGrid").flexigrid({
+	dataType : 'json',	
+	colModel : [ {
+		display : 'Código',
+		name : 'codigo',
+		width : 40,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Produto',
+		name : 'produto',
+		width : 90,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Edição',
+		name : 'edicao',
+		width : 40,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Preço Capa R$',
+		name : 'precoCapa',
+		width : 80,
+		sortable : true,
+		align : 'right',
+	}, {
+		display : 'Preço c/ Desc. R$',
+		name : 'desconto',
+		width : 60,
+		sortable : true,
+		align : 'right',
+	}, {
+		display : 'Reparte Sugerido',
+		name : 'reparte',
+		width : 80,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Reparte Final',
+		name : 'reparteFinal',
+		width : 70,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Diferença',
+		name : 'diferenca',
+		width : 45,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Motivo',
+		name : 'motivo',
+		width : 80,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Fornecedor',
+		name : 'fornecedor',
+		width : 60,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Total R$',
+		name : 'total',
+		width : 40,
+		sortable : true,
+		align : 'right'
+	}],
+	sortname : "codigo",
+	sortorder : "asc",
+	width : 840,
+	height : 200
+});
+
+}
+
 function montarColunaSemFornecedor(){
 	
 	$(".encalheCotaGrid").flexigrid({
@@ -373,7 +507,7 @@ function popup_consignado() {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					
-					$(".grids").show();
+					$(".gridsConsignado").show();
 					
 				},
 				
@@ -463,6 +597,36 @@ function popup_encargos() {
 </head>
 
 <body>
+
+<div id="dialog-novo" title="Consignados">
+     
+	<fieldset>
+    	<strong><span id="datacotanome"></span></strong>
+    	
+    	 <div class="gridsConsignado" style="display: none;">
+        
+        	<table class="consignadoGrid"></table>
+        
+        		<span class="bt_novos" title="Gerar Arquivo">
+        			<a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+				<span class="bt_novos" title="Imprimir">
+					<a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>      
+				<div align="right">
+								
+					<table>
+						<tr>
+							<td><strong>Total R$:</strong></td>
+							<td> </td>
+						</tr>				
+						<tr>
+							<td></td>													
+							<td><span id="listaInfoConsignado"></span></td>
+						</tr>						
+					</table>			
+				</div>       	
+	    </div>  
+    </fieldset>
+</div>
 
 <div id="dialog-encalhe" title="Encalhe da Cota">
 	<fieldset>

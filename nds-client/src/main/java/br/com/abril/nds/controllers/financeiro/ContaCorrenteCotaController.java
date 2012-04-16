@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
 import br.com.abril.nds.dto.ResultadosEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
@@ -162,11 +164,40 @@ public class ContaCorrenteCotaController {
 		
 	}
 	
-	
-	public void teste(){
+	/**
+	 * Consulta Consignados da cota em uma determinada data
+	 * @param filtroConsolidadoConsignadoCotaDTO
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 */
+	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtroConsolidadoConsignadoCotaDTO, String sortname, String sortorder, int rp, int page){
 		
-		result.use(Results.json()).withoutRoot().from("guilherme").serialize();
+		List<ConsignadoCotaDTO> listaConsignadoCota = null;
+		
+		if(listaConsignadoCota != null){
+			TableModel<CellModel> tableModel = obterTableModelParaConsignadoCota(listaConsignadoCota);
+			
+			/*ResultadosEncalheCotaDTO resultado = new ResultadosEncalheCotaDTO(
+					tableModel,
+					contaCorrente.getDataConsolidado().toString(),
+					listaInfoTotalFornecedor );
+			
+			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
+			
+			Object[] dados = new Object[2];
+			dados[0] = temMaisQueUm;
+			dados[1] = resultado;	*/	
+						
+			//result.use(Results.json()).from(dados, "result").recursive().serialize();
+		} else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Consolidado não encontrado.");
+		}
+		
 	}
+	
+	
 	
 	/**
 	 * Método para verificação de quantidade de fornecedor para ocultar coluna na grid
@@ -188,6 +219,26 @@ public class ContaCorrenteCotaController {
 		}
 		
 		return temMaisQueUm;
+	}
+	
+	private boolean  verificarQuantidadeFornecedorEncalhe(List<ConsignadoCotaDTO> listaConsignadoCota){
+		
+		String nomeFornecedor = null;
+		boolean temMaisQueUm = false;
+		
+		for(ConsignadoCotaDTO consignadoCotaDTO : listaConsignadoCota){
+			
+			if(nomeFornecedor == null && consignadoCotaDTO.getNomeFornecedor() != null){
+				nomeFornecedor = consignadoCotaDTO.getNomeFornecedor();
+			}
+			
+			if(!nomeFornecedor.equals(consignadoCotaDTO.getNomeFornecedor()) ){
+				temMaisQueUm = true;
+			}
+		}
+		
+		return temMaisQueUm;
+		
 	}
 	
 		
@@ -522,6 +573,74 @@ public class ContaCorrenteCotaController {
 		tableModel.setRows(listaModeloGenerico);
 		
 		return tableModel;		
+	}
+	
+	private TableModel<CellModel> obterTableModelParaConsignadoCota(List<ConsignadoCotaDTO> listaConsigandoCota) {
+		
+		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+		
+		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
+		
+		int counter = 1;
+		
+		boolean temMaisQueUm = verificarQuantidadeFornecedorEncalhe(listaConsigandoCota);		
+				
+		for(ConsignadoCotaDTO dto : listaConsigandoCota) {
+			
+			String codigoProduto 		 = dto.getCodigoProduto().toString();
+			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
+			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
+			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
+			String reparteSugerido		 = (dto.getReparteSugerido()    == null)	? "0.0" : dto.getReparteFinal().toString();
+			String reparteFinal			 = (dto.getReparteFinal()		== null)	? "0.0" : dto.getReparteFinal().toString();
+			String diferenca			 = (dto.getDiferenca()		    == null)	? "0.0" : dto.getDiferenca().toString();
+			String motivo   			 = (dto.getMotivo()		        == null)	? "0.0" : dto.getMotivo().toString();
+			String nomeFornecedor		 = (dto.getNomeFornecedor()     == null)	? "0.0" : dto.getNomeFornecedor().toString();			
+			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
+					
+			if(temMaisQueUm){
+				listaModeloGenerico.add(
+						new CellModel( 	
+								counter, 
+								codigoProduto, 
+								nomeProduto, 
+								numeroEdicao, 
+								precoCapa, 
+								precoComDesconto,
+								reparteSugerido,
+								reparteFinal,
+								diferenca,
+								motivo,
+								nomeFornecedor,
+								total
+						));
+			}else{
+				listaModeloGenerico.add(
+						new CellModel( 	
+								counter, 
+								codigoProduto, 
+								nomeProduto, 
+								numeroEdicao, 
+								precoCapa, 
+								precoComDesconto,
+								reparteSugerido,
+								reparteFinal,
+								diferenca,
+								motivo,
+								total
+						));
+			}		
+			
+			counter++;			
+		}
+		
+		tableModel.setPage(1);
+		tableModel.setTotal(listaModeloGenerico.size());
+		tableModel.setRows(listaModeloGenerico);
+		
+		return tableModel;	
+		
 	}
 			
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
