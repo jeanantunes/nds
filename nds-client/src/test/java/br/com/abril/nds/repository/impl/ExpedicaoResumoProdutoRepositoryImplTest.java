@@ -131,7 +131,10 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 				save(itemFisico);
 				
 				
-				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				MovimentoEstoque movimentoEstoque  = 
+					Fixture.movimentoEstoque(itemFisico, produtoEdicao, tipoMovimentoFaltDe, usuario,
+						estoque, new Date(), new BigDecimal(1),
+						StatusAprovacao.APROVADO, "Aprovado");
 				
 				save(movimentoEstoque);
 				

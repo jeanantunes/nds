@@ -99,9 +99,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void setupHistoricoInadimplencia() {
 		
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte = Fixture
-				.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinanceiroReparte);
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebReparte = Fixture
+				.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(tipoMovimentoFinanceiroRecebReparte);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
 		save(tipoProdutoRevista);
@@ -135,8 +135,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinenceiroReparte);
+		//save(tipoMovimentoFinenceiroReparte);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
@@ -151,7 +150,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
+				cota, tipoMovimentoFinanceiroRecebReparte, usuarioJoao,
 				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		

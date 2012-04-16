@@ -80,6 +80,10 @@ public class FiadorController {
 	public void pesquisarFiador(FiltroConsultaFiadorDTO filtro, String sortorder, 
 			String sortname, Integer page, Integer rp, ValidacaoVO validacaoVO){
 		
+		if (filtro == null){
+			filtro = (FiltroConsultaFiadorDTO) this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
+		}
+		
 		if (page == null){
 			page = 1;
 		}
@@ -102,6 +106,10 @@ public class FiadorController {
 		}
 		
 		if (filtro.getPaginacaoVO() == null){
+			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
+		}
+		
+		if (sortorder != null){
 			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
 		}
 		
@@ -162,17 +170,29 @@ public class FiadorController {
 		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = (FiltroConsultaFiadorDTO) 
 				this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
 		
+		if (filtroConsultaFiadorDTO == null){
+			filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+			filtroConsultaFiadorDTO.setCpfCnpj(pessoa.getCpf());
+		}
+		
 		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
 	}
 	
-	public void buscarPessoaCPF(String cpf){
+	@Post
+	public void buscarPessoaCPF(String cpf, boolean isFiador, String cpfConjuge){
 		
 		List<String> dados = null;
 		
 		if (cpf != null){
 			
 			cpf = cpf.replace("-", "").replace(".", "");
-			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf);
+			
+			if (cpfConjuge != null){
+				cpfConjuge = cpfConjuge.replace("-", "").replace(".", "");
+			}
+			
+			
+			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
 			
 			if (fisica != null){
 				dados = new ArrayList<String>();
@@ -209,6 +229,29 @@ public class FiadorController {
 		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
 	}
 	
+	@Post
+	public void buscarPessoaCNPJ(String cnpj){
+		List<String> dados = null;
+		
+		if (cnpj != null){
+			
+			cnpj = cnpj.replace("-", "").replace(".", "").replace("/", "");
+			PessoaJuridica juridica = this.pessoaService.buscarPessoaPorCNPJ(cnpj);
+			
+			if (juridica != null){
+				dados = new ArrayList<String>();
+				
+				dados.add(juridica.getRazaoSocial());
+				dados.add(juridica.getNomeFantasia());
+				dados.add(juridica.getInscricaoEstadual());
+				dados.add(Util.adicionarMascaraCNPJ(juridica.getCnpj()));
+				dados.add(juridica.getEmail());
+			}
+		}
+		
+		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void preencherDadosFiador(Pessoa pessoa) {
 		
@@ -219,8 +262,8 @@ public class FiadorController {
 			if (p.getConjuge() != null){
 				
 				p.getConjuge().setEstadoCivil(EstadoCivil.CASADO);
-				p.getConjuge().setCpf(p.getCpf().replace(".", "").replace("-", ""));
-				p.getConjuge().setRg(p.getRg().replace("-", "").replace(".", ""));
+				p.getConjuge().setCpf(p.getConjuge().getCpf().replace(".", "").replace("-", ""));
+				p.getConjuge().setRg(p.getConjuge().getRg().replace("-", "").replace(".", ""));
 			}
 			
 			p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
@@ -243,8 +286,8 @@ public class FiadorController {
 					if (p.getConjuge() != null){
 						
 						p.getConjuge().setEstadoCivil(EstadoCivil.CASADO);
-						p.getConjuge().setCpf(p.getCpf().replace(".", "").replace("-", ""));
-						p.getConjuge().setRg(p.getRg().replace("-", "").replace(".", ""));
+						p.getConjuge().setCpf(p.getConjuge().getCpf().replace(".", "").replace("-", ""));
+						p.getConjuge().setRg(p.getConjuge().getRg().replace("-", "").replace(".", ""));
 					}
 					
 					p.setCpf(p.getCpf().replace(".", "").replace("-", ""));
@@ -324,6 +367,11 @@ public class FiadorController {
 		
 		FiltroConsultaFiadorDTO filtroConsultaFiadorDTO = (FiltroConsultaFiadorDTO) 
 				this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
+		
+		if (filtroConsultaFiadorDTO == null){
+			filtroConsultaFiadorDTO = new FiltroConsultaFiadorDTO();
+			filtroConsultaFiadorDTO.setCpfCnpj(fiador.getCnpj());
+		}
 		
 		this.pesquisarFiador(filtroConsultaFiadorDTO, null, null, null, null, validacaoVO);
 	}
@@ -509,6 +557,11 @@ public class FiadorController {
 		
 		//dados do conjuge
 		if (pessoa.getConjuge() != null){
+			
+			if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
+				msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
+			}
+			
 			pessoa = pessoa.getConjuge();
 			
 			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){

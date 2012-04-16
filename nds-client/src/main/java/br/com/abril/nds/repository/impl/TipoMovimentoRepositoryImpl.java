@@ -1,5 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -15,6 +19,16 @@ import br.com.abril.nds.repository.TipoMovimentoRepository;
 public class TipoMovimentoRepositoryImpl extends AbstractRepository<TipoMovimento, Long> 
 										 implements TipoMovimentoRepository {
 
+	@SuppressWarnings("unchecked")
+	public List<TipoMovimento> obterTiposMovimento() {
+		
+		Criteria criteria = super.getSession().createCriteria(TipoMovimento.class);
+		
+		criteria.addOrder(Order.asc("descricao"));
+		
+		return criteria.list();
+	}
+	
 	/**
 	 * Construtor padrão.
 	 */

@@ -26,7 +26,7 @@ public class TipoMovimentoServiceImpl implements TipoMovimentoService {
 	@Transactional(readOnly = true)
 	public List<TipoMovimento> obterTiposMovimento() {
 		
-		return tipoMovimentoRepository.buscarTodos();
+		return tipoMovimentoRepository.obterTiposMovimento();
 	}
 	
 }

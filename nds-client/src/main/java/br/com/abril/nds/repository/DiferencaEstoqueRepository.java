@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
@@ -39,19 +40,23 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	 * de acordo com o filtro.
 	 * 
 	 * @param filtro - filtro de pesquisa
+	 * @param dataLimiteLancamentoPesquisa - Data limite de lançamento para realizar a pesquisa
 	 * 
 	 * @return {@link List<Diferenca>}
 	 */
-	List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
+	List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+									Date dataLimiteLancamentoPesquisa);
 	
 	/**
 	 * Obtém a quantidade total de registros de diferenças para consulta.
 	 * 
 	 * @param filtro - filtro de pesquisa
+	 * @param dataLimiteLancamentoPesquisa - Data limite de lançamento para realizar a pesquisa
 	 * 
 	 * @return Quantidade total de registros de diferenças para consulta
 	 */
-	Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro);
+	Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+							  Date dataLimiteLancamentoPesquisa);
 	
 	/**
 	 * Verifica se a diferença foi lançada automaticamente (pelo recebimento físico)

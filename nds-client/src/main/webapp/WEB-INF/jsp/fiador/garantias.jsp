@@ -5,13 +5,13 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Descrição',
-				name : 'descricao',
+				name : 'garantia.descricao',
 				width : 510,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'valor',
+				name : 'garantia.valor',
 				width : 130,
 				sortable : true,
 				align : 'right'
@@ -24,8 +24,12 @@
 			} ],
 			width : 770,
 			height : 150,
+			sortname : "garantia.descricao",
+			sortorder : "asc",
 			disableSelect: true
 		});
+		
+		$(".imoveisGrid").flexOptions({url: "<c:url value='/cadastro/fiador/obterGarantiasFiador'/>"});
 		
 		$("#valorGarantia").numeric();
 	});
@@ -177,12 +181,12 @@
 	style="text-align: left; display: s;" class="fiadorPF">
 	<tr>
 		<td>Valor R$:</td>
-		<td><input type="text" style="width: 100px" id="valorGarantia" /></td>
+		<td><input type="text" style="width: 100px" id="valorGarantia" maxlength="255"/></td>
 	</tr>
 	<tr>
 		<td>Descrição:</td>
 		<td>
-			<textarea name="textarea2" rows="4" style="width: 600px" id="descricaoGarantia"></textarea>
+			<textarea name="textarea2" rows="4" style="width: 600px" id="descricaoGarantia" maxlength="255"></textarea>
 		</td>
 	</tr>
 	<tr>
