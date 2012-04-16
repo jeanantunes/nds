@@ -343,6 +343,19 @@ fieldset label {
 							</li>
 						</ul>
 					</li>
+					
+					<li>
+						<span class="classNFe">&nbsp;</span><a
+						href="javascript:;">NF-e</a>
+						<ul>
+							
+							<li>
+								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
+							</li>
+							
+						</ul>
+					</li>
+					
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
 						<ul>

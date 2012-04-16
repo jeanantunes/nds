@@ -28,6 +28,8 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoEntregador;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -54,6 +56,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
@@ -444,6 +447,8 @@ public class DataLoader {
 		gerarCargaHistoricoSituacaoCota(session, 100);
 		
 		gerarCargaDadosConsultaEncalhe(session);
+		
+		gerarEntregadores(session);
 		
 	}
 
@@ -1016,12 +1021,12 @@ public class DataLoader {
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
-		MovimentoEstoque movimentoRecFisicoVeja1 = Fixture.movimentoEstoque(
-				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
-				estoqueProdutoVeja1, StatusAprovacao.APROVADO, "Aprovado");
+		MovimentoEstoque movimentoRecFisicoVeja1 = 
+			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
+				 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+				 StatusAprovacao.APROVADO, "Aprovado");
 		
 		session.save(movimentoRecFisicoVeja1);
-		session.update(estoqueProdutoVeja1);
 		
 		MovimentoEstoque movimentoEstoque1 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoFaltaEm, usuarioJoao,
@@ -1826,7 +1831,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, null);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, null);
 			
 			session.save(movimentoEstoqueDiferenca);
 			
@@ -1842,14 +1847,14 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, null);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, null);
 			
 			session.save(movimentoEstoqueDiferenca);
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(
 					new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true);
+						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
 			
 			session.save(diferenca);
 		}
@@ -1943,7 +1948,10 @@ public class DataLoader {
 				session.save(itemFisico);
 				
 				
-				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				MovimentoEstoque movimentoEstoque  = 
+					Fixture.movimentoEstoque(itemFisico, produtoEdicao, tipoMovimentoFaltDe, usuario,
+						estoque, new Date(), new BigDecimal(1),
+						StatusAprovacao.APROVADO, "Aprovado");
 				
 				session.save(movimentoEstoque);
 				
@@ -3917,5 +3925,67 @@ public class DataLoader {
 			session.save(historicoSituacaoCota);
 		}
 	}
-	
+
+	private static void gerarEntregadores(Session session) {
+
+		juridicaAcme.setNomeFantasia("Zaroio");
+
+		Entregador entregador = Fixture.criarEntregador(
+				234L, true, new Date(), 
+				BigDecimal.TEN, juridicaAcme, false, null);
+		
+		save(session, juridicaAcme, entregador);
+		
+		juridicaFc.setNomeFantasia("Pregaless");
+		
+		entregador = Fixture.criarEntregador(
+				123L, false, new Date(), 
+				null, juridicaFc, false, null);
+		save(session, juridicaFc, entregador);
+
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP");
+		
+		EnderecoEntregador enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COMERCIAL);
+		
+		Telefone telefone = Fixture.telefone("19", "36560000", null);
+		
+		TelefoneEntregador telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.COMERCIAL);
+
+		save(session, endereco, enderecoEntregador, telefone, telefoneEntregador);
+
+		jose.setApelido("Mistura");
+		
+		entregador = Fixture.criarEntregador(
+				345L, false, new Date(), 
+				null, jose, false, null);
+		save(session, jose, entregador);
+		
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP");
+		
+		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COBRANCA);
+		
+		telefone = Fixture.telefone("19", "36112887", null);
+		
+		telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.CELULAR);
+
+		save(session, endereco, enderecoEntregador, telefone, telefoneEntregador);
+
+		maria.setApelido("Tranca-rua");
+		
+		save(session, maria);
+		
+		entregador = Fixture.criarEntregador(
+				456L, false, new Date(), 
+				null, maria, false, null);
+
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP");
+		
+		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);
+
+		telefone = Fixture.telefone("11", "31053333", null);
+		
+		telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.CELULAR);
+
+		save(session, entregador, endereco, enderecoEntregador, telefone, telefoneEntregador);
+	}
 }

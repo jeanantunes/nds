@@ -248,7 +248,6 @@
 		
 		$(".enderecosGrid").flexigrid({
 			preProcess: processarResultadoConsultaEndereco,
-			//url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
 			dataType : 'json',
 			colModel : [  {
 				display : 'Tipo Endereço',

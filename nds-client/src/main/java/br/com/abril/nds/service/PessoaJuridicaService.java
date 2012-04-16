@@ -6,5 +6,6 @@ public interface PessoaJuridicaService {
 
 	PessoaJuridica buscarPorCnpj(String cnpj);
 	PessoaJuridica buscarCnpjPorFornecedor(String nomeFantasia);
-	
+	PessoaJuridica salvarPessoaJuridica(PessoaJuridica pessoaJuridica);
+
 }

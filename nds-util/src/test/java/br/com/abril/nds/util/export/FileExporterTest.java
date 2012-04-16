@@ -11,6 +11,12 @@ import java.util.List;
 import org.junit.Test;
 
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.vo.ExportFilterTestVO;
+import br.com.abril.nds.util.export.vo.ExportFooterSmallAlignlessTestVO;
+import br.com.abril.nds.util.export.vo.ExportFooterSmallTestVO;
+import br.com.abril.nds.util.export.vo.ExportFooterTestVO;
+import br.com.abril.nds.util.export.vo.ExportTestSmallVO;
+import br.com.abril.nds.util.export.vo.ExportTestVO;
 
 
 public class FileExporterTest {
@@ -108,6 +114,19 @@ public class FileExporterTest {
 				exportParameters.getDataList(), exportParameters.getListClass(), outputStream);
 	}
 	
+	@Test
+	public void exportSmallAlignlessPDF() throws FileNotFoundException {
+		
+		OutputStream outputStream = new FileOutputStream("target/testeSmallAlignless" + new Date().getTime() + ".pdf");
+		
+		ExportParameters<ExportTestSmallVO, ExportFilterTestVO, ExportFooterSmallAlignlessTestVO> exportParameters =
+			this.getExportParametersForSmallAlignless();
+		
+		FileExporter.to("testeSmallAlignless", FileType.PDF).inOutputStream(
+			exportParameters.getNdsFileHeader(), exportParameters.getFilter(), exportParameters.getFooter(), 
+				exportParameters.getDataList(), exportParameters.getListClass(), outputStream);
+	}
+	
 	private ExportParameters<ExportTestVO, ExportFilterTestVO, ExportFooterTestVO> getExportParametersForLarge() {
 		
 		ExportParameters<ExportTestVO, ExportFilterTestVO, ExportFooterTestVO> exportParameters =
@@ -171,6 +190,42 @@ public class FileExporterTest {
 		
 		ExportFooterSmallTestVO exportFooterSmallTestVO = 
 			new ExportFooterSmallTestVO(
+				new BigDecimal("999.99999"), new BigDecimal("999.99999"), 999L);
+		
+		exportParameters.setNdsFileHeader(ndsFileHeader);
+		exportParameters.setFilter(exportFilterTestVO);
+		exportParameters.setDataList(listaExportTestSmallVOs);
+		exportParameters.setListClass(ExportTestSmallVO.class);
+		exportParameters.setFooter(exportFooterSmallTestVO);
+		
+		return exportParameters;
+	}
+	
+	private ExportParameters<ExportTestSmallVO, ExportFilterTestVO, ExportFooterSmallAlignlessTestVO> getExportParametersForSmallAlignless() {
+		
+		ExportParameters<ExportTestSmallVO, ExportFilterTestVO, ExportFooterSmallAlignlessTestVO> exportParameters =
+			new ExportParameters<ExportTestSmallVO, ExportFilterTestVO, ExportFooterSmallAlignlessTestVO>();
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		ndsFileHeader.setNomeDistribuidor("Treelog S/A. Logística e Distribuição - SP ");
+		ndsFileHeader.setCnpjDistribuidor("00.000.000/00001-00");
+		ndsFileHeader.setData(new Date());
+		ndsFileHeader.setNomeUsuario("Antonio Carlos Pereira");
+		
+		ExportFilterTestVO exportFilterTestVO = 
+			new ExportFilterTestVO("1111111111111111", "2", "3", "4", "5", "6", "7");
+		
+		List<ExportTestSmallVO> listaExportTestSmallVOs = new ArrayList<ExportTestSmallVO>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			listaExportTestSmallVOs.add(
+				new ExportTestSmallVO("" + i, "" + i, "" + i, "" + i, "" + i));
+		}
+		
+		ExportFooterSmallAlignlessTestVO exportFooterSmallTestVO = 
+			new ExportFooterSmallAlignlessTestVO(
 				new BigDecimal("999.99999"), new BigDecimal("999.99999"), 999L);
 		
 		exportParameters.setNdsFileHeader(ndsFileHeader);

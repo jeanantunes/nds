@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -146,7 +147,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 * @throws JRException
 	 */
 	
-	private byte[] gerarDocumentoCobrancas(List<String> listNossoNumero) throws JRException {
+	private byte[] gerarDocumentoCobrancas(List<String> listNossoNumero) throws Exception {
 		
 		List<CobrancaImpressaoDTO> cobrancas = new ArrayList<CobrancaImpressaoDTO>();
 		
@@ -188,7 +189,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 * @throws AutenticacaoEmailException
 	 * @throws JRException 
 	 */
-	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, JRException {
+	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, Exception {
 
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -217,7 +218,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 * @return byte[]
 	 * @throws JRException
 	 */
-	private byte[] getDocumentoCobranca(Cobranca... cobrancas) throws JRException{
+	private byte[] getDocumentoCobranca(Cobranca... cobrancas) throws Exception{
 		
 		Distribuidor distribuidor  = distribuidorService.obter();
 		
@@ -236,14 +237,17 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 * @return  byte[] 
 	 * @throws JRException
 	 */
-	private byte[] gerarDocumentoIreport(List<CobrancaImpressaoDTO> list) throws JRException{
+	private byte[] gerarDocumentoIreport(List<CobrancaImpressaoDTO> list) throws Exception{
 		
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
 		 Map<String, Object> map = getInformacoesDistribuido();
+		 URL url = Thread.currentThread().getContextClassLoader()
+				 	.getResource("/reports/cobranca.jasper");
+		 //Executa o decode do path do arquivo
+		 String path = url.toURI().getPath();
 		 
-		 return  JasperRunManager.runReportToPdf(Thread.currentThread().getContextClassLoader()
-				 	.getResource("/reports/cobranca.jasper").getFile(), map, jrDataSource);
+		 return  JasperRunManager.runReportToPdf(path, map, jrDataSource);
 	}
 	
 	/**
@@ -341,4 +345,5 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		return impressaoDTO;
 	}
+	
 }
