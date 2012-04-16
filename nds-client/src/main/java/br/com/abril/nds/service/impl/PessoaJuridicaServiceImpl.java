@@ -23,5 +23,15 @@ public class PessoaJuridicaServiceImpl implements PessoaJuridicaService {
 	public PessoaJuridica buscarCnpjPorFornecedor(String nomeFantasia){
 		return pessoaJuridicaRepository.buscarCnpjPorFornecedor(nomeFantasia);
 	}
-	
+
+	/**
+	 * @see br.com.abril.nds.service.PessoaJuridicaService#salvarPessoaJuridica(br.com.abril.nds.model.cadastro.PessoaJuridica)
+	 */
+	@Override
+	@Transactional
+	public PessoaJuridica salvarPessoaJuridica(PessoaJuridica pessoaJuridica) {
+		
+		return this.pessoaJuridicaRepository.merge(pessoaJuridica);
+	}
+
 }

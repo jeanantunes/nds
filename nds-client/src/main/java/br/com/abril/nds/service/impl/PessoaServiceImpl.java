@@ -34,6 +34,16 @@ public class PessoaServiceImpl implements PessoaService {
 		return this.pessoaRepository.obterSociosPorFiador(idFiador);
 	}
 	
+
+	/**
+	 * @see br.com.abril.nds.service.PessoaService#salvarPessoa(br.com.abril.nds.model.cadastro.Pessoa)
+	 */
+	@Override
+	@Transactional
+	public void salvarPessoa(Pessoa pessoa) {
+
+		this.pessoaRepository.adicionar(pessoa);
+	}
 	@Transactional(readOnly = true)
 	@Override
 	public PessoaFisica buscarPessoaFisicaPorId(Long idPessoa){
@@ -52,7 +62,7 @@ public class PessoaServiceImpl implements PessoaService {
 	public PessoaFisica buscarPessoaPorCPF(String cpf, boolean isFiador, String cpfConjuge){
 		
 		if (cpf == null || cpf.trim().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "CPF √© obrigat√≥rio.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "CPF È obrigatÛrio.");
 		}
 		
 		cpf = cpf.trim();
@@ -62,7 +72,7 @@ public class PessoaServiceImpl implements PessoaService {
 		if (pessoaFisica != null && !isFiador && pessoaFisica.getConjuge() != null && !pessoaFisica.getConjuge().getCpf().equals(cpfConjuge)){
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					"A pessoa de CPF " + Util.adicionarMascaraCPF(pessoaFisica.getCpf()) + " j√° √© conjuge de outra pessoa.");
+					"A pessoa de CPF " + Util.adicionarMascaraCPF(pessoaFisica.getCpf()) + " j· È conjuge de outra pessoa.");
 		}
 		
 		return pessoaFisica;
@@ -73,7 +83,7 @@ public class PessoaServiceImpl implements PessoaService {
 	public PessoaJuridica buscarPessoaPorCNPJ(String cnpj) {
 		
 		if (cnpj == null || cnpj.trim().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "CNPJ √© obrigat√≥rio.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "CNPJ È obrigatÛrio.");
 		}
 		
 		cnpj = cnpj.trim();
