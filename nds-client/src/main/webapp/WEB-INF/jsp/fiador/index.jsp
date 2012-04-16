@@ -119,8 +119,6 @@
 		
 		function exibirGridFiadoresCadastrados(){
 			
-			$(".pessoasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarFiador'/>"});
-			
 			var data = "filtro.nome=" + $("#nomeFiadorPesquisa").val() + "&filtro.cpfCnpj=" + $("#cpfCnpjFiadorPesquisa").val();
 			$.postJSON("<c:url value='/cadastro/fiador/pesquisarFiador'/>", data, 
 				function(result){
@@ -201,6 +199,8 @@
 				width : 960,
 				height : 255
 			});
+			
+			$(".pessoasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarFiador'/>"});
 		});
 		
 		function processarResultadoConsultaFiadores(data){
