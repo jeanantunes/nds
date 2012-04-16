@@ -1016,12 +1016,12 @@ public class DataLoader {
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
-		MovimentoEstoque movimentoRecFisicoVeja1 = Fixture.movimentoEstoque(
-				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
-				estoqueProdutoVeja1, StatusAprovacao.APROVADO, "Aprovado");
+		MovimentoEstoque movimentoRecFisicoVeja1 = 
+			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
+				 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+				 StatusAprovacao.APROVADO, "Aprovado");
 		
 		session.save(movimentoRecFisicoVeja1);
-		session.update(estoqueProdutoVeja1);
 		
 		MovimentoEstoque movimentoEstoque1 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoFaltaEm, usuarioJoao,
@@ -1826,7 +1826,7 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, null);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, null);
 			
 			session.save(movimentoEstoqueDiferenca);
 			
@@ -1842,14 +1842,14 @@ public class DataLoader {
 			
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.APROVADO, null);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, null);
 			
 			session.save(movimentoEstoqueDiferenca);
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(
 					new BigDecimal(i), usuario, produtoEdicao, tipoDiferenca, 
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true);
+						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
 			
 			session.save(diferenca);
 		}
@@ -1943,7 +1943,10 @@ public class DataLoader {
 				session.save(itemFisico);
 				
 				
-				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				MovimentoEstoque movimentoEstoque  = 
+					Fixture.movimentoEstoque(itemFisico, produtoEdicao, tipoMovimentoFaltDe, usuario,
+						estoque, new Date(), new BigDecimal(1),
+						StatusAprovacao.APROVADO, "Aprovado");
 				
 				session.save(movimentoEstoque);
 				

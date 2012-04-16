@@ -823,31 +823,6 @@ public class Fixture {
 		
 		return estoqueProdutoCota;
 	}
-
-	public static MovimentoEstoque movimentoEstoque(
-			ItemRecebimentoFisico itemRecebimentoFisico,
-			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto,
-			StatusAprovacao statusAprovacao, String motivo) {
-
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setData(new Date());
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
-		movimentoEstoque.setProdutoEdicao(produtoEdicao);
-		movimentoEstoque.setQtde(new BigDecimal(1.0));
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
-		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProduto.getMovimentos().add(movimentoEstoque);
-		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setStatus(statusAprovacao);
-		movimentoEstoque.setMotivo(motivo);
-		return movimentoEstoque;
-	}
 	
 	public static MovimentoEstoque movimentoEstoque(ItemRecebimentoFisico itemRecebimentoFisico,
 													ProdutoEdicao produtoEdicao, 
@@ -926,16 +901,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
-		
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
