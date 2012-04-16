@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -511,10 +511,12 @@ public class RecebimentoFisicoController {
 	@Post
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
+		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			
+			validarItensRecebimento(itensRecebimento);
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		
 		}
@@ -531,6 +533,15 @@ public class RecebimentoFisicoController {
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	}
 	
+	private void validarItensRecebimento(List<RecebimentoFisicoDTO> itensRecebimento) {
+		for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimento){
+			if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().equals(BigDecimal.ZERO) ){
+				throw new ValidacaoException(TipoMensagem.WARNING, "NF interface com Itens sem quantidade física informada.");
+			}
+		}
+		
+	}
+
 	/**
 	 * Limpa os dados mantidos em session.
 	 */

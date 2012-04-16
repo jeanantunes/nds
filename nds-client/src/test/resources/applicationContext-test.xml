@@ -15,9 +15,9 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client-test" />
-		<property name="username" value="root" />
-		<property name="password" value="root" />
+		<property name="url" value="${testDataSourceURL}" />
+		<property name="username" value="${testDataSourceUsername}" />
+		<property name="password" value="${testDataSourcePassword}" />
 	</bean>
 
 	<bean id="sessionFactory"
@@ -29,7 +29,7 @@
 	        	<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.format_sql">false</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
 			</props>
 		</property>
 	</bean>
@@ -70,5 +70,4 @@
 	</bean>
 	
 	 -->
-
 </beans>

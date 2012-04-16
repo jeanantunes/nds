@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -59,7 +60,17 @@ public class FiltroCotaAusenteDTO implements Serializable {
 	}
 
 	public void setData(Date data) {
-		this.data = data;
+		
+		if(data != null) {		
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(data.getTime());
+			cal.clear(Calendar.HOUR);
+			cal.clear(Calendar.MINUTE);
+			cal.clear(Calendar.SECOND);
+			cal.clear(Calendar.MILLISECOND);
+			this.data = cal.getTime();
+		}
+		this.data = null;
 	}
 
 	public String getBox() {

@@ -91,22 +91,6 @@ public class FiltroConsultaEncalheDTO {
 		this.idFornecedor = idFornecedor;
 	}
 
-	/**
-	 * Obtém idCota
-	 *
-	 * @return Long
-	 */
-	public Long getIdCota() {
-		return idCota;
-	}
-
-	/**
-	 * Atribuí idCota
-	 * @param idCota 
-	 */
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
-	}
 
 	/**
 	 * Obtém paginacao
@@ -178,7 +162,24 @@ public class FiltroConsultaEncalheDTO {
 	}
 
 	/**
-	 * Implementa hashCode
+	 * Obtém idCota
+	 *
+	 * @return Long
+	 */
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	/**
+	 * Atribuí idCota
+	 * @param idCota 
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
@@ -197,8 +198,8 @@ public class FiltroConsultaEncalheDTO {
 		return result;
 	}
 
-	/**
-	 * Implementa equals
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -245,6 +246,7 @@ public class FiltroConsultaEncalheDTO {
 		}
 		return true;
 	}
+
 	
 	
 }

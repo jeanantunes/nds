@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.fiscal;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -10,7 +11,9 @@ import javax.persistence.MappedSuperclass;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 
 @MappedSuperclass
-public abstract class NotaFiscal {
+public abstract class NotaFiscal implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Column(name = "DATA_EMISSAO", nullable = false)
 	private Date dataEmissao;

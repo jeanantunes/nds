@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,6 +49,10 @@ public class Banco implements Serializable {
 	private boolean ativo;
 	@Column(name = "INSTRUCOES", nullable = false)
 	private String instrucoes;
+	@Column(name = "JUROS")
+	private BigDecimal juros;
+	@Column(name = "MULTA")
+	private BigDecimal multa;
 	
 	public Long getId() {
 		return id;
@@ -144,6 +149,21 @@ public class Banco implements Serializable {
 	public void setInstrucoes(String instrucoes) {
 		this.instrucoes = instrucoes;
 	}
-	
+
+	public BigDecimal getJuros() {
+		return juros;
+	}
+
+	public void setJuros(BigDecimal juros) {
+		this.juros = juros;
+	}
+
+	public BigDecimal getMulta() {
+		return multa;
+	}
+
+	public void setMulta(BigDecimal multa) {
+		this.multa = multa;
+	}
 	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -14,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -42,6 +43,7 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 public class SuspensaoCotaController {
 
+	protected static final String WARNING_SUSPENSAO_COTA_SUSPENSA = "Não foi possível realizar a suspensão pois a cota já estava suspensa.";
 	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há sugestões para suspensão de cota.";
 	protected static final String NENHUM_REGISTRO_SELECIONADO = "Nenhum registro foi selecionado!";
 	protected static final String SEM_BAIXA_NA_DATA = "Não foi feita baixa bancária na data de operação atual.";
@@ -289,6 +291,13 @@ public class SuspensaoCotaController {
 			try {
 				 cotasExigemContrato = cotaService.suspenderCotasGetDTO(idCotas, getUsuario().getId());
 				 
+				 session.setAttribute("selecionados", null);
+			} catch (InvalidParameterException e) {
+				
+				mensagens.add(WARNING_SUSPENSAO_COTA_SUSPENSA);
+				LOG.error(WARNING_SUSPENSAO_COTA_SUSPENSA, e);
+				status = TipoMensagem.WARNING;
+				
 			} catch(Exception e ) {
 				mensagens.add(ERRO_SUSPENDER_COTAS);
 				LOG.error(ERRO_SUSPENDER_COTAS, e);

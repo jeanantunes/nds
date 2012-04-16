@@ -195,7 +195,7 @@ validarEdicaoCallBack : function() {
 		}
 		
 		limparCamposNovoItem();
-		w
+		
 		$("#dialog-novo-item").dialog({
 			resizable: false,
 			height:480,

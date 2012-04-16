@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -234,7 +234,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
 		
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
-			switch (movimentoFinanceiroCota.getTipoMovimento().getGrupoMovimentoFinaceiro()){
+			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
 				case CREDITO:
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
 					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
@@ -407,7 +407,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						if (consolidadoDivida != null){
 							List<MovimentoFinanceiroCota> movimentoFinanceiroDivida = consolidadoDivida.getMovimentos();
 							for (MovimentoFinanceiroCota m : movimentoFinanceiroDivida){
-								if (m.getTipoMovimento().getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
+								if (((TipoMovimentoFinanceiro) m.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
 									valorMulta = m.getValor();
 									break;
 								}

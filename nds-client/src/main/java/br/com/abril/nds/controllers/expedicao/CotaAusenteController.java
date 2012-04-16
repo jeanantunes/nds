@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,15 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -35,12 +38,14 @@ public class CotaAusenteController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
 	
 	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente na data.";
 	private static final String WARNING_CAMPO_DATA_OBRIGATORIO = "O campo \"Data\" é obrigatório.";
 	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
-	
-	
+	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
+	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
+	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
 	@Autowired
@@ -83,20 +88,50 @@ public class CotaAusenteController {
 	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, 
 			String box,String sortorder, String sortname, int page, int rp) {
 		
-		Date data = validaData(dataAusencia);
+		TipoMensagem status = TipoMensagem.SUCCESS;
 		
-		boolean isDataOperacao = isDataOperacao(data);
-				
-		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
-				data, 
-				(box==null || box.isEmpty()) ? null:box, 
-				numCota, 
-				new PaginacaoVO(page, rp, sortorder), 
-				ColunaOrdenacao.valueOf(sortname));
-				
-		tratarFiltro(filtro);
+		List<String> mensagens = new ArrayList<String>();
+
+		TableModel<CellModelKeyValue<CotaAusenteDTO>> grid = null;
 		
-		efetuarConsulta(filtro, isDataOperacao);
+		try {
+			Date data = validaData(dataAusencia);
+			
+			boolean isDataOperacao = isDataOperacao(data);
+					
+			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
+					data, 
+					(box==null || box.isEmpty()) ? null:box, 
+					numCota, 
+					new PaginacaoVO(page, rp, sortorder), 
+					ColunaOrdenacao.valueOf(sortname));
+					
+			tratarFiltro(filtro);
+			
+			grid = efetuarConsulta(filtro, isDataOperacao);
+		} catch(ValidacaoException e) {
+		
+			mensagens.clear();
+		
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;	
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_PESQUISAR_COTAS_AUSENTES);
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_PESQUISAR_COTAS_AUSENTES, e);
+		}
+	
+		if(grid==null) {
+			grid = new TableModel<CellModelKeyValue<CotaAusenteDTO>>();
+		}
+		
+		Object[] retorno = new Object[3];
+		retorno[0] = grid;
+		retorno[1] = mensagens;
+		retorno[2] = status.name();
+	
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		
 	}
 	
@@ -104,7 +139,7 @@ public class CotaAusenteController {
 	 * Efetua a consulta e monta a estrutura do grid de CotasAusentes.
 	 * @param filtro
 	 */
-	private void efetuarConsulta(FiltroCotaAusenteDTO filtro, boolean isDataOperacao) {
+	private TableModel<CellModelKeyValue<CotaAusenteDTO>> efetuarConsulta(FiltroCotaAusenteDTO filtro, boolean isDataOperacao) {
 		
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
@@ -115,7 +150,7 @@ public class CotaAusenteController {
 		}
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
 		}
 		
 		if(!isDataOperacao) {
@@ -134,8 +169,7 @@ public class CotaAusenteController {
 		
 		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+		return tableModel;
 	}
 
 	private boolean isDataOperacao(Date data) {
@@ -200,11 +234,44 @@ public class CotaAusenteController {
 	@Post
 	public void enviarParaSuplementar(Integer numCota) {
 	
-		if(numCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		try {
+			
+			if(numCota == null) 
+				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+						
+			cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+			
+			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
+			
+		} catch(ValidacaoException e) {
+			mensagens.clear();
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;
+		
+		} catch(InvalidParameterException e) {
+			mensagens.clear();
+			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
+			status=TipoMensagem.WARNING;			
+		}catch(TipoMovimentoEstoqueInexistente e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.WARNING;
+		} catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_ENVIO_SUPLEMENTAR );
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_ENVIO_SUPLEMENTAR, e);
 		}
 		
-		cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+		Object[] retorno = new Object[2];
+		retorno[0] = mensagens;
+		retorno[1] = status;		
+		
+		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 
 	@Post

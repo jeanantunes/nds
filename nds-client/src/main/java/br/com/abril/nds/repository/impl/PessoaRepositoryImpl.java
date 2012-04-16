@@ -2,10 +2,13 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.PessoaRepository;
 
@@ -44,5 +47,63 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<PessoaFisica> obterSociosPorFiador(Long idFiador){
+		
+		StringBuilder hql = new StringBuilder("select f.socios from Fiador f ");
+		hql.append(" where f.id = :idFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return query.list();
+	}
+
+	@Override
+	public PessoaFisica buscarPorCPF(String cpf) {
+		
+		Criteria criteria = this.getSession().createCriteria(PessoaFisica.class);
+		criteria.add(Restrictions.eq("cpf", cpf));
+		criteria.setMaxResults(1);
+		
+		return (PessoaFisica) criteria.uniqueResult();
+	}
 	
+	@Override
+	public PessoaJuridica buscarPorCNPJ(String cnpj) {
+		
+		Criteria criteria = this.getSession().createCriteria(PessoaJuridica.class);
+		criteria.add(Restrictions.eq("cnpj", cnpj));
+		criteria.setMaxResults(1);
+		
+		return (PessoaJuridica) criteria.uniqueResult();
+	}
+	
+	@Override
+	public Long buscarIdPessoaPorCPF(String cpf) {
+		
+		StringBuilder hql = new StringBuilder("select p.id ");
+		hql.append(" from PessoaFisica p ");
+		hql.append(" where p.cpf = :cpf ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("cpf", cpf);
+		query.setMaxResults(1);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long buscarIdPessoaPorCNPJ(String cnpj) {
+		
+		StringBuilder hql = new StringBuilder("select p.id ");
+		hql.append(" from PessoaJuridica p ");
+		hql.append(" where p.cnpj = :cnpj ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("cnpj", cnpj);
+		query.setMaxResults(1);
+		
+		return (Long) query.uniqueResult();
+	}
 }

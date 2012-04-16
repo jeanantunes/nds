@@ -2,33 +2,60 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
-import br.com.abril.nds.model.aprovacao.Aprovacao;
+import br.com.abril.nds.model.movimentacao.Movimento;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
- * Interface que define serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.ProdutoEdicao}
+ * Interface que define os serviços referentes
+ * ao controle de aprovações.
  * 
  * @author Discover Technology
  */
 public interface ControleAprovacaoService {
 
 	/**
-	 * Obtém as aprovações de acordo com os parâmetros informados.
+	 * Obtém os movimentos para aprovação de acordo com o filtro.
 	 * 
 	 * @param filtro - filtro para a pesquisa
 	 * 
-	 * @return {@link List<Aprovacao>}
+	 * @return {@link List<MovimentoAprovacaoDTO>}
 	 */
-	List<Aprovacao> obterAprovacoes(FiltroControleAprovacaoDTO filtro);
+	List<MovimentoAprovacaoDTO> obterMovimentosAprovacao(FiltroControleAprovacaoDTO filtro);
 	
 	/**
-	 * Obtém o total de aprovações de acordo com os parâmetros informados.
+	 * Obtém o total de movimentos para aprovação de acordo com o filtro.
 	 * 
 	 * @param filtro - filtro para a pesquisa
 	 * 
-	 * @return {@link List<Aprovacao>}
+	 * @return total de movimentos para aprovação
 	 */
-	Long obterTotalAprovacoes(FiltroControleAprovacaoDTO filtro);
+	Long obterTotalMovimentosAprovacao(FiltroControleAprovacaoDTO filtro);
 	
+	/**
+	 * Aprova o movimento referente ao identificador informado.
+	 * 
+	 * @param idMovimento - identificador do movimento
+	 * @param usuario - usuário aprovador
+	 */
+	void aprovarMovimento(Long idMovimento, Usuario usuario);
+	
+	/**
+	 * Rejeita o movimento referente ao identificador informado.
+	 * 
+	 * @param idMovimento - identificador do movimento
+	 * @param motivo - motivo da rejeição
+	 * @param usuario - usuário aprovador
+	 */
+	void rejeitarMovimento(Long idMovimento, String motivo, Usuario usuario);
+	
+	/**
+	 * Realiza aprovação do movimento e chama 
+	 * a atualização do estoque do produto se necessário.
+	 * 
+	 * @param movimento - movimento
+	 * @param usuario - usuário
+	 */
+	void realizarAprovacaoMovimento(Movimento movimento, Usuario usuario);
 }

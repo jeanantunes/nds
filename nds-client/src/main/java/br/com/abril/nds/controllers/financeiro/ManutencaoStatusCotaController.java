@@ -23,10 +23,10 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
@@ -434,7 +434,7 @@ public class ManutencaoStatusCotaController {
 		
 		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
 			
-			listaMensagens.add("Informe o Status!");
+			listaMensagens.add("O preenchimento do campo [Status] é obrigatório!");
 		}
 		
 		if (novoHistoricoSituacaoCota.getCota() == null
@@ -485,13 +485,13 @@ public class ManutencaoStatusCotaController {
 		
 		if (novoHistoricoSituacaoCota.getMotivo() == null) {
 			
-			listaMensagens.add("Informe o Motivo!");
+			listaMensagens.add("O preenchimento do campo [Motivo] é obrigatório!");
 		}
 		
 		if (novoHistoricoSituacaoCota.getDescricao() == null
 				|| novoHistoricoSituacaoCota.getDescricao().trim().isEmpty()) {
 			
-			listaMensagens.add("Informe a Descrição!");
+			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {

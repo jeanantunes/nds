@@ -38,23 +38,25 @@ function cliquePesquisar() {
 
 function processaRetornoPesquisa(result) {
 	
-	//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
-	if (result.mensagens) {
-		exibirMensagem(
-				result.mensagens.tipoMensagem, 
-				result.mensagens.listaMensagens
-		);
-		$(".grids").hide();
-		return result.tableModel;
+	var grid = result[0];
+	var mensagens = result[1];
+	var status = result[2];
+	
+	if(mensagens!=null && mensagens.length!=0) {
+		exibirMensagem(status,mensagens);
 	}
 	
-	$.each(result.rows, function(index, row) {
+	if(!grid.rows) {
+		return grid;
+	}
+	
+	$.each(grid.rows, function(index, row) {
 		
 		row.cell.acao = gerarBotaoExcluir(row.cell.idCotaAusente);		
 		
   	});
 	
-	return result;
+	return grid;
 }
 
 function gerarBotaoExcluir(idCotaAusente) {
@@ -77,16 +79,26 @@ function popupNovaCotaAusente() {
 		buttons: {
 			"Confirmar": function() {
 				
-				var numcota = $('#idNovaCota').attr('value');
+				var numCota = $("#idNovaCota").attr("value");
+				var nomeCota = $("#idNomeNovaCota").attr("value");
 				
+				if($.trim(numCota) == "" || $.trim(nomeCota) == "") {
+					exibirMensagemDialog("WARNING",["O campo \"Cota\" &eacute obrigat&oacuterio."]);	
+					return;
+				}
+												
 				$.postJSON("<c:url value='/cotaAusente/gerarNovaCotaAusente'/>", 
-						"numCota="+numcota, 
+						"numCota="+numCota, 
 						popupConfirmaAusenciaCota);
 				
 				$( this ).dialog( "close" );
 				
 			},
 			"Cancelar": function() {
+				
+				$("#idNovaCota").attr("value","");
+				$("#idNomeNovaCota").attr("value","");
+				
 				$( this ).dialog( "close" );
 			}
 		}
@@ -108,10 +120,6 @@ function popupConfirmaAusenciaCota(numcota) {
 							"numCota="+numcota, 
 							retornoEnvioSuplementar);
 					
-					$( this ).dialog( "close" );
-					$(".grids").show();
-					
-					
 				},
 				"Não": function() {
 					
@@ -124,9 +132,15 @@ function popupConfirmaAusenciaCota(numcota) {
 			}
 		});
 }
-	
+
 function retornoEnvioSuplementar(result) {
 	
+	var mensagens = result[0];
+	var status = result[1];
+	
+	exibirMensagem(status, mensagens);
+	
+	$( "#dialog-confirm" ).dialog("close");
 	
 }
 
@@ -566,6 +580,16 @@ function mostra_grid(){
 
 
 <div id="dialog-novo" title="Incluir Cota Ausente"> 
+
+<div class="effectDialog ui-state-highlight ui-corner-all" 
+		 style="display: none; position: absolute; z-index: 2000; width: 500px;">
+		 
+		<p>
+			<span style="float: left;" class="ui-icon ui-icon-info"></span>
+			<b class="effectDialogText"></b>
+		</p>
+</div>
+
     <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td>Cota:</td>
@@ -573,7 +597,7 @@ function mostra_grid(){
               <td width="446" colspan="3">
  <!-- NOVA COTA - NUM -->     
 <input id="idNovaCota" name="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota');" />
+	onchange="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota',true);" />
 	
 <!-- PESQUISAR NOVA COTA -->           
 	<label style="margin-left:10px;">
@@ -584,7 +608,7 @@ function mostra_grid(){
  <!-- NOVA COTA - NOME -->
 <input id="idNomeNovaCota" name="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
 	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
-		 	   onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota');" />
+		 	   onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota',true);" />
 		 	   
        			</td>
             

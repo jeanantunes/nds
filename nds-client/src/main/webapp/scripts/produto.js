@@ -18,6 +18,12 @@ var produto = {
 					   "codigoProduto=" + codigoProduto,
 					   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
 					   function() { produto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
+		
+		} else {
+		
+			if (errorCallBack) {
+				errorCallBack();
+			}
 		}
 	},
 
@@ -122,6 +128,11 @@ var produto = {
 			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
 					   function(result) { produto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
 					   function() { produto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
+		} else {
+			
+			if (errorCallBack) {
+				errorCallBack();
+			}
 		}
 	},
 	
@@ -162,6 +173,11 @@ var produto = {
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
 					data, function(result) { produto.validaNumeroEdicaoSucessoCallBack(idCodigo, idEdicao, successCallBack); },
 					function() { produto.validarNumeroEdicaoErrorCallBack(idEdicao, errorCallBack); }, isFromModal);
+		} else {
+			
+			if (errorCallBack) {
+				errorCallBack();
+			}
 		}
 	},
 

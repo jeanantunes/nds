@@ -18,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -206,7 +206,7 @@ public class DebitoCreditoCotaController {
 			
 			itemExport.setObservacao(movimeto.getObservacao());
 			
-			itemExport.setTipoMovimentoFinanceiro(movimeto.getTipoMovimento());
+			itemExport.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimeto.getTipoMovimento());
 			
 			itemExport.setUsuario(movimeto.getUsuario());
 			
@@ -487,7 +487,7 @@ public class DebitoCreditoCotaController {
 						  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
 
 		debitoCredito.setDataLancamento(formatField(movimentoFinanceiroCota.getDataCriacao()));
-		debitoCredito.setTipoMovimentoFinanceiro(movimentoFinanceiroCota.getTipoMovimento());
+		debitoCredito.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento());
 		debitoCredito.setDataVencimento(formatField(movimentoFinanceiroCota.getData()));
 		debitoCredito.setNumeroCota(movimentoFinanceiroCota.getCota().getNumeroCota());
 		debitoCredito.setObservacao(movimentoFinanceiroCota.getObservacao());

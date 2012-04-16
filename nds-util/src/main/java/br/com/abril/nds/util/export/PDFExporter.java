@@ -252,8 +252,10 @@ public class PDFExporter implements Exporter {
 		
 		document.add(new Paragraph("Itens Pesquisados", titleFont));
 		
-		PdfPTable pdfTable = new PdfPTable(exportModel.getHeaders().size());
-        
+		//PdfPTable pdfTable = new PdfPTable(exportModel.getHeaders().size());
+		
+		PdfPTable pdfTable = new PdfPTable(this.getDataTableSize(exportModel));
+
 		pdfTable.setWidthPercentage(100F);
 		
 		pdfTable.setSpacingBefore(10F);
@@ -261,6 +263,8 @@ public class PDFExporter implements Exporter {
 		pdfTable.setSpacingAfter(10F);
 		
         pdfTable.setHeaderRows(1);
+        
+        int headerSize = 0;
         
         for (ExportHeader exportHeader : exportModel.getHeaders()) {
         	
@@ -276,11 +280,20 @@ public class PDFExporter implements Exporter {
     		pdfCell.addElement(paragraph);
     		
     		pdfTable.addCell(pdfCell);
+    		
+    		headerSize++;
+    		
+    		if (headerSize == exportModel.getHeaders().size()) {
+    		
+    			pdfTable.completeRow();
+    		}
         }
         
         int rowNum = 0;
-        
+
         for (ExportRow exportRow : exportModel.getRows()) {
+        	
+        	int lineSize = 0;
         	
         	for (ExportColumn exportColumn : exportRow.getColumns()) {
         		
@@ -299,6 +312,13 @@ public class PDFExporter implements Exporter {
         		pdfCell.addElement(paragraph);
         		
         		pdfTable.addCell(pdfCell);
+        		
+        		lineSize++;
+        		
+        		if (lineSize == exportModel.getHeaders().size()) {
+        		
+        			pdfTable.completeRow();
+        		}
         	}
         	
         	rowNum++;
@@ -373,13 +393,14 @@ public class PDFExporter implements Exporter {
     					footerCellCount++;
     				}
         		}
-        		
+
         		if (!exportFooter.getLabel().trim().isEmpty()) {
     				
         			PdfPCell footerLabelPdfCell = new PdfPCell();
         			   
-            		Paragraph footerLabelParagraph = 
-            			new Paragraph(StringUtils.defaultString(exportFooter.getLabel() + ":"), footerLabelFont);
+        			String label = StringUtils.defaultString(exportFooter.getLabel()) + ": ";
+        			
+            		Paragraph footerLabelParagraph = new Paragraph(label, footerLabelFont);
             		
             		footerLabelPdfCell.addElement(footerLabelParagraph);
             		
@@ -436,6 +457,36 @@ public class PDFExporter implements Exporter {
 			
 			pdfTable.addCell(emptyCell);
 		}
+		
+		pdfTable.completeRow();
+	}
+	
+	private int getDataTableSize(ExportModel exportModel) {
+		
+		int headerSize = 0;
+		
+		if (exportModel.getHeaders() != null && !exportModel.getHeaders().isEmpty()) {
+			
+			headerSize = exportModel.getHeaders().size();
+		}
+		
+		int footerSize = 0;
+		
+		if (exportModel.getFooters() != null 
+				&& !exportModel.getFooters().isEmpty()) {
+			
+			for (ExportFooter exportFooter : exportModel.getFooters()) {
+				
+				if (!exportFooter.getLabel().trim().isEmpty()) {
+					
+					footerSize++;
+				}
+				
+				footerSize++;
+			}
+		}
+		
+		return footerSize > headerSize ? footerSize : headerSize;
 	}
 
 }

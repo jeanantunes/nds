@@ -418,7 +418,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		diferenca.setQtde(calculoQdeDiferenca.abs());
 		diferenca.setResponsavel(usuario);
 		diferenca.setProdutoEdicao(produtoEdicao);
-		diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
 		
 		
 		

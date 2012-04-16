@@ -1,7 +1,9 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -10,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.service.ConsultaBaseEnderecoService;
+import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
@@ -46,6 +50,9 @@ public class EnderecoController {
 	@Autowired
 	private ConsultaBaseEnderecoService consultaBaseEnderecoService;
 	
+	@Autowired
+	private FiadorService fiadorService;
+	
 	@Path("/")
 	public void index() {
 		
@@ -64,29 +71,52 @@ public class EnderecoController {
 		List<EnderecoAssociacaoDTO> listaEndereco =
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
-		TableModel<CellModel> tableModelEndereco = new TableModel<CellModel>();
-
 		if (listaEndereco == null) {
 
 			listaEndereco = new ArrayList<EnderecoAssociacaoDTO>();
-
-		} else {
-
-			if (sortname != null) {
-
-				sortorder = sortorder == null ? "asc" : sortorder;
-
-				Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
-
-				PaginacaoUtil.ordenarEmMemoria(listaEndereco, ordenacao, sortname);
+		}
+		
+		Set<Long> idsIgnorar = new HashSet<Long>();
+		
+		List<EnderecoAssociacaoDTO> enderecosRemovidos = (List<EnderecoAssociacaoDTO>) 
+				this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		
+		if (enderecosRemovidos != null){
+			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : enderecosRemovidos){
+				idsIgnorar.add(enderecoAssociacaoDTO.getId());
 			}
+		}
+		
+		for (EnderecoAssociacaoDTO enderecosAdicionado : listaEndereco){
+			idsIgnorar.add(enderecosAdicionado.getEndereco().getId());
+		}
+		
+		TableModel<CellModel> tableModelEndereco = new TableModel<CellModel>();
 
-			tableModelEndereco = getTableModelListaEndereco(listaEndereco);
+		List<EnderecoAssociacaoDTO> listaEnderecosBanco = null;
+		
+		Long idFiador = (Long) this.session.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+		
+		if (idFiador != null){
+			
+			listaEnderecosBanco = this.fiadorService.buscarEnderecosFiador(idFiador, idsIgnorar);
+		}
+		
+		if (listaEnderecosBanco != null){
+			listaEndereco.addAll(listaEnderecosBanco);
+		}
+		if (sortname != null) {
+
+			sortorder = sortorder == null ? "asc" : sortorder;
+
+			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+
+			PaginacaoUtil.ordenarEmMemoria(listaEndereco, ordenacao, sortname);
 		}
 
-		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEndereco);
+		tableModelEndereco = getTableModelListaEndereco(listaEndereco);
 
-		this.result.use(Results.json()).withoutRoot().from(tableModelEndereco).recursive().serialize();
+		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
 	}
 
 	/**
@@ -123,11 +153,9 @@ public class EnderecoController {
 			listaEnderecoAssociacao.add(enderecoAssociacao);
 		}
 
-		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEnderecoAssociacao);
-
 		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
-
-		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
+		
+		this.pesquisarEnderecos(null, null);
 	}
 
 	/**
@@ -146,11 +174,11 @@ public class EnderecoController {
 
 		enderecoAssociacao.setId(idEnderecoAssociacao);
 
-		listaEnderecoAssociacaoSalvar.remove(enderecoAssociacao);
+		if (listaEnderecoAssociacaoSalvar != null){
+			listaEnderecoAssociacaoSalvar.remove(enderecoAssociacao);
+		}
 
 		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacaoSalvar);
-
-		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEnderecoAssociacaoSalvar);
 
 		if (idEnderecoAssociacao >= 0) {
 
@@ -166,8 +194,8 @@ public class EnderecoController {
 
 			this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaEnderecosRemover);
 		}
-
-		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
+		
+		this.pesquisarEnderecos(null, null);
 	}
 
 	/**
@@ -189,6 +217,32 @@ public class EnderecoController {
 		int index = listaEndereco.indexOf(enderecoAssociacao);
 
 		enderecoAssociacao = listaEndereco.get(index);
+		
+		if (enderecoAssociacao == null){
+			
+			Long idFiador = (Long) this.session.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+			
+			if (idFiador != null){
+				EnderecoFiador enderecoFiador = this.fiadorService.buscarEnderecoPorEnderecoFiador(idFiador, idEnderecoAssociacao);
+				
+				if (enderecoFiador != null){
+					
+					enderecoAssociacao = new EnderecoAssociacaoDTO(
+							enderecoFiador.isPrincipal(), 
+							enderecoFiador.getEndereco(), 
+							enderecoFiador.getTipoEndereco(),
+							null);
+					
+					List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
+							(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+									Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+					
+					listaEnderecoAssociacao.add(enderecoAssociacao);
+					
+					this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
+				}
+			}
+		}
 
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
@@ -331,7 +385,7 @@ public class EnderecoController {
 
 			if (enderecoAssociacao.getId() == null) {
 
-				idCellModel = (int) System.currentTimeMillis() * -1;
+				idCellModel = enderecoAssociacao.getEndereco().getId() == null ? (int) System.currentTimeMillis() * -1 : enderecoAssociacao.getEndereco().getId().intValue();
 
 				enderecoAssociacao.setId(idCellModel);
 			}

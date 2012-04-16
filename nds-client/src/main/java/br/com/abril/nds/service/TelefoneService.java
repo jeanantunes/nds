@@ -11,36 +11,26 @@ import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 
 public interface TelefoneService {
 	
-	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
+	void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones);
 	
-	void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
+	void cadastrarTelefone(TelefoneAssociacaoDTO associacaoTelefone);
 	
-	void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota);
-	
-	void removerTelefonesCota(Collection<Long> listaTelefonesCota);
-	
-	List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar);
-	
-	void cadastrarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
-	
-	void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor);
-	
-	void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor);
+	void removerTelefones(Collection<Long> listaTelefones);
 	
 	/**
-	 * M√©todo respons√°vel por salvar uma lista de 
+	 * MÈtodo respons·vel por salvar uma lista de 
 	 * {@link br.com.abril.nds.model.cadastro.Telefone} 
 	 * para um determinado 
 	 * {@link br.com.abril.nds.model.cadastro.Entregador}.
 	 * 
-	 * @param listaTelefonesEntregador - Lista da associa√ß√£o:
+	 * @param listaTelefonesEntregador - Lista da associaÁ„o:
 	 * {@link br.com.abril.nds.model.cadastro.Telefone} / {@link br.com.abril.nds.model.cadastro.Entregador} 
 	 * 
 	 */
 	void salvarTelefonesEntregador(List<TelefoneEntregador> listaTelefonesEntregador);
 	
 	/**
-	 * M√©todo respons√°vel por remover uma lista de 
+	 * MÈtodo respons·vel por remover uma lista de 
 	 * {@link br.com.abril.nds.model.cadastro.Telefone} 
 	 * de um determinado 
 	 * {@link br.com.abril.nds.model.cadastro.Entregador}.

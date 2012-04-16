@@ -25,9 +25,10 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<Telefon
 	public List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar) {
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
-		   .append(" (t.principal, t.telefone, t.tipoTelefone) ")
-		   .append(" from TelefoneFornecedor t ")
-		   .append(" where t.fornecedor.id = :idFornecedor ");
+		   .append(" (t.principal, t.telefone, t.tipoTelefone, telefonePessoa) ")
+		   .append(" from TelefoneFornecedor t, Telefone telefonePessoa ")
+		   .append(" where t.fornecedor.id = :idFornecedor ")
+		   .append("   and t.telefone.id = telefonePessoa.id ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			hql.append(" and t.telefone.id not in (:idsIgnorar) ");

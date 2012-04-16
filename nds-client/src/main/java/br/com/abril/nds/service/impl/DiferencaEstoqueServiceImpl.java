@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RateioCotaVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -92,12 +92,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
 		
-		if (filtro != null) {
-			
-			filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
-		}
-		
-		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
+		return this.diferencaEstoqueRepository.obterDiferencas(filtro, dataInicialLancamento);
 	}
 	
 	@Transactional(readOnly = true)
@@ -105,9 +100,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
 		
-		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
-		
-		return this.diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		return this.diferencaEstoqueRepository.obterTotalDiferencas(filtro, dataInicialLancamento);
 	}
 	
 	@Transactional(readOnly = true)
@@ -191,8 +184,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
 		
 		for (Diferenca diferenca : listaDiferencas) {
-
-			this.processarMovimentoEstoque(diferenca, idUsuario);
 			
 			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
 			
@@ -257,7 +248,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				diferenca.getMovimentoEstoque().getData(),
 					diferenca.getProdutoEdicao().getId(),
 						cota.getId(), idUsuario, rateioCotaVO.getQuantidade(), 
-							diferenca.getMovimentoEstoque().getTipoMovimento());
+							(TipoMovimentoEstoque) diferenca.getMovimentoEstoque().getTipoMovimento());
 		}
 	}
 

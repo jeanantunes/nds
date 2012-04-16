@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.List;
 
@@ -8,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -26,6 +27,7 @@ import br.com.abril.nds.repository.RateioCotaAusenteRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -53,8 +55,14 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Transactional
-	public void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario){
+	public void declararCotaAusente(Integer numCota, Date data, List<RateioCotaAusente> listaDeRateio, Long idUsuario) throws TipoMovimentoEstoqueInexistente{
 
+		
+		
+		if(isCotaAusenteNaData(numCota,data)) {
+			throw new InvalidParameterException();
+		}
+		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
 		
 		CotaAusente cotaAusente = new CotaAusente();
@@ -68,9 +76,27 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		
 		 movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		 
+		 if(listaDeRateio == null || listaDeRateio.size()==0) {
+				return;
+		 }
+		 
 		 gerarRateios(listaDeRateio, movimentosCota, data, idUsuario, cota.getId());
 	}
 	
+
+
+	private boolean isCotaAusenteNaData(Integer numCota, Date data) {
+		
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO();
+		filtro.setData(data);
+		filtro.setNumCota(numCota);
+		
+		if(cotaAusenteRepository.obterCountCotasAusentes(filtro) > 0) {
+			return true;
+		}
+		return false;
+	}
+
 
 
 	/**
@@ -131,11 +157,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	}
 	
 	private void gerarRateios(List<RateioCotaAusente> listaDeRateio, List<MovimentoEstoqueCota> movimentosCota, Date data, Long idUsuario, Long idCota) {
-		
-		if(listaDeRateio == null || listaDeRateio.size()==0) {
-			return;
-		}
-				
+		 		
 		for(MovimentoEstoqueCota movimentoEstoqueCota : movimentosCota) {
 		
 			BigDecimal total = new BigDecimal(0);

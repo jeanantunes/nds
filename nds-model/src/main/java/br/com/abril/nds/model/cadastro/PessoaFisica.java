@@ -8,6 +8,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -28,7 +30,7 @@ public class PessoaFisica extends Pessoa implements Serializable {
 	@Column(name = "NOME")
 	private String nome;
 	
-	@Column(name = "CPF")
+	@Column(name = "CPF", unique = true)
 	private String cpf;
 	
 	@Column(name = "RG")
@@ -60,6 +62,13 @@ public class PessoaFisica extends Pessoa implements Serializable {
 	
 	@Column(name = "APELIDO")
 	private String apelido;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "PESSOA_ID_CONJUGE")
+	private PessoaFisica conjuge;
+	
+	@Column(name = "SOCIO_PRINCIPAL")
+	private boolean socioPrincipal;
 
 	public String getNome() {
 		return nome;
@@ -147,6 +156,22 @@ public class PessoaFisica extends Pessoa implements Serializable {
 
 	public void setNatural(String natural) {
 		this.natural = natural;
+	}
+
+	public PessoaFisica getConjuge() {
+		return conjuge;
+	}
+
+	public void setConjuge(PessoaFisica conjuge) {
+		this.conjuge = conjuge;
+	}
+
+	public boolean isSocioPrincipal() {
+		return socioPrincipal;
+	}
+
+	public void setSocioPrincipal(boolean socioPrincipal) {
+		this.socioPrincipal = socioPrincipal;
 	}
 
 	@Override

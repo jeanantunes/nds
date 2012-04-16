@@ -3,15 +3,14 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
@@ -39,170 +38,31 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
-	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
+	public void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones){
 		
-		if (idCota == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		for (TelefoneAssociacaoDTO associacaoTelefone : listaTelefones){
+			this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
+			
+			if (associacaoTelefone.getTelefone().getId() == null){
+				this.telefoneRepository.adicionar(associacaoTelefone.getTelefone());
+			} else {
+				this.telefoneRepository.alterar(associacaoTelefone.getTelefone());
+			}
 		}
-		
-		List<TelefoneAssociacaoDTO> listaTelAssoc =
-				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
-		
-		List<Telefone> listaTel = this.telefoneCotaRepository.buscarTelefonesPessoaPorCota(idCota);
-		
-		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
-			listaTel.remove(tDto.getTelefone());
-		}
-		
-		for (Telefone telefone : listaTel){
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
-			listaTelAssoc.add(telefoneAssociacaoDTO);
-		}
-		
-		return listaTelAssoc;
 	}
 	
 	@Transactional
 	@Override
-	public void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
-		this.salvarTelefonesCota(listaTelefonesAdicionar);
-		this.removerTelefonesCota(listaTelefonesRemover);
-	}
-
-	@Transactional
-	@Override
-	public void salvarTelefonesCota(List<TelefoneCota> listaTelefonesCota) {
+	public void cadastrarTelefone(TelefoneAssociacaoDTO associacaoTelefone){
 		
-		if (listaTelefonesCota != null){
-			boolean isTelefonePrincipal = false;
-			
-			for (TelefoneCota telefoneCota : listaTelefonesCota){
-				if (telefoneCota == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone cota é obrigatório");
-				}
-				
-				this.valiadarTelefone(telefoneCota.getTelefone(), telefoneCota.getTipoTelefone());
-				
-				if (isTelefonePrincipal && telefoneCota.isPrincipal()){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
-				}
-				
-				if (telefoneCota.isPrincipal()){
-					isTelefonePrincipal = telefoneCota.isPrincipal();
-				}
-				
-				if (telefoneCota.getCota() == null || telefoneCota.getCota().getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório");
-				}
-				
-				if (telefoneCota.getTelefone().getId() == null){
-					this.telefoneRepository.adicionar(telefoneCota.getTelefone());
-				} else {
-					this.telefoneRepository.alterar(telefoneCota.getTelefone());
-				}
-				
-				if (telefoneCota.getId() == null){
-					this.telefoneCotaRepository.adicionar(telefoneCota);
-				} else {
-					this.telefoneCotaRepository.alterar(telefoneCota);
-				}
-			}
-		}
-	}
-
-	@Transactional
-	@Override
-	public void removerTelefonesCota(Collection<Long> listaTelefonesCota) {
+		this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
 		
-		if (listaTelefonesCota != null && !listaTelefonesCota.isEmpty()){
-			this.telefoneCotaRepository.removerTelefonesCota(listaTelefonesCota);
-			
-			this.removerTelefone(listaTelefonesCota);
-		}
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar) {
-		
-		if (idFornecedor == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "IdFornecedor é obrigatório");
-		}
-		
-		List<TelefoneAssociacaoDTO> listaTelAssoc =
-				this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, idsIgnorar);
-		
-		List<Telefone> listaTel = this.telefoneFornecedorRepository.buscarTelefonesPessoaPorFornecedor(idFornecedor);
-		
-		for (TelefoneAssociacaoDTO tDto : listaTelAssoc){
-			listaTel.remove(tDto.getTelefone());
-		}
-		
-		for (Telefone telefone : listaTel){
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
-			listaTelAssoc.add(telefoneAssociacaoDTO);
-		}
-		
-		return listaTelAssoc;
-	}
-	
-	@Transactional
-	@Override
-	public void cadastrarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover){
-		this.salvarTelefonesFornecedor(listaTelefonesAdicionar);
-		this.removerTelefonesFornecedor(listaTelefonesRemover);
-	}
-
-	@Transactional
-	@Override
-	public void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefonesFornecedor) {
-		
-		if (listaTelefonesFornecedor != null){
-			boolean isTelefonePrincipal = false;
-			
-			for (TelefoneFornecedor telefoneFornecedor : listaTelefonesFornecedor){
-				if (telefoneFornecedor == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone fornecedor é obrigatório.");
-				}
-				
-				this.valiadarTelefone(telefoneFornecedor.getTelefone(), telefoneFornecedor.getTipoTelefone());
-				
-				if (isTelefonePrincipal && telefoneFornecedor.isPrincipal()){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
-				}
-				
-				if (telefoneFornecedor.isPrincipal()){
-					isTelefonePrincipal = telefoneFornecedor.isPrincipal();
-				}
-				
-				if (telefoneFornecedor.getFornecedor() == null || telefoneFornecedor.getFornecedor().getId() == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório.");
-				}
-				
-				if (telefoneFornecedor.getTelefone().getId() == null){
-					this.telefoneRepository.adicionar(telefoneFornecedor.getTelefone());
-				} else {
-					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
-				}
-				
-				if (telefoneFornecedor.getId() == null){
-					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
-				} else {
-					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
-				}
-			}
-		}
-	}
-
-	@Transactional
-	@Override
-	public void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
-		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
-			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
-			
-			this.removerTelefone(listaTelefonesFornecedor);
+		if (associacaoTelefone.getTelefone().getId() == null){
+			this.telefoneRepository.adicionar(associacaoTelefone.getTelefone());
+		} else {
+			this.telefoneRepository.alterar(associacaoTelefone.getTelefone());
 		}
 	}
 	
@@ -211,7 +71,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
 		if (telefone == null){
-			mensagensValidacao.add("Telefone é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Telefone é obrigatório.");
 		}
 		
 		if (telefone.getDdd() == null || telefone.getDdd().trim().isEmpty()){
@@ -242,9 +102,10 @@ public class TelefoneServiceImpl implements TelefoneService {
 		}
 	}
 	
-	private void removerTelefone(Collection<Long> listaTelefonesCota) {
+	@Override
+	public void removerTelefones(Collection<Long> listaTelefones) {
 		try {
-			this.telefoneRepository.removerTelefones(listaTelefonesCota);
+			this.telefoneRepository.removerTelefones(listaTelefones);
 		} catch (Exception e) {
 			//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
 			//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer

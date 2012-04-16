@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -54,6 +55,8 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 	
 	@Before
 	public void setup() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
 		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		save(tipoRevista);
@@ -79,7 +82,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 		for(Integer i=1000;i<1010; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"0"+ i, "000.000.000.000", "acme@mail.com");
 			save(juridica);
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
@@ -87,6 +90,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
 			produto.addFornecedor(fornecedor);
+			produto.setEditor(abril);
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
@@ -127,7 +131,10 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 				save(itemFisico);
 				
 				
-				MovimentoEstoque movimentoEstoque  = Fixture.movimentoEstoque(itemFisico, produtoEdicao,tipoMovimentoFaltDe , usuario, estoque, StatusAprovacao.APROVADO, "Teste");
+				MovimentoEstoque movimentoEstoque  = 
+					Fixture.movimentoEstoque(itemFisico, produtoEdicao, tipoMovimentoFaltDe, usuario,
+						estoque, new Date(), new BigDecimal(1),
+						StatusAprovacao.APROVADO, "Aprovado");
 				
 				save(movimentoEstoque);
 				

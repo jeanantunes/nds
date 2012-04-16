@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -39,17 +40,15 @@ public class Fiador implements Serializable {
 	@Column(name = "INICIO_ATIVIDADE")
 	private Date inicioAtividade;
 	
-	@OneToOne
-	@JoinColumn(name = "PESSOA_ID_CONJUGE")
-	private Pessoa conjuge;
-	
 	@OneToMany(mappedBy = "fiador")
 	private List<Cota> cotasAssociadas;
 	
 	@OneToMany(mappedBy = "fiador")
 	private List<Garantia> garantias;
 	
-	@OneToMany(mappedBy = "fiador")
+	@OneToMany
+	@JoinTable(name = "FIADOR_SOCIO", joinColumns = {@JoinColumn(name = "FIADOR_ID")}, 
+									  inverseJoinColumns = {@JoinColumn(name = "SOCIO_ID")})
 	private List<Pessoa> socios;
 
 	public Long getId() {
@@ -74,14 +73,6 @@ public class Fiador implements Serializable {
 
 	public void setInicioAtividade(Date inicioAtividade) {
 		this.inicioAtividade = inicioAtividade;
-	}
-
-	public Pessoa getConjuge() {
-		return conjuge;
-	}
-
-	public void setConjuge(Pessoa conjuge) {
-		this.conjuge = conjuge;
 	}
 
 	public List<Cota> getCotasAssociadas() {

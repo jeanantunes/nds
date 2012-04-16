@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -84,6 +86,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		
 		if (filtro != null) {
 		
 			if (filtro.getDataMovimento() != null) {
@@ -134,6 +138,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -177,7 +183,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 					
 		hql += " from Diferenca diferenca "
 			+  " join diferenca.movimentoEstoque movimentoEstoque "
-			+  " where diferenca.statusConfirmacao = :statusConfirmacao ";
+			+  " where diferenca.statusConfirmacao = :statusConfirmacao "
+			+  " and movimentoEstoque.status = :statusAprovacao ";
 		
 		if (filtro != null) {
 			
@@ -196,9 +203,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+										   Date dataLimiteLancamentoPesquisa) {
 		
-		String hql = this.gerarQueryDiferencas(filtro, false);
+		String hql = this.gerarQueryDiferencas(filtro, dataLimiteLancamentoPesquisa, false);
 		
 		if (filtro != null && filtro.getOrdenacaoColuna() != null) {
 			
@@ -255,7 +263,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		Query query = getSession().createQuery(hql);
 		
-		aplicarParametrosParaPesquisaDiferencas(filtro, query);
+		aplicarParametrosParaPesquisaDiferencas(filtro, dataLimiteLancamentoPesquisa, query);
 		
 		if (filtro != null && filtro.getPaginacao() != null) {
 			
@@ -284,13 +292,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		return listaDiferencas;
 	}
 	
-	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
+	public Long obterTotalDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+									 Date dataLimiteLancamentoPesquisa) {
 		
-		String hql = this.gerarQueryDiferencas(filtro, true);
+		String hql = this.gerarQueryDiferencas(filtro, dataLimiteLancamentoPesquisa, true);
 		
 		Query query = getSession().createQuery(hql);
 		
-		aplicarParametrosParaPesquisaDiferencas(filtro, query);
+		aplicarParametrosParaPesquisaDiferencas(filtro, dataLimiteLancamentoPesquisa, query);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -299,11 +308,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	 * Gera a query de busca de diferenças.
 	 *   
 	 * @param filtro - filtro da pesquisa
+	 * @param dataLimiteLancamentoPesquisa - Data limite de lançamento para realizar a pesquisa
 	 * @param totalizar - flag para contagem de total
 	 * 
 	 * @return Query
 	 */
-	private String gerarQueryDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
+	private String gerarQueryDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+										Date dataLimiteLancamentoPesquisa,
 										boolean totalizar) {
 		
 		String hql;
@@ -335,12 +346,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
 			}
 				 
-			hql += " where diferenca.movimentoEstoque is not null ";
+			hql += " where diferenca.movimentoEstoque is not null "
+				+ " and diferenca.statusConfirmacao = :statusConfirmacao ";
 			
-			if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
+			if (dataLimiteLancamentoPesquisa != null) {
 				hql += " and diferenca.produtoEdicao.id in " +
 					   " 	(select distinct lancamento.produtoEdicao.id from Lancamento lancamento " +
-					   " 		where lancamento.dataLancamentoDistribuidor >= :dataLimiteLancamentoDistribuidor) ";
+					   " 		where lancamento.dataLancamentoDistribuidor >= :dataLimiteLancamentoPesquisa) ";
 			}
 				
 			if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
@@ -355,13 +367,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				hql += " and fornecedores.id = :idFornecedor ";
 			}
 			
-			if (filtro.getPeriodoVO() != null
-					&& filtro.getPeriodoVO().getDataInicial() != null
-					&& filtro.getPeriodoVO().getDataFinal() != null) {
-				
-				hql += " and diferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
-			}
-			
 			if (filtro.getTipoDiferenca() != null) {
 				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
 			}
@@ -374,9 +379,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 	 * Aplica os parâmetros para a busca de diferenças.
 	 *   
 	 * @param filtro - filtro da pesquisa
+	 * @param dataLimiteLancamentoPesquisa - Data limite de lançamento para realizar a pesquisa
 	 * @param query - objeto query
 	 */
-	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro, 
+	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+														 Date dataLimiteLancamentoPesquisa,
 													 	 Query query) {
 		
 		if (filtro == null) {
@@ -384,8 +391,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			return;
 		}
 		
-		if (filtro.getDataLimiteLancamentoDistribuidor() != null) {
-			query.setParameter("dataLimiteLancamentoDistribuidor", filtro.getDataLimiteLancamentoDistribuidor());
+		query.setParameter("statusConfirmacao", StatusConfirmacao.CONFIRMADO);
+		
+		if (dataLimiteLancamentoPesquisa != null) {
+			query.setParameter("dataLimiteLancamentoPesquisa", dataLimiteLancamentoPesquisa);
 		}
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
@@ -398,14 +407,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		if (filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-		
-		if (filtro.getPeriodoVO() != null
-				&& filtro.getPeriodoVO().getDataInicial() != null
-				&& filtro.getPeriodoVO().getDataFinal() != null) {
-			
-			query.setParameter("dataInicial", filtro.getPeriodoVO().getDataInicial());
-			query.setParameter("dataFinal", filtro.getPeriodoVO().getDataFinal());
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {

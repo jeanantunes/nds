@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.util.QuartzUtil;
 
 /**
  * Classe de implementação de serviços referentes a situação de cota.
@@ -75,6 +76,20 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 		}
 		
 		cota.setSituacaoCadastro(historicoSituacaoCota.getNovaSituacao());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.SituacaoCotaService#removerAgendamentosAlteracaoSituacaoCota(java.lang.Long)
+	 */
+	public void removerAgendamentosAlteracaoSituacaoCota(Long idCota) {
+		
+		if (idCota == null) {
+			
+			throw new IllegalArgumentException("ID da Cota nulo!");
+		}
+		
+		QuartzUtil.removeJobsFromGroup(idCota.toString());
 	}
 
 }

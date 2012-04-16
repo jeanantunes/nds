@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -55,14 +56,15 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Before
 	public void setUp() {
-		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
 		
 		Carteira carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
 	    
 		save(carteiraRegistrada);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraRegistrada, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399");
+				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);
 		
@@ -113,8 +115,10 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		save(rotaRoteiroOperacao);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinenceiroReparte);
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
+			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		
+		save(tipoMovimentoFinenceiroRecebimentoReparte);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
@@ -123,6 +127,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(tipoProdutoRevista);
 		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
@@ -140,8 +145,8 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cotaManoel, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), new Date());
+				cotaManoel, tipoMovimentoFinenceiroRecebimentoReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado = Fixture

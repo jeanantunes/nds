@@ -70,12 +70,25 @@
 	}
 
 	function popularGridEnderecos() {
-
-		$(".enderecosGrid").flexOptions({
-			url : '<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
-		});
-
-		$(".enderecosGrid").flexReload();
+		
+		$.postJSON(
+			'<c:url value="/cadastro/endereco/pesquisarEnderecos" />',
+			null,
+			function(result) {
+				$(".enderecosGrid").flexAddData({
+					page: result.page, total: result.total, rows: result.rows
+				});	
+				
+				limparFormEndereco();
+				
+				$("#tipoEndereco").focus();
+			},
+			function(result) {
+				
+				processarResultadoConsultaEndereco(result);
+			},
+			true
+		);
 	}		
 	
 	function incluirNovoEndereco() {

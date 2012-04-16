@@ -1,0 +1,37 @@
+package br.com.abril.nds.repository.impl;
+
+import java.util.List;
+import java.util.Set;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.model.cadastro.Garantia;
+import br.com.abril.nds.repository.GarantiaRepository;
+
+@Repository
+public class GarantiaRepositoryImpl extends AbstractRepository<Garantia, Long> implements GarantiaRepository {
+
+	public GarantiaRepositoryImpl() {
+		super(Garantia.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Garantia> obterGarantiasFiador(Long idFiador) {
+		Criteria criteria = this.getSession().createCriteria(Garantia.class);
+		criteria.add(Restrictions.eq("fiador.id", idFiador));
+		
+		return criteria.list();
+	}
+	
+	public void removerGarantias(Set<Long> idsGarantias){
+		
+		Query query = this.getSession().createQuery("delete from Garantia where id in :idsGarantias");
+		query.setParameterList("idsGarantias", idsGarantias);
+		
+		query.executeUpdate();
+	}
+}

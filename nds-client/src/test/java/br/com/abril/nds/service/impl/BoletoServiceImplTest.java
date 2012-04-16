@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -71,7 +72,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(carteiraSemRegistro);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399");
+			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
@@ -98,8 +99,9 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinenceiroReparte);
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
+			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(tipoMovimentoFinenceiroRecebimentoReparte);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
@@ -107,7 +109,11 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
 		save(tipoProdutoRevista);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
@@ -121,12 +127,12 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+				new BigDecimal("100.56"), cota, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), new Date());
+				cota, tipoMovimentoFinenceiroRecebimentoReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado1 =
@@ -172,19 +178,19 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),
 									    new Date(), new Date(), BigDecimal.ZERO, 
-                					    new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO,
+                					    new BigDecimal(100), "1", "1", StatusCobranca.PAGO,
                 					    cota, bancoHSBC, divida1, 0);
 		save(boleto1);
 		
 		Boleto boleto2 = Fixture.boleto("1234567890124", "456", "1234567890124456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-				   						new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+				   						new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
 				   						cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 		
 		Boleto boleto3 = Fixture.boleto("1234567890125", "456", "1234567890125456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 		
@@ -257,7 +263,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
 		pagamento.setNossoNumero("1234567890127");
 		pagamento.setNumeroRegistro(1);
-		pagamento.setValorPagamento(new BigDecimal(10.00));
+		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
 									   null, distribuidor.getPoliticaCobranca(), distribuidor,

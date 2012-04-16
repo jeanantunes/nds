@@ -11,14 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -32,17 +29,21 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 
 	@Before
 	public void setUp() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 		
 		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 		
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
+		TipoProduto tipoProduto = Fixture.tipoRevista();
 		save(tipoProduto);
 		
-		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		Produto produto = Fixture.produtoVeja(tipoProduto);
 		produto.addFornecedor(dinap);
+		produto.setEditor(abril);
 		save(produto);
 
 		ProdutoEdicao produtoEdicao =
@@ -57,10 +58,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		Estudo estudo = 
 				Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);
 		save(estudo);
-		
-		ParametroSistema parametroSistema = 
-				Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA, "");
-		save(parametroSistema);
 	}
 	
 	@Test

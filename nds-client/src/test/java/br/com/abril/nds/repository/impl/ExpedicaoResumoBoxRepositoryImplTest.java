@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -69,6 +70,9 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 	
 	@Before
 	public void setup() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
 		save(carteira);
 		
@@ -131,14 +135,17 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
 		produtoVeja.addFornecedor(fornecedorDinap);
+		produtoVeja.setEditor(abril);
 		save(produtoVeja);
 
 		Produto produtoSuper = Fixture.produtoSuperInteressante(tipoProdutoRevista);
 		produtoSuper.addFornecedor(fornecedorDinap);
+		produtoSuper.setEditor(abril);
 		save(produtoSuper);
 		
 		Produto produtoCapricho = Fixture.produtoCapricho(tipoProdutoRevista);
 		produtoCapricho.addFornecedor(fornecedorDinap);
+		produtoCapricho.setEditor(abril);
 		save(produtoCapricho);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
@@ -196,9 +203,11 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		EstoqueProduto estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigDecimal.ZERO);
 		save(estoqueProdutoVeja1);
 		
-		MovimentoEstoque movimentoRecFisicoVeja1 = Fixture.movimentoEstoque(
-				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
-				estoqueProdutoVeja1, StatusAprovacao.APROVADO, "Aprovado");
+		MovimentoEstoque movimentoRecFisicoVeja1 =
+			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
+				estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+				StatusAprovacao.APROVADO, "Aprovado");
+
 		save(movimentoRecFisicoVeja1);
 		update(estoqueProdutoVeja1);
 		

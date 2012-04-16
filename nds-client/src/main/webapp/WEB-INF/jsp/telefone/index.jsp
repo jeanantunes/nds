@@ -1,4 +1,7 @@
 <head>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 	<script type="text/javascript">
 		function popupTelefone() {
 			
@@ -61,6 +64,8 @@
 				sortorder: "asc",
 				sortname: "tipoTelefone"
 			});
+			
+			$("#telefonesGrid").flexOptions({url: "<c:url value='/cadastro/telefone/pesquisarTelefones'/>"});
 		}
 		
 		function processarResultado(data){
@@ -122,7 +127,7 @@
 				"&principal=" + ("" + $("#telefonePrincipal").attr("checked") == 'checked');
 			
 			$.postJSON(
-				'/nds-client/cadastro/telefone/adicionarTelefone',
+				"<c:url value='/cadastro/telefone/adicionarTelefone'/>",
 				data,
 				function(result) {
 					$("#telefonesGrid").flexAddData({
@@ -153,7 +158,7 @@
 						$(this).dialog("close");
 						
 						$.postJSON(
-							'/nds-client/cadastro/telefone/removerTelefone',
+							"<c:url value='/cadastro/telefone/removerTelefone'/>",
 							data,
 							function(result) {
 								$("#telefonesGrid").flexAddData({
@@ -185,7 +190,7 @@
 			var data = "referencia=" + referenciaTelefone;
 		
 			$.postJSON(
-				'/nds-client/cadastro/telefone/editarTelefone',
+				"<c:url value='/cadastro/telefone/editarTelefone'/>",
 				data,
 				function(result) {
 					if (result != ''){
@@ -243,7 +248,7 @@
 			popularGrid();
 			
 			$.postJSON(
-				'/nds-client/cadastro/telefone/pesquisarTelefones',
+				"<c:url value='/cadastro/telefone/pesquisarTelefones'/>",
 				null,
 				function(result) {
 					$("#telefonesGrid").flexAddData({
@@ -261,11 +266,17 @@
 			);
 		}
 		
+		$(function() {
+			$("#ddd").numeric();
+			$("#numeroTelefone").numeric();
+			$("#ramal").numeric();
+		});
+		
 		//OS MÉTODOS A BAIXO FORAM CRIADOS APENAS PARA TESTE, JA QUE ESSA TELA SERÁ INCLUDE PARA OUTRAS
 		function salvar(){
 			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
 			$.postJSON(
-				'/nds-client/cadastro/telefone/salvar',
+				"<c:url value='/cadastro/telefone/salvar'/>",
 				data,
 				function(result){
 					if (result.tipoMensagem){
@@ -289,7 +300,7 @@
 			
 			var data = 'idCota=' + $("#idCota").val() + '&idFornecedor=' + $("#idFornecedor").val();
 			$.postJSON(
-				'/nds-client/cadastro/telefone/cadastrar',
+				"<c:url value='/cadastro/telefone/cadastrar'/>",
 				data,
 				function(result){
 					popupTelefone();
@@ -302,6 +313,8 @@
 			);
 		}
 	</script>
+	
+	
 </head>
 	<div id="manutencaoTelefones" title="Telefones">
 		

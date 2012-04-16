@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -66,16 +67,11 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 		
-		pj = Fixture.juridicaDinap();		
-		save(pj);
-		
 		cfop = Fixture.cfop5102();
-		//slavei o CFOP
 		save(cfop);
 		
 		
 		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-		//Salvei Tipo
 		save(tipoNotaFiscal);
 				
 		fornecedor = Fixture.fornecedorAcme(tipoFornecedorPublicacao);
@@ -84,15 +80,19 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
+		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, dinap.getJuridica(), fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
 		notaFiscal.setOrigem(Origem.MANUAL);
 		save(notaFiscal);		
 				
 		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
 		save(tipoProduto);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
 		produto.addFornecedor(dinap);
+		produto.setEditor(abril);
 		save(produto);
 		
 		produtoEdicao =

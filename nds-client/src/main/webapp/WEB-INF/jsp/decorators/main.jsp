@@ -212,7 +212,7 @@ fieldset label {
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
 									de Boletos</a>
 							</li>
-							<li><a href="Financeiro/cadastro_manutencao_status.htm">Manutenção
+							<li><a href='<c:url value="/financeiro/manutencaoStatusCota"/>'>Manutenção
 									de Status Cota</a>
 							</li>
 							<li><a href="Financeiro/parametros_cobranca.htm">Parâmetros
@@ -313,7 +313,8 @@ fieldset label {
 								href="Recolhimento/conferencia_encalhe_jornaleiro_contingencia.htm">Conferência
 									de Encalhe Cota Contingência</a>
 							</li>
-							<li><a href="Recolhimento/consulta_encalhe_jornaleiro.htm">Consulta
+							<li>
+								<a href='<c:url value="/devolucao/consultaEncalhe"/>'>Consulta
 									Encalhe Cota</a>
 							</li>
 
@@ -342,6 +343,19 @@ fieldset label {
 							</li>
 						</ul>
 					</li>
+					
+					<li>
+						<span class="classNFe">&nbsp;</span><a
+						href="javascript:;">NF-e</a>
+						<ul>
+							
+							<li>
+								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
+							</li>
+							
+						</ul>
+					</li>
+					
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
 						<ul>

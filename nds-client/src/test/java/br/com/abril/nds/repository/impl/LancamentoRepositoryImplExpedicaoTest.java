@@ -16,6 +16,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -68,14 +69,18 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		for(Integer i=1000;i<1050; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"0"+ i, "000.000.000.000", "acme@mail.com");
 			save(juridica);
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			save(fornecedor);
 			
+			Editor abril = Fixture.editoraAbril();
+			save(abril);
+			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
 			produto.addFornecedor(fornecedor);
+			produto.setEditor(abril);
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
@@ -125,13 +130,13 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			estudo.setQtdeReparte(new BigDecimal(10));
 			save(estudo);
 			
-			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i);
 			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
 					estudo, cota);
 			save(pessoa,cota,estudoCota);		
 			
-			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "02" + i, "ie"+i, "email"+i);
 			Cota cota2 = Fixture.cota(i+3000, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);

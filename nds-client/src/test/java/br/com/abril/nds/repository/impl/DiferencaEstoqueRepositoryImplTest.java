@@ -16,8 +16,8 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.Ordenacao
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
@@ -52,20 +52,31 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	private TipoDiferenca tipoDiferenca;
 	
-	private long qtdeMovimentos;
+	private long qtdeMovimentosLancamento;
+	
+	private long qtdeMovimentosConsulta;
 	
 	private int qtdResultadoPorPagina;
 
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
+	private Editor abril;
+
+	private Fornecedor fornecedor;
+	
 	@Before
 	public void setup() {
+		abril = Fixture.editoraAbril();
+		save(abril);
+		
 		
 		this.dataMovimento = Fixture.criarData(01, 2, 2012);
 		
 		this.quantidadeDiferenca = new BigDecimal("1.0");
 		
-		this.qtdeMovimentos = 30;
+		this.qtdeMovimentosLancamento = 30;
+		
+		this.qtdeMovimentosConsulta = 30;
 		
 		this.qtdResultadoPorPagina = 15;
 		
@@ -84,7 +95,9 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.tipoDiferenca = TipoDiferenca.FALTA_EM;
 		
-		StatusConfirmacao statusConfirmacao = StatusConfirmacao.PENDENTE;
+		StatusConfirmacao statusConfirmado = StatusConfirmacao.CONFIRMADO;
+		
+		StatusConfirmacao statusPendente = StatusConfirmacao.PENDENTE;
 		
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		
@@ -92,19 +105,12 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		CFOP cfop = Fixture.cfop5102();
 		save(cfop);
-	
 		
-		PessoaJuridica pessoaJuridica = Fixture.juridicaDinap();
-		
-		save(pessoaJuridica);
-		
-		
-		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		
+		fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedor);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
-			Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal,
+			Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor.getJuridica(), fornecedor, tipoNotaFiscal,
 										 usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		
 		save(notaFiscalFornecedor);
@@ -136,24 +142,43 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 							   itemRecebimentoFisico);
 		save(lancamentoVeja);
 		
-		for (int i = 0; i < this.qtdeMovimentos; i++) {
+		for (int i = 0; i < this.qtdeMovimentosLancamento; i++) {
 			
 			MovimentoEstoque movimentoEstoque =
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.PENDENTE, "Pendente.");
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.APROVADO, null);
 			
 			save(movimentoEstoque);
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusConfirmacao, null, movimentoEstoque, true);
+								  tipoDiferenca, statusConfirmado, null, movimentoEstoque, true);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
 			save(diferenca);
-		}		
+		}
+		
+		for (int i = 0; i < this.qtdeMovimentosConsulta; i++) {
+			
+			MovimentoEstoque movimentoEstoque =
+				Fixture.movimentoEstoque(
+					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
+						estoqueProduto, dataMovimento, 
+							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.APROVADO, null);
+			
+			save(movimentoEstoque);
+			
+			Diferenca diferenca = 
+				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
+								  tipoDiferenca, statusPendente, null, movimentoEstoque, true);
+			
+			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+			
+			save(diferenca);
+		}
 	}
 	
 	@Test
@@ -201,11 +226,11 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.setDataMovimento(this.dataMovimento);
 		filtro.setTipoDiferenca(this.tipoDiferenca);
 		
-		long quantidadeTotal = this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
+		Long quantidadeTotal = this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
 		
 		Assert.assertNotNull(quantidadeTotal);
 		
-		Assert.assertEquals(this.qtdeMovimentos, quantidadeTotal);
+		Assert.assertEquals(this.qtdeMovimentosLancamento, quantidadeTotal.longValue());
 	}
 	
 	@Test
@@ -224,7 +249,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		filtro.setPaginacao(paginacao);
 		
-		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro);
+		List<Diferenca> lista = diferencaEstoqueRepository.obterDiferencas(filtro, null);
 		
 		Assert.assertNotNull(lista);
 		
@@ -239,11 +264,11 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.setNumeroEdicao(1L);
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
-		long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro, null);
 		
 		Assert.assertNotNull(quantidadeTotal);
 		
-		Assert.assertTrue(quantidadeTotal != 0);
+		Assert.assertEquals(this.qtdeMovimentosConsulta, quantidadeTotal.longValue());
 	}
 	
 	private ProdutoEdicao criarProdutoEdicao() {
@@ -253,11 +278,8 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(tipoProduto);
 		
 		Produto produto = Fixture.produtoVeja(tipoProduto);
+		produto.setEditor(abril);
 		save(produto);
-		
-		Fornecedor fornecedor = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		
-		save(fornecedor);
 		
 		ProdutoEdicao produtoEdicao = 
 			Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);

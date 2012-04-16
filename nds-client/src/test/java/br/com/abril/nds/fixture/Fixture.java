@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
@@ -93,10 +94,12 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -236,9 +239,12 @@ public class Fixture {
 	
 	public static Banco hsbc(Carteira carteira) {
 		return Fixture.banco(10L, true, carteira, "1010",
-				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399");
+				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
+	public static Editor editoraAbril() {
+		return criarEditor("Editora Abril", 10L);
+	}
 
 	public static Date criarData(int dia, int mes, int ano) {
 		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
@@ -368,6 +374,23 @@ public class Fixture {
 		return lancamento;
 	}
 	
+	public static ChamadaEncalhe chamadaEncalhe(
+			Date inicioRecolhimento, 
+			Date finalRecolhimento, 
+			ProdutoEdicao produtoEdicao, 
+			TipoChamadaEncalhe tipoChamadaEncalhe) {
+		
+		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
+		
+		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
+		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
+		
+		return chamadaEncalhe;
+		
+	}
+	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
 			Usuario usuario,
 			ProdutoEdicao produtoEdicao, 
@@ -444,6 +467,8 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);
+		distribuidor.setCapacidadeDistribuicao(10000);
+		distribuidor.setCapacidadeRecolhimento(10000L);
 		return distribuidor;
 	}
 
@@ -552,7 +577,7 @@ public class Fixture {
 	public static TipoMovimentoEstoque tipoMovimentoSobraEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(false);
-		tipoMovimento.setDescricao("SObra EM");
+		tipoMovimento.setDescricao("Sobra EM");
 		tipoMovimento.setIncideDivida(false);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM);
 		return tipoMovimento;
@@ -619,11 +644,19 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.CREDITO);
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Envio Encalhe - Financeiro");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Estoque");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
@@ -638,11 +671,11 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte() {
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Reparte");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		tipoMovimento.setDescricao("Recebimento Reparte");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
 	
@@ -777,30 +810,18 @@ public class Fixture {
 		estoqueProduto.setQtdeSuplementar(qtde);
 		return estoqueProduto;
 	}
-
-	public static MovimentoEstoque movimentoEstoque(
-			ItemRecebimentoFisico itemRecebimentoFisico,
-			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto,
-			StatusAprovacao statusAprovacao, String motivo) {
-
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setData(new Date());
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
-		movimentoEstoque.setProdutoEdicao(produtoEdicao);
-		movimentoEstoque.setQtde(new BigDecimal(1.0));
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
-		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProduto.getMovimentos().add(movimentoEstoque);
-		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setStatus(statusAprovacao);
-		movimentoEstoque.setMotivo(motivo);
-		return movimentoEstoque;
+	
+	public static EstoqueProdutoCota estoqueProdutoCota(ProdutoEdicao produtoEdicao, BigDecimal qtde,
+			Cota cota, List<MovimentoEstoqueCota> movimentos) {
+		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
+		estoqueProdutoCota.setCota(cota);
+		estoqueProdutoCota.setMovimentos(movimentos);
+		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
+		estoqueProdutoCota.setQtdeDevolvida(qtde);
+		estoqueProdutoCota.setQtdeRecebida(qtde);
+		estoqueProdutoCota.setVersao(2L);
+		
+		return estoqueProdutoCota;
 	}
 	
 	public static MovimentoEstoque movimentoEstoque(ItemRecebimentoFisico itemRecebimentoFisico,
@@ -880,14 +901,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -912,14 +925,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -1085,7 +1090,7 @@ public class Fixture {
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
-								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco) {
+								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();
 		
@@ -1100,6 +1105,8 @@ public class Fixture {
 		banco.setMoeda(moeda);
 		banco.setNome(nome);
 		banco.setNumeroBanco(numeroBanco);
+		banco.setJuros(juros);
+		banco.setMulta(multa);
 		
 		return banco;
 	}
@@ -1117,17 +1124,19 @@ public class Fixture {
 	
 	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
 			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
-			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+			BigDecimal valor, List<MovimentoEstoqueCota> lista,
+			StatusAprovacao statusAprovacao, Date data, boolean lancamentoManual) {
 		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
 		mfc.setData(data);
 		mfc.setMovimentos(lista);
-		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setStatus(statusAprovacao);
 		mfc.setTipoMovimento(tipoMovimento);
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
+		mfc.setLancamentoManual(lancamentoManual);
 		return mfc;
 	}
 
@@ -1149,6 +1158,19 @@ public class Fixture {
 			BigDecimal valorConsolidado) {
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
 		consolidado.setConsignado(valorConsolidado);
+		consolidado.setMovimentos(movimentos);
+		consolidado.setCota(cota);
+		consolidado.setDataConsolidado(data);
+		consolidado.setTotal(valorConsolidado);
+		return consolidado;
+	}
+	
+	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCotaEncalhe(
+			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
+			BigDecimal valorConsolidado, BigDecimal valorEncalhe) {
+		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		consolidado.setConsignado(valorConsolidado);
+		consolidado.setEncalhe(valorEncalhe);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
@@ -1516,14 +1538,18 @@ public class Fixture {
 	}
 	
 	public static Telefone telefone(String ddd, String numero, String ramal){
-		
 		Telefone telefone = new Telefone();
 		telefone.setDdd(ddd);
 		telefone.setNumero(numero);
 		telefone.setRamal(ramal);
-		
 		return telefone;
-		
+	}
+	
+	public static Editor criarEditor(String nome, Long codigo) {
+		Editor editor = new Editor();
+		editor.setNome(nome);
+		editor.setCodigo(10L);
+		return editor;
 	}
 	
 }

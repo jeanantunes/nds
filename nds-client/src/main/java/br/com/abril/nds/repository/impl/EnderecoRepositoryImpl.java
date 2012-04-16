@@ -9,7 +9,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.repository.EnderecoRepository;
 
 /**
- * Reposit√≥rio respons√°vel por controlar os dados referentes a entidade
+ * RepositÛrio respons·vel por controlar os dados referentes a entidade
  * {@link br.com.abril.nds.model.cadastro.Endereco}
  * 
  * @author Discover Technology
@@ -37,6 +37,7 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		hql.append(" where e.id in (:ids) ")
 		   .append(" and e.id not in (select ec.id from EnderecoCota ec where id in (:ids)) ")
 		   .append(" and e.id not in (select ee.id from EnderecoEntregador ee where id in (:ids)) ")
+		   .append(" and e.id not in (select efi.id from EnderecoFiador efi where id in (:ids)) ")
 		   .append(" and e.id not in (select ef.id from EnderecoFornecedor ef where id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
