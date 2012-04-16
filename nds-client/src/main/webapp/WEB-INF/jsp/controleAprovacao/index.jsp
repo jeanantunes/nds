@@ -121,7 +121,7 @@
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
 									
-									pesquisar();
+									$(".solicitacoesAprovacao").flexReload();
 							   },
 							   null,
 							   true
@@ -168,7 +168,7 @@
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
 									
-									pesquisar();
+									$(".solicitacoesAprovacao").flexReload();
 							   },
 							   null,
 							   true
@@ -198,6 +198,7 @@
 		         {name:'idTipoMovimento', value: idTipoMovimento},
 		         {name:'dataMovimentoFormatada', value: dataMovimento}
 		    ],
+		    newp: 1,
 		});
 		
 		$(".solicitacoesAprovacao").flexReload();
