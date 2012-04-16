@@ -243,7 +243,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril");
+		return criarEditor("Editora Abril", 10L);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -648,7 +648,7 @@ public class Fixture {
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio do Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Financeiro");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		return tipoMovimento;
 	}
@@ -656,7 +656,7 @@ public class Fixture {
 	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Estoque");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
@@ -671,11 +671,11 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte() {
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Reparte");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		tipoMovimento.setDescricao("Recebimento Reparte");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
 	
@@ -823,31 +823,6 @@ public class Fixture {
 		
 		return estoqueProdutoCota;
 	}
-
-	public static MovimentoEstoque movimentoEstoque(
-			ItemRecebimentoFisico itemRecebimentoFisico,
-			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto,
-			StatusAprovacao statusAprovacao, String motivo) {
-
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setData(new Date());
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
-		movimentoEstoque.setProdutoEdicao(produtoEdicao);
-		movimentoEstoque.setQtde(new BigDecimal(1.0));
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
-		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProduto.getMovimentos().add(movimentoEstoque);
-		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setStatus(statusAprovacao);
-		movimentoEstoque.setMotivo(motivo);
-		return movimentoEstoque;
-	}
 	
 	public static MovimentoEstoque movimentoEstoque(ItemRecebimentoFisico itemRecebimentoFisico,
 													ProdutoEdicao produtoEdicao, 
@@ -926,14 +901,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -958,14 +925,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -1165,17 +1124,19 @@ public class Fixture {
 	
 	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
 			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
-			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+			BigDecimal valor, List<MovimentoEstoqueCota> lista,
+			StatusAprovacao statusAprovacao, Date data, boolean lancamentoManual) {
 		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
 		mfc.setData(data);
 		mfc.setMovimentos(lista);
-		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setStatus(statusAprovacao);
 		mfc.setTipoMovimento(tipoMovimento);
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
+		mfc.setLancamentoManual(lancamentoManual);
 		return mfc;
 	}
 
@@ -1584,9 +1545,10 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome) {
+	public static Editor criarEditor(String nome, Long codigo) {
 		Editor editor = new Editor();
 		editor.setNome(nome);
+		editor.setCodigo(10L);
 		return editor;
 	}
 	

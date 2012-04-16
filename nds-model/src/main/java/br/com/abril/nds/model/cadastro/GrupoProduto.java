@@ -10,7 +10,8 @@ public enum GrupoProduto {
 	CROMO,
 	REVISTA,
 	LIVRO,
-	OUTROS,
-	JORNAL;
+	JORNAL,
+	VALE_DESCONTO,
+	OUTROS;
 	
 }

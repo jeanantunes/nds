@@ -92,12 +92,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
 		
-		if (filtro != null) {
-			
-			filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
-		}
-		
-		return this.diferencaEstoqueRepository.obterDiferencas(filtro);
+		return this.diferencaEstoqueRepository.obterDiferencas(filtro, dataInicialLancamento);
 	}
 	
 	@Transactional(readOnly = true)
@@ -105,9 +100,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
 		
-		filtro.setDataLimiteLancamentoDistribuidor(dataInicialLancamento);
-		
-		return this.diferencaEstoqueRepository.obterTotalDiferencas(filtro);
+		return this.diferencaEstoqueRepository.obterTotalDiferencas(filtro, dataInicialLancamento);
 	}
 	
 	@Transactional(readOnly = true)
@@ -255,7 +248,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				diferenca.getMovimentoEstoque().getData(),
 					diferenca.getProdutoEdicao().getId(),
 						cota.getId(), idUsuario, rateioCotaVO.getQuantidade(), 
-							diferenca.getMovimentoEstoque().getTipoMovimento());
+							(TipoMovimentoEstoque) diferenca.getMovimentoEstoque().getTipoMovimento());
 		}
 	}
 

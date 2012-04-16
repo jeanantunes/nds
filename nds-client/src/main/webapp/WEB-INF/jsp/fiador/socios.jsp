@@ -25,6 +25,8 @@
 			width : 770,
 			height : 160
 		});
+		
+		$(".cotasAssociadasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarSociosFiador'/>"});
 	});
 	
 	function carregarSocios(){
@@ -114,30 +116,78 @@
 	        "pessoa.conjuge.nacionalidade=" + $('[name="nacionalidadeConjugeCpf"]:eq(1)').val() + "&" +
 	        "pessoa.conjuge.natural=" + $('[name="naturalConjugeCpf"]:eq(1)').val();
 	    }
+	    
+	    data = data + "&referencia=" + $("#idSocioEdicao").val();
 
 		$.postJSON("<c:url value='/cadastro/fiador/adicionarSocio'/>", data, 
 			function(result){
 		
-				//if (result[0].tipoMensagem){
-				//	exibirMensagemDialog(result[0].tipoMensagem, result[0].listaMensagens);
-				//}
-				
 				if (result != ""){
 					$(".sociosGrid").flexAddData({
 						page: result.page, total: result.total, rows: result.rows
 					});
 					
-					//$("#gridFiadoresCadastrados").show();
-				} //else {
-					//$("#gridFiadoresCadastrados").hide();
-				//}
-				
-				//if (result[0].tipoMensagem == "SUCCESS"){
-				//	$(janela).dialog("close");
-				//}
+					limparDadosCadastraisCPF(1);
+					
+					opcaoCivilPf("");
+					
+					$("#btnAddEditarSocio").text("Incluir Novo");
+					
+					$("#idSocioEdicao").val("");
+				}
 			},
 			null,
 			true
+		);
+	}
+	
+	function editarSocio(referencia){
+		$.postJSON("<c:url value='/cadastro/fiador/editarSocio' />", "referencia=" + referencia, 
+			function(result) {
+				
+				limparDadosCadastraisCPF(1);
+			
+				if (result){
+					
+					$('[name="nomeFiadorCpf"]:eq(1)').val(result[0]);
+					$('[name="emailFiadorCpf"]:eq(1)').val(result[1]);
+					$('[name="cpfFiador"]:eq(1)').val(result[2]);
+					$('[name="rgFiador"]:eq(1)').val(result[3]);
+					$('[name="dataNascimentoFiadorCpf"]:eq(1)').val(result[4]);
+					$('[name="orgaoEmissorFiadorCpf"]:eq(1)').val(result[5]);
+					$('[name="selectUfOrgaoEmiCpf"]:eq(1)').val(result[6]);
+					$('[name="estadoCivilFiadorCpf"]:eq(1)').val(result[7]);
+					$('[name="selectSexoFiador"]:eq(1)').val(result[8]);
+					$('[name="nacionalidadeFiadorCpf"]:eq(1)').val(result[9]);
+					$('[name="naturalFiadorCpf"]:eq(1)').val(result[10]);
+					
+					if (result[7] == "CASADO"){
+						
+						opcaoCivilPf(result[7]);
+						
+						$('[name="nomeConjugeCpf"]:eq(1)').val(result[11]);
+						$('[name="emailConjugeCpf"]:eq(1)').val(result[12]);
+						$('[name="cpfConjuge"]:eq(1)').val(result[13]);
+						$('[name="rgConjuge"]:eq(1)').val(result[14]);
+						$('[name="dataNascimentoConjugeCpf"]:eq(1)').val(result[15]);
+						$('[name="orgaoEmissorConjugeCpf"]:eq(1)').val(result[16]);
+						$('[name="selectUfOrgaoEmiConjugeCpf"]:eq(1)').val(result[17]);
+						$('[name="selectSexoConjuge"]:eq(1)').val(result[18]);
+						$('[name="nacionalidadeConjugeCpf"]:eq(1)').val(result[19]);
+						$('[name="naturalConjugeCpf"]:eq(1)').val(result[20]);
+					}
+					
+					if (result[21] == "true"){
+						$('[name="checkboxSocioPrincipal"]:eq(1)').check();
+					} else {
+						$('[name="checkboxSocioPrincipal"]:eq(1)').uncheck();
+					}
+					
+					$("#idSocioEdicao").val(referencia);
+				}
+				
+				$("#btnAddEditarSocio").text("Editar");
+			}
 		);
 	}
 </script>
@@ -152,3 +202,5 @@
 <strong>Sócios Cadastrados</strong>
 <br />
 <table class="sociosGrid"></table>
+
+<input type="hidden" id="idSocioEdicao"/>
