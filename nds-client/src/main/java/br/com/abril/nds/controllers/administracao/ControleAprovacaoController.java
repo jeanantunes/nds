@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ControleAprovacaoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -57,6 +58,8 @@ public class ControleAprovacaoController {
 	
 	private static final String FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "filtroPesquisaControleAprovacao";
 	
+	private static final String QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaControleAprovacao";
+	
 	@Path("/")
 	public void index() {
 		
@@ -100,9 +103,13 @@ public class ControleAprovacaoController {
 			
 		} else {
 			
-			Long qtdeTotalRegistros =
+			Long qtdeTotalRegistros = 
 				this.controleAprovacaoService.obterTotalMovimentosAprovacao(filtro);
 			
+			PaginacaoUtil.armazenarQtdRegistrosPesquisa(
+				this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+				listaMovimentoAprovacaoDTO.size());
+						
 			this.processarAprovacoes(listaMovimentoAprovacaoDTO, filtro,
 									 qtdeTotalRegistros.intValue());
 		}
@@ -114,6 +121,9 @@ public class ControleAprovacaoController {
 	public void aprovarMovimento(Long idMovimento) {
 		
 		controleAprovacaoService.aprovarMovimento(idMovimento, obterUsuario());
+		
+		PaginacaoUtil.atualizarQtdRegistrosPesquisa(
+			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Movimento aprovado com sucesso."),
@@ -138,6 +148,9 @@ public class ControleAprovacaoController {
 		}
 		
 		controleAprovacaoService.rejeitarMovimento(idMovimento, motivo, obterUsuario());
+		
+		PaginacaoUtil.atualizarQtdRegistrosPesquisa(
+			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Movimento rejeitado com sucesso."),
@@ -261,12 +274,9 @@ public class ControleAprovacaoController {
 			(FiltroControleAprovacaoDTO) 
 				this.session.getAttribute(FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
 		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-		
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		this.session.setAttribute(FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE, filtroAtual);
+		PaginacaoUtil.calcularPaginaAtual(
+			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+			filtroAtual, filtroSessao);
 		
 		return filtroAtual;
 	}

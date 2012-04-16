@@ -4,9 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 
+import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -123,5 +126,76 @@ public class PaginacaoUtil {
 		
 		return listaAOrdenar;
 	}
+	
+	/**
+	 * Armazena na sessão a quantidade de registros retornados
+	 * na pesquisa para controle de paginação.
+	 * 
+	 * @param session - sessão
+	 * @param atributoSessao - nome do atributo na sessão
+	 * @param qtdRegistros - quantidade de registros
+	 */
+	public static void armazenarQtdRegistrosPesquisa(HttpSession session,
+			  						  		 		 String atributoSessao, int qtdRegistros) {
+
+		session.setAttribute(atributoSessao, qtdRegistros);
+	}
+	
+	/**
+	 * Atualiza a quantidade de registros retornados na 
+	 * pesquisa para controle de paginação.
+	 * 
+	 * @param session - sessão
+	 * @param atributoSessao - nome do atributo na sessão
+	 */
+	public static void atualizarQtdRegistrosPesquisa(HttpSession session,
+			   								   		 String atributoSessao) {
+		
+		Integer qtdRegistrosPesquisaPagina =
+			(Integer) session.getAttribute(atributoSessao);
+		
+		if (qtdRegistrosPesquisaPagina != null) {
+			
+			qtdRegistrosPesquisaPagina -=  1;
+			
+			session.setAttribute(atributoSessao, qtdRegistrosPesquisaPagina);
+		}
+	}
+	
+	/**
+	 * Calcula a página atual e armazena no VO de paginação.
+	 * 
+	 * @param session - sessão
+	 * @param atributoSessao - nome do atributo na sessão
+	 * @param filtroAtual
+	 * @param filtroSessao
+	 */
+	public static void calcularPaginaAtual(HttpSession session,
+										   String atributoSessao,
+										   FiltroControleAprovacaoDTO filtroAtual,
+										   FiltroControleAprovacaoDTO filtroSessao) {
+	
+		Integer qtdRegistrosPesquisaPagina =
+			(Integer) session.getAttribute(atributoSessao);
+		
+		Integer paginaAtual = filtroAtual.getPaginacao().getPaginaAtual();
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+		
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+			
+			qtdRegistrosPesquisaPagina = null;
+		}		
+		
+		if (!paginaAtual.equals(1) && qtdRegistrosPesquisaPagina != null
+				&& qtdRegistrosPesquisaPagina.equals(0)) {
+			
+			paginaAtual -= 1;
+			
+			filtroAtual.getPaginacao().setPaginaAtual(paginaAtual);
+		}
+		
+		session.setAttribute(atributoSessao, filtroAtual);
+	}		
 	
 }
