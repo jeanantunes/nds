@@ -9,7 +9,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.repository.EnderecoRepository;
 
 /**
- * Repositório responsável por controlar os dados referentes a entidade
+ * Repositorio responsavel por controlar os dados referentes a entidade
  * {@link br.com.abril.nds.model.cadastro.Endereco}
  * 
  * @author Discover Technology
