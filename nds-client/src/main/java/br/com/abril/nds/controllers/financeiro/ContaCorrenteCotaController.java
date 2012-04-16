@@ -127,6 +127,7 @@ public class ContaCorrenteCotaController {
 	 * @param rp
 	 * @param page
 	 */
+	
 	public void consultarEncalheCota(FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO, String sortname, String sortorder, int rp, int page ){
 				
 		
@@ -147,12 +148,46 @@ public class ContaCorrenteCotaController {
 					tableModel,
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
+			
+			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
+			
+			Object[] dados = new Object[2];
+			dados[0] = temMaisQueUm;
+			dados[1] = resultado;		
 						
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+			result.use(Results.json()).from(dados, "result").recursive().serialize();
 		}else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Encalhe não encontrado.");
 		}
 		
+	}
+	
+	
+	public void teste(){
+		
+		result.use(Results.json()).withoutRoot().from("guilherme").serialize();
+	}
+	
+	/**
+	 * Método para verificação de quantidade de fornecedor para ocultar coluna na grid
+	 */
+	private boolean verificarQuantidadeFornecedor(List<EncalheCotaDTO> listaEncalheCota){
+			
+		String nomeFornecedor = null;
+		boolean temMaisQueUm = false;
+		
+		for(EncalheCotaDTO encalheDTO : listaEncalheCota){
+			
+			if(nomeFornecedor == null && encalheDTO.getNomeFornecedor() != null){
+				nomeFornecedor = encalheDTO.getNomeFornecedor();
+			}
+			
+			if(!nomeFornecedor.equals(encalheDTO.getNomeFornecedor()) ){
+				temMaisQueUm = true;
+			}
+		}
+		
+		return temMaisQueUm;
 	}
 	
 		
@@ -435,6 +470,10 @@ public class ContaCorrenteCotaController {
 			
 		int counter = 1;
 		
+		boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
+		
+		String nomeFornecedor = null;
+		
 		for(EncalheCotaDTO dto : listaEncalheCota) {		
 			
 			String codigoProduto 		 = dto.getCodigoProduto().toString();
@@ -443,27 +482,41 @@ public class ContaCorrenteCotaController {
 			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
 			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
 			String encalhe		 	 	 = (dto.getEncalhe()		    == null) 	? "0.0" : dto.getEncalhe().toString();
-			String nomeFornecedor	 	 = (dto.getNomeFornecedor() 	== null) 	? "0.0" : dto.getNomeFornecedor();
+			if(temMaisQueUm){
+				nomeFornecedor	 	 = (dto.getNomeFornecedor() 	== null) 	? "0.0" : dto.getNomeFornecedor();
+			}			
 			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
 					
-			listaModeloGenerico.add(
-					new CellModel( 	
-							counter, 
-							codigoProduto, 
-							nomeProduto, 
-							numeroEdicao, 
-							precoCapa, 
-							precoComDesconto,
-							encalhe,
-							nomeFornecedor,
-							total
-					));
+			if(temMaisQueUm){
+				listaModeloGenerico.add(
+						new CellModel( 	
+								counter, 
+								codigoProduto, 
+								nomeProduto, 
+								numeroEdicao, 
+								precoCapa, 
+								precoComDesconto,
+								encalhe,
+								nomeFornecedor,
+								total
+						));
+			}else{
+				listaModeloGenerico.add(
+						new CellModel( 	
+								counter, 
+								codigoProduto, 
+								nomeProduto, 
+								numeroEdicao, 
+								precoCapa, 
+								precoComDesconto,
+								encalhe,
+								total
+						));
+			}		
 			
 			counter++;
 		}
 						
-		//result.include("cotaNome",cota.getNumeroCota()+" "+cota.getPessoa() );
-		
 		tableModel.setPage(1);
 		tableModel.setTotal(listaModeloGenerico.size());
 		tableModel.setRows(listaModeloGenerico);
