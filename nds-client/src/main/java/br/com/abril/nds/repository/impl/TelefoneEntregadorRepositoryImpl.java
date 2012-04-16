@@ -1,10 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 
@@ -61,5 +65,30 @@ public class TelefoneEntregadorRepositoryImpl extends
 
 		query.executeUpdate();
 	}
-	
+
+	/**
+	 * @see br.com.abril.nds.repository.TelefoneEntregadorRepository#buscarTelefonesEntregador(java.lang.Long)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TelefoneAssociacaoDTO> buscarTelefonesEntregador(Long idEntregador) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select telefoneEntregador.id as id, telefoneEntregador.telefone as telefone, ")
+		   .append(" telefoneEntregador.principal as principal, ")
+		   .append(" telefoneEntregador.tipoTelefone as tipoTelefone ")
+		   .append(" from TelefoneEntregador telefoneEntregador ")
+		   .append(" where telefoneEntregador.entregador.id = :idEntregador ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TelefoneAssociacaoDTO.class);
+		
+		query.setResultTransformer(resultTransformer);
+		
+		query.setParameter("idEntregador", idEntregador);
+		
+		return query.list();
+	}
 }

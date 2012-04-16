@@ -8,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -29,7 +30,7 @@ import br.com.abril.nds.util.TipoMensagem;
  * {@link br.com.abril.nds.model.cadastro.Entregador} 
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Service 
 public class EntregadorServiceImpl implements EntregadorService {
@@ -207,6 +208,20 @@ public class EntregadorServiceImpl implements EntregadorService {
 		this.entregadorRepository.alterar(entregador);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<TelefoneAssociacaoDTO> buscarTelefonesEntregador(Long idEntregador) {
+		
+		if (idEntregador == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Id do Entregador é obrigatório");
+		}
+		
+		List<TelefoneAssociacaoDTO> listaTelAssoc =
+				this.telefoneEntregadorRepository.buscarTelefonesEntregador(idEntregador);
+		
+		return listaTelAssoc;
+	}
+	
 	/*
 	 * Método responsável por salvar os endereços referentes ao entregador em questão.
 	 */

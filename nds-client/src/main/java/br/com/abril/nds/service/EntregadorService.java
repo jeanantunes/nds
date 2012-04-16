@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
@@ -91,4 +92,13 @@ public interface EntregadorService {
 	void processarTelefones(Long idEntregador, 
 							List<TelefoneEntregador> listaTelefonesAdicionar, 
 							Collection<Long> listaTelefonesRemover);
+	
+	/**
+	 * Método que retorna uma lista de telefones associados a um entregador.
+	 * 
+	 * @param idEntregador - Id do entregador.
+	 * 
+	 * @return List<TelefoneAssociacaoDTO> - lista retornada.
+	 */
+	List<TelefoneAssociacaoDTO> buscarTelefonesEntregador(Long idEntregador);
 }

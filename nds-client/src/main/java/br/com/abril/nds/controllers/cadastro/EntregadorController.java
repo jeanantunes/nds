@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -65,9 +65,6 @@ public class EntregadorController {
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
 	
-	@Autowired
-	private TelefoneService telefoneService;
-
 	@Path("/")
 	public void index() { }
 
@@ -204,7 +201,7 @@ public class EntregadorController {
 		);
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
-				this.telefoneService.buscarTelefonesCota(idEntregador, null);
+				this.entregadorService.buscarTelefonesEntregador(idEntregador);
 		
 		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
 		
@@ -335,14 +332,14 @@ public class EntregadorController {
 	private Set<Long> obterTelefonesRemoverSessao(){
 		Set<Long> telefonesSessao = (Set<Long>) 
 				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
-		
+
 		if (telefonesSessao == null){
 			telefonesSessao = new HashSet<Long>();
 		}
-		
+
 		return telefonesSessao;
 	}
-	
+
 	/*
 	 * Método que retorna uma pessoa Juridica com suas devidas validações.
 	 */
