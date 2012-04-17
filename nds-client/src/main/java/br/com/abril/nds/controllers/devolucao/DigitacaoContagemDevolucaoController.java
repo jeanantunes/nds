@@ -230,7 +230,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	//TODO: não há como reconhecer usuario, ainda
 	private boolean isPerfilUsuarioEncarregado() {
-		return true;
+		return false;
 	}
 	
 	/**
