@@ -10,6 +10,8 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 @DiscriminatorValue(value = "FORNECEDOR")
 public class NotaFiscalSaidaFornecedor extends NotaFiscalSaida {
 
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
