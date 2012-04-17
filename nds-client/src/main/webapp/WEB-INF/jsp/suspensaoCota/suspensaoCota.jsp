@@ -224,7 +224,8 @@
                 	</strong>
                 </td>
                 
-                <td width="5%" id="totalSugerida">                	
+                <td width="5%" >
+                	<div id="totalSugerida"></div>                	
                 </td>
                 
                 <td width="7%">
@@ -233,8 +234,8 @@
                 	</strong>
                 </td>
                 
-                <td width="17%" id="total">                	
-                	
+                <td width="17%">                	
+                	<div id="total"></div>
                 </td>
                 
                 <td width="17%">
@@ -466,8 +467,8 @@ function processaRetornoPesquisa(data) {
 			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
 		}
 		
-		document.getElementById("total").innerText = total.toFixed(2).replace(".",",");
-		document.getElementById("totalSugerida").innerText = totalSugerida;	
+		document.getElementById("total").innerHTML  = total.toFixed(2).replace(".",",");
+		document.getElementById("totalSugerida").innerHTML  = totalSugerida;	
 		
 		return grid;
 	}
