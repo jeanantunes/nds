@@ -10,6 +10,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 @DiscriminatorValue(value = "COTA")
 public class NotaFiscalEntradaCota extends NotaFiscalEntrada {
 	
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;

@@ -85,7 +85,7 @@ public class Cota implements Serializable {
 	@JoinColumn( name="ID_COTA")
 	private List<RotaRoteiroOperacao> rotaRoteiroOperacao;
 	
-	@ManyToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name="ID_FIADOR")
 	private Fiador fiador;
 	
