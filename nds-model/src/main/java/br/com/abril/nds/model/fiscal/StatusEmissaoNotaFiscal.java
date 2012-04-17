@@ -1,6 +1,6 @@
 package br.com.abril.nds.model.fiscal;
 
-public enum StatusNotaFiscalSaida {
+public enum StatusEmissaoNotaFiscal {
 	
 	/**
 	 * Pendente de transmissão para geração da NFe

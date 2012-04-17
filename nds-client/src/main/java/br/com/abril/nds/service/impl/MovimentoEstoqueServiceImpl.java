@@ -86,15 +86,23 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		BigDecimal total = new BigDecimal(0);
 		
+		MovimentoEstoqueCota movimentoEstoqueCota;
+		
 		for( EstudoCota estudoCota:listaEstudoCota ) {
 			
-			gerarMovimentoCota(dataLancamento,idProdutoEdicao,estudoCota.getCota().getId(),
+			movimentoEstoqueCota = 
+					gerarMovimentoCota(dataLancamento,idProdutoEdicao,estudoCota.getCota().getId(),	
 					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota);
+			
+			movimentoEstoqueCota.setEstudoCota(estudoCota);
+			
+			movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
 			
 			total = total.add(estudoCota.getQtdeEfetiva());
 		}
 		
 		gerarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, total, tipoMovimento);
+		
 	}
 	
 	@Override
@@ -175,6 +183,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
 		
+		atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);
+		
 		return movimentoEstoque;
 	}
 	
@@ -229,7 +239,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Override
 	@Transactional
-	public void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 						
 		EstoqueProdutoCota estoqueProdutoCota = 
 			estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEdicao, idCota);
@@ -256,6 +266,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(estoqueProdutoCota.getCota());
 		movimentoEstoqueCota.setData(new Date());
+		movimentoEstoqueCota.setDataCriacao(new Date());
 		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());
 		movimentoEstoqueCota.setQtde(quantidade);
@@ -268,6 +279,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoqueCota,
 																usuario);
 		}
+		
+		atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
+		
+		return movimentoEstoqueCota;
 	}
 	
 	@Override

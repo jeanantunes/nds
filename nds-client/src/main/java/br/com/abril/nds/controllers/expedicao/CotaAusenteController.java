@@ -1,32 +1,43 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.controllers.financeiro.SuspensaoCotaController.RodapeDTO;
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaAusenteService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -50,18 +61,20 @@ public class CotaAusenteController {
 	private CotaAusenteService cotaAusenteService;
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
-	
 	@Autowired
-	
+	private DistribuidorService distribuidorService;
+	@Autowired
+	private HttpSession session;
+	@Autowired
+	private HttpServletResponse httpResponse;
+	@Autowired
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CotaAusenteController.class);
 	
 	private final Result result;
-	private final HttpSession session;
-	
-	public CotaAusenteController(Result result, HttpSession session) {
+		
+	public CotaAusenteController(Result result) {
 		this.result=result;
-		this.session = session;
 	}
 	
 	public void cotaAusente() {
@@ -72,6 +85,8 @@ public class CotaAusenteController {
 	 * Inicializa dados da tela
 	 */
 	public void index() {
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
 		result.forwardTo(CotaAusenteController.class).cotaAusente();
 	}
@@ -289,8 +304,6 @@ public class CotaAusenteController {
 		
 	}
 	
-
-
 	//TODO getRealUsuario
 	public Usuario getUsuario() {
 		Usuario usuario = new Usuario();
@@ -298,5 +311,49 @@ public class CotaAusenteController {
 		usuario.setLogin("fakeUsuario");
 		usuario.setNome("Fake Usuario");
 		return usuario;
+	}
+	
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroCotaAusenteDTO filtro = (FiltroCotaAusenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		List<CotaAusenteDTO> listaCotaAusente = cotaAusenteService.obterCotasAusentes(filtro) ;
+		
+		FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+				listaCotaAusente, CotaAusenteDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 }
