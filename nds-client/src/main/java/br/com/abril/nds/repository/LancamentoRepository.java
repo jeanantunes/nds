@@ -28,4 +28,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo);
 	
 	 Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao);
+	 
+	 Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
 }

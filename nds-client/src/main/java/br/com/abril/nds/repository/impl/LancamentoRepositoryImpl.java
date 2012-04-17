@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -340,5 +341,25 @@ public class LancamentoRepositoryImpl extends
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
 		
 		return (Lancamento) query.uniqueResult();
+	}
+	
+	public Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento.dataRecolhimentoPrevista  ")
+			.append(" from Lancamento lancamento ")
+			.append(" join lancamento.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+
+			.append(" where produto.codigo = :codigoProduto ")
+			.append(" and produtoEdicao.numeroEdicao =:numeroEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		return (Date) query.uniqueResult();
 	}
 }

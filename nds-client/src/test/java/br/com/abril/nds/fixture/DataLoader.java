@@ -28,6 +28,8 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoEntregador;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -54,6 +56,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
@@ -128,6 +131,8 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	
 	private static  TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 	
@@ -334,6 +339,17 @@ public class DataLoader {
 	private static FormaCobranca formaTransferenciBancaria;
 	
 	private static Editor editoraAbril;
+	private static Lancamento lancamentoVeja1EcncalheAnt;
+	private static Lancamento lancamentoVeja2EcncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaVeja1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaVeja2EncalheAnt;
+	private static ProdutoEdicao produtoEdicaoVeja1EncalheAnt;
+	private static ProdutoEdicao produtoEdicaoVeja2EncalheAnt;
+	private static EstoqueProduto estoqueProdutoVeja1EncalheAnt;
+	private static EstoqueProduto estoqueProdutoVeja2EncalheAnt;
+	private static Estudo estudoVeja1EncalheAnt;
+	private static EstudoCota estudoCotaVeja1JoaoEncaljeAnt;
+	private static EstudoCota estudoCotaVeja1ManoelEncaljeAnt;
 	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -444,6 +460,8 @@ public class DataLoader {
 		gerarCargaHistoricoSituacaoCota(session, 100);
 		
 		gerarCargaDadosConsultaEncalhe(session);
+		
+		gerarEntregadores(session);
 		
 	}
 
@@ -574,6 +592,14 @@ public class DataLoader {
 		estoqueProdutoCotaInfoExame1 = Fixture.estoqueProdutoCota(
 				produtoEdicaoInfoExame1, cotaOrlando, BigDecimal.TEN, BigDecimal.TEN);
 		save(session, estoqueProdutoCotaInfoExame1);
+		
+		estoqueProdutoCotaVeja1EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1EncalheAnt, cotaJose, BigDecimal.TEN, BigDecimal.ONE);
+		save(session, estoqueProdutoCotaVeja1EncalheAnt);
+		
+		estoqueProdutoCotaVeja2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1EncalheAnt, cotaManoel, BigDecimal.TEN, BigDecimal.ONE);
+		save(session, estoqueProdutoCotaVeja2EncalheAnt);
 	}
 
 	private static void criarCobrancas(Session session) {
@@ -1123,9 +1149,13 @@ public class DataLoader {
 		
 		estoqueProdutoInfoExame1 = Fixture.estoqueProduto(produtoEdicaoInfoExame1, BigDecimal.ZERO);
 		
+		estoqueProdutoVeja1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja1EncalheAnt, BigDecimal.ZERO);
+		
+		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigDecimal.ZERO);
+		
 		save(session, estoqueProdutoVeja1, estoqueProdutoVeja2, estoqueProdutoVeja3,
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
-			 estoqueProdutoInfoExame1);
+			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt);
 	}
 
 	private static void criarRecebimentosFisicos(Session session) {
@@ -1181,6 +1211,10 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudoVeja1Atual);
 		
+		estudoVeja1EncalheAnt = Fixture
+				.estudo(BigDecimal.TEN, lancamentoVeja1EcncalheAnt.getDataLancamentoDistribuidor(), produtoEdicaoVeja1EncalheAnt);
+		session.save(estudoVeja1EncalheAnt);
+		
 	
 	}
 
@@ -1200,6 +1234,12 @@ public class DataLoader {
 		
 		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
 		save(session,estudoCotaManoel);
+		
+		estudoCotaVeja1JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaJose);
+		save(session,estudoCotaVeja1JoaoEncaljeAnt);
+		
+		estudoCotaVeja1ManoelEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaManoel);
+		save(session,estudoCotaVeja1ManoelEncaljeAnt);
 		
 	
 	}
@@ -1433,6 +1473,30 @@ public class DataLoader {
 		lancamentoCocaCola = Fixture.lancamento(TipoLancamento.LANCAMENTO,cocaColaLight , 
 				new Date(), new Date(), new Date(), new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico);
 		save(session, lancamentoCocaCola);
+		
+		
+		lancamentoVeja1EcncalheAnt = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoVeja1EncalheAnt,
+						DateUtil.adicionarDias(new Date(), 0),
+						DateUtil.adicionarDias(new Date(),+5), new Date(),
+						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
+						null);
+		session.save(lancamentoVeja1EcncalheAnt);
+		
+		lancamentoVeja2EcncalheAnt = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoVeja2EncalheAnt,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),+5), new Date(),
+
+						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
+
+						null);
+		session.save(lancamentoVeja2EcncalheAnt);
+		
 	}
 
 	private static void criarProdutosEdicao(Session session) {
@@ -1525,6 +1589,17 @@ public class DataLoader {
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
 				cocaCola);
 		session.save(cocaColaLight);
+		
+		produtoEdicaoVeja1EncalheAnt = Fixture.produtoEdicao(5L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produtoVeja);
+		session.save(produtoEdicaoVeja1EncalheAnt);
+		
+		produtoEdicaoVeja2EncalheAnt = Fixture.produtoEdicao(6L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produtoVeja);
+		session.save(produtoEdicaoVeja2EncalheAnt);
+	
 	}
 
 	private static void criarProdutos(Session session) {
@@ -1764,8 +1839,11 @@ public class DataLoader {
 		tipoMovimentoSobraDe = Fixture.tipoMovimentoSobraDe();
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		
+		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoEnvioEncalhe();
 
-		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
+		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
@@ -1775,7 +1853,9 @@ public class DataLoader {
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
 		
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
-		save(session,tipoMovimentoEnvioJornaleiro);
+		
+		save(session, tipoMovimentoEnvioJornaleiro, 
+				tipoMovimentoEstornoCotaAusente, tipoMovimentoEnvioEncalhe);
 		
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
@@ -1812,6 +1892,16 @@ public class DataLoader {
 				distribuidor, fornecedorFc, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, fcSegunda, fcSexta);
+		
+		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
+				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				OperacaoDistribuidor.RECOLHIMENTO);
+		
+		DistribuicaoFornecedor fcQuartaRecolhimento = Fixture.distribuicaoFornecedor(
+				distribuidor, fornecedorFc, DiaSemana.QUARTA_FEIRA,
+				OperacaoDistribuidor.RECOLHIMENTO);
+		
+		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}
 	
 	private static void gerarCargaDiferencaEstoque(Session session,
@@ -3920,5 +4010,67 @@ public class DataLoader {
 			session.save(historicoSituacaoCota);
 		}
 	}
-	
+
+	private static void gerarEntregadores(Session session) {
+
+		juridicaAcme.setNomeFantasia("Zaroio");
+
+		Entregador entregador = Fixture.criarEntregador(
+				234L, true, new Date(), 
+				BigDecimal.TEN, juridicaAcme, false, null);
+		
+		save(session, juridicaAcme, entregador);
+		
+		juridicaFc.setNomeFantasia("Pregaless");
+		
+		entregador = Fixture.criarEntregador(
+				123L, false, new Date(), 
+				null, juridicaFc, false, null);
+		save(session, juridicaFc, entregador);
+
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP");
+		
+		EnderecoEntregador enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COMERCIAL);
+		
+		Telefone telefone = Fixture.telefone("19", "36560000", null);
+		
+		TelefoneEntregador telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.COMERCIAL);
+
+		save(session, endereco, enderecoEntregador, telefone, telefoneEntregador);
+
+		jose.setApelido("Mistura");
+		
+		entregador = Fixture.criarEntregador(
+				345L, false, new Date(), 
+				null, jose, false, null);
+		save(session, jose, entregador);
+		
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP");
+		
+		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COBRANCA);
+		
+		telefone = Fixture.telefone("19", "36112887", null);
+		
+		telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.CELULAR);
+
+		save(session, endereco, enderecoEntregador, telefone, telefoneEntregador);
+
+		maria.setApelido("Tranca-rua");
+		
+		save(session, maria);
+		
+		entregador = Fixture.criarEntregador(
+				456L, false, new Date(), 
+				null, maria, false, null);
+
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP");
+		
+		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);
+
+		telefone = Fixture.telefone("11", "31053333", null);
+		
+		telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.CELULAR);
+
+		save(session, entregador, endereco, enderecoEntregador, telefone, telefoneEntregador);
+	}
 }

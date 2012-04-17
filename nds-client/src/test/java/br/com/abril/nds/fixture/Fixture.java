@@ -21,6 +21,8 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoEntregador;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -36,15 +38,17 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -62,7 +66,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -663,6 +666,24 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Cota Ausente");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Cota Ausente");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		return tipoMovimento;
+	}
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -1550,6 +1571,46 @@ public class Fixture {
 		editor.setNome(nome);
 		editor.setCodigo(10L);
 		return editor;
+	}	
+	
+	public static TelefoneEntregador telefoneEntregador(Entregador entregador, boolean principal, Telefone telefone, TipoTelefone tipoTelefone){
+		
+		TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
+		telefoneEntregador.setEntregador(entregador);
+		telefoneEntregador.setPrincipal(principal);
+		telefoneEntregador.setTelefone(telefone);
+		telefoneEntregador.setTipoTelefone(tipoTelefone);
+		
+		return telefoneEntregador;
+		
 	}
 	
+	public static EnderecoEntregador enderecoEntregador(Entregador entregador, Endereco endereco, boolean isPrincipal,TipoEndereco tipoEndereco){
+		
+		EnderecoEntregador enderecoEntregador = new EnderecoEntregador();
+		enderecoEntregador.setEndereco(endereco);
+		enderecoEntregador.setEntregador(entregador);
+		enderecoEntregador.setPrincipal(isPrincipal);
+		enderecoEntregador.setTipoEndereco(tipoEndereco);
+		
+		return enderecoEntregador;
+	}
+	
+	public static Entregador criarEntregador(
+			Long codigo, boolean comissionado,
+			Date inicioAtividade, BigDecimal percentualComissao, Pessoa pessoa, 
+			boolean procuracao, ProcuracaoEntregador procuracaoEntregador) {
+		
+		Entregador entregador = new Entregador();
+
+		entregador.setCodigo(codigo);
+		entregador.setComissionado(comissionado);
+		entregador.setInicioAtividade(inicioAtividade);
+		entregador.setPercentualComissao(percentualComissao);
+		entregador.setPessoa(pessoa);
+		entregador.setProcuracao(procuracao);
+		entregador.setProcuracaoEntregador(procuracaoEntregador);
+		
+		return entregador;
+	}
 }
