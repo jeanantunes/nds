@@ -3,10 +3,12 @@ package br.com.abril.nds.model.cadastro;
 public enum TipoCobranca {
 	
 	BOLETO("Boleto"), 
-	CHEQUE("Cheque"),
-	DINHEIRO("Dinheiro"), 
+	BOLETO_EM_BRANCO("Boleto em branco"), 
+	CHEQUE("Cheque"), 
 	DEPOSITO("Depósito"), 
-	TRANSFERENCIA_BANCARIA("Transferência  Bancaria ");
+	TRANSFERENCIA_BANCARIA("Transferência  Bancaria "),
+	DINHEIRO("Dinheiro"),
+	OUTROS("Outros");
 	
 	private String descricao;
 	
@@ -20,7 +22,6 @@ public enum TipoCobranca {
 	
 	@Override
 	public String toString() {
-		
 		return this.descricao;
 	}
 }

@@ -147,8 +147,8 @@ public class BancoController {
 										  (banco.getId()!=null?banco.getId().toString():""),
 										  (banco.getNumeroBanco()!=null?banco.getNumeroBanco():""),
 										  (banco.getNome()!=null?banco.getNome():""),
-										  (banco.getAgencia()!=null?banco.getAgencia().toString():""),
-										  (banco.getConta()!=null?banco.getConta().toString():""),
+										  (banco.getAgencia()!=null?banco.getAgencia().toString()+"-"+banco.getDvAgencia():""),
+										  (banco.getConta()!=null?banco.getConta().toString()+"-"+banco.getDvConta():""),
 										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
 										  (banco.getMoeda()!=null?banco.getMoeda().toString():""),
 										  (banco.getCarteira()!=null?banco.getCarteira().getTipoRegistroCobranca().toString():""),
@@ -194,6 +194,7 @@ public class BancoController {
 	 * @param juros
 	 * @param ativo
 	 * @param multa
+	 * @param vrMulta
 	 * @param instrucoes
 	 */
 	@Post
@@ -209,11 +210,12 @@ public class BancoController {
 						  BigDecimal juros,
 						  int ativo,
 						  BigDecimal multa,
+						  BigDecimal vrMulta,
 						  String instrucoes){
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 
-		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,juros,multa,instrucoes);
+		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,instrucoes);
 		
 		long lAgencia = Long.parseLong(agencia);
 		long lConta = Long.parseLong(conta);
@@ -230,6 +232,7 @@ public class BancoController {
         banco.setJuros(juros);
         banco.setAtivo(ativo==1);
         banco.setMulta(multa);
+        banco.setVrMulta(vrMulta);
         banco.setInstrucoes(instrucoes);
 	
         this.bancoService.incluirBanco(banco);
@@ -270,6 +273,7 @@ public class BancoController {
 	 * @param juros
 	 * @param ativo
 	 * @param multa
+	 * @param vrMulta
 	 * @param instrucoes
 	 * @throws Mensagem de pendencias financeiras do banco
 	 */
@@ -287,11 +291,12 @@ public class BancoController {
 						  	BigDecimal juros,
 						  	int ativo,
 						  	BigDecimal multa,
+						  	BigDecimal vrMulta,
 						  	String instrucoes){
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 		
-		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,juros,multa,instrucoes);
+		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,instrucoes);
 		
 		if (ativo==0){
 			if (this.bancoService.verificarPendencias(idBanco)){
@@ -314,6 +319,7 @@ public class BancoController {
 		banco.setJuros(juros);
 		banco.setAtivo(ativo==1);
 		banco.setMulta(multa);
+		banco.setVrMulta(vrMulta);
 		banco.setInstrucoes(instrucoes);
 
 		this.bancoService.alterarBanco(banco);
@@ -347,8 +353,6 @@ public class BancoController {
 								  	  String digito,
 								  	  Moeda moeda,
 								  	  Carteira carteira,
-								  	  BigDecimal juros,
-								  	  BigDecimal multa,
 								  	  String instrucoes){
 		
 		if (validator.hasErrors()) {

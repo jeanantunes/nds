@@ -165,7 +165,7 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
-							<li><a href="banco">Bancos</a>
+							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href="Cadastro/cadastro_box.htm">Box</a>
 							</li>

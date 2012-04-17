@@ -4,10 +4,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.CotaCobrancaVO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -106,4 +109,39 @@ public interface CotaService {
 	String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota);
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
+	
+	//void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
+
+	List<Cota> obterCotaAssociadaFiador(Long idFiador);
+	
+    /**
+     * Obtém parametros de Cobranca da cota
+     * @param idCota
+     * @return Value Object com parametros de Cobranca da cota 
+     */
+    CotaCobrancaVO obterDadosCotaCobranca(Cota cota);
+    
+    
+    /**
+	 * Método responsável por obter bancos relacionados ao tipo de cobrança para preencher combo da camada view
+	 * @param Tipo de cobrança
+	 * @return comboBancos: bancos cadastrados relacionados ao tipo de cobrança
+	 */
+    List<ItemDTO<Integer, String>> getComboBancosTipoCobranca(TipoCobranca tipoCobranca);
+    
+    /**
+	 * Método responsável por obter formas de cobrança para preencher combo da camada view
+	 * @return comboTiposPagamento: formas de cobrança cadastrados
+	 */
+    List<ItemDTO<TipoCobranca, String>> getComboTiposCobranca();
+    
+    
+    /**
+     * Posta parametros de Cobranca da cota
+     * @param Value Object com parametros de Cobranca da cota 
+     */
+    void postarDadosCotaCobranca(CotaCobrancaVO cotaCobranca);
+
+	
+
 }

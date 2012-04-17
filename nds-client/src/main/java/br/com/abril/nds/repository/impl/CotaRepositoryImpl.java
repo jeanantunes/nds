@@ -265,6 +265,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		return criteria.list();
 	}
+
 	
 	@Override
 	public Long obterQntCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
@@ -462,4 +463,5 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		return hql.toString();
 	}
 	
+
 }
