@@ -2780,7 +2780,7 @@ function buscaBancos(tipoCobranca){
 		        <td width="486">
 
 			        <select name="tabpf-financeiro-tipoCobranca" id="tabpf-financeiro-tipoCobranca" style="width:150px;" onchange="opcaoPagtoPf(this.value);buscaBancos(this.value);">
-                        <option value="SELECIONE">Selecione</option>
+                        <option value="">Selecione</option>
                         <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
 		                    <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
 		                </c:forEach>
