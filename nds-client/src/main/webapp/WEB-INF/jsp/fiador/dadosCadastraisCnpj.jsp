@@ -54,7 +54,7 @@
 			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCNPJ' />", "cnpj=" + cnpj, 
 				function(result) {
 					
-					if (result){
+					if (result != ""){
 						$("#razaoSocialFiador").val(result[0]);
 						$("#nomeFantasiaFiador").val(result[1]);
 						$("#inscricaoEstadualFiador").val(result[2]);
