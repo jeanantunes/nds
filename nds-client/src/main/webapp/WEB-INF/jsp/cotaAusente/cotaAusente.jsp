@@ -91,6 +91,9 @@ function popupNovaCotaAusente() {
 						"numCota="+numCota, 
 						popupConfirmaAusenciaCota);
 				
+
+				$("#idNovaCota").attr("value","");
+				$("#idNomeNovaCota").attr("value",""); 
 				$( this ).dialog( "close" );
 				
 			},
@@ -139,6 +142,8 @@ function retornoEnvioSuplementar(result) {
 	var status = result[1];
 	
 	exibirMensagem(status, mensagens);
+	
+	$(".ausentesGrid").flexReload();
 	
 	$( "#dialog-confirm" ).dialog("close");
 	

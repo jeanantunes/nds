@@ -597,6 +597,7 @@ public class FiadorServiceImpl implements FiadorService {
 	public void excluirFiador(Long idFiador){
 		
 		Fiador fiador = this.fiadorRepository.buscarPorId(idFiador);
+
 		
 		if (fiador != null){
 			

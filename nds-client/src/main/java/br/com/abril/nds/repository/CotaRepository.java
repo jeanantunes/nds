@@ -1,11 +1,14 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 
 /**
@@ -88,4 +91,34 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
 
 	Long obterTotalCotasSujeitasSuspensao();
+	
+	List<Cota> obterCotaAssociadaFiador(Long idFiador);
+	
+	/**
+	 * 
+	 * Obtem cotas sujeitas a antecipação de recolhimento de encalhe.
+	 * 
+	 * @param filtro - filtro coma as opções de consulta 
+	 * 
+	 * @return List<ChamdaAntecipadaEncalheDTO>
+	 */
+	List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * Obtem a quantidade de cotas sujeitas a antecipação de recolhimento de encalhe.
+	 * 
+	 * @param filtro - filtro coma as opções de consulta 
+	 * 
+	 * @return Long
+	 */
+	Long obterQntCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * Obtem a quantidade de exemplares de uma cota sujeita a antecipação de recolhimento de encalhe.
+	 * 
+	 * @param filtro - filtro coma as opções de consulta 
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
 }

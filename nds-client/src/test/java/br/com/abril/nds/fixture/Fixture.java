@@ -666,6 +666,24 @@ public class Fixture {
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Cota Ausente");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Cota Ausente");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		return tipoMovimento;
+	}
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);

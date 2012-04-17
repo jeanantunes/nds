@@ -22,6 +22,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
 @Entity
@@ -68,7 +69,7 @@ public class Cota implements Serializable {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "BOX_ID")
-	private Box box;
+	private Box box; 
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
@@ -87,6 +88,9 @@ public class Cota implements Serializable {
 	@ManyToOne(optional = true)
 	@JoinColumn(name="ID_FIADOR")
 	private Fiador fiador;
+	
+	@OneToMany(mappedBy = "cota")
+	private Set<EstoqueProdutoCota> estoqueProdutoCotas = new HashSet<EstoqueProdutoCota>();
 	
 	public Long getId() {
 		return id;
@@ -208,6 +212,14 @@ public class Cota implements Serializable {
 
 	public void setFiador(Fiador fiador) {
 		this.fiador = fiador;
+	}
+	
+	public Set<EstoqueProdutoCota> getEstoqueProdutoCotas() {
+		return estoqueProdutoCotas;
+	}
+
+	public void setEstoqueProdutoCotas(Set<EstoqueProdutoCota> estoqueProdutoCotas) {
+		this.estoqueProdutoCotas = estoqueProdutoCotas;
 	}
 
 	/**
