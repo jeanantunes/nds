@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -250,8 +251,12 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		if (fiador.getId() == null){
 			
+			fiador.setInicioAtividade(new Date());
+			
 			this.fiadorRepository.adicionar(fiador);
 		} else {
+			
+			fiador.setInicioAtividade(this.fiadorRepository.buscarDataInicioAtividadeFiadorPorId(fiador.getId()));
 			
 			this.fiadorRepository.alterar(fiador);
 		}
@@ -565,6 +570,10 @@ public class FiadorServiceImpl implements FiadorService {
 	@Override
 	public Pessoa buscarPessoaFiadorPorId(Long idFiador) {
 		
+		if (idFiador == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id fiador é obrigatório.");
+		}
+		
 		Pessoa pessoa = this.fiadorRepository.buscarPessoaFiadorPorId(idFiador);
 		
 		if (pessoa instanceof PessoaFisica){
@@ -625,5 +634,27 @@ public class FiadorServiceImpl implements FiadorService {
 	public EnderecoFiador buscarEnderecoPorEnderecoFiador(Long idFiador, Long idEndereco) {
 		
 		return this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(idEndereco, idFiador);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public Fiador obterFiadorPorId(Long idFiador){
+		
+		if (idFiador == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id fiador é obrigatório.");
+		}
+		
+		return this.fiadorRepository.buscarPorId(idFiador);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cota> obterCotasAssociadaFiador(Long idFiador) {
+		
+		if (idFiador == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id fiador é obrigatório.");
+		}
+		
+		return this.fiadorRepository.obterCotasAssociadaFiador(idFiador);
 	}
 }

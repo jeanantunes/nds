@@ -40,7 +40,9 @@ public class Fiador implements Serializable {
 	@Column(name = "INICIO_ATIVIDADE")
 	private Date inicioAtividade;
 	
-	@OneToMany(mappedBy = "fiador")
+	@OneToMany
+	@JoinTable(name = "FIADOR_COTA", joinColumns = {@JoinColumn(name = "FIADOR_ID")}, 
+	  								  inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private List<Cota> cotasAssociadas;
 	
 	@OneToMany(mappedBy = "fiador")

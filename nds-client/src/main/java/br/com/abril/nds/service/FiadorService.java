@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Garantia;
@@ -40,4 +41,8 @@ public interface FiadorService {
 	TelefoneFiador buscarTelefonePorTelefoneFiador(Long idFiador, Long idTelefone);
 
 	EnderecoFiador buscarEnderecoPorEnderecoFiador(Long idFiador, Long idEndereco);
+
+	Fiador obterFiadorPorId(Long idFiador);
+	
+	List<Cota> obterCotasAssociadaFiador(Long idFiador);
 }

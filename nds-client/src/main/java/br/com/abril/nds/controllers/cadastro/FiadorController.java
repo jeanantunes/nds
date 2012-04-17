@@ -346,7 +346,6 @@ public class FiadorController {
 		
 		Fiador fiador = new Fiador();
 		fiador.setId((Long) this.httpSession.getAttribute(ID_FIADOR_EDICAO));
-		fiador.setInicioAtividade(new Date());
 		fiador.setPessoa(pessoa);
 		
 		this.fiadorService.cadastrarFiador(fiador, sociosAdicionar, sociosRemover, listaEnderecosAdicionar, 
@@ -401,17 +400,17 @@ public class FiadorController {
 		
 		limparDadosSessao();
 		
-		Pessoa fiador = this.fiadorService.buscarPessoaFiadorPorId(idFiador);
+		Fiador fiador = this.fiadorService.obterFiadorPorId(idFiador);
 		
 		List<String> dados = new ArrayList<String>();
 		
-		if (fiador != null){
+		if (fiador.getPessoa() != null){
 			
 			this.httpSession.setAttribute(ID_FIADOR_EDICAO, idFiador);
 			
-			if (fiador instanceof PessoaFisica){
+			if (fiador.getPessoa() instanceof PessoaFisica){
 				
-				PessoaFisica fisica =  (PessoaFisica) fiador;
+				PessoaFisica fisica =  (PessoaFisica) fiador.getPessoa();
 				
 				dados.add("CPF");
 				dados.add(fisica.getNome());
@@ -442,7 +441,7 @@ public class FiadorController {
 				}
 			} else {
 				
-				PessoaJuridica pessoaJuridica = (PessoaJuridica) fiador;
+				PessoaJuridica pessoaJuridica = (PessoaJuridica) fiador.getPessoa();
 				
 				dados.add("CNPJ");
 				dados.add(pessoaJuridica.getRazaoSocial());
@@ -451,6 +450,8 @@ public class FiadorController {
 				dados.add(Util.adicionarMascaraCNPJ(pessoaJuridica.getCnpj()));
 				dados.add(pessoaJuridica.getEmail());
 			}
+			
+			dados.add(DateUtil.formatarDataPTBR(fiador.getInicioAtividade()));
 		}
 		
 		result.use(Results.json()).from(dados, "result").serialize();

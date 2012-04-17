@@ -9,7 +9,6 @@
 			
 			$("#cadastroCnpj").hide();
 			$("#cadastroCpf").show();
-			$(".inicioAtividade").show();
 			
 			modalCadastroFiador("CPF");
 		};
@@ -21,12 +20,14 @@
 			
 			$("#cadastroCnpj").show();
 			$("#cadastroCpf").hide();
-			$(".inicioAtividade").hide();
 			
 			modalCadastroFiador("CNPJ");
 		};
 		
 		function modalCadastroFiador(paramCpfCnpj){
+			
+			$("#inicioAtividadeNovo").show();
+			$("#inicioAtividadeEdicao").hide();
 			
 			fecharModalCadastroFiador = false;
 			
@@ -64,12 +65,6 @@
 			});
 		
 			$(".trSocioPrincipal").hide();
-			
-			//$.postJSON("<c:url value='/cadastro/fiador/cancelarCadastro'/>", null, 
-			//	function(result){
-					
-			//	}
-			//);
 		}
 		
 		function cancelarCadastro(){
@@ -250,6 +245,9 @@
 			$.postJSON("<c:url value='/cadastro/fiador/editarFiador' />", "idFiador=" + idFiador, 
 				function(result) {
 					
+					$("#inicioAtividadeNovo").hide();
+					$("#inicioAtividadeEdicao").show();
+					
 					limparCamposCadastroFiador();
 				
 					if (result[0] == "CPF"){
@@ -282,6 +280,11 @@
 					        $("#selectSexoConjuge").val(result[19]);
 					        $("#nacionalidadeConjugeCpf").val(result[20]);
 					        $("#naturalConjugeCpf").val(result[21]);
+					        
+					        $(".inicioAtividadeEdicao").text(result[22]);
+					        
+						} else {
+							$(".inicioAtividadeEdicao").text(result[12]);
 						}
 					} else {
 						
@@ -292,6 +295,7 @@
 						$("#inscricaoEstadualFiador").val(result[3]);
 						$("#cnpjFiador").val(result[4]);
 						$("#emailFiadorCnpj").val(result[5]);
+						$(".inicioAtividadeEdicao").text(result[6]);
 					}
 				}
 			);

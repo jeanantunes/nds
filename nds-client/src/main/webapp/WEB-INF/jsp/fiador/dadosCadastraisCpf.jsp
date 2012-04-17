@@ -166,7 +166,8 @@
 <table width="754" cellpadding="2" cellspacing="2" style="text-align: left;">
 	<tr class="inicioAtividade">
 		<td nowrap="nowrap"><strong>Início de Atividade:</strong></td>
-		<td>${dataAtual}</td>
+		<td class="inicioAtividadeNovo">${dataAtual}</td>
+		<td class="inicioAtividadeEdicao"></td>
 		<td>&nbsp;</td>
 		<td colspan="3">&nbsp;</td>
 	</tr>

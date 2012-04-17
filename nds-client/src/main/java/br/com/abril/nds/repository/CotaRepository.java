@@ -88,6 +88,4 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
 
 	Long obterTotalCotasSujeitasSuspensao();
-	
-	List<Cota> obterCotaAssociadaFiador(Long idFiador);
 }

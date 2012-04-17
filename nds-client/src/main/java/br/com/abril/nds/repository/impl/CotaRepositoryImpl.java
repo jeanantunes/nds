@@ -251,13 +251,4 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		return qtde == null ? 0 : qtde;
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Cota> obterCotaAssociadaFiador(Long idFiador){
-		Criteria criteria = this.getSession().createCriteria(Cota.class);
-		criteria.add(Restrictions.eq("fiador.id", idFiador));
-		
-		return criteria.list();
-	}
 }
