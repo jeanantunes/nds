@@ -25,9 +25,10 @@ public class TelefoneCotaRepositoryImpl extends AbstractRepository<TelefoneCota,
 	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
-		   .append(" (t.principal, t.telefone, t.tipoTelefone) ")
-		   .append(" from TelefoneCota t ")
-		   .append(" where t.cota.id = :idCota ");
+		   .append(" (t.principal, t.telefone, t.tipoTelefone, telefonePessoa) ")
+		   .append(" from TelefoneCota t, Telefone telefonePessoa ")
+		   .append(" where t.cota.id = :idCota ")
+		   .append("   and t.telefone.id = telefonePessoa.id ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			hql.append(" and t.telefone.id not in (:idsIgnorar) ");

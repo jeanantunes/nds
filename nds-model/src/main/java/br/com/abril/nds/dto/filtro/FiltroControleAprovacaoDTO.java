@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -18,7 +17,7 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 
 	private Date dataMovimento;
 	
-	private TipoMovimento tipoMovimento;
+	private Long idTipoMovimento;
 	
 	private PaginacaoVO paginacao;
 	
@@ -35,12 +34,12 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 	 * Construtor.
 	 * 
 	 * @param dataMovimento - data de movimento
-	 * @param tipoMovimento - tipo de movimento
+	 * @param idTipoMovimento - id tipo de movimento
 	 */
-	public FiltroControleAprovacaoDTO(Date dataMovimento, TipoMovimento tipoMovimento) {
+	public FiltroControleAprovacaoDTO(Date dataMovimento, Long idTipoMovimento) {
 		
 		this.dataMovimento = dataMovimento;
-		this.tipoMovimento = tipoMovimento;
+		this.idTipoMovimento = idTipoMovimento;
 	}
 
 	/**
@@ -86,19 +85,19 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 	public void setDataMovimento(Date dataMovimento) {
 		this.dataMovimento = dataMovimento;
 	}
-
+	
 	/**
-	 * @return the tipoMovimento
+	 * @return the idTipoMovimento
 	 */
-	public TipoMovimento getTipoMovimento() {
-		return tipoMovimento;
+	public Long getIdTipoMovimento() {
+		return idTipoMovimento;
 	}
 
 	/**
-	 * @param tipoMovimento the tipoMovimento to set
+	 * @param idTipoMovimento the idTipoMovimento to set
 	 */
-	public void setTipoMovimento(TipoMovimento tipoMovimento) {
-		this.tipoMovimento = tipoMovimento;
+	public void setIdTipoMovimento(Long idTipoMovimento) {
+		this.idTipoMovimento = idTipoMovimento;
 	}
 
 	/**
@@ -139,11 +138,11 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 		result = prime * result
 				+ ((dataMovimento == null) ? 0 : dataMovimento.hashCode());
 		result = prime * result
+				+ ((idTipoMovimento == null) ? 0 : idTipoMovimento.hashCode());
+		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
-		result = prime * result
-				+ ((tipoMovimento == null) ? 0 : tipoMovimento.hashCode());
 		return result;
 	}
 
@@ -164,17 +163,17 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 				return false;
 		} else if (!dataMovimento.equals(other.dataMovimento))
 			return false;
+		if (idTipoMovimento == null) {
+			if (other.idTipoMovimento != null)
+				return false;
+		} else if (!idTipoMovimento.equals(other.idTipoMovimento))
+			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
 		if (paginacao == null) {
 			if (other.paginacao != null)
 				return false;
 		} else if (!paginacao.equals(other.paginacao))
-			return false;
-		if (tipoMovimento == null) {
-			if (other.tipoMovimento != null)
-				return false;
-		} else if (!tipoMovimento.equals(other.tipoMovimento))
 			return false;
 		return true;
 	}

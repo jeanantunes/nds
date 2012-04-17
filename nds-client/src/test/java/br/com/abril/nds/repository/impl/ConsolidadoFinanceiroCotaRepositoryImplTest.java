@@ -32,6 +32,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
@@ -142,13 +143,14 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
 		save(expedicao);
 		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
 		save(estoqueProdutoCota);
 		
 		//MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
 		//save(movimentoEstoqueCota);
 		
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		estoqueProdutoCota.getMovimentos().add(movimento);
 		save(movimento);
 		
 		
@@ -156,7 +158,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		save(tipoMovimentoFinanceiro);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
-				new BigDecimal(230), listaMovimentoEstoqueCota, dataAtual);
+				new BigDecimal(230), listaMovimentoEstoqueCota, StatusAprovacao.APROVADO, dataAtual, true);
 		save(movimentoFinanceiroCota);
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();

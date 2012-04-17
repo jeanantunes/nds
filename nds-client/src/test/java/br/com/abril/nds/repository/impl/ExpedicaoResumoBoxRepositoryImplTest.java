@@ -203,9 +203,11 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		EstoqueProduto estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigDecimal.ZERO);
 		save(estoqueProdutoVeja1);
 		
-		MovimentoEstoque movimentoRecFisicoVeja1 = Fixture.movimentoEstoque(
-				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
-				estoqueProdutoVeja1, StatusAprovacao.APROVADO, "Aprovado");
+		MovimentoEstoque movimentoRecFisicoVeja1 =
+			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
+				estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+				StatusAprovacao.APROVADO, "Aprovado");
+
 		save(movimentoRecFisicoVeja1);
 		update(estoqueProdutoVeja1);
 		

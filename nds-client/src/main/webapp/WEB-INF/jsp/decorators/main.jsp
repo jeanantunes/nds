@@ -170,7 +170,7 @@ fieldset label {
 							</li>
 							<li><a href="Cadastro/cadastro_entregador.htm">Entregador</a>
 							</li>
-							<li><a href="Cadastro/cadastro_fiador.htm">Fiador</a>
+							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
 							</li>
 							<li><a href="Cadastro/cadastro_fornecedor.htm">Fornecedor</a>
 							</li>
@@ -343,6 +343,19 @@ fieldset label {
 							</li>
 						</ul>
 					</li>
+					
+					<li>
+						<span class="classNFe">&nbsp;</span><a
+						href="javascript:;">NF-e</a>
+						<ul>
+							
+							<li>
+								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
+							</li>
+							
+						</ul>
+					</li>
+					
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
 						<ul>

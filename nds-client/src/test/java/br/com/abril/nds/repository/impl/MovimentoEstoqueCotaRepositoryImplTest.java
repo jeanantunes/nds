@@ -656,7 +656,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		Date data = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
 		
-		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+		PessoaFisica manoel = Fixture.pessoaFisica("223.556.789-00",
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		

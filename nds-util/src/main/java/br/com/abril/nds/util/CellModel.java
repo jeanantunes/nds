@@ -8,6 +8,7 @@ package br.com.abril.nds.util;
  * @author michel.jader
  *
  */
+@Deprecated
 public class CellModel {
 	
 	private int id;

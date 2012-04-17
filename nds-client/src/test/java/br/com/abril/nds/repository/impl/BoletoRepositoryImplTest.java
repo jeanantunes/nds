@@ -80,8 +80,9 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinenceiroReparte = Fixture.tipoMovimentoFinanceiroReparte();
-		save(tipoMovimentoFinenceiroReparte);
+		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
+			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(tipoMovimentoFinenceiroRecebimentoReparte);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
@@ -111,8 +112,8 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cota, tipoMovimentoFinenceiroReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), new Date());
+				cota, tipoMovimentoFinenceiroRecebimentoReparte, usuarioJoao,
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado = Fixture

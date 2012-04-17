@@ -160,7 +160,7 @@
 					align : 'left'
 				}, {
 					display : 'CPF / CNPJ',
-					name : 'cpf',
+					name : 'cpfCnpj',
 					width : 120,
 					sortable : true,
 					align : 'left'
@@ -186,11 +186,11 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "codigo",
-				sortorder : "asc",
+				sortorder : "desc",
 				disableSelect: true,
 				usepager : true,
 				useRp : true,
@@ -199,6 +199,8 @@
 				width : 960,
 				height : 255
 			});
+			
+			$(".pessoasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarFiador'/>"});
 		});
 		
 		function processarResultadoConsultaFiadores(data){
@@ -213,7 +215,7 @@
 			}
 			
 			if (data.result){
-				data.rows = data.result.rows;
+				data.rows = data.result[1].rows;
 			}
 			
 			var i;
@@ -228,7 +230,7 @@
 			$('.imoveisGrid').show();
 			
 			if (data.result){
-				return data.result;
+				return data.result[1];
 			}
 			return data;
 		}
@@ -335,10 +337,13 @@
 		
 		function limparCamposCadastroFiador(){
 			//dados cadastrais cpf
-			limparDadosCadastraisCPF();
+			limparDadosCadastraisCPF(0);
 	        
 	        //dados cadastrais cnpj
 			limparDadosCadastraisCNPJ();
+	        
+			//dados cadastrais socios
+			limparDadosCadastraisCPF(1);
 		    
 		    //endereços
 			limparFormEndereco();
@@ -431,11 +436,11 @@
 				<tr>
 					<td width="41">Nome:</td>
               		<td colspan="3">
-              			<input type="text" name="textfield2" id="nomeFiadorPesquisa" style="width:180px;"/>
+              			<input type="text" name="textfield2" id="nomeFiadorPesquisa" style="width:180px;" maxlength="255"/>
               		</td>
                 	<td width="68">CPF/CNPJ:</td>
                 	<td width="477">
-                		<input type="text" name="textfield" id="cpfCnpjFiadorPesquisa" style="width:130px;"/>
+                		<input type="text" name="textfield" id="cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
                 	</td>
               		<td width="104">
               			<span class="bt_pesquisar"><a href="javascript:exibirGridFiadoresCadastrados();">Pesquisar</a></span>

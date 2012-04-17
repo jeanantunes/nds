@@ -1,4 +1,7 @@
-package br.com.abril.nds.util.export;
+package br.com.abril.nds.util.export.vo;
+
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ExportFilterTestVO {

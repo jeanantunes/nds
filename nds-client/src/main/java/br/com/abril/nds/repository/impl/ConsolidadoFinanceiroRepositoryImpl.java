@@ -8,7 +8,9 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -179,6 +181,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 				EncalheCotaDTO.class));
 		
 		return query.list();
+		
+	}
+	
+	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
+		//TODO: Consulta Consignados
+		return null;
 		
 	}
 	

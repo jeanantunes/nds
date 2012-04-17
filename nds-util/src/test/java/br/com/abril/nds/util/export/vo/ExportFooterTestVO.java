@@ -1,7 +1,9 @@
-package br.com.abril.nds.util.export;
+package br.com.abril.nds.util.export.vo;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable

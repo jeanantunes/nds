@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -70,6 +71,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append("	and MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID = :idTipoMovimento ");
 		sql.append(" 	and ( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO ) ");
 
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
+		
 		if(indQtdEncalheAposPrimeiroDia) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.DATA > :dataRecolhimentoDistribuidor 	");
 		} else {
@@ -91,6 +94,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
 
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
@@ -145,6 +150,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append("	and MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID = :idTipoMovimento ");
 		sql.append(" 	and ( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO ) ");
 
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
+		
 		if(indQtdEncalheAposPrimeiroDia) {
 			sql.append(" and MOVIMENTO_ESTOQUE_COTA.DATA > :dataRecolhimentoDistribuidor 	");
 		} else {
@@ -164,6 +171,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
 
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
+
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
@@ -231,6 +241,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA is null or ");
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO) ) ");
 		
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
+
+		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and ( MOVIMENTO_ESTOQUE_COTA.COTA_ID is null or MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota )  ");
 		}
@@ -240,11 +253,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		}
 		
 		sql.append("	group by  ");
-		sql.append("	PESSOA.ID,							");
+		
+		
+		sql.append("    PESSOA.ID,							");
 		sql.append("	LANCAMENTO.DATA_REC_DISTRIB,        ");
 		sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA,        ");
-		sql.append("	ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA ) as recolhimentos ");
+		sql.append("	ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA, ");
+		sql.append("	PRODUTO.CODIGO,                     ");
+		sql.append("	PRODUTO.NOME,                       ");
+		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO,       ");
+		sql.append("	PRODUTO_EDICAO.PRECO_VENDA,         ");
+		sql.append("	PRODUTO_EDICAO.DESCONTO             ");
 
+		sql.append(" )	as encalhes ");
+		
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
@@ -256,6 +278,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		if(filtro.getIdFornecedor() != null) {
 			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
 		
 		sqlquery.setParameter("dataRecolhimentoDistribuidor", filtro.getDataRecolhimento());
 
@@ -326,6 +350,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA is null or ");
 		sql.append(" 	( MOVIMENTO_ESTOQUE_COTA.DATA between CHAMADA_ENCALHE.INICIO_RECOLHIMENTO and CHAMADA_ENCALHE.FINAL_RECOLHIMENTO) ) ");
+		
+		sql.append(" and CHAMADA_ENCALHE.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe	");
 		
 		
 		if(filtro.getIdCota()!=null) {
@@ -423,6 +449,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));
 		
 		sqlquery.setParameter("idTipoMovimento", idTipoMovimento);
+		
+		sqlquery.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
@@ -545,7 +573,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 						orderByColumn = " movimento.produtoEdicao.precoVenda ";
 						break;
 					case QTD_DEVOLUCAO:
-						orderByColumn = " qtdDevolucao ";
+						orderByColumn = " sum(movimento.qtde) ";
 						break;
 					case QTD_NOTA:
 						orderByColumn = " qtdNota ";

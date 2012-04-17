@@ -10,4 +10,6 @@ public interface DistribuicaoFornecedorRepository extends Repository<Distribuica
 	List<Integer> obterDiasSemanaDistribuicao(String codigoProduto, Long idProdutoEdicao);
 	
 	boolean verificarDistribuicaoDiaSemana(String codigoProduto, Long idProdutoEdicao, DiaSemana diaSemana);
+	
+	boolean verificarRecolhimentoDiaSemana(String codigoProduto,Long idProdutoEdicao, DiaSemana diaSemana);
 }

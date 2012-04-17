@@ -535,7 +535,7 @@ public class RecebimentoFisicoController {
 	
 	private void validarItensRecebimento(List<RecebimentoFisicoDTO> itensRecebimento) {
 		for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimento){
-			if( recebimentoDTO.getQtdFisico() == null ){
+			if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().equals(BigDecimal.ZERO) ){
 				throw new ValidacaoException(TipoMensagem.WARNING, "NF interface com Itens sem quantidade física informada.");
 			}
 		}

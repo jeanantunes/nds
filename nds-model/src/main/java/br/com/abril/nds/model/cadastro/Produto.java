@@ -62,9 +62,18 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
+	/**
+	 * Editor do produto
+	 */
 	@ManyToOne
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
+	
+	/**
+	 * Flag indicando se o produto permite recolhimentos parciais
+	 */
+	@Column(name = "PARCIAL")
+	private boolean parcial;
 	
 	public Long getId() {
 		return id;
@@ -140,6 +149,14 @@ public class Produto implements Serializable {
 	
 	public void setEditor(Editor editor) {
 		this.editor = editor;
+	}
+	
+	public boolean isParcial() {
+		return parcial;
+	}
+	
+	public void setParcial(boolean parcial) {
+		this.parcial = parcial;
 	}
 	
 	public Fornecedor getFornecedor() {
