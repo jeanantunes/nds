@@ -86,9 +86,9 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	public enum OrdenacaoColuna {
 		
 		BOX("box"),
-		NUMERO_COTA(""),
-		NOME_COTA(""),
-		QNT_EXEMPLARES("");
+		NUMERO_COTA("numeroCota"),
+		NOME_COTA("nomeCota"),
+		QNT_EXEMPLARES("qntExemplares");
 		
 		private String nomeColuna;
 		
@@ -246,7 +246,17 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		result = prime * result
 				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
 		result = prime * result
+				+ ((dataAntecipacao == null) ? 0 : dataAntecipacao.hashCode());
+		result = prime * result
+				+ ((dataProgramada == null) ? 0 : dataProgramada.hashCode());
+		result = prime * result
 				+ ((fornecedor == null) ? 0 : fornecedor.hashCode());
+		result = prime * result
+				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeProduto == null) ? 0 : nomeProduto.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
 		result = prime * result
 				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
 		result = prime * result
@@ -278,10 +288,35 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 				return false;
 		} else if (!codigoProduto.equals(other.codigoProduto))
 			return false;
+		if (dataAntecipacao == null) {
+			if (other.dataAntecipacao != null)
+				return false;
+		} else if (!dataAntecipacao.equals(other.dataAntecipacao))
+			return false;
+		if (dataProgramada == null) {
+			if (other.dataProgramada != null)
+				return false;
+		} else if (!dataProgramada.equals(other.dataProgramada))
+			return false;
 		if (fornecedor == null) {
 			if (other.fornecedor != null)
 				return false;
 		} else if (!fornecedor.equals(other.fornecedor))
+			return false;
+		if (nomeFornecedor == null) {
+			if (other.nomeFornecedor != null)
+				return false;
+		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
+			return false;
+		if (nomeProduto == null) {
+			if (other.nomeProduto != null)
+				return false;
+		} else if (!nomeProduto.equals(other.nomeProduto))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
 			return false;
 		if (numeroEdicao == null) {
 			if (other.numeroEdicao != null)
@@ -297,6 +332,5 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }

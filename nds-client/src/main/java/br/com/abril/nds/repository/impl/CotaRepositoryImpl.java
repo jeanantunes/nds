@@ -28,6 +28,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.CotaRepository;
 
 /**
@@ -360,6 +361,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		param.put("numeroEdicao", filtro.getNumeroEdicao());
 		param.put("status", StatusLancamento.EXPEDIDO);
 		param.put("dataAtual", new Date());
+		param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
 		
 		if(filtro.getNumeroCota() != null ){
 			param.put("numeroCota",filtro.getNumeroCota());
@@ -396,12 +398,20 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		}
 			
 		hql.append(" WHERE ")
-			.append(" estoqueProdutoCota.produtoEdicao.id = produtoEdicao.id ")
+				.append("NOT EXISTS (")
+							.append(" SELECT chamadaEncalheCota.cota FROM ChamadaEncalheCota chamadaEncalheCota ")
+							.append(" JOIN chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+							.append(" WHERE chamadaEncalheCota.cota = cota ")
+							.append(" AND chamadaEncalhe.produtoEdicao = produtoEdicao ")
+							.append(" AND chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe")
+				.append(" ) ")
+			.append(" AND estoqueProdutoCota.produtoEdicao.id = produtoEdicao.id ")
 			.append(" AND lancamento.status =:status ")
 			.append(" AND produto.codigo =:codigoProduto ")
 			.append(" AND produtoEdicao.numeroEdicao =:numeroEdicao ")
 			.append(" AND lancamento.dataRecolhimentoPrevista >:dataAtual ")
 			.append(" AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ");
+			
 		
 		if(filtro.getNumeroCota() != null ){
 			
