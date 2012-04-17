@@ -75,7 +75,7 @@
 			
 			$("#impressosGrid").flexOptions({
 				url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
-				params: GeraDivida.formData()
+				params: GeraDivida.formData(),newp: 1
 			});
 			
 			$("#impressosGrid").flexReload();
@@ -150,7 +150,7 @@
 		dialogPesquisaInvalida:function(){
 			
 			$("#pesquisaInvalida").dialog({
-				title: 'Aten��o',
+				title: 'Atenção',
 				resizable: false,
 				height:120,
 				width:330,
@@ -170,7 +170,7 @@
 				
 				$("#impressosGrid").flexOptions({
 					url: "<c:url value='/financeiro/impressaoBoletos/consultar' />",
-					params: GeraDivida.formData(),
+					params: GeraDivida.formData(),newp: 1,
 					onSuccess:GeraDivida.renderizarArquivos(result)
 				});	
 				
@@ -207,7 +207,7 @@
 		},
 		
 		renderizarArquivo: function (nossoNumero){
-			
+		
 			window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>";
 		}
 		
@@ -223,6 +223,12 @@
 		});
 		
 		$("#descricaoCota").autocomplete({source: ""});
+		
+		$('input[id^="data"]').mask("99/99/9999");
+		
+		$("input[name='numCota']").numeric();
+		
+		$("#dataMovimento").focus();
 		
 		$("#impressosGrid").flexigrid({
 			preProcess:GeraDivida.executarPreProcessamento,
@@ -319,7 +325,7 @@
 				name="pesquisaDividasForm" 
 				method="post">
 			<fieldset class="classFieldset">
-		   	    <legend> Gerar Divida</legend>
+		   	    <legend> Gerar Dívida</legend>
 		   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  					<tr>
 						    <td width="29">Data:</td>
@@ -336,7 +342,7 @@
 	    					<td>
 	    						<input name="numCota" 
 				              		   id="numCota" 
-				              		   type="number"
+				              		   type="text"
 				              		   maxlength="11"
 				              		   style="width:70px; 
 				              		   float:left; margin-right:5px;"
@@ -375,7 +381,7 @@
 	    						<span  class="bt_novos" title="Gerar Dívida" style="margin-left:20px;">
 	    							<a href="javascript:GeraDivida.gerarDivida();" id="btnGerarDivida">
 	    								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
-	    								Gerar Divida
+	    								Gerar Dívida
 	    							</a>
 	    						</span>
 	   						</td>
@@ -413,7 +419,7 @@
 					<span class="bt_novos" title="Imprimir Dividas">
 						<a href="javascript:GeraDivida.imprimirDividas('DIVIDA')">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir Dividas
+							Imprimir Dívidas
 						</a>
 					</span>
 					

@@ -592,7 +592,7 @@ public class DataLoader {
 		save(session, estoqueProdutoCotaInfoExame1);
 		
 		estoqueProdutoCotaVeja1EncalheAnt = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1EncalheAnt, cotaJose, BigDecimal.TEN, BigDecimal.ONE);
+				produtoEdicaoVeja1EncalheAnt, cotaJose, new BigDecimal(20), BigDecimal.ONE);
 		save(session, estoqueProdutoCotaVeja1EncalheAnt);
 		
 		estoqueProdutoCotaVeja2EncalheAnt = Fixture.estoqueProdutoCota(

@@ -75,7 +75,7 @@
 			
 			$("#ceAntecipadaCotaGrid").flexOptions({
 				url: "<c:url value='/devolucao/chamadaEncalheAntecipada/montarPesquisaCotas' />",
-				params: EncalheAntecipado.params()
+				params: EncalheAntecipado.params(),newp: 1
 			});
 			
 			$("#ceAntecipadaCotaGrid").flexReload();
@@ -85,7 +85,7 @@
 			
 			$("#ceAntecipadaGrid").flexOptions({
 				url: "<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisar' />",
-				params: EncalheAntecipado.params()
+				params: EncalheAntecipado.params(),newp: 1
 			});
 			
 			$("#ceAntecipadaGrid").flexReload();
@@ -274,7 +274,8 @@
 									: EncalheAntecipado.groupNameCheck;
 
 			if(!verifyAtLeastOneChecked(groupName)){
-				exibirMensagem("WARNING","Selecione um item para realizar a operação!");
+				var mensagens = new Array('Selecione um item para realizar a operação!') ;
+				exibirMensagem('WARNING',mensagens);
 				return false;
 			}
 			return true;
@@ -672,6 +673,7 @@
 					contextPath + "/devolucao/chamadaEncalheAntecipada/exportar?fileType=" + fileType + paramDataProgaramada;
 			}
 		}
+		
 	};
 	
 	
@@ -689,6 +691,8 @@ $(function() {
 		$("#edicao").numeric();
 	
 		$("#produto").autocomplete({source: ""});
+		
+		$("#codigoProduto").focus();
 		
 		$("#ceAntecipadaGrid").flexigrid({
 			preProcess:EncalheAntecipado.executarPreProcessamentoCota,
@@ -742,25 +746,25 @@ $(function() {
 			display : 'Cota',
 			name : 'cota',
 			width : 100,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Nome',
 			name : 'nome',
 			width : 590,
-			sortable : true,
+			sortable : false,
 			align : 'left'
 		}, {
 			display : 'Qtde. Exemplares',
 			name : 'qtdeExemplares',
 			width : 130,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}, {
 			display : ' ',
 			name : 'sel',
 			width : 50,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}],
 		disableSelect : true,
@@ -811,7 +815,7 @@ $(function() {
 		    
 		    <td width="76">Produto:</td>
 		    <td width="258">
-		    	<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
+		    	<input type="text" name="produto" id="produto" style="width: 213px;" maxlength="255"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
 					    	   EncalheAntecipado.pesquisarProdutosSuccessCallBack,
