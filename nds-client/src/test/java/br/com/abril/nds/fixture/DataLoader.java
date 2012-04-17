@@ -1851,10 +1851,10 @@ public class DataLoader {
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
-			
+		
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
 		
-		save(session,tipoMovimentoEnvioJornaleiro, 
+		save(session, tipoMovimentoEnvioJornaleiro, 
 				tipoMovimentoEstornoCotaAusente, tipoMovimentoEnvioEncalhe);
 		
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);

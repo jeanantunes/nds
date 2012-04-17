@@ -30,7 +30,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -630,7 +630,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		Date dataAtual = new Date();
 		
-		StatusNotaFiscalSaida statusNF = StatusNotaFiscalSaida.AGUARDANDO_GERACAO_NFE;
+		StatusEmissaoNotaFiscal statusNF = StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE;
 		
 		ParametroEmissaoNotaFiscal parametroEmissaoNF = parametroEmissaoNotaFiscalRepository.obterParametroEmissaoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		
@@ -665,7 +665,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 		nfSaidaFornecedor.setNumero(numeroNF.toString());
 		nfSaidaFornecedor.setSerie(serieNF);
-		nfSaidaFornecedor.setStatus(statusNF);
+		nfSaidaFornecedor.setStatusEmissao(statusNF);
 		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
 		
 		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
