@@ -78,7 +78,7 @@ public class SuspensaoCotaController {
 	}
 	
 	
-	/*
+	/**
 	 * Obtém os dados do cabeçalho de exportação.
 	 * 
 	 * @return NDSFileHeader
