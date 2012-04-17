@@ -113,7 +113,7 @@
 			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", data, 
 				function(result) {
 					
-					if (result){
+					if (result != ""){
 						
 						if (fiador){
 							$('[name="nomeFiadorCpf"]:eq(' + refAba + ')').val(result[0]);
