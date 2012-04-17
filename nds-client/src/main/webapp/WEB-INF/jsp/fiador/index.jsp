@@ -302,7 +302,7 @@
 		}
 		
 		function excluirFiador(idFiador){
-			$("#dialog-excluir-fiador").dialog({
+			$(".dialog-excluir-fiador").dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -336,7 +336,7 @@
 				}
 			});
 			
-			$("#dialog-excluir-fiador").show();
+			$(".dialog-excluir-fiador").show();
 		}
 		
 		function limparCamposCadastroFiador(){
@@ -374,7 +374,7 @@
 
 <body>
 	
-	<div id="dialog-excluir-fiador" title="Fiadores" style="display: none;">
+	<div id="dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
 		<p>Confirma esta Exclusão?</p>
 	</div>
 	

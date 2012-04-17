@@ -176,18 +176,27 @@ public class FiadorServiceImpl implements FiadorService {
 						
 						PessoaFisica conjuge = ((PessoaFisica) socio).getConjuge();
 						
+						Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(conjuge.getCpf());
+						conjuge.setId(idPessoa);
+						
 						if (conjuge.getId() == null){
+							
 							this.pessoaRepository.adicionar(conjuge);
 						} else {
+							
 							this.pessoaRepository.alterar(conjuge);
 						}
 					}
+					
+					Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaFisica) socio).getCpf());
+					socio.setId(idPessoa);
 				}
 				
-				
 				if (socio.getId() == null){
+					
 					this.pessoaRepository.adicionar(socio);
 				} else {
+					
 					this.pessoaRepository.alterar(socio);
 				}
 			}
@@ -590,6 +599,16 @@ public class FiadorServiceImpl implements FiadorService {
 		Fiador fiador = this.fiadorRepository.buscarPorId(idFiador);
 		
 		if (fiador != null){
+			
+			if (fiador.getCotasAssociadas() != null){
+				
+				for (Cota cota : fiador.getCotasAssociadas()){
+					
+					cota.setFiador(null);
+					this.cotaRepository.alterar(cota);
+				}
+			}
+			
 			this.fiadorRepository.remover(fiador);
 		}
 	}
@@ -656,5 +675,20 @@ public class FiadorServiceImpl implements FiadorService {
 		}
 		
 		return this.fiadorRepository.obterCotasAssociadaFiador(idFiador);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota) {
+		
+		if (idFiador == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id fiador é obrigatório.");
+		}
+		
+		if (numeroCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		return this.fiadorRepository.verificarAssociacaoFiadorCota(idFiador, numeroCota);
 	}
 }

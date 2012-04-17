@@ -45,4 +45,6 @@ public interface FiadorService {
 	Fiador obterFiadorPorId(Long idFiador);
 	
 	List<Cota> obterCotasAssociadaFiador(Long idFiador);
+
+	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
 }

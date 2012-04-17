@@ -209,4 +209,20 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		
 		return query.list();
 	}
+
+	@Override
+	public boolean verificarAssociacaoFiadorCota(Long idFiador,	Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder("select count (c.id) ");
+		hql.append(" from Fiador f, Cota c ")
+		   .append(" where c.fiador.id = f.id ")
+		   .append(" and   f.id = :idFiador ")
+		   .append(" and   c.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		query.setParameter("numeroCota", numeroCota);
+		
+		return ((Long)query.uniqueResult()) > 0;
+	}
 }

@@ -26,4 +26,6 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 	Date buscarDataInicioAtividadeFiadorPorId(Long id);
 
 	List<Cota> obterCotasAssociadaFiador(Long idFiador);
+
+	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
 }

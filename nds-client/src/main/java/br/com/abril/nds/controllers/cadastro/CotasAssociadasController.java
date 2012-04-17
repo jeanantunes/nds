@@ -149,7 +149,14 @@ public class CotasAssociadasController {
 			}
 		}
 		
+		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+		
+		if (idFiador != null){
+			add = !this.fiadorService.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+		}
+		
 		if (add){
+			
 			AssociacaoCota associacaoCota = new AssociacaoCota();
 			associacaoCota.setReferencia((int)new Date().getTime());
 			associacaoCota.setNumeroCota(numeroCota);
