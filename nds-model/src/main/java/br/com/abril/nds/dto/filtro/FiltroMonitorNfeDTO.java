@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class FiltroMonitorNfeDTO implements Serializable {
 	
+	
+	private boolean indDocumentoCPF;
 	private String box;
 	private Date dataInicial;
 	private Date dataFinal;
@@ -150,10 +152,21 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public void setSituacaoNfe(String situacaoNfe) {
 		this.situacaoNfe = situacaoNfe;
 	}
-	
-	
-	
-	
+	/**
+	 * Obtém indDocumentoCPF
+	 *
+	 * @return boolean
+	 */
+	public boolean isIndDocumentoCPF() {
+		return indDocumentoCPF;
+	}
+	/**
+	 * Atribuí indDocumentoCPF
+	 * @param indDocumentoCPF 
+	 */
+	public void setIndDocumentoCPF(boolean indDocumentoCPF) {
+		this.indDocumentoCPF = indDocumentoCPF;
+	}
 	
 	
 }

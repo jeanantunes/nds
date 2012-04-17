@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -56,6 +55,8 @@ public class PainelMonitorNFEController {
 	private HttpServletRequest request;
 	
 	private static final String LISTA_NFE = "listaNFE";
+	
+	private static final String TIPO_DOCUMENTO_CPF = "cpf";
 	
 	@Path("/")
 	public void index(){
@@ -119,7 +120,7 @@ public class PainelMonitorNFEController {
 
 	}
 	
-	public void imprimirDanfeUnica(Integer lineIdImpressaoDanfe) {
+	public void prepararDanfeUnicaImpressao(Integer lineIdImpressaoDanfe) {
 		
 		List<CellModelKeyValue<NfeVO>> listaNfeVO = getListaNfeFromSession();
 
@@ -136,15 +137,15 @@ public class PainelMonitorNFEController {
 		
 		}
 		
-		//TODO imprimir a listaNfeParaImpressao...
+		result.use(Results.nothing());
 		
 	}
 	
-	public void imprimirDanfes(List<Integer> listaLineIdsImpressaoDanfes) {
+	public void prepararDanfesImpressao(List<Integer> listaLineIdsImpressaoDanfes) {
 		
 		
 		if(listaLineIdsImpressaoDanfes==null ||
-				!listaLineIdsImpressaoDanfes.isEmpty()) {
+				listaLineIdsImpressaoDanfes.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
 			
@@ -168,7 +169,7 @@ public class PainelMonitorNFEController {
 			
 		}
 		
-		//TODO imprimir a listaNfeParaImpressao...
+		result.use(Results.nothing());
 		
 	}
 	
@@ -253,7 +254,7 @@ public class PainelMonitorNFEController {
 	}
 	
 	private TableModel getTableModelDataMock() {
-		
+		//TODO: remover após testes
 		TableModel<CellModelKeyValue<NfeVO>> tableModel = new TableModel<CellModelKeyValue<NfeVO>>();
 		
 		List<NfeVO> lista = new ArrayList<NfeVO>();
@@ -285,14 +286,27 @@ public class PainelMonitorNFEController {
 		
 	}
 	
+	private void carregarComboSituacaoNfe() {
+		
+		List<String> combo = new ArrayList<String>();
+		/*
+		AGUARDANDO_PROCESSAMENTO("Aguardando Processamento"),
+		EM_PROCESSAMENTO("Em Processamento"),
+		PROCESSAMENTO_REJEITADO("Processamento Rejeitado"),
+		AGUARDANDO_ACAO_DO_USUARIO("Aguardando Ação do Usuário"),
+		NFE_AUTORIZADA("Nf-e Autorizada"),
+		NFE_REJEITADA("Nf-e Rejeitada"),
+		NFE_DENEGADA("Nf-e Denegada");*/
+		
+	}
+	
 	
 	@Path("/pesquisar")
 	public void pesquisar(
+			String tipoDocumento,
 			String box,
 			String dataInicial,
 			String dataFinal,
-			String cpf,
-			String cnpj,
 			String documento,
 			String tipoNfe,
 			String numeroInicial,
@@ -316,12 +330,11 @@ public class PainelMonitorNFEController {
 		filtroMonitorNfeDTO.setNumeroNotaInicial(numeroFinal);
 		filtroMonitorNfeDTO.setSituacaoNfe(situacaoNfe);
 		filtroMonitorNfeDTO.setTipoNfe(tipoNfe);
+		filtroMonitorNfeDTO.setIndDocumentoCPF(TIPO_DOCUMENTO_CPF.equals(tipoDocumento));
 		
 		System.out.println(box);
 		System.out.println(dataInicial);
 		System.out.println(dataFinal);
-		System.out.println(cpf);
-		System.out.println(cnpj);
 		System.out.println(documento);
 		System.out.println(tipoNfe);
 		System.out.println(numeroInicial);

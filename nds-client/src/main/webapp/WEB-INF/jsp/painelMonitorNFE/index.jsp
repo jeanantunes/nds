@@ -14,8 +14,7 @@ var PainelMonitorNFE = {
 			var box = $("#box").val();
 			var dataInicial = $("#dataInicial").val();
 			var dataFinal = $("#dataFinal").val();
-			var cpf	=  $("#cpf").val();
-			var cnpj = $("#cnpj").val();
+			var tipoDocumento = $('input:radio[name=radioTipoDoc]:checked').val();
 			var documento = $("#documento").val();
 			var tipoNfe = $("#tipoNfe").val();
 			var numeroInicial = $("#numeroInicial").val();
@@ -27,8 +26,7 @@ var PainelMonitorNFE = {
 			        {name:'box', value: box },
 			        {name:'dataInicial', value: dataInicial },
 			        {name:'dataFinal', value: dataFinal },
-			        {name:'cpf', value: cpf },
-			        {name:'cnpj', value: cnpj },
+			        {name:'tipoDocumento', value: tipoDocumento },
 			        {name:'documento', value: documento },
 			        {name:'tipoNfe', value: tipoNfe },
 			        {name:'numeroInicial', value: numeroInicial },
@@ -114,7 +112,7 @@ var PainelMonitorNFE = {
 				
 				var hiddenField = '<input type="hidden" name="lineId" value="'+value.id+'" />';
 				
-				value.cell.imprimirLinha = '<img title="Imprimir" src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0"/>';
+				value.cell.imprimirLinha = '<a href="#" onclick="PainelMonitorNFE.imprimirDanfeUnica('+value.id+')"><img title="Imprimir" src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0"/>';
 				
 				value.cell.sel = '<input type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>'+hiddenField;
 				
@@ -128,9 +126,13 @@ var PainelMonitorNFE = {
 		
 		imprimirDanfes : function() {
 			
-			var listaIdLineSelecionado = '';
+			var nomeLista = 'listaLineIdsImpressaoDanfes';
+			
+			var selecionados = '';
 			
 			var linhasDaGrid = $("#nfeGrid tr");
+			
+			var contador = 0;
 			
 			$.each(linhasDaGrid, function(index, value) {
 				
@@ -144,38 +146,29 @@ var PainelMonitorNFE = {
 				
 				if(inputSelecao.attr('checked')) {
 					
-					if(listaIdLineSelecionado == '') {
-						listaIdLineSelecionado = lineId;
+					var indiceAtual = '['+contador+']=';
+					
+					if(selecionados == '') {
+						selecionados = ( nomeLista + indiceAtual + lineId )  ;
 					} else {
-						listaIdLineSelecionado = (listaIdLineSelecionado + ', '+ lineId);
+						selecionados = ( selecionados + '&' + nomeLista + indiceAtual + lineId )  ;
 					}
 					
-					
+					contador = (contador + 1);
 				}
 				
 			});
 			
-			alert(listaIdLineSelecionado);
-			
-			/*
-			$.postJSON("<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>",
-					params,
-					callBackSucesso,
-					callBackFalha, 
-					false);
-			*/
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", selecionados);
 			
 		},
 		
-		imprimirDanfeUnica : function() {
+		imprimirDanfeUnica : function(linedId) {
 			
-			var params = '';
+			var params = 'lineIdImpressaoDanfe='+lineId;
 			
-			$.postJSON("<c:url value='/nfe/painelMonitorNFe/imprimirDanfeUnica'/>",
-					params,
-					callBackSucesso,
-					callBackFalha, 
-					false);
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfeUnicaImpressao'/>",
+					params);
 			
 		},
 		
@@ -346,14 +339,14 @@ $(function() {
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td width="15%">
-									<input type="radio" name="radio" id="cpf" value="radio" />
+									<input type="radio" name="radioTipoDoc" value="cpf" />
 								</td>
 								<td width="34%">
 									<label for="cpf">CPF</label>
 								</td>
 								
 								<td width="15%">
-									<input type="radio" name="radio" id="cnpj" value="radio" />
+									<input type="radio" name="radioTipoDoc" checked="checked" value="cnpj" />
 								</td>
 								
 								<td width="36%">
@@ -429,17 +422,33 @@ $(function() {
 				<span class="bt_novos" title="Gerar Arquivo"><a
 					href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 						hspace="5" border="0" />Arquivo</a>
-				</span> <span class="bt_novos" title="Imprimir"><a
-					href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-						alt="Imprimir" hspace="5" border="0" />Imprimir</a>
-				</span> <span class="bt_novos" title="Imprimir Seleção"><a
-					href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-						alt="Imprimir Seleção" hspace="5" border="0" />Imprimir Seleção</a>
-				</span> <span class="bt_sellAll" style="float: right;"><label
-					for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-					name="Todos" onclick="PainelMonitorNFE.checkAll(this);"
-					style="float: left; margin-right: 25px;" />
+				</span> 
+				
+				<span 	class="bt_novos" title="Imprimir">
+					<a href="javascript:;">
+						<img 	src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+								alt="Imprimir" hspace="5" border="0" />Imprimir
+					</a>
+				</span> 
+				
+				
+				<span class="bt_novos" title="Imprimir Seleção">
+					<a 	onclick="PainelMonitorNFE.imprimirDanfes()"	href="javascript:;">
+						<img 	src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+								alt="Imprimir Seleção" 
+								hspace="5" 
+								border="0" />
+						Imprimir Seleção
+					</a>
+				</span> 
+				
+				<span class="bt_sellAll" style="float: right;">
+					<label for="sel">Selecionar Todos</label>
+					<input 	type="checkbox" id="sel" name="Todos" 
+							onclick="PainelMonitorNFE.checkAll(this);"
+							style="float: left; margin-right: 25px;" />
 				</span>
+				
 			</div>
 
 
