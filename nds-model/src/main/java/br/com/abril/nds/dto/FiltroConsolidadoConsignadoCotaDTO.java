@@ -1,4 +1,4 @@
-package br.com.abril.nds.dto.filtro;
+package br.com.abril.nds.dto;
 
 import java.util.Date;
 
@@ -7,8 +7,7 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroConsolidadoEncalheCotaDTO {
-	
+public class FiltroConsolidadoConsignadoCotaDTO {
 	
 	@Export(label="Data")
 	private Date dataConsolidado;
@@ -27,15 +26,17 @@ public class FiltroConsolidadoEncalheCotaDTO {
 	 * 	
 	 */
 	public enum OrdenacaoColuna {
-		
 		CODIGO_PRODUTO("codigoProduto"),
 		NOME_PRODUTO("nomeProduto"),
 		NUMERO_EDICAO("numeroEdicao"),
 		PRECO_CAPA("precoVenda"),
 		PRECO_COM_DESCONTO("precoComDesconto"),
-		ENCALHE("encalhe"),
+		REPARTE_SUGERIDO("reparteSugerido"),
+		REPARTE_FINAL("reparteFinal"),
+		DIFERENCA("diferenca"),
+		MOTIVO("motivo"),		
 		FORNECEDOR("fornecedor"),
-		TOTAL("total");	
+		TOTAL("total");
 		
 		private String nomeColuna;
 		
@@ -47,9 +48,8 @@ public class FiltroConsolidadoEncalheCotaDTO {
 		public String toString() {
 			return this.nomeColuna;
 		}
-		
-	}	
-	
+	}
+
 	public Date getDataConsolidado() {
 		return dataConsolidado;
 	}
@@ -81,7 +81,7 @@ public class FiltroConsolidadoEncalheCotaDTO {
 	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-	
+
 	public Long getLineId() {
 		return lineId;
 	}
@@ -113,7 +113,7 @@ public class FiltroConsolidadoEncalheCotaDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FiltroConsolidadoEncalheCotaDTO other = (FiltroConsolidadoEncalheCotaDTO) obj;
+		FiltroConsolidadoConsignadoCotaDTO other = (FiltroConsolidadoConsignadoCotaDTO) obj;
 		if (dataConsolidado == null) {
 			if (other.dataConsolidado != null)
 				return false;
@@ -132,6 +132,6 @@ public class FiltroConsolidadoEncalheCotaDTO {
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
 		return true;
-	}	
-
+	}
+		
 }
