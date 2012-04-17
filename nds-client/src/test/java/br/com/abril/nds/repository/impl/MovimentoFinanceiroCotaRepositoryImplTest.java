@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
@@ -83,7 +84,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
-				new BigDecimal(200), null, new Date());
+				new BigDecimal(200), null, StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
 		
@@ -160,7 +161,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 					.movimentoFinanceiroCota(movimentoFinanceiroCota.getCota(),
 							tipoMovimentoFinanceiro,
 							movimentoFinanceiroCota.getUsuario(),
-							new BigDecimal("450"), null, new Date());
+							new BigDecimal("450"), null, StatusAprovacao.APROVADO, new Date(), true);
 
 			save(novoMovimentoFinanceiroCota);
 
@@ -169,7 +170,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 			novoMovimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 					movimentoFinanceiroCota.getCota(), tipoMovimentoFinanceiro,
 					movimentoFinanceiroCota.getUsuario(),
-					new BigDecimal("170"), null, new Date());
+					new BigDecimal("170"), null, StatusAprovacao.APROVADO, new Date(), true);
 
 			save(novoMovimentoFinanceiroCota);
 			

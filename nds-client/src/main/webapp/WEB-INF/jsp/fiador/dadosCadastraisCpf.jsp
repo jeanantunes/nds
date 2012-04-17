@@ -12,6 +12,9 @@
 	}
 	
 	function cadastrarFiadorCpf(janela){
+		
+		fecharModalCadastroFiador = true;
+		
 		var data = "pessoa.nome=" + $("#nomeFiadorCpf").val() + "&" +
 		           "pessoa.email=" + $("#emailFiadorCpf").val() + "&" +
 		           "pessoa.cpf=" + $("#cpfFiador").val() + "&" +
@@ -63,28 +66,29 @@
 		);
 	}
 	
-	function limparDadosCadastraisCPF(){
-		$('[name="nomeFiadorCpf"]:eq(0)').val("");
-        $('[name="emailFiadorCpf"]:eq(0)').val("");
-        $('[name="cpfFiador"]:eq(0)').val("");
-        $('[name="rgFiador"]:eq(0)').val("");
-        $('[name="dataNascimentoFiadorCpf"]:eq(0)').val("");
-        $('[name="orgaoEmissorFiadorCpf"]:eq(0)').val("");
-        $('[name="selectUfOrgaoEmiCpf"]:eq(0)').val("");
-        $('[name="estadoCivilFiadorCpf"]:eq(0)').val("");
-        $('[name="selectSexoFiador"]:eq(0)').val("");
-        $('[name="nacionalidadeFiadorCpf"]:eq(0)').val("");
-        $('[name="naturalFiadorCpf"]:eq(0)').val("");
-        $('[name="nomeConjugeCpf"]:eq(0)').val("");
-        $('[name="emailConjugeCpf"]:eq(0)').val("");
-        $('[name="cpfConjuge"]:eq(0)').val("");
-        $('[name="rgConjuge"]:eq(0)').val("");
-        $('[name="dataNascimentoConjugeCpf"]:eq(0)').val("");
-        $('[name="orgaoEmissorConjugeCpf"]:eq(0)').val("");
-        $('[name="selectUfOrgaoEmiConjugeCpf"]:eq(0)').val("");
-        $('[name="selectSexoConjuge"]:eq(0)').val("");
-        $('[name="nacionalidadeConjugeCpf"]:eq(0)').val("");
-        $('[name="naturalConjugeCpf"]:eq(0)').val("");
+	function limparDadosCadastraisCPF(indiceAba){
+		
+		$('[name="nomeFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="emailFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="cpfFiador"]:eq('+ indiceAba +')').val("");
+        $('[name="rgFiador"]:eq('+ indiceAba +')').val("");
+        $('[name="dataNascimentoFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="orgaoEmissorFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="selectUfOrgaoEmiCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="estadoCivilFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="selectSexoFiador"]:eq('+ indiceAba +')').val("");
+        $('[name="nacionalidadeFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="naturalFiadorCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="nomeConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="emailConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="cpfConjuge"]:eq('+ indiceAba +')').val("");
+        $('[name="rgConjuge"]:eq('+ indiceAba +')').val("");
+        $('[name="dataNascimentoConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="orgaoEmissorConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="selectUfOrgaoEmiConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="selectSexoConjuge"]:eq('+ indiceAba +')').val("");
+        $('[name="nacionalidadeConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="naturalConjugeCpf"]:eq('+ indiceAba +')').val("");
 	}
 	
 	$(function(){
@@ -94,40 +98,107 @@
 		$('[name="rgConjuge"]').mask("99.999.999-9");
 		$('[name="dataNascimentoFiadorCpf"]').mask("99/99/9999");
 		$('[name="dataNascimentoConjugeCpf"]').mask("99/99/9999");
+		$('[name="selectUfOrgaoEmiCpf"]').mask("aa");
+		$('[name="selectUfOrgaoEmiConjugeCpf"]').mask("aa");
 	});
+	
+	function buscarPessoaCPF(cpf, fiador){
+		
+		var refAba = $("#tab-1").css("display") == "block" ? 0 : 1;
+		
+		if (cpf != "___.___.___-__"){
+			
+			var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('[name="cpfFiador"]:eq(' + refAba + ')').val();
+			
+			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", data, 
+				function(result) {
+					
+					if (result){
+						
+						if (fiador){
+							$('[name="nomeFiadorCpf"]:eq(' + refAba + ')').val(result[0]);
+							$('[name="emailFiadorCpf"]:eq(' + refAba + ')').val(result[1]);
+							$('[name="cpfFiador"]:eq(' + refAba + ')').val(result[2]);
+							$('[name="rgFiador"]:eq(' + refAba + ')').val(result[3]);
+							$('[name="dataNascimentoFiadorCpf"]:eq(' + refAba + ')').val(result[4]);
+							$('[name="orgaoEmissorFiadorCpf"]:eq(' + refAba + ')').val(result[5]);
+							$('[name="selectUfOrgaoEmiCpf"]:eq(' + refAba + ')').val(result[6]);
+							$('[name="estadoCivilFiadorCpf"]:eq(' + refAba + ')').val(result[7]);
+							$('[name="selectSexoFiador"]:eq(' + refAba + ')').val(result[8]);
+							$('[name="nacionalidadeFiadorCpf"]:eq(' + refAba + ')').val(result[9]);
+							$('[name="naturalFiadorCpf"]:eq(' + refAba + ')').val(result[10]);
+							
+							if (result[7] == "CASADO"){
+								
+								opcaoCivilPf(result[7]);
+								
+								$('[name="nomeConjugeCpf"]:eq(' + refAba + ')').val(result[11]);
+								$('[name="emailConjugeCpf"]:eq(' + refAba + ')').val(result[12]);
+								$('[name="cpfConjuge"]:eq(' + refAba + ')').val(result[13]);
+								$('[name="rgConjuge"]:eq(' + refAba + ')').val(result[14]);
+								$('[name="dataNascimentoConjugeCpf"]:eq(' + refAba + ')').val(result[15]);
+								$('[name="orgaoEmissorConjugeCpf"]:eq(' + refAba + ')').val(result[16]);
+								$('[name="selectUfOrgaoEmiConjugeCpf"]:eq(' + refAba + ')').val(result[17]);
+								$('[name="selectSexoConjuge"]:eq(' + refAba + ')').val(result[18]);
+								$('[name="nacionalidadeConjugeCpf"]:eq(' + refAba + ')').val(result[19]);
+								$('[name="naturalConjugeCpf"]:eq(' + refAba + ')').val(result[20]);
+							}
+						} else {
+							
+							$('[name="nomeConjugeCpf"]:eq(' + refAba + ')').val(result[0]);
+							$('[name="emailConjugeCpf"]:eq(' + refAba + ')').val(result[1]);
+							$('[name="cpfConjuge"]:eq(' + refAba + ')').val(result[2]);
+							$('[name="rgConjuge"]:eq(' + refAba + ')').val(result[3]);
+							$('[name="dataNascimentoConjugeCpf"]:eq(' + refAba + ')').val(result[4]);
+							$('[name="orgaoEmissorConjugeCpf"]:eq(' + refAba + ')').val(result[5]);
+							$('[name="selectUfOrgaoEmiConjugeCpf"]:eq(' + refAba + ')').val(result[6]);
+							$('[name="selectSexoConjuge"]:eq(' + refAba + ')').val(result[8]);
+							$('[name="nacionalidadeConjugeCpf"]:eq(' + refAba + ')').val(result[9]);
+							$('[name="naturalConjugeCpf"]:eq(' + refAba + ')').val(result[10]);
+						}
+					}
+				},
+				null,
+				true
+			);
+		}
+	}
 </script>
 
 <table width="754" cellpadding="2" cellspacing="2" style="text-align: left;">
 	<tr class="inicioAtividade">
 		<td nowrap="nowrap"><strong>Início de Atividade:</strong></td>
-		<td>${dataAtual}</td>
+		<td class="inicioAtividadeNovo">${dataAtual}</td>
+		<td class="inicioAtividadeEdicao"></td>
 		<td>&nbsp;</td>
 		<td colspan="3">&nbsp;</td>
 	</tr>
 	<tr>
 		<td width="118">Nome:</td>
-		<td width="237"><input type="text" style="width: 230px" id="nomeFiadorCpf" name="nomeFiadorCpf" /></td>
+		<td width="237"><input type="text" style="width: 230px" id="nomeFiadorCpf" name="nomeFiadorCpf" maxlength="255"/></td>
 		<td width="134">E-mail:</td>
-		<td colspan="3"><input type="text" style="width: 230px" id="emailFiadorCpf" name="emailFiadorCpf" /></td>
+		<td colspan="3"><input type="text" style="width: 230px" id="emailFiadorCpf" name="emailFiadorCpf" maxlength="255"/></td>
 	</tr>
 	<tr>
 		<td>CPF:</td>
-		<td><input type="text" style="width: 150px" id="cpfFiador" name="cpfFiador" /></td>
+		<td>
+			<input type="text" style="width: 150px" id="cpfFiador" name="cpfFiador" onblur="buscarPessoaCPF(this.value, true);"/>
+		</td>
 		<td>R. G.:</td>
 		<td colspan="3"><input type="text" style="width: 150px" id="rgFiador" name="rgFiador" /></td>
 	</tr>
 	<tr>
 		<td>Data Nascimento:</td>
-		<td><input type="text" style="width: 150px" id="dataNascimentoFiadorCpf" name="dataNascimentoFiadorCpf" /></td>
+		<td>
+			<input type="text" style="width: 150px" id="dataNascimentoFiadorCpf" name="dataNascimentoFiadorCpf" />
+		</td>
 		<td>Orgão Emissor:</td>
-		<td width="59"><input type="text" style="width: 50px" id="orgaoEmissorFiadorCpf" name="orgaoEmissorFiadorCpf" /></td>
+		<td width="59">
+			<input type="text" style="width: 50px" id="orgaoEmissorFiadorCpf" name="orgaoEmissorFiadorCpf" maxlength="255"/>
+		</td>
 		<td width="31">UF:</td>
 		<td width="135">
-			<select name="selectUfOrgaoEmiCpf" id="selectUfOrgaoEmiCpf" style="width: 50px">
-				<option selected="selected"></option>
-				<option>RJ</option>
-				<option>SP</option>
-			</select>
+			<input type="text" name="selectUfOrgaoEmiCpf" id="selectUfOrgaoEmiCpf" style="width: 50px; text-transform:uppercase;"/>
 		</td>
 	</tr>
 	<tr>
@@ -152,9 +223,13 @@
 	</tr>
 	<tr>
 		<td>Nacionalidade:</td>
-		<td><input type="text" style="width: 150px" id="nacionalidadeFiadorCpf" name="nacionalidadeFiadorCpf" /></td>
+		<td>
+			<input type="text" style="width: 150px" id="nacionalidadeFiadorCpf" name="nacionalidadeFiadorCpf" maxlength="255"/>
+		</td>
 		<td>Natural:</td>
-		<td colspan="3"><input type="text" style="width: 150px" id="naturalFiadorCpf" name="naturalFiadorCpf" /></td>
+		<td colspan="3">
+			<input type="text" style="width: 150px" id="naturalFiadorCpf" name="naturalFiadorCpf" maxlength="255"/>
+		</td>
 	</tr>
 	<tr class="trSocioPrincipal" style="display: none;">
 		<td>Principal:</td>
@@ -169,13 +244,13 @@
 	<table width="760" cellpadding="2" cellspacing="2" style="text-align: left;">
 		<tr>
 			<td width="108">Nome:</td>
-			<td width="274"><input type="text" style="width: 230px" id="nomeConjugeCpf" name="nomeConjugeCpf" /></td>
+			<td width="274"><input type="text" style="width: 230px" id="nomeConjugeCpf" name="nomeConjugeCpf" maxlength="255"/></td>
 			<td width="118">E-mail:</td>
-			<td colspan="3"><input type="text" style="width: 230px" id="emailConjugeCpf" name="emailConjugeCpf" /></td>
+			<td colspan="3"><input type="text" style="width: 230px" id="emailConjugeCpf" name="emailConjugeCpf" maxlength="255"/></td>
 		</tr>
 		<tr>
 			<td>CPF:</td>
-			<td><input type="text" style="width: 150px" id="cpfConjuge" name="cpfConjuge"/></td>
+			<td><input type="text" style="width: 150px" id="cpfConjuge" name="cpfConjuge" onblur="buscarPessoaCPF(this.value, false);"/></td>
 			<td>R. G.:</td>
 			<td colspan="3"><input type="text" style="width: 175px" id="rgConjuge" name="rgConjuge" /></td>
 		</tr>
@@ -183,14 +258,10 @@
 			<td>Data Nascimento:</td>
 			<td><input type="text" style="width: 150px" id="dataNascimentoConjugeCpf" name="dataNascimentoConjugeCpf" /></td>
 			<td>Orgão Emissor:</td>
-			<td width="63"><input type="text" style="width: 50px" id="orgaoEmissorConjugeCpf" id="name" /></td>
+			<td width="63"><input type="text" style="width: 50px" id="orgaoEmissorConjugeCpf" name="orgaoEmissorConjugeCpf" maxlength="255" /></td>
 			<td width="26">UF:</td>
 			<td width="136">
-				<select name="selectUfOrgaoEmiConjugeCpf" id="selectUfOrgaoEmiConjugeCpf" style="width: 50px">
-					<option selected="selected"></option>
-					<option>RJ</option>
-					<option>SP</option>
-				</select>
+				<input type="text" name="selectUfOrgaoEmiConjugeCpf" id="selectUfOrgaoEmiConjugeCpf" style="width: 50px; text-transform:uppercase;" />
 			</td>
 		</tr>
 		<tr>
@@ -203,11 +274,11 @@
 				</select>
 			</td>
 			<td>Nacionalidade:</td>
-			<td colspan="3"><input type="text" style="width: 150px" id="nacionalidadeConjugeCpf" name="nacionalidadeConjugeCpf" /></td>
+			<td colspan="3"><input type="text" style="width: 150px" id="nacionalidadeConjugeCpf" name="nacionalidadeConjugeCpf" maxlength="255"/></td>
 		</tr>
 		<tr>
 			<td>Natural:</td>
-			<td><input type="text" style="width: 175px" id="naturalConjugeCpf" name="naturalConjugeCpf" /></td>
+			<td><input type="text" style="width: 175px" id="naturalConjugeCpf" name="naturalConjugeCpf" maxlength="255"/></td>
 			<td>&nbsp;</td>
 			<td colspan="3">&nbsp;</td>
 		</tr>

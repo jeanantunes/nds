@@ -25,14 +25,16 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
 public abstract class NotaFiscalEntrada extends NotaFiscal {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(generator = "NF_ENTRADA_SEQ")
 	@Column(name = "ID")
-	private Long id;
+	protected Long id;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
-	private Origem origem;
+	protected Origem origem;
 	
 	@ManyToOne
 	@JoinColumn(name = "USUARIO_ID")
@@ -40,7 +42,7 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
-	private StatusNotaFiscalEntrada statusNotaFiscal;
+	protected StatusNotaFiscalEntrada statusNotaFiscal;
 	
 	public Long getId() {
 		return id;

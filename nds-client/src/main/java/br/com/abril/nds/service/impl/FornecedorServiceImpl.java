@@ -93,7 +93,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 		
 		for (Telefone telefone : listaTel){
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null);
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, telefone, null, null);
 			listaTelAssoc.add(telefoneAssociacaoDTO);
 		}
 		

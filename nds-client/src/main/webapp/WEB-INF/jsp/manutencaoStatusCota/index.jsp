@@ -49,7 +49,7 @@
 					align : 'left'
 				}],
 				sortname : "data",
-				sortorder : "asc",
+				sortorder : "desc",
 				usepager : true,
 				useRp : true,
 				rp : 15,
@@ -187,7 +187,8 @@
 
 			$(".manutencaoStatusCotaGrid").flexOptions({
 				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
-				params: filtro
+				params: filtro,
+				newp: 1
 			});
 			
 			$(".manutencaoStatusCotaGrid").flexReload();

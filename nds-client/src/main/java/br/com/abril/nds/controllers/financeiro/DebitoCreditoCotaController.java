@@ -206,7 +206,7 @@ public class DebitoCreditoCotaController {
 			
 			itemExport.setObservacao(movimeto.getObservacao());
 			
-			itemExport.setTipoMovimentoFinanceiro(movimeto.getTipoMovimento());
+			itemExport.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimeto.getTipoMovimento());
 			
 			itemExport.setUsuario(movimeto.getUsuario());
 			
@@ -487,7 +487,7 @@ public class DebitoCreditoCotaController {
 						  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
 
 		debitoCredito.setDataLancamento(formatField(movimentoFinanceiroCota.getDataCriacao()));
-		debitoCredito.setTipoMovimentoFinanceiro(movimentoFinanceiroCota.getTipoMovimento());
+		debitoCredito.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento());
 		debitoCredito.setDataVencimento(formatField(movimentoFinanceiroCota.getData()));
 		debitoCredito.setNumeroCota(movimentoFinanceiroCota.getCota().getNumeroCota());
 		debitoCredito.setObservacao(movimentoFinanceiroCota.getObservacao());

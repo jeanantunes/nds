@@ -17,9 +17,8 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneFiador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.util.CellModel;
@@ -65,7 +64,20 @@ public class TelefoneController {
 		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
 		
 		if (idFiador != null){
-			listaTelefones = this.fiadorService.buscarTelefonesFiador(idFiador, null);
+			
+			Set<Long> idsTelefonesSessao = new HashSet<Long>();
+			
+			if (!telefonesSessao.isEmpty()){
+				
+				for (TelefoneAssociacaoDTO dto : telefonesSessao.values()){
+					
+					idsTelefonesSessao.add(dto.getTelefone().getId());
+				}
+			}
+			
+			idsTelefonesSessao.addAll(this.obterTelefonesRemoverSessao());
+			
+			listaTelefones = this.fiadorService.buscarTelefonesFiador(idFiador, idsTelefonesSessao);
 		}
 		
 		if (listaTelefones != null){
@@ -100,7 +112,7 @@ public class TelefoneController {
 	public void adicionarTelefone(Integer referencia, String tipoTelefone, String ddd, 
 			String numero, String ramal, boolean principal){
 		
-		this.validarDadosEntrada(tipoTelefone, ddd, numero, principal);
+		this.validarDadosEntrada(tipoTelefone, ddd, numero, principal, referencia);
 		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
@@ -146,6 +158,12 @@ public class TelefoneController {
 			setTelefonesRemover.add(telefoneAssociacaoDTO.getTelefone().getId());
 			
 			this.httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, setTelefonesRemover);
+		} else {
+			
+			Set<Long> setTelefonesRemover = this.obterTelefonesRemoverSessao();
+			setTelefonesRemover.add(referencia.longValue());
+			
+			this.httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, setTelefonesRemover);
 		}
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSalvarSessao);
@@ -159,13 +177,48 @@ public class TelefoneController {
 		
 		TelefoneAssociacaoDTO telefoneAssociacaoDTO = telefonesSessao.get(referencia);
 		
+		
+		
 		if (telefoneAssociacaoDTO != null){
+			
 			this.result.use(Results.json()).from(telefoneAssociacaoDTO, "result").recursive().serialize();
 		} else {
-			this.result.use(Results.json()).from("", "result").recursive().serialize();
+			
+			telefoneAssociacaoDTO = this.buscarAssociacaoTelefone(referencia);
+			
+			if (telefoneAssociacaoDTO != null){
+				
+				this.obterTelefonesSalvarSessao().put(referencia, telefoneAssociacaoDTO);
+				
+				this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, this.obterTelefonesSalvarSessao());
+				
+				this.result.use(Results.json()).from(telefoneAssociacaoDTO, "result").recursive().serialize();
+			} else {
+				this.result.use(Results.json()).from("", "result").serialize();
+			}
 		}
 	}
 	
+	private TelefoneAssociacaoDTO buscarAssociacaoTelefone(Integer referencia) {
+		
+		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+		
+		if (idFiador != null){
+			
+			TelefoneFiador telefoneFiador = this.fiadorService.buscarTelefonePorTelefoneFiador(idFiador, referencia.longValue());
+			
+			TelefoneAssociacaoDTO dto = new TelefoneAssociacaoDTO();
+			dto.setPrincipal(telefoneFiador.isPrincipal());
+			dto.setReferencia(referencia);
+			dto.setTelefone(telefoneFiador.getTelefone());
+			dto.setTipoTelefone(telefoneFiador.getTipoTelefone());
+			
+			return dto;
+		}
+		
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
@@ -219,7 +272,7 @@ public class TelefoneController {
 		return tableModel;
 	}
 	
-	private void validarDadosEntrada(String tipoTelefone, String ddd, String numero, boolean principal) {
+	private void validarDadosEntrada(String tipoTelefone, String ddd, String numero, boolean principal, Integer referencia) {
 		List<String> listaValidacao = new ArrayList<String>();
 		
 		if (Util.getEnumByStringValue(TipoTelefone.values(), tipoTelefone) == null){
@@ -238,7 +291,9 @@ public class TelefoneController {
 			Map<Integer, TelefoneAssociacaoDTO> telefones = this.obterTelefonesSalvarSessao();
 			
 			for (Integer key : telefones.keySet()){
-				if (telefones.get(key).isPrincipal()){
+				
+				if (telefones.get(key).isPrincipal() && (referencia != null && !referencia.equals(telefones.get(key).getReferencia()))){
+					
 					listaValidacao.add("Já existe um telefone principal.");
 					break;
 				}

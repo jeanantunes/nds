@@ -121,7 +121,10 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(estoqueProduto);
 		
 		MovimentoEstoque movimentoEstoque = 
-				Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto, StatusAprovacao.APROVADO, "motivo");
+			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario,
+				estoqueProduto, new Date(), new BigDecimal(1),
+				StatusAprovacao.APROVADO, "Aprovado");
+				
 		save(movimentoEstoque);
 		
 		diferenca = 

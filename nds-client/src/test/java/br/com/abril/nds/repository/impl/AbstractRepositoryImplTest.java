@@ -35,6 +35,17 @@ public abstract class AbstractRepositoryImplTest {
 		getSession().clear();
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected <T extends Object> T merge(T entidade) {
+		
+		entidade = (T) getSession().merge(entidade);
+		
+		getSession().flush();
+		getSession().clear();
+		
+		return entidade;
+	}
+	
 	protected void update(Object... entidades) {
 		for (Object entidade : entidades) {
 			getSession().update(entidade);

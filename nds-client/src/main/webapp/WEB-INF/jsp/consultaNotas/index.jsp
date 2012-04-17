@@ -283,7 +283,6 @@ fieldset label
 				<span style="float: left; margin-right: .3em;"
 					class="ui-icon ui-icon-info">
 				</span> 
-				<b>Liberação de Encalhe < evento > com < status >.</b>
 			</p>
 		</div>
 

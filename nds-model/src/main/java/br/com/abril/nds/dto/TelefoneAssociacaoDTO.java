@@ -22,11 +22,16 @@ public class TelefoneAssociacaoDTO implements Serializable {
 	
 	public TelefoneAssociacaoDTO(){}
 	
-	public TelefoneAssociacaoDTO(boolean principal, Telefone telefone, TipoTelefone tipoTelefone){
-		this.principal = principal;
-		this.telefone = telefone;
-		this.tipoTelefone = tipoTelefone;
-		this.referencia = telefone.getId().intValue();
+	public TelefoneAssociacaoDTO(boolean principal, Telefone telefone, TipoTelefone tipoTelefone, Telefone telefonePessoa){
+		
+		if (tipoTelefone != null){
+			this.principal = principal;
+			this.telefone = telefone;
+			this.tipoTelefone = tipoTelefone;
+			this.referencia = telefone.getId().intValue();
+		} else {
+			this.telefone = telefonePessoa;
+		}
 	}
 
 	public Telefone getTelefone() {

@@ -1,14 +1,11 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 
 /**
  * Data Transfer Object para filtro de pesquisa de diferenças de estoque.
@@ -37,8 +34,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	
 	@Export(label = "Fornecedor", exhibitionOrder = 4)
 	private String nomeFornecedor;
-
-	private PeriodoVO periodoVO;
 	
 	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
 	private TipoDiferenca tipoDiferenca;
@@ -47,8 +42,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	
 	private OrdenacaoColunaConsulta ordenacaoColuna;
 	
-	private Date dataLimiteLancamentoDistribuidor;
-
 	/**
 	 * Construtor padrão.
 	 */
@@ -131,19 +124,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
-	/**
-	 * @return the periodoVO
-	 */
-	public PeriodoVO getPeriodoVO() {
-		return periodoVO;
-	}
-
-	/**
-	 * @param periodoVO the periodoVO to set
-	 */
-	public void setPeriodoVO(PeriodoVO periodoVO) {
-		this.periodoVO = periodoVO;
-	}
 	
 	/**
 	 * @return the tipoDiferenca
@@ -186,20 +166,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-
-	/**
-	 * @return the dataLimiteLancamentoDistribuidor
-	 */
-	public Date getDataLimiteLancamentoDistribuidor() {
-		return dataLimiteLancamentoDistribuidor;
-	}
-
-	/**
-	 * @param dataLimiteLancamentoDistribuidor the dataLimiteLancamentoDistribuidor to set
-	 */
-	public void setDataLimiteLancamentoDistribuidor(Date dataLimiteLancamentoDistribuidor) {
-		this.dataLimiteLancamentoDistribuidor = dataLimiteLancamentoDistribuidor;
-	}
 	
 	/**
 	 * @return the nomeFornecedor
@@ -228,30 +194,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-	
-	@Export(label = "Data Inicial", exhibitionOrder = 5)
-	public String getDataInicial() {
-		
-		if (this.periodoVO == null
-				|| this.periodoVO.getDataInicial() == null) {
-			
-			return "";
-		}
-		
-		return DateUtil.formatarDataPTBR(this.periodoVO.getDataInicial());
-	}
-	
-	@Export(label = "Data Final", exhibitionOrder = 6)
-	public String getDataFinal() {
-		
-		if (this.periodoVO == null
-				|| this.periodoVO.getDataFinal() == null) {
-			
-			return "";
-		}
-		
-		return DateUtil.formatarDataPTBR(this.periodoVO.getDataFinal());
-	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -265,13 +207,15 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
 		result = prime * result
+				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeProduto == null) ? 0 : nomeProduto.hashCode());
+		result = prime * result
 				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
-		result = prime * result
-				+ ((periodoVO == null) ? 0 : periodoVO.hashCode());
 		result = prime * result
 				+ ((tipoDiferenca == null) ? 0 : tipoDiferenca.hashCode());
 		return result;
@@ -299,6 +243,16 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 				return false;
 		} else if (!idFornecedor.equals(other.idFornecedor))
 			return false;
+		if (nomeFornecedor == null) {
+			if (other.nomeFornecedor != null)
+				return false;
+		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
+			return false;
+		if (nomeProduto == null) {
+			if (other.nomeProduto != null)
+				return false;
+		} else if (!nomeProduto.equals(other.nomeProduto))
+			return false;
 		if (numeroEdicao == null) {
 			if (other.numeroEdicao != null)
 				return false;
@@ -310,11 +264,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 			if (other.paginacao != null)
 				return false;
 		} else if (!paginacao.equals(other.paginacao))
-			return false;
-		if (periodoVO == null) {
-			if (other.periodoVO != null)
-				return false;
-		} else if (!periodoVO.equals(other.periodoVO))
 			return false;
 		if (tipoDiferenca != other.tipoDiferenca)
 			return false;

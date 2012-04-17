@@ -15,7 +15,13 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao,Long idUsuario,BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 	
-	void gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 	
 	void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistente;
+
+	void atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
+							 	 MovimentoEstoque movimentoEstoque);
+	
+	void atualizarEstoqueProdutoCota(TipoMovimentoEstoque tipoMovimentoEstoque,
+								 	 MovimentoEstoqueCota movimentoEstoqueCota);
 }

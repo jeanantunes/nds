@@ -1,9 +1,14 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ConsultaEncalheDTO {
 
+	private Date dataDoRecolhimentoDistribuidor;
+	
+	private Date dataMovimento;
+	
 	private Long idProdutoEdicao;
 	
 	private String codigoProduto;
@@ -26,6 +31,42 @@ public class ConsultaEncalheDTO {
 	
 	private Integer recolhimento;
 	
+	public ConsultaEncalheDTO() {}
+
+	/**
+	 * Obtém dataDoRecolhimentoDistribuidor
+	 *
+	 * @return Date
+	 */
+	public Date getDataDoRecolhimentoDistribuidor() {
+		return dataDoRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * Atribuí dataDoRecolhimentoDistribuidor
+	 * @param dataDoRecolhimentoDistribuidor 
+	 */
+	public void setDataDoRecolhimentoDistribuidor(
+			Date dataDoRecolhimentoDistribuidor) {
+		this.dataDoRecolhimentoDistribuidor = dataDoRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * Obtém dataMovimento
+	 *
+	 * @return Date
+	 */
+	public Date getDataMovimento() {
+		return dataMovimento;
+	}
+
+	/**
+	 * Atribuí dataMovimento
+	 * @param dataMovimento 
+	 */
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
+	}
 
 	/**
 	 * Obtém idProdutoEdicao
@@ -213,5 +254,8 @@ public class ConsultaEncalheDTO {
 	public void setRecolhimento(Integer recolhimento) {
 		this.recolhimento = recolhimento;
 	}
+
+	
+	
 	
 }

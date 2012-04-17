@@ -43,6 +43,19 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepository<Dis
 	public boolean verificarDistribuicaoDiaSemana(String codigoProduto,
 			Long idProdutoEdicao, DiaSemana diaSemana) {
 		
+		return verificarDiaSemana(codigoProduto, idProdutoEdicao, diaSemana, OperacaoDistribuidor.DISTRIBUICAO);
+	}
+	
+	@Override
+	public boolean verificarRecolhimentoDiaSemana(String codigoProduto,
+			Long idProdutoEdicao, DiaSemana diaSemana) {
+		
+		return verificarDiaSemana(codigoProduto, idProdutoEdicao, diaSemana, OperacaoDistribuidor.RECOLHIMENTO);
+	}
+	
+	private boolean verificarDiaSemana (String codigoProduto,Long idProdutoEdicao, 
+										DiaSemana diaSemana,OperacaoDistribuidor operacaoDistribuidor) {
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("select count(d.codigoDiaSemana) from DistribuicaoFornecedor d, Produto p, ProdutoEdicao e ")
 		   .append("  join p.fornecedores fornecedor  ")
@@ -57,7 +70,7 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepository<Dis
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setParameter("diaSemana", diaSemana.getCodigoDiaSemana());
-		query.setParameter("opeDis", OperacaoDistribuidor.DISTRIBUICAO);
+		query.setParameter("opeDis", operacaoDistribuidor);
 		query.setMaxResults(1);
 		
 		try {

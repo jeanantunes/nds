@@ -49,9 +49,61 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 
 	@SuppressWarnings("unchecked")
 	public List<PessoaFisica> obterSociosPorFiador(Long idFiador){
-		Criteria criteria = this.getSession().createCriteria(PessoaFisica.class);
-		criteria.add(Restrictions.eq("fiador.id", idFiador));
 		
-		return criteria.list();
+		StringBuilder hql = new StringBuilder("select f.socios from Fiador f ");
+		hql.append(" where f.id = :idFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return query.list();
+	}
+
+	@Override
+	public PessoaFisica buscarPorCPF(String cpf) {
+		
+		Criteria criteria = this.getSession().createCriteria(PessoaFisica.class);
+		criteria.add(Restrictions.eq("cpf", cpf));
+		criteria.setMaxResults(1);
+		
+		return (PessoaFisica) criteria.uniqueResult();
+	}
+	
+	@Override
+	public PessoaJuridica buscarPorCNPJ(String cnpj) {
+		
+		Criteria criteria = this.getSession().createCriteria(PessoaJuridica.class);
+		criteria.add(Restrictions.eq("cnpj", cnpj));
+		criteria.setMaxResults(1);
+		
+		return (PessoaJuridica) criteria.uniqueResult();
+	}
+	
+	@Override
+	public Long buscarIdPessoaPorCPF(String cpf) {
+		
+		StringBuilder hql = new StringBuilder("select p.id ");
+		hql.append(" from PessoaFisica p ");
+		hql.append(" where p.cpf = :cpf ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("cpf", cpf);
+		query.setMaxResults(1);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long buscarIdPessoaPorCNPJ(String cnpj) {
+		
+		StringBuilder hql = new StringBuilder("select p.id ");
+		hql.append(" from PessoaJuridica p ");
+		hql.append(" where p.cnpj = :cnpj ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("cnpj", cnpj);
+		query.setMaxResults(1);
+		
+		return (Long) query.uniqueResult();
 	}
 }

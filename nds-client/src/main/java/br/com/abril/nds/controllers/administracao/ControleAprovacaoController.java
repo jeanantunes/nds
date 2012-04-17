@@ -1,24 +1,35 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ControleAprovacaoVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO.OrdenacaoColunaControleAprovacao;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.aprovacao.Aprovacao;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ControleAprovacaoService;
+import br.com.abril.nds.service.TipoMovimentoService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -39,62 +50,183 @@ public class ControleAprovacaoController {
 	@Autowired
 	private HttpSession session;
 	
+	@Autowired
 	private ControleAprovacaoService controleAprovacaoService;
 	
+	@Autowired
+	private TipoMovimentoService tipoMovimentoService;
+	
 	private static final String FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "filtroPesquisaControleAprovacao";
+	
+	private static final String QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaControleAprovacao";
 	
 	@Path("/")
 	public void index() {
 		
+		carregarComboTipoMovimento();
+	}
+	
+	private void carregarComboTipoMovimento() {
+		
+		List<TipoMovimento> listaTipoMovimento = tipoMovimentoService.obterTiposMovimento();
+		
+		List<ItemDTO<Long, String>> listaTipoMovimentoCombo =
+				new ArrayList<ItemDTO<Long,String>>();
+		
+		for (TipoMovimento tipoMovimento : listaTipoMovimento) {
+			
+			listaTipoMovimentoCombo.add(
+				new ItemDTO<Long, String>(tipoMovimento.getId(), tipoMovimento.getDescricao()));
+		}
+		
+		result.include("listaTipoMovimentoCombo", listaTipoMovimentoCombo);
 	}
 	
 	@Path("/pesquisarAprovacoes")
-	public void pesquisarAprovacoes(String tipoMovimento, String dataMovimentoFormatada,
+	public void pesquisarAprovacoes(Long idTipoMovimento, String dataMovimentoFormatada,
 			 						String sortorder, String sortname, int page, int rp) {
 		
 		this.validarEntradaDadosPesquisa(dataMovimentoFormatada);
 		
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-		
-		//TODO:
 		FiltroControleAprovacaoDTO filtro  = 
-			this.carregarFiltroPesquisa(tipoMovimentoFinanceiro, dataMovimento, sortorder,
+			this.carregarFiltroPesquisa(idTipoMovimento, dataMovimento, sortorder,
 										sortname, page, rp);
 		
-		List<Aprovacao> listaAprovacao =
-			controleAprovacaoService.obterAprovacoes(filtro);
+		List<MovimentoAprovacaoDTO> listaMovimentoAprovacaoDTO =
+			controleAprovacaoService.obterMovimentosAprovacao(filtro);
 		
-		if (listaAprovacao == null || listaAprovacao.isEmpty()) {
+		if (listaMovimentoAprovacaoDTO == null || listaMovimentoAprovacaoDTO.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
 		} else {
 			
-			Long qtdeTotalRegistros = this.controleAprovacaoService.obterTotalAprovacoes(filtro);
+			Long qtdeTotalRegistros = 
+				this.controleAprovacaoService.obterTotalMovimentosAprovacao(filtro);
 			
-			this.processarAprovacoes(listaAprovacao, filtro, qtdeTotalRegistros.intValue());
+			PaginacaoUtil.armazenarQtdRegistrosPesquisa(
+				this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+				listaMovimentoAprovacaoDTO.size());
+						
+			this.processarAprovacoes(listaMovimentoAprovacaoDTO, filtro,
+									 qtdeTotalRegistros.intValue());
 		}
 		
 		result.use(Results.json());
 	}
 	
-	/*
+	@Post
+	public void aprovarMovimento(Long idMovimento) {
+		
+		controleAprovacaoService.aprovarMovimento(idMovimento, obterUsuario());
+		
+		PaginacaoUtil.atualizarQtdRegistrosPesquisa(
+			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
+		
+		result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Movimento aprovado com sucesso."),
+							"result").recursive().serialize();
+	}
+	
+	@Post
+	public void rejeitarMovimento(Long idMovimento, String motivo) {
+		
+		if (motivo == null || motivo.trim().isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"O preenchimento do campo [Motivo] é obrigatório!");
+		}
+		
+		motivo = motivo.trim();
+		
+		if (motivo.length() > 255) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"O campo [Motivo] deve conter até 255 caracteres!");
+		}
+		
+		controleAprovacaoService.rejeitarMovimento(idMovimento, motivo, obterUsuario());
+		
+		PaginacaoUtil.atualizarQtdRegistrosPesquisa(
+			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
+		
+		result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Movimento rejeitado com sucesso."),
+							"result").recursive().serialize();
+	}
+	
+	/**
 	 * Processa o resultado dos controles de aprovação.
 	 *  
-	 * @param listaAprovacao - lista de diferenças
+	 * @param listaMovimentoAprovacaoDTO - lista de movimentos para aprovação
 	 * @param filtro - filtro da pesquisa
 	 * @param qtdeTotalRegistros - quantidade total de registros
 	 */
-	private void processarAprovacoes(List<Aprovacao> listaAprovacao, 
+	private void processarAprovacoes(List<MovimentoAprovacaoDTO> listaMovimentoAprovacaoDTO, 
 									 FiltroControleAprovacaoDTO filtro,
 									 Integer qtdeTotalRegistros) {
 		
+		List<ControleAprovacaoVO> listaControleAprovacao = new LinkedList<ControleAprovacaoVO>();
 		
+		ControleAprovacaoVO controleAprovacao = null;
+		
+		for (MovimentoAprovacaoDTO movimentoAprovacao : listaMovimentoAprovacaoDTO) {
+			
+			controleAprovacao = new ControleAprovacaoVO();
+			
+			controleAprovacao.setId(movimentoAprovacao.getIdMovimento().toString());
+			
+			controleAprovacao.setTipoMovimento(movimentoAprovacao.getDescricaoTipoMovimento());
+			
+			controleAprovacao.setDataMovimento(
+				DateUtil.formatarDataPTBR(movimentoAprovacao.getDataCriacao()));
+			
+			if (movimentoAprovacao.getNumeroCota() != null) {
+				controleAprovacao.setNumeroCota(movimentoAprovacao.getNumeroCota().toString());
+			} else {
+				controleAprovacao.setNumeroCota("");
+			}
+			
+			controleAprovacao.setNomeCota(
+				(movimentoAprovacao.getNomeCota() != null) ? movimentoAprovacao.getNomeCota() : "");
+			
+			if (movimentoAprovacao.getValor() != null) {
+				controleAprovacao.setValor(
+					CurrencyUtil.formatarValor(movimentoAprovacao.getValor()));
+			} else {
+				controleAprovacao.setValor("");
+			}
+			
+			if (movimentoAprovacao.getParcelas() != null) {
+				controleAprovacao.setParcelas(movimentoAprovacao.getParcelas().toString());
+			} else {
+				controleAprovacao.setParcelas("");
+			}
+			
+			if (movimentoAprovacao.getPrazo() != null) {
+				controleAprovacao.setPrazo(movimentoAprovacao.getPrazo().toString());
+			} else {
+				controleAprovacao.setPrazo("");
+			}
+			
+			controleAprovacao.setRequerente(movimentoAprovacao.getNomeUsuarioRequerente());
+			
+			listaControleAprovacao.add(controleAprovacao);
+		}
+		
+		TableModel<CellModelKeyValue<ControleAprovacaoVO>> tableModel =
+			new TableModel<CellModelKeyValue<ControleAprovacaoVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaControleAprovacao));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(qtdeTotalRegistros);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	/*
+	/**
 	 * Valida a entrada de dados para pesquisa de controle de aprovações.
 	 * 
 	 * @param dataMovimentoFormatada - data de movimento formatado
@@ -114,10 +246,10 @@ public class ControleAprovacaoController {
 		}
 	}
 	
-	/*
+	/**
 	 * Carrega o filtro da pesquisa de controle de aprovações.
 	 * 
-	 * @param tipoMovimento - tipo de movimento
+	 * @param idTipoMovimento - id tipo de movimento
 	 * @param dataMovimento - data do movimento
 	 * @param sortorder - ordenação
 	 * @param sortname - coluna para ordenação
@@ -126,7 +258,7 @@ public class ControleAprovacaoController {
 	 * 
 	 * @return Filtro
 	 */
-	private FiltroControleAprovacaoDTO carregarFiltroPesquisa(TipoMovimento tipoMovimento,
+	private FiltroControleAprovacaoDTO carregarFiltroPesquisa(Long idTipoMovimento,
 															  Date dataMovimento, 
 															  String sortorder, 
 															  String sortname, 
@@ -134,7 +266,7 @@ public class ControleAprovacaoController {
 															  int rp) {
 		
 		FiltroControleAprovacaoDTO filtroAtual =
-			new FiltroControleAprovacaoDTO(dataMovimento, tipoMovimento);
+			new FiltroControleAprovacaoDTO(dataMovimento, idTipoMovimento);
 		
 		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
 		
@@ -142,17 +274,14 @@ public class ControleAprovacaoController {
 			(FiltroControleAprovacaoDTO) 
 				this.session.getAttribute(FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
 		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-		
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		this.session.setAttribute(FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE, filtroAtual);
+		PaginacaoUtil.calcularPaginaAtual(
+			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+			filtroAtual, filtroSessao);
 		
 		return filtroAtual;
 	}
 	
-	/*
+	/**
 	 * Configura a paginação do filtro de pesquisa de controle de aprovações.
 	 * 
 	 * @param filtro - filtro da pesquisa
@@ -176,6 +305,22 @@ public class ControleAprovacaoController {
 			filtro.setOrdenacaoColuna(
 				Util.getEnumByStringValue(OrdenacaoColunaControleAprovacao.values(), sortname));
 		}
+	}
+	
+	/**
+	 * Obtém usuário logado.
+	 * 
+	 * @return usuário logado
+	 */
+	private Usuario obterUsuario() {
+		
+		//TODO: Aguardando definição de como será obtido o usuário logado
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		return usuario;
 	}
 	
 }

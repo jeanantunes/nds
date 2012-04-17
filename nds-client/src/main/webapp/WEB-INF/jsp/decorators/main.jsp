@@ -170,7 +170,7 @@ fieldset label {
 							</li>
 							<li><a href="Cadastro/cadastro_entregador.htm">Entregador</a>
 							</li>
-							<li><a href="Cadastro/cadastro_fiador.htm">Fiador</a>
+							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
 							</li>
 							<li><a href="Cadastro/cadastro_fornecedor.htm">Fornecedor</a>
 							</li>
@@ -206,7 +206,7 @@ fieldset label {
 							<li><a href="Financeiro/geracao_cobranca.htm">Geração
 									Cobrança</a>
 							</li>
-							<li><a href="Financeiro/historico_inadimplencia.htm">Histórico
+							<li><a href="<c:url value="/inadimplencia/index"/>">Histórico
 									de Inadimplência</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
@@ -313,7 +313,8 @@ fieldset label {
 								href="Recolhimento/conferencia_encalhe_jornaleiro_contingencia.htm">Conferência
 									de Encalhe Cota Contingência</a>
 							</li>
-							<li><a href="Recolhimento/consulta_encalhe_jornaleiro.htm">Consulta
+							<li>
+								<a href='<c:url value="/devolucao/consultaEncalhe"/>'>Consulta
 									Encalhe Cota</a>
 							</li>
 
@@ -342,6 +343,19 @@ fieldset label {
 							</li>
 						</ul>
 					</li>
+					
+					<li>
+						<span class="classNFe">&nbsp;</span><a
+						href="javascript:;">NF-e</a>
+						<ul>
+							
+							<li>
+								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
+							</li>
+							
+						</ul>
+					</li>
+					
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
 						<ul>

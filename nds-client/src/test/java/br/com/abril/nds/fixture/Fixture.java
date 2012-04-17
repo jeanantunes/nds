@@ -21,6 +21,8 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoEntregador;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -36,15 +38,17 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -62,7 +66,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -94,10 +97,12 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -241,7 +246,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril");
+		return criarEditor("Editora Abril", 10L);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -370,6 +375,23 @@ public class Fixture {
 			lancamento.addRecebimento(recebimento);
 		}
 		return lancamento;
+	}
+	
+	public static ChamadaEncalhe chamadaEncalhe(
+			Date inicioRecolhimento, 
+			Date finalRecolhimento, 
+			ProdutoEdicao produtoEdicao, 
+			TipoChamadaEncalhe tipoChamadaEncalhe) {
+		
+		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
+		
+		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
+		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
+		
+		return chamadaEncalhe;
+		
 	}
 	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
@@ -629,7 +651,7 @@ public class Fixture {
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio do Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Financeiro");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		return tipoMovimento;
 	}
@@ -637,13 +659,31 @@ public class Fixture {
 	public static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Encalhe");
+		tipoMovimento.setDescricao("Envio Encalhe - Estoque");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 	
 		return tipoMovimento;
 	}
 
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Cota Ausente");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Cota Ausente");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
+		return tipoMovimento;
+	}
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -652,11 +692,11 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
-	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte() {
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Envio Reparte");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		tipoMovimento.setDescricao("Recebimento Reparte");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
 	
@@ -804,31 +844,6 @@ public class Fixture {
 		
 		return estoqueProdutoCota;
 	}
-
-	public static MovimentoEstoque movimentoEstoque(
-			ItemRecebimentoFisico itemRecebimentoFisico,
-			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
-			Usuario usuario, EstoqueProduto estoqueProduto,
-			StatusAprovacao statusAprovacao, String motivo) {
-
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		movimentoEstoque.setData(new Date());
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
-		movimentoEstoque.setProdutoEdicao(produtoEdicao);
-		movimentoEstoque.setQtde(new BigDecimal(1.0));
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
-		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProduto.setQtde(estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProduto.getMovimentos().add(movimentoEstoque);
-		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setStatus(statusAprovacao);
-		movimentoEstoque.setMotivo(motivo);
-		return movimentoEstoque;
-	}
 	
 	public static MovimentoEstoque movimentoEstoque(ItemRecebimentoFisico itemRecebimentoFisico,
 													ProdutoEdicao produtoEdicao, 
@@ -907,14 +922,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -939,14 +946,6 @@ public class Fixture {
 		movimentoEstoque.setQtde(qtde);
 		movimentoEstoque.setTipoMovimento(tipoMovimento);
 		movimentoEstoque.setUsuario(usuario);
-		if (tipoMovimento.getOperacaoEstoque() == OperacaoEstoque.ENTRADA) {
-			estoqueProdutoCota.setQtdeRecebida(estoqueProdutoCota
-					.getQtdeRecebida().add(movimentoEstoque.getQtde()));
-		} else {
-			estoqueProdutoCota.setQtdeDevolvida(estoqueProdutoCota
-					.getQtdeDevolvida().subtract(movimentoEstoque.getQtde()));
-		}
-		estoqueProdutoCota.getMovimentos().add(movimentoEstoque);
 		movimentoEstoque.setEstoqueProdutoCota(estoqueProdutoCota);
 		movimentoEstoque.setCota(cota);
 		movimentoEstoque.setStatus(statusAprovacao);
@@ -1146,17 +1145,19 @@ public class Fixture {
 	
 	public static MovimentoFinanceiroCota movimentoFinanceiroCota(Cota cota,
 			TipoMovimentoFinanceiro tipoMovimento, Usuario usuario,
-			BigDecimal valor, List<MovimentoEstoqueCota> lista, Date data) {
+			BigDecimal valor, List<MovimentoEstoqueCota> lista,
+			StatusAprovacao statusAprovacao, Date data, boolean lancamentoManual) {
 		MovimentoFinanceiroCota mfc = new MovimentoFinanceiroCota();
 		mfc.setAprovadoAutomaticamente(true);
 		mfc.setCota(cota);
 		mfc.setDataAprovacao(data);
 		mfc.setData(data);
 		mfc.setMovimentos(lista);
-		mfc.setStatus(StatusAprovacao.APROVADO);
+		mfc.setStatus(statusAprovacao);
 		mfc.setTipoMovimento(tipoMovimento);
 		mfc.setUsuario(usuario);
 		mfc.setValor(valor);
+		mfc.setLancamentoManual(lancamentoManual);
 		return mfc;
 	}
 
@@ -1565,10 +1566,51 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome) {
+	public static Editor criarEditor(String nome, Long codigo) {
 		Editor editor = new Editor();
 		editor.setNome(nome);
+		editor.setCodigo(10L);
 		return editor;
+	}	
+	
+	public static TelefoneEntregador telefoneEntregador(Entregador entregador, boolean principal, Telefone telefone, TipoTelefone tipoTelefone){
+		
+		TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
+		telefoneEntregador.setEntregador(entregador);
+		telefoneEntregador.setPrincipal(principal);
+		telefoneEntregador.setTelefone(telefone);
+		telefoneEntregador.setTipoTelefone(tipoTelefone);
+		
+		return telefoneEntregador;
+		
 	}
 	
+	public static EnderecoEntregador enderecoEntregador(Entregador entregador, Endereco endereco, boolean isPrincipal,TipoEndereco tipoEndereco){
+		
+		EnderecoEntregador enderecoEntregador = new EnderecoEntregador();
+		enderecoEntregador.setEndereco(endereco);
+		enderecoEntregador.setEntregador(entregador);
+		enderecoEntregador.setPrincipal(isPrincipal);
+		enderecoEntregador.setTipoEndereco(tipoEndereco);
+		
+		return enderecoEntregador;
+	}
+	
+	public static Entregador criarEntregador(
+			Long codigo, boolean comissionado,
+			Date inicioAtividade, BigDecimal percentualComissao, Pessoa pessoa, 
+			boolean procuracao, ProcuracaoEntregador procuracaoEntregador) {
+		
+		Entregador entregador = new Entregador();
+
+		entregador.setCodigo(codigo);
+		entregador.setComissionado(comissionado);
+		entregador.setInicioAtividade(inicioAtividade);
+		entregador.setPercentualComissao(percentualComissao);
+		entregador.setPessoa(pessoa);
+		entregador.setProcuracao(procuracao);
+		entregador.setProcuracaoEntregador(procuracaoEntregador);
+		
+		return entregador;
+	}
 }
