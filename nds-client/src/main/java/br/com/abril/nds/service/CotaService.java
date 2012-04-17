@@ -105,9 +105,5 @@ public interface CotaService {
 	
 	String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota);
 	
-	List<Cota> obterCotaAssociadaFiador(Long idFiador);
-
 	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
-	
-	//void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
 }

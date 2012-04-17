@@ -403,10 +403,4 @@ public class CotaServiceImpl implements CotaService {
 		
 		return null;
 	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	public List<Cota> obterCotaAssociadaFiador(Long idFiador){
-		return this.cotaRepository.obterCotaAssociadaFiador(idFiador);
-	}
 }

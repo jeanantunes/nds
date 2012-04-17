@@ -98,6 +98,8 @@
 		$('[name="rgConjuge"]').mask("99.999.999-9");
 		$('[name="dataNascimentoFiadorCpf"]').mask("99/99/9999");
 		$('[name="dataNascimentoConjugeCpf"]').mask("99/99/9999");
+		$('[name="selectUfOrgaoEmiCpf"]').mask("aa");
+		$('[name="selectUfOrgaoEmiConjugeCpf"]').mask("aa");
 	});
 	
 	function buscarPessoaCPF(cpf, fiador){
@@ -166,7 +168,8 @@
 <table width="754" cellpadding="2" cellspacing="2" style="text-align: left;">
 	<tr class="inicioAtividade">
 		<td nowrap="nowrap"><strong>Início de Atividade:</strong></td>
-		<td>${dataAtual}</td>
+		<td class="inicioAtividadeNovo">${dataAtual}</td>
+		<td class="inicioAtividadeEdicao"></td>
 		<td>&nbsp;</td>
 		<td colspan="3">&nbsp;</td>
 	</tr>
@@ -195,11 +198,7 @@
 		</td>
 		<td width="31">UF:</td>
 		<td width="135">
-			<select name="selectUfOrgaoEmiCpf" id="selectUfOrgaoEmiCpf" style="width: 50px">
-				<option selected="selected"></option>
-				<option>RJ</option>
-				<option>SP</option>
-			</select>
+			<input type="text" name="selectUfOrgaoEmiCpf" id="selectUfOrgaoEmiCpf" style="width: 50px; text-transform:uppercase;"/>
 		</td>
 	</tr>
 	<tr>
@@ -262,11 +261,7 @@
 			<td width="63"><input type="text" style="width: 50px" id="orgaoEmissorConjugeCpf" name="orgaoEmissorConjugeCpf" maxlength="255" /></td>
 			<td width="26">UF:</td>
 			<td width="136">
-				<select name="selectUfOrgaoEmiConjugeCpf" id="selectUfOrgaoEmiConjugeCpf" style="width: 50px">
-					<option selected="selected"></option>
-					<option>RJ</option>
-					<option>SP</option>
-				</select>
+				<input type="text" name="selectUfOrgaoEmiConjugeCpf" id="selectUfOrgaoEmiConjugeCpf" style="width: 50px; text-transform:uppercase;" />
 			</td>
 		</tr>
 		<tr>
