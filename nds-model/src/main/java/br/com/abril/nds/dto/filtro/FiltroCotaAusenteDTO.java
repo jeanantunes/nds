@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiltroCotaAusenteDTO implements Serializable {
@@ -60,17 +61,8 @@ public class FiltroCotaAusenteDTO implements Serializable {
 	}
 
 	public void setData(Date data) {
-		
-		if(data != null) {		
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(data.getTime());
-			cal.clear(Calendar.HOUR);
-			cal.clear(Calendar.MINUTE);
-			cal.clear(Calendar.SECOND);
-			cal.clear(Calendar.MILLISECOND);
-			this.data = cal.getTime();
-		}
-		this.data = null;
+			
+		this.data = DateUtil.removerTimestamp(data);
 	}
 
 	public String getBox() {

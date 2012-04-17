@@ -3,14 +3,20 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<script type="text/javascript"	
-	src="${pageContext.request.contextPath}/scripts/jquery-dateFormat/jquery.dateFormat-1.0.js"></script>
+<script type="text/javascript"	src="${pageContext.request.contextPath}/scripts/jquery-dateFormat/jquery.dateFormat-1.0.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 
 <title>NDS - Novo Distrib</title>
 
 
 <script language="javascript" type="text/javascript">
 
+
+$(function() {		
+	$("#idNumCota").numeric();
+	$("#idNomeCota").autocomplete({source: ""});
+});
 
 function cliquePesquisar() {
 	
@@ -84,12 +90,12 @@ function popup(idCota) {
 	
 	
 $(function() {
-		$( "#datepickerDe" ).datepicker({
+		$( "#idDataDe" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerAte" ).datepicker({
+		$( "#idDataAte" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -99,7 +105,7 @@ $(function() {
 $(document).ready(function(){	
 	$("#selDivida").click(function() {
 		$(".menu_dividas").show().fadeIn("fast");
-	})
+	});
 
 	$(".menu_dividas").mouseleave(function() {
 		$(".menu_dividas").hide();
@@ -155,21 +161,41 @@ $(document).ready(function(){
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="72">Per&Iacuteodo de:</td>
-              <td width="108" ><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" />
+              <td width="108" >
+
+<!-- DATA DE -->
+<input type="text" name="datepickerDe" id="idDataDe" style="width:80px;" />
+            
               </td>
               <td width="28" >At&eacute:
               </td>
-              <td width="106" ><input type="text" name="datepickerAte" id="datepickerAte" style="width:80px;" />
+              <td width="106" >
+
+<!-- DATA ATE --> 
+<input type="text" name="datepickerAte" id="idDataAte" style="width:80px;" />
+              
               </td>
               <td width="36">Cota:</td>
-              <td width="93"><input type="text" name="cota" id="cota" style="width:80px;" /></td>
+              <td width="93">
+
+<!-- NUM COTA -->
+<input type="text" name="idNumCota" id="idNumCota" style="width:80px;" 
+	onchange="cota.pesquisarPorNumeroCota('#idNumCota', '#idNomeCota');"/></td>
+              
               <td width="45">Nome:</td>
-              <td width="193"><input type="text" name="cota2" id="cota2" style="width:180px;" /></td>
+              <td width="193">
+
+<!-- NOME COTA -->
+<input type="text" name="idNomeCota" id="idNomeCota" style="width:180px;" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
+		 	   onblur="cota.pesquisarPorNomeCota('#idNumCota', '#idNomeCota');"/></td>
+            
               <td width="48">Status:</td>
               <td width="170">
+              
  
  <!-- COMBO STATUS -->             
- <select name="select" id="select" style="width:90px;">
+ <select name="select" id="idStatusCota" style="width:90px;">
   <option>Selecione...</option>
   <c:forEach items="${itensStatus}" var="status" varStatus="index">
   	 <option value="${status.key}">${status.value}</option>
@@ -179,20 +205,72 @@ $(document).ready(function(){
  			</td>
             </tr>
             <tr>
-              <td colspan="2"><a href="#" id="selDivida">Situa&ccedil&atildeo da D&iacutevida:</a>
-              <div class="menu_dividas" style="display:none;">
-                <span class="bt_sellAll"><input type="checkbox" id="selDivida" name="Todos2" onclick="checkAll_dividas();" style="float:left;"/><label for="selDivida">Selecionar Todas</label></span>
-                <br clear="all" />
+              <td colspan="2">
+<!-- SITUACAO -->              
+<a href="javascript:;" id="selDivida">Situa&ccedil&atildeo da D&iacutevida:</a>
+              
+              <div class="menu_dividas" style="display:none;border: 1px solid #CCC;position: absolute;background: white;z-index: 10;">
 
-                <input id="emaberto" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+<!-- SITUACAO DIVIDA  TODAS -->                
+
+			<table>
+				<tr>
+					
+                
+				
+				<td>
+					<span class="bt_sellAll">
+<input type="checkbox" id="idTodas" name="Todos2" onclick="checkAll_dividas();" style="float:left;"/>
+					</span>
+				</td>
+				<td>
+					<span class="bt_sellAll">
+<label for="selDivida">Selecionar Todas</label>
+					</span>
+				</td>
+								
+				</tr>
+				<tr>
+				
+<!-- SITUACAO DIVIDA - ABERTAS -->
+				<td>
+<input id="idDividaEmAberto" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+                </td>
+                <td>
                 <label for="emaberto">Em Aberto</label>
-                <br clear="all" />
-                <input name="checkgroup_menu_divida" onclick="verifyCheck_2()" id="negociada" type="checkbox"/>
+                </td>
+                
+                </tr>
+                <tr>
+                
+                <td>
+<!-- SITUACAO DIVIDA - NEGOCIADA -->
+<input id="idDividaNegociada" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+				</td>
+				<td>
                 <label for="negociada">Negociada</label>
-                <br clear="all" />
-                <input name="checkgroup_menu_divida" onclick="verifyCheck_2()" id="paga" type="checkbox"/>
+                </td>
+                
+                </tr>
+                <tr>
+                
+                <td>
+<!-- SITUACAO DIVIDA - PAGA -->
+<input id="idDividaPaga" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+				</td>
+				<td>
                 <label for="paga">Paga</label>
-              </div></td>
+                </td>
+                
+				</tr>
+			</table>
+                
+           </div>
+           
+           
+           </td>
+           
+           
               <td colspan="2" >
                 
               </td>
@@ -245,7 +323,7 @@ $(document).ready(function(){
 </div> 
 <script>
 	
-$("#idCota").mask("?99999999999999999999", {placeholder:""});
+$("#idNumCota").mask("?99999999999999999999", {placeholder:""});
 
 $(function() {	
 	

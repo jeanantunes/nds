@@ -143,6 +143,8 @@ function retornoEnvioSuplementar(result) {
 	
 	exibirMensagem(status, mensagens);
 	
+	$(".ausentesGrid").flexReload();
+	
 	$( "#dialog-confirm" ).dialog("close");
 	
 }

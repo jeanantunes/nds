@@ -336,8 +336,8 @@ public class DataLoader {
 			sf = ctx.getBean(SessionFactory.class);
 			session = sf.openSession();
 			tx = session.beginTransaction();			
-			carregarDadosConsultaEncalhe(session);
-			//carregarDados(session);
+			//carregarDadosConsultaEncalhe(session);
+			carregarDados(session);
 			commit = true;
 		} catch (Exception e) {
 			e.printStackTrace();

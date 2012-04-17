@@ -10,18 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.exception.ValidacaoException;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -85,7 +85,8 @@ public class InadimplenciaController {
 		try {
 			
 			FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
-					
+		//	filtro.setPaginacao(new PaginacaoVO(page,rp,sortorder));
+		
 			tratarFiltro(filtro);
 			
 			grid = obterInadimplencias(filtro);
