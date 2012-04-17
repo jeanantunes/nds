@@ -34,7 +34,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		},{
-			display : 'DiferenÃ§a',
+			display : 'Diferença',
 			name : 'qntDiferenca',
 			width : 90,
 			sortable : true,
@@ -60,7 +60,7 @@ $(function() {
 		preProcess:executarPreProcessamento,
 		dataType : 'json',
 		colModel : [ {
-			display : 'CÃ³digo',
+			display : 'Código',
 			name : 'codigoProduto',
 			width : 60,
 			sortable : true,
@@ -72,13 +72,13 @@ $(function() {
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'EdiÃ§Ã£o',
+			display : 'Edição',
 			name : 'edicaoProduto',
 			width : 90,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'PreÃ§o Venda R$',
+			display : 'Preço Venda R$',
 			name : 'precoCapa',
 			width : 90,
 			sortable : true,
@@ -90,7 +90,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		},{
-			display : 'DiferenÃ§a',
+			display : 'Diferença',
 			name : 'qntDiferenca',
 			width : 90,
 			sortable : true,
@@ -182,6 +182,9 @@ $(function() {
 		else if (tipoPesquisa === 'BOX'){
 			carregarGridbox(formData);
 			$("#gridProduto").hide();
+		}else{
+			var mensagens = new Array('Selecione um tipo de cosnulta!') ;
+			exibirMensagem('WARNING',mensagens);
 		}
 		
 		$("#dataLancamento").focus();
@@ -194,7 +197,7 @@ $(function() {
 	
 		$("#resumoExpedicaoGridProduto").flexOptions({
 			url: "<c:url value='/expedicao/resumo/pesquisar/produto' />",
-			params: formData
+			params: formData,newp: 1
 		});
 		
 		$("#resumoExpedicaoGridProduto").flexReload();
@@ -209,7 +212,7 @@ $(function() {
 	
 		$("#resumoExpedicaoGridBox").flexOptions({
 			url: "<c:url value='/expedicao/resumo/pesquisar/box' />",
-			params: formData
+			params: formData,newp: 1
 		});
 		
 		$("#resumoExpedicaoGridBox").flexReload();
@@ -234,8 +237,8 @@ $(function() {
 	 */
 	function getTituloFieldSetPesquisa(){
 		return ($('#tipoPesquisa').val() === 'BOX')
-				? 'Pesquisar ExpediÃ§Ã£o por Box'
-						:'Pesquisar ExpediÃ§Ã£o por Produto';
+				? 'Pesquisar Expedição por Box'
+						:'Pesquisar Expedição por Produto';
 	}
  
 	/**
@@ -243,8 +246,8 @@ $(function() {
 	 */
 	function getTituloFieldSet(){
 		return ($('#tipoPesquisa').val() === 'BOX')
-				? 'Resumo  ExpediÃ§Ã£o por Box'
-						:'Resumo  ExpediÃ§Ã£o por Produto';
+				? 'Resumo  Expedição por Box'
+						:'Resumo  Expedição por Produto';
 	}
 
   	/**
@@ -270,17 +273,18 @@ $(function() {
 	
 <fieldset class="classFieldset">
   
-  <legend id="idFiledResumo"> Pesquisar Resumo  ExpediÃ§Ã£o por Box </legend>
+  <legend id="idFiledResumo"> Pesquisar Resumo  Expedição por Box </legend>
   
   	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  <tr>
-	    <td width="116">Data LanÃ§amento:</td>
+	    <td width="116">Data Lançamento:</td>
 	    <td width="145">
 	    	<input type="text" name="dataLancamento" id="dataLancamento" style="width:80px;"/>
 	    </td>
 	    <td width="91">Tipo Consulta:</td>
 	    <td width="180">
 	        <select name="tipoPesquisa" id="tipoPesquisa" style="width: 200px;" onchange="mudarLegendaFielsSet('idFiledResumo','pesquisar')">
+				<option selected="selected"></option>
 				<c:forEach var="tipoResumo" items="${listaTipoResumo}">
 					<option value="${tipoResumo.key}">${tipoResumo.value}</option>
 				</c:forEach>
@@ -303,7 +307,7 @@ $(function() {
 
 	<fieldset class="classFieldset">
 	    
-	    <legend id="idFiledResultResumo">Resumo  ExpediÃ§Ã£o por Box</legend>
+	    <legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
 	
 		    <div id="gridProduto" style="display:none;">
 		    	<table id="resumoExpedicaoGridProduto" class="resumoExpedicaoGridProduto"></table>

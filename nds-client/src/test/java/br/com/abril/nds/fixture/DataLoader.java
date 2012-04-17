@@ -211,12 +211,20 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoNatGeo1;
 	private static ProdutoEdicao produtoEdicaoPlacar1;
 	private static ProdutoEdicao cocaColaLight;
+	private static ProdutoEdicao produtoEdicaoVeja1EncalheAnt;
+	private static ProdutoEdicao produtoEdicaoVeja2EncalheAnt;
+	private static ProdutoEdicao produtoEdicaoSuper1EncalheAnt;
+	private static ProdutoEdicao produtoEdicaoSuper2EncalheAnt;
 		
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 	private static Lancamento lancamentoCocaCola;
+	private static Lancamento lancamentoVeja1EcncalheAnt;
+	private static Lancamento lancamentoVeja2EcncalheAnt;
+	private static Lancamento lancamentoSuper1EcncalheAnt;
+	private static Lancamento lancamentoSuper2EcncalheAnt;
 
 	private static NotaFiscalEntradaFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscalEntrada itemNotaFiscalFornecedor;
@@ -229,7 +237,11 @@ public class DataLoader {
 	private static EstoqueProduto estoqueProdutoVeja4;
 	private static EstoqueProduto estoqueProdutoSuper1;
 	private static EstoqueProduto estoqueProdutoCapricho1;
-	private static EstoqueProduto estoqueProdutoInfoExame1;	
+	private static EstoqueProduto estoqueProdutoInfoExame1;
+	private static EstoqueProduto estoqueProdutoVeja1EncalheAnt;
+	private static EstoqueProduto estoqueProdutoVeja2EncalheAnt;
+	private static EstoqueProduto estoqueProdutoSuper1EncalheAnt;
+	private static EstoqueProduto estoqueProdutoSuper2EncalheAnt;
 	
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
@@ -257,12 +269,26 @@ public class DataLoader {
 	private static Estudo estudoVeja2;
 	private static Estudo estudoSuper1;
 	private static Estudo estudoCapricho1;
+	private static Estudo estudoVeja1EncalheAnt;
+	private static Estudo estudoVeja2EncalheAnt;
+	
 	private static EstudoCota estudoCotaSuper1Manoel;
 	private static EstudoCota estudoCotaManoel;
 	private static EstudoCota estudoCotaVeja2Joao;
 	private static EstudoCota estudoCotaCaprichoZe;
 	private static EstudoCota estudoCotaVeja1Joao;
-
+	private static EstudoCota estudoCotaVeja1JoaoEncaljeAnt;
+	private static EstudoCota estudoCotaVeja1ManoelEncaljeAnt;
+	private static EstudoCota estudoCotaVeja1MariaEncaljeAnt;
+	private static EstudoCota estudoCotaVeja2JoaoEncaljeAnt;
+	private static EstudoCota estudoCotaVeja2ManoelEncaljeAnt;
+	private static EstudoCota estudoCotaVeja2MariaEncaljeAnt;
+	private static EstudoCota estudoCotaSuper1JoaoEncaljeAnt;
+	private static EstudoCota estudoCotaSuper1ManoelEncaljeAnt;
+	private static EstudoCota estudoCotaSuper1MariaEncaljeAnt;
+	private static EstudoCota estudoCotaSuper2JoaoEncaljeAnt;
+	private static EstudoCota estudoCotaSuper2ManoelEncaljeAnt;
+	private static EstudoCota estudoCotaSuper2MariaEncaljeAnt;
 	
 	private static Box box300Reparte;
 	private static Box box1;
@@ -307,6 +333,18 @@ public class DataLoader {
 	private static EstoqueProdutoCota estoqueProdutoCotaCapricho1;
 	private static EstoqueProdutoCota estoqueProdutoCotaQuatroRodas1;
 	private static EstoqueProdutoCota estoqueProdutoCotaInfoExame1;
+	private static EstoqueProdutoCota estoqueProdutoCotaJoseVeja1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelVeja1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaMariaVeja1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaJoseVeja2EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelVeja2EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaMariaVeja2EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaJoseSuper1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelSuper1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaMariaSuper1EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaJoseSuper2EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelSuper2EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaMariaSuper2EncalheAnt;
 	
 	private static CobrancaDinheiro cobrancaGuilherme1;
 	private static CobrancaDinheiro cobrancaGuilherme2;
@@ -339,18 +377,9 @@ public class DataLoader {
 	private static FormaCobranca formaTransferenciBancaria;
 	
 	private static Editor editoraAbril;
-	private static Lancamento lancamentoVeja1EcncalheAnt;
-	private static Lancamento lancamentoVeja2EcncalheAnt;
-	private static EstoqueProdutoCota estoqueProdutoCotaVeja1EncalheAnt;
-	private static EstoqueProdutoCota estoqueProdutoCotaVeja2EncalheAnt;
-	private static ProdutoEdicao produtoEdicaoVeja1EncalheAnt;
-	private static ProdutoEdicao produtoEdicaoVeja2EncalheAnt;
-	private static EstoqueProduto estoqueProdutoVeja1EncalheAnt;
-	private static EstoqueProduto estoqueProdutoVeja2EncalheAnt;
-	private static Estudo estudoVeja1EncalheAnt;
-	private static EstudoCota estudoCotaVeja1JoaoEncaljeAnt;
-	private static EstudoCota estudoCotaVeja1ManoelEncaljeAnt;
-	
+	private static Estudo estudoSuper1EncalheAnt;
+	private static Estudo estudoSuper2EncalheAnt;
+
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -593,13 +622,54 @@ public class DataLoader {
 				produtoEdicaoInfoExame1, cotaOrlando, BigDecimal.TEN, BigDecimal.TEN);
 		save(session, estoqueProdutoCotaInfoExame1);
 		
-		estoqueProdutoCotaVeja1EncalheAnt = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1EncalheAnt, cotaJose, BigDecimal.TEN, BigDecimal.ONE);
-		save(session, estoqueProdutoCotaVeja1EncalheAnt);
+		estoqueProdutoCotaJoseVeja1EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1EncalheAnt, cotaJose, new BigDecimal(20), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaJoseVeja1EncalheAnt);
 		
-		estoqueProdutoCotaVeja2EncalheAnt = Fixture.estoqueProdutoCota(
+		estoqueProdutoCotaManoelVeja1EncalheAnt = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1EncalheAnt, cotaManoel, BigDecimal.TEN, BigDecimal.ONE);
-		save(session, estoqueProdutoCotaVeja2EncalheAnt);
+		save(session, estoqueProdutoCotaManoelVeja1EncalheAnt);
+		
+		estoqueProdutoCotaMariaVeja1EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1EncalheAnt, cotaMaria, new BigDecimal(15), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaMariaVeja1EncalheAnt);
+		
+		estoqueProdutoCotaJoseVeja2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja2EncalheAnt, cotaJose,  new BigDecimal(36), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaJoseVeja2EncalheAnt);
+		
+		estoqueProdutoCotaManoelVeja2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja2EncalheAnt, cotaManoel, new BigDecimal(50), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaManoelVeja2EncalheAnt);
+		
+		estoqueProdutoCotaMariaVeja2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja2EncalheAnt, cotaMaria, new BigDecimal(7), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaMariaVeja2EncalheAnt);
+	
+		estoqueProdutoCotaJoseSuper1EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper1EncalheAnt, cotaJose, new BigDecimal(20), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaJoseSuper1EncalheAnt);
+		
+		estoqueProdutoCotaManoelSuper1EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper1EncalheAnt, cotaManoel, BigDecimal.TEN, BigDecimal.ONE);
+		save(session, estoqueProdutoCotaManoelSuper1EncalheAnt);
+		
+		estoqueProdutoCotaMariaSuper1EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper1EncalheAnt, cotaMaria, new BigDecimal(15), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaMariaSuper1EncalheAnt);
+		
+		estoqueProdutoCotaJoseSuper2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper2EncalheAnt, cotaJose,  new BigDecimal(36), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaJoseSuper2EncalheAnt);
+		
+		estoqueProdutoCotaManoelSuper2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper2EncalheAnt, cotaManoel, new BigDecimal(50), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaManoelSuper2EncalheAnt);
+		
+		estoqueProdutoCotaMariaSuper2EncalheAnt = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper2EncalheAnt, cotaMaria, new BigDecimal(7), BigDecimal.ONE);
+		save(session, estoqueProdutoCotaMariaSuper2EncalheAnt);
+		
 	}
 
 	private static void criarCobrancas(Session session) {
@@ -1153,9 +1223,14 @@ public class DataLoader {
 		
 		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigDecimal.ZERO);
 		
+		estoqueProdutoSuper1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper1EncalheAnt, BigDecimal.ZERO);
+		
+		estoqueProdutoSuper2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper2EncalheAnt, BigDecimal.ZERO);
+		
 		save(session, estoqueProdutoVeja1, estoqueProdutoVeja2, estoqueProdutoVeja3,
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
-			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt);
+			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt,
+			 estoqueProdutoSuper1EncalheAnt,estoqueProdutoSuper2EncalheAnt);
 	}
 
 	private static void criarRecebimentosFisicos(Session session) {
@@ -1215,7 +1290,19 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoVeja1EcncalheAnt.getDataLancamentoDistribuidor(), produtoEdicaoVeja1EncalheAnt);
 		session.save(estudoVeja1EncalheAnt);
 		
-	
+		estudoVeja2EncalheAnt = Fixture
+				.estudo(BigDecimal.TEN, lancamentoVeja2EcncalheAnt.getDataLancamentoDistribuidor(), produtoEdicaoVeja2EncalheAnt);
+		session.save(estudoVeja2EncalheAnt);
+		
+		estudoSuper1EncalheAnt = Fixture
+				.estudo(BigDecimal.TEN, lancamentoSuper1EcncalheAnt.getDataLancamentoDistribuidor(), produtoEdicaoSuper1EncalheAnt);
+		session.save(estudoSuper1EncalheAnt);
+		
+		estudoSuper2EncalheAnt = Fixture
+				.estudo(BigDecimal.TEN, lancamentoSuper2EcncalheAnt.getDataLancamentoDistribuidor(), produtoEdicaoSuper2EncalheAnt);
+		session.save(estudoSuper2EncalheAnt);
+		
+		
 	}
 
     private static void criarEstudosCota(Session session) {
@@ -1241,7 +1328,36 @@ public class DataLoader {
 		estudoCotaVeja1ManoelEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaManoel);
 		save(session,estudoCotaVeja1ManoelEncaljeAnt);
 		
-	
+		estudoCotaVeja1MariaEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaMaria);
+		save(session,estudoCotaVeja1MariaEncaljeAnt);
+		
+		estudoCotaVeja2JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2EncalheAnt, cotaJose);
+		save(session,estudoCotaVeja2JoaoEncaljeAnt);
+		
+		estudoCotaVeja2ManoelEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2EncalheAnt, cotaManoel);
+		save(session,estudoCotaVeja2ManoelEncaljeAnt);
+		
+		estudoCotaVeja2MariaEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2EncalheAnt, cotaMaria);
+		save(session,estudoCotaVeja2MariaEncaljeAnt);
+		
+		estudoCotaSuper1JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1EncalheAnt, cotaJose);
+		save(session,estudoCotaSuper1JoaoEncaljeAnt);
+		
+		estudoCotaSuper1ManoelEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1EncalheAnt, cotaManoel);
+		save(session,estudoCotaSuper1ManoelEncaljeAnt);
+		
+		estudoCotaSuper1MariaEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1EncalheAnt, cotaMaria);
+		save(session,estudoCotaSuper1MariaEncaljeAnt);
+		
+		estudoCotaSuper2JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper2EncalheAnt, cotaJose);
+		save(session,estudoCotaVeja2JoaoEncaljeAnt);
+		
+		estudoCotaSuper2ManoelEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper2EncalheAnt, cotaManoel);
+		save(session,estudoCotaSuper2ManoelEncaljeAnt);
+		
+		estudoCotaSuper2MariaEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper2EncalheAnt, cotaMaria);
+		save(session,estudoCotaSuper2MariaEncaljeAnt);
+		
 	}
 	
 	private static void criarLancamentosExpedidos(Session session){
@@ -1497,6 +1613,28 @@ public class DataLoader {
 						null);
 		session.save(lancamentoVeja2EcncalheAnt);
 		
+		lancamentoSuper1EcncalheAnt = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoSuper1EncalheAnt,
+						DateUtil.adicionarDias(new Date(), 0),
+						DateUtil.adicionarDias(new Date(),+5), new Date(),
+						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
+						null);
+		session.save(lancamentoSuper1EcncalheAnt);
+		
+		lancamentoSuper2EcncalheAnt = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoSuper2EncalheAnt,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),+5), new Date(),
+
+						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
+
+						null);
+		session.save(lancamentoSuper2EcncalheAnt);
+		
 	}
 
 	private static void criarProdutosEdicao(Session session) {
@@ -1599,6 +1737,16 @@ public class DataLoader {
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja2EncalheAnt);
+		
+		produtoEdicaoSuper1EncalheAnt = Fixture.produtoEdicao(2L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produtoSuper);
+		session.save(produtoEdicaoSuper1EncalheAnt);
+		
+		produtoEdicaoSuper2EncalheAnt = Fixture.produtoEdicao(3L, 10, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				produtoSuper);
+		session.save(produtoEdicaoSuper2EncalheAnt);
 	
 	}
 

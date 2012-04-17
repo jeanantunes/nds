@@ -247,6 +247,8 @@ public class ChamadaEncalheAntecipadaController {
 									String dataRecolhimento,String codigoProduto,
 									Long numeroEdicao,String dataProgramada){
 		
+		validarDataRecolhimento(dataRecolhimento);
+		
 		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para chamda antecipada de encalhe!");
 		
 		gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
@@ -266,9 +268,9 @@ public class ChamadaEncalheAntecipadaController {
 							String dataRecolhimento, String codigoProduto, 
 							Long numeroEdicao,String dataProgramada,String gravarTodos){
 		
+		validarDataRecolhimento(dataRecolhimento);
+		
 		if(!gravarTodos.isEmpty()){
-			
-			validarDataRecolhimento(dataRecolhimento);
 			
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
@@ -297,8 +299,6 @@ public class ChamadaEncalheAntecipadaController {
 	private void gravarChamadaEncalheAnteicipada(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												String dataRecolhimento, String codigoProduto, 
 												Long numeroEdicao,String dataProgramada){
-		
-		validarDataRecolhimento(dataRecolhimento);
 		
 		if(listaChamadaEncalheAntecipada == null || listaChamadaEncalheAntecipada.isEmpty()){
 			
@@ -563,11 +563,11 @@ public class ChamadaEncalheAntecipadaController {
 	private void validarParametrosPesquisa(String codigoProduto,Long numeroEdicao){
 		
 		if(codigoProduto == null || codigoProduto.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do produto é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Código] é obrigatório.");
 		}
 		
 		if(numeroEdicao == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento da edição é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Edição] é obrigatório.");
 		}
 	}
 	
