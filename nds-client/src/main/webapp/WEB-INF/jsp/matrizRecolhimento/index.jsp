@@ -1,7 +1,82 @@
 <head>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
+	<script type="text/javascript">
 
+		function carregarDataSemana() {
 
+			var data = [
+   				{
+   					name: 'numeroSemana', value: $("#numeroSemana").val()
+   				}
+   			];
+			
+			$.getJSON(
+				"<c:url value='/cadastro/distribuidor/obterDataDaSemana' />", 
+				data,
+				function(result) {
+
+					if (result) {
+						
+						$("#dataPesquisa").val(result);
+					}
+				}
+			);
+		}
+	
+		function carregarDiaSemana() {
+
+			var data = [
+   				{
+   					name: 'data', value: $("#dataPesquisa").val()
+   				}
+   			];
+			
+			$.getJSON(
+				"<c:url value='/cadastro/distribuidor/obterNumeroSemana' />", 
+				data,
+				function(result) {
+
+					if (result) {
+
+						$("#numeroSemana").val(result.int);
+					}
+				}
+			);
+		}
+	
+		function carregarDadosPesquisa() {
+
+			var dataPesquisa = $.format.date(new Date(), "dd/MM/yyyy");
+
+		  	$("#dataPesquisa").val(dataPesquisa);
+			
+		  	carregarDiaSemana();
+		}
+	
+		function inicializar() {
+				
+			$("#dataPesquisa").datepicker({
+				showOn : "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly : true,
+				dateFormat: 'dd/mm/yy',
+				defaultDate: new Date()
+			});
+
+			$("#dataPesquisa").mask("99/99/9999");
+			
+			$("input[name='numeroSemana']").numeric();
+
+			carregarDadosPesquisa();
+		}
+		
+		$(function() {
+
+			inicializar();
+		});
+	</script>
 </head>
 
 <body>
@@ -16,27 +91,35 @@
 			<tr>
 				<td width="76">Fornecedor:</td>
 				<td colspan="3">
-					<a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
-					<div class="menu_fornecedor" style="display: none;">
-						<span class="bt_sellAll">
-							<input type="checkbox" id="sel" name="Todos1" onclick="checkAll_fornecedor();" style="float: left;" />
-							<label for="sel">Selecionar Todos</label>
+					<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+					<div class="menu_fornecedor" style="display:none;">
+	                	<span class="bt_sellAll">
+							<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+							<label for="selTodos1">Selecionar Todos</label>
 						</span>
-						<br clear="all" />
-						<input id="dinap" name="checkgroup_menu" onclick="verifyCheck_1()" type="checkbox" />
-						<label for="dinap">Dinap</label>
-						<br clear="all" />
-						<input name="checkgroup_menu" onclick="verifyCheck_1()" id="fc" type="checkbox" />
-						<label for="fc">FC</label>
-					</div>
+	                    <br clear="all" />
+	                    <c:forEach items="${fornecedores}" var="fornecedor">
+	                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox"/>
+	                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
+	                     	<br clear="all" />
+	                	</c:forEach> 
+	            	</div>
 				</td>
 				<td width="53">Semana:</td>
 				<td width="107">
-					<input type="text" name="textfield8" id="textfield8" style="width: 50px;" />
+					<input type="text" 
+						   name="numeroSemana" 
+						   id="numeroSemana" value="${numeroSemana}" style="width: 50px;"
+						   onchange="carregarDataSemana();" />
 				</td>
 				<td width="33">Data:</td>
 				<td width="145">
-					<input type="text" name="datepickerDe" id="datepickerDe" style="width: 80px;" />
+					<input type="text" 
+						   name="dataPesquisa" 
+						   id="dataPesquisa" 
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
+						   value="${dataAtual}"
+						   onchange="carregarDiaSemana();" />
 				</td>
 				<td width="164">
 					<span class="bt_pesquisar">
