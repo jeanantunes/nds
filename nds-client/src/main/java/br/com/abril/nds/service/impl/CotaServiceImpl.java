@@ -607,6 +607,7 @@ public class CotaServiceImpl implements CotaService {
 		//String conta;
 		//String contaDigito;
 		
+
 		
 		
 		
@@ -620,7 +621,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		
 		
-		/*
+		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		ConcentracaoCobrancaCota concentracaoCobranca;
 		if (cotaCobranca.isDomingo()){
@@ -665,7 +666,7 @@ public class CotaServiceImpl implements CotaService {
 			concentracaoCobranca.setParametroCobrancaCota(parametroCobranca);
 			this.concentracaoCobrancaCotaRepository.merge(concentracaoCobranca);
 		}
-		*/
+		
 	}
 	
 

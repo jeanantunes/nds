@@ -45,6 +45,9 @@ public class FormaCobranca implements Serializable {
 	@Column(name = "TAXA_JUROS_MENSAL")
 	private BigDecimal taxaJurosMensal;
 	
+	@Column(name = "TAXA_COMISSAO")
+	private BigDecimal taxaComissao;
+	
 	@Column(name = "VENCIMENTO_DIA_UTIL", nullable = false)
 	private boolean vencimentoDiaUtil;
 	
@@ -108,6 +111,18 @@ public class FormaCobranca implements Serializable {
 		this.taxaJurosMensal = taxaJurosMensal;
 	}
 	
+	public BigDecimal getTaxaComissao() {
+		return taxaComissao;
+	}
+
+	public void setTaxaComissao(BigDecimal taxaComissao) {
+		this.taxaComissao = taxaComissao;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public boolean isVencimentoDiaUtil() {
 		return vencimentoDiaUtil;
 	}
