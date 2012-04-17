@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 
 @Repository
@@ -194,6 +195,19 @@ public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implemen
 		criteria.add(Restrictions.eq("codigo", codigoCarteira));
 		criteria.setMaxResults(1);
 		return (Carteira) criteria.uniqueResult();
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipoCobranca) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select f.banco from FormaCobranca f ");		
+		hql.append(" where f.tipoCobranca = :tipoCobranca  ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("tipoCobranca", tipoCobranca);
+		return query.list();
 	}
 	
 }

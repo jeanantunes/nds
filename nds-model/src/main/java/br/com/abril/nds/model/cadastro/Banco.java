@@ -53,6 +53,8 @@ public class Banco implements Serializable {
 	private BigDecimal juros;
 	@Column(name = "MULTA")
 	private BigDecimal multa;
+	@Column(name = "VR_MULTA")
+	private BigDecimal vrMulta;
 	
 	public Long getId() {
 		return id;
@@ -164,6 +166,18 @@ public class Banco implements Serializable {
 
 	public void setMulta(BigDecimal multa) {
 		this.multa = multa;
+	}
+
+	public BigDecimal getVrMulta() {
+		return vrMulta;
+	}
+
+	public void setVrMulta(BigDecimal vrMulta) {
+		this.vrMulta = vrMulta;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 }

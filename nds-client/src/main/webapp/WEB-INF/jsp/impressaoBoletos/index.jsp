@@ -181,10 +181,10 @@
 		renderizarArquivos:function(result){
 			
 			if("BOLETO" == result){
-				window.location ="<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>" ;
+				window.open("<c:url value='/financeiro/impressaoBoletos/imprimirBoletosEmMassa'/>",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
 			}
 			else if ("DIVIDA" == result) {
-				window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>";
+				window.open("<c:url value='/financeiro/impressaoBoletos/imprimirDividasEmMassa'/>",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
 			}
 		},
 		
@@ -207,8 +207,9 @@
 		},
 		
 		renderizarArquivo: function (nossoNumero){
-		
-			window.location = "<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>";
+
+			window.open("<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
+
 		}
 		
 	};
