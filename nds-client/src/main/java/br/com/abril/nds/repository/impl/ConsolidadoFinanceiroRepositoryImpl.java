@@ -184,9 +184,124 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		
 	}
 	
+	/**
+	 * Método que obtém os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota
+	 */
+	@SuppressWarnings("unchecked")
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
-		//TODO: Consulta Consignados
-		return null;
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select ");
+		hql.append(" p.codigo as codigoProduto, ");	
+		hql.append(" p.nome as nomeProduto, ");
+		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");				
+		hql.append(" pe.numeroEdicao as numeroEdicao, ");
+		hql.append(" pe.precoVenda as precoCapa, ");		
+		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
+		hql.append(" ec.qtdePrevista as reparteSugerido, ");
+		hql.append(" ec.qtdeEfetiva as reparteFinal, ");
+		hql.append(" (ec.qtdePrevista - ec.qtdeEfetiva) as diferenca, ");
+		hql.append(" td.descricao as motivo, ");		
+		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total ");
+		
+		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
+		
+		hql.append(" LEFT JOIN consolidado.cota c ");
+		hql.append(" LEFT JOIN consolidado.movimentos mfc ");
+		hql.append(" LEFT JOIN mfc.movimentos mec ");		
+		hql.append(" LEFT JOIN mec.tipoMovimento tp ");		
+		hql.append(" LEFT JOIN mec.estoqueProdutoCota epc ");
+		hql.append(" LEFT JOIN mec.estudoCota ec ");
+		hql.append(" LEFT JOIN ec.rateiosDiferenca rd ");
+		hql.append(" LEFT JOIN rd.diferenca d ");
+		hql.append(" LEFT JOIN d.tipoDiferenca td ");		
+		hql.append(" LEFT JOIN epc.produtoEdicao pe ");
+		hql.append(" LEFT JOIN pe.produto p ");
+		hql.append(" LEFT JOIN p.fornecedores f ");
+						
+		hql.append(" WHERE c.numeroCota =:numeroCota ");
+		
+		hql.append(" and consolidado.dataConsolidado =:dataConsolidado ");		
+		hql.append(" and tp.grupoMovimentoEstoque =:grupoMovimentoEstoque ");
+		hql.append(" and mfc.tipoMovimento.grupoMovimentoFinaceiro =:grupoMovimentoFinanceiro ");
+		
+		hql.append(" GROUP BY	");
+		
+		hql.append(" p.codigo, ");
+		hql.append(" p.nome, ");
+		hql.append(" pe.numeroEdicao, ");
+		hql.append(" pe.precoVenda, ");
+		hql.append(" pe.desconto, ");
+		hql.append(" f.juridica.razaoSocial ");
+		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+
+		if (filtro.getOrdenacaoColuna() != null) {
+
+			hql.append(" order by ");
+			
+			String orderByColumn = "";
+			
+				switch (filtro.getOrdenacaoColuna()) {
+				
+					case CODIGO_PRODUTO:
+						orderByColumn = " codigoProduto ";
+						break;
+					case NOME_PRODUTO:
+						orderByColumn = " nomeProduto ";
+						break;
+					case NUMERO_EDICAO:
+						orderByColumn = " numeroEdicao ";
+						break;
+					case PRECO_CAPA:
+						orderByColumn = " precoVenda ";
+						break;
+					case PRECO_COM_DESCONTO:
+						orderByColumn = " precoComDesconto ";
+						break;				
+					case REPARTE_SUGERIDO:
+						orderByColumn = " reparteSugerido ";
+						break;
+					case REPARTE_FINAL:
+						orderByColumn = " reparteFinal ";
+						break;
+					case DIFERENCA:
+						orderByColumn = " diferenca ";
+						break;
+					case MOTIVO:
+						orderByColumn = " motivo ";
+						break;						
+					case FORNECEDOR:
+						orderByColumn = " fornecedor ";
+						break;
+					case TOTAL:
+						orderByColumn = " total ";
+						break;
+					default:
+						break;
+				}
+			
+			hql.append(orderByColumn);
+			
+			if (paginacao.getOrdenacao() != null) {
+				
+				hql.append(paginacao.getOrdenacao().toString());
+				
+			}			
+		}
+					
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", filtro.getNumeroCota());
+		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		//query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				EncalheCotaDTO.class));
+		
+		return query.list();
 		
 	}
 	

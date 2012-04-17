@@ -10,7 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -146,8 +148,8 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
 		save(estoqueProdutoCota);
 		
-		//MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
-		//save(movimentoEstoqueCota);
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		save(movimentoEstoqueCota);
 		
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		estoqueProdutoCota.getMovimentos().add(movimento);
@@ -169,6 +171,113 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 	}
 	
+	@Before
+	public void setUp2() {
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+				save(manoel);
+				
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		save(box1);
+		
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel);
+		
+		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoEnvioJornaleiro();
+		save(tipoMovimento);
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(usuario);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista();
+		save(tipoProduto);
+		
+		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedor);
+		
+		Produto produto = Fixture.produtoBravo(tipoProduto);
+		Fornecedor fornecedor = Fixture.fornecedorAcme(tipoFornecedor);
+		produto.setEditor(abril);
+		save(fornecedor);
+		produto.addFornecedor(fornecedor);
+		save(produto);
+		
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
+				new BigDecimal(10), produto);
+		save(produtoEdicao);
+				
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(tipoFornecedorPublicacao);
+				
+		PessoaJuridica pj = Fixture.juridicaDinap();		
+		save(pj);
+		
+		CFOP cfop = Fixture.cfop5102();		
+		save(cfop);
+				
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		save(tipoNotaFiscal);
+					
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		save(notaFiscal);
+		
+		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
+		save(recebimentoFisico);
+		
+		ItemNotaFiscalEntrada itemNotaFiscal= 
+				Fixture.itemNotaFiscal(
+						produtoEdicao, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(12));
+		save(itemNotaFiscal);
+		
+		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		save(itemRecebimentoFisico);
+		
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico);
+		save(lancamento);	
+		
+		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
+		save(estudo);
+		
+		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(20), new BigDecimal(10), estudo, cotaManoel);
+		save(estudoCota);
+		
+		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
+		save(expedicao);
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
+		save(estoqueProdutoCota);
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		save(movimentoEstoqueCota);
+		
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		estoqueProdutoCota.getMovimentos().add(movimento);
+		save(movimento);
+		
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
+		save(tipoMovimentoFinanceiro);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
+				new BigDecimal(230), listaMovimentoEstoqueCota, StatusAprovacao.APROVADO, dataAtual, true);
+		save(movimentoFinanceiroCota);
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
+		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
+		
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
+		save(consolidadoFinanceiroCota);
+		
+	}
 		
 	@Test
 	public void obterEncalhedaCota(){
@@ -181,6 +290,20 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		List<EncalheCotaDTO> lista = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtro);
 		
 		Assert.assertEquals(1, lista.size());
+		
+	}
+	
+	@Test
+	public void obterConsignadoCota(){
+		/*
+		FiltroConsolidadoConsignadoCotaDTO filtro = new FiltroConsolidadoConsignadoCotaDTO();	
+		
+		filtro.setDataConsolidado(dataAtual);
+		filtro.setNumeroCota(cotaManoel.getNumeroCota());
+		
+		List<ConsignadoCotaDTO> lista = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+		
+		Assert.assertEquals(1, lista.size());*/
 		
 	}
 
