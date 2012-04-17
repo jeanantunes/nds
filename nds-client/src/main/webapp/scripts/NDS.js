@@ -287,11 +287,18 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 			} else {
 				if (sucessCallBackFunction) {
 					
-					if (json.map){
+					if (json.map) {
+
 						sucessCallBackFunction(json.map);
+						
+					} else if (json.result) {
+
+						sucessCallBackFunction(json.result);
+						
+					} else {
+						
+						sucessCallBackFunction(json);
 					}
-					
-					sucessCallBackFunction(json.result);
 				}
 			}
 		},
