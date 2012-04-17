@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,17 +9,16 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Controller responsável pela Matriz de Recolhimento.
@@ -49,9 +50,28 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar() {
+	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> idsFornecedores, 
+						  String sortorder, String sortname, int page, int rp) {
+
+		List<ResumoPeriodoBalanceamentoDTO> listaResumos = new ArrayList<ResumoPeriodoBalanceamentoDTO>();
 		
+		for (int i = 0; i < 10; i++) {
+			
+			ResumoPeriodoBalanceamentoDTO resumo = new ResumoPeriodoBalanceamentoDTO();
+			
+			resumo.setData(new Date());
+			resumo.setQtdeTitulos(new Long(i));
+			resumo.setQtdeTitulosParciais(new Long(i));
+			resumo.setQtdeExemplares(new BigDecimal(i));
+			resumo.setPesoTotal(new BigDecimal(i));
+			resumo.setValorTotal(new BigDecimal(i));
+			
+			resumo.setExibeDestaque(i == 8 || i == 9);
+				
+			listaResumos.add(resumo);
+		}
 		
+		result.use(Results.json()).from(listaResumos, "result").serialize();
 	}
 	
 	@Post
@@ -78,6 +98,7 @@ public class MatrizRecolhimentoController {
 	@Post
 	@Path("/exibirMatrizBalanceamentoPorDia")
 	public void exibirMatrizBalanceamentoDoDia() {
+		
 		
 		
 	}
