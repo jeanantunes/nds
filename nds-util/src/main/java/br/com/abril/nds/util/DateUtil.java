@@ -167,5 +167,91 @@ public class DateUtil {
 		return quantidadeDias;
 	}
 	
+	/**
+	 * Obtém a número da semana no ano da data desejada utilizando o
+	 * código do dia de ínicio da semana.
+	 *  
+	 * @param data - data
+	 * @param diaInicioSemana - dia de início da semana (Utilizar as constantes da classe java.util.Calendar)
+	 * 
+	 * @return Número da semana no ano da data passada por parâmetro
+	 */
+	public static int obterNumeroSemanaNoAno(Date data, Integer diaInicioSemana) {
+				
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		if (diaInicioSemana == null) {
+			
+			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+		
+		if (diaInicioSemana != null) {
+		
+			calendar.setFirstDayOfWeek(diaInicioSemana);
+		}
+		
+		return calendar.get(Calendar.WEEK_OF_YEAR);
+	}
+	
+	/**
+	 * Obtém a número da semana no ano da data desejada.
+	 * 
+	 * Será utilizado o padrão de acordo com o Locale do sistema.
+	 *  
+	 * @param data - data
+	 * 
+	 * @return Número da semana no ano da data passada por parâmetro
+	 */
+	public static int obterNumeroSemanaNoAno(Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+
+		return calendar.get(Calendar.WEEK_OF_YEAR);
+	}
+	
+	/**
+	 * Obtém a data de acordo com o número e dia de ínicio de uma semana.
+	 * 
+	 * @param numeroSemana - número da semana no ano
+	 * @param diaInicioSemana - dia de início da semana (Utilizar as constantes da classe java.util.Calendar)
+	 * 
+	 * @return Data
+	 */
+	public static Date obterDataDaSemanaNoAno(Integer numeroSemana, Integer diaInicioSemana) {
+		
+		if (numeroSemana == null) {
+			
+			throw new IllegalArgumentException("Número da semana inválido!");
+		}
+		
+		if (diaInicioSemana == null) {
+			
+			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.WEEK_OF_YEAR, numeroSemana);
+		
+		calendar.setFirstDayOfWeek(diaInicioSemana);
+		
+		Date data = calendar.getTime();
+		
+		return removerTimestamp(data);
+	}
 	
 }

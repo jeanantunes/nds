@@ -69,6 +69,9 @@
 <script type="text/javascript"
  		src="${pageContext.request.contextPath}/scripts/jquery.calculation.min.js"></script> 		
 
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.dateFormat-1.0.js"></script>
+
 <link rel="stylesheet" type="text/css"
 	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
