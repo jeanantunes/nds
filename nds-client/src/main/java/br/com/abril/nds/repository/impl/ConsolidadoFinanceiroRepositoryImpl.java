@@ -50,7 +50,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append("  	consolidadoFinanceiroCota.debitoCredito as debCred,	            	");
 		hql.append(" 	consolidadoFinanceiroCota.encargos as encargos,             		");
 		hql.append(" 	consolidadoFinanceiroCota.pendente as pendente, 		        	");
-		hql.append(" 	consolidadoFinanceiroCota.total as total            				");
+		hql.append(" 	consolidadoFinanceiroCota.total as total ,          				");
+		hql.append(" 	consolidadoFinanceiroCota.id as id            				        ");
 
 		hql.append(" from ");
 
