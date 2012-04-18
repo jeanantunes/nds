@@ -109,8 +109,8 @@ function pesquisarConsignadoCota(lineId){
 		
 	var numeroCota = $("#cota").val();		
 	
-	var parametroPesquisa = [{name:'filtroConsolidadoConsignadoDTO.numeroCota', value:numeroCota },
-	                         {name:'filtroConsolidadoConsignadoDTO.lineId', value:lineId }];
+	var parametroPesquisa = [{name:'filtroConsolidadoConsignadoCotaDTO.numeroCota', value:numeroCota },
+	                         {name:'filtroConsolidadoConsignadoCotaDTO.lineId', value:lineId }];
 	
 	$.postJSON(
 			'<c:url value="/financeiro/contaCorrenteCota/consultarConsignadoCota" />', 
@@ -152,11 +152,11 @@ function pesquisarConsignadoCota(lineId){
 				$(".consignadoCotaGrid").show();
 				
 							
-				$(".popup_consignado").show();
+				$(".gridsConsignado").show();
 				
 			});	
 			
-	popup_consolidado();
+	popup_consignado();
 	
 }
 
@@ -693,9 +693,9 @@ $(function() {
         	<table class="consignadoGrid"></table>
         
         		<span class="bt_novos" title="Gerar Arquivo">
-        			<a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+        			<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 				<span class="bt_novos" title="Imprimir">
-					<a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>      
+					<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>      
 				<div align="right">
 								
 					<table>
