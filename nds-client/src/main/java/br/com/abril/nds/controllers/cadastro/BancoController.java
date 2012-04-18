@@ -147,7 +147,7 @@ public class BancoController {
 										  (banco.getId()!=null?banco.getId().toString():""),
 										  (banco.getNumeroBanco()!=null?banco.getNumeroBanco():""),
 										  (banco.getNome()!=null?banco.getNome():""),
-										  (banco.getAgencia()!=null?banco.getAgencia().toString()+"-"+banco.getDvAgencia():""),
+										  (banco.getAgencia()!=null?banco.getAgencia().toString():""),
 										  (banco.getConta()!=null?banco.getConta().toString()+"-"+banco.getDvConta():""),
 										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
 										  (banco.getMoeda()!=null?banco.getMoeda().toString():""),
