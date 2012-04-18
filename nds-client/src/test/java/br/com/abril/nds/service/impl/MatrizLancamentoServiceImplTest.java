@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -106,7 +106,7 @@ public class MatrizLancamentoServiceImplTest {
 				Fixture.criarData(5, Calendar.MARCH, 2012),
 				Fixture.criarData(7, Calendar.MARCH, 2012));
 
-		List<ResumoPeriodoLancamentoDTO> resumos = new ArrayList<ResumoPeriodoLancamentoDTO>();
+		List<ResumoPeriodoBalanceamentoDTO> resumos = new ArrayList<ResumoPeriodoBalanceamentoDTO>();
 
 		Mockito.when(
 				lancamentoRepository

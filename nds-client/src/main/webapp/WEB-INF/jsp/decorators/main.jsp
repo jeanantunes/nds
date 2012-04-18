@@ -165,7 +165,7 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
-							<li><a href="banco">Bancos</a>
+							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href="Cadastro/cadastro_box.htm">Box</a>
 							</li>
@@ -303,10 +303,11 @@ fieldset label {
 								href="Recolhimento/balanceamento_da_matriz_recolhimento.htm">Balanceamento
 									da Matriz</a>
 							</li>
-							<li><a href="Recolhimento/ce_antecipada.htm">CE
+							<li><a href='<c:url value="/devolucao/chamadaEncalheAntecipada"/>'>CE
 									Antecipada</a>
 							</li>
-							<li><a href="Recolhimento/chamadao.htm">Chamadão</a>
+							<li>
+								<a href='<c:url value="/recolhimento/chamadao"/>'>Chamadão</a>
 							</li>
 							<li><a
 								href="Recolhimento/conferencia_encalhe_jornaleiro.htm">Conferência

@@ -4,6 +4,78 @@
 
 	<script type="text/javascript">
 
+		function pesquisar() {
+
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/pesquisar' />", 
+				obterParametrosPesquisa(),
+				function(result) {
+					
+					var rows = '<tr>';
+
+					$.each(result, function(index, resumo) {
+						
+						rows += '<td>';
+
+						if (resumo.exibeDestaque) {
+
+							rows += '<div class="box_resumo alert">';
+							
+						} else {
+
+							rows += '<div class="box_resumo">';
+						}
+						
+						rows += '<label>' + resumo.dataFormatada;
+						rows += '<a href="javascript:;" onclick="mudaGrid();" style="float: right;">';
+						rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
+						rows += '</a>';
+						rows += '</label>';
+						rows += '<span class="span_1">Qtde. TÃ­tulos:</span>';	 
+						rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';	
+						rows += '<span class="span_1">Qtde. Exempl.:</span>';	
+						rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+						rows += '<span class="span_1">Qtde. Parciais:</span>';	
+						rows += '<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';	
+						rows += '<span class="span_1">Peso Total:</span>';
+						rows += '<span class="span_2">' + resumo.pesoTotalFormatado + '</span>';
+						rows += '<span class="span_1">Valor Total:</span>';
+						rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
+						rows += '</div>';
+						rows += '</td>';					  
+				    });	
+				    
+				    rows += "</tr>";
+				    
+				    $("#tableResumoPeriodoBalanceamento").append(rows);
+
+				    $("#resumoPeriodo").show();
+
+				    $("#fieldsetGrids").hide();
+				},
+				function() {
+
+					$("#resumoPeriodo").hide();
+				}
+			);
+		}
+	
+		function obterParametrosPesquisa() {
+
+			var parametros = new Array();
+
+			parametros.push({name:'numeroSemana', value: $("#numeroSemana").val()});
+			
+			parametros.push({name:'dataPesquisa', value: $("#dataPesquisa").val()});
+			
+			$("input[name='checkgroup_menu']:checked").each(function(i) {
+				
+				parametros.push({name:'idsFornecedores', value: $(this).val()});
+			});
+
+			return parametros;
+		}
+	
 		function carregarDataSemana() {
 
 			var data = [
@@ -100,7 +172,7 @@
 	                    <br clear="all" />
 	                    <c:forEach items="${fornecedores}" var="fornecedor">
 	                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox"/>
-	                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
+	                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
 	                     	<br clear="all" />
 	                	</c:forEach> 
 	            	</div>
@@ -123,7 +195,7 @@
 				</td>
 				<td width="164">
 					<span class="bt_pesquisar">
-						<a href="javascript:;" onclick="mostrar();">Pesquisar</a>
+						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>
 				</td>
 			</tr>
@@ -132,48 +204,18 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 	
-	<!--  Resumo do Período -->
+	<!--  Resumo do PerÃ­odo -->
 	
 	<fieldset class="classFieldset" id="resumoPeriodo" style="display: none;">
 	
-		<legend>Resumo do Período</legend>
+		<legend>Resumo do PerÃ­odo</legend>
 		
 		<div style="width: 950px; overflow-x: auto;">
-			<table width="100%" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<td>
-						<div class="box_resumo">
-							<label>01/12/2011 
-								<a href="javascript:;" onclick="mudaGrid();" style="float: right;">
-									<img src="<c:url value='images/ico_detalhes.png'/>" width="15" height="15" border="0" title="Visualizar" />
-								</a>
-							</label>
-							<span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-							<span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-							<span class="span_1">Qtde. Parciais:</span><span class="span_2">7</span>
-							<span class="span_1">Peso Total:</span><span class="span_2">250.000</span>
-							<span class="span_1">Valor Total:</span><span class="span_2">250.000</span>
-						</div>
-					</td>
-					<td>
-						<div class="box_resumo alert">
-							<label>01/12/2011 
-								<a href="javascript:;" onclick="mudaGrid();" style="float: right;">
-									<img src="<c:url value='images/ico_detalhes.png'/>" width="15" height="15" border="0" title="Visualizar" />
-								</a>
-							</label>
-							<span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-							<span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-							<span class="span_1">Qtde. Parciais:</span><span class="span_2">7</span>
-							<span class="span_1">Peso Total:</span><span class="span_2">250.000</span>
-							<span class="span_1">Valor Total:</span><span class="span_2">250.000</span>
-						</div>
-					</td>
-				</tr>
+			<table id="tableResumoPeriodoBalanceamento" name="tableResumoPeriodoBalanceamento" width="100%" border="0" cellspacing="2" cellpadding="2">
 			</table>
 		</div>
 		
-		<!-- Botões de Ação -->
+		<!-- BotÃµes de AÃ§Ã£o -->
 		
 		<table width="950" border="0" cellspacing="0" cellpadding="0">
 			<tr>
@@ -202,8 +244,8 @@
 				<td>
 					<span class="bt_configura_inicial">
 						<a href="javascript:;">
-							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />
-							Voltar Configuração Inicial
+							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar ConfiguraÃ§Ã£o Inicial" border="0" hspace="5" />
+							Voltar ConfiguraÃ§Ã£o Inicial
 						</a>
 					</span>
 				</td>
@@ -213,7 +255,7 @@
 	
 	<!-- Balanceamento -->
 	
-	<fieldset class="classFieldset">
+	<fieldset id="fieldsetGrids" class="classFieldset">
 	
 		<legend>Balanceamento da Matriz de Recolhimento </legend>
 		
@@ -260,7 +302,7 @@
 		
 		<!-- GRID -->
 		
-		<div id="grid_matriz" style="display: none;">
+		<div id="gridMatriz" style="display: none;">
 			<table class="balanceamentoGrid"></table>
 		</div>
 		

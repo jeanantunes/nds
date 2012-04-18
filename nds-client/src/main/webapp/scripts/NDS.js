@@ -296,7 +296,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 						sucessCallBackFunction(json.result);
 						
 					} else {
-						
+
 						sucessCallBackFunction(json);
 					}
 				}

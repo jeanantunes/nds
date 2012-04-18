@@ -53,6 +53,9 @@ public class ParametroCobrancaCota implements Serializable {
 	
 	@OneToMany
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
+	
+	@Embedded
+	private ContaBancariaCota contaBancariaCota;
 
 	public Long getId() {
 		return id;
@@ -117,6 +120,14 @@ public class ParametroCobrancaCota implements Serializable {
 	public void setConcentracaoCobrancaCota(
 			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
 		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
+	}
+	
+	public ContaBancariaCota getContaBancariaCota() {
+		return contaBancariaCota;
+	}
+	
+	public void setContaBancariaCota(ContaBancariaCota contaBancariaCota) {
+		this.contaBancariaCota = contaBancariaCota;
 	}
 
 }

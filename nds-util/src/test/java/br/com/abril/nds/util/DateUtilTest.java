@@ -30,9 +30,9 @@ public class DateUtilTest {
 	@Test
 	public void obterDataDaDecimaSextaSemanaDoAno2012() {
 		
-		Date dataEsperada = DateUtil.parseDataPTBR("17/04/2012");
+		Date dataEsperada = DateUtil.parseDataPTBR("01/01/2012");
 		
-		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(16, Calendar.WEDNESDAY);
+		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY);
 		
 		Assert.assertEquals(dataEsperada, dataObtida);
 	}

@@ -6,17 +6,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.client.vo.CotaCobrancaVO;
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -35,9 +37,17 @@ public class CotaController {
 
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private BancoService bancoService;
 
 	@Autowired
 	private HttpSession session;
+	
+	private static List<ItemDTO<Integer,String>> listaBancos =  new ArrayList<ItemDTO<Integer,String>>();
+
+    private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
+    
 	
 	public CotaController(Result result) {
 
@@ -45,7 +55,24 @@ public class CotaController {
 	}
 
 	@Path("/")
-	public void index() { }
+	public void index() {
+		listaBancos = this.bancoService.getComboBancos();
+		listaTiposCobranca = this.cotaService.getComboTiposCobranca();
+		result.include("listaBancos",listaBancos);
+		result.include("listaTiposCobranca",listaTiposCobranca);
+	}
+	
+	
+	
+	/*
+	@Post
+	@Path("/buscaComboBancos")
+	public void buscaComboBancos(TipoCobranca tipoCobranca){
+		listaBancos = this.cotaService.getComboBancosTipoCobranca(tipoCobranca);
+		result.include("listaBancos",listaBancos);
+	}
+    */
+
 
 	@Post
 	public void novaCota() { 
@@ -54,6 +81,8 @@ public class CotaController {
 
 		this.result.nothing();
 	}
+	
+
 
 	@Post
 	public void editarCota(Long idCota) { 
@@ -84,6 +113,8 @@ public class CotaController {
 		this.result.nothing();
 	}
 	
+	
+	
 	@Post
 	public void salvarCota(Long idCota) {
 
@@ -93,6 +124,8 @@ public class CotaController {
 		
 		this.result.nothing();
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	private void processarEnderecosCota(Long idCota) {
@@ -107,6 +140,8 @@ public class CotaController {
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 	}
+	
+	
 	
 	private void processarTelefonesCota(Long idCota){
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
@@ -124,6 +159,8 @@ public class CotaController {
 		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
 	}
 	
+	
+	
 	@SuppressWarnings("unchecked")
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
@@ -135,6 +172,8 @@ public class CotaController {
 		
 		return telefonesSessao;
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterTelefonesRemoverSessao(){
@@ -148,6 +187,8 @@ public class CotaController {
 		return telefonesSessao;
 	}
 
+	
+	
 	@Post
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
@@ -176,6 +217,8 @@ public class CotaController {
 		}		
 	}
 
+	
+	
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
@@ -200,6 +243,8 @@ public class CotaController {
 		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
 	}
 	
+	
+	
 	@Post
 	public void pesquisarPorNome(String nomeCota) {
 		
@@ -219,6 +264,8 @@ public class CotaController {
 		this.result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
 	
+	
+	
 	@Post
 	public void cancelar(){
 		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
@@ -226,5 +273,50 @@ public class CotaController {
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Método responsável por obter os parametros de cobranca da Cota para a aba 'Financeiro'.
+	 * @param idCota
+	 */
+	@Post
+	@Path("/editarCotaCobranca")
+	public void editarCotaCobranca(Integer numeroCota){
+		
+		if (numeroCota==null){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "informe a cota.");
+		}
+
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		CotaCobrancaVO cotaCobranca = this.cotaService.obterDadosCotaCobranca(cota);
+		
+		if (cotaCobranca==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		
+		result.use(Results.json()).from(cotaCobranca,"result").recursive().serialize();
+	}
+	
+	
+	
+	
+	
+	
+	
+	@Post
+	@Path("/postarCotaCobranca")
+	public void postarCotaCobranca(CotaCobrancaVO cotaCobranca){
+		
+	    this.cotaService.postarDadosCotaCobranca(cotaCobranca);
+		
+	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros de cobrança alterados com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+
 	
 }
