@@ -44,8 +44,12 @@
 						rows += '</div>';
 						rows += '</td>';					  
 				    });	
+
+					
 				    
 				    rows += "</tr>";
+
+				    $("#tableResumoPeriodoBalanceamento").empty();
 				    
 				    $("#tableResumoPeriodoBalanceamento").append(rows);
 
@@ -70,7 +74,7 @@
 			
 			$("input[name='checkgroup_menu']:checked").each(function(i) {
 				
-				parametros.push({name:'idsFornecedores', value: $(this).val()});
+				parametros.push({name:'listaIdsFornecedores', value: $(this).val()});
 			});
 
 			return parametros;

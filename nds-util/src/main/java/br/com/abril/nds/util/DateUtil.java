@@ -3,8 +3,11 @@ package br.com.abril.nds.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -258,6 +261,72 @@ public class DateUtil {
 		Date data = calendar.getTime();
 		
 		return removerTimestamp(data);
+	}
+	
+	/**
+	 * Retorna o código do dia da semana de uma determinada data.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return Código do dia da semana (verificar constantes da classe java.util.Calendar)
+	 */
+	public static int obterDiaDaSemana(Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+		
+		return calendar.get(Calendar.DAY_OF_WEEK);
+	}
+	
+	/**
+	 * Obtém um período filtrado de acordo com os dias da semana desejados. 
+	 * 
+	 * @param dataInicial - data inicial do período
+	 * @param dataFinal - data final do período
+	 * @param listaCodigosDiasSemana - lista de códigos com os dias da semana
+	 * 
+	 * @return Período de datas filtrado pelos dias da semana
+	 */
+	public static List<Date> obterPeriodoDeAcordoComDiasDaSemana(Date dataInicial, 
+																 Date dataFinal,
+																 Collection<Integer> listaCodigosDiasSemana) {
+		
+		if (dataInicial == null) {
+			
+			throw new IllegalArgumentException("Data inicial inválida!");
+		}
+		
+		if (dataFinal == null) {
+			
+			throw new IllegalArgumentException("Data final inválida!");
+		}
+		
+		if (listaCodigosDiasSemana == null || listaCodigosDiasSemana.isEmpty()) {
+			
+			throw new IllegalArgumentException("Códigos de dias da semana inválidos!");
+		}
+		
+		List<Date> datas = new ArrayList<Date>();
+		
+		while (dataInicial.before(dataFinal) || dataInicial.equals(dataFinal)) {
+			
+			int diaDaSemana = obterDiaDaSemana(dataInicial);
+			
+			if (listaCodigosDiasSemana.contains(diaDaSemana)) {
+				
+				datas.add(dataInicial);
+			}
+			
+			dataInicial = DateUtil.adicionarDias(dataInicial, 1);
+		}
+		
+		return datas;
 	}
 	
 }
