@@ -151,6 +151,10 @@ public class CotaController {
 	@Post
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
+		if(numeroCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");
+		}
+		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 
 		if (cota == null) {

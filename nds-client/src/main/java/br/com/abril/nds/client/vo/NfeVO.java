@@ -2,20 +2,42 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class NfeVO implements Serializable {
 
 	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Export(label="Nota")
 	private String numero;
+	
+	@Export(label="Série")
 	private String serie;
+	
+	@Export(label="Emissão")
 	private String emissao;
+	
+	@Export(label="Tipo Emissão")
+	private String tipoEmissao;
+	
+	@Export(label="CNPJ Emissor")
 	private String cnpjEmissor;
+	
+	@Export(label="CNPJ Destinatário")
 	private String cnpjDestinatario;
+	
+	@Export(label="Status NF-e")
 	private String statusNfe;
+	
+	@Export(label="Tipo NF-e")
 	private String tipoNfe;
+	
+	@Export(label="Movimento Integração")
 	private String movimentoIntegracao;
 	
 	
@@ -138,6 +160,21 @@ public class NfeVO implements Serializable {
 	 */
 	public void setMovimentoIntegracao(String movimentoIntegracao) {
 		this.movimentoIntegracao = movimentoIntegracao;
+	}
+	/**
+	 * Obtém tipoEmissao
+	 *
+	 * @return String
+	 */
+	public String getTipoEmissao() {
+		return tipoEmissao;
+	}
+	/**
+	 * Atribuí tipoEmissao
+	 * @param tipoEmissao 
+	 */
+	public void setTipoEmissao(String tipoEmissao) {
+		this.tipoEmissao = tipoEmissao;
 	}
 	
 	

@@ -8,6 +8,7 @@ public class NfeDTO implements Serializable {
 	private String numero;
 	private String serie;
 	private Date emissao;
+	private String tipoEmissao;
 	private String cnpjEmissor;
 	private String cnpjDestinatario;
 	private String statusNfe;
@@ -148,6 +149,23 @@ public class NfeDTO implements Serializable {
 	 */
 	public void setMovimentoIntegracao(String movimentoIntegracao) {
 		this.movimentoIntegracao = movimentoIntegracao;
+	}
+
+	/**
+	 * Obtém tipoEmissao
+	 *
+	 * @return String
+	 */
+	public String getTipoEmissao() {
+		return tipoEmissao;
+	}
+
+	/**
+	 * Atribuí tipoEmissao
+	 * @param tipoEmissao 
+	 */
+	public void setTipoEmissao(String tipoEmissao) {
+		this.tipoEmissao = tipoEmissao;
 	}
 	
 	
