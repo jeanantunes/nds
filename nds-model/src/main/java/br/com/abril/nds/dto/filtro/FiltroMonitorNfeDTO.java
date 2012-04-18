@@ -3,19 +3,83 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
+
+@Exportable
 public class FiltroMonitorNfeDTO implements Serializable {
 	
 	
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private boolean indDocumentoCPF;
+	
+	@Export(label="Box")
 	private String box;
+	
+	@Export(label="Período de")
 	private Date dataInicial;
+	
+	@Export(label="Até")
 	private Date dataFinal;
+	
+	@Export(label="Destinatário")
 	private String destinatario;
+	
+	@Export(label="Tipo de Nf-e")
 	private String tipoNfe;
+	
+	@Export(label="Número")
 	private String numeroNotaInicial;
+	
+	@Export(label="Até")
 	private String numeroNotaFinal;
+	
+	@Export(label="Chave de Acesso NF-e")
 	private String chaveAcesso;
+	
+	@Export(label="Situação Nf-e")
 	private String situacaoNfe;
+	
+	private PaginacaoVO paginacao;
+	
+	private OrdenacaoColuna ordenacaoColuna;
+	
+	/**
+	 * Enum para ordenação das colunas do filtro.
+	 * 
+	 * @author Discover Technology
+	 *
+	 */
+	public enum OrdenacaoColuna {
+		
+		NOTA("numero"),
+		SERIE("serie"),
+		EMISSAO("emissao"),
+		TIPO_EMISSAO("tipoEmissao"),
+		CNPJ_EMISSOR("cnpjEmissor"),
+		CNPJ_DESTINATARIO("cnpjDestinatario"),
+		STATUS_NFE("statusNfe"),
+		TIPO_NFE("tipoNfe"),
+		MOVIMENTO_INTEGRACAO("movimentoIntegracao");		
+		
+		private String nomeColuna;
+		
+		private OrdenacaoColuna(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+	}	
+
 	
 	/**
 	 * Obtém box
@@ -167,6 +231,35 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public void setIndDocumentoCPF(boolean indDocumentoCPF) {
 		this.indDocumentoCPF = indDocumentoCPF;
 	}
-	
+	/**
+	 * Obtém paginacao
+	 *
+	 * @return PaginacaoVO
+	 */
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+	/**
+	 * Atribuí paginacao
+	 * @param paginacao 
+	 */
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
+	}
+	/**
+	 * Obtém ordenacaoColuna
+	 *
+	 * @return OrdenacaoColuna
+	 */
+	public OrdenacaoColuna getOrdenacaoColuna() {
+		return ordenacaoColuna;
+	}
+	/**
+	 * Atribuí ordenacaoColuna
+	 * @param ordenacaoColuna 
+	 */
+	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
+		this.ordenacaoColuna = ordenacaoColuna;
+	}
 	
 }

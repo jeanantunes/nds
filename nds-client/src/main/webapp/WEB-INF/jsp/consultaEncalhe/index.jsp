@@ -212,12 +212,9 @@ $(function() {
 					<td width="90">
 
 						<input 	type="text" 
+								maxlength="17"
 								id="cota" onchange="cota.pesquisarPorNumeroCota('#cota', '#nomeCota');" 
 								style="width: 60px; float:left; margin-right:5px;"/>
-
-						<span class="classPesquisar">
-							<a href="javascript:;">&nbsp;</a>
-						</span>
 					
 					</td>
 					
@@ -225,7 +222,8 @@ $(function() {
 					
 					<td width="160">
 
-			            <input type="text" 
+			            <input type="text"
+			            maxlength="255" 
 			            name="nomeCota" 
 			            id="nomeCota" 
 			            onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
