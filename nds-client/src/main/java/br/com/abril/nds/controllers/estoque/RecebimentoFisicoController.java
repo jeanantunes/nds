@@ -191,6 +191,7 @@ public class RecebimentoFisicoController {
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
 		
+				
 		if(itensRecebimentoFisico == null) {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
@@ -199,7 +200,9 @@ public class RecebimentoFisicoController {
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
-		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());		
+		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());	
+		
+		ValidacaoVO validacao = new ValidacaoVO();
 		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(idNotaFiscal);
 		
@@ -207,7 +210,7 @@ public class RecebimentoFisicoController {
 		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
+				
 	}
 	
 	private boolean verificarRecebimentoFisicoConfirmado(Long idNotaFiscal) {
@@ -516,7 +519,7 @@ public class RecebimentoFisicoController {
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			
-			validarItensRecebimento(itensRecebimento);
+			//validarItensRecebimento(itensRecebimento);
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		
 		}
@@ -533,12 +536,35 @@ public class RecebimentoFisicoController {
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	}
 	
-	private void validarItensRecebimento(List<RecebimentoFisicoDTO> itensRecebimento) {
-		for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimento){
-			if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().equals(BigDecimal.ZERO) ){
-				throw new ValidacaoException(TipoMensagem.WARNING, "NF interface com Itens sem quantidade física informada.");
-			}
+	public void validarItensRecebimento() {
+		
+		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
+		
+		Long idNotaFiscal = notaFiscal.getId();
+		
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+		
+				
+		if(itensRecebimentoFisico == null) {
+			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
+		
+		recarregarValoresCalculados(itensRecebimentoFisico);
+		
+		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
+		
+		if(Origem.INTERFACE.equals(notaFiscal.getOrigem())){
+			List<String> msgs = new ArrayList<String>();
+			
+			for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimentoFisico){
+				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigDecimal.ZERO) == 0 ){
+					msgs.add("NF interface com Itens sem quantidade física informada.");
+					ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
+					result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+					
+				}
+			}
+		}		
 		
 	}
 

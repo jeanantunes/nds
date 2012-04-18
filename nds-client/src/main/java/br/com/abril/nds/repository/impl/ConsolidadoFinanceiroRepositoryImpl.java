@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -192,7 +193,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select ");
+		hql.append(" select consolidado ");
 		hql.append(" p.codigo as codigoProduto, ");	
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");				
@@ -204,7 +205,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		hql.append(" (ec.qtdePrevista - ec.qtdeEfetiva) as diferenca, ");
 		hql.append(" td.descricao as motivo, ");		
 		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total ");
-		
+	
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
 		
 		hql.append(" LEFT JOIN consolidado.cota c ");
@@ -215,12 +216,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 		hql.append(" LEFT JOIN mec.estudoCota ec ");
 		hql.append(" LEFT JOIN ec.rateiosDiferenca rd ");
 		hql.append(" LEFT JOIN rd.diferenca d ");
-		hql.append(" LEFT JOIN d.tipoDiferenca td ");		
+		//hql.append(" LEFT JOIN d.tipoDiferenca td ");		
 		hql.append(" LEFT JOIN epc.produtoEdicao pe ");
 		hql.append(" LEFT JOIN pe.produto p ");
 		hql.append(" LEFT JOIN p.fornecedores f ");
 						
-		hql.append(" WHERE c.numeroCota =:numeroCota ");
+		/*hql.append(" WHERE c.numeroCota =:numeroCota ");
 		
 		hql.append(" and consolidado.dataConsolidado =:dataConsolidado ");		
 		hql.append(" and tp.grupoMovimentoEstoque =:grupoMovimentoEstoque ");
@@ -290,8 +291,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepository<Cons
 				
 			}			
 		}
+		*/
+		Session session = getSession();
 					
-		Query query = getSession().createQuery(hql.toString());
+		Query query =session.createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
