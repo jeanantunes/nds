@@ -11,7 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
@@ -151,7 +151,7 @@ public class LancamentoRepositoryImpl extends
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
+	public List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo) {
 		StringBuilder hql = new StringBuilder(
 				"select lancamento.dataLancamentoPrevista as data, ");
@@ -171,7 +171,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("fornecedores", fornecedores);
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ResumoPeriodoLancamentoDTO.class));
+				ResumoPeriodoBalanceamentoDTO.class));
 		return query.list();
 	}
 	

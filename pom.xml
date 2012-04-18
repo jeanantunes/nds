@@ -322,6 +322,10 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>nexus</id>
+			<url>http://10.10.50.105:8080/nexus/content/groups/public/</url>
+		</repository>
 	</repositories>
 
 	<build>

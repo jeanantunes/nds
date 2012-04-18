@@ -70,6 +70,12 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "POSSUI_BRINDE", nullable = false)
 	private boolean possuiBrinde;
 	
+	/**
+	 * Percentual de expectativa de venda do produto
+	 */
+	@Column(name = "EXPECTATIVA_VENDA")
+	private BigDecimal expectativaVenda;
+	
 	public Long getId() {
 		return id;
 	}
@@ -157,6 +163,14 @@ public class ProdutoEdicao implements Serializable {
 	
 	public void setPossuiBrinde(boolean possuiBrinde) {
 		this.possuiBrinde = possuiBrinde;
+	}
+	
+	public BigDecimal getExpectativaVenda() {
+		return expectativaVenda;
+	}
+	
+	public void setExpectativaVenda(BigDecimal expectativaVenda) {
+		this.expectativaVenda = expectativaVenda;
 	}
 
 	@Override
