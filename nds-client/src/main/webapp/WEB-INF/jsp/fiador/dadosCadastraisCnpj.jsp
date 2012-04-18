@@ -49,12 +49,12 @@
 	
 	function buscarPessoaCNPJ(cnpj){
 		
-		if (cnpj != "__.___.___/____-__"){
+		if (cnpj != "__.___.___/____-__" && cnpj != ""){
 			
 			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCNPJ' />", "cnpj=" + cnpj, 
 				function(result) {
 					
-					if (result != ""){
+					if (result[0] != undefined){
 						$("#razaoSocialFiador").val(result[0]);
 						$("#nomeFantasiaFiador").val(result[1]);
 						$("#inscricaoEstadualFiador").val(result[2]);
