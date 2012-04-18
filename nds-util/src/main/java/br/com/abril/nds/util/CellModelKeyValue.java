@@ -1,5 +1,6 @@
 package br.com.abril.nds.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,12 @@ import java.util.List;
  * @author michel.jader
  *
  */
-public class CellModelKeyValue<T> {
+public class CellModelKeyValue<T> implements Serializable {
 	
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private T cell;
 	

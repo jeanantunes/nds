@@ -115,25 +115,29 @@ public class CobrancaServiceImpl implements CobrancaService {
 		BigDecimal taxaMulta = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoMulta = null;
-
-		if ((banco !=null) && (banco.getMulta()!=null)){
-			taxaMulta = banco.getMulta();
+		
+		if ((banco !=null) && (banco.getVrMulta()!=null)){
+			valorCalculadoMulta = banco.getVrMulta();
 		}
-		else if (cota.getParametroCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca().getTaxaMulta() != null) {
-
-			taxaMulta = cota.getParametroCobranca().getFormaCobranca().getTaxaMulta();
-
-		} else if (distribuidor.getPoliticaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta() != null) {
-
-			taxaMulta = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta();
+		else{
+			if ((banco !=null) && (banco.getMulta()!=null)){
+				taxaMulta = banco.getMulta();
+			}
+			else if (cota.getParametroCobranca() != null
+					&& cota.getParametroCobranca().getFormaCobranca() != null
+					&& cota.getParametroCobranca().getFormaCobranca().getTaxaMulta() != null) {
+	
+				taxaMulta = cota.getParametroCobranca().getFormaCobranca().getTaxaMulta();
+	
+			}else if (distribuidor.getPoliticaCobranca() != null
+					&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
+					&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta() != null) {
+	
+				taxaMulta = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta();
+			}
+			valorCalculadoMulta = valor.multiply(MathUtil.divide(taxaMulta, new BigDecimal(100)));
 		}
-
-		valorCalculadoMulta = valor.multiply(MathUtil.divide(taxaMulta, new BigDecimal(100)));
-
+		
 		return valorCalculadoMulta;
 	}
 

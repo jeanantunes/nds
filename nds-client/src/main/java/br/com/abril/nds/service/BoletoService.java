@@ -46,4 +46,5 @@ public interface BoletoService {
 	
 	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException;
 	
+	void incrementarVia(String... nossoNumero);
 }

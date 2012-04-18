@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
@@ -554,12 +554,12 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Date data23022012 = Fixture.criarData(23,
 				Calendar.FEBRUARY, 2012);
 		List<Date> datas = Arrays.asList(data22022012, data23022012);
-		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
+		List<ResumoPeriodoBalanceamentoDTO> resumos = lancamentoRepository
 				.buscarResumosPeriodo(datas,
 						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 		Assert.assertEquals(2, resumos.size());
 		
-		ResumoPeriodoLancamentoDTO resumo2202 = resumos.get(0);
+		ResumoPeriodoBalanceamentoDTO resumo2202 = resumos.get(0);
 		Assert.assertNotNull(resumo2202);
 		Assert.assertEquals(data22022012, resumo2202.getData());
 		Assert.assertEquals(Long.valueOf(3), resumo2202.getQtdeTitulos());
@@ -568,7 +568,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(16.5)),
 				CurrencyUtil.formatarValor(resumo2202.getPesoTotal()));
 		
-		ResumoPeriodoLancamentoDTO resumo2302 = resumos.get(1);
+		ResumoPeriodoBalanceamentoDTO resumo2302 = resumos.get(1);
 		Assert.assertNotNull(resumo2302);
 		Assert.assertEquals(data23022012, resumo2302.getData());
 		Assert.assertEquals(Long.valueOf(2), resumo2302.getQtdeTitulos());

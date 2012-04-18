@@ -115,7 +115,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 										   infoEncalheDTO.getCodigoProduto(),
 										   produtoEdicao.getId())){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Distribuidor não ");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O dia da Data Antecipada é diferente do dia de recolhimento do distribuidor!");
 		}
 		
 		

@@ -260,7 +260,6 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setNumeroEdicao(numeroEdicao);
-		filtro.setFornecedor(box1.getId());
 		filtro.setNumeroCota(1234);
 		
 		BigDecimal antecipadaEncalheDTO = cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);

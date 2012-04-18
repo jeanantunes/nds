@@ -69,6 +69,9 @@
 <script type="text/javascript"
  		src="${pageContext.request.contextPath}/scripts/jquery.calculation.min.js"></script> 		
 
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.dateFormat-1.0.js"></script>
+
 <link rel="stylesheet" type="text/css"
 	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
@@ -162,7 +165,7 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
-							<li><a href="banco">Bancos</a>
+							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href="Cadastro/cadastro_box.htm">Box</a>
 							</li>
@@ -300,7 +303,7 @@ fieldset label {
 								href="Recolhimento/balanceamento_da_matriz_recolhimento.htm">Balanceamento
 									da Matriz</a>
 							</li>
-							<li><a href="Recolhimento/ce_antecipada.htm">CE
+							<li><a href='<c:url value="/devolucao/chamadaEncalheAntecipada"/>'>CE
 									Antecipada</a>
 							</li>
 							<li><a href="Recolhimento/chamadao.htm">Chamadão</a>
