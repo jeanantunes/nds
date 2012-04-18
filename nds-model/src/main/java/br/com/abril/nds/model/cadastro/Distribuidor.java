@@ -98,6 +98,19 @@ public class Distribuidor {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "INICIO_SEMANA", nullable = false)
 	private DiaSemana inicioSemana = DiaSemana.QUARTA_FEIRA;
+	
+	/**
+	 * Flag indicando se o distribuidor executa recolhimento de
+	 * lançamento parcial
+	 */
+	@Column(name = "EXECUTA_RECOLHIMENTO_PARCIAL", nullable = false)
+	private boolean executaRecolhimentoParcial;
+	
+	/**
+	 * Fator em número de dias para o cálculo do relançamento parcial
+	 */
+	@Column(name = "FATOR_RELANCAMENTO_PARCIAL", nullable = false)
+	private int fatorRelancamentoParcial;
 
 	public Long getId() {
 		return id;
@@ -210,6 +223,22 @@ public class Distribuidor {
 	
 	public void setInicioSemana(DiaSemana inicioSemana) {
 		this.inicioSemana = inicioSemana;
+	}
+	
+	public boolean isExecutaRecolhimentoParcial() {
+		return executaRecolhimentoParcial;
+	}
+	
+	public void setExecutaRecolhimentoParcial(boolean executaRecolhimentoParcial) {
+		this.executaRecolhimentoParcial = executaRecolhimentoParcial;
+	}
+	
+	public int getFatorRelancamentoParcial() {
+		return fatorRelancamentoParcial;
+	}
+	
+	public void setFatorRelancamentoParcial(int fatorRelancamentoParcial) {
+		this.fatorRelancamentoParcial = fatorRelancamentoParcial;
 	}
 	
 }
