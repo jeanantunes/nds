@@ -42,7 +42,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		return consolidadoFinanceiroRepository.buscarPorId(id);
 	}
 	
-}
+
 	
 	@Transactional(readOnly=true)
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){

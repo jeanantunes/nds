@@ -140,17 +140,6 @@ public class ContaCorrenteCotaController {
 	 * @param rp
 	 * @param page
 	 */
-	
-	public void consultarEncalheCota(FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO, String sortname, String sortorder, int rp, int page ){
-				
-		
-		ViewContaCorrenteCota contaCorrente = obterListaEncalheSessao(filtroConsolidadoEncalheDTO.getLineId());
-		
-		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente.getDataConsolidado());	
-		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE, filtroConsolidadoEncalheDTO);
-						
-		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);		
-		
 	public void consultarEncalheCota(
 			FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO,
 			String sortname, String sortorder, int rp, int page) {
