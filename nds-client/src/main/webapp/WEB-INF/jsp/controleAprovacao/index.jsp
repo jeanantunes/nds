@@ -193,7 +193,6 @@
 		
 		$(".solicitacoesAprovacao").flexOptions({
 			url: "<c:url value='/administracao/controleAprovacao/pesquisarAprovacoes' />",
-			onSuccess: executarAposProcessamento,
 			params: [
 		         {name:'idTipoMovimento', value: idTipoMovimento},
 		         {name:'dataMovimentoFormatada', value: dataMovimento}
@@ -235,11 +234,7 @@
 		
 		return resultado;
 	}
-	
-	function executarAposProcessamento() {
-		
-	}
-		
+
 </script>
 
 </head>

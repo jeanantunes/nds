@@ -123,8 +123,7 @@ function pesquisarConsignadoCota(lineId){
 					montarColunaSemFornecedor();
 				}
 				
-				//$(".encalheCotaGrid").flexOptions({colModel: colunas});
-				
+							
 				$(".consignadoCotaGrid").flexAddData({
 					page: 1, total: 1, rows: result[1].tableModel.rows
 				});

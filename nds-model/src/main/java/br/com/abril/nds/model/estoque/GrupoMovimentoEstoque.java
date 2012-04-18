@@ -7,79 +7,104 @@ package br.com.abril.nds.model.estoque;
  * @created 14-fev-2012 11:35:33
  */
 public enum GrupoMovimentoEstoque  {
+	
 	/**
 	 * Recebimento de mercadorias distribuidor
 	 */
-	RECEBIMENTO_FISICO(OperacaoEstoque.ENTRADA), 
+	RECEBIMENTO_FISICO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
-	 * Envio de reparte à cota
+	 * Envio de reparte à cota pelo distribuidor
 	 */
-	ENVIO_JORNALEIRO(OperacaoEstoque.SAIDA),
+	ENVIO_JORNALEIRO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR),
+
 	/**
-	 * Recebimento do encalhe do jornaleiro
+	 * Recebimento do encalhe da cota pelo distribuidor
 	 */
-	RECEBIMENTO_ENCALHE(OperacaoEstoque.ENTRADA), 
+	RECEBIMENTO_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
 	 * Sobra de pacote distribuidor
 	 */
-	SOBRA_DE(OperacaoEstoque.ENTRADA), 
+	SOBRA_DE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
-	 * Sobra e m pacote distribuidor
+	 * Sobra em pacote distribuidor
 	 */
-	SOBRA_EM(OperacaoEstoque.ENTRADA), 
+	SOBRA_EM(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
 	 * Falta de pacote distribuidor
 	 */
-	FALTA_DE(OperacaoEstoque.SAIDA), 
+	FALTA_DE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR), 
 	
 	
 	/**
 	 * Falta em pacote distribuidor
 	 */
-	FALTA_EM(OperacaoEstoque.SAIDA),
+	FALTA_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR),
 	
 	/**
 	 * Recebimento do reparte cota
 	 */
-	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA),
+	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.COTA),
 	
 	/**
 	 * Envio do encalhe cota
 	 */
-	ENVIO_ENCALHE(OperacaoEstoque.SAIDA),
+	ENVIO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.COTA),
 	
 	/**
 	 * Estorno do reparte da cota ausente
 	 */
-	ESTORNO_REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA),
+	ESTORNO_REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA, Dominio.COTA),
 	
 	/**
 	 * Restauracao do reparte de cota ausente
 	 */
-	RESTAURACAO_REPARTE_COTA_AUSENTE(OperacaoEstoque.ENTRADA),
+	RESTAURACAO_REPARTE_COTA_AUSENTE(OperacaoEstoque.ENTRADA, Dominio.COTA),
 	
 	/**
 	 * Entrada de estoque suplementar de cota ausente distribuidor
 	 */
-	SUPLEMENTAR_COTA_AUSENTE(OperacaoEstoque.ENTRADA), 
+	SUPLEMENTAR_COTA_AUSENTE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
 	 * Restauração de reparte de cota ausente distribuidor
 	 */
-	REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA);
+	REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR);
 	
 	private OperacaoEstoque operacaoEstoque;
+	private Dominio dominio;
 	
-	private GrupoMovimentoEstoque(OperacaoEstoque operacaoEstoque) {
+	private GrupoMovimentoEstoque(OperacaoEstoque operacaoEstoque, Dominio dominio) {
 		this.operacaoEstoque = operacaoEstoque;
+		this.dominio = dominio;
 	}
 	
 	public OperacaoEstoque getOperacaoEstoque() {
 		return operacaoEstoque;
+	}
+	
+	/**
+	 * @return o domínio do grupo de movimento
+	 */
+	public Dominio getDominio() {
+		return dominio;
+	}
+	
+	/**
+	 * Domínio do movimento estoque
+	 * 
+	 * @author francisco.garcia
+	 *
+	 */
+	public static enum Dominio {
+		
+		DISTRIBUIDOR, 
+		
+		COTA;
+		
 	}
 
 }

@@ -34,7 +34,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		},{
-			display : 'Diferença',
+			display : 'DiferenÃ§a',
 			name : 'qntDiferenca',
 			width : 90,
 			sortable : true,
@@ -60,7 +60,7 @@ $(function() {
 		preProcess:executarPreProcessamento,
 		dataType : 'json',
 		colModel : [ {
-			display : 'Código',
+			display : 'CÃ³digo',
 			name : 'codigoProduto',
 			width : 60,
 			sortable : true,
@@ -72,13 +72,13 @@ $(function() {
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Edição',
+			display : 'EdiÃ§Ã£o',
 			name : 'edicaoProduto',
 			width : 90,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Preço Venda R$',
+			display : 'PreÃ§o Venda R$',
 			name : 'precoCapa',
 			width : 90,
 			sortable : true,
@@ -90,7 +90,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		},{
-			display : 'Diferença',
+			display : 'DiferenÃ§a',
 			name : 'qntDiferenca',
 			width : 90,
 			sortable : true,
@@ -115,7 +115,7 @@ $(function() {
 });
 
 	/**
-	 * Executa o prÃ© processamento das informaÃ§Ãµes retornadas da requisiÃ§Ã£o de pesquisa.
+	 * Executa o prÃ© processamento das informaï¿½ï¿½es retornadas da requisiÃ§Ã£o de pesquisa.
 	 */
 	function executarPreProcessamento(resultado) {
 		
@@ -237,8 +237,8 @@ $(function() {
 	 */
 	function getTituloFieldSetPesquisa(){
 		return ($('#tipoPesquisa').val() === 'BOX')
-				? 'Pesquisar Expedição por Box'
-						:'Pesquisar Expedição por Produto';
+				? 'Pesquisar ExpediÃ§Ã£o por Box'
+						:'Pesquisar ExpediÃ§Ã£o por Produto';
 	}
  
 	/**
@@ -246,12 +246,12 @@ $(function() {
 	 */
 	function getTituloFieldSet(){
 		return ($('#tipoPesquisa').val() === 'BOX')
-				? 'Resumo  Expedição por Box'
-						:'Resumo  Expedição por Produto';
+				? 'Resumo  ExpediÃ§Ã£o por Box'
+						:'Resumo  ExpediÃ§Ã£o por Produto';
 	}
 
   	/**
-  	 * Efetua a exportaÃ§Ã£o dos dados da pesquisa.
+  	 * Efetua a exportaï¿½ï¿½o dos dados da pesquisa.
   	 */
 	function exportar(fileType) {
 
@@ -273,11 +273,11 @@ $(function() {
 	
 <fieldset class="classFieldset">
   
-  <legend id="idFiledResumo"> Pesquisar Resumo  Expedição por Box </legend>
+  <legend id="idFiledResumo"> Pesquisar Resumo  ExpediÃ§Ã£o por Box </legend>
   
   	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  <tr>
-	    <td width="116">Data Lançamento:</td>
+	    <td width="116">Data LanÃ§amento:</td>
 	    <td width="145">
 	    	<input type="text" name="dataLancamento" id="dataLancamento" style="width:80px;"/>
 	    </td>
@@ -307,7 +307,7 @@ $(function() {
 
 	<fieldset class="classFieldset">
 	    
-	    <legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
+	    <legend id="idFiledResultResumo">Resumo  ExpediÃ§Ã£o por Box</legend>
 	
 		    <div id="gridProduto" style="display:none;">
 		    	<table id="resumoExpedicaoGridProduto" class="resumoExpedicaoGridProduto"></table>

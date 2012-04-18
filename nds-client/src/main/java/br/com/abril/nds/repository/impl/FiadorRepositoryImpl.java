@@ -47,7 +47,6 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public ConsultaFiadorDTO obterFiadoresCpfCnpj(FiltroConsultaFiadorDTO filtroConsultaFiadorDTO) {
-		boolean andUsado = false;
 		
 		StringBuilder hql = new StringBuilder("select f from Fiador f, Pessoa p ");
 		hql.append(" where f.pessoa.id = p.id ");
@@ -55,10 +54,7 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		if (filtroConsultaFiadorDTO.getCpfCnpj() != null &&
 				!filtroConsultaFiadorDTO.getCpfCnpj().isEmpty()){
 			
-			if (!andUsado){
-				hql.append(" and ");
-				andUsado = true;
-			}
+			hql.append(" and ");
 			
 			hql.append(" (p.cpf = :cpfCnpj or p.cnpj = :cpfCnpj) ");
 		}
@@ -66,10 +62,7 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		if (filtroConsultaFiadorDTO.getNome() != null &&
 				!filtroConsultaFiadorDTO.getNome().isEmpty()){
 			
-			if (!andUsado){
-				hql.append(" and ");
-				andUsado = true;
-			}
+			hql.append(" and ");
 			
 			hql.append(" (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
 		}

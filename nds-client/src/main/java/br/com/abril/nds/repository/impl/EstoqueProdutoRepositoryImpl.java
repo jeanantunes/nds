@@ -19,10 +19,6 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepository<EstoqueProd
 	@Override
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
 
-		if(	idProdutoEdicao == null ) {
-			throw new NullPointerException();
-		}
-		
 		Criteria criteria = super.getSession().createCriteria(EstoqueProduto.class);
 		
 		criteria.add(Restrictions.eq("id", idProdutoEdicao));

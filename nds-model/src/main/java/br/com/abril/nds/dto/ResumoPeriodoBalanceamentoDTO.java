@@ -7,7 +7,7 @@ import java.util.Date;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
-public class ResumoPeriodoLancamentoDTO implements Serializable {
+public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 
 	private static final long serialVersionUID = 7487823794102857136L;
 
@@ -20,6 +20,8 @@ public class ResumoPeriodoLancamentoDTO implements Serializable {
 	private String pesoTotalFormatado;
 	private BigDecimal valorTotal;
 	private String valorTotalFormatado;
+	private Long qtdeTitulosParciais;
+	private boolean exibeDestaque;
 	
 	public Date getData() {
 		return data;
@@ -89,14 +91,42 @@ public class ResumoPeriodoLancamentoDTO implements Serializable {
 		return valorTotalFormatado;
 	}
 	
-	public static ResumoPeriodoLancamentoDTO empty(Date data) {
-		ResumoPeriodoLancamentoDTO resumo = new ResumoPeriodoLancamentoDTO();
+	public static ResumoPeriodoBalanceamentoDTO empty(Date data) {
+		ResumoPeriodoBalanceamentoDTO resumo = new ResumoPeriodoBalanceamentoDTO();
 		resumo.setData(data);
 		resumo.setPesoTotal(BigDecimal.ZERO);
 		resumo.setQtdeExemplares(BigDecimal.ZERO);
 		resumo.setQtdeTitulos(0L);
 		resumo.setValorTotal(BigDecimal.ZERO);
 		return resumo;
+	}
+
+	/**
+	 * @return the qtdeTitulosParciais
+	 */
+	public Long getQtdeTitulosParciais() {
+		return qtdeTitulosParciais;
+	}
+
+	/**
+	 * @param qtdeTitulosParciais the qtdeTitulosParciais to set
+	 */
+	public void setQtdeTitulosParciais(Long qtdeTitulosParciais) {
+		this.qtdeTitulosParciais = qtdeTitulosParciais;
+	}
+
+	/**
+	 * @return the exibeDestaque
+	 */
+	public boolean isExibeDestaque() {
+		return exibeDestaque;
+	}
+
+	/**
+	 * @param exibeDestaque the exibeDestaque to set
+	 */
+	public void setExibeDestaque(boolean exibeDestaque) {
+		this.exibeDestaque = exibeDestaque;
 	}
 	
 }
