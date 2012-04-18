@@ -47,6 +47,12 @@ public class Box implements Serializable {
 	@OneToMany(mappedBy = "box")
 	private Set<Cota> cotas = new HashSet<Cota>();
 	
+	/**
+	 * Flag indicando se o box corresponde a uma praça atendida
+	 */
+	@Column(name = "PRACA_ATENDIDA", nullable = false)
+	private boolean pracaAtendida;
+	
 	public Set<Cota> getCotas() {
 		return cotas;
 	}
@@ -91,6 +97,14 @@ public class Box implements Serializable {
 	
 	public void setTipoBox(TipoBox tipoBox) {
 		this.tipoBox = tipoBox;
+	}
+	
+	public boolean isPracaAtendida() {
+		return pracaAtendida;
+	}
+	
+	public void setPracaAtendida(boolean pracaAtendida) {
+		this.pracaAtendida = pracaAtendida;
 	}
 
 

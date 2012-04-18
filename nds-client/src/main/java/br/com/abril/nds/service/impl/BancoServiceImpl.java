@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.service.BancoService;
 
@@ -105,6 +106,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setJuros(banco.getJuros());
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());
+			bancoVO.setVrMulta(banco.getVrMulta());
 			bancoVO.setInstrucoes(banco.getInstrucoes());
 		}
 		return bancoVO; 
@@ -173,7 +175,9 @@ public class BancoServiceImpl implements BancoService {
 	@Override
 	public List<ItemDTO<Moeda, String>> getComboMoedas() {
 		List<ItemDTO<Moeda,String>> comboMoedas = new ArrayList<ItemDTO<Moeda,String>>();
-		comboMoedas.add(new ItemDTO<Moeda,String>(Moeda.REAL,"Real"));
+		for(Moeda itemMoeda: Moeda.values()){
+		    comboMoedas.add(new ItemDTO<Moeda,String>(itemMoeda,itemMoeda.toString()));
+		}
 		return comboMoedas;
 	}
 
@@ -186,4 +190,21 @@ public class BancoServiceImpl implements BancoService {
 	public Carteira obterCarteiraPorCodigo(Integer codigoCarteira) {
 		return this.bancoRepository.obterCarteiraPorCodigo(codigoCarteira);
 	}
+
+	
+	/**
+	 * Método responsável por obter bancos para preencher combo da camada view
+	 * @return comboBancos: bancos cadastrados
+	 */
+	@Transactional(readOnly=true)
+	@Override
+	public List<ItemDTO<Integer, String>> getComboBancos() {
+		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
+		List<Banco> bancos = bancoRepository.buscarTodos();
+		for (Banco itemBanco : bancos){
+			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+" - "+itemBanco.getNome()));
+		}
+		return comboBancos;
+	}
+	
 }

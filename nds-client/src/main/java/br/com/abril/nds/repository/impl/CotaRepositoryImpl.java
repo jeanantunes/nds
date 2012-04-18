@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -16,13 +18,17 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.CotaRepository;
 
 /**
@@ -260,4 +266,212 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		return criteria.list();
 	}
+
+	
+	@Override
+	public Long obterQntCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT count ( cota.id ) ");
+		
+		hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida ");
+		
+		hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setMaxResults(1);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT new ").append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
+		.append(" ( box.codigo , cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
+				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
+				.append(" else null end ")
+		.append(" ) ");	
+		
+		hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
+		
+		hql.append(getOrderByCotasSujeitasAntecipacoEncalhe(filtro));
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		if (filtro.getPaginacao() != null) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+		
+		return query.list();
+	}
+	
+	/**
+	 * Retorna os parametros da consulta de dividas.
+	 * @param filtro
+	 * @return HashMap<String,Object>
+	 */
+	private HashMap<String,Object> getParametrosCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		HashMap<String,Object> param = new HashMap<String, Object>();
+		
+		param.put("codigoProduto", filtro.getCodigoProduto());
+		param.put("numeroEdicao", filtro.getNumeroEdicao());
+		param.put("status", StatusLancamento.EXPEDIDO);
+		param.put("dataAtual", new Date());
+		param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
+		
+		if(filtro.getNumeroCota() != null ){
+			param.put("numeroCota",filtro.getNumeroCota());
+		}
+		
+		if(filtro.getFornecedor()!= null){
+			param.put("fornecedor", filtro.getFornecedor());
+		}
+		
+		if(filtro.getBox()!= null){
+			param.put("box", filtro.getBox());
+		}
+
+		return param;
+	}
+
+	private String getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" FROM ")
+			.append(" Cota cota  ")
+			.append(" JOIN cota.pessoa pessoa ")
+			.append(" JOIN cota.box box ")
+			.append(" JOIN cota.estoqueProdutoCotas estoqueProdutoCota ")
+			.append(" JOIN cota.estudoCotas estudoCota ")
+			.append(" JOIN estudoCota.estudo estudo ")
+			.append(" JOIN estudo.produtoEdicao produtoEdicao  ")
+			.append(" JOIN produtoEdicao.produto produto ")
+			.append(" JOIN produtoEdicao.lancamentos lancamento ");
+	
+		if(filtro.getFornecedor()!= null){
+			hql.append(" JOIN produto.fornecedores fornecedor ");
+		}
+			
+		hql.append(" WHERE ")
+				.append("NOT EXISTS (")
+							.append(" SELECT chamadaEncalheCota.cota FROM ChamadaEncalheCota chamadaEncalheCota ")
+							.append(" JOIN chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+							.append(" WHERE chamadaEncalheCota.cota = cota ")
+							.append(" AND chamadaEncalhe.produtoEdicao = produtoEdicao ")
+							.append(" AND chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe")
+				.append(" ) ")
+			.append(" AND estoqueProdutoCota.produtoEdicao.id = produtoEdicao.id ")
+			.append(" AND lancamento.status =:status ")
+			.append(" AND produto.codigo =:codigoProduto ")
+			.append(" AND produtoEdicao.numeroEdicao =:numeroEdicao ")
+			.append(" AND lancamento.dataRecolhimentoPrevista >:dataAtual ")
+			.append(" AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ");
+			
+		
+		if(filtro.getNumeroCota() != null ){
+			
+			hql.append(" AND cota.numeroCota =:numeroCota ");
+		}
+
+		if(filtro.getFornecedor()!= null){
+			
+			hql.append(" AND fornecedor.id =:fornecedor ");
+		}	
+		
+		if(filtro.getBox()!= null){
+			
+			hql.append(" AND box.id =:box ");
+		}
+		
+		return hql.toString();
+	}
+	
+	/**
+	 * Retorna a instrução de ordenação para consulta obterCotasSujeitasAntecipacoEncalhe
+	 * 
+	 * @param filtro - filtro de pesquisa com os parâmetros de ordenação.
+	 *
+	 * @return String
+	 */
+	private String getOrderByCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		if(filtro == null || filtro.getOrdenacaoColuna() == null){
+			return "";
+		}
+		
+		StringBuilder hql = new StringBuilder();
+		
+		switch (filtro.getOrdenacaoColuna()) {
+			case BOX:
+				hql.append(" order by box.codigo ");
+				break;
+			case NOME_COTA:
+				hql.append(" order by   ")
+					.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+					.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
+					.append(" else null end ");
+				break;
+			case NUMERO_COTA:
+				hql.append(" order by cota.numeroCota ");
+				break;	
+			case QNT_EXEMPLARES:
+				hql.append(" order by  estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida ");
+				break;	
+			default:
+				hql.append(" order by  box.codigo ");
+		}
+		
+		if (filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+		}
+		
+		return hql.toString();
+	}
+	
+
 }

@@ -3,7 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -19,7 +19,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	void atualizarLancamento(Long idLancamento, Date novaDataLancamentoPrevista);
 
-	List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
+	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo);
 	
 	List<Lancamento> obterLancamentosNaoExpedidos(
@@ -28,4 +28,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo);
 	
 	 Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao);
+	 
+	 Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
 }

@@ -11,11 +11,12 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -150,7 +151,7 @@ public class LancamentoRepositoryImpl extends
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ResumoPeriodoLancamentoDTO> buscarResumosPeriodo(
+	public List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo) {
 		StringBuilder hql = new StringBuilder(
 				"select lancamento.dataLancamentoPrevista as data, ");
@@ -170,7 +171,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("fornecedores", fornecedores);
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ResumoPeriodoLancamentoDTO.class));
+				ResumoPeriodoBalanceamentoDTO.class));
 		return query.list();
 	}
 	
@@ -340,5 +341,25 @@ public class LancamentoRepositoryImpl extends
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
 		
 		return (Lancamento) query.uniqueResult();
+	}
+	
+	public Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento.dataRecolhimentoPrevista  ")
+			.append(" from Lancamento lancamento ")
+			.append(" join lancamento.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+
+			.append(" where produto.codigo = :codigoProduto ")
+			.append(" and produtoEdicao.numeroEdicao =:numeroEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		return (Date) query.uniqueResult();
 	}
 }

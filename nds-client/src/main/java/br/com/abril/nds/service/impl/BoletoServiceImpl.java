@@ -44,6 +44,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -101,6 +102,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected CobrancaService cobrancaService;
+	
+	@Autowired
+	protected CobrancaRepository cobrancaRepository;
 
 	@Autowired
 	protected TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
@@ -1122,5 +1126,14 @@ public class BoletoServiceImpl implements BoletoService {
 		return cobranca;
 	}
 
-	
+	/**
+	 * Incrementa o valor de vias
+	 * @param nossoNumero
+	 */
+	@Override
+	@Transactional
+	public void incrementarVia(String... nossoNumero) {
+		cobrancaRepository.incrementarVia(nossoNumero);
+	}
+
 }

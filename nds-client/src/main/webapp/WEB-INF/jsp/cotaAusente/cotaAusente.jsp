@@ -91,6 +91,9 @@ function popupNovaCotaAusente() {
 						"numCota="+numCota, 
 						popupConfirmaAusenciaCota);
 				
+
+				$("#idNovaCota").attr("value","");
+				$("#idNomeNovaCota").attr("value",""); 
 				$( this ).dialog( "close" );
 				
 			},
@@ -139,6 +142,8 @@ function retornoEnvioSuplementar(result) {
 	var status = result[1];
 	
 	exibirMensagem(status, mensagens);
+	
+	$(".ausentesGrid").flexReload();
 	
 	$( "#dialog-confirm" ).dialog("close");
 	
@@ -643,7 +648,7 @@ function mostra_grid(){
                 <td width="296">
 <!-- NOME -->            
 <input id="idNomeCota" name="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
 		 	   onblur="cota.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
 	/>
 				</td>
@@ -666,11 +671,17 @@ function mostra_grid(){
           <br />
           <span class="bt_novos" title="Gerar Arquivo">
 <!-- ARQUIVO -->
-<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
+	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+	Arquivo
+</a></span>
 
 	<span class="bt_novos" title="Imprimir">
 <!-- IMPRIMIR -->	
-<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
+	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+	Imprimir
+</a></span>
 
         </div>
         <span class="bt_novos" title="Novo">

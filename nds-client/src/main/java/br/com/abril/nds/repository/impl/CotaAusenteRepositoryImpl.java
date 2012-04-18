@@ -58,7 +58,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		
 		if(filtro.getBox() != null){
 			
-			queryNative.append("and box.CODIGO = :box 															");
+			queryNative.append("and box.NOME = :box 															");
 		}
 		
 		queryNative.append("group by 		");
@@ -142,7 +142,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		}
 		
 		if(filtro.getBox() != null){			
-			queryNative.append("and box.CODIGO = :box 															");
+			queryNative.append("and box.NOME = :box 															");
 		}
 				
 		Query query  = getSession().createSQLQuery(queryNative.toString());

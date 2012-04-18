@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.repository.FiadorRepository;
@@ -45,7 +47,6 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public ConsultaFiadorDTO obterFiadoresCpfCnpj(FiltroConsultaFiadorDTO filtroConsultaFiadorDTO) {
-		boolean andUsado = false;
 		
 		StringBuilder hql = new StringBuilder("select f from Fiador f, Pessoa p ");
 		hql.append(" where f.pessoa.id = p.id ");
@@ -53,10 +54,7 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		if (filtroConsultaFiadorDTO.getCpfCnpj() != null &&
 				!filtroConsultaFiadorDTO.getCpfCnpj().isEmpty()){
 			
-			if (!andUsado){
-				hql.append(" and ");
-				andUsado = true;
-			}
+			hql.append(" and ");
 			
 			hql.append(" (p.cpf = :cpfCnpj or p.cnpj = :cpfCnpj) ");
 		}
@@ -64,10 +62,7 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		if (filtroConsultaFiadorDTO.getNome() != null &&
 				!filtroConsultaFiadorDTO.getNome().isEmpty()){
 			
-			if (!andUsado){
-				hql.append(" and ");
-				andUsado = true;
-			}
+			hql.append(" and ");
 			
 			hql.append(" (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
 		}
@@ -179,5 +174,48 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		query.setParameter("idFiador", idFiador);
 		
 		return query.list();
+	}
+
+	@Override
+	public Date buscarDataInicioAtividadeFiadorPorId(Long id) {
+		
+		StringBuilder hql = new StringBuilder("select f.inicioAtividade ");
+		hql.append(" from Fiador f ")
+		   .append(" where f.id = :id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("id", id);
+		
+		return (Date) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasAssociadaFiador(Long idFiador){
+		
+		StringBuilder hql = new StringBuilder("select f.cotasAssociadas ");
+		hql.append(" from Fiador f ")
+		   .append(" where f.id = :idFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		
+		return query.list();
+	}
+
+	@Override
+	public boolean verificarAssociacaoFiadorCota(Long idFiador,	Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder("select count (c.id) ");
+		hql.append(" from Fiador f, Cota c ")
+		   .append(" where c.fiador.id = f.id ")
+		   .append(" and   f.id = :idFiador ")
+		   .append(" and   c.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		query.setParameter("numeroCota", numeroCota);
+		
+		return ((Long)query.uniqueResult()) > 0;
 	}
 }

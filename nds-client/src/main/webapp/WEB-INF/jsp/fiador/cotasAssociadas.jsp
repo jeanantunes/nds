@@ -106,18 +106,36 @@
 	}
 	
 	function removerAssociacaoCota(referencia){
-		$.postJSON("<c:url value='/cadastro/fiador/removerAssociacaoCota' />", "referencia=" + referencia, 
-			function(result) {
-				$(".cotasAssociadasGrid").flexAddData({
-					page: 1, total: 1, rows: result.rows
-				});
-				
-				$("#numeroCota").val("");
-				$("#nomeCota").val("");
-			},
-			null,
-			true
-		);
+		
+		$(".dialog-excluir").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$(this).dialog("close");
+					
+					$.postJSON("<c:url value='/cadastro/fiador/removerAssociacaoCota' />", "referencia=" + referencia, 
+						function(result) {
+							$(".cotasAssociadasGrid").flexAddData({
+								page: 1, total: 1, rows: result.rows
+							});
+							
+							$("#numeroCota").val("");
+							$("#nomeCota").val("");
+						},
+						null,
+						true
+					);
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		
+		$(".dialog-excluir").show();
 	}
 	
 	function limparCamposCotasAssociadas(){
@@ -142,8 +160,10 @@
 		}
 	}
 </script>
-<table width="280" cellpadding="2" cellspacing="2"
-	style="text-align: left;">
+<table width="280" cellpadding="2" cellspacing="2" style="text-align: left;">
+	<div class="dialog-excluir" id="dialog-excluir" title="Cotas Associadas">
+		<p>Confirma esta Exclusão?</p>
+	</div>
 	<tr>
 		<td width="46">Cota:</td>
 		<td width="218">

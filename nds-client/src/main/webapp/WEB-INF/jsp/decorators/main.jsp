@@ -69,6 +69,9 @@
 <script type="text/javascript"
  		src="${pageContext.request.contextPath}/scripts/jquery.calculation.min.js"></script> 		
 
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.dateFormat-1.0.js"></script>
+
 <link rel="stylesheet" type="text/css"
 	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
@@ -162,7 +165,7 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
-							<li><a href="banco">Bancos</a>
+							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href="Cadastro/cadastro_box.htm">Box</a>
 							</li>
@@ -170,7 +173,7 @@ fieldset label {
 							</li>
 							<li><a href="Cadastro/cadastro_entregador.htm">Entregador</a>
 							</li>
-							<li><a href="Cadastro/cadastro_fiador.htm">Fiador</a>
+							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
 							</li>
 							<li><a href="Cadastro/cadastro_fornecedor.htm">Fornecedor</a>
 							</li>
@@ -206,7 +209,7 @@ fieldset label {
 							<li><a href="Financeiro/geracao_cobranca.htm">Geração
 									Cobrança</a>
 							</li>
-							<li><a href="Financeiro/historico_inadimplencia.htm">Histórico
+							<li><a href="<c:url value="/inadimplencia/index"/>">Histórico
 									de Inadimplência</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
@@ -300,10 +303,11 @@ fieldset label {
 								href="Recolhimento/balanceamento_da_matriz_recolhimento.htm">Balanceamento
 									da Matriz</a>
 							</li>
-							<li><a href="Recolhimento/ce_antecipada.htm">CE
+							<li><a href='<c:url value="/devolucao/chamadaEncalheAntecipada"/>'>CE
 									Antecipada</a>
 							</li>
-							<li><a href="Recolhimento/chamadao.htm">Chamadão</a>
+							<li>
+								<a href='<c:url value="/recolhimento/chamadao"/>'>Chamadão</a>
 							</li>
 							<li><a
 								href="Recolhimento/conferencia_encalhe_jornaleiro.htm">Conferência
@@ -343,6 +347,19 @@ fieldset label {
 							</li>
 						</ul>
 					</li>
+					
+					<li>
+						<span class="classNFe">&nbsp;</span><a
+						href="javascript:;">NF-e</a>
+						<ul>
+							
+							<li>
+								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
+							</li>
+							
+						</ul>
+					</li>
+					
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
 						<ul>

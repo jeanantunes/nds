@@ -187,7 +187,8 @@
 
 			$(".manutencaoStatusCotaGrid").flexOptions({
 				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
-				params: filtro
+				params: filtro,
+				newp: 1
 			});
 			
 			$(".manutencaoStatusCotaGrid").flexReload();

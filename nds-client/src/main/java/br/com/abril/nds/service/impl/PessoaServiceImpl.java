@@ -34,6 +34,16 @@ public class PessoaServiceImpl implements PessoaService {
 		return this.pessoaRepository.obterSociosPorFiador(idFiador);
 	}
 	
+
+	/**
+	 * @see br.com.abril.nds.service.PessoaService#salvarPessoa(br.com.abril.nds.model.cadastro.Pessoa)
+	 */
+	@Override
+	@Transactional
+	public void salvarPessoa(Pessoa pessoa) {
+
+		this.pessoaRepository.adicionar(pessoa);
+	}
 	@Transactional(readOnly = true)
 	@Override
 	public PessoaFisica buscarPessoaFisicaPorId(Long idPessoa){

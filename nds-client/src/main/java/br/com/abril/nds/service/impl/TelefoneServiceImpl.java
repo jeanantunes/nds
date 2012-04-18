@@ -12,7 +12,9 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -20,6 +22,9 @@ import br.com.abril.nds.util.TipoMensagem;
 @Service
 public class TelefoneServiceImpl implements TelefoneService {
 
+	@Autowired
+	private TelefoneEntregadorRepository telefoneEntregadorRepository;
+	
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
@@ -97,4 +102,76 @@ public class TelefoneServiceImpl implements TelefoneService {
 			//selects que terão que ser alterados até que todas as associações estejam definidas.
 		}
 	}
+
+	/**
+	 * @see br.com.abril.nds.service.TelefoneService#salvarTelefonesEntregador(java.util.List)
+	 */
+	@Override
+	@Transactional
+	public void salvarTelefonesEntregador(List<TelefoneEntregador> listaTelefonesEntregador) {
+		
+		if (listaTelefonesEntregador != null) {
+			
+			boolean isTelefonePrincipal = false;
+			
+			for (TelefoneEntregador telefoneEntregador : listaTelefonesEntregador){
+				
+				if (telefoneEntregador == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone fornecedor é obrigatório.");
+				}
+				
+				this.valiadarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
+				
+				if (isTelefonePrincipal && telefoneEntregador.isPrincipal()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				}
+				
+				if (telefoneEntregador.isPrincipal()) {
+					
+					isTelefonePrincipal = telefoneEntregador.isPrincipal();
+				}
+				
+				if (telefoneEntregador.getEntregador() == null || telefoneEntregador.getEntregador().getId() == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório.");
+				}
+				
+				if (telefoneEntregador.getTelefone().getId() == null) {
+					
+					this.telefoneRepository.adicionar(telefoneEntregador.getTelefone());
+					
+				} else {
+					
+					this.telefoneRepository.alterar(telefoneEntregador.getTelefone());
+				}
+				
+				if (telefoneEntregador.getId() == null) {
+					
+					this.telefoneEntregadorRepository.adicionar(telefoneEntregador);
+					
+				} else {
+					
+					this.telefoneEntregadorRepository.alterar(telefoneEntregador);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @see br.com.abril.nds.service.TelefoneService#removerTelefonesEntregador(java.util.Collection)
+	 */
+	@Override
+	@Transactional
+	public void removerTelefonesEntregador(Collection<Long> listaTelefonesEntregador) {
+		
+		if (listaTelefonesEntregador != null && !listaTelefonesEntregador.isEmpty()){
+			
+			this.telefoneEntregadorRepository.removerTelefonesEntregador(listaTelefonesEntregador);
+			
+			this.removerTelefones(listaTelefonesEntregador);
+		}
+	}
+	
 }
