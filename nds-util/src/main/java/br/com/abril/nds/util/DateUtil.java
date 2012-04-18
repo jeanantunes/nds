@@ -245,6 +245,12 @@ public class DateUtil {
 		
 		Calendar calendar = Calendar.getInstance();
 		
+		int year = calendar.get(Calendar.YEAR);
+		
+		calendar.clear();
+		
+		calendar.set(Calendar.YEAR, year);
+		
 		calendar.set(Calendar.WEEK_OF_YEAR, numeroSemana);
 		
 		calendar.setFirstDayOfWeek(diaInicioSemana);
