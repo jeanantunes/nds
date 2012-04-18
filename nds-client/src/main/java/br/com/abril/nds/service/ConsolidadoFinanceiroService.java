@@ -3,10 +3,17 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 
 public interface ConsolidadoFinanceiroService {
 	
 	List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro);
+
+	public abstract List<VendaEncalheDTO> obterMovimentoVendaEncalhe(FiltroConsolidadoVendaCotaDTO filtro);
+
+	public abstract ConsolidadoFinanceiroCota buscarPorId(Long id);
 
 }

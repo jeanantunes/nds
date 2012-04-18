@@ -9,32 +9,6 @@ import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class EncalheCotaDTO implements Serializable {
-	
-	private static final long serialVersionUID = 2186060384671120600L;
-	
-	@Export(label="Código")
-	private String codigoProduto;
-	
-	@Export(label="Produto")		
-	private String nomeProduto;
-	
-	@Export(label="Edição")
-	private Long numeroEdicao;
-	
-	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT )
-	private BigDecimal precoCapa;
-	
-	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT )
-	private BigDecimal precoComDesconto;
-	
-	@Export(label="Encalhe" , alignment= Alignment.CENTER )
-	private BigDecimal encalhe;
-	
-	@Export(label="Fornecedor")
-	private String nomeFornecedor;
-	
-	@Export(label="Toral R$" , alignment= Alignment.RIGHT )
-	private BigDecimal total;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -44,16 +18,16 @@ public class EncalheCotaDTO implements Serializable {
 		this.codigoProduto = codigoProduto;
 	}
 
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
-		
 	public String getNomeProduto() {
 		return nomeProduto;
 	}
 
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
+	}
+
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
 	}
 
 	public void setNumeroEdicao(Long numeroEdicao) {
@@ -76,12 +50,12 @@ public class EncalheCotaDTO implements Serializable {
 		this.precoComDesconto = precoComDesconto;
 	}
 
-	public BigDecimal getEncalhe() {
-		return encalhe;
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
 	}
 
-	public void setEncalhe(BigDecimal encalhe) {
-		this.encalhe = encalhe;
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
 	}
 
 	public BigDecimal getTotal() {
@@ -92,12 +66,40 @@ public class EncalheCotaDTO implements Serializable {
 		this.total = total;
 	}
 
-	public String getNomeFornecedor() {
-		return nomeFornecedor;
+	private static final long serialVersionUID = 2186060384671120600L;
+	
+	@Export(label = "Código")
+	private String codigoProduto;
+
+	@Export(label = "Produto")
+	private String nomeProduto;
+
+	@Export(label = "Edição")
+	private Long numeroEdicao;
+
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT)
+	private BigDecimal precoCapa;
+
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT)
+	private BigDecimal precoComDesconto;
+	
+	@Export(label = "Encalhe", alignment = Alignment.CENTER)
+	private BigDecimal encalhe;
+	
+	@Export(label = "Fornecedor")
+	private String nomeFornecedor;
+
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
+	private BigDecimal total;
+
+	
+
+	public BigDecimal getEncalhe() {
+		return encalhe;
 	}
 
-	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
+	public void setEncalhe(BigDecimal encalhe) {
+		this.encalhe = encalhe;
 	}
 
 }

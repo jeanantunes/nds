@@ -70,7 +70,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Restauração de reparte de cota ausente distribuidor
 	 */
-	REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA);
+	REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA),
+	
+	/**
+	 * Compra de encalhe da cota no distribuidor.
+	 */
+	COMPRA_ENCALHE(OperacaoEstoque.ENTRADA),
+	
+	/**
+	 * Venda de encalhe do distruibuidor para a cota.
+	 */
+	VENDA_ENCALHE(OperacaoEstoque.SAIDA);
 	
 	private OperacaoEstoque operacaoEstoque;
 	

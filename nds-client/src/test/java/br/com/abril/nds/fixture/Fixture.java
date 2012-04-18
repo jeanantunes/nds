@@ -40,11 +40,11 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -62,7 +62,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -662,6 +661,24 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Compra do Encalhe");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.COMPRA_ENCALHE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoVendaEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Venda Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
+	
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
@@ -1162,6 +1179,7 @@ public class Fixture {
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
 		consolidado.setTotal(valorConsolidado);
+		consolidado.setVendaEncalhe(valorConsolidado);
 		return consolidado;
 	}
 	

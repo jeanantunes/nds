@@ -1,6 +1,7 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/scripts/vendaEncalheCota.js'></script>
 
 <script language="javascript" type="text/javascript">
 /**
@@ -96,11 +97,11 @@ function getDataFromResult(data) {
 		
 		var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 		
-			value.cell[3] = '<a href="#"/>'+consignado+'</a>'+hiddeFields;
+			value.cell[3] = '<a href="javascript:;"/>'+consignado+'</a>'+hiddeFields;
 			value.cell[4] = '<a href="javascript:;" onclick="pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
-			value.cell[5] = '<a href="#"/>'+vendaEncalhe+'</a>'+hiddeFields;
-			value.cell[6] = '<a href="#"/>'+debCred+'</a>'+hiddeFields;
-			value.cell[7] = '<a href="#"/>'+encargos+'</a>'+hiddeFields;
+			value.cell[5] = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell[10]+',\''+value.cell[0]+'\')"/>'+vendaEncalhe+'</a>'+hiddeFields;
+			value.cell[6] = '<a href="javascript:;"/>'+debCred+'</a>'+hiddeFields;
+			value.cell[7] = '<a href="javascript:;"/>'+encargos+'</a>'+hiddeFields;
 					
 		});
 		
@@ -303,6 +304,7 @@ function carregarEncalheCotaGrid() {
 	});
 }
 
+
 function popup_consignado() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -397,10 +399,21 @@ function popup_encargos() {
 				}
 			}
 		});
-	};	
+	};
+$(function() {
+	vendaEncalhe.url = '${pageContext.request.contextPath}/financeiro/contaCorrenteCota/obterMovimentoVendaEncalhe';
+	vendaEncalhe.initGrid(".vendaEncalheGrid");
+	vendaEncalhe.dialogId = "#dialog-venda-encalhe";
+	
+	vendaEncalhe.urlExport = '${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe';
+});	
 </script>
 <style type="text/css">
   fieldset { width:auto!important; }
+  
+  #dialog-venda-encalhe {
+  	display: none;
+  }
   </style>
 </head>
 
@@ -441,13 +454,41 @@ function popup_encargos() {
 						<td><span id="listaInfoEncalhe"></span></td>
 					</tr>						
 				</table>
-			
-			
-			
 			</div>       	
 	    </div>   
     </fieldset>
 
+</div>
+
+
+
+<div id="dialog-venda-encalhe" title="Venda de Encalhe">
+	<fieldset>
+    	<legend><span id="datacotanome-venda-encalhe"></span></legend>
+        
+        <table class="vendaEncalheGrid"></table>
+        <span class="bt_novos" title="Gerar Arquivo">
+			<a id="dialog-venda-encalhe-export-xls" href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe?fileType=XLS">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				Arquivo
+			</a>
+		</span>
+			
+		<span class="bt_novos" title="Imprimir">
+			<a id="dialog-venda-encalhe-export-pdf" href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe?fileType=PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>
+       	<div align="right">								
+				<table id="totaisFornecedores-venda-encalhe" width="290" border="0" cellspacing="2" cellpadding="2"  style="float:right; margin-top: 7px;" >
+					<tr>
+						<td><strong>Total R$:</strong></td>
+					</tr>			
+				</table>
+			</div>       	
+       	
+    </fieldset>
 </div>
 
 <div class="corpo">

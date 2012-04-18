@@ -28,16 +28,16 @@ public class Box implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = -8925902448339516787L;
+	
 	@Id
 	@GeneratedValue(generator = "BOX_SEQ")
 	@Column(name = "ID")
-	
 	private Long id;
-	@Column(name = "CODIGO", nullable = false)
 	
+	@Column(name = "CODIGO", nullable = false)	
 	private String codigo;
-	@Enumerated(EnumType.STRING)
 	
+	@Enumerated(EnumType.STRING)	
 	@Column(name = "TIPO_BOX", nullable = false)
 	private TipoBox tipoBox;
 	
