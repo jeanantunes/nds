@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -71,7 +72,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			Date dataInicial, List<Long> fornecedores) {
 		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
 		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
-				.buscarDiasDistribuicao(fornecedores);
+				.buscarDiasDistribuicao(fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Set<DiaSemana> diasDistribuicao = EnumSet.noneOf(DiaSemana.class);
 		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
 			diasDistribuicao.add(distribuicao.getDiaSemana());

@@ -106,7 +106,7 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		idsFornecedores.add(fornecedorFC.getId());
 		idsFornecedores.add(fornecedorDinap.getId());
 		List<DistribuicaoFornecedor> resultado = distribuidorRepository
-				.buscarDiasDistribuicao(idsFornecedores);
+				.buscarDiasDistribuicao(idsFornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Assert.assertEquals(3, resultado.size());
 		Assert.assertTrue(resultado.contains(dinapSegunda));
 		Assert.assertTrue(resultado.contains(dinapQuarta));
