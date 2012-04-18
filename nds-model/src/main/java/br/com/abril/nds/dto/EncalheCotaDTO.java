@@ -68,19 +68,19 @@ public class EncalheCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
-	@Export(label = "CÃ³digo")
+	@Export(label = "Código")
 	private String codigoProduto;
 
 	@Export(label = "Produto")
 	private String nomeProduto;
 
-	@Export(label = "EdiÃ§Ã£o")
+	@Export(label = "Edição")
 	private Long numeroEdicao;
 
-	@Export(label = "PreÃ§o Capa R$", alignment = Alignment.RIGHT)
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT)
 	private BigDecimal precoCapa;
 
-	@Export(label = "PreÃ§o c/ Desc. R$", alignment = Alignment.RIGHT)
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT)
 	private BigDecimal precoComDesconto;
 	
 	@Export(label = "Encalhe", alignment = Alignment.CENTER)
