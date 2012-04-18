@@ -32,13 +32,12 @@ public class Box implements Serializable {
 	@Id
 	@GeneratedValue(generator = "BOX_SEQ")
 	@Column(name = "ID")
-	
 	private Long id;
-	@Column(name = "CODIGO", nullable = false)
 	
+	@Column(name = "CODIGO", nullable = false)	
 	private String codigo;
-	@Enumerated(EnumType.STRING)
 	
+	@Enumerated(EnumType.STRING)	
 	@Column(name = "TIPO_BOX", nullable = false)
 	private TipoBox tipoBox;
 	

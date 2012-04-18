@@ -4,11 +4,46 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+/**
+ * 
+ * @author Discover
+ * 
+ */
 @Exportable
-public class EncalheCotaDTO implements Serializable {
+public class VendaEncalheDTO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1869983646801522380L;
+
+	@Export(label = "CÃ³digo")
+	private String codigoProduto;
+
+	@Export(label = "Produto")
+	private String nomeProduto;
+
+	@Export(label = "EdiÃ§Ã£o")
+	private Long numeroEdicao;
+
+	@Export(label = "PreÃ§o Capa R$", alignment = Alignment.RIGHT)
+	private BigDecimal precoCapa;
+
+	@Export(label = "PreÃ§o c/ Desc. R$", alignment = Alignment.RIGHT)
+	private BigDecimal precoComDesconto;
+
+	@Export(label = "Box", alignment = Alignment.CENTER)
+	private String box;
+	@Export(label = "Exemplares", alignment = Alignment.CENTER)
+	private BigDecimal exemplares;
+	@Export(label = "Fornecedor")
+	private String nomeFornecedor;
+
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
+	private BigDecimal total;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -66,40 +101,20 @@ public class EncalheCotaDTO implements Serializable {
 		this.total = total;
 	}
 
-	private static final long serialVersionUID = 2186060384671120600L;
-	
-	@Export(label = "Código")
-	private String codigoProduto;
-
-	@Export(label = "Produto")
-	private String nomeProduto;
-
-	@Export(label = "Edição")
-	private Long numeroEdicao;
-
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT)
-	private BigDecimal precoCapa;
-
-	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT)
-	private BigDecimal precoComDesconto;
-	
-	@Export(label = "Encalhe", alignment = Alignment.CENTER)
-	private BigDecimal encalhe;
-	
-	@Export(label = "Fornecedor")
-	private String nomeFornecedor;
-
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
-	private BigDecimal total;
-
-	
-
-	public BigDecimal getEncalhe() {
-		return encalhe;
+	public String getBox() {
+		return box;
 	}
 
-	public void setEncalhe(BigDecimal encalhe) {
-		this.encalhe = encalhe;
+	public void setBox(String box) {
+		this.box = box;
+	}
+
+	public BigDecimal getExemplares() {
+		return exemplares;
+	}
+
+	public void setExemplares(BigDecimal exemplares) {
+		this.exemplares = exemplares;
 	}
 
 }
