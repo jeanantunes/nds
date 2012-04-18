@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 
@@ -35,7 +36,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	private BigDecimal diferenca;
 	
 	@Export(label="Motivo")
-	private String motivo;
+	private TipoDiferenca motivo;
 	
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
@@ -107,14 +108,6 @@ public class ConsignadoCotaDTO implements Serializable{
 		this.diferenca = diferenca;
 	}
 
-	public String getMotivo() {
-		return motivo;
-	}
-
-	public void setMotivo(String motivo) {
-		this.motivo = motivo;
-	}
-
 	public String getNomeFornecedor() {
 		return nomeFornecedor;
 	}
@@ -129,6 +122,14 @@ public class ConsignadoCotaDTO implements Serializable{
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
-	}	
+	}
 
+	public TipoDiferenca getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(TipoDiferenca motivo) {
+		this.motivo = motivo;
+	}
+	
 }
