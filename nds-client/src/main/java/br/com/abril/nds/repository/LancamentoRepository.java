@@ -22,6 +22,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo);
 	
+	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodoRecolhimento(
+		List<Date> periodoRecolhimento, List<Long> fornecedores, GrupoProduto grupoCromo);
+	
 	List<Lancamento> obterLancamentosNaoExpedidos(
 			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo);
 	

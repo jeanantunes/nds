@@ -99,7 +99,7 @@ public class MatrizLancamentoServiceImplTest {
 		List<DistribuicaoFornecedor> distribuicoes = Arrays.asList(
 				dinapSegunda, dinapQuarta, dinapSexta, fcSegunda, fcSexta);
 		Mockito.when(
-				distribuidorRepository.buscarDiasDistribuicao(fornecedores))
+				distribuidorRepository.buscarDiasDistribuicao(fornecedores, OperacaoDistribuidor.DISTRIBUICAO))
 				.thenReturn(distribuicoes);
 		List<Date> periodo = Arrays.asList(
 				Fixture.criarData(2, Calendar.MARCH, 2012),
@@ -116,7 +116,7 @@ public class MatrizLancamentoServiceImplTest {
 		service.obterResumoPeriodo(dataInicial, fornecedores);
 
 		Mockito.verify(distribuidorRepository).buscarDiasDistribuicao(
-				fornecedores);
+				fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Mockito.verify(lancamentoRepository).buscarResumosPeriodo(periodo,
 				fornecedores, GrupoProduto.CROMO);
 	}
