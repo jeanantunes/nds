@@ -108,11 +108,12 @@ var PainelMonitorNFE = {
 				return {total: 0, rows: {}};
 			}
 			
-			$.each(resultado.tableModel.rows, function(index, value){
+			$.each(resultado.rows, function(index, value){
 				
 				var hiddenField = '<input type="hidden" name="lineId" value="'+value.id+'" />';
 				
-				value.cell.imprimirLinha = '<a href="#" onclick="PainelMonitorNFE.imprimirDanfeUnica('+value.id+')"><img title="Imprimir" src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0"/>';
+				value.cell.imprimirLinha = '<a href="javascript:;" onclick="PainelMonitorNFE.imprimirDanfeUnica('+value.id+')">'+
+				'<img title="Imprimir" src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0"/></a>';
 				
 				value.cell.sel = '<input type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>'+hiddenField;
 				
@@ -120,7 +121,7 @@ var PainelMonitorNFE = {
 			
 			$('.grids').show();
 			
-			return resultado.tableModel;
+			return resultado;
 			
 		},
 		
@@ -159,16 +160,23 @@ var PainelMonitorNFE = {
 				
 			});
 			
-			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", selecionados);
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", selecionados, 
+				function(){
+				window.location ="<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>" ;
+			});
 			
 		},
 		
-		imprimirDanfeUnica : function(linedId) {
+		imprimirDanfeUnica : function(lineId) {
 			
 			var params = 'lineIdImpressaoDanfe='+lineId;
 			
 			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfeUnicaImpressao'/>",
-					params);
+				params,
+				function(){
+					window.location ="<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>" ;
+				}		
+			);
 			
 		},
 		
@@ -195,7 +203,7 @@ var PainelMonitorNFE = {
 					align : 'center'
 				}, {
 					display : 'Tipo Emissão',
-					name : 'tipoNfe',
+					name : 'tipoEmissao',
 					width : 70,
 					sortable : true,
 					align : 'left'
@@ -387,16 +395,14 @@ $(function() {
 				<tr>
 					<td>Situação NF-e:</td>
 					<td colspan="3">
-						<select id="situacaoNfe" style="width: 290px;">
-							<option></option>
-							<option>Aguardando Processamento</option>
-							<option>Em Processamento</option>
-							<option>Processamento Rejeitado</option>
-							<option>Aguardando Ação do Usuário</option>
-							<option>NF-e Autorizada</option>
-							<option>NF-e Rejeitada</option>
-							<option>NF-e Denegada</option>
-					</select>
+					
+					
+						<select name="situacaoNfe" id="situacaoNfe" style="width:290px;">
+						    <option value=""  selected="selected"></option>
+						    <c:forEach items="${comboStatusNfe}" var="statusNfe">
+						      		<option value="${statusNfe.key}">${statusNfe.value}</option>	
+						    </c:forEach>
+					    </select>
 					</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
@@ -419,18 +425,20 @@ $(function() {
 			<div class="grids" style="display: none;">
 				<table id="nfeGrid"></table>
 				<!--<span class="bt_novos" title="Gerar Arquivo XML"><a href="javascript:;"><img src="../images/ico_xml.gif" hspace="5" border="0" />XML</a></span>-->
-				<span class="bt_novos" title="Gerar Arquivo"><a
-					href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-						hspace="5" border="0" />Arquivo</a>
+				
+				<span class="bt_novos" title="Gerar Arquivo">
+					<a href="${pageContext.request.contextPath}/nfe/painelMonitorNFe/exportar?fileType=XLS">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+						Arquivo
+					</a> 
 				</span> 
 				
-				<span 	class="bt_novos" title="Imprimir">
-					<a href="javascript:;">
-						<img 	src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-								alt="Imprimir" hspace="5" border="0" />Imprimir
+				<span class="bt_novos" title="Imprimir"> 
+					<a href="${pageContext.request.contextPath}/nfe/painelMonitorNFe/exportar?fileType=PDF">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
+						Imprimir 
 					</a>
-				</span> 
-				
+				</span>				
 				
 				<span class="bt_novos" title="Imprimir Seleção">
 					<a 	onclick="PainelMonitorNFE.imprimirDanfes()"	href="javascript:;">
