@@ -7,17 +7,17 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Controller responsável pela Matriz de Recolhimento.
@@ -31,9 +31,9 @@ public class MatrizRecolhimentoController {
 
 	@Autowired
 	private Result result;
-	
+
 	@Autowired
-	private HttpSession httpSession;
+	private RecolhimentoService recolhimentoService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -49,9 +49,12 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar() {
+	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+
+		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
+			this.recolhimentoService.obterResumoPeriodoBalanceamento(dataPesquisa, listaIdsFornecedores);
 		
-		
+		result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
 	
 	@Post
@@ -78,6 +81,7 @@ public class MatrizRecolhimentoController {
 	@Post
 	@Path("/exibirMatrizBalanceamentoPorDia")
 	public void exibirMatrizBalanceamentoDoDia() {
+		
 		
 		
 	}

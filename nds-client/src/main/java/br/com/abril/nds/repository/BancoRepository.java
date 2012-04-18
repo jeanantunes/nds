@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -67,5 +68,12 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	 * @return {@link br.com.abril.nds.model.cadastro.Carteira} 
 	 */
 	Carteira obterCarteiraPorCodigo(Integer codigoCarteira);
+	
+	/**
+	 * Obtém uma lista de Bancos para os parametros passados.
+	 * @param Tipo de Cobrança
+	 * @return {@link List<Banco>}
+	 */
+	List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipoCobranca);
 	
 }

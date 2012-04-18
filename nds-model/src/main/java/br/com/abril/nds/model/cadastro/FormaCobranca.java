@@ -107,7 +107,11 @@ public class FormaCobranca implements Serializable {
 	public void setTaxaJurosMensal(BigDecimal taxaJurosMensal) {
 		this.taxaJurosMensal = taxaJurosMensal;
 	}
-	
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public boolean isVencimentoDiaUtil() {
 		return vencimentoDiaUtil;
 	}

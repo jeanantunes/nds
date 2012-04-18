@@ -89,6 +89,8 @@
 		});
 		
 		$("#numCota").numeric();
+		$("#dataDe").mask("99/99/9999");
+		$("#dataAte").mask("99/99/9999");
 		
 		$("#descricaoCota").autocomplete({source: ""});
 		
@@ -108,6 +110,7 @@
 			         {name:'dataAte', value:$("#dataAte").val()},
 			         {name:'status', value:$("#status").val()}
 			        ] ,
+			        newp: 1
 		});
 		
 		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
@@ -142,11 +145,11 @@
 			         var linkImpressao='';
 			         
 		        	 linkImpressao = '<a href="javascript:;" onclick="imprimeBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
-				 					 '<img src="${pageContext.request.contextPath}/images/bt_impressao.png" hspace="5" border="0px" title="Imprime boleto" />' +
+				 					 '<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime boleto" />' +
 				 					 '</a>';
 			         			 					     
 			         linkEmail = '<a href="javascript:;" onclick="enviaBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
-			                     '<img src="${pageContext.request.contextPath}/images/bt_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
+			                     '<img src="${pageContext.request.contextPath}/images/ico_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
  					             '</a>';		 					 
 									
 				     row.cell[8] = linkImpressao + linkEmail;

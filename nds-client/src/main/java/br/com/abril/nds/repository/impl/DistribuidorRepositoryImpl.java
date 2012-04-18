@@ -33,13 +33,19 @@ public class DistribuidorRepositoryImpl extends
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<DistribuicaoFornecedor> buscarDiasDistribuicao(
-			Collection<Long> idsForncedores) {
-		StringBuilder hql = new StringBuilder("from DistribuicaoFornecedor where fornecedor.id in (:idsFornecedores) ");
+	public List<DistribuicaoFornecedor> buscarDiasDistribuicao(Collection<Long> idsForncedores, 
+															   OperacaoDistribuidor operacaoDistribuidor) {
+		
+		StringBuilder hql = 
+			new StringBuilder("from DistribuicaoFornecedor where fornecedor.id in (:idsFornecedores) ");
+		
 		hql.append("and operacaoDistribuidor = :operacaoDistribuidor ");
+		
 		Query query = getSession().createQuery(hql.toString());
+		
 		query.setParameterList("idsFornecedores", idsForncedores);
-		query.setParameter("operacaoDistribuidor", OperacaoDistribuidor.DISTRIBUICAO);
+		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
+		
 		return query.list();
 	}
 	

@@ -106,14 +106,14 @@
 		
 		var refAba = $("#tab-1").css("display") == "block" ? 0 : 1;
 		
-		if (cpf != "___.___.___-__"){
+		if (cpf != "___.___.___-__" && cpf != ""){
 			
 			var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('[name="cpfFiador"]:eq(' + refAba + ')').val();
 			
 			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", data, 
 				function(result) {
-					
-					if (result){
+				
+					if (result[0] != undefined){
 						
 						if (fiador){
 							$('[name="nomeFiadorCpf"]:eq(' + refAba + ')').val(result[0]);

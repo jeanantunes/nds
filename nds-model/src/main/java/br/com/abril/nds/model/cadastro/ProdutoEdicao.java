@@ -6,9 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -27,48 +32,63 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 @Table(name = "PRODUTO_EDICAO", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"NUMERO_EDICAO", "PRODUTO_ID" })})
 @SequenceGenerator(name="PROD_ED_SEQ", initialValue = 1, allocationSize = 1)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue(value = "PRODUTO")
 public class ProdutoEdicao implements Serializable {
 
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = 1035863865037866666L;
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "PROD_ED_SEQ")
 	@Column(name = "ID")
-	private Long id;
+	protected Long id;
 	
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
-	private Long numeroEdicao;
+	protected Long numeroEdicao;
 	
 	@Column(name = "PRECO_VENDA", nullable = false)
-	private BigDecimal precoVenda;
+	protected BigDecimal precoVenda;
 	
 	@Column(name = "DESCONTO")
-	private BigDecimal desconto = BigDecimal.ZERO;
+	protected BigDecimal desconto = BigDecimal.ZERO;
 	
 	@Column(name = "PACOTE_PADRAO", nullable = false)
-	private int pacotePadrao;
+	protected int pacotePadrao;
 	
 	@Column(name = "PEB", nullable = false)
-	private int peb;
+	protected int peb;
 	
 	@Column(name = "PRECO_CUSTO")
-	private BigDecimal precoCusto;
+	protected BigDecimal precoCusto;
 	
 	@Column(name = "PESO", nullable = false)
-	private BigDecimal peso;
+	protected BigDecimal peso;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
-	private Produto produto;
+	protected Produto produto;
 	
 	@OneToMany(mappedBy = "produtoEdicao")
-	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+	protected Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
 	@Column(name = "POSSUI_BRINDE", nullable = false)
-	private boolean possuiBrinde;
+	protected boolean possuiBrinde;
+	
+	/**
+	 * Percentual de expectativa de venda do produto
+	 */
+	@Column(name = "EXPECTATIVA_VENDA")
+	protected BigDecimal expectativaVenda;
+	
+	/**
+	 * Flag indicando se o produto permite vale desconto
+	 */
+	@Column(name = "PERMITE_VALE_DESCONTO")
+	protected boolean permiteValeDesconto;
 	
 	public Long getId() {
 		return id;
@@ -157,6 +177,22 @@ public class ProdutoEdicao implements Serializable {
 	
 	public void setPossuiBrinde(boolean possuiBrinde) {
 		this.possuiBrinde = possuiBrinde;
+	}
+	
+	public BigDecimal getExpectativaVenda() {
+		return expectativaVenda;
+	}
+	
+	public void setExpectativaVenda(BigDecimal expectativaVenda) {
+		this.expectativaVenda = expectativaVenda;
+	}
+	
+	public boolean isPermiteValeDesconto() {
+		return permiteValeDesconto;
+	}
+	
+	public void setPermiteValeDesconto(boolean permiteValeDesconto) {
+		this.permiteValeDesconto = permiteValeDesconto;
 	}
 
 	@Override

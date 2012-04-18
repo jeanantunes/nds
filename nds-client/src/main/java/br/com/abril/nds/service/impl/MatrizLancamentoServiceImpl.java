@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.LancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -67,11 +68,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ResumoPeriodoLancamentoDTO> obterResumoPeriodo(
+	public List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodo(
 			Date dataInicial, List<Long> fornecedores) {
 		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
 		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
-				.buscarDiasDistribuicao(fornecedores);
+				.buscarDiasDistribuicao(fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Set<DiaSemana> diasDistribuicao = EnumSet.noneOf(DiaSemana.class);
 		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
 			diasDistribuicao.add(distribuicao.getDiaSemana());
@@ -79,26 +80,26 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
 				dataInicial, dataFinal, diasDistribuicao);
-		List<ResumoPeriodoLancamentoDTO> resumos = lancamentoRepository
+		List<ResumoPeriodoBalanceamentoDTO> resumos = lancamentoRepository
 				.buscarResumosPeriodo(periodoDistribuicao, fornecedores,
 						GrupoProduto.CROMO);
 		
 		return montarResumoPeriodo(periodoDistribuicao, resumos);
 	}
 
-	private List<ResumoPeriodoLancamentoDTO> montarResumoPeriodo(
+	private List<ResumoPeriodoBalanceamentoDTO> montarResumoPeriodo(
 			List<Date> periodoDistribuicao,
-			List<ResumoPeriodoLancamentoDTO> resumos) {
-		Map<Date, ResumoPeriodoLancamentoDTO> mapa = new HashMap<Date, ResumoPeriodoLancamentoDTO>();
-		for (ResumoPeriodoLancamentoDTO resumo : resumos) {
+			List<ResumoPeriodoBalanceamentoDTO> resumos) {
+		Map<Date, ResumoPeriodoBalanceamentoDTO> mapa = new HashMap<Date, ResumoPeriodoBalanceamentoDTO>();
+		for (ResumoPeriodoBalanceamentoDTO resumo : resumos) {
 			mapa.put(resumo.getData(), resumo);
 		}
-		List<ResumoPeriodoLancamentoDTO> retorno = new ArrayList<ResumoPeriodoLancamentoDTO>(
+		List<ResumoPeriodoBalanceamentoDTO> retorno = new ArrayList<ResumoPeriodoBalanceamentoDTO>(
 				periodoDistribuicao.size());
 		for (Date data : periodoDistribuicao) {
-			ResumoPeriodoLancamentoDTO resumo = mapa.get(data);
+			ResumoPeriodoBalanceamentoDTO resumo = mapa.get(data);
 			if (resumo == null) {
-				resumo = ResumoPeriodoLancamentoDTO.empty(data);
+				resumo = ResumoPeriodoBalanceamentoDTO.empty(data);
 			}
 			retorno.add(resumo);
 		}

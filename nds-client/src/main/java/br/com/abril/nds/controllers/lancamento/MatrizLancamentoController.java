@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.LancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -93,7 +93,7 @@ public class MatrizLancamentoController {
 	public void resumoPeriodo(Date dataInicial, List<Long> idsFornecedores) {
 		validar();
 		verificarCamposObrigatorios(dataInicial, idsFornecedores);
-		List<ResumoPeriodoLancamentoDTO> dtos = matrizLancamentoService
+		List<ResumoPeriodoBalanceamentoDTO> dtos = matrizLancamentoService
 				.obterResumoPeriodo(dataInicial, idsFornecedores);
 		result.use(Results.json()).withoutRoot().from(dtos).serialize();
 	}

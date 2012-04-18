@@ -50,6 +50,9 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao;
 	
+	@Column(name = "POSSUI_CONTRATO", nullable = false)
+	private boolean possuiContrato;
+	
 	@OneToMany(mappedBy = "cota")
 	private List<PDV> pdvs = new ArrayList<PDV>();
 
@@ -57,6 +60,9 @@ public class Cota implements Serializable {
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
 	
+	/**
+	 *Assumido como 'comissão' no 'cadastro cota cobrança'
+	 */
 	@Column(name  ="FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
 	
@@ -116,6 +122,18 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public boolean isPossuiContrato() {
+		return possuiContrato;
+	}
+
+	public void setPossuiContrato(boolean possuiContrato) {
+		this.possuiContrato = possuiContrato;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public List<PDV> getPdvs() {
 		return pdvs;
 	}

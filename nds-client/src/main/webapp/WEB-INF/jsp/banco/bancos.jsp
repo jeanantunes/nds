@@ -92,6 +92,8 @@
 		$("#newConta").numeric();	
 		$("#newDigito").numeric();	
 		$("#newJuros").numeric();	
+		$("#newMulta").numeric();
+		$("#newVrMulta").numeric();
 		
 		$("#alterNumero").numeric();	
 		$("#alterCodigoCedente").numeric();	
@@ -99,11 +101,15 @@
 		$("#alterConta").numeric();	
 		$("#alterDigito").numeric();	
 		$("#alterJuros").numeric();	
+		$("#alterMulta").numeric();
+		$("#alterVrMulta").numeric();
     }); 
 
     function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
+		limparTelaCadastroBanco();
+		
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:350,
@@ -182,6 +188,7 @@
 			         {name:'cedente', value:$("#cedente").val()},
 			         {name:'ativo', value:$("#ativo").val() }
 			        ] ,
+			        newp: 1
 		});
 		
 		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
@@ -253,6 +260,7 @@
 		var ativo      = $("#newAtivo").val();
 		
 		var multa      = $("#newMulta").val();
+		var vrMulta    = $("#newVrMulta").val();
 		var instrucoes = $("#newInstrucoes").val();
 
 		$.postJSON("<c:url value='/banco/novoBanco'/>",
@@ -267,6 +275,7 @@
 				   "&juros="+ juros+
 				   "&ativo="+ ativo+
 				   "&multa="+ multa+
+				   "&vrMulta="+ vrMulta+
 				   "&instrucoes="+ instrucoes,
 				   function(result) {
 			           fecharDialogs();
@@ -301,6 +310,7 @@
 		var ativo      = $("#alterAtivo").val();
 		
 		var multa      = $("#alterMulta").val();
+		var vrMulta    = $("#alterVrMulta").val();
 		var instrucoes = $("#alterInstrucoes").val();
 
 		$.postJSON("<c:url value='/banco/alteraBanco'/>",
@@ -316,6 +326,7 @@
 				   "&juros="+ juros+
 				   "&ativo="+ ativo+
 				   "&multa="+ multa+
+				   "&vrMulta="+ vrMulta+
 				   "&instrucoes="+ instrucoes,
 				   function(result) {
 					   fecharDialogs();
@@ -355,6 +366,7 @@
 		document.formularioAlteraBanco.alterAtivo.checked = resultado.ativo;
 		
 		$("#alterMulta").val(resultado.multa);
+		$("#alterVrMulta").val(resultado.vrMulta);
 		$("#alterInstrucoes").val(resultado.instrucoes);
 		
 		popup_alterar();
@@ -374,7 +386,31 @@
 			       });
 	}
 	
-
+    function limparTelaCadastroBanco() {
+		$("#newNumero").val("");
+		$("#newNome").val("");
+		$("#newCodigoCedente").val("");
+		$("#newAgencia").val("");
+		$("#newConta").val("");
+		$("#newDigito").val("");
+		$("#newMoeda").val("");
+		$("#newCarteira").val("");
+		$("#newJuros").val("");
+		$("#newAtivo").val("");
+		$("#newMulta").val("");
+		$("#newVrMulta").val("");
+		$("#newInstrucoes").val("");
+	}
+    
+    function limparMulta(){
+    	$("#newMulta").val("");
+    	$("#alterMulta").val("");
+    }
+    
+    function limparVrMulta(){
+    	$("#newVrMulta").val("");
+    	$("#alterVrMulta").val("");
+    }
 	
 </script>
 <style>
@@ -409,29 +445,29 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="111">Número Banco:</td>
-					<td width="216"><input type="text" name="newNumero"
-						id="newNumero" style="width: 150px;" />
+					<td width="216"><input type="text" name="newNumero" maxlength="17"
+						id="newNumero" style="width: 143px;" />
 					</td>
 					<td width="73">Nome:</td>
-					<td width="205"><input type="text" name="newNome"
-						id="newNome" style="width: 177px;" />
+					<td width="205"><input type="text" name="newNome" maxlength="100"
+						id="newNome" style="width: 215px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Código Cedente:</td>
-					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente"
-						style="width: 150px;" />
+					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente" maxlength="17"
+						style="width: 143px;" />
 					</td>
 					<td>Agência:</td>
-					<td><input maxlength="20" type="text" name="newAgencia" id="newAgencia"
-						style="width: 177px;" />
+					<td><input maxlength="17" type="text" name="newAgencia" id="newAgencia"
+						style="width: 215px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Conta / Digito:</td>
-					<td><input maxlength="20" type="text" name="newConta" id="newConta"
+					<td><input maxlength="17" type="text" name="newConta" id="newConta"
 						style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
-						id="newDigito" style="width: 37px;" />
+						id="newDigito" style="width: 30px;" />
 					</td>
 					<td>Moeda:</td>
 					<td>
@@ -456,7 +492,7 @@ label {
 					
 					</td>
 					<td>Juros %:</td>
-					<td><input maxlength="19" type="text" name="newJuros" id="newJuros"
+					<td><input maxlength="17" type="text" name="newJuros" id="newJuros"
 						style="width: 80px;" />
 					</td>
 				</tr>
@@ -465,15 +501,18 @@ label {
 					<td><input name="newAtivo" type="checkbox" value=""
 						checked="checked" id="newAtivo" /><label for="statusBco">Ativo</label>
 					</td>
+	
 					<td>Multa %:</td>
-					<td><input maxlength="19" type="text" name="newMulta" id="newMulta"
-						style="width: 80px;" />
+					<td>
+					    <input onchange="limparVrMulta();" maxlength="17" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
+					    ou R$: <input onchange="limparMulta();" maxlength="17" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
 					</td>
+
 				</tr>
 				<tr>
 					<td>Instruções:</td>
-					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes"
-							style="width: 477px;"></textarea>
+					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes" maxlength="200"
+							style="width: 490px;"></textarea>
 					</td>
 				</tr>
 			</table>
@@ -503,29 +542,29 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="111">Número Banco:</td>
-					<td width="216"><input type="text" name="alterNumero"
-						id="alterNumero" style="width: 150px;" />
+					<td width="216"><input type="text" name="alterNumero" maxlength="17"
+						id="alterNumero" style="width: 143px;" />
 					</td>
 					<td width="73">Nome:</td>
-					<td width="205"><input type="text" name="alterNome"
-						id="alterNome" style="width: 177px;" />
+					<td width="205"><input type="text" name="alterNome" maxlength="100"
+						id="alterNome" style="width: 215px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Código Cedente:</td>
-					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente"
-						style="width: 150px;" />
+					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente" maxlength="17"
+						style="width: 143px;" />
 					</td>
 					<td>Agência:</td>
-					<td><input maxlength="20" type="text" name="alterAgencia" id="alterAgencia"
-						style="width: 177px;" />
+					<td><input maxlength="17" type="text" name="alterAgencia" id="alterAgencia"
+						style="width: 215px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Conta / Digito:</td>
-					<td><input maxlength="20" type="text" name="alterConta" id="alterConta"
+					<td><input maxlength="17" type="text" name="alterConta" id="alterConta"
 						style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
-						id="alterDigito" style="width: 37px;" />
+						id="alterDigito" style="width: 30px;" />
 					</td>
 					<td>Moeda:</td>
 					<td>
@@ -550,7 +589,7 @@ label {
 		                
 					</td>
 					<td>Juros %:</td>
-					<td><input maxlength="19" type="text" name="alterJuros" id="alterJuros"
+					<td><input maxlength="17" type="text" name="alterJuros" id="alterJuros"
 						style="width: 80px;" />
 					</td>
 				</tr>
@@ -559,15 +598,18 @@ label {
 					<td><input name="alterAtivo" type="checkbox" value=""
 						checked="checked" id="alterAtivo" /><label for="statusBco">Ativo</label>
 					</td>
+					
 					<td>Multa %:</td>
-					<td><input maxlength="19" type="text" name="alterMulta" id="alterMulta"
-						style="width: 80px;" />
+					<td>
+					    <input onchange="limparVrMulta();" maxlength="17" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
+					    ou R$: <input onchange="limparMulta();" maxlength="17" type="text" name="alterVrMulta" id="alterVrMulta" style="width:80px; text-align:right;" />
 					</td>
+					
 				</tr>
 				<tr>
 					<td>Instruções:</td>
-					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes"
-							style="width: 477px;"></textarea>
+					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes" maxlength="200"
+							style="width: 490px;"></textarea>
 					</td>
 				</tr>
 			</table>
