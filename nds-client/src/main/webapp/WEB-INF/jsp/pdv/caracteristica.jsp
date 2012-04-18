@@ -1,14 +1,21 @@
 
+<script type="text/javascript">
 
- <fieldset>
-  	<legend>Características</legend>
-    <table width="777" border="0" cellspacing="1" cellpadding="1">
+var PDV_Caracteristica = {
+				
+};
+
+</script>
+
+<fieldset>
+<legend>CaracterÃ­sticas</legend>
+<table width="777" border="0" cellspacing="1" cellpadding="1">
   <tr>
     <td colspan="2" class="complementar"><input name="ptoPrincipal" type="checkbox" value="" id="ptoPrincipal" />
       <label for="ptoPrincipal">Ponto Principal</label>
       <br clear="all" />
       <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
-      <label for="balcaoCentral">Balcão Central</label>
+      <label for="balcaoCentral">BalcÃ£o Central</label>
       <br clear="all" />
       <input name="temComputador" type="checkbox" value="" id="temComputador" />
       <label for="temComputador">Tem Computador?</label>
@@ -18,10 +25,11 @@
       <textarea name="textarea" cols="" rows="2" style="width:610px;"></textarea>
       </td>
   </tr>
-  </table>
-  </fieldset>
-  <fieldset>
-  	<legend>Segmentação</legend>
+</table>
+</fieldset>
+
+<fieldset>
+ <legend>SegmentaÃ§Ã£o</legend>
     <table width="522" border="0" cellspacing="1" cellpadding="1">
   <tr>
     <td width="123">Tipo de Ponto:</td>
@@ -32,11 +40,11 @@
     </select></td>
     </tr>
   <tr>
-    <td>Área de Influência:</td>
+    <td>Ãrea de InfluÃªncia:</td>
     <td><select name="" style="width:232px;">
       <option selected="selected">Selecione....</option>
       <option>Residencial</option>
-      <option>Escritórios / Indústrias</option>
+      <option>EscritÃ³rios / IndÃºstrias</option>
       <option>Comercial</option>
       <option>Estradas</option>
     </select></td>
@@ -49,5 +57,5 @@
     </select></td>
     </tr>
     </table>
-  </fieldset>
+ </fieldset>
 

@@ -1,12 +1,18 @@
+<script type="text/javascript">
 
-  <fieldset>
-  	<legend>Dados Básicos</legend>
+var PDV_DadosBasico = {
+				
+};
+
+</script>
+ <fieldset>
+  	<legend>Dados BÃ¡sicos</legend>
     <table width="777" border="0" cellspacing="2" cellpadding="2">
   <tr>
     <td width="572" valign="top">
     <table width="572" border="0" cellspacing="1" cellpadding="1">
       <tr>
-        <td>Data Início:</td>
+        <td>Data Inï¿½cio:</td>
         <td><input type="text"  style="width:80px;" disabled="disabled"/></td>
       </tr>
       <tr>
@@ -26,7 +32,7 @@
         <td><input type="text" name="textfield8" id="textfield8" style="width:300px;"/></td>
       </tr>
       <tr>
-        <td>Ponto de Referência:</td>
+        <td>Ponto de Referï¿½ncia:</td>
         <td><input type="text" name="textfield11" id="textfield11" style="width:300px;"/></td>
       </tr>
       <tr>
@@ -43,7 +49,7 @@
           <option>Hiper / Supermercado</option>
           <option>Shopping</option>
           <option>Galeria</option>
-          <option>Posto Serviço</option>
+          <option>Posto ServiÃ§o</option>
         </select></div></td>
       </tr>
       </table>
@@ -59,7 +65,7 @@
     <td width="135">Dias Funcionamento:</td>
     <td width="252" class="diasFunc"><select name="select9" id="select9" style="width:230px;">
       <option selected="selected">Selecione</option>
-      <option>Diário</option>
+      <option>DiÃ¡rio</option>
       <option>Segunda - Sexta</option>
       <option>Finais de Semana</option>
       <option>Feriados</option>
@@ -67,13 +73,13 @@
       <option>-----------------------------------------</option>
       <option>Domingo</option>
       <option>Segunda-feira</option>
-      <option>Terça-feira</option>
+      <option>TerÃ§a-feira</option>
       <option>Quarta-feira</option>
       <option>Quinta-feira</option>
       <option>Sexta-feira</option>
-      <option>Sábado</option>
+      <option>SÃ¡bado</option>
       </select></td>
-    <td width="47">Horário:</td>
+    <td width="47">HorÃ¡rio:</td>
     <td width="179"><input type="text" name="textfield10" id="textfield9" style="width:60px;"/>
       As
       <input type="text" name="textfield10" id="textfield10" style="width:60px;"/></td>
@@ -90,7 +96,7 @@
       </tr>
       <tr class="class_linha_2">
         <td>&nbsp;</td>
-        <td class="diasFunc">Sábado</td>
+        <td class="diasFunc">SÃ¡bado</td>
         <td>&nbsp;</td>
         <td>06:00 as 22:00</td>
         <td><a href="javascript:;"><img src="../images/ico_excluir.gif" alt="Excluir" width="15" height="15" border="0" /></a></td>
@@ -102,12 +108,12 @@
     <td>Tamanho:</td>
     <td><select name="select13" id="select15" style="width:200px;">
       <option>Selecione...</option>
-      <option>P (2m² até 4m² )</option>
-      <option>M (4m² até 8m²)</option>
-      <option>G (8m² até 12m²)</option>
-      <option>SG  (acima de 12m²)</option>
+      <option>P (2mï¿½ atï¿½ 4mï¿½ )</option>
+      <option>M (4mï¿½ atï¿½ 8mï¿½)</option>
+      <option>G (8mï¿½ atï¿½ 12mï¿½)</option>
+      <option>SG  (acima de 12mï¿½)</option>
     </select></td>
-    <td>Qtde  Funcionários:</td>
+    <td>Qtde  Funcionï¿½rios:</td>
     <td><input type="text" name="textfield23" id="textfield24" style="width:60px;"/></td>
   </tr>
   <tr>
@@ -123,15 +129,15 @@
     <td>&nbsp;</td>
   </tr>
   <tr>
-    <td width="136">Tipo de Licença:</td>
+    <td width="136">Tipo de LicenÃ§a:</td>
     <td width="239"><select name="select10" id="select10" style="width:232px;">
       <option selected="selected">Selecione</option>
       </select></td>
-    <td width="132">Número da Licença:</td>
+    <td width="132">NÃºmero da LicenÃ§a:</td>
     <td width="257"><input type="text" name="textfield13" id="textfield13" style="width:225px;"/></td>
   </tr>
   <tr>
-    <td>Nome  da Licença:</td>
+    <td>Nome  da Licenï¿½a:</td>
     <td><span class="diasFunc">
       <input type="text" name="textfield14" id="textfield14" style="width:225px;"/>
       </span></td>
@@ -141,5 +147,6 @@
 </table>
 <br />
 
-  </fieldset>
+ </fieldset>
+
 
