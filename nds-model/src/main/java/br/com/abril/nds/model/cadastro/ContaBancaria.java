@@ -12,7 +12,7 @@ import javax.persistence.Embeddable;
  *
  */
 @Embeddable
-public class ContaBancariaCota implements Serializable {
+public class ContaBancaria implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
