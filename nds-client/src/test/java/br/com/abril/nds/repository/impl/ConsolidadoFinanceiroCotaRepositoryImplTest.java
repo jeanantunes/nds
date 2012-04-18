@@ -10,9 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -29,11 +28,16 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -61,7 +65,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 	EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
 	MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
 	
-	@Before
+	//@Before
 	public void setUp() {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
@@ -185,7 +189,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 	}
 	
-	//@Before
+	@Before
 	public void setUp2() {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
@@ -219,6 +223,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Fornecedor fornecedor = Fixture.fornecedorAcme(tipoFornecedor);
 		produto.setEditor(abril);
 		save(fornecedor);
+		
 		produto.addFornecedor(fornecedor);
 		save(produto);
 		
@@ -270,15 +275,29 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
 		save(expedicao);
 		
-		//RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca( , cota, diferenca, estudoCota)
-		
 		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
 		save(estoqueProdutoCota);
 		
-		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEncalhe, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
+
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		movimentoEstoqueCota.setEstudoCota(estudoCota);
 		save(movimentoEstoqueCota);
 		
-		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEncalhe, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, new BigDecimal(45)); 
+		save(estoqueProduto);
+		
+		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
+		save(movimentoEstoque);
+		
+		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+		save(diferenca);
+		
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
+		save(rateioDiferenca);
+		
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+
 		estoqueProdutoCota.getMovimentos().add(movimento);
 		save(movimento);
 		MovimentoEstoqueCota  movimentoVenda = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoVenda, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
@@ -309,7 +328,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 	}
 		
-	@Test
+/*	@Test
 	public void obterEncalhedaCota(){
 		
 		FiltroConsolidadoEncalheCotaDTO filtro = new FiltroConsolidadoEncalheCotaDTO();		
@@ -321,11 +340,23 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 		Assert.assertEquals(1, lista.size());
 		
-	}
+	}*/
 	
+
+	@Test
+	public void obterConsignadoCota(){
+		try{
+		FiltroConsolidadoConsignadoCotaDTO filtro = new FiltroConsolidadoConsignadoCotaDTO();	
+		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 	@Test
 	public void obterVendaEncalhe(){
+
 		
 		FiltroConsolidadoVendaCotaDTO filtro = new FiltroConsolidadoVendaCotaDTO();		
 		
@@ -338,5 +369,4 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 	}
 	
-
 }
