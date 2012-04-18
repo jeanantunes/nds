@@ -10,9 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
-import br.com.abril.nds.dto.VendaEncalheDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -210,6 +209,9 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		TipoMovimentoEstoque tipoMovimentoVenda = Fixture.tipoMovimentoVendaEncalhe();
 		save(tipoMovimentoVenda);
 		
+		TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
+		save(tipoMovimentoConsignado);
+		
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
@@ -279,6 +281,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		save(estoqueProdutoCota);
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
+		save(tipoMovimentoEstoque);
 
 		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
 		movimentoEstoqueCota.setEstudoCota(estudoCota);
@@ -289,40 +292,44 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(movimentoEstoque);
-		
+			
 		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		save(diferenca);
 		
 		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
 		save(rateioDiferenca);
 		
-		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
-
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		movimento.setEstudoCota(estudoCota);
+		
+		
 		estoqueProdutoCota.getMovimentos().add(movimento);
 		save(movimento);
-		MovimentoEstoqueCota  movimentoVenda = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoVenda, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
-		save(movimentoVenda);
+		MovimentoEstoqueCota  movimentoEnvioJornaleiro = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		movimentoEnvioJornaleiro.setEstudoCota(estudoCota);
+		save(movimentoEnvioJornaleiro);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
 		save(tipoMovimentoFinanceiro);
+		
+		listaMovimentoEstoqueCota.add(movimentoEstoqueCota);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
 				new BigDecimal(230), listaMovimentoEstoqueCota,StatusAprovacao.APROVADO, dataAtual, true);
 		save(movimentoFinanceiroCota);
 		
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompra = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompra = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
 		save(tipoMovimentoFinanceiroCompra);
 		
 		List<MovimentoEstoqueCota>  listMovimentoEstoqueCotaVenda= new ArrayList<MovimentoEstoqueCota>();
-		listMovimentoEstoqueCotaVenda.add(movimentoVenda);
+		listMovimentoEstoqueCotaVenda.add(movimentoEnvioJornaleiro);
 		
 		
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
-//		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
-		//listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompra);
-		
+ 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
+				
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
 		save(consolidadoFinanceiroCota);
 		
@@ -347,6 +354,11 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 	public void obterConsignadoCota(){
 		try{
 		FiltroConsolidadoConsignadoCotaDTO filtro = new FiltroConsolidadoConsignadoCotaDTO();	
+		filtro.setDataConsolidado(dataAtual);
+		filtro.setNumeroCota(cotaManoel.getNumeroCota());
+				
+		List<ConsignadoCotaDTO> lista = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+		Assert.assertEquals(1, lista.size());
 		
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -354,7 +366,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 	}
 
 	
-	@Test
+	/*@Test
 	public void obterVendaEncalhe(){
 
 		
@@ -367,6 +379,6 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		List<VendaEncalheDTO> lista = consolidadoFinanceiroService.obterMovimentoVendaEncalhe(filtro);
 		Assert.assertEquals(1, lista.size());
 		
-	}
+	}*/
 	
 }

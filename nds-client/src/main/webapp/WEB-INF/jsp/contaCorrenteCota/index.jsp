@@ -109,8 +109,8 @@ function pesquisarConsignadoCota(lineId){
 		
 	var numeroCota = $("#cota").val();		
 	
-	var parametroPesquisa = [{name:'filtroConsolidadoEncalheDTO.numeroCota', value:numeroCota },
-	                         {name:'filtroConsolidadoEncalheDTO.lineId', value:lineId }];
+	var parametroPesquisa = [{name:'filtroConsolidadoConsignadoDTO.numeroCota', value:numeroCota },
+	                         {name:'filtroConsolidadoConsignadoDTO.lineId', value:lineId }];
 	
 	$.postJSON(
 			'<c:url value="/financeiro/contaCorrenteCota/consultarConsignadoCota" />', 
@@ -118,10 +118,10 @@ function pesquisarConsignadoCota(lineId){
 			function(result){
 				
 				if(result[0] == true){
-					montarColunaComFornecedor();
+					montarColunaConsignadoComFornecedor();
 					
 				}else{
-					montarColunaSemFornecedor();
+					montarColunaConsignadoSemFornecedor();
 				}
 				
 							
@@ -362,7 +362,7 @@ function montarColunaComFornecedor(){
 
 function montarColunaConsignadoComFornecedor(){
 
-$(".consignadoGrid").flexigrid({
+$(".consignadoCotaGrid").flexigrid({
 	dataType : 'json',	
 	colModel : [ {
 		display : 'Código',
@@ -438,6 +438,79 @@ $(".consignadoGrid").flexigrid({
 });
 
 }
+
+function montarColunaConsignadoSemFornecedor(){
+
+	$(".consignadoCotaGrid").flexigrid({
+		dataType : 'json',	
+		colModel : [ {
+			display : 'Código',
+			name : 'codigo',
+			width : 40,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Produto',
+			name : 'produto',
+			width : 90,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Edição',
+			name : 'edicao',
+			width : 40,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoCapa',
+			width : 80,
+			sortable : true,
+			align : 'right',
+		}, {
+			display : 'Preço c/ Desc. R$',
+			name : 'desconto',
+			width : 60,
+			sortable : true,
+			align : 'right',
+		}, {
+			display : 'Reparte Sugerido',
+			name : 'reparte',
+			width : 80,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Final',
+			name : 'reparteFinal',
+			width : 70,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Diferença',
+			name : 'diferenca',
+			width : 45,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Motivo',
+			name : 'motivo',
+			width : 80,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total R$',
+			name : 'total',
+			width : 40,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "codigo",
+		sortorder : "asc",
+		width : 840,
+		height : 200
+	});
+
+	}
 
 function montarColunaSemFornecedor(){
 	

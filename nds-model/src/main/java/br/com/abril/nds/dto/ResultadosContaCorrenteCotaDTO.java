@@ -8,14 +8,14 @@ import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 
 @SuppressWarnings("serial")
-public class ResultadosEncalheCotaDTO implements Serializable {
+public class ResultadosContaCorrenteCotaDTO implements Serializable {
 	
 
 	private TableModel<CellModel> tableModel;
 	private String dataEscolhida;
 	private List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
 	
-	public ResultadosEncalheCotaDTO(
+	public ResultadosContaCorrenteCotaDTO(
 			TableModel<CellModel> tableModel,
 			String dataEscolhida,
 			List<InfoTotalFornecedorDTO> listaInfoFornecedores){
