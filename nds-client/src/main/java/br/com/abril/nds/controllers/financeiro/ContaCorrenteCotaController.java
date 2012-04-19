@@ -173,9 +173,7 @@ public class ContaCorrenteCotaController {
 					listaInfoTotalFornecedor );
 			
 			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
-			
-			temMaisQueUm = false;
-			
+					
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
 			dados[1] = resultado;		
@@ -615,145 +613,7 @@ public class ContaCorrenteCotaController {
 		return tableModel;
 
 	}
-
-	/**
-	 * Obtem uma lista de Encalhe da cota no dia selecionado e prepara o Grid
-	 * para receber os valores
-	 * 
-	 * @param itensContaCorrenteCota
-	 * @return
-	 */
-	/*private TableModel<CellModel> obterTableModelParaEncalheCota(
-			List<EncalheCotaDTO> listaEncalheCota) {
-
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-
-		int counter = 1;
-		
-		boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
-		
-		String nomeFornecedor = null;
-		
-		for(EncalheCotaDTO dto : listaEncalheCota) {		
-			
-			String codigoProduto 		 = dto.getCodigoProduto().toString();
-			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
-			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
-			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
-			String encalhe		 	 	 = (dto.getEncalhe()		    == null) 	? "0.0" : dto.getEncalhe().toString();
-			if(temMaisQueUm){
-				nomeFornecedor	 	 = (dto.getNomeFornecedor() 	== null) 	? "0.0" : dto.getNomeFornecedor();
-			}			
-			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
-					
-			if(temMaisQueUm){
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								encalhe,
-								nomeFornecedor,
-								total
-						));
-			}else{
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								encalhe,
-								total
-						));
-			}		
-			
-			counter++;
-		}
-						
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-
-		return tableModel;
-	}
 	
-	private TableModel<CellModel> obterTableModelParaConsignadoCota(List<ConsignadoCotaDTO> listaConsigandoCota) {
-		
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-		
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-		
-		int counter = 1;
-		
-		boolean temMaisQueUm = verificarQuantidadeFornecedorConsignado(listaConsigandoCota);		
-				
-		for(ConsignadoCotaDTO dto : listaConsigandoCota) {
-			
-			String codigoProduto 		 = dto.getCodigoProduto().toString();
-			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
-			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
-			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
-			String reparteSugerido		 = (dto.getReparteSugerido()    == null)	? "0.0" : dto.getReparteFinal().toString();
-			String reparteFinal			 = (dto.getReparteFinal()		== null)	? "0.0" : dto.getReparteFinal().toString();
-			String diferenca			 = (dto.getDiferenca()		    == null)	? "0.0" : dto.getDiferenca().toString();
-			String motivo   			 = (dto.getMotivo()		        == null)	? "0.0" : dto.getMotivo().getDescricao().toString();
-			String nomeFornecedor		 = (dto.getNomeFornecedor()     == null)	? "0.0" : dto.getNomeFornecedor().toString();			
-			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
-					
-			if(temMaisQueUm){
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								reparteSugerido,
-								reparteFinal,
-								diferenca,
-								motivo,
-								nomeFornecedor,
-								total
-						));
-			}else{
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								reparteSugerido,
-								reparteFinal,
-								diferenca,
-								motivo,
-								total
-						));
-			}		
-			
-			counter++;			
-		}
-		
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-		
-		return tableModel;	
-		
-	}*/
-			
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 

@@ -59,8 +59,7 @@ function pesquisarEncalheCota(lineId){
 			function(result){
 				
 				if(result[0] == true){
-					//montarColunaComFornecedor();
-					montarColunaSemFornecedor();
+					montarColunaComFornecedor();					
 					
 				}else{
 					montarColunaSemFornecedor();
