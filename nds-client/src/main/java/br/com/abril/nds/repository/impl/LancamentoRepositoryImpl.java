@@ -153,7 +153,7 @@ public class LancamentoRepositoryImpl extends
 	public List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo) {
 		StringBuilder hql = new StringBuilder(
-				"select lancamento.dataLancamentoPrevista as data, ");
+				"select lancamento.dataLancamentoDistribuidor as data, ");
 		hql.append("count(lancamento.produtoEdicao) as qtdeTitulos, ");
 		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo then lancamento.reparte ");
 		hql.append("else (lancamento.reparte / lancamento.produtoEdicao.pacotePadrao) end ) as qtdeExemplares, ");
@@ -161,10 +161,10 @@ public class LancamentoRepositoryImpl extends
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
 		hql.append("from Lancamento lancamento ");
 		hql.append("join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
-		hql.append("where lancamento.dataLancamentoPrevista in (:periodo) ");
+		hql.append("where lancamento.dataLancamentoDistribuidor in (:periodo) ");
 		hql.append("and fornecedor.id in (:fornecedores) ");
-		hql.append("group by lancamento.dataLancamentoPrevista ");
-		hql.append("order by lancamento.dataLancamentoPrevista");
+		hql.append("group by lancamento.dataLancamentoDistribuidor ");
+		hql.append("order by lancamento.dataLancamentoDistribuidor");
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameterList("periodo", periodoDistribuicao);
 		query.setParameterList("fornecedores", fornecedores);
@@ -179,19 +179,20 @@ public class LancamentoRepositoryImpl extends
 																				List<Long> fornecedores,
 																				GrupoProduto grupoCromo) {
 		
-		StringBuilder hql = new StringBuilder("select lancamento.dataRecolhimentoPrevista as data, ");
+		StringBuilder hql = new StringBuilder("select lancamento.dataRecolhimentoDistribuidor as data, ");
 		
 		hql.append("count(lancamento.produtoEdicao) as qtdeTitulos, ");
 		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo then lancamento.reparte ");
 		hql.append("else (lancamento.reparte / lancamento.produtoEdicao.pacotePadrao) end ) as qtdeExemplares, ");
 		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.peso)) as pesoTotal, ");
-		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal ");
+		hql.append("sum((lancamento.reparte * lancamento.produtoEdicao.precoVenda)) as valorTotal, ");
+		hql.append("(case when lancamento.produtoEdicao.produto.parcial = true then count(lancamento.produtoEdicao) else 0 end) as qtdeTitulosParciais ");
 		hql.append("from Lancamento lancamento ");
 		hql.append("join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
-		hql.append("where lancamento.dataRecolhimentoPrevista in (:periodo) ");
+		hql.append("where lancamento.dataRecolhimentoDistribuidor in (:periodo) ");
 		hql.append("and fornecedor.id in (:fornecedores) ");
-		hql.append("group by lancamento.dataRecolhimentoPrevista ");
-		hql.append("order by lancamento.dataRecolhimentoPrevista");
+		hql.append("group by lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("order by lancamento.dataRecolhimentoDistribuidor");
 		
 		Query query = getSession().createQuery(hql.toString());
 		

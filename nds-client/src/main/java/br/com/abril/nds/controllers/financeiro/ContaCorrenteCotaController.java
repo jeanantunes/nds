@@ -839,5 +839,21 @@ public class ContaCorrenteCotaController {
 		
 		result.use(Results.nothing());
 	}
+	
+	public void exportarConsignadoCota(FileType fileType,Long idConsolidado) throws IOException{
+		ConsolidadoFinanceiroCota  consolidado =  consolidadoFinanceiroService.buscarPorId(idConsolidado);
+		FiltroConsolidadoConsignadoCotaDTO filtro = new FiltroConsolidadoConsignadoCotaDTO();
+		filtro.setDataConsolidado(consolidado.getDataConsolidado());
+		filtro.setNumeroCota(consolidado.getCota().getNumeroCota());
+	//TODO: Consulta ira ser feita por ID	filtro.setIdConsolidado(idConsolidado);				
+		List<ConsignadoCotaDTO> listConsignadoCotaDTO =consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+		
+		FileExporter.to("venda-encalhe", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, null,
+				listConsignadoCotaDTO, ConsignadoCotaDTO.class,
+				this.httpServletResponse);
+		
+		result.use(Results.nothing());
+	}
 
 }
