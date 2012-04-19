@@ -70,6 +70,19 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name = "EMITIDA", nullable = false)
 	protected boolean emitida;
 	
+	@Column(name = "TIPO_EMISSAO_NFE")
+	private TipoEmissaoNfe tipoEmissaoNfe;
+	
+	/**
+	 * Campo com a descrição do ocorrido na 
+	 * integração da nfe.
+	 */
+	@Column(name="MOVIMENTO_INTEGRACAO")
+	private String movimentoIntegracao;
+	
+	@Column(name="STATUS_EMISSAO_NFE") 
+	private StatusEmissaoNfe statusEmissaoNfe;
+	
 	public Date getDataEmissao() {
 		return dataEmissao;
 	}
@@ -173,5 +186,57 @@ public abstract class NotaFiscal implements Serializable {
 	public void setStatusEmissao(StatusEmissaoNotaFiscal statusEmissao) {
 		this.statusEmissao = statusEmissao;
 	}
+
+	/**
+	 * Obtém tipoEmissaoNfe
+	 *
+	 * @return TipoEmissaoNfe
+	 */
+	public TipoEmissaoNfe getTipoEmissaoNfe() {
+		return tipoEmissaoNfe;
+	}
+
+	/**
+	 * Atribuí tipoEmissaoNfe
+	 * @param tipoEmissaoNfe 
+	 */
+	public void setTipoEmissaoNfe(TipoEmissaoNfe tipoEmissaoNfe) {
+		this.tipoEmissaoNfe = tipoEmissaoNfe;
+	}
+
+	/**
+	 * Obtém movimentoIntegracao
+	 *
+	 * @return String
+	 */
+	public String getMovimentoIntegracao() {
+		return movimentoIntegracao;
+	}
+
+	/**
+	 * Atribuí movimentoIntegracao
+	 * @param movimentoIntegracao 
+	 */
+	public void setMovimentoIntegracao(String movimentoIntegracao) {
+		this.movimentoIntegracao = movimentoIntegracao;
+	}
+
+	/**
+	 * Obtém statusEmissaoNfe
+	 *
+	 * @return StatusEmissaoNfe
+	 */
+	public StatusEmissaoNfe getStatusEmissaoNfe() {
+		return statusEmissaoNfe;
+	}
+
+	/**
+	 * Atribuí statusEmissaoNfe
+	 * @param statusEmissaoNfe 
+	 */
+	public void setStatusEmissaoNfe(StatusEmissaoNfe statusEmissaoNfe) {
+		this.statusEmissaoNfe = statusEmissaoNfe;
+	}
+	
 	
 }

@@ -17,21 +17,9 @@ public enum StatusEmissaoNotaFiscal {
 	/**
 	 * Nota Fiscal Cancelada
 	 */
-	CANCELADA("Cancelada"), 
+	CANCELADA("Cancelada"); 
 	
-	AGUARDANDO_PROCESSAMENTO("Aguardando Processamento"),
 	
-	EM_PROCESSAMENTO("Em Processamento"),
-	
-	PROCESSAMENTO_REJEITADO("Processamento Rejeitado"),
-	
-	AGUARDANDO_ACAO_DO_USUARIO("Aguardando Ação do Usuário"),
-	
-	NFE_AUTORIZADA("Nf-e Autorizada"),
-	
-	NFE_REJEITADA("Nf-e Rejeitada"),
-	
-	NFE_DENEGADA("Nf-e Denegada");
 	
 	private StatusEmissaoNotaFiscal(String descricao) {
 		this.descricao = descricao;
