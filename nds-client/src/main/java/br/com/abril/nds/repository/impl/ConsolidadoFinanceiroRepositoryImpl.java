@@ -110,14 +110,14 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
 
 		
-		hql.append(" JOIN consolidado.cota c ");
-		hql.append(" JOIN consolidado.movimentos mfc ");
-		hql.append(" JOIN mfc.movimentos mec ");		
-		hql.append(" JOIN mec.tipoMovimento tp ");		
-		hql.append(" JOIN mec.estoqueProdutoCota epc ");
-		hql.append(" JOIN epc.produtoEdicao pe ");
-		hql.append(" JOIN pe.produto p ");
-		hql.append(" JOIN p.fornecedores f ");
+		hql.append(" LEFT JOIN consolidado.cota c ");
+		hql.append(" LEFT JOIN consolidado.movimentos mfc ");
+		hql.append(" LEFT JOIN mfc.movimentos mec ");		
+		hql.append(" LEFT JOIN mec.tipoMovimento tp ");		
+		hql.append(" LEFT JOIN mec.estoqueProdutoCota epc ");
+		hql.append(" LEFT JOIN epc.produtoEdicao pe ");
+		hql.append(" LEFT JOIN pe.produto p ");
+		hql.append(" LEFT JOIN p.fornecedores f ");
 			
 
 		hql.append(" WHERE c.numeroCota =:numeroCota ");
