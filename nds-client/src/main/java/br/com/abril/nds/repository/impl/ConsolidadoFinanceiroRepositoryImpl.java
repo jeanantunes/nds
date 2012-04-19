@@ -246,7 +246,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			hql.append(filtro.getOrdenacaoColuna().toString());			
 			
 			if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+				hql.append(" ").append(filtro.getPaginacao().getOrdenacao().toString());
 			}
 			
 		}
