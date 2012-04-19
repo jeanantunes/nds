@@ -2,7 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
-import br.com.abril.nds.client.vo.CotaCobrancaVO;
+import br.com.abril.nds.client.vo.FinanceiroVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -22,7 +22,7 @@ public interface FinanceiroService {
      * @param idCota
      * @return Value Object com parametros de Cobranca da cota 
      */
-    CotaCobrancaVO obterDadosCotaCobranca(Integer numeroCota);
+    FinanceiroVO obterDadosCotaCobranca(Long idCota);
     
     
     /**
@@ -43,7 +43,7 @@ public interface FinanceiroService {
      * Posta parametros de Cobranca da cota
      * @param Value Object com parametros de Cobranca da cota 
      */
-    void postarDadosCotaCobranca(CotaCobrancaVO cotaCobranca);
+    void postarDadosCotaCobranca(FinanceiroVO cotaCobranca);
 
 	
 
