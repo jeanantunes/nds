@@ -189,7 +189,7 @@
 			<li><a href="#tabpf-4">PDV</a></li>
 			<li><a href="#tabpf-5">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
-			<li><a href="#tabpf-7">Distribui��o</a></li>
+			<li><a href="#tabpf-7">Distribuição</a></li>
 			<li><a href="#tabpf-8">Fornecedor</a></li>
 			</ul>
 		
@@ -205,7 +205,7 @@
 
 			<div id="tabpf-4">
 				 <jsp:include page="../pdv/index.jsp"></jsp:include>
-			</div> </div>
+			</div> 
 
 			<div id="tabpf-5"> 
 			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
@@ -214,6 +214,7 @@
 			<div id="tabpf-6"> </div>
 			
 			<div id="tabpf-7"> </div>
+			
 			<div id="tabpf-8"> </div>
 		
 		</div>
