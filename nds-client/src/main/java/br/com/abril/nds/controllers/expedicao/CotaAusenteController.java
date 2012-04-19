@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.financeiro.SuspensaoCotaController.RodapeDTO;
 import br.com.abril.nds.dto.CotaAusenteDTO;
-import br.com.abril.nds.dto.CotaSuspensaoDTO;
-import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
@@ -29,13 +26,12 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -112,7 +108,7 @@ public class CotaAusenteController {
 		try {
 			Date data = validaData(dataAusencia);
 			
-			boolean isDataOperacao = isDataOperacao(data);
+			boolean isDataOperacao = DateUtil.isHoje(data);
 					
 			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
 					data, 
@@ -187,16 +183,7 @@ public class CotaAusenteController {
 		return tableModel;
 	}
 
-	private boolean isDataOperacao(Date data) {
-		
-		Long dia = 86400000L;
-		
-		if( (data.getTime()/dia) == (new Date().getTime()/dia) )
-			return true;
-		
-		return false;
-	}
-
+	
 	private Date validaData(String dataAusencia) {
 
 		if ( dataAusencia == null || dataAusencia.isEmpty())
@@ -299,9 +286,48 @@ public class CotaAusenteController {
 	}
 	
 	@Post
-	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos) {
+	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, Integer numCota) {
+		//TODO
 		
 		
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		try {
+			
+			if(numCota == null) 
+				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+						
+			cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+			
+			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
+			
+		} catch(ValidacaoException e) {
+			mensagens.clear();
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;
+		
+		} catch(InvalidParameterException e) {
+			mensagens.clear();
+			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
+			status=TipoMensagem.WARNING;			
+		}catch(TipoMovimentoEstoqueInexistente e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.WARNING;
+		} catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_ENVIO_SUPLEMENTAR );
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_ENVIO_SUPLEMENTAR, e);
+		}
+		
+		Object[] retorno = new Object[2];
+		retorno[0] = mensagens;
+		retorno[1] = status;		
+		
+		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 	
 	//TODO getRealUsuario
