@@ -348,7 +348,8 @@ public class PDFExporter implements Exporter {
     		
         	for (ExportFooter exportFooter : exportFooters) {
         		
-        		if (!exportFooter.getHeaderToAlign().trim().isEmpty()) {
+        		if (exportFooter.getHeaderToAlign() != null 
+        				&& !exportFooter.getHeaderToAlign().trim().isEmpty()) {
         			
         			Integer headerIndex = null; 
     				

@@ -1,18 +1,19 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -32,9 +33,9 @@ public class MatrizRecolhimentoController {
 
 	@Autowired
 	private Result result;
-	
+
 	@Autowired
-	private HttpSession httpSession;
+	private RecolhimentoService recolhimentoService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -50,28 +51,20 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> idsFornecedores, 
-						  String sortorder, String sortname, int page, int rp) {
-
-		List<ResumoPeriodoBalanceamentoDTO> listaResumos = new ArrayList<ResumoPeriodoBalanceamentoDTO>();
+	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
-		for (int i = 0; i < 10; i++) {
+		this.validarDadosPesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
+		
+		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
+			this.recolhimentoService.obterResumoPeriodoBalanceamento(dataPesquisa, listaIdsFornecedores);
+		
+		if (resumoPeriodoBalanceamento == null
+				|| resumoPeriodoBalanceamento.isEmpty()) {
 			
-			ResumoPeriodoBalanceamentoDTO resumo = new ResumoPeriodoBalanceamentoDTO();
-			
-			resumo.setData(new Date());
-			resumo.setQtdeTitulos(new Long(i));
-			resumo.setQtdeTitulosParciais(new Long(i));
-			resumo.setQtdeExemplares(new BigDecimal(i));
-			resumo.setPesoTotal(new BigDecimal(i));
-			resumo.setValorTotal(new BigDecimal(i));
-			
-			resumo.setExibeDestaque(i == 8 || i == 9);
-				
-			listaResumos.add(resumo);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
 		}
 		
-		result.use(Results.json()).from(listaResumos, "result").serialize();
+		result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
 	
 	@Post
@@ -129,6 +122,34 @@ public class MatrizRecolhimentoController {
 	public void confirmar() {
 		
 		
+	}
+	
+	/*
+	 * Valida os dados da pesquisa.
+	 *  
+	 * @param numeroSemana - número da semana
+	 * @param dataPesquisa - data da pesquisa
+	 * @param listaIdsFornecedores - lista de id's dos fornecedores
+	 */
+	private void validarDadosPesquisa(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (numeroSemana == null && dataPesquisa == null) {
+			
+			listaMensagens.add("O preenchimento do campo [Semana] ou [Data] é obrigatório!");
+			
+		}
+		
+		if (listaIdsFornecedores == null || listaIdsFornecedores.isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
+		}
 	}
 	
 }
