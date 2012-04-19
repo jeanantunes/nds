@@ -118,6 +118,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" LEFT JOIN epc.produtoEdicao pe ");
 		hql.append(" LEFT JOIN pe.produto p ");
 		hql.append(" LEFT JOIN p.fornecedores f ");
+		hql.append(" LEFT JOIN f.juridica juridica ");
 			
 
 		hql.append(" WHERE c.numeroCota =:numeroCota ");
@@ -133,7 +134,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
 		hql.append(" pe.desconto, ");
-		hql.append(" f.juridica.razaoSocial ");
+		hql.append(" juridica.razaoSocial ");
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
