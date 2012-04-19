@@ -1,37 +1,30 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.util.PessoaUtil;
-import br.com.abril.nds.client.vo.CotaCobrancaVO;
 import br.com.abril.nds.client.vo.CotaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -45,15 +38,21 @@ public class CotaController {
 
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private FinanceiroController financeiroController;
+
 
 	public CotaController(Result result) {
-
 		this.result = result;
 	}
 
+	
 	@Path("/")
 	public void index() {
-
+		
+		//Pré carregamento da aba "financeiro" 
+		this.financeiroController.preCarregamento();
 	}
 	
 	
@@ -104,6 +103,9 @@ public class CotaController {
 		processarEnderecosCota(idCota);
 		
 		processarTelefonesCota(idCota);
+		
+		//Persiste os dados da aba "financeiro"
+		this.financeiroController.postarFinanceiro(idCota);
 		
 		this.result.nothing();
 	}
@@ -256,6 +258,8 @@ public class CotaController {
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
+	
+	
 	
 	
 }
