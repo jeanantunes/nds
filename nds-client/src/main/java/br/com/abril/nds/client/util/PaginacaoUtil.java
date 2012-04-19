@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 
-import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -171,12 +171,13 @@ public class PaginacaoUtil {
 	 * @param filtroSessao
 	 */
 	public static void calcularPaginaAtual(HttpSession session,
-										   String atributoSessao,
-										   FiltroControleAprovacaoDTO filtroAtual,
-										   FiltroControleAprovacaoDTO filtroSessao) {
+										   String atributoQtdRegistrosSessao,
+										   String atributoFiltroSessao,
+										   FiltroDTO filtroAtual,
+										   FiltroDTO filtroSessao) {
 	
 		Integer qtdRegistrosPesquisaPagina =
-			(Integer) session.getAttribute(atributoSessao);
+			(Integer) session.getAttribute(atributoQtdRegistrosSessao);
 		
 		Integer paginaAtual = filtroAtual.getPaginacao().getPaginaAtual();
 		
@@ -195,7 +196,7 @@ public class PaginacaoUtil {
 			filtroAtual.getPaginacao().setPaginaAtual(paginaAtual);
 		}
 		
-		session.setAttribute(atributoSessao, filtroAtual);
+		session.setAttribute(atributoFiltroSessao, filtroAtual);
 	}		
 	
 }
