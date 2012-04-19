@@ -348,18 +348,23 @@ public class FiadorServiceImpl implements FiadorService {
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
-			listaEndereco.add(enderecoAssociacao.getEndereco());
+			if (enderecoAssociacao.getEndereco() != null){
+				listaEndereco.add(enderecoAssociacao.getEndereco());
+			}
 
 			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 			
-			if (enderecoFiador != null){
+			if (enderecoFiador != null && enderecoFiador.getEndereco() != null){
 				idsEndereco.add(enderecoFiador.getEndereco().getId());
 				
 				this.enderecoFiadorRepository.remover(enderecoFiador);
 			}
 		}
 		
-		this.enderecoRepository.removerEnderecos(idsEndereco);
+		if (listaEndereco != null && !listaEndereco.isEmpty()){
+		
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
 	}
 	
 	private void processarTelefones(Fiador fiador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
