@@ -4,34 +4,37 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 
 @SuppressWarnings("serial")
-public class ResultadosContaCorrenteCotaDTO implements Serializable {
+public class ResultadosContaCorrenteConsignadoDTO implements Serializable {
 	
-
-	private TableModel<CellModel> tableModel;
+	private TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModelConsignado;
 	private String dataEscolhida;
 	private List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
 	
-	public ResultadosContaCorrenteCotaDTO(
-			TableModel<CellModel> tableModel,
+	public ResultadosContaCorrenteConsignadoDTO(
+			TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModelConsignado,			
 			String dataEscolhida,
 			List<InfoTotalFornecedorDTO> listaInfoFornecedores){
 		super();
-		this.tableModel = tableModel;
+		this.tableModelConsignado = tableModelConsignado;
 		this.dataEscolhida = dataEscolhida;
 		this.listaInfoFornecedores = listaInfoFornecedores;
 	}
+	
 
-	public TableModel<CellModel> getTableModel() {
-		return tableModel;
+	public TableModel<CellModelKeyValue<ConsignadoCotaDTO>> getTableModelConsignado() {
+		return tableModelConsignado;
 	}
 
-	public void setTableModel(TableModel<CellModel> tableModel) {
-		this.tableModel = tableModel;
+
+	public void setTableModelConsignado(
+			TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModelConsignado) {
+		this.tableModelConsignado = tableModelConsignado;
 	}
+
 
 	public String getDataEscolhida() {
 		return dataEscolhida;

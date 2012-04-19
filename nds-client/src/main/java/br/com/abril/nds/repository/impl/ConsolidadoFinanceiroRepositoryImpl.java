@@ -290,7 +290,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
 		hql.append(" ec.qtdePrevista as reparteSugerido, ");
 		hql.append(" ec.qtdeEfetiva as reparteFinal, ");
-
 		hql.append(" (ec.qtdePrevista - ec.qtdeEfetiva) as diferenca, ");
 		hql.append(" d.tipoDiferenca as motivo, ");		
 		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total ");

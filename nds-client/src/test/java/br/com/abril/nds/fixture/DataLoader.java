@@ -545,6 +545,7 @@ public class DataLoader {
 		gerarCotasAusentes(session);
 		criarDadosContaCorrenteEncalhe(session);
 		criarDadosContaCorrenteVendaEncalhe(session);
+		criarDadosContaCorrenteConsigando(session);
 		
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
@@ -576,6 +577,138 @@ public class DataLoader {
 	
 	private static void  criarDadosContaCorrenteVendaEncalhe(Session session){
 		//massaDadosContaCorrenteEncalhe(session, tipoMovimentoVendaEncalhe, tipoMovimentoFinanceiroCompraEncalhe);
+	}
+	
+	private static void criarDadosContaCorrenteConsigando(Session session){
+		
+		Date dataAtual = new Date();
+		MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
+		
+		//Editor abril = Fixture.editoraAbril();
+		//save(session, abril);
+		
+		//PessoaFisica manoel = Fixture.pessoaFisica("122.456.789-22",
+			//	"manoel@mail.com", "Manoel da Silva");
+		//save(session, manoel);
+				
+		//Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		//save(session,box1);
+		
+				
+		TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+		save(session,tipoMovimentoEncalhe);
+		
+		TipoMovimentoEstoque tipoMovimentoVenda = Fixture.tipoMovimentoVendaEncalhe();
+		save(session,tipoMovimentoVenda);
+		
+		TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
+		save(session,tipoMovimentoConsignado);
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session,usuario);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista();
+		save(session,tipoProduto);
+		
+		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
+		save(session,tipoFornecedor);
+			
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(session,tipoFornecedorPublicacao);
+				
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+		save(session,tipoNotaFiscal);
+					
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		save(session,notaFiscal);
+		
+		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
+		save(session,recebimentoFisico);
+		
+		ItemNotaFiscalEntrada itemNotaFiscal= 
+				Fixture.itemNotaFiscal(
+						produtoEdicaoBravo1, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(12));
+		save(session,itemNotaFiscal);
+		
+		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		save(session,itemRecebimentoFisico);
+		
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoBravo1, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico);
+		save(session,lancamento);	
+		
+		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicaoBravo1);
+		save(session,estudo);
+		
+		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(20), new BigDecimal(10), estudo, cotaManoel);
+		save(session,estudoCota);
+		
+		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
+		save(session,expedicao);
+		
+		EstoqueProdutoCota  estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicaoBravo1,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
+		save(session,estoqueProdutoCota);
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
+		save(session,tipoMovimentoEstoque);
+
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		movimentoEstoqueCota.setEstudoCota(estudoCota);
+		save(session,movimentoEstoqueCota);
+		
+		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicaoBravo1, new BigDecimal(45)); 
+		save(session,estoqueProduto);
+		
+		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
+		save(session,movimentoEstoque);
+			
+		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+		save(session,diferenca);
+		
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
+		save(session,rateioDiferenca);
+		
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicaoBravo1, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		movimento.setEstudoCota(estudoCota);
+		
+		
+		estoqueProdutoCota.getMovimentos().add(movimento);
+		save(session,movimento);
+		MovimentoEstoqueCota  movimentoEnvioJornaleiro = Fixture.movimentoEstoqueCota(produtoEdicaoBravo1, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		movimentoEnvioJornaleiro.setEstudoCota(estudoCota);
+		save(session,movimentoEnvioJornaleiro);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(session,tipoMovimentoFinanceiro);
+		
+		listaMovimentoEstoqueCota.add(movimentoEstoqueCota);
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
+				new BigDecimal(230), listaMovimentoEstoqueCota,StatusAprovacao.APROVADO, dataAtual, true);
+		save(session,movimentoFinanceiroCota);
+		
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompra = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(session,tipoMovimentoFinanceiroCompra);
+		
+		List<MovimentoEstoqueCota>  listMovimentoEstoqueCotaVenda= new ArrayList<MovimentoEstoqueCota>();
+		listMovimentoEstoqueCotaVenda.add(movimentoEnvioJornaleiro);
+		
+		
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
+ 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
+				
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
+		save(session,consolidadoFinanceiroCota);
+		
+		
 	}
 	
 	private static void massaDadosContaCorrenteEncalhe(Session session, TipoMovimentoEstoque tipoMovimento, TipoMovimentoFinanceiro tipoMovimentoFinanceiro){

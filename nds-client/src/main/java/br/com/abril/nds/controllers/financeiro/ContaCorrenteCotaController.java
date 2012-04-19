@@ -19,7 +19,8 @@ import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
-import br.com.abril.nds.dto.ResultadosContaCorrenteCotaDTO;
+import br.com.abril.nds.dto.ResultadosContaCorrenteConsignadoDTO;
+import br.com.abril.nds.dto.ResultadosContaCorrenteEncalheDTO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
@@ -160,14 +161,20 @@ public class ContaCorrenteCotaController {
 
 		if (listaEncalheCota != null) {
 
-			TableModel<CellModel> tableModel = obterTableModelParaEncalheCota(listaEncalheCota);
+			TableModel<CellModelKeyValue<EncalheCotaDTO>> tableModel = new TableModel<CellModelKeyValue<EncalheCotaDTO>>();
+			
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEncalheCota));
+			tableModel.setPage(1);
+			tableModel.setTotal(listaEncalheCota.size());
 
-			ResultadosContaCorrenteCotaDTO resultado = new ResultadosContaCorrenteCotaDTO(
+			ResultadosContaCorrenteEncalheDTO resultado = new ResultadosContaCorrenteEncalheDTO(
 					tableModel,
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
 			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
+			
+			temMaisQueUm = false;
 			
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
@@ -188,6 +195,7 @@ public class ContaCorrenteCotaController {
 	 * @param rp
 	 * @param page
 	 */
+	@SuppressWarnings("unused")
 	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtroConsolidadoConsignadoCotaDTO, String sortname, String sortorder, int rp, 
 			int page){
 		
@@ -203,16 +211,22 @@ public class ContaCorrenteCotaController {
 		
 		List<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
 		
+		TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsignadoCotaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsignadoCota));
+		tableModel.setPage(1);
+		tableModel.setTotal(listaConsignadoCota.size());
+		
 		if(listaConsignadoCota != null){
-			TableModel<CellModel> tableModel = obterTableModelParaConsignadoCota(listaConsignadoCota);
 			
-			ResultadosContaCorrenteCotaDTO resultado = new ResultadosContaCorrenteCotaDTO(
+			
+			ResultadosContaCorrenteConsignadoDTO resultado = new ResultadosContaCorrenteConsignadoDTO(
 					tableModel,
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
 			boolean temMaisQueUm = verificarQuantidadeFornecedorConsignado(listaConsignadoCota);
-			
+									
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
 			dados[1] = resultado;		
@@ -609,7 +623,7 @@ public class ContaCorrenteCotaController {
 	 * @param itensContaCorrenteCota
 	 * @return
 	 */
-	private TableModel<CellModel> obterTableModelParaEncalheCota(
+	/*private TableModel<CellModel> obterTableModelParaEncalheCota(
 			List<EncalheCotaDTO> listaEncalheCota) {
 
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
@@ -738,7 +752,7 @@ public class ContaCorrenteCotaController {
 		
 		return tableModel;	
 		
-	}
+	}*/
 			
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
