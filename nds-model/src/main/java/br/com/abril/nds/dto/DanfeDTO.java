@@ -9,192 +9,6 @@ public class DanfeDTO implements Serializable{
 
 	private static final long serialVersionUID = -409988158737123482L;
 
-	public class ItemDanfe{
-		
-		private String codigoProduto;
-
-		private String descricaoProduto;
-
-		private String NCM;
-
-		private String CFOP;
-
-		private Long unidade;
-
-		private Long quantidade;
-
-		private BigDecimal valorUnitario;
-
-		private BigDecimal valorTotal;
-
-		private String CST;
-
-		private String CSOSN;
-
-		private BigDecimal baseCalculo;
-
-		private BigDecimal aliquotaICMS;
-
-		private String valorICMS;
-
-		private String aliquotaIPI;
-
-		private String valorIPI;
-
-		public String getCodigoProduto() {
-			return codigoProduto;
-		}
-
-		public void setCodigoProduto(String codigoProduto) {
-			this.codigoProduto = codigoProduto;
-		}
-
-		public String getDescricaoProduto() {
-			return descricaoProduto;
-		}
-
-		public void setDescricaoProduto(String descricaoProduto) {
-			this.descricaoProduto = descricaoProduto;
-		}
-
-		public String getNCM() {
-			return NCM;
-		}
-
-		public void setNCM(String nCM) {
-			NCM = nCM;
-		}
-
-		public String getCFOP() {
-			return CFOP;
-		}
-
-		public void setCFOP(String cFOP) {
-			CFOP = cFOP;
-		}
-
-		public Long getUnidade() {
-			return unidade;
-		}
-
-		public void setUnidade(Long unidade) {
-			this.unidade = unidade;
-		}
-
-		public Long getQuantidade() {
-			return quantidade;
-		}
-
-		public void setQuantidade(Long quantidade) {
-			this.quantidade = quantidade;
-		}
-
-		public BigDecimal getValorUnitario() {
-			return valorUnitario;
-		}
-
-		public void setValorUnitario(BigDecimal valorUnitario) {
-			this.valorUnitario = valorUnitario;
-		}
-
-		public BigDecimal getValorTotal() {
-			return valorTotal;
-		}
-
-		public void setValorTotal(BigDecimal valorTotal) {
-			this.valorTotal = valorTotal;
-		}
-
-		public String getCST() {
-			return CST;
-		}
-
-		public void setCST(String cST) {
-			CST = cST;
-		}
-
-		public String getCSOSN() {
-			return CSOSN;
-		}
-
-		public void setCSOSN(String cSOSN) {
-			CSOSN = cSOSN;
-		}
-
-		public BigDecimal getBaseCalculo() {
-			return baseCalculo;
-		}
-
-		public void setBaseCalculo(BigDecimal baseCalculo) {
-			this.baseCalculo = baseCalculo;
-		}
-
-		public BigDecimal getAliquotaICMS() {
-			return aliquotaICMS;
-		}
-
-		public void setAliquotaICMS(BigDecimal aliquotaICMS) {
-			this.aliquotaICMS = aliquotaICMS;
-		}
-
-		public String getValorICMS() {
-			return valorICMS;
-		}
-
-		public void setValorICMS(String valorICMS) {
-			this.valorICMS = valorICMS;
-		}
-
-		public String getAliquotaIPI() {
-			return aliquotaIPI;
-		}
-
-		public void setAliquotaIPI(String aliquotaIPI) {
-			this.aliquotaIPI = aliquotaIPI;
-		}
-
-		public String getValorIPI() {
-			return valorIPI;
-		}
-
-		public void setValorIPI(String valorIPI) {
-			this.valorIPI = valorIPI;
-		}
-	}
-	
-	public class Duplicata{
-		
-		private String numero;
-		
-		private Date vencimento;
-		
-		private BigDecimal valor;
-
-		public String getNumero() {
-			return numero;
-		}
-
-		public void setNumero(String numero) {
-			this.numero = numero;
-		}
-
-		public Date getVencimento() {
-			return vencimento;
-		}
-
-		public void setVencimento(Date vencimento) {
-			this.vencimento = vencimento;
-		}
-
-		public BigDecimal getValor() {
-			return valor;
-		}
-
-		public void setValor(BigDecimal valor) {
-			this.valor = valor;
-		}
-	}
-	
 	private String naturezaOperacao;
 
 	private String formaPagamento;
@@ -209,7 +23,7 @@ public class DanfeDTO implements Serializable{
 
 	private String horaSaida;
 
-	private String tipoNF;
+	private int tipoNF;
 
 	private String ambiente;
 
@@ -313,7 +127,7 @@ public class DanfeDTO implements Serializable{
 
 	private BigDecimal transportadoraPesoBruto;
 
-	private String transportadoraPesoLiquido;
+	private BigDecimal transportadoraPesoLiquido;
 
 	private String transportadoraANTT;
 
@@ -321,11 +135,11 @@ public class DanfeDTO implements Serializable{
 
 	private String transportadoraPlacaVeiculoUF;
 
-	private String ISSQNTotal;
+	private BigDecimal ISSQNTotal;
 
-	private String ISSQNBase;
+	private BigDecimal ISSQNBase;
 
-	private String ISSQNValor;
+	private BigDecimal ISSQNValor;
 
 	private String informacoesComplementares;
 	
@@ -395,11 +209,11 @@ public class DanfeDTO implements Serializable{
 		this.horaSaida = horaSaida;
 	}
 
-	public String getTipoNF() {
+	public int getTipoNF() {
 		return tipoNF;
 	}
 
-	public void setTipoNF(String tipoNF) {
+	public void setTipoNF(int tipoNF) {
 		this.tipoNF = tipoNF;
 	}
 
@@ -814,11 +628,11 @@ public class DanfeDTO implements Serializable{
 		this.transportadoraPesoBruto = transportadoraPesoBruto;
 	}
 
-	public String getTransportadoraPesoLiquido() {
+	public BigDecimal getTransportadoraPesoLiquido() {
 		return transportadoraPesoLiquido;
 	}
 
-	public void setTransportadoraPesoLiquido(String transportadoraPesoLiquido) {
+	public void setTransportadoraPesoLiquido(BigDecimal transportadoraPesoLiquido) {
 		this.transportadoraPesoLiquido = transportadoraPesoLiquido;
 	}
 
@@ -846,27 +660,27 @@ public class DanfeDTO implements Serializable{
 		this.transportadoraPlacaVeiculoUF = transportadoraPlacaVeiculoUF;
 	}
 
-	public String getISSQNTotal() {
+	public BigDecimal getISSQNTotal() {
 		return ISSQNTotal;
 	}
 
-	public void setISSQNTotal(String iSSQNTotal) {
+	public void setISSQNTotal(BigDecimal iSSQNTotal) {
 		ISSQNTotal = iSSQNTotal;
 	}
 
-	public String getISSQNBase() {
+	public BigDecimal getISSQNBase() {
 		return ISSQNBase;
 	}
 
-	public void setISSQNBase(String iSSQNBase) {
+	public void setISSQNBase(BigDecimal iSSQNBase) {
 		ISSQNBase = iSSQNBase;
 	}
 
-	public String getISSQNValor() {
+	public BigDecimal getISSQNValor() {
 		return ISSQNValor;
 	}
 
-	public void setISSQNValor(String iSSQNValor) {
+	public void setISSQNValor(BigDecimal iSSQNValor) {
 		ISSQNValor = iSSQNValor;
 	}
 
