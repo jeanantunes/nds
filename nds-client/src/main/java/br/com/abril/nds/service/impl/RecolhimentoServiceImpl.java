@@ -1,8 +1,9 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.distribuidorRepository.buscarDiasDistribuicao(
 				listaIdsFornecedores, OperacaoDistribuidor.RECOLHIMENTO);
 		
-		List<Integer> listaCodigosDiasSemana = new ArrayList<Integer>();
+		Set<Integer> listaCodigosDiasSemana = new TreeSet<Integer>();
 		
 		for (DistribuicaoFornecedor recolhimento : recolhimentos) {
 			

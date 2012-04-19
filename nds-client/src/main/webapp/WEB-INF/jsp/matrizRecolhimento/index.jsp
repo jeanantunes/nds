@@ -82,9 +82,16 @@
 	
 		function carregarDataSemana() {
 
+			var numeroSemana = $("#numeroSemana").val();
+
+			if (!numeroSemana) {
+
+				return;
+			}
+			
 			var data = [
    				{
-   					name: 'numeroSemana', value: $("#numeroSemana").val()
+   					name: 'numeroSemana', value: numeroSemana
    				}
    			];
 			
@@ -103,6 +110,13 @@
 	
 		function carregarDiaSemana() {
 
+			var dataPesquisa = $("#dataPesquisa").val();
+
+			if (!dataPesquisa) {
+
+				return;
+			}
+			
 			var data = [
    				{
    					name: 'data', value: $("#dataPesquisa").val()
