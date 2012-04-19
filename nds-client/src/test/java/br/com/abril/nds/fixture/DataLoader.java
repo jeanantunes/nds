@@ -131,8 +131,11 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
-	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
+		
+	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	
 	private static  TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 	
@@ -221,6 +224,19 @@ public class DataLoader {
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 	private static Lancamento lancamentoCocaCola;
+	
+	private static Lancamento lancamentoInfoExame1;
+	private static Lancamento lancamentoQuatroRodas1;
+	private static Lancamento lancamentoBoaForma1;
+	private static Lancamento lancamentoBravo1;
+	private static Lancamento lancamentoCaras1;
+	private static Lancamento lancamentoCasaClaudia1;
+	private static Lancamento lancamentoClaudia1;
+	private static Lancamento lancamentoContigo1;
+	private static Lancamento lancamentoManequim1;
+	private static Lancamento lancamentoNatGeo1;
+	private static Lancamento lancamentoPlacar1;
+
 	private static Lancamento lancamentoVeja1EcncalheAnt;
 	private static Lancamento lancamentoVeja2EcncalheAnt;
 	private static Lancamento lancamentoSuper1EcncalheAnt;
@@ -249,6 +265,39 @@ public class DataLoader {
 	private static ItemNotaFiscalEntrada itemNotaFiscalCoca;
 	private static ItemRecebimentoFisico itemCocaRecebimentoFisico;
 	
+	private static ItemNotaFiscalEntrada itemNotaInfoExame1;
+	private static ItemRecebimentoFisico itemInfoExame1;
+	
+	private static ItemNotaFiscalEntrada itemNotaQuatroRodas1;
+	private static ItemRecebimentoFisico itemQuatroRodas1;
+	
+	private static ItemNotaFiscalEntrada itemNotaBoaForma1;
+	private static ItemRecebimentoFisico itemBoaForma1;
+	
+	private static ItemNotaFiscalEntrada itemNotaBravo1;
+	private static ItemRecebimentoFisico itemBravo1;
+	 
+	private static ItemNotaFiscalEntrada itemNotaCaras1;
+	private static ItemRecebimentoFisico itemCaras1;
+	
+	private static ItemNotaFiscalEntrada itemNotaCasaClaudia1;
+	private static ItemRecebimentoFisico itemCasaClaudia1;
+	
+	private static ItemNotaFiscalEntrada itemNotaClaudia1;
+	private static ItemRecebimentoFisico itemClaudia1;
+	
+	private static ItemNotaFiscalEntrada itemNotaContigo1;
+	private static ItemRecebimentoFisico itemContigo1;
+	
+	private static ItemNotaFiscalEntrada itemNotaManequim1;
+	private static ItemRecebimentoFisico itemManequim1;
+	
+	private static ItemNotaFiscalEntrada itemNotaNatGeo1;
+	private static ItemRecebimentoFisico itemNatGeo1;
+	
+	private static ItemNotaFiscalEntrada itemNotaPlacar1;
+	private static ItemRecebimentoFisico itemPlacar1;
+	
 	private static Cota cotaJose;
 	private static Cota cotaManoel;
 	private static Cota cotaMaria;
@@ -272,6 +321,19 @@ public class DataLoader {
 	private static Estudo estudoVeja1EncalheAnt;
 	private static Estudo estudoVeja2EncalheAnt;
 	
+	
+	private static Estudo estudoInfoExame1;
+	private static Estudo estudoQuatroRodas1;
+	private static Estudo estudoBoaForma1;
+	private static Estudo estudoBravo1;
+	private static Estudo estudoCaras1;
+	private static Estudo estudoCasaClaudia1;
+	private static Estudo estudoClaudia1;
+	private static Estudo estudoContigo1;
+	private static Estudo estudoManequim1;
+	private static Estudo estudoNatGeo1;
+	private static Estudo estudoPlacar1;
+	
 	private static EstudoCota estudoCotaSuper1Manoel;
 	private static EstudoCota estudoCotaManoel;
 	private static EstudoCota estudoCotaVeja2Joao;
@@ -289,6 +351,17 @@ public class DataLoader {
 	private static EstudoCota estudoCotaSuper2JoaoEncaljeAnt;
 	private static EstudoCota estudoCotaSuper2ManoelEncaljeAnt;
 	private static EstudoCota estudoCotaSuper2MariaEncaljeAnt;
+	private static EstudoCota estudoJoseInfoExame1;
+	private static EstudoCota estudoJoseQuatroRodas1;
+	private static EstudoCota estudoJoseBoaForma1;
+	private static EstudoCota estudoJoseBravo1;
+	private static EstudoCota estudoJoseCaras1;
+	private static EstudoCota estudoJoseCasaClaudia1;
+	private static EstudoCota estudoJoseClaudia1;
+	private static EstudoCota estudoJoseContigo1;
+	private static EstudoCota estudoJoseManequim1;
+	private static EstudoCota estudoJoseNatGeo1;
+	private static EstudoCota estudoJoseEdicaoPlacar1;
 	
 	private static Box box300Reparte;
 	private static Box box1;
@@ -380,6 +453,7 @@ public class DataLoader {
 	private static Estudo estudoSuper1EncalheAnt;
 	private static Estudo estudoSuper2EncalheAnt;
 
+	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -439,6 +513,7 @@ public class DataLoader {
 		criarProdutosEdicao(session);
 		criarCFOP(session);
 		criarTiposMovimento(session);
+		
 		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
@@ -568,19 +643,36 @@ public class DataLoader {
 		MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEnvioEncalhe, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		save(session, movimento);
-		
 				
 		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuario, 
 				new BigDecimal(230), listaMovimentoEstoqueCota, StatusAprovacao.APROVADO, dataAtual, true);
 		save(session, movimentoFinanceiroCota);
 		
+		
+		MovimentoEstoqueCota movimentoVendaEncalhe  = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoVendaEncalhe, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		save(session, movimentoVendaEncalhe);
+		
+		List<MovimentoEstoqueCota> listMovimentoEstoqueCotas = new ArrayList<MovimentoEstoqueCota>();
+		
+		listMovimentoEstoqueCotas.add(movimentoVendaEncalhe);
+		MovimentoFinanceiroCota movimentoFinanceiroCompraEncalhe= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuario, 
+				new BigDecimal(230), listMovimentoEstoqueCotas, StatusAprovacao.APROVADO, dataAtual, true);
+		save(session, movimentoFinanceiroCompraEncalhe);
+		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
+		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompraEncalhe);
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
 		save(session, consolidadoFinanceiroCota);
 		
 	}
+	
+	
+	
+	
+	
+	
 
 	private static void criarControleBaixaBancaria(Session session) {
 		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
@@ -1105,9 +1197,31 @@ public class DataLoader {
 	}
 
 	private static void criarParametrosSistema(Session session) {
-		ParametroSistema parametroSistema = Fixture.parametroSistema(
-				TipoParametroSistema.PATH_IMAGENS_CAPA,
-				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
+		
+		ParametroSistema parametroSistema = 
+			Fixture.parametroSistema(
+				TipoParametroSistema.PATH_IMAGENS_CAPA, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
+		
+		session.save(parametroSistema);
+		
+		parametroSistema = 
+			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7");
+		
+		session.save(parametroSistema);
+		
+		parametroSistema = 
+			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7");
+			
+		session.save(parametroSistema);
+		
+		parametroSistema = 
+			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7");
+			
+		session.save(parametroSistema);
+		
+		parametroSistema = 
+			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7");
+				
 		session.save(parametroSistema);
 	}
 
@@ -1205,27 +1319,27 @@ public class DataLoader {
 	}
 
 	private static void criarEstoquesProdutos(Session session) {
-		estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigDecimal.ZERO);
+		estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigDecimal.TEN);
 		
-		estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigDecimal.ZERO);
+		estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigDecimal.TEN);
 		
-		estoqueProdutoVeja3 = Fixture.estoqueProduto(produtoEdicaoVeja3, BigDecimal.ZERO);
+		estoqueProdutoVeja3 = Fixture.estoqueProduto(produtoEdicaoVeja3, BigDecimal.TEN);
 		
-		estoqueProdutoVeja4 = Fixture.estoqueProduto(produtoEdicaoVeja4, BigDecimal.ZERO);
+		estoqueProdutoVeja4 = Fixture.estoqueProduto(produtoEdicaoVeja4, BigDecimal.TEN);
 		
-		estoqueProdutoSuper1 = Fixture.estoqueProduto(produtoEdicaoSuper1, BigDecimal.ZERO);
+		estoqueProdutoSuper1 = Fixture.estoqueProduto(produtoEdicaoSuper1, BigDecimal.TEN);
 		
-		estoqueProdutoCapricho1 = Fixture.estoqueProduto(produtoEdicaoCapricho1, BigDecimal.ZERO);
+		estoqueProdutoCapricho1 = Fixture.estoqueProduto(produtoEdicaoCapricho1, BigDecimal.TEN);
 		
-		estoqueProdutoInfoExame1 = Fixture.estoqueProduto(produtoEdicaoInfoExame1, BigDecimal.ZERO);
+		estoqueProdutoInfoExame1 = Fixture.estoqueProduto(produtoEdicaoInfoExame1, BigDecimal.TEN);
 		
-		estoqueProdutoVeja1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja1EncalheAnt, BigDecimal.ZERO);
+		estoqueProdutoVeja1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja1EncalheAnt, BigDecimal.TEN);
 		
-		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigDecimal.ZERO);
+		estoqueProdutoVeja2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoVeja2EncalheAnt, BigDecimal.TEN);
 		
-		estoqueProdutoSuper1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper1EncalheAnt, BigDecimal.ZERO);
+		estoqueProdutoSuper1EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper1EncalheAnt, BigDecimal.TEN);
 		
-		estoqueProdutoSuper2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper2EncalheAnt, BigDecimal.ZERO);
+		estoqueProdutoSuper2EncalheAnt = Fixture.estoqueProduto(produtoEdicaoSuper2EncalheAnt, BigDecimal.TEN);
 		
 		save(session, estoqueProdutoVeja1, estoqueProdutoVeja2, estoqueProdutoVeja3,
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
@@ -1244,7 +1358,41 @@ public class DataLoader {
 		itemCocaRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscalCoca, recebimentoFisico, new BigDecimal(50));
 		session.save(itemCocaRecebimentoFisico);
 		
-		//TODO
+		
+		//TODO ITEM RECEBIMENTO FISICO
+		
+		itemInfoExame1 = Fixture.itemRecebimentoFisico(itemNotaInfoExame1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemInfoExame1);
+		
+		itemQuatroRodas1 = Fixture.itemRecebimentoFisico(itemNotaQuatroRodas1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemQuatroRodas1);
+		
+		itemBoaForma1 = Fixture.itemRecebimentoFisico(itemNotaBoaForma1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemBoaForma1);
+		
+		itemBravo1 = Fixture.itemRecebimentoFisico(itemNotaBravo1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemBravo1);
+		
+		itemCaras1 = Fixture.itemRecebimentoFisico(itemNotaCaras1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemCaras1);
+		
+		itemCasaClaudia1 = Fixture.itemRecebimentoFisico(itemNotaCasaClaudia1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemCasaClaudia1);
+		
+		itemClaudia1 = Fixture.itemRecebimentoFisico(itemNotaClaudia1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemClaudia1);
+		
+		itemContigo1 = Fixture.itemRecebimentoFisico(itemNotaContigo1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemContigo1);
+		
+		itemManequim1 = Fixture.itemRecebimentoFisico(itemNotaManequim1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemManequim1);
+		
+		itemNatGeo1 = Fixture.itemRecebimentoFisico(itemNotaNatGeo1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemNatGeo1);
+		
+		itemPlacar1 = Fixture.itemRecebimentoFisico(itemNotaPlacar1, recebimentoFisico, BigDecimal.TEN);
+		session.save(itemPlacar1);
 	}
 
 	private static void criarNotasFiscais(Session session) {
@@ -1257,10 +1405,56 @@ public class DataLoader {
 				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		session.save(itemNotaFiscalFornecedor);
 		
-		//TODO
 		itemNotaFiscalCoca= Fixture.itemNotaFiscal(cocaColaLight,
 				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		session.save(itemNotaFiscalCoca);
+		
+		//TODO ITEM NOTA FISCAL
+		
+		itemNotaInfoExame1 = Fixture.itemNotaFiscal(produtoEdicaoInfoExame1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaInfoExame1);
+		
+		itemNotaQuatroRodas1 = Fixture.itemNotaFiscal(produtoEdicaoQuatroRodas1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaQuatroRodas1);
+		
+		itemNotaBoaForma1 = Fixture.itemNotaFiscal(produtoEdicaoBoaForma1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaBoaForma1);
+		
+		itemNotaBravo1 = Fixture.itemNotaFiscal(produtoEdicaoBravo1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaBravo1);
+		
+		itemNotaCaras1 = Fixture.itemNotaFiscal(produtoEdicaoCaras1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaCaras1);
+		
+		itemNotaCasaClaudia1 = Fixture.itemNotaFiscal(produtoEdicaoCasaClaudia1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaCasaClaudia1);
+		
+		itemNotaClaudia1 = Fixture.itemNotaFiscal(produtoEdicaoClaudia1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaClaudia1);
+		
+		itemNotaContigo1 = Fixture.itemNotaFiscal(produtoEdicaoContigo1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaContigo1);
+		
+		itemNotaManequim1 = Fixture.itemNotaFiscal(produtoEdicaoManequim1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaManequim1);
+				
+		itemNotaNatGeo1 = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaNatGeo1);
+		
+		itemNotaPlacar1 = Fixture.itemNotaFiscal(produtoEdicaoPlacar1,
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+		session.save(itemNotaPlacar1); 
+		
 	}
 
 	private static void criarEstudos(Session session) {
@@ -1301,8 +1495,52 @@ public class DataLoader {
 		estudoSuper2EncalheAnt = Fixture
 				.estudo(BigDecimal.TEN, lancamentoSuper2EcncalheAnt.getDataLancamentoDistribuidor(), produtoEdicaoSuper2EncalheAnt);
 		session.save(estudoSuper2EncalheAnt);
+		//TODO Estudos
 		
+		estudoInfoExame1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoInfoExame1.getDataLancamentoDistribuidor(), produtoEdicaoInfoExame1);
+		session.save(estudoInfoExame1);
 		
+		estudoQuatroRodas1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoQuatroRodas1.getDataLancamentoDistribuidor(), produtoEdicaoQuatroRodas1);
+		session.save(estudoQuatroRodas1);
+		
+		estudoBoaForma1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoBoaForma1.getDataLancamentoDistribuidor(), produtoEdicaoBoaForma1);
+		session.save(estudoBoaForma1);
+		
+		estudoBravo1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoBravo1.getDataLancamentoDistribuidor(), produtoEdicaoBravo1);
+		session.save(estudoBravo1);
+		
+		estudoCaras1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoCaras1.getDataLancamentoDistribuidor(), produtoEdicaoCaras1);
+		session.save(estudoCaras1);
+		
+		estudoCasaClaudia1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoCasaClaudia1.getDataLancamentoDistribuidor(), produtoEdicaoCasaClaudia1);
+		session.save(estudoCasaClaudia1);
+		
+		estudoClaudia1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoClaudia1.getDataLancamentoDistribuidor(), produtoEdicaoClaudia1);
+		session.save(estudoClaudia1);
+		
+		estudoContigo1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoContigo1.getDataLancamentoDistribuidor(), produtoEdicaoContigo1);
+		session.save(estudoContigo1);
+		
+		estudoManequim1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoManequim1.getDataLancamentoDistribuidor(), produtoEdicaoManequim1);
+		session.save(estudoManequim1);
+		
+		estudoNatGeo1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoNatGeo1.getDataLancamentoDistribuidor(), produtoEdicaoNatGeo1);
+		session.save(estudoNatGeo1);
+		
+		estudoPlacar1 = Fixture
+				.estudo(BigDecimal.TEN, lancamentoPlacar1.getDataLancamentoDistribuidor(), produtoEdicaoPlacar1);
+		session.save(estudoPlacar1);
+	
 	}
 
     private static void criarEstudosCota(Session session) {
@@ -1358,6 +1596,41 @@ public class DataLoader {
 		estudoCotaSuper2MariaEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper2EncalheAnt, cotaMaria);
 		save(session,estudoCotaSuper2MariaEncaljeAnt);
 		
+		//TODO ESTUDO DA COTA
+		
+		estudoJoseInfoExame1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoInfoExame1, cotaJose);
+		save(session,estudoJoseInfoExame1);
+		
+		estudoJoseQuatroRodas1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoQuatroRodas1, cotaJose);
+		save(session,estudoJoseQuatroRodas1);
+		
+		estudoJoseBoaForma1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoBoaForma1, cotaJose);
+		save(session,estudoJoseBoaForma1);
+		
+		estudoJoseBravo1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoBravo1, cotaJose);
+		save(session,estudoJoseBravo1);
+		
+		estudoJoseCaras1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCaras1, cotaJose);
+		save(session,estudoJoseCaras1);
+		
+		estudoJoseCasaClaudia1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCasaClaudia1, cotaJose);
+		save(session,estudoJoseCasaClaudia1);
+		
+		estudoJoseClaudia1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoClaudia1, cotaJose);
+		save(session,estudoJoseClaudia1);
+		
+		estudoJoseContigo1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoContigo1, cotaJose);
+		save(session,estudoJoseContigo1);
+		
+		estudoJoseManequim1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoManequim1, cotaJose);
+		save(session,estudoJoseManequim1);
+		
+		estudoJoseNatGeo1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoNatGeo1, cotaJose);
+		save(session,estudoJoseNatGeo1);
+		
+		estudoJoseEdicaoPlacar1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoPlacar1, cotaJose);
+		save(session,estudoJoseEdicaoPlacar1);
+	
 	}
 	
 	private static void criarLancamentosExpedidos(Session session){
@@ -1462,129 +1735,7 @@ public class DataLoader {
 								new Date(), new BigDecimal(1000), StatusLancamento.CONFIRMADO,
 								null);
 		session.save(lancamentoCapricho1);
-		
-		
-		
-		Lancamento lancamentoInfoExame1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoInfoExame1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoInfoExame1.getPeb()), new Date(),
-								new Date(), new BigDecimal(500), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoInfoExame1);
-		
-		Lancamento lancamentoQuatroRodas1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoQuatroRodas1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1500), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoQuatroRodas1);
-		
-		Lancamento lancamentoBoaForma1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoBoaForma1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoBoaForma1.getPeb()), new Date(),
-								new Date(), new BigDecimal(190), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoBoaForma1);
-		
-		Lancamento lancamentoBravo1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoBravo1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoBravo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoBravo1);
-		
-		Lancamento lancamentoBoaCaras1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoCaras1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoCaras1.getPeb()), new Date(),
-								new Date(), new BigDecimal(290), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoBoaCaras1);
-		
-		Lancamento lancamentoCasaClaudia1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoCasaClaudia1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(350), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoCasaClaudia1);
-		
-		Lancamento lancamentoClaudia1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoClaudia1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(400), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoClaudia1);
-		
-		Lancamento lancamentoContigo1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoContigo1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoContigo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(185), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoContigo1);
-		
-		Lancamento lancamentoManequim1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoManequim1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoManequim1.getPeb()), new Date(),
-								new Date(), new BigDecimal(225), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoManequim1);
-		
-		Lancamento lancamentoNatGeo1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoNatGeo1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoNatGeo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(75), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoNatGeo1);
-		
-		Lancamento lancamentoPlacar1 = Fixture
-				.lancamento(
-						TipoLancamento.LANCAMENTO,
-						produtoEdicaoPlacar1,
-						DateUtil.adicionarDias(new Date(), 1),
-						DateUtil.adicionarDias(new Date(),
-								produtoEdicaoPlacar1.getPeb()), new Date(),
-								new Date(), new BigDecimal(195), StatusLancamento.CONFIRMADO,
-								null);
-		session.save(lancamentoPlacar1);
+	
 		
 		lancamentoCocaCola = Fixture.lancamento(TipoLancamento.LANCAMENTO,cocaColaLight , 
 				new Date(), new Date(), new Date(), new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico);
@@ -1612,6 +1763,244 @@ public class DataLoader {
 
 						null);
 		session.save(lancamentoVeja2EcncalheAnt);
+		
+		//TODO LANCAMENTOS 
+		
+		/*lancamentoInfoExame1 =  Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoInfoExame1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoInfoExame1);
+		
+		lancamentoQuatroRodas1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoQuatroRodas1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoQuatroRodas1);
+		
+		lancamentoBoaForma1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoBoaForma1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoBoaForma1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoBoaForma1);
+		
+		lancamentoBravo1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoBravo1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoBravo1);
+		
+		lancamentoCaras1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoCaras1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoCaras1);
+		
+		lancamentoCasaClaudia1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoCasaClaudia1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoCasaClaudia1);
+		
+		lancamentoClaudia1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoClaudia1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoClaudia1);
+		
+		lancamentoContigo1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoContigo1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								null);
+		session.save(lancamentoContigo1);
+		
+		lancamentoManequim1 = Fixture
+		.lancamento(
+				TipoLancamento.LANCAMENTO,
+				produtoEdicaoManequim1,
+				DateUtil.adicionarDias(new Date(), 1),
+				DateUtil.adicionarDias(new Date(),
+						produtoEdicaoInfoExame1.getPeb()), new Date(),
+						new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+						null);
+	session.save(lancamentoManequim1); 
+			
+			lancamentoNatGeo1 = Fixture
+			.lancamento(
+					TipoLancamento.LANCAMENTO,
+					produtoEdicaoNatGeo1,
+					DateUtil.adicionarDias(new Date(), 1),
+					DateUtil.adicionarDias(new Date(),
+							produtoEdicaoInfoExame1.getPeb()), new Date(),
+							new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+							null);
+	session.save(lancamentoNatGeo1);*/
+		
+
+		
+		lancamentoInfoExame1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoInfoExame1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(500), StatusLancamento.CONFIRMADO,
+								itemInfoExame1);
+		session.save(lancamentoInfoExame1);
+		
+		lancamentoQuatroRodas1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoQuatroRodas1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
+								new Date(), new BigDecimal(1500), StatusLancamento.CONFIRMADO,
+								itemQuatroRodas1);
+		session.save(lancamentoQuatroRodas1);
+		
+		lancamentoBoaForma1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoBoaForma1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoBoaForma1.getPeb()), new Date(),
+								new Date(), new BigDecimal(190), StatusLancamento.CONFIRMADO,
+								itemBoaForma1);
+		session.save(lancamentoBoaForma1);
+		
+		lancamentoBravo1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoBravo1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoBravo1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								itemBravo1);
+		session.save(lancamentoBravo1);
+		
+		lancamentoCaras1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoCaras1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoInfoExame1.getPeb()), new Date(),
+								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								itemCaras1);
+		session.save(lancamentoCaras1);
+		
+		
+		
+		lancamentoCasaClaudia1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoCasaClaudia1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
+								new Date(), new BigDecimal(350), StatusLancamento.CONFIRMADO,
+								itemCasaClaudia1);
+		session.save(lancamentoCasaClaudia1);
+		
+		lancamentoClaudia1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoClaudia1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoClaudia1.getPeb()), new Date(),
+								new Date(), new BigDecimal(400), StatusLancamento.CONFIRMADO,
+								itemClaudia1);
+		session.save(lancamentoClaudia1);
+		
+		
+		lancamentoContigo1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoContigo1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoContigo1.getPeb()), new Date(),
+								new Date(), new BigDecimal(185), StatusLancamento.CONFIRMADO,
+								itemContigo1);
+		session.save(lancamentoContigo1);
+		
+		lancamentoManequim1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoManequim1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoManequim1.getPeb()), new Date(),
+								new Date(), new BigDecimal(225), StatusLancamento.CONFIRMADO,
+								itemManequim1);
+		session.save(lancamentoManequim1);
+		
+		lancamentoNatGeo1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoNatGeo1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoNatGeo1.getPeb()), new Date(),
+								new Date(), new BigDecimal(75), StatusLancamento.CONFIRMADO,
+								itemNatGeo1);
+		session.save(lancamentoNatGeo1);
+		
+		lancamentoPlacar1 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoPlacar1,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoPlacar1.getPeb()), new Date(),
+								new Date(), new BigDecimal(195), StatusLancamento.CONFIRMADO,
+								itemPlacar1);
+		session.save(lancamentoPlacar1);
 		
 		lancamentoSuper1EcncalheAnt = Fixture
 				.lancamento(
@@ -1988,6 +2377,14 @@ public class DataLoader {
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		
+		
+		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
+		
+		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
+		
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe);
+		
+		
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
 		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
@@ -2016,7 +2413,7 @@ public class DataLoader {
 				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
 				tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
-				tipoMovimentoFinanceiroEnvioEncalhe);
+				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente);
 
 	}
 

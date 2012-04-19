@@ -8,23 +8,31 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.InfoNfeDTO;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -46,10 +54,16 @@ public class PainelMonitorNFEController {
 	private HttpServletResponse httpResponse;
 
 	@Autowired
+	private MonitorNFEService monitorNFEService;
+	
+	@Autowired
 	private Result result;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private HttpSession session;
 	
 	@Autowired
 	private HttpServletRequest request;
@@ -58,8 +72,14 @@ public class PainelMonitorNFEController {
 	
 	private static final String TIPO_DOCUMENTO_CPF = "cpf";
 	
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaNfe";
+	
+	private static final String NFES_PARA_IMPRESSAO_DANFES= "nfesParaImpressaoDanfes";
+	
 	@Path("/")
 	public void index(){
+		
+		carregarComboSituacaoNfe();
 		
 	}
 	
@@ -124,6 +144,10 @@ public class PainelMonitorNFEController {
 		
 		List<CellModelKeyValue<NfeVO>> listaNfeVO = getListaNfeFromSession();
 
+		if(listaNfeVO == null || listaNfeVO.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
+		}
+		
 		NfeVO nfeParaImpressao = null;
 		
 		for(CellModelKeyValue<NfeVO> cell : listaNfeVO) {
@@ -137,12 +161,21 @@ public class PainelMonitorNFEController {
 		
 		}
 		
-		result.use(Results.nothing());
+		if(nfeParaImpressao == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
+		}
+		
+		List<NfeVO> nfesParaImpressaoDanfes = new ArrayList<NfeVO>();
+		
+		nfesParaImpressaoDanfes.add(nfeParaImpressao);
+		
+		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, nfesParaImpressaoDanfes);
+		
+		result.use(Results.json()).from("").serialize();
 		
 	}
 	
 	public void prepararDanfesImpressao(List<Integer> listaLineIdsImpressaoDanfes) {
-		
 		
 		if(listaLineIdsImpressaoDanfes==null ||
 				listaLineIdsImpressaoDanfes.isEmpty()) {
@@ -152,6 +185,11 @@ public class PainelMonitorNFEController {
 		}
 		
 		List<CellModelKeyValue<NfeVO>> listaNfeVO = getListaNfeFromSession();
+		
+		
+		if(listaNfeVO == null || listaNfeVO.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
+		}
 		
 		List<NfeVO> listaNfeParaImpressao = new ArrayList<NfeVO>();
 		
@@ -169,7 +207,13 @@ public class PainelMonitorNFEController {
 			
 		}
 		
-		result.use(Results.nothing());
+		if(listaNfeParaImpressao == null || listaNfeParaImpressao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
+		}
+		
+		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, listaNfeParaImpressao);
+		
+		result.use(Results.json()).from("").serialize();
 		
 	}
 	
@@ -183,17 +227,40 @@ public class PainelMonitorNFEController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 
-		FiltroMonitorNfeDTO filtroMonitorNfeDTO = null;
+		FiltroMonitorNfeDTO filtroMonitorNfeDTO = obterFiltroExportacao();
 
-		List<NfeVO> listaNfeVO =  null;
+		InfoNfeDTO infoNfe = monitorNFEService.pesquisarNFe(filtroMonitorNfeDTO);
+
+		List<NfeVO> listaNfeVO =  getListaNfeVO(infoNfe.getListaNfeDTO());
 		
-		FileExporter.to("painel-monitor-nfe", fileType).inHTTPResponse(
+		FileExporter.to("nfe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				filtroMonitorNfeDTO, 
 				null, 
 				listaNfeVO,
 				NfeVO.class, this.httpResponse);
 		
+	}
+	
+	/*
+	 * Obtém o filtro para exportação.
+	 */
+	private FiltroMonitorNfeDTO obterFiltroExportacao() {
+		
+		FiltroMonitorNfeDTO filtro = 
+				(FiltroMonitorNfeDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+		}
+		
+		return filtro;
 	}
 	
 	/*
@@ -232,12 +299,31 @@ public class PainelMonitorNFEController {
 		return usuario;
 	}
 	
-	/**
-	 * Renderiza o arquivo de impressão de dividas
-	 * @param filtro
-	 * @throws IOException
-	 */
-	private void imprimirDanfes(byte[] arquivo, String nomeArquivo) throws IOException {
+	public void imprimirDanfes() {
+		
+		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
+		
+		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, null);
+		
+		//TODO: chamar componente jasperreport geracao arquivos DANFE 
+		
+		byte[] arquivoMockado = {23,34,5,42,42,42,4,5,43,46,43,22,23,5};
+		
+		try {
+			
+			escreverArquivoParaResponse(arquivoMockado, "arquivoTeste");
+			
+		} catch(IOException e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do arquivo.");
+			
+		}
+		
+		
+	}
+
+	
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
 		this.httpResponse.setContentType("application/pdf");
 		
@@ -252,51 +338,116 @@ public class PainelMonitorNFEController {
 		result.use(Results.nothing());
 		
 	}
-	
-	private TableModel getTableModelDataMock() {
-		//TODO: remover após testes
-		TableModel<CellModelKeyValue<NfeVO>> tableModel = new TableModel<CellModelKeyValue<NfeVO>>();
-		
-		List<NfeVO> lista = new ArrayList<NfeVO>();
-		
-		int contador = 0;
-		
-		while(contador++<10) {
-			
-			NfeVO nfe = new NfeVO();
-			
-			nfe.setCnpjDestinatario("000000000"+contador);
-			nfe.setCnpjEmissor("0000000"+contador);
-			nfe.setEmissao("01/02/2012");
-			nfe.setMovimentoIntegracao("movimento_");
-			nfe.setNumero("000"+contador);
-			nfe.setSerie("000"+contador);
-			nfe.setStatusNfe("status_");
-			nfe.setTipoNfe("tiponfe_");
-			
-			lista.add(nfe);
-			
-		}
 
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-		tableModel.setTotal(lista.size());
-		tableModel.setPage(1);
-		
-		return tableModel;
-		
+	/**
+	 * Configura paginação da lista de resultados
+	 * 
+	 * @param filtro
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
+	private void configurarPaginacaoPesquisa(FiltroMonitorNfeDTO filtro, 
+											String sortorder, String sortname,
+											int page, int rp) {
+
+		if (filtro != null) {
+
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+
+			filtro.setPaginacao(paginacao);
+
+			filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroMonitorNfeDTO.OrdenacaoColuna.values(),sortname)));
+		}
 	}
 	
+	/**
+	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
+	 * 
+	 * @param filtro
+	 */
+	private void tratarFiltro(FiltroMonitorNfeDTO filtro) {
+
+		FiltroMonitorNfeDTO filtroSession = 
+				(FiltroMonitorNfeDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtro)) {
+
+			filtroSession.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+	}
+
+	private List<NfeVO> getListaNfeVO( List<NfeDTO> listaNfeDTO ) {
+		
+		List<NfeVO> listaNfeVO = new ArrayList<NfeVO>();
+		
+		NfeVO nfeVO = null;
+		
+		String cnpjDestinatario 	= null;
+		String cnpjEmissor 			= null;
+		String emissao 				= null;
+		String tipoEmissao			= null;
+		String movimentoIntegracao 	= null;
+		String numero 				= null;
+		String serie 				= null;
+		String statusNfe 			= null;
+		String tipoNfe 				= null;
+		
+		for(NfeDTO nfeDTO : listaNfeDTO) {
+			
+			cnpjDestinatario 		= nfeDTO.getCnpjDestinatario();
+			cnpjEmissor 			= nfeDTO.getCnpjEmissor();
+			emissao 				= DateUtil.formatarDataPTBR(nfeDTO.getEmissao());
+			tipoEmissao				= nfeDTO.getTipoEmissao();
+			movimentoIntegracao 	= nfeDTO.getMovimentoIntegracao();
+			numero 					= nfeDTO.getNumero();
+			serie 					= nfeDTO.getSerie();
+			statusNfe 				= nfeDTO.getStatusNfe();
+			tipoNfe 				= nfeDTO.getTipoNfe();
+			
+			nfeVO = new NfeVO();
+			
+			nfeVO.setCnpjDestinatario(cnpjDestinatario);
+			nfeVO.setCnpjEmissor(cnpjEmissor);
+			nfeVO.setEmissao(emissao);
+			nfeVO.setTipoEmissao(tipoEmissao);
+			nfeVO.setMovimentoIntegracao(movimentoIntegracao);
+			nfeVO.setNumero(numero);
+			nfeVO.setSerie(serie);
+			nfeVO.setStatusNfe(statusNfe);
+			nfeVO.setTipoNfe(tipoNfe);
+			
+			listaNfeVO.add(nfeVO);
+			
+		}
+		
+		return listaNfeVO;
+	}	
+	
+
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void carregarComboSituacaoNfe() {
 		
-		List<String> combo = new ArrayList<String>();
-		/*
-		AGUARDANDO_PROCESSAMENTO("Aguardando Processamento"),
-		EM_PROCESSAMENTO("Em Processamento"),
-		PROCESSAMENTO_REJEITADO("Processamento Rejeitado"),
-		AGUARDANDO_ACAO_DO_USUARIO("Aguardando Ação do Usuário"),
-		NFE_AUTORIZADA("Nf-e Autorizada"),
-		NFE_REJEITADA("Nf-e Rejeitada"),
-		NFE_DENEGADA("Nf-e Denegada");*/
+		List<ItemDTO<String, String>> comboStatusNfe = new ArrayList<ItemDTO<String, String>>();
+		
+		
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.PENDENTE_TRANSMISSAO_NFE.name(), StatusEmissaoNotaFiscal.PENDENTE_TRANSMISSAO_NFE.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE.name(), StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.EMITIDA.name(), StatusEmissaoNotaFiscal.EMITIDA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.CANCELADA.name(), StatusEmissaoNotaFiscal.CANCELADA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.AGUARDANDO_PROCESSAMENTO.name(), StatusEmissaoNotaFiscal.AGUARDANDO_PROCESSAMENTO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.EM_PROCESSAMENTO.name(), StatusEmissaoNotaFiscal.EM_PROCESSAMENTO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.PROCESSAMENTO_REJEITADO.name(), StatusEmissaoNotaFiscal.PROCESSAMENTO_REJEITADO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.AGUARDANDO_ACAO_DO_USUARIO.name(), StatusEmissaoNotaFiscal.AGUARDANDO_ACAO_DO_USUARIO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.NFE_AUTORIZADA.name(), StatusEmissaoNotaFiscal.NFE_AUTORIZADA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.NFE_REJEITADA.name(), StatusEmissaoNotaFiscal.NFE_REJEITADA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.NFE_DENEGADA.name(), StatusEmissaoNotaFiscal.NFE_DENEGADA.getDescricao()));
+
+		result.include("comboStatusNfe", comboStatusNfe);
 		
 	}
 	
@@ -312,7 +463,11 @@ public class PainelMonitorNFEController {
 			String numeroInicial,
 			String numeroFinal,
 			String chaveAcesso,
-			String situacaoNfe
+			String situacaoNfe,
+			String sortorder, 
+			String sortname, 
+			int page, 
+			int rp
 			) {
 
 		List<String> mensagens = validarCampos(dataInicial, dataFinal);
@@ -332,21 +487,31 @@ public class PainelMonitorNFEController {
 		filtroMonitorNfeDTO.setTipoNfe(tipoNfe);
 		filtroMonitorNfeDTO.setIndDocumentoCPF(TIPO_DOCUMENTO_CPF.equals(tipoDocumento));
 		
-		System.out.println(box);
-		System.out.println(dataInicial);
-		System.out.println(dataFinal);
-		System.out.println(documento);
-		System.out.println(tipoNfe);
-		System.out.println(numeroInicial);
-		System.out.println(numeroFinal);
-		System.out.println(chaveAcesso);
-		System.out.println(situacaoNfe);
+		configurarPaginacaoPesquisa(filtroMonitorNfeDTO, sortorder, sortname, page, rp);
 		
-		TableModel<CellModelKeyValue<NfeVO>> tableModel = getTableModelDataMock();
+		tratarFiltro(filtroMonitorNfeDTO);
+		
+		InfoNfeDTO info = monitorNFEService.pesquisarNFe(filtroMonitorNfeDTO);
+		
+		List<NfeDTO> listaResultado = info.getListaNfeDTO();
+		
+		Integer quantidadeRegistros = info.getQtdeRegistros();
+		
+		if (listaResultado == null || listaResultado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		List<NfeVO> listaNfeVO = getListaNfeVO(listaResultado);
+		
+		TableModel<CellModelKeyValue<NfeVO>> tableModel = new TableModel<CellModelKeyValue<NfeVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNfeVO));
+		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
+		tableModel.setPage(filtroMonitorNfeDTO.getPaginacao().getPaginaAtual());
 		
 		setListaNfeToSession(tableModel.getRows());
 		
-		result.use(Results.json()).from(tableModel).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	

@@ -44,8 +44,12 @@
 						rows += '</div>';
 						rows += '</td>';					  
 				    });	
+
+					
 				    
 				    rows += "</tr>";
+
+				    $("#tableResumoPeriodoBalanceamento").empty();
 				    
 				    $("#tableResumoPeriodoBalanceamento").append(rows);
 
@@ -70,7 +74,7 @@
 			
 			$("input[name='checkgroup_menu']:checked").each(function(i) {
 				
-				parametros.push({name:'idsFornecedores', value: $(this).val()});
+				parametros.push({name:'listaIdsFornecedores', value: $(this).val()});
 			});
 
 			return parametros;
@@ -78,9 +82,16 @@
 	
 		function carregarDataSemana() {
 
+			var numeroSemana = $("#numeroSemana").val();
+
+			if (!numeroSemana) {
+
+				return;
+			}
+			
 			var data = [
    				{
-   					name: 'numeroSemana', value: $("#numeroSemana").val()
+   					name: 'numeroSemana', value: numeroSemana
    				}
    			];
 			
@@ -99,6 +110,13 @@
 	
 		function carregarDiaSemana() {
 
+			var dataPesquisa = $("#dataPesquisa").val();
+
+			if (!dataPesquisa) {
+
+				return;
+			}
+			
 			var data = [
    				{
    					name: 'data', value: $("#dataPesquisa").val()

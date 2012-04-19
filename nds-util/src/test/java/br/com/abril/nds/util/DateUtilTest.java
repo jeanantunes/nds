@@ -1,7 +1,9 @@
 package br.com.abril.nds.util;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -28,13 +30,50 @@ public class DateUtilTest {
 	}
 	
 	@Test
-	public void obterDataDaDecimaSextaSemanaDoAno2012() {
+	public void obterDataDaPrimeiraSemanaDoAno2012() {
 		
-		Date dataEsperada = DateUtil.parseDataPTBR("17/04/2012");
+		Date dataEsperada = DateUtil.parseDataPTBR("01/01/2012");
 		
-		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(16, Calendar.WEDNESDAY);
+		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY);
 		
 		Assert.assertEquals(dataEsperada, dataObtida);
+	}
+	
+	@Test
+	public void obterDiaDaSemana() {
+		
+		Date data = DateUtil.parseDataPTBR("18/04/2012");
+		
+		int diaDaSemana = DateUtil.obterDiaDaSemana(data);
+		
+		Assert.assertEquals(Calendar.WEDNESDAY, diaDaSemana);
+	}
+	
+	@Test
+	public void obterPeriodoDeAcordoComDiasDaSemana() {
+		
+		Date dataInicial = DateUtil.parseDataPTBR("15/04/2012");
+		Date dataFinal = DateUtil.parseDataPTBR("21/04/2012");
+		
+		List<Integer> listaCodigosDiasSemana = new ArrayList<Integer>();
+		
+		listaCodigosDiasSemana.add(Calendar.MONDAY);
+		listaCodigosDiasSemana.add(Calendar.TUESDAY);
+		listaCodigosDiasSemana.add(Calendar.THURSDAY);
+		listaCodigosDiasSemana.add(Calendar.SUNDAY);
+		
+		List<Date> periodo = 
+			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
+				dataInicial, dataFinal, listaCodigosDiasSemana);
+		
+		List<Date> periodoEsperado = new ArrayList<Date>();
+		
+		periodoEsperado.add(DateUtil.parseDataPTBR("15/04/2012"));
+		periodoEsperado.add(DateUtil.parseDataPTBR("16/04/2012"));
+		periodoEsperado.add(DateUtil.parseDataPTBR("17/04/2012"));
+		periodoEsperado.add(DateUtil.parseDataPTBR("19/04/2012"));
+		
+		Assert.assertEquals(periodoEsperado, periodo);
 	}
 
 }
