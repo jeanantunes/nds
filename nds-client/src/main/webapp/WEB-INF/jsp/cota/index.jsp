@@ -27,11 +27,24 @@
 		
 		limparFormEndereco();
 		limparCamposTelefone();
+
 	}
 
 	function editarCota() {
 		
 		var idCota = prompt("Digite o id da cota a ser editada.");
+		
+		if (idCota) {
+			
+			popup_cpf(idCota);
+			
+			$("#_idCotaRef").val(idCota);
+		}
+	}
+	
+    function novaCota() {
+		
+		var idCota = prompt("Digite o id da nova cota.");
 		
 		if (idCota) {
 			
@@ -143,14 +156,14 @@
 		</div>
 
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="popup_cpf();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CPF
+			<a href="javascript:;" onclick="novaCota();">
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo CPF
 			</a>
 		</span>
 		
 		<span class="bt_novos" title="Novo">
 			<a href="javascript:;" onclick="editarCota();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar PF
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar CPF
 			</a>
 		</span>
 
@@ -176,28 +189,32 @@
 			<li><a href="#tabpf-4">PDV</a></li>
 			<li><a href="#tabpf-5">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
-			<li><a href="#tabpf-7">Distribuição</a></li>
+			<li><a href="#tabpf-7">DistribuiÃ§Ã£o</a></li>
 			<li><a href="#tabpf-8">Fornecedor</a></li>
 			</ul>
 		
 			<div id="tabpf-1"> </div>
 			
 			<div id="tabpf-2">
-			
 				<jsp:include page="../endereco/index.jsp"></jsp:include>
-	
 			</div>
 			
 			<div id="tabpf-3">
 				<jsp:include page="../telefone/index.jsp"></jsp:include>
 			</div>
+
 			<div id="tabpf-4">
 				 <jsp:include page="../pdv/index.jsp"></jsp:include>
-			</div> </div>
+			</div> 
+
 			<div id="tabpf-5"> 
+			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
 			</div>
+			
 			<div id="tabpf-6"> </div>
+			
 			<div id="tabpf-7"> </div>
+			
 			<div id="tabpf-8"> </div>
 		
 		</div>

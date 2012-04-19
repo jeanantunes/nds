@@ -5,19 +5,15 @@
 <script type="text/javascript">
 
 
-	function buscaBancos(tipoCobranca){
-		/*
-		var data = [{name: 'tipoCobranca', value: tipoCobranca}];
-		$.postJSON("<c:url value='/cadastro/cota/buscaComboBancos' />",
-				   data);
-		*/
-	}
-
-
-
 	$(function() {	
-		editarFinanceiro(123);
+		var idCota = 1; //Receber aqui o ID da Cota que esta sendo alterada ou editada
+		editarFinanceiro(idCota);
 	});
+	
+	
+	function buscaComboBancos(tipoCobranca){
+
+	}
 
 
 	function opcaoPagto(op){
@@ -39,8 +35,8 @@
 	};
 	
 	
-	function editarFinanceiro(numCota){
-		var data = [{name: 'numCota', value: numCota}];
+	function editarFinanceiro(idCota){
+		var data = [{name: 'idCota', value: idCota}];
 		$.postJSON("<c:url value='/cadastro/financeiro/editarFinanceiro' />",
 				   data,
 				   sucessCallbackFinanceiro, 
@@ -50,6 +46,10 @@
 	
 	
 	function sucessCallbackFinanceiro(resultado) {
+		
+		//hidden
+		$("#_idCota").val(resultado.idCota);
+		$("#_numCota").val(resultado.numCota);
 		
 		$("#tipoCobranca").val(resultado.tipoCobranca);
 		$("#banco").val(resultado.idBanco);
@@ -101,6 +101,10 @@
 	
 	
 	function postarFinanceiro() {
+		
+		//hidden
+		var idCota = $("#_idCota").val();
+		var numCota = $("#_numCota").val();
 		
 		var tipoCobranca        = $("#tipoCobranca").val();
 		var idBanco             = $("#banco").val();
@@ -172,10 +176,9 @@
 		var qtdDividasAberto = $("#qtdDividasAberto").val();
 		var vrDividasAberto = $("#vrDividasAberto").val();
 		
-		var numCota=123;//NUMERO_COTA=123; PROVISORIO ATÉ EXISTIR O CADASTRO DA COTA.
-		
-		$.postJSON("<c:url value='/cadastro/financeiro/postarFinanceiro'/>",
-				   "cotaCobranca.numCota="+numCota+  
+		$.postJSON("<c:url value='/cadastro/financeiro/postarFinanceiroSessao'/>",
+				   "cotaCobranca.idCota="+idCota+ 
+				   "&cotaCobranca.numCota="+numCota+ 
 				   "&cotaCobranca.tipoCobranca="+tipoCobranca+ 
 				   "&cotaCobranca.idBanco="+idBanco+            
 				   "&cotaCobranca.recebeEmail="+recebeEmail+        
@@ -202,6 +205,32 @@
 	}
 
 
+	
+	
+	
+	function popup_pesq_fornecedor() {
+		
+		$( "#dialog-pesq-fornecedor" ).dialog({
+			resizable: false,
+			height:300,
+			width:490,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$( ".forncedoresSel" ).css('display','table-cell');
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
+	
+	function removeFornecedor(){
+		$( ".forncedoresSel" ).fadeOut('fast');
+	}
+
 </script>
 
 
@@ -209,22 +238,23 @@
 
 #divBoleto,
 #divTrasnsferenciaBancaria,
-#divDeposito {
-    display:none;
-}
+#divDeposito {display:none;}
+#dialog-pesq-fornecedor{display:none;}
+.forncedoresSel{display:none;}
 
 </style>
 
 
 </head>
 
-<body>
-
    <!--PESSOA FISICA - FINANCEIRO -->
     
     <form name="formFinanceiro" id="formFinanceiro"> 
     
 	    <!--  <div id="tabpf-financeiro" > -->
+	       
+	       <input type="hidden" id="_idCota"/>
+	       <input type="hidden" id="_numCota"/>
 	    
 		   <table width="671" border="0" cellspacing="2" cellpadding="2">
 		      
@@ -232,14 +262,29 @@
 		        <td width="171">Tipo de Pagamento:</td>
 		        <td width="486">
 
-			        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);buscaBancos(this.value);">
+			        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);buscaComboBancos(this.value);">
                         <option value="">Selecione</option>
-                        <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
-		                    <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
+                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+		                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
 		                </c:forEach>
                     </select> 
 
 		        </td>
+		        
+		        
+		        
+		        
+		        <!-- Provisório -->
+	            <td>
+				    <span class="bt_posta_sessao" title="Teste Posta Sessao">
+				        <a href="javascript:;" onclick="postarFinanceiro();">
+				        </a>
+				    </span>
+		        </td>
+		        
+		        
+		        
+		        
 		      </tr>
 		      
 		      
@@ -299,21 +344,21 @@
 							  
 							  <tr>
 							    <td width="88">Num. Banco:</td>
-							    <td width="120"><input type="text" id="numBanco" name="numBanco" style="width:60px;"/></td>
+							    <td width="120"><input type="text" id="numBanco" name="numBanco" style="width:60px;" /></td>
 							    <td width="47">Nome:</td>
-							    <td width="277"><input type="text" id="nomeBanco" name="nomeBanco" style="width:150px;"/></td>
+							    <td width="277"><input type="text" id="nomeBanco" name="nomeBanco" style="width:150px;" /></td>
 							  </tr>
 							  
 							  <tr>
 							    <td>Agência:</td>
-							    <td><input type="text" id="agencia" name="agencia" style="width:60px;"/>
+							    <td><input type="text" id="agencia" name="agencia" style="width:60px;" />
 							      -
-							      <input type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;"/></td>
+							      <input type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
 							    <td>Conta:</td>
 							    <td>
-							        <input type="text" id="conta" name="conta" style="width:60px;"/>
+							        <input type="text" id="conta" name="conta" style="width:60px;" />
 							      -
-							        <input type="text" id="contaDigito" name="contaDigito" style="width:30px;"/></td>
+							        <input type="text" id="contaDigito" name="contaDigito" style="width:30px;" /></td>
 							  </tr>
 							  
 							  <tr>
@@ -340,7 +385,7 @@
 		        <td>Fator Vencimento em D+:</td>
 		       
 		        <td>
-			        <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;">
+			        <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
 			          <option>1</option>
 			          <option>2</option>
 			          <option>3</option>
@@ -368,12 +413,15 @@
 		      
 		      <tr>
 		        <td>Sugere Suspensão:</td>
-		        <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" checked /></td>
+		        <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" /></td>
 		      </tr>
 		      
 		      <tr>
 		        <td>Contrato:</td>
-		        <td><input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="imprimir_contrato();" /> <span class="bt_imprimir"><a href="javascript:;">Contrato</a></span></td>
+		        <td>
+		            <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="imprimir_contrato();" /> 
+		            <span class="bt_imprimir"><a href="javascript:;">Contrato</a></span>
+		        </td>
 		      </tr>
 		      
 		      <tr>
@@ -399,14 +447,14 @@
 		      <tr>
 		        <td>Valor Mínimo R$:</td>
 		        <td>
-		            <input name="valorMinimo" id="valorMinimo" type="text" style="width:60px;"/>
+		            <input name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
 		        </td>
 		      </tr>
 		      
 		      <tr>
 		        <td>Comissão %:</td>
 		        <td>
-		            <input name="comissao" id="comissao" type="text" style="width:60px;"/>
+		            <input name="comissao" id="comissao" type="text" style="width:60px;" />
 		        </td>
 		      </tr>
 		      
@@ -414,31 +462,90 @@
 		        <td height="23">Sugere Suspensão quando:</td>
 		        <td>
 			        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+			           
 			           <tr>
 			              <td width="36%">Qtde de dividas em aberto:</td>
 			            
 			              <td width="15%">
-			                  <input type="text" name="qtdDividasAberto" id="qtdDividasAberto" style="width:60px;"/>
+			                  <input type="text" name="qtdDividasAberto" id="qtdDividasAberto" style="width:60px;" />
 			              </td>
 			            
 			              <td width="6%">ou</td>
 			              <td width="7%">R$: </td>
 			            
 			              <td width="36%">
-			                  <input type="text" name="vrDividasAberto" id="vrDividasAberto" style="width:60px;"/>
+			                  <input type="text" name="vrDividasAberto" id="vrDividasAberto" style="width:60px;" />
 			              </td>
-			            
 			          </tr>
+			       
 			         </table>
 		         </td>
-		      
 		      </tr>
+		      
+		      
+		      <tr>
+		          <td height="23">Unifica boleto?</td>
+		          <td>
+		              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+				          <tr>
+					          <td>
+					              <select name="select3" id="select2" onchange="popup_pesq_fornecedor();">
+					                  <option selected="selected"> </option>
+					                  <option>Sim</option>
+					                  <option>Não</option>
+					              </select>
+					          </td>
+						  </tr>
+						      
+					      <tr>
+					          <td height="23">&nbsp;</td>
+					          <td valign="middle">
+					              
+					              <div style="float:left; font-weight:bold; line-height:37px; margin-right:5px;">Unificar os boletos: </div>
+					              
+					              <div class="forncedoresSel">
+					                  <label>Dinap</label> 
+				                      <a href="javascript:;" onclick="removeFornecedor();">
+				                          <img src="../images/ico_excluir.gif" width="15" height="15" alt="Excluir" border="0" />
+				                      </a>
+					              </div>
+					        
+					              <div class="forncedoresSel">
+					                  <label>FC </label>
+					                  <a href="javascript:;" onclick="removeFornecedor();">
+					                      <img src="../images/ico_excluir.gif" width="15" height="15" alt="Excluir" border="0" />
+					                  </a>
+					              </div>
+					           </td>
+					      </tr>
+					      
+		              </table>
+		          </td>
+		      </tr>
+		      
 		  
 		  </table>
 	      <br clear="all" />
 	    <!-- </div> -->
+	    
+	    
+	    
+	    
+	    
+	    <div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
+			<fieldset>
+				<legend>Selecione um ou mais Fornecedores para unificação dos boletos</legend>
+			    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
+			        <option>Dinap</option>
+			        <option>FC</option>
+			        <option>Treelog</option>
+			    </select>
+			</fieldset>
+		</div>
+	    
+	    
+	    
     
     </form>
     <!-- /PESSOA FISICA - FINANCEIRO -->  
     
-</body>
