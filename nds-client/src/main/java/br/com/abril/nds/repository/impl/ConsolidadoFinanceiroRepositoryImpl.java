@@ -227,9 +227,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" LEFT JOIN pe.produto p ");
 		hql.append(" LEFT JOIN p.fornecedores f ");
 
-		hql.append(" WHERE cota.numeroCota =:numeroCota ");
-
-		hql.append(" and consolidado.dataConsolidado =:dataConsolidado ");
+		hql.append(" WHERE consolidado.id =:idConsolidado ");
 		hql.append(" and tp.grupoMovimentoEstoque =:grupoMovimentoEstoque ");
 		hql.append(" and mfc.tipoMovimento.grupoMovimentoFinaceiro =:grupoMovimentoFinanceiro ");
 
@@ -258,8 +256,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		getSession().createCriteria(hql.toString());
 
-		query.setParameter("numeroCota", filtro.getNumeroCota());
-		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
+		query.setParameter("idConsolidado", filtro.getIdConsolidado());
 		query.setParameter("grupoMovimentoEstoque",
 				GrupoMovimentoEstoque.VENDA_ENCALHE);
 		query.setParameter("grupoMovimentoFinanceiro",
