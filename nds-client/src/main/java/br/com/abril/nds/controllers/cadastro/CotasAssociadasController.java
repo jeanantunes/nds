@@ -125,6 +125,7 @@ public class CotasAssociadasController {
 		
 		String nome = null;
 		if (numeroCota != null){
+			
 			nome = this.cotaService.obterNomeResponsavelPorNumeroDaCota(numeroCota);
 		}
 		

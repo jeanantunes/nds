@@ -154,12 +154,10 @@
 					if (result != ""){
 						
 						$("#nomeCota").val(result);
-						
 						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "javascript:adicionarAssociacaoCota();");
 					} else {
 						
 						$("#nomeCota").val("");
-						
 						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "");
 					}
 				},
