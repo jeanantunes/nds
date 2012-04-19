@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 public class ExportHandler {
 	
@@ -201,9 +203,9 @@ public class ExportHandler {
 
 			if (exportAnnotation != null) {
 
-				Object methodReturn = method.invoke(footer, new Object[] {});
+				Object exportObject = method.invoke(footer, new Object[] {});
 
-				exportFooters.add(generateExportFooter(methodReturn, exportAnnotation));
+				processExportFooter(exportFooters, exportAnnotation, exportObject);
 			}
 		}
 
@@ -215,26 +217,62 @@ public class ExportHandler {
 
 				field.setAccessible(true);
 
-				Object fieldValue = field.get(footer);
-
-				exportFooters.add(generateExportFooter(fieldValue, exportAnnotation));
+				Object exportObject = field.get(footer);
+				
+				processExportFooter(exportFooters, exportAnnotation, exportObject);
 			}
 		}
 
 		return exportFooters;
 	}
 
-	private static ExportFooter generateExportFooter(Object value, Export exportAnnotation) {
+	private static void processExportFooter(List<ExportFooter> exportFooters, 
+										    Export exportAnnotation,
+										    Object exportObject) {
+		
+		if (exportObject instanceof Map) {
+			 
+			@SuppressWarnings("unchecked")
+			Map<String, Object> footerMap = (Map<String, Object>) exportObject;
+			
+			if (exportAnnotation.label() != null && !exportAnnotation.label().trim().isEmpty()) {
+				
+				exportFooters.add(
+					generateExportFooter(
+						null, exportAnnotation.label(), 
+							exportAnnotation.alignment(), exportAnnotation.alignWithHeader()));
+			}
+			
+			for (Map.Entry<String, Object> entry : footerMap.entrySet()) {
+
+				exportFooters.add(
+					generateExportFooter(
+						entry.getValue(), entry.getKey(), 
+							exportAnnotation.alignment(), null));
+			}
+		} else {
+
+			exportFooters.add(
+				generateExportFooter(
+					exportObject, exportAnnotation.label(), 
+						exportAnnotation.alignment(), exportAnnotation.alignWithHeader()));
+		}
+	}
 	
+	private static ExportFooter generateExportFooter(Object value, 
+												     String label, 
+												     Alignment alignment, 
+												     String alignWithHeader) {
+
 		ExportFooter exportFooter = new ExportFooter();
 		
-		exportFooter.setLabel(exportAnnotation.label());
+		exportFooter.setLabel(label);
 		
 		exportFooter.setValue(getExportValue(value));
 		
-		exportFooter.setAlignment(exportAnnotation.alignment());
+		exportFooter.setAlignment(alignment);
 		
-		exportFooter.setHeaderToAlign(exportAnnotation.alignWithHeader());
+		exportFooter.setHeaderToAlign(alignWithHeader);
 		
 		return exportFooter;
 	}

@@ -329,7 +329,8 @@ public class XLSExporter implements Exporter {
 		
 		for (ExportFooter exportFooter : footers) {
 			
-			if (!exportFooter.getHeaderToAlign().trim().isEmpty()) {
+			if (exportFooter.getHeaderToAlign() != null 
+					&& !exportFooter.getHeaderToAlign().trim().isEmpty()) {
 
 				Integer headerIndex = null; 
 				
@@ -626,9 +627,7 @@ public class XLSExporter implements Exporter {
 	    style.setTopBorderColor(HSSFColor.LIGHT_BLUE.index);
 	    
 	    style.setAlignment(this.getAlignment(alignment));
-	    
-	    style.setIndention((short) 2);
-	    
+
 	    Font font = this.getFont(sheet, "Arial", (short) 10, true, false);
 	    
 	    font.setColor(HSSFColor.WHITE.index);
