@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
-public class CotaCobrancaVO {
+public class FinanceiroVO {
 
+	Long idCota;
 	Integer numCota;
 	
 	TipoCobranca tipoCobranca;
@@ -37,12 +38,12 @@ public class CotaCobrancaVO {
 	BigDecimal vrDividasAberto;
 	
 	
-	public CotaCobrancaVO() {
+	public FinanceiroVO() {
 		
 	}
 
 
-	public CotaCobrancaVO(Integer numCota, TipoCobranca tipoCobranca,
+	public FinanceiroVO(Integer numCota, TipoCobranca tipoCobranca,
 			long idBanco, boolean recebeEmail, String numBanco,
 			String nomeBanco, String agencia, String agenciaDigito,
 			String conta, String contaDigito, long fatorVencimento,
@@ -78,7 +79,17 @@ public class CotaCobrancaVO {
 		this.vrDividasAberto = vrDividasAberto;
 	}
 
+	
+	public Long getIdCota() {
+		return idCota;
+	}
 
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	
 	public Integer getNumCota() {
 		return numCota;
 	}
@@ -87,7 +98,7 @@ public class CotaCobrancaVO {
 	public void setNumCota(Integer numCota) {
 		this.numCota = numCota;
 	}
-
+	
 
 	public TipoCobranca getTipoCobranca() {
 		return tipoCobranca;
@@ -336,6 +347,7 @@ public class CotaCobrancaVO {
 		result = prime * result
 				+ (int) (fatorVencimento ^ (fatorVencimento >>> 32));
 		result = prime * result + (int) (idBanco ^ (idBanco >>> 32));
+		result = prime * result + ((idCota == null) ? 0 : idCota.hashCode());
 		result = prime * result
 				+ ((nomeBanco == null) ? 0 : nomeBanco.hashCode());
 		result = prime * result
@@ -370,7 +382,7 @@ public class CotaCobrancaVO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CotaCobrancaVO other = (CotaCobrancaVO) obj;
+		FinanceiroVO other = (FinanceiroVO) obj;
 		if (agencia == null) {
 			if (other.agencia != null)
 				return false;
@@ -403,6 +415,11 @@ public class CotaCobrancaVO {
 		if (fatorVencimento != other.fatorVencimento)
 			return false;
 		if (idBanco != other.idBanco)
+			return false;
+		if (idCota == null) {
+			if (other.idCota != null)
+				return false;
+		} else if (!idCota.equals(other.idCota))
 			return false;
 		if (nomeBanco == null) {
 			if (other.nomeBanco != null)
