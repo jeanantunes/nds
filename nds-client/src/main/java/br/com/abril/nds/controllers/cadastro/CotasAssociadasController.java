@@ -128,7 +128,7 @@ public class CotasAssociadasController {
 			nome = this.cotaService.obterNomeResponsavelPorNumeroDaCota(numeroCota);
 		}
 		
-		this.result.use(Results.json()).from(nome != null ? nome : "", "result").recursive().serialize();
+		this.result.use(Results.json()).withoutRoot().from(nome != null ? nome : "").recursive().serialize();
 	}
 	
 	@Post

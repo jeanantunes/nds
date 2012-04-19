@@ -151,8 +151,17 @@
 		
 			$.postJSON("<c:url value='/cadastro/fiador/pesquisarNomeCotaPorNumeroCota' />", "numeroCota=" + numeroCota, 
 				function(result) {
-					
-					$("#nomeCota").val(result);
+					if (result != ""){
+						
+						$("#nomeCota").val(result);
+						
+						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "javascript:adicionarAssociacaoCota();");
+					} else {
+						
+						$("#nomeCota").val("");
+						
+						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "");
+					}
 				},
 				null,
 				true
@@ -176,7 +185,7 @@
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td><span class="bt_add"><a href="javascript:adicionarAssociacaoCota();">Incluir Novo</a></span></td>
+		<td><span class="bt_add"><a name="habilitarAdicionarCotaAssociacao">Incluir Novo</a></span></td>
 	</tr>
 </table>
 <br />
