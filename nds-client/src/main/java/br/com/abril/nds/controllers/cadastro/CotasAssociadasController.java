@@ -183,7 +183,7 @@ public class CotasAssociadasController {
 			}
 		}
 		
-		if (associacaoCotaRemover != null){
+		if (associacaoCotaRemover != null && associacaoCotaRemover.getNumeroCota() != null){
 		
 			this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO, listaAssociacaoSessao);
 			

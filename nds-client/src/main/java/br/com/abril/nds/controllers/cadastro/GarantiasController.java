@@ -181,7 +181,7 @@ public class GarantiasController {
 			}
 		}
 		
-		if (garantiaCadastradaRemover != null){
+		if (garantiaCadastradaRemover != null && garantiaCadastradaRemover.getGarantia().getId() != null){
 			Set<Long> garantiasRemover = this.obterListaGarantiasRemoverSessao();
 			garantiasRemover.add(garantiaCadastradaRemover.getGarantia().getId());
 			
