@@ -33,57 +33,7 @@ public class MovimentoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Before
 	public void setup() {
-		/*Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
-		
-		Banco banco = Fixture.hsbc(carteira); 
-		save(banco);
-		
-		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
-		save(juridicaDistrib);
-		
-		FormaCobranca formaBoleto =
-			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
-										BigDecimal.ONE, BigDecimal.ONE);
-		save(formaBoleto);
-		
-		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
-		
-		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
-		save(distribuidor);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito =
-			Fixture.tipoMovimentoFinanceiroCredito();
-		save(tipoMovimentoFinanceiroCredito);
-		
-		Usuario usuarioJoao = Fixture.usuarioJoao();
-		save(usuarioJoao);
-		
-		Box box = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
-		save(box);
-		
-		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
-				"developertestermail@gmail.com", "Manoel da Silva");
-		save(manoel);
-		
-		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box);
-		save(cotaManoel);
-		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
-				cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
-				new BigDecimal(200), null, new Date());
-		save(movimentoFinanceiroCota);
-		
-		
-		List<MovimentoFinanceiroCota> lista = new ArrayList<MovimentoFinanceiroCota>();
-		lista.add(movimentoFinanceiroCota);
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
-				Fixture.consolidadoFinanceiroCota(lista, cotaManoel, new Date(), BigDecimal.TEN);
-		save(consolidadoFinanceiroCota);*/
-		
-		
+				
 		Calendar calendar = Calendar.getInstance();
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
@@ -115,33 +65,33 @@ public class MovimentoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void obterMovimentosAprovacao() {
 		
-		FiltroControleAprovacaoDTO filtroControleAprovacaoDTO = getFiltroDebitoCredito();
+		FiltroControleAprovacaoDTO filro = getFiltro();
 
 		List<MovimentoAprovacaoDTO> listaControleAprovacaoDTO = 
-				this.movimentoRepository.obterMovimentosAprovacao(filtroControleAprovacaoDTO);
+				this.movimentoRepository.obterMovimentosAprovacao(filro);
 		
 		Assert.assertNotNull(listaControleAprovacaoDTO);
 		
 		Assert.assertTrue(!listaControleAprovacaoDTO.isEmpty());
 		
 		Long qtdeTotalRegistros =
-				this.movimentoRepository.obterTotalMovimentosAprovacao(filtroControleAprovacaoDTO);
+				this.movimentoRepository.obterTotalMovimentosAprovacao(filro);
 		
 		Assert.assertTrue(qtdeTotalRegistros == 1);
 	}
 	
-	private FiltroControleAprovacaoDTO getFiltroDebitoCredito() {
+	private FiltroControleAprovacaoDTO getFiltro() {
 
 		Calendar calendar = Calendar.getInstance();
 		
-		FiltroControleAprovacaoDTO filtroControleAprovacaoDTO = new FiltroControleAprovacaoDTO();
+		FiltroControleAprovacaoDTO filtro = new FiltroControleAprovacaoDTO();
 		
-		filtroControleAprovacaoDTO.setIdTipoMovimento(tipoMovimentoFaltaEm.getId());
+		filtro.setIdTipoMovimento(tipoMovimentoFaltaEm.getId());
 		
-		filtroControleAprovacaoDTO.setDataMovimento(calendar.getTime());
+		filtro.setDataMovimento(calendar.getTime());
 		
-		filtroControleAprovacaoDTO.setPaginacao(new PaginacaoVO(1, 15, "asc"));
+		filtro.setPaginacao(new PaginacaoVO(1, 15, "asc"));
 
-		return filtroControleAprovacaoDTO;
+		return filtro;
 	}
 }

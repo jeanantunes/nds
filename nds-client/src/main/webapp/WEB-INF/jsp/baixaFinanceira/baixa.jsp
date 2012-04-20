@@ -464,12 +464,6 @@
 					   "&multa="+ multa,
 					   function() {mostrarBaixaManual();});
 		}
-        
-        function removeMascaraPriceFormat(field){
-        	field = replaceAll(field, ",", "");
-        	field = replaceAll(field, ".", "");
-    		return field;
-    	};
 
 		function calculaTotalManual() {
         	

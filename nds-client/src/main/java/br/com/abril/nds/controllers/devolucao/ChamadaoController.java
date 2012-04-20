@@ -1,6 +1,7 @@
-package br.com.abril.nds.controllers.recolhimento;
+package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -54,7 +55,7 @@ import br.com.caelum.vraptor.view.Results;
  * @author Discover Technology
  */
 @Resource
-@Path("/recolhimento/chamadao")
+@Path("/devolucao/chamadao")
 public class ChamadaoController {
 
 	@Autowired
@@ -104,6 +105,9 @@ public class ChamadaoController {
 		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadaoDTO =
 			this.chamadaoService.obterConsignados(filtroSessao);
 		
+		ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao = 
+			this.chamadaoService.obterResumoConsignados(filtroSessao);
+		
 		List<ChamadaoVO> listaChamadao = new LinkedList<ChamadaoVO>();
 		
 		ChamadaoVO chamadaoVO = null;
@@ -134,8 +138,30 @@ public class ChamadaoController {
 			listaChamadao.add(chamadaoVO);
 		}
 		
+		ResultadoChamadaoVO resultadoChamadao = null;
+		
+		if (resumoConsignadoCotaChamadao != null) {
+			
+			String valorTotalFormatado = null;
+			
+			if (resumoConsignadoCotaChamadao.getValorTotal() != null) {
+			
+				valorTotalFormatado =
+					CurrencyUtil.formatarValor(resumoConsignadoCotaChamadao.getValorTotal());
+			}
+			
+			resumoConsignadoCotaChamadao.setQtdProdutosTotal(
+				(long) listaConsignadoCotaChamadaoDTO.size());
+			
+			resultadoChamadao =
+				new ResultadoChamadaoVO(null, resumoConsignadoCotaChamadao.getQtdProdutosTotal(),
+										resumoConsignadoCotaChamadao.getQtdExemplaresTotal(),
+										valorTotalFormatado);
+			
+		}
+		
 		FileExporter.to("chamadao", fileType)
-			.inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, 
+			.inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoChamadao, 
 					listaChamadao, ChamadaoVO.class, this.response);
 	}
 	
@@ -334,10 +360,28 @@ public class ChamadaoController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		tableModel.setTotal(qtdeTotalRegistros);
 		
+		Long qtdProdutosTotal = null;
+		
+		BigDecimal qtdExemplaresTotal = null;
+		
+		String valorTotalFormatado = null;
+		
+		if (resumoConsignadoCotaChamadao != null) {
+			
+			qtdProdutosTotal = resumoConsignadoCotaChamadao.getQtdProdutosTotal();
+			
+			qtdExemplaresTotal = resumoConsignadoCotaChamadao.getQtdExemplaresTotal();
+			
+			if (resumoConsignadoCotaChamadao.getValorTotal() != null) {
+			
+				valorTotalFormatado =
+					CurrencyUtil.formatarValor(resumoConsignadoCotaChamadao.getValorTotal());	
+			}
+		}
+		
 		ResultadoChamadaoVO resultadoChamadao =
-			new ResultadoChamadaoVO(tableModel, resumoConsignadoCotaChamadao.getQtdProdutosTotal(),
-									resumoConsignadoCotaChamadao.getQtdExemplaresTotal(),
-									resumoConsignadoCotaChamadao.getValorTotal());
+			new ResultadoChamadaoVO(tableModel, qtdProdutosTotal,
+									qtdExemplaresTotal, valorTotalFormatado);
 		
 		result.use(Results.json()).withoutRoot().from(resultadoChamadao).recursive().serialize();
 	}
