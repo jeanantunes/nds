@@ -94,6 +94,10 @@ public class PdvController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	public void salvarPDV(){
+		
+	}
+	
 	private List<PdvVO> getPdvsSession(){
 		
 		if(session.getAttribute(PARAM_LISTA_PDV_SESSION)!= null){
