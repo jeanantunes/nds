@@ -50,7 +50,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		
 		queryNative.append("WHERE 																				");
 		
-		queryNative.append("ca.DATA = :data 																	");
+		queryNative.append("ca.ativo =:ativo AND ca.DATA = :data 												");
+		
 		
 		if(filtro.getNumCota() != null){			
 			queryNative.append("and cota.NUMERO_COTA = :numCota 												");
@@ -104,6 +105,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
 			
 		query.setParameter("data", filtro.getData());
+		query.setParameter("ativo", true);
 		
 		if(filtro.getNumCota() != null){
 			query.setParameter("numCota", filtro.getNumCota());

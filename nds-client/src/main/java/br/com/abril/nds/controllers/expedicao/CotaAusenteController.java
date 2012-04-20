@@ -157,11 +157,8 @@ public class CotaAusenteController {
 		
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
-		try {
-			listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
+		
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
@@ -245,7 +242,12 @@ public class CotaAusenteController {
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status=TipoMensagem.WARNING;
 		
-		} catch(Exception e) {
+		} catch(TipoMovimentoEstoqueInexistente e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.WARNING;
+			
+		}catch(Exception e) {
 			mensagens.clear();
 			mensagens.add(ERRO_CANCELAR_COTA_AUSENTE);
 			status=TipoMensagem.ERROR;
@@ -417,7 +419,7 @@ public class CotaAusenteController {
 		
 		List<CotaAusenteDTO> listaCotaAusente = cotaAusenteService.obterCotasAusentes(filtro) ;
 		
-		FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+		FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 				listaCotaAusente, CotaAusenteDTO.class, this.httpResponse);
 		
 		result.nothing();

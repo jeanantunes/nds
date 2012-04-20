@@ -129,9 +129,10 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	/**
 	 * Método que cancela uma Cota Ausente e reajusta os movimentos
 	 * @param idCotaAusente
+	 * @throws TipoMovimentoEstoqueInexistente 
 	 */
 	@Transactional
-	public void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) {
+	public void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) throws TipoMovimentoEstoqueInexistente {
 		
 		Date dataAtual = new Date();
 		
@@ -159,6 +160,14 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 					TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
 				
+					if ( tipoMovimento == null ) {
+					 	throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);		
+					} 
+					
+					if ( tipoMovimentoCota == null ) {
+						throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
+					}
+					
 			
 				movimentoEstoqueService.gerarMovimentoEstoque(dataAtual,movimento.getProdutoEdicao().getId(),idUsuario,qtdeARetirar,tipoMovimento);
 				movimentoEstoqueService.gerarMovimentoCota(dataAtual, movimento.getProdutoEdicao().getId(), idCotaAusente, idUsuario, qtdeARetirar, tipoMovimentoCota); 
