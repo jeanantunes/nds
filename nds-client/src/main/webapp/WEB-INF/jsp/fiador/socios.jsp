@@ -196,6 +196,20 @@
 			}
 		);
 	}
+	
+	function removerSocio(referencia){
+		$.postJSON("<c:url value='/cadastro/fiador/removerSocio' />", "referencia=" + referencia, 
+			function(result) {
+				$(".sociosGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});
+				
+				$("#btnAddEditarSocio").text("Incluir Novo");
+			},
+			null,
+			true
+		);
+	}
 </script>
 
 <jsp:include page="dadosCadastraisCpf.jsp"></jsp:include>

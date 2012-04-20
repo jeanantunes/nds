@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -57,6 +58,62 @@ public class PDV implements Serializable {
 	
 	@OneToMany(mappedBy = "pdv")
 	private Set<TelefonePDV> telefones = new HashSet<TelefonePDV>();
+	
+	/**
+	 * Nome do PDV
+	 */
+	@Column(name = "NOME", nullable = false)
+	private String nome;
+	
+	/**
+	 * Nome do contato no PDV
+	 */
+	@Column(name = "CONTATO")
+	private String contato;
+	
+	/**
+	 * Site do PDV
+	 */
+	@Column(name = "SITE")
+	private String site;
+	
+	/**
+	 * Email do PDV
+	 */
+	@Column(name = "EMAIL")
+	private String email;
+	
+	/**
+	 * Ponto de referência do PDV
+	 */
+	@Column(name = "PONTO_REFERENCIA")
+	private String pontoReferencia;
+	
+	/**
+	 * Flag indicando se o pdv esta dentro de outro estabelecimento
+	 */
+	@Column(name = "DENTRO_OUTRO_ESTABELECIMENTO", nullable = false)
+	private boolean dentroOutroEstabelecimento;
+	
+	/**
+	 * Tipo de estabelecimento ao qual o PDV está inserido
+	 */
+	@OneToOne
+	@JoinColumn(name = "TIPO_ESTABELECIMENTO_PDV_ID" )
+	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoPDV;
+	
+	/**
+	 * Tamanho do PDV
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TAMANHO_PDV", nullable = false)
+	private TamanhoPDV tamanhoPDV;
+	
+	/**
+	 * Flag indicando se o PDV possui o Sistema IPV
+	 */
+	@Column(name = "POSSUI_SISTEMA_IPV", nullable = false)
+	private boolean possuiSistemaIPV;
 	
 	public Long getId() {
 		return id;
@@ -104,6 +161,79 @@ public class PDV implements Serializable {
 	
 	public void setTelefones(Set<TelefonePDV> telefones) {
 		this.telefones = telefones;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getContato() {
+		return contato;
+	}
+
+	public void setContato(String contato) {
+		this.contato = contato;
+	}
+
+	public String getSite() {
+		return site;
+	}
+
+	public void setSite(String site) {
+		this.site = site;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPontoReferencia() {
+		return pontoReferencia;
+	}
+
+	public void setPontoReferencia(String pontoReferencia) {
+		this.pontoReferencia = pontoReferencia;
+	}
+	
+	public boolean isDentroOutroEstabelecimento() {
+		return dentroOutroEstabelecimento;
+	}
+	
+	public void setDentroOutroEstabelecimento(boolean dentroOutroEstabelecimento) {
+		this.dentroOutroEstabelecimento = dentroOutroEstabelecimento;
+	}
+	
+	public TipoEstabelecimentoAssociacaoPDV getTipoEstabelecimentoPDV() {
+		return tipoEstabelecimentoPDV;
+	}
+	
+	public void setTipoEstabelecimentoPDV(
+			TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoPDV) {
+		this.tipoEstabelecimentoPDV = tipoEstabelecimentoPDV;
+	}
+	
+	public TamanhoPDV getTamanhoPDV() {
+		return tamanhoPDV;
+	}
+	
+	public void setTamanhoPDV(TamanhoPDV tamanhoPDV) {
+		this.tamanhoPDV = tamanhoPDV;
+	}
+	
+	public boolean isPossuiSistemaIPV() {
+		return possuiSistemaIPV;
+	}
+	
+	public void setPossuiSistemaIPV(boolean possuiSistemaIPV) {
+		this.possuiSistemaIPV = possuiSistemaIPV;
 	}
 
 }

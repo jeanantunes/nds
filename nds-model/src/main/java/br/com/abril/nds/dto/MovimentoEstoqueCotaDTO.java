@@ -18,8 +18,6 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public MovimentoEstoqueCotaDTO() {
 	}
 	
-	
-	
 	public MovimentoEstoqueCotaDTO(Long idCota, Long idProdEd,
 			String codigoProd, Long edicaoProd, String nomeProd,
 			Integer qtdeReparte, List<RateioDTO> rateios) {
@@ -32,8 +30,6 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 		this.qtdeReparte = qtdeReparte;
 		this.rateios = rateios;
 	}
-
-
 
 	public Long getIdCota() {
 		return idCota;

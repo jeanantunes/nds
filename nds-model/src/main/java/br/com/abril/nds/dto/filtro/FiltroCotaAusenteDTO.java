@@ -5,23 +5,28 @@ import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroCotaAusenteDTO implements Serializable {
 
 	private static final long serialVersionUID = -2816898317696471483L;
 
+	@Export(label = "Data")
 	
 	private Date data;
+	@Export(label = "Box")
 	
 	private String box;
-	
+	@Export(label = "Cota")
 	private Integer numCota;
-		
+	
 	private PaginacaoVO paginacao;
 	
 	private	ColunaOrdenacao colunaOrdenacao;
-			
+	
 	public FiltroCotaAusenteDTO(){
 		
 	}
@@ -95,6 +100,54 @@ public class FiltroCotaAusenteDTO implements Serializable {
 
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((box == null) ? 0 : box.hashCode());
+		result = prime * result
+				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((numCota == null) ? 0 : numCota.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroCotaAusenteDTO other = (FiltroCotaAusenteDTO) obj;
+		if (box == null) {
+			if (other.box != null)
+				return false;
+		} else if (!box.equals(other.box))
+			return false;
+		if (colunaOrdenacao != other.colunaOrdenacao)
+			return false;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		if (numCota == null) {
+			if (other.numCota != null)
+				return false;
+		} else if (!numCota.equals(other.numCota))
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		return true;
 	}
 	
 		

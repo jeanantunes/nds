@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
-import br.com.abril.nds.dto.RateioDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
