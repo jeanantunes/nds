@@ -125,10 +125,11 @@ public class CotasAssociadasController {
 		
 		String nome = null;
 		if (numeroCota != null){
+			
 			nome = this.cotaService.obterNomeResponsavelPorNumeroDaCota(numeroCota);
 		}
 		
-		this.result.use(Results.json()).from(nome != null ? nome : "", "result").recursive().serialize();
+		this.result.use(Results.json()).withoutRoot().from(nome != null ? nome : "").recursive().serialize();
 	}
 	
 	@Post
@@ -183,7 +184,7 @@ public class CotasAssociadasController {
 			}
 		}
 		
-		if (associacaoCotaRemover != null){
+		if (associacaoCotaRemover != null && associacaoCotaRemover.getNumeroCota() != null){
 		
 			this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO, listaAssociacaoSessao);
 			

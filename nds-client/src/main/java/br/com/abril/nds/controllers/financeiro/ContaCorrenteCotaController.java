@@ -21,7 +21,8 @@ import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
-import br.com.abril.nds.dto.ResultadosEncalheCotaDTO;
+import br.com.abril.nds.dto.ResultadosContaCorrenteConsignadoDTO;
+import br.com.abril.nds.dto.ResultadosContaCorrenteEncalheDTO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
@@ -82,12 +83,14 @@ public class ContaCorrenteCotaController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroContaCorrente";
 
 	private static final String FILTRO_SESSION_ATTRIBUTE_ENCALHE = "filtroContaCorrenteEncalhe";
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE_CONSIGNADO = "filtroContaCorrenteConsignado";
 
 	@Autowired
 	private HttpServletRequest request;
 
-	private static final String ITENS_ENCALHE = "itensEncalhe";
-
+	private static final String ITENS_CONTA_CORRENTE = "itensContaCorrente";
+	
 	public ContaCorrenteCotaController() {
 	}
 
@@ -124,7 +127,7 @@ public class ContaCorrenteCotaController {
 					"Nenhum registro encontrado.");
 		}
 
-		request.getSession().setAttribute(ITENS_ENCALHE,
+		request.getSession().setAttribute(ITENS_CONTA_CORRENTE,
 				listaItensContaCorrenteCota);
 
 		TableModel<CellModel> tableModel = obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
@@ -146,8 +149,7 @@ public class ContaCorrenteCotaController {
 			FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO,
 			String sortname, String sortorder, int rp, int page) {
 
-		ViewContaCorrenteCota contaCorrente = obterListaEncalheSessao(filtroConsolidadoEncalheDTO
-				.getLineId());
+		ViewContaCorrenteCota contaCorrente = obterListaContaCorrenteSessao(filtroConsolidadoEncalheDTO.getLineId());
 
 		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente
 				.getDataConsolidado());
@@ -161,15 +163,19 @@ public class ContaCorrenteCotaController {
 
 		if (listaEncalheCota != null) {
 
-			TableModel<CellModel> tableModel = obterTableModelParaEncalheCota(listaEncalheCota);
+			TableModel<CellModelKeyValue<EncalheCotaDTO>> tableModel = new TableModel<CellModelKeyValue<EncalheCotaDTO>>();
+			
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEncalheCota));
+			tableModel.setPage(1);
+			tableModel.setTotal(listaEncalheCota.size());
 
-			ResultadosEncalheCotaDTO resultado = new ResultadosEncalheCotaDTO(
+			ResultadosContaCorrenteEncalheDTO resultado = new ResultadosContaCorrenteEncalheDTO(
 					tableModel,
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
 			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
-			
+					
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
 			dados[1] = resultado;		
@@ -189,25 +195,44 @@ public class ContaCorrenteCotaController {
 	 * @param rp
 	 * @param page
 	 */
-	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtroConsolidadoConsignadoCotaDTO, String sortname, String sortorder, int rp, int page){
+	@SuppressWarnings("unused")
+	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtroConsolidadoConsignadoCotaDTO, String sortname, String sortorder, int rp, 
+			int page){
 		
-		List<ConsignadoCotaDTO> listaConsignadoCota = null;
+		ViewContaCorrenteCota contaCorrente = obterListaContaCorrenteSessao(filtroConsolidadoConsignadoCotaDTO.getLineId());
+
+		filtroConsolidadoConsignadoCotaDTO.setDataConsolidado(contaCorrente
+				.getDataConsolidado());
+		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO,
+				filtroConsolidadoConsignadoCotaDTO);
+		
+		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
+				.obterMovimentoEstoqueCotaConsignado(filtroConsolidadoConsignadoCotaDTO);
+		
+		List<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
+		
+		TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsignadoCotaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsignadoCota));
+		tableModel.setPage(1);
+		tableModel.setTotal(listaConsignadoCota.size());
 		
 		if(listaConsignadoCota != null){
-			TableModel<CellModel> tableModel = obterTableModelParaConsignadoCota(listaConsignadoCota);
 			
-			/*ResultadosEncalheCotaDTO resultado = new ResultadosEncalheCotaDTO(
+			
+			ResultadosContaCorrenteConsignadoDTO resultado = new ResultadosContaCorrenteConsignadoDTO(
 					tableModel,
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
-			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
-			
+			boolean temMaisQueUm = verificarQuantidadeFornecedorConsignado(listaConsignadoCota);
+									
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
-			dados[1] = resultado;	*/	
+			dados[1] = resultado;		
 						
-			//result.use(Results.json()).from(dados, "result").recursive().serialize();
+			result.use(Results.json()).from(dados, "result").recursive().serialize();
+						
 		} else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Consolidado não encontrado.");
 		}
@@ -238,7 +263,7 @@ public class ContaCorrenteCotaController {
 		return temMaisQueUm;
 	}
 	
-	private boolean  verificarQuantidadeFornecedorEncalhe(List<ConsignadoCotaDTO> listaConsignadoCota){
+	private boolean  verificarQuantidadeFornecedorConsignado(List<ConsignadoCotaDTO> listaConsignadoCota){
 		
 		String nomeFornecedor = null;
 		boolean temMaisQueUm = false;
@@ -305,6 +330,53 @@ public class ContaCorrenteCotaController {
 		return listaInfoFornecedores;
 
 	}
+	
+	/**
+	 * Método que armazena informações para exibição do nome fornecedor e o total por fornecedor
+	 * @param listaConsignadoCota
+	 */
+	private List<InfoTotalFornecedorDTO> mostrarInfoTotalForncedoresConsignado(
+			List<ConsignadoCotaDTO> listaConsignadoCota) {
+
+		List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
+
+		String nomeFornecedor = "";
+		BigDecimal total = new BigDecimal(0);
+		InfoTotalFornecedorDTO info = new InfoTotalFornecedorDTO();
+		int count = 1;
+
+		for (ConsignadoCotaDTO consignado : listaConsignadoCota) {
+
+			if (nomeFornecedor.equals("")) {
+				nomeFornecedor = consignado.getNomeFornecedor();
+			}
+
+			if (consignado.getNomeFornecedor().equals(nomeFornecedor)) {
+				total = total.add(consignado.getTotal());
+
+			} else {
+				info = new InfoTotalFornecedorDTO();
+				info.setNomeFornecedor(nomeFornecedor);
+				info.setValorTotal(total.toString());
+				listaInfoFornecedores.add(info);
+				nomeFornecedor = consignado.getNomeFornecedor();
+				total = new BigDecimal(0);
+
+			}
+
+			if (count == listaConsignadoCota.size()) {
+				info = new InfoTotalFornecedorDTO();
+				info.setNomeFornecedor(consignado.getNomeFornecedor());
+				info.setValorTotal(total.add(consignado.getTotal()).toString());
+				listaInfoFornecedores.add(info);
+			}
+
+			count++;
+		}
+
+		return listaInfoFornecedores;
+
+	}
 
 	/**
 	 * Obtém lista de conta corrente da sessão para localizar data selecionada
@@ -313,9 +385,9 @@ public class ContaCorrenteCotaController {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private ViewContaCorrenteCota obterListaEncalheSessao(Long lineId) {
+	private ViewContaCorrenteCota obterListaContaCorrenteSessao(Long lineId) {
 		List<ViewContaCorrenteCota> listaContaCorrente = (List<ViewContaCorrenteCota>) request
-				.getSession().getAttribute(ITENS_ENCALHE);
+				.getSession().getAttribute(ITENS_CONTA_CORRENTE);
 
 		if (listaContaCorrente != null) {
 			for (ViewContaCorrenteCota contaCorrente : listaContaCorrente) {
@@ -328,7 +400,7 @@ public class ContaCorrenteCotaController {
 		return null;
 
 	}
-
+	
 	public void exportarEncalhe(FileType fileType) throws IOException {
 
 		FiltroConsolidadoEncalheCotaDTO filtro = this
@@ -555,145 +627,7 @@ public class ContaCorrenteCotaController {
 		return tableModel;
 
 	}
-
-	/**
-	 * Obtem uma lista de Encalhe da cota no dia selecionado e prepara o Grid
-	 * para receber os valores
-	 * 
-	 * @param itensContaCorrenteCota
-	 * @return
-	 */
-	private TableModel<CellModel> obterTableModelParaEncalheCota(
-			List<EncalheCotaDTO> listaEncalheCota) {
-
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-
-		int counter = 1;
-		
-		boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
-		
-		String nomeFornecedor = null;
-		
-		for(EncalheCotaDTO dto : listaEncalheCota) {		
-			
-			String codigoProduto 		 = dto.getCodigoProduto().toString();
-			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
-			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
-			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
-			String encalhe		 	 	 = (dto.getEncalhe()		    == null) 	? "0.0" : dto.getEncalhe().toString();
-			if(temMaisQueUm){
-				nomeFornecedor	 	 = (dto.getNomeFornecedor() 	== null) 	? "0.0" : dto.getNomeFornecedor();
-			}			
-			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
-					
-			if(temMaisQueUm){
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								encalhe,
-								nomeFornecedor,
-								total
-						));
-			}else{
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								encalhe,
-								total
-						));
-			}		
-			
-			counter++;
-		}
-						
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-
-		return tableModel;
-	}
 	
-	private TableModel<CellModel> obterTableModelParaConsignadoCota(List<ConsignadoCotaDTO> listaConsigandoCota) {
-		
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-		
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-		
-		int counter = 1;
-		
-		boolean temMaisQueUm = verificarQuantidadeFornecedorEncalhe(listaConsigandoCota);		
-				
-		for(ConsignadoCotaDTO dto : listaConsigandoCota) {
-			
-			String codigoProduto 		 = dto.getCodigoProduto().toString();
-			String nomeProduto	     	 = (dto.getNomeProduto() 	    == null) 	? "0.0" : dto.getNomeProduto();
-			String numeroEdicao 		 = (dto.getNumeroEdicao()       == null) 	? "0.0" : dto.getNumeroEdicao().toString();
-			String precoCapa 	     	 = (dto.getPrecoCapa()			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String precoComDesconto      = (dto.getPrecoComDesconto()  	== null) 	? "0.0" : dto.getPrecoComDesconto().toString();
-			String reparteSugerido		 = (dto.getReparteSugerido()    == null)	? "0.0" : dto.getReparteFinal().toString();
-			String reparteFinal			 = (dto.getReparteFinal()		== null)	? "0.0" : dto.getReparteFinal().toString();
-			String diferenca			 = (dto.getDiferenca()		    == null)	? "0.0" : dto.getDiferenca().toString();
-			String motivo   			 = (dto.getMotivo()		        == null)	? "0.0" : dto.getMotivo().toString();
-			String nomeFornecedor		 = (dto.getNomeFornecedor()     == null)	? "0.0" : dto.getNomeFornecedor().toString();			
-			String total		 	     = (dto.getTotal()			    == null) 	? "0.0" : dto.getTotal().toString() ;
-					
-			if(temMaisQueUm){
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								reparteSugerido,
-								reparteFinal,
-								diferenca,
-								motivo,
-								nomeFornecedor,
-								total
-						));
-			}else{
-				listaModeloGenerico.add(
-						new CellModel( 	
-								counter, 
-								codigoProduto, 
-								nomeProduto, 
-								numeroEdicao, 
-								precoCapa, 
-								precoComDesconto,
-								reparteSugerido,
-								reparteFinal,
-								diferenca,
-								motivo,
-								total
-						));
-			}		
-			
-			counter++;			
-		}
-		
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-		
-		return tableModel;	
-		
-	}
-			
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
