@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
+import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -334,9 +336,21 @@ public class ContaCorrenteCotaController {
 
 		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService
 				.obterMovimentoEstoqueCotaEncalhe(filtro);
+		
+		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
+		
+		for(EncalheCotaDTO encalheCotaDTO: listaEncalheCota){
+			String key = encalheCotaDTO.getNomeFornecedor();
+			if(totais.containsKey(key)){				
+				totais.put(key, totais.get(key).add(encalheCotaDTO.getTotal()));				
+			}else{
+				totais.put(key, encalheCotaDTO.getTotal());
+			}
+		}
+		
 
 		FileExporter.to("encalhe-cota", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null, listaEncalheCota,
+				this.getNDSFileHeader(), filtro, new FooterTotalFornecedorVO(totais), listaEncalheCota,
 				EncalheCotaDTO.class, this.httpServletResponse);
 
 		result.use(Results.nothing());
@@ -772,8 +786,20 @@ public class ContaCorrenteCotaController {
 		
 		List<VendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
+		
+		
+		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
+		
+		for(VendaEncalheDTO encalheDTO: encalheDTOs){
+			String key = encalheDTO.getNomeFornecedor();
+			if(totais.containsKey(key)){				
+				totais.put(key, totais.get(key).add(encalheDTO.getTotal()));				
+			}else{
+				totais.put(key, encalheDTO.getTotal());
+			}
+		}
 		FileExporter.to("venda-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null,
+				this.getNDSFileHeader(), filtro, new FooterTotalFornecedorVO(totais),
 				encalheDTOs, VendaEncalheDTO.class,
 				this.httpServletResponse);
 		
