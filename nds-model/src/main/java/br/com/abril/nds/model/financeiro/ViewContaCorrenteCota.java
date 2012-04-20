@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -20,8 +21,13 @@ import br.com.abril.nds.model.cadastro.Cota;
  */
 @Entity
 @Table(name = "VIEW_CONTA_CORRENTE_COTA")
-public class ViewContaCorrenteCota {
+public class ViewContaCorrenteCota  implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8354662679886829377L;
+
 	@Id	
 	@Column(name = "ID")
 	private Long id;

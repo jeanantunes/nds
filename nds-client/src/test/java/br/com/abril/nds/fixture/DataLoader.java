@@ -548,8 +548,9 @@ public class DataLoader {
 		criarParametrosCobrancaCota(session);
 		criarNotasFiscaisEntradaFornecedor(session);
 		gerarCotasAusentes(session);
-		criarDadosContaCorrenteEncalhe(session);
-		criarDadosContaCorrenteVendaEncalhe(session);
+		
+		massaDadosContaCorrenteTipoMovimento(session);
+		
 		criarDadosContaCorrenteConsigando(session);
 		
 		gerarCargaDiferencaEstoque(
@@ -576,13 +577,7 @@ public class DataLoader {
 		
 	}
 	
-	private static void criarDadosContaCorrenteEncalhe(Session session) {		
-		//massaDadosContaCorrenteEncalhe(session, tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroEnvioEncalhe);	
-	}
 	
-	private static void  criarDadosContaCorrenteVendaEncalhe(Session session){
-		massaDadosContaCorrenteEncalhe(session, tipoMovimentoVendaEncalhe, tipoMovimentoFinanceiroCompraEncalhe);
-	}
 	
 	private static void criarDadosContaCorrenteConsigando(Session session){
 		
@@ -716,7 +711,7 @@ public class DataLoader {
 		
 	}
 	
-	private static void massaDadosContaCorrenteEncalhe(Session session, TipoMovimentoEstoque tipoMovimento, TipoMovimentoFinanceiro tipoMovimentoFinanceiro){
+	private static void massaDadosContaCorrenteTipoMovimento(Session session){
 		
 	Date dataAtual = new Date();
 	List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
@@ -787,33 +782,52 @@ public class DataLoader {
 	estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);
 	save(session, estoqueProdutoCota);
 			
-	MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
-	movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
-	save(session, movimento);
-			
-	MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
-			new BigDecimal(230), listaMovimentoEstoqueCota, StatusAprovacao.APROVADO, dataAtual, true);
-	save(session, movimentoFinanceiroCota);
 	
 	
-	MovimentoEstoqueCota movimentoVendaEncalhe  = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
-	save(session, movimentoVendaEncalhe);
 	
-	List<MovimentoEstoqueCota> listMovimentoEstoqueCotas = new ArrayList<MovimentoEstoqueCota>();
+	massaDadosContaCorrenteMovimento(session, tipoMovimentoVendaEncalhe,
+			tipoMovimentoFinanceiroCompraEncalhe, dataAtual, listaMovimentoEstoqueCota,
+			usuario, produtoEdicao, estoqueProdutoCota);
 	
-	listMovimentoEstoqueCotas.add(movimentoVendaEncalhe);
-	MovimentoFinanceiroCota movimentoFinanceiroCompraEncalhe= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
-			new BigDecimal(230), listMovimentoEstoqueCotas, StatusAprovacao.APROVADO, dataAtual, true);
-	save(session, movimentoFinanceiroCompraEncalhe);
 	
-	List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
-	listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
-	listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompraEncalhe);
-	
-	ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
-	save(session, consolidadoFinanceiroCota);
+	massaDadosContaCorrenteMovimento(session, tipoMovimentoEnvioEncalhe,
+			tipoMovimentoFinanceiroEnvioEncalhe, dataAtual, listaMovimentoEstoqueCota,
+			usuario, produtoEdicao, estoqueProdutoCota);
 	
 }
+
+	private static void massaDadosContaCorrenteMovimento(Session session,
+			TipoMovimentoEstoque tipoMovimento,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Date dataAtual,
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
+			Usuario usuario, ProdutoEdicao produtoEdicao,
+			EstoqueProdutoCota estoqueProdutoCota) {
+		MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		save(session, movimento);
+				
+		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
+				new BigDecimal(230), listaMovimentoEstoqueCota, StatusAprovacao.APROVADO, dataAtual, true);
+		save(session, movimentoFinanceiroCota);
+		
+		
+		MovimentoEstoqueCota movimentoVendaEncalhe  = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		save(session, movimentoVendaEncalhe);
+		
+		List<MovimentoEstoqueCota> listMovimentoEstoqueCotas = new ArrayList<MovimentoEstoqueCota>();
+		
+		listMovimentoEstoqueCotas.add(movimentoVendaEncalhe);
+		MovimentoFinanceiroCota movimentoFinanceiroCompraEncalhe= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
+				new BigDecimal(230), listMovimentoEstoqueCotas, StatusAprovacao.APROVADO, dataAtual, true);
+		save(session, movimentoFinanceiroCompraEncalhe);
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
+		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
+		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompraEncalhe);
+		
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
+		save(session, consolidadoFinanceiroCota);
+	}
 	
 	
 	
