@@ -135,3 +135,11 @@ function intValue(valor) {
 
 	return parseInt(valor, 10);
 }
+
+function removeMascaraPriceFormat(field) {
+	
+	field = replaceAll(field, ",", "");
+	field = replaceAll(field, ".", "");
+	
+	return field;
+}
