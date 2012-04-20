@@ -240,7 +240,8 @@ public class ExportHandler {
 				exportFooters.add(
 					generateExportFooter(
 						null, exportAnnotation.label(), 
-							exportAnnotation.alignment(), exportAnnotation.alignWithHeader()));
+							exportAnnotation.alignment(), 
+								exportAnnotation.alignWithHeader(), false));
 			}
 			
 			for (Map.Entry<String, Object> entry : footerMap.entrySet()) {
@@ -248,21 +249,24 @@ public class ExportHandler {
 				exportFooters.add(
 					generateExportFooter(
 						entry.getValue(), entry.getKey(), 
-							exportAnnotation.alignment(), null));
+							exportAnnotation.alignment(), null, exportAnnotation.printVertical()));
 			}
+			
 		} else {
 
 			exportFooters.add(
 				generateExportFooter(
 					exportObject, exportAnnotation.label(), 
-						exportAnnotation.alignment(), exportAnnotation.alignWithHeader()));
+						exportAnnotation.alignment(), 
+							exportAnnotation.alignWithHeader(), exportAnnotation.printVertical()));
 		}
 	}
 	
 	private static ExportFooter generateExportFooter(Object value, 
 												     String label, 
 												     Alignment alignment, 
-												     String alignWithHeader) {
+												     String alignWithHeader,
+												     boolean verticalPrinting) {
 
 		ExportFooter exportFooter = new ExportFooter();
 		
@@ -273,6 +277,8 @@ public class ExportHandler {
 		exportFooter.setAlignment(alignment);
 		
 		exportFooter.setHeaderToAlign(alignWithHeader);
+		
+		exportFooter.setVerticalPrinting(verticalPrinting);
 		
 		return exportFooter;
 	}

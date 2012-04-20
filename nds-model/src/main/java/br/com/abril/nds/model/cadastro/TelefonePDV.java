@@ -10,18 +10,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
- * Entidade para associação de endereço ao PDV
+ * Entidade para associação de telefone ao PDV
  * 
  * @author francisco.garcia
  *
  */
 @Entity
-@Table(name = "ENDERECO_PDV")
-@SequenceGenerator(name="ENDERECO_PDV_SEQ", initialValue = 1, allocationSize = 1)
-public class EnderecoPDV extends AssociacaoEndereco {
-	
+@Table(name = "TELEFONE_PDV")
+@SequenceGenerator(name="TELEFONE_PDV_SEQ", initialValue = 1, allocationSize = 1)
+public class TelefonePDV extends AssociacaoTelefone {
+
 	@Id
-	@GeneratedValue(generator = "ENDERECO_PDV_SEQ")
+	@GeneratedValue(generator = "TELEFONE_PDV_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
@@ -36,14 +36,12 @@ public class EnderecoPDV extends AssociacaoEndereco {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public PDV getPdv() {
 		return pdv;
 	}
-
+	
 	public void setPdv(PDV pdv) {
 		this.pdv = pdv;
 	}
-	
-	
 }

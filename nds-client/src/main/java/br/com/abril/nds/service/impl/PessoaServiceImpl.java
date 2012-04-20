@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,9 @@ public class PessoaServiceImpl implements PessoaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<PessoaFisica> obterSociosPorFiador(Long idFiador) {
+	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar) {
 		
-		return this.pessoaRepository.obterSociosPorFiador(idFiador);
+		return this.pessoaRepository.obterSociosPorFiador(idFiador, idsIgnorar);
 	}
 	
 

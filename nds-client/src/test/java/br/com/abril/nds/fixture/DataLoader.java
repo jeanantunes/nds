@@ -3930,15 +3930,11 @@ public class DataLoader {
 
 	private static void gerarEntregadores(Session session) {
 
-		juridicaAcme.setNomeFantasia("Zaroio");
-
 		Entregador entregador = Fixture.criarEntregador(
 				234L, true, new Date(), 
 				BigDecimal.TEN, juridicaAcme, false, null);
 		
 		save(session, juridicaAcme, entregador);
-		
-		juridicaFc.setNomeFantasia("Pregaless");
 		
 		entregador = Fixture.criarEntregador(
 				123L, false, new Date(), 
@@ -3955,7 +3951,7 @@ public class DataLoader {
 
 		save(session, endereco, enderecoEntregador, telefone, telefoneEntregador);
 
-		jose.setApelido("Mistura");
+		jose.setApelido("Zezinho");
 		
 		entregador = Fixture.criarEntregador(
 				345L, false, new Date(), 
@@ -3972,7 +3968,7 @@ public class DataLoader {
 
 		save(session, endereco, enderecoEntregador, telefone, telefoneEntregador);
 
-		maria.setApelido("Tranca-rua");
+		maria.setApelido("Mariazinha");
 		
 		save(session, maria);
 		

@@ -9,6 +9,8 @@ public class ExportFooter {
 	private Export.Alignment alignment;
 	
 	private String headerToAlign;
+	
+	private boolean verticalPrinting;
 
 	/**
 	 * Construtor padrão.
@@ -71,6 +73,20 @@ public class ExportFooter {
 	 */
 	public void setHeaderToAlign(String headerToAlign) {
 		this.headerToAlign = headerToAlign;
+	}
+
+	/**
+	 * @return the verticalPrinting
+	 */
+	public boolean isVerticalPrinting() {
+		return verticalPrinting;
+	}
+
+	/**
+	 * @param verticalPrinting the verticalPrinting to set
+	 */
+	public void setVerticalPrinting(boolean verticalPrinting) {
+		this.verticalPrinting = verticalPrinting;
 	}
 
 }
