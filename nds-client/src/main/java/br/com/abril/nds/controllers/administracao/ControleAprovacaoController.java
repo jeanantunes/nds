@@ -107,7 +107,8 @@ public class ControleAprovacaoController {
 				this.controleAprovacaoService.obterTotalMovimentosAprovacao(filtro);
 			
 			PaginacaoUtil.armazenarQtdRegistrosPesquisa(
-				this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+				this.session,
+				QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
 				listaMovimentoAprovacaoDTO.size());
 						
 			this.processarAprovacoes(listaMovimentoAprovacaoDTO, filtro,
@@ -275,7 +276,9 @@ public class ControleAprovacaoController {
 				this.session.getAttribute(FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
 		
 		PaginacaoUtil.calcularPaginaAtual(
-			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+			this.session,
+			QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
+			FILTRO_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE,
 			filtroAtual, filtroSessao);
 		
 		return filtroAtual;

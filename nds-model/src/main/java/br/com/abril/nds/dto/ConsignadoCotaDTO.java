@@ -5,8 +5,9 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
-
+@Exportable
 public class ConsignadoCotaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 2186060384671120600L;

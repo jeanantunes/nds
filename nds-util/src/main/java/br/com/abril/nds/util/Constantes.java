@@ -36,14 +36,6 @@ public abstract class Constantes {
 	
 	public static final String UPLOAD_AJAX_REQUEST_ATTRIBUTE = "formUploadAjax";
 	
-	
-	/**
-	 * Constante que representa o nome do atributo com os dados de 'cota cobranca'
-	 * armazenado na sessão para serem persistidos na base. 
-	 */
-	public static final String ATRIBUTO_SESSAO_FINANCEIRO_SALVAR = "financeiroSalvarSessao";
-
-	
 }
 
 

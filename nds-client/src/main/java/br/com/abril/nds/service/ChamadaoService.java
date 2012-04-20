@@ -1,0 +1,44 @@
+package br.com.abril.nds.service;
+
+import java.util.List;
+
+import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
+import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
+
+/**
+ * Interface que define os serviços referentes
+ * ao chamadão de publicações.
+ * 
+ * @author Discover Technology
+ */
+public interface ChamadaoService {
+
+	/**
+	 * Obtém os consignados da cota para realizar o chamadão.
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * 
+	 * @return {@link List<ConsignadoCotaChamadaoDTO>}
+	 */
+	List<ConsignadoCotaChamadaoDTO> obterConsignados(FiltroChamadaoDTO filtro);
+	
+	/**
+	 * Obtém o total de consignados da cota para realizar o chamadão.
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * 
+	 * @return total de consignados
+	 */
+	Long obterTotalConsignados(FiltroChamadaoDTO filtro);
+	
+	/**
+	 * Obtém o resumo dos consignados da cota para realizar o chamadão. 
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * 
+	 * @return {@link List<ResumoConsignadoCotaChamadaoDTO>}
+	 */
+	ResumoConsignadoCotaChamadaoDTO obterResumoConsignados(FiltroChamadaoDTO filtro);
+	
+}

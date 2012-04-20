@@ -28,6 +28,7 @@
 				
 				if (result[0].tipoMensagem == "SUCCESS"){
 					$(janela).dialog("close");
+					$("#cnpjFiador").removeAttr("disabled");
 				}
 			},
 			null,

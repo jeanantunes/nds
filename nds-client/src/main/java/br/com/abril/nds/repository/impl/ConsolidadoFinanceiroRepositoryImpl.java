@@ -110,14 +110,15 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
 
 		
-		hql.append(" JOIN consolidado.cota c ");
-		hql.append(" JOIN consolidado.movimentos mfc ");
-		hql.append(" JOIN mfc.movimentos mec ");		
-		hql.append(" JOIN mec.tipoMovimento tp ");		
-		hql.append(" JOIN mec.estoqueProdutoCota epc ");
-		hql.append(" JOIN epc.produtoEdicao pe ");
-		hql.append(" JOIN pe.produto p ");
-		hql.append(" JOIN p.fornecedores f ");
+		hql.append(" LEFT JOIN consolidado.cota c ");
+		hql.append(" LEFT JOIN consolidado.movimentos mfc ");
+		hql.append(" LEFT JOIN mfc.movimentos mec ");		
+		hql.append(" LEFT JOIN mec.tipoMovimento tp ");		
+		hql.append(" LEFT JOIN mec.estoqueProdutoCota epc ");
+		hql.append(" LEFT JOIN epc.produtoEdicao pe ");
+		hql.append(" LEFT JOIN pe.produto p ");
+		hql.append(" LEFT JOIN p.fornecedores f ");
+		hql.append(" LEFT JOIN f.juridica juridica ");
 			
 
 		hql.append(" WHERE c.numeroCota =:numeroCota ");
@@ -133,7 +134,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
 		hql.append(" pe.desconto, ");
-		hql.append(" f.juridica.razaoSocial ");
+		hql.append(" juridica.razaoSocial ");
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
@@ -226,9 +227,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" LEFT JOIN pe.produto p ");
 		hql.append(" LEFT JOIN p.fornecedores f ");
 
-		hql.append(" WHERE cota.numeroCota =:numeroCota ");
-
-		hql.append(" and consolidado.dataConsolidado =:dataConsolidado ");
+		hql.append(" WHERE consolidado.id =:idConsolidado ");
 		hql.append(" and tp.grupoMovimentoEstoque =:grupoMovimentoEstoque ");
 		hql.append(" and mfc.tipoMovimento.grupoMovimentoFinaceiro =:grupoMovimentoFinanceiro ");
 
@@ -246,7 +245,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			hql.append(filtro.getOrdenacaoColuna().toString());			
 			
 			if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+				hql.append(" ").append(filtro.getPaginacao().getOrdenacao().toString());
 			}
 			
 		}
@@ -257,8 +256,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		getSession().createCriteria(hql.toString());
 
-		query.setParameter("numeroCota", filtro.getNumeroCota());
-		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
+		query.setParameter("idConsolidado", filtro.getIdConsolidado());
 		query.setParameter("grupoMovimentoEstoque",
 				GrupoMovimentoEstoque.VENDA_ENCALHE);
 		query.setParameter("grupoMovimentoFinanceiro",
@@ -289,10 +287,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" juridica.razaoSocial as nomeFornecedor, ");				
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");		
-		hql.append(" (pe.precoVenda  pe.desconto) as precoComDesconto, ");
+		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
 		hql.append(" ec.qtdePrevista as reparteSugerido, ");
 		hql.append(" ec.qtdeEfetiva as reparteFinal, ");
-
 		hql.append(" (ec.qtdePrevista - ec.qtdeEfetiva) as diferenca, ");
 		hql.append(" d.tipoDiferenca as motivo, ");		
 		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total ");
@@ -307,8 +304,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" JOIN mec.estudoCota ec ");
 		hql.append(" JOIN epc.produtoEdicao pe ");
 		
-		hql.append(" JOIN ec.rateiosDiferenca rd ");
-		hql.append(" JOIN rd.diferenca d ");
+		hql.append(" LEFT JOIN ec.rateiosDiferenca rd ");
+		hql.append(" LEFT JOIN rd.diferenca d ");
 			
 		hql.append(" JOIN pe.produto p ");
 		hql.append(" JOIN p.fornecedores f ");
@@ -320,7 +317,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		hql.append(" and consolidado.dataConsolidado =:dataConsolidado ");		
 		hql.append(" and tp.grupoMovimentoEstoque =:grupoMovimentoEstoque ");
-		//hql.append(" and mfc.tipoMovimento.grupoMovimentoFinaceiro =:grupoMovimentoFinanceiro ");
+		hql.append(" and mfc.tipoMovimento.grupoMovimentoFinaceiro =:grupoMovimentoFinanceiro ");
 		
 		hql.append(" GROUP BY	");
 		
@@ -394,10 +391,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-		//query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				EncalheCotaDTO.class));
+				ConsignadoCotaDTO.class));
 		
 		return query.list();
 		
