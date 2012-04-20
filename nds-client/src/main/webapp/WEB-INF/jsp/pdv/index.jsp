@@ -1,22 +1,10 @@
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
 <script type="text/javascript">
 
-var PDV = {
-		
-		popup_novoPdv:function() {
-			
-			$( "#dialog-pdv" ).dialog({
-				resizable: false,
-				height:600,
-				width:890,
-				modal: true
-			});
-		}		
-};
-
 $(".PDVsGrid").flexigrid({
-	
+	preProcess: PDV.executarPreProcessamento,
 	dataType : 'json',
 	colModel : [  {
 		display : 'Nome PDV',

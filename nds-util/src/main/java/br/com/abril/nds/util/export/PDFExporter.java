@@ -252,8 +252,6 @@ public class PDFExporter implements Exporter {
 		
 		document.add(new Paragraph("Itens Pesquisados", titleFont));
 		
-		//PdfPTable pdfTable = new PdfPTable(exportModel.getHeaders().size());
-		
 		PdfPTable pdfTable = new PdfPTable(this.getDataTableSize(exportModel));
 
 		pdfTable.setWidthPercentage(100F);
@@ -342,11 +340,15 @@ public class PDFExporter implements Exporter {
     		
         	this.createFooterSeparationLine(pdfTable, exportHeaders);
         	
+        	int footerCount = 0;
+        	
     		int cellNum = 0;
     		
     		int footerCellCount = 0;
     		
         	for (ExportFooter exportFooter : exportFooters) {
+        		
+        		footerCount++;
         		
         		if (exportFooter.getHeaderToAlign() != null 
         				&& !exportFooter.getHeaderToAlign().trim().isEmpty()) {
@@ -383,32 +385,28 @@ public class PDFExporter implements Exporter {
     				while (footerCellCount <= (cellNum - 1)) {
     				
     					PdfPCell emptyCell = new PdfPCell();
-    					
-    					if ((rowNum % 2) == 0) {
-    	        			
-    						emptyCell.setBackgroundColor(rowBaseColor);        			
-    	        		}
-    					
+
+    					emptyCell.setBackgroundColor(rowBaseColor);        			
+
     					pdfTable.addCell(emptyCell);
     					
     					footerCellCount++;
     				}
         		}
 
-        		if (!exportFooter.getLabel().trim().isEmpty()) {
+        		boolean hasLabel = !exportFooter.getLabel().trim().isEmpty();
+        		
+        		if (hasLabel) {
     				
         			PdfPCell footerLabelPdfCell = new PdfPCell();
         			   
-        			String label = StringUtils.defaultString(exportFooter.getLabel()) + ": ";
+        			String label = StringUtils.defaultString(exportFooter.getLabel());
         			
             		Paragraph footerLabelParagraph = new Paragraph(label, footerLabelFont);
             		
             		footerLabelPdfCell.addElement(footerLabelParagraph);
-            		
-            		if ((rowNum % 2) == 0) {
-	        			
-            			footerLabelPdfCell.setBackgroundColor(rowBaseColor);        			
-	        		}
+
+            		footerLabelPdfCell.setBackgroundColor(rowBaseColor);        			
             		
             		pdfTable.addCell(footerLabelPdfCell);
             		
@@ -423,19 +421,39 @@ public class PDFExporter implements Exporter {
         		
         		footerValuePdfCell.addElement(footerValueParagraph);
         		
-        		if ((rowNum % 2) == 0) {
-        			
-        			footerValuePdfCell.setBackgroundColor(rowBaseColor);        			
-        		}
-        		
+        		footerValuePdfCell.setBackgroundColor(rowBaseColor);        			
+
         		pdfTable.addCell(footerValuePdfCell);
         		
         		footerCellCount++;
-        	}
-        	
-        	if ((rowNum % 2) == 0) {
-        	
-        		pdfTable.getDefaultCell().setBackgroundColor(rowBaseColor);
+        		
+        		if (exportFooter.isVerticalPrinting()
+        				&& footerCount < exportFooters.size()) {
+
+        			pdfTable.completeRow();
+        			
+    				rowNum++;
+    				
+    				footerCellCount--;
+    				
+    				if (hasLabel) {
+    					
+    					footerCellCount--;
+    				}
+    				
+    				int newCellCount = 0;
+    				
+    				while (newCellCount <= (footerCellCount - 1)) {
+        				
+    					PdfPCell emptyCell = new PdfPCell();
+
+    					emptyCell.setBackgroundColor(rowBaseColor);        			
+
+    					pdfTable.addCell(emptyCell);
+    					
+    					newCellCount++;
+    				}
+    			}
         	}
         	
         	pdfTable.completeRow();
@@ -477,6 +495,11 @@ public class PDFExporter implements Exporter {
 				&& !exportModel.getFooters().isEmpty()) {
 			
 			for (ExportFooter exportFooter : exportModel.getFooters()) {
+				
+				if (exportFooter.isVerticalPrinting()) {
+					
+					continue;
+				}
 				
 				if (!exportFooter.getLabel().trim().isEmpty()) {
 					
