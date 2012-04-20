@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -401,13 +402,16 @@ public class ContaCorrenteCotaController {
 
 	}
 	
-	public void exportarEncalhe(FileType fileType) throws IOException {
+	public void exportarEncalhe(FileType fileType, Long idConsolidado) throws IOException {
+		ConsolidadoFinanceiroCota  consolidado =  consolidadoFinanceiroService.buscarPorId(idConsolidado);
 
 		FiltroConsolidadoEncalheCotaDTO filtro = this
 				.obterFiltroExportacaoEncalhe();
 
 		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService
 				.obterMovimentoEstoqueCotaEncalhe(filtro);
+		String cota = consolidado.getCota().getNumeroCota() + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(consolidado.getCota().getPessoa());
+		filtro.setCota(cota);
 		
 		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
 		
@@ -715,8 +719,10 @@ public class ContaCorrenteCotaController {
 		ConsolidadoFinanceiroCota  consolidado =  consolidadoFinanceiroService.buscarPorId(idConsolidado);
 		FiltroConsolidadoVendaCotaDTO filtro = new FiltroConsolidadoVendaCotaDTO();
 		filtro.setDataConsolidado(consolidado.getDataConsolidado());
-		filtro.setNumeroCota(consolidado.getCota().getNumeroCota());
-		filtro.setIdConsolidado(idConsolidado);				
+		
+		filtro.setIdConsolidado(idConsolidado);			
+		String cota = consolidado.getCota().getNumeroCota() + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(consolidado.getCota().getPessoa());
+		filtro.setCota(cota);
 		
 		List<VendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
@@ -745,6 +751,9 @@ public class ContaCorrenteCotaController {
 		FiltroConsolidadoConsignadoCotaDTO filtro = new FiltroConsolidadoConsignadoCotaDTO();
 		filtro.setDataConsolidado(consolidado.getDataConsolidado());
 		filtro.setNumeroCota(consolidado.getCota().getNumeroCota());
+		String cota = consolidado.getCota().getNumeroCota() + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(consolidado.getCota().getPessoa());
+		filtro.setCota(cota);
+		
 	//TODO: Consulta ira ser feita por ID	filtro.setIdConsolidado(idConsolidado);				
 		List<ConsignadoCotaDTO> listConsignadoCotaDTO =consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
 		

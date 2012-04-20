@@ -15,7 +15,7 @@ public class FooterTotalFornecedorVO implements Serializable {
 	private static final long serialVersionUID = -4248910091629744306L;
 	
 	
-	@Export(label = "Totais R$")
+	@Export(label = "Totais R$", printVertical = true)
 	private HashMap<String, BigDecimal> totais;
 	
 	public FooterTotalFornecedorVO() {

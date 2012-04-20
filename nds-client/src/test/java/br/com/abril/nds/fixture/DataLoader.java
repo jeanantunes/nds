@@ -572,11 +572,11 @@ public class DataLoader {
 	}
 	
 	private static void criarDadosContaCorrenteEncalhe(Session session) {		
-		massaDadosContaCorrenteEncalhe(session, tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroEnvioEncalhe);	
+		//massaDadosContaCorrenteEncalhe(session, tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroEnvioEncalhe);	
 	}
 	
 	private static void  criarDadosContaCorrenteVendaEncalhe(Session session){
-		//massaDadosContaCorrenteEncalhe(session, tipoMovimentoVendaEncalhe, tipoMovimentoFinanceiroCompraEncalhe);
+		massaDadosContaCorrenteEncalhe(session, tipoMovimentoVendaEncalhe, tipoMovimentoFinanceiroCompraEncalhe);
 	}
 	
 	private static void criarDadosContaCorrenteConsigando(Session session){

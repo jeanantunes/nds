@@ -13,8 +13,8 @@ public class FiltroConsolidadoVendaCotaDTO {
 	@Export(label="Data")
 	private Date dataConsolidado;
 	
-	@Export(label="Numero Cota")
-	private Integer numeroCota;	
+	@Export(label="Cota")
+	private String cota;	
 	
 	private Long idConsolidado;
 			
@@ -66,12 +66,14 @@ public class FiltroConsolidadoVendaCotaDTO {
 		this.dataConsolidado = dataConsolidado;
 	}
 
-	public Integer getNumeroCota() {
-		return numeroCota;
+	
+
+	public String getCota() {
+		return cota;
 	}
 
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
+	public void setCota(String cota) {
+		this.cota = cota;
 	}
 
 	public PaginacaoVO getPaginacao() {
@@ -99,7 +101,7 @@ public class FiltroConsolidadoVendaCotaDTO {
 		result = prime * result
 				+ ((dataConsolidado == null) ? 0 : dataConsolidado.hashCode());
 		result = prime * result
-				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+				+ ((cota == null) ? 0 : cota.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
@@ -121,10 +123,10 @@ public class FiltroConsolidadoVendaCotaDTO {
 				return false;
 		} else if (!dataConsolidado.equals(other.dataConsolidado))
 			return false;
-		if (numeroCota == null) {
-			if (other.numeroCota != null)
+		if (cota == null) {
+			if (other.cota != null)
 				return false;
-		} else if (!numeroCota.equals(other.numeroCota))
+		} else if (!cota.equals(other.cota))
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
