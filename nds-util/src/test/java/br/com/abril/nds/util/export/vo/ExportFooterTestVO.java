@@ -1,11 +1,10 @@
 package br.com.abril.nds.util.export.vo;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ExportFooterTestVO {
@@ -27,13 +26,10 @@ public class ExportFooterTestVO {
 	
 	@Export(label = "", alignment = Alignment.RIGHT, alignWithHeader = "Column10")
 	private BigDecimal totalColumn10;
-	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT)
-	private Map<String, BigDecimal> footerMap;
 
 	public ExportFooterTestVO(BigDecimal totalColumn5, BigDecimal totalColumn6,
 							  Long totalColumn7, Long totalColumn8, Integer totalColumn9,
-							  BigDecimal totalColumn10, Map<String, BigDecimal> footerMap) {
+							  BigDecimal totalColumn10) {
 		
 		this.totalColumn5 = totalColumn5;
 		this.totalColumn6 = totalColumn6;
@@ -41,7 +37,6 @@ public class ExportFooterTestVO {
 		this.totalColumn8 = totalColumn8;
 		this.totalColumn9 = totalColumn9;
 		this.totalColumn10 = totalColumn10;
-		this.footerMap = footerMap;
 	}
 
 	public BigDecimal getTotalColumn5() {
@@ -90,14 +85,6 @@ public class ExportFooterTestVO {
 
 	public void setTotalColumn10(BigDecimal totalColumn10) {
 		this.totalColumn10 = totalColumn10;
-	}
-
-	public Map<String, BigDecimal> getFooterMap() {
-		return footerMap;
-	}
-
-	public void setFooterMap(Map<String, BigDecimal> footerMap) {
-		this.footerMap = footerMap;
 	}
 
 }

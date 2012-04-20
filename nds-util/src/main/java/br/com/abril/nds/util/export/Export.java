@@ -17,6 +17,8 @@ public @interface Export {
 	
 	int exhibitionOrder() default 1000;
 	
+	boolean printVertical() default false;
+	
 	public enum Alignment {
 		
 		LEFT(0),
