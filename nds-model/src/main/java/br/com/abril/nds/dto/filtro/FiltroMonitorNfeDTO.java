@@ -61,8 +61,9 @@ public class FiltroMonitorNfeDTO implements Serializable {
 		SERIE("serie"),
 		EMISSAO("emissao"),
 		TIPO_EMISSAO("tipoEmissao"),
-		CNPJ_EMISSOR("cnpjEmissor"),
 		CNPJ_DESTINATARIO("cnpjDestinatario"),
+		CNPJ_REMETENTE("cnpjRemetente"),
+		CPF_REMETENTE("cpfRemetente"),
 		STATUS_NFE("statusNfe"),
 		TIPO_NFE("tipoNfe"),
 		MOVIMENTO_INTEGRACAO("movimentoIntegracao");		

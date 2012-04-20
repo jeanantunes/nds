@@ -208,14 +208,26 @@ var PainelMonitorNFE = {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'CNPJ Emissor',
-					name : 'cnpjEmissor',
+					display : 'CNPJ Destinatário',
+					name : 'cnpjDestinatario',
 					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'CNPJ Destinatário',
-					name : 'cnpjDestinatario',
+					display : 'CPF Destinatário',
+					name : 'cpfDestinatario',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'CNPJ Remetente',
+					name : 'cnpjRemetente',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'CPF Remetente',
+					name : 'cpfRemetente',
 					width : 100,
 					sortable : true,
 					align : 'left'

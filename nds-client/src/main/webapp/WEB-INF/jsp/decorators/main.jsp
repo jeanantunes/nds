@@ -307,7 +307,7 @@ fieldset label {
 									Antecipada</a>
 							</li>
 							<li>
-								<a href='<c:url value="/recolhimento/chamadao"/>'>Chamadão</a>
+								<a href='<c:url value="/devolucao/chamadao"/>'>Chamadão</a>
 							</li>
 							<li><a
 								href="Recolhimento/conferencia_encalhe_jornaleiro.htm">Conferência

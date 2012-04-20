@@ -44,7 +44,11 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			NfeDTO nfe = new NfeDTO();
 			
 			nfe.setCnpjDestinatario("000000000"+contador);
-			nfe.setCnpjEmissor("0000000"+contador);
+			nfe.setCpfDestinatario("0000000"+contador);
+
+			nfe.setCnpjRemetente("000000000"+contador);
+			nfe.setCpfRemetente("0000000"+contador);
+
 			nfe.setEmissao(new Date());
 			nfe.setTipoEmissao("tipoEmissao_");
 			nfe.setMovimentoIntegracao("movimento_");

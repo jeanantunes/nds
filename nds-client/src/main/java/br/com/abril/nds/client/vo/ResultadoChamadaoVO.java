@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -17,11 +19,14 @@ public class ResultadoChamadaoVO implements Serializable {
 	
 	private TableModel<CellModelKeyValue<ChamadaoVO>> tableModel;
 	
+	@Export(label = "Total Produtos", alignment=Alignment.CENTER, alignWithHeader = "Edição")
 	private Long qtdProdutosTotal;
 	
+	@Export(label = "Total Exemplares", alignment=Alignment.CENTER, alignWithHeader = "Reparte")
 	private BigDecimal qtdExemplaresTotal;
 	
-	private BigDecimal valorTotal;
+	@Export(label = "Total R$", alignment=Alignment.RIGHT, alignWithHeader = "Valor R$")
+	private String valorTotal;
 	
 	/**
 	 * Construtor padrão.
@@ -42,7 +47,7 @@ public class ResultadoChamadaoVO implements Serializable {
 	public ResultadoChamadaoVO(TableModel<CellModelKeyValue<ChamadaoVO>> tableModel,
 							   Long qtdProdutosTotal,
 							   BigDecimal qtdExemplaresTotal,
-							   BigDecimal valorTotal) {
+							   String valorTotal) {
 		
 		this.tableModel = tableModel;
 		this.qtdProdutosTotal = qtdProdutosTotal;
@@ -95,14 +100,14 @@ public class ResultadoChamadaoVO implements Serializable {
 	/**
 	 * @return the valorTotal
 	 */
-	public BigDecimal getValorTotal() {
+	public String getValorTotal() {
 		return valorTotal;
 	}
 
 	/**
 	 * @param valorTotal the valorTotal to set
 	 */
-	public void setValorTotal(BigDecimal valorTotal) {
+	public void setValorTotal(String valorTotal) {
 		this.valorTotal = valorTotal;
 	}
 
