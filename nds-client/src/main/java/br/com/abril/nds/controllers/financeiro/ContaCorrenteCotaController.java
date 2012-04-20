@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
+import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -400,15 +403,31 @@ public class ContaCorrenteCotaController {
 	}
 	
 	public void exportarEncalhe(FileType fileType) throws IOException {
-
 		FiltroConsolidadoEncalheCotaDTO filtro = this
 				.obterFiltroExportacaoEncalhe();
 
 		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService
 				.obterMovimentoEstoqueCotaEncalhe(filtro);
+		
+		
+		String nomeCota = cotaService.obterNomeResponsavelPorNumeroDaCota(filtro.getNumeroCota());
+		String cota = filtro.getNumeroCota() + " - " + nomeCota;
+		filtro.setCota(cota);
+		
+		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
+		
+		for(EncalheCotaDTO encalheCotaDTO: listaEncalheCota){
+			String key = encalheCotaDTO.getNomeFornecedor();
+			if(totais.containsKey(key)){				
+				totais.put(key, totais.get(key).add(encalheCotaDTO.getTotal()));				
+			}else{
+				totais.put(key, encalheCotaDTO.getTotal());
+			}
+		}
+		
 
 		FileExporter.to("encalhe-cota", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null, listaEncalheCota,
+				this.getNDSFileHeader(), filtro, new FooterTotalFornecedorVO(totais), listaEncalheCota,
 				EncalheCotaDTO.class, this.httpServletResponse);
 
 		result.use(Results.nothing());
@@ -701,29 +720,53 @@ public class ContaCorrenteCotaController {
 		ConsolidadoFinanceiroCota  consolidado =  consolidadoFinanceiroService.buscarPorId(idConsolidado);
 		FiltroConsolidadoVendaCotaDTO filtro = new FiltroConsolidadoVendaCotaDTO();
 		filtro.setDataConsolidado(consolidado.getDataConsolidado());
-		filtro.setNumeroCota(consolidado.getCota().getNumeroCota());
-		filtro.setIdConsolidado(idConsolidado);				
+		
+		filtro.setIdConsolidado(idConsolidado);			
+		String cota = consolidado.getCota().getNumeroCota() + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(consolidado.getCota().getPessoa());
+		filtro.setCota(cota);
 		
 		List<VendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
+		
+		
+		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
+		
+		for(VendaEncalheDTO encalheDTO: encalheDTOs){
+			String key = encalheDTO.getNomeFornecedor();
+			if(totais.containsKey(key)){				
+				totais.put(key, totais.get(key).add(encalheDTO.getTotal()));				
+			}else{
+				totais.put(key, encalheDTO.getTotal());
+			}
+		}
 		FileExporter.to("venda-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null,
+				this.getNDSFileHeader(), filtro, new FooterTotalFornecedorVO(totais),
 				encalheDTOs, VendaEncalheDTO.class,
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());
 	}
 	
-	public void exportarConsignadoCota(FileType fileType,Long idConsolidado) throws IOException{
-		ConsolidadoFinanceiroCota  consolidado =  consolidadoFinanceiroService.buscarPorId(idConsolidado);
-		FiltroConsolidadoConsignadoCotaDTO filtro = new FiltroConsolidadoConsignadoCotaDTO();
-		filtro.setDataConsolidado(consolidado.getDataConsolidado());
-		filtro.setNumeroCota(consolidado.getCota().getNumeroCota());
-	//TODO: Consulta ira ser feita por ID	filtro.setIdConsolidado(idConsolidado);				
+	public void exportarConsignadoCota(FileType fileType) throws IOException{
+		FiltroConsolidadoConsignadoCotaDTO filtro = (FiltroConsolidadoConsignadoCotaDTO) request.getSession().getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO);
+		String nomeCota = cotaService.obterNomeResponsavelPorNumeroDaCota(filtro.getNumeroCota());
+		String cota = filtro.getNumeroCota() + " - " + nomeCota;
+		filtro.setCota(cota);
+				
 		List<ConsignadoCotaDTO> listConsignadoCotaDTO =consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
 		
-		FileExporter.to("venda-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null,
+		for(ConsignadoCotaDTO consignadoDTO: listConsignadoCotaDTO){
+			String key = consignadoDTO.getNomeFornecedor();
+			if(totais.containsKey(key)){				
+				totais.put(key, totais.get(key).add(consignadoDTO.getTotal()));				
+			}else{
+				totais.put(key, consignadoDTO.getTotal());
+			}
+		}
+		
+		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, new FooterTotalFornecedorVO(totais),
 				listConsignadoCotaDTO, ConsignadoCotaDTO.class,
 				this.httpServletResponse);
 		

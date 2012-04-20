@@ -29,17 +29,17 @@ var vendaEncalhe = {
 					 for(var i= 1; i<table.rows.length;i++){
 						 table.deleteRow(i);
 					 }
+					 var row = table.rows[0];
+					 if(row.cells.length>1){
+				    	  row.deleteCell(2);
+					      row.deleteCell(1);
+				      }
 					 
 					 var primeira = true;
-					 for(var fornecedor in totalFonecedor){	
-					      var row;
+					 for(var fornecedor in totalFonecedor){						     
 					      if(primeira){
-					    	  row = table.rows[0];
 					    	  primeira = false;
-					    	  if(row.cells.length>1){
-						    	  row.deleteCell(2);
-							      row.deleteCell(1);
-						      }
+					    	  
 					      }else{					    	 
 					    	  row = table.insertRow(table.rows.length);
 					    	  row.insertCell(0);
