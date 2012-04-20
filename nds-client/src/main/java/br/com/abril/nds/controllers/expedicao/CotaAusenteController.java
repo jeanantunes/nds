@@ -52,7 +52,10 @@ public class CotaAusenteController {
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
 	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
 	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
+	private static final String ERRO_CANCELAR_COTA_AUSENTE = "Erro inesperado ao realizar cancelamento de cota ausente.";
 	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
+	private static final String SUCESSO_CANCELAR_COTA_AUSENTE = "Cancelamento de cota ausente realizado com sucesso.";
+	
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
 	@Autowired
@@ -221,18 +224,46 @@ public class CotaAusenteController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
+	/**
+	 * 
+	 * @param idCotaAusente
+	 */
 	public void cancelarCotaAusente(Long idCotaAusente) {
-		System.out.println("ID_COTA_AUSENTE" + idCotaAusente);
+				
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		try {
+		
+			cotaAusenteService.cancelarCotaAusente(idCotaAusente, getUsuario().getId());
+			
+			mensagens.add(SUCESSO_CANCELAR_COTA_AUSENTE);
+			
+		} catch(ValidacaoException e) {
+			mensagens.clear();
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;
+		
+		} catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_CANCELAR_COTA_AUSENTE);
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_CANCELAR_COTA_AUSENTE, e);
+		}
+		
+		Object[] retorno = new Object[2];
+		retorno[0] = mensagens;
+		retorno[1] = status;		
+		
+		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 		
-	@Post
-	public void gerarNovaCotaAusente(Integer numCota) {
-		
-		List<Integer> lista = new ArrayList<Integer>();
-		lista.add(numCota);
-		result.use(Results.json()).from(lista, "result").serialize();
-	}
-	
+	/**
+	 * Declara cota como ausente e envia seu reparte para suplementar
+	 * 
+	 * @param numCota - Número da Cota
+	 */
 	@Post
 	public void enviarParaSuplementar(Integer numCota) {
 	
@@ -245,7 +276,7 @@ public class CotaAusenteController {
 			if(numCota == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 						
-			cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCota, new Date(), this.getUsuario().getId());
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
@@ -276,6 +307,11 @@ public class CotaAusenteController {
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 
+	/**
+	 * Obtém movimentos para realização do Rateio
+	 * 
+	 * @param numCota
+	 */
 	@Post
 	public void carregarDadosRateio(Integer numCota) {
 		
@@ -285,10 +321,14 @@ public class CotaAusenteController {
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Realiza rateio preenchidos na tela
+	 * 
+	 * @param movimentos
+	 * @param numCota
+	 */
 	@Post
 	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, Integer numCota) {
-		//TODO
-		
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -298,8 +338,8 @@ public class CotaAusenteController {
 			
 			if(numCota == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
-						
-			cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+			
+			cotaAusenteService.declararCotaAusenteRatearReparte(numCota, new Date(), this.getUsuario().getId() , movimentos);
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			

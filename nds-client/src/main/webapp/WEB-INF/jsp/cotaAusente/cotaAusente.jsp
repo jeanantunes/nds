@@ -86,12 +86,9 @@ function popupNovaCotaAusente() {
 					exibirMensagemDialog("WARNING",["O campo \"Cota\" &eacute obrigat&oacuterio."]);	
 					return;
 				}
-												
-				$.postJSON("<c:url value='/cotaAusente/gerarNovaCotaAusente'/>", 
-						"numCota="+numCota, 
-						popupConfirmaAusenciaCota);
 				
-
+				popupConfirmaAusenciaCota(numCota);
+				
 				$("#idNovaCota").attr("value","");
 				$("#idNomeNovaCota").attr("value",""); 
 				$( this ).dialog( "close" );
@@ -458,12 +455,16 @@ function popup_alterar() {
 }	
 
 function retornoExlusaoCotaAusente(result) {
-	alert("retorno exclusao cota ausente");
+	
+	var mensagens = result[0];
+	var status = result[1];
+	
+	exibirMensagem(status, mensagens);
+	
+	$(".ausentesGrid").flexReload();
 }
 	
 function popup_excluir(idCotaAusente) {
-	
-		
 	
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,

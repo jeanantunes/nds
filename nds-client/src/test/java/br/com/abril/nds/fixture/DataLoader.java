@@ -667,12 +667,7 @@ public class DataLoader {
 		save(session, consolidadoFinanceiroCota);
 		
 	}
-	
-	
-	
-	
-	
-	
+		
 
 	private static void criarControleBaixaBancaria(Session session) {
 		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
