@@ -246,7 +246,9 @@ public class SociosController {
 			}
 		}
 		
-		if (socioCadastradoRemover != null){
+		if (socioCadastradoRemover != null && socioCadastradoRemover.getPessoa() != null && 
+				socioCadastradoRemover.getPessoa().getId() != null){
+			
 			Set<Long> sociosRemover = this.obterListaSociosRemoverSessao();
 			sociosRemover.add(socioCadastradoRemover.getPessoa().getId());
 			

@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -45,10 +47,15 @@ public class FileExporterTest {
 					"" + i, "" + i, "" + i, "" + i, "" + i));
 		}
 		
+		Map<String, BigDecimal> footerMap = new HashMap<String, BigDecimal>();
+		
+		footerMap.put("FC", new BigDecimal("100.00"));
+		footerMap.put("Dinap", new BigDecimal("200.00"));
+		
 		ExportFooterTestVO exportFooterTestVO = 
 			new ExportFooterTestVO(
 				new BigDecimal("999.99999"), new BigDecimal("999.99999"), 999L, 
-					999L, 999, new BigDecimal("999.99999"));
+					999L, 999, new BigDecimal("999.99999"), footerMap);
 		
 		FileExporter.to("teste", FileType.XLS).inOutputStream(
 			ndsFileHeader, exportFilterTestVO, exportFooterTestVO, 
@@ -151,10 +158,15 @@ public class FileExporterTest {
 					"" + i, "" + i, "" + i, "" + i, "" + i));
 		}
 		
+		Map<String, BigDecimal> footerMap = new HashMap<String, BigDecimal>();
+		
+		footerMap.put("FC", new BigDecimal("100.00"));
+		footerMap.put("Dinap", new BigDecimal("200.00"));
+		
 		ExportFooterTestVO exportFooterTestVO = 
 			new ExportFooterTestVO(
 				new BigDecimal("999.99999"), new BigDecimal("999.99999"), 999L, 
-					999L, 999, new BigDecimal("999.99999"));
+					999L, 999, new BigDecimal("999.99999"), footerMap);
 
 		exportParameters.setNdsFileHeader(ndsFileHeader);
 		exportParameters.setFilter(exportFilterTestVO);

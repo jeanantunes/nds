@@ -111,6 +111,14 @@ public class Distribuidor {
 	 */
 	@Column(name = "FATOR_RELANCAMENTO_PARCIAL", nullable = false)
 	private int fatorRelancamentoParcial;
+	
+	/**
+	 * Parametrização do contrato entre cota e distribuidor
+	 */
+	@OneToOne
+	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
+	private ParametroContratoCota parametroContratoCota;
+	
 
 	public Long getId() {
 		return id;
@@ -240,5 +248,21 @@ public class Distribuidor {
 	public void setFatorRelancamentoParcial(int fatorRelancamentoParcial) {
 		this.fatorRelancamentoParcial = fatorRelancamentoParcial;
 	}
+
+	/**
+	 * @return the parametroContratoCota
+	 */
+	public ParametroContratoCota getParametroContratoCota() {
+		return parametroContratoCota;
+	}
+
+	/**
+	 * @param parametroContratoCota the parametroContratoCota to set
+	 */
+	public void setParametroContratoCota(ParametroContratoCota parametroContratoCota) {
+		this.parametroContratoCota = parametroContratoCota;
+	}
+	
+
 	
 }
