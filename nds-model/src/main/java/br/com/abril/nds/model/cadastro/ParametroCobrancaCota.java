@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -56,6 +57,21 @@ public class ParametroCobrancaCota implements Serializable {
 	
 	@Embedded
 	private ContaBancaria contaBancariaCota;
+	
+	/**
+	 * Flag indicando se a cobrança é unificada por
+	 * Fornecedor
+	 */
+	@Column(name = "UNIFICA_COBRANCA_FORNECEDOR", nullable = false)
+	private boolean unificaCobrancaFornecedor;
+	
+	/**
+	 * Fornecedores para unificação das cobranças
+	 */
+	@OneToMany
+	@JoinTable(name = "PARAM_COBRANCA_COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "PARAM_COBRANCA_COTA_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
+	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	public Long getId() {
 		return id;
@@ -128,6 +144,22 @@ public class ParametroCobrancaCota implements Serializable {
 	
 	public void setContaBancariaCota(ContaBancaria contaBancariaCota) {
 		this.contaBancariaCota = contaBancariaCota;
+	}
+	
+	public boolean isUnificaCobrancaFornecedor() {
+		return unificaCobrancaFornecedor;
+	}
+	
+	public void setUnificaCobrancaFornecedor(boolean unificaCobrancaFornecedor) {
+		this.unificaCobrancaFornecedor = unificaCobrancaFornecedor;
+	}
+	
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+	
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
 	}
 
 }

@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -107,6 +108,14 @@ public class Cota implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "INICIO_ATIVIDADE", nullable = false)
 	private Date inicioAtividade;
+	
+	/**
+	 * Fornecedores associados à Cota
+	 */
+	@OneToMany
+	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
+	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
 	public Long getId() {
 		return id;
@@ -224,8 +233,6 @@ public class Cota implements Serializable {
 		this.parametroCobranca = parametroCobranca;
 	}
 	
-	
-
 	public List<RotaRoteiroOperacao> getRotaRoteiroOperacao() {
 		return rotaRoteiroOperacao;
 	}
@@ -256,6 +263,14 @@ public class Cota implements Serializable {
 	
 	public void setInicioAtividade(Date inicioAtividade) {
 		this.inicioAtividade = inicioAtividade;
+	}
+	
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+	
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
 	}
 
 	/**
