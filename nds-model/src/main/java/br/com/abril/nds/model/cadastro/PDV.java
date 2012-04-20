@@ -142,6 +142,12 @@ public class PDV implements Serializable {
 	@OneToMany(mappedBy = "pdv")
 	private Set<PeriodoFuncionamentoPDV> periodos = new HashSet<PeriodoFuncionamentoPDV>();
 	
+	/**
+	 * Características do PDV
+	 */
+	@Embedded
+	private CaracteristicasPDV caracteristicas;
+	
 	public Long getId() {
 		return id;
 	}
@@ -293,6 +299,14 @@ public class PDV implements Serializable {
 	
 	public void setPeriodos(Set<PeriodoFuncionamentoPDV> periodos) {
 		this.periodos = periodos;
+	}
+	
+	public CaracteristicasPDV getCaracteristicas() {
+		return caracteristicas;
+	}
+	
+	public void setCaracteristicas(CaracteristicasPDV caracteristicas) {
+		this.caracteristicas = caracteristicas;
 	}
 
 }
