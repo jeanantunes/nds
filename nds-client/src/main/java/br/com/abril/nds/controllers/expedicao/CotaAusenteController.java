@@ -53,9 +53,10 @@ public class CotaAusenteController {
 	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
 	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
 	private static final String ERRO_CANCELAR_COTA_AUSENTE = "Erro inesperado ao realizar cancelamento de cota ausente.";
+	private static final String ERRO_RATEIO = "Erro inesperado ao realizar rateio.";
 	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
 	private static final String SUCESSO_CANCELAR_COTA_AUSENTE = "Cancelamento de cota ausente realizado com sucesso.";
-	
+	private static final String SUCESSO_RATEIO = "Rateio realizado com sucesso.";
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
 	@Autowired
@@ -343,7 +344,7 @@ public class CotaAusenteController {
 			
 			cotaAusenteService.declararCotaAusenteRatearReparte(numCota, new Date(), this.getUsuario().getId() , movimentos);
 			
-			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
+			mensagens.add(SUCESSO_RATEIO);
 			
 		} catch(ValidacaoException e) {
 			mensagens.clear();
@@ -360,9 +361,9 @@ public class CotaAusenteController {
 			status=TipoMensagem.WARNING;
 		} catch(Exception e) {
 			mensagens.clear();
-			mensagens.add(ERRO_ENVIO_SUPLEMENTAR );
+			mensagens.add(ERRO_RATEIO );
 			status=TipoMensagem.ERROR;
-			LOG.error(ERRO_ENVIO_SUPLEMENTAR, e);
+			LOG.error(ERRO_RATEIO, e);
 		}
 		
 		Object[] retorno = new Object[2];
