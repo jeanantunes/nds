@@ -92,8 +92,13 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
+import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -489,6 +494,8 @@ public class DataLoader {
 		gerarCargaHistoricoSituacaoCota(session, 100);
 		
 		gerarCargaDadosConsultaEncalhe(session);
+		
+		gerarCargaDadosNotasFiscaisNFE(session);
 		
 		gerarEntregadores(session);
 		
@@ -2790,6 +2797,161 @@ public class DataLoader {
 				new BigDecimal(28), cotaMaria, StatusAprovacao.APROVADO, "Aprovado");
 		save(session, mec2);
 	    
+	}
+	
+	
+	private static void gerarCargaDadosNotasFiscaisNFE(Session session) {
+		
+		Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		save(session, boxNovo);
+		
+		Cota cotaJohnyConsultaEncalhe = null;
+		
+		PessoaFisica johnyDasNotas = Fixture.pessoaFisica(
+				"654.852.916-73",
+				"johny@discover.com.br", "Johny da Silva");
+		
+		save(session, johnyDasNotas);
+		
+		cotaJohnyConsultaEncalhe = Fixture.cota(2700, johnyDasNotas, SituacaoCadastro.ATIVO, box1);
+		
+		save(session, cotaJohnyConsultaEncalhe);
+		
+		ProdutoEdicao produtoEdicao91 = null;
+		ProdutoEdicao produtoEdicao92 = null;
+		ProdutoEdicao produtoEdicao93 = null;
+		
+		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
+		
+		Produto produto91 = Fixture.produto("00091", "Produto 91", "Produto 91", periodicidade, tipoProdutoRevista);
+		Produto produto92 = Fixture.produto("00092", "Produto 92", "Produto 92", periodicidade, tipoProdutoRevista);
+		Produto produto93 = Fixture.produto("00093", "Produto 93", "Produto 93", periodicidade, tipoProdutoRevista);
+		
+		produto91.addFornecedor(fornecedorDinap);
+		produto92.addFornecedor(fornecedorDinap);
+		produto93.addFornecedor(fornecedorDinap);
+		
+		save(session, produto91, produto92, produto93);
+
+		produtoEdicao91 = Fixture.produtoEdicao(91L, 10, 7,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), produto91);
+		
+		produtoEdicao91.setDesconto(BigDecimal.ZERO);
+
+		
+		produtoEdicao92 = Fixture.produtoEdicao(92L, 10, 7,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), produto92);
+		produtoEdicao92.setDesconto(BigDecimal.ONE);
+
+		
+		produtoEdicao93 = Fixture.produtoEdicao(93L, 10, 7,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), produto93);
+		produtoEdicao93.setDesconto(BigDecimal.ONE);
+
+		
+		save(session, produtoEdicao91, produtoEdicao92, produtoEdicao93);
+		
+		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = 
+				Fixture.notaFiscalEntradaFornecedorNFE(
+						cfop5102, 
+						fornecedorDinap.getJuridica(),
+						"11011110",
+						"11111000",
+						"11101011101",
+						fornecedorDinap,
+						StatusEmissaoNfe.NFE_AUTORIZADA,
+						TipoEmissaoNfe.CONTINGENCIA_DPEC,
+						
+						tipoNotaFiscalRecebimento,
+						
+						usuarioJoao, 
+						BigDecimal.TEN, 
+						BigDecimal.ZERO, 
+						BigDecimal.TEN,
+						true);
+		
+		save(session, notaFiscalEntradaFornecedorNFE);
+
+		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE = 
+				Fixture.itemNotaFiscal(
+						produtoEdicao91, 
+						usuarioJoao,
+						notaFiscalEntradaFornecedorNFE, 
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(50));
+		
+		save(session, itemNotaFiscalEntradaNFE);
+		
+		
+		///// ENTRADA COTA
+		
+		NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = 
+				Fixture.notaFiscalEntradaCotaNFE(
+						cfop5102, 
+						fornecedorDinap.getJuridica(),
+						"222220000202",
+						"220202022220",
+						"2000022",
+						cotaJohnyConsultaEncalhe,
+						StatusEmissaoNfe.NFE_AUTORIZADA,
+						TipoEmissaoNfe.CONTINGENCIA_DPEC,
+						
+						tipoNotaFiscalRecebimento,
+						
+						usuarioJoao, 
+						BigDecimal.TEN, 
+						BigDecimal.ZERO, 
+						BigDecimal.TEN,
+						true);
+		
+		
+		save(session, notaFiscalEntradaCotaNFE);
+
+		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
+				Fixture.itemNotaFiscal(
+						
+						produtoEdicao91, 
+						
+						usuarioJoao,
+						notaFiscalEntradaCotaNFE, 
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(50));
+		
+		save(session, itemNotaFiscalEntradaNFE_2);
+		
+		///// SAIDA FORNECEDOR
+	
+		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE = 
+				Fixture.notaFiscalSaidaFornecedorNFE(
+						cfop5102, 
+						fornecedorDinap.getJuridica(),
+						"33300003003",
+						"30300333330",
+						"0003303",
+						fornecedorDinap,
+						StatusEmissaoNfe.NFE_AUTORIZADA,
+						TipoEmissaoNfe.CONTINGENCIA_DPEC,
+						
+						tipoNotaFiscalRecebimento,
+						
+						usuarioJoao, 
+						BigDecimal.TEN, 
+						BigDecimal.ZERO, 
+						BigDecimal.TEN,
+						true);
+		
+		
+		save(session, notaFiscalSaidaFornecedorNFE);
+
+		ItemNotaFiscalSaida itemNotaFiscalSaida = 
+				Fixture.itemNotaFiscalSaida(produtoEdicao91, notaFiscalSaidaFornecedorNFE, BigDecimal.TEN);
+		
+		save(session, itemNotaFiscalSaida);
+		
 	}
 	
 	private static void gerarCargaDadosConsultaEncalhe(Session session) {

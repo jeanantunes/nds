@@ -70,6 +70,7 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name = "EMITIDA", nullable = false)
 	protected boolean emitida;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_EMISSAO_NFE")
 	private TipoEmissaoNfe tipoEmissaoNfe;
 	
@@ -80,6 +81,7 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name="MOVIMENTO_INTEGRACAO")
 	private String movimentoIntegracao;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name="STATUS_EMISSAO_NFE") 
 	private StatusEmissaoNfe statusEmissaoNfe;
 	

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -16,9 +17,95 @@ public class ViewNotaFiscal implements Serializable {
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@EmbeddedId
+	private ViewNotaFiscalPK pk = new ViewNotaFiscalPK();
+	
+	public static class ViewNotaFiscalPK implements Serializable{
+		
+		@Column(name = "NOTAS_DE")
+		private String notasDe;
+		
+		@Column(name = "DATA_EMISSAO")
+		private Date dataEmissao;
+		
+		@Column(name = "NUMERO")
+		private String numero;
+		
+		@Column(name = "SERIE")
+		private String serie;
 
-	@Column(name = "NOTAS_DE")
-	private String notasDe;
+		/**
+		 * Obtém notasDe
+		 *
+		 * @return String
+		 */
+		public String getNotasDe() {
+			return notasDe;
+		}
+
+		/**
+		 * Atribuí notasDe
+		 * @param notasDe 
+		 */
+		public void setNotasDe(String notasDe) {
+			this.notasDe = notasDe;
+		}
+
+		/**
+		 * Obtém dataEmissao
+		 *
+		 * @return Date
+		 */
+		public Date getDataEmissao() {
+			return dataEmissao;
+		}
+
+		/**
+		 * Atribuí dataEmissao
+		 * @param dataEmissao 
+		 */
+		public void setDataEmissao(Date dataEmissao) {
+			this.dataEmissao = dataEmissao;
+		}
+
+		/**
+		 * Obtém numero
+		 *
+		 * @return String
+		 */
+		public String getNumero() {
+			return numero;
+		}
+
+		/**
+		 * Atribuí numero
+		 * @param numero 
+		 */
+		public void setNumero(String numero) {
+			this.numero = numero;
+		}
+
+		/**
+		 * Obtém serie
+		 *
+		 * @return String
+		 */
+		public String getSerie() {
+			return serie;
+		}
+
+		/**
+		 * Atribuí serie
+		 * @param serie 
+		 */
+		public void setSerie(String serie) {
+			this.serie = serie;
+		}
+		
+		
+	}
+
 
 	@Column(name = "PESSOA_ID")
 	private Long idPessoa;
@@ -41,17 +128,12 @@ public class ViewNotaFiscal implements Serializable {
 	@Column(name = "FORNECEDOR_ID")
 	private Long idFornecedor;
 	
-	@Column(name = "DATA_EMISSAO")
-	private Date dataEmissao;
+
 	
 	@Column(name = "DATA_EXPEDICAO")
 	private Date dataExpedicao;
 	
-	@Column(name = "NUMERO")
-	private String numero;
-	
-	@Column(name = "SERIE")
-	private String serie;
+
 	
 	@Column(name = "CHAVE_ACESSO")
 	private String chaveAcesso;
@@ -105,20 +187,20 @@ public class ViewNotaFiscal implements Serializable {
 	private String statusEmissaoNfe;
 
 	/**
-	 * Obtém notasDe
+	 * Obtém pk
 	 *
-	 * @return String
+	 * @return ViewNotaFiscalPK
 	 */
-	public String getNotasDe() {
-		return notasDe;
+	public ViewNotaFiscalPK getPk() {
+		return pk;
 	}
 
 	/**
-	 * Atribuí notasDe
-	 * @param notasDe 
+	 * Atribuí pk
+	 * @param pk 
 	 */
-	public void setNotasDe(String notasDe) {
-		this.notasDe = notasDe;
+	public void setPk(ViewNotaFiscalPK pk) {
+		this.pk = pk;
 	}
 
 	/**
@@ -241,23 +323,6 @@ public class ViewNotaFiscal implements Serializable {
 	}
 
 	/**
-	 * Obtém dataEmissao
-	 *
-	 * @return Date
-	 */
-	public Date getDataEmissao() {
-		return dataEmissao;
-	}
-
-	/**
-	 * Atribuí dataEmissao
-	 * @param dataEmissao 
-	 */
-	public void setDataEmissao(Date dataEmissao) {
-		this.dataEmissao = dataEmissao;
-	}
-
-	/**
 	 * Obtém dataExpedicao
 	 *
 	 * @return Date
@@ -272,40 +337,6 @@ public class ViewNotaFiscal implements Serializable {
 	 */
 	public void setDataExpedicao(Date dataExpedicao) {
 		this.dataExpedicao = dataExpedicao;
-	}
-
-	/**
-	 * Obtém numero
-	 *
-	 * @return String
-	 */
-	public String getNumero() {
-		return numero;
-	}
-
-	/**
-	 * Atribuí numero
-	 * @param numero 
-	 */
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
-
-	/**
-	 * Obtém serie
-	 *
-	 * @return String
-	 */
-	public String getSerie() {
-		return serie;
-	}
-
-	/**
-	 * Atribuí serie
-	 * @param serie 
-	 */
-	public void setSerie(String serie) {
-		this.serie = serie;
 	}
 
 	/**

@@ -2,11 +2,15 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -23,7 +27,12 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
+import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -32,6 +41,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest {
 
+	private static Box box1;
 	
 	@Before
 	public void setUp() {
@@ -45,7 +55,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
 		save(box1);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
@@ -66,7 +76,6 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		cotaJohnyConsultaEncalhe = Fixture.cota(2593, johnyCE, SituacaoCadastro.ATIVO, box1);
 		save(cotaJohnyConsultaEncalhe);
-		
 		
 		ProdutoEdicao produtoEdicaoCE = null;
 		ProdutoEdicao produtoEdicaoCE_2 = null;
@@ -101,129 +110,181 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		save(produtoEdicaoCE, produtoEdicaoCE_2, produtoEdicaoCE_3);
 		
-		NotaFiscalEntradaFornecedor notaFiscalProdutoCE = 
-				Fixture.notaFiscalEntradaFornecedor(
+		gerarNotasFiscaisEletronicas(
+				cfop5102, 
+				cotaJohnyConsultaEncalhe, 
+				fornecedorDinap, 
+				tipoNotaFiscal,
+				usuarioJoao, 
+				produtoEdicaoCE, 
+				produtoEdicaoCE_2, 
+				produtoEdicaoCE_3);
+		
+	}
+	
+	private void gerarNotasFiscaisEletronicas(
+			CFOP cfop5102,
+			Cota cota,
+			Fornecedor fornecedorDinap, 
+			TipoNotaFiscal tipoNotaFiscal, 
+			Usuario usuarioJoao,
+			ProdutoEdicao produtoEdicaoCE, 
+			ProdutoEdicao produtoEdicaoCE_2,
+			ProdutoEdicao produtoEdicaoCE_3) {
+		
+		
+		///// ENTRADA FORNECEDOR
+		
+		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = 
+				Fixture.notaFiscalEntradaFornecedorNFE(
 						cfop5102, 
-						fornecedorDinap.getJuridica(), 
-						fornecedorDinap, 
+						fornecedorDinap.getJuridica(),
+						"11011110",
+						"11111000",
+						"11101011101",
+						fornecedorDinap,
+						StatusEmissaoNfe.NFE_AUTORIZADA,
+						TipoEmissaoNfe.CONTINGENCIA_DPEC,
 						tipoNotaFiscal,
 						usuarioJoao, 
 						BigDecimal.TEN, 
 						BigDecimal.ZERO, 
-						BigDecimal.TEN);
+						BigDecimal.TEN,
+						true);
 		
-		save(notaFiscalProdutoCE);
+		save(notaFiscalEntradaFornecedorNFE);
 
-		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE = 
+		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE = 
 				Fixture.itemNotaFiscal(
 						produtoEdicaoCE, 
 						usuarioJoao,
-						notaFiscalProdutoCE, 
+						notaFiscalEntradaFornecedorNFE, 
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),
 						TipoLancamento.LANCAMENTO,
 						new BigDecimal(50));
 		
-		save(itemNotaFiscalProdutoCE);
+		save(itemNotaFiscalEntradaNFE);
 		
 		
-		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE_2 = 
-				Fixture.itemNotaFiscal(
-						produtoEdicaoCE_2, 
-						usuarioJoao,
-						notaFiscalProdutoCE, 
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+		///// ENTRADA COTA
 		
-		save(itemNotaFiscalProdutoCE_2);
+		NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = 
+				Fixture.notaFiscalEntradaCotaNFE(
+						cfop5102, 
+						fornecedorDinap.getJuridica(),
+						"222220000202",
+						"220202022220",
+						"2000022",
+						cota,
+						StatusEmissaoNfe.NFE_AUTORIZADA,
+						TipoEmissaoNfe.CONTINGENCIA_DPEC,
+						tipoNotaFiscal,
+						usuarioJoao, 
+						BigDecimal.TEN, 
+						BigDecimal.ZERO, 
+						BigDecimal.TEN,
+						true);
 		
-		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE_3 = 
-				Fixture.itemNotaFiscal(
-						produtoEdicaoCE_3, 
-						usuarioJoao,
-						notaFiscalProdutoCE, 
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
 		
-		save(itemNotaFiscalProdutoCE_3);
+		save(notaFiscalEntradaCotaNFE);
 
+		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
+				Fixture.itemNotaFiscal(
+						produtoEdicaoCE, 
+						usuarioJoao,
+						notaFiscalEntradaCotaNFE, 
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(50));
+		
+		save(itemNotaFiscalEntradaNFE_2);
+		
+		///// SAIDA FORNECEDOR
+	
+		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE = 
+				Fixture.notaFiscalSaidaFornecedorNFE(
+						cfop5102, 
+						fornecedorDinap.getJuridica(),
+						"33300003003",
+						"30300333330",
+						"0003303",
+						fornecedorDinap,
+						StatusEmissaoNfe.NFE_AUTORIZADA,
+						TipoEmissaoNfe.CONTINGENCIA_DPEC,
+						tipoNotaFiscal,
+						usuarioJoao, 
+						BigDecimal.TEN, 
+						BigDecimal.ZERO, 
+						BigDecimal.TEN,
+						true);
 		
 		
+		save(notaFiscalSaidaFornecedorNFE);
+
+		ItemNotaFiscalSaida itemNotaFiscalSaida = 
+				Fixture.itemNotaFiscalSaida(produtoEdicaoCE, notaFiscalSaidaFornecedorNFE, BigDecimal.TEN);
 		
-		///////////////////////
-		
-		
-//		NotaFiscalEntradaCota notaFiscalEntradaCota = 
-//				Fixture.notaFiscal(
-//						cfop5102, 
-//						fornecedorDinap.getJuridica(), 
-//						fornecedorDinap, 
-//						tipoNotaFiscal,
-//						usuarioJoao, 
-//						BigDecimal.TEN, 
-//						BigDecimal.ZERO, 
-//						BigDecimal.TEN);
-//		
-//		save(notaFiscalProdutoCE);
-//
-//		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE = 
-//				Fixture.itemNotaFiscal(
-//						produtoEdicaoCE, 
-//						usuarioJoao,
-//						notaFiscalProdutoCE, 
-//						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-//						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-//						TipoLancamento.LANCAMENTO,
-//						new BigDecimal(50));
-//		
-//		save(itemNotaFiscalProdutoCE);
-//		
-//		
-//		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE_2 = 
-//				Fixture.itemNotaFiscal(
-//						produtoEdicaoCE_2, 
-//						usuarioJoao,
-//						notaFiscalProdutoCE, 
-//						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-//						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-//						TipoLancamento.LANCAMENTO,
-//						new BigDecimal(50));
-//		
-//		save(itemNotaFiscalProdutoCE_2);
-//		
-//		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE_3 = 
-//				Fixture.itemNotaFiscal(
-//						produtoEdicaoCE_3, 
-//						usuarioJoao,
-//						notaFiscalProdutoCE, 
-//						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-//						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-//						TipoLancamento.LANCAMENTO,
-//						new BigDecimal(50));
-//		
-//		save(itemNotaFiscalProdutoCE_3);
+		save(itemNotaFiscalSaida);
+
 		
 	}
-	
-
 	
 	
 	@Autowired
 	private ViewNotaFiscalRepository viewNotaFiscalRepository;
 	
 	@Test
-	public void test() {
+	public void pesquisarNotaFiscal_Todas() {
+		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		Assert.assertNotNull(lista);
+		Assert.assertEquals(3, lista.size());
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_DESTINATARIO);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_REMETENTE);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.MOVIMENTO_INTEGRACAO);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.NOTA);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.SERIE);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
 		
-		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
-		
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.STATUS_NFE);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_EMISSAO);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
+		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_NFE);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+
 		
 	}
 	
+	
+	@Test
+	public void pesquisarNotaFiscal_EntradaCota() {
+		
+		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+		filtro.setBox(box1.getCodigo());
+		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		Assert.assertNotNull(lista);
+		Assert.assertEquals(1, lista.size());
+		NfeDTO notaNFE = lista.get(0);
+		Assert.assertEquals("352.855.474-00", notaNFE.getCpfRemetente());
+		
+	}
 	
 	
 	private FiltroMonitorNfeDTO obterFiltroMonitorNfeDTO() {

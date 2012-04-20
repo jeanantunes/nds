@@ -6,7 +6,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
@@ -22,20 +21,20 @@ public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFis
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro) {
+	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro, boolean indEmitida) {
 		
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" SELECT ");	
 		
 		sql.append(" VIEW_NOTA_FISCAL.NUMERO as numero, 				");
-		sql.append(" VIEW_NOTA_FISCAL.SERIE as serie, 					");
+		sql.append(" VIEW_NOTA_FISCAL.SERIE as serie, 					"); 
 		sql.append(" VIEW_NOTA_FISCAL.DATA_EMISSAO as emissao, 			");
 		sql.append(" VIEW_NOTA_FISCAL.TIPO_EMISSAO_NFE as tipoEmissao, 	");
 		
 		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'SAIDA' 	AND PESSOA.TIPO = 'J' ) THEN PESSOA.CNPJ ELSE NULL END AS  cnpjDestinatario, 									");
 		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'ENTRADA'   AND PESSOA.TIPO = 'J' ) THEN PESSOA.CNPJ ELSE NULL END AS  cnpjRemetente, 									");
-		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'ENTRADA'   AND PESSOA.TIPO = 'F' ) THEN PESSOA.CPF  ELSE NULL END AS  cpfRementente, 									");
+		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'ENTRADA'   AND PESSOA.TIPO = 'F' ) THEN PESSOA.CPF  ELSE NULL END AS  cpfRemetente, 									");
 		
 		sql.append(" VIEW_NOTA_FISCAL.STATUS_EMISSAO_NFE as statusNfe,  ");
 		sql.append(" VIEW_NOTA_FISCAL.NOTAS_DE as tipoNfe, 				");
@@ -46,12 +45,22 @@ public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFis
 		sql.append(" INNER JOIN PESSOA ON  ");
 		sql.append(" ( VIEW_NOTA_FISCAL.PESSOA_ID = PESSOA.ID )  ");
 		
+		if(filtro.getBox()!=null) {
+
+			sql.append(" INNER JOIN COTA ON ");
+			sql.append(" (COTA.ID = VIEW_NOTA_FISCAL.COTA_ID) ");
+			
+			sql.append(" INNER JOIN BOX ON ");
+			sql.append(" (BOX.ID = COTA.BOX_ID) ");
+			
+		}
+		
 		sql.append(" where ");
 
 		sql.append(" VIEW_NOTA_FISCAL.EMITIDA = :emitida ");
 		
 		if(filtro.getBox()!=null) {
-			sql.append(" AND BOX.ID ??????");
+			sql.append(" AND BOX.CODIGO = :codigoBox ");
 		}
 
 		if(filtro.getDataInicial()!=null) {
@@ -120,7 +129,7 @@ public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFis
 						orderByColumn = " cnpjDestinatario ";
 						break;
 					case CNPJ_REMETENTE:
-						orderByColumn = " cnpjRemetente";
+						orderByColumn = " cnpjRemetente ";
 						break;
 					case CPF_REMETENTE:
 						orderByColumn = " cpfRemetente ";
@@ -149,30 +158,23 @@ public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFis
 		
 		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
 		
-		sql.append(" VIEW_NOTA_FISCAL.NUMERO as numero, 				");
-		sql.append(" VIEW_NOTA_FISCAL.SERIE as serie, 					");
-		sql.append(" VIEW_NOTA_FISCAL.DATA_EMISSAO as emissao, 			");
-		sql.append(" VIEW_NOTA_FISCAL.TIPO_EMISSAO_NFE as tipoEmissao, 	");
-		sql.append(" 'TODO OBTER CNPJ' as cpf, 							");
-		sql.append(" VIEW_NOTA_FISCAL.STATUS_EMISSAO_NFE as statusNfe,  ");
-		sql.append(" VIEW_NOTA_FISCAL.NOTAS_DE as tipoNfe, 				");
-		sql.append(" VIEW_NOTA_FISCAL.MOVIMENTO_INTEGRACAO as movimentoIntegracao ");
-		
 		sqlQuery.addScalar("numero");
 		sqlQuery.addScalar("serie");
 		sqlQuery.addScalar("emissao");
 		sqlQuery.addScalar("tipoEmissao");
+		sqlQuery.addScalar("cnpjDestinatario");
+		sqlQuery.addScalar("cnpjRemetente");
+		sqlQuery.addScalar("cpfRemetente");
 		sqlQuery.addScalar("statusNfe");
 		sqlQuery.addScalar("tipoNfe");
 		sqlQuery.addScalar("movimentoIntegracao");
 		
-		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));
+		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(NfeDTO.class));
 
-		
-		sqlQuery.setParameter("emitida", true);
+		sqlQuery.setParameter("emitida", indEmitida);
 		
 		if(filtro.getBox()!=null) {
-			sqlQuery.setParameter("box", filtro.getBox());
+			sqlQuery.setParameter("codigoBox", filtro.getBox());
 		}
 
 		if(filtro.getDataInicial()!=null) {

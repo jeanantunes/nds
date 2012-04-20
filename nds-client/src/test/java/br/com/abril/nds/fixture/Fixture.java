@@ -88,10 +88,16 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -730,6 +736,21 @@ public class Fixture {
 		return itemNotaFiscal;
 	}
 
+	public static ItemNotaFiscalSaida itemNotaFiscalSaida(
+			ProdutoEdicao produtoEdicao,
+			NotaFiscalSaida notaFiscal, 
+			BigDecimal qtde) {
+		
+		ItemNotaFiscalSaida itemNotaFiscal = new ItemNotaFiscalSaida();
+		
+		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
+		itemNotaFiscal.setQtde(qtde);
+		itemNotaFiscal.setNotaFiscal(notaFiscal);
+		
+		return itemNotaFiscal;
+		
+	}
+	
 	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
@@ -796,7 +817,139 @@ public class Fixture {
 
 		return notaFiscalFornecedor;
 	}
-
+	
+	public static NotaFiscalEntradaCota notaFiscalEntradaCotaNFE(
+			CFOP cfop,
+			PessoaJuridica emitente, 
+			String numero,
+			String serie,
+			String chaveAcesso,
+			Cota cota,
+			StatusEmissaoNfe statusEmissaoNfe,
+			TipoEmissaoNfe tipoEmissaoNfe,
+			TipoNotaFiscal tipoNotaFiscal,
+			Usuario usuario, 
+			BigDecimal valorBruto, 
+			BigDecimal valorDesconto, 
+			BigDecimal valorLiquido,
+			boolean indEmitida) {
+		
+		NotaFiscalEntradaCota notaFiscalEntradaCota = new NotaFiscalEntradaCota();
+		
+		notaFiscalEntradaCota.setCfop(cfop);
+		notaFiscalEntradaCota.setChaveAcesso(chaveAcesso);
+		notaFiscalEntradaCota.setDataEmissao(new Date());
+		notaFiscalEntradaCota.setDataExpedicao(new Date());
+		notaFiscalEntradaCota.setEmitente(emitente);
+		notaFiscalEntradaCota.setNumero(numero);
+		notaFiscalEntradaCota.setSerie(serie);
+		notaFiscalEntradaCota.setOrigem(Origem.INTERFACE);
+		notaFiscalEntradaCota.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
+		notaFiscalEntradaCota.setTipoNotaFiscal(tipoNotaFiscal);
+		notaFiscalEntradaCota.setUsuario(usuario);
+		notaFiscalEntradaCota.setCota(cota);
+		notaFiscalEntradaCota.setValorBruto(valorBruto);
+		notaFiscalEntradaCota.setValorDesconto(valorDesconto);
+		notaFiscalEntradaCota.setValorLiquido(valorLiquido);
+		notaFiscalEntradaCota.setStatusEmissaoNfe(statusEmissaoNfe);
+		notaFiscalEntradaCota.setTipoEmissaoNfe(tipoEmissaoNfe);
+		notaFiscalEntradaCota.setEmitida(indEmitida);
+		
+		return notaFiscalEntradaCota;
+		
+	}
+	
+	
+	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE(
+			CFOP cfop,
+			PessoaJuridica emitente, 
+			String numero,
+			String serie,
+			String chaveAcesso,
+			Fornecedor fornecedor,
+			StatusEmissaoNfe statusEmissaoNfe,
+			TipoEmissaoNfe tipoEmissaoNfe,
+			TipoNotaFiscal tipoNotaFiscal,
+			Usuario usuario, 
+			BigDecimal valorBruto, 
+			BigDecimal valorDesconto, 
+			BigDecimal valorLiquido,
+			boolean indEmitida) {
+		
+		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
+		
+		notaFiscalEntradaFornecedor.setCfop(cfop);
+		notaFiscalEntradaFornecedor.setChaveAcesso(chaveAcesso);
+		notaFiscalEntradaFornecedor.setDataEmissao(new Date());
+		notaFiscalEntradaFornecedor.setDataExpedicao(new Date());
+		notaFiscalEntradaFornecedor.setEmitente(emitente);
+		notaFiscalEntradaFornecedor.setNumero(numero);
+		notaFiscalEntradaFornecedor.setSerie(serie);
+		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
+		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
+		notaFiscalEntradaFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
+		notaFiscalEntradaFornecedor.setUsuario(usuario);
+		notaFiscalEntradaFornecedor.setFornecedor(fornecedor);
+		notaFiscalEntradaFornecedor.setValorBruto(valorBruto);
+		notaFiscalEntradaFornecedor.setValorDesconto(valorDesconto);
+		notaFiscalEntradaFornecedor.setValorLiquido(valorLiquido);
+		notaFiscalEntradaFornecedor.setStatusEmissaoNfe(statusEmissaoNfe);
+		notaFiscalEntradaFornecedor.setTipoEmissaoNfe(tipoEmissaoNfe);
+		notaFiscalEntradaFornecedor.setEmitida(indEmitida);
+		
+		return notaFiscalEntradaFornecedor;
+		
+	}
+	
+	
+	public static NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE(
+			CFOP cfop,
+			PessoaJuridica emitente, 
+			String numero,
+			String serie,
+			String chaveAcesso,
+			Fornecedor fornecedor,
+			StatusEmissaoNfe statusEmissaoNfe,
+			TipoEmissaoNfe tipoEmissaoNfe,
+			TipoNotaFiscal tipoNotaFiscal,
+			Usuario usuario, 
+			BigDecimal valorBruto, 
+			BigDecimal valorDesconto, 
+			BigDecimal valorLiquido,
+			boolean indEmitida) {
+		
+		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedor = new NotaFiscalSaidaFornecedor();
+		
+		notaFiscalSaidaFornecedor.setCfop(cfop);
+		notaFiscalSaidaFornecedor.setChaveAcesso(chaveAcesso);
+		notaFiscalSaidaFornecedor.setDataEmissao(new Date());
+		notaFiscalSaidaFornecedor.setDataExpedicao(new Date());
+		notaFiscalSaidaFornecedor.setEmitente(emitente);
+		notaFiscalSaidaFornecedor.setNumero(numero);
+		notaFiscalSaidaFornecedor.setSerie(serie);
+		
+		//notaFiscalSaidaFornecedor.setOrigem(Origem.INTERFACE);
+		
+		//notaFiscalSaidaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
+		
+		notaFiscalSaidaFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
+		
+		//notaFiscalSaidaFornecedor.setUsuario(usuario);
+		
+		notaFiscalSaidaFornecedor.setFornecedor(fornecedor);
+		notaFiscalSaidaFornecedor.setValorBruto(valorBruto);
+		notaFiscalSaidaFornecedor.setValorDesconto(valorDesconto);
+		notaFiscalSaidaFornecedor.setValorLiquido(valorLiquido);
+		notaFiscalSaidaFornecedor.setStatusEmissaoNfe(statusEmissaoNfe);
+		notaFiscalSaidaFornecedor.setTipoEmissaoNfe(tipoEmissaoNfe);
+		notaFiscalSaidaFornecedor.setEmitida(indEmitida);
+		
+		return notaFiscalSaidaFornecedor;
+		
+	}
+	
+	
+	
 	public static RecebimentoFisico recebimentoFisico(NotaFiscalEntradaFornecedor notaFiscalFornecedor, 
 													  Usuario usuario,
 													  Date dataRecebimento,
