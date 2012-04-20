@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.financeiro.SuspensaoCotaController.RodapeDTO;
 import br.com.abril.nds.dto.CotaAusenteDTO;
-import br.com.abril.nds.dto.CotaSuspensaoDTO;
-import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
@@ -29,13 +26,12 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -56,7 +52,11 @@ public class CotaAusenteController {
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
 	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
 	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
+	private static final String ERRO_CANCELAR_COTA_AUSENTE = "Erro inesperado ao realizar cancelamento de cota ausente.";
+	private static final String ERRO_RATEIO = "Erro inesperado ao realizar rateio.";
 	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
+	private static final String SUCESSO_CANCELAR_COTA_AUSENTE = "Cancelamento de cota ausente realizado com sucesso.";
+	private static final String SUCESSO_RATEIO = "Rateio realizado com sucesso.";
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
 	@Autowired
@@ -112,7 +112,7 @@ public class CotaAusenteController {
 		try {
 			Date data = validaData(dataAusencia);
 			
-			boolean isDataOperacao = isDataOperacao(data);
+			boolean isDataOperacao = DateUtil.isHoje(data);
 					
 			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
 					data, 
@@ -158,11 +158,8 @@ public class CotaAusenteController {
 		
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
-		try {
-			listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
+		
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
@@ -187,16 +184,7 @@ public class CotaAusenteController {
 		return tableModel;
 	}
 
-	private boolean isDataOperacao(Date data) {
-		
-		Long dia = 86400000L;
-		
-		if( (data.getTime()/dia) == (new Date().getTime()/dia) )
-			return true;
-		
-		return false;
-	}
-
+	
 	private Date validaData(String dataAusencia) {
 
 		if ( dataAusencia == null || dataAusencia.isEmpty())
@@ -234,18 +222,51 @@ public class CotaAusenteController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
+	/**
+	 * 
+	 * @param idCotaAusente
+	 */
 	public void cancelarCotaAusente(Long idCotaAusente) {
-		System.out.println("ID_COTA_AUSENTE" + idCotaAusente);
+				
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		try {
+		
+			cotaAusenteService.cancelarCotaAusente(idCotaAusente, getUsuario().getId());
+			
+			mensagens.add(SUCESSO_CANCELAR_COTA_AUSENTE);
+			
+		} catch(ValidacaoException e) {
+			mensagens.clear();
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;
+		
+		} catch(TipoMovimentoEstoqueInexistente e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.WARNING;
+			
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_CANCELAR_COTA_AUSENTE);
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_CANCELAR_COTA_AUSENTE, e);
+		}
+		
+		Object[] retorno = new Object[2];
+		retorno[0] = mensagens;
+		retorno[1] = status;		
+		
+		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 		
-	@Post
-	public void gerarNovaCotaAusente(Integer numCota) {
-		
-		List<Integer> lista = new ArrayList<Integer>();
-		lista.add(numCota);
-		result.use(Results.json()).from(lista, "result").serialize();
-	}
-	
+	/**
+	 * Declara cota como ausente e envia seu reparte para suplementar
+	 * 
+	 * @param numCota - Número da Cota
+	 */
 	@Post
 	public void enviarParaSuplementar(Integer numCota) {
 	
@@ -258,7 +279,7 @@ public class CotaAusenteController {
 			if(numCota == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 						
-			cotaAusenteService.declararCotaAusente(numCota, new Date(), null, this.getUsuario().getId());
+			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCota, new Date(), this.getUsuario().getId());
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
@@ -289,6 +310,11 @@ public class CotaAusenteController {
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 
+	/**
+	 * Obtém movimentos para realização do Rateio
+	 * 
+	 * @param numCota
+	 */
 	@Post
 	public void carregarDadosRateio(Integer numCota) {
 		
@@ -298,10 +324,53 @@ public class CotaAusenteController {
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Realiza rateio preenchidos na tela
+	 * 
+	 * @param movimentos
+	 * @param numCota
+	 */
 	@Post
-	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos) {
+	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, Integer numCota) {
 		
+		TipoMensagem status = TipoMensagem.SUCCESS;
 		
+		List<String> mensagens = new ArrayList<String>();
+		
+		try {
+			
+			if(numCota == null) 
+				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+			
+			cotaAusenteService.declararCotaAusenteRatearReparte(numCota, new Date(), this.getUsuario().getId() , movimentos);
+			
+			mensagens.add(SUCESSO_RATEIO);
+			
+		} catch(ValidacaoException e) {
+			mensagens.clear();
+			mensagens.addAll(e.getValidacao().getListaMensagens());
+			status=TipoMensagem.WARNING;
+		
+		} catch(InvalidParameterException e) {
+			mensagens.clear();
+			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
+			status=TipoMensagem.WARNING;			
+		}catch(TipoMovimentoEstoqueInexistente e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.WARNING;
+		} catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(ERRO_RATEIO );
+			status=TipoMensagem.ERROR;
+			LOG.error(ERRO_RATEIO, e);
+		}
+		
+		Object[] retorno = new Object[2];
+		retorno[0] = mensagens;
+		retorno[1] = status;		
+		
+		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 	
 	//TODO getRealUsuario
@@ -351,7 +420,7 @@ public class CotaAusenteController {
 		
 		List<CotaAusenteDTO> listaCotaAusente = cotaAusenteService.obterCotasAusentes(filtro) ;
 		
-		FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+		FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 				listaCotaAusente, CotaAusenteDTO.class, this.httpResponse);
 		
 		result.nothing();
