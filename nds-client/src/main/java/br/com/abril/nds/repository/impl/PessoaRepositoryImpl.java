@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -48,13 +49,21 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PessoaFisica> obterSociosPorFiador(Long idFiador){
+	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar){
 		
 		StringBuilder hql = new StringBuilder("select f.socios from Fiador f ");
 		hql.append(" where f.id = :idFiador ");
 		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			hql.append(" and f.pessoa.id not in (:idsIgnorar) ");
+		}
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idFiador", idFiador);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
 		
 		return query.list();
 	}

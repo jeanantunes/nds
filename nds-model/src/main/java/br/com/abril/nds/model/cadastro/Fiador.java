@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -46,7 +47,7 @@ public class Fiador implements Serializable {
 	@OneToMany(mappedBy = "fiador")
 	private List<Garantia> garantias;
 	
-	@OneToMany
+	@ManyToMany
 	@JoinTable(name = "FIADOR_SOCIO", joinColumns = {@JoinColumn(name = "FIADOR_ID")}, 
 									  inverseJoinColumns = {@JoinColumn(name = "SOCIO_ID")})
 	private List<Pessoa> socios;
