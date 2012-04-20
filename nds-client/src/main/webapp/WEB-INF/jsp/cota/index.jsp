@@ -1,5 +1,9 @@
 <head>
 <title>NDS - Novo Distrib</title>
+
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
+
+
 <script language="javascript" type="text/javascript">
 	
 	function popup_cnpj() {
@@ -118,6 +122,13 @@
 		$( "#tabpdv" ).tabs();
 	});
 	
+	function carregarPDV(){
+		
+		var idCota = 123;
+		
+		PDV.pesquisarPdvs(idCota);
+	}
+	
 </script>
 <style>
 
@@ -173,7 +184,7 @@
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
 			<li><a href="#tabpf-2" onclick="popularGridEnderecos()">EndereÃ§os</a></li>			
 			<li><a href="#tabpf-3" onclick="carregarTelefones()">Telefones</a></li>
-			<li><a href="#tabpf-4">PDV</a></li>
+			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
 			<li><a href="#tabpf-5">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
 			<li><a href="#tabpf-7">Distribuição</a></li>

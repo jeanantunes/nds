@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.devolucao;
+package br.com.abril.nds.controllers.recolhimento;
 
 import java.io.IOException;
 import java.math.BigDecimal;
