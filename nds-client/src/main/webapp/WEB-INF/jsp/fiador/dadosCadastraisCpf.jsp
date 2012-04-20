@@ -59,6 +59,8 @@
 				
 				if (result[0].tipoMensagem == "SUCCESS"){
 					$(janela).dialog("close");
+					$("#cpfFiador").removeAttr("disabled");
+					$("#cpfConjuge").removeAttr("disabled");
 				}
 			},
 			null,
@@ -94,8 +96,6 @@
 	$(function(){
 		$('[name="cpfFiador"]').mask("999.999.999-99");
 		$('[name="cpfConjuge"]').mask("999.999.999-99");
-		$('[name="rgFiador"]').mask("99.999.999-9");
-		$('[name="rgConjuge"]').mask("99.999.999-9");
 		$('[name="dataNascimentoFiadorCpf"]').mask("99/99/9999");
 		$('[name="dataNascimentoConjugeCpf"]').mask("99/99/9999");
 		$('[name="selectUfOrgaoEmiCpf"]').mask("aa");
@@ -168,8 +168,8 @@
 <table width="754" cellpadding="2" cellspacing="2" style="text-align: left;">
 	<tr class="inicioAtividade">
 		<td nowrap="nowrap"><strong>Início de Atividade:</strong></td>
-		<td class="inicioAtividadeNovo">${dataAtual}</td>
-		<td class="inicioAtividadeEdicao"></td>
+		<td class="inicioAtividadeNovo" style="display: none;">${dataAtual}</td>
+		<td class="inicioAtividadeEdicao" style="display: none;"></td>
 		<td>&nbsp;</td>
 		<td colspan="3">&nbsp;</td>
 	</tr>

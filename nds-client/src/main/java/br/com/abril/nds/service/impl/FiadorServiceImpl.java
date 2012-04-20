@@ -240,7 +240,7 @@ public class FiadorServiceImpl implements FiadorService {
 			fiador.getPessoa().setId(idPessoa);
 		} else {
 			
-			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaJuridica) fiador.getPessoa()).getCnpj());
+			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCNPJ(((PessoaJuridica) fiador.getPessoa()).getCnpj());
 			fiador.getPessoa().setId(idPessoa);
 		}
 		

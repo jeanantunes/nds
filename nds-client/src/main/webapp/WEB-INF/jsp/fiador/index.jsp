@@ -82,6 +82,9 @@
 								$("#dialog-close").dialog("close");
 								$("#dialog-fiador").dialog("close");
 								$("#dialog-cancelar-cadastro-fiador").dialog("close");
+								$("#cpfFiador").removeAttr("disabled");
+								$("#cpfConjuge").removeAttr("disabled");
+								$("#cnpjFiador").removeAttr("disabled");
 								
 								limparCamposCadastroFiador();
 							}
@@ -245,8 +248,8 @@
 			$.postJSON("<c:url value='/cadastro/fiador/editarFiador' />", "idFiador=" + idFiador, 
 				function(result) {
 					
-					$("#inicioAtividadeNovo").hide();
-					$("#inicioAtividadeEdicao").show();
+					$(".inicioAtividadeNovo").hide();
+					$(".inicioAtividadeEdicao").show();
 					
 					limparCamposCadastroFiador();
 				
@@ -286,6 +289,9 @@
 						} else {
 							$(".inicioAtividadeEdicao").text(result[12]);
 						}
+						
+						$("#cpfFiador").attr("disabled", true);
+						$("#cpfConjuge").attr("disabled", true);
 					} else {
 						
 						popupCadastroFiadorCNPJ();
@@ -296,6 +302,8 @@
 						$("#cnpjFiador").val(result[4]);
 						$("#emailFiadorCnpj").val(result[5]);
 						$(".inicioAtividadeEdicao").text(result[6]);
+						
+						$("#cnpjFiador").attr("disabled", true);
 					}
 				}
 			);
