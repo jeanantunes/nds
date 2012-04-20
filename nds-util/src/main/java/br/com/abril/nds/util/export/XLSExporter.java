@@ -323,7 +323,9 @@ public class XLSExporter implements Exporter {
 			return;
 		}
 		
-		Row row = sheet.createRow(lastRowNum + 2);
+		int newRowNum = lastRowNum + 2;
+		
+		Row row = sheet.createRow(newRowNum);
 		
 		int cellNum = 0;
 		
@@ -360,7 +362,9 @@ public class XLSExporter implements Exporter {
 				}
 			}
 			
-			if (!exportFooter.getLabel().trim().isEmpty()) {
+			boolean hasLabel = !exportFooter.getLabel().trim().isEmpty();
+			
+			if (hasLabel) {
 				
 				Cell labelCell = row.createCell(cellNum++);
 				
@@ -380,6 +384,18 @@ public class XLSExporter implements Exporter {
 			cell.setCellStyle(cellStyle);
 			
 			cellNum++;
+			
+			if (exportFooter.isVerticalPrinting()) {
+				
+				row = sheet.createRow(++newRowNum);
+				
+				cellNum--;
+				
+				if (hasLabel) {
+					
+					cellNum--;
+				}
+			}
 		}
 	}
 	
@@ -900,7 +916,10 @@ public class XLSExporter implements Exporter {
 	    style.setBorderLeft(CellStyle.BORDER_THIN);
 	    style.setLeftBorderColor(HSSFColor.BLACK.index);
 		
-	    style.setAlignment(this.getAlignment(alignment));
+	    if (!isLabel) {
+	    
+	    	style.setAlignment(this.getAlignment(alignment));
+	    }
 	    
 		style.setFont(this.getFont(sheet, "Calibri", (short) 11, isLabel, false));
 	    
