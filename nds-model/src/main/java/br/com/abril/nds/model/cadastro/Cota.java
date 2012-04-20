@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,11 +15,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 
@@ -50,6 +54,9 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao;
 	
+	@Column(name = "POSSUI_CONTRATO", nullable = false)
+	private boolean possuiContrato;
+	
 	@OneToMany(mappedBy = "cota")
 	private List<PDV> pdvs = new ArrayList<PDV>();
 
@@ -57,6 +64,9 @@ public class Cota implements Serializable {
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
 	
+	/**
+	 *Assumido como 'comissão' no 'cadastro cota cobrança'
+	 */
 	@Column(name  ="FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
 	
@@ -92,6 +102,21 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota")
 	private Set<EstoqueProdutoCota> estoqueProdutoCotas = new HashSet<EstoqueProdutoCota>();
 	
+	/**
+	 * Data de início de atividade da cota
+	 */
+	@Temporal(TemporalType.DATE)
+	@Column(name = "INICIO_ATIVIDADE", nullable = false)
+	private Date inicioAtividade;
+	
+	/**
+	 * Fornecedores associados à Cota
+	 */
+	@OneToMany
+	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
+	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -116,6 +141,18 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public boolean isPossuiContrato() {
+		return possuiContrato;
+	}
+
+	public void setPossuiContrato(boolean possuiContrato) {
+		this.possuiContrato = possuiContrato;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public List<PDV> getPdvs() {
 		return pdvs;
 	}
@@ -196,8 +233,6 @@ public class Cota implements Serializable {
 		this.parametroCobranca = parametroCobranca;
 	}
 	
-	
-
 	public List<RotaRoteiroOperacao> getRotaRoteiroOperacao() {
 		return rotaRoteiroOperacao;
 	}
@@ -220,6 +255,22 @@ public class Cota implements Serializable {
 
 	public void setEstoqueProdutoCotas(Set<EstoqueProdutoCota> estoqueProdutoCotas) {
 		this.estoqueProdutoCotas = estoqueProdutoCotas;
+	}
+	
+	public Date getInicioAtividade() {
+		return inicioAtividade;
+	}
+	
+	public void setInicioAtividade(Date inicioAtividade) {
+		this.inicioAtividade = inicioAtividade;
+	}
+	
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+	
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
 	}
 
 	/**

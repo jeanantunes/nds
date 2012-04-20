@@ -9,6 +9,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+/**
+ * Entidade para associação de endereço ao PDV
+ * 
+ * @author francisco.garcia
+ *
+ */
 @Entity
 @Table(name = "ENDERECO_PDV")
 @SequenceGenerator(name="ENDERECO_PDV_SEQ", initialValue = 1, allocationSize = 1)

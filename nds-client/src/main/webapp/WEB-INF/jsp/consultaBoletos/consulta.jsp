@@ -89,6 +89,8 @@
 		});
 		
 		$("#numCota").numeric();
+		$("#dataDe").mask("99/99/9999");
+		$("#dataAte").mask("99/99/9999");
 		
 		$("#descricaoCota").autocomplete({source: ""});
 		

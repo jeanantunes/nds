@@ -323,13 +323,16 @@ public class XLSExporter implements Exporter {
 			return;
 		}
 		
-		Row row = sheet.createRow(lastRowNum + 2);
+		int newRowNum = lastRowNum + 2;
+		
+		Row row = sheet.createRow(newRowNum);
 		
 		int cellNum = 0;
 		
 		for (ExportFooter exportFooter : footers) {
 			
-			if (!exportFooter.getHeaderToAlign().trim().isEmpty()) {
+			if (exportFooter.getHeaderToAlign() != null 
+					&& !exportFooter.getHeaderToAlign().trim().isEmpty()) {
 
 				Integer headerIndex = null; 
 				
@@ -359,7 +362,9 @@ public class XLSExporter implements Exporter {
 				}
 			}
 			
-			if (!exportFooter.getLabel().trim().isEmpty()) {
+			boolean hasLabel = !exportFooter.getLabel().trim().isEmpty();
+			
+			if (hasLabel) {
 				
 				Cell labelCell = row.createCell(cellNum++);
 				
@@ -379,6 +384,18 @@ public class XLSExporter implements Exporter {
 			cell.setCellStyle(cellStyle);
 			
 			cellNum++;
+			
+			if (exportFooter.isVerticalPrinting()) {
+				
+				row = sheet.createRow(++newRowNum);
+				
+				cellNum--;
+				
+				if (hasLabel) {
+					
+					cellNum--;
+				}
+			}
 		}
 	}
 	
@@ -626,9 +643,7 @@ public class XLSExporter implements Exporter {
 	    style.setTopBorderColor(HSSFColor.LIGHT_BLUE.index);
 	    
 	    style.setAlignment(this.getAlignment(alignment));
-	    
-	    style.setIndention((short) 2);
-	    
+
 	    Font font = this.getFont(sheet, "Arial", (short) 10, true, false);
 	    
 	    font.setColor(HSSFColor.WHITE.index);
@@ -901,7 +916,10 @@ public class XLSExporter implements Exporter {
 	    style.setBorderLeft(CellStyle.BORDER_THIN);
 	    style.setLeftBorderColor(HSSFColor.BLACK.index);
 		
-	    style.setAlignment(this.getAlignment(alignment));
+	    if (!isLabel) {
+	    
+	    	style.setAlignment(this.getAlignment(alignment));
+	    }
 	    
 		style.setFont(this.getFont(sheet, "Calibri", (short) 11, isLabel, false));
 	    

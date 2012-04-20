@@ -166,6 +166,57 @@ public class FiadorServiceImpl implements FiadorService {
 			}
 		}
 		
+		if (fiador.getPessoa() instanceof PessoaFisica){
+			
+			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaFisica) fiador.getPessoa()).getCpf());
+			fiador.getPessoa().setId(idPessoa);
+		} else {
+			
+			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCNPJ(((PessoaJuridica) fiador.getPessoa()).getCnpj());
+			fiador.getPessoa().setId(idPessoa);
+		}
+		
+		if (fiador.getPessoa() instanceof PessoaFisica){
+			if (((PessoaFisica) fiador.getPessoa()).getConjuge() != null){
+				((PessoaFisica) fiador.getPessoa()).getConjuge().setConjuge((PessoaFisica) fiador.getPessoa());
+			}
+		}
+		
+		if (fiador.getPessoa() instanceof PessoaJuridica){
+			this.processarSocios(fiador, sociosAdicionar, sociosRemover);
+		}
+		
+		if (fiador.getPessoa().getId() == null){
+			
+			this.pessoaRepository.adicionar(fiador.getPessoa());
+		} else {
+			
+			this.pessoaRepository.alterar(fiador.getPessoa());
+		}
+		
+		if (fiador.getId() == null){
+			
+			fiador.setInicioAtividade(new Date());
+			
+			this.fiadorRepository.adicionar(fiador);
+		} else {
+			
+			fiador.setInicioAtividade(this.fiadorRepository.buscarDataInicioAtividadeFiadorPorId(fiador.getId()));
+			
+			this.fiadorRepository.alterar(fiador);
+		}
+		
+		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
+		
+		this.processarTelefones(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
+		
+		this.processarGarantias(fiador, listaGarantiaAdicionar, listaGarantiaRemover);
+		
+		this.processarCotasAssociadas(fiador, listaCotas, listaCotasDesassociar);
+	}
+
+	private void processarSocios(Fiador fiador, List<Pessoa> sociosAdicionar, Set<Long> sociosRemover) {
+		
 		if (sociosAdicionar != null && !sociosAdicionar.isEmpty()){
 			
 			for (Pessoa socio : sociosAdicionar){
@@ -233,50 +284,6 @@ public class FiadorServiceImpl implements FiadorService {
 			
 			fiador.setSocios(sociosAdicionar);
 		}
-		
-		if (fiador.getPessoa() instanceof PessoaFisica){
-			
-			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaFisica) fiador.getPessoa()).getCpf());
-			fiador.getPessoa().setId(idPessoa);
-		} else {
-			
-			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaJuridica) fiador.getPessoa()).getCnpj());
-			fiador.getPessoa().setId(idPessoa);
-		}
-		
-		if (fiador.getPessoa() instanceof PessoaFisica){
-			if (((PessoaFisica) fiador.getPessoa()).getConjuge() != null){
-				((PessoaFisica) fiador.getPessoa()).getConjuge().setConjuge((PessoaFisica) fiador.getPessoa());
-			}
-		}
-		
-		if (fiador.getPessoa().getId() == null){
-			
-			this.pessoaRepository.adicionar(fiador.getPessoa());
-		} else {
-			
-			this.pessoaRepository.alterar(fiador.getPessoa());
-		}
-		
-		if (fiador.getId() == null){
-			
-			fiador.setInicioAtividade(new Date());
-			
-			this.fiadorRepository.adicionar(fiador);
-		} else {
-			
-			fiador.setInicioAtividade(this.fiadorRepository.buscarDataInicioAtividadeFiadorPorId(fiador.getId()));
-			
-			this.fiadorRepository.alterar(fiador);
-		}
-		
-		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
-		
-		this.processarTelefones(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
-		
-		this.processarGarantias(fiador, listaGarantiaAdicionar, listaGarantiaRemover);
-		
-		this.processarCotasAssociadas(fiador, listaCotas, listaCotasDesassociar);
 	}
 
 	private void processarEnderecos(Fiador fiador,
@@ -348,18 +355,23 @@ public class FiadorServiceImpl implements FiadorService {
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
-			listaEndereco.add(enderecoAssociacao.getEndereco());
+			if (enderecoAssociacao.getEndereco() != null){
+				listaEndereco.add(enderecoAssociacao.getEndereco());
+			}
 
 			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 			
-			if (enderecoFiador != null){
+			if (enderecoFiador != null && enderecoFiador.getEndereco() != null){
 				idsEndereco.add(enderecoFiador.getEndereco().getId());
 				
 				this.enderecoFiadorRepository.remover(enderecoFiador);
 			}
 		}
 		
-		this.enderecoRepository.removerEnderecos(idsEndereco);
+		if (listaEndereco != null && !listaEndereco.isEmpty()){
+		
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
 	}
 	
 	private void processarTelefones(Fiador fiador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,

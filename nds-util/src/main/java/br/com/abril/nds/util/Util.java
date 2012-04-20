@@ -198,22 +198,4 @@ public abstract class Util {
 		
 		return formatado.toString();
 	}
-	
-	public static String adicionarMascaraRG(String rg){
-		
-		if (rg == null){
-			return "";
-		}
-		
-		rg = rg.replace("-", "").replace(".", "");
-		
-		if (rg.length() < 9){
-			rg = Util.padLeft(rg, "0", 9);
-		}
-		
-		StringBuilder formatado = new StringBuilder();
-		formatado.append(rg.substring(0, 2)).append(".").append(rg.substring(2, 5)).append(".").append(rg.substring(5, 8)).append("-").append(rg.substring(8, 9));
-		
-		return formatado.toString();
-	}
 }

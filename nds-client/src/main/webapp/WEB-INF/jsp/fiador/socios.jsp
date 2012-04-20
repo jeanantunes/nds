@@ -133,6 +133,9 @@
 					
 					$("#btnAddEditarSocio").text("Incluir Novo");
 					
+					$('[name="cpfFiador"]:eq(1)').removeAttr("disabled");
+					$('[name="cpfConjuge"]:eq(1)').removeAttr("disabled");
+					
 					$("#idSocioEdicao").val("");
 				}
 			},
@@ -186,8 +189,25 @@
 					$("#idSocioEdicao").val(referencia);
 				}
 				
+				$('[name="cpfFiador"]:eq(1)').attr("disabled", true);
+				$('[name="cpfConjuge"]:eq(1)').attr("disabled", true);
+				
 				$("#btnAddEditarSocio").text("Editar");
 			}
+		);
+	}
+	
+	function removerSocio(referencia){
+		$.postJSON("<c:url value='/cadastro/fiador/removerSocio' />", "referencia=" + referencia, 
+			function(result) {
+				$(".sociosGrid").flexAddData({
+					page: 1, total: 1, rows: result.rows
+				});
+				
+				$("#btnAddEditarSocio").text("Incluir Novo");
+			},
+			null,
+			true
 		);
 	}
 </script>

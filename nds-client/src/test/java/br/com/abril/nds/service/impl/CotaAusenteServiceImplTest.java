@@ -84,10 +84,6 @@ public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 	}
-	
-	@Test	
-	public void cancelarCotaAusente(){		
-		cotaAusenteCotaService.cancelarCotaAusente(cotaAusente.getId(), user.getId());
-	}
+
 
 }

@@ -6,19 +6,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.util.PessoaUtil;
-import br.com.abril.nds.client.vo.CotaCobrancaVO;
 import br.com.abril.nds.client.vo.CotaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -37,42 +35,27 @@ public class CotaController {
 
 	@Autowired
 	private CotaService cotaService;
-	
-	@Autowired
-	private BancoService bancoService;
 
 	@Autowired
 	private HttpSession session;
 	
-	private static List<ItemDTO<Integer,String>> listaBancos =  new ArrayList<ItemDTO<Integer,String>>();
+	@Autowired
+	private FinanceiroController financeiroController;
 
-    private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
-    
-	
+
 	public CotaController(Result result) {
-
 		this.result = result;
 	}
 
+	
 	@Path("/")
 	public void index() {
-		listaBancos = this.bancoService.getComboBancos();
-		listaTiposCobranca = this.cotaService.getComboTiposCobranca();
-		result.include("listaBancos",listaBancos);
-		result.include("listaTiposCobranca",listaTiposCobranca);
+		
+		//Pré carregamento da aba "financeiro" 
+		this.financeiroController.preCarregamento();
 	}
 	
 	
-	
-	/*
-	@Post
-	@Path("/buscaComboBancos")
-	public void buscaComboBancos(TipoCobranca tipoCobranca){
-		listaBancos = this.cotaService.getComboBancosTipoCobranca(tipoCobranca);
-		result.include("listaBancos",listaBancos);
-	}
-    */
-
 
 	@Post
 	public void novaCota() { 
@@ -88,7 +71,6 @@ public class CotaController {
 	public void editarCota(Long idCota) { 
 
 		if (idCota == null) {
-
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
 		}
 
@@ -121,6 +103,9 @@ public class CotaController {
 		processarEnderecosCota(idCota);
 		
 		processarTelefonesCota(idCota);
+		
+		//Persiste os dados da aba "financeiro"
+		this.financeiroController.postarFinanceiro(idCota);
 		
 		this.result.nothing();
 	}
@@ -276,47 +261,5 @@ public class CotaController {
 	
 	
 	
-	
-	
-	
-	
-	
-	/**
-	 * Método responsável por obter os parametros de cobranca da Cota para a aba 'Financeiro'.
-	 * @param idCota
-	 */
-	@Post
-	@Path("/editarCotaCobranca")
-	public void editarCotaCobranca(Integer numeroCota){
-		
-		if (numeroCota==null){
-		    throw new ValidacaoException(TipoMensagem.WARNING, "informe a cota.");
-		}
-
-		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
-		CotaCobrancaVO cotaCobranca = this.cotaService.obterDadosCotaCobranca(cota);
-		
-		if (cotaCobranca==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} 
-		
-		result.use(Results.json()).from(cotaCobranca,"result").recursive().serialize();
-	}
-	
-	
-	
-	
-	
-	
-	
-	@Post
-	@Path("/postarCotaCobranca")
-	public void postarCotaCobranca(CotaCobrancaVO cotaCobranca){
-		
-	    this.cotaService.postarDadosCotaCobranca(cotaCobranca);
-		
-	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros de cobrança alterados com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
-	}
-
 	
 }

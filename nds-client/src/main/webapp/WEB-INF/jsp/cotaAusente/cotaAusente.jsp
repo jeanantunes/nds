@@ -5,6 +5,8 @@
 
 <script language="javascript" type="text/javascript">
 
+var numCotaAusente;
+
 $(function() {
 	$("#idNovaCota").numeric();
 	$("#idNomeNovaCota").autocomplete({source: ""});
@@ -86,12 +88,9 @@ function popupNovaCotaAusente() {
 					exibirMensagemDialog("WARNING",["O campo \"Cota\" &eacute obrigat&oacuterio."]);	
 					return;
 				}
-												
-				$.postJSON("<c:url value='/cotaAusente/gerarNovaCotaAusente'/>", 
-						"numCota="+numCota, 
-						popupConfirmaAusenciaCota);
 				
-
+				popupConfirmaAusenciaCota(numCota);
+				
 				$("#idNovaCota").attr("value","");
 				$("#idNomeNovaCota").attr("value",""); 
 				$( this ).dialog( "close" );
@@ -111,6 +110,8 @@ function popupNovaCotaAusente() {
 
 function popupConfirmaAusenciaCota(numcota) {
 	
+	numCotaAusente = numcota;
+	
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -122,6 +123,8 @@ function popupConfirmaAusenciaCota(numcota) {
 					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
 							"numCota="+numcota, 
 							retornoEnvioSuplementar);
+				
+					$( "#dialog-confirm" ).dialog("close");
 					
 				},
 				"Não": function() {
@@ -144,9 +147,23 @@ function retornoEnvioSuplementar(result) {
 	exibirMensagem(status, mensagens);
 	
 	$(".ausentesGrid").flexReload();
+}
+
+function retornoRateio(result) {
 	
-	$( "#dialog-confirm" ).dialog("close");
+	var mensagens = result[0];
+	var status = result[1];
 	
+	if(status == "SUCCESS") {
+	
+		exibirMensagem(status, mensagens);
+		
+		$(".ausentesGrid").flexReload();
+		
+		$( "#dialog-confirm" ).dialog("close");
+	} else {
+		exibirMensagemDialog(status, mensagens);
+	}
 }
 
 function gerarMovimentos(movimentos) {
@@ -376,7 +393,7 @@ function popupRateio(movimentos) {
 	mov = movimentos;
 	
 	gerarMovimentos(movimentos);
-		
+	
 		$( "#dialog-suplementar" ).dialog({
 			resizable: false,
 			height:450,
@@ -385,6 +402,15 @@ function popupRateio(movimentos) {
 			buttons: {
 				"Suplementar": function() {
 					
+					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
+							"numCota=" + numCotaAusente, 
+							retornoEnvioSuplementar);
+					
+					$( this ).dialog( "close" );
+					
+				},
+				"Redistribuir": function() {
+					
 					var parametros = getParametrosFromMovimentos();
 					
 					if(!parametros) {
@@ -392,14 +418,9 @@ function popupRateio(movimentos) {
 					}
 					
 					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
-							parametros);
+							parametros,
+							retornoRateio);
 					
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
-				},
-				"Redistribuir": function() {
 					$( this ).dialog( "close" );
 				}
 			}
@@ -428,6 +449,8 @@ function getParametrosFromMovimentos() {
 			});		
 		}
   	});
+	
+	parametros.push({name:'numCota', value: numCotaAusente});
 	
 	return parametros;
 }
@@ -458,12 +481,16 @@ function popup_alterar() {
 }	
 
 function retornoExlusaoCotaAusente(result) {
-	alert("retorno exclusao cota ausente");
+	
+	var mensagens = result[0];
+	var status = result[1];
+	
+	exibirMensagem(status, mensagens);
+	
+	$(".ausentesGrid").flexReload();
 }
 	
 function popup_excluir(idCotaAusente) {
-	
-		
 	
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -478,7 +505,6 @@ function popup_excluir(idCotaAusente) {
 							retornoExlusaoCotaAusente);
 					
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
 					
 				},

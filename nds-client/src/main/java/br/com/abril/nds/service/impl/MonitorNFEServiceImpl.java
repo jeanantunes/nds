@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -63,14 +65,15 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 	}
 	
-	private byte[] gerarDocumentoIreport(List<DanfeDTO> list) throws JRException{
-		
+	private byte[] gerarDocumentoIreport(List<DanfeDTO> list) throws JRException, URISyntaxException{
+
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
-		 Map<String, Object> map = null; //parametros
-		 
-		 return  JasperRunManager.runReportToPdf(Thread.currentThread().getContextClassLoader()
-				 	.getResource("/reports/danfe.jasper").getFile(), map, jrDataSource);
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/danfe.jasper");
+		
+		String path = url.toURI().getPath();
+		
+		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
 	}
 	
 }

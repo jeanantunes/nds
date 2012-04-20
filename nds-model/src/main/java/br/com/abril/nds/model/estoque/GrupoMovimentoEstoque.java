@@ -72,7 +72,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Restauração de reparte de cota ausente distribuidor
 	 */
-	REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR);
+	REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR),
+	
+	/**
+	 * Compra de encalhe da cota no distribuidor.
+	 */
+	COMPRA_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.COTA),
+	
+	/**
+	 * Venda de encalhe do distruibuidor para a cota.
+	 */
+	VENDA_ENCALHE(OperacaoEstoque.SAIDA,Dominio.DISTRIBUIDOR);
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

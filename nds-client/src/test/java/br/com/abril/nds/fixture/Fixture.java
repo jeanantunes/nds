@@ -502,6 +502,7 @@ public class Fixture {
 		cota.setBox(box);
 		ContratoCota contratoCota = criarContratoCota(cota, true);
 		cota.setContratoCota(contratoCota);
+		cota.setInicioAtividade(new Date());
 		return cota;
 	}
 
@@ -668,6 +669,24 @@ public class Fixture {
 		tipoMovimento.setDescricao("Envio Encalhe - Estoque");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+	
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Compra do Encalhe");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.COMPRA_ENCALHE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoVendaEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Venda Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
 	
 		return tipoMovimento;
 	}
@@ -1336,6 +1355,7 @@ public class Fixture {
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
 		consolidado.setTotal(valorConsolidado);
+		consolidado.setVendaEncalhe(valorConsolidado);
 		return consolidado;
 	}
 	
