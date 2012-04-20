@@ -136,6 +136,12 @@ public class PDV implements Serializable {
 	@Embedded
 	private LicencaMunicipal licencaMunicipal;
 	
+	/**
+	 * Períodos de funcionamento do PDV
+	 */
+	@OneToMany(mappedBy = "pdv")
+	private Set<PeriodoFuncionamentoPDV> periodos = new HashSet<PeriodoFuncionamentoPDV>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -279,6 +285,14 @@ public class PDV implements Serializable {
 	
 	public void setLicencaMunicipal(LicencaMunicipal licencaMunicipal) {
 		this.licencaMunicipal = licencaMunicipal;
+	}
+	
+	public Set<PeriodoFuncionamentoPDV> getPeriodos() {
+		return periodos;
+	}
+	
+	public void setPeriodos(Set<PeriodoFuncionamentoPDV> periodos) {
+		this.periodos = periodos;
 	}
 
 }
