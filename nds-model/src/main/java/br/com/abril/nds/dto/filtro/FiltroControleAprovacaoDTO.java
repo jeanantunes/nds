@@ -3,23 +3,19 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.vo.PaginacaoVO;
-
 /**
  * Data Transfer Object para filtro da pesquisa de 
  * controle de aprovação.
  * 
  * @author Discover Technology
  */
-public class FiltroControleAprovacaoDTO implements Serializable {
+public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializable {
 	
 	private static final long serialVersionUID = -6999848869244920043L;
 
 	private Date dataMovimento;
 	
 	private Long idTipoMovimento;
-	
-	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColunaControleAprovacao ordenacaoColuna;
 	
@@ -101,20 +97,6 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the paginacao
-	 */
-	public PaginacaoVO getPaginacao() {
-		return paginacao;
-	}
-
-	/**
-	 * @param paginacao the paginacao to set
-	 */
-	public void setPaginacao(PaginacaoVO paginacao) {
-		this.paginacao = paginacao;
-	}
-
-	/**
 	 * @return the ordenacaoColuna
 	 */
 	public OrdenacaoColunaControleAprovacao getOrdenacaoColuna() {
@@ -142,7 +124,7 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
-				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+				+ ((super.paginacao == null) ? 0 : super.paginacao.hashCode());
 		return result;
 	}
 
@@ -170,10 +152,10 @@ public class FiltroControleAprovacaoDTO implements Serializable {
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
-		if (paginacao == null) {
+		if (super.paginacao == null) {
 			if (other.paginacao != null)
 				return false;
-		} else if (!paginacao.equals(other.paginacao))
+		} else if (!super.paginacao.equals(other.paginacao))
 			return false;
 		return true;
 	}

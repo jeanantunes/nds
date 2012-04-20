@@ -496,6 +496,7 @@ public class Fixture {
 		cota.setBox(box);
 		ContratoCota contratoCota = criarContratoCota(cota, true);
 		cota.setContratoCota(contratoCota);
+		cota.setInicioAtividade(new Date());
 		return cota;
 	}
 

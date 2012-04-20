@@ -1,5 +1,7 @@
 <head>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+
 <script>
 
 	$(function() {
@@ -10,8 +12,8 @@
 	function iniciarGrid() {
 		
 		$(".chamadaoGrid").flexigrid({
-			url : '../xml/chamadao-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
@@ -38,7 +40,7 @@
 				align : 'right'
 			}, {
 				display : 'Desconto R$',
-				name : 'desconto',
+				name : 'valorDesconto',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -56,13 +58,13 @@
 				align : 'left'
 			}, {
 				display : 'Recolhimento',
-				name : 'recolhimento',
+				name : 'dataRecolhimento',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'valor',
+				name : 'valorTotal',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -70,7 +72,7 @@
 				display : ' ',
 				name : 'sel',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -86,7 +88,7 @@
 	
 	function iniciarData() {
 		
-		$( "#datepickerDe" ).datepicker({
+		$("#dataChamadao").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -103,7 +105,6 @@
 	}
 		
 	function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
@@ -125,20 +126,21 @@
 
 	function pesquisar() {
 		
-		var idTipoMovimento = $("#tipoMovimento").val();
-		var dataMovimento = $("#dataMovimento").val();
+		var numeroCota = $("#numeroCota").val();
+		var dataChamadaoFormatada = $("#dataChamadao").val();
+		var idFornecedor = $("#idFornecedor").val();
 		
-		$(".solicitacoesAprovacao").flexOptions({
-			url: "<c:url value='/administracao/controleAprovacao/pesquisarAprovacoes' />",
-			onSuccess: executarAposProcessamento,
+		$(".chamadaoGrid").flexOptions({
+			url: "<c:url value='/recolhimento/chamadao/pesquisarConsignados' />",
 			params: [
-		         {name:'idTipoMovimento', value: idTipoMovimento},
-		         {name:'dataMovimentoFormatada', value: dataMovimento}
+		         {name:'numeroCota', value: numeroCota},
+		         {name:'dataChamadaoFormatada', value: dataChamadaoFormatada},
+		         {name:'idFornecedor', value: idFornecedor}
 		    ],
 		    newp: 1,
 		});
 		
-		$(".solicitacoesAprovacao").flexReload();
+		$(".chamadaoGrid").flexReload();
 	}
 	
 	function executarPreProcessamento(resultado) {
@@ -157,15 +159,11 @@
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
-					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
-					  		  '</a>';
+			var inputCheck = '<input type = "checkbox" id = "ch' + index +
+							 '" name = "ch' + index +
+							 '" onclick = "calcularTotalCota(' + index + ')" />';
 			
-			var linkRejeitar = '<a href="javascript:;" onclick="rejeitarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
-							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
-							   '</a>';
-			
-			row.cell.acao = linkAprovar + linkRejeitar;
+			row.cell.sel = inputCheck;
 		});
 			
 		$(".grids").show();
@@ -190,21 +188,31 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   			<tr>
 			    <td width="29">Cota:</td>
-			    <td width="98"><input type="text" name="cota" id="cota" style="width:70px; float:left; margin-right:5px;" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+			    <td width="98">
+			    	<input type="text" name="numeroCota" id="numeroCota" style="width:70px; float:left;
+						   margin-right:5px;" onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');" />
+			    </td>
 			    <td width="38">Nome:</td>
-			    <td width="178">Antonio José da Silva</td>
+			    <td width="178">
+			    	<input name="descricaoCota" id="descricaoCota" type="text"
+		      		 	   class="nome_jornaleiro" maxlength="255" style="width:130px;"
+		      		 	   onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
+		      		 	   onblur="cota.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" />
+		      	</td>
 			    <td width="96">Data Chamadão:</td>
-			    <td width="102"><input type="text" name="datepickerDe" id="datepickerDe" style="width:70px; float:left; margin-right:5px;" /></td>
+			    <td width="102">
+			    	<input type="text" name="dataChamadao" id="dataChamadao" style="width:70px; float:left; margin-right:5px;" />
+			    </td>
 			    <td width="68">Fornecedor:</td>
 			    <td width="191">
-			   		<select name="select" id="select" style="width:190px;">
-      					<option selected="selected"> </option>
-						<option>Todos</option>
-					    <option>Dinap</option>
-					    <option>FC</option>
+			   		<select name="idFornecedor" id="idFornecedor" style="width:190px;">
+      					<option selected="selected" value="">Todos</option>
+						<c:forEach var="fornecedor" items="${listaFornecedores}">
+							<option value="${fornecedor.key}">${fornecedor.value}</option>
+						</c:forEach>
     				</select>
     			</td>
-    			<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+    			<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
   			</tr>
 		</table>
 	</fieldset>
@@ -226,9 +234,19 @@
 							  src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
 						</span>
 	
-	      				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	      				<span class="bt_novos" title="Gerar Arquivo">
+	      					<a href="${pageContext.request.contextPath}/recolhimento/chamadao/exportar?fileType=XLS">
+								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+								Arquivo
+							</a>
+	      				</span>
 	
-						<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+						<span class="bt_novos" title="Imprimir">
+							<a href="${pageContext.request.contextPath}/recolhimento/chamadao/exportar?fileType=PDF">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+								Imprimir
+							</a>
+						</span>
 					</td>
 	      				
 	      			<td width="458">
