@@ -17,6 +17,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
+ * Entidade que representa o PDV associado
+ * a uma cota
  * @author francisco.garcia
  * @version 1.0
  * @created 14-fev-2012 11:35:32
@@ -36,10 +38,6 @@ public class PDV implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_PDV", nullable = false)
-	private TipoPDV tipoPDV;
-	
 	@Column(name = "PRINCIPAL", nullable = false)
 	private boolean principal;
 	
@@ -47,8 +45,18 @@ public class PDV implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
+	/**
+	 * Status do PDV
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_PDV", nullable = false)
+	private StatusPDV status;
+	
 	@OneToMany(mappedBy = "pdv")
 	private Set<EnderecoPDV> enderecos = new HashSet<EnderecoPDV>();
+	
+	@OneToMany(mappedBy = "pdv")
+	private Set<TelefonePDV> telefones = new HashSet<TelefonePDV>();
 	
 	public Long getId() {
 		return id;
@@ -56,14 +64,6 @@ public class PDV implements Serializable {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public TipoPDV getTipoPDV() {
-		return tipoPDV;
-	}
-	
-	public void setTipoPDV(TipoPDV tipoPDV) {
-		this.tipoPDV = tipoPDV;
 	}
 	
 	public boolean isPrincipal() {
@@ -88,6 +88,22 @@ public class PDV implements Serializable {
 	
 	public void setEnderecos(Set<EnderecoPDV> enderecos) {
 		this.enderecos = enderecos;
+	}
+	
+	public StatusPDV getStatus() {
+		return status;
+	}
+	
+	public void setStatus(StatusPDV status) {
+		this.status = status;
+	}
+	
+	public Set<TelefonePDV> getTelefones() {
+		return telefones;
+	}
+	
+	public void setTelefones(Set<TelefonePDV> telefones) {
+		this.telefones = telefones;
 	}
 
 }
