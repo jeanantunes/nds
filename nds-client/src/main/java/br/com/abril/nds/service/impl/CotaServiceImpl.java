@@ -413,5 +413,13 @@ public class CotaServiceImpl implements CotaService {
 		return this.cotaRepository.obterCotaAssociadaFiador(idFiador);
 	}
 
-	
+	/**
+	 * @see br.com.abril.nds.service.CotaService#obterCotaPDVPorNumeroDaCota(java.lang.Integer)
+	 */
+	@Override
+	@Transactional
+	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
+
+		return this.cotaRepository.obterCotaPDVPorNumeroDaCota(numeroCota);
+	}
 }

@@ -4,12 +4,15 @@ import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 
 public class EntregadorPessoaFisicaVO implements Serializable {
 
 	private static final long serialVersionUID = -8851435607582630245L;
 
 	private Entregador entregador;
+	
+	private ProcuracaoEntregador procuracaoEntregador;
 	
 	private PessoaFisica pessoaFisica;
 
@@ -26,6 +29,20 @@ public class EntregadorPessoaFisicaVO implements Serializable {
 	public void setEntregador(Entregador entregador) {
 		this.entregador = entregador;
 	}
+	
+	/**
+	 * @return the procuracaoEntregador
+	 */
+	public ProcuracaoEntregador getProcuracaoEntregador() {
+		return procuracaoEntregador;
+	}
+
+	/**
+	 * @param procuracaoEntregador the procuracaoEntregador to set
+	 */
+	public void setProcuracaoEntregador(ProcuracaoEntregador procuracaoEntregador) {
+		this.procuracaoEntregador = procuracaoEntregador;
+	}
 
 	/**
 	 * @return the pessoaFisica
@@ -40,41 +57,4 @@ public class EntregadorPessoaFisicaVO implements Serializable {
 	public void setPessoaFisica(PessoaFisica pessoaFisica) {
 		this.pessoaFisica = pessoaFisica;
 	}
-	
-//	private Long id;
-//	
-//	private String codigo;
-//	
-//	private String email;
-//	
-//	private String inicioAtividade;
-//	
-//	private boolean comissionado;
-//	
-//	private String percentualComissao;
-//
-//	private boolean procuracao;
-//
-//	private String nome;
-//	
-//	private String cpf;
-//	
-//	private String rg;
-//	
-//	private String orgaoEmissor;
-//	
-//	private String ufOrgaoEmissor;
-//	
-//	private Date dataNascimento;
-//	
-//	private EstadoCivil estadoCivil;
-//	
-//	private Sexo sexo;
-//	
-//	private String nacionalidade;
-//	
-//	private String natural;
-//	
-//	private String apelido;
-	
 }
