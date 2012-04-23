@@ -1,5 +1,9 @@
 <head>
 <title>NDS - Novo Distrib</title>
+
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
+
+
 <script language="javascript" type="text/javascript">
 	
 	function popup_cnpj() {
@@ -27,11 +31,24 @@
 		
 		limparFormEndereco();
 		limparCamposTelefone();
+
 	}
 
 	function editarCota() {
 		
 		var idCota = prompt("Digite o id da cota a ser editada.");
+		
+		if (idCota) {
+			
+			popup_cpf(idCota);
+			
+			$("#_idCotaRef").val(idCota);
+		}
+	}
+	
+    function novaCota() {
+		
+		var idCota = prompt("Digite o id da nova cota.");
 		
 		if (idCota) {
 			
@@ -62,7 +79,7 @@
 		$( "#dialog-cpf" ).dialog({
 			resizable: false,
 			height:640,
-			width:840,
+			width:950,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -114,14 +131,27 @@
 		$( "#tabpf" ).tabs();
 		
 		$( "#tabpj" ).tabs();
+		
+		$( "#tabpdv" ).tabs();
 	});
+	
+	function carregarPDV(){
+		
+		var idCota = 123;
+		
+		PDV.pesquisarPdvs(idCota);
+	}
 	
 </script>
 <style>
 
 	.diasFunc label, .finceiro label, .materialPromocional label{ vertical-align:super;}
 	.complementar label, .distribuicao label{ vertical-align:super; margin-right:5px; margin-left:5px;}
-
+	
+	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
+	
+	
+		
 </style>
 
 </head>
@@ -137,14 +167,14 @@
 		</div>
 
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="popup_cpf();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CPF
+			<a href="javascript:;" onclick="novaCota();">
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo CPF
 			</a>
 		</span>
 		
 		<span class="bt_novos" title="Novo">
 			<a href="javascript:;" onclick="editarCota();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar PF
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar CPF
 			</a>
 		</span>
 
@@ -167,27 +197,36 @@
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
 			<li><a href="#tabpf-2" onclick="popularGridEnderecos()">Endereços</a></li>			
 			<li><a href="#tabpf-3" onclick="carregarTelefones()">Telefones</a></li>
-			<li><a href="#tabpf-4">PDV</a></li>
+			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
 			<li><a href="#tabpf-5">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
 			<li><a href="#tabpf-7">Distribuição</a></li>
+			<li><a href="#tabpf-8">Fornecedor</a></li>
 			</ul>
 		
 			<div id="tabpf-1"> </div>
 			
 			<div id="tabpf-2">
-			
 				<jsp:include page="../endereco/index.jsp"></jsp:include>
-	
 			</div>
 			
 			<div id="tabpf-3">
 				<jsp:include page="../telefone/index.jsp"></jsp:include>
 			</div>
-			<div id="tabpf-4"> </div>
-			<div id="tabpf-5"> </div>
+
+			<div id="tabpf-4">
+				 <jsp:include page="../pdv/index.jsp"></jsp:include>
+			</div> 
+
+			<div id="tabpf-5"> 
+			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
+			</div>
+			
 			<div id="tabpf-6"> </div>
+			
 			<div id="tabpf-7"> </div>
+			
+			<div id="tabpf-8"> </div>
 		
 		</div>
 		

@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import br.com.abril.nds.dto.ResumoPeriodoLancamentoDTO;
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -99,14 +99,14 @@ public class MatrizLancamentoServiceImplTest {
 		List<DistribuicaoFornecedor> distribuicoes = Arrays.asList(
 				dinapSegunda, dinapQuarta, dinapSexta, fcSegunda, fcSexta);
 		Mockito.when(
-				distribuidorRepository.buscarDiasDistribuicao(fornecedores))
+				distribuidorRepository.buscarDiasDistribuicao(fornecedores, OperacaoDistribuidor.DISTRIBUICAO))
 				.thenReturn(distribuicoes);
 		List<Date> periodo = Arrays.asList(
 				Fixture.criarData(2, Calendar.MARCH, 2012),
 				Fixture.criarData(5, Calendar.MARCH, 2012),
 				Fixture.criarData(7, Calendar.MARCH, 2012));
 
-		List<ResumoPeriodoLancamentoDTO> resumos = new ArrayList<ResumoPeriodoLancamentoDTO>();
+		List<ResumoPeriodoBalanceamentoDTO> resumos = new ArrayList<ResumoPeriodoBalanceamentoDTO>();
 
 		Mockito.when(
 				lancamentoRepository
@@ -116,7 +116,7 @@ public class MatrizLancamentoServiceImplTest {
 		service.obterResumoPeriodo(dataInicial, fornecedores);
 
 		Mockito.verify(distribuidorRepository).buscarDiasDistribuicao(
-				fornecedores);
+				fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Mockito.verify(lancamentoRepository).buscarResumosPeriodo(periodo,
 				fornecedores, GrupoProduto.CROMO);
 	}

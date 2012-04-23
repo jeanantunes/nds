@@ -1,0 +1,68 @@
+package br.com.abril.nds.dto.filtro;
+
+import java.io.Serializable;
+
+public class FiltroPdvDTO implements Serializable {
+
+	/**
+	 * Serial UID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Long idCota;
+	
+	private ColunaOrdenacao colunaOrdenacao;
+	
+	public enum ColunaOrdenacao{
+		
+		NOME_PDV(""),
+		TIPO_PONTO(""),
+		CONTATO(""),
+		TELEFONE(""),
+		ENDERECO(""),
+		PRINCIPAL(""),
+		STATUS(""),
+		FATURAMENTO("");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacao(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+	}
+
+	/**
+	 * @return the idCota
+	 */
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	/**
+	 * @param idCota the idCota to set
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	/**
+	 * @return the colunaOrdenacao
+	 */
+	public ColunaOrdenacao getColunaOrdenacao() {
+		return colunaOrdenacao;
+	}
+
+	/**
+	 * @param colunaOrdenacao the colunaOrdenacao to set
+	 */
+	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
+		this.colunaOrdenacao = colunaOrdenacao;
+	}
+	
+	
+}

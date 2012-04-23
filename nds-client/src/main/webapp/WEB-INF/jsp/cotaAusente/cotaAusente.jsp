@@ -5,6 +5,8 @@
 
 <script language="javascript" type="text/javascript">
 
+var numCotaAusente;
+
 $(function() {
 	$("#idNovaCota").numeric();
 	$("#idNomeNovaCota").autocomplete({source: ""});
@@ -86,11 +88,11 @@ function popupNovaCotaAusente() {
 					exibirMensagemDialog("WARNING",["O campo \"Cota\" &eacute obrigat&oacuterio."]);	
 					return;
 				}
-												
-				$.postJSON("<c:url value='/cotaAusente/gerarNovaCotaAusente'/>", 
-						"numCota="+numCota, 
-						popupConfirmaAusenciaCota);
 				
+				popupConfirmaAusenciaCota(numCota);
+				
+				$("#idNovaCota").attr("value","");
+				$("#idNomeNovaCota").attr("value",""); 
 				$( this ).dialog( "close" );
 				
 			},
@@ -108,6 +110,8 @@ function popupNovaCotaAusente() {
 
 function popupConfirmaAusenciaCota(numcota) {
 	
+	numCotaAusente = numcota;
+	
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -119,6 +123,8 @@ function popupConfirmaAusenciaCota(numcota) {
 					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
 							"numCota="+numcota, 
 							retornoEnvioSuplementar);
+				
+					$( "#dialog-confirm" ).dialog("close");
 					
 				},
 				"Não": function() {
@@ -140,8 +146,24 @@ function retornoEnvioSuplementar(result) {
 	
 	exibirMensagem(status, mensagens);
 	
-	$( "#dialog-confirm" ).dialog("close");
+	$(".ausentesGrid").flexReload();
+}
+
+function retornoRateio(result) {
 	
+	var mensagens = result[0];
+	var status = result[1];
+	
+	if(status == "SUCCESS") {
+	
+		exibirMensagem(status, mensagens);
+		
+		$(".ausentesGrid").flexReload();
+		
+		$( "#dialog-confirm" ).dialog("close");
+	} else {
+		exibirMensagemDialog(status, mensagens);
+	}
 }
 
 function gerarMovimentos(movimentos) {
@@ -371,7 +393,7 @@ function popupRateio(movimentos) {
 	mov = movimentos;
 	
 	gerarMovimentos(movimentos);
-		
+	
 		$( "#dialog-suplementar" ).dialog({
 			resizable: false,
 			height:450,
@@ -380,6 +402,15 @@ function popupRateio(movimentos) {
 			buttons: {
 				"Suplementar": function() {
 					
+					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
+							"numCota=" + numCotaAusente, 
+							retornoEnvioSuplementar);
+					
+					$( this ).dialog( "close" );
+					
+				},
+				"Redistribuir": function() {
+					
 					var parametros = getParametrosFromMovimentos();
 					
 					if(!parametros) {
@@ -387,14 +418,9 @@ function popupRateio(movimentos) {
 					}
 					
 					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
-							parametros);
+							parametros,
+							retornoRateio);
 					
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
-				},
-				"Redistribuir": function() {
 					$( this ).dialog( "close" );
 				}
 			}
@@ -423,6 +449,8 @@ function getParametrosFromMovimentos() {
 			});		
 		}
   	});
+	
+	parametros.push({name:'numCota', value: numCotaAusente});
 	
 	return parametros;
 }
@@ -453,12 +481,16 @@ function popup_alterar() {
 }	
 
 function retornoExlusaoCotaAusente(result) {
-	alert("retorno exclusao cota ausente");
+	
+	var mensagens = result[0];
+	var status = result[1];
+	
+	exibirMensagem(status, mensagens);
+	
+	$(".ausentesGrid").flexReload();
 }
 	
 function popup_excluir(idCotaAusente) {
-	
-		
 	
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -473,7 +505,6 @@ function popup_excluir(idCotaAusente) {
 							retornoExlusaoCotaAusente);
 					
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
 					
 				},
@@ -643,7 +674,7 @@ function mostra_grid(){
                 <td width="296">
 <!-- NOME -->            
 <input id="idNomeCota" name="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
+	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
 		 	   onblur="cota.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
 	/>
 				</td>
@@ -666,11 +697,17 @@ function mostra_grid(){
           <br />
           <span class="bt_novos" title="Gerar Arquivo">
 <!-- ARQUIVO -->
-<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
+	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+	Arquivo
+</a></span>
 
 	<span class="bt_novos" title="Imprimir">
 <!-- IMPRIMIR -->	
-<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
+	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+	Imprimir
+</a></span>
 
         </div>
         <span class="bt_novos" title="Novo">

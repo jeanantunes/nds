@@ -115,7 +115,7 @@ $(function() {
 });
 
 	/**
-	 * Executa o pré processamento das informações retornadas da requisição de pesquisa.
+	 * Executa o pré processamento das informa��es retornadas da requisição de pesquisa.
 	 */
 	function executarPreProcessamento(resultado) {
 		
@@ -182,6 +182,9 @@ $(function() {
 		else if (tipoPesquisa === 'BOX'){
 			carregarGridbox(formData);
 			$("#gridProduto").hide();
+		}else{
+			var mensagens = new Array('Selecione um tipo de cosnulta!') ;
+			exibirMensagem('WARNING',mensagens);
 		}
 		
 		$("#dataLancamento").focus();
@@ -194,7 +197,7 @@ $(function() {
 	
 		$("#resumoExpedicaoGridProduto").flexOptions({
 			url: "<c:url value='/expedicao/resumo/pesquisar/produto' />",
-			params: formData
+			params: formData,newp: 1
 		});
 		
 		$("#resumoExpedicaoGridProduto").flexReload();
@@ -209,7 +212,7 @@ $(function() {
 	
 		$("#resumoExpedicaoGridBox").flexOptions({
 			url: "<c:url value='/expedicao/resumo/pesquisar/box' />",
-			params: formData
+			params: formData,newp: 1
 		});
 		
 		$("#resumoExpedicaoGridBox").flexReload();
@@ -248,7 +251,7 @@ $(function() {
 	}
 
   	/**
-  	 * Efetua a exportação dos dados da pesquisa.
+  	 * Efetua a exporta��o dos dados da pesquisa.
   	 */
 	function exportar(fileType) {
 
@@ -281,6 +284,7 @@ $(function() {
 	    <td width="91">Tipo Consulta:</td>
 	    <td width="180">
 	        <select name="tipoPesquisa" id="tipoPesquisa" style="width: 200px;" onchange="mudarLegendaFielsSet('idFiledResumo','pesquisar')">
+				<option selected="selected"></option>
 				<c:forEach var="tipoResumo" items="${listaTipoResumo}">
 					<option value="${tipoResumo.key}">${tipoResumo.value}</option>
 				</c:forEach>

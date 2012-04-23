@@ -12,7 +12,9 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -79,6 +81,14 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
 								     BigDecimal.TEN);
   		
   		save(bancoHSBC,bancoBB);
+  		
+  		
+  		//CRIA UM OBJETO FORMA DE COBRANCA BOLETO NA SESSAO PARA TESTES
+  		FormaCobranca formaCobranca = Fixture.formaCobrancaBoleto(false,
+  				BigDecimal.ZERO, false, bancoBB,
+  				BigDecimal.TEN, BigDecimal.ZERO);
+  		
+  		
   	}
   	
   	@Test
@@ -143,4 +153,12 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(carteira);
 		Assert.assertEquals(TipoRegistroCobranca.SEM_REGISTRO, carteira.getTipoRegistroCobranca());
 	}
+
+
+	@Test
+  	public void getComboBancosTipoCobranca(){
+		List<Banco> bancos = this.bancoRepository.obterBancosPorTipoDeCobranca(TipoCobranca.BOLETO);
+		Assert.assertTrue(bancos!=null);
+	}
+	
 }

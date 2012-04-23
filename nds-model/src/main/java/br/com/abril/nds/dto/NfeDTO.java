@@ -5,15 +5,26 @@ import java.util.Date;
 
 public class NfeDTO implements Serializable {
 
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
 	private String numero;
 	private String serie;
 	private Date emissao;
-	private String cnpjEmissor;
+	private String tipoEmissao;
+	
 	private String cnpjDestinatario;
+	private String cpfDestinatario;
+	
+	private String cnpjRemetente;
+	private String cpfRemetente;
+	
 	private String statusNfe;
 	private String tipoNfe;
 	private String movimentoIntegracao;
-
+	
+	
 	/**
 	 * Obtém numero
 	 *
@@ -22,7 +33,6 @@ public class NfeDTO implements Serializable {
 	public String getNumero() {
 		return numero;
 	}
-
 	/**
 	 * Atribuí numero
 	 * @param numero 
@@ -30,7 +40,6 @@ public class NfeDTO implements Serializable {
 	public void setNumero(String numero) {
 		this.numero = numero;
 	}
-
 	/**
 	 * Obtém serie
 	 *
@@ -39,7 +48,6 @@ public class NfeDTO implements Serializable {
 	public String getSerie() {
 		return serie;
 	}
-
 	/**
 	 * Atribuí serie
 	 * @param serie 
@@ -47,7 +55,6 @@ public class NfeDTO implements Serializable {
 	public void setSerie(String serie) {
 		this.serie = serie;
 	}
-
 	/**
 	 * Obtém emissao
 	 *
@@ -56,7 +63,6 @@ public class NfeDTO implements Serializable {
 	public Date getEmissao() {
 		return emissao;
 	}
-
 	/**
 	 * Atribuí emissao
 	 * @param emissao 
@@ -64,24 +70,21 @@ public class NfeDTO implements Serializable {
 	public void setEmissao(Date emissao) {
 		this.emissao = emissao;
 	}
-
 	/**
-	 * Obtém cnpjEmissor
+	 * Obtém tipoEmissao
 	 *
 	 * @return String
 	 */
-	public String getCnpjEmissor() {
-		return cnpjEmissor;
+	public String getTipoEmissao() {
+		return tipoEmissao;
 	}
-
 	/**
-	 * Atribuí cnpjEmissor
-	 * @param cnpjEmissor 
+	 * Atribuí tipoEmissao
+	 * @param tipoEmissao 
 	 */
-	public void setCnpjEmissor(String cnpjEmissor) {
-		this.cnpjEmissor = cnpjEmissor;
+	public void setTipoEmissao(String tipoEmissao) {
+		this.tipoEmissao = tipoEmissao;
 	}
-
 	/**
 	 * Obtém cnpjDestinatario
 	 *
@@ -90,7 +93,6 @@ public class NfeDTO implements Serializable {
 	public String getCnpjDestinatario() {
 		return cnpjDestinatario;
 	}
-
 	/**
 	 * Atribuí cnpjDestinatario
 	 * @param cnpjDestinatario 
@@ -98,7 +100,51 @@ public class NfeDTO implements Serializable {
 	public void setCnpjDestinatario(String cnpjDestinatario) {
 		this.cnpjDestinatario = cnpjDestinatario;
 	}
-
+	/**
+	 * Obtém cpfDestinatario
+	 *
+	 * @return String
+	 */
+	public String getCpfDestinatario() {
+		return cpfDestinatario;
+	}
+	/**
+	 * Atribuí cpfDestinatario
+	 * @param cpfDestinatario 
+	 */
+	public void setCpfDestinatario(String cpfDestinatario) {
+		this.cpfDestinatario = cpfDestinatario;
+	}
+	/**
+	 * Obtém cnpjRemetente
+	 *
+	 * @return String
+	 */
+	public String getCnpjRemetente() {
+		return cnpjRemetente;
+	}
+	/**
+	 * Atribuí cnpjRemetente
+	 * @param cnpjRemetente 
+	 */
+	public void setCnpjRemetente(String cnpjRemetente) {
+		this.cnpjRemetente = cnpjRemetente;
+	}
+	/**
+	 * Obtém cpfRemetente
+	 *
+	 * @return String
+	 */
+	public String getCpfRemetente() {
+		return cpfRemetente;
+	}
+	/**
+	 * Atribuí cpfRemetente
+	 * @param cpfRemetente 
+	 */
+	public void setCpfRemetente(String cpfRemetente) {
+		this.cpfRemetente = cpfRemetente;
+	}
 	/**
 	 * Obtém statusNfe
 	 *
@@ -107,7 +153,6 @@ public class NfeDTO implements Serializable {
 	public String getStatusNfe() {
 		return statusNfe;
 	}
-
 	/**
 	 * Atribuí statusNfe
 	 * @param statusNfe 
@@ -115,7 +160,6 @@ public class NfeDTO implements Serializable {
 	public void setStatusNfe(String statusNfe) {
 		this.statusNfe = statusNfe;
 	}
-
 	/**
 	 * Obtém tipoNfe
 	 *
@@ -124,7 +168,6 @@ public class NfeDTO implements Serializable {
 	public String getTipoNfe() {
 		return tipoNfe;
 	}
-
 	/**
 	 * Atribuí tipoNfe
 	 * @param tipoNfe 
@@ -132,7 +175,6 @@ public class NfeDTO implements Serializable {
 	public void setTipoNfe(String tipoNfe) {
 		this.tipoNfe = tipoNfe;
 	}
-
 	/**
 	 * Obtém movimentoIntegracao
 	 *
@@ -141,7 +183,6 @@ public class NfeDTO implements Serializable {
 	public String getMovimentoIntegracao() {
 		return movimentoIntegracao;
 	}
-
 	/**
 	 * Atribuí movimentoIntegracao
 	 * @param movimentoIntegracao 
@@ -149,7 +190,7 @@ public class NfeDTO implements Serializable {
 	public void setMovimentoIntegracao(String movimentoIntegracao) {
 		this.movimentoIntegracao = movimentoIntegracao;
 	}
-	
+
 	
 	
 	

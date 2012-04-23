@@ -1,7 +1,172 @@
 <head>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
+	<script type="text/javascript">
 
+		function pesquisar() {
 
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/pesquisar' />", 
+				obterParametrosPesquisa(),
+				function(result) {
+					
+					var rows = '<tr>';
+
+					$.each(result, function(index, resumo) {
+						
+						rows += '<td>';
+
+						if (resumo.exibeDestaque) {
+
+							rows += '<div class="box_resumo alert">';
+							
+						} else {
+
+							rows += '<div class="box_resumo">';
+						}
+						
+						rows += '<label>' + resumo.dataFormatada;
+						rows += '<a href="javascript:;" onclick="mudaGrid();" style="float: right;">';
+						rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
+						rows += '</a>';
+						rows += '</label>';
+						rows += '<span class="span_1">Qtde. TÃ­tulos:</span>';	 
+						rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';	
+						rows += '<span class="span_1">Qtde. Exempl.:</span>';	
+						rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+						rows += '<span class="span_1">Qtde. Parciais:</span>';	
+						rows += '<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';	
+						rows += '<span class="span_1">Peso Total:</span>';
+						rows += '<span class="span_2">' + resumo.pesoTotalFormatado + '</span>';
+						rows += '<span class="span_1">Valor Total:</span>';
+						rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
+						rows += '</div>';
+						rows += '</td>';					  
+				    });	
+
+					
+				    
+				    rows += "</tr>";
+
+				    $("#tableResumoPeriodoBalanceamento").empty();
+				    
+				    $("#tableResumoPeriodoBalanceamento").append(rows);
+
+				    $("#resumoPeriodo").show();
+
+				    $("#fieldsetGrids").hide();
+				},
+				function() {
+
+					$("#resumoPeriodo").hide();
+				}
+			);
+		}
+	
+		function obterParametrosPesquisa() {
+
+			var parametros = new Array();
+
+			parametros.push({name:'numeroSemana', value: $("#numeroSemana").val()});
+			
+			parametros.push({name:'dataPesquisa', value: $("#dataPesquisa").val()});
+			
+			$("input[name='checkgroup_menu']:checked").each(function(i) {
+				
+				parametros.push({name:'listaIdsFornecedores', value: $(this).val()});
+			});
+
+			return parametros;
+		}
+	
+		function carregarDataSemana() {
+
+			var numeroSemana = $("#numeroSemana").val();
+
+			if (!numeroSemana) {
+
+				return;
+			}
+			
+			var data = [
+   				{
+   					name: 'numeroSemana', value: numeroSemana
+   				}
+   			];
+			
+			$.getJSON(
+				"<c:url value='/cadastro/distribuidor/obterDataDaSemana' />", 
+				data,
+				function(result) {
+
+					if (result) {
+						
+						$("#dataPesquisa").val(result);
+					}
+				}
+			);
+		}
+	
+		function carregarDiaSemana() {
+
+			var dataPesquisa = $("#dataPesquisa").val();
+
+			if (!dataPesquisa) {
+
+				return;
+			}
+			
+			var data = [
+   				{
+   					name: 'data', value: $("#dataPesquisa").val()
+   				}
+   			];
+			
+			$.getJSON(
+				"<c:url value='/cadastro/distribuidor/obterNumeroSemana' />", 
+				data,
+				function(result) {
+
+					if (result) {
+
+						$("#numeroSemana").val(result.int);
+					}
+				}
+			);
+		}
+	
+		function carregarDadosPesquisa() {
+
+			var dataPesquisa = $.format.date(new Date(), "dd/MM/yyyy");
+
+		  	$("#dataPesquisa").val(dataPesquisa);
+			
+		  	carregarDiaSemana();
+		}
+	
+		function inicializar() {
+				
+			$("#dataPesquisa").datepicker({
+				showOn : "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly : true,
+				dateFormat: 'dd/mm/yy',
+				defaultDate: new Date()
+			});
+
+			$("#dataPesquisa").mask("99/99/9999");
+			
+			$("input[name='numeroSemana']").numeric();
+
+			carregarDadosPesquisa();
+		}
+		
+		$(function() {
+
+			inicializar();
+		});
+	</script>
 </head>
 
 <body>
@@ -16,31 +181,39 @@
 			<tr>
 				<td width="76">Fornecedor:</td>
 				<td colspan="3">
-					<a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
-					<div class="menu_fornecedor" style="display: none;">
-						<span class="bt_sellAll">
-							<input type="checkbox" id="sel" name="Todos1" onclick="checkAll_fornecedor();" style="float: left;" />
-							<label for="sel">Selecionar Todos</label>
+					<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+					<div class="menu_fornecedor" style="display:none;">
+	                	<span class="bt_sellAll">
+							<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+							<label for="selTodos1">Selecionar Todos</label>
 						</span>
-						<br clear="all" />
-						<input id="dinap" name="checkgroup_menu" onclick="verifyCheck_1()" type="checkbox" />
-						<label for="dinap">Dinap</label>
-						<br clear="all" />
-						<input name="checkgroup_menu" onclick="verifyCheck_1()" id="fc" type="checkbox" />
-						<label for="fc">FC</label>
-					</div>
+	                    <br clear="all" />
+	                    <c:forEach items="${fornecedores}" var="fornecedor">
+	                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox"/>
+	                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
+	                     	<br clear="all" />
+	                	</c:forEach> 
+	            	</div>
 				</td>
 				<td width="53">Semana:</td>
 				<td width="107">
-					<input type="text" name="textfield8" id="textfield8" style="width: 50px;" />
+					<input type="text" 
+						   name="numeroSemana" 
+						   id="numeroSemana" value="${numeroSemana}" style="width: 50px;"
+						   onchange="carregarDataSemana();" />
 				</td>
 				<td width="33">Data:</td>
 				<td width="145">
-					<input type="text" name="datepickerDe" id="datepickerDe" style="width: 80px;" />
+					<input type="text" 
+						   name="dataPesquisa" 
+						   id="dataPesquisa" 
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
+						   value="${dataAtual}"
+						   onchange="carregarDiaSemana();" />
 				</td>
 				<td width="164">
 					<span class="bt_pesquisar">
-						<a href="javascript:;" onclick="mostrar();">Pesquisar</a>
+						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>
 				</td>
 			</tr>
@@ -49,48 +222,18 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 	
-	<!--  Resumo do Período -->
+	<!--  Resumo do PerÃ­odo -->
 	
 	<fieldset class="classFieldset" id="resumoPeriodo" style="display: none;">
 	
-		<legend>Resumo do Período</legend>
+		<legend>Resumo do PerÃ­odo</legend>
 		
 		<div style="width: 950px; overflow-x: auto;">
-			<table width="100%" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<td>
-						<div class="box_resumo">
-							<label>01/12/2011 
-								<a href="javascript:;" onclick="mudaGrid();" style="float: right;">
-									<img src="<c:url value='images/ico_detalhes.png'/>" width="15" height="15" border="0" title="Visualizar" />
-								</a>
-							</label>
-							<span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-							<span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-							<span class="span_1">Qtde. Parciais:</span><span class="span_2">7</span>
-							<span class="span_1">Peso Total:</span><span class="span_2">250.000</span>
-							<span class="span_1">Valor Total:</span><span class="span_2">250.000</span>
-						</div>
-					</td>
-					<td>
-						<div class="box_resumo alert">
-							<label>01/12/2011 
-								<a href="javascript:;" onclick="mudaGrid();" style="float: right;">
-									<img src="<c:url value='images/ico_detalhes.png'/>" width="15" height="15" border="0" title="Visualizar" />
-								</a>
-							</label>
-							<span class="span_1">Qtde. Títulos:</span><span class="span_2">70</span>
-							<span class="span_1">Qtde. Exempl.:</span><span class="span_2">250.000</span>
-							<span class="span_1">Qtde. Parciais:</span><span class="span_2">7</span>
-							<span class="span_1">Peso Total:</span><span class="span_2">250.000</span>
-							<span class="span_1">Valor Total:</span><span class="span_2">250.000</span>
-						</div>
-					</td>
-				</tr>
+			<table id="tableResumoPeriodoBalanceamento" name="tableResumoPeriodoBalanceamento" width="100%" border="0" cellspacing="2" cellpadding="2">
 			</table>
 		</div>
 		
-		<!-- Botões de Ação -->
+		<!-- BotÃµes de AÃ§Ã£o -->
 		
 		<table width="950" border="0" cellspacing="0" cellpadding="0">
 			<tr>
@@ -119,8 +262,8 @@
 				<td>
 					<span class="bt_configura_inicial">
 						<a href="javascript:;">
-							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />
-							Voltar Configuração Inicial
+							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar ConfiguraÃ§Ã£o Inicial" border="0" hspace="5" />
+							Voltar ConfiguraÃ§Ã£o Inicial
 						</a>
 					</span>
 				</td>
@@ -130,7 +273,7 @@
 	
 	<!-- Balanceamento -->
 	
-	<fieldset class="classFieldset">
+	<fieldset id="fieldsetGrids" class="classFieldset">
 	
 		<legend>Balanceamento da Matriz de Recolhimento </legend>
 		
@@ -177,7 +320,7 @@
 		
 		<!-- GRID -->
 		
-		<div id="grid_matriz" style="display: none;">
+		<div id="gridMatriz" style="display: none;">
 			<table class="balanceamentoGrid"></table>
 		</div>
 		

@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -38,6 +39,9 @@ public class CotasAssociadasController {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private FiadorService fiadorService;
 	
 	private Result result;
 	
@@ -88,7 +92,7 @@ public class CotasAssociadasController {
 		
 		if (idFiador != null){
 			//buscar no server
-			List<Cota> listaAssociacaoCotaFiador = this.cotaService.obterCotaAssociadaFiador(idFiador);
+			List<Cota> listaAssociacaoCotaFiador = this.fiadorService.obterCotasAssociadaFiador(idFiador);
 			
 			for (Cota cota : listaAssociacaoCotaFiador){
 				AssociacaoCota associacaoCota = new AssociacaoCota();
@@ -121,10 +125,11 @@ public class CotasAssociadasController {
 		
 		String nome = null;
 		if (numeroCota != null){
+			
 			nome = this.cotaService.obterNomeResponsavelPorNumeroDaCota(numeroCota);
 		}
 		
-		this.result.use(Results.json()).from(nome != null ? nome : "", "result").recursive().serialize();
+		this.result.use(Results.json()).withoutRoot().from(nome != null ? nome : "").recursive().serialize();
 	}
 	
 	@Post
@@ -145,7 +150,14 @@ public class CotasAssociadasController {
 			}
 		}
 		
+		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+		
+		if (idFiador != null){
+			add = !this.fiadorService.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+		}
+		
 		if (add){
+			
 			AssociacaoCota associacaoCota = new AssociacaoCota();
 			associacaoCota.setReferencia((int)new Date().getTime());
 			associacaoCota.setNumeroCota(numeroCota);
@@ -172,7 +184,7 @@ public class CotasAssociadasController {
 			}
 		}
 		
-		if (associacaoCotaRemover != null){
+		if (associacaoCotaRemover != null && associacaoCotaRemover.getNumeroCota() != null){
 		
 			this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO, listaAssociacaoSessao);
 			

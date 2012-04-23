@@ -107,7 +107,7 @@
 	
 	function removerAssociacaoCota(referencia){
 		
-		$("#dialog-excluir").dialog({
+		$(".dialog-excluir").dialog({
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -135,7 +135,7 @@
 			}
 		});
 		
-		$("#dialog-excluir").show();
+		$(".dialog-excluir").show();
 	}
 	
 	function limparCamposCotasAssociadas(){
@@ -151,8 +151,15 @@
 		
 			$.postJSON("<c:url value='/cadastro/fiador/pesquisarNomeCotaPorNumeroCota' />", "numeroCota=" + numeroCota, 
 				function(result) {
-					
-					$("#nomeCota").val(result);
+					if (result != ""){
+						
+						$("#nomeCota").val(result);
+						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "javascript:adicionarAssociacaoCota();");
+					} else {
+						
+						$("#nomeCota").val("");
+						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "");
+					}
 				},
 				null,
 				true
@@ -161,7 +168,7 @@
 	}
 </script>
 <table width="280" cellpadding="2" cellspacing="2" style="text-align: left;">
-	<div id="dialog-excluir" title="Telefones">
+	<div class="dialog-excluir" id="dialog-excluir" title="Cotas Associadas">
 		<p>Confirma esta Exclusão?</p>
 	</div>
 	<tr>
@@ -176,7 +183,7 @@
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td><span class="bt_add"><a href="javascript:adicionarAssociacaoCota();">Incluir Novo</a></span></td>
+		<td><span class="bt_add"><a name="habilitarAdicionarCotaAssociacao">Incluir Novo</a></span></td>
 	</tr>
 </table>
 <br />

@@ -1,0 +1,1325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="272"/>
+	<property name="ireport.y" value="0"/>
+	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
+	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
+		<pen lineWidth="0.25"/>
+	</style>
+	<style name="dados" forecolor="#000000" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" pattern="" fontName="Arial" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
+		<pen lineWidth="0.25"/>
+	</style>
+	<style name="detail" forecolor="#000000" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" pattern="" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
+		<pen lineWidth="0.25"/>
+		<box>
+			<pen lineWidth="0.25" lineStyle="Solid"/>
+			<topPen lineWidth="0.0" lineStyle="Solid"/>
+			<leftPen lineWidth="0.25" lineStyle="Solid"/>
+			<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+			<rightPen lineWidth="0.25" lineStyle="Solid"/>
+		</box>
+	</style>
+	<parameter name="Logo" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Local onde está  a imagem do logo da empresa.]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FAT_NUMERO1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO1" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR1" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO2" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR2" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO3" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO3" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR3" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO4" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO4" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR4" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO5" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO5" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR5" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO6" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO6" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR6" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO7" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO7" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR7" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO8" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO8" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR8" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO9" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO9" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR9" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="FAT_NUMERO10" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FAT_VENCIMENTO10" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="FAT_VALOR10" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[]]>
+	</queryString>
+	<field name="naturezaOperacao" class="java.lang.String">
+		<fieldDescription><![CDATA[naturezaOperacao]]></fieldDescription>
+	</field>
+	<field name="destinatarioNome" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioNome]]></fieldDescription>
+	</field>
+	<field name="transportadoraCNPJ" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraCNPJ]]></fieldDescription>
+	</field>
+	<field name="transportadoraPesoLiquido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[transportadoraPesoLiquido]]></fieldDescription>
+	</field>
+	<field name="emissorNome" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorNome]]></fieldDescription>
+	</field>
+	<field name="destinatarioCNPJ" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioCNPJ]]></fieldDescription>
+	</field>
+	<field name="valorFrete" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorFrete]]></fieldDescription>
+	</field>
+	<field name="valorLiquido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorLiquido]]></fieldDescription>
+	</field>
+	<field name="valorBaseICMS" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorBaseICMS]]></fieldDescription>
+	</field>
+	<field name="transportadoraNome" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraNome]]></fieldDescription>
+	</field>
+	<field name="chave" class="java.lang.String">
+		<fieldDescription><![CDATA[chave]]></fieldDescription>
+	</field>
+	<field name="emissorCEP" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorCEP]]></fieldDescription>
+	</field>
+	<field name="emissorInscricaoMunicipal" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorInscricaoMunicipal]]></fieldDescription>
+	</field>
+	<field name="protocolo" class="java.lang.String">
+		<fieldDescription><![CDATA[protocolo]]></fieldDescription>
+	</field>
+	<field name="transportadoraEspecie" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraEspecie]]></fieldDescription>
+	</field>
+	<field name="tipoNF" class="java.lang.Integer">
+		<fieldDescription><![CDATA[tipoNF]]></fieldDescription>
+	</field>
+	<field name="emissorInscricaoEstadualSubstituto" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorInscricaoEstadualSubstituto]]></fieldDescription>
+	</field>
+	<field name="transportadoraMunicipio" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraMunicipio]]></fieldDescription>
+	</field>
+	<field name="frete" class="java.lang.Integer">
+		<fieldDescription><![CDATA[frete]]></fieldDescription>
+	</field>
+	<field name="ISSQNTotal" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ISSQNTotal]]></fieldDescription>
+	</field>
+	<field name="transportadoraQuantidade" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraQuantidade]]></fieldDescription>
+	</field>
+	<field name="destinatarioMunicipio" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioMunicipio]]></fieldDescription>
+	</field>
+	<field name="valorFatura" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorFatura]]></fieldDescription>
+	</field>
+	<field name="emissorInscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorInscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="serie" class="java.lang.String">
+		<fieldDescription><![CDATA[serie]]></fieldDescription>
+	</field>
+	<field name="informacoesComplementares" class="java.lang.String">
+		<fieldDescription><![CDATA[informacoesComplementares]]></fieldDescription>
+	</field>
+	<field name="emissorLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorLogradouro]]></fieldDescription>
+	</field>
+	<field name="destinatarioBairro" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioBairro]]></fieldDescription>
+	</field>
+	<field name="valorOutro" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorOutro]]></fieldDescription>
+	</field>
+	<field name="destinatarioInscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioInscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="versao" class="java.lang.String">
+		<fieldDescription><![CDATA[versao]]></fieldDescription>
+	</field>
+	<field name="faturas" class="java.util.List">
+		<fieldDescription><![CDATA[faturas]]></fieldDescription>
+	</field>
+	<field name="emissorMunicipio" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorMunicipio]]></fieldDescription>
+	</field>
+	<field name="emissorUF" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorUF]]></fieldDescription>
+	</field>
+	<field name="dataEmissao" class="java.util.Date">
+		<fieldDescription><![CDATA[dataEmissao]]></fieldDescription>
+	</field>
+	<field name="destinatarioNumero" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioNumero]]></fieldDescription>
+	</field>
+	<field name="ISSQNValor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ISSQNValor]]></fieldDescription>
+	</field>
+	<field name="transportadoraPesoBruto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[transportadoraPesoBruto]]></fieldDescription>
+	</field>
+	<field name="ambiente" class="java.lang.String">
+		<fieldDescription><![CDATA[ambiente]]></fieldDescription>
+	</field>
+	<field name="destinatarioUF" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioUF]]></fieldDescription>
+	</field>
+	<field name="valorSeguro" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorSeguro]]></fieldDescription>
+	</field>
+	<field name="formaPagamento" class="java.lang.String">
+		<fieldDescription><![CDATA[formaPagamento]]></fieldDescription>
+	</field>
+	<field name="transportadoraPlacaVeiculo" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraPlacaVeiculo]]></fieldDescription>
+	</field>
+	<field name="numeroNF" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroNF]]></fieldDescription>
+	</field>
+	<field name="valorBaseICMSSubstituto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorBaseICMSSubstituto]]></fieldDescription>
+	</field>
+	<field name="horaSaida" class="java.lang.String">
+		<fieldDescription><![CDATA[horaSaida]]></fieldDescription>
+	</field>
+	<field name="valorICMSSubstituto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorICMSSubstituto]]></fieldDescription>
+	</field>
+	<field name="valorICMS" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorICMS]]></fieldDescription>
+	</field>
+	<field name="destinatarioComplemento" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioComplemento]]></fieldDescription>
+	</field>
+	<field name="emissorCNPJ" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorCNPJ]]></fieldDescription>
+	</field>
+	<field name="transportadoraPlacaVeiculoUF" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraPlacaVeiculoUF]]></fieldDescription>
+	</field>
+	<field name="transportadoraMarca" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraMarca]]></fieldDescription>
+	</field>
+	<field name="destinatarioTelefone" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioTelefone]]></fieldDescription>
+	</field>
+	<field name="valorDesconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorDesconto]]></fieldDescription>
+	</field>
+	<field name="dataSaida" class="java.util.Date">
+		<fieldDescription><![CDATA[dataSaida]]></fieldDescription>
+	</field>
+	<field name="itensDanfe" class="java.util.List">
+		<fieldDescription><![CDATA[itensDanfe]]></fieldDescription>
+	</field>
+	<field name="transportadoraNumeracao" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraNumeracao]]></fieldDescription>
+	</field>
+	<field name="emissorNumero" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorNumero]]></fieldDescription>
+	</field>
+	<field name="valorNF" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorNF]]></fieldDescription>
+	</field>
+	<field name="valorIPI" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorIPI]]></fieldDescription>
+	</field>
+	<field name="transportadoraInscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraInscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="transportadoraUF" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraUF]]></fieldDescription>
+	</field>
+	<field name="destinatarioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioLogradouro]]></fieldDescription>
+	</field>
+	<field name="transportadoraANTT" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraANTT]]></fieldDescription>
+	</field>
+	<field name="emissorBairro" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorBairro]]></fieldDescription>
+	</field>
+	<field name="destinatarioCEP" class="java.lang.String">
+		<fieldDescription><![CDATA[destinatarioCEP]]></fieldDescription>
+	</field>
+	<field name="ISSQNBase" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ISSQNBase]]></fieldDescription>
+	</field>
+	<field name="emissorFantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorFantasia]]></fieldDescription>
+	</field>
+	<field name="transportadoraEndereco" class="java.lang.String">
+		<fieldDescription><![CDATA[transportadoraEndereco]]></fieldDescription>
+	</field>
+	<field name="valorProdutos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorProdutos]]></fieldDescription>
+	</field>
+	<field name="numeroFatura" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroFatura]]></fieldDescription>
+	</field>
+	<field name="emissorTelefone" class="java.lang.String">
+		<fieldDescription><![CDATA[emissorTelefone]]></fieldDescription>
+	</field>
+	<background>
+		<band height="814" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="2" y="15" width="559" height="786" forecolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="50"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ambiente}.equals( "0" ) || $F{protocolo} == null ? "SEM VALOR FISCAL" : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<title>
+		<band height="35">
+			<frame>
+				<reportElement x="0" y="0" width="565" height="35"/>
+				<rectangle>
+					<reportElement style="borda" mode="Transparent" x="0" y="12" width="115" height="20"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" mode="Transparent" x="115" y="12" width="361" height="20"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" mode="Transparent" x="478" y="0" width="87" height="32"/>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Transparent" x="0" y="0" width="476" height="12"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</rectangle>
+				<line>
+					<reportElement x="1" y="33" width="564" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="478" y="1" width="87" height="6"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[NF-e]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="12" width="114" height="6"/>
+					<textElement>
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[DATA DE RECEBIMENTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="117" y="12" width="359" height="6"/>
+					<textElement>
+						<font fontName="Arial" size="5"/>
+					</textElement>
+					<text><![CDATA[IDENTIFICAÇÃO E ASSINATURA DO RECEBEDOR]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="dados" x="482" y="7" width="83" height="11"/>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Nº " + $F{numeroNF}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" x="482" y="18" width="83" height="14"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA["SÉRIE: " + $F{serie}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="campoPequeno" x="2" y="0" width="474" height="6"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["RECEBEMOS DE " + $F{emissorNome}.toUpperCase() + " OS PRODUTOS CONSTANTES NA NOTA FISCAL INDICADA AO LADO."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="406">
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="565" height="146"/>
+				<rectangle>
+					<reportElement style="borda" x="271" y="0" width="74" height="96"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="120" width="110" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="220" y="120" width="125" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="110" y="120" width="110" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="345" y="120" width="220" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="96" width="345" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="0" y="0" width="271" height="96"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank" evaluationTime="Report">
+					<reportElement x="4" y="4" width="60" height="59"/>
+					<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo.jpg").toURI().getPath()]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="98" width="303" height="6"/>
+					<textElement/>
+					<text><![CDATA[NATUREZA DA OPERAÇÃO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="346" y="122" width="219" height="6"/>
+					<textElement>
+						<font size="4"/>
+					</textElement>
+					<text><![CDATA[CHAVE DE ACESSO DA NF-e P/ CONSULTA DE AUTENTICIDADE NO SITE WWW.NFE.FAZENDA.GOV.BR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="111" y="122" width="109" height="6"/>
+					<textElement/>
+					<text><![CDATA[INSCRIÇÃO ESTADUAL DE SUBST.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="1" y="122" width="108" height="6"/>
+					<textElement/>
+					<text><![CDATA[INSCRIÇÃO ESTADUAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="221" y="122" width="119" height="6"/>
+					<textElement/>
+					<text><![CDATA[CNPJ / CPF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="276" y="49" width="48" height="7"/>
+					<textElement verticalAlignment="Middle">
+						<font size="6"/>
+					</textElement>
+					<text><![CDATA[1 - SAÍDA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="276" y="43" width="48" height="7"/>
+					<textElement verticalAlignment="Middle">
+						<font size="6"/>
+					</textElement>
+					<text><![CDATA[0 - ENTRADA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="271" y="2" width="74" height="9"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DANFE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="271" y="13" width="74" height="23"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTO AUXILIAR DE NOTA FISCAL ELETRÔNICA]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="1" y="128" width="108" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{emissorInscricaoEstadual}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="111" y="128" width="109" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{emissorInscricaoEstadualSubstituto}]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement style="dados" x="221" y="128" width="125" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{emissorCNPJ}.length() == 14 ? $F{emissorCNPJ}.substring(0,2) + "." +
+$F{emissorCNPJ}.substring(2,5) + "." + $F{emissorCNPJ}.substring(5,8) + "/" +
+$F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{emissorCNPJ}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" x="2" y="103" width="343" height="17"/>
+					<textElement>
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{naturezaOperacao}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="346" y="128" width="219" height="17"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{chave}.length() == 44 ?
+($F{chave} != null? $F{chave}.substring(0,4) + " " + $F{chave}.substring(4,8) + " " + $F{chave}.substring(8,12) + " " +
+$F{chave}.substring(12,16) + " " + $F{chave}.substring(16,20) + " " + $F{chave}.substring(20,24) + " " +
+$F{chave}.substring(24,28) + " " + $F{chave}.substring(28,32) + " " + $F{chave}.substring(32,36) + " " +
+$F{chave}.substring(36,40) + " " + $F{chave}.substring(40,44) + " " : "" ) : $F{chave}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="campoPequeno" x="276" y="80" width="43" height="7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA["FOLHA " + $V{PAGE_NUMBER} + " /"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement style="campoPequeno" x="319" y="80" width="26" height="7"/>
+					<textElement verticalAlignment="Middle">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="campoPequeno" x="276" y="71" width="69" height="7"/>
+					<textElement verticalAlignment="Middle">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA["SÉRIE: " + $F{serie}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" x="324" y="43" width="12" height="13"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{tipoNF}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="campoPequeno" x="276" y="56" width="69" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Nº " + $F{numeroNF}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" positionType="Float" x="67" y="4" width="202" height="36"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorNome}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" positionType="Float" x="67" y="42" width="202" height="21"/>
+					<textElement textAlignment="Center">
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorLogradouro} + ", " + $F{emissorNumero} + " - " + $F{emissorBairro}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" positionType="Float" x="67" y="64" width="202" height="13"/>
+					<textElement textAlignment="Center">
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorMunicipio} + " - " + $F{emissorUF}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" positionType="Float" x="67" y="78" width="83" height="13"/>
+					<textElement>
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CEP: " + $F{emissorCEP}.substring(0,5) + "-" + $F{emissorCEP}.substring(5,8)]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" positionType="Float" x="153" y="78" width="116" height="13"/>
+					<textElement>
+						<font isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{emissorTelefone}.length() == 8 ? "FONE: " + $F{emissorTelefone}.substring(0,4) +
+"-" + $F{emissorTelefone}.substring(4,8) : "FONE: (" + $F{emissorTelefone}.substring(0,2) + ") " +
+$F{emissorTelefone}.substring(2,6) + "-" + $F{emissorTelefone}.substring(6,10)]]></textFieldExpression>
+				</textField>
+				<componentElement>
+					<reportElement x="357" y="11" width="200" height="85"/>
+					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128C" drawText="false" checksumRequired="false" barHeight="103">
+						<jr:codeExpression><![CDATA[$F{chave}]]></jr:codeExpression>
+					</jr:barbecue>
+				</componentElement>
+			</frame>
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="146" width="565" height="260"/>
+				<rectangle>
+					<reportElement style="borda" x="0" y="9" width="345" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="345" y="9" width="153" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="345" y="57" width="153" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="33" width="276" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="498" y="57" width="67" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="498" y="9" width="67" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="498" y="33" width="67" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="211" y="57" width="106" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="57" width="211" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="317" y="57" width="28" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="276" y="33" width="134" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="410" y="33" width="88" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="113" y="127" width="113" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="339" y="127" width="113" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="452" y="127" width="113" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="127" width="113" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="226" y="127" width="113" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" stretchType="RelativeToTallestObject" x="0" y="92" width="565" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="94" y="151" width="94" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="282" y="151" width="94" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="376" y="151" width="94" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="151" width="94" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="188" y="151" width="94" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="470" y="151" width="95" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="186" width="226" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="226" y="186" width="68" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="294" y="186" width="68" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="362" y="186" width="68" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="430" y="186" width="28" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="458" y="186" width="107" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="226" y="210" width="204" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="458" y="210" width="107" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="210" width="226" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="430" y="210" width="28" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="366" y="234" width="104" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="226" y="234" width="140" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="75" y="234" width="75" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="150" y="234" width="76" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="234" width="75" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="470" y="234" width="95" height="24"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="0" width="541" height="7"/>
+					<textElement>
+						<font size="6" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[DESTINATÁRIO / REMETENTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="500" y="59" width="64" height="6"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[HORA ENTRADA / SAÍDA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="35" width="274" height="6"/>
+					<textElement/>
+					<text><![CDATA[ENDEREÇO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="500" y="11" width="64" height="6"/>
+					<textElement/>
+					<text><![CDATA[DATA EMISSÃO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="412" y="35" width="86" height="6"/>
+					<textElement/>
+					<text><![CDATA[CEP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="59" width="209" height="6"/>
+					<textElement/>
+					<text><![CDATA[MUNICÍPIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="319" y="59" width="26" height="6"/>
+					<textElement/>
+					<text><![CDATA[UF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="213" y="59" width="104" height="6"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[FONE / FAX]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="347" y="11" width="151" height="6"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[CNPJ / CPF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="500" y="35" width="64" height="6"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DATA ENTRADA / SAÍDA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="11" width="343" height="6"/>
+					<textElement/>
+					<text><![CDATA[NOME / RAZÃO SOCIAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="83" width="563" height="7"/>
+					<textElement>
+						<font size="6" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[FATURA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="129" width="111" height="6"/>
+					<textElement/>
+					<text><![CDATA[BASE DE CALCULO DO ICMS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="115" y="129" width="111" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR DO ICMS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="228" y="129" width="111" height="6"/>
+					<textElement/>
+					<text><![CDATA[BASE DE CALCULO DO ICMS SUBST.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="341" y="129" width="111" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR DO ICMS SUBST.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="454" y="129" width="111" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR TOTAL DOS PRODUTOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="278" y="35" width="132" height="6"/>
+					<textElement/>
+					<text><![CDATA[BAIRRO / DISTRITO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="118" width="563" height="7"/>
+					<textElement>
+						<font size="6" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[CALCULO DO IMPOSTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="347" y="59" width="151" height="6"/>
+					<textElement/>
+					<text><![CDATA[INSCRIÇÃO ESTADUAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="284" y="153" width="92" height="6"/>
+					<textElement/>
+					<text><![CDATA[OUTRAS DESPESAS ACESSÓRIAS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="378" y="153" width="92" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR TOTAL DO IPI]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="472" y="153" width="92" height="6"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[VALOR TOTAL DA NOTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="96" y="153" width="92" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR DO SEGURO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="190" y="153" width="92" height="6"/>
+					<textElement/>
+					<text><![CDATA[DESCONTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="177" width="563" height="7"/>
+					<textElement>
+						<font size="6" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[TRANSPORTADOR / VOLUMES TRANSPORTADOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="432" y="188" width="26" height="6"/>
+					<textElement/>
+					<text><![CDATA[UF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="460" y="188" width="104" height="6"/>
+					<textElement/>
+					<text><![CDATA[CNPJ / CPF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="188" width="224" height="6"/>
+					<textElement/>
+					<text><![CDATA[NOME / RAZÃO SOCIAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="364" y="188" width="66" height="6"/>
+					<textElement/>
+					<text><![CDATA[PLACA DO VEICULO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="228" y="188" width="66" height="6"/>
+					<textElement/>
+					<text><![CDATA[FRETE POR CONTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="296" y="188" width="66" height="6"/>
+					<textElement/>
+					<text><![CDATA[CÓDIGO ANTT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="153" width="92" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR DO FRETE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="460" y="212" width="104" height="6"/>
+					<textElement/>
+					<text><![CDATA[INSCRIÇÃO ESTADUAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="432" y="212" width="26" height="6"/>
+					<textElement/>
+					<text><![CDATA[UF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="228" y="212" width="202" height="6"/>
+					<textElement/>
+					<text><![CDATA[MUNICÍPIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="212" width="224" height="6"/>
+					<textElement/>
+					<text><![CDATA[ENDEREÇO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="77" y="236" width="73" height="6"/>
+					<textElement/>
+					<text><![CDATA[ESPÉCIE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="228" y="236" width="138" height="6"/>
+					<textElement/>
+					<text><![CDATA[NUMERAÇÃO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="236" width="73" height="6"/>
+					<textElement/>
+					<text><![CDATA[QUANTIDADE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="368" y="236" width="102" height="6"/>
+					<textElement/>
+					<text><![CDATA[PESO BRUTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="153" y="236" width="73" height="6"/>
+					<textElement/>
+					<text><![CDATA[MARCA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="472" y="236" width="92" height="6"/>
+					<textElement/>
+					<text><![CDATA[PESO LIQUIDO]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="dados" x="319" y="65" width="26" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioUF}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" x="278" y="40" width="132" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioBairro}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" x="2" y="65" width="209" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioMunicipio}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement style="dados" x="500" y="65" width="64" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{horaSaida}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="dados" x="347" y="65" width="151" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioInscricaoEstadual}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement style="dados" x="500" y="40" width="64" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{dataSaida}]]></textFieldExpression>
+				</textField>
+				<textField pattern="(##) ####-####">
+					<reportElement style="dados" x="213" y="65" width="104" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioTelefone}.length() == 8 ? $F{destinatarioTelefone}.substring(0,4) +
+"-" + $F{destinatarioTelefone}.substring(4,8) : "(" + $F{destinatarioTelefone}.substring(0,2) + ") " +
+$F{destinatarioTelefone}.substring(2,6) + "-" + $F{destinatarioTelefone}.substring(6,10)]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement style="dados" x="500" y="16" width="64" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{dataEmissao}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="dados" x="2" y="40" width="274" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioLogradouro} + ", " + $F{destinatarioNumero} + " " + $F{destinatarioComplemento}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="dados" x="2" y="16" width="343" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioNome}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#####-###">
+					<reportElement style="dados" x="412" y="40" width="86" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioCEP}.substring( 0, 5 ) + "-" + $F{destinatarioCEP}.substring( 5, 8 )]]></textFieldExpression>
+				</textField>
+				<textField pattern="##.###.###/####-##">
+					<reportElement style="dados" x="347" y="16" width="151" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{destinatarioCNPJ}.length() == 14 ? $F{destinatarioCNPJ}.substring(0,2) + "." +
+$F{destinatarioCNPJ}.substring(2,5) + "." + $F{destinatarioCNPJ}.substring(5,8) + "/" +
+$F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,14) : $F{destinatarioCNPJ}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement style="dados" x="2" y="135" width="109" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorBaseICMS} == null ? 0.00 : $F{valorBaseICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN)).toString()]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" mode="Transparent" x="113" y="135" width="109" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="styled">
+						<font fontName="Arial" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valorICMS} == null ? "0.00" : $F{valorICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement style="dados" x="454" y="135" width="109" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorProdutos} == null ? "0.00" : $F{valorProdutos}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="228" y="135" width="109" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorBaseICMSSubstituto} == null ? 0.00 : $F{valorBaseICMSSubstituto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="284" y="159" width="90" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorOutro} == null ? "0.00" : $F{valorOutro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement style="dados" x="472" y="159" width="90" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorNF} == null ? "0.00" : $F{valorNF}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="378" y="159" width="90" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorIPI} == null ? "0.00" : $F{valorIPI}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="96" y="159" width="90" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorSeguro} == null ? "0.00" : $F{valorSeguro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="2" y="159" width="90" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorFrete} == null ? "0.00" : $F{valorFrete}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="190" y="159" width="90" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorDesconto} == null ? "0.00" : $F{valorDesconto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="dados" x="2" y="194" width="224" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraNome}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement style="dados" x="460" y="194" width="104" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraCNPJ}.length() == 14 ? $F{transportadoraCNPJ}.substring(0,2) + "." +
+$F{transportadoraCNPJ}.substring(2,5) + "." + $F{transportadoraCNPJ}.substring(5,8) + "/" +
+$F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(12,14) : $F{transportadoraCNPJ}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement style="dados" x="270" y="194" width="13" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{frete}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="460" y="217" width="104" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraInscricaoEstadual}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="dados" x="2" y="217" width="224" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraEndereco}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="432" y="217" width="26" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraUF}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="228" y="217" width="202" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraMunicipio}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.0000;(-###0.0000)" isBlankWhenNull="true">
+					<reportElement style="dados" x="368" y="241" width="92" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraPesoBruto} != null ? $F{transportadoraPesoBruto}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.0000;(-###0.0000)" isBlankWhenNull="true">
+					<reportElement style="dados" x="472" y="241" width="92" height="18"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraPesoLiquido} != null ? $F{transportadoraPesoLiquido}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : ""]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="2" y="241" width="73" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraQuantidade}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="77" y="241" width="73" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraEspecie}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="341" y="135" width="108" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorICMSSubstituto} == null ? 0.00 : $F{valorICMSSubstituto}.round(new MathContext(2, RoundingMode.HALF_EVEN)).toString()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="432" y="194" width="26" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraPlacaVeiculoUF}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="364" y="194" width="66" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraPlacaVeiculo}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="296" y="194" width="66" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraANTT}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="153" y="242" width="73" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraMarca}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="228" y="241" width="136" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{transportadoraNumeracao}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="229" y="195" width="32" height="10"/>
+					<textElement>
+						<font fontName="Arial" size="4"/>
+					</textElement>
+					<text><![CDATA[1 - Emitente
+2 - Destinatário]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="3" y="94" width="106" height="8"/>
+					<textElement>
+						<font fontName="Arial" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Numero Fatura: " + $F{numeroFatura}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" x="3" y="102" width="558" height="12"/>
+					<subreportParameter name="faturas">
+						<subreportParameterExpression><![CDATA[$F{faturas}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{faturas})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_duplicatas.jasper"]]></subreportExpression>
+				</subreport>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="149" y="94" width="52" height="8"/>
+					<textElement>
+						<font fontName="Arial" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valorFatura}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="109" y="94" width="40" height="8"/>
+					<textElement>
+						<font fontName="Arial" size="6"/>
+					</textElement>
+					<text><![CDATA[Valor original:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="201" y="94" width="39" height="8"/>
+					<textElement>
+						<font fontName="Arial" size="6"/>
+					</textElement>
+					<text><![CDATA[Valor líquido:]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="240" y="94" width="100" height="8"/>
+					<textElement>
+						<font fontName="Arial" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valorLiquido}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="8" splitType="Stretch">
+			<staticText>
+				<reportElement style="campoPequeno" x="0" y="0" width="564" height="7"/>
+				<textElement>
+					<font size="6" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DADOS DO PRODUTOS / SERVIÇOS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="27"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="9">
+			<line>
+				<reportElement x="0" y="0" width="565" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="campoPequeno" x="1" y="2" width="293" height="5"/>
+				<textElement>
+					<font size="5" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{versao} != null ? "VERSÃO DO SISTEMA EMISSOR DA NFE: " + $F{versao}.toUpperCase() : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="campoPequeno" x="294" y="2" width="270" height="5"/>
+				<textElement textAlignment="Right">
+					<font size="5" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DANFE GERADO EM OPENFE.COM.BR"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="136" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="565" height="136" isRemoveLineWhenBlank="true"/>
+				<rectangle>
+					<reportElement style="borda" x="0" y="10" width="141" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="141" y="10" width="141" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="282" y="10" width="141" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="423" y="10" width="142" height="24"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="0" y="45" width="364" height="91"/>
+				</rectangle>
+				<rectangle>
+					<reportElement style="borda" x="364" y="45" width="201" height="91"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="2" width="563" height="7"/>
+					<textElement>
+						<font size="6" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[CALCULO DO ISSQN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="12" width="139" height="6"/>
+					<textElement/>
+					<text><![CDATA[INSCRIÇÃO MUNICIPAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="143" y="12" width="139" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR TOTAL DOS SERVIÇOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="284" y="12" width="139" height="6"/>
+					<textElement/>
+					<text><![CDATA[BASE DE CALCULO DO ISSQN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="426" y="12" width="139" height="6"/>
+					<textElement/>
+					<text><![CDATA[VALOR DO ISSQN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="36" width="563" height="7"/>
+					<textElement>
+						<font size="6" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[DADOS ADICIONAIS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="2" y="47" width="362" height="6"/>
+					<textElement/>
+					<text><![CDATA[INFORMAÇÕES COMPLEMENTARES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="campoPequeno" x="366" y="47" width="198" height="6"/>
+					<textElement/>
+					<text><![CDATA[RESERVADO AO FISCO]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement style="dados" x="141" y="18" width="137" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{ISSQNTotal} != null ? $F{ISSQNTotal}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement style="dados" x="284" y="18" width="137" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{ISSQNBase} != null ? $F{ISSQNBase}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement style="dados" x="426" y="18" width="138" height="16"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{ISSQNValor} != null ? $F{ISSQNValor}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="2" y="18" width="139" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{emissorInscricaoMunicipal}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="4" y="53" width="358" height="83"/>
+					<textElement verticalAlignment="Top">
+						<font isItalic="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{informacoesComplementares}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+</jasperReport>

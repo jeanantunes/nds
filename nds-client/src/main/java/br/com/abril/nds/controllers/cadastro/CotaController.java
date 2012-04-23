@@ -39,13 +39,23 @@ public class CotaController {
 	@Autowired
 	private HttpSession session;
 	
-	public CotaController(Result result) {
+	@Autowired
+	private FinanceiroController financeiroController;
 
+
+	public CotaController(Result result) {
 		this.result = result;
 	}
 
+	
 	@Path("/")
-	public void index() { }
+	public void index() {
+		
+		//Pré carregamento da aba "financeiro" 
+		this.financeiroController.preCarregamento();
+	}
+	
+	
 
 	@Post
 	public void novaCota() { 
@@ -54,12 +64,13 @@ public class CotaController {
 
 		this.result.nothing();
 	}
+	
+
 
 	@Post
 	public void editarCota(Long idCota) { 
 
 		if (idCota == null) {
-
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
 		}
 
@@ -84,6 +95,8 @@ public class CotaController {
 		this.result.nothing();
 	}
 	
+	
+	
 	@Post
 	public void salvarCota(Long idCota) {
 
@@ -91,8 +104,13 @@ public class CotaController {
 		
 		processarTelefonesCota(idCota);
 		
+		//Persiste os dados da aba "financeiro"
+		this.financeiroController.postarFinanceiro(idCota);
+		
 		this.result.nothing();
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	private void processarEnderecosCota(Long idCota) {
@@ -107,6 +125,8 @@ public class CotaController {
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 	}
+	
+	
 	
 	private void processarTelefonesCota(Long idCota){
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
@@ -124,6 +144,8 @@ public class CotaController {
 		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
 	}
 	
+	
+	
 	@SuppressWarnings("unchecked")
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
@@ -135,6 +157,8 @@ public class CotaController {
 		
 		return telefonesSessao;
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterTelefonesRemoverSessao(){
@@ -148,8 +172,14 @@ public class CotaController {
 		return telefonesSessao;
 	}
 
+	
+	
 	@Post
 	public void pesquisarPorNumero(Integer numeroCota) {
+		
+		if(numeroCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");
+		}
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 
@@ -172,6 +202,8 @@ public class CotaController {
 		}		
 	}
 
+	
+	
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
@@ -196,6 +228,8 @@ public class CotaController {
 		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
 	}
 	
+	
+	
 	@Post
 	public void pesquisarPorNome(String nomeCota) {
 		
@@ -215,6 +249,8 @@ public class CotaController {
 		this.result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
 	
+	
+	
 	@Post
 	public void cancelar(){
 		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
@@ -222,5 +258,8 @@ public class CotaController {
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
+	
+	
+	
 	
 }

@@ -129,6 +129,7 @@
 				         {name:'idFornecedor', value:idFornecedor},
 				         {name:'tipoDiferenca', value:tipoDiferenca}
 				        ] ,
+		        newp: 1
 			});
 			
 			$(".consultaFaltasSobrasGrid").flexReload();

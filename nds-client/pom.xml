@@ -129,6 +129,11 @@
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
         </dependency>
+        
+        <dependency>
+			<groupId>net.sourceforge.barbecue</groupId>
+			<artifactId>barbecue</artifactId>
+		</dependency>
 
 	</dependencies>
 

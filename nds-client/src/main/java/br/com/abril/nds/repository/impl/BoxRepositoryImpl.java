@@ -36,20 +36,22 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 			.append(" join cota.estudoCotas estudoCota ")
 			.append(" join estudoCota.estudo estudo ")
 			.append(" join estudo.produtoEdicao produtoEdicao ")
-			.append(" join produtoEdicao.produto produto ")
-		
-			.append(" where ")
-			.append(" produto.codigo = :codigoProduto")
-		
-			.append(" group by box.codigo ")
+			.append(" join produtoEdicao.produto produto ");
 			
+	    if(codigoProduto!= null && !codigoProduto.isEmpty()){
+			hql.append(" where ")
+	    	.append(" produto.codigo = :codigoProduto");
+	    }
+	    
+		hql.append(" group by box.codigo ")
 			.append(" order by box.codigo ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("codigoProduto", codigoProduto);
-	
-		
+	    if(codigoProduto!= null && !codigoProduto.isEmpty()){
+	    	query.setParameter("codigoProduto", codigoProduto);
+	    }
+			
 		return query.list();
 	}
 

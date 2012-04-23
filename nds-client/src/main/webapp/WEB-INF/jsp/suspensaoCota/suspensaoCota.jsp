@@ -224,7 +224,8 @@
                 	</strong>
                 </td>
                 
-                <td width="5%" id="totalSugerida">                	
+                <td width="5%" >
+                	<div id="totalSugerida"></div>                	
                 </td>
                 
                 <td width="7%">
@@ -233,8 +234,8 @@
                 	</strong>
                 </td>
                 
-                <td width="17%" id="total">                	
-                	
+                <td width="17%">                	
+                	<div id="total"></div>
                 </td>
                 
                 <td width="17%">
@@ -265,56 +266,14 @@
 <script>	
 	
 	
-	function processaRetornoPesquisa(data) {
-		
-		var grid = data[0];
-		var mensagens = data[1];
-		var status = data[2];
-		
-		var checkTodos = document.getElementById("sel");
-				
-		if(mensagens != null && mensagens.length!=0 && checkTodos.checked!=true) {
-			exibirMensagem(status,mensagens);
-			checkTodos.checked=false;			
-		}
-				
-		if(!grid.rows || status=="error") {
-			
-			document.getElementById("total").innerText = "0,00";
-			document.getElementById("totalSugerida").innerText = "0";	
-			
-			return grid;
-			
-		} else {
-			$(".corpo").show();	
-		}
-		
-
-		var totalSugerida = grid.rows.length;
-		var total = 0.0;
-		
-		for(var i=0; i<grid.rows.length; i++) {			
-			
-			var cell = grid.rows[i].cell;
-			
-			total += parseFloat(cell.dividaAcumulada.replace(".","").replace(",","."));
-			
-			cell.acao = gerarAcoes(cell.idCota,cell.dividas,cell.nome);
-			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
-		}
-		
-		document.getElementById("total").innerText = total.toFixed(2).replace(".",",");
-		document.getElementById("totalSugerida").innerText = totalSugerida;	
-		
-		return grid;
-	}
+	
 	
 	function gerarCheckbox(id,name,idCota,selecionado) {
 		
 		var input = document.createElement("INPUT");
 		input.id=id;
 		input.name=name;
-		input.style.setProperty("float","left");
+		input.style.cssText = "float:left;" + input.style.cssText;
 		input.type="checkbox";
 		input.setAttribute("onclick","adicionarSelecao("+idCota+",this);");
 		
@@ -322,7 +281,7 @@
 			input.checker=true;
 		}
 		
-		return input.outerHTML; 
+		return input.outerHTML || new XMLSerializer().serializeToString(input);
 	}
 	
 	function gerarAcoes(idCota,dividas,nome) {
@@ -336,9 +295,9 @@
 		img.border="0";
 		img.hspace="5";
 		img.title="Detalhes";		
-		a.innerHTML = img.outerHTML;		
+		a.innerHTML = img.outerHTML || new XMLSerializer().serializeToString(img);;		
 		
-		return a.outerHTML;
+		return a.outerHTML || new XMLSerializer().serializeToString(a);
 	}
 	
 	function gerarTabelaDetalhes(dividas, nome) {
@@ -347,7 +306,8 @@
 		div.innerHTML="";
 		
 		var fieldset  = document.createElement("FIELDSET");
-		fieldset.style.setProperty("width","330px");
+		
+		fieldset.style.cssText = "width:330px;" + fieldset.style.cssText;
 		
 		div.appendChild(fieldset);
 		
@@ -469,6 +429,49 @@
 		 });		 		
 	}
 	
+function processaRetornoPesquisa(data) {
+		
+		var grid = data[0];
+		var mensagens = data[1];
+		var status = data[2];
+		
+		var checkTodos = document.getElementById("sel");
+				
+		if(mensagens != null && mensagens.length!=0 && checkTodos.checked!=true) {
+			exibirMensagem(status,mensagens);
+			checkTodos.checked=false;			
+		}
+				
+		if(!grid.rows || status=="error") {
+			
+			document.getElementById("total").innerText = "0,00";
+			document.getElementById("totalSugerida").innerText = "0";	
+			
+			return grid;
+			
+		} else {
+			$(".corpo").show();	
+		}
+		
+
+		var totalSugerida = grid.rows.length;
+		var total = 0.0;
+		
+		for(var i=0; i<grid.rows.length; i++) {			
+			
+			var cell = grid.rows[i].cell;
+			
+			total += parseFloat(cell.dividaAcumulada.replace(".","").replace(",","."));
+			
+			cell.acao = gerarAcoes(cell.idCota,cell.dividas,cell.nome);
+			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
+		}
+		
+		document.getElementById("total").innerHTML  = total.toFixed(2).replace(".",",");
+		document.getElementById("totalSugerida").innerHTML  = totalSugerida;	
+		
+		return grid;
+	}
 	
 	
 	$(function() {	

@@ -81,7 +81,8 @@ public class SociosController {
 		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
 		
 		if (idFiador != null){
-			List<PessoaFisica> listaSocios = this.pessoaService.obterSociosPorFiador(idFiador);
+			
+			List<PessoaFisica> listaSocios = this.pessoaService.obterSociosPorFiador(idFiador, this.obterListaSociosRemoverSessao());
 			
 			for (PessoaFisica p : listaSocios){
 				SocioCadastrado socioCadastrado = new SocioCadastrado();
@@ -246,12 +247,18 @@ public class SociosController {
 			}
 		}
 		
-		if (socioCadastradoRemover != null){
-			Set<Long> sociosRemover = this.obterListaSociosRemoverSessao();
-			sociosRemover.add(socioCadastradoRemover.getPessoa().getId());
+		Set<Long> sociosRemover = this.obterListaSociosRemoverSessao();
+		
+		if (socioCadastradoRemover != null && socioCadastradoRemover.getPessoa() != null && 
+				socioCadastradoRemover.getPessoa().getId() != null){
 			
-			this.httpSession.setAttribute(LISTA_SOCIOS_REMOVER_SESSAO, sociosRemover);
+			sociosRemover.add(socioCadastradoRemover.getPessoa().getId());
+		} else {
+			
+			sociosRemover.add(referencia.longValue());
 		}
+		
+		this.httpSession.setAttribute(LISTA_SOCIOS_REMOVER_SESSAO, sociosRemover);
 		
 		this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, sociosSalvar);
 		
@@ -281,7 +288,7 @@ public class SociosController {
 			dados.add(socio.getNome());
 			dados.add(socio.getEmail());
 			dados.add(Util.adicionarMascaraCPF(socio.getCpf()));
-			dados.add(Util.adicionarMascaraRG(socio.getRg()));
+			dados.add(socio.getRg());
 			dados.add(DateUtil.formatarDataPTBR(socio.getDataNascimento()));
 			dados.add(socio.getOrgaoEmissor());
 			dados.add(socio.getUfOrgaoEmissor());
@@ -296,7 +303,7 @@ public class SociosController {
 				dados.add(conjuge.getNome());
 				dados.add(conjuge.getEmail());
 				dados.add(Util.adicionarMascaraCPF(conjuge.getCpf()));
-				dados.add(Util.adicionarMascaraRG(conjuge.getRg()));
+				dados.add(conjuge.getRg());
 				dados.add(DateUtil.formatarDataPTBR(conjuge.getDataNascimento()));
 				dados.add(conjuge.getOrgaoEmissor());
 				dados.add(conjuge.getUfOrgaoEmissor());

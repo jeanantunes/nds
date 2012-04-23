@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
@@ -223,6 +224,9 @@ public class ConsultaBoletosController {
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
 
+		//CONTROLE DE VIAS IMPRESSAS
+		boletoService.incrementarVia(nossoNumero);
+		
 		httpResponse.flushBuffer();
 	}
 	
