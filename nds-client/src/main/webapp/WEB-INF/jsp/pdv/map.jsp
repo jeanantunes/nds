@@ -1,12 +1,4 @@
 
-<script type="text/javascript">
-
-var PDV_MAP = {
-				
-};
-
-</script>
-
 <fieldset>
 	<legend>MAP</legend>
 	<table width="605" border="0" align="center" cellpadding="2" cellspacing="2">
