@@ -28,11 +28,18 @@ public class PdvVO implements Serializable{
 	private String bairro;
 	
 	private String cidade;
+	
+	private boolean isPrincipal;
+	
+	private String status;
+	
+	private String faturamento;
 
 	public PdvVO() {}
 	
 	public PdvVO(int id,Long idPdv,Long idCota,String nomePdv,String tipoPonto,
-			String contato,String telefone,String endereco,String bairro,String cidade) {
+				 String contato,String telefone,String endereco,String bairro,
+				 String cidade,boolean isPrincipal, String status,String faturamento) {
 		
 		this.id = id;
 		this.idPdv = idPdv;
@@ -44,6 +51,9 @@ public class PdvVO implements Serializable{
 		this.endereco = endereco;
 		this.bairro = bairro;
 		this.cidade = cidade;
+		this.isPrincipal = isPrincipal;
+		this.status = status;
+		this.faturamento = faturamento;
 	}
 	
 	/**
@@ -184,6 +194,48 @@ public class PdvVO implements Serializable{
 	 */
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the isPrincipal
+	 */
+	public boolean isPrincipal() {
+		return isPrincipal;
+	}
+
+	/**
+	 * @param isPrincipal the isPrincipal to set
+	 */
+	public void setPrincipal(boolean isPrincipal) {
+		this.isPrincipal = isPrincipal;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the faturamento
+	 */
+	public String getFaturamento() {
+		return faturamento;
+	}
+
+	/**
+	 * @param faturamento the faturamento to set
+	 */
+	public void setFaturamento(String faturamento) {
+		this.faturamento = faturamento;
 	}
 
 	

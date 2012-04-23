@@ -7,14 +7,22 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CaracteristicaDTO;
+import br.com.abril.nds.dto.EspecialidadeDTO;
+import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.MapDTO;
+import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -40,25 +48,18 @@ public class PdvController {
 	
 	@Path("/")
 	public void index(){
-		
+	
 	}
 	
 	@Post
 	@Path("/consultar")
-	public void consultarPDVs(Long idCota){
+	public void consultarPDVs(Long idCota,String sortname, String sortorder){
 		
-		List<PdvVO> listaPdvs = null;
+		List<PdvVO>  listaPdvs = getPdvsSession();
 		
-		if(getPdvsSession().isEmpty()){
-			listaPdvs = getMock();
-			session.setAttribute(PARAM_LISTA_PDV_SESSION, listaPdvs);
-		}
-		else{
-			listaPdvs = getPdvsSession();
-		}
+		ordenarListaPdvs(sortname, sortorder, listaPdvs);
 		
-		TableModel<CellModelKeyValue<PdvVO>> tableModel =
-				new TableModel<CellModelKeyValue<PdvVO>>();
+		TableModel<CellModelKeyValue<PdvVO>> tableModel = new TableModel<CellModelKeyValue<PdvVO>>();
 			
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPdvs));
 		
@@ -67,6 +68,18 @@ public class PdvController {
 		tableModel.setPage(1);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private void ordenarListaPdvs(String sortname, String sortorder, List<PdvVO> listaPdvs){
+		
+		if (sortname != null) {
+
+			sortorder = sortorder == null ? "asc" : sortorder;
+
+			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+
+			PaginacaoUtil.ordenarEmMemoria(listaPdvs, ordenacao, sortname);
+		}
 	}
 	
 	@Post
@@ -85,18 +98,6 @@ public class PdvController {
 		
 		result.use(Results.json()).from("","result").recursive().serialize();
 	}
-		
-	@Post
-	@Path("/editar")
-	public void editarPDV(Long idPdv, Long idCota){
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
-	}
-	
-	public void salvarPDV(){
-		
-	}
 	
 	private List<PdvVO> getPdvsSession(){
 		
@@ -112,7 +113,8 @@ public class PdvController {
 		List<PdvVO> listaPdvs = new ArrayList<PdvVO>();
 		
 		for(int x=0; x<6 ; x++){
-			listaPdvs.add(new PdvVO(x,Long.valueOf(x),Long.valueOf(x),"Nome PDV" + x,"Tipo PDV","CONTATo","3689-25444","Rua XPTO","Bairro","Cidade"));
+			listaPdvs.add(new PdvVO(x,Long.valueOf(x),Long.valueOf(x),"Nome PDV" + x,"Tipo PDV","CONTATo",
+									"3689-25444","Rua XPTO","Bairro","Cidade",true,"Status","10"));
 		}
 		
 		return listaPdvs;
@@ -120,4 +122,23 @@ public class PdvController {
 		
 	}
 
+		
+	@Post
+	@Path("/editar")
+	public void editarPDV(Long idPdv, Long idCota){
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/salvar")
+	public void salvarPDV(PdvDTO pdvDTO){		
+		//TODO implementar a logica de validação e salvar os dados na sessão do usuario
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	
 }

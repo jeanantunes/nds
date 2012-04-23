@@ -1,0 +1,408 @@
+package br.com.abril.nds.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import br.com.abril.nds.model.cadastro.StatusPDV;
+import br.com.abril.nds.model.cadastro.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.TipoEstabelecimentoAssociacaoPDV;
+import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+
+public class PdvDTO implements Serializable {
+
+	/**
+	 * Serial UID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Long id;
+	
+	private StatusPDV statusPDV;
+	
+	private Date dataInicio;
+	
+	private String nomePDV ;
+	
+	private String contato;
+	
+	private String site;
+	
+	private String email;
+	
+	private String pontoReferencia;
+	
+	private boolean dentroOutroEstabelecimento;
+	
+	private TamanhoPDV tamanhoPDV;
+	
+	private int qtdeFuncionarios;
+	
+	private boolean sistemaIPV;
+	
+	private BigDecimal porcentagemFaturamento;
+	
+	private TipoLicencaMunicipal tipoLicencaMunicipal;
+
+	private String numeroLicenca;
+	
+	private String nomeLicenca;
+	
+	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
+	
+	private DiasFuncionamentoDTO diasFuncionamentoDTO ;
+	
+	private EnderecoPdvDTO enderecoPdvDTO;
+	
+    private TelefonePdvDTO telefonePdvDTO;
+    
+    private CaracteristicaDTO caracteristicaDTO;
+    
+    private EspecialidadeDTO especialidadeDTO;
+    
+    private GeradorFluxoDTO geradorFluxoDTO;
+    
+    private MapDTO mapDTO;
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the diasFuncionamentoDTO
+	 */
+	public DiasFuncionamentoDTO getDiasFuncionamentoDTO() {
+		return diasFuncionamentoDTO;
+	}
+
+	/**
+	 * @param diasFuncionamentoDTO the diasFuncionamentoDTO to set
+	 */
+	public void setDiasFuncionamentoDTO(DiasFuncionamentoDTO diasFuncionamentoDTO) {
+		this.diasFuncionamentoDTO = diasFuncionamentoDTO;
+	}
+
+	/**
+	 * @return the enderecoPdvDTO
+	 */
+	public EnderecoPdvDTO getEnderecoPdvDTO() {
+		return enderecoPdvDTO;
+	}
+
+	/**
+	 * @param enderecoPdvDTO the enderecoPdvDTO to set
+	 */
+	public void setEnderecoPdvDTO(EnderecoPdvDTO enderecoPdvDTO) {
+		this.enderecoPdvDTO = enderecoPdvDTO;
+	}
+
+	/**
+	 * @return the telefonePdvDTO
+	 */
+	public TelefonePdvDTO getTelefonePdvDTO() {
+		return telefonePdvDTO;
+	}
+
+	/**
+	 * @param telefonePdvDTO the telefonePdvDTO to set
+	 */
+	public void setTelefonePdvDTO(TelefonePdvDTO telefonePdvDTO) {
+		this.telefonePdvDTO = telefonePdvDTO;
+	}
+
+	/**
+	 * @return the caracteristicaDTO
+	 */
+	public CaracteristicaDTO getCaracteristicaDTO() {
+		return caracteristicaDTO;
+	}
+
+	/**
+	 * @param caracteristicaDTO the caracteristicaDTO to set
+	 */
+	public void setCaracteristicaDTO(CaracteristicaDTO caracteristicaDTO) {
+		this.caracteristicaDTO = caracteristicaDTO;
+	}
+
+	/**
+	 * @return the especialidadeDTO
+	 */
+	public EspecialidadeDTO getEspecialidadeDTO() {
+		return especialidadeDTO;
+	}
+
+	/**
+	 * @param especialidadeDTO the especialidadeDTO to set
+	 */
+	public void setEspecialidadeDTO(EspecialidadeDTO especialidadeDTO) {
+		this.especialidadeDTO = especialidadeDTO;
+	}
+
+	/**
+	 * @return the geradorFluxoDTO
+	 */
+	public GeradorFluxoDTO getGeradorFluxoDTO() {
+		return geradorFluxoDTO;
+	}
+
+	/**
+	 * @param geradorFluxoDTO the geradorFluxoDTO to set
+	 */
+	public void setGeradorFluxoDTO(GeradorFluxoDTO geradorFluxoDTO) {
+		this.geradorFluxoDTO = geradorFluxoDTO;
+	}
+
+	/**
+	 * @return the mapDTO
+	 */
+	public MapDTO getMapDTO() {
+		return mapDTO;
+	}
+
+	/**
+	 * @param mapDTO the mapDTO to set
+	 */
+	public void setMapDTO(MapDTO mapDTO) {
+		this.mapDTO = mapDTO;
+	}
+
+	/**
+	 * @return the statusPDV
+	 */
+	public StatusPDV getStatusPDV() {
+		return statusPDV;
+	}
+
+	/**
+	 * @param statusPDV the statusPDV to set
+	 */
+	public void setStatusPDV(StatusPDV statusPDV) {
+		this.statusPDV = statusPDV;
+	}
+
+	/**
+	 * @return the dataInicio
+	 */
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	/**
+	 * @param dataInicio the dataInicio to set
+	 */
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	/**
+	 * @return the nomePDV
+	 */
+	public String getNomePDV() {
+		return nomePDV;
+	}
+
+	/**
+	 * @param nomePDV the nomePDV to set
+	 */
+	public void setNomePDV(String nomePDV) {
+		this.nomePDV = nomePDV;
+	}
+
+	/**
+	 * @return the contato
+	 */
+	public String getContato() {
+		return contato;
+	}
+
+	/**
+	 * @param contato the contato to set
+	 */
+	public void setContato(String contato) {
+		this.contato = contato;
+	}
+
+	/**
+	 * @return the site
+	 */
+	public String getSite() {
+		return site;
+	}
+
+	/**
+	 * @param site the site to set
+	 */
+	public void setSite(String site) {
+		this.site = site;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the pontoReferencia
+	 */
+	public String getPontoReferencia() {
+		return pontoReferencia;
+	}
+
+	/**
+	 * @param pontoReferencia the pontoReferencia to set
+	 */
+	public void setPontoReferencia(String pontoReferencia) {
+		this.pontoReferencia = pontoReferencia;
+	}
+
+	/**
+	 * @return the dentroOutroEstabelecimento
+	 */
+	public boolean isDentroOutroEstabelecimento() {
+		return dentroOutroEstabelecimento;
+	}
+
+	/**
+	 * @param dentroOutroEstabelecimento the dentroOutroEstabelecimento to set
+	 */
+	public void setDentroOutroEstabelecimento(boolean dentroOutroEstabelecimento) {
+		this.dentroOutroEstabelecimento = dentroOutroEstabelecimento;
+	}
+
+	
+	/**
+	 * @return the tamanhoPDV
+	 */
+	public TamanhoPDV getTamanhoPDV() {
+		return tamanhoPDV;
+	}
+
+	/**
+	 * @param tamanhoPDV the tamanhoPDV to set
+	 */
+	public void setTamanhoPDV(TamanhoPDV tamanhoPDV) {
+		this.tamanhoPDV = tamanhoPDV;
+	}
+
+	/**
+	 * @return the qtdeFuncionarios
+	 */
+	public int getQtdeFuncionarios() {
+		return qtdeFuncionarios;
+	}
+
+	/**
+	 * @param qtdeFuncionarios the qtdeFuncionarios to set
+	 */
+	public void setQtdeFuncionarios(int qtdeFuncionarios) {
+		this.qtdeFuncionarios = qtdeFuncionarios;
+	}
+
+	/**
+	 * @return the sistemaIPV
+	 */
+	public boolean isSistemaIPV() {
+		return sistemaIPV;
+	}
+
+	/**
+	 * @param sistemaIPV the sistemaIPV to set
+	 */
+	public void setSistemaIPV(boolean sistemaIPV) {
+		this.sistemaIPV = sistemaIPV;
+	}
+
+	/**
+	 * @return the porcentagemFaturamento
+	 */
+	public BigDecimal getPorcentagemFaturamento() {
+		return porcentagemFaturamento;
+	}
+
+	/**
+	 * @param porcentagemFaturamento the porcentagemFaturamento to set
+	 */
+	public void setPorcentagemFaturamento(BigDecimal porcentagemFaturamento) {
+		this.porcentagemFaturamento = porcentagemFaturamento;
+	}
+
+	/**
+	 * @return the tipoLicencaMunicipal
+	 */
+	public TipoLicencaMunicipal getTipoLicencaMunicipal() {
+		return tipoLicencaMunicipal;
+	}
+
+	/**
+	 * @param tipoLicencaMunicipal the tipoLicencaMunicipal to set
+	 */
+	public void setTipoLicencaMunicipal(TipoLicencaMunicipal tipoLicencaMunicipal) {
+		this.tipoLicencaMunicipal = tipoLicencaMunicipal;
+	}
+
+	/**
+	 * @return the numeroLicenca
+	 */
+	public String getNumeroLicenca() {
+		return numeroLicenca;
+	}
+
+	/**
+	 * @param numeroLicenca the numeroLicenca to set
+	 */
+	public void setNumeroLicenca(String numeroLicenca) {
+		this.numeroLicenca = numeroLicenca;
+	}
+
+	/**
+	 * @return the nomeLicenca
+	 */
+	public String getNomeLicenca() {
+		return nomeLicenca;
+	}
+
+	/**
+	 * @param nomeLicenca the nomeLicenca to set
+	 */
+	public void setNomeLicenca(String nomeLicenca) {
+		this.nomeLicenca = nomeLicenca;
+	}
+
+	/**
+	 * @return the tipoEstabelecimentoAssociacaoPDV
+	 */
+	public TipoEstabelecimentoAssociacaoPDV getTipoEstabelecimentoAssociacaoPDV() {
+		return tipoEstabelecimentoAssociacaoPDV;
+	}
+
+	/**
+	 * @param tipoEstabelecimentoAssociacaoPDV the tipoEstabelecimentoAssociacaoPDV to set
+	 */
+	public void setTipoEstabelecimentoAssociacaoPDV(
+			TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV) {
+		this.tipoEstabelecimentoAssociacaoPDV = tipoEstabelecimentoAssociacaoPDV;
+	}
+	
+	
+    
+    
+}
