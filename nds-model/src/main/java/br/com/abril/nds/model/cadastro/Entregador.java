@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ public class Entregador {
 	@Column(name = "PROCURACAO", nullable = false)
 	private boolean procuracao;
 	
-	@OneToOne(mappedBy = "entregador")
+	@OneToOne(mappedBy = "entregador", cascade=CascadeType.REMOVE)
 	private ProcuracaoEntregador procuracaoEntregador;
 	
 	@OneToMany(mappedBy = "entregador")
