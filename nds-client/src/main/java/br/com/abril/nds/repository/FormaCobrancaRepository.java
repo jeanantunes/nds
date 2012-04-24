@@ -1,0 +1,23 @@
+package br.com.abril.nds.repository;
+
+import java.util.List;
+
+import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+
+/**
+ * Interface que define as regras de acesso a dados referentes a entidade
+ * {@link br.com.abril.nds.model.cadastro.FormaCobranca}  
+ * 
+ * @author Discover Technology
+ *
+ */
+public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
+	
+	
+	FormaCobranca obterPorTipoEBanco(TipoCobranca tipo, Banco banco);
+	
+	List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipo);
+	
+}

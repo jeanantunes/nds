@@ -4,6 +4,8 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.FinanceiroVO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -46,5 +48,13 @@ public interface FinanceiroService {
     void postarDadosCotaCobranca(FinanceiroVO cotaCobranca);
 
 	
+    
+    
+    
+    /**
+     * !!!
+     * @return
+     */
+    List<FormaCobranca> obterFormasCobrancaPorCota(/*FiltroConsultaFormasCobrancaCotaDTO filtro*/);
 
 }
