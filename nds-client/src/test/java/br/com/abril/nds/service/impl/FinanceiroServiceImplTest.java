@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -10,6 +12,7 @@ import br.com.abril.nds.client.vo.FinanceiroVO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -43,5 +46,13 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		@SuppressWarnings("static-access")
 		FinanceiroVO financeiroVO = this.financeiroService.obterDadosCotaCobranca(this.ID_COTA);
 		Assert.assertTrue(financeiroVO!=null);
+	}
+	
+	
+	@Test
+	public void obterFormasCobrancaPorCota(){
+		List<FormaCobranca> formasCobranca = this.financeiroService.obterFormasCobrancaPorCota();
+		Assert.assertNotNull(formasCobranca);
+		Assert.assertTrue((formasCobranca.size()>0));
 	}
 }
