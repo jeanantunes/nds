@@ -24,7 +24,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -251,10 +250,8 @@ public class ChamadaoController {
 	 */
 	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
-		//TODO: fornecedores publicação?
-		
 		List<Fornecedor> listaFornecedor =
-			fornecedorService.obterFornecedoresPorProduto(codigoProduto, GrupoFornecedor.PUBLICACAO);
+			fornecedorService.obterFornecedoresPorProduto(codigoProduto, null);
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
 			new ArrayList<ItemDTO<Long,String>>();
@@ -338,8 +335,14 @@ public class ChamadaoController {
 			chamadaoVO.setPrecoCapa(
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoCapa()));
 			
-			chamadaoVO.setValorDesconto(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoComDesconto()));
+			if (consignadoCotaChamadao.getPrecoComDesconto() != null) {
+				
+				chamadaoVO.setValorDesconto(
+					CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoComDesconto()));
+				
+			} else {
+				chamadaoVO.setValorDesconto("");
+			}
 			
 			chamadaoVO.setReparte(consignadoCotaChamadao.getReparte().toString());
 			chamadaoVO.setFornecedor(consignadoCotaChamadao.getNomeFornecedor());
@@ -407,9 +410,19 @@ public class ChamadaoController {
 				TipoMensagem.WARNING, "O preenchimento do campo [Data Chamadão] é obrigatório!");
 		}
 		
-		if (!DateUtil.isValidDatePTBR(dataChamadaoFormatada)) {
+		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
+		
+		if (dataChamadao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida");
+		}
+		
+		Date dataAtual = DateUtil.removerTimestamp(new Date());
+		
+		if (dataChamadao.compareTo(dataAtual) < 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A Data do Chamadão deve ser maior ou igual a data do dia!");
 		}
 	}
 	
