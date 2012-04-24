@@ -103,31 +103,11 @@
 		
 		iniciarData();
 		
-		$("#tipoMovimento").focus();
+		$("#numeroCota").focus();
 		
 		$("#descricaoCota").autocomplete({source: ""});
 	}
 		
-	function popup() {
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-
 	function pesquisar() {
 		
 		var numeroCota = $("#numeroCota").val();
@@ -294,6 +274,26 @@
 		    thousandsSeparator: '.'
 		});
 	}
+	
+	function confirmar() {
+		
+		$( "#dialog-novo" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:320,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").hide("highlight", {}, 1000, callback);
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	}
 		
 </script>
 
@@ -336,7 +336,11 @@
 						</c:forEach>
     				</select>
     			</td>
-    			<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+    			<td width="104">
+    				<span class="bt_pesquisar" title="Pesquisar">
+    					<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
+    				</span>
+    			</td>
   			</tr>
 		</table>
 	</fieldset>
@@ -353,7 +357,7 @@
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
 	   			<tr>
 	   				<td width="318" valign="top">
-	    				<span class="bt_confirmar_novo" title="Gravar"><a onclick="popup();" href="javascript:;"><img
+	    				<span class="bt_confirmar_novo" title="Confirmar"><a onclick="confirmar();" href="javascript:;"><img
 							  border="0" hspace="5"
 							  src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
 						</span>
@@ -376,7 +380,7 @@
 	      			<td width="458">
 				        <fieldset class="box_field" style="width:320px;">
 				        	<legend>Chamadão</legend>
-				        	<div class="box_resumo">
+				        	<div class="box_resumo" style="width:308px;">
 				            	<table width="309" border="0" cellspacing="1" cellpadding="1">
 				                	<tr class="header_table">
 				                    	<td height="23" align="right">&nbsp;</td>
