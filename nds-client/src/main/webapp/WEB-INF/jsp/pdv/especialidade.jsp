@@ -1,7 +1,7 @@
 <script type="text/javascript">
 $(function() {
 	
-	$("select[name='selectEspecialidades']").selectAdjustWidth("select[name='selectCaracteristicas']");
+	
 	
 	$("select[name='selectEspecialidades']").multiSelect("select[name='selectCaracteristicas']", {trigger: "#linkVoltarTodos"});
 	

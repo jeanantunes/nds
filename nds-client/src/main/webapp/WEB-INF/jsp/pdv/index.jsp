@@ -64,7 +64,9 @@ $(".PDVsGrid").flexigrid({
 		align : 'center'
 	}],
 	width : 880,
-	height : 150
+	height : 150,
+	sortname : "nomePdv",
+	sortorder : "asc"
 });
 
 $("#btnSalvarPDV").keypress(function() {
@@ -96,7 +98,10 @@ $("#btnSalvarPDV").keypress(function() {
 <span class="bt_novo"><a href="javascript:;" onclick="PDV.popup_novoPdv();">Novo</a></span>
 
 <br clear="all" />
-	
+
+<div id="dialog-excluirPdv" title="Atenção" style="display:none">
+	<p>Confirmar exclusão PDV ?</p>
+</div>
 
 <div id="dialog-pdv" title="PDV Cota">
 

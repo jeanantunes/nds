@@ -13,6 +13,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EspecialidadeDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -37,15 +38,8 @@ public class PdvController {
 	private Result result;
 	
 	@Autowired
-	private HttpSession session;
-	
-	@Autowired
 	private PdvService pdvService;
-	
-	private static final String PARAM_LISTA_PDV_SESSION = "pramListaPdvs";
-	
-	
-	
+
 	@Path("/")
 	public void index(){
 	
@@ -55,7 +49,7 @@ public class PdvController {
 	@Path("/consultar")
 	public void consultarPDVs(Long idCota,String sortname, String sortorder){
 		
-		List<PdvVO>  listaPdvs = getPdvsSession();
+		List<PdvVO>  listaPdvs = getMock();
 		
 		ordenarListaPdvs(sortname, sortorder, listaPdvs);
 		
@@ -72,7 +66,7 @@ public class PdvController {
 	
 	private void ordenarListaPdvs(String sortname, String sortorder, List<PdvVO> listaPdvs){
 		
-		if (sortname != null) {
+		if (sortname != null && !listaPdvs.isEmpty()) {
 
 			sortorder = sortorder == null ? "asc" : sortorder;
 
@@ -84,28 +78,16 @@ public class PdvController {
 	
 	@Post
 	@Path("/excluir")
-	public void excluirPDV(Long idPdv, Long idCota, int id){
+	public void excluirPDV(Long idPdv, Long idCota){
 		
 		if(!pdvService.isExcluirPdv(idPdv)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pdv não pode ser excluido!");
 		}
 		
-		List<PdvVO> list = getPdvsSession();
-		
-		if(!list.isEmpty()){
-			list.remove(id);
-		}
-		
-		result.use(Results.json()).from("","result").recursive().serialize();
-	}
+		//TODO Chamar componente para exclusão
 	
-	private List<PdvVO> getPdvsSession(){
-		
-		if(session.getAttribute(PARAM_LISTA_PDV_SESSION)!= null){
-
-			return (List<PdvVO>) session.getAttribute(PARAM_LISTA_PDV_SESSION);
-		}
-		return new ArrayList<PdvVO>();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV excluido com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	public List<PdvVO> getMock(){
@@ -127,8 +109,16 @@ public class PdvController {
 	@Path("/editar")
 	public void editarPDV(Long idPdv, Long idCota){
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		PdvDTO dto = new PdvDTO();
+		dto.setContato("asasaa");
+		dto.setDentroOutroEstabelecimento(Boolean.TRUE);
+		
+		CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
+		caracteristicaDTO.setLuminoso(Boolean.TRUE);
+		
+		dto.setCaracteristicaDTO(caracteristicaDTO);
+		
+		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 	
 	@Post
@@ -139,6 +129,5 @@ public class PdvController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
-	
-	
+		
 }

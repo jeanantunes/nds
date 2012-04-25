@@ -1,24 +1,15 @@
 
 var PDV = {
 		
-		popup_novoPdv:function() {
-			
-			$( "#dialog-pdv" ).dialog({
-				resizable: false,
-				height:600,
-				width:890,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						PDV.salvarPDV();
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		},
+		abaDadosBasico:"DADOS_BASICO",
+		abaEndereco:"ENDERECO",
+		abaTelefone:"TELEFONE",
+		abaCaracteristica:"CARACTERISTICA",
+		abaEspecialidade:"ESPECIALIDADE",
+		abaGeradorFluxo:"GERADOR_FLUXO",
+		abaMap:"MAP",
+		
+		abaSelecionada:"",
 		
 		pesquisarPdvs: function (idCota){
 			
@@ -37,13 +28,13 @@ var PDV = {
 			// Monta as colunas com os inputs do grid
 			$.each(resultado.rows, function(index, row) {
 				
-				var param = '\'' + row.cell.idPdv +'\','+'\''+ row.cell.idCota + '\',' + index;
+				var param = '\'' + row.cell.idPdv +'\','+'\''+ row.cell.idCota +'\'';
 				
 				var linkEdicao = '<a href="javascript:;" onclick="PDV.editarPDV('+ param +');" style="cursor:pointer">' +
 					 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar PDV" />' +
 					 '</a>';			
 				 
-				var linkExclusao ='<a href="javascript:;" onclick="PDV.excluirPDV('+param +' );" style="cursor:pointer">' +
+				var linkExclusao ='<a href="javascript:;" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
 	                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir PDV" />' +
 	                  '</a>';		 					 
 				
@@ -61,6 +52,34 @@ var PDV = {
 			return resultado;
 		},
 		
+		carregarAbaDadosBasico: function (result){
+			
+		},
+		
+		carregarAbaEndereco: function (result){
+			
+		},
+		
+		carregarAbaTelefone: function (result){
+			
+		},
+		
+		carregarAbaCaracteristica: function (result){
+			
+		},
+		
+		carregarAbaEspecialidade: function (result){
+			
+		},
+		
+		carregarAbaGeradorFluxo: function (result){
+			
+		},
+		
+		carregarAbaMap: function (result){
+			
+		},
+		
 		editarPDV:function (idPdv,idCota,index){
 			
 			$.postJSON(contextPath + "/cadastro/pdv/editar",
@@ -73,12 +92,12 @@ var PDV = {
 			},PDV.errorEditarPDV,true); 
 		},
 		
-		excluirPDV:function(idPdv,idCota,index){
+		excluirPDV:function(idPdv,idCota){
 			
 			$.postJSON(contextPath + "/cadastro/pdv/excluir",
 					[{name:"idPdv",value:idPdv},
 					 {name:"idCota",value:idCota},
-					 {name:"id",value:index}], function(result){
+					 ], function(result){
 				
 				PDV.pesquisarPdvs(idCota);
 				
@@ -107,6 +126,7 @@ var PDV = {
 					this.getDadosMap(), function(result){
 				
 			},this.errorSalvarPDV,true);
+			
 		},
 		
 		errorSalvarPDV: function (){
@@ -132,8 +152,8 @@ var PDV = {
 				"pdvDTO.tipoLicencaMunicipal.id="				+$("#selectTipoLicenca").val()+ "&" +
 				"pdvDTO.numeroLicenca="							+$("#numerolicenca").val()+ "&" +
 				"pdvDTO.nomeLicenca="							+$("#nomeLicenca").val();
-		            
-		return dados;
+			
+			return dados;
 		},
 		
 				
@@ -158,7 +178,7 @@ var PDV = {
 			var listaEspecialidades ="";
 			
 			 $("#especialidades_options option").each(function () {
-				 listaEspecialidades = listaEspecialidades + "pdvDTO.especialidadeDTO.especialidades="+ $(this).val() +"&";
+				 listaEspecialidades = listaEspecialidades + "pdvDTO.especialidades="+ $(this).val() +"&";
              });
    
 			return listaEspecialidades;
@@ -166,16 +186,29 @@ var PDV = {
 		
 		getDadosGeradorFluxo: function (){
 			
-			var dados = "";
+			 var listaFluxoSecundario ="";
 			
-			return dados;
+			 $("#selectFluxoSecundario option").each(function () {
+				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario="+ $(this).val() +"&";
+			 });
+			 
+			 /**
+			  * TODO definir como sera o fluxo principal 
+			  */
+			 //listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.pdvDTO.geradorFluxoPrincipal="+ $("#").val() +"&";
+			 
+			 return listaFluxoSecundario;	
 		},
 		
 		getDadosMap: function (){
 			
-			var dados = "";
+			var listaMaps ="";
 			
-			return dados;
+			 $("#selectMap option").each(function () {
+				 listaMaps = listaMaps + "pdvDTO.maps="+ $(this).val() +"&";
+            });
+  
+			return listaMaps;
 		},
 		
 		isChecked : function (idCampo){	
@@ -241,6 +274,44 @@ var PDV = {
 			 */
 			
 			linha.remove();
+		},
+		
+		exibirDialogExclusao:function(idPdv,idCota){
+			
+			$("#dialog-excluirPdv" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:250,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						PDV.excluirPDV(idPdv, idCota);
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		},
+		
+		popup_novoPdv:function() {
+			
+			$( "#dialog-pdv" ).dialog({
+				resizable: false,
+				height:600,
+				width:890,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						PDV.salvarPDV();
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
 		}
 		
 };
