@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro.pdv;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 
 /**
  * Entidade com informações de segmentação do PDV

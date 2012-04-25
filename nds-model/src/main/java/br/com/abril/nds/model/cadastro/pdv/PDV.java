@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro.pdv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 
 /**
  * Entidade que representa o PDV associado
@@ -147,6 +150,12 @@ public class PDV implements Serializable {
 	 */
 	@Embedded
 	private CaracteristicasPDV caracteristicas;
+	
+	/**
+	 * Segmentação do PDV
+	 */
+	@Embedded
+	private SegmentacaoPDV segmentacao;
 	
 	public Long getId() {
 		return id;
@@ -307,6 +316,14 @@ public class PDV implements Serializable {
 	
 	public void setCaracteristicas(CaracteristicasPDV caracteristicas) {
 		this.caracteristicas = caracteristicas;
+	}
+	
+	public SegmentacaoPDV getSegmentacao() {
+		return segmentacao;
+	}
+	
+	public void setSegmentacao(SegmentacaoPDV segmentacao) {
+		this.segmentacao = segmentacao;
 	}
 
 }
