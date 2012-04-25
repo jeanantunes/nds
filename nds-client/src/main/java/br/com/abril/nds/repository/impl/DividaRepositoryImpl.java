@@ -7,12 +7,19 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.controllers.financeiro.InadimplenciaController;
+import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.repository.DividaRepository;
@@ -21,6 +28,9 @@ import br.com.abril.nds.repository.DividaRepository;
 public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> implements
 		DividaRepository {
 
+	@Value("#{queries.inadimplenciasCota}")
+	protected String queryInadimplenciasCota;
+	
 	public DividaRepositoryImpl() {
 		super(Divida.class);
 	}
@@ -301,5 +311,88 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		}
 		
 		return  hql.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<StatusDividaDTO> obterInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
+	
+		StringBuilder sql = new StringBuilder(queryInadimplenciasCota);
+		
+		sql.append(obterOrderByInadimplenciasCota(filtro));
+		
+		sql.append(obterFiltrosInadimplenciasCota(filtro));
+		
+		if(filtro.getPaginacao().getPosicaoInicial()!= null &&  filtro.getPaginacao().getQtdResultadosPorPagina()!= null) {
+			sql.append(" LIMIT :inicio,:qtdeResult");
+		}
+		
+		Query query = getSession().createSQLQuery(sql.toString())
+				.addScalar("numCota")
+				.addScalar("nome")
+				.addScalar("status")
+				.addScalar("consignado")
+				.addScalar("dataVencimento")
+				.addScalar("valor")
+				.addScalar("situacao")
+				.addScalar("dividaAcumulada")
+				.addScalar("diasAtraso");
+		
+		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			
+			query.setInteger("inicio", filtro.getPaginacao().getPosicaoInicial());
+			query.setInteger("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina() );
+		}
+			
+		query.setResultTransformer(Transformers.aliasToBean(StatusDividaDTO.class));
+				
+		return query.list();
+	}	
+	
+	private String obterFiltrosInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
+			//TODO  implementar
+			String sql = "";
+			
+			return sql;
+	}
+	
+	private String obterOrderByInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
+		
+		String sortColumn = filtro.getColunaOrdenacao().name();
+		String sortOrder = filtro.getPaginacao().getOrdenacao().name();
+		
+		
+		String sql = "";
+		
+		if(sortColumn == null || sortOrder == null) {
+			return sql;
+		}
+		
+		sql += " ORDER BY ";
+		
+		if(sortColumn.equalsIgnoreCase("numCota")) {
+			sql += "numCota";
+		} else if(sortColumn.equalsIgnoreCase("nome")) {
+			sql += "nome";
+		} else if(sortColumn.equalsIgnoreCase("status")) {
+			sql += "status";
+		} else if(sortColumn.equalsIgnoreCase("consignado")) {
+			sql += "consignado";
+		} else if(sortColumn.equalsIgnoreCase("dataVencimento")) {
+			sql += "dataVencimento";
+		} else if(sortColumn.equalsIgnoreCase("valor")) {
+			sql += "valor";
+		}  else if(sortColumn.equalsIgnoreCase("situacao")) {
+			sql += "situacao";
+		} else if(sortColumn.equalsIgnoreCase("dividaAcumulada")) {
+			sql += "dividaAcumulada";
+		} else if(sortColumn.equalsIgnoreCase("diasAtraso")) {
+			sql += "diasAtraso";
+		} else {
+			return "";
+		}
+		
+		sql += sortOrder.equalsIgnoreCase("asc") ?  " ASC " : " DESC ";		
+		
+		return sql;
 	}
 }
