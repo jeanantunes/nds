@@ -212,7 +212,7 @@
 						   onchange="carregarDiaSemana();" />
 				</td>
 				<td width="164">
-					<span class="bt_pesquisar">
+					<span class="bt_pesquisar" title="Pesquisar">
 						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>
 				</td>
@@ -252,6 +252,15 @@
 						</a>
 					</span>
 				</td>
+				
+				<td>
+					<span class="bt_confirmar_novo" title="Confirmar balanceamento">
+						<a href="javascript:;" onclick="popup_balanceamento();">
+							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
+						</a>
+					</span>
+				</td>
+					
 				<td>
 					<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
 						<a href="javascript:;" onclick="mostra_matriz();">
@@ -259,8 +268,9 @@
 						</a>
 					</span>
 				</td>
+				
 				<td>
-					<span class="bt_configura_inicial">
+					<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
 						<a href="javascript:;">
 							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />
 							Voltar Configuração Inicial
@@ -296,13 +306,6 @@
 						<span class="bt_novos" title="Reprogramar">
 							<a href="javascript:;" onclick="popup();">
 								<img src="<c:url value='images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
-							</a>
-						</span>
-					</td>
-					<td width="127">
-						<span class="bt_confirmar_novo" title="Confirmar balanceamento">
-							<a href="javascript:;" onclick="popup_balanceamento();">
-								<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
 							</a>
 						</span>
 					</td>
