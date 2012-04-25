@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 
 public class EntregadorPessoaJuridicaVO implements Serializable {
 
@@ -13,6 +14,8 @@ public class EntregadorPessoaJuridicaVO implements Serializable {
 	private static final long serialVersionUID = 1500282702636525652L;
 
 	private Entregador entregador;
+
+	private ProcuracaoEntregador procuracaoEntregador;
 	
 	private PessoaJuridica pessoaJuridica;
 
@@ -28,6 +31,20 @@ public class EntregadorPessoaJuridicaVO implements Serializable {
 	 */
 	public void setEntregador(Entregador entregador) {
 		this.entregador = entregador;
+	}
+
+	/**
+	 * @return the procuracaoEntregador
+	 */
+	public ProcuracaoEntregador getProcuracaoEntregador() {
+		return procuracaoEntregador;
+	}
+
+	/**
+	 * @param procuracaoEntregador the procuracaoEntregador to set
+	 */
+	public void setProcuracaoEntregador(ProcuracaoEntregador procuracaoEntregador) {
+		this.procuracaoEntregador = procuracaoEntregador;
 	}
 
 	/**

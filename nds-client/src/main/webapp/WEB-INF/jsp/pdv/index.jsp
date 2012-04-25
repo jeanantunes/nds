@@ -1,6 +1,8 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
+
 <script type="text/javascript">
 
 $(".PDVsGrid").flexigrid({
@@ -33,21 +35,27 @@ $(".PDVsGrid").flexigrid({
 	}, {
 		display : 'Endereço',
 		name : 'endereco',
-		width : 150,
+		width : 170,
 		sortable : true,
 		align : 'left'
 	}, {
-		display : 'Bairro',
-		name : 'bairro',
-		width : 90,
+		display : 'Principal',
+		name : 'principal',
+		width : 60,
 		sortable : true,
-		align : 'left'
+		align : 'center'
 	}, {
-		display : 'Cidade',
-		name : 'cidade',
-		width : 110,
+		display : 'Status',
+		name : 'status',
+		width : 60,
 		sortable : true,
-		align : 'left'
+		align : 'center'
+	}, {
+		display : '% Fat.',
+		name : 'faturamento',
+		width : 50,
+		sortable : true,
+		align : 'center'
 	}, {
 		display : 'Ação',
 		name : 'acao',
@@ -58,6 +66,26 @@ $(".PDVsGrid").flexigrid({
 	width : 880,
 	height : 150
 });
+
+$("#btnSalvarPDV").keypress(function() {
+	
+	var keynum = 0;
+      
+    if(window.event) {
+
+        keynum = event.keyCode;
+    
+    } else if(event.which) {   
+
+    	keynum = event.which;
+    }
+
+	if (keynum == 13) {
+		PDV.salvarPDV();
+	}
+});
+
+
 
 </script>
 	
@@ -83,24 +111,23 @@ $(".PDVsGrid").flexigrid({
 	        <li><a href="#tabpdv-7">MAP</a></li>
 	       
 	  </ul>
-	 	
-	   <div id="tabpdv-1"> <jsp:include page="dadosBasico.jsp"/> </div>
-	   
-	   <div id="tabpdv-2"> <jsp:include page="endereco.jsp"/> </div>
-	   
-	   <div id="tabpdv-3"> <jsp:include page="telefone.jsp"/> </div>
-	   
-	   <div id="tabpdv-4"> <jsp:include page="caracteristica.jsp"/> </div>
-	   
-	   <div id="tabpdv-5"> <jsp:include page="especialidade.jsp"/> </div>
-	   
-	   <div id="tabpdv-6"> <jsp:include page="geradorFluxo.jsp"/> </div>
-	   
-	   <div id="tabpdv-7"> <jsp:include page="map.jsp"/> </div>				
-			 
-	  <br clear="all" />
-	
+	 	   <div id="tabpdv-1"> <jsp:include page="dadosBasico.jsp"/> </div>
+		   
+		   <div id="tabpdv-2"> <jsp:include page="endereco.jsp"/> </div>
+		   
+		   <div id="tabpdv-3"> <jsp:include page="telefone.jsp"/> </div>
+		   
+		   <div id="tabpdv-4"> <jsp:include page="caracteristica.jsp"/> </div>
+		   
+		   <div id="tabpdv-5"> <jsp:include page="especialidade.jsp"/> </div>
+		   
+		   <div id="tabpdv-6"> <jsp:include page="geradorFluxo.jsp"/> </div>
+		   
+		   <div id="tabpdv-7"> <jsp:include page="map.jsp"/> </div>				
+				 
+		  <br clear="all" />
 	</div>
-
+	
 </div>
+
 

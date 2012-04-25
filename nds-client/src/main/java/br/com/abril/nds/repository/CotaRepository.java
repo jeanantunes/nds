@@ -122,4 +122,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 */
 	BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
 
+	
+	Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota);
 }

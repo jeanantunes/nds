@@ -1,48 +1,203 @@
 <head>
 
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
-<script type="text/javascript">
+<script language="javascript" type="text/javascript">
 
 
-	$(function() {	
-		var idCota = 1; //Receber aqui o ID da Cota que esta sendo alterada ou editada
-		editarFinanceiro(idCota);
-	});
 	
-	
-	function buscaComboBancos(tipoCobranca){
-
+	function carregaFinanceiro(){
+		var idCota = $("#_idCotaRef").val();
+		populaFinanceiro(idCota);
+		exibe_botao_contrato();
+		mostrarGridConsulta();
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+    $(function() {	
+		$(".boletosUnificadosGrid").flexigrid({
+			preProcess: getDataFromResult,
+			dataType : 'json',
+			colModel : [  {
+				display : 'Fornecedores',
+				name : 'fornecedores',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Concentração de Pagamento',
+				name : 'concentracaoPagto',
+				width : 170,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Tipo de Pagamento',
+				name : 'tipoPagto',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Detalhes - Tipo de Pagamento',
+				name : 'detalhesTipoPagto',
+				width : 250,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 50,
+				sortable : false,
+				align : 'center'
+			}],
+			width : 770,
+			height : 150
+		});
+    });	
+    
+    function mostrarGridConsulta() {
+    	
+		/*PASSAGEM DE PARAMETROS*/
+		$(".boletosUnificadosGrid").flexOptions({
+			/*METODO QUE RECEBERA OS PARAMETROS*/
+			url: "<c:url value='/cadastro/financeiro/consultaFormasCobranca' />",
+			params: [
+			         {name:'idCota', value:$("#_idCotaRef").val()},
+			        ] ,
+			        newp: 1
+		});
+		
+		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
+		$(".boletosUnificadosGrid").flexReload();
+		
+		$(".grids").show();
+	}	
+	
+	function getDataFromResult(resultado) {
+		
+		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			$(".grids").hide();
+			return resultado.tableModel;
+		}
+		
+		var dadosPesquisa;
+		$.each(resultado, function(index, value) {
+			  if(value[0] == "TblModelFormasCobranca") {
+				  dadosPesquisa = value[1];
+			  }
+	    });
+		
+		
+        /*
+		$.each(dadosPesquisa.rows, 
+				function(index, row) {
+
+					 var linkEditar = '<a href="javascript:;" onclick="editarFormaCobranca(' + row.cell[0] + ');" style="cursor:pointer">' +
+                                      '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" title="Altera forma cobrança" />' +
+	                                  '</a>';			
+				
+			         var linkExcluir =    '<a href="javascript:;" onclick="excluirFormaCobranca(' + row.cell[0] + ');" style="cursor:pointer">' +
+			                              '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" title="Exclui forma cobrança" />' +
+						                  '</a>';		 					 
+									
+				     row.cell[9] = linkEditar + linkExcluir;
+
+		         }
+		);
+		*/
+		
+		
+		return dadosPesquisa;
+	}
+    
+    
+    
+    
+    
+    
+
+	
+	
+	
+	
+	
+
+	
+	function limparDivDeposito() {
+		$("#numBanco").val("");
+		$("#nomeBanco").val("");
+		$("#agencia").val("");
+		$("#agenciaDigito").val("");
+		$("#conta").val("");
+	    $("#contaDigito").val("");
+	}
+	
+	
+	
+    function limparDivComboBanco() {
+    	$("#banco").val("");
+	}
+	
+    
+    
+    function limparDivBoleto() {
+    	$("#recebeEmail").val("");
+    }
+    
+    
 
 	function opcaoPagto(op){
-		
-		$('#divBoleto').hide();
-		$('#divComboBanco').hide();
-		$('#divDeposito').hide();
 		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
 			$('#divComboBanco').show();
 			$('#divBoleto').show();
+			limparDivDeposito();
 	    }
 		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
 			$('#divComboBanco').show();
+			limparDivBoleto();
+			limparDivDeposito();
 		}    
 		else if (op=='DEPOSITO'){
 			$('#divDeposito').show();
+			limparDivBoleto();
+			limparDivComboBanco();
 		}    
+		else{
+			limparDivBoleto();
+			limparDivDeposito();
+			limparDivComboBanco();
+			$('#divBoleto').hide();
+			$('#divComboBanco').hide();
+			$('#divDeposito').hide();
+		}
+		
 	};
 	
 	
-	function editarFinanceiro(idCota){
+	
+	function populaFinanceiro(idCota){
 		var data = [{name: 'idCota', value: idCota}];
-		$.postJSON("<c:url value='/cadastro/financeiro/editarFinanceiro' />",
+		$.postJSON("<c:url value='/cadastro/financeiro/populaFinanceiro' />",
 				   data,
 				   sucessCallbackFinanceiro, 
 				   null,
 				   true);
 	}
+	
 	
 	
 	function sucessCallbackFinanceiro(resultado) {
@@ -53,7 +208,6 @@
 		
 		$("#tipoCobranca").val(resultado.tipoCobranca);
 		$("#banco").val(resultado.idBanco);
-		$("#recebeEmail").val(resultado.recebeEmail);
 		$("#numBanco").val(resultado.numBanco);
 		$("#nomeBanco").val(resultado.nomeBanco);
 		$("#agencia").val(resultado.agencia);
@@ -61,6 +215,9 @@
 		$("#conta").val(resultado.conta);
 	    $("#contaDigito").val(resultado.contaDigito);
 		$("#fatorVencimento").val(resultado.fatorVencimento);
+		
+		$("#recebeEmail").val(resultado.recebeEmail);
+		document.formFinanceiro.recebeEmail.checked = resultado.recebeEmail;
 	
 		$("#sugereSuspensao").val(resultado.sugereSuspensao);
 		document.formFinanceiro.sugereSuspensao.checked = resultado.sugereSuspensao;
@@ -94,9 +251,8 @@
 		$("#comissao").val(resultado.comissao);
 		$("#qtdDividasAberto").val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto").val(resultado.vrDividasAberto);
+		
 	}
-	
-	
 	
 	
 	
@@ -108,7 +264,6 @@
 		
 		var tipoCobranca        = $("#tipoCobranca").val();
 		var idBanco             = $("#banco").val();
-		var recebeEmail         = $("#recebeEmail").val();
 		var numBanco            = $("#numBanco").val();
 		var nomeBanco           = $("#nomeBanco").val();
 		var agencia             = $("#agencia").val();
@@ -116,6 +271,12 @@
 		var conta               = $("#conta").val();
 		var contaDigito         = $("#contaDigito").val();
 		var fatorVencimento     = $("#fatorVencimento").val();
+		
+		$("#recebeEmail").val(0);
+		if (document.formFinanceiro.recebeEmail.checked){
+			$("#recebeEmail").val(1);
+		}
+		var recebeEmail = $("#recebeEmail").val();
 		
 		$("#sugereSuspensao").val(0);
 		if (document.formFinanceiro.sugereSuspensao.checked){
@@ -206,19 +367,55 @@
 
 
 	
+	function exibe_botao_contrato(){
+		if (document.formFinanceiro.contrato.checked){
+			$('#botaoContrato').show();
+		}
+		else{
+			$('#botaoContrato').hide();
+		}
+	}
+	
+
 	
 	
-	function popup_pesq_fornecedor() {
+	
+	
+	
+	
+	function popup_nova_unificacao() {
 		
-		$( "#dialog-pesq-fornecedor" ).dialog({
+		$( "#dialog-nova-unificacao" ).dialog({
 			resizable: false,
-			height:300,
+			height:550,
+			width:500,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+    };
+
+    
+    function popup_excluir_unificacao() {
+    	
+		$( "#dialog-excluir-unificacao" ).dialog({
+			resizable: false,
+			height:170,
 			width:490,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$( ".forncedoresSel" ).css('display','table-cell');
+					$("#effect").show("highlight", {}, 1000, callback);
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -227,10 +424,8 @@
 		});
 	};
 	
-	function removeFornecedor(){
-		$( ".forncedoresSel" ).fadeOut('fast');
-	}
-
+	
+	
 </script>
 
 
@@ -241,6 +436,9 @@
 #divDeposito {display:none;}
 #dialog-pesq-fornecedor{display:none;}
 .forncedoresSel{display:none;}
+#dialog-nova-unificacao, #dialog-excluir-unificacao{display:none;}
+#dialog-excluir-unificacao fieldset{width:430px!important;}
+#dialog-nova-unificacao fieldset {width:440px!important;}
 
 </style>
 
@@ -253,298 +451,374 @@
     
 	    <!--  <div id="tabpf-financeiro" > -->
 	       
-	       <input type="hidden" id="_idCota"/>
-	       <input type="hidden" id="_numCota"/>
-	    
-		   <table width="671" border="0" cellspacing="2" cellpadding="2">
+        <input type="hidden" id="_idCota"/>
+        <input type="hidden" id="_numCota"/>
+    
+	    <table width="671" border="0" cellspacing="2" cellpadding="2">
 		      
-		      <tr>
-		        <td width="171">Tipo de Pagamento:</td>
-		        <td width="486">
-
-			        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);buscaComboBancos(this.value);">
-                        <option value="">Selecione</option>
-                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
-		                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-		                </c:forEach>
-                    </select> 
-
-		        </td>
-		        
-		        
-		        
-		        
-		        <!-- Provisório -->
-	            <td>
-				    <span class="bt_posta_sessao" title="Teste Posta Sessao">
-				        <a href="javascript:;" onclick="postarFinanceiro();">
-				        </a>
-				    </span>
-		        </td>
-		        
-		        
-		        
-		        
-		      </tr>
+		   <tr>
 		      
-		      
-		      <tr>
-		      
-		        <td colspan="2" nowrap="nowrap">
-		        
-		        
-		        
-		            <div id="divComboBanco" style="display:none;">   
-		            
-		                <table width="417" border="0" cellpadding="2" cellspacing="2">
-		                    <tr>
-					      	  <td colspan="2"><b>Dados do Banco</b></td>
-					       	</tr>
-					       	  
-					      	<tr>
-					      	  <td width="57">Nome:</td>
-					      	  <td width="346">
-					    	    
-					    	    <select name="banco" id="banco" style="width:150px;">
-		                            <c:forEach varStatus="counter" var="banco" items="${listaBancos}">
-						                <option value="${banco.key}">${banco.value}</option>
-						            </c:forEach>
-		                        </select>
-					    	 
-					      	</tr>
-		                 </table>
-				        
-			        </div>    
-			        
-		        
-		        
-			        <div id="divBoleto" style="display:none;">   
-	
-				  		<table width="417" border="0" cellpadding="2" cellspacing="2">
-				  		
-					      	<tr>
-					      	  <td align="right">
-					      	      <input type="checkbox" id="recebeEmail" name="recebeEmail" /></td>
-					      	  <td>Receber por E-mail?</td>
-					        </tr>
-					        
-				        </table>
-				        
-			        </div>   
-			        
-	
-	
-					<div id="divDeposito" style="display:none;">   
-			            
-			      	 	<table width="558" border="0" cellspacing="2" cellpadding="2">
-							  
-							  <tr>
-							    <td colspan="4"><strong>Dados Bancários - Cota:</strong></td>
-							  </tr>
-							  
-							  <tr>
-							    <td width="88">Num. Banco:</td>
-							    <td width="120"><input type="text" id="numBanco" name="numBanco" style="width:60px;" /></td>
-							    <td width="47">Nome:</td>
-							    <td width="277"><input type="text" id="nomeBanco" name="nomeBanco" style="width:150px;" /></td>
-							  </tr>
-							  
-							  <tr>
-							    <td>Agência:</td>
-							    <td><input type="text" id="agencia" name="agencia" style="width:60px;" />
-							      -
-							      <input type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
-							    <td>Conta:</td>
-							    <td>
-							        <input type="text" id="conta" name="conta" style="width:60px;" />
-							      -
-							        <input type="text" id="contaDigito" name="contaDigito" style="width:30px;" /></td>
-							  </tr>
-							  
-							  <tr>
-							    <td>&nbsp;</td>
-							    <td>&nbsp;</td>
-							    <td>&nbsp;</td>
-							    <td>&nbsp;</td>
-							  </tr>
-							  
-						 </table>
-						 
-			        </div>
-			        
-			        
-			        
-		
-		        </td>
-		        
-		      </tr>
-		      
-		      
-		      <tr>
+		     <td>Fator Vencimento em D+:</td>
 		       
-		        <td>Fator Vencimento em D+:</td>
-		       
-		        <td>
-			        <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
-			          <option>1</option>
-			          <option>2</option>
-			          <option>3</option>
-			          <option>4</option>
-			          <option>5</option>
-			          <option>6</option>
-			          <option>7</option>
-			          <option>8</option>
-			          <option>9</option>
-			          <option>10</option>
-			          <option>11</option>
-			          <option>12</option>
-			          <option>13</option>
-			          <option>14</option>
-			          <option>15</option>
-			          <option>16</option>
-			          <option>17</option>
-			          <option>18</option>
-			          <option>19</option>
-			          <option>20</option>
-			        </select>
-		        </td>
-		        
-		      </tr>
+		     <td>
+			     <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
+			       <option>1</option>
+			       <option>2</option>
+			       <option>3</option>
+			       <option>4</option>
+			       <option>5</option>
+			       <option>6</option>
+			       <option>7</option>
+			       <option>8</option>
+			       <option>9</option>
+			       <option>10</option>
+			       <option>11</option>
+			       <option>12</option>
+			       <option>13</option>
+			       <option>14</option>
+			       <option>15</option>
+			       <option>16</option>
+			       <option>17</option>
+			       <option>18</option>
+			       <option>19</option>
+			       <option>20</option>
+			     </select>
+		     </td>
+		     
+		   </tr>
+		   
+		   <tr>
+		     <td>Sugere Suspensão:</td>
+		     <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" /></td>
+		   </tr>
 		      
-		      <tr>
-		        <td>Sugere Suspensão:</td>
-		        <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" /></td>
-		      </tr>
+		   <tr>
+		     <td>Contrato:</td>
+		     <td>
+		         <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="exibe_botao_contrato();" />
+		         <span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
+		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO - FUNÇÃO PROVISÓRIA ADICIONADA PARA POSTAR DADOS NA SESSAO -->
+		             <a href="javascript:;" onclick="">Contrato</a>
+		         </span>
+		     </td>
+		   </tr>
+
+		   <tr>
+		     <td>Valor Mínimo R$:</td>
+		     <td>
+		         <input name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
+		     </td>
+		   </tr>
 		      
-		      <tr>
-		        <td>Contrato:</td>
-		        <td>
-		            <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="imprimir_contrato();" /> 
-		            <span class="bt_imprimir"><a href="javascript:;">Contrato</a></span>
-		        </td>
-		      </tr>
+		   <tr>
+		     <td>Comissão %:</td>
+		     <td>
+		         <input name="comissao" id="comissao" type="text" style="width:60px;" />
+		     </td>
+		   </tr>
 		      
-		      <tr>
-		        <td>Concentração Pagamento:</td>
-		        <td>
-		            <input type="checkbox" name="PS" id="PS" />
-		            <label for="PS">S</label>
-		            <input type="checkbox" name="PT" id="PT" />
-		            <label for="PT">T</label>
-		            <input type="checkbox" name="PQ" id="PQ" />
-		            <label for="PQ">Q</label>
-		            <input type="checkbox" name="PQu" id="PQu" />
-		            <label for="PQu">Q</label>
-		            <input type="checkbox" name="PSex" id="PSex" />
-		            <label for="PSex">S</label>
-		            <input type="checkbox" name="PSab" id="PSab" />
-		            <label for="PSab">S</label>
-		            <input type="checkbox" name="PDom" id="PDom" />
-		            <label for="PDom">D</label>
-		        </td>
-		      </tr>
-		      
-		      <tr>
-		        <td>Valor Mínimo R$:</td>
-		        <td>
-		            <input name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
-		        </td>
-		      </tr>
-		      
-		      <tr>
-		        <td>Comissão %:</td>
-		        <td>
-		            <input name="comissao" id="comissao" type="text" style="width:60px;" />
-		        </td>
-		      </tr>
-		      
-		      <tr>
-		        <td height="23">Sugere Suspensão quando:</td>
-		        <td>
-			        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		   <tr>
+		     <td height="23">Sugere Suspensão quando:</td>
+		     <td>
+			     <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			           
-			           <tr>
-			              <td width="36%">Qtde de dividas em aberto:</td>
+			        <tr>
+			           <td width="36%">Qtde de dividas em aberto:</td>
 			            
-			              <td width="15%">
-			                  <input type="text" name="qtdDividasAberto" id="qtdDividasAberto" style="width:60px;" />
-			              </td>
+			           <td width="15%">
+			               <input type="text" name="qtdDividasAberto" id="qtdDividasAberto" style="width:60px;" />
+			           </td>
 			            
-			              <td width="6%">ou</td>
-			              <td width="7%">R$: </td>
+			           <td width="6%">ou</td>
+			           <td width="7%">R$: </td>
 			            
-			              <td width="36%">
-			                  <input type="text" name="vrDividasAberto" id="vrDividasAberto" style="width:60px;" />
-			              </td>
-			          </tr>
+			           <td width="36%">
+			               <input type="text" name="vrDividasAberto" id="vrDividasAberto" style="width:60px;" />
+			           </td>
+			       </tr>
 			       
-			         </table>
-		         </td>
-		      </tr>
-		      
-		      
-		      <tr>
-		          <td height="23">Unifica boleto?</td>
-		          <td>
-		              <table width="100%" border="0" cellspacing="0" cellpadding="0">
-				          <tr>
-					          <td>
-					              <select name="select3" id="select2" onchange="popup_pesq_fornecedor();">
-					                  <option selected="selected"> </option>
-					                  <option>Sim</option>
-					                  <option>Não</option>
-					              </select>
-					          </td>
-						  </tr>
-						      
-					      <tr>
-					          <td height="23">&nbsp;</td>
-					          <td valign="middle">
-					              
-					              <div style="float:left; font-weight:bold; line-height:37px; margin-right:5px;">Unificar os boletos: </div>
-					              
-					              <div class="forncedoresSel">
-					                  <label>Dinap</label> 
-				                      <a href="javascript:;" onclick="removeFornecedor();">
-				                          <img src="../images/ico_excluir.gif" width="15" height="15" alt="Excluir" border="0" />
-				                      </a>
-					              </div>
-					        
-					              <div class="forncedoresSel">
-					                  <label>FC </label>
-					                  <a href="javascript:;" onclick="removeFornecedor();">
-					                      <img src="../images/ico_excluir.gif" width="15" height="15" alt="Excluir" border="0" />
-					                  </a>
-					              </div>
-					           </td>
-					      </tr>
-					      
-		              </table>
-		          </td>
-		      </tr>
-		      
+		         </table>
+		      </td>
+		   </tr>
+  
+		</table>
 		  
-		  </table>
-	      <br clear="all" />
-	    <!-- </div> -->
+
+		<strong>Formas de Pagamento</strong>
+		  
+		<table class="boletosUnificadosGrid"></table>
+		  
+		<br clear="all" />
+		  
+		<span class="bt_novos" title="Nova Unificação">
+		    <a href="javascript:;" onclick="popup_nova_unificacao();">
+		        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
+		        Nova Forma de Pagamento
+		    </a>
+		</span>
+				
+				
+	    <br clear="all" />
+
+
 	    
 	    
 	    
-	    
-	    
-	    <div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
+	    <div id="dialog-nova-unificacao" title="Nova Unificação de Boletos">
 			<fieldset>
-				<legend>Selecione um ou mais Fornecedores para unificação dos boletos</legend>
-			    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
-			        <option>Dinap</option>
-			        <option>FC</option>
-			        <option>Treelog</option>
-			    </select>
-			</fieldset>
+				<legend>Unificar Boletos</legend>
+			    
+			    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
+				    
+				     <tr class="header_table">
+				         <td align="left">Fornecedores</td>
+				         <td align="left">&nbsp;</td>
+				         <td align="left">Concentração de Pagamentos</td>
+				     </tr>
+				     
+			         <tr>
+			             <td width="170" align="left" valign="top" style="border:1px solid #ccc;"><table width="168" border="0" cellspacing="1" cellpadding="1">
+			             
+			             <tr>
+			                 <td width="23"><input type="checkbox" name="checkbox12" id="checkbox6" /></td>
+			                 <td width="138">Abril</td>
+			             </tr>
+			             
+			             <tr>
+			                 <td><input type="checkbox" name="checkbox11" id="checkbox5" /></td>
+			                 <td>Treelog</td>
+			             </tr>
+			             
+			             <tr>
+			                 <td><input type="checkbox" name="checkbox10" id="checkbox4" /></td>
+			                 <td>Dinap</td>
+			             </tr>
+			             
+				         <tr>
+				             <td><input type="checkbox" name="checkbox8" id="checkbox3" /></td>
+				             <td>FC</td>
+				         </tr>
+				         
+			             </table>
+			             
+		                 <p><br clear="all" />
+			                 <br clear="all" />
+			                 <br clear="all" />
+			                 <br clear="all" />
+		                 </p></td>
+		                 
+					     <td width="21" align="left" valign="top">&nbsp;</td>
+					     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
+					     
+		                     <table width="100%" border="0" cellspacing="1" cellpadding="1">
+							        
+					             <tr>
+					                 <td>
+					                     <input type="checkbox" name="PS" id="PS" />
+					                 </td>    
+					                 <td>
+					                     <label for="PS">Segunda-feira</label>
+					                 </td>
+					             </tr>
+							            
+							     <tr>
+					                 <td>           
+							             <input type="checkbox" name="PT" id="PT" />
+							         </td>    
+					                 <td>    
+							             <label for="PT">Terça-feira</label>
+							         </td>
+					             </tr>
+					             
+					             <tr>
+					                 <td>            
+							             <input type="checkbox" name="PQ" id="PQ" />
+							         </td>    
+					                 <td>      
+							             <label for="PQ">Quarta-feira</label>
+							         </td>
+					              </tr>    
+							                          
+							      <tr>
+					                 <td>          
+							             <input type="checkbox" name="PQu" id="PQu" />
+							          </td>    
+					                  <td>  
+							             <label for="PQu">Quinta-feira</label>
+							          </td>
+					              </tr>
+							                  
+							      <tr>
+					                 <td>          
+							             <input type="checkbox" name="PSex" id="PSex" />
+							         </td>    
+					                 <td>      
+							             <label for="PSex">Sexta-feira</label>
+							         </td>
+					              </tr>    
+							               
+							      <tr>
+					                 <td>    
+							             <input type="checkbox" name="PSab" id="PSab" />
+							             </td>    
+					                 <td>  
+							             <label for="PSab">Sábado</label>
+							         </td>
+					              </tr>
+							                   
+							      <tr>
+					                  <td>
+							             <input type="checkbox" name="PDom" id="PDom" />
+							             </td>    
+					                 <td>  
+							             <label for="PDom">Domingo</label>
+							         </td>
+					              </tr>
+							
+							 </table>
+							 
+					     </td>
+    
+		             </tr>  
+
+		         
+					 <tr>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">&nbsp;</td>
+					 </tr>
+		
+					  
+					 <tr>
+				        <td valign="top"><strong>Tipo de Pagamento:</strong></td>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">
+		
+					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);">
+		                        <option value="">Selecione</option>
+		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
+				                </c:forEach>
+		                    </select> 
+		
+				        </td>    
+				     </tr>
+	
+				</table>
+			    
+			    
+
+		        <div id="divComboBanco" style="display:none;">   
+		            
+	                <table width="417" border="0" cellpadding="2" cellspacing="2">
+	                    <tr>
+				      	  <td colspan="2"><b>Dados do Banco</b></td>
+				       	</tr>
+				       	  
+				      	<tr>
+				      	  <td width="57">Nome:</td>
+				      	  <td width="346">
+				    	    
+				    	    <select name="banco" id="banco" style="width:150px;">
+				    	        <option value=""></option>
+	                            <c:forEach varStatus="counter" var="banco" items="${listaBancos}">
+					                <option value="${banco.key}">${banco.value}</option>
+					            </c:forEach>
+	                        </select>
+				    	 
+				      	</tr>
+	                 </table>
+			        
+		        </div>    
+		        
+	        
+	        
+		        <div id="divBoleto" style="display:none;">   
+
+			  		<table width="417" border="0" cellpadding="2" cellspacing="2">
+			  		
+				      	<tr>
+				      	  <td align="right">
+				      	      <input type="checkbox" id="recebeEmail" name="recebeEmail" /></td>
+				      	  <td>Receber por E-mail?</td>
+				        </tr>
+				        
+			        </table>
+			        
+		        </div>   
+        
+        
+        
+		        <div id="divDeposito" style="display:none;">   
+					            
+		      	 	<table width="558" border="0" cellspacing="2" cellpadding="2">
+						  
+						  <tr>
+						    <td colspan="4"><strong>Dados Bancários - Cota:</strong></td>
+						  </tr>
+						  
+						  <tr>
+						    <td width="88">Num. Banco:</td>
+						    <td width="120"><input type="text" id="numBanco" name="numBanco" style="width:60px;" /></td>
+						    <td width="47">Nome:</td>
+						    <td width="277"><input type="text" id="nomeBanco" name="nomeBanco" style="width:150px;" /></td>
+						  </tr>
+						  
+						  <tr>
+						    <td>Agência:</td>
+						    <td><input type="text" id="agencia" name="agencia" style="width:60px;" />
+						      -
+						      <input type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
+						    <td>Conta:</td>
+						    <td>
+						        <input type="text" id="conta" name="conta" style="width:60px;" />
+						      -
+						        <input type="text" id="contaDigito" name="contaDigito" style="width:30px;" /></td>
+						  </tr>
+						  
+						  <tr>
+						    <td>&nbsp;</td>
+						    <td>&nbsp;</td>
+						    <td>&nbsp;</td>
+						    <td>&nbsp;</td>
+						  </tr>
+						  
+					 </table>
+					 
+		        </div>
+	
+	
+				<br clear="all" />
+				<span class="bt_add">
+				    <a href="javascript:;" onclick="postarFinanceiro();">
+				        Incluir Novo
+				    </a>
+				</span>
+
+
+		    </fieldset>
 		</div>
-	    
-	    
-	    
+				
+				
+		<div id="dialog-excluir-unificacao" title="Unificação de Boletos">
+		<fieldset>
+			<legend>Exclusão de Unificação de Boletos</legend>
+		    <p>Confirma a exclusão desta Unificação de Boleto</p>
+		</fieldset>
+		</div>
+		
+		
+		<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
+		<fieldset>
+			<legend>Selecione um ou mais Fornecedores para unificação dos boletos</legend>
+		    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
+		      <option>Dinap</option>
+		      <option>FC</option>
+		      <option>Treelog</option>
+		    </select>
+		</fieldset>
+		</div>
+				    		    
     
     </form>
     <!-- /PESSOA FISICA - FINANCEIRO -->  

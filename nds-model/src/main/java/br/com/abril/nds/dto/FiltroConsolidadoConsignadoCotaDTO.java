@@ -12,9 +12,19 @@ public class FiltroConsolidadoConsignadoCotaDTO {
 	@Export(label="Data")
 	private Date dataConsolidado;
 	
-	@Export(label="Numero Cota")
 	private Integer numeroCota;	
+	
+	@Export(label="Cota")
+	private String cota;
 			
+	public String getCota() {
+		return cota;
+	}
+
+	public void setCota(String cota) {
+		this.cota = cota;
+	}
+
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;

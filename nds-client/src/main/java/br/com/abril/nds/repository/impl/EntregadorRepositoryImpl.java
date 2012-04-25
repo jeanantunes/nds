@@ -2,7 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -197,14 +201,14 @@ public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Lon
 		case EMAIL:
 			builder.append(" entregador.pessoa.email ");
 			break;
-		
+
 		}
 		
 		builder.append(
 				filtroEntregador.getPaginacao() != null && 
 				Ordenacao.DESC == filtroEntregador.getPaginacao().getOrdenacao() ? 
 						" desc" : " asc ");
-			
+
 		return builder.toString();
 	}
 
@@ -233,4 +237,40 @@ public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Lon
 		
 		return query.list();
 	}
+
+	/**
+	 * @see br.com.abril.nds.repository.EntregadorRepository#obterProcuracaoEntregadorPorIdEntregador(java.lang.Long)
+	 */
+	@Override
+	public ProcuracaoEntregador obterProcuracaoEntregadorPorIdEntregador(Long idEntregador) {
+
+		Criteria criteria = getSession().createCriteria(ProcuracaoEntregador.class);
+		
+		criteria.createAlias("entregador", "entregador");
+		
+		criteria.add(Restrictions.eq("entregador.id", idEntregador));
+		
+		return (ProcuracaoEntregador) criteria.uniqueResult();
+	}
+
+	/**
+	 * @see br.com.abril.nds.repository.EntregadorRepository#obterQuantidadeEntregadoresPorIdPessoa(java.lang.Long)
+	 */
+	@Override
+	public Integer obterQuantidadeEntregadoresPorIdPessoa(Long idPessoa, Long idEntregador) {
+
+		Criteria criteria = getSession().createCriteria(Entregador.class);
+		
+		criteria.add(Restrictions.eq("pessoa.id", idPessoa));
+		
+		if (idEntregador != null) {
+		
+			criteria.add(Restrictions.ne("id", idEntregador));
+		}
+		
+		criteria.setProjection(Projections.rowCount());
+
+		return ((Long) criteria.list().get(0)).intValue();
+	}	
+	
 }

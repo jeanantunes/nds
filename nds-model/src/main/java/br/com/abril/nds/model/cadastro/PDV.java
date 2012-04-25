@@ -1,10 +1,12 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -114,6 +116,37 @@ public class PDV implements Serializable {
 	 */
 	@Column(name = "POSSUI_SISTEMA_IPV", nullable = false)
 	private boolean possuiSistemaIPV;
+	
+	/**
+	 * Quantidade de funcionários do PDV
+	 */
+	@Column(name = "QTDE_FUNCIONARIOS", nullable = false)
+	private int qtdeFuncionarios;
+	
+	/**
+	 * Porcentagem que o PDV representa no total do faturamento
+	 * da cota
+	 */
+	@Column(name = "PORCENTAGEM_FATURAMENTO", nullable = false)
+	private BigDecimal porcentagemFaturamento;
+	
+	/**
+	 * Licença municipal do PDV
+	 */
+	@Embedded
+	private LicencaMunicipal licencaMunicipal;
+	
+	/**
+	 * Períodos de funcionamento do PDV
+	 */
+	@OneToMany(mappedBy = "pdv")
+	private Set<PeriodoFuncionamentoPDV> periodos = new HashSet<PeriodoFuncionamentoPDV>();
+	
+	/**
+	 * Características do PDV
+	 */
+	@Embedded
+	private CaracteristicasPDV caracteristicas;
 	
 	public Long getId() {
 		return id;
@@ -234,6 +267,46 @@ public class PDV implements Serializable {
 	
 	public void setPossuiSistemaIPV(boolean possuiSistemaIPV) {
 		this.possuiSistemaIPV = possuiSistemaIPV;
+	}
+	
+	public int getQtdeFuncionarios() {
+		return qtdeFuncionarios;
+	}
+	
+	public void setQtdeFuncionarios(int qtdeFuncionarios) {
+		this.qtdeFuncionarios = qtdeFuncionarios;
+	}
+	
+	public BigDecimal getPorcentagemFaturamento() {
+		return porcentagemFaturamento;
+	}
+	
+	public void setPorcentagemFaturamento(BigDecimal porcentagemFaturamento) {
+		this.porcentagemFaturamento = porcentagemFaturamento;
+	}
+	
+	public LicencaMunicipal getLicencaMunicipal() {
+		return licencaMunicipal;
+	}
+	
+	public void setLicencaMunicipal(LicencaMunicipal licencaMunicipal) {
+		this.licencaMunicipal = licencaMunicipal;
+	}
+	
+	public Set<PeriodoFuncionamentoPDV> getPeriodos() {
+		return periodos;
+	}
+	
+	public void setPeriodos(Set<PeriodoFuncionamentoPDV> periodos) {
+		this.periodos = periodos;
+	}
+	
+	public CaracteristicasPDV getCaracteristicas() {
+		return caracteristicas;
+	}
+	
+	public void setCaracteristicas(CaracteristicasPDV caracteristicas) {
+		this.caracteristicas = caracteristicas;
 	}
 
 }

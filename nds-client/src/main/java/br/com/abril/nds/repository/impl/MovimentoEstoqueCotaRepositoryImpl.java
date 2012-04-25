@@ -5,11 +5,11 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
@@ -293,6 +293,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaConsultaEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO, java.lang.Long)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento) {
 
 		StringBuffer sql = new StringBuffer();
@@ -437,7 +438,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		.addScalar("dataMovimento")
 		.addScalar("codigoProduto")
 		.addScalar("nomeProduto")
-		.addScalar("numeroEdicao", Hibernate.LONG)
+		.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 		.addScalar("precoVenda")
 		.addScalar("precoComDesconto")
 		.addScalar("reparte")
@@ -646,6 +647,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO, br.com.abril.nds.model.estoque.TipoMovimentoEstoque, boolean)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro, 
 			TipoMovimentoEstoque tipoMovimentoEstoque,

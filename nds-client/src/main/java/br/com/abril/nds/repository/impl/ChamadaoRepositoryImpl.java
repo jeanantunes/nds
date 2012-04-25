@@ -1,9 +1,9 @@
 package br.com.abril.nds.repository.impl;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaoRepository;
 
 @Repository
@@ -30,14 +31,16 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT ")
-			.append(" sum(estoqueProdutoCota.qtdeRecebida ")
-			.append(" - estoqueProdutoCota.qtdeDevolvida) as qtdExemplaresTotal, ")
-			.append(" sum(produtoEdicao.precoVenda * ")
-			.append(" (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) as valorTotal ");
+			.append(" sum(estoqueProdCota.QTDE_RECEBIDA ")
+			.append(" - estoqueProdCota.QTDE_DEVOLVIDA) as qtdExemplaresTotal, ")
+			.append(" sum(produtoEdicao.PRECO_VENDA * ")
+			.append(" (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA)) as valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		Query query = this.getSession().createSQLQuery(hql.toString())
+			.addScalar("qtdExemplaresTotal", StandardBasicTypes.BIG_DECIMAL)
+			.addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
 		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
@@ -53,62 +56,68 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//TODO: fornecedor
-		hql.append("SELECT ")
-			.append(" produto.codigo as codigoProduto, ")
-			.append(" produto.nome as nomeProduto, ")
-			.append(" produtoEdicao.numeroEdicao as numeroEdicao, ")
-			.append(" produtoEdicao.precoVenda as precoCapa, ")
-			.append(" produtoEdicao.desconto as precoComDesconto, ")
-			.append(" (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as reparte, ")
-			.append(" juridica.razaoSocial as nomeFornecedor, ")
-			.append(" lancamento.dataRecolhimentoPrevista as dataRecolhimento, ")
-			.append(" (produtoEdicao.precoVenda * ")
-			.append(" (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) as valorTotal ");
+		hql.append("select ")
+			.append("produto.CODIGO as codigoProduto, ")
+			.append("produto.NOME as nomeProduto, ")
+			.append("produtoEdicao.NUMERO_EDICAO as numeroEdicao, ")
+			.append("produtoEdicao.PRECO_VENDA as precoCapa, ")
+			.append("produtoEdicao.DESCONTO as precoComDesconto, ")
+			.append("estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA as reparte, ")
+			.append("(case ")
+				.append("when (select count(produtoFor.fornecedores_id) from produto_fornecedor produtoFor ")
+					.append("where produtoFor.PRODUTO_ID = produto.ID) > 1 ")
+				.append("then 'Diversos' ")
+				.append("when (select count(produtoFor.fornecedores_id) from produto_fornecedor produtoFor ")
+					.append("where produtoFor.PRODUTO_ID = produto.ID) = 1 ")
+				.append("then (select pessoa.RAZAO_SOCIAL ")
+					.append("from produto_fornecedor produtoFor, fornecedor fornecedor, pessoa pessoa ")
+					.append("where fornecedor.ID = produtoFor.fornecedores_id ")
+					.append("and fornecedor.JURIDICA_ID = pessoa.ID and produtoFor.PRODUTO_ID = produto.ID) ")
+				.append("else null end) as nomeFornecedor, ")
+			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
+			.append("produtoEdicao.PRECO_VENDA * ")
+			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal "); 
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
 		if (filtro != null && filtro.getOrdenacaoColuna() != null) {
 			
 			switch (filtro.getOrdenacaoColuna()) {
-			
-				//TODO: acertar ordenações.
-			
+				
 				case CODIGO_PRODUTO:
-					hql.append(" order by produto.codigo ");
+					hql.append(" order by codigoProduto ");
 					break;
 					
 				case NOME_PRODUTO:
-					hql.append(" order by produto.nome ");
+					hql.append(" order by nomeProduto ");
 					break;
 					
 				case EDICAO:
-					hql.append(" order by produtoEdicao.numeroEdicao ");
+					hql.append(" order by numeroEdicao ");
 					break;
 				
 				case PRECO_CAPA:
-					hql.append(" order by produtoEdicao.precoVenda ");
+					hql.append(" order by precoCapa ");
 					break;
 					
 				case VALOR_DESCONTO:
-					hql.append(" order by produtoEdicao.desconto ");
+					hql.append(" order by precoComDesconto ");
 					break;
 					
 				case REPARTE:
-					hql.append(" order by (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
+					hql.append(" order by reparte ");
 					break;
 					
 				case FORNECEDOR:
-					hql.append(" order by juridica.razaoSocial ");
+					hql.append(" order by nomeFornecedor ");
 					break;
 					
 				case RECOLHIMENTO:
-					hql.append(" order by lancamento.dataRecolhimentoPrevista ");
+					hql.append(" order by dataRecolhimento ");
 					break;
 				
 				case VALOR_TOTAL:
-					hql.append(" order by (produtoEdicao.precoVenda * ")
-						.append(" (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
+					hql.append(" order by valorTotal ");
 					break;
 					
 				default:
@@ -121,7 +130,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 			}
 		}
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		Query query = this.getSession().createSQLQuery(hql.toString())
+			.addScalar("codigoProduto").addScalar("nomeProduto")
+			.addScalar("numeroEdicao", StandardBasicTypes.LONG).addScalar("precoCapa")
+			.addScalar("precoComDesconto").addScalar("reparte")
+			.addScalar("nomeFornecedor").addScalar("dataRecolhimento")
+			.addScalar("valorTotal");
 		
 		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
@@ -146,11 +160,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		
 		StringBuilder hql = new StringBuilder();
 				
-		hql.append("SELECT count(cota) ");
+		hql.append("SELECT count(cota.ID) as totalConsignados ");
 				
 		hql.append(this.gerarQueryConsignados(filtro));
 		
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(hql.toString())
+			.addScalar("totalConsignados", StandardBasicTypes.LONG);
 		
 		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
@@ -161,31 +176,52 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" FROM ")
-			.append(" Cota cota ")
-			.append(" JOIN cota.estoqueProdutoCotas estoqueProdutoCota ")
-			.append(" JOIN cota.estudoCotas estudoCota ")
-			.append(" JOIN estudoCota.estudo estudo ")
-			.append(" JOIN estudo.produtoEdicao produtoEdicao ")
-			.append(" JOIN produtoEdicao.produto produto ")
-			.append(" JOIN produtoEdicao.lancamentos lancamento ")
-			.append(" JOIN produto.fornecedores fornecedor ")
-			.append(" JOIN fornecedor.juridica juridica ");
-				
-		hql.append(" WHERE lancamento.dataRecolhimentoPrevista > :dataAtual ")
-			.append(" AND lancamento.status = :status ")
-			.append(" AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ");
-				
+		hql.append("from COTA cota ")
+	    	.append("inner join ESTOQUE_PRODUTO_COTA estoqueProdCota ")
+	            .append("on cota.ID = estoqueProdCota.COTA_ID ")
+	        .append("inner join ESTUDO_COTA estudoCota ")
+	            .append("on cota.ID = estudoCota.COTA_ID ")
+	        .append("inner join ESTUDO estudo ")
+	            .append("on estudoCota.ESTUDO_ID = estudo.ID ") 
+	        .append("inner join PRODUTO_EDICAO produtoEdicao ") 
+	            .append("on estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	        .append("inner join PRODUTO produto ") 
+	            .append("on produtoEdicao.PRODUTO_ID = produto.ID ") 
+	        .append("inner join LANCAMENTO lancamento ") 
+	            .append("on produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ");
+	            
+	    if (filtro.getIdFornecedor() != null) {
+	    	
+	    	hql.append("inner join PRODUTO_FORNECEDOR produtoFornecedor ")
+	    		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ");
+	    }
+	            
+	    hql.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	        .append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento ")
+	        .append("and lancamento.STATUS = :statusLancamento ")
+	        .append("and (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ")
+	        
+	        .append("and not exists ( ")
+	        	.append("select chamadaEncalheCota.COTA_ID ")
+	            .append("from CHAMADA_ENCALHE_COTA chamadaEncalheCota ") 
+	            .append("inner join CHAMADA_ENCALHE chamadaEncalhe ")
+	                .append("on chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID, COTA c ")
+	            .append("where chamadaEncalheCota.COTA_ID = c.ID ")
+	            .append("and chamadaEncalheCota.COTA_ID = cota.ID ")
+	            .append("and chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	            .append("and chamadaEncalhe.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe ")
+            .append(")");
+		
 		if (filtro != null) {
 		
 			if (filtro.getNumeroCota() != null ) {
 				
-				hql.append(" AND cota.numeroCota = :numeroCota ");
+				hql.append("and cota.NUMERO_COTA = :numeroCota ");
 			}
 
 			if (filtro.getIdFornecedor() != null) {
-				
-				hql.append(" AND fornecedor.id = :idFornecedor ");
+
+				hql.append(" AND produtoFornecedor.FORNECEDORES_ID = :idFornecedor ");
 			}
 		}
 		
@@ -206,9 +242,14 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 			return;
 		}
 		
-		//TODO: new Date()?
-		query.setParameter("dataAtual", new Date());
-		query.setParameter("status", StatusLancamento.EXPEDIDO);
+		//TODO: trazer lançamentos já balanceados?
+		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO.toString());
+		
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.toString());
+		
+		if (filtro.getDataChamadao() != null) {
+			query.setParameter("dataRecolhimento", filtro.getDataChamadao());
+		}
 		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());

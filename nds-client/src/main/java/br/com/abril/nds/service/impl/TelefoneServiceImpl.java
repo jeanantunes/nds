@@ -118,7 +118,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				if (telefoneEntregador == null) {
 					
-					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone fornecedor é obrigatório.");
+					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone entregador é obrigatório.");
 				}
 				
 				this.valiadarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
@@ -135,7 +135,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				if (telefoneEntregador.getEntregador() == null || telefoneEntregador.getEntregador().getId() == null) {
 					
-					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório.");
+					throw new ValidacaoException(TipoMensagem.ERROR, "Entregador é obrigatório.");
 				}
 				
 				if (telefoneEntregador.getTelefone().getId() == null) {

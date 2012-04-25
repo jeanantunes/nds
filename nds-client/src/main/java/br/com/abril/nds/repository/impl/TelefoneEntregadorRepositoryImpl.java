@@ -75,7 +75,7 @@ public class TelefoneEntregadorRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select telefoneEntregador.id as id, telefoneEntregador.telefone as telefone, ")
+		hql.append(" select cast(telefoneEntregador.id as integer) as referencia, telefoneEntregador.telefone as telefone, ")
 		   .append(" telefoneEntregador.principal as principal, ")
 		   .append(" telefoneEntregador.tipoTelefone as tipoTelefone ")
 		   .append(" from TelefoneEntregador telefoneEntregador ")

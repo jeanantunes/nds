@@ -7,6 +7,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
 public class ResultadoDiferencaVO implements Serializable {
@@ -18,10 +19,10 @@ public class ResultadoDiferencaVO implements Serializable {
 	
 	private TableModel<CellModelKeyValue<DiferencaVO>> tableModel;
 	
-	@Export(label = "Total", alignWithHeader = "Exemplar")
+	@Export(label = "Total", alignment=Alignment.RIGHT, alignWithHeader = "Exemplar")
 	private BigDecimal qtdeTotalDiferencas;
 	
-	@Export(label = "", alignWithHeader = "Total R$")
+	@Export(label = "",alignment=Alignment.RIGHT, alignWithHeader = "Total R$")
 	private String valorTotalDiferencas;
 	
 	/**

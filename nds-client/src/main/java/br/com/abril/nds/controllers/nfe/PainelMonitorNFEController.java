@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuidorService;
@@ -387,7 +388,11 @@ public class PainelMonitorNFEController {
 		NfeVO nfeVO = null;
 		
 		String cnpjDestinatario 	= null;
-		String cnpjEmissor 			= null;
+		String cpfDestinatario 		= null;
+
+		String cnpjRemetente 		= null;
+		String cpfRemetente 		= null;
+		
 		String emissao 				= null;
 		String tipoEmissao			= null;
 		String movimentoIntegracao 	= null;
@@ -399,7 +404,11 @@ public class PainelMonitorNFEController {
 		for(NfeDTO nfeDTO : listaNfeDTO) {
 			
 			cnpjDestinatario 		= nfeDTO.getCnpjDestinatario();
-			cnpjEmissor 			= nfeDTO.getCnpjEmissor();
+			cpfDestinatario			= nfeDTO.getCpfDestinatario();
+			
+			cnpjRemetente			= nfeDTO.getCnpjRemetente();
+			cpfRemetente			= nfeDTO.getCpfRemetente();
+			
 			emissao 				= DateUtil.formatarDataPTBR(nfeDTO.getEmissao());
 			tipoEmissao				= nfeDTO.getTipoEmissao();
 			movimentoIntegracao 	= nfeDTO.getMovimentoIntegracao();
@@ -408,10 +417,15 @@ public class PainelMonitorNFEController {
 			statusNfe 				= nfeDTO.getStatusNfe();
 			tipoNfe 				= nfeDTO.getTipoNfe();
 			
+			
 			nfeVO = new NfeVO();
 			
 			nfeVO.setCnpjDestinatario(cnpjDestinatario);
-			nfeVO.setCnpjEmissor(cnpjEmissor);
+			nfeVO.setCpfDestinatario(cpfDestinatario);
+			
+			nfeVO.setCnpjRemetente(cnpjRemetente);
+			nfeVO.setCpfRemetente(cpfRemetente);
+			
 			nfeVO.setEmissao(emissao);
 			nfeVO.setTipoEmissao(tipoEmissao);
 			nfeVO.setMovimentoIntegracao(movimentoIntegracao);
@@ -435,17 +449,13 @@ public class PainelMonitorNFEController {
 		List<ItemDTO<String, String>> comboStatusNfe = new ArrayList<ItemDTO<String, String>>();
 		
 		
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.PENDENTE_TRANSMISSAO_NFE.name(), StatusEmissaoNotaFiscal.PENDENTE_TRANSMISSAO_NFE.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE.name(), StatusEmissaoNotaFiscal.AGUARDANDO_GERACAO_NFE.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.EMITIDA.name(), StatusEmissaoNotaFiscal.EMITIDA.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.CANCELADA.name(), StatusEmissaoNotaFiscal.CANCELADA.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.AGUARDANDO_PROCESSAMENTO.name(), StatusEmissaoNotaFiscal.AGUARDANDO_PROCESSAMENTO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.EM_PROCESSAMENTO.name(), StatusEmissaoNotaFiscal.EM_PROCESSAMENTO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.PROCESSAMENTO_REJEITADO.name(), StatusEmissaoNotaFiscal.PROCESSAMENTO_REJEITADO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.AGUARDANDO_ACAO_DO_USUARIO.name(), StatusEmissaoNotaFiscal.AGUARDANDO_ACAO_DO_USUARIO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.NFE_AUTORIZADA.name(), StatusEmissaoNotaFiscal.NFE_AUTORIZADA.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.NFE_REJEITADA.name(), StatusEmissaoNotaFiscal.NFE_REJEITADA.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNotaFiscal.NFE_DENEGADA.name(), StatusEmissaoNotaFiscal.NFE_DENEGADA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.name(), StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.EM_PROCESSAMENTO.name(), StatusEmissaoNfe.EM_PROCESSAMENTO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.name(), StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.name(), StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_AUTORIZADA.name(), StatusEmissaoNfe.NFE_AUTORIZADA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_REJEITADA.name(), StatusEmissaoNfe.NFE_REJEITADA.getDescricao()));
+		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_DENEGADA.name(), StatusEmissaoNfe.NFE_DENEGADA.getDescricao()));
 
 		result.include("comboStatusNfe", comboStatusNfe);
 		

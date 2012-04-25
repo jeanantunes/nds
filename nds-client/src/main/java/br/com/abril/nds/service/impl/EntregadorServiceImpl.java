@@ -1,25 +1,32 @@
 package br.com.abril.nds.service.impl;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.repository.EnderecoEntregadorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
+import br.com.abril.nds.repository.ProcuracaoEntregadorRepository;
 import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.TelefoneService;
@@ -37,6 +44,9 @@ public class EntregadorServiceImpl implements EntregadorService {
 
 	@Autowired
 	private TelefoneService telefoneService;
+	
+	@Autowired
+	private ProcuracaoEntregadorRepository procuracaoEntregadorRepository;
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
@@ -71,20 +81,22 @@ public class EntregadorServiceImpl implements EntregadorService {
 	}
 
 	/**
-	 * @see br.com.abril.nds.service.EntregadorService#salvarEntregador(br.com.abril.nds.model.cadastro.Entregador)
+	 * @see br.com.abril.nds.service.EntregadorService#salvarEntregadorProcuracao(br.com.abril.nds.model.cadastro.Entregador)
 	 */
 	@Override
 	@Transactional
-	public void salvarEntregador(Entregador entregador) {
+	public Entregador salvarEntregadorProcuracao(Entregador entregador, ProcuracaoEntregador procuracaoEntregador) {
+		
+		entregador = this.entregadorRepository.merge(entregador);
 
-		if (entregador.getId() == null) {
+		if (procuracaoEntregador != null) {
 
-			this.entregadorRepository.adicionar(entregador);
-
-		} else {
-
-			this.entregadorRepository.alterar(entregador);
+			procuracaoEntregador.setEntregador(entregador);		
+			
+			this.procuracaoEntregadorRepository.merge(procuracaoEntregador);
 		}
+		
+		return entregador;
 	}
 
 	/**
@@ -97,7 +109,7 @@ public class EntregadorServiceImpl implements EntregadorService {
 		Entregador entregador = this.entregadorRepository.buscarPorId(idEntregador);
 
 		if (entregador == null) {
-			
+
 			throw new ValidacaoException(TipoMensagem.WARNING, "Entregador não encontrado.");
 		}
 		
@@ -115,13 +127,30 @@ public class EntregadorServiceImpl implements EntregadorService {
 	}
 
 	/**
-	 * @see br.com.abril.nds.service.EntregadorService#obterEntregadorPorId(java.lang.Long)
+	 * @see br.com.abril.nds.service.EntregadorService#obterProcuracaoEntregadorPorId(java.lang.Long)
 	 */
 	@Override
 	@Transactional
-	public Entregador obterEntregadorPorId(Long idEntregador) {
+	public ProcuracaoEntregador obterProcuracaoEntregadorPorId(Long idEntregador) {
 
-		return this.entregadorRepository.buscarPorId(idEntregador);
+		ProcuracaoEntregador procuracaoEntregador = 
+				this.entregadorRepository.obterProcuracaoEntregadorPorIdEntregador(idEntregador);
+		
+		if (procuracaoEntregador == null) {
+			
+			procuracaoEntregador = new ProcuracaoEntregador();
+			
+			Entregador entregador = this.entregadorRepository.buscarPorId(idEntregador);
+			
+			if (entregador == null) {
+				
+				return null;
+			}
+			
+			procuracaoEntregador.setEntregador(entregador);
+		}
+		
+		return procuracaoEntregador;
 	}
 
 	/**
@@ -196,18 +225,21 @@ public class EntregadorServiceImpl implements EntregadorService {
 
 		this.telefoneService.removerTelefonesEntregador(listaTelefonesRemover);
 		
-		List<Telefone> listaTelefone = new ArrayList<Telefone>();
-		
-		for (TelefoneEntregador telefoneEntregador : listaTelefonesAdicionar){
-			
-			listaTelefone.add(telefoneEntregador.getTelefone());
-		}
-		
-		entregador.getPessoa().setTelefones(listaTelefone);
-		
-		this.entregadorRepository.alterar(entregador);
+//		List<Telefone> listaTelefone = new ArrayList<Telefone>();
+//		
+//		for (TelefoneEntregador telefoneEntregador : listaTelefonesAdicionar){
+//			
+//			listaTelefone.add(telefoneEntregador.getTelefone());
+//		}
+//		
+//		entregador.getPessoa().setTelefones(listaTelefone);
+//		
+//		this.entregadorRepository.alterar(entregador);
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.EntregadorService#buscarTelefonesEntregador(Long)
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<TelefoneAssociacaoDTO> buscarTelefonesEntregador(Long idEntregador) {
@@ -261,6 +293,11 @@ public class EntregadorServiceImpl implements EntregadorService {
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
+			if (enderecoAssociacao.getEndereco() == null) {
+				
+				continue;
+			}
+			
 			listaEndereco.add(enderecoAssociacao.getEndereco());
 
 			EnderecoEntregador enderecoEntregador = this.enderecoEntregadorRepository.buscarPorId(enderecoAssociacao.getId());
@@ -270,7 +307,47 @@ public class EntregadorServiceImpl implements EntregadorService {
 			this.enderecoEntregadorRepository.remover(enderecoEntregador);
 		}
 
-		this.enderecoRepository.removerEnderecos(idsEndereco);
+		if (!idsEndereco.isEmpty()) {
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.EntregadorService#buscarPorId(java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public Entregador buscarPorId(Long idEntregador) {
+		
+		return this.entregadorRepository.buscarPorId(idEntregador);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public boolean isPessoaJaCadastrada(Long idPessoa, Long idEntregador) {
+	
+		Integer contagem = this.entregadorRepository.obterQuantidadeEntregadoresPorIdPessoa(idPessoa, idEntregador);
+		
+		return contagem > 0;
+	}
+	
+	/**
+	 * @see br.com.abril.nds.service.EntregadorService#getDocumentoProcuracao(List)
+	 */
+	@Transactional
+	public byte[] getDocumentoProcuracao(List<ProcuracaoImpressaoDTO> list) throws Exception {
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		
+		 URL url = 
+			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao.jasper");
+
+		 String path = url.toURI().getPath();
+		 
+		 return JasperRunManager.runReportToPdf(path, null, jrDataSource);
+	}
 }

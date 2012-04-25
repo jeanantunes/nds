@@ -1,12 +1,4 @@
 
-<script type="text/javascript">
-
-var PDV_GeradorFluxo= {
-				
-};
-
-</script>
-
 <fieldset>
 	<legend>Gerador de Fluxo</legend>
     <table width="620" border="0" align="center" cellpadding="2" cellspacing="2">
