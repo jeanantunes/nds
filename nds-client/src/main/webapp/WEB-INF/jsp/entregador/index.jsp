@@ -519,7 +519,7 @@
 				display : 'Telefone',
 				name : 'telefone',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'E-Mail',
