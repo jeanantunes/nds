@@ -92,7 +92,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 			}
 		}
 		
-		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+		if(filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			queryNative.append(" limit :inicio,:qtdeResult ");
 		}
 				
@@ -115,7 +115,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 			query.setParameter("box", filtro.getBox());
 		}
 		
-		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+		if(filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			query.setParameter("inicio", filtro.getPaginacao().getPosicaoInicial());
 			query.setParameter("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina());
 		}

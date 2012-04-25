@@ -661,7 +661,7 @@ function mostra_grid(){
               <td width="35">Data:</td>
               <td colspan="3">
 <!--DATA-->
-<input id="idData" type="text" name="datepickerDe" style="width:80px;" /></td>
+<input id="idData" value="${data}" type="text" name="datepickerDe" style="width:80px;" /></td>
               
                 <td width="38">Cota:</td>
                 <td width="123">
