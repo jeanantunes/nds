@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class EspecialidadeDTO implements Serializable {
 	
@@ -10,21 +9,24 @@ public class EspecialidadeDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private List<Long> especialidades;
+	private Long especialidade;
 
 	/**
-	 * @return the especialidades
+	 * @return the especialidade
 	 */
-	public List<Long> getEspecialidades() {
-		return especialidades;
+	public Long getEspecialidade() {
+		return especialidade;
 	}
 
 	/**
-	 * @param especialidades the especialidades to set
+	 * @param especialidade the especialidade to set
 	 */
-	public void setEspecialidades(List<Long> especialidades) {
-		this.especialidades = especialidades;
+	public void setEspecialidade(Long especialidade) {
+		this.especialidade = especialidade;
 	}
+
 	
+
+		
 	
 }

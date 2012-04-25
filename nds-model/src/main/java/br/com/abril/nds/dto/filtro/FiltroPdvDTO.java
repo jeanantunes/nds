@@ -2,6 +2,8 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.vo.PaginacaoVO;
+
 public class FiltroPdvDTO implements Serializable {
 
 	/**
@@ -12,6 +14,8 @@ public class FiltroPdvDTO implements Serializable {
 	private Long idCota;
 	
 	private ColunaOrdenacao colunaOrdenacao;
+	
+	private PaginacaoVO paginacao;
 	
 	public enum ColunaOrdenacao{
 		
@@ -63,6 +67,22 @@ public class FiltroPdvDTO implements Serializable {
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
+
+	/**
+	 * @return the paginacao
+	 */
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+
+	/**
+	 * @param paginacao the paginacao to set
+	 */
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
+	}
+	
+	
 	
 	
 }

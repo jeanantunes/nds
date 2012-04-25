@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.StatusPDV;
 import br.com.abril.nds.model.cadastro.TamanhoPDV;
@@ -58,11 +59,13 @@ public class PdvDTO implements Serializable {
     
     private CaracteristicaDTO caracteristicaDTO;
     
-    private EspecialidadeDTO especialidadeDTO;
+    private List<Long> especialidades;
+  
+	private List<Long> geradorFluxoSecundario;
     
-    private GeradorFluxoDTO geradorFluxoDTO;
+    private Long geradorFluxoPrincipal;
     
-    private MapDTO mapDTO;
+    private List<Long> maps;
 
 	/**
 	 * @return the id
@@ -133,48 +136,7 @@ public class PdvDTO implements Serializable {
 	public void setCaracteristicaDTO(CaracteristicaDTO caracteristicaDTO) {
 		this.caracteristicaDTO = caracteristicaDTO;
 	}
-
-	/**
-	 * @return the especialidadeDTO
-	 */
-	public EspecialidadeDTO getEspecialidadeDTO() {
-		return especialidadeDTO;
-	}
-
-	/**
-	 * @param especialidadeDTO the especialidadeDTO to set
-	 */
-	public void setEspecialidadeDTO(EspecialidadeDTO especialidadeDTO) {
-		this.especialidadeDTO = especialidadeDTO;
-	}
-
-	/**
-	 * @return the geradorFluxoDTO
-	 */
-	public GeradorFluxoDTO getGeradorFluxoDTO() {
-		return geradorFluxoDTO;
-	}
-
-	/**
-	 * @param geradorFluxoDTO the geradorFluxoDTO to set
-	 */
-	public void setGeradorFluxoDTO(GeradorFluxoDTO geradorFluxoDTO) {
-		this.geradorFluxoDTO = geradorFluxoDTO;
-	}
-
-	/**
-	 * @return the mapDTO
-	 */
-	public MapDTO getMapDTO() {
-		return mapDTO;
-	}
-
-	/**
-	 * @param mapDTO the mapDTO to set
-	 */
-	public void setMapDTO(MapDTO mapDTO) {
-		this.mapDTO = mapDTO;
-	}
+	
 
 	/**
 	 * @return the statusPDV
@@ -401,8 +363,61 @@ public class PdvDTO implements Serializable {
 			TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV) {
 		this.tipoEstabelecimentoAssociacaoPDV = tipoEstabelecimentoAssociacaoPDV;
 	}
+
+	/**
+	 * @return the especialidades
+	 */
+	public List<Long> getEspecialidades() {
+		return especialidades;
+	}
+
+	/**
+	 * @param especialidades the especialidades to set
+	 */
+	public void setEspecialidades(List<Long> especialidades) {
+		this.especialidades = especialidades;
+	}
+
+	/**
+	 * @return the maps
+	 */
+	public List<Long> getMaps() {
+		return maps;
+	}
+
+	/**
+	 * @param maps the maps to set
+	 */
+	public void setMaps(List<Long> maps) {
+		this.maps = maps;
+	}
+
+	/**
+	 * @return the geradorFluxoSecundario
+	 */
+	public List<Long> getGeradorFluxoSecundario() {
+		return geradorFluxoSecundario;
+	}
+
+	/**
+	 * @param geradorFluxoSecundario the geradorFluxoSecundario to set
+	 */
+	public void setGeradorFluxoSecundario(List<Long> geradorFluxoSecundario) {
+		this.geradorFluxoSecundario = geradorFluxoSecundario;
+	}
+
+	/**
+	 * @return the geradorFluxoPrincipal
+	 */
+	public Long getGeradorFluxoPrincipal() {
+		return geradorFluxoPrincipal;
+	}
+
+	/**
+	 * @param geradorFluxoPrincipal the geradorFluxoPrincipal to set
+	 */
+	public void setGeradorFluxoPrincipal(Long geradorFluxoPrincipal) {
+		this.geradorFluxoPrincipal = geradorFluxoPrincipal;
+	}
 	
-	
-    
-    
 }
