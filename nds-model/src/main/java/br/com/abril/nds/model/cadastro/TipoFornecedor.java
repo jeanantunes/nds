@@ -11,6 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+
+/**
+ * TODO: Remover, dominio fechado. Grupo Fornecedor
+ * @author francisco.garcia
+ *
+ */
 @Entity
 @Table(name = "TIPO_FORNECEDOR")
 @SequenceGenerator(name="TP_FORNECEDOR_SEQ", initialValue = 1, allocationSize = 1)

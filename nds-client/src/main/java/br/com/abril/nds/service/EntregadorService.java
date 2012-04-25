@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 
 /**
@@ -29,8 +31,10 @@ public interface EntregadorService {
 	 * Método que persiste um entregador na base de dados.
 	 * 
 	 * @param entregador - Entregador a ser persistido.
+	 * 
+	 * @param procuracaoEntregador - Procuração do entregador.
 	 */
-	void salvarEntregador(Entregador entregador);
+	Entregador salvarEntregadorProcuracao(Entregador entregador, ProcuracaoEntregador procuracaoEntregador);
 	
 	/**
 	 * Método que remove um entregador a partir de seu ID cadastrado na base de dados.
@@ -50,13 +54,22 @@ public interface EntregadorService {
 	Long obterContagemEntregadoresPorFiltro(FiltroEntregadorDTO filtroEntregador);
 	
 	/**
-	 * Método que retorna um {@link br.com.abril.nds.model.cadastro.Entregador} através de seu Id.
+	 * Método que retorna uma {@link br.com.abril.nds.model.cadastro.ProcuracaoEntregador} através do Id do entregador.
 	 * 
 	 * @param idEntregador - Id do entregador a ser pesquisado.
 	 * 
-	 * @return Entregador - entregador encontrado.
+	 * @return ProcuracaoEntregador - entregador encontrado.
 	 */
-	Entregador obterEntregadorPorId(Long idEntregador);
+	ProcuracaoEntregador obterProcuracaoEntregadorPorId(Long idEntregador);
+	
+	/**
+	 * Método que retorna um {@link br.com.abril.nds.model.cadastro.Entregador} 
+	 * 
+	 * @param idEntregador - Id do entregador a ser pesquisado
+	 * 
+	 * @return Entregador
+	 */
+	Entregador buscarPorId(Long idEntregador);
 	
 	/**
 	 * Método que retorna uma lista de Endereços associados, através do ID do entregador.
@@ -101,4 +114,26 @@ public interface EntregadorService {
 	 * @return List<TelefoneAssociacaoDTO> - lista retornada.
 	 */
 	List<TelefoneAssociacaoDTO> buscarTelefonesEntregador(Long idEntregador);
+	
+	/**
+	 * Método que verifica se uma pessoa já foi associada à um entregador.
+	 * 
+	 * @param idPessoa - Id da pessoa em questão
+	 * 
+	 * @param idEntregador - Caso seja uma edição, este entregador será ignorado na pesquisa da pessoa. 
+	 * 
+	 * @return boolean - se já existe uma associação: true, caso não exista: false.
+	 */
+	boolean isPessoaJaCadastrada(Long idPessoa, Long idEntregador);
+	
+	/**
+	 * Método que retorna o documento de procuração para impressão.
+	 * 
+	 * @param list
+	 * 
+	 * @return byte[]
+	 * 
+	 * @throws Exception
+	 */
+	byte[] getDocumentoProcuracao(List<ProcuracaoImpressaoDTO> list) throws Exception;
 }

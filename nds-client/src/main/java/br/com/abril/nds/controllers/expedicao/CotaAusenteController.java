@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +89,19 @@ public class CotaAusenteController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
+		gerarDataLancamento();
+		
 		result.forwardTo(CotaAusenteController.class).cotaAusente();
+	}
+	
+	/**
+	 * Gera a data de lancamento como data atual
+	 */
+	private void gerarDataLancamento() {
+		
+		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		
+		result.include("data",data);			
 	}
 	
 	/**

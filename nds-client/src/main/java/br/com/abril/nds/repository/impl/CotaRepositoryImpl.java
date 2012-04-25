@@ -250,7 +250,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 	public Long obterTotalCotasSujeitasSuspensao() {
 		
 		StringBuilder sql = new StringBuilder(queryCountSuspensaoCota);
-						
+
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		Long qtde = ((BigInteger) query.uniqueResult()).longValue();
@@ -474,4 +474,23 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 	}
 	
 
+
+	/**
+	 * @see br.com.abril.nds.repository.CotaRepository#obterCotaPDVPorNumeroDaCota(java.lang.Integer)
+	 */
+	@Override
+	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Cota cota ")
+		   .append(" left join fetch cota.pdvs ")
+		   .append(" where cota.numeroCota = :numeroCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("numeroCota", numeroCota);
+
+		return (Cota) query.uniqueResult();
+	}
 }

@@ -1,9 +1,12 @@
 
 <script type="text/javascript">
-
-var PDV_MAP = {
-				
-};
+$(function() {
+	
+	$("select[name='selectMap']").multiSelect("select[name='selectMaterialPromocional']", {trigger: "#linkMapVoltarTodos"});
+	
+	$("select[name='selectMaterialPromocional']").multiSelect("select[name='selectMap']", {trigger: "#linkMapEnviarTodos"});
+	
+});
 
 </script>
 
@@ -14,7 +17,8 @@ var PDV_MAP = {
 	    <td width="264" valign="top">
 		    <fieldset style="width:250px!important;">
 		    	<legend>Material Promocional</legend>
-			    <select name="select4" size="10" multiple="multiple" id="select3" style="height:270px; width:245px;">
+			    
+			    <select name="selectMaterialPromocional" size="10" multiple="multiple" id="selectMaterialPromocional" style="height:270px; width:245px;">
 			      <option>Adesivo</option>
 			      <option>Bandeirola</option>
 			      <option>Brindes</option>
@@ -27,17 +31,26 @@ var PDV_MAP = {
 			      <option>Reprint Capa</option>
 			      <option>Sapateira</option>
 			      <option>Totem</option>
-		    </select>
+		    	</select>
+		    
 		    </fieldset>
 	    </td>
-	    <td width="69" align="center">
-	    	<img src="../images/seta_vai_todos.png" width="39" height="30" /><br /><br />
-	    	<img src="../images/seta_volta_todos.png" width="39" height="30" /> <br /></td>
+	    
+	     <td width="69" align="center">
+			<a id="linkMapEnviarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_vai_todos.png"></a>
+			<br><br>
+			<a id="linkMapVoltarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_volta_todos.png"></a>
+			<br>
+		</td>
+	    	
 	    <td width="252" valign="top">
 	    	<fieldset style="width:250px!important;">
+	    		
 	    		<legend>Tem espaço para receber o MAP</legend>
-	    		<select name="select5" size="10" multiple="multiple" id="select4" style="height:270px; width:245px;">
+	    		
+	    		<select name="selectMap" id ="selectMap" size="10" multiple="multiple" id="select4" style="height:270px; width:245px;">
 				</select>
+				
 			</fieldset>
 		</td>
 	  </tr>

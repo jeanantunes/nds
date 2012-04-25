@@ -3,7 +3,9 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -44,6 +46,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
+import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -1785,5 +1792,40 @@ public class Fixture {
 		entregador.setProcuracaoEntregador(procuracaoEntregador);
 		
 		return entregador;
+	}
+	
+	public static PDV criarPDV(String nome,BigDecimal porcentagemFaturamento,TamanhoPDV tamanhoPDV,Cota cota , Boolean principal, StatusPDV status){
+
+		PDV pdv = new PDV();
+		pdv.setNome(nome);
+		pdv.setPorcentagemFaturamento(porcentagemFaturamento);
+		pdv.setTamanhoPDV(tamanhoPDV);
+		pdv.setCota(cota);
+		pdv.setPrincipal(principal);
+		pdv.setStatus(status);
+	
+		return pdv;
+	}
+	
+	public static EnderecoPDV criarEnderecoPDV(Endereco endereco, PDV pdv, Boolean principal, TipoEndereco tipoEndereco){
+		
+		EnderecoPDV enderecoPDV = new EnderecoPDV();
+		enderecoPDV.setEndereco(endereco);
+		enderecoPDV.setPdv(pdv);
+		enderecoPDV.setPrincipal(principal);
+		enderecoPDV.setTipoEndereco(tipoEndereco);
+		
+		return enderecoPDV;
+	}
+	
+	public static TelefonePDV criarTelefonePDV(Telefone telefone, PDV pdv, Boolean principal, TipoTelefone tipoTelefone ){
+		
+		TelefonePDV telefonePDV = new TelefonePDV();
+		telefonePDV.setPdv(pdv);
+		telefonePDV.setPrincipal(principal);
+		telefonePDV.setTelefone(telefone);
+		telefonePDV.setTipoTelefone(tipoTelefone);
+		
+		return telefonePDV;
 	}
 }

@@ -5,6 +5,105 @@
 .complementar label{ vertical-align:super; margin-right:5px; margin-left:5px;}
 </style>
 <script>
+	function obterCota(numeroCota, isPF) {
+		
+		var sufixo = "PJ";
+		
+		if(isPF) {
+			
+			sufixo = "PF";
+		}
+
+		var numeroCotaProcuracao = "#numeroCotaProcuracao" + sufixo;
+		var nomeJornaleiroProcuracao = "#nomeJornaleiroProcuracao" + sufixo;
+		var boxProcuracao = "#boxProcuracao" + sufixo;
+		var nacionalidadeProcuracao = "#nacionalidadeProcuracao" + sufixo;
+		var estadoCivilProcuracao = "#estadoCivilProcuracao" + sufixo;
+		var enderecoPDVPrincipalProcuracao = "#enderecoPDVPrincipalProcuracao" + sufixo;
+		var cepProcuracao = "#cepProcuracao" + sufixo;
+		var bairroProcuracao = "#bairroProcuracao" + sufixo;
+		var cidadeProcuracao = "#cidadeProcuracao" + sufixo;
+		var numeroPermissaoProcuracao = "#numeroPermissaoProcuracao" + sufixo;
+		var rgProcuracao = "#rgProcuracao" + sufixo;
+		var cpfProcuracao = "#cpfProcuracao" + sufixo;
+
+		$.postJSON(
+			'<c:url value="/cadastro/entregador/obterCotaPorNumero" />',
+			{'numeroCota': numeroCota},
+			function(result) {
+				$(numeroCotaProcuracao).val(result.numeroCota);
+				$(nomeJornaleiroProcuracao).val(result.nomeJornaleiro);
+				$(boxProcuracao).val(result.box);
+				$(nacionalidadeProcuracao).val(result.nacionalidade);
+				$(estadoCivilProcuracao).val(result.estadoCivil);
+				$(enderecoPDVPrincipalProcuracao).val(result.enderecoPDVPrincipal);
+				$(cepProcuracao).val(result.cep);
+				$(bairroProcuracao).val(result.bairro);
+				$(cidadeProcuracao).val(result.cidade);
+				$(numeroPermissaoProcuracao).val(result.numeroPermissao);
+				$(rgProcuracao).val(result.rg).mask("99.999.999-9");
+				$(cpfProcuracao).val(result.cpf).mask("999.999.999-99");
+			}, 
+			function(result) {
+				
+				$(numeroCotaProcuracao).val("");
+				$(nomeJornaleiroProcuracao).val("");
+				$(boxProcuracao).val("");
+				$(nacionalidadeProcuracao).val("");
+				$(estadoCivilProcuracao).val("");
+				$(enderecoPDVPrincipalProcuracao).val("");
+				$(cepProcuracao).val("");
+				$(bairroProcuracao).val("");
+				$(cidadeProcuracao).val("");
+				$(numeroPermissaoProcuracao).val("");
+				$(rgProcuracao).val("");
+				$(cpfProcuracao).val("");
+
+				exibirMensagemDialog(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+				);
+			},
+			true
+		);
+	}
+
+	function novoEntregador(isCadastroPF) {
+		
+		var idCampoInicioAtividade = "#inicioAtividade";
+
+		if (isCadastroPF) {
+			
+			idCampoInicioAtividade += "PF";
+			
+			$("#formDadosEntregadorPF")[0].reset();
+			$("#idEntregadorPF").val("");
+			$("#naoComissionadoPF").click();
+			$("#naoProcuracaoPF").click();
+
+		} else {
+
+			idCampoInicioAtividade += "PJ";
+			
+			$("#formDadosEntregadorPJ")[0].reset();
+			$("#idEntregadorPJ").val("");
+			$("#naoComissionadoPJ").click();
+			$("#naoProcuracaoPJ").click();
+		}
+		
+		$.postJSON(
+			'<c:url value="/cadastro/entregador/novoCadastro" />',
+			null,
+			function(result) {
+
+				$("#linkDadosCadastrais").click();
+				
+				$(idCampoInicioAtividade).html(result);
+
+				popup_novoEntregador(isCadastroPF);		
+			}
+		);
+	}	
 
 	function popup_novoEntregador(isCadastroPF) {
 
@@ -27,49 +126,94 @@
 			buttons: {
 				"Confirmar": function() {
 
-					var formData;
-					var url;
-
-					if (isCadastroPF) {
-
-						formData = $("#formDadosEntregadorPF").serializeArray();
-						url = '<c:url value="/cadastro/entregador/cadastrarEntregadorPessoaFisica" />';
-
-					} else {
-
-						formData = $("#formDadosEntregadorPJ").serializeArray();
-						url = '<c:url value="/cadastro/entregador/cadastrarEntregadorPessoaJuridica" />';
-					}
-
-					$.postJSON(
-						url,
-						formData,
-						function(result) {
-
-							$("#dialog-novoEntregador").dialog( "close" );
-
-							$(".pessoasGrid").flexReload();
-							
-							exibirMensagem(
-								result.tipoMensagem, 
-								result.listaMensagens
-							);
-						},
-						function(result) {
-
-							exibirMensagemDialog(
-								result.mensagens.tipoMensagem, 
-								result.mensagens.listaMensagens
-							);
-						},
-						true
-					);
+					cadastrarEntregador(isCadastroPF);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			}
 		});
+	}
+	
+	function cadastrarEntregador(isCadastroPF, imprimir) {
+		
+		var data = new Array();
+		
+		var url;
+
+		if (isCadastroPF) {
+
+			data.push({name: 'cpfEntregador', value: $("#cpf").val()});
+			data.push({name: 'idEntregador', value: $("#idEntregadorPF").val()});
+			data.push({name: 'codigoEntregador', value: $("#codigoEntregadorPF").val()});
+			data.push({name: 'isComissionado', value: $("#comissionadoPF").is(":checked")});
+			data.push({name: 'percentualComissao', value: $("#percentualComissaoPF").val()});
+			data.push({name: 'procuracao', value: $("#procuracaoPF").is(":checked")});
+			data.push({name: 'cpfProcuracao', value: $("#cpfProcuracaoPF").val()});
+			data.push({name: 'numeroCotaProcuracao', value: $("#numeroCotaProcuracaoPF").val()});
+
+			data.push({name: 'procuracaoEntregador.numeroPermissao', value: $("#numeroPermissaoPF").val()});
+			data.push({name: 'procuracaoEntregador.procurador', value: $("#nomeProcuradorProcuracaoPF").val()});
+			data.push({name: 'procuracaoEntregador.estadoCivil', value: $("#estadoCivilProcuradorProcuracaoPF").val()});
+			data.push({name: 'procuracaoEntregador.endereco', value: $("#enderecoProcuradorProcuracaoPF").val()});
+			data.push({name: 'procuracaoEntregador.rg', value: $("#rgProcuradorProcuracaoPF").val()});
+			data.push({name: 'procuracaoEntregador.nacionalidade', value: $("#nacionalidadeProcuradorProcuracaoPF").val()});
+			data.push({name: 'procuracaoEntregador.profissao', value: $("#profissaoProcuradorProcuracaoPF").val()});
+
+			url = '<c:url value="/cadastro/entregador/cadastrarEntregadorPessoaFisica" />';
+
+		} else {
+
+			data.push({name: 'cnpjEntregador', value: $("#cnpj").val()});
+			data.push({name: 'idEntregador', value: $("#idEntregadorPJ").val()});
+			data.push({name: 'codigoEntregador', value: $("#codigoEntregadorPJ").val()});
+			data.push({name: 'isComissionado', value: $("#comissionadoPJ").is(":checked")});
+			data.push({name: 'percentualComissao', value: $("#percentualComissaoPJ").val()});
+			data.push({name: 'procuracao', value: $("#procuracaoPJ").is(":checked")});
+			data.push({name: 'cpfProcuracao', value: $("#cpfProcuracaoPJ").val()});
+			data.push({name: 'numeroCotaProcuracao', value: $("#numeroCotaProcuracaoPJ").val()});
+
+			data.push({name: 'procuracaoEntregador.numeroPermissao', value: $("#numeroPermissaoPJ").val()});
+			data.push({name: 'procuracaoEntregador.procurador', value: $("#nomeProcuradorProcuracaoPJ").val()});
+			data.push({name: 'procuracaoEntregador.estadoCivil', value: $("#estadoCivilProcuradorProcuracaoPJ").val()});
+			data.push({name: 'procuracaoEntregador.endereco', value: $("#enderecoProcuradorProcuracaoPJ").val()});
+			data.push({name: 'procuracaoEntregador.rg', value: $("#rgProcuradorProcuracaoPJ").val()});
+			data.push({name: 'procuracaoEntregador.nacionalidade', value: $("#nacionalidadeProcuradorProcuracaoPJ").val()});
+			data.push({name: 'procuracaoEntregador.profissao', value: $("#profissaoProcuradorProcuracaoPJ").val()});
+
+			url = '<c:url value="/cadastro/entregador/cadastrarEntregadorPessoaJuridica" />';
+		}
+
+		$.postJSON(
+			url,
+			data,
+			function(result) {
+				
+				if (imprimir) {
+
+					realizarImpressao(isCadastroPF);
+
+				} else {
+
+					$("#dialog-novoEntregador").dialog( "close" );
+
+					pesquisarEntregadores();
+
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+				}
+			},
+			function(result) {
+
+				exibirMensagemDialog(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+				);
+			},
+			true
+		);
 	}
 
 	function editarEntregador(idEntregador) {
@@ -81,6 +225,8 @@
 
 				if (result.pessoaFisica) {
 
+					$("#formDadosEntregadorPF")[0].reset();
+
 					popup_novoEntregador(true);
 
 					$("#idEntregadorPF").val(result.entregador.id);
@@ -88,9 +234,9 @@
 					$("#inicioAtividadePF").html(result.entregador.inicioAtividade.$);
 					$("#nomeEntregador").val(result.pessoaFisica.nome);
 					$("#apelido").val(result.pessoaFisica.apelido);
-					$("#cpf").val(result.pessoaFisica.cpf);
-					$("#rg").val(result.pessoaFisica.rg);
-					$("#dataNascimento").val(result.pessoaFisica.dataNascimento ? result.pessoaFisica.dataNascimento.$ : "");
+					$("#cpf").val(result.pessoaFisica.cpf).mask("999.999.999-99");
+					$("#rg").val(result.pessoaFisica.rg).mask("99.999.999-9");
+					$("#dataNascimento").val(result.pessoaFisica.dataNascimento ? result.pessoaFisica.dataNascimento.$ : "").mask("99/99/9999");
 					$("#orgaoEmissor").val(result.pessoaFisica.orgaoEmissor);
 					$("#ufOrgaoEmissor").val(result.pessoaFisica.ufOrgaoEmissor);
 					$("#estadoCivil").val(result.pessoaFisica.estadoCivil);
@@ -108,6 +254,17 @@
 					}
 
 					if (result.entregador.procuracao) {
+
+						$("#estadoCivilProcuradorProcuracaoPF").val(result.procuracaoEntregador.estadoCivil);
+						$("#nacionalidadeProcuradorProcuracaoPF").val(result.procuracaoEntregador.nacionalidade);
+						$("#numeroPermissaoPF").val(result.procuracaoEntregador.numeroPermissao);
+						$("#nomeProcuradorProcuracaoPF").val(result.procuracaoEntregador.procurador);
+						$("#profissaoProcuradorProcuracaoPF").val(result.procuracaoEntregador.profissao);
+						$("#rgProcuradorProcuracaoPF").val(result.procuracaoEntregador.rg).mask("99.999.999-9");
+						$("#enderecoProcuradorProcuracaoPF").val(result.procuracaoEntregador.endereco);
+						
+						obterCota(result.procuracaoEntregador.cota.numeroCota, true); 
+
 						$("#procuracaoPF").click();
 						$("#naoProcuracaoPF").uncheck();	
 					} else {
@@ -117,6 +274,8 @@
 
 				} else {
 
+					$("#formDadosEntregadorPJ")[0].reset();
+
 					popup_novoEntregador(false);
 
 					$("#idEntregadorPJ").val(result.entregador.id);
@@ -124,8 +283,8 @@
 					$("#inicioAtividadePJ").html(result.entregador.inicioAtividade.$);
 					$("#razaoSocial").val(result.pessoaJuridica.razaoSocial);
 					$("#nomeFantasia").val(result.pessoaJuridica.nomeFantasia);
-					$("#cnpj").val(result.pessoaJuridica.cnpj);
-					$("#inscricaoEstadual").val(result.pessoaJuridica.inscricaoEstadual);
+					$("#cnpj").val(result.pessoaJuridica.cnpj).mask("99.999.999/9999-99");
+					$("#inscricaoEstadual").val(result.pessoaJuridica.inscricaoEstadual).mask("999.999.999.999");
 					$("#emailPJ").val(result.pessoaJuridica.email);
 					$("#percentualComissaoPJ").val(result.entregador.percentualComissao);
 
@@ -138,8 +297,20 @@
 					}
 
 					if (result.entregador.procuracao) {
+
+						$("#estadoCivilProcuradorProcuracaoPJ").val(result.procuracaoEntregador.estadoCivil);
+						$("#nacionalidadeProcuradorProcuracaoPJ").val(result.procuracaoEntregador.nacionalidade);
+						$("#numeroPermissaoPJ").val(result.procuracaoEntregador.numeroPermissao);
+						$("#nomeProcuradorProcuracaoPJ").val(result.procuracaoEntregador.procurador);
+						$("#profissaoProcuradorProcuracaoPJ").val(result.procuracaoEntregador.profissao);
+						$("#rgProcuradorProcuracaoPJ").val(result.procuracaoEntregador.rg).mask("99.999.999-9");
+						$("#enderecoProcuradorProcuracaoPJ").val(result.procuracaoEntregador.endereco);
+						
+						obterCota(result.procuracaoEntregador.cota.numeroCota, false);
+
 						$("#procuracaoPJ").click();
-						$("#naoProcuracaoPJ").uncheck();	
+						$("#naoProcuracaoPJ").uncheck();
+
 					} else {
 						$("#naoProcuracaoPJ").click();
 						$("#procuracaoPJ").uncheck();
@@ -195,7 +366,76 @@
 			}
 		});
 	};
+	
+	function realizarImpressao(isPF) {
 
+		var sufixo = "PJ";
+		
+		if(isPF) {
+			
+			sufixo = "PF";
+		}
+
+		var nomeJornaleiroProcuracao = "#nomeJornaleiroProcuracao" + sufixo;
+		var boxProcuracao = "#boxProcuracao" + sufixo;
+		var nacionalidadeProcuracao = "#nacionalidadeProcuracao" + sufixo;
+		var estadoCivilProcuracao = "#estadoCivilProcuracao" + sufixo;
+		var enderecoPDVPrincipalProcuracao = "#enderecoPDVPrincipalProcuracao" + sufixo;
+		var bairroProcuracao = "#bairroProcuracao" + sufixo;
+		var cidadeProcuracao = "#cidadeProcuracao" + sufixo;
+		var numeroPermissaoProcuracao = "#numeroPermissao" + sufixo;
+		var rgProcuracao = "#rgProcuracao" + sufixo;
+		var cpfProcuracao = "#cpfProcuracao" + sufixo;
+
+		var nomeProcurador = "#nomeProcuradorProcuracao" + sufixo;		
+		var rgProcurador = "#rgProcuradorProcuracao" + sufixo;
+		var estadoCivilProcurador = "#estadoCivilProcuradorProcuracao" + sufixo;
+		var nacionalidadeProcurador = "#nacionalidadeProcuradorProcuracao" + sufixo;
+		var enderecoDoProcurado = "#enderecoProcuradorProcuracao" + sufixo;
+		
+		var data = new Array();			
+		
+		data.push({ name:'procuracaoImpressao.nomeJornaleiro' , value: $(nomeJornaleiroProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.boxCota' , value: $(boxProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.nacionalidade' , value: $(nacionalidadeProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.estadoCivil' , value: $(estadoCivilProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.enderecoPDV' , value: $(enderecoPDVPrincipalProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.bairroPDV' , value: $(bairroProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.cidadePDV' , value: $(cidadeProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.numeroPermissao' , value: $(numeroPermissaoProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.rgJornaleiro' , value: $(rgProcuracao).val()});
+		data.push({ name:'procuracaoImpressao.cpfJornaleiro' , value: $(cpfProcuracao).val()});
+		
+		data.push({ name:'procuracaoImpressao.nomeProcurador' , value: $(nomeProcurador).val()});
+		data.push({ name:'procuracaoImpressao.rgProcurador' , value: $(rgProcurador).val()});
+		data.push({ name:'procuracaoImpressao.estadoCivilProcurador' , value: $(estadoCivilProcurador).val()});
+		data.push({ name:'procuracaoImpressao.nacionalidadeProcurador' , value: $(nacionalidadeProcurador).val()});
+		data.push({ name:'procuracaoImpressao.enderecoDoProcurado' , value: $(enderecoDoProcurado).val()});
+
+		var parameters = arrayToURLParameters(data);
+		
+		window.location = "<c:url value='/cadastro/entregador/imprimirProcuracao"+ parameters +"'/>";
+	}
+
+	function imprimirProcuracao(isPF) {
+
+		cadastrarEntregador(isPF, true);
+	}
+
+	function arrayToURLParameters(array) {
+
+		var i;
+		var params = "?";
+		
+		for (i = 0; i < array.length; i++) {
+			
+			params += i == 0 ? "" : "&";
+			params += array[i].name + "=" + array[i].value; 
+		}
+		
+		return params;
+	}
+	
 	function processarResultadoEntregadores(data) {
 
 		if (data.mensagens) {
@@ -279,7 +519,7 @@
 				display : 'Telefone',
 				name : 'telefone',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'E-Mail',
@@ -370,12 +610,12 @@
         	<table class="pessoasGrid"></table>
         </div>
         <span class="bt_novos" title="Novo">
-           	<a href="javascript:;" onclick="popup_novoEntregador(true);">
+           	<a href="javascript:;" onclick="novoEntregador(true);">
            		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF
            	</a>
         </span>
 
-        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novoEntregador(false);">
+        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="novoEntregador(false);">
         	<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
         </span>
            

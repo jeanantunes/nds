@@ -1,9 +1,12 @@
 
 <script type="text/javascript">
+$(function() {
 
-var PDV_GeradorFluxo= {
-				
-};
+	$("select[name='selectFluxoSecundario']").multiSelect("select[name='selecTipoGeradorFluxo']", {trigger: "#linkFluxoVoltarTodos"});
+	
+	$("select[name='selecTipoGeradorFluxo']").multiSelect("select[name='selectFluxoSecundario']", {trigger: "#linkFluxoEnviarTodos"});
+	
+});
 
 </script>
 
@@ -14,7 +17,8 @@ var PDV_GeradorFluxo= {
 	    <td width="252" valign="top">
 		    <fieldset style="width:250px!important;">
 		    <legend>Tipo Gerador Fluxo</legend>
-		    <select name="select11" size="10" multiple="multiple" id="select5" style="height:267px; width:245px;">
+		    
+		    <select name="selecTipoGeradorFluxo" size="10" multiple="multiple" id="selecTipoGeradorFluxo" style="height:267px; width:245px;">
 		      <option>Academia de Ginastica</option>
 		      <option>Aeroporto</option>
 		      <option>Agência de Turismo</option>
@@ -23,6 +27,7 @@ var PDV_GeradorFluxo= {
 		      <option>Biblioteca</option>
 		      <option>Estática</option>
 		    </select>
+		    
 		    </fieldset>
 	    </td>
 	    <td width="68" align="center" valign="top">
@@ -34,9 +39,12 @@ var PDV_GeradorFluxo= {
 		        </td>
 		      </tr>
 		      <tr>
-		        <td><img src="../images/seta_vai_todos.png" width="39" height="30" /><br />
-		          <br />
-		          <img src="../images/seta_volta_todos.png" width="39" height="30" /></td>
+		        <td>
+					<a id="linkFluxoEnviarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_vai_todos.png"></a>
+					<br><br>
+					<a id="linkFluxoVoltarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_volta_todos.png"></a>
+					<br>
+				</td>
 		      </tr>
 	    	</table>
 	    </td>
@@ -47,30 +55,17 @@ var PDV_GeradorFluxo= {
 	    	</fieldset>
 	    
     		<fieldset style="margin-top:5px; width:250px!important;">
+		    	
 		    	<legend>Gerador Fluxo Secundário</legend>
-			    <select name="select11" size="10" multiple="multiple" id="select6" style="height:200px; width:245px;">
+			    
+			    <select name="selectFluxoSecundario" size="10" multiple="multiple" id="selectFluxoSecundario" style="height:200px; width:245px;">
 		    	</select>
+		    	
 		    </fieldset>
 		   
     	</td>
 	  </tr>
-	  <tr class="geradorFluxo">
-	    <td valign="top"><strong>Gerador:</strong></td>
-	    <td align="center" valign="top">&nbsp;</td>
-	    <td valign="top"><strong>Gerador:</strong></td>
-	  </tr>
-	  <tr class="geradorFluxo">
-	    <td valign="top"><span style="width:250px!important;">
-	      <input name="input" type="text" style="width:240px; " />
-	      </span>
-		</td>
-    	<td align="center" valign="top">&nbsp;</td>
-    	<td valign="top"><span style="width:250px!important;">
-      		<input name="input2" type="text" style="width:240px; " />
-    		</span>
-    	</td>
-	  </tr>
-  </table>
+	 </table>
 
 </fieldset>
 

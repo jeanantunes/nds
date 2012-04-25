@@ -1,3 +1,15 @@
+<script type="text/javascript">
+$(function() {
+	
+	
+	
+	$("select[name='selectEspecialidades']").multiSelect("select[name='selectCaracteristicas']", {trigger: "#linkVoltarTodos"});
+	
+	$("select[name='selectCaracteristicas']").multiSelect("select[name='selectEspecialidades']", {trigger: "#linkEnviarTodos"});
+	
+});
+
+</script>
 
 <fieldset>
   	<legend>Especialidade</legend>
@@ -6,30 +18,41 @@
 	    <td width="264" valign="top">
 	    	<fieldset style="width:250px!important;">
 		    	<legend>Caracteristicas</legend>
-			    <select name="select4" size="10" multiple="multiple" id="select3" style="height:270px; width:245px;">
-			      <option>Decoração</option>
-			      <option>Fasciculos</option>
-			      <option>Figurinhas</option>
-			      <option>Generalista</option>
-			      <option>Informática</option>
-			      <option>Moda</option>
-			      <option>Quadrinhos</option>
-			      <option>Sexo</option>
-			    </select>
+			   
+				<select name="selectCaracteristicas" multiple="true" id="caract_options" size="10" style="height:270px; width:245px;" >
+					<option value="1">Decoração</option>
+					<option value="1">Fasciculos</option>
+					<option value="1">Figurinhas</option>
+					<option value="1">Generalista</option>
+					<option value="1">Informática</option>
+					<option value="1">Moda</option>
+					<option value="1">Quadrinhos</option>
+					<option value="1">Sexo</option>
+				</select>
+			
 	    	</fieldset>
 	    </td>
+	    
 	    <td width="69" align="center">
-	    	<img src="../images/seta_vai_todos.png" width="39" height="30" /><br /><br />
-	    	<img src="../images/seta_volta_todos.png" width="39" height="30" /> <br /></td>
+			<a id="linkEnviarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_vai_todos.png"></a>
+			<br><br>
+			<a id="linkVoltarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_volta_todos.png"></a>
+			<br>
+		</td>
+	    
 	    <td width="252" valign="top">
+	    	
 	    	<fieldset style="width:250px!important;">
+		   		
 		   		<legend>Especialidades</legend>
-		    	<select name="select5" size="10" multiple="multiple" id="select4" style="height:270px; width:245px;">
+ 	
+		    	<select name="selectEspecialidades" multiple="true" id="especialidades_options" size="10" style="height:270px; width:245px;">
+					  
 				</select>
+		    	
 			</fieldset>
 		</td>
 	  </tr>
 	</table>
 </fieldset>
-
 

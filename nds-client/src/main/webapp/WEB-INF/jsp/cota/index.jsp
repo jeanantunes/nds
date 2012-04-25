@@ -198,7 +198,7 @@
 			<li><a href="#tabpf-2" onclick="popularGridEnderecos()">Endereços</a></li>			
 			<li><a href="#tabpf-3" onclick="carregarTelefones()">Telefones</a></li>
 			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
-			<li><a href="#tabpf-5">Financeiro</a></li>
+			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
 			<li><a href="#tabpf-7">Distribuição</a></li>
 			<li><a href="#tabpf-8">Fornecedor</a></li>

@@ -1,46 +1,35 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+
 
 /**
- * Entidade para os tipos de estabelecimentos
- * que em que um PDV pode estar associado.
- * 
- * Indica os tipos de estabelecimentos em que um 
- * PDV pode estar "inserido" 
+ * Entidade base com informações de código e descrição, 
+ * facilitando o mapeamento de entidades que são informações
+ * populados com informações oriundas de sistemas legados
  * 
  * @author francisco.garcia
  *
  */
-@Entity
-@Table(name = "TIPO_ESTABELECIMENTO_ASSOCIACAO_PDV")
-public class TipoEstabelecimentoAssociacaoPDV {
+@MappedSuperclass
+public abstract class CodigoDescricao implements Serializable {
 	
-	@Id
-	private Long id;
-	
+	private static final long serialVersionUID = 1L;
+
 	/**
-	 * Código interno do estabelecimento
+	 * Identificação de informação legada
 	 */
-	@Column(name = "CODIGO", nullable = false, unique = true)
-	private Long codigo; 
+	@Column(name = "CODIGO", nullable = false)
+	private Long codigo;
 	
 	/**
-	 * Descrição do tipo de estabelecimento
+	 * Descrição da informação
 	 */
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Long getCodigo() {
 		return codigo;
@@ -74,7 +63,7 @@ public class TipoEstabelecimentoAssociacaoPDV {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TipoEstabelecimentoAssociacaoPDV other = (TipoEstabelecimentoAssociacaoPDV) obj;
+		CodigoDescricao other = (CodigoDescricao) obj;
 		if (codigo == null) {
 			if (other.codigo != null)
 				return false;

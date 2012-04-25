@@ -107,6 +107,8 @@ public interface CotaService {
 	
 	List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar);
 	
+	Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota);
+	
 	//void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
 
 	List<Cota> obterCotaAssociadaFiador(Long idFiador);

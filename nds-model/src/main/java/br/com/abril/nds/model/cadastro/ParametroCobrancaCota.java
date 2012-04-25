@@ -52,7 +52,7 @@ public class ParametroCobrancaCota implements Serializable {
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
 	
-	@OneToMany
+	@OneToMany(mappedBy="parametroCobrancaCota")
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 	
 	@Embedded
