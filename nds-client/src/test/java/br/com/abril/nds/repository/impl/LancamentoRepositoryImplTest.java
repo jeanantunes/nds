@@ -549,6 +549,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void buscarResumosPeriodo() {
+		
 		Date data22022012 = Fixture.criarData(22,
 				Calendar.FEBRUARY, 2012);
 		Date data23022012 = Fixture.criarData(23,
@@ -576,7 +577,37 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				CurrencyUtil.formatarValor(resumo2302.getQtdeExemplares()));
 		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(101.20)),
 				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
+	}
+	
+	@Test
+	public void buscarResumosPeriodoRecolhimento() {
 		
+		Date data22032012 = Fixture.criarData(22, Calendar.MARCH, 2012);
+		Date data23032012 = Fixture.criarData(23, Calendar.MARCH, 2012);
+		
+		List<Date> datas = Arrays.asList(data22032012, data23032012);
+		
+		List<ResumoPeriodoBalanceamentoDTO> resumos =
+			this.lancamentoRepository.buscarResumosPeriodoRecolhimento(
+				datas, Collections.singletonList(this.fornecedorDinap.getId()), GrupoProduto.CROMO);
+		
+		Assert.assertEquals(2, resumos.size());
+		
+		ResumoPeriodoBalanceamentoDTO resumo2203 = resumos.get(0);
+		
+		Assert.assertNotNull(resumo2203);
+		Assert.assertEquals(data22032012, resumo2203.getData());
+		Assert.assertEquals(Long.valueOf(1), resumo2203.getQtdeTitulos());
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(25.00)), CurrencyUtil.formatarValor(resumo2203.getQtdeExemplares()));
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(2.5)), CurrencyUtil.formatarValor(resumo2203.getPesoTotal()));
+		
+		ResumoPeriodoBalanceamentoDTO resumo2303 = resumos.get(1);
+		
+		Assert.assertNotNull(resumo2303);
+		Assert.assertEquals(data23032012, resumo2303.getData());
+		Assert.assertEquals(Long.valueOf(1), resumo2303.getQtdeTitulos());
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(40.00)), CurrencyUtil.formatarValor(resumo2303.getQtdeExemplares()));
+		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(4.0)), CurrencyUtil.formatarValor(resumo2303.getPesoTotal()));
 	}
 
 }
