@@ -1,9 +1,9 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
-import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
+import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 
 /**
@@ -15,30 +15,25 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 public interface ChamadaoService {
 
 	/**
-	 * Obtém os consignados da cota para realizar o chamadão.
+	 * Obtém os consignados da cota para realizar o chamadão,
+	 * o total de consignados da cota para realizar o chamadão,
+	 * o resumo dos consignados da cota para realizar o chamadão.
 	 * 
 	 * @param filtro - filtro para a pesquisa
 	 * 
 	 * @return {@link List<ConsignadoCotaChamadaoDTO>}
 	 */
-	List<ConsignadoCotaChamadaoDTO> obterConsignados(FiltroChamadaoDTO filtro);
+	ConsultaChamadaoDTO obterConsignados(FiltroChamadaoDTO filtro);
 	
 	/**
-	 * Obtém o total de consignados da cota para realizar o chamadão.
+	 * Confima o chamadão das publicações da cota.
 	 * 
-	 * @param filtro - filtro para a pesquisa
-	 * 
-	 * @return total de consignados
+	 * @param listaLancamento - lista de ids de lançamento
+	 * @param numeroCota - número da cota
+	 * @param dataChamadao - data do chamadão
+	 * @param chamarTodos - indica se todas as publicações da cota serão recolhidas
 	 */
-	Long obterTotalConsignados(FiltroChamadaoDTO filtro);
-	
-	/**
-	 * Obtém o resumo dos consignados da cota para realizar o chamadão. 
-	 * 
-	 * @param filtro - filtro para a pesquisa
-	 * 
-	 * @return {@link List<ResumoConsignadoCotaChamadaoDTO>}
-	 */
-	ResumoConsignadoCotaChamadaoDTO obterResumoConsignados(FiltroChamadaoDTO filtro);
+	void confirmarChamacao(List<Long> listaLancamento, Integer numeroCota,
+			  		  	   Date dataChamadao, boolean chamarTodos);
 	
 }

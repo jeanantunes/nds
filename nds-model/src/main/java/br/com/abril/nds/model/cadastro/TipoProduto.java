@@ -32,6 +32,10 @@ public class TipoProduto implements Serializable {
 	private Long id;
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
+	
+	/**
+	 * TODO: mover para o produto
+	 */
 	@Column(name  = "NCM", nullable = false)
 	private String ncm;
 	@Enumerated(EnumType.STRING)

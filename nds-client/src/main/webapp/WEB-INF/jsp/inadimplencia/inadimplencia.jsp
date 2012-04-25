@@ -20,27 +20,46 @@ $(function() {
 
 function cliquePesquisar() {
 	
-	var periodoDe = "B";//$('#idCota').attr('value');
-	var periodoAte = "C";//$('#idNomeCota').attr('value');
-	var numCota = 1;//$('#idBox').attr('value');
-	var nomeCota = "E";//$('#idBox').attr('value');
-	var status = "F";//$('#idBox').attr('value');
-	var situacao = "G";//$('#idBox').attr('value');	
+	var periodoDe = $('#idDataDe').attr('value');
+	var periodoAte = $('#idDataAte').attr('value');
+	var numCota = $('#idNumCota').attr('value');
+	var nomeCota = $('#idNomeCota').attr('value');
+	var statusCota = $('#idStatusCota').attr('value');
+	
+	var situacaoEmAberto = ( $('#idDividaEmAberto').attr('checked') == "checked" ) ;	
+	var situacaoNegociada = ( $('#idDividaNegociada').attr('checked') == "checked" );
+	var situacaoPaga = ( $('#idDividaPaga').attr('checked') == "checked" );
+	
 		
 	$(".inadimplenciaGrid").flexOptions({			
 		url : '<c:url value="/inadimplencia/pesquisar"/>',
 		dataType : 'json',
 		preProcess:processaRetornoPesquisa,
-		params:[{name:'periodoDe',value:periodoDe},
-		        {name:'periodoAte',value:periodoAte},
-		        {name:'numCota',value:numCota},
-		        {name:'nomeCota',value:nomeCota},
-		        {name:'statusDivida',value:status},
-		        {name:'situacao',value:situacao}]		
+		
+		params:[{name:'periodoDe',value : periodoDe},
+		        {name:'periodoAte',value : periodoAte},
+		        {name:'numCota',value : numCota},
+		        {name:'nomeCota',value : nomeCota},
+		        {name:'statusCota',value : statusCota},
+		        {name:'situacaoEmAberto',value : situacaoEmAberto},
+		        {name:'situacaoNegociada',value : situacaoNegociada},
+		        {name:'situacaoPaga',value : situacaoPaga}]		
 	});
 	
 	$(".inadimplenciaGrid").flexReload();
 }
+
+
+function selecionarTodos(elementoCheck) {
+	
+	var selects =  document.getElementsByName("checkgroup_menu_divida");
+	
+	$.each(selects, function(index, row) {
+		row.checked=elementoCheck.checked;
+	});
+	
+}
+	
 
 function processaRetornoPesquisa(result) {
 	
@@ -220,7 +239,7 @@ $(document).ready(function(){
 				
 				<td>
 					<span class="bt_sellAll">
-<input type="checkbox" id="idTodas" name="Todos2" onclick="checkAll_dividas();" style="float:left;"/>
+<input type="checkbox" id="idSelecaoTodos" name="Todos2" onclick="selecionarTodos(this);" style="float:left;"/>
 					</span>
 				</td>
 				<td>
@@ -293,9 +312,22 @@ $(document).ready(function(){
           	
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td width="23%"><span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+                <td width="23%"><span class="bt_novos" title="Gerar Arquivo">
+                
+<!-- EXCEL -->
+<a href="${pageContext.request.contextPath}/inadimplencia/exportar?fileType=XLS">
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span></td>
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+				<span class="bt_novos" title="Imprimir">
+
+<!-- PDF -->
+<a href="${pageContext.request.contextPath}/inadimplencia/exportar?fileType=PDF">
+
+				
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+
+				</span></td>
                 <td width="8%"><strong>Qtde Cotas:</strong></td>
                 <td width="5%">05</td>
                 <td width="2%">&nbsp;</td>
@@ -386,7 +418,6 @@ $(function() {
 				display : 'Detalhes',
 				name : 'detalhe',
 				width : 40,
-				sortable : true,
 				align : 'center',
 			}],
 			sortname : "cota",

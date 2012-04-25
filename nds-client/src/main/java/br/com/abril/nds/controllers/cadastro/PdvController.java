@@ -3,20 +3,19 @@ package br.com.abril.nds.controllers.cadastro;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CaracteristicaDTO;
-import br.com.abril.nds.dto.EspecialidadeDTO;
-import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.MapDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.LicencaMunicipal;
+import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
+import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -45,6 +44,104 @@ public class PdvController {
 	
 	}
 	
+	/**
+	 * Carrega dados básicos para abrir tela de PDV
+	 */
+	public void preCarregamento() {
+				
+		result.include("listaStatus",gerarItemStatus(StatusPDV.values()));
+		result.include("listaTamanhoPDV",gerarTamanhosPDV(TamanhoPDV.values()));
+		result.include("listaTipoEstabelecimento",gerarTiposEstabelecimento());
+		result.include("listaTipoLicencaMunicipal",gerarTiposLicencaMunicipal());
+				
+	}
+	
+	private List<ItemDTO<Long, String>> gerarTiposEstabelecimento() {
+		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
+		
+		//TODO obter lista do banco de dados
+		List<TipoEstabelecimentoAssociacaoPDV> licencas = getFakeTiposEstabelecimento();
+		
+		for(TipoEstabelecimentoAssociacaoPDV licenca: licencas) {
+			itens.add(new ItemDTO<Long, String>(licenca.getCodigo(), licenca.getDescricao()));
+		}
+		
+		return itens;
+	}
+
+	private List<TipoEstabelecimentoAssociacaoPDV> getFakeTiposEstabelecimento() {
+		
+		List<TipoEstabelecimentoAssociacaoPDV> estabelecimentos = new ArrayList<TipoEstabelecimentoAssociacaoPDV>();
+		 
+		 estabelecimentos.add(new TipoEstabelecimentoAssociacaoPDV());
+		 estabelecimentos.get(0).setCodigo(1L);
+		 estabelecimentos.get(0).setDescricao("Licenca 1");
+		 
+		 estabelecimentos.add(new TipoEstabelecimentoAssociacaoPDV());
+		 estabelecimentos.get(1).setCodigo(1L);
+		 estabelecimentos.get(1).setDescricao("Licenca 2");
+		 
+		return estabelecimentos;
+	}
+
+	private List<ItemDTO<String, String>> gerarItemStatus(StatusPDV[] statusPDVs) {
+		
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
+		
+		for(StatusPDV item: statusPDVs) {
+			itens.add(new ItemDTO<String, String>(item.name(), item.getDescricao()));
+		}
+		
+		return itens;
+	}
+	
+	private List<ItemDTO<String, String>> gerarTamanhosPDV(TamanhoPDV[] tamanhoPDVs) {
+		
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
+		
+		for(TamanhoPDV item: tamanhoPDVs) {
+			itens.add(new ItemDTO<String, String>(item.name(), item.getDescricao()));
+		}
+		
+		return itens;
+	}
+	
+	/**
+	 * Gera dados do combo de Dias de Funcionamento (Aba - Dados Básicos)
+	 * @return
+	 */
+	private List<ItemDTO<String, String>> gerarTiposLicencaMunicipal() {
+		
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
+		
+		//TODO obter lista do banco de dados
+		List<LicencaMunicipal> licencas = getFakelicencas();
+		
+		for(LicencaMunicipal licenca: licencas) {
+			itens.add(new ItemDTO<String, String>(licenca.getNumeroLicenca(), licenca.getNomeLicenca()));
+		}
+		
+		return itens;
+	}
+	
+
+	//TODO remover após implementação real
+	private List<LicencaMunicipal> getFakelicencas() {
+		
+		 List<LicencaMunicipal> licencas = new ArrayList<LicencaMunicipal>();
+		 
+		 licencas.add(new LicencaMunicipal());
+		 licencas.get(0).setNumeroLicenca("1");
+		 licencas.get(0).setNomeLicenca("Licenca 1");
+		 
+		 licencas.add(new LicencaMunicipal());
+		 licencas.get(1).setNumeroLicenca("2");
+		 licencas.get(1).setNomeLicenca("Licenca 2");
+		 
+		return licencas;
+	}
+
+
 	@Post
 	@Path("/consultar")
 	public void consultarPDVs(Long idCota,String sortname, String sortorder){

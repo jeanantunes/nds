@@ -14,17 +14,17 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoPDV;
-import br.com.abril.nds.model.cadastro.PDV;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.StatusPDV;
-import br.com.abril.nds.model.cadastro.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefonePDV;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
+import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.repository.PdvRepository;
 
 public class PdvRepositoryTest extends AbstractRepositoryImplTest {

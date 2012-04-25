@@ -1,8 +1,10 @@
-package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro.pdv;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.CodigoDescricao;
 
 /**
  * Entidade para os tipos de estabelecimentos
