@@ -89,4 +89,14 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 		return true;
 	}
 
+	@Override
+	public String getNome() {		
+		return this.razaoSocial;
+	}
+
+	@Override
+	public String getDocumento() {
+		return this.cnpj;
+	}
+
 }
