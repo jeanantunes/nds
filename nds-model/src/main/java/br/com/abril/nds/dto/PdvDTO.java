@@ -27,6 +27,12 @@ public class PdvDTO implements Serializable {
 	
 	private String contato;
 	
+	private String endereco;
+	
+	private String telefone;
+	
+	private boolean principal;
+	
 	private String site;
 	
 	private String email;
@@ -419,5 +425,49 @@ public class PdvDTO implements Serializable {
 	public void setGeradorFluxoPrincipal(Long geradorFluxoPrincipal) {
 		this.geradorFluxoPrincipal = geradorFluxoPrincipal;
 	}
+
+	/**
+	 * @return the endereco
+	 */
+	public String getEndereco() {
+		return endereco;
+	}
+
+	/**
+	 * @param endereco the endereco to set
+	 */
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+
+	/**
+	 * @return the telefone
+	 */
+	public String getTelefone() {
+		return telefone;
+	}
+
+	/**
+	 * @param telefone the telefone to set
+	 */
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	/**
+	 * @return the principal
+	 */
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	/**
+	 * @param principal the principal to set
+	 */
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
+	
+	
 	
 }

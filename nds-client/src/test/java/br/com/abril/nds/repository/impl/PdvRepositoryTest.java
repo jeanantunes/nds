@@ -9,7 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.dto.filtro.FiltroPdvDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -84,7 +86,9 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		FiltroPdvDTO filtro = new FiltroPdvDTO();
 		filtro.setIdCota(cotaManoel.getId());
 		
-		List<PDV> lista = pdvRepository.obterPDVsPorCota(filtro);
+		filtro.setColunaOrdenacao(ColunaOrdenacao.CONTATO);
+		
+		List<PdvDTO> lista = pdvRepository.obterPDVsPorCota(filtro);
 		
 		Assert.assertNotNull(lista);
 		

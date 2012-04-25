@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.model.cadastro.PDV;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.PdvService;
 
@@ -25,7 +25,7 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Transactional(readOnly=true)
 	@Override
-	public List<PDV> obterPDVsPorCota(FiltroPdvDTO filtro) {
+	public List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro) {
 		
 		return pdvRepository.obterPDVsPorCota(filtro);
 	}
