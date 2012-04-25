@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +53,7 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -745,8 +747,9 @@ public class ContaCorrenteCotaController {
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());
-	}
+	}	
 	
+
 	public void exportarConsignadoCota(FileType fileType) throws IOException{
 		FiltroConsolidadoConsignadoCotaDTO filtro = (FiltroConsolidadoConsignadoCotaDTO) request.getSession().getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO);
 		String nomeCota = cotaService.obterNomeResponsavelPorNumeroDaCota(filtro.getNumeroCota());
@@ -772,5 +775,5 @@ public class ContaCorrenteCotaController {
 		
 		result.use(Results.nothing());
 	}
-
+	
 }
