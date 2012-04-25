@@ -300,7 +300,7 @@ fieldset label {
 						href="javascript:;">Recolhimento</a>
 						<ul>
 							<li><a
-								href="Recolhimento/balanceamento_da_matriz_recolhimento.htm">Balanceamento
+								href="<c:url value="/devolucao/balanceamentoMatriz"/>">Balanceamento
 									da Matriz</a>
 							</li>
 							<li><a href='<c:url value="/devolucao/chamadaEncalheAntecipada"/>'>CE
