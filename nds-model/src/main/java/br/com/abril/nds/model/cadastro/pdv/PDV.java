@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -21,6 +23,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
 
 /**
  * Entidade que representa o PDV associado
@@ -156,6 +159,23 @@ public class PDV implements Serializable {
 	 */
 	@Embedded
 	private SegmentacaoPDV segmentacao;
+	
+	/**
+	 * Especialidades do PDV
+	 * 
+	 */
+	@ManyToMany
+	@JoinTable(name = "PDV_ESPECIALIDADE_PDV", joinColumns = { @JoinColumn(name = "PDV_ID") }, 
+		inverseJoinColumns = { @JoinColumn(name = "ESPECIALIDADE_PDV_ID") })
+	private Set<EspecialidadePDV> especialidades = new HashSet<EspecialidadePDV>();
+	
+	/**
+	 * Materiais promocionais do PDV
+	 */
+	@ManyToMany
+	@JoinTable(name = "PDV_MATERIAL_PROMOCIONAL", joinColumns = {@JoinColumn(name = "PDV_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "MATERIAL_PROMOCIONAL_ID")})
+	private Set<MaterialPromocional> materiais = new HashSet<MaterialPromocional>();
 	
 	public Long getId() {
 		return id;
@@ -324,6 +344,22 @@ public class PDV implements Serializable {
 	
 	public void setSegmentacao(SegmentacaoPDV segmentacao) {
 		this.segmentacao = segmentacao;
+	}
+	
+	public Set<EspecialidadePDV> getEspecialidades() {
+		return especialidades;
+	}
+	
+	public void setEspecialidades(Set<EspecialidadePDV> especialidades) {
+		this.especialidades = especialidades;
+	}
+	
+	public Set<MaterialPromocional> getMateriais() {
+		return materiais;
+	}
+	
+	public void setMateriais(Set<MaterialPromocional> materiais) {
+		this.materiais = materiais;
 	}
 
 }

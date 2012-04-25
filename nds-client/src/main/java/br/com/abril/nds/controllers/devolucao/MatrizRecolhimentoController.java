@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
-			this.recolhimentoService.obterResumoPeriodoBalanceamento(dataPesquisa, listaIdsFornecedores);
+			this.obterResumoPeriodoBalanceamento(dataPesquisa, listaIdsFornecedores);
 		
 		if (resumoPeriodoBalanceamento == null
 				|| resumoPeriodoBalanceamento.isEmpty()) {
@@ -191,6 +192,87 @@ public class MatrizRecolhimentoController {
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * Obtém o resumo do período de balanceamento de acordo com a data da pesquisa
+	 * e a lista de id's dos fornecedores.
+	 */
+	private List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodoBalanceamento(Date dataPesquisa, 
+																				List<Long> listaIdsFornecedores) {
+		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = this.obterMatrizBalanceamento(dataPesquisa);
+		
+		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
+			
+			return null;
+		}
+		
+		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento =
+			new ArrayList<ResumoPeriodoBalanceamentoDTO>();
+		
+		for (Map.Entry<Date, List<RecolhimentoDTO>> entry : matrizBalanceamento.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			
+			ResumoPeriodoBalanceamentoDTO itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoDTO();
+			
+			itemResumoPeriodoBalanceamento.setData(dataRecolhimento);
+			
+			List<RecolhimentoDTO> listaDadosRecolhimento = entry.getValue();
+			
+			if (listaDadosRecolhimento != null && !listaDadosRecolhimento.isEmpty()) {
+				
+				boolean exibeDestaque = false;
+				
+				Long qtdeTitulos = Long.valueOf(listaDadosRecolhimento.size());
+				Long qtdeTitulosParciais = 0L;
+				
+				BigDecimal pesoTotal = BigDecimal.ZERO;
+				BigDecimal qtdeExemplares = BigDecimal.ZERO;
+				BigDecimal valorTotal = BigDecimal.ZERO;
+				
+				for (RecolhimentoDTO dadosRecolhimento : listaDadosRecolhimento) {
+					
+					if (dadosRecolhimento.getAtendida() != null
+							&& dadosRecolhimento.getAtendida().doubleValue() > 0) {
+						
+						exibeDestaque = true;
+					}
+					
+					if (dadosRecolhimento.getParcial() != null) {
+						
+						qtdeTitulosParciais++;
+					}
+					
+					if (dadosRecolhimento.getPeso() != null) {
+						
+						pesoTotal = pesoTotal.add(dadosRecolhimento.getPeso());
+					}
+					
+					if (dadosRecolhimento.getQtdeExemplares() != null) {
+					
+						qtdeExemplares = qtdeExemplares.add(dadosRecolhimento.getQtdeExemplares());
+					}
+					
+					if (dadosRecolhimento.getValorTotal() != null) {
+						
+						valorTotal = valorTotal.add(dadosRecolhimento.getValorTotal());
+					}
+				}
+				
+				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
+				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
+				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
+				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
+				itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
+			}
+			
+			resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
+		}
+		
+		return resumoPeriodoBalanceamento;
 	}
 	
 }

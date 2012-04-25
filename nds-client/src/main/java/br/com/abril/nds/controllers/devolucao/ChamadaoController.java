@@ -357,9 +357,19 @@ public class ChamadaoController {
 		TableModel<CellModelKeyValue<ChamadaoVO>> tableModel =
 			new TableModel<CellModelKeyValue<ChamadaoVO>>();
 		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaChamadao));
+		//tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaChamadao));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		tableModel.setTotal(qtdeTotalRegistros);
+		
+		List<CellModelKeyValue<ChamadaoVO>> listaCellModel = new ArrayList<CellModelKeyValue<ChamadaoVO>>();
+		
+		//TODO usar id lancamento como id
+		for (ChamadaoVO vo : listaChamadao){
+			CellModelKeyValue<ChamadaoVO> cell = new CellModelKeyValue<ChamadaoVO>(1, vo);
+			listaCellModel.add(cell);
+		}
+		
+		tableModel.setRows(listaCellModel);
 		
 		Long qtdProdutosTotal = null;
 		

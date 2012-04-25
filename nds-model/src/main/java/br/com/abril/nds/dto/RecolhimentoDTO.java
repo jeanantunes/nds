@@ -44,6 +44,8 @@ public class RecolhimentoDTO implements Serializable {
 
 	private BigDecimal valorTotal;
 	
+	private BigDecimal peso;
+	
 	private Date novaData;
 
 	/**
@@ -255,4 +257,19 @@ public class RecolhimentoDTO implements Serializable {
 	public void setNovaData(Date novaData) {
 		this.novaData = novaData;
 	}
+
+	/**
+	 * @return the peso
+	 */
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	/**
+	 * @param peso the peso to set
+	 */
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
+	}
+	
 }
