@@ -209,7 +209,7 @@ fieldset label {
 							<li><a href="Financeiro/geracao_cobranca.htm">Geração
 									Cobrança</a>
 							</li>
-							<li><a href="<c:url value="/inadimplencia/index"/>">Histórico
+							<li><a href="inadimplencia/index">Histórico
 									de Inadimplência</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
@@ -221,7 +221,7 @@ fieldset label {
 							<li><a href="Financeiro/parametros_cobranca.htm">Parâmetros
 									de Cobrança</a>
 							</li>
-							<li><a href="suspensaoCota/index">Suspensão
+							<li><a href='<c:url value="/suspensaoCota/index"/>'>Suspensão
 									Cota</a>
 							</li>
 							<li><a href="Financeiro/workflow_aprovacao.htm">Work
@@ -269,7 +269,7 @@ fieldset label {
 					<li><span class="classExpedicao">&nbsp;</span><a
 						href="javascript:;">Expedição</a>
 						<ul>
-							<li><a href="confirmacaoExpedicao/index">Confirma
+							<li><a href='<c:url value="/confirmacaoExpedicao/index"/>'>Confirma
 									Expedição</a>
 							</li>
 							<li><a

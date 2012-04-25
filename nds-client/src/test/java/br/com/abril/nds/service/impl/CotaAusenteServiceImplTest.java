@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -83,6 +84,11 @@ public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 		save(tmr);
 		
 		
+	}
+	
+	@Test
+	public void cotaAusente() {
+		cotaAusenteCotaService.obterCotasAusentes(new FiltroCotaAusenteDTO());
 	}
 
 
