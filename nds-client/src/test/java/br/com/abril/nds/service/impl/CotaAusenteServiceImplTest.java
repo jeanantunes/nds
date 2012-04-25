@@ -3,7 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
@@ -25,7 +25,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaAusenteService;
 
-@Ignore(value = "Sem metodos de teste")
 public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
