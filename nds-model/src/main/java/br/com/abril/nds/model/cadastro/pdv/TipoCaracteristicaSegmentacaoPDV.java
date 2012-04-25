@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro.pdv;
 
 /**
  * Tipo de característica de segmentação do PDV

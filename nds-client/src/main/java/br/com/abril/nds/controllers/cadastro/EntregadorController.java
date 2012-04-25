@@ -29,13 +29,13 @@ import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.PDV;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;

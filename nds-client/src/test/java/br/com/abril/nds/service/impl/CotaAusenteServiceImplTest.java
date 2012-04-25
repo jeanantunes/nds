@@ -3,14 +3,13 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -25,6 +24,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaAusenteService;
 
+@Ignore(value = "Sem metodos de teste")
 public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
