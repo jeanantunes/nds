@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
+import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -49,21 +49,25 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ConsignadoCotaChamadaoDTO> obterConsignados(FiltroChamadaoDTO filtro) {
+	public ConsultaChamadaoDTO obterConsignados(FiltroChamadaoDTO filtro) {
 		
-		return this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+		ConsultaChamadaoDTO consultaChamadaoDTO = new ConsultaChamadaoDTO();
+		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(this.chamadaoRepository.obterConsignadosParaChamadao(filtro));
+		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(filtro));
+		
+		if (consultaChamadaoDTO.getResumoConsignadoCotaChamadao() != null){
+			consultaChamadaoDTO.getResumoConsignadoCotaChamadao().setQtdProdutosTotal(this.obterTotalConsignados(filtro));
+		}
+		
+		return consultaChamadaoDTO;
 	}
 	
-	@Override
-	@Transactional(readOnly = true)
-	public Long obterTotalConsignados(FiltroChamadaoDTO filtro) {
+	private Long obterTotalConsignados(FiltroChamadaoDTO filtro) {
 		
 		return this.chamadaoRepository.obterTotalConsignadosParaChamadao(filtro);
 	}
 	
-	@Override
-	@Transactional(readOnly = true)
-	public ResumoConsignadoCotaChamadaoDTO obterResumoConsignados(FiltroChamadaoDTO filtro) {
+	private ResumoConsignadoCotaChamadaoDTO obterResumoConsignados(FiltroChamadaoDTO filtro) {
 		
 		return this.chamadaoRepository.obterResumoConsignadosParaChamadao(filtro);
 	}
