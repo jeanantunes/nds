@@ -348,11 +348,19 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		return query.list();
 	}	
 	
-	private String obterFiltrosInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
-			//TODO  implementar
-			String sql = "";
-			
-			return sql;
+	private HashMap<String, Object> obterFiltrosInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
+		
+		//TODO get correct params
+		HashMap<String,Object> param = new HashMap<String, Object>();
+		
+		param.put("data",filtro.getDataMovimento());
+		
+		if(!isBoleto){
+			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
+		}
+	
+		
+		return param;
 	}
 	
 	private String obterOrderByInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
