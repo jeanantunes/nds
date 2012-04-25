@@ -225,7 +225,8 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertTrue(quantidade > 0);
 	}
 
-	@Test
+	//TODO
+	/*@Test
 	public void obterInadimplencias() throws Exception {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao("asc",CotaSuspensaoDTO.Ordenacao.NOME.name(),0,50);
@@ -237,5 +238,5 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		setupHistoricoInadimplencia();
 		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
 		Assert.assertTrue(total==1L);			
-	}
+	}*/
 }

@@ -84,6 +84,11 @@ public class CotaAusenteServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 	}
+	
+	@Test
+	public void cotaAusente() {
+		cotaAusenteCotaService.obterCotasAusentes(null);
+	}
 
 
 }

@@ -320,7 +320,8 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		sql.append(obterOrderByInadimplenciasCota(filtro));
 		
-		sql.append(obterFiltrosInadimplenciasCota(filtro));
+		//TODO
+		//sql.append(obterFiltrosInadimplenciasCota(filtro));
 		
 		if(filtro.getPaginacao().getPosicaoInicial()!= null &&  filtro.getPaginacao().getQtdResultadosPorPagina()!= null) {
 			sql.append(" LIMIT :inicio,:qtdeResult");
@@ -348,7 +349,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		return query.list();
 	}	
 	
-	private HashMap<String, Object> obterFiltrosInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
+	/*private HashMap<String, Object> obterFiltrosInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 		
 		//TODO get correct params
 		HashMap<String,Object> param = new HashMap<String, Object>();
@@ -361,7 +362,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 	
 		
 		return param;
-	}
+	}*/
 	
 	private String obterOrderByInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 		

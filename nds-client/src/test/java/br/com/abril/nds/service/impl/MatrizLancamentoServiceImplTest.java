@@ -93,7 +93,7 @@ public class MatrizLancamentoServiceImplTest {
 		
 	}
 	
-/*	@Test
+	@Test
 	public void obterResumoPeriodo() {
 		List<Long> fornecedores = Arrays.asList(1L, 2L);
 		List<DistribuicaoFornecedor> distribuicoes = Arrays.asList(
@@ -119,7 +119,7 @@ public class MatrizLancamentoServiceImplTest {
 				fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Mockito.verify(lancamentoRepository).buscarResumosPeriodo(periodo,
 				fornecedores, GrupoProduto.CROMO);
-	}*/
+	}
 	
 
 }
