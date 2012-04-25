@@ -16,6 +16,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ChamadaoVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaoVO;
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
+import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
@@ -101,11 +102,14 @@ public class ChamadaoController {
 		
 		FiltroChamadaoDTO filtroSessao = this.obterFiltroParaExportacao();
 		
+		ConsultaChamadaoDTO consultaChamadaoDTO = 
+				this.chamadaoService.obterConsignados(filtroSessao);
+		
 		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadaoDTO =
-			this.chamadaoService.obterConsignados(filtroSessao);
+				consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO();
 		
 		ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao = 
-			this.chamadaoService.obterResumoConsignados(filtroSessao);
+			consultaChamadaoDTO.getResumoConsignadoCotaChamadao();
 		
 		List<ChamadaoVO> listaChamadao = new LinkedList<ChamadaoVO>();
 		
@@ -277,31 +281,25 @@ public class ChamadaoController {
 			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor,
 										sortorder, sortname, page, rp);
 		
-		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadaoDTO =
+		ConsultaChamadaoDTO consultaChamadaoDTO = 
 			this.chamadaoService.obterConsignados(filtro);
 		
-		if (listaConsignadoCotaChamadaoDTO == null || listaConsignadoCotaChamadaoDTO.isEmpty()) {
+		if (consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO() == null || 
+				consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
-		} else {
-			
-			Long qtdeTotalRegistros = 
-				this.chamadaoService.obterTotalConsignados(filtro);
-			
-			ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao = 
-				this.chamadaoService.obterResumoConsignados(filtro);
-			
-			resumoConsignadoCotaChamadao.setQtdProdutosTotal(qtdeTotalRegistros);			
+		} else {		
 			
 			PaginacaoUtil.armazenarQtdRegistrosPesquisa(
 				this.session,
 				QTD_REGISTROS_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE,
-				listaConsignadoCotaChamadaoDTO.size());
+				consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().size());
 						
-			this.processarConsignados(listaConsignadoCotaChamadaoDTO, 
-									  resumoConsignadoCotaChamadao, filtro,
-									  qtdeTotalRegistros.intValue());
+			this.processarConsignados(consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO(), 
+									  consultaChamadaoDTO.getResumoConsignadoCotaChamadao(),
+									  filtro,
+									  consultaChamadaoDTO.getResumoConsignadoCotaChamadao().getQtdProdutosTotal().intValue());
 		}
 		
 		result.use(Results.json());
