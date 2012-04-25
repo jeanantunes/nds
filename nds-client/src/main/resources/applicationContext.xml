@@ -15,15 +15,15 @@
 	<util:properties id="properties" location="classpath:/nds-client.properties" />
 	
 	<util:properties id="queries" location="classpath:/query.properties" />
-
+	
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
- 
+
 	<!-- TOMCAT -->
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-client"/>
 
 	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
 		<property name="hibernateProperties">
@@ -43,7 +43,7 @@
 	</bean>
 
 	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
