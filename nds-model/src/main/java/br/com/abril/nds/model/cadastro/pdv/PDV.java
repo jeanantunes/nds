@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -156,6 +157,15 @@ public class PDV implements Serializable {
 	 */
 	@Embedded
 	private SegmentacaoPDV segmentacao;
+	
+	/**
+	 * Especialidades do PDV
+	 * 
+	 */
+	@OneToMany
+	@JoinTable(name = "PDV_ESPECIALIDADE_PDV", joinColumns = {@JoinColumn(name = "PDV_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "ESPECIALIDADE_PDV_ID")})
+	private Set<EspecialidadePDV> especialidades = new HashSet<EspecialidadePDV>();
 	
 	public Long getId() {
 		return id;
@@ -324,6 +334,14 @@ public class PDV implements Serializable {
 	
 	public void setSegmentacao(SegmentacaoPDV segmentacao) {
 		this.segmentacao = segmentacao;
+	}
+	
+	public Set<EspecialidadePDV> getEspecialidades() {
+		return especialidades;
+	}
+	
+	public void setEspecialidades(Set<EspecialidadePDV> especialidades) {
+		this.especialidades = especialidades;
 	}
 
 }
