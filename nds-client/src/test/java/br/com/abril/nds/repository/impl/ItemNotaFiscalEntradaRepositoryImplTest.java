@@ -4,15 +4,11 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
+import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -36,12 +32,16 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ViewNotaFiscalRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 
-public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest {
+public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryImplTest {
 
+	@Autowired
+	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
+	
 	private static Box box1;
+	
+	private static NotaFiscalEntradaCota notaFiscalEntradaCota;
 	
 	@Before
 	public void setUp() {
@@ -169,8 +169,11 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		///// ENTRADA COTA
 		
-		NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = 
-				Fixture.notaFiscalEntradaCotaNFE(
+		//NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = 
+		
+		notaFiscalEntradaCota = 
+				
+		Fixture.notaFiscalEntradaCotaNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
 						"222220000202",
@@ -187,13 +190,13 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 						true);
 		
 		
-		save(notaFiscalEntradaCotaNFE);
+		save(notaFiscalEntradaCota);
 
 		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
 				Fixture.itemNotaFiscal(
 						produtoEdicaoCE, 
 						usuarioJoao,
-						notaFiscalEntradaCotaNFE, 
+						notaFiscalEntradaCota, 
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),
 						TipoLancamento.LANCAMENTO,
@@ -231,101 +234,12 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 	}
 	
-	
-	@Autowired
-	private ViewNotaFiscalRepository viewNotaFiscalRepository;
-	
 	@Test
-	public void testObterQtdeRegistroNotaFiscal() {
+	public void testObterListaItemNotaFiscalEntradaDadosDanfe() {
 		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+		@SuppressWarnings("unused")
+		List<ItemDanfe> results = itemNotaFiscalEntradaRepository.obterListaItemNotaFiscalEntradaDadosDanfe(notaFiscalEntradaCota.getId());
 		
-		Integer qtde = viewNotaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
-		
-		Assert.assertEquals(3, qtde.intValue());
-		
-	}
-	
-	
-	@Test
-	public void testObterQtdeRegistroNotaFiscal_Cota() {
-		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		
-		filtro.setBox(box1.getCodigo());
-		
-		Integer qtde = viewNotaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
-		
-		Assert.assertEquals(1, qtde.intValue());
-		
-	}
-	
-	@Test
-	public void pesquisarNotaFiscal_Todas() {
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-		Assert.assertNotNull(lista);
-		Assert.assertEquals(3, lista.size());
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_DESTINATARIO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_REMETENTE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.MOVIMENTO_INTEGRACAO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.NOTA);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.SERIE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-		
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.STATUS_NFE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_EMISSAO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_NFE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-		
-	}
-	
-	
-	@Test
-	public void pesquisarNotaFiscal_EntradaCota() {
-		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		filtro.setBox(box1.getCodigo());
-		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-		Assert.assertNotNull(lista);
-		Assert.assertEquals(1, lista.size());
-		NfeDTO notaNFE = lista.get(0);
-		Assert.assertEquals("352.855.474-00", notaNFE.getCpfRemetente());
-		
-	}
-	
-	
-	private FiltroMonitorNfeDTO obterFiltroMonitorNfeDTO() {
-		
-		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
-		
-		PaginacaoVO paginacao = new PaginacaoVO();
-
-		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
-		paginacao.setPaginaAtual(1);
-		paginacao.setQtdResultadosPorPagina(500);
-
-		filtro.setPaginacao(paginacao);
-	
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
-		
-		return filtro;
 		
 	}
 	

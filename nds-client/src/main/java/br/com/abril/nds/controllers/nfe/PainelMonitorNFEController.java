@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MonitorNFEService;
@@ -306,13 +309,11 @@ public class PainelMonitorNFEController {
 		
 		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, null);
 		
-		//TODO: chamar componente jasperreport geracao arquivos DANFE 
-		
-		byte[] arquivoMockado = {23,34,5,42,42,42,4,5,43,46,43,22,23,5};
+		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNfesParaImpressaoDanfe);
 		
 		try {
 			
-			escreverArquivoParaResponse(arquivoMockado, "arquivoTeste");
+			escreverArquivoParaResponse(danfeBytes, "danfes");
 			
 		} catch(IOException e) {
 			
@@ -380,7 +381,57 @@ public class PainelMonitorNFEController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
+	
+	
+	
+	/**
+	 * Obtém a descrição a partir da chave do enum TipoEmissaoNfe
+	 * 
+	 * @param chave
+	 * 
+	 * @return String - descricao
+	 */
+	private String obterDescricaoTipoEmissaoNfe(String chave) {
+		if(chave  == null) {
+			return "";
+		}
+		TipoEmissaoNfe tipoEmissaoNfe = TipoEmissaoNfe.valueOf(chave);
+		return ((tipoEmissaoNfe == null) ? "" : tipoEmissaoNfe.getDescricao());
+	}
 
+	
+	/**
+	 * Obtém a descrição a partir da chave do enum StatusEmissaoNfe
+	 * 
+	 * @param chave
+	 * 
+	 * @return String - descricao
+	 */
+	private String obterDescricaoStatusEmissaoNfe(String chave) {
+		if(chave  == null) {
+			return "";
+		}
+		StatusEmissaoNfe statusEmissaoNfe = StatusEmissaoNfe.valueOf(chave);
+		return ((statusEmissaoNfe == null) ? "" : statusEmissaoNfe.getDescricao());
+	}
+
+	
+
+	/**
+	 * Obtém a descrição a partir da chave do enum TipoOperacao
+	 * 
+	 * @param chave
+	 * 
+	 * @return String - descricao
+	 */
+	private String obterDescricaoTipoOperacao(String chave) {
+		if(chave  == null) {
+			return "";
+		}
+		TipoOperacao tipoOperacao = TipoOperacao.valueOf(chave);
+		return ((tipoOperacao == null) ? "" : tipoOperacao.getDescricao());
+	}
+	
 	private List<NfeVO> getListaNfeVO( List<NfeDTO> listaNfeDTO ) {
 		
 		List<NfeVO> listaNfeVO = new ArrayList<NfeVO>();
@@ -403,22 +454,25 @@ public class PainelMonitorNFEController {
 		
 		for(NfeDTO nfeDTO : listaNfeDTO) {
 			
-			cnpjDestinatario 		= nfeDTO.getCnpjDestinatario();
-			cpfDestinatario			= nfeDTO.getCpfDestinatario();
+			cnpjDestinatario 		= (nfeDTO.getCnpjDestinatario() == null) ? "-" : nfeDTO.getCnpjDestinatario();
+			cpfDestinatario			= (nfeDTO.getCpfDestinatario() == null) ? "-" : nfeDTO.getCpfDestinatario();
 			
-			cnpjRemetente			= nfeDTO.getCnpjRemetente();
-			cpfRemetente			= nfeDTO.getCpfRemetente();
+			cnpjRemetente			= (nfeDTO.getCnpjRemetente() == null) ? "-" : nfeDTO.getCnpjRemetente();
+			cpfRemetente			= (nfeDTO.getCpfRemetente() == null) ? "-" :  nfeDTO.getCpfRemetente();
 			
 			emissao 				= DateUtil.formatarDataPTBR(nfeDTO.getEmissao());
-			tipoEmissao				= nfeDTO.getTipoEmissao();
+			tipoEmissao				= obterDescricaoTipoEmissaoNfe(nfeDTO.getTipoEmissao());
 			movimentoIntegracao 	= nfeDTO.getMovimentoIntegracao();
 			numero 					= nfeDTO.getNumero();
 			serie 					= nfeDTO.getSerie();
-			statusNfe 				= nfeDTO.getStatusNfe();
-			tipoNfe 				= nfeDTO.getTipoNfe();
-			
+			statusNfe 				= obterDescricaoStatusEmissaoNfe(nfeDTO.getStatusNfe());
+			tipoNfe 				= obterDescricaoTipoOperacao(nfeDTO.getTipoNfe());
 			
 			nfeVO = new NfeVO();
+			
+			nfeVO.setTipoOperacao(TipoOperacao.valueOf(nfeDTO.getTipoNfe()));
+			
+			nfeVO.setIdNotaFiscal(nfeDTO.getIdNotaFiscal());
 			
 			nfeVO.setCnpjDestinatario(cnpjDestinatario);
 			nfeVO.setCpfDestinatario(cpfDestinatario);
