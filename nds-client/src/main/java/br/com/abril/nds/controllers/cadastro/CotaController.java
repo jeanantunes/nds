@@ -41,7 +41,9 @@ public class CotaController {
 	
 	@Autowired
 	private FinanceiroController financeiroController;
-
+	
+	@Autowired
+	private PdvController pdvController;
 
 	public CotaController(Result result) {
 		this.result = result;
@@ -53,6 +55,8 @@ public class CotaController {
 		
 		//Pré carregamento da aba "financeiro" 
 		this.financeiroController.preCarregamento();
+		this.pdvController.preCarregamento();
+		
 	}
 	
 	
