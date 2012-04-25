@@ -45,6 +45,13 @@ public class SegmentacaoPDV {
 	@JoinColumn(name = "CLUSTER_PDV_ID")
 	private ClusterPDV clusterPDV;
 	
+	/**
+	 * Tipo de Cluster do PDV
+	 */
+	@ManyToOne 
+	@JoinColumn(name = "TIPO_CLUSTER_PDV_ID")
+	private TipoClusterPDV tipoClusterPDV;
+	
 	public TipoPontoPDV getTipoPontoPDV() {
 		return tipoPontoPDV;
 	}
@@ -77,6 +84,14 @@ public class SegmentacaoPDV {
 
 	public void setClusterPDV(ClusterPDV clusterPDV) {
 		this.clusterPDV = clusterPDV;
+	}
+	
+	public TipoClusterPDV getTipoClusterPDV() {
+		return tipoClusterPDV;
+	}
+	
+	public void setTipoClusterPDV(TipoClusterPDV tipoClusterPDV) {
+		this.tipoClusterPDV = tipoClusterPDV;
 	}
 
 }
