@@ -163,7 +163,7 @@ public class MatrizRecolhimentoController {
 	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date diaBalanceamento) {
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date dataBalanceamento) {
 
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento =  
 				(Map<Date, List<RecolhimentoDTO>>) this.session.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
@@ -172,7 +172,7 @@ public class MatrizRecolhimentoController {
 
 			matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
 
-			matrizBalanceamento.put(diaBalanceamento, null);
+			matrizBalanceamento.put(dataBalanceamento, null);
 		}
 		
 		return matrizBalanceamento; 
@@ -181,13 +181,13 @@ public class MatrizRecolhimentoController {
 	/*
 	 * Retorna os dados do recolhimento referente a um dia especifico.
 	 */
-	private List<RecolhimentoDTO> obterRecolhimentoDia(Date diaRecolhimento) {
+	private List<RecolhimentoDTO> obterBalanceamentoDia(Date dataRecolhimento) {
 		
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = obterMatrizBalanceamento(null);
 
 		if (matrizBalanceamento != null) {
 			
-			return matrizBalanceamento.get(diaRecolhimento);
+			return matrizBalanceamento.get(dataRecolhimento);
 		}
 		
 		return null;

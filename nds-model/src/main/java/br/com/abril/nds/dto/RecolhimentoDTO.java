@@ -30,7 +30,7 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private TipoLancamentoParcial parcial;
 
-	private boolean isBrinde;
+	private boolean possuiBrinde;
 
 	private Date dataLancamento;
 
@@ -145,17 +145,17 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the isBrinde
+	 * @return the possuiBrinde
 	 */
-	public boolean isBrinde() {
-		return isBrinde;
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
 	}
 
 	/**
-	 * @param isBrinde the isBrinde to set
+	 * @param possuiBrinde the possuiBrinde to set
 	 */
-	public void setBrinde(boolean isBrinde) {
-		this.isBrinde = isBrinde;
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
 	}
 
 	/**
