@@ -145,11 +145,11 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	
     
+	//TODO: Alterações no modelo de dados necessárias
 	/**
 	 * Método responsável por obter os dados da forma de cobranca
 	 * @param idFormaCobranca: ID da forma de cobranca
 	 * @return Data Transfer Object com os dados da forma de cobranca
-	 * TO-DO
 	 */
 	@Override
 	@Transactional(readOnly = true)
@@ -282,10 +282,10 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	
 
+	//TODO: Alterações no modelo de dados necessárias
 	/**
 	 * Método responsável por alterar ou incluir uma forma de cobranca dos parametros de cobranca da cota
 	 * @param Dados da forma de cobranca do parametro de cobranca da cota
-	 * TO-DO
 	 */
 	@Override
 	@Transactional
