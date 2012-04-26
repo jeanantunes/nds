@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -38,7 +39,7 @@ import br.com.caelum.vraptor.view.Results;
 public class MatrizRecolhimentoController {
 
 	@Autowired
-	private HttpSession session;
+	private HttpSession httpSession;
 	
 	@Autowired
 	private Result result;
@@ -50,6 +51,8 @@ public class MatrizRecolhimentoController {
 	private FornecedorService fornecedorService;
 	
 	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO = "mapaRecolhimento";
+	
+	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL = "mapaRecolhimentoInicial";
 	
 	@Get
 	@Path("/")
@@ -64,10 +67,15 @@ public class MatrizRecolhimentoController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
-		this.validarDadosPesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
+		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
+		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
+			this.obterMatrizBalanceamento(dataPesquisa, listaIdsFornecedores);
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
-			this.obterResumoPeriodoBalanceamento(dataPesquisa, listaIdsFornecedores);
+			this.obterResumoPeriodoBalanceamento(matrizBalanceamento);
 		
 		if (resumoPeriodoBalanceamento == null
 				|| resumoPeriodoBalanceamento.isEmpty()) {
@@ -75,7 +83,7 @@ public class MatrizRecolhimentoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
 		}
 		
-		result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
+		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
 	
 	@Post
@@ -139,13 +147,13 @@ public class MatrizRecolhimentoController {
 	 * @param dataPesquisa - data da pesquisa
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 */
-	private void validarDadosPesquisa(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+	private void validarDadosPesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (numeroSemana == null && dataPesquisa == null) {
+		if (dataPesquisa == null) {
 			
-			listaMensagens.add("O preenchimento do campo [Semana] ou [Data] é obrigatório!");
+			listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
 			
 		}
 		
@@ -164,17 +172,39 @@ public class MatrizRecolhimentoController {
 	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date dataBalanceamento) {
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date dataBalanceamento, 
+																	  List<Long> listaIdsFornecedores) {
 
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento =  
-				(Map<Date, List<RecolhimentoDTO>>) this.session.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
+			(Map<Date, List<RecolhimentoDTO>>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
 		
 		if (matrizBalanceamento == null) {
 
 			matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
 
 			matrizBalanceamento.put(dataBalanceamento, null);
+			
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO, matrizBalanceamento);
 		}
+		
+		return matrizBalanceamento; 
+	}
+	
+	/*
+	 * MOCK:
+	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamentoMock(Date dataBalanceamento, 
+																	  	  List<Long> listaIdsFornecedores) {
+
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
+		
+		Date dataRecolhimento = DateUtil.parseDataPTBR("25/04/2012");
+		
+		List<RecolhimentoDTO> listaDadosRecolhimento = new ArrayList<RecolhimentoDTO>();
+		
+		matrizBalanceamento.put(dataRecolhimento, listaDadosRecolhimento);
 		
 		return matrizBalanceamento; 
 	}
@@ -182,9 +212,11 @@ public class MatrizRecolhimentoController {
 	/*
 	 * Retorna os dados do recolhimento referente a um dia especifico.
 	 */
-	private List<RecolhimentoDTO> obterBalanceamentoDia(Date dataRecolhimento) {
+	private List<RecolhimentoDTO> obterBalanceamentoDia(Date dataRecolhimento, 
+														List<Long> listaIdsFornecedores) {
 		
-		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = obterMatrizBalanceamento(null);
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
+			this.obterMatrizBalanceamento(dataRecolhimento, listaIdsFornecedores);
 
 		if (matrizBalanceamento != null) {
 			
@@ -198,11 +230,8 @@ public class MatrizRecolhimentoController {
 	 * Obtém o resumo do período de balanceamento de acordo com a data da pesquisa
 	 * e a lista de id's dos fornecedores.
 	 */
-	private List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodoBalanceamento(Date dataPesquisa, 
-																				List<Long> listaIdsFornecedores) {
-		
-		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = this.obterMatrizBalanceamento(dataPesquisa);
-		
+	private List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodoBalanceamento(Map<Date, List<RecolhimentoDTO>> matrizBalanceamento) {
+
 		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
 			
 			return null;
