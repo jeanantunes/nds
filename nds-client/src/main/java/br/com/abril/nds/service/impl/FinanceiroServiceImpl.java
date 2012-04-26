@@ -449,6 +449,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	 * @see br.com.abril.nds.service.FinanceiroService#obtemContratoTransporte(long)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public ContratoTransporteDTO obtemContratoTransporte(long idCota){
 		ContratoTransporteDTO contrato = new ContratoTransporteDTO();
 		
