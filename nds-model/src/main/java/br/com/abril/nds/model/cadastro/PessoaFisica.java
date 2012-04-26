@@ -199,4 +199,9 @@ public class PessoaFisica extends Pessoa implements Serializable {
 		return true;
 	}
 
+	@Override
+	public String getDocumento() {		
+		return this.cpf;
+	}
+
 }

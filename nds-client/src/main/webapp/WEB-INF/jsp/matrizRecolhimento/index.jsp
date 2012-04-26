@@ -72,7 +72,7 @@
 			
 			parametros.push({name:'dataPesquisa', value: $("#dataPesquisa").val()});
 			
-			$("input[name='checkgroup_menu']:checked").each(function(i) {
+			$("input[name='checkGroupFornecedores']:checked").each(function(i) {
 				
 				parametros.push({name:'listaIdsFornecedores', value: $(this).val()});
 			});
@@ -184,12 +184,12 @@
 					<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 					<div class="menu_fornecedor" style="display:none;">
 	                	<span class="bt_sellAll">
-							<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
-							<label for="selTodos1">Selecionar Todos</label>
+							<input type="checkbox" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
+							<label for="checkBoxSelecionarTodosFornecedores">Selecionar Todos</label>
 						</span>
 	                    <br clear="all" />
 	                    <c:forEach items="${fornecedores}" var="fornecedor">
-	                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox"/>
+	                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox"/>
 	                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
 	                     	<br clear="all" />
 	                	</c:forEach> 
@@ -237,10 +237,17 @@
 		
 		<table width="950" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-				<td width="88">
+				<td width="115">
+					<span class="bt_confirmar_novo" title="Confirmar balanceamento">
+						<a href="javascript:;" onclick="popup_balanceamento();">
+							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
+						</a>
+					</span>
+				</td>
+				<td width="117">
 					<strong>Balancear por:</strong>
 				</td>
-				<td width="412">
+				<td width="296">
 					<span class="bt_confirmar_novo" title="Balancear Editor">
 						<a href="javascript:;" onclick="popup_balanceamento();">
 							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Editor
@@ -253,15 +260,7 @@
 					</span>
 				</td>
 				
-				<td>
-					<span class="bt_confirmar_novo" title="Confirmar balanceamento">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
-						</a>
-					</span>
-				</td>
-					
-				<td>
+				<td width="207">
 					<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
 						<a href="javascript:;" onclick="mostra_matriz();">
 							<img border="0" hspace="5" src="<c:url value='images/ico_detalhes.png'/>">Matriz Fornecedor
@@ -269,7 +268,7 @@
 					</span>
 				</td>
 				
-				<td>
+				<td width="215">
 					<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
 						<a href="javascript:;">
 							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />

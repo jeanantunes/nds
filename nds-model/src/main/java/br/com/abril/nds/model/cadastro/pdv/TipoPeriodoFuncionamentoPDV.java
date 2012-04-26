@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro.pdv;
 
 /**
  * Enumeração com os tipos de período de funcionamento do PDV

@@ -16,17 +16,17 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoPDV;
-import br.com.abril.nds.model.cadastro.PDV;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.StatusPDV;
-import br.com.abril.nds.model.cadastro.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefonePDV;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
+import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.repository.PdvRepository;
 
 public class PdvRepositoryTest extends AbstractRepositoryImplTest {
@@ -72,11 +72,11 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		Telefone telefone1 = Fixture.telefone("001", "369222", "10");
 		save(telefone1);
 		
-		EnderecoPDV enderecoPdv1 = Fixture.criarEnderecoPDV(endereco, pdv, false, TipoEndereco.COMERCIAL);
+		/*EnderecoPDV enderecoPdv1 = Fixture.criarEnderecoPDV(endereco, pdv, false, TipoEndereco.COMERCIAL);
 		save(enderecoPdv1);
 		
 		TelefonePDV telefonePDV1 = Fixture.criarTelefonePDV(telefone, pdv, false, TipoTelefone.COMERCIAL);
-		save(telefonePDV1);
+		save(telefonePDV1);*/
 		
 	}
 	

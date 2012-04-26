@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.model.cadastro.PDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.PdvRepository;
 
 @Repository
@@ -23,9 +23,10 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT pdv.nome as nomePDV, " )
+				.append("  pdv.segmentacao.tipoPontoPDV as tipoPontoPDV ,")
 				.append("  pdv.contato as contato,")
 				.append("  endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
-				.append("  telefone.ddd || '-' telefone.numero as telefone ,")
+				.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
 				.append("  pdv.principal as principal,")
 				.append("  pdv.status as statusPDV ,")
 				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento ")
@@ -85,7 +86,7 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 				hql.append(" order by  statusPDV ");
 				break;
 			case TIPO_PONTO:
-				hql.append(" order by  estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida ");
+				hql.append(" order by  tipoPontoPDV ");
 				break;
 			case ENDERECO:
 				hql.append(" order by  endereco ");

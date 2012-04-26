@@ -2,11 +2,16 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -32,6 +37,9 @@ import br.com.caelum.vraptor.view.Results;
 public class MatrizRecolhimentoController {
 
 	@Autowired
+	private HttpSession session;
+	
+	@Autowired
 	private Result result;
 
 	@Autowired
@@ -39,6 +47,8 @@ public class MatrizRecolhimentoController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO = "mapaRecolhimento";
 	
 	@Get
 	@Path("/")
@@ -85,15 +95,12 @@ public class MatrizRecolhimentoController {
 	@Path("/exibirMatrizBalanceamento")
 	public void exibirMatrizBalanceamento() {
 		
-		
 	}
 	
 	@Post
 	@Path("/exibirMatrizBalanceamentoPorDia")
 	public void exibirMatrizBalanceamentoDoDia() {
-		
-		
-		
+
 	}
 	
 	@Post
@@ -150,6 +157,40 @@ public class MatrizRecolhimentoController {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
+	}
+	
+	/*
+	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date diaBalanceamento) {
+
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento =  
+				(Map<Date, List<RecolhimentoDTO>>) this.session.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
+		
+		if (matrizBalanceamento == null) {
+
+			matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
+
+			matrizBalanceamento.put(diaBalanceamento, null);
+		}
+		
+		return matrizBalanceamento; 
+	}
+
+	/*
+	 * Retorna os dados do recolhimento referente a um dia especifico.
+	 */
+	private List<RecolhimentoDTO> obterRecolhimentoDia(Date diaRecolhimento) {
+		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = obterMatrizBalanceamento(null);
+
+		if (matrizBalanceamento != null) {
+			
+			return matrizBalanceamento.get(diaRecolhimento);
+		}
+		
+		return null;
 	}
 	
 }

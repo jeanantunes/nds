@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro.pdv;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 
 /**
  * Entidade com informações de segmentação do PDV
@@ -44,6 +45,13 @@ public class SegmentacaoPDV {
 	@JoinColumn(name = "CLUSTER_PDV_ID")
 	private ClusterPDV clusterPDV;
 	
+	/**
+	 * Tipo de Cluster do PDV
+	 */
+	@ManyToOne 
+	@JoinColumn(name = "TIPO_CLUSTER_PDV_ID")
+	private TipoClusterPDV tipoClusterPDV;
+	
 	public TipoPontoPDV getTipoPontoPDV() {
 		return tipoPontoPDV;
 	}
@@ -76,6 +84,14 @@ public class SegmentacaoPDV {
 
 	public void setClusterPDV(ClusterPDV clusterPDV) {
 		this.clusterPDV = clusterPDV;
+	}
+	
+	public TipoClusterPDV getTipoClusterPDV() {
+		return tipoClusterPDV;
+	}
+	
+	public void setTipoClusterPDV(TipoClusterPDV tipoClusterPDV) {
+		this.tipoClusterPDV = tipoClusterPDV;
 	}
 
 }
