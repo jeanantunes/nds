@@ -1,0 +1,265 @@
+package br.com.abril.nds.dto;
+
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+
+public class FormaCobrancaDTO {
+	
+	Long idFormaCobranca;
+	Long idCota;
+	Long idParametroCobranca;
+	
+	//DADOS DO GRID
+	String fornecedor;
+	String concentracaoPagto;
+	String tipoPagto;
+	String detalhesTipoPagto;
+	
+	//DADOS DO FORMULARIO
+	TipoCobranca tipoCobranca;
+	long idBanco;
+	boolean recebeEmail;
+	
+	String numBanco;
+	String nomeBanco;
+	String agencia;
+	String agenciaDigito;
+	String conta;
+	String contaDigito;
+	
+	boolean domingo;
+	boolean segunda;
+	boolean terca;
+	boolean quarta;
+	boolean quinta;
+	boolean sexta;
+	boolean sabado;
+	
+	
+	public FormaCobrancaDTO(){
+		
+	}
+
+	//CONTRUTOR PARA DADOS DA GRID
+	public FormaCobrancaDTO(Long idFormaCobranca, String fornecedor,
+			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto) {
+		super();
+		this.idFormaCobranca = idFormaCobranca;
+		this.fornecedor = fornecedor;
+		this.concentracaoPagto = concentracaoPagto;
+		this.tipoPagto = tipoPagto;
+		this.detalhesTipoPagto = detalhesTipoPagto;
+	}
+	
+	//CONTRUTOR PARA O FORMULARIO
+	public FormaCobrancaDTO(long idCota, long idParametroCobranca, TipoCobranca tipoCobranca, long idBanco,
+			boolean recebeEmail, String numBanco, String nomeBanco,
+			String agencia, String agenciaDigito, String conta,
+			String contaDigito, boolean domingo, boolean segunda,
+			boolean terca, boolean quarta, boolean quinta, boolean sexta,
+			boolean sabado) {
+		super();
+		this.idCota = idCota;
+		this.idParametroCobranca = idParametroCobranca;
+		this.tipoCobranca = tipoCobranca;
+		this.idBanco = idBanco;
+		this.recebeEmail = recebeEmail;
+		this.numBanco = numBanco;
+		this.nomeBanco = nomeBanco;
+		this.agencia = agencia;
+		this.agenciaDigito = agenciaDigito;
+		this.conta = conta;
+		this.contaDigito = contaDigito;
+		this.domingo = domingo;
+		this.segunda = segunda;
+		this.terca = terca;
+		this.quarta = quarta;
+		this.quinta = quinta;
+		this.sexta = sexta;
+		this.sabado = sabado;
+	}
+
+	public Long getIdFormaCobranca() {
+		return idFormaCobranca;
+	}
+
+	public void setIdFormaCobranca(Long idFormaCobranca) {
+		this.idFormaCobranca = idFormaCobranca;
+	}
+	
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public Long getIdParametroCobranca() {
+		return idParametroCobranca;
+	}
+
+	public void setIdParametroCobranca(Long idParametroCobranca) {
+		this.idParametroCobranca = idParametroCobranca;
+	}
+
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
+	public String getConcentracaoPagto() {
+		return concentracaoPagto;
+	}
+
+	public void setConcentracaoPagto(String concentracaoPagto) {
+		this.concentracaoPagto = concentracaoPagto;
+	}
+
+	public String getTipoPagto() {
+		return tipoPagto;
+	}
+
+	public void setTipoPagto(String tipoPagto) {
+		this.tipoPagto = tipoPagto;
+	}
+
+	public String getDetalhesTipoPagto() {
+		return detalhesTipoPagto;
+	}
+
+	public void setDetalhesTipoPagto(String detalhesTipoPagto) {
+		this.detalhesTipoPagto = detalhesTipoPagto;
+	}
+
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
+	}
+
+	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
+	}
+
+	public long getIdBanco() {
+		return idBanco;
+	}
+
+	public void setIdBanco(long idBanco) {
+		this.idBanco = idBanco;
+	}
+
+	public boolean isRecebeEmail() {
+		return recebeEmail;
+	}
+
+	public void setRecebeEmail(boolean recebeEmail) {
+		this.recebeEmail = recebeEmail;
+	}
+
+	public String getNumBanco() {
+		return numBanco;
+	}
+
+	public void setNumBanco(String numBanco) {
+		this.numBanco = numBanco;
+	}
+
+	public String getNomeBanco() {
+		return nomeBanco;
+	}
+
+	public void setNomeBanco(String nomeBanco) {
+		this.nomeBanco = nomeBanco;
+	}
+
+	public String getAgencia() {
+		return agencia;
+	}
+
+	public void setAgencia(String agencia) {
+		this.agencia = agencia;
+	}
+
+	public String getAgenciaDigito() {
+		return agenciaDigito;
+	}
+
+	public void setAgenciaDigito(String agenciaDigito) {
+		this.agenciaDigito = agenciaDigito;
+	}
+
+	public String getConta() {
+		return conta;
+	}
+
+	public void setConta(String conta) {
+		this.conta = conta;
+	}
+
+	public String getContaDigito() {
+		return contaDigito;
+	}
+
+	public void setContaDigito(String contaDigito) {
+		this.contaDigito = contaDigito;
+	}
+
+	public boolean isDomingo() {
+		return domingo;
+	}
+
+	public void setDomingo(boolean domingo) {
+		this.domingo = domingo;
+	}
+
+	public boolean isSegunda() {
+		return segunda;
+	}
+
+	public void setSegunda(boolean segunda) {
+		this.segunda = segunda;
+	}
+
+	public boolean isTerca() {
+		return terca;
+	}
+
+	public void setTerca(boolean terca) {
+		this.terca = terca;
+	}
+
+	public boolean isQuarta() {
+		return quarta;
+	}
+
+	public void setQuarta(boolean quarta) {
+		this.quarta = quarta;
+	}
+
+	public boolean isQuinta() {
+		return quinta;
+	}
+
+	public void setQuinta(boolean quinta) {
+		this.quinta = quinta;
+	}
+
+	public boolean isSexta() {
+		return sexta;
+	}
+
+	public void setSexta(boolean sexta) {
+		this.sexta = sexta;
+	}
+
+	public boolean isSabado() {
+		return sabado;
+	}
+
+	public void setSabado(boolean sabado) {
+		this.sabado = sabado;
+	}
+
+}

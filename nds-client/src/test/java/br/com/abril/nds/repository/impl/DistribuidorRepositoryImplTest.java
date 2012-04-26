@@ -24,12 +24,13 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.repository.DistribuidorRepository;
 
 public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	
 	@Autowired
-	private DistribuidorRepositoryImpl distribuidorRepository;
+	private DistribuidorRepository distribuidorRepository;
 
 	private Distribuidor distribuidor;
 	private Fornecedor fornecedorFC; 

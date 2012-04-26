@@ -16,21 +16,27 @@ public class RecolhimentoDTO implements Serializable {
 
 	private static final long serialVersionUID = -2168766293591158494L;
 
+	private Long idProdutoEdicao;
+	
 	private Long codigoProduto;
 
 	private String descricaoProduto;
-	
+
 	private Long numeroEdicao;
 	
 	private BigDecimal precoVenda;
+
+	private Long idFornecedor;
 	
 	private String nomeFornecedor;
-	
+
+	private Long idEditor;
+
 	private String nomeEditor;
-	
+
 	private TipoLancamentoParcial parcial;
 
-	private boolean isBrinde;
+	private boolean possuiBrinde;
 
 	private Date dataLancamento;
 
@@ -43,8 +49,24 @@ public class RecolhimentoDTO implements Serializable {
 	private BigDecimal qtdeExemplares;
 
 	private BigDecimal valorTotal;
-	
+
+	private BigDecimal peso;
+
 	private Date novaData;
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
 
 	/**
 	 * @return the codigoProduto
@@ -103,6 +125,20 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+
+	/**
 	 * @return the nomeFornecedor
 	 */
 	public String getNomeFornecedor() {
@@ -114,6 +150,20 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	/**
+	 * @return the idEditor
+	 */
+	public Long getIdEditor() {
+		return idEditor;
+	}
+
+	/**
+	 * @param idEditor the idEditor to set
+	 */
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
 	}
 
 	/**
@@ -145,17 +195,17 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the isBrinde
+	 * @return the possuiBrinde
 	 */
-	public boolean isBrinde() {
-		return isBrinde;
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
 	}
 
 	/**
-	 * @param isBrinde the isBrinde to set
+	 * @param possuiBrinde the possuiBrinde to set
 	 */
-	public void setBrinde(boolean isBrinde) {
-		this.isBrinde = isBrinde;
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
 	}
 
 	/**
@@ -240,6 +290,20 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	/**
+	 * @return the peso
+	 */
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	/**
+	 * @param peso the peso to set
+	 */
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
 	}
 
 	/**

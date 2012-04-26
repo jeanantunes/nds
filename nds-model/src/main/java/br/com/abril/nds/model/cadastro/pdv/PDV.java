@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -22,6 +23,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
 
 /**
  * Entidade que representa o PDV associado
@@ -162,10 +164,36 @@ public class PDV implements Serializable {
 	 * Especialidades do PDV
 	 * 
 	 */
-	@OneToMany
-	@JoinTable(name = "PDV_ESPECIALIDADE_PDV", joinColumns = {@JoinColumn(name = "PDV_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "ESPECIALIDADE_PDV_ID")})
+	@ManyToMany
+	@JoinTable(name = "PDV_ESPECIALIDADE_PDV", joinColumns = { @JoinColumn(name = "PDV_ID") }, 
+		inverseJoinColumns = { @JoinColumn(name = "ESPECIALIDADE_PDV_ID") })
 	private Set<EspecialidadePDV> especialidades = new HashSet<EspecialidadePDV>();
+	
+	/**
+	 * Materiais promocionais do PDV
+	 */
+	@ManyToMany
+	@JoinTable(name = "PDV_MATERIAL_PROMOCIONAL", joinColumns = {@JoinColumn(name = "PDV_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "MATERIAL_PROMOCIONAL_ID")})
+	private Set<MaterialPromocional> materiais = new HashSet<MaterialPromocional>();
+	
+	/**
+	 * PDV é expositor de material promocional
+	 */
+	@Column(name = "EXPOSITOR", nullable = false)
+	private boolean expositor;
+	
+	/**
+	 * Tipo de expositor 
+	 */
+	@Column(name = "TIPO_EXPOSITOR")
+	private String tipoExpositor;
+	
+	/**
+	 * Gerador de fluxo PDV
+	 */
+	@OneToOne(mappedBy = "pdv")
+	private GeradorFluxoPDV geradorFluxoPDV;
 	
 	public Long getId() {
 		return id;
@@ -342,6 +370,38 @@ public class PDV implements Serializable {
 	
 	public void setEspecialidades(Set<EspecialidadePDV> especialidades) {
 		this.especialidades = especialidades;
+	}
+	
+	public Set<MaterialPromocional> getMateriais() {
+		return materiais;
+	}
+	
+	public void setMateriais(Set<MaterialPromocional> materiais) {
+		this.materiais = materiais;
+	}
+	
+	public GeradorFluxoPDV getGeradorFluxoPDV() {
+		return geradorFluxoPDV;
+	}
+	
+	public void setGeradorFluxoPDV(GeradorFluxoPDV geradorFluxoPDV) {
+		this.geradorFluxoPDV = geradorFluxoPDV;
+	}
+	
+	public boolean isExpositor() {
+		return expositor;
+	}
+	
+	public void setExpositor(boolean expositor) {
+		this.expositor = expositor;
+	}
+	
+	public String getTipoExpositor() {
+		return tipoExpositor;
+	}
+	
+	public void setTipoExpositor(String tipoExpositor) {
+		this.tipoExpositor = tipoExpositor;
 	}
 
 }
