@@ -2,10 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
-import br.com.abril.nds.client.vo.FinanceiroVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -22,9 +22,9 @@ public interface FinanceiroService {
     /**
      * Obtém parametros de Cobranca da cota
      * @param idCota
-     * @return Value Object com parametros de Cobranca da cota 
+     * @return Data Transfer Object com parametros de Cobranca da cota 
      */
-    FinanceiroVO obterDadosCotaCobranca(Long idCota);
+    ParametroCobrancaDTO obterDadosParametroCobrancaPorCota(Long idCota);
     
     
     /**
@@ -43,19 +43,29 @@ public interface FinanceiroService {
     
     /**
      * Posta parametros de Cobranca da cota
-     * @param Value Object com parametros de Cobranca da cota 
+     * @param Data Transfer Object com parametros de Cobranca da cota 
      */
-    void postarDadosCotaCobranca(FinanceiroVO cotaCobranca);
-
-	
-    
-    
+    void postarParametroCobranca(ParametroCobrancaDTO cotaCobranca);
     
     /**
-     * !!!
-     * @return
+     * Posta forma de Cobranca
+     * @param Data Transfer Object com forma de Cobranca
      */
-    List<FormaCobranca> obterFormasCobrancaPorCota(/*FiltroConsultaFormasCobrancaCotaDTO filtro*/);
+    void postarFormaCobranca(FormaCobrancaDTO formaCobranca);
+
+    /**
+     * Obtém Formas de Cobrança da cota
+     * @param idCota: ID da cota
+     * @return Formas de cobrança da Cota
+     */
+    List<FormaCobrancaDTO> obterDadosFormasCobrancaPorCota(Long idCota);
+    
+    /**
+     * Obtém Forma de Cobrança do Parametro de Cobranca
+     * @param idParametro: ID do parametro de cobranca
+     * @return Forma de cobrança do parametro de cobranca
+     */
+    FormaCobrancaDTO obterDadosFormaCobranca(Long idForma);
 
     
     /**

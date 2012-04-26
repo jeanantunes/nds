@@ -9,8 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.FinanceiroVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -90,23 +92,30 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);
 		save(enderecoDaCota,enderecoCota);
 		
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(1, null, cota, 1, formaBoleto, 
+											  false, new BigDecimal(1000));
+		save(parametroCobranca);
+		
 		idCota = cota.getId();
 		
 	}
 	
 	@Test
-	public void obterDadosCotaCobranca(){
-		FinanceiroVO financeiroVO = this.financeiroService.obterDadosCotaCobranca(idCota);
+	public void obterDadosParametroCobrancaPorCota(){
+		ParametroCobrancaDTO financeiroVO = this.financeiroService.obterDadosParametroCobrancaPorCota(idCota);
 		Assert.assertTrue(financeiroVO!=null);
 	}
 	
 	
 	@Test
 	public void obterFormasCobrancaPorCota(){
-		List<FormaCobranca> formasCobranca = this.financeiroService.obterFormasCobrancaPorCota();
+		List<FormaCobrancaDTO> formasCobranca = this.financeiroService.obterDadosFormasCobrancaPorCota(idCota);
 		Assert.assertNotNull(formasCobranca);
 		Assert.assertTrue((formasCobranca.size()>0));
 	}
+	
+	
 	@Test
 	public void obtemContratoTransporte() {
 		ContratoTransporteDTO contratoTransporteDTO =  financeiroService.obtemContratoTransporte(idCota);
@@ -117,8 +126,6 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(contratoTransporteDTO.getContratante());
 		Assert.assertNotNull(contratoTransporteDTO.getContratante().getEndereco());
 	}
-	
-	
 	
 	
 }
