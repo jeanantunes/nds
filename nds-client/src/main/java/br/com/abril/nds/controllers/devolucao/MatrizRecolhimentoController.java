@@ -1,10 +1,12 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -18,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -37,7 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 public class MatrizRecolhimentoController {
 
 	@Autowired
-	private HttpSession session;
+	private HttpSession httpSession;
 	
 	@Autowired
 	private Result result;
@@ -49,6 +52,8 @@ public class MatrizRecolhimentoController {
 	private FornecedorService fornecedorService;
 	
 	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO = "mapaRecolhimento";
+	
+	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL = "mapaRecolhimentoInicial";
 	
 	@Get
 	@Path("/")
@@ -63,10 +68,15 @@ public class MatrizRecolhimentoController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
-		this.validarDadosPesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
+		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
+		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
+			this.obterMatrizBalanceamentoMock(dataPesquisa, listaIdsFornecedores);
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
-			this.recolhimentoService.obterResumoPeriodoBalanceamento(dataPesquisa, listaIdsFornecedores);
+			this.obterResumoPeriodoBalanceamento(matrizBalanceamento);
 		
 		if (resumoPeriodoBalanceamento == null
 				|| resumoPeriodoBalanceamento.isEmpty()) {
@@ -74,7 +84,7 @@ public class MatrizRecolhimentoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
 		}
 		
-		result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
+		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
 	
 	@Post
@@ -138,13 +148,13 @@ public class MatrizRecolhimentoController {
 	 * @param dataPesquisa - data da pesquisa
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 */
-	private void validarDadosPesquisa(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+	private void validarDadosPesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (numeroSemana == null && dataPesquisa == null) {
+		if (dataPesquisa == null) {
 			
-			listaMensagens.add("O preenchimento do campo [Semana] ou [Data] é obrigatório!");
+			listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
 			
 		}
 		
@@ -163,16 +173,64 @@ public class MatrizRecolhimentoController {
 	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date diaBalanceamento) {
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date dataBalanceamento, 
+																	  List<Long> listaIdsFornecedores) {
 
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento =  
-				(Map<Date, List<RecolhimentoDTO>>) this.session.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
+			(Map<Date, List<RecolhimentoDTO>>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
 		
 		if (matrizBalanceamento == null) {
 
 			matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
 
-			matrizBalanceamento.put(diaBalanceamento, null);
+			matrizBalanceamento.put(dataBalanceamento, null);
+			
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO, matrizBalanceamento);
+		}
+		
+		return matrizBalanceamento; 
+	}
+	
+	/*
+	 * MOCK:
+	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
+	 */
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamentoMock(Date dataBalanceamento, 
+																	  	  List<Long> listaIdsFornecedores) {
+
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = new TreeMap<Date, List<RecolhimentoDTO>>();
+		
+		Date dataLancamento = DateUtil.parseDataPTBR("11/04/2012");
+
+		for (int diaRecolhimento = 18; diaRecolhimento <= 24; diaRecolhimento++) {
+		
+			Date dataRecolhimento = DateUtil.parseDataPTBR(diaRecolhimento + "/04/2012");
+			
+			List<RecolhimentoDTO> listaDadosRecolhimento = new ArrayList<RecolhimentoDTO>();
+			
+			for (int i = 1; i <= 100; i++) {
+				
+				RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
+				
+				dadosRecolhimento.setAtendida(BigDecimal.ZERO);
+				dadosRecolhimento.setCodigoProduto(new Long(i));
+				dadosRecolhimento.setDataLancamento(dataLancamento);
+				dadosRecolhimento.setDataRecolhimento(dataRecolhimento);
+				dadosRecolhimento.setDescricaoProduto("Produto Teste " + i);
+				dadosRecolhimento.setNomeEditor("Zé Editor " + i);
+				dadosRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
+				dadosRecolhimento.setNumeroEdicao(1L);
+				dadosRecolhimento.setPeso(new BigDecimal(i));
+				dadosRecolhimento.setPossuiBrinde(false);
+				dadosRecolhimento.setPrecoVenda(new BigDecimal(i));
+				dadosRecolhimento.setQtdeExemplares(new BigDecimal(i));
+				dadosRecolhimento.setSede(new BigDecimal(i));
+				dadosRecolhimento.setValorTotal(new BigDecimal(i));
+				
+				listaDadosRecolhimento.add(dadosRecolhimento);
+			}
+			
+			matrizBalanceamento.put(dataRecolhimento, listaDadosRecolhimento);
 		}
 		
 		return matrizBalanceamento; 
@@ -181,16 +239,96 @@ public class MatrizRecolhimentoController {
 	/*
 	 * Retorna os dados do recolhimento referente a um dia especifico.
 	 */
-	private List<RecolhimentoDTO> obterRecolhimentoDia(Date diaRecolhimento) {
+	private List<RecolhimentoDTO> obterBalanceamentoDia(Date dataRecolhimento, 
+														List<Long> listaIdsFornecedores) {
 		
-		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = obterMatrizBalanceamento(null);
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
+			this.obterMatrizBalanceamento(dataRecolhimento, listaIdsFornecedores);
 
 		if (matrizBalanceamento != null) {
 			
-			return matrizBalanceamento.get(diaRecolhimento);
+			return matrizBalanceamento.get(dataRecolhimento);
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * Obtém o resumo do período de balanceamento de acordo com a data da pesquisa
+	 * e a lista de id's dos fornecedores.
+	 */
+	private List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodoBalanceamento(Map<Date, List<RecolhimentoDTO>> matrizBalanceamento) {
+
+		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
+			
+			return null;
+		}
+		
+		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento =
+			new ArrayList<ResumoPeriodoBalanceamentoDTO>();
+		
+		for (Map.Entry<Date, List<RecolhimentoDTO>> entry : matrizBalanceamento.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			
+			ResumoPeriodoBalanceamentoDTO itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoDTO();
+			
+			itemResumoPeriodoBalanceamento.setData(dataRecolhimento);
+			
+			List<RecolhimentoDTO> listaDadosRecolhimento = entry.getValue();
+			
+			if (listaDadosRecolhimento != null && !listaDadosRecolhimento.isEmpty()) {
+				
+				boolean exibeDestaque = false;
+				
+				Long qtdeTitulos = Long.valueOf(listaDadosRecolhimento.size());
+				Long qtdeTitulosParciais = 0L;
+				
+				BigDecimal pesoTotal = BigDecimal.ZERO;
+				BigDecimal qtdeExemplares = BigDecimal.ZERO;
+				BigDecimal valorTotal = BigDecimal.ZERO;
+				
+				for (RecolhimentoDTO dadosRecolhimento : listaDadosRecolhimento) {
+					
+					if (dadosRecolhimento.getAtendida() != null
+							&& dadosRecolhimento.getAtendida().doubleValue() > 0) {
+						
+						exibeDestaque = true;
+					}
+					
+					if (dadosRecolhimento.getParcial() != null) {
+						
+						qtdeTitulosParciais++;
+					}
+					
+					if (dadosRecolhimento.getPeso() != null) {
+						
+						pesoTotal = pesoTotal.add(dadosRecolhimento.getPeso());
+					}
+					
+					if (dadosRecolhimento.getQtdeExemplares() != null) {
+					
+						qtdeExemplares = qtdeExemplares.add(dadosRecolhimento.getQtdeExemplares());
+					}
+					
+					if (dadosRecolhimento.getValorTotal() != null) {
+						
+						valorTotal = valorTotal.add(dadosRecolhimento.getValorTotal());
+					}
+				}
+				
+				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
+				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
+				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
+				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
+				itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
+			}
+			
+			resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
+		}
+		
+		return resumoPeriodoBalanceamento;
 	}
 	
 }

@@ -1,34 +1,80 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.FinanceiroVO;
+import br.com.abril.nds.dto.ContratoTransporteDTO;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.FinanceiroService;
 
-@Ignore
+
 public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private FinanceiroService financeiroService;
 	
-	private static final Long ID_COTA = 1l;
+	private  Long idCota;
 	
 	@Before
 	public void setup() {
+		
+		
+		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		save(carteira);
+		
+		Banco banco = Fixture.hsbc(carteira); 
+		save(banco);
+		
+		
+		PessoaJuridica pj = Fixture.pessoaJuridica("Distrib", "01.001.001/001-00",
+				"000.000.000.00", "distrib@mail.com");
+		
+		FormaCobranca formaBoleto =
+			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
+										BigDecimal.ONE, BigDecimal.ONE);
+		save(formaBoleto);
+		
+		PoliticaCobranca politicaCobranca =
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
+		
+		Distribuidor distribuidor = Fixture.distribuidor(pj, new Date(), politicaCobranca);
+
+		save(pj);
+		save(distribuidor);
+		
+		
+		Endereco enderecoDoDistruibuidor = Fixture.criarEndereco(
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+		
+		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, enderecoDoDistruibuidor, true, TipoEndereco.COBRANCA);
+		
+		save(enderecoDoDistruibuidor,enderecoDistribuidor);
 		
 		PessoaFisica pessoaFisica = Fixture.pessoaFisica("123.456.789-00","sys.discover@gmail.com", "Cota da Silva");
 		save(pessoaFisica);
@@ -39,20 +85,47 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		Cota cota = Fixture.cota(1000, pessoaFisica, SituacaoCadastro.ATIVO,box);
 		save(cota);
 		
+		Endereco enderecoDaCota = Fixture.criarEndereco(
+				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP");
+		
+		
+		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);
+		save(enderecoDaCota,enderecoCota);
+		
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(1, null, cota, 1, formaBoleto, 
+											  false, new BigDecimal(1000));
+		save(parametroCobranca);
+		
+		idCota = cota.getId();
+		
 	}
 	
 	@Test
-	public void obterDadosCotaCobranca(){
-		@SuppressWarnings("static-access")
-		FinanceiroVO financeiroVO = this.financeiroService.obterDadosCotaCobranca(this.ID_COTA);
+	public void obterDadosParametroCobrancaPorCota(){
+		ParametroCobrancaDTO financeiroVO = this.financeiroService.obterDadosParametroCobrancaPorCota(idCota);
 		Assert.assertTrue(financeiroVO!=null);
 	}
 	
 	
 	@Test
 	public void obterFormasCobrancaPorCota(){
-		List<FormaCobranca> formasCobranca = this.financeiroService.obterFormasCobrancaPorCota();
+		List<FormaCobrancaDTO> formasCobranca = this.financeiroService.obterDadosFormasCobrancaPorCota(idCota);
 		Assert.assertNotNull(formasCobranca);
 		Assert.assertTrue((formasCobranca.size()>0));
 	}
+	
+	
+	@Test
+	public void obtemContratoTransporte() {
+		ContratoTransporteDTO contratoTransporteDTO =  financeiroService.obtemContratoTransporte(idCota);
+		System.out.println(contratoTransporteDTO);
+		Assert.assertNotNull(contratoTransporteDTO);
+		Assert.assertNotNull(contratoTransporteDTO.getContratada());
+		Assert.assertNotNull(contratoTransporteDTO.getContratada().getEndereco());
+		Assert.assertNotNull(contratoTransporteDTO.getContratante());
+		Assert.assertNotNull(contratoTransporteDTO.getContratante().getEndereco());
+	}
+	
+	
 }

@@ -50,11 +50,12 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
 
 public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private CotaRepositoryImpl cotaRepository;
+	private CotaRepository cotaRepository;
 		
 	private static final Integer NUMERO_COTA = 1;
 	

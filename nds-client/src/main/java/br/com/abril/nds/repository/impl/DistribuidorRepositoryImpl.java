@@ -4,11 +4,14 @@ package br.com.abril.nds.repository.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
@@ -47,6 +50,19 @@ public class DistribuidorRepositoryImpl extends
 		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
 		
 		return query.list();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterEnderecoPrincipal()
+	 */
+	@Override
+	public EnderecoDistribuidor obterEnderecoPrincipal(){
+		Criteria criteria=  getSession().createCriteria(EnderecoDistribuidor.class);
+		criteria.add(Restrictions.eq("principal", true) );		
+		criteria.setMaxResults(1);
+		
+		return (EnderecoDistribuidor) criteria.uniqueResult();
 	}
 	
 
