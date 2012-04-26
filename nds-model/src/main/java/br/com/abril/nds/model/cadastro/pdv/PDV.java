@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -145,7 +146,7 @@ public class PDV implements Serializable {
 	/**
 	 * Períodos de funcionamento do PDV
 	 */
-	@OneToMany(mappedBy = "pdv")
+	@OneToMany(mappedBy = "pdv", cascade ={CascadeType.MERGE,CascadeType.PERSIST})
 	private Set<PeriodoFuncionamentoPDV> periodos = new HashSet<PeriodoFuncionamentoPDV>();
 	
 	/**

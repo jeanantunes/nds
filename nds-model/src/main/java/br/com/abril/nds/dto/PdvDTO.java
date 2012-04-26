@@ -9,6 +9,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 
 public class PdvDTO implements Serializable {
 
@@ -18,6 +19,8 @@ public class PdvDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	
+	private Long idCota;
 	
 	private StatusPDV statusPDV;
 	
@@ -55,6 +58,8 @@ public class PdvDTO implements Serializable {
 	
 	private String nomeLicenca;
 	
+	private boolean dentroDeOutroEstabelecimento;
+	
 	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
 	
 	private DiasFuncionamentoDTO diasFuncionamentoDTO ;
@@ -72,7 +77,9 @@ public class PdvDTO implements Serializable {
     private Long geradorFluxoPrincipal;
     
     private List<Long> maps;
-
+    
+    private TipoPontoPDV tipoPontoPDV;
+    
 	/**
 	 * @return the id
 	 */
@@ -466,6 +473,48 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setPrincipal(boolean principal) {
 		this.principal = principal;
+	}
+
+	/**
+	 * @return the tipoPontoPDV
+	 */
+	public TipoPontoPDV getTipoPontoPDV() {
+		return tipoPontoPDV;
+	}
+
+	/**
+	 * @param tipoPontoPDV the tipoPontoPDV to set
+	 */
+	public void setTipoPontoPDV(TipoPontoPDV tipoPontoPDV) {
+		this.tipoPontoPDV = tipoPontoPDV;
+	}
+
+	/**
+	 * @return the dentroDeOutroEstabelecimento
+	 */
+	public boolean isDentroDeOutroEstabelecimento() {
+		return dentroDeOutroEstabelecimento;
+	}
+
+	/**
+	 * @param dentroDeOutroEstabelecimento the dentroDeOutroEstabelecimento to set
+	 */
+	public void setDentroDeOutroEstabelecimento(boolean dentroDeOutroEstabelecimento) {
+		this.dentroDeOutroEstabelecimento = dentroDeOutroEstabelecimento;
+	}
+
+	/**
+	 * @return the idCota
+	 */
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	/**
+	 * @param idCota the idCota to set
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 	
 	

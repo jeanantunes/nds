@@ -11,6 +11,15 @@ import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.PdvRepository;
 
+/**
+ * 
+ * Classe de implementação  das ações a acesso a dados referente a classe
+ * {@link br.com.abril.nds.model.cadastro.pdv.PDV}  
+ * 
+ * @author Discover Technology
+ *
+ */
+
 @Repository
 public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements PdvRepository {
 
@@ -18,6 +27,8 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		super(PDV.class);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro){
 		
 		StringBuilder hql = new StringBuilder();
@@ -64,6 +75,13 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		
 	}
 	
+	/**
+	 * Monta strinf hql de ordenação da consulta de pdvs
+	 * 
+	 * @param filtro - filtro com as opções de ordenação
+	 * 
+	 * @return String
+	 */
 	private String getOrdenacaoPDV(FiltroPdvDTO filtro){
 		
 		if(filtro == null || filtro.getColunaOrdenacao() == null){
@@ -98,7 +116,7 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 				hql.append(" order by  nomePDV ");
 		}
 		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
+		if (filtro.getPaginacao()!= null && filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
