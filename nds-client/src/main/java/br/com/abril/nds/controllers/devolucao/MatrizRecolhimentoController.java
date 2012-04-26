@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -70,7 +71,7 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
-			this.obterMatrizBalanceamento(dataPesquisa, listaIdsFornecedores);
+			this.obterMatrizBalanceamentoMock(dataPesquisa, listaIdsFornecedores);
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
 		
@@ -194,17 +195,43 @@ public class MatrizRecolhimentoController {
 	 * MOCK:
 	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
 	 */
-	@SuppressWarnings("unchecked")
 	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamentoMock(Date dataBalanceamento, 
 																	  	  List<Long> listaIdsFornecedores) {
 
-		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = new TreeMap<Date, List<RecolhimentoDTO>>();
 		
-		Date dataRecolhimento = DateUtil.parseDataPTBR("25/04/2012");
+		Date dataLancamento = DateUtil.parseDataPTBR("11/04/2012");
+
+		for (int diaRecolhimento = 18; diaRecolhimento <= 24; diaRecolhimento++) {
 		
-		List<RecolhimentoDTO> listaDadosRecolhimento = new ArrayList<RecolhimentoDTO>();
-		
-		matrizBalanceamento.put(dataRecolhimento, listaDadosRecolhimento);
+			Date dataRecolhimento = DateUtil.parseDataPTBR(diaRecolhimento + "/04/2012");
+			
+			List<RecolhimentoDTO> listaDadosRecolhimento = new ArrayList<RecolhimentoDTO>();
+			
+			for (int i = 1; i <= 100; i++) {
+				
+				RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
+				
+				dadosRecolhimento.setAtendida(BigDecimal.ZERO);
+				dadosRecolhimento.setCodigoProduto(new Long(i));
+				dadosRecolhimento.setDataLancamento(dataLancamento);
+				dadosRecolhimento.setDataRecolhimento(dataRecolhimento);
+				dadosRecolhimento.setDescricaoProduto("Produto Teste " + i);
+				dadosRecolhimento.setNomeEditor("Zé Editor " + i);
+				dadosRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
+				dadosRecolhimento.setNumeroEdicao(1L);
+				dadosRecolhimento.setPeso(new BigDecimal(i));
+				dadosRecolhimento.setPossuiBrinde(false);
+				dadosRecolhimento.setPrecoVenda(new BigDecimal(i));
+				dadosRecolhimento.setQtdeExemplares(new BigDecimal(i));
+				dadosRecolhimento.setSede(new BigDecimal(i));
+				dadosRecolhimento.setValorTotal(new BigDecimal(i));
+				
+				listaDadosRecolhimento.add(dadosRecolhimento);
+			}
+			
+			matrizBalanceamento.put(dataRecolhimento, listaDadosRecolhimento);
+		}
 		
 		return matrizBalanceamento; 
 	}
