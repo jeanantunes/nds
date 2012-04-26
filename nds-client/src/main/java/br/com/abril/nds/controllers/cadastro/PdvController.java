@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.StatusPDV;
 import br.com.abril.nds.model.cadastro.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.TipoEstabelecimentoAssociacaoPDV;
+import br.com.abril.nds.model.cadastro.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -49,13 +52,28 @@ public class PdvController {
 	 */
 	public void preCarregamento() {
 				
+
+		String dataAtual = new SimpleDateFormat("dd/MM/yyyy").format(new Date());		
+		result.include("dataAtual",dataAtual);
 		result.include("listaStatus",gerarItemStatus(StatusPDV.values()));
+		result.include("listaDiasFuncionamento",gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV.values()));
 		result.include("listaTamanhoPDV",gerarTamanhosPDV(TamanhoPDV.values()));
 		result.include("listaTipoEstabelecimento",gerarTiposEstabelecimento());
 		result.include("listaTipoLicencaMunicipal",gerarTiposLicencaMunicipal());
 				
 	}
 	
+	private Object gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV[] tipos) {
+		
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
+		
+		for(TipoPeriodoFuncionamentoPDV item: tipos) {
+			itens.add(new ItemDTO<String, String>(item.name(), item.getDescricao()));
+		}
+		
+		return itens;
+	}
+
 	private List<ItemDTO<Long, String>> gerarTiposEstabelecimento() {
 		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
 		
@@ -75,11 +93,11 @@ public class PdvController {
 		 
 		 estabelecimentos.add(new TipoEstabelecimentoAssociacaoPDV());
 		 estabelecimentos.get(0).setCodigo(1L);
-		 estabelecimentos.get(0).setDescricao("Licenca 1");
+		 estabelecimentos.get(0).setDescricao("Tipo Estab 1");
 		 
 		 estabelecimentos.add(new TipoEstabelecimentoAssociacaoPDV());
 		 estabelecimentos.get(1).setCodigo(1L);
-		 estabelecimentos.get(1).setDescricao("Licenca 2");
+		 estabelecimentos.get(1).setDescricao("Tipo Estab 2");
 		 
 		return estabelecimentos;
 	}

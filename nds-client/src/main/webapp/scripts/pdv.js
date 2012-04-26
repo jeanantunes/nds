@@ -11,6 +11,8 @@ var PDV = {
 		
 		abaSelecionada:"",
 		
+		diasFuncionamento:[],
+		
 		pesquisarPdvs: function (idCota){
 			
 			var param = [{name:"idCota",value:idCota}];
@@ -169,7 +171,7 @@ var PDV = {
 	              "pdvDTO.caracteristicaDTO.caracteristica=" + $("#selectCaracteristica").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
-			
+						
 			return dados;
 		},
 
@@ -238,33 +240,48 @@ var PDV = {
 			}
 		},
 		
+		adicionarDiaFuncionamento: function() {
+			
+			var idDiasFuncionamento = $("#selectDiasFuncionamento").val();
+			var diasFuncionamento = $("#selectDiasFuncionamento option:selected").text();
+			var inicioHorario = $("#inicioHorario").val();
+			var fimHorario = $("#fimHorario").val();
+						
+			PDV.diasFuncionamento.push({idDia:idDiasFuncionamento,dia:diasFuncionamento,inicio:inicioHorario,fim:fimHorario});
+			
+			if(PDV.diasFuncionamento.length==1) {
+				alert('um');
+			}
+			
+			PDV.montartabelaDiasFuncionamento();
+		},
+		
 		montartabelaDiasFuncionamento: function(){
 			
 			/**
 			 * TODO chamar metodo para validar a inclusao conforme EMS
 			 */
+					 
+			 $('#listaDiasFuncionais tr').remove();;
+			 
 			
-			 var idDiasFuncionamento = $("#selectDiasFuncionamento").val();
-			 var diasFuncionamento = $("#selectDiasFuncionamento option:selected").text();
-			 var inicioHoratio = $("#inicioHorario").val();
-			 var fimHorario = $("#fimHorario").val();
-			 
-			 var inputHidden = "<input type='hidden' value='"+idDiasFuncionamento +"' name='diasFuncionamento'/>";
-			 
-			 $('#listaDiasFuncionais tr');
-			 
-			 var tr = $('<tr class="class_linha_1"></tr>');
-			
-			 tr.append("<td width='138'>&nbsp; "+ inputHidden+"</td>");
-			 tr.append("<td width='249' class='diasFunc'>"+ diasFuncionamento +"</td>");
-			 tr.append("<td width='47'>&nbsp;</td>");
-			 tr.append("<td width='100'>"+ inicioHoratio +" as "+ fimHorario +"</td>");
-			 tr.append("<td width='227'>"+
-			 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent());'" +
-			 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
-			 			"width='15' height='15' border='0'/></a></td>");
-		      
-			 $('#listaDiasFuncionais').append(tr);
+			$.each(PDV.diasFuncionamento, function(index, row) {
+					
+				 var inputHidden = "<input type='hidden' value='"+row.idDia +"' name='diasFuncionamento'/>";
+					
+				 var tr = $('<tr class="class_linha_1"></tr>');
+				
+				 tr.append("<td width='138'>&nbsp; "+ inputHidden+"</td>");
+				 tr.append("<td width='249' class='diasFunc'>"+ row.dia +"</td>");
+				 tr.append("<td width='47'>&nbsp;</td>");
+				 tr.append("<td width='100'>"+ row.inicio +" as "+ row.fim +"</td>");
+				 tr.append("<td width='227'>"+
+				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent());'" +
+				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
+				 			"width='15' height='15' border='0'/></a></td>");
+			      
+				 $('#listaDiasFuncionais').append(tr);
+			});
 		},
 		
 		removerDiasFuncionamento: function (linha){
