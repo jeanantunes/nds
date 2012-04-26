@@ -7,16 +7,23 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "AREA_INFLUENCIA_PDV")
-@SequenceGenerator(name="AREA_INFLUENCIA_PDV_SEQ", initialValue = 1, allocationSize = 1)
-public class AreaInfluenciaPDV extends CodigoDescricao {
 
-	private static final long serialVersionUID = 1L;
+/**
+ * Entidade que representa os materiais promocionais
+ * 
+ * @author francisco.garcia
+ *
+ */
+@Entity
+@Table(name = "MATERIAL_PROMOCIONAL")
+@SequenceGenerator(name="MATERIAL_PROMOCIONAL_SEQ", initialValue = 1, allocationSize = 1)
+public class MaterialPromocional extends CodigoDescricao {
+	
+private static final long serialVersionUID = 1L;
 	
 	@Id
 	@Column(name = "ID")
-	@GeneratedValue(generator = "AREA_INFLUENCIA_PDV_SEQ")
+	@GeneratedValue(generator = "MATERIAL_PROMOCIONAL_SEQ")
 	private Long id; 
 	
 	public Long getId() {

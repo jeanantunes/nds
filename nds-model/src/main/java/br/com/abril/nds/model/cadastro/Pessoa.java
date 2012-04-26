@@ -106,4 +106,16 @@ public abstract class Pessoa implements Serializable {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @return Nome da Pessoa
+	 */
+	public abstract String getNome();
+	
+	/**
+	 * 
+	 * @return Documento que identifica a pessoa(CPF, CNPJ, etc..)
+	 */
+	public abstract String getDocumento();
 }

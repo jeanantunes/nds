@@ -3,7 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.model.cadastro.PDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 
 public interface PdvService {
 

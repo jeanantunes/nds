@@ -6,7 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.model.cadastro.PDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.PdvRepository;
 
 @Repository

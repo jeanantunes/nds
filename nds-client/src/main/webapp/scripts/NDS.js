@@ -233,7 +233,8 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 			var tipoMensagem = null;
 			var listaMensagens = null;
 			
-			if(!json) {
+			if (!json && !sucessCallBackFunction) {
+				
 				return;
 			}
 			

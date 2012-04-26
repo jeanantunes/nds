@@ -5,10 +5,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.StatusPDV;
-import br.com.abril.nds.model.cadastro.TamanhoPDV;
-import br.com.abril.nds.model.cadastro.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
+import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 
 public class PdvDTO implements Serializable {
 
