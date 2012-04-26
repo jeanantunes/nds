@@ -20,7 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
-@Table(name = "	ESTOQUE_PRODUTO_COTA",uniqueConstraints = { @UniqueConstraint(columnNames = {
+@Table(name = "ESTOQUE_PRODUTO_COTA",uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"COTA_ID", "PRODUTO_EDICAO_ID" })})
 @SequenceGenerator(name="ESTOQUE_PROD_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstoqueProdutoCota {
