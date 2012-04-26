@@ -16,18 +16,24 @@ public class RecolhimentoDTO implements Serializable {
 
 	private static final long serialVersionUID = -2168766293591158494L;
 
+	private Long idProdutoEdicao;
+	
 	private Long codigoProduto;
 
 	private String descricaoProduto;
-	
+
 	private Long numeroEdicao;
 	
 	private BigDecimal precoVenda;
+
+	private Long idFornecedor;
 	
 	private String nomeFornecedor;
-	
+
+	private Long idEditor;
+
 	private String nomeEditor;
-	
+
 	private TipoLancamentoParcial parcial;
 
 	private boolean possuiBrinde;
@@ -43,10 +49,24 @@ public class RecolhimentoDTO implements Serializable {
 	private BigDecimal qtdeExemplares;
 
 	private BigDecimal valorTotal;
-	
+
 	private BigDecimal peso;
-	
+
 	private Date novaData;
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
 
 	/**
 	 * @return the codigoProduto
@@ -105,6 +125,20 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+
+	/**
 	 * @return the nomeFornecedor
 	 */
 	public String getNomeFornecedor() {
@@ -116,6 +150,20 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	/**
+	 * @return the idEditor
+	 */
+	public Long getIdEditor() {
+		return idEditor;
+	}
+
+	/**
+	 * @param idEditor the idEditor to set
+	 */
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
 	}
 
 	/**
@@ -245,20 +293,6 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the novaData
-	 */
-	public Date getNovaData() {
-		return novaData;
-	}
-
-	/**
-	 * @param novaData the novaData to set
-	 */
-	public void setNovaData(Date novaData) {
-		this.novaData = novaData;
-	}
-
-	/**
 	 * @return the peso
 	 */
 	public BigDecimal getPeso() {
@@ -271,5 +305,18 @@ public class RecolhimentoDTO implements Serializable {
 	public void setPeso(BigDecimal peso) {
 		this.peso = peso;
 	}
-	
+
+	/**
+	 * @return the novaData
+	 */
+	public Date getNovaData() {
+		return novaData;
+	}
+
+	/**
+	 * @param novaData the novaData to set
+	 */
+	public void setNovaData(Date novaData) {
+		this.novaData = novaData;
+	}
 }
