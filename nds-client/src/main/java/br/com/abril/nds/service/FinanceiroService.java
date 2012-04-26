@@ -3,8 +3,8 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.FinanceiroVO;
+import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -56,5 +56,20 @@ public interface FinanceiroService {
      * @return
      */
     List<FormaCobranca> obterFormasCobrancaPorCota(/*FiltroConsultaFormasCobrancaCotaDTO filtro*/);
+
+    
+    /**
+     * Obtem os dados para o contrato de prestação de serviços de transportes de revistas.<br/>
+     * 
+     * A composição do contrato de prestação de serviços as informações serão obtidas:
+     * <ul>
+	 * <li>Contratante com base nos dados da distribuidora.</li>
+ 	 * <li>Contratada com base nos dados da cota parametrizada.</li>
+  	 * <li>Condições da contratação(Prazo, Inicio e Termino e Aviso Prévio para Recisão) obtido nos parâmetros da distribuidora.</li>
+	 * </ul>
+     * @param idCota Id da cota
+     * @return
+     */
+	public abstract ContratoTransporteDTO obtemContratoTransporte(long idCota);
 
 }

@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -124,4 +125,11 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	
 	Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota);
+	
+	/**
+	 * Obtem o endereço principal da cota.
+	 * @param idCota Id da Cota
+	 * @return endereço principal da cota.
+	 */
+	public abstract EnderecoCota obterEnderecoPrincipal(long idCota);
 }
