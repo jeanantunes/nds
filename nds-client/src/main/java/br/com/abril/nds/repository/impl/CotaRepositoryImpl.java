@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -492,5 +493,21 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		query.setParameter("numeroCota", numeroCota);
 
 		return (Cota) query.uniqueResult();
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.CotaRepository#obterEnderecoPrincipal(long)
+	 */
+	@Override
+	public EnderecoCota obterEnderecoPrincipal(long idCota){
+		Criteria criteria =  getSession().createCriteria(EnderecoCota.class);
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+		criteria.add(Restrictions.eq("principal", true));
+		criteria.setMaxResults(1);
+		
+		return (EnderecoCota) criteria.uniqueResult();
 	}
 }

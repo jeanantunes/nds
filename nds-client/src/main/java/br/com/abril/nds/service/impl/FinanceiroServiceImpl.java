@@ -9,19 +9,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.FinanceiroVO;
+import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.PessoaContratoDTO;
+import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancaria;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.service.FinanceiroService;
 
@@ -48,6 +56,10 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	@Autowired
 	private ConcentracaoCobrancaCotaRepository concentracaoCobrancaRepository;
+	
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	
 	
@@ -375,5 +387,56 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		return formasCobranca;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.FinanceiroService#obtemContratoTransporte(long)
+	 */
+	@Override
+	public ContratoTransporteDTO obtemContratoTransporte(long idCota){
+		ContratoTransporteDTO contrato = new ContratoTransporteDTO();
+		
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();	
+		
+		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();		
+		PessoaContratoDTO contratante = new PessoaContratoDTO();		
+		
+		contratante.setNome(pessoaJuridica.getNome());
+		contratante.setDocumento(pessoaJuridica.getDocumento());
+		contratante.setTipoPessoa(TipoPessoa.JURIDICA);
+		
+		EnderecoDistribuidor enderecoDistribuidor= distribuidorRepository.obterEnderecoPrincipal();
+		
+		if (enderecoDistribuidor != null) {
+			contratante.setEndereco(enderecoDistribuidor.getEndereco());
+		}
+		contrato.setContratante(contratante);
+		
+		
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);	
+		if (cota!=null) {
+			PessoaContratoDTO contratada = new PessoaContratoDTO();
+			contratada.setNome(cota.getPessoa().getNome());
+			contratada.setDocumento(cota.getPessoa().getDocumento());
+			
+			contratante.setTipoPessoa((cota.getPessoa()instanceof PessoaJuridica)?TipoPessoa.JURIDICA:TipoPessoa.FISICA);
+			EnderecoCota enderecoCota = cotaRepository
+					.obterEnderecoPrincipal(cota.getId());
+			if (enderecoCota != null) {
+				contratada.setEndereco(enderecoCota.getEndereco());
+			}
+			contrato.setContratada(contratada);
+		}else{
+			throw new IllegalArgumentException("Id da cota não cadastrada");
+		}
+		
+		
+		//TODO: Dados dos gestores do Contrato
+		
+		//TODO: Dados da contratação(Prazo, Inicio e Termino e Aviso Prévio para Recisão)
+		
+		return contrato;
+	}
 
 }
