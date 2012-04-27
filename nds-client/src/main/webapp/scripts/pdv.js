@@ -194,7 +194,10 @@ var PDV = {
 				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario="+ $(this).val() +"&";
 			 });
 			 
-			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal").val() +"&";
+			 /**
+			  * TODO definir como sera o fluxo principal 
+			  */
+			 //listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.pdvDTO.geradorFluxoPrincipal="+ $("#").val() +"&";
 			 
 			 return listaFluxoSecundario;	
 		},
@@ -239,19 +242,17 @@ var PDV = {
 		
 		adicionarDiaFuncionamento: function() {
 			
-			debugger;
-			
 			var tipoPeriodo = $("#selectDiasFuncionamento").val();
 			var inicioHorario = $("#inicioHorario").val();
 			var fimHorario = $("#fimHorario").val();
 			
 			var parametros = [];
 			
-			$.each(PDV.diasFuncionamento, function(index, diasFuncionamento) {
+			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
 				
-				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: movimento.idCota});
-				parametros.push({name:'periodos['+ index +'].inicio', value: inicioHorario});
-				parametros.push({name:'periodos['+ index +'].fim', value: fimHorario});
+				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: diaFuncionamento.tipoPeriodo});
+				parametros.push({name:'periodos['+ index +'].inicio', value: diaFuncionamento.inicio});
+				parametros.push({name:'periodos['+ index +'].fim', value: diaFuncionamento.fim});
 		  	});
 						
 			parametros.push({name:'novoPeriodo.tipoPeriodo', value: tipoPeriodo});
@@ -267,8 +268,8 @@ var PDV = {
 		
 		retornoAdicaoDiaFuncionamento: 	function(result){
 			
-			debugger;
-			
+			var items = result[0];
+			var mensagens = result[1];
 			var status = result[2];
 	
 			if(status == "SUCCESS") {
@@ -280,12 +281,25 @@ var PDV = {
 				
 				var novoPeriodo = {tipoPeriodo:tipoPeriodo,descTipoPeriodo:descTipoPeriodo,inicio:inicioHorario,fim:fimHorario};
 				
-				
 				PDV.diasFuncionamento.push(novoPeriodo);
 				PDV.montartabelaDiasFuncionamento();
 				
+				var combo = $("#selectDiasFuncionamento");
+				combo.clear();
+				
+				$.each(items, function(index, item) {
+					var option = document.createElement("OPTION");
+					option.innerHTML = item.value.$;
+					option.value = item.key.$;
+							
+					combo.append(option);
+			  	});
+				
 			} else {
-				alert(result[1]);
+				
+				if(mensagens!=null && mensagens.length!=0) {
+					exibirMensagem(status,mensagens);
+				}
 			}
 		},
 		
@@ -309,7 +323,7 @@ var PDV = {
 				 tr.append("<td width='47'>&nbsp;</td>");
 				 tr.append("<td width='100'>"+ row.inicio +" as "+ row.fim +"</td>");
 				 tr.append("<td width='227'>"+
-				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent());'" +
+				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent(),"+index+");'" +
 				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
 				 			"width='15' height='15' border='0'/></a></td>");
 			      
@@ -317,13 +331,50 @@ var PDV = {
 			});
 		},
 		
-		removerDiasFuncionamento: function (linha){
+		removerDiasFuncionamento: function (linha,indice){
 			
 			/**
 			 * TODO chamar metodo para validar a exclusao, verificar com analista se tera regra para exclusao 
 			 */
+			PDV.diasFuncionamento.splice(indice,1);
 			
-			linha.remove();
+			var parametros = [];
+			
+			debugger;
+			
+			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
+				
+				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: diaFuncionamento.tipoPeriodo});
+				parametros.push({name:'periodos['+ index +'].inicio', value: diaFuncionamento.inicio});
+				parametros.push({name:'periodos['+ index +'].fim', value: diaFuncionamento.fim});
+		  	});
+			
+			$.postJSON(contextPath + "/cadastro/pdv/obterPeriodosPossiveis",
+					parametros, 
+					function(result) {PDV.retornoObterPeriodosPossiveis(result);
+					linha.remove();}
+			);
+						
+			
+		},
+		
+		retornoObterPeriodosPossiveis: function(result) {
+			
+			var items = result[0];
+			var mensagens = result[1];
+			var status = result[2];
+			
+			var combo = $("#selectDiasFuncionamento");
+			combo.clear();
+			
+			$.each(items, function(index, item) {
+				var option = document.createElement("OPTION");
+				option.innerHTML = item.value.$;
+				option.value = item.key.$;
+						
+				combo.append(option);
+		  	});
+			
 		},
 		
 		exibirDialogExclusao:function(idPdv,idCota){
@@ -362,37 +413,6 @@ var PDV = {
 					}
 				}
 			});
-		},
-		
-		enviarFluxoPrincipal: function (){
-			
-			var txtGeradorFluxoPrincipal ="";
-			var hiddenGeradorFluxoPrincipal=""; 
-			
-			if($("#txtGeradorFluxoPrincipal").val().length == 0){
-				
-				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
-				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
-				$("#selecTipoGeradorFluxo option:selected").remove();
-			}
-			else{
-				
-				txtGeradorFluxoPrincipal = $("#txtGeradorFluxoPrincipal").val();
-				hiddenGeradorFluxoPrincipal=$("#hiddenGeradorFluxoPrincipal").val(); 
-				var option = "<option value='" + hiddenGeradorFluxoPrincipal + "'>" + txtGeradorFluxoPrincipal + "</option>";
-				
-				$("#selecTipoGeradorFluxo").append(option);
-				
-				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
-				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
-				
-				$("#selecTipoGeradorFluxo option:selected").remove();
-			}
-			
-			$("#txtGeradorFluxoPrincipal").val(txtGeradorFluxoPrincipal);
-			$("#hiddenGeradorFluxoPrincipal").val(hiddenGeradorFluxoPrincipal);
-			
-			$("#selecTipoGeradorFluxo").sortOptions();
 		}
 		
 };
