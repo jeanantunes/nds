@@ -1,13 +1,6 @@
 <div id="dialog-novo" title="Alteração de Status">
 
-	<div class="effectDialog ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 2000; width: 580px;">
-		 
-		<p>
-			<span style="float: left;" class="ui-icon ui-icon-info"></span>
-			<b class="effectDialogText"></b>
-		</p>
-	</div>
+	<jsp:include page="../messagesDialog.jsp" />
 
 	<table width="535" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		<tr>

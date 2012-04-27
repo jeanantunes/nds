@@ -1,12 +1,6 @@
 <div id="dialog-novoEntregador" title="Novo Entregador" style="display:none">
 	
-	<div class="effectDialog ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 2000; width: 800px;">
-		<p>
-			<span style="float: left;" class="ui-icon ui-icon-info"></span>
-			<b class="effectDialogText"></b>
-		</p>
-	</div>
+	<jsp:include page="../messagesDialog.jsp" />
 
 	<div id="tabsNovoEntregador">
 

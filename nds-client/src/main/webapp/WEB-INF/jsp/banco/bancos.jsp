@@ -122,6 +122,10 @@
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+			
+				clearMessageDialogTimeout();
 			}
 		});
 	};
@@ -143,6 +147,7 @@
 				}
 			},
 			beforeClose: function() {
+				
 				clearMessageDialogTimeout();
 		    }
 		});	
@@ -429,13 +434,7 @@ label {
 
 	<div id="dialog-novo" title="Incluir Novo Banco">
 
-        <div id="effect-novo" name="effect-novo" class="effectDialog ui-state-highlight ui-corner-all" 
-	        style="display: none; position: absolute; z-index: 2000; width: 600px;">
-	        <p>
-		        <span style="float: left;" class="ui-icon ui-icon-info"></span>
-		        <b class="effectDialogText"></b>
-	        </p>
-        </div>
+        <jsp:include page="../messagesDialog.jsp" />
 
         <form name="formularioNovoBanco" id="formularioNovoBanco"> 
 
@@ -524,13 +523,7 @@ label {
     
     <div id="dialog-alterar" title="Alterar Banco">
     
-        <div id="effect-alterar" name="effect-alterar" class="effectDialog ui-state-highlight ui-corner-all" 
-	        style="display: none; position: absolute; z-index: 2000; width: 600px;">
-	        <p>
-		        <span style="float: left;" class="ui-icon ui-icon-info"></span>
-		        <b class="effectDialogText"></b>
-	        </p>
-        </div>
+        <jsp:include page="../messagesDialog.jsp" />
 
 	    <form name="formularioAlteraBanco" id="formularioAlteraBanco"> 
 	
