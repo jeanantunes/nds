@@ -171,7 +171,7 @@ fieldset label {
 							</li>
 							<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>
 							</li>
-							<li><a href="Cadastro/cadastro_entregador.htm">Entregador</a>
+							<li><a href="<c:url value="/cadastro/entregador"/>">Entregador</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
 							</li>
