@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 
 /**
@@ -18,15 +19,7 @@ public class RecolhimentoDTO implements Serializable {
 
 	private Long sequencia;
 	
-	private Long idProdutoEdicao;
-	
-	private Long codigoProduto;
-
-	private String descricaoProduto;
-
-	private Long numeroEdicao;
-	
-	private BigDecimal precoVenda;
+	private ProdutoEdicao produtoEdicao;
 
 	private Long idFornecedor;
 	
@@ -37,8 +30,6 @@ public class RecolhimentoDTO implements Serializable {
 	private String nomeEditor;
 
 	private TipoLancamentoParcial parcial;
-
-	private boolean possuiBrinde;
 	
 	private boolean possuiChamada;
 
@@ -54,78 +45,41 @@ public class RecolhimentoDTO implements Serializable {
 
 	private BigDecimal valorTotal;
 
-	private BigDecimal peso;
-
 	private Date novaData;
 
 	/**
-	 * @return the idProdutoEdicao
+	 * Construtor padrão.
 	 */
-	public Long getIdProdutoEdicao() {
-		return idProdutoEdicao;
+	public RecolhimentoDTO() {
+		
 	}
 
 	/**
-	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 * @return the sequencia
 	 */
-	public void setIdProdutoEdicao(Long idProdutoEdicao) {
-		this.idProdutoEdicao = idProdutoEdicao;
+	public Long getSequencia() {
+		return sequencia;
 	}
 
 	/**
-	 * @return the codigoProduto
+	 * @param sequencia the sequencia to set
 	 */
-	public Long getCodigoProduto() {
-		return codigoProduto;
+	public void setSequencia(Long sequencia) {
+		this.sequencia = sequencia;
 	}
 
 	/**
-	 * @param codigoProduto the codigoProduto to set
+	 * @return the produtoEdicao
 	 */
-	public void setCodigoProduto(Long codigoProduto) {
-		this.codigoProduto = codigoProduto;
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
 	}
 
 	/**
-	 * @return the descricaoProduto
+	 * @param produtoEdicao the produtoEdicao to set
 	 */
-	public String getDescricaoProduto() {
-		return descricaoProduto;
-	}
-
-	/**
-	 * @param descricaoProduto the descricaoProduto to set
-	 */
-	public void setDescricaoProduto(String descricaoProduto) {
-		this.descricaoProduto = descricaoProduto;
-	}
-
-	/**
-	 * @return the numeroEdicao
-	 */
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
-
-	/**
-	 * @param numeroEdicao the numeroEdicao to set
-	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
-	}
-
-	/**
-	 * @return the precoVenda
-	 */
-	public BigDecimal getPrecoVenda() {
-		return precoVenda;
-	}
-
-	/**
-	 * @param precoVenda the precoVenda to set
-	 */
-	public void setPrecoVenda(BigDecimal precoVenda) {
-		this.precoVenda = precoVenda;
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
 	}
 
 	/**
@@ -199,17 +153,17 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the possuiBrinde
+	 * @return the possuiChamada
 	 */
-	public boolean isPossuiBrinde() {
-		return possuiBrinde;
+	public boolean isPossuiChamada() {
+		return possuiChamada;
 	}
 
 	/**
-	 * @param possuiBrinde the possuiBrinde to set
+	 * @param possuiChamada the possuiChamada to set
 	 */
-	public void setPossuiBrinde(boolean possuiBrinde) {
-		this.possuiBrinde = possuiBrinde;
+	public void setPossuiChamada(boolean possuiChamada) {
+		this.possuiChamada = possuiChamada;
 	}
 
 	/**
@@ -297,20 +251,6 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the peso
-	 */
-	public BigDecimal getPeso() {
-		return peso;
-	}
-
-	/**
-	 * @param peso the peso to set
-	 */
-	public void setPeso(BigDecimal peso) {
-		this.peso = peso;
-	}
-
-	/**
 	 * @return the novaData
 	 */
 	public Date getNovaData() {
@@ -322,34 +262,6 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public void setNovaData(Date novaData) {
 		this.novaData = novaData;
-	}
-
-	/**
-	 * @return the sequencia
-	 */
-	public Long getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Long sequencia) {
-		this.sequencia = sequencia;
-	}
-
-	/**
-	 * @return the possuiChamada
-	 */
-	public boolean getPossuiChamada() {
-		return possuiChamada;
-	}
-
-	/**
-	 * @param possuiChamada the possuiChamada to set
-	 */
-	public void setPossuiChamada(boolean possuiChamada) {
-		this.possuiChamada = possuiChamada;
 	}
 	
 }

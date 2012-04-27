@@ -17,6 +17,8 @@ import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -248,20 +250,29 @@ public class MatrizRecolhimentoController {
 				
 				RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 				
+				Produto produto = new Produto();
+				
+				produto.setCodigo("" + i);
+				produto.setDescricao("Produto " + i);
+				
+				ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+				
+				produtoEdicao.setNumeroEdicao(1L);
+				produtoEdicao.setPeso(new BigDecimal(i));
+				produtoEdicao.setPossuiBrinde(false);
+				produtoEdicao.setPrecoVenda(new BigDecimal(i));
+				
+				produtoEdicao.setProduto(produto);
+				
 				dadosRecolhimento.setAtendida(BigDecimal.ZERO);
-				dadosRecolhimento.setCodigoProduto(new Long(i));
 				dadosRecolhimento.setDataLancamento(dataLancamento);
 				dadosRecolhimento.setDataRecolhimento(dataRecolhimento);
-				dadosRecolhimento.setDescricaoProduto("Produto Teste " + i);
 				dadosRecolhimento.setNomeEditor("Zé Editor " + i);
 				dadosRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
-				dadosRecolhimento.setNumeroEdicao(1L);
-				dadosRecolhimento.setPeso(new BigDecimal(i));
-				dadosRecolhimento.setPossuiBrinde(false);
-				dadosRecolhimento.setPrecoVenda(new BigDecimal(i));
 				dadosRecolhimento.setQtdeExemplares(new BigDecimal(i));
 				dadosRecolhimento.setSede(new BigDecimal(i));
 				dadosRecolhimento.setValorTotal(new BigDecimal(i));
+				dadosRecolhimento.setProdutoEdicao(produtoEdicao);
 				
 				listaDadosRecolhimento.add(dadosRecolhimento);
 			}
@@ -337,9 +348,9 @@ public class MatrizRecolhimentoController {
 						qtdeTitulosParciais++;
 					}
 					
-					if (dadosRecolhimento.getPeso() != null) {
+					if (dadosRecolhimento.getProdutoEdicao().getPeso() != null) {
 						
-						pesoTotal = pesoTotal.add(dadosRecolhimento.getPeso());
+						pesoTotal = pesoTotal.add(dadosRecolhimento.getProdutoEdicao().getPeso());
 					}
 					
 					if (dadosRecolhimento.getQtdeExemplares() != null) {
