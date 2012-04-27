@@ -11,7 +11,7 @@ public class NfeDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long idNotaFiscal;
-	private String numero;
+	private Long numero;
 	private String serie;
 	private Date emissao;
 	private String tipoEmissao;
@@ -30,16 +30,16 @@ public class NfeDTO implements Serializable {
 	/**
 	 * Obtém numero
 	 *
-	 * @return String
+	 * @return Long
 	 */
-	public String getNumero() {
+	public Long getNumero() {
 		return numero;
 	}
 	/**
 	 * Atribuí numero
 	 * @param numero 
 	 */
-	public void setNumero(String numero) {
+	public void setNumero(Long numero) {
 		this.numero = numero;
 	}
 	/**

@@ -17,7 +17,7 @@ public class NfeVO implements Serializable {
 	private Long idNotaFiscal;
 	
 	@Export(label="Nota")
-	private String numero;
+	private Long numero;
 	
 	@Export(label="Série")
 	private String serie;
@@ -71,9 +71,9 @@ public class NfeVO implements Serializable {
 	/**
 	 * Obtém numero
 	 *
-	 * @return String
+	 * @return Long
 	 */
-	public String getNumero() {
+	public Long getNumero() {
 		return numero;
 	}
 
@@ -81,7 +81,7 @@ public class NfeVO implements Serializable {
 	 * Atribuí numero
 	 * @param numero 
 	 */
-	public void setNumero(String numero) {
+	public void setNumero(Long numero) {
 		this.numero = numero;
 	}
 

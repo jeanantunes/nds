@@ -27,17 +27,17 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	@Export(label="Até")
 	private Date dataFinal;
 	
-	@Export(label="Destinatário")
-	private String destinatario;
+	@Export(label="Destinatário / Remetente")
+	private String documentoPessoa;
 	
 	@Export(label="Tipo de Nf-e")
 	private String tipoNfe;
 	
 	@Export(label="Número")
-	private String numeroNotaInicial;
+	private Long numeroNotaInicial;
 	
 	@Export(label="Até")
-	private String numeroNotaFinal;
+	private Long numeroNotaFinal;
 	
 	@Export(label="Chave de Acesso NF-e")
 	private String chaveAcesso;
@@ -128,19 +128,19 @@ public class FiltroMonitorNfeDTO implements Serializable {
 		this.dataFinal = dataFinal;
 	}
 	/**
-	 * Obtém destinatario
+	 * Obtém documentoPessoa
 	 *
 	 * @return String
 	 */
-	public String getDestinatario() {
-		return destinatario;
+	public String getDocumentoPessoa() {
+		return documentoPessoa;
 	}
 	/**
-	 * Atribuí destinatario
-	 * @param destinatario 
+	 * Atribuí documentoPessoa
+	 * @param documentoPessoa 
 	 */
-	public void setDestinatario(String destinatario) {
-		this.destinatario = destinatario;
+	public void setDocumentoPessoa(String documentoPessoa) {
+		this.documentoPessoa = documentoPessoa;
 	}
 	/**
 	 * Obtém tipoNfe
@@ -160,31 +160,31 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	/**
 	 * Obtém numeroNotaInicial
 	 *
-	 * @return String
+	 * @return Long
 	 */
-	public String getNumeroNotaInicial() {
+	public Long getNumeroNotaInicial() {
 		return numeroNotaInicial;
 	}
 	/**
 	 * Atribuí numeroNotaInicial
 	 * @param numeroNotaInicial 
 	 */
-	public void setNumeroNotaInicial(String numeroNotaInicial) {
+	public void setNumeroNotaInicial(Long numeroNotaInicial) {
 		this.numeroNotaInicial = numeroNotaInicial;
 	}
 	/**
 	 * Obtém numeroNotaFinal
 	 *
-	 * @return String
+	 * @return Long
 	 */
-	public String getNumeroNotaFinal() {
+	public Long getNumeroNotaFinal() {
 		return numeroNotaFinal;
 	}
 	/**
 	 * Atribuí numeroNotaFinal
 	 * @param numeroNotaFinal 
 	 */
-	public void setNumeroNotaFinal(String numeroNotaFinal) {
+	public void setNumeroNotaFinal(Long numeroNotaFinal) {
 		this.numeroNotaFinal = numeroNotaFinal;
 	}
 	/**

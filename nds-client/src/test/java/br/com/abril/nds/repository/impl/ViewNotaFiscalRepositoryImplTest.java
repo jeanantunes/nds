@@ -139,7 +139,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.notaFiscalEntradaFornecedorNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
-						"11011110",
+						11011110L,
 						"11111000",
 						"11101011101",
 						fornecedorDinap,
@@ -173,7 +173,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.notaFiscalEntradaCotaNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
-						"222220000202",
+						222220000L,
 						"220202022220",
 						"2000022",
 						cota,
@@ -207,7 +207,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.notaFiscalSaidaFornecedorNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
-						"33300003003",
+						333000030L,
 						"30300333330",
 						"0003303",
 						fornecedorDinap,

@@ -15,7 +15,7 @@ public class DanfeDTO implements Serializable{
 
 	private String serie;
 
-	private String numeroNF;
+	private Long numeroNF;
 
 	private Date dataEmissao;
 
@@ -177,11 +177,11 @@ public class DanfeDTO implements Serializable{
 		this.serie = serie;
 	}
 
-	public String getNumeroNF() {
+	public Long getNumeroNF() {
 		return numeroNF;
 	}
 
-	public void setNumeroNF(String numeroNF) {
+	public void setNumeroNF(Long numeroNF) {
 		this.numeroNF = numeroNF;
 	}
 
