@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -64,6 +65,9 @@ public class FiadorController {
 	
 	@Autowired
 	private PessoaService pessoaService;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 	
 	public FiadorController(Result result, HttpSession httpSession, Validator validator){
 		this.result = result;
@@ -179,7 +183,7 @@ public class FiadorController {
 	}
 	
 	@Post
-	public void buscarPessoaCPF(String cpf, boolean isFiador, String cpfConjuge){
+	public void buscarPessoaCPF(String cpf, boolean isFiador, String cpfConjuge, boolean socio){
 		
 		List<String> dados = null;
 		
@@ -191,10 +195,28 @@ public class FiadorController {
 				cpfConjuge = cpfConjuge.replace("-", "").replace(".", "");
 			}
 			
+			PessoaFisica fisica = null;
 			
-			PessoaFisica fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
+			if (!socio){
+				Fiador fiador = this.fiadorService.obterFiadorPorCPF(cpf);
+				
+				if (fiador != null){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um fiador cadastrado com esse CPF.");
+				}
+				
+				fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
+			} else {
+				
+				fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
+			}
 			
 			if (fisica != null){
+				
+				if (isFiador){
+					this.carregarTelefonesEnderecosPessoa(fisica.getId());
+				}
+				
 				dados = new ArrayList<String>();
 				
 				dados.add(fisica.getNome());
@@ -229,6 +251,28 @@ public class FiadorController {
 		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void carregarTelefonesEnderecosPessoa(Long id) {
+		
+		Set<Long> telRemover = (Set<Long>) 
+				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		Map<Integer, TelefoneAssociacaoDTO> telSalvar = (Map<Integer, TelefoneAssociacaoDTO>)
+				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		if (telSalvar != null){
+			
+			for (TelefoneAssociacaoDTO dto : telSalvar.values()){
+				
+				telRemover.add(dto.getTelefone().getId());
+			}
+		}
+		
+		List<TelefoneAssociacaoDTO> lista = this.telefoneService.buscarTelefonesPorIdPessoa(id, telRemover);
+		
+		this.httpSession.setAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO, lista);
+	}
+
 	@Post
 	public void buscarPessoaCNPJ(String cnpj){
 		List<String> dados = null;
@@ -341,7 +385,7 @@ public class FiadorController {
 			}
 		}
 		
-		Set<Integer> listaCotasDesassociar = (Set<Integer>) 
+		Set<Long> listaCotasDesassociar = (Set<Long>) 
 				this.httpSession.getAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
 		
 		Fiador fiador = new Fiador();
@@ -452,11 +496,20 @@ public class FiadorController {
 			}
 			
 			dados.add(DateUtil.formatarDataPTBR(fiador.getInicioAtividade()));
+			
+			this.carregarTelefonesEnderecosFiador(idFiador);
 		}
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
+	private void carregarTelefonesEnderecosFiador(Long idFiador) {
+		
+		List<TelefoneAssociacaoDTO> lista = this.fiadorService.buscarTelefonesFiador(idFiador, null);
+		
+		this.httpSession.setAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO, lista);
+	}
+
 	private void limparDadosSessao(){
 		this.httpSession.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 		this.httpSession.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);

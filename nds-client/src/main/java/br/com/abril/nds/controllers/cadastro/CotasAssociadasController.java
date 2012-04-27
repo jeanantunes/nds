@@ -52,7 +52,7 @@ public class CotasAssociadasController {
 		
 		private String nomeCota;
 		
-		private Integer referencia;
+		private Long referencia;
 
 		public Integer getNumeroCota() {
 			return numeroCota;
@@ -70,11 +70,11 @@ public class CotasAssociadasController {
 			this.nomeCota = nomeCota;
 		}
 
-		public Integer getReferencia() {
+		public Long getReferencia() {
 			return referencia;
 		}
 
-		public void setReferencia(Integer referencia) {
+		public void setReferencia(Long referencia) {
 			this.referencia = referencia;
 		}
 	}
@@ -92,12 +92,13 @@ public class CotasAssociadasController {
 		
 		if (idFiador != null){
 			//buscar no server
-			List<Cota> listaAssociacaoCotaFiador = this.fiadorService.obterCotasAssociadaFiador(idFiador);
+			List<Cota> listaAssociacaoCotaFiador = 
+					this.fiadorService.obterCotasAssociadaFiador(idFiador, this.obterListaAssociacaoRemover());
 			
 			for (Cota cota : listaAssociacaoCotaFiador){
 				AssociacaoCota associacaoCota = new AssociacaoCota();
 				associacaoCota.setNumeroCota(cota.getNumeroCota());
-				associacaoCota.setReferencia(cota.getId().intValue());
+				associacaoCota.setReferencia(cota.getId());
 				if (cota.getPessoa() instanceof PessoaFisica){
 					associacaoCota.setNomeCota(((PessoaFisica) cota.getPessoa()).getNome());
 				} else if (cota.getPessoa() instanceof PessoaJuridica){
@@ -135,7 +136,7 @@ public class CotasAssociadasController {
 	@Post
 	public void adicionarAssociacaoCota(Integer numeroCota, String nomeCota){
 		
-		if (numeroCota == null){
+		if (numeroCota == null || nomeCota == null || nomeCota.trim().isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota é obrigatório.");
 		}
 		
@@ -150,16 +151,20 @@ public class CotasAssociadasController {
 			}
 		}
 		
-		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
-		
-		if (idFiador != null){
-			add = !this.fiadorService.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+		if (add){
+			
+			Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+			
+			if (idFiador != null){
+				
+				add = !this.fiadorService.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+			}
 		}
 		
 		if (add){
 			
 			AssociacaoCota associacaoCota = new AssociacaoCota();
-			associacaoCota.setReferencia((int)new Date().getTime());
+			associacaoCota.setReferencia(new Long((int)new Date().getTime()));
 			associacaoCota.setNumeroCota(numeroCota);
 			associacaoCota.setNomeCota(nomeCota);
 			
@@ -172,7 +177,7 @@ public class CotasAssociadasController {
 	}
 	
 	@Post
-	public void removerAssociacaoCota(Integer referencia){
+	public void removerAssociacaoCota(Long referencia){
 		List<AssociacaoCota> listaAssociacaoSessao = this.obterListaAssociacaoSalvar();
 		
 		AssociacaoCota associacaoCotaRemover = null;
@@ -180,19 +185,22 @@ public class CotasAssociadasController {
 		for (int index = 0 ; index < listaAssociacaoSessao.size() ; index++){
 			if (listaAssociacaoSessao.get(index).getReferencia().equals(referencia)){
 				associacaoCotaRemover = listaAssociacaoSessao.remove(index);
+				
+				this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO, listaAssociacaoSessao);
 				break;
 			}
 		}
 		
+		Set<Long> setAssociacaoRemover = this.obterListaAssociacaoRemover();
 		if (associacaoCotaRemover != null && associacaoCotaRemover.getNumeroCota() != null){
-		
-			this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO, listaAssociacaoSessao);
 			
-			Set<Integer> setAssociacaoRemover = this.obterListaAssociacaoRemover();
-			setAssociacaoRemover.add(associacaoCotaRemover.getNumeroCota());
+			setAssociacaoRemover.add(associacaoCotaRemover.getReferencia().longValue());
+		} else {
 			
-			this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO, setAssociacaoRemover);
+			setAssociacaoRemover.add(referencia.longValue());
 		}
+		
+		this.httpSession.setAttribute(LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO, setAssociacaoRemover);
 		
 		this.obterAssociacoesCotaFiador(null, null);
 	}
@@ -210,12 +218,12 @@ public class CotasAssociadasController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Set<Integer> obterListaAssociacaoRemover(){
-		Set<Integer> listaAssociacao = (Set<Integer>) 
+	private Set<Long> obterListaAssociacaoRemover(){
+		Set<Long> listaAssociacao = (Set<Long>) 
 				this.httpSession.getAttribute(LISTA_COTAS_ASSOCIADAS_REMOVER_SESSAO);
 		
 		if (listaAssociacao == null){
-			listaAssociacao = new HashSet<Integer>();
+			listaAssociacao = new HashSet<Long>();
 		}
 		
 		return listaAssociacao;
@@ -230,7 +238,7 @@ public class CotasAssociadasController {
 		for (AssociacaoCota associacaoCota : lista) {
 			
 			CellModel cellModel = new CellModel(
-				associacaoCota.getReferencia(), 
+				associacaoCota.getReferencia().intValue(), 
 				associacaoCota.getNumeroCota(),
 				associacaoCota.getNomeCota()
 			);

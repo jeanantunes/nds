@@ -20,17 +20,29 @@ public class GarantiaRepositoryImpl extends AbstractRepository<Garantia, Long> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Garantia> obterGarantiasFiador(Long idFiador) {
+	public List<Garantia> obterGarantiasFiador(Long idFiador, Set<Long> idsIgnorar) {
 		Criteria criteria = this.getSession().createCriteria(Garantia.class);
 		criteria.add(Restrictions.eq("fiador.id", idFiador));
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			criteria.add(Restrictions.not(Restrictions.in("id", idsIgnorar)));
+		}
 		
 		return criteria.list();
 	}
 	
 	public void removerGarantias(Set<Long> idsGarantias){
 		
-		Query query = this.getSession().createQuery("delete from Garantia where id in :idsGarantias");
+		Query query = this.getSession().createQuery("delete from Garantia where id in (:idsGarantias) ");
 		query.setParameterList("idsGarantias", idsGarantias);
+		
+		query.executeUpdate();
+	}
+	
+	public void removerGarantiasPorFiador(Long idFiador){
+		
+		Query query = this.getSession().createQuery("delete from Garantia where fiador.id = :idFiador ");
+		query.setParameter("idFiador", idFiador);
 		
 		query.executeUpdate();
 	}

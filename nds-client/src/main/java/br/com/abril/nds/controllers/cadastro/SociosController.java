@@ -14,6 +14,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.DateUtil;
@@ -39,6 +40,9 @@ public class SociosController {
 	
 	@Autowired
 	private PessoaService pessoaService;
+	
+	@Autowired
+	private FiadorService fiadorService;
 	
 	private Result result;
 	
@@ -82,7 +86,23 @@ public class SociosController {
 		
 		if (idFiador != null){
 			
-			List<PessoaFisica> listaSocios = this.pessoaService.obterSociosPorFiador(idFiador, this.obterListaSociosRemoverSessao());
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			Set<String> cpfsIgnorar = new HashSet<String>();
+			
+			for (SocioCadastrado sc : listaSocioSalvar){
+				
+				if (sc.getPessoa().getId() != null){
+					
+					idsIgnorar.add(sc.getPessoa().getId());
+				}
+				
+				cpfsIgnorar.add(sc.getPessoa().getCpf().replace(".", "").replace("-", ""));
+			}
+			
+			idsIgnorar.addAll(this.obterListaSociosRemoverSessao());
+			
+			List<PessoaFisica> listaSocios = 
+					this.pessoaService.obterSociosPorFiador(idFiador, idsIgnorar, cpfsIgnorar);
 			
 			for (PessoaFisica p : listaSocios){
 				SocioCadastrado socioCadastrado = new SocioCadastrado();
@@ -139,6 +159,19 @@ public class SociosController {
 		
 		if (pessoa == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório.");
+		}
+		
+		List<SocioCadastrado> listaSociosSessao = this.obterListaSociosSalvarSessao();
+		
+		if (!listaSociosSessao.isEmpty()){
+			
+			for (SocioCadastrado socioCadastrado : listaSociosSessao){
+				
+				if (socioCadastrado.getPessoa().getCpf().equals(pessoa.getCpf())){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Sócio com o CPF " + Util.adicionarMascaraCPF(pessoa.getCpf()) + " já adicionado.");
+				}
+			}
 		}
 		
 		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
@@ -203,19 +236,6 @@ public class SociosController {
 			}
 		}
 		
-		List<SocioCadastrado> listaSociosSessao = this.obterListaSociosSalvarSessao();
-		
-		if (!listaSociosSessao.isEmpty()){
-			
-			for (SocioCadastrado socioCadastrado : listaSociosSessao){
-				
-				if (socioCadastrado.getPessoa().getCpf().equals(pessoa.getCpf())){
-					
-					msgsValidacao.add("Sócio com o CPF " + Util.adicionarMascaraCPF(pessoa.getCpf()) + " já adicionado.");
-				}
-			}
-		}
-		
 		if (validator.hasErrors()) {
 			
 			for (Message message : validator.getErrors()) {
@@ -225,6 +245,41 @@ public class SociosController {
 				
 				if (message.getCategory().equals("conjuge.dataNascimento")){
 					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
+				}
+			}
+		}
+		
+		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+		
+		if (idFiador != null){
+			
+			String cpf = pessoa.getCpf();
+			
+			if (cpf != null){
+				cpf = cpf.replace(".", "").replace("-", "").trim();
+			}
+			
+			if (cpf != null){
+				
+				PessoaFisica pessoaFisica = this.fiadorService.buscarSocioFiadorPorCPF(idFiador, cpf);
+				
+				if (pessoaFisica != null) {
+					
+					
+					
+					for (int index = 0 ; index < listaSociosSessao.size() ; index++){
+						
+						if (listaSociosSessao.get(index).getPessoa().getId().equals(pessoaFisica.getId())){
+							
+							
+							listaSociosSessao.get(index).setPessoa(pessoaFisica);
+							break;
+						}
+					}
+					
+					
+					
+					this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSociosSessao);
 				}
 			}
 		}
@@ -243,6 +298,8 @@ public class SociosController {
 		for (int index = 0 ; index < sociosSalvar.size() ; index++){
 			if (sociosSalvar.get(index).getReferencia().equals(referencia)){
 				socioCadastradoRemover = sociosSalvar.remove(index);
+				
+				this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, sociosSalvar);
 				break;
 			}
 		}
@@ -259,8 +316,6 @@ public class SociosController {
 		}
 		
 		this.httpSession.setAttribute(LISTA_SOCIOS_REMOVER_SESSAO, sociosRemover);
-		
-		this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, sociosSalvar);
 		
 		this.pesquisarSociosFiador(null, null);
 	}

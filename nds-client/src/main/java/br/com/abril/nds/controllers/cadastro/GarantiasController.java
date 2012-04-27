@@ -75,8 +75,21 @@ public class GarantiasController {
 		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
 		
 		if (idFiador != null){
-			//buscar no server
-			List<Garantia> listaGarantiaFiador = this.garantiaService.obterGarantiasFiador(idFiador);
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (GarantiaCadastrada ga : listaGarantiasSessao){
+				
+				if (ga.getReferencia() != null){
+					
+					idsIgnorar.add(ga.getReferencia().longValue());
+				}
+			}
+			
+			idsIgnorar.addAll(this.obterListaGarantiasRemoverSessao());
+			
+			List<Garantia> listaGarantiaFiador = 
+					this.garantiaService.obterGarantiasFiador(idFiador, idsIgnorar);
 			
 			for (Garantia g : listaGarantiaFiador){
 				GarantiaCadastrada garantiaCadastrada = new GarantiaCadastrada();
@@ -117,13 +130,33 @@ public class GarantiasController {
 		}
 		
 		if (novaGarantia){
+			
+			Garantia gar = null;
+			
+			if (referencia != null){
+				gar = this.garantiaService.buscarGarantiaPorId(referencia.longValue());
+			}
+			
 			GarantiaCadastrada novaGarantiaCadastrada = new GarantiaCadastrada();
-			novaGarantiaCadastrada.setGarantia(garantia);
-			novaGarantiaCadastrada.setReferencia((int) new Date().getTime());
+			
+			if (gar != null){
+				
+				novaGarantiaCadastrada.setReferencia(gar.getId().intValue());
+				garantia.setId(gar.getId());
+			} else {
+				
+				novaGarantiaCadastrada.setReferencia((int) new Date().getTime());
+			}
+			
 			listaGarantiasSessao.add(novaGarantiaCadastrada);
 			
-			this.httpSession.setAttribute(LISTA_GARANTIAS_SALVAR_SESSAO, listaGarantiasSessao);
+			novaGarantiaCadastrada.setGarantia(garantia);
+		} else {
+			
+			
 		}
+		
+		this.httpSession.setAttribute(LISTA_GARANTIAS_SALVAR_SESSAO, listaGarantiasSessao);
 		
 		this.obterGarantiasFiador(null, null);
 	}
@@ -165,7 +198,7 @@ public class GarantiasController {
 			garantia = this.garantiaService.buscarGarantiaPorId(referencia.longValue());
 		}
 		
-		this.result.use(Results.json()).from(garantia != null ? garantia : "", "result").recursive().serialize();
+		this.result.use(Results.json()).from(garantia != null ? garantia : "", "result").serialize();
 	}
 	
 	public void excluirGarantia(Integer referencia){
@@ -177,18 +210,23 @@ public class GarantiasController {
 		for (int index = 0 ; index < garantiasSalvar.size() ; index++){
 			if (garantiasSalvar.get(index).getReferencia().equals(referencia)){
 				garantiaCadastradaRemover = garantiasSalvar.remove(index);
+				
+				this.httpSession.setAttribute(LISTA_GARANTIAS_SALVAR_SESSAO, garantiasSalvar);
 				break;
 			}
 		}
 		
+		Set<Long> garantiasRemover = this.obterListaGarantiasRemoverSessao();
+		
 		if (garantiaCadastradaRemover != null && garantiaCadastradaRemover.getGarantia().getId() != null){
-			Set<Long> garantiasRemover = this.obterListaGarantiasRemoverSessao();
-			garantiasRemover.add(garantiaCadastradaRemover.getGarantia().getId());
 			
-			this.httpSession.setAttribute(LISTA_GARANTIAS_REMOVER_SESSAO, garantiasRemover);
+			garantiasRemover.add(garantiaCadastradaRemover.getGarantia().getId());
+		} else {
+			
+			garantiasRemover.add(referencia.longValue());
 		}
 		
-		this.httpSession.setAttribute(LISTA_GARANTIAS_SALVAR_SESSAO, garantiasSalvar);
+		this.httpSession.setAttribute(LISTA_GARANTIAS_REMOVER_SESSAO, garantiasRemover);
 		
 		this.obterGarantiasFiador(null, null);
 	}
