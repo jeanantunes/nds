@@ -58,14 +58,7 @@ function pesquisarEncalheCota(lineId){
 			parametroPesquisa,
 			function(result){
 				
-				if(result[0] == true){
-					montarColunaComFornecedor();					
-					
-				}else{
-					montarColunaSemFornecedor();
-				}
-				
-				//$(".encalheCotaGrid").flexOptions({colModel: colunas});
+				$(".encalheCotaGrid").flexToggleCol(7,result[0]);			
 				
 				$(".encalheCotaGrid").flexAddData({
 					page: 1, total: 1, rows: result[1].tableModelEncalhe.rows
@@ -117,13 +110,8 @@ function pesquisarConsignadoCota(lineId){
 			parametroPesquisa,
 			function(result){
 				
-				if(result[0] == true){
-					montarColunaConsignadoComFornecedor();
-					
-				}else{
-					montarColunaConsignadoSemFornecedor();
-				}
 				
+				$(".consignadoCotaGrid").flexToggleCol(10,result[0]);
 							
 				$(".consignadoCotaGrid").flexAddData({
 					page: 1, total: 1, rows: result[1].tableModelConsignado.rows
@@ -214,6 +202,8 @@ $(function() {
 	$("#nomeCota").autocomplete({source: ""});
 	
 	carregarItemContaCorrenteCotaGrid();
+	montarColunaConsignado();
+	montarColunaEncalheCota();
 	
 });
 
@@ -300,7 +290,7 @@ function carregarItemContaCorrenteCotaGrid() {
 
 
 
-function montarColunaComFornecedor(){
+function montarColunaEncalheCota(){
 	
 	$(".encalheCotaGrid").flexigrid({		
 		dataType : 'json',
@@ -360,7 +350,7 @@ function montarColunaComFornecedor(){
 	});
 }
 
-function montarColunaConsignadoComFornecedor(){
+function montarColunaConsignado(){
 
 $(".consignadoCotaGrid").flexigrid({
 	dataType : 'json',	
@@ -439,134 +429,8 @@ $(".consignadoCotaGrid").flexigrid({
 
 }
 
-function montarColunaConsignadoSemFornecedor(){
 
-	$(".consignadoCotaGrid").flexigrid({
-		dataType : 'json',	
-		colModel : [ {
-			display : 'Código',
-			name : 'codigoProduto',
-			width : 40,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Produto',
-			name : 'nomeProduto',
-			width : 90,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Edição',
-			name : 'numeroEdicao',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Preço Capa R$',
-			name : 'precoCapa',
-			width : 80,
-			sortable : true,
-			align : 'right',
-		}, {
-			display : 'Preço c/ Desc. R$',
-			name : 'precoComDesconto',
-			width : 60,
-			sortable : true,
-			align : 'right',
-		}, {
-			display : 'Reparte Sugerido',
-			name : 'reparteSugerido',
-			width : 82,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Reparte Final',
-			name : 'reparteFinal',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Diferença',
-			name : 'diferenca',
-			width : 45,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Motivo',
-			name : 'motivo',
-			width : 80,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Total R$',
-			name : 'total',
-			width : 50,
-			sortable : true,
-			align : 'right'
-		}],
-		sortname : "codigo",
-		sortorder : "asc",
-		width : 820,
-		height : 200
-	});
 
-	}
-
-function montarColunaSemFornecedor(){
-	
-	$(".encalheCotaGrid").flexigrid({
-		
-		dataType : 'json',
-		colModel : [ {
-			display : 'Código',
-			name : 'codigoProduto',
-			width : 50,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Produto',
-			name : 'nomeProduto',
-			width : 130,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Edição',
-			name : 'numeroEdicao',
-			width : 70,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Preço Capa R$',
-			name : 'precoCapa',
-			width : 95,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Preço c/ Desc. R$',
-			name : 'precoComDesconto',
-			width : 70,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Encalhe',
-			name : 'encalhe',
-			width : 70,
-			sortable : true,
-			align : 'right',
-		}, {
-			display : 'Total R$',
-			name : 'total',
-			width : 75,
-			sortable : true,
-			align : 'right'
-		}],
-		sortname : "codigoProduto",
-		sortorder : "asc",
-		width : 800,
-		height : 200		
-	});
-	
-}
 
 
 function popup_consignado() {

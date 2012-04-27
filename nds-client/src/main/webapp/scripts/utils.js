@@ -30,69 +30,93 @@ $(document).ready(function(){
 
 function exibirMensagem(tipoMensagem, mensagens) {
 
-	var campoTexto = $("#idTextoMensagem");
-
-	campoTexto.html('');
-
-	$.each(mensagens, function(index, value) {
-		campoTexto.append(value + '</br>');
-	});
-
-	$("#effect").removeClass("ui-state-error");
-	$("#effect").removeClass("ui-state-highlight");
-	$("#effect").removeClass("ui-state-default");
+	var divSuccess = $("#effectSuccess");
+	var divWarning = $("#effectWarning");
+	var divError = $("#effectError");
 	
-	if (tipoMensagem == "SUCCESS") {
-		$("#effect").addClass("ui-state-default");
-	} else if (tipoMensagem == "WARNING"){
-		$("#effect").addClass("ui-state-highlight");
-	} else if (tipoMensagem == "ERROR"){
-		$("#effect").addClass("ui-state-error");
-	}
+	var textSuccess = $("#idTextSuccess");
+	var textWarning = $("#idTextWarning");
+	var textError = $("#idTextError");
 	
-	$('#effect').show(1000, esconde("effect"));
+	montarExibicaoMensagem(tipoMensagem, mensagens,
+						   divSuccess, textSuccess,
+						   divWarning, textWarning,
+						   divError, textError);
 }
 
 function exibirMensagemDialog(tipoMensagem, mensagens) {
 	
-	var campoTexto = $(".effectDialogText");
+	var divSuccess = $("div[name='effectSuccessDialog']");
+	var divWarning = $("div[name='effectWarningDialog']");
+	var divError = $("div[name='effectErrorDialog']");
+	
+	var textSuccess = $("b[name='idTextSuccessDialog']");
+	var textWarning = $("b[name='idTextWarningDialog']");
+	var textError = $("b[name='idTextErrorDialog']");
+	
+	montarExibicaoMensagem(tipoMensagem, mensagens,
+						   divSuccess, textSuccess,
+						   divWarning, textWarning,
+						   divError, textError);
+}
 
+function montarExibicaoMensagem(tipoMensagem, mensagens,
+								divSuccess, textSuccess,
+							    divWarning, textWarning,
+							    divError, textError) {
+	
+	var campoTexto;
+
+	if (tipoMensagem == "SUCCESS") {
+		
+		campoTexto = $(textSuccess);
+		
+		montarTextoMensagem(campoTexto, mensagens);
+		
+		$(divSuccess).show(1000, esconde(divSuccess));
+		
+	} else if (tipoMensagem == "WARNING") {
+		
+		campoTexto = $(textWarning);
+		
+		montarTextoMensagem(campoTexto, mensagens);
+		
+		$(divWarning).show(1000, esconde(divWarning));
+		
+	} else if (tipoMensagem == "ERROR") {
+		
+		campoTexto = $(textError);
+		
+		montarTextoMensagem(campoTexto, mensagens);
+		
+		$(divError).show(1000, esconde(divError));
+	}
+}
+
+function montarTextoMensagem(campoTexto, mensagens) {
+	
 	campoTexto.html('');
 
 	$.each(mensagens, function(index, value) {
 		campoTexto.append(value + '</br>');
 	});
-
-	$(".effectDialog").removeClass("ui-state-error");
-	$(".effectDialog").removeClass("ui-state-highlight");
-	$(".effectDialog").removeClass("ui-state-default");
-	
-	if (tipoMensagem == "SUCCESS") {
-		$(".effectDialog").addClass("ui-state-default");
-	} else if (tipoMensagem == "WARNING"){
-		$(".effectDialog").addClass("ui-state-highlight");
-	} else if (tipoMensagem == "ERROR"){
-		$(".effectDialog").addClass("ui-state-error");
-	}
-	
-	$('.effectDialog').show(1000, escondeDialog("effectDialog"));
 }
 
 function isNumeric(a){
 	return !isNaN(parseFloat(a))&&isFinite(a);
 }
 
-function esconde(idDiv) {
+function esconde(div) {
 	messageTimeout = 
 		setTimeout(function() {
-			$('#' + idDiv).removeAttr("style").fadeOut();
+			$(div).removeAttr("style").fadeOut();
 		}, 5000);
 }
 
-function escondeDialog(idDiv) {
+function escondeDialog(div) {
 	messageDialogTimeout =
 		setTimeout(function() {
-			$('.' + idDiv).removeAttr("style").fadeOut();
+			$(div).removeAttr("style").fadeOut();
 		}, 5000);
 }
 
@@ -100,14 +124,18 @@ function clearMessageTimeout() {
 	
 	clearTimeout(messageTimeout);
 	
-	$('#effect').hide();
+	$('#effectSuccess').hide();
+	$('#effectWarning').hide();
+	$('#effectError').hide();
 }
 
 function clearMessageDialogTimeout() {
 	
 	clearTimeout(messageDialogTimeout);
 	
-	$('.effectDialog').hide();
+	$("div[name='effectSuccessDialog']").hide();
+	$("div[name='effectWarningDialog']").hide();
+	$("div[name='effectErrorDialog']").hide();
 }
 
 function montarComboBox(result, incluirTodos) {

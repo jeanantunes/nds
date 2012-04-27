@@ -1,11 +1,15 @@
 package br.com.abril.nds.repository.impl;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
 /**
@@ -53,6 +57,18 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 	    }
 			
 		return query.list();
+	}
+	
+	
+	public List<Box> busca(String nome,TipoBox tipoBox, boolean postoAvancado , String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+		
+		
+		Criteria criteria =  getSession().createCriteria(Box.class);
+		
+		//criteria.addOrder(Order.asc(propertyName));
+		
+		return criteria.list();
+		
 	}
 
 }

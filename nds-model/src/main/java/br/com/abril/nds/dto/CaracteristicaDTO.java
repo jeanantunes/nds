@@ -2,8 +2,15 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+
 public class CaracteristicaDTO implements Serializable {
 	
+	/**
+	 * Serial UID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private boolean pontoPrincipal;
 	
 	private boolean balcaoCentral;
@@ -21,6 +28,24 @@ public class CaracteristicaDTO implements Serializable {
 	private Long areaInfluencia;
 	
 	private Long cluster;
+	
+	private TipoCaracteristicaSegmentacaoPDV tipoCaracteristicaSegmentacaoPDV;
+	
+
+	/**
+	 * @return the tipoCaracteristicaSegmentacaoPDV
+	 */
+	public TipoCaracteristicaSegmentacaoPDV getTipoCaracteristicaSegmentacaoPDV() {
+		return tipoCaracteristicaSegmentacaoPDV;
+	}
+
+	/**
+	 * @param tipoCaracteristicaSegmentacaoPDV the tipoCaracteristicaSegmentacaoPDV to set
+	 */
+	public void setTipoCaracteristicaSegmentacaoPDV(
+			TipoCaracteristicaSegmentacaoPDV tipoCaracteristicaSegmentacaoPDV) {
+		this.tipoCaracteristicaSegmentacaoPDV = tipoCaracteristicaSegmentacaoPDV;
+	}
 
 	/**
 	 * @return the pontoPrincipal
