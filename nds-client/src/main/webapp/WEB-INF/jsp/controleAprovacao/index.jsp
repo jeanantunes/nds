@@ -245,28 +245,14 @@
 
 	<div id="dialog-confirm" title="Aprovar Solicitação">
 		
-		<div class="effectDialog ui-state-highlight ui-corner-all" 
-			 style="display: none; position: absolute; z-index: 2000; width: 250px;">
-			 
-			<p>
-				<span style="float: left;" class="ui-icon ui-icon-info"></span>
-				<b class="effectDialogText"></b>
-			</p>
-		</div>
+		<jsp:include page="../messagesDialog.jsp" />
 		
 		<p>Confirmar Aprovação?</p>
 	</div>
 
 	<div id="dialog-rejeitar" title="Rejeitar Solicitação">
 		
-		<div class="effectDialog ui-state-highlight ui-corner-all" 
-			 style="display: none; position: absolute; z-index: 2000; width: 420px;">
-			 
-			<p>
-				<span style="float: left;" class="ui-icon ui-icon-info"></span>
-				<b class="effectDialogText"></b>
-			</p>
-		</div>
+		<jsp:include page="../messagesDialog.jsp" />
 		
 		<p>
 			<strong>Confirmar Rejeição?</strong>
