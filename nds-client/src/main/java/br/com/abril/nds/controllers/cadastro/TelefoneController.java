@@ -306,7 +306,7 @@ public class TelefoneController {
 			
 			for (Integer key : telefones.keySet()){
 				
-				if (telefones.get(key).isPrincipal() && (referencia != null && referencia == telefones.get(key).getReferencia())){
+				if (telefones.get(key).isPrincipal() && (referencia != null && !referencia.equals(telefones.get(key).getReferencia()))){
 					
 					listaValidacao.add("Já existe um telefone principal.");
 					break;
@@ -317,7 +317,7 @@ public class TelefoneController {
 			
 			for (TelefoneAssociacaoDTO dto : listaExibicao){
 				
-				if (dto.isPrincipal() && (referencia != null && referencia == dto.getReferencia())){
+				if (dto.isPrincipal() && (referencia != null && !referencia.equals(dto.getReferencia()))){
 					
 					listaValidacao.add("Já existe um telefone principal.");
 					break;

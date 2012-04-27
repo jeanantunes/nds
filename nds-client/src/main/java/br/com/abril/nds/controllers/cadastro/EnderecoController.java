@@ -122,12 +122,12 @@ public class EnderecoController {
 
 		validarDadosEndereco(enderecoAssociacao);
 
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
-
 		if (enderecoAssociacao.isEnderecoPrincipal()) {
 
-			validarExistenciaEnderecoPrincipal(listaEnderecoAssociacao, enderecoAssociacao);
+			validarExistenciaEnderecoPrincipal(enderecoAssociacao);
 		}
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
 		if (enderecoAssociacao.getId() != null){
 			
@@ -446,10 +446,21 @@ public class EnderecoController {
 	 * 
 	 * @param listaEnderecoAssociacao
 	 */
-	private void validarExistenciaEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacao,
-													EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
+	private void validarExistenciaEnderecoPrincipal(EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
 
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
+		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+
+			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
+
+				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
+			}
+		}
+		
+		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaExibir) {
 
 			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
 
