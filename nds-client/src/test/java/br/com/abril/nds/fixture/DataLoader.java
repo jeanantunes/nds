@@ -989,31 +989,31 @@ public class DataLoader {
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaGuilherme, bancoHSBC, dividaGuilherme3,1);
 		
-		cobrancaMurilo1 = Fixture.boleto("1234567890126", "123", "1234567890126123",
+		cobrancaMurilo1 = Fixture.boleto("1234567890126", "41234", "1234567890126123",
                 new Date(),  Fixture.criarData(4, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMurilo, bancoHSBC, dividaMurilo1,1);
 		
-		cobrancaMurilo2 = Fixture.boleto("1234567890127", "123", "1234567890127123",
+		cobrancaMurilo2 = Fixture.boleto("1234567890127", "4123", "1234567890127123",
                 new Date(),  Fixture.criarData(5, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMurilo, bancoHSBC, dividaMurilo2,1);
 		
-		cobrancaMurilo3 = Fixture.boleto("1234567890128", "123", "1234567890128123",
+		cobrancaMurilo3 = Fixture.boleto("1234567890128", "4123", "1234567890128123",
                 new Date(),  Fixture.criarData(6, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMurilo, bancoHSBC, dividaMurilo3,1);
 		
-		cobrancaMariana1 = Fixture.boleto("1234567890129", "123", "1234567890129123",
+		cobrancaMariana1 = Fixture.boleto("1234567890129", "4123", "1234567890129123",
                 new Date(),  Fixture.criarData(7, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMariana, bancoHSBC, dividaMariana1,1);
 		
-		cobrancaMariana2 = Fixture.boleto("1234567890120", "123", "1234567890120123",
+		cobrancaMariana2 = Fixture.boleto("1234567890120", "4123", "1234567890120123",
                 new Date(),  Fixture.criarData(8, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
