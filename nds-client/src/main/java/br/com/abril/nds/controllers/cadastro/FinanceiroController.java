@@ -1,8 +1,10 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import br.com.abril.nds.service.FinanceiroService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -48,6 +51,8 @@ public class FinanceiroController {
 	
 	@Autowired
 	private Validator validator;	
+    
+    private HttpServletResponse httpResponse;
 	
 	private static List<ItemDTO<Integer,String>> listaBancos =  new ArrayList<ItemDTO<Integer,String>>();
 
@@ -59,15 +64,30 @@ public class FinanceiroController {
 	 */
 	public static String ATRIBUTO_SESSAO_FINANCEIRO_SALVAR = "financeiroSalvarSessao";
 	
-	public FinanceiroController(Result result) {
+	/**
+	 * Construtor da classe
+	 * @param result
+	 * @param session
+	 * @param httpResponse
+	 */
+	public FinanceiroController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
 		this.result = result;
+		this.session = httpSession;
+		this.httpResponse = httpResponse;
 	}
-
-	@Path("/")
+	
+	/**
+	 * Método de chamada da página
+	 * Pré-carrega itens da pagina com informações default.
+	 */
+	@Get
 	public void index() {
 		preCarregamento();
 	}
 	
+	/**
+	 * Método de Pré-carregamento de itens da pagina com informações default.
+	 */
 	public void preCarregamento(){
 		listaBancos = this.bancoService.getComboBancos();
 		listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
@@ -198,6 +218,27 @@ public class FinanceiroController {
 	    this.session.removeAttribute(this.ATRIBUTO_SESSAO_FINANCEIRO_SALVAR);
     }
 
+    
+    /**
+	 * Exibe o contrato em formato PDF.
+	 * @param idCota
+	 * @throws Exception
+	 */
+	@Get
+	@Path("/imprimeContrato")
+	public void imprimeContrato(Long idCota) throws Exception{
+
+		byte[] b = this.financeiroService.geraImpressaoContrato(idCota);
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+
+		httpResponse.flushBuffer();
+	}
+    
 	
 	/**
 	 * Método responsável pela validação dos dados e rotinas.

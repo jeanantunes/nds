@@ -663,14 +663,14 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		nfSaidaFornecedor.setEmitente(pessoaJuridica);
 		nfSaidaFornecedor.setFornecedor(fornecedor);
 
-		nfSaidaFornecedor.setNumero(numeroNF.toString());
+		nfSaidaFornecedor.setNumero(numeroNF);
 		nfSaidaFornecedor.setSerie(serieNF);
 		nfSaidaFornecedor.setStatusEmissao(statusNF);
 		nfSaidaFornecedor.setTipoNotaFiscal(tipoNF);
 		
 		notaFiscalSaidaRepository.adicionar(nfSaidaFornecedor);
 		
-		nfSaidaFornecedor.setNumero(nfSaidaFornecedor.getId().toString());
+		nfSaidaFornecedor.setNumero(nfSaidaFornecedor.getId());
 		nfSaidaFornecedor.setSerie(nfSaidaFornecedor.getId().toString());
 		notaFiscalSaidaRepository.alterar(nfSaidaFornecedor);
 		

@@ -353,7 +353,7 @@ $(function() {
 						id="dataFinal" style="width: 80px;" />
 					</td>
 
-					<td colspan="3">Destinatário:</td>
+					<td colspan="3">Dest./Remet.:</td>
 
 					<td width="135">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -384,9 +384,9 @@ $(function() {
 					<td>	
 						<select name="tipoNfe" id="tipoNfe" style="width: 120px;">
 							<option selected="selected"></option>
-							<option>Todos</option>
-							<option>Entrada</option>
-							<option>Saída</option>
+							<option value="">Todos</option>
+							<option value="ENTRADA">Entrada</option>
+							<option value="SAIDA">Saída</option>
 						</select>
 					</td>
 					<td>Número:</td>

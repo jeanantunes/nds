@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -65,19 +66,24 @@ public interface CotaService {
 	 * Suspende lista de cotas
 	 * 
 	 * @param idCotas - código das cotas a serem suspensas
+	 * @param idUsuario - identificador do usuário
+	 * @param motivoAlteracaoSituacao - motivo de alteração da situação
 	 * 
 	 * @return Lista de Cotas suspensas
-	 */List<Cota>suspenderCotas(List<Long> idCotas, Long idUsuario);
+	 */
+	List<Cota>suspenderCotas(List<Long> idCotas, Long idUsuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao);
 	
 	/**
 	 * Suspende cota
 	 * 
 	 * 
 	 * @param idCota - Código da cota a ser suspensa
+	 * @param usuario - usuário
+	 * @param motivoAlteracaoSituacao - motivo de alteração da situação
 	 * 
 	 * @return Cota - cota suspensa
 	 */
-	Cota suspenderCota(Long idCota, Usuario usuario);
+	Cota suspenderCota(Long idCota, Usuario usuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao);
 
 	/**
 	 * Suspende lista de cotas e retorna dados básicos das cota suspensas com 

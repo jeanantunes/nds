@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratoTransporte" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="280"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="prazo" class="java.lang.String">
+		<fieldDescription><![CDATA[prazo]]></fieldDescription>
+	</field>
+	<field name="termino" class="java.util.Date">
+		<fieldDescription><![CDATA[termino]]></fieldDescription>
+	</field>
+	<field name="inicio" class="java.util.Date">
+		<fieldDescription><![CDATA[inicio]]></fieldDescription>
+	</field>
+	<field name="avisoPrevio" class="java.lang.String">
+		<fieldDescription><![CDATA[avisoPrevio]]></fieldDescription>
+	</field>
+	<field name="contratante" class="br.com.abril.nds.dto.PessoaContratoDTO">
+		<fieldDescription><![CDATA[contratante]]></fieldDescription>
+	</field>
+	<field name="contratada" class="br.com.abril.nds.dto.PessoaContratoDTO">
+		<fieldDescription><![CDATA[contratada]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="33" y="19" width="496" height="34"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE TRANSPORTE DE REVISTAS
+QUADRO RESUMO
+]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="367" splitType="Stretch">
+			<textField>
+				<reportElement x="17" y="71" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getNome()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="107" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getDocumento()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="143" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getTipoPessoa()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="178" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getEndereco()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="212" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getNomeGestor()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="247" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getTelefones()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="283" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getEmailGestor()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="319" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getEnderecoGestor()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="71" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getNome()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="283" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getEmailGestor()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="178" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getEndereco()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="247" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getTelefones()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="107" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getDocumento()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="143" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getTipoPessoa()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="212" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getNomeGestor()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="319" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratante}.getEnderecoGestor()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="25" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{avisoPrevio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="25" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{prazo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="25" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{termino}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="275" y="25" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{inicio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

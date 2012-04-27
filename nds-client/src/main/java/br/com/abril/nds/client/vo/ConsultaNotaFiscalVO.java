@@ -14,15 +14,15 @@ import br.com.abril.nds.util.export.Exportable;
  *
  */
 @Exportable
-public class ConsultaNotaFiscalVO implements Serializable {
 
+public class ConsultaNotaFiscalVO implements Serializable {
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1614668906130031084L;
 	
 	@Export(label = "Número da Nota")
-	private String numeroNota;
+	private Long numeroNota;
 	
 	@Export(label = "Data de Emissão", alignment = Alignment.CENTER)
 	private Date dataEmissao;
@@ -49,14 +49,14 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	/**
 	 * @return the numeroNota
 	 */
-	public String getNumeroNota() {
+	public Long getNumeroNota() {
 		return numeroNota;
 	}
 
 	/**
 	 * @param numeroNota the numeroNota to set
 	 */
-	public void setNumeroNota(String numeroNota) {
+	public void setNumeroNota(Long numeroNota) {
 		this.numeroNota = numeroNota;
 	}
 

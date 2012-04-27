@@ -1,9 +1,16 @@
 package br.com.abril.nds.service.impl;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +22,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancaria;
@@ -34,6 +42,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.util.TipoMensagem;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -62,10 +71,8 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Autowired
 	private ConcentracaoCobrancaCotaRepository concentracaoCobrancaRepository;
 	
-	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-	
 	
 	
 	/**
@@ -497,5 +504,46 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		return contrato;
 	}
 
+	
+
+	/**
+	 * Gera um relatório à partir de um Objeto com atributos e listas definidas
+	 * @param list
+	 * @param pathJasper
+	 * @return Array de bytes do relatório gerado
+	 * @throws JRException
+	 * @throws URISyntaxException
+	 */
+	private byte[] gerarDocumentoIreport(List<ContratoTransporteDTO> list, String pathJasper) throws JRException, URISyntaxException{
+
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		
+		URL url = Thread.currentThread().getContextClassLoader().getResource(pathJasper);
+		
+		String path = url.toURI().getPath();
+		
+		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
+	}
+	
+	
+	
+	@Override
+	@Transactional(readOnly = true)
+	public byte[] geraImpressaoContrato(Long idCota){
+		
+		byte[] relatorio=null;
+
+		ContratoTransporteDTO contratoDTO = this.obtemContratoTransporte(idCota);
+		List<ContratoTransporteDTO> listaContratos = new ArrayList<ContratoTransporteDTO>();
+		listaContratos.add(contratoDTO);
+		try{
+		    relatorio = this.gerarDocumentoIreport(listaContratos, "/reports/contratoTransporte.jasper");
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Contrato.");
+		}
+		return relatorio;
+	}
+	
 
 }

@@ -9,6 +9,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 
 public class PdvDTO implements Serializable {
 
@@ -19,6 +20,8 @@ public class PdvDTO implements Serializable {
 
 	private Long id;
 	
+	private Integer numeroCota;
+	
 	private StatusPDV statusPDV;
 	
 	private Date dataInicio;
@@ -26,6 +29,12 @@ public class PdvDTO implements Serializable {
 	private String nomePDV ;
 	
 	private String contato;
+	
+	private String endereco;
+	
+	private String telefone;
+	
+	private boolean principal;
 	
 	private String site;
 	
@@ -49,9 +58,11 @@ public class PdvDTO implements Serializable {
 	
 	private String nomeLicenca;
 	
+	private boolean dentroDeOutroEstabelecimento;
+	
 	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
 	
-	private List<PeriodoFuncionamentoDTO> periodosFuncionamento;
+	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
 	
 	private EnderecoPdvDTO enderecoPdvDTO;
 	
@@ -66,7 +77,9 @@ public class PdvDTO implements Serializable {
     private Long geradorFluxoPrincipal;
     
     private List<Long> maps;
-
+    
+    private TipoPontoPDV tipoPontoPDV;
+    
 	/**
 	 * @return the id
 	 */
@@ -80,6 +93,8 @@ public class PdvDTO implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	
 
 	/**
 	 * @return the enderecoPdvDTO
@@ -406,12 +421,98 @@ public class PdvDTO implements Serializable {
 		this.geradorFluxoPrincipal = geradorFluxoPrincipal;
 	}
 
-	public List<PeriodoFuncionamentoDTO> getPeriodosFuncionamento() {
-		return periodosFuncionamento;
+	/**
+	 * @return the endereco
+	 */
+	public String getEndereco() {
+		return endereco;
 	}
 
-	public void setPeriodosFuncionamento(List<PeriodoFuncionamentoDTO> periodosFuncionamento) {
-		this.periodosFuncionamento = periodosFuncionamento;
+	/**
+	 * @param endereco the endereco to set
+	 */
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
 	}
+
+	/**
+	 * @return the telefone
+	 */
+	public String getTelefone() {
+		return telefone;
+	}
+
+	/**
+	 * @param telefone the telefone to set
+	 */
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	/**
+	 * @return the principal
+	 */
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	/**
+	 * @param principal the principal to set
+	 */
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
+
+	/**
+	 * @return the tipoPontoPDV
+	 */
+	public TipoPontoPDV getTipoPontoPDV() {
+		return tipoPontoPDV;
+	}
+
+	/**
+	 * @param tipoPontoPDV the tipoPontoPDV to set
+	 */
+	public void setTipoPontoPDV(TipoPontoPDV tipoPontoPDV) {
+		this.tipoPontoPDV = tipoPontoPDV;
+	}
+
+	/**
+	 * @return the dentroDeOutroEstabelecimento
+	 */
+	public boolean isDentroDeOutroEstabelecimento() {
+		return dentroDeOutroEstabelecimento;
+	}
+
+	/**
+	 * @param dentroDeOutroEstabelecimento the dentroDeOutroEstabelecimento to set
+	 */
+	public void setDentroDeOutroEstabelecimento(boolean dentroDeOutroEstabelecimento) {
+		this.dentroDeOutroEstabelecimento = dentroDeOutroEstabelecimento;
+	}
+
+	/**
+	 * @return the numeroCota
+	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	/**
+	 * @param numeroCota the numeroCota to set
+	 */
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public List<PeriodoFuncionamentoDTO> getPeriodosFuncionamentoDTO() {
+		return periodosFuncionamentoDTO;
+	}
+
+	public void setPeriodosFuncionamentoDTO(List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO) {
+		this.periodosFuncionamentoDTO = periodosFuncionamentoDTO;
+	}
+
+	
 	
 }

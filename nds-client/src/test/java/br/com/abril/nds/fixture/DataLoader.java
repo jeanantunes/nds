@@ -68,7 +68,6 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -111,7 +110,6 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
 import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
@@ -989,31 +987,31 @@ public class DataLoader {
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaGuilherme, bancoHSBC, dividaGuilherme3,1);
 		
-		cobrancaMurilo1 = Fixture.boleto("1234567890126", "123", "1234567890126123",
+		cobrancaMurilo1 = Fixture.boleto("1234567890126", "41234", "1234567890126123",
                 new Date(),  Fixture.criarData(4, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMurilo, bancoHSBC, dividaMurilo1,1);
 		
-		cobrancaMurilo2 = Fixture.boleto("1234567890127", "123", "1234567890127123",
+		cobrancaMurilo2 = Fixture.boleto("1234567890127", "4123", "1234567890127123",
                 new Date(),  Fixture.criarData(5, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMurilo, bancoHSBC, dividaMurilo2,1);
 		
-		cobrancaMurilo3 = Fixture.boleto("1234567890128", "123", "1234567890128123",
+		cobrancaMurilo3 = Fixture.boleto("1234567890128", "4123", "1234567890128123",
                 new Date(),  Fixture.criarData(6, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMurilo, bancoHSBC, dividaMurilo3,1);
 		
-		cobrancaMariana1 = Fixture.boleto("1234567890129", "123", "1234567890129123",
+		cobrancaMariana1 = Fixture.boleto("1234567890129", "4123", "1234567890129123",
                 new Date(),  Fixture.criarData(7, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaMariana, bancoHSBC, dividaMariana1,1);
 		
-		cobrancaMariana2 = Fixture.boleto("1234567890120", "123", "1234567890120123",
+		cobrancaMariana2 = Fixture.boleto("1234567890120", "4123", "1234567890120123",
                 new Date(),  Fixture.criarData(8, 1, 2010),
                 new Date(), BigDecimal.ZERO, new BigDecimal(200),
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
@@ -3378,106 +3376,129 @@ public class DataLoader {
 		
 		save(session, produtoEdicao91, produtoEdicao92, produtoEdicao93);
 		
-		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = 
-				Fixture.notaFiscalEntradaFornecedorNFE(
-						cfop5102, 
-						fornecedorDinap.getJuridica(),
-						"11011110",
-						"11111000",
-						"11101011101",
-						fornecedorDinap,
-						StatusEmissaoNfe.NFE_AUTORIZADA,
-						TipoEmissaoNfe.CONTINGENCIA_DPEC,
-						
-						tipoNotaFiscalRecebimento,
-						
-						usuarioJoao, 
-						BigDecimal.TEN, 
-						BigDecimal.ZERO, 
-						BigDecimal.TEN,
-						true);
+		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = null;
 		
-		save(session, notaFiscalEntradaFornecedorNFE);
+		int contador = 0;
+		
+		contador = 0;
+		
+		while(contador++<10) {
 
-		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE = 
-				Fixture.itemNotaFiscal(
-						produtoEdicao91, 
-						usuarioJoao,
-						notaFiscalEntradaFornecedorNFE, 
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+			notaFiscalEntradaFornecedorNFE = Fixture.notaFiscalEntradaFornecedorNFE(
+					cfop5102, 
+					fornecedorDinap.getJuridica(),
+					11011110L+contador,
+					"11111000"+contador,
+					"11101011101"+contador,
+					fornecedorDinap,
+					StatusEmissaoNfe.NFE_AUTORIZADA,
+					TipoEmissaoNfe.CONTINGENCIA_DPEC,
+					
+					tipoNotaFiscalRecebimento,
+					
+					usuarioJoao, 
+					BigDecimal.TEN, 
+					BigDecimal.ZERO, 
+					BigDecimal.TEN,
+					true);
+	
+			save(session, notaFiscalEntradaFornecedorNFE);
 		
-		save(session, itemNotaFiscalEntradaNFE);
+			ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE = 
+					Fixture.itemNotaFiscal(
+							produtoEdicao91, 
+							usuarioJoao,
+							notaFiscalEntradaFornecedorNFE, 
+							Fixture.criarData(22, Calendar.FEBRUARY,2012),
+							Fixture.criarData(22, Calendar.FEBRUARY,2012),
+							TipoLancamento.LANCAMENTO,
+							new BigDecimal(50));
+			
+			save(session, itemNotaFiscalEntradaNFE);
+
+			
+		}
 		
 		
 		///// ENTRADA COTA
 		
-		NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = 
-				Fixture.notaFiscalEntradaCotaNFE(
-						cfop5102, 
-						fornecedorDinap.getJuridica(),
-						"222220000202",
-						"220202022220",
-						"2000022",
-						cotaJohnyConsultaEncalhe,
-						StatusEmissaoNfe.NFE_AUTORIZADA,
-						TipoEmissaoNfe.CONTINGENCIA_DPEC,
-						
-						tipoNotaFiscalRecebimento,
-						
-						usuarioJoao, 
-						BigDecimal.TEN, 
-						BigDecimal.ZERO, 
-						BigDecimal.TEN,
-						true);
+		NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = null;
 		
+		contador = 0;
 		
-		save(session, notaFiscalEntradaCotaNFE);
+		while(contador++<10) {
+			
+			notaFiscalEntradaCotaNFE = 
+					Fixture.notaFiscalEntradaCotaNFE(
+							cfop5102, 
+							fornecedorDinap.getJuridica(),
+							222220000202L+contador,
+							"220202022220"+contador,
+							"2000022"+contador,
+							cotaJohnyConsultaEncalhe,
+							StatusEmissaoNfe.NFE_AUTORIZADA,
+							TipoEmissaoNfe.CONTINGENCIA_DPEC,
+							tipoNotaFiscalRecebimento,
+							usuarioJoao, 
+							BigDecimal.TEN, 
+							BigDecimal.ZERO, 
+							BigDecimal.TEN,
+							true);
+			
+			
+			save(session, notaFiscalEntradaCotaNFE);
 
-		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
-				Fixture.itemNotaFiscal(
-						
-						produtoEdicao91, 
-						
-						usuarioJoao,
-						notaFiscalEntradaCotaNFE, 
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+			ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
+					Fixture.itemNotaFiscal(
+							
+							produtoEdicao91, 
+							
+							usuarioJoao,
+							notaFiscalEntradaCotaNFE, 
+							Fixture.criarData(22, Calendar.FEBRUARY,2012),
+							Fixture.criarData(22, Calendar.FEBRUARY,2012),
+							TipoLancamento.LANCAMENTO,
+							new BigDecimal(50));
+			
+			save(session, itemNotaFiscalEntradaNFE_2);			
+		}
+
 		
-		save(session, itemNotaFiscalEntradaNFE_2);
 		
 		///// SAIDA FORNECEDOR
 	
-		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE = 
-				Fixture.notaFiscalSaidaFornecedorNFE(
-						cfop5102, 
-						fornecedorDinap.getJuridica(),
-						"33300003003",
-						"30300333330",
-						"0003303",
-						fornecedorDinap,
-						StatusEmissaoNfe.NFE_AUTORIZADA,
-						TipoEmissaoNfe.CONTINGENCIA_DPEC,
-						
-						tipoNotaFiscalRecebimento,
-						
-						usuarioJoao, 
-						BigDecimal.TEN, 
-						BigDecimal.ZERO, 
-						BigDecimal.TEN,
-						true);
-		
-		
-		save(session, notaFiscalSaidaFornecedorNFE);
+		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE = null;
 
-		ItemNotaFiscalSaida itemNotaFiscalSaida = 
-				Fixture.itemNotaFiscalSaida(produtoEdicao91, notaFiscalSaidaFornecedorNFE, BigDecimal.TEN);
+		contador = 0;
 		
-		save(session, itemNotaFiscalSaida);
+		while(contador++<10) {
+
+			notaFiscalSaidaFornecedorNFE = Fixture.notaFiscalSaidaFornecedorNFE(
+					cfop5102, 
+					fornecedorDinap.getJuridica(),
+					33300003003L+contador,
+					"30300333330"+contador,
+					"0003303"+contador,
+					fornecedorDinap,
+					StatusEmissaoNfe.NFE_AUTORIZADA,
+					TipoEmissaoNfe.CONTINGENCIA_DPEC,
+					tipoNotaFiscalRecebimento,
+					usuarioJoao, 
+					BigDecimal.TEN, 
+					BigDecimal.ZERO, 
+					BigDecimal.TEN,
+					true);
+	
+			save(session, notaFiscalSaidaFornecedorNFE);
+		
+			ItemNotaFiscalSaida itemNotaFiscalSaida = 
+					Fixture.itemNotaFiscalSaida(produtoEdicao91, notaFiscalSaidaFornecedorNFE, BigDecimal.TEN);
+			
+			save(session, itemNotaFiscalSaida);
+			
+		}
+
+		
 		
 	}
 	
