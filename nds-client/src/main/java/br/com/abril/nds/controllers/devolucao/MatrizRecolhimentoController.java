@@ -61,7 +61,7 @@ public class MatrizRecolhimentoController {
 		
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
 
-		result.include("fornecedores", fornecedores);
+		this.result.include("fornecedores", fornecedores);
 	}
 	
 	@Post
@@ -73,16 +73,15 @@ public class MatrizRecolhimentoController {
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
 			this.obterMatrizBalanceamentoMock(dataPesquisa, listaIdsFornecedores);
 		
+		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
 			this.obterResumoPeriodoBalanceamento(matrizBalanceamento);
-		
-		if (resumoPeriodoBalanceamento == null
-				|| resumoPeriodoBalanceamento.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
-		}
 		
 		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
@@ -115,9 +114,46 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/balancearPorEditor")
+	@SuppressWarnings("unchecked")
 	public void balancearPorEditor() {
 		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamentoAtual =  
+			(Map<Date, List<RecolhimentoDTO>>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
 		
+		if (matrizBalanceamentoAtual == null || matrizBalanceamentoAtual.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		Map<Date, Long> mapaRecolhimentoEditor = new HashMap<Date, Long>();
+		
+		for (Map.Entry<Date, List<RecolhimentoDTO>> entry : matrizBalanceamentoAtual.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			
+			List<RecolhimentoDTO> listaDadosRecolhimento = entry.getValue();
+			
+			if (listaDadosRecolhimento == null || listaDadosRecolhimento.isEmpty()) {
+				
+				continue;
+			}
+			
+			for (RecolhimentoDTO dadosRecolhimento : listaDadosRecolhimento) {
+				
+				//mapaRecolhimentoEditor.put(entry.getKey(), k);
+			}
+			
+			
+		}
+		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamentoEditor = new TreeMap<Date, List<RecolhimentoDTO>>();
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamentoEditor);
+		
+		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
+			this.obterResumoPeriodoBalanceamento(matrizBalanceamentoEditor);
+		
+		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
 	
 	@Post
