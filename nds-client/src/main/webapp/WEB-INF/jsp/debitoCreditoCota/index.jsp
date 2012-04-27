@@ -346,6 +346,12 @@
 			buttonImageOnly: true
 		});
 		
+		$( "#datepickerDe" ).mask("99/99/9999");
+		$( "#datepickerAte" ).mask("99/99/9999");
+		$( "#datepickerDeVenc" ).mask("99/99/9999");
+		$( "#datepickerAteVenc" ).mask("99/99/9999");
+		$( "#datepickerData" ).mask("99/99/9999");
+		
 		$('#edicaoDataLancamento').datepicker("option", {minDate:-1,maxDate:-2})
 		
 		$( "#edicaoDataVencimento" ).datepicker({
