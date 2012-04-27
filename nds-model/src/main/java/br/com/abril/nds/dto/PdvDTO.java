@@ -62,7 +62,7 @@ public class PdvDTO implements Serializable {
 	
 	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
 	
-	private DiasFuncionamentoDTO diasFuncionamentoDTO ;
+	private PeriodoFuncionamentoDTO periodoFuncionamentoDTO ;
 	
 	private EnderecoPdvDTO enderecoPdvDTO;
 	
@@ -94,19 +94,7 @@ public class PdvDTO implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the diasFuncionamentoDTO
-	 */
-	public DiasFuncionamentoDTO getDiasFuncionamentoDTO() {
-		return diasFuncionamentoDTO;
-	}
-
-	/**
-	 * @param diasFuncionamentoDTO the diasFuncionamentoDTO to set
-	 */
-	public void setDiasFuncionamentoDTO(DiasFuncionamentoDTO diasFuncionamentoDTO) {
-		this.diasFuncionamentoDTO = diasFuncionamentoDTO;
-	}
+	
 
 	/**
 	 * @return the enderecoPdvDTO
@@ -515,6 +503,21 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
+	}
+
+	/**
+	 * @return the periodoFuncionamentoDTO
+	 */
+	public PeriodoFuncionamentoDTO getPeriodoFuncionamentoDTO() {
+		return periodoFuncionamentoDTO;
+	}
+
+	/**
+	 * @param periodoFuncionamentoDTO the periodoFuncionamentoDTO to set
+	 */
+	public void setPeriodoFuncionamentoDTO(
+			PeriodoFuncionamentoDTO periodoFuncionamentoDTO) {
+		this.periodoFuncionamentoDTO = periodoFuncionamentoDTO;
 	}
 
 	
