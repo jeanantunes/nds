@@ -8,11 +8,20 @@
 	
 	function carregaFinanceiro(){
 		var idCota = $("#_idCotaRef").val();
-		populaFinanceiro(idCota);
+		obterParametroCobranca(idCota);
 		exibe_botao_contrato();
-		mostrarGridConsulta();
+		mostrarGrid();
 	}
 
+	
+	function exibe_botao_contrato(){
+		if (document.formFinanceiro.contrato.checked){
+			$('#botaoContrato').show();
+		}
+		else{
+			$('#botaoContrato').hide();
+		}
+	}
 	
 	
 	
@@ -29,7 +38,7 @@
 			dataType : 'json',
 			colModel : [  {
 				display : 'Fornecedores',
-				name : 'fornecedores',
+				name : 'fornecedor',
 				width : 120,
 				sortable : true,
 				align : 'left'
@@ -63,12 +72,12 @@
 		});
     });	
     
-    function mostrarGridConsulta() {
+    function mostrarGrid() {
     	
 		/*PASSAGEM DE PARAMETROS*/
 		$(".boletosUnificadosGrid").flexOptions({
 			/*METODO QUE RECEBERA OS PARAMETROS*/
-			url: "<c:url value='/cadastro/financeiro/consultaFormasCobranca' />",
+			url: "<c:url value='/cadastro/financeiro/obterFormasCobranca' />",
 			params: [
 			         {name:'idCota', value:$("#_idCotaRef").val()},
 			        ] ,
@@ -90,37 +99,25 @@
 				resultado.mensagens.listaMensagens
 			);
 			$(".grids").hide();
-			return resultado.tableModel;
-		}
+			return resultado;
+		}	
 		
-		var dadosPesquisa;
-		$.each(resultado, function(index, value) {
-			  if(value[0] == "TblModelFormasCobranca") {
-				  dadosPesquisa = value[1];
-			  }
-	    });
+		$.each(resultado.rows, function(index, row) {
+			
+			var linkEditar = '<a href="javascript:;" onclick="editarFormaCobranca(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
+					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
+					  		  '</a>';
+			
+			var linkExcluir = '<a href="javascript:;" onclick="excluirFormaCobranca(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
+							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+							   '</a>';
+			
+			row.cell.acao = linkEditar + linkExcluir;
+		});
+			
+		$(".grids").show();
 		
-		
-        /*
-		$.each(dadosPesquisa.rows, 
-				function(index, row) {
-
-					 var linkEditar = '<a href="javascript:;" onclick="editarFormaCobranca(' + row.cell[0] + ');" style="cursor:pointer">' +
-                                      '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" title="Altera forma cobrança" />' +
-	                                  '</a>';			
-				
-			         var linkExcluir =    '<a href="javascript:;" onclick="excluirFormaCobranca(' + row.cell[0] + ');" style="cursor:pointer">' +
-			                              '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" title="Exclui forma cobrança" />' +
-						                  '</a>';		 					 
-									
-				     row.cell[9] = linkEditar + linkExcluir;
-
-		         }
-		);
-		*/
-		
-		
-		return dadosPesquisa;
+		return resultado;
 	}
     
     
@@ -189,22 +186,127 @@
 	
 	
 	
-	function populaFinanceiro(idCota){
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	function obterParametroCobranca(idCota){
 		var data = [{name: 'idCota', value: idCota}];
-		$.postJSON("<c:url value='/cadastro/financeiro/populaFinanceiro' />",
+		$.postJSON("<c:url value='/cadastro/financeiro/obterParametroCobranca' />",
 				   data,
-				   sucessCallbackFinanceiro, 
+				   sucessCallbackParametroCobranca, 
 				   null,
 				   true);
 	}
 	
 	
 	
-	function sucessCallbackFinanceiro(resultado) {
+	function sucessCallbackParametroCobranca(resultado) {
 		
 		//hidden
+		$("#_idParametroCobranca").val(resultado.idParametroCobranca);
 		$("#_idCota").val(resultado.idCota);
 		$("#_numCota").val(resultado.numCota);
+	
+		$("#fatorVencimento").val(resultado.fatorVencimento);
+		
+		$("#sugereSuspensao").val(resultado.sugereSuspensao);
+		document.formFinanceiro.sugereSuspensao.checked = resultado.sugereSuspensao;
+		
+		$("#contrato").val(resultado.contrato);
+		document.formFinanceiro.contrato.checked = resultado.contrato;
+
+		$("#valorMinimo").val(resultado.valorMinimo);
+		$("#comissao").val(resultado.comissao);
+		$("#qtdDividasAberto").val(resultado.qtdDividasAberto);
+		$("#vrDividasAberto").val(resultado.vrDividasAberto);
+		
+	}
+	
+	
+	
+	function postarParametroCobranca() {
+		
+		//hidden
+		var idParametroCobranca = $("#_idParametroCobranca").val();
+		var idCota = $("#_idCota").val();
+		var numCota = $("#_numCota").val();
+		
+		var fatorVencimento     = $("#fatorVencimento").val();
+		
+		$("#sugereSuspensao").val(0);
+		if (document.formFinanceiro.sugereSuspensao.checked){
+			$("#sugereSuspensao").val(1);
+		}
+		var sugereSuspensao = $("#sugereSuspensao").val();
+		
+		$("#contrato").val(0);
+		if (document.formFinanceiro.contrato.checked){
+			$("#contrato").val(1);
+		}
+		var contrato = $("#contrato").val();
+	 
+		var valorMinimo = $("#valorMinimo").val();
+		var comissao = $("#comissao").val();
+		var qtdDividasAberto = $("#qtdDividasAberto").val();
+		var vrDividasAberto = $("#vrDividasAberto").val();
+		
+		$.postJSON("<c:url value='/cadastro/financeiro/postarParametroCobrancaSessao'/>",
+				   "parametroCobranca.idParametroCobranca="+idParametroCobranca+ 
+				   "&parametroCobranca.idCota="+idCota+ 
+				   "&parametroCobranca.numCota="+numCota+    
+				   "&parametroCobranca.fatorVencimento="+fatorVencimento+    
+				   "&parametroCobranca.sugereSuspensao="+sugereSuspensao+    
+				   "&parametroCobranca.contrato="+contrato+          
+				   "&parametroCobranca.valorMinimo="+valorMinimo+        
+				   "&parametroCobranca.comissao="+comissao+          
+				   "&parametroCobranca.qtdDividasAberto="+qtdDividasAberto+   
+				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto);
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	function obterFormaCobranca(idFormaCobranca){
+		var data = [{name: 'idFormaCobranca', value: idCota}];
+		$.postJSON("<c:url value='/cadastro/financeiro/obterFormaCobranca' />",
+				   data,
+				   sucessCallbackFormaCobranca, 
+				   null,
+				   true);
+	}
+	
+	
+	
+	function sucessCallbackFormaCobranca(resultado) {
+		
+		//hidden
+		$("#_idFormaCobranca").val(resultado.idFormaCobranca);
 		
 		$("#tipoCobranca").val(resultado.tipoCobranca);
 		$("#banco").val(resultado.idBanco);
@@ -214,18 +316,10 @@
 		$("#agenciaDigito").val(resultado.agenciaDigito);
 		$("#conta").val(resultado.conta);
 	    $("#contaDigito").val(resultado.contaDigito);
-		$("#fatorVencimento").val(resultado.fatorVencimento);
 		
 		$("#recebeEmail").val(resultado.recebeEmail);
 		document.formFinanceiro.recebeEmail.checked = resultado.recebeEmail;
-	
-		$("#sugereSuspensao").val(resultado.sugereSuspensao);
-		document.formFinanceiro.sugereSuspensao.checked = resultado.sugereSuspensao;
-		
-		$("#contrato").val(resultado.contrato);
-		document.formFinanceiro.contrato.checked = resultado.contrato;
-		
-		
+
 		$("#PS").val(resultado.segunda);
 		document.formFinanceiro.PS.checked = resultado.segunda;
 		
@@ -246,21 +340,16 @@
 		
 		$("#PDom").val(resultado.domingo);
 		document.formFinanceiro.PDom.checked = resultado.domingo;
-		
-		$("#valorMinimo").val(resultado.valorMinimo);
-		$("#comissao").val(resultado.comissao);
-		$("#qtdDividasAberto").val(resultado.qtdDividasAberto);
-		$("#vrDividasAberto").val(resultado.vrDividasAberto);
-		
 	}
 	
 	
 	
-	function postarFinanceiro() {
+	function postarFormaCobranca() {
 		
 		//hidden
+		var idFormaCobranca = $("#_idFormaCobranca").val();
 		var idCota = $("#_idCota").val();
-		var numCota = $("#_numCota").val();
+		var idParametroCobranca = $("#_idParametroCobranca").val();
 		
 		var tipoCobranca        = $("#tipoCobranca").val();
 		var idBanco             = $("#banco").val();
@@ -270,25 +359,12 @@
 		var agenciaDigito       = $("#agenciaDigito").val();
 		var conta               = $("#conta").val();
 		var contaDigito         = $("#contaDigito").val();
-		var fatorVencimento     = $("#fatorVencimento").val();
 		
 		$("#recebeEmail").val(0);
 		if (document.formFinanceiro.recebeEmail.checked){
 			$("#recebeEmail").val(1);
 		}
 		var recebeEmail = $("#recebeEmail").val();
-		
-		$("#sugereSuspensao").val(0);
-		if (document.formFinanceiro.sugereSuspensao.checked){
-			$("#sugereSuspensao").val(1);
-		}
-		var sugereSuspensao = $("#sugereSuspensao").val();
-		
-		$("#contrato").val(0);
-		if (document.formFinanceiro.contrato.checked){
-			$("#contrato").val(1);
-		}
-		var contrato = $("#contrato").val();
 		
 		$("#PS").val(0);
 		if (document.formFinanceiro.PS.checked){
@@ -331,52 +407,43 @@
 			$("#PDom").val(1);
 		}
 		var domingo  = $("#PDom").val();
-		 
-		var valorMinimo = $("#valorMinimo").val();
-		var comissao = $("#comissao").val();
-		var qtdDividasAberto = $("#qtdDividasAberto").val();
-		var vrDividasAberto = $("#vrDividasAberto").val();
-		
-		$.postJSON("<c:url value='/cadastro/financeiro/postarFinanceiroSessao'/>",
-				   "cotaCobranca.idCota="+idCota+ 
-				   "&cotaCobranca.numCota="+numCota+ 
-				   "&cotaCobranca.tipoCobranca="+tipoCobranca+ 
-				   "&cotaCobranca.idBanco="+idBanco+            
-				   "&cotaCobranca.recebeEmail="+recebeEmail+        
-				   "&cotaCobranca.numBanco="+numBanco+        
-				   "&cotaCobranca.nomeBanco="+nomeBanco+          
-				   "&cotaCobranca.agencia="+agencia+            
-				   "&cotaCobranca.agenciaDigito="+agenciaDigito+     
-				   "&cotaCobranca.conta="+conta+              
-				   "&cotaCobranca.contaDigito="+contaDigito+        
-				   "&cotaCobranca.fatorVencimento="+fatorVencimento+    
-				   "&cotaCobranca.sugereSuspensao="+sugereSuspensao+    
-				   "&cotaCobranca.contrato="+contrato+   
-				   "&cotaCobranca.domingo="+domingo+    
-				   "&cotaCobranca.segunda="+segunda+            
-				   "&cotaCobranca.terca="+terca+            
-				   "&cotaCobranca.quarta="+quarta+            
-				   "&cotaCobranca.quinta="+quinta+            
-				   "&cotaCobranca.sexta="+sexta+            
-				   "&cotaCobranca.sabado="+sabado+           
-				   "&cotaCobranca.valorMinimo="+valorMinimo+        
-				   "&cotaCobranca.comissao="+comissao+          
-				   "&cotaCobranca.qtdDividasAberto="+qtdDividasAberto+   
-				   "&cotaCobranca.vrDividasAberto="+vrDividasAberto);
-	}
-
-
-	
-	function exibe_botao_contrato(){
-		if (document.formFinanceiro.contrato.checked){
-			$('#botaoContrato').show();
-		}
-		else{
-			$('#botaoContrato').hide();
-		}
+		 	
+		$.postJSON("<c:url value='/cadastro/financeiro/postarFormaCobranca'/>",
+				   "formaCobranca.idFormaCobranca="+idFormaCobranca+ 
+				   "&formaCobranca.idCota="+idCota+ 
+				   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
+				   "&formaCobranca.tipoCobranca="+tipoCobranca+ 
+				   "&formaCobranca.idBanco="+idBanco+            
+				   "&formaCobranca.recebeEmail="+recebeEmail+    
+				   "&formaCobranca.numBanco="+numBanco+        
+				   "&formaCobranca.nomeBanco="+nomeBanco+          
+				   "&formaCobranca.agencia="+agencia+            
+				   "&formaCobranca.agenciaDigito="+agenciaDigito+     
+				   "&formaCobranca.conta="+conta+              
+				   "&formaCobranca.contaDigito="+contaDigito+        
+				   "&formaCobranca.domingo="+domingo+    
+				   "&formaCobranca.segunda="+segunda+            
+				   "&formaCobranca.terca="+terca+            
+				   "&formaCobranca.quarta="+quarta+            
+				   "&formaCobranca.quinta="+quinta+            
+				   "&formaCobranca.sexta="+sexta+            
+				   "&formaCobranca.sabado="+sabado);
 	}
 	
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -453,6 +520,8 @@
 	       
         <input type="hidden" id="_idCota"/>
         <input type="hidden" id="_numCota"/>
+        <input type="hidden" id="_idFormaCobranca"/>
+        <input type="hidden" id="_idParametroCobranca"/>
     
 	    <table width="671" border="0" cellspacing="2" cellpadding="2">
 		      
@@ -790,7 +859,7 @@
 	
 				<br clear="all" />
 				<span class="bt_add">
-				    <a href="javascript:;" onclick="postarFinanceiro();">
+				    <a href="javascript:;" onclick="postarParametroCobranca();">
 				        Incluir Novo
 				    </a>
 				</span>

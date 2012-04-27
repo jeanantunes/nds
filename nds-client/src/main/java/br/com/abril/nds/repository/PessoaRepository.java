@@ -13,7 +13,7 @@ public interface PessoaRepository extends Repository<Pessoa, Long> {
 	
 	List<PessoaJuridica> buscarPorCnpj(String cnpj);
 
-	List<PessoaFisica> obterSociosPorFiador(Long idFiador,  Set<Long> idsIgnorar);
+	List<PessoaFisica> obterSociosPorFiador(Long idFiador,  Set<Long> idsIgnorar, Set<String> cpfsIgnorar);
 
 	PessoaFisica buscarPorCPF(String cpf);
 	

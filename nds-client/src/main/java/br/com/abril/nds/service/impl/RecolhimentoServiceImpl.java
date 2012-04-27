@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -60,4 +61,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				periodoRecolhimento, listaIdsFornecedores, GrupoProduto.CROMO);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<RecolhimentoDTO> obterDadosBalanceamentoRecolhimento(Date dataInicial) {
+
+		
+		return null;
+	}
 }

@@ -109,7 +109,7 @@ public class CotaController {
 		processarTelefonesCota(idCota);
 		
 		//Persiste os dados da aba "financeiro"
-		this.financeiroController.postarFinanceiro(idCota);
+		this.financeiroController.postarParametroCobranca(idCota);
 		
 		this.result.nothing();
 	}

@@ -177,6 +177,24 @@ public class PDV implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "MATERIAL_PROMOCIONAL_ID")})
 	private Set<MaterialPromocional> materiais = new HashSet<MaterialPromocional>();
 	
+	/**
+	 * PDV é expositor de material promocional
+	 */
+	@Column(name = "EXPOSITOR", nullable = false)
+	private boolean expositor;
+	
+	/**
+	 * Tipo de expositor 
+	 */
+	@Column(name = "TIPO_EXPOSITOR")
+	private String tipoExpositor;
+	
+	/**
+	 * Gerador de fluxo PDV
+	 */
+	@OneToOne(mappedBy = "pdv")
+	private GeradorFluxoPDV geradorFluxoPDV;
+	
 	public Long getId() {
 		return id;
 	}
@@ -360,6 +378,30 @@ public class PDV implements Serializable {
 	
 	public void setMateriais(Set<MaterialPromocional> materiais) {
 		this.materiais = materiais;
+	}
+	
+	public GeradorFluxoPDV getGeradorFluxoPDV() {
+		return geradorFluxoPDV;
+	}
+	
+	public void setGeradorFluxoPDV(GeradorFluxoPDV geradorFluxoPDV) {
+		this.geradorFluxoPDV = geradorFluxoPDV;
+	}
+	
+	public boolean isExpositor() {
+		return expositor;
+	}
+	
+	public void setExpositor(boolean expositor) {
+		this.expositor = expositor;
+	}
+	
+	public String getTipoExpositor() {
+		return tipoExpositor;
+	}
+	
+	public void setTipoExpositor(String tipoExpositor) {
+		this.tipoExpositor = tipoExpositor;
 	}
 
 }

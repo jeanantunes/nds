@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -102,7 +103,7 @@ public class FiadorServiceImpl implements FiadorService {
 			List<Garantia> listaGarantiaAdicionar,
 			Set<Long> listaGarantiaRemover, 
 			List<Integer> listaCotasAssociar,
-			Set<Integer> listaCotasDesassociar) {
+			Set<Long> listaCotasDesassociar) {
 		
 		this.validarDadosFiador(fiador, sociosAdicionar);
 		
@@ -441,11 +442,11 @@ public class FiadorServiceImpl implements FiadorService {
 	}
 	
 	private void processarCotasAssociadas(Fiador fiador,
-			List<Cota> listaCotasAssociar, Set<Integer> listaCotasDesassociar) {
+			List<Cota> listaCotasAssociar, Set<Long> listaCotasDesassociar) {
 		
 		if (listaCotasDesassociar != null){
-			for (Integer numeroCota : listaCotasDesassociar){
-				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			for (Long idCota : listaCotasDesassociar){
+				Cota cota = this.cotaRepository.buscarPorId(idCota);
 				
 				if (cota != null){
 					cota.setFiador(null);
@@ -622,7 +623,29 @@ public class FiadorServiceImpl implements FiadorService {
 				}
 			}
 			
+			this.enderecoFiadorRepository.excluirEnderecosFiador(fiador.getId());
+			
+			this.telefoneFiadorRepository.excluirTelefonesFiador(fiador.getId());
+			
+			this.garantiaService.removerGarantiasPorFiador(fiador.getId());
+			
 			this.fiadorRepository.remover(fiador);
+			
+			Set<Long> idsTelefone = new HashSet<Long>();
+			for (Telefone telefone : fiador.getPessoa().getTelefones()){
+				
+				idsTelefone.add(telefone.getId());
+			}
+			
+			this.telefoneService.removerTelefones(idsTelefone);
+			
+			Set<Long> idsEndereco = new HashSet<Long>();
+			for (Endereco endereco : fiador.getPessoa().getEnderecos()){
+				
+				idsEndereco.add(endereco.getId());
+			}
+			
+			this.enderecoService.removerEnderecos(idsEndereco);
 		}
 	}
 
@@ -681,13 +704,13 @@ public class FiadorServiceImpl implements FiadorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Cota> obterCotasAssociadaFiador(Long idFiador) {
+	public List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar) {
 		
 		if (idFiador == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id fiador é obrigatório.");
 		}
 		
-		return this.fiadorRepository.obterCotasAssociadaFiador(idFiador);
+		return this.fiadorRepository.obterCotasAssociadaFiador(idFiador, cotasIgnorar);
 	}
 
 	@Override
@@ -703,5 +726,26 @@ public class FiadorServiceImpl implements FiadorService {
 		}
 		
 		return this.fiadorRepository.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Fiador obterFiadorPorCPF(String cpf) {
+		
+		return this.fiadorRepository.obterFiadorPorCpf(cpf);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf) {
+		
+		return this.fiadorRepository.buscarSocioFiadorPorCPF(idFiador, cpf);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Fiador obterFiadorPorCNPJ(String cnpj) {
+		
+		return this.fiadorRepository.obterFiadorPorCnpj(cnpj);
 	}
 }

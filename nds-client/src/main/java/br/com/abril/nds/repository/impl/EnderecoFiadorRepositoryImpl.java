@@ -75,4 +75,13 @@ public class EnderecoFiadorRepositoryImpl extends
 		
 		return (EnderecoFiador) query.uniqueResult();
 	}
+	
+	@Override
+	public void excluirEnderecosFiador(Long idFiador){
+		
+		Query query = this.getSession().createQuery("delete from EnderecoFiador where fiador.id = :idFiador ");
+		query.setParameter("idFiador", idFiador);
+		
+		query.executeUpdate();
+	}
 }

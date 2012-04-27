@@ -1,7 +1,9 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -11,33 +13,31 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 
 	private static final long serialVersionUID = 4974398934934768542L;
 	
+	@Export(label = "Período de")
+	private String periodoDe;
+	
+	@Export(label = "Período até")
+	private String periodoAte;
+	
 	@Export(label = "Cota")
 	private Integer numCota;
 	
 	@Export(label = "Nome")
-	private String nome;
+	private String nomeCota;
 	
 	@Export(label = "Status")
-	private String status;
+	private String statusCota;
 	
-	@Export(label = "Consignado até Data")
-	private String consignado;
+	@Export(label = "Dividas Abertas")
+	private Boolean situacaoEmAberto; 
 	
-	@Export(label = "Data Vencimento")
-	private String dataVencimento;
+	@Export(label = "Dividas Pagas")
+	private Boolean situacaoPaga;
 	
-	@Export(label = "Data Pagamento")
-	private String dataPagamento;
+	@Export(label = "Dívidas Negociadas")
+	private Boolean situacaoNegociada;
 	
-	@Export(label = "Situação da Dívida")
-	private String situacao;
 	
-	@Export(label = "Dívida Acumulada")
-	private String dividaAcumulada;
-	
-	@Export(label = "Dias em Atraso")
-	private String diasAtraso;
-
 	private PaginacaoVO paginacao;
 	
 	private	ColunaOrdenacao colunaOrdenacao;
@@ -57,7 +57,29 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
-	
+
+	public Date getPeriodoDe() {
+		if(periodoDe == null) return null;
+		return DateUtil.parseDataPTBR(periodoDe);
+	}
+
+	public void setPeriodoDe(String periodoDe) {
+		if(periodoDe != null && periodoDe.trim().isEmpty()) 
+			return;
+		this.periodoDe = periodoDe;
+	}
+
+	public Date getPeriodoAte() {
+		if(periodoAte == null) return null;
+		return DateUtil.parseDataPTBR(periodoAte);
+	}
+
+	public void setPeriodoAte(String periodoAte) {
+		if(periodoAte != null && periodoAte.trim().isEmpty()) 
+			return;
+		this.periodoAte = periodoAte;
+	}
+
 	public Integer getNumCota() {
 		return numCota;
 	}
@@ -66,75 +88,49 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 		this.numCota = numCota;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getNomeCota() {
+		return nomeCota;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setNomeCota(String nomeCota) {
+		if(nomeCota != null && nomeCota.trim().isEmpty()) 
+			return;
+		this.nomeCota = nomeCota;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getStatusCota() {
+		return statusCota;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatusCota(String statusCota) {
+		if(statusCota != null && statusCota.trim().isEmpty()) 
+			return;
+		this.statusCota = statusCota;
 	}
 
-	public String getConsignado() {
-		return consignado;
+	public Boolean getSituacaoEmAberto() {
+		return situacaoEmAberto;
 	}
 
-	public void setConsignado(String consignado) {
-		this.consignado = consignado;
+	public void setSituacaoEmAberto(Boolean situacaoEmAberto) {
+		this.situacaoEmAberto = situacaoEmAberto;
 	}
 
-	public String getDataVencimento() {
-		return dataVencimento;
+	public Boolean getSituacaoPaga() {
+		return situacaoPaga;
 	}
 
-	public void setDataVencimento(String dataVencimento) {
-		this.dataVencimento = dataVencimento;
+	public void setSituacaoPaga(Boolean situacaoPaga) {
+		this.situacaoPaga = situacaoPaga;
 	}
 
-	public String getDataPagamento() {
-		return dataPagamento;
+	public Boolean getSituacaoNegociada() {
+		return situacaoNegociada;
 	}
 
-	public void setDataPagamento(String dataPagamento) {
-		this.dataPagamento = dataPagamento;
+	public void setSituacaoNegociada(Boolean situacaoNegociada) {
+		this.situacaoNegociada = situacaoNegociada;
 	}
-
-	public String getSituacao() {
-		return situacao;
-	}
-
-	public void setSituacao(String situacao) {
-		this.situacao = situacao;
-	}
-
-	public String getDividaAcumulada() {
-		return dividaAcumulada;
-	}
-
-	public void setDividaAcumulada(String dividaAcumulada) {
-		this.dividaAcumulada = dividaAcumulada;
-	}
-
-	public String getDiasAtraso() {
-		return diasAtraso;
-	}
-
-	public void setDiasAtraso(String diasAtraso) {
-		this.diasAtraso = diasAtraso;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-
 
 	/**
 	 * Enum para ordenação das colunas do filtro.
