@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -33,13 +34,21 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Telefone> buscarTelefonesPessoa(Long idPessoa) {
+	public List<Telefone> buscarTelefonesPessoa(Long idPessoa, Set<Long> idsIgnorar) {
 		StringBuilder hql = new StringBuilder("select p.telefones ");
-		hql.append(" from Pessoa p ")
-		   .append(" where p.id = :idPessoa");
+		hql.append(" from Pessoa p join p.telefones telefones ")
+		   .append(" where p.id = :idPessoa ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			hql.append(" and telefones.id not in (:idsIgnorar) ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idPessoa", idPessoa);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			query.setParameter("idsIgnorar", idsIgnorar);
+		}
 		
 		return query.list();
 	}

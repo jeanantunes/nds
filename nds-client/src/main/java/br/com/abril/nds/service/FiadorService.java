@@ -12,6 +12,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
 
 public interface FiadorService {
@@ -28,7 +29,7 @@ public interface FiadorService {
 			List<Garantia> listaGarantiaAdicionar,
 			Set<Long> listaGarantiaRemover, 
 			List<Integer> listaCotasAssociar,
-			Set<Integer> listaCotasDesassociar);
+			Set<Long> listaCotasDesassociar);
 	
 	Pessoa buscarPessoaFiadorPorId(Long idFiador);
 
@@ -44,7 +45,13 @@ public interface FiadorService {
 
 	Fiador obterFiadorPorId(Long idFiador);
 	
-	List<Cota> obterCotasAssociadaFiador(Long idFiador);
+	List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar);
 
 	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
+	
+	Fiador obterFiadorPorCPF(String cpf);
+
+	PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf);
+
+	Fiador obterFiadorPorCNPJ(String cnpj);
 }

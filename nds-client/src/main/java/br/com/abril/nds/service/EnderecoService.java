@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -14,4 +15,6 @@ public interface EnderecoService {
 	Endereco obterEnderecoPorId(Long idEndereco);
 
 	void cadastrarEnderecos(List<EnderecoAssociacaoDTO> listaEnderecos);
+	
+	void removerEnderecos(Collection<Long> idsEndereco);
 }

@@ -63,7 +63,9 @@
 					$("#cpfConjuge").removeAttr("disabled");
 				}
 			},
-			null,
+			function (){
+				fecharModalCadastroFiador = false;
+			},
 			true
 		);
 	}
@@ -108,7 +110,8 @@
 		
 		if (cpf != "___.___.___-__" && cpf != ""){
 			
-			var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('[name="cpfFiador"]:eq(' + refAba + ')').val();
+			var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('[name="cpfFiador"]:eq(' + refAba + ')').val() +
+				"&socio=" + (refAba == 0 ? "false" : "true");
 			
 			$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", data, 
 				function(result) {
