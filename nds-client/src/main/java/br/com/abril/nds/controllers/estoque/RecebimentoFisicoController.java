@@ -235,7 +235,7 @@ public class RecebimentoFisicoController {
 	 * @param numeroNotaFiscal
 	 * @param serie
 	 */
-	private void validarDadosNotaFiscal(String cnpj, String numeroNotaFiscal, String serie, String fornecedor) {
+	private void validarDadosNotaFiscal(String cnpj, Long numeroNotaFiscal, String serie, String fornecedor) {
 		
 		List<String> msgs = new ArrayList<String>();
 		
@@ -247,7 +247,7 @@ public class RecebimentoFisicoController {
 			}
 		}	
 		
-		if(numeroNotaFiscal == null || numeroNotaFiscal.isEmpty()) {
+		if(numeroNotaFiscal == null) {
 			msgs.add("O campo Nota Fiscal é obrigatório");
 		}
 
@@ -613,7 +613,7 @@ public class RecebimentoFisicoController {
 	 * @param chaveAcesso
 	 */
 	@Post
-	public void verificarNotaFiscalExistente(String cnpj, String numeroNotaFiscal, String serie,String indNFe,String fornecedor, String chaveAcesso) {
+	public void verificarNotaFiscalExistente(String cnpj, Long numeroNotaFiscal, String serie,String indNFe,String fornecedor, String chaveAcesso) {
 
 		if(indNFe.equals("S")){
 			if(chaveAcesso == null || chaveAcesso.trim().isEmpty()){
@@ -912,8 +912,7 @@ public class RecebimentoFisicoController {
 				}
 			}	
 
-			if (	notaFiscalFornecedor.getNumero() == null || 
-					notaFiscalFornecedor.getNumero().isEmpty()) {
+			if ( notaFiscalFornecedor.getNumero() == null ) {
 				
 				msgs.add("O campo Nota Fiscal dever ser informado");
 				

@@ -24,7 +24,7 @@ public abstract class NotaFiscal implements Serializable {
 	protected Date dataExpedicao;
 	
 	@Column(name = "NUMERO", nullable = false)
-	protected String numero;
+	protected Long numero;
 	
 	@Column(name = "SERIE", nullable  = false)
 	protected String serie;
@@ -101,11 +101,11 @@ public abstract class NotaFiscal implements Serializable {
 		this.dataExpedicao = dataExpedicao;
 	}
 	
-	public String getNumero() {
+	public Long getNumero() {
 		return numero;
 	}
 	
-	public void setNumero(String numero) {
+	public void setNumero(Long numero) {
 		this.numero = numero;
 	}
 	

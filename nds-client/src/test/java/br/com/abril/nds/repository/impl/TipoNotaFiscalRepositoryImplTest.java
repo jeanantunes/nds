@@ -27,7 +27,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 	
 	String cnpj = "00.000.000/0001-00";
 	String chave = "11111";
-	String numeroNota = "2344242";
+	Long numeroNota = 2344242L;
 	String serie = "345353543";
 	
 	@Before

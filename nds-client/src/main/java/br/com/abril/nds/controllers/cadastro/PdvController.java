@@ -263,19 +263,51 @@ public class PdvController {
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
 		List<String> mensagens = new ArrayList<String>();
-		mensagens.add("gui");
 		
 		List<TipoPeriodoFuncionamentoPDV> tiposPeriodosPossiveis = null;
 	
+		if(periodos == null) {
+			periodos = new ArrayList<PeriodoFuncionamentoDTO>();
+		}
+		
 		try {
 			
-			if(periodos == null) {
-				periodos = new ArrayList<PeriodoFuncionamentoDTO>();
-			}
-			
-			PeriodoFuncionamentoDTO.validarPeriodos(periodos);
+			pdvService.validarPeriodos(periodos);
 			periodos.add(novoPeriodo);
-			tiposPeriodosPossiveis = PeriodoFuncionamentoDTO.getPeriodosPossiveis(periodos);
+			tiposPeriodosPossiveis = pdvService.getPeriodosPossiveis(periodos);
+						
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.ERROR;
+		}
+		
+		
+		
+		Object[] retorno = new Object[3];
+		retorno[0] = getCombosPeriodos(tiposPeriodosPossiveis);
+		retorno[1] = mensagens;
+		retorno[2] = status.name();		
+		
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/obterPeriodosPossiveis")
+	public void obterPeriodosPossiveis(List<PeriodoFuncionamentoDTO> periodos){		
+				
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		List<String> mensagens = new ArrayList<String>();
+		
+		List<TipoPeriodoFuncionamentoPDV> tiposPeriodosPossiveis = null;
+	
+		if(periodos==null) {
+			periodos = new ArrayList<PeriodoFuncionamentoDTO>();
+		}
+		
+		try {
+		
+			tiposPeriodosPossiveis = pdvService.getPeriodosPossiveis(periodos);
 						
 		}catch(Exception e) {
 			mensagens.clear();
@@ -284,10 +316,22 @@ public class PdvController {
 		}
 		
 		Object[] retorno = new Object[3];
-		retorno[0] = tiposPeriodosPossiveis;
+		retorno[0] = getCombosPeriodos(tiposPeriodosPossiveis);
 		retorno[1] = mensagens;
 		retorno[2] = status.name();		
 		
 		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+	}
+
+	private List<ItemDTO<String, String>> getCombosPeriodos(
+			List<TipoPeriodoFuncionamentoPDV> tiposPeriodosPossiveis) {
+		
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
+		
+		for(TipoPeriodoFuncionamentoPDV tipo: tiposPeriodosPossiveis) {
+			itens.add(new ItemDTO<String, String>(tipo.name(),tipo.getDescricao()));
+		}
+		
+		return itens;
 	}
 }
