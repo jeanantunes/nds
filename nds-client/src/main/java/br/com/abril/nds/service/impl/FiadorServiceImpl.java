@@ -741,4 +741,11 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		return this.fiadorRepository.buscarSocioFiadorPorCPF(idFiador, cpf);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Fiador obterFiadorPorCNPJ(String cnpj) {
+		
+		return this.fiadorRepository.obterFiadorPorCnpj(cnpj);
+	}
 }
