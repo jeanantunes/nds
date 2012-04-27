@@ -205,11 +205,9 @@ public class FiadorController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um fiador cadastrado com esse CPF.");
 				}
 				
-				fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
-			} else {
-				
-				fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
 			}
+			
+			fisica = this.pessoaService.buscarPessoaPorCPF(cpf, isFiador, cpfConjuge);
 			
 			if (fisica != null){
 				
@@ -280,6 +278,14 @@ public class FiadorController {
 		if (cnpj != null){
 			
 			cnpj = cnpj.replace("-", "").replace(".", "").replace("/", "");
+			
+			Fiador fiador = this.fiadorService.obterFiadorPorCNPJ(cnpj);
+			
+			if (fiador != null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um fiador cadastrado com esse CNPJ.");
+			}
+			
 			PessoaJuridica juridica = this.pessoaService.buscarPessoaPorCNPJ(cnpj);
 			
 			if (juridica != null){
@@ -290,6 +296,8 @@ public class FiadorController {
 				dados.add(juridica.getInscricaoEstadual());
 				dados.add(Util.adicionarMascaraCNPJ(juridica.getCnpj()));
 				dados.add(juridica.getEmail());
+				
+				this.carregarTelefonesEnderecosPessoa(juridica.getId());
 			}
 		}
 		
