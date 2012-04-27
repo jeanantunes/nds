@@ -89,10 +89,10 @@ public class InadimplenciaController {
 
 	private void gerarListaStatus() {
 		
-		List<ItemDTO<Integer, String>> status = new ArrayList<ItemDTO<Integer,String>>();
+		List<ItemDTO<String, String>> status = new ArrayList<ItemDTO<String,String>>();
 				
 		for(SituacaoCadastro situacao : SituacaoCadastro.values()) {
-			status.add(new ItemDTO<Integer, String>(situacao.ordinal(), situacao.toString()));
+			status.add(new ItemDTO<String, String>(situacao.name(), situacao.toString()));
 		}
 		
 		result.include("itensStatus", status);
@@ -100,7 +100,7 @@ public class InadimplenciaController {
 	}
 	
 	public void pesquisar( Integer page, Integer rp, String sortname, String sortorder,
-			String periodoDe, String periodoAte, String nomeCota, Integer numCota, Integer statusCota, 
+			String periodoDe, String periodoAte, String nomeCota, Integer numCota, String statusCota, 
 			boolean situacaoEmAberto, boolean situacaoNegociada, boolean situacaoPaga) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
@@ -125,9 +125,9 @@ public class InadimplenciaController {
 			filtroAtual.setSituacaoPaga(situacaoPaga);
 			filtroAtual.setSituacaoNegociada(situacaoNegociada);
 			
-			if(statusCota!= null && ( statusCota-1) > 0) {
+			if(statusCota!= null && !statusCota.equals("none")) {
 				
-				filtroAtual.setStatusCota(SituacaoCadastro.values()[statusCota-1].toString());
+				filtroAtual.setStatusCota(SituacaoCadastro.valueOf(statusCota).name());
 			}
 		
 			tratarFiltro(filtroAtual);
