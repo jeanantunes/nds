@@ -25,6 +25,8 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	private Date dataRecolhimento;
 	
 	private BigDecimal valorTotal;
+	
+	private Long idLancamento;
 
 	/**
 	 * @return the codigoProduto
@@ -150,6 +152,20 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	 */
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	/**
+	 * @return the idLancamento
+	 */
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
 	}
 
 }

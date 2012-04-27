@@ -8,6 +8,7 @@ public enum MotivoAlteracaoSituacao {
 	DOENCA("Doença"),
 	INCIDENTES("Incidentes"),
 	RECESSO_ESTUDANTIL("Recesso Estudantil"),
+	CHAMADAO("Chamadão"),
 	OUTROS("Outros");
 
 	private String descricao;

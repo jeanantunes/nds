@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ChamadaoVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaoVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -44,6 +45,7 @@ import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -83,6 +85,7 @@ public class ChamadaoController {
 	
 	private static final String QTD_REGISTROS_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaConsignados";
 	
+	@Get
 	@Path("/")
 	public void index() {
 		
@@ -168,8 +171,10 @@ public class ChamadaoController {
 					listaChamadao, ChamadaoVO.class, this.response);
 	}
 	
-	/*
+	/**
 	 * Obtém o filtro de pesquisa para exportação.
+	 * 
+	 * @return filtro
 	 */
 	private FiltroChamadaoDTO obterFiltroParaExportacao() {
 		
@@ -225,7 +230,7 @@ public class ChamadaoController {
 		return filtroSessao;
 	}
 	
-	/*
+	/**
 	 * Obtém os dados do cabeçalho de exportação.
 	 * 
 	 * @return NDSFileHeader
@@ -269,6 +274,7 @@ public class ChamadaoController {
 		return listaFornecedoresCombo;
 	}
 	
+	@Post
 	@Path("/pesquisarConsignados")
 	public void pesquisarConsignados(Integer numeroCota, String dataChamadaoFormatada, Long idFornecedor,
 									 String sortorder, String sortname, int page, int rp) {
@@ -289,7 +295,7 @@ public class ChamadaoController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
-		} else {		
+		} else {
 			
 			PaginacaoUtil.armazenarQtdRegistrosPesquisa(
 				this.session,
@@ -299,10 +305,36 @@ public class ChamadaoController {
 			this.processarConsignados(consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO(), 
 									  consultaChamadaoDTO.getResumoConsignadoCotaChamadao(),
 									  filtro,
-									  consultaChamadaoDTO.getResumoConsignadoCotaChamadao().getQtdProdutosTotal().intValue());
+									  consultaChamadaoDTO.getQuantidadeTotalConsignados().intValue());
 		}
 		
 		result.use(Results.json());
+	}
+	
+	@Post
+	@Path("/confirmarChamadao")
+	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao, boolean chamarTodos) {
+		
+		if (!chamarTodos && listaChamadao == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"É necessário selecionar pelo menos um produto para realizar o chamadão!");
+		}
+		
+		FiltroChamadaoDTO filtroSessao =
+			(FiltroChamadaoDTO) 
+				this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
+		
+		FiltroChamadaoDTO filtro  = 
+			this.carregarFiltroConfirmacao(filtroSessao.getNumeroCota(),
+										   filtroSessao.getDataChamadao(),
+										   filtroSessao.getIdFornecedor());
+		
+		chamadaoService.confirmarChamadao(listaChamadao, filtro, chamarTodos, obterUsuario());
+		
+		result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
+							"result").recursive().serialize();
 	}
 	
 	/**
@@ -351,6 +383,8 @@ public class ChamadaoController {
 			chamadaoVO.setValorTotal(
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotal()));
 			
+			chamadaoVO.setIdLancamento(consignadoCotaChamadao.getIdLancamento().toString());
+			
 			listaChamadao.add(chamadaoVO);
 		}
 		
@@ -363,9 +397,11 @@ public class ChamadaoController {
 		
 		List<CellModelKeyValue<ChamadaoVO>> listaCellModel = new ArrayList<CellModelKeyValue<ChamadaoVO>>();
 		
-		//TODO usar id lancamento como id
-		for (ChamadaoVO vo : listaChamadao){
-			CellModelKeyValue<ChamadaoVO> cell = new CellModelKeyValue<ChamadaoVO>(1, vo);
+		for (ChamadaoVO vo : listaChamadao) {
+			
+			CellModelKeyValue<ChamadaoVO> cell =
+				new CellModelKeyValue<ChamadaoVO>(Integer.valueOf(vo.getIdLancamento()), vo);
+			
 			listaCellModel.add(cell);
 		}
 		
@@ -445,7 +481,7 @@ public class ChamadaoController {
 	 * @param page - página atual
 	 * @param rp - quantidade de registros para exibição
 	 * 
-	 * @return Filtro
+	 * @return filtro
 	 */
 	private FiltroChamadaoDTO carregarFiltroPesquisa(Integer numeroCota,
 													 Date dataChamadao,
@@ -469,6 +505,25 @@ public class ChamadaoController {
 			QTD_REGISTROS_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE,
 			FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE,
 			filtroAtual, filtroSessao);
+		
+		return filtroAtual;
+	}
+	
+	/**
+	 * Carrega o filtro da pesquisa de consignados da cota para confirmar o chamadão.
+	 * 
+	 * @param numeroCota - número da cota
+	 * @param dataChamadao - data do chamadão
+	 * @param idFornecedor - id do fornecedor
+	 * 
+	 * @return filtro
+	 */
+	private FiltroChamadaoDTO carregarFiltroConfirmacao(Integer numeroCota,
+													 	Date dataChamadao,
+													 	Long idFornecedor) {
+		
+		FiltroChamadaoDTO filtroAtual =
+			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor);
 		
 		return filtroAtual;
 	}

@@ -5,14 +5,13 @@ import java.util.List;
 
 public class ConsultaChamadaoDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4851929385744110963L;
 	
 	private List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadaoDTO;
 	
 	private ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao;
+	
+	private Long quantidadeTotalConsignados;
 
 	public List<ConsignadoCotaChamadaoDTO> getListaConsignadoCotaChamadaoDTO() {
 		return listaConsignadoCotaChamadaoDTO;
@@ -31,4 +30,19 @@ public class ConsultaChamadaoDTO implements Serializable {
 			ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao) {
 		this.resumoConsignadoCotaChamadao = resumoConsignadoCotaChamadao;
 	}
+
+	/**
+	 * @return the quantidadeTotalConsignados
+	 */
+	public Long getQuantidadeTotalConsignados() {
+		return quantidadeTotalConsignados;
+	}
+
+	/**
+	 * @param quantidadeTotalConsignados the quantidadeTotalConsignados to set
+	 */
+	public void setQuantidadeTotalConsignados(Long quantidadeTotalConsignados) {
+		this.quantidadeTotalConsignados = quantidadeTotalConsignados;
+	}
+	
 }
