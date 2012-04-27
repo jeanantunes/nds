@@ -264,10 +264,6 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 					
 					if (sucessCallBackFunction) {
 						
-						if (json.map){
-							sucessCallBackFunction(json.map);
-						}
-						
 						sucessCallBackFunction(json.result);
 					}
 				} else {
@@ -288,11 +284,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 			} else {
 				if (sucessCallBackFunction) {
 					
-					if (json.map) {
-
-						sucessCallBackFunction(json.map);
-						
-					} else if (json.result) {
+					if (json.result) {
 
 						sucessCallBackFunction(json.result);
 						
