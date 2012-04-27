@@ -493,6 +493,19 @@
 	
 	
 	
+	
+	
+	
+	function imprimeContrato(){
+		var idCota = $("#_idCota").val();
+	    document.location.assign("${pageContext.request.contextPath}/cadastro/financeiro/imprimeContrato?idCota="+idCota);
+	}
+	
+	
+	
+	
+	
+	
 </script>
 
 
@@ -518,10 +531,10 @@
     
 	    <!--  <div id="tabpf-financeiro" > -->
 	       
-        <input type="hidden" id="_idCota"/>
-        <input type="hidden" id="_numCota"/>
-        <input type="hidden" id="_idFormaCobranca"/>
-        <input type="hidden" id="_idParametroCobranca"/>
+        <input type="hidden" name="_idCota" id="_idCota"/>
+        <input type="hidden" name="_numCota" id="_numCota"/>
+        <input type="hidden" name="_idFormaCobranca" id="_idFormaCobranca"/>
+        <input type="hidden" name="_idParametroCobranca"id="_idParametroCobranca"/>
     
 	    <table width="671" border="0" cellspacing="2" cellpadding="2">
 		      
@@ -567,7 +580,7 @@
 		         <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="exibe_botao_contrato();" />
 		         <span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
 		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO - FUNÇÃO PROVISÓRIA ADICIONADA PARA POSTAR DADOS NA SESSAO -->
-		             <a href="javascript:;" onclick="">Contrato</a>
+		             <a href="javascript:;" onclick="imprimeContrato()">Contrato</a>
 		         </span>
 		     </td>
 		   </tr>

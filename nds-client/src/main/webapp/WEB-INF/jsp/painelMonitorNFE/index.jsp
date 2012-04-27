@@ -72,7 +72,7 @@ var PainelMonitorNFE = {
 	
 				var linha = $(value);
 				
-				var colunaSelecao = linha.find("td")[10];
+				var colunaSelecao = linha.find("td")[11];
 				
 				$(colunaSelecao).find("div").find('input[name="checkgroup"]').attr("checked",true);
 				
@@ -87,7 +87,7 @@ var PainelMonitorNFE = {
 	
 				var linha = $(value);
 	
-				var colunaSelecao = linha.find("td")[10];
+				var colunaSelecao = linha.find("td")[11];
 				
 				$(colunaSelecao).find("div").find('input[name="checkgroup"]').attr("checked",false);
 				
@@ -117,6 +117,12 @@ var PainelMonitorNFE = {
 				
 				value.cell.sel = '<input type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>'+hiddenField;
 				
+				var descMovimentoIntegracao = value.cell.movimentoIntegracao;
+				
+				var tooltipMovimentoIntegracao = '<a href="javascript:;"><img title="'+descMovimentoIntegracao+'" src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" hspace="3"/></a>';
+				
+				value.cell.movimentoIntegracao = tooltipMovimentoIntegracao;
+				
 			});
 			
 			$('.grids').show();
@@ -139,7 +145,7 @@ var PainelMonitorNFE = {
 				
 				var linha = $(value);
 				
-				var colunaSelecao = linha.find("td")[10];
+				var colunaSelecao = linha.find("td")[11];
 			
 				var inputSelecao = $(colunaSelecao).find("div").find('input[name="checkgroup"]');
 				
@@ -210,12 +216,6 @@ var PainelMonitorNFE = {
 				}, {
 					display : 'CNPJ Destinatário',
 					name : 'cnpjDestinatario',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'CPF Destinatário',
-					name : 'cpfDestinatario',
 					width : 100,
 					sortable : true,
 					align : 'left'

@@ -8,7 +8,8 @@ import br.com.abril.nds.model.fiscal.ViewNotaFiscal;
 
 public interface ViewNotaFiscalRepository extends Repository<ViewNotaFiscal,Integer>{
 
-	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro, boolean indEmitida);
+	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro);
 
+	public Integer obterQtdeRegistroNotaFiscal(FiltroMonitorNfeDTO filtro);
 	
 }

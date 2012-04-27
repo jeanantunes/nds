@@ -28,4 +28,24 @@ public class BoxServiceImpl implements BoxService{
 		
 		return boxRepository.obterBoxPorProduto(codigoProduto);
 	}
+
+	public void adicionar(Box entity) {
+		boxRepository.adicionar(entity);
+	}
+
+	public void remover(Box entity) {
+		boxRepository.remover(entity);
+	}
+
+	public Box buscarPorId(Long id) {
+		return boxRepository.buscarPorId(id);
+	}
+
+	public Box merge(Box entity) {
+		return boxRepository.merge(entity);
+	}
+	
+	
+	
+	
 }
