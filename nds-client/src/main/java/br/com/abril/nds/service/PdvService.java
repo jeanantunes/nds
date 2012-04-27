@@ -3,13 +3,17 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+
+
 
 /**
  * 
@@ -51,4 +55,22 @@ public interface PdvService {
 	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo();
 	
 	List<MaterialPromocional> obterMateriaisPromocionalPDV();
+
+	/**
+	 * Obtém lista com os possíveis peridos a serem selecionados
+	 * 
+	 * @param selecionados - Periodos já selecionados
+	 * @return - períodos que ainda podem ser selecionados
+	 */
+	public List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados);
+	
+	/**
+	 * Valida se uma lista de períodos é valida, de acordo com as regras definidas na EMS 0159
+	 * 
+	 * @param listaTipos
+	 * @throws Exception
+	 */
+	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
+
+
 }

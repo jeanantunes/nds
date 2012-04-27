@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,10 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CaracteristicaDTO;
-import br.com.abril.nds.dto.EnderecoPdvDTO;
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.model.cadastro.AssociacaoEndereco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.ClusterPDVRepository;
@@ -359,5 +360,111 @@ public class PdvServiceImpl implements PdvService {
 		
 		return caracteristicasPDV;
 	}
+	
+	/**
+	 * Obtém lista com os possíveis peridos a serem selecionados
+	 * 
+	 * @param selecionados - Periodos já selecionados
+	 * @return - períodos que ainda podem ser selecionados
+	 */
+	public List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados) {
+		
+		List<TipoPeriodoFuncionamentoPDV> possiveis = new ArrayList<TipoPeriodoFuncionamentoPDV>();
+		
+		for(TipoPeriodoFuncionamentoPDV periodo: TipoPeriodoFuncionamentoPDV.values()) {
+			
+			try{
+				selecionados.add(new PeriodoFuncionamentoDTO(periodo, null,null));
+				validarPeriodos(selecionados);
+				selecionados.remove(selecionados.size() - 1);
+				
+				possiveis.add(periodo);
+			} catch (Exception e) {
+				selecionados.remove(selecionados.size() - 1);
+			}
+		}
+		return possiveis;
+	}
+	
+	/**
+	 * Valida se uma lista de períodos é valida, de acordo com as regras definidas na EMS 0159
+	 * 
+	 * @param listaTipos
+	 * @throws Exception
+	 */
+	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception {
+		
+		List<TipoPeriodoFuncionamentoPDV> listaTipos = new ArrayList<TipoPeriodoFuncionamentoPDV>();
+		
+		for(PeriodoFuncionamentoDTO p : periodos) {
+			listaTipos.add(p.getTipoPeriodoFuncionamentoPDV());
+		}
+		
+		validarDuplicidadeDePeriodo(listaTipos);
+		
+		if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.DIARIA)) {
+			
+			if(listaTipos.size()>1) {
+				
+				throw new Exception("Ao selecionar " + TipoPeriodoFuncionamentoPDV.DIARIA.getDescricao() + ", nenhum outro item deve ser incluido.");
+			} 
+		
+		}
+		
+		if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS)) {
+			
+			if(listaTipos.size() > 1) {
+				
+				throw new Exception("Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluido.");
+			} 
+		
+		} 
+		
+		if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.SEGUNDA_SEXTA)) {
+			
+			if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.SEGUNDA_FEIRA)
+				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.TERCA_FEIRA)
+				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.QUARTA_FEIRA)
+				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.QUINTA_FEIRA)
+				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.SEXTA_FEIRA)) {
+				
+				throw new Exception("Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.SEGUNDA_SEXTA.getDescricao()+"', não é permitido a selecao específica de um dia da semana.");				
+			}
+		} 
+		
+		if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.FINAIS_SEMANA)) {
+			
+			if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.SABADO)
+				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.DOMINGO)) {
+				
+				throw new Exception("Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.FINAIS_SEMANA.getDescricao()+"', não é permitido a definição específíca para sábado ou domingo.");				
+			}
+		}		
+	}
+
+	/**
+	 * Valida duplicidade de período
+	 * 
+	 * @param periodos - periodos
+	 * @throws Exception - Exceção ao encontrar registro duplicado.
+	 */
+	private void validarDuplicidadeDePeriodo(List<TipoPeriodoFuncionamentoPDV> periodos) throws Exception {
+		
+		for(TipoPeriodoFuncionamentoPDV item : periodos) {
+			int count=0;
+			for(TipoPeriodoFuncionamentoPDV itemComparado : periodos) {
+				if(item.equals(itemComparado)) {
+					count++;
+					if(count>1) {
+						throw new Exception("O período " + 
+								item.getDescricao() + 
+								" foi incluido a lista mais de uma vez.");
+					}
+				}
+			}			
+		}
+		
+	}
+
 
 }

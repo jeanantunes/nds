@@ -180,7 +180,7 @@ public class DiferencaEstoqueController {
 				consultaDiferencaVO.setNumeroNotaFiscal(
 					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero());
 			} else {
-				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
+				consultaDiferencaVO.setNumeroNotaFiscal(null);
 			}
 			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
@@ -1065,7 +1065,7 @@ public class DiferencaEstoqueController {
 				consultaDiferencaVO.setNumeroNotaFiscal(
 					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero());
 			} else {
-				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
+				consultaDiferencaVO.setNumeroNotaFiscal(null);
 			}
 			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());

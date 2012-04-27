@@ -38,7 +38,7 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	var textWarning = $("#idTextWarning");
 	var textError = $("#idTextError");
 	
-	montarExibicaoMensagem(tipoMensagem, mensagens,
+	montarExibicaoMensagem(false, tipoMensagem, mensagens,
 						   divSuccess, textSuccess,
 						   divWarning, textWarning,
 						   divError, textError);
@@ -54,13 +54,13 @@ function exibirMensagemDialog(tipoMensagem, mensagens) {
 	var textWarning = $("b[name='idTextWarningDialog']");
 	var textError = $("b[name='idTextErrorDialog']");
 	
-	montarExibicaoMensagem(tipoMensagem, mensagens,
+	montarExibicaoMensagem(true, tipoMensagem, mensagens,
 						   divSuccess, textSuccess,
 						   divWarning, textWarning,
 						   divError, textError);
 }
 
-function montarExibicaoMensagem(tipoMensagem, mensagens,
+function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 								divSuccess, textSuccess,
 							    divWarning, textWarning,
 							    divError, textError) {
@@ -73,7 +73,7 @@ function montarExibicaoMensagem(tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divSuccess).show(1000, esconde(divSuccess));
+		$(divSuccess).show(1000, esconde(isFromDialog, divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
 		
@@ -81,7 +81,7 @@ function montarExibicaoMensagem(tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divWarning).show(1000, esconde(divWarning));
+		$(divWarning).show(1000, esconde(isFromDialog, divWarning));
 		
 	} else if (tipoMensagem == "ERROR") {
 		
@@ -89,7 +89,7 @@ function montarExibicaoMensagem(tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divError).show(1000, esconde(divError));
+		$(divError).show(1000, esconde(isFromDialog, divError));
 	}
 }
 
@@ -106,18 +106,22 @@ function isNumeric(a){
 	return !isNaN(parseFloat(a))&&isFinite(a);
 }
 
-function esconde(div) {
-	messageTimeout = 
-		setTimeout(function() {
-			$(div).removeAttr("style").fadeOut();
-		}, 5000);
-}
-
-function escondeDialog(div) {
-	messageDialogTimeout =
-		setTimeout(function() {
-			$(div).removeAttr("style").fadeOut();
-		}, 5000);
+function esconde(isFromDialog, div) {
+	
+	if (isFromDialog) {
+		
+		messageDialogTimeout =
+			setTimeout(function() {
+				$(div).removeAttr("style").fadeOut();
+			}, 5000);
+		
+	} else {
+		
+		messageTimeout = 
+			setTimeout(function() {
+				$(div).removeAttr("style").fadeOut();
+			}, 5000);	
+	}
 }
 
 function clearMessageTimeout() {
