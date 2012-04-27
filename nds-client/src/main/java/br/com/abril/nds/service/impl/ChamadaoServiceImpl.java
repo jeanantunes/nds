@@ -8,20 +8,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ChamadaoRepository;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaoService;
+import br.com.abril.nds.service.CotaService;
 
 /**
  * Classe de implementação de serviços referentes
@@ -42,21 +48,36 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	protected ChamadaEncalheRepository chamadaEncalheRepository;
 	
 	@Autowired
-	protected LancamentoRepository lancamentoRepository;
+	protected CotaRepository cotaRepository;
 	
 	@Autowired
-	protected CotaRepository cotaRepository;
+	protected EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	
+	@Autowired
+	protected ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	protected CotaService cotaService;
 	
 	@Override
 	@Transactional(readOnly = true)
 	public ConsultaChamadaoDTO obterConsignados(FiltroChamadaoDTO filtro) {
 		
 		ConsultaChamadaoDTO consultaChamadaoDTO = new ConsultaChamadaoDTO();
-		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(this.chamadaoRepository.obterConsignadosParaChamadao(filtro));
+		
+		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(
+			this.chamadaoRepository.obterConsignadosParaChamadao(filtro));
+		
 		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(filtro));
 		
-		if (consultaChamadaoDTO.getResumoConsignadoCotaChamadao() != null){
-			consultaChamadaoDTO.getResumoConsignadoCotaChamadao().setQtdProdutosTotal(this.obterTotalConsignados(filtro));
+		Long quantidadeTotalConsignados = this.obterTotalConsignados(filtro);
+
+		consultaChamadaoDTO.setQuantidadeTotalConsignados(quantidadeTotalConsignados);
+		
+		if (consultaChamadaoDTO.getResumoConsignadoCotaChamadao() != null) {
+			
+			consultaChamadaoDTO.getResumoConsignadoCotaChamadao()
+				.setQtdProdutosTotal(quantidadeTotalConsignados);
 		}
 		
 		return consultaChamadaoDTO;
@@ -74,39 +95,103 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Override
 	@Transactional
-	public void confirmarChamacao(List<Long> listaLancamento, Integer numeroCota,
-								  Date dataChamadao, boolean chamarTodos) {
+	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
+								  FiltroChamadaoDTO filtro,
+								  boolean chamarTodos, Usuario usuario) {
 		
-		Lancamento lancamento = null;
+		Date dataChamadao = filtro.getDataChamadao();
 		
-		for (Long idLancamento : listaLancamento) {
+		if (chamarTodos) {
+			
+			listaChamadao =
+				this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+		}
 		
-			lancamento = lancamentoRepository.buscarPorId(idLancamento);
+		ProdutoEdicao produtoEdicao = null;
 		
-			ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();  
-				//chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(produtoEdicao,infoEncalheDTO.getDataAntecipacao());
+		ChamadaEncalhe chamadaEncalhe = null;
+		
+		ChamadaEncalheCota chamadaEncalheCota = null;
+		
+		EstoqueProdutoCota estoqueProdutoCota = null;
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		
+		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			
-			chamadaEncalhe.setFinalRecolhimento(dataChamadao);
-			chamadaEncalhe.setInicioRecolhimento(dataChamadao);
-			chamadaEncalhe.setProdutoEdicao(lancamento.getProdutoEdicao());
-			chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
+			produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				consignadoCotaChamadao.getCodigoProduto(), consignadoCotaChamadao.getNumeroEdicao());
 			
-			chamadaEncalhe = chamadaEncalheRepository.merge(chamadaEncalhe);
+			chamadaEncalhe =
+				chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
+					produtoEdicao, dataChamadao, TipoChamadaEncalhe.CHAMADAO);
 			
-			ChamadaEncalheCota chamadaEncalheCota = null;
+			if (chamadaEncalhe == null) {
+				
+				chamadaEncalhe = new ChamadaEncalhe();
 			
-			Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+				chamadaEncalhe.setFinalRecolhimento(dataChamadao);
+				chamadaEncalhe.setInicioRecolhimento(dataChamadao);
+				chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+				chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
+				
+				chamadaEncalhe = chamadaEncalheRepository.merge(chamadaEncalhe);
+			}
 			
 			chamadaEncalheCota = new ChamadaEncalheCota();
+			
 			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 			chamadaEncalheCota.setConferido(Boolean.FALSE);
 			chamadaEncalheCota.setCota(cota);
 			
-			//TODO:
-			chamadaEncalheCota.setQtdePrevista(BigDecimal.ZERO);
+			estoqueProdutoCota =
+				estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
+					produtoEdicao.getId(), cota.getId());
+			
+			BigDecimal qtdPrevista = BigDecimal.ZERO;
+			
+			if (estoqueProdutoCota != null) {
+				
+				qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
+					estoqueProdutoCota.getQtdeDevolvida());
+			}
+			
+			chamadaEncalheCota.setQtdePrevista(qtdPrevista);
 			
 			chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 		}
+		
+		this.verificarSuspenderCota(filtro, cota.getId(), usuario);
+	}
+	
+	/**
+	 * Verifica se todo o consignado da cota foi chamado 
+	 * e dependendo do resultado suspende a cota.
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * @param idCota - identificador da cota
+	 * @param usuario - usuário
+	 */
+	private void verificarSuspenderCota(FiltroChamadaoDTO filtro, Long idCota, Usuario usuario) {
+		
+		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
+			this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+		
+		if (listaConsignadoCotaChamadao == null || listaConsignadoCotaChamadao.isEmpty()) {
+			
+			this.suspenderCota(idCota, usuario);
+		}
+	}
+	
+	/**
+	 * Suspende a cota.
+	 * 
+	 * @param idCota - identificador da cota
+	 * @param usuario - usuário
+	 */
+	private void suspenderCota(Long idCota, Usuario usuario) {
+		
+		cotaService.suspenderCota(idCota, usuario, MotivoAlteracaoSituacao.CHAMADAO);
 	}
 	
 }

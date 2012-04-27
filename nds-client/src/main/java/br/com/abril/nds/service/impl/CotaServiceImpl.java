@@ -300,7 +300,7 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<CotaSuspensaoDTO> suspenderCotasGetDTO(List<Long> idCotas, Long idUsuario) {
 
-		List<Cota> cotasSuspensas =  suspenderCotas(idCotas, idUsuario);
+		List<Cota> cotasSuspensas =  suspenderCotas(idCotas, idUsuario, MotivoAlteracaoSituacao.INADIMPLENCIA);
 		
 		List<CotaSuspensaoDTO> cotasDTO = new ArrayList<CotaSuspensaoDTO>();
 		
@@ -331,21 +331,23 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Override
 	@Transactional
-	public List<Cota> suspenderCotas(List<Long> idCotas, Long idUsuario) {
+	public List<Cota> suspenderCotas(List<Long> idCotas, Long idUsuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao) {
 
 		List<Cota> cotasSuspensas = new ArrayList<Cota>();
 		
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
 		
 		for(Long id:idCotas) {	
-			cotasSuspensas.add(suspenderCota(id, usuario));			
-		}		
+			
+			cotasSuspensas.add(suspenderCota(id, usuario, motivoAlteracaoSituacao));
+		}	
+		
 		return cotasSuspensas;
 	}
 
 	@Override
 	@Transactional
-	public Cota suspenderCota(Long idCota, Usuario usuario) {
+	public Cota suspenderCota(Long idCota, Usuario usuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao) {
 				
 		Cota cota = obterPorId(idCota);
 		
@@ -359,11 +361,13 @@ public class CotaServiceImpl implements CotaService {
 		historico.setNovaSituacao(SituacaoCadastro.SUSPENSO);
 		historico.setSituacaoAnterior(cota.getSituacaoCadastro());
 		historico.setResponsavel(usuario);
-		historico.setMotivo(MotivoAlteracaoSituacao.INADIMPLENCIA);
+		historico.setMotivo(motivoAlteracaoSituacao);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
+		
 		historicoSituacaoCotaRepository.adicionar(historico);
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
+		
 		cotaRepository.alterar(cota);
 		
 		situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
