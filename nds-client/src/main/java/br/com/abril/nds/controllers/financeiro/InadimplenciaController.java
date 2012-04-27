@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.DividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
@@ -19,10 +20,15 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -50,6 +56,11 @@ public class InadimplenciaController {
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DividaService dividaService;
+	
+	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
 	@Autowired
 	private static final Logger LOG = LoggerFactory
@@ -100,19 +111,32 @@ public class InadimplenciaController {
 
 		TableModel<CellModelKeyValue<StatusDividaDTO>> grid = null;
 		
+		String total = "0,00";
+		String count = "0";
+		
 		try {
 			
-			if(statusCota!= null) {
-				SituacaoCadastro situacao = SituacaoCadastro.values()[statusCota];
-			}
-			
 			FiltroCotaInadimplenteDTO filtroAtual = new FiltroCotaInadimplenteDTO();
-			filtroAtual.setPaginacao(new PaginacaoVO(page,rp,sortorder));
+			filtroAtual.setPaginacao(new PaginacaoVO(page,rp,sortname,sortorder));
 			filtroAtual.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
+			filtroAtual.setNumCota(numCota);
+			filtroAtual.setNomeCota(nomeCota);
+			filtroAtual.setPeriodoDe(periodoDe);
+			filtroAtual.setPeriodoAte(periodoAte);
+			filtroAtual.setSituacaoEmAberto(situacaoEmAberto);
+			filtroAtual.setSituacaoPaga(situacaoPaga);
+			filtroAtual.setSituacaoNegociada(situacaoNegociada);
+			
+			if(statusCota!= null) {
+				filtroAtual.setStatusCota(SituacaoCadastro.values()[statusCota].toString());
+			}
 		
 			tratarFiltro(filtroAtual);
 			
 			grid = obterInadimplencias(filtroAtual);
+			
+			total = CurrencyUtil.formatarValor(dividaService.obterSomaDividas(filtroAtual));
+			count = dividaService.obterTotalCotasInadimplencias(filtroAtual).toString();
 		
 		} catch(ValidacaoException e) {
 		
@@ -131,45 +155,33 @@ public class InadimplenciaController {
 			grid = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
 		}
 		
-		Object[] retorno = new Object[3];
+		Object[] retorno = new Object[5];
 		retorno[0] = grid;
 		retorno[1] = mensagens;
 		retorno[2] = status.name();
+		retorno[3] = total;
+		retorno[4] = count;
+		
 	
 		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
-	}
-	
-	//TODO remove after get real List
-	private List<StatusDividaDTO> getInadimplencias() {
-
-		List<StatusDividaDTO> listaInadimplencias = new ArrayList<StatusDividaDTO>();
-		
-		for(Integer i = 0; i<50; i++) {
-			listaInadimplencias.add(new StatusDividaDTO(
-					i.longValue(),i,"Nome"+i,"Status"+i,i+",00","10/10/"+i,"10/10/"+i,"Situacao"+i, i+",00", i.longValue()));
-		}
-		
-		return listaInadimplencias;
 	}
 
 	private TableModel<CellModelKeyValue<StatusDividaDTO>> obterInadimplencias(
 			FiltroCotaInadimplenteDTO filtro) {
-		
-		//TODO getRealList
-		List<StatusDividaDTO> listaInadimplencias = getInadimplencias();
-		
+	
+		List<StatusDividaDTO> listaInadimplencias = dividaService.obterInadimplenciasCota(filtro);
 				
 		if (listaInadimplencias == null || listaInadimplencias.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
 		}
 		
-		Long totalRegistros = 50L;//cotaAusenteService.obterCountCotasAusentes(filtro);
+		Long totalRegistros = dividaService.obterTotalInadimplenciasCota(filtro);
 		
 		TableModel<CellModelKeyValue<StatusDividaDTO>> tableModel = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaInadimplencias));
 		
-		tableModel.setPage(1);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
 		
@@ -240,6 +252,25 @@ public class InadimplenciaController {
 	}
 	
 	/**
+	 * Obtém detalhes de acumulo da divida
+	 * 
+	 * @param idDivida
+	 */
+	public void getDetalhesDivida(Long idDivida) {
+		
+		List<Divida> dividas = dividaService.getDividasAcumulo(idDivida);
+		
+		List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
+		
+		for(Divida divida : dividas) {
+			dividasDTO.add(new DividaDTO(
+					DateUtil.formatarData(divida.getCobranca().getDataVencimento(), FORMATO_DATA), 
+					CurrencyUtil.formatarValor(divida.getCobranca().getValor())));
+		}
+		result.use(Results.json()).from(dividasDTO, "result").serialize();
+	}	
+	
+	/**
 	 * Exporta os dados da pesquisa.
 	 * 
 	 * @param fileType - tipo de arquivo
@@ -251,11 +282,10 @@ public class InadimplenciaController {
 		
 		FiltroCotaInadimplenteDTO filtro = (FiltroCotaInadimplenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		//TODO getRealList
-		List<StatusDividaDTO> listaInadimplencias = getInadimplencias();
+		List<StatusDividaDTO> listaInadimplencias = dividaService.obterInadimplenciasCota(filtro);
 		
-		Double total = 333.3;
-		Integer count = 100;
+		Double total = dividaService.obterSomaDividas(filtro);
+		Integer count = dividaService.obterTotalCotasInadimplencias(filtro).intValue();
 		
 		RodapeDTO rodape = new RodapeDTO(count, CurrencyUtil.formatarValor(total));
 		

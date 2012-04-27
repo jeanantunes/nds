@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
@@ -41,13 +44,17 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
@@ -187,6 +194,37 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   bancoHSBC,
                 					   divida,0);
 		save(boleto);		
+		
+		HistoricoAcumuloDivida acumDividaGuilherme2;
+		CobrancaDinheiro cobrancaAcumuloGuilherme2;
+		
+		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
+				.consolidadoFinanceiroCota(null, cotaManoel,
+						Fixture.criarData(2, 2, 2010), new BigDecimal(210));
+		
+		Divida dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaManoel, Fixture.criarData(2, 2, 2010),
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+		
+		
+		acumDividaGuilherme2 = Fixture.criarHistoricoAcumuloDivida(
+				dividaAcumuladaGuilherme2, 
+				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
+		
+		
+		
+		
+		cobrancaAcumuloGuilherme2 = Fixture.criarCobrancaDinheiro("3234567890124", 
+				new Date(),Fixture.criarData(1, 1, 2010),  Fixture.criarData(2, 2, 2010),
+                BigDecimal.ZERO, new BigDecimal(210),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaGuilherme2,1);
+		
+		
+		dividaAcumuladaGuilherme2.getAcumulado().add(divida);
+		
+		save(consolidadoAcumuloGuilherme2,dividaAcumuladaGuilherme2,acumDividaGuilherme2,cobrancaAcumuloGuilherme2);
+		
+		
 	}
 	
 	@Test
@@ -225,18 +263,63 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertTrue(quantidade > 0);
 	}
 
-	//TODO
-	/*@Test
-	public void obterInadimplencias() throws Exception {
-		setupHistoricoInadimplencia();
-		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao("asc",CotaSuspensaoDTO.Ordenacao.NOME.name(),0,50);
-		Assert.assertEquals(lista.size(),1);			
+	@Test
+	public void obterInadimplencias(){
+		try {
+			
+			FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+			filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.NOME);
+			filtro.setNomeCota("Manoel da Silva");
+			filtro.setNumCota(123);
+			filtro.setPeriodoDe("02/03/2009");
+			filtro.setPeriodoAte("02/03/2012");
+			filtro.setSituacaoEmAberto(true);
+			filtro.setSituacaoPaga(true);
+			filtro.setSituacaoNegociada(false);
+			filtro.setStatusCota("Ativo");
+			filtro.setPaginacao(new PaginacaoVO(1, 5, ColunaOrdenacao.NOME.toString(), "ASC"));
+			
+			List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+			Assert.assertEquals(lista.size(),1);	
+			StatusDividaDTO divida = lista.get(0);
+			Assert.assertEquals(divida.getConsignado(), "100,00" );
+			Assert.assertEquals(divida.getDataPagamento(), "02/03/2010" );
+			Assert.assertEquals(divida.getDataVencimento(), "01/02/2010");
+			Assert.assertEquals(divida.getDividaAcumulada(), "210,00");
+			Assert.assertEquals(divida.getNome(), "Manoel da Silva");
+			Assert.assertEquals(divida.getSituacao(),"Paga");
+			Assert.assertTrue(divida.getDiasAtraso() == 29);
+			Assert.assertTrue(divida.getNumCota() == 123);
+			Assert.assertEquals(divida.getStatus(),"Ativo");
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+		}
+			
 	}
 	
 	@Test
-	public void obterTotalInadimplencis() throws Exception {
-		setupHistoricoInadimplencia();
-		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
-		Assert.assertTrue(total==1L);			
-	}*/
+	public void obterTotalInadimplencias() {
+		
+		Long lista = dividaRepository.obterTotalInadimplenciasCota(new FiltroCotaInadimplenteDTO());
+		
+		Assert.assertTrue(lista==1L);					
+	}
+	
+	@Test
+	public void obterTotalCotasInadimplencias() {
+		
+		Long lista = dividaRepository.obterTotalCotasInadimplencias(new FiltroCotaInadimplenteDTO());
+		
+		Assert.assertTrue(lista==1L);					
+	}
+	
+	@Test
+	public void obterSomaDividas() {
+		
+		Double valor = dividaRepository.obterSomaDividas(new FiltroCotaInadimplenteDTO());
+		
+		Assert.assertTrue(valor==210.0);					
+	}
 }

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
@@ -13,12 +15,13 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
-import br.com.abril.nds.model.cadastro.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -41,6 +44,10 @@ public class PdvController {
 	
 	@Autowired
 	private PdvService pdvService;
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PdvController.class);
+	
 
 	@Path("/")
 	public void index(){
@@ -244,5 +251,39 @@ public class PdvController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
+	
+	@Post
+	@Path("/adicionarPeriodo")
+	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
 		
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		mensagens.add("gui");
+		
+		List<TipoPeriodoFuncionamentoPDV> tiposPeriodosPossiveis = null;
+	
+		try {
+			
+			if(periodos == null) {
+				periodos = new ArrayList<PeriodoFuncionamentoDTO>();
+			}
+			
+			PeriodoFuncionamentoDTO.validarPeriodos(periodos);
+			periodos.add(novoPeriodo);
+			tiposPeriodosPossiveis = PeriodoFuncionamentoDTO.getPeriodosPossiveis(periodos);
+						
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.ERROR;
+		}
+		
+		Object[] retorno = new Object[3];
+		retorno[0] = tiposPeriodosPossiveis;
+		retorno[1] = mensagens;
+		retorno[2] = status.name();		
+		
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+	}
 }
