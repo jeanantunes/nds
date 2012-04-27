@@ -177,6 +177,15 @@ public class PDV implements Serializable {
 	@JoinTable(name = "PDV_MATERIAL_PROMOCIONAL", joinColumns = {@JoinColumn(name = "PDV_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "MATERIAL_PROMOCIONAL_ID")})
 	private Set<MaterialPromocional> materiais = new HashSet<MaterialPromocional>();
+	  	
+	@Column(name = "EXPOSITOR", nullable = false)  	
+	private boolean expositor;
+		
+	@Column(name = "TIPO_EXPOSITOR")
+	private String tipoExpositor;
+	  	
+	@OneToOne(mappedBy = "pdv")	  	
+	private GeradorFluxoPDV geradorFluxoPDV;
 	
 	public Long getId() {
 		return id;
@@ -362,5 +371,49 @@ public class PDV implements Serializable {
 	public void setMateriais(Set<MaterialPromocional> materiais) {
 		this.materiais = materiais;
 	}
+
+	/**
+	 * @return the expositor
+	 */
+	public boolean isExpositor() {
+		return expositor;
+	}
+
+	/**
+	 * @param expositor the expositor to set
+	 */
+	public void setExpositor(boolean expositor) {
+		this.expositor = expositor;
+	}
+
+	/**
+	 * @return the tipoExpositor
+	 */
+	public String getTipoExpositor() {
+		return tipoExpositor;
+	}
+
+	/**
+	 * @param tipoExpositor the tipoExpositor to set
+	 */
+	public void setTipoExpositor(String tipoExpositor) {
+		this.tipoExpositor = tipoExpositor;
+	}
+
+	/**
+	 * @return the geradorFluxoPDV
+	 */
+	public GeradorFluxoPDV getGeradorFluxoPDV() {
+		return geradorFluxoPDV;
+	}
+
+	/**
+	 * @param geradorFluxoPDV the geradorFluxoPDV to set
+	 */
+	public void setGeradorFluxoPDV(GeradorFluxoPDV geradorFluxoPDV) {
+		this.geradorFluxoPDV = geradorFluxoPDV;
+	}
+	
+	
 
 }
