@@ -11,6 +11,8 @@ var PDV = {
 		
 		abaSelecionada:"",
 		
+		diasFuncionamento:[],
+		
 		pesquisarPdvs: function (idCota){
 			
 			var param = [{name:"idCota",value:idCota}];
@@ -169,7 +171,7 @@ var PDV = {
 	              "pdvDTO.caracteristicaDTO.caracteristica=" + $("#selectCaracteristica").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
-			
+						
 			return dados;
 		},
 
@@ -235,33 +237,84 @@ var PDV = {
 			}
 		},
 		
+		adicionarDiaFuncionamento: function() {
+			
+			debugger;
+			
+			var tipoPeriodo = $("#selectDiasFuncionamento").val();
+			var inicioHorario = $("#inicioHorario").val();
+			var fimHorario = $("#fimHorario").val();
+			
+			var parametros = [];
+			
+			$.each(PDV.diasFuncionamento, function(index, diasFuncionamento) {
+				
+				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: movimento.idCota});
+				parametros.push({name:'periodos['+ index +'].inicio', value: inicioHorario});
+				parametros.push({name:'periodos['+ index +'].fim', value: fimHorario});
+		  	});
+						
+			parametros.push({name:'novoPeriodo.tipoPeriodo', value: tipoPeriodo});
+			parametros.push({name:'novoPeriodo.inicio', value: inicioHorario});
+			parametros.push({name:'novoPeriodo.fim', value: fimHorario});
+			
+			
+			$.postJSON(contextPath + "/cadastro/pdv/adicionarPeriodo",
+					parametros, 
+					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);}
+			);
+		},
+		
+		retornoAdicaoDiaFuncionamento: 	function(result){
+			
+			debugger;
+			
+			var status = result[2];
+	
+			if(status == "SUCCESS") {
+				
+				var tipoPeriodo = $("#selectDiasFuncionamento").val();
+				var descTipoPeriodo = $("#selectDiasFuncionamento option:selected").text();
+				var inicioHorario = $("#inicioHorario").val();
+				var fimHorario = $("#fimHorario").val();
+				
+				var novoPeriodo = {tipoPeriodo:tipoPeriodo,descTipoPeriodo:descTipoPeriodo,inicio:inicioHorario,fim:fimHorario};
+				
+				
+				PDV.diasFuncionamento.push(novoPeriodo);
+				PDV.montartabelaDiasFuncionamento();
+				
+			} else {
+				alert(result[1]);
+			}
+		},
+		
 		montartabelaDiasFuncionamento: function(){
 			
 			/**
 			 * TODO chamar metodo para validar a inclusao conforme EMS
 			 */
+					 
+			 $('#listaDiasFuncionais tr').remove();;
+			 
 			
-			 var idDiasFuncionamento = $("#selectDiasFuncionamento").val();
-			 var diasFuncionamento = $("#selectDiasFuncionamento option:selected").text();
-			 var inicioHoratio = $("#inicioHorario").val();
-			 var fimHorario = $("#fimHorario").val();
-			 
-			 var inputHidden = "<input type='hidden' value='"+idDiasFuncionamento +"' name='diasFuncionamento'/>";
-			 
-			 $('#listaDiasFuncionais tr');
-			 
-			 var tr = $('<tr class="class_linha_1"></tr>');
-			
-			 tr.append("<td width='138'>&nbsp; "+ inputHidden+"</td>");
-			 tr.append("<td width='249' class='diasFunc'>"+ diasFuncionamento +"</td>");
-			 tr.append("<td width='47'>&nbsp;</td>");
-			 tr.append("<td width='100'>"+ inicioHoratio +" as "+ fimHorario +"</td>");
-			 tr.append("<td width='227'>"+
-			 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent());'" +
-			 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
-			 			"width='15' height='15' border='0'/></a></td>");
-		      
-			 $('#listaDiasFuncionais').append(tr);
+			$.each(PDV.diasFuncionamento, function(index, row) {
+					
+				 var inputHidden = "<input type='hidden' value='"+row.tipoPeriodo +"' name='diasFuncionamento'/>";
+					
+				 var tr = $('<tr class="class_linha_1"></tr>');
+				
+				 tr.append("<td width='138'>&nbsp; "+ inputHidden+"</td>");
+				 tr.append("<td width='249' class='diasFunc'>"+ row.descTipoPeriodo +"</td>");
+				 tr.append("<td width='47'>&nbsp;</td>");
+				 tr.append("<td width='100'>"+ row.inicio +" as "+ row.fim +"</td>");
+				 tr.append("<td width='227'>"+
+				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent());'" +
+				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
+				 			"width='15' height='15' border='0'/></a></td>");
+			      
+				 $('#listaDiasFuncionais').append(tr);
+			});
 		},
 		
 		removerDiasFuncionamento: function (linha){
@@ -343,4 +396,5 @@ var PDV = {
 		}
 		
 };
+
 

@@ -171,7 +171,7 @@ fieldset label {
 							</li>
 							<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>
 							</li>
-							<li><a href="Cadastro/cadastro_entregador.htm">Entregador</a>
+							<li><a href="<c:url value="/cadastro/entregador"/>">Entregador</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
 							</li>
@@ -209,7 +209,7 @@ fieldset label {
 							<li><a href="Financeiro/geracao_cobranca.htm">Geração
 									Cobrança</a>
 							</li>
-							<li><a href="inadimplencia/index">Histórico
+							<li> <a href='<c:url value="/inadimplencia/index"/>'>Histórico
 									de Inadimplência</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão

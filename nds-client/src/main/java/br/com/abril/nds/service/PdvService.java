@@ -31,4 +31,6 @@ public interface PdvService {
 	 * @return List<PdvDTO>
 	 */
 	List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro);
+	
+	void salvar(PdvDTO pdvDTO);
 }

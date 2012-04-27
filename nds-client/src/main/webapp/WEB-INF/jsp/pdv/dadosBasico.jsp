@@ -1,3 +1,15 @@
+<script>
+$(function() {
+	
+	$('#inicioHorario').mask('99:99'); 
+	$('#fimHorario').mask('99:99'); 
+	$("#porcentagemFaturamento").numeric();
+	$("#qntFuncionarios").numeric();
+	$("#numerolicenca").numeric();
+	
+
+});
+</script>
 
 <fieldset>
 <legend>Dados Básicos</legend>
@@ -20,7 +32,7 @@
           </td>
         <td width="80">Data Início:</td>
         	<td width="215">
-        		<input type="text" id="dataInicio"  style="width:80px;" disabled="disabled"/>
+        		<input value="${dataAtual}" type="text" id="dataInicio"  style="width:80px;" disabled="disabled" />
         	</td>
       </tr>
       <tr>
@@ -83,8 +95,8 @@
 
     </td>
     <td width="191" align="center" valign="top">
-    	<img src="../images/bancaJornal.jpg" width="191" height="136" alt="Banca" /><br />
-    	<a href="javascript:" onclick="popup_img();"><img src="../images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="../images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
+    	<img src="${pageContext.request.contextPath}/images/no_image.jpeg" width="191" height="136" alt="Banca" /><br />
+    	<a href="javascript:" onclick="popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
     </td>
   </tr>
 </table>
@@ -95,27 +107,18 @@
 	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" style="width:230px;">
 		      
 		      <option value="-1" selected="selected">Selecione</option>
-		      <option value="1" >Di&aacuterio</option>
-		      <option value="2" >Segunda - Sexta</option>
-		      <option value="3" >Finais de Semana</option>
-		      <option value="4" >Feriados</option>
-		      <option value="5" >24 Horas</option>
-		      <option>-----------------------------------------</option>
-		      <option value="6" >Domingo</option>
-		      <option value="7" >Segunda-feira</option>
-		      <option value="8" >Ter&ccedila-feira</option>
-		      <option value="9" >Quarta-feira</option>
-		      <option value="10" >Quinta-feira</option>
-		      <option value="11" >Sexta-feira</option>
-		      <option value="12" >S&aacutebado</option>
 		      
+		       <c:forEach items="${listaDiasFuncionamento}" var="item">
+	          	<option value="${item.key}">${item.value}</option>	          
+	          </c:forEach>
+	          
 	      </select>
     	</td>
     	<td width="47">Horário:</td>
     	<td width="179"><input type="text" name="inicioHorario" id="inicioHorario" style="width:60px;"/>
       		As
       	<input type="text" name="fimHorario" id="fimHorario" style="width:60px;"/></td>
-    	<td width="148"><span class="bt_add"><a href="javascript:;" onclick="PDV.montartabelaDiasFuncionamento()">Incluir Novo</a></span></td>
+    	<td width="148"><span class="bt_add"><a href="javascript:;" onclick="PDV.adicionarDiaFuncionamento()">Incluir Novo</a></span></td>
   	</tr>
 </table>
 

@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.AssociacaoEndereco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
@@ -35,6 +36,7 @@ import br.com.abril.nds.repository.MaterialPromocionalRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PeriodoFuncionamentoPDVRepository;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
+import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
 import br.com.abril.nds.service.PdvService;
 
@@ -71,6 +73,9 @@ public class PdvServiceImpl implements PdvService {
 	@Autowired
 	private TipoPontoPDVRepository tipoPontoPDVRepository;
 	
+	@Autowired
+	private TipoLicencaMunicipalRepository tipoLicencaMunicipalRepository;
+	
 	@Override
 	public boolean isExcluirPdv(Long idPdv) {
 		
@@ -87,18 +92,34 @@ public class PdvServiceImpl implements PdvService {
 		return pdvRepository.obterPDVsPorCota(filtro);
 	}
 	
-	public void savlarPDV(PdvDTO pdvDTO){
+	@Transactional
+	public void salvar(PdvDTO pdvDTO){
 		
 		if(pdvDTO == null){
 			throw new IllegalArgumentException("Parâmetro PDV inválido");
 		}
 		
-		PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
+		if(pdvDTO.getNumeroCota() == null){
+			throw new IllegalArgumentException("Parâmetro Cota PDV inválido");
+		}
+		
+		Cota cota  = obterCotaPDV(pdvDTO);
+		
+		if(cota == null){
+			throw new IllegalArgumentException("Não foi encontrado Cota para inclusão do PDV");
+		}
+		
+		PDV pdv = null;
+		
+		if(pdvDTO.getId()!= null){
+			pdv = pdvRepository.buscarPorId(pdvDTO.getId());
+		}
 		
 		if(pdv == null){
 			pdv = new PDV();
 		}
-
+		
+		pdv.setCota(cota);
 		pdv.setNome(pdvDTO.getNomePDV());
 		pdv.setContato(pdvDTO.getContato());
 		pdv.setPontoReferencia(pdvDTO.getPontoReferencia());
@@ -111,8 +132,7 @@ public class PdvServiceImpl implements PdvService {
 		pdv.setStatus(pdvDTO.getStatusPDV());
 		pdv.setTamanhoPDV(pdvDTO.getTamanhoPDV());
 		pdv.setDentroOutroEstabelecimento(pdvDTO.isDentroDeOutroEstabelecimento());
-		
-		pdv.setCota(obterCotaPDV(pdvDTO));
+	
 		pdv.setEspecialidades(obterEspecialidadesPDV(pdvDTO));
 		pdv.setLicencaMunicipal(obterLicencaMunicipalPDV(pdvDTO,pdv));
 		pdv.setCaracteristicas(obterCaracteristicaPDV(pdvDTO,pdv));
@@ -125,10 +145,10 @@ public class PdvServiceImpl implements PdvService {
 		
 		pdv =  pdvRepository.merge(pdv);
 		
-		salvarEndereco(pdvDTO, pdv);
-		salvarTelefone(pdvDTO, pdv);
-		salvarGeradorFluxoPDV(pdvDTO, pdv);
-		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
+		//salvarEndereco(pdvDTO, pdv);
+		//salvarTelefone(pdvDTO, pdv);
+		//salvarGeradorFluxoPDV(pdvDTO, pdv);
+		//salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
 	}
 	
 	private void salvarPeriodoFuncionamentoPDV(PdvDTO pdvDTO,PDV pdv){
@@ -150,27 +170,35 @@ public class PdvServiceImpl implements PdvService {
 
 	private SegmentacaoPDV obterSegmentacaoPDV(PdvDTO pdvDTO,PDV pdv) {
 		
-		CaracteristicaDTO caracteristicaDTO = pdvDTO.getCaracteristicaDTO();
-				
 		SegmentacaoPDV segmaSegmentacaoPDV = pdv.getSegmentacao();
 		
 		if(segmaSegmentacaoPDV == null){
-			
 			segmaSegmentacaoPDV = new SegmentacaoPDV();
 		}
 		
-		AreaInfluenciaPDV areaInfluenciaPDV = areaInfluenciaPDVRepository.buscarPorId(caracteristicaDTO.getAreaInfluencia());
+		CaracteristicaDTO caracteristicaDTO = pdvDTO.getCaracteristicaDTO();
+		AreaInfluenciaPDV areaInfluenciaPDV = null;
+		ClusterPDV clusterPDV = null;
+		TipoPontoPDV tipoPontoPDV = null;
 		
-		ClusterPDV clusterPDV = clusterPDVRepository.buscarPorId(caracteristicaDTO.getCluster());
-		
-		TipoPontoPDV tipoPontoPDV = tipoPontoPDVRepository.buscarPorId(caracteristicaDTO.getTipoPonto());
-		
+		if(pdvDTO.getCaracteristicaDTO()!= null){
+			
+			if(caracteristicaDTO.getAreaInfluencia()!= null){
+				areaInfluenciaPDV = areaInfluenciaPDVRepository.buscarPorId(caracteristicaDTO.getAreaInfluencia());
+			}
+			
+			if(caracteristicaDTO.getCluster()!= null){
+				clusterPDV = clusterPDVRepository.buscarPorId(caracteristicaDTO.getCluster());
+			}
+			
+			if(caracteristicaDTO.getTipoPonto()!= null){
+				tipoPontoPDV = tipoPontoPDVRepository.buscarPorId(caracteristicaDTO.getTipoPonto());
+			}
+		}
+			
 		segmaSegmentacaoPDV.setAreaInfluenciaPDV(areaInfluenciaPDV);
-		
 		segmaSegmentacaoPDV.setClusterPDV(clusterPDV);
-		
 		segmaSegmentacaoPDV.setTipoCaracteristica(caracteristicaDTO.getTipoCaracteristicaSegmentacaoPDV());
-		
 		segmaSegmentacaoPDV.setTipoPontoPDV(tipoPontoPDV);
 		
 		return segmaSegmentacaoPDV;
@@ -194,7 +222,12 @@ public class PdvServiceImpl implements PdvService {
 	private Set<MaterialPromocional> obterMateriaisPDV(PdvDTO pdvDTO) {
 		
 		Set<MaterialPromocional> materialPromocional = new HashSet<MaterialPromocional>();
-		materialPromocional.addAll( materialPromocionalRepository.obterMateriaisPromocional((pdvDTO.getMaps().toArray(new Long[]{}))));
+		
+		if(pdvDTO.getMaps()!= null){
+
+			materialPromocional.addAll( materialPromocionalRepository.obterMateriaisPromocional((pdvDTO.getMaps().toArray(new Long[]{}))));
+			
+		}
 		
 		return materialPromocional;
 	}
@@ -206,9 +239,16 @@ public class PdvServiceImpl implements PdvService {
 		if(licencaMunicipal == null){
 			licencaMunicipal = new LicencaMunicipal();
 		}
+		
+		TipoLicencaMunicipal tipoLicencaMunicipal = null;
+		
+		if(pdvDTO.getTipoLicencaMunicipal()!= null){
+			tipoLicencaMunicipal = tipoLicencaMunicipalRepository.obterTipoLicencaMunicipal(pdvDTO.getTipoLicencaMunicipal().getId());
+		}
+		
 		licencaMunicipal.setNomeLicenca(pdvDTO.getNomeLicenca());
 		licencaMunicipal.setNumeroLicenca(pdvDTO.getNumeroLicenca());
-		licencaMunicipal.setTipoLicencaMunicipal(pdvDTO.getTipoLicencaMunicipal());
+		licencaMunicipal.setTipoLicencaMunicipal(tipoLicencaMunicipal);
 		
 		return licencaMunicipal;
 	}
@@ -239,14 +279,17 @@ public class PdvServiceImpl implements PdvService {
 	private Set<EspecialidadePDV> obterEspecialidadesPDV(PdvDTO pdvDTO) {
 		
 		Set<EspecialidadePDV> especialidadePDVs = new HashSet<EspecialidadePDV>();
-		especialidadePDVs.addAll(especialidadePDVRepository.obterEspecialidades((pdvDTO.getEspecialidades().toArray(new Long[]{}))));
+		
+		if(pdvDTO.getEspecialidades() != null){
+			especialidadePDVs.addAll(especialidadePDVRepository.obterEspecialidades((pdvDTO.getEspecialidades().toArray(new Long[]{}))));
+		}
 		
 		return especialidadePDVs;
 	}
 
 	private Cota obterCotaPDV(PdvDTO pdvDTO) {
 		
-		return cotaRepository.buscarPorId(pdvDTO.getIdCota());
+		return cotaRepository.obterPorNumerDaCota(pdvDTO.getNumeroCota());
 	}
 
 	private CaracteristicasPDV obterCaracteristicaPDV(PdvDTO pdvDTO,PDV pdv) {

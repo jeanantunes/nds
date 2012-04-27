@@ -59,7 +59,7 @@ public class PDV implements Serializable {
 	 * Status do PDV
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS_PDV", nullable = false)
+	@Column(name = "STATUS_PDV")
 	private StatusPDV status;
 	
 	@OneToMany(mappedBy = "pdv")
@@ -101,7 +101,7 @@ public class PDV implements Serializable {
 	/**
 	 * Flag indicando se o pdv esta dentro de outro estabelecimento
 	 */
-	@Column(name = "DENTRO_OUTRO_ESTABELECIMENTO", nullable = false)
+	@Column(name = "DENTRO_OUTRO_ESTABELECIMENTO")
 	private boolean dentroOutroEstabelecimento;
 	
 	/**
@@ -115,26 +115,26 @@ public class PDV implements Serializable {
 	 * Tamanho do PDV
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TAMANHO_PDV", nullable = false)
+	@Column(name = "TAMANHO_PDV")
 	private TamanhoPDV tamanhoPDV;
 	
 	/**
 	 * Flag indicando se o PDV possui o Sistema IPV
 	 */
-	@Column(name = "POSSUI_SISTEMA_IPV", nullable = false)
+	@Column(name = "POSSUI_SISTEMA_IPV")
 	private boolean possuiSistemaIPV;
 	
 	/**
 	 * Quantidade de funcionários do PDV
 	 */
-	@Column(name = "QTDE_FUNCIONARIOS", nullable = false)
+	@Column(name = "QTDE_FUNCIONARIOS")
 	private int qtdeFuncionarios;
 	
 	/**
 	 * Porcentagem que o PDV representa no total do faturamento
 	 * da cota
 	 */
-	@Column(name = "PORCENTAGEM_FATURAMENTO", nullable = false)
+	@Column(name = "PORCENTAGEM_FATURAMENTO")
 	private BigDecimal porcentagemFaturamento;
 	
 	/**

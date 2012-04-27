@@ -66,33 +66,51 @@ function processaRetornoPesquisa(result) {
 	var grid = result[0];
 	var mensagens = result[1];
 	var status = result[2];
+	var total = result[3];
+	var qtde = result[4];
 	
 	if(mensagens!=null && mensagens.length!=0) {
 		exibirMensagem(status,mensagens);
 	}
 	
 	if(!grid.rows) {
+		document.getElementById("idTotal").innerHTML  = "0,00";
+		document.getElementById("idQtde").innerHTML  = 0;	
 		return grid;
 	}
 	
 	$.each(grid.rows, function(index, row) {
 		
-		row.cell.detalhe = gerarBotaoDetalhes(row.cell.idCota);		
+		row.cell.detalhe = gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome);		
 		
   	});
+	
+	document.getElementById("idQtde").innerHTML  = qtde;
+	document.getElementById("idTotal").innerHTML  = total;	
 	
 	return grid;
 }
 
-function gerarBotaoDetalhes(idCota) {
-	return "<a href=\"javascript:;\" onclick=\"popup("+idCota+");\"><img src=\"${pageContext.request.contextPath}/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+function gerarBotaoDetalhes(idDivida, nome) {
+	return "<a href=\"javascript:;\" onclick=\"getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"${pageContext.request.contextPath}/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 	
 }
 
-function popup(idCota) {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+var nomeCota;
+
+function getDetalhes(idDivida, nome) {
+	nomeCota = nome;
+	$.postJSON("<c:url value='/inadimplencia/getDetalhesDivida'/>", 
+			"idDivida="+idDivida+"&method='get'", 
+			popupDetalhes);	
+};
+
+
+function popupDetalhes(result) {
 	
-		$( "#dialog-novo" ).dialog({
+		gerarTabelaDetalhes(result, nomeCota);
+	
+		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:380,
@@ -107,6 +125,77 @@ function popup(idCota) {
 		});
 }
 	
+function gerarTabelaDetalhes(dividas, nome) {
+	var div = document.getElementById("dialog-detalhes");
+	
+	div.innerHTML="";
+	
+	var fieldset  = document.createElement("FIELDSET");
+	
+	fieldset.style.cssText = "width:330px;" + fieldset.style.cssText;
+	
+	div.appendChild(fieldset);
+	
+	var legend = document.createElement("LEGEND");
+	legend.innerHTML = "Cota: ".bold() + " - " + nome;
+	
+	fieldset.appendChild(legend);
+	
+	var table = document.createElement("TABLE");
+	table.id = "tabelaDetalhesId";
+	table.width = "330";
+	table.border = "0";
+	table.cellspacing = "1";
+	table.cellpadding = "1";
+	
+	fieldset.appendChild(table);
+	
+	var tbody = document.createElement("TBODY");
+	
+	table.appendChild(tbody);
+	
+ 	var cabecalho = document.createElement("TR");
+ 	cabecalho.className="header_table";
+ 	
+ 	var tdDia = document.createElement("TD");
+ 	tdDia.width="136";
+ 	tdDia.align="left";
+ 	tdDia.innerHTML="Dia Vencimento".bold();
+ 	cabecalho.appendChild(tdDia);
+ 	
+ 	var tdValor = document.createElement("TD");
+ 	tdValor.width="157";
+ 	tdValor.align="right";
+ 	tdValor.innerHTML="Valor R$".bold();		 	
+ 	cabecalho.appendChild(tdValor);
+ 	
+ 	tbody.appendChild(cabecalho);
+	
+	 $(dividas).each(function (index, divida) {
+		 
+		 var linha = document.createElement("TR");
+		 
+		 var lin = (index%2==0) ? 1:2;
+		 
+		 linha.className="class_linha_" + lin ;
+ 	 
+	 	var cel = document.createElement("TD");
+	 	cel.align="left";
+	 	text = document.createTextNode(divida.vencimento);
+	 	cel.appendChild(text);			 	
+	 	linha.appendChild(cel);
+	 	
+	 	var cel2 = document.createElement("TD");
+	 	cel2.align="right";
+	 	text2 = document.createTextNode(divida.valor);
+	 	cel2.appendChild(text2);			 	
+	 	linha.appendChild(cel2);
+	 	
+	 	tbody.appendChild(linha);
+		 
+		
+	 });		 		
+}
 	
 $(function() {
 		$( "#idDataDe" ).datepicker({
@@ -140,7 +229,9 @@ $(document).ready(function(){
 
 <form action="" method="get" id="form1" name="form1">
 
-
+<div id="dialog-detalhes" title="Detalhe da Divida">     
+    
+  </div>
 
 
 <div id="dialog-novo" title="Detalhe da Divida">
@@ -215,7 +306,7 @@ $(document).ready(function(){
  
  <!-- COMBO STATUS -->             
  <select name="select" id="idStatusCota" style="width:90px;">
-  <option>Selecione...</option>
+  <option value="none">Selecione...</option>
   <c:forEach items="${itensStatus}" var="status" varStatus="index">
   	 <option value="${status.key}">${status.value}</option>
   </c:forEach>
@@ -329,10 +420,14 @@ $(document).ready(function(){
 
 				</span></td>
                 <td width="8%"><strong>Qtde Cotas:</strong></td>
-                <td width="5%">05</td>
+                <td width="5%">
+                	<div id="idQtde">0</div>  
+                </td>
                 <td width="2%">&nbsp;</td>
                 <td width="10%"><strong>Divida Total R$:</strong></td>
-                <td width="9%">9.999.999,99</td>
+                <td width="9%">
+                	<div id="idTotal">0,00</div>  
+                </td>
                 <td width="43%">&nbsp;</td>
               </tr>
             </table>
@@ -420,7 +515,7 @@ $(function() {
 				width : 40,
 				align : 'center',
 			}],
-			sortname : "cota",
+			sortname : "nome",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

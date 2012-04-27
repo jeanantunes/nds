@@ -2,8 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 
 public interface TelefoneService {
@@ -35,4 +37,8 @@ public interface TelefoneService {
 	 * @param listaTelefonesEntregador - Lista com os Ids dos telefones
 	 */
 	void removerTelefonesEntregador(Collection<Long> listaTelefonesEntregador);
+
+	List<TelefoneAssociacaoDTO> buscarTelefonesPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar);
+
+	Telefone buscarTelefonePorId(Long longValue);
 }

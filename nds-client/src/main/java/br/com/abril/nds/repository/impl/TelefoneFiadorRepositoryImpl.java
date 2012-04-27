@@ -109,4 +109,13 @@ public class TelefoneFiadorRepositoryImpl extends AbstractRepository<TelefoneFia
 		
 		return (TelefoneFiador) query.uniqueResult();
 	}
+	
+	@Override
+	public void excluirTelefonesFiador(Long idFiador){
+		
+		Query query = this.getSession().createQuery("delete from TelefoneFiador where fiador.id = :idFiador ");
+		query.setParameter("idFiador", idFiador);
+		
+		query.executeUpdate();
+	}
 }

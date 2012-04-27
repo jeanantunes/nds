@@ -1,7 +1,14 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -11,6 +18,7 @@ public class StatusDividaDTO implements Serializable {
 	
 	private static final long serialVersionUID = -4132748025627433307L;
 
+	private Long idDivida;
 	
 	private Long idCota;
 	
@@ -40,6 +48,8 @@ public class StatusDividaDTO implements Serializable {
 		
 	@Export(label = "Dias em Atraso", alignment=Alignment.CENTER)
 	private Long diasAtraso;
+	
+	private static final String FORMATO_DATA = "dd/MM/yyyy";
 
 	public StatusDividaDTO() {
 		
@@ -66,10 +76,10 @@ public class StatusDividaDTO implements Serializable {
 		return idCota;
 	}
 
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
+	public void setIdCota(BigInteger idCota) {
+		this.idCota = idCota.longValue();
 	}
-
+	
 	public Integer getNumCota() {
 		return numCota;
 	}
@@ -91,31 +101,39 @@ public class StatusDividaDTO implements Serializable {
 	}
 
 	public void setStatus(String status) {
-		this.status = status;
+		this.status = SituacaoCadastro.valueOf(status).toString();
 	}
 
 	public String getConsignado() {
 		return consignado;
 	}
 
-	public void setConsignado(String consignado) {
-		this.consignado = consignado;
+	public void setConsignado(BigDecimal consignado) {
+		this.consignado = CurrencyUtil.formatarValor(consignado);
 	}
 
 	public String getDataVencimento() {
 		return dataVencimento;
 	}
 
-	public void setDataVencimento(String dataVencimento) {
-		this.dataVencimento = dataVencimento;
+	public void setDataVencimento(Date dataVencimento) {
+		if(dataVencimento==null) {
+			this.dataVencimento = "";
+			return;
+		}
+		this.dataVencimento = DateUtil.formatarData(dataVencimento, FORMATO_DATA);
 	}
 
 	public String getDataPagamento() {
 		return dataPagamento;
 	}
 
-	public void setDataPagamento(String dataPagamento) {
-		this.dataPagamento = dataPagamento;
+	public void setDataPagamento(Date dataPagamento) {
+		if(dataPagamento==null) {
+			this.dataPagamento = "";
+			return;
+		}
+		this.dataPagamento = DateUtil.formatarData(dataPagamento, FORMATO_DATA);
 	}
 
 	public String getSituacao() {
@@ -123,22 +141,31 @@ public class StatusDividaDTO implements Serializable {
 	}
 
 	public void setSituacao(String situacao) {
-		this.situacao = situacao;
+		this.situacao = StatusDivida.valueOf(situacao).toString();
 	}
 
 	public String getDividaAcumulada() {
 		return dividaAcumulada;
 	}
 
-	public void setDividaAcumulada(String dividaAcumulada) {
-		this.dividaAcumulada = dividaAcumulada;
+	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
+		this.dividaAcumulada = CurrencyUtil.formatarValor(dividaAcumulada);
 	}
 
 	public Long getDiasAtraso() {
 		return diasAtraso;
 	}
 
-	public void setDiasAtraso(Long diasAtraso) {
-		this.diasAtraso = diasAtraso;
+	public void setDiasAtraso(Integer diasAtraso) {
+		this.diasAtraso = diasAtraso.longValue();
 	}
+
+	public Long getIdDivida() {
+		return idDivida;
+	}
+
+	public void setIdDivida(BigInteger idDivida) {
+		this.idDivida = idDivida.longValue();
+	}
+
 }

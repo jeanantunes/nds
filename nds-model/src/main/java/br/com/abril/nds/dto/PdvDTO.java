@@ -20,7 +20,7 @@ public class PdvDTO implements Serializable {
 
 	private Long id;
 	
-	private Long idCota;
+	private Integer numeroCota;
 	
 	private StatusPDV statusPDV;
 	
@@ -504,19 +504,19 @@ public class PdvDTO implements Serializable {
 	}
 
 	/**
-	 * @return the idCota
+	 * @return the numeroCota
 	 */
-	public Long getIdCota() {
-		return idCota;
+	public Integer getNumeroCota() {
+		return numeroCota;
 	}
 
 	/**
-	 * @param idCota the idCota to set
+	 * @param numeroCota the numeroCota to set
 	 */
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
-	
+
 	
 	
 }

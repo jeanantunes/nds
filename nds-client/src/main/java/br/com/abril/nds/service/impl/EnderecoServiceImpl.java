@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,5 +118,12 @@ public class EnderecoServiceImpl implements EnderecoService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
 		}
 		
+	}
+
+	@Override
+	@Transactional
+	public void removerEnderecos(Collection<Long> idsEndereco) {
+		
+		this.enderecoRepository.removerEnderecos(idsEndereco);
 	}
 }
