@@ -48,11 +48,19 @@ public class Box implements Serializable {
 	private Set<Cota> cotas = new HashSet<Cota>();
 	
 	/**
-	 * Flag indicando se o box corresponde a uma praça atendida
+	 * Flag indicando se o box é um posto avançado
 	 */
-	@Column(name = "PRACA_ATENDIDA", nullable = false)
-	private boolean pracaAtendida;
+	@Column(name = "POSTO_AVANCADO", nullable = false)
+	private boolean postoAvancado;
 	
+	public boolean isPostoAvancado() {
+		return postoAvancado;
+	}
+
+	public void setPostoAvancado(boolean postoAvancado) {
+		this.postoAvancado = postoAvancado;
+	}
+
 	public Set<Cota> getCotas() {
 		return cotas;
 	}
@@ -97,14 +105,6 @@ public class Box implements Serializable {
 	
 	public void setTipoBox(TipoBox tipoBox) {
 		this.tipoBox = tipoBox;
-	}
-	
-	public boolean isPracaAtendida() {
-		return pracaAtendida;
-	}
-	
-	public void setPracaAtendida(boolean pracaAtendida) {
-		this.pracaAtendida = pracaAtendida;
 	}
 
 
