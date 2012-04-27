@@ -382,7 +382,7 @@
     <td width="126">Tipo de Movimento:</td>
     <td width="310">
     <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;">
-  		<option selected="selected">Todos</option>
+  		<option selected="selected"></option>
 		<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 			<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
 		</c:forEach>
@@ -456,7 +456,7 @@
     
     <td width="360">
 	    <select name="filtroDebitoCredito.idTipoMovimento" id="idTipoMovimento" style="width:250px;">
-		  <option selected="selected">Todos</option>
+		  <option selected="selected"></option>
 		  <c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 		  	<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
 		  </c:forEach>
