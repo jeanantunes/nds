@@ -9,6 +9,8 @@ public class NfeDTO implements Serializable {
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private Long idNotaFiscal;
 	private String numero;
 	private String serie;
 	private Date emissao;
@@ -190,8 +192,21 @@ public class NfeDTO implements Serializable {
 	public void setMovimentoIntegracao(String movimentoIntegracao) {
 		this.movimentoIntegracao = movimentoIntegracao;
 	}
-
-	
+	/**
+	 * Obtém idNotaFiscal
+	 *
+	 * @return Long
+	 */
+	public Long getIdNotaFiscal() {
+		return idNotaFiscal;
+	}
+	/**
+	 * Atribuí idNotaFiscal
+	 * @param idNotaFiscal 
+	 */
+	public void setIdNotaFiscal(Long idNotaFiscal) {
+		this.idNotaFiscal = idNotaFiscal;
+	}
 	
 	
 }

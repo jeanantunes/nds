@@ -21,19 +21,40 @@ public class ViewNotaFiscal implements Serializable {
 	@EmbeddedId
 	private ViewNotaFiscalPK pk = new ViewNotaFiscalPK();
 	
-	public static class ViewNotaFiscalPK implements Serializable{
+	public static class ViewNotaFiscalPK implements Serializable {
+
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
+
+
+		@Column(name = "NOTA_FISCAL_ID")
+		private Long notaFiscalId;
+
 		
 		@Column(name = "NOTAS_DE")
 		private String notasDe;
-		
-		@Column(name = "DATA_EMISSAO")
-		private Date dataEmissao;
-		
-		@Column(name = "NUMERO")
-		private String numero;
-		
-		@Column(name = "SERIE")
-		private String serie;
+
+
+		/**
+		 * Obtém notaFiscalId
+		 *
+		 * @return Long
+		 */
+		public Long getNotaFiscalId() {
+			return notaFiscalId;
+		}
+
+
+		/**
+		 * Atribuí notaFiscalId
+		 * @param notaFiscalId 
+		 */
+		public void setNotaFiscalId(Long notaFiscalId) {
+			this.notaFiscalId = notaFiscalId;
+		}
+
 
 		/**
 		 * Obtém notasDe
@@ -44,6 +65,7 @@ public class ViewNotaFiscal implements Serializable {
 			return notasDe;
 		}
 
+
 		/**
 		 * Atribuí notasDe
 		 * @param notasDe 
@@ -51,61 +73,19 @@ public class ViewNotaFiscal implements Serializable {
 		public void setNotasDe(String notasDe) {
 			this.notasDe = notasDe;
 		}
-
-		/**
-		 * Obtém dataEmissao
-		 *
-		 * @return Date
-		 */
-		public Date getDataEmissao() {
-			return dataEmissao;
-		}
-
-		/**
-		 * Atribuí dataEmissao
-		 * @param dataEmissao 
-		 */
-		public void setDataEmissao(Date dataEmissao) {
-			this.dataEmissao = dataEmissao;
-		}
-
-		/**
-		 * Obtém numero
-		 *
-		 * @return String
-		 */
-		public String getNumero() {
-			return numero;
-		}
-
-		/**
-		 * Atribuí numero
-		 * @param numero 
-		 */
-		public void setNumero(String numero) {
-			this.numero = numero;
-		}
-
-		/**
-		 * Obtém serie
-		 *
-		 * @return String
-		 */
-		public String getSerie() {
-			return serie;
-		}
-
-		/**
-		 * Atribuí serie
-		 * @param serie 
-		 */
-		public void setSerie(String serie) {
-			this.serie = serie;
-		}
+		
 		
 		
 	}
 
+	@Column(name = "DATA_EMISSAO")
+	private Date dataEmissao;
+	
+	@Column(name = "NUMERO")
+	private String numero;
+	
+	@Column(name = "SERIE")
+	private String serie;
 
 	@Column(name = "PESSOA_ID")
 	private Long idPessoa;
@@ -128,12 +108,8 @@ public class ViewNotaFiscal implements Serializable {
 	@Column(name = "FORNECEDOR_ID")
 	private Long idFornecedor;
 	
-
-	
 	@Column(name = "DATA_EXPEDICAO")
 	private Date dataExpedicao;
-	
-
 	
 	@Column(name = "CHAVE_ACESSO")
 	private String chaveAcesso;
@@ -201,6 +177,57 @@ public class ViewNotaFiscal implements Serializable {
 	 */
 	public void setPk(ViewNotaFiscalPK pk) {
 		this.pk = pk;
+	}
+
+	/**
+	 * Obtém dataEmissao
+	 *
+	 * @return Date
+	 */
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	/**
+	 * Atribuí dataEmissao
+	 * @param dataEmissao 
+	 */
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
+	}
+
+	/**
+	 * Obtém numero
+	 *
+	 * @return String
+	 */
+	public String getNumero() {
+		return numero;
+	}
+
+	/**
+	 * Atribuí numero
+	 * @param numero 
+	 */
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+
+	/**
+	 * Obtém serie
+	 *
+	 * @return String
+	 */
+	public String getSerie() {
+		return serie;
+	}
+
+	/**
+	 * Atribuí serie
+	 * @param serie 
+	 */
+	public void setSerie(String serie) {
+		this.serie = serie;
 	}
 
 	/**
@@ -542,6 +569,10 @@ public class ViewNotaFiscal implements Serializable {
 	public void setStatusEmissaoNfe(String statusEmissaoNfe) {
 		this.statusEmissaoNfe = statusEmissaoNfe;
 	}
+
+	
+	
+
 	
 	
 }
