@@ -20,10 +20,8 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -127,8 +125,9 @@ public class InadimplenciaController {
 			filtroAtual.setSituacaoPaga(situacaoPaga);
 			filtroAtual.setSituacaoNegociada(situacaoNegociada);
 			
-			if(statusCota!= null) {
-				filtroAtual.setStatusCota(SituacaoCadastro.values()[statusCota].toString());
+			if(statusCota!= null && ( statusCota-1) > 0) {
+				
+				filtroAtual.setStatusCota(SituacaoCadastro.values()[statusCota-1].toString());
 			}
 		
 			tratarFiltro(filtroAtual);

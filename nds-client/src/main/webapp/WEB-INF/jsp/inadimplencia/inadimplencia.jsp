@@ -81,7 +81,7 @@ function processaRetornoPesquisa(result) {
 	
 	$.each(grid.rows, function(index, row) {
 		
-		row.cell.detalhe = gerarBotaoDetalhes(row.cell.idCota);		
+		row.cell.detalhe = gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome);		
 		
   	});
 	
@@ -91,8 +91,8 @@ function processaRetornoPesquisa(result) {
 	return grid;
 }
 
-function gerarBotaoDetalhes(idCota) {
-	return "<a href=\"javascript:;\" onclick=\"getDetalhes("+idDivida+","+nome+");\"><img src=\"${pageContext.request.contextPath}/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+function gerarBotaoDetalhes(idDivida, nome) {
+	return "<a href=\"javascript:;\" onclick=\"getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"${pageContext.request.contextPath}/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 	
 }
 
@@ -101,7 +101,7 @@ var nomeCota;
 function getDetalhes(idDivida, nome) {
 	nomeCota = nome;
 	$.postJSON("<c:url value='/inadimplencia/getDetalhesDivida'/>", 
-			"idCota="+idCota+"&method='get'", 
+			"idDivida="+idDivida+"&method='get'", 
 			popupDetalhes);	
 };
 
