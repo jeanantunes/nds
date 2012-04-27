@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.service.FiadorService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -40,12 +41,17 @@ public class TelefoneController {
 	
 	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessao";
 	
+	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicao";
+	
 	private Result result;
 	
 	private HttpSession httpSession;
 	
 	@Autowired
 	private FiadorService fiadorService;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 	
 	public TelefoneController(Result result, HttpSession httpSession){
 		this.result = result;
@@ -57,32 +63,21 @@ public class TelefoneController {
 	
 	@Post
 	public void pesquisarTelefones(String sortname, String sortorder){
+		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
-		List<TelefoneAssociacaoDTO> listaTelefones = null;
+		List<TelefoneAssociacaoDTO> listaTelefones = this.obterTelefonesExibicao();
 		
-		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
-		
-		if (idFiador != null){
-			
-			Set<Long> idsTelefonesSessao = new HashSet<Long>();
-			
-			if (!telefonesSessao.isEmpty()){
-				
-				for (TelefoneAssociacaoDTO dto : telefonesSessao.values()){
-					
-					idsTelefonesSessao.add(dto.getTelefone().getId());
-				}
-			}
-			
-			idsTelefonesSessao.addAll(this.obterTelefonesRemoverSessao());
-			
-			listaTelefones = this.fiadorService.buscarTelefonesFiador(idFiador, idsTelefonesSessao);
-		}
+		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
 		
 		if (listaTelefones != null){
+			
 			for (TelefoneAssociacaoDTO tDto : listaTelefones){
-				telefonesSessao.put(tDto.getReferencia(), tDto);
+				
+				if (tDto.getTipoTelefone() != null && !telefonesRemover.contains(new Long(tDto.getReferencia()))){
+					
+					telefonesSessao.put(tDto.getReferencia(), tDto);
+				}
 			}
 		}
 		
@@ -127,6 +122,15 @@ public class TelefoneController {
 			telefoneAssociacaoDTO.setTelefone(telefone);
 		} else {
 			telefoneAssociacaoDTO = telefonesSessao.get(referencia);
+		}
+		
+		if (telefoneAssociacaoDTO == null){
+			
+			Telefone tel = this.telefoneService.buscarTelefonePorId(referencia.longValue());
+			
+			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
+			telefoneAssociacaoDTO.setReferencia(referencia);
+			telefoneAssociacaoDTO.setTelefone(tel);
 		}
 		
 		telefoneAssociacaoDTO.setPrincipal(principal);
@@ -177,26 +181,22 @@ public class TelefoneController {
 		
 		TelefoneAssociacaoDTO telefoneAssociacaoDTO = telefonesSessao.get(referencia);
 		
-		
-		
-		if (telefoneAssociacaoDTO != null){
-			
-			this.result.use(Results.json()).from(telefoneAssociacaoDTO, "result").recursive().serialize();
-		} else {
+		if (telefoneAssociacaoDTO == null){
 			
 			telefoneAssociacaoDTO = this.buscarAssociacaoTelefone(referencia);
 			
-			if (telefoneAssociacaoDTO != null){
+			if (telefoneAssociacaoDTO == null){
 				
-				this.obterTelefonesSalvarSessao().put(referencia, telefoneAssociacaoDTO);
+				Telefone telefone = this.telefoneService.buscarTelefonePorId(referencia.longValue());
 				
-				this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, this.obterTelefonesSalvarSessao());
-				
-				this.result.use(Results.json()).from(telefoneAssociacaoDTO, "result").recursive().serialize();
-			} else {
-				this.result.use(Results.json()).from("", "result").serialize();
+				if (telefone != null){
+					
+					telefoneAssociacaoDTO = new TelefoneAssociacaoDTO(false, null, null, telefone);
+				}
 			}
 		}
+		
+		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().serialize();
 	}
 	
 	private TelefoneAssociacaoDTO buscarAssociacaoTelefone(Integer referencia) {
@@ -229,6 +229,20 @@ public class TelefoneController {
 		}
 		
 		return telefonesSessao;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<TelefoneAssociacaoDTO> obterTelefonesExibicao(){
+		
+		List<TelefoneAssociacaoDTO> telefonesExibicao = (List<TelefoneAssociacaoDTO>)
+				this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
+		
+		if (telefonesExibicao == null){
+			
+			telefonesExibicao = new ArrayList<TelefoneAssociacaoDTO>();
+		}
+		
+		return telefonesExibicao;
 	}
 	
 	@SuppressWarnings("unchecked")

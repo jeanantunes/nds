@@ -31,7 +31,9 @@
 					$("#cnpjFiador").removeAttr("disabled");
 				}
 			},
-			null,
+			function(){
+				fecharModalCadastroFiador = false;
+			},
 			true
 		);
 	}

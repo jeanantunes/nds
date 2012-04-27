@@ -49,13 +49,17 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar){
+	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar){
 		
-		StringBuilder hql = new StringBuilder("select f.socios from Fiador f ");
+		StringBuilder hql = new StringBuilder("select f.socios from Fiador f left join f.socios socios ");
 		hql.append(" where f.id = :idFiador ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			hql.append(" and f.pessoa.id not in (:idsIgnorar) ");
+		}
+		
+		if (cpfsIgnorar != null && !cpfsIgnorar.isEmpty()){
+			hql.append(" and socios.cpf not in (:cpfsIgnorar) ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -63,6 +67,10 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa, Long> imple
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
+		if (cpfsIgnorar != null && !cpfsIgnorar.isEmpty()){
+			query.setParameterList("cpfsIgnorar", cpfsIgnorar);
 		}
 		
 		return query.list();

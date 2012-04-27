@@ -19,4 +19,6 @@ public interface TelefoneFiadorRepository extends Repository<TelefoneFiador, Lon
 	List<Telefone> buscarTelefonesPessoaPorFiador(Long idFiador);
 
 	TelefoneFiador obterTelefonePorTelefoneFiador(Long idTelefone, Long idFiador);
+
+	void excluirTelefonesFiador(Long idFiador);
 }

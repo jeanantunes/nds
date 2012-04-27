@@ -30,9 +30,9 @@ public class PessoaServiceImpl implements PessoaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar) {
+	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar) {
 		
-		return this.pessoaRepository.obterSociosPorFiador(idFiador, idsIgnorar);
+		return this.pessoaRepository.obterSociosPorFiador(idFiador, idsIgnorar, cpfsIgnorar);
 	}
 	
 

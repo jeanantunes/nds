@@ -15,6 +15,11 @@ public class DateUtil {
 
 	public static boolean isValidDate(String valor, String pattern) {
 
+		if (valor == null || pattern == null){
+			
+			return false;
+		}
+		
 		try {
 			DateFormat f = new SimpleDateFormat(pattern);
 			
@@ -32,15 +37,30 @@ public class DateUtil {
 	
 	public static boolean isValidDatePTBR(String date) {
 		
+		if (date == null){
+			
+			return false;
+		}
+		
 		return isValidDate(date, Constantes.DATE_PATTERN_PT_BR);
 	}
 	
 	public static String formatarData(Date data, String formato) {
 		
+		if (data == null || formato == null){
+			
+			return "";
+		}
+		
 		return new SimpleDateFormat(formato).format(data);
 	}
 	
 	public static String formatarDataPTBR(Date data) {
+		
+		if (data == null){
+			
+			return "";
+		}
 		
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}

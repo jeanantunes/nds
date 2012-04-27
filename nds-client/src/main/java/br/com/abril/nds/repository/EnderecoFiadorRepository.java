@@ -14,4 +14,6 @@ public interface EnderecoFiadorRepository extends Repository<EnderecoFiador, Lon
 	List<Endereco> buscarEnderecosPessoaPorFiador(Long idFiador);
 
 	EnderecoFiador buscarEnderecoPorEnderecoFiador(Long idEndereco, Long idFiador);
+
+	void excluirEnderecosFiador(Long idFiador);
 }
