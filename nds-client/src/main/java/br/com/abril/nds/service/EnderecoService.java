@@ -17,4 +17,6 @@ public interface EnderecoService {
 	void cadastrarEnderecos(List<EnderecoAssociacaoDTO> listaEnderecos);
 	
 	void removerEnderecos(Collection<Long> idsEndereco);
+
+	Endereco buscarEnderecoPorId(Long idEndereco);
 }
