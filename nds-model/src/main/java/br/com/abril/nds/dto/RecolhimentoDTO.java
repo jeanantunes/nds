@@ -16,6 +16,8 @@ public class RecolhimentoDTO implements Serializable {
 
 	private static final long serialVersionUID = -2168766293591158494L;
 
+	private Long sequencia;
+	
 	private Long idProdutoEdicao;
 	
 	private Long codigoProduto;
@@ -37,6 +39,8 @@ public class RecolhimentoDTO implements Serializable {
 	private TipoLancamentoParcial parcial;
 
 	private boolean possuiBrinde;
+	
+	private boolean possuiChamada;
 
 	private Date dataLancamento;
 
@@ -319,4 +323,33 @@ public class RecolhimentoDTO implements Serializable {
 	public void setNovaData(Date novaData) {
 		this.novaData = novaData;
 	}
+
+	/**
+	 * @return the sequencia
+	 */
+	public Long getSequencia() {
+		return sequencia;
+	}
+
+	/**
+	 * @param sequencia the sequencia to set
+	 */
+	public void setSequencia(Long sequencia) {
+		this.sequencia = sequencia;
+	}
+
+	/**
+	 * @return the possuiChamada
+	 */
+	public boolean getPossuiChamada() {
+		return possuiChamada;
+	}
+
+	/**
+	 * @param possuiChamada the possuiChamada to set
+	 */
+	public void setPossuiChamada(boolean possuiChamada) {
+		this.possuiChamada = possuiChamada;
+	}
+	
 }
