@@ -71,7 +71,7 @@ public class ConsolidadoFinanceiroCota {
 	private Cota cota;
 	
 	@OneToMany
-	@JoinTable(name = "	CONSOLIDADO_MVTO_FINANCEIRO_COTA", joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
+	@JoinTable(name = "CONSOLIDADO_MVTO_FINANCEIRO_COTA", joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")})
 	private List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 
