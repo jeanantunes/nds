@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,17 +13,15 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.controllers.financeiro.InadimplenciaController;
-import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
 
 @Repository
@@ -30,6 +30,16 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 
 	@Value("#{queries.inadimplenciasCota}")
 	protected String queryInadimplenciasCota;
+	
+	@Value("#{queries.countInadimplenciasCota}")
+	protected String queryCountInadimplenciasCota;
+	
+	@Value("#{queries.countCotaInadimplencias}")
+	protected String queryCountCotaInadimplencias;
+	
+	@Value("#{queries.sumDividaCotas}")
+	protected String querySumDividaCotas;
+	
 	
 	public DividaRepositoryImpl() {
 		super(Divida.class);
@@ -318,56 +328,122 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 	
 		StringBuilder sql = new StringBuilder(queryInadimplenciasCota);
 		
+		HashMap<String,Object> params = new HashMap<String, Object>();
+		
+		tratarFiltro(sql,params,filtro);
+		
 		sql.append(obterOrderByInadimplenciasCota(filtro));
 		
-		//TODO
-		//sql.append(obterFiltrosInadimplenciasCota(filtro));
-		
-		if(filtro.getPaginacao().getPosicaoInicial()!= null &&  filtro.getPaginacao().getQtdResultadosPorPagina()!= null) {
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			sql.append(" LIMIT :inicio,:qtdeResult");
+			params.put("inicio", filtro.getPaginacao().getPosicaoInicial());
+			params.put("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina());
 		}
 		
 		Query query = getSession().createSQLQuery(sql.toString())
+				.addScalar("idDivida")
+				.addScalar("idCota")
 				.addScalar("numCota")
 				.addScalar("nome")
 				.addScalar("status")
 				.addScalar("consignado")
 				.addScalar("dataVencimento")
-				.addScalar("valor")
+				.addScalar("dataPagamento")
 				.addScalar("situacao")
 				.addScalar("dividaAcumulada")
 				.addScalar("diasAtraso");
 		
-		if(filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-			
-			query.setInteger("inicio", filtro.getPaginacao().getPosicaoInicial());
-			query.setInteger("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina() );
+		for(String key : params.keySet()){
+			query.setParameter(key, params.get(key));
 		}
-			
+		
 		query.setResultTransformer(Transformers.aliasToBean(StatusDividaDTO.class));
 				
 		return query.list();
 	}	
-	
-	/*private HashMap<String, Object> obterFiltrosInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 		
-		//TODO get correct params
-		HashMap<String,Object> param = new HashMap<String, Object>();
+	private void tratarFiltro(StringBuilder sql, HashMap<String, Object> params, FiltroCotaInadimplenteDTO filtro) {
 		
-		param.put("data",filtro.getDataMovimento());
+		boolean whereUtilizado = false;
 		
-		if(!isBoleto){
-			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
+		if(filtro.getPeriodoDe() != null) {
+			
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;
+			
+			sql.append(" COBRANCA_.DT_VENCIMENTO >= :periodoDe ");
+			params.put("periodoDe", filtro.getPeriodoDe());
 		}
-	
 		
-		return param;
-	}*/
-	
+		if(filtro.getPeriodoAte() != null) {
+			
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;
+			
+			sql.append(" COBRANCA_.DT_VENCIMENTO <= :periodoAte ");
+			params.put("periodoAte",filtro.getPeriodoAte());
+		}
+		
+		if(filtro.getNumCota() != null) {
+			
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;
+			
+			sql.append(" COTA_.NUMERO_COTA = :numCota ");
+			params.put("numCota",filtro.getNumCota());
+		}
+		
+		if(filtro.getStatusCota() != null) {
+			
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;
+			
+			sql.append(" COTA_.SITUACAO_CADASTRO = :statusCota ");
+			params.put("statusCota",filtro.getStatusCota());
+		}
+
+		boolean utilizado = false;
+		
+		if( filtro.getSituacaoPaga() != null && filtro.getSituacaoEmAberto() != null && filtro.getSituacaoNegociada() != null
+				&& (filtro.getSituacaoPaga() == true || filtro.getSituacaoEmAberto() == true || filtro.getSituacaoNegociada() == true) ) {
+			
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;			
+			sql.append("( ");
+			
+			if( filtro.getSituacaoEmAberto() == true) {
+				utilizado = true;
+				
+				sql.append(" DIVIDA_.STATUS = :situacaoEmAberto ");
+				params.put("situacaoEmAberto",StatusDivida.EM_ABERTO.name());
+			}
+			if( filtro.getSituacaoNegociada() == true) {
+				sql.append( utilizado ? " || " : "");
+				utilizado = true;
+				
+				sql.append(" DIVIDA_.STATUS = :situacaoNegociada ");
+				params.put("situacaoNegociada",StatusDivida.NEGOCIADA.name());
+			} 
+			if( filtro.getSituacaoPaga() == true ) {
+				sql.append( utilizado ? " || " : "");
+				utilizado = true;
+				
+				sql.append(" DIVIDA_.STATUS = :situacaoPaga ");
+				params.put("situacaoPaga",StatusDivida.QUITADA.name());
+			}
+			sql.append(" ) ");
+		}
+		
+	}
+
 	private String obterOrderByInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 		
+		if(filtro.getColunaOrdenacao() == null || filtro.getPaginacao() == null) {
+			return "";
+		}
+		
 		String sortColumn = filtro.getColunaOrdenacao().name();
-		String sortOrder = filtro.getPaginacao().getOrdenacao().name();
+		String sortOrder = filtro.getPaginacao().getSortOrder();
 		
 		
 		String sql = "";
@@ -388,8 +464,8 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 			sql += "consignado";
 		} else if(sortColumn.equalsIgnoreCase("dataVencimento")) {
 			sql += "dataVencimento";
-		} else if(sortColumn.equalsIgnoreCase("valor")) {
-			sql += "valor";
+		} else if(sortColumn.equalsIgnoreCase("dataPagamento")) {
+			sql += "dataPagamento";
 		}  else if(sortColumn.equalsIgnoreCase("situacao")) {
 			sql += "situacao";
 		} else if(sortColumn.equalsIgnoreCase("dividaAcumulada")) {
@@ -403,5 +479,59 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		sql += sortOrder.equalsIgnoreCase("asc") ?  " ASC " : " DESC ";		
 		
 		return sql;
+	}
+	
+	public Long obterTotalInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder(queryCountInadimplenciasCota);	
+		
+		
+		HashMap<String,Object> params = new HashMap<String, Object>();
+		
+		tratarFiltro(sql,params,filtro);
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		for(String key : params.keySet()){
+			query.setParameter(key, params.get(key));
+		}
+		
+		return ((BigInteger) query.uniqueResult()).longValue();
+	}
+	
+	public Long obterTotalCotasInadimplencias(FiltroCotaInadimplenteDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder(queryCountCotaInadimplencias);	
+		
+		
+		HashMap<String,Object> params = new HashMap<String, Object>();
+		
+		tratarFiltro(sql,params,filtro);
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		for(String key : params.keySet()){
+			query.setParameter(key, params.get(key));
+		}
+		
+		return ((BigInteger) query.uniqueResult()).longValue();
+	}
+
+	@Override
+	public Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder(querySumDividaCotas);	
+		
+		HashMap<String,Object> params = new HashMap<String, Object>();
+		
+		tratarFiltro(sql,params,filtro);
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		for(String key : params.keySet()){
+			query.setParameter(key, params.get(key));
+		}
+		
+		return ((BigDecimal) query.uniqueResult()).doubleValue();
 	}
 }

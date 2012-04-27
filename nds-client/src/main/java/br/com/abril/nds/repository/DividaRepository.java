@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.StatusDividaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.model.financeiro.Divida;
 
@@ -38,4 +40,37 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	 * @return Long
 	 */
 	Long obterQunatidadeDividaGeradas(Date dataMovimento);
+	
+	/**
+	 * Obter dívidas não pagas da cota
+	 * 
+	 * @param filtro - filtro de pesquisa
+	 * @return
+	 */
+	List<StatusDividaDTO> obterInadimplenciasCota(FiltroCotaInadimplenteDTO filtro);
+	
+
+	/**
+	 * Obtém quantidade de inadimplencias da cota (count de obterInadimplenciasCota)
+	 * 
+	 * @param filtro filtro de pesquisa
+	 * @return Quantidade de inadimplencias
+	 */
+	Long obterTotalInadimplenciasCota(FiltroCotaInadimplenteDTO filtro);
+
+	/**
+	 * Obtém quantidade de cotas distintas da pesquisa de inadimplencias da cota 
+	 * 
+	 * @param filtro filtro de pesquisa
+	 * @return Quantidade de cotas
+	 */
+	Long obterTotalCotasInadimplencias(FiltroCotaInadimplenteDTO filtro);
+
+	/**
+	 * Obter soma de dividas referentes ao filtro
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro);
 }
