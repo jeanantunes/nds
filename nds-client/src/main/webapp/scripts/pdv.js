@@ -155,6 +155,13 @@ var PDV = {
 				"pdvDTO.numeroLicenca="							+$("#numerolicenca").val()+ "&" +
 				"pdvDTO.nomeLicenca="							+$("#nomeLicenca").val();
 			
+			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
+				
+				dados += '&pdvDTO.periodosFuncionamentoDTO['+ index +'].tipoPeriodo=' + diaFuncionamento.tipoPeriodo +
+				'&pdvDTO.periodosFuncionamentoDTO['+ index +'].inicio='+diaFuncionamento.inicio +
+				'&pdvDTO.periodosFuncionamentoDTO['+ index +'].fim='+diaFuncionamento.fim;
+		  	});
+			
 			return dados;
 		},
 		
@@ -339,9 +346,7 @@ var PDV = {
 			PDV.diasFuncionamento.splice(indice,1);
 			
 			var parametros = [];
-			
-			debugger;
-			
+						
 			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
 				
 				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: diaFuncionamento.tipoPeriodo});
