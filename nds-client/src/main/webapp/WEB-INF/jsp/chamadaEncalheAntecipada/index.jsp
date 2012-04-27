@@ -802,13 +802,8 @@ $(function() {
 	
 	<div id="dialog-novo" title="CE Antecipada">
 		
-		<div class="effectDialog ui-state-highlight ui-corner-all"
-			style="display: none; position: absolute; z-index: 2000; width: 250px;">
-			<p><span style="float: left;" class="ui-icon ui-icon-info"></span>
-				<b class="effectDialogText"></b>
-			</p>
-		</div>
-	
+		<jsp:include page="../messagesDialog.jsp" />
+			
 		<p>Data Antecipada:<input name="dataAntecipacao" type="text" id="dataAntecipacao" style="width:80px;"/></p>
 		<p>Confirma a gravação dessas informações? </p>      
 	</div>

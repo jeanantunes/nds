@@ -366,14 +366,9 @@
 </div>
 
 <div id="dialog-editar" title="Editar Tipo de Movimento">
-<div class="effectDialog ui-state-highlight ui-corner-all" 
-	 style="display: none; position: absolute; z-index: 2000; width: 450px;">
-	 
-	<p>
-		<span style="float: left;" class="ui-icon ui-icon-info"></span>
-		<b class="effectDialogText"></b>
-	</p>
-</div>
+
+<jsp:include page="../messagesDialog.jsp" />
+
 <form id="formEdicaoMovimentoFinanceiro">
 <input type="hidden" name="debitoCredito.id" id="edicaoId" />
 <table width="450" border="0" cellspacing="2" cellpadding="2">

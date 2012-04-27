@@ -612,14 +612,7 @@ function mostra_grid(){
 
 <div id="dialog-novo" title="Incluir Cota Ausente"> 
 
-<div class="effectDialog ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 2000; width: 500px;">
-		 
-		<p>
-			<span style="float: left;" class="ui-icon ui-icon-info"></span>
-			<b class="effectDialogText"></b>
-		</p>
-</div>
+	<jsp:include page="../messagesDialog.jsp" />
 
     <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>

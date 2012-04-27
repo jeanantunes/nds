@@ -1,13 +1,6 @@
 <div id="dialog-novo" title="Incluir Novo Tipo de Movimento" style="display: none;">
 
-	<div class="effectDialog ui-state-highlight ui-corner-all" 
-		 style="display: none; position: absolute; z-index: 2000; width: 600px;">
-		 
-		<p>
-			<span style="float: left;" class="ui-icon ui-icon-info"></span>
-			<b class="effectDialogText"></b>
-		</p>
-	</div>
+	<jsp:include page="../messagesDialog.jsp" />
 
 	<table width="650" border="0" cellspacing="2" cellpadding="2">
 	  <tr>
@@ -116,8 +109,6 @@
 			
 			$("#debitosCreditosGrid_1").flexReload();
 			
-			$(".effectDialog").hide();
-			
 			$("#dialog-novo").dialog({
 				resizable: false,
 				height:450,
@@ -130,6 +121,9 @@
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout();
 				}
 			});     
 		}
