@@ -95,6 +95,8 @@
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$("#dataChamadao").mask("99/99/9999");
 	}
 	
 	function inicializar() {
@@ -155,15 +157,15 @@
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 			
-			var spanReparte = "<span id='reparte" + index + "'>"
+			var spanReparte = "<span id='reparte" + row.id + "'>"
 						+ row.cell.reparte + "</span>";
 			
-			var spanValorTotal = "<span id='valorTotal" + index + "'>"
+			var spanValorTotal = "<span id='valorTotal" + row.id + "'>"
 						+ row.cell.valorTotal + "</span>";
 			
-			var inputCheck = '<input type="checkbox" id="ch' + index + '"'
+			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
 						   + ' name="checkConsignado"'
-						   + ' value="' + index + '"'
+						   + ' value="' + row.id + '"'
 						   + ' onclick="calcularParcial()" />';
 						   
 			row.cell.reparte = spanReparte;
@@ -277,22 +279,83 @@
 	
 	function confirmar() {
 		
-		$( "#dialog-novo" ).dialog({
+		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:320,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
+
+					realizarChamadao();
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					
+					$(this).dialog("close");
 				}
+			},
+			beforeClose: function() {
+			
+				clearMessageDialogTimeout();
 			}
 		});
+	}
+	
+	function realizarChamadao() {
+		
+		var linhasDaGrid = $('.chamadaoGrid tr');
+		
+		var listaChamadao = "";
+		
+		var checkAllSelected = verifyCheckAll();
+		
+		if (!checkAllSelected) {
+			
+			$.each(linhasDaGrid, function(index, value) {
+				
+				var linha = $(value);
+				
+				var colunaCheck = linha.find("td")[9];
+				
+				var inputCheck = $(colunaCheck).find("div").find('input[name="checkConsignado"]');
+				
+				var checked = inputCheck.attr("checked") == "checked";
+				
+				if (checked) {
+				
+					var colunaCodProduto = linha.find("td")[0];
+					var colunaNumEdicao = linha.find("td")[2];
+					
+					var codProduto = $(colunaCodProduto).find("div").html();
+					var numEdicao = $(colunaNumEdicao).find("div").html();
+					
+					var linhaSelecionada = 'listaChamadao[' + index + '].codigoProduto=' + codProduto + '&';
+					linhaSelecionada += 'listaChamadao[' + index + '].numeroEdicao=' + numEdicao + '&';
+					
+					listaChamadao = (listaChamadao + linhaSelecionada);
+				}
+			});
+		}
+		
+		$.postJSON("<c:url value='/devolucao/chamadao/confirmarChamadao' />",
+				   listaChamadao + "&chamarTodos=" + checkAllSelected,
+				   function(result) {
+						
+						$("#dialog-confirm").dialog("close");
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagem(tipoMensagem, listaMensagens);
+						}
+						
+						$(".chamadaoGrid").flexReload();
+					},
+				   null,
+				   true
+		);
 	}
 		
 </script>
@@ -301,10 +364,14 @@
 
 <body>
 
-	<div id="dialog-novo" title="Chamadão">
+	<div id="dialog-confirm" title="Chamadão">
+		
+		<jsp:include page="../messagesDialog.jsp" />
+		
 		<br />
 		<strong>Confirma a Programação do Chamadão?</strong>
-		<br />   
+		<br />
+		   
 	</div>
 	
 	<fieldset class="classFieldset">

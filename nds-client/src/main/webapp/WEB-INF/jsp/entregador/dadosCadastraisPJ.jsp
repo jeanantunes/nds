@@ -230,7 +230,7 @@
 			</span>
             <br clear="all" />
 
-      	</div
+      	</div>
       <br />
 </form>
         </div>

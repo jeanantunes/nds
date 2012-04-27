@@ -17,6 +17,8 @@ import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -61,7 +63,7 @@ public class MatrizRecolhimentoController {
 		
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
 
-		result.include("fornecedores", fornecedores);
+		this.result.include("fornecedores", fornecedores);
 	}
 	
 	@Post
@@ -73,16 +75,15 @@ public class MatrizRecolhimentoController {
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
 			this.obterMatrizBalanceamentoMock(dataPesquisa, listaIdsFornecedores);
 		
+		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
 			this.obterResumoPeriodoBalanceamento(matrizBalanceamento);
-		
-		if (resumoPeriodoBalanceamento == null
-				|| resumoPeriodoBalanceamento.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
-		}
 		
 		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
@@ -115,9 +116,46 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/balancearPorEditor")
+	@SuppressWarnings("unchecked")
 	public void balancearPorEditor() {
 		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamentoAtual =  
+			(Map<Date, List<RecolhimentoDTO>>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
 		
+		if (matrizBalanceamentoAtual == null || matrizBalanceamentoAtual.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		Map<Date, Long> mapaRecolhimentoEditor = new HashMap<Date, Long>();
+		
+		for (Map.Entry<Date, List<RecolhimentoDTO>> entry : matrizBalanceamentoAtual.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			
+			List<RecolhimentoDTO> listaDadosRecolhimento = entry.getValue();
+			
+			if (listaDadosRecolhimento == null || listaDadosRecolhimento.isEmpty()) {
+				
+				continue;
+			}
+			
+			for (RecolhimentoDTO dadosRecolhimento : listaDadosRecolhimento) {
+				
+				//mapaRecolhimentoEditor.put(entry.getKey(), k);
+			}
+			
+			
+		}
+		
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamentoEditor = new TreeMap<Date, List<RecolhimentoDTO>>();
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamentoEditor);
+		
+		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
+			this.obterResumoPeriodoBalanceamento(matrizBalanceamentoEditor);
+		
+		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
 	
 	@Post
@@ -212,20 +250,29 @@ public class MatrizRecolhimentoController {
 				
 				RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 				
+				Produto produto = new Produto();
+				
+				produto.setCodigo("" + i);
+				produto.setDescricao("Produto " + i);
+				
+				ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+				
+				produtoEdicao.setNumeroEdicao(1L);
+				produtoEdicao.setPeso(new BigDecimal(i));
+				produtoEdicao.setPossuiBrinde(false);
+				produtoEdicao.setPrecoVenda(new BigDecimal(i));
+				
+				produtoEdicao.setProduto(produto);
+				
 				dadosRecolhimento.setAtendida(BigDecimal.ZERO);
-				dadosRecolhimento.setCodigoProduto(new Long(i));
 				dadosRecolhimento.setDataLancamento(dataLancamento);
 				dadosRecolhimento.setDataRecolhimento(dataRecolhimento);
-				dadosRecolhimento.setDescricaoProduto("Produto Teste " + i);
 				dadosRecolhimento.setNomeEditor("Zé Editor " + i);
 				dadosRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
-				dadosRecolhimento.setNumeroEdicao(1L);
-				dadosRecolhimento.setPeso(new BigDecimal(i));
-				dadosRecolhimento.setPossuiBrinde(false);
-				dadosRecolhimento.setPrecoVenda(new BigDecimal(i));
 				dadosRecolhimento.setQtdeExemplares(new BigDecimal(i));
 				dadosRecolhimento.setSede(new BigDecimal(i));
 				dadosRecolhimento.setValorTotal(new BigDecimal(i));
+				dadosRecolhimento.setProdutoEdicao(produtoEdicao);
 				
 				listaDadosRecolhimento.add(dadosRecolhimento);
 			}
@@ -301,9 +348,9 @@ public class MatrizRecolhimentoController {
 						qtdeTitulosParciais++;
 					}
 					
-					if (dadosRecolhimento.getPeso() != null) {
+					if (dadosRecolhimento.getProdutoEdicao().getPeso() != null) {
 						
-						pesoTotal = pesoTotal.add(dadosRecolhimento.getPeso());
+						pesoTotal = pesoTotal.add(dadosRecolhimento.getProdutoEdicao().getPeso());
 					}
 					
 					if (dadosRecolhimento.getQtdeExemplares() != null) {

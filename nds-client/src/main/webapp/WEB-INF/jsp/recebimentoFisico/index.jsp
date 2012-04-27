@@ -207,6 +207,9 @@ validarEdicaoCallBack : function() {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
 			}
 		});
 	}
@@ -314,6 +317,9 @@ validarEdicaoCallBack : function() {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
 			}
 		});	
 			      
@@ -386,8 +392,6 @@ validarEdicaoCallBack : function() {
 	*/
 	function limparCampos() {
 		
-		$(".effectDialog").hide();
-		
 		$("#dataEmissao").val("");
 		$("#valorBruto").val("");
 		$("#valorLiquido").val("");
@@ -410,8 +414,6 @@ validarEdicaoCallBack : function() {
 	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
 	*/
 	function limparCamposNovoItem() {
-		
-		$(".effectDialog").hide();
 		
 		$("#codigo").val("");
 		$("#produto").val("");
@@ -949,15 +951,7 @@ validarEdicaoCallBack : function() {
 
 	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
 			
-			<div class="effectDialog ui-state-highlight ui-corner-all" 
-			 style="display: none; position: absolute; z-index: 2000; width: 500px;">
-			 
-				<p>
-					<span style="float: left;" class="ui-icon ui-icon-info"></span>
-					<b class="effectDialogText"></b>
-				</p>
-			
-			</div>
+			<jsp:include page="../messagesDialog.jsp" />
 			
 			<table width="439" cellpadding="2" cellspacing="2"
 				style="text-align: left;">
@@ -1035,14 +1029,7 @@ validarEdicaoCallBack : function() {
 
 	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 
-		<div class="effectDialog ui-state-highlight ui-corner-all" 
-			 style="display: none; position: absolute; z-index: 2000; width: 500px;">
-			 
-			<p>
-				<span style="float: left;" class="ui-icon ui-icon-info"></span>
-				<b class="effectDialogText"></b>
-			</p>
-		</div>
+		<jsp:include page="../messagesDialog.jsp" />
 	
 		<table width="341" border="0" cellspacing="2" cellpadding="2">
 			<tr>

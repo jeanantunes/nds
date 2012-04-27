@@ -81,5 +81,10 @@ public interface FinanceiroService {
      * @return
      */
 	public abstract ContratoTransporteDTO obtemContratoTransporte(long idCota);
+	
+	
+	
+	
+	byte[] geraImpressaoContrato(Long idCota);
 
 }
