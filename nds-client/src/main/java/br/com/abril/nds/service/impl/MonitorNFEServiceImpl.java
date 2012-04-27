@@ -166,7 +166,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	private void carregarDanfeDadosPrincipais(DanfeDTO danfe, NfeVO nfe, NotaFiscal notaFiscal) {
 		
 		String serie 		= notaFiscal.getSerie();
-		String numeroNF 	= notaFiscal.getNumero();
+		Long numeroNF 	    = notaFiscal.getNumero();
 		String chave 		= notaFiscal.getChaveAcesso();
 		Date dataEmissao 	= notaFiscal.getDataEmissao();
 		Date dataSaida 		= notaFiscal.getDataExpedicao();

@@ -447,7 +447,7 @@ public class PainelMonitorNFEController {
 		String emissao 				= null;
 		String tipoEmissao			= null;
 		String movimentoIntegracao 	= null;
-		String numero 				= null;
+		Long numero 				= null;
 		String serie 				= null;
 		String statusNfe 			= null;
 		String tipoNfe 				= null;
@@ -524,8 +524,8 @@ public class PainelMonitorNFEController {
 			String dataFinal,
 			String documento,
 			String tipoNfe,
-			String numeroInicial,
-			String numeroFinal,
+			Long numeroInicial,
+			Long numeroFinal,
 			String chaveAcesso,
 			String situacaoNfe,
 			String sortorder, 
@@ -544,9 +544,12 @@ public class PainelMonitorNFEController {
 		filtroMonitorNfeDTO.setChaveAcesso(chaveAcesso);
 		filtroMonitorNfeDTO.setDataInicial(DateUtil.parseData(dataInicial, "dd/MM/yyyy"));
 		filtroMonitorNfeDTO.setDataFinal(DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
-		filtroMonitorNfeDTO.setDestinatario(documento);
-		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroInicial);
-		filtroMonitorNfeDTO.setNumeroNotaInicial(numeroFinal);
+		filtroMonitorNfeDTO.setDocumentoPessoa(documento);
+
+		filtroMonitorNfeDTO.setNumeroNotaInicial(numeroInicial);
+		
+		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroFinal);
+		
 		filtroMonitorNfeDTO.setSituacaoNfe(situacaoNfe);
 		filtroMonitorNfeDTO.setTipoNfe(tipoNfe);
 		filtroMonitorNfeDTO.setIndDocumentoCPF(TIPO_DOCUMENTO_CPF.equals(tipoDocumento));
