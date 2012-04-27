@@ -759,7 +759,7 @@ public class DataLoader {
 	Date dataAtual = new Date();
 	List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 
-	PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+	PessoaFisica manoel = Fixture.pessoaFisica("12345678900",
 			"manoel@mail.com", "Manoel da Silva");
 			save(session, manoel);
 
@@ -2384,7 +2384,7 @@ public class DataLoader {
 
 	private static void criarDistribuidor(Session session) {
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
+				"56003315000147", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
@@ -2911,35 +2911,35 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10.000.000/0001-00", "000.000.000.000", "sys.discover@gmail.com");
+				"10000000000100", "000.000.000.000", "sys.discover@gmail.com");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11.111.111/0001-11", "111.111.111.111", "sys.discover@gmail.com");
+				"11111111000111", "111.111.111.111", "sys.discover@gmail.com");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22.222.222/0001-22", "222.222.222.222", "sys.discover@gmail.com");
+				"22222222000122", "222.222.222.222", "sys.discover@gmail.com");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93.081.738/0001-01", "333.333.333.333", "sys.discover@gmail.com");
+				"93081738000101", "333.333.333.333", "sys.discover@gmail.com");
 
-		manoel = Fixture.pessoaFisica("319.435.088-95",
+		manoel = Fixture.pessoaFisica("31943508895",
 				"sys.discover@gmail.com", "Manoel da Silva");
 
-		jose = Fixture.pessoaFisica("123.456.789-01",
+		jose = Fixture.pessoaFisica("12345678901",
 				"sys.discover@gmail.com", "Jose da Silva");
 
-		maria = Fixture.pessoaFisica("123.456.789-02",
+		maria = Fixture.pessoaFisica("12345678902",
 				"sys.discover@gmail.com", "Maria da Silva");
 
-		guilherme = Fixture.pessoaFisica("999.333.555-11", "sys.discover@gmail.com", "Guilherme de Morais Leandro");
+		guilherme = Fixture.pessoaFisica("99933355511", "sys.discover@gmail.com", "Guilherme de Morais Leandro");
 
-		murilo = Fixture.pessoaFisica("999.333.555-22", "sys.discover@gmail.com", "Murilo");
+		murilo = Fixture.pessoaFisica("99933355522", "sys.discover@gmail.com", "Murilo");
 
-		mariana = Fixture.pessoaFisica("999.333.555-33", "sys.discover@gmail.com", "Mariana");
+		mariana = Fixture.pessoaFisica("99933355533", "sys.discover@gmail.com", "Mariana");
 
-		orlando = Fixture.pessoaFisica("999.333.555-44", "sys.discover@gmail.com", "Orlando");
+		orlando = Fixture.pessoaFisica("99933355544", "sys.discover@gmail.com", "Orlando");
 
-		luis  = Fixture.pessoaFisica("123.456.789-03",
+		luis  = Fixture.pessoaFisica("12345678903",
 				"sys.discover@gmail.com", "Luis Silva");
 
-	    joao = Fixture.pessoaFisica("123.456.789-04",
+	    joao = Fixture.pessoaFisica("12345678904",
 				"sys.discover@gmail.com", "João da Silva");
 
 		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaValida,manoel,jose,maria,
@@ -3333,7 +3333,7 @@ public class DataLoader {
 		Cota cotaJohnyConsultaEncalhe = null;
 
 		PessoaFisica johnyDasNotas = Fixture.pessoaFisica(
-				"654.852.916-73",
+				"65485291673",
 				"johny@discover.com.br", "Johny da Silva");
 
 		save(session, johnyDasNotas);
@@ -3698,7 +3698,7 @@ public class DataLoader {
 
 
 		PessoaFisica johnyCE = Fixture.pessoaFisica(
-				"352.855.474-00",
+				"35285547400",
 				"johny@discover.com.br", "Johny da Silva");
 		save(session, johnyCE);
 

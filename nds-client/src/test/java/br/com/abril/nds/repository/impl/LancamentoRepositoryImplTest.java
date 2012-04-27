@@ -580,6 +580,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
 	}
 
+	@Ignore//TODO:dar continuidade.
 	@Test
 	public void buscarBalanceamentoPeriodo() {
 		
