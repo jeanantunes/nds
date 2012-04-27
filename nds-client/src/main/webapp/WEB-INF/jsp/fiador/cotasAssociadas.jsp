@@ -158,12 +158,14 @@
 					} else {
 						
 						$("#nomeCota").val("");
-						$('[name="habilitarAdicionarCotaAssociacao"]').attr("href", "");
+						$('[name="habilitarAdicionarCotaAssociacao"]').removeAttr("href");
 					}
 				},
 				null,
 				true
 			);
+		} else {
+			$("#nomeCota").val("");
 		}
 	}
 </script>

@@ -198,19 +198,40 @@
 	}
 	
 	function removerSocio(referencia){
-		$.postJSON("<c:url value='/cadastro/fiador/removerSocio' />", "referencia=" + referencia, 
-			function(result) {
-				$(".sociosGrid").flexAddData({
-					page: 1, total: 1, rows: result.rows
-				});
-				
-				$("#btnAddEditarSocio").text("Incluir Novo");
-			},
-			null,
-			true
-		);
+		$("#dialog-excluir-socio").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$(this).dialog("close");
+					
+					$.postJSON("<c:url value='/cadastro/fiador/removerSocio' />", "referencia=" + referencia, 
+						function(result) {
+							$(".sociosGrid").flexAddData({
+								page: 1, total: 1, rows: result.rows
+							});
+							
+							$("#btnAddEditarSocio").text("Incluir Novo");
+						},
+						null,
+						true
+					);
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		
+		$("#dialog-excluir-socio").show();
 	}
 </script>
+
+<div id="dialog-excluir-socio" title="Socios" style="display: none;">
+	<p>Confirma esta Exclusão?</p>
+</div>
 
 <jsp:include page="dadosCadastraisCpf.jsp"></jsp:include>
 

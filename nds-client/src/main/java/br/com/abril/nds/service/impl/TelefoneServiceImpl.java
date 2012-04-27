@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -174,4 +175,28 @@ public class TelefoneServiceImpl implements TelefoneService {
 		}
 	}
 	
+	@Override
+	@Transactional
+	public List<TelefoneAssociacaoDTO> buscarTelefonesPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar){
+		
+		List<Telefone> lista = this.telefoneRepository.buscarTelefonesPessoa(idPessoa, idsIgnorar);
+		
+		List<TelefoneAssociacaoDTO> ret = new ArrayList<TelefoneAssociacaoDTO>();
+		
+		if (lista != null && !lista.isEmpty()){
+			
+			for (Telefone telefone : lista){
+				ret.add(new TelefoneAssociacaoDTO(false, null, null, telefone));
+			}
+		}
+		
+		return ret;
+	}
+
+	@Override
+	@Transactional
+	public Telefone buscarTelefonePorId(Long longValue) {
+		
+		return this.telefoneRepository.buscarPorId(longValue);
+	}
 }

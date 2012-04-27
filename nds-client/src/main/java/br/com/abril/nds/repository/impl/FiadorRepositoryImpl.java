@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.repository.FiadorRepository;
 
 @Repository
@@ -191,14 +193,22 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Cota> obterCotasAssociadaFiador(Long idFiador){
+	public List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar){
 		
 		StringBuilder hql = new StringBuilder("select f.cotasAssociadas ");
-		hql.append(" from Fiador f ")
-		   .append(" where f.id = :idFiador ");
+		hql.append(" from Fiador f, Cota c ")
+		   .append(" where f.id = :idFiador and c.fiador.id = f.id ");
+		
+		if (cotasIgnorar != null && !cotasIgnorar.isEmpty()){
+			hql.append(" and c.id not in (:cotasIgnorar) ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idFiador", idFiador);
+		
+		if (cotasIgnorar != null && !cotasIgnorar.isEmpty()){
+			query.setParameterList("cotasIgnorar", cotasIgnorar);
+		}
 		
 		return query.list();
 	}
@@ -217,5 +227,22 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		query.setParameter("numeroCota", numeroCota);
 		
 		return ((Long)query.uniqueResult()) > 0;
+	}
+
+	@Override
+	public PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf) {
+		
+		StringBuilder hql = new StringBuilder("select p ");
+		hql.append(" from Pessoa p, Fiador f ")
+		   .append(" where p.cpf = :cpf ")
+		   .append(" and   f.id = :idFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFiador", idFiador);
+		query.setParameter("cpf", cpf);
+		
+		query.setMaxResults(1);
+		
+		return (PessoaFisica) query.uniqueResult();
 	}
 }

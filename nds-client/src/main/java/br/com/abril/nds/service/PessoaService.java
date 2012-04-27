@@ -13,7 +13,7 @@ public interface PessoaService {
 
 	void salvarPessoa(Pessoa pessoa);
 	
-	List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar);
+	List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar);
 	
 	PessoaFisica buscarPessoaFisicaPorId(Long idPessoa);
 

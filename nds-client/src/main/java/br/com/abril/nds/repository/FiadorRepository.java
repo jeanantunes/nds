@@ -2,12 +2,14 @@ package br.com.abril.nds.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 
 public interface FiadorRepository extends Repository<Fiador, Long> {
 
@@ -25,7 +27,9 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 
 	Date buscarDataInicioAtividadeFiadorPorId(Long id);
 
-	List<Cota> obterCotasAssociadaFiador(Long idFiador);
+	List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar);
 
 	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
+
+	PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf);
 }

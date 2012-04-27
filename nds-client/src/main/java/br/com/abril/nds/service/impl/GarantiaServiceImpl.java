@@ -24,9 +24,9 @@ public class GarantiaServiceImpl implements GarantiaService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public List<Garantia> obterGarantiasFiador(Long idFiador) {
+	public List<Garantia> obterGarantiasFiador(Long idFiador, Set<Long> idsIgnorar) {
 		
-		return this.garantiaRepository.obterGarantiasFiador(idFiador);
+		return this.garantiaRepository.obterGarantiasFiador(idFiador, idsIgnorar);
 	}
 	
 	@Override
@@ -84,5 +84,12 @@ public class GarantiaServiceImpl implements GarantiaService {
 		if (!msgsValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgsValidacao));
 		}
+	}
+
+	@Override
+	@Transactional
+	public void removerGarantiasPorFiador(Long idFiador) {
+		
+		this.garantiaRepository.removerGarantiasPorFiador(idFiador);
 	}
 }

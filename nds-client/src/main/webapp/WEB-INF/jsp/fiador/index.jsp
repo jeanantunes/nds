@@ -82,8 +82,8 @@
 								$("#dialog-close").dialog("close");
 								$("#dialog-fiador").dialog("close");
 								$("#dialog-cancelar-cadastro-fiador").dialog("close");
-								$("#cpfFiador").removeAttr("disabled");
-								$("#cpfConjuge").removeAttr("disabled");
+								$('[name="cpfFiador"]').removeAttr("disabled");
+								$('[name="cpfConjuge"]').removeAttr("disabled");
 								$("#cnpjFiador").removeAttr("disabled");
 								
 								limparCamposCadastroFiador();
@@ -290,8 +290,8 @@
 							$(".inicioAtividadeEdicao").text(result[12]);
 						}
 						
-						$("#cpfFiador").attr("disabled", true);
-						$("#cpfConjuge").attr("disabled", true);
+						$('[name="cpfFiador"]').attr("disabled", true);
+						$('[name="cpfConjuge"]').attr("disabled", true);
 					} else {
 						
 						popupCadastroFiadorCNPJ();
