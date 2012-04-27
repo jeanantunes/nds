@@ -5,7 +5,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.DanfeDTO;
+import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.InfoNfeDTO;
 import br.com.abril.nds.dto.ItemDanfe;
@@ -29,6 +32,8 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaida;
@@ -101,7 +106,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		List<EnderecoDistribuidor> listaEnderecoDistribuidor = distribuidor.getEnderecos();
 		
-		//TODO qual endereco utilizar
+		//TODO principal?
 		Endereco endereco = null;
 		if(listaEnderecoDistribuidor!=null && !listaEnderecoDistribuidor.isEmpty()) {
 		
@@ -113,23 +118,37 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 		}
 		
+		List<TelefoneDistribuidor> listaTelefoneDistribuidor = distribuidor.getTelefones();
+		
+		//TODO principal?
+		Telefone telefone = null;
+		if(listaTelefoneDistribuidor!=null && !listaTelefoneDistribuidor.isEmpty()) {
+		
+			TelefoneDistribuidor telefoneDistribuidor = listaTelefoneDistribuidor.get(0);
+		
+			if(telefoneDistribuidor!=null) {
+				telefone = telefoneDistribuidor.getTelefone();
+			}
+			
+		}
+		
 		PessoaJuridica pessoaJuridicaDistribuidor = distribuidor.getJuridica();
 		
-		List<DanfeDTO> listaDanfes = new ArrayList<DanfeDTO>();
+		List<DanfeWrapper> listaDanfeWrapper = new ArrayList<DanfeWrapper>();
 		
 		for(NfeVO notaFiscal :  listaNfeImpressaoDanfe) {
 			
-			DanfeDTO danfe = obterDadosDANFE(notaFiscal, distribuidor, pessoaJuridicaDistribuidor, endereco);
+			DanfeDTO danfe = obterDadosDANFE(notaFiscal, distribuidor, pessoaJuridicaDistribuidor, endereco, telefone);
 			
 			if(danfe!=null) {
-				listaDanfes.add(danfe);
+				listaDanfeWrapper.add(new DanfeWrapper(danfe));
 			}
 			
 		}
 		
 		try {
 			
-			return gerarDocumentoIreport(listaDanfes);
+			return gerarDocumentoIreport(listaDanfeWrapper);
 		
 		} catch(Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos DANFE");
@@ -192,7 +211,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * @param pessoaJuridicaDistribuidor
 	 * @param endereco
 	 */
-	private void carregarDanfeDadosEmissor(DanfeDTO danfe, PessoaJuridica pessoaJuridicaDistribuidor, Endereco endereco) {
+	private void carregarDanfeDadosEmissor(DanfeDTO danfe, PessoaJuridica pessoaJuridicaDistribuidor, Endereco endereco, Telefone telefone) {
 	
 		String emissorCNPJ 							= pessoaJuridicaDistribuidor.getCnpj();
 		String emissorNome 							= pessoaJuridicaDistribuidor.getRazaoSocial();
@@ -208,7 +227,12 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String emissorMunicipio 	= "";
 		String emissorUF 			= "";
 		String emissorCEP 			= "";
-		String emissorTelefone 		= null; //TODO
+		String emissorTelefone 		= "";
+		
+		if(telefone!=null) {
+			emissorTelefone = (( telefone.getDdd()==null 	? "" : telefone.getDdd() ) + 
+							  ( telefone.getNumero()==null 	? "" : telefone.getNumero() ));
+		}
 		
 		if(endereco!=null) {
 	
@@ -218,9 +242,11 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			emissorMunicipio 	= endereco.getCidade();
 			emissorUF 			= endereco.getUf();
 			emissorCEP 			= endereco.getCep();
-			emissorTelefone 	= null;
 			
 		}
+		
+		emissorCEP = tratarCep(emissorCEP);
+		emissorTelefone = tratarTelefone(emissorTelefone);
 		
 		danfe.setEmissorCNPJ(emissorCNPJ);
 		danfe.setEmissorNome(emissorNome);
@@ -238,6 +264,52 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 
 	}
 
+	
+	
+	private static String tratarTelefone(String telefone) {
+		
+		if(telefone == null) {
+			return "          ";
+		}
+		
+		if(telefone.length() == 8) {
+			return telefone;
+		}
+		
+		if(telefone.length() == 10) {
+			return telefone;
+		}
+		
+		int qtdDigitosFaltantes =  10 - telefone.length();
+			
+		while(--qtdDigitosFaltantes >= 0) {
+			telefone = telefone + " ";
+		}
+				
+		return telefone;
+		
+	}
+	
+	private static String tratarCep(String cep) {
+
+		if(cep == null) {
+			return "          ";
+		}
+		
+		if(cep.length() == 8) {
+			return cep;
+		}
+		
+		int qtdDigitosFaltantes = 8 - cep.length();
+			
+		while(--qtdDigitosFaltantes >= 0) {
+			cep = cep + " ";
+		}
+				
+		return cep;
+		
+	}
+	
 	/**
 	 * Carrega os dados de destinatario na DANFE.
 	 * 
@@ -289,14 +361,34 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 							destinatarioMunicipio 		= enderecoDestinatario.getCidade();
 							destinatarioUF 				= enderecoDestinatario.getUf();
 							destinatarioCEP 			= enderecoDestinatario.getCep();
-							destinatarioTelefone 		= "";							
+													
 							
 						}
+
+						List<Telefone> listaTelefone = pessoaDestinatario.getTelefones();
+						
+						if(listaTelefone!=null && !listaTelefone.isEmpty()) {
+							
+							Telefone telefone = listaTelefone.get(0);
+							
+							if(telefone!=null) {
+								destinatarioTelefone = (( telefone.getDdd()==null 	? "" : telefone.getDdd() ) + 
+												  ( telefone.getNumero()==null 	? "" : telefone.getNumero() ));
+							}
+							
+							
+						}
+						
+						
+						
 					}
 				}
 			}
 		} 
 		
+		
+		destinatarioCEP = tratarCep(destinatarioCEP);
+		destinatarioTelefone = tratarTelefone(destinatarioTelefone);
 		
 		danfe.setDestinatarioCNPJ(destinatarioCNPJ);
 		danfe.setDestinatarioNome(destinatarioNome);
@@ -400,10 +492,11 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * @param distribuidor
 	 * @param pessoaJuridicaDistribuidor
 	 * @param endereco
+	 * @param telefone
 	 * 
 	 * @return DanfeDTO
 	 */
-	private DanfeDTO obterDadosDANFE(NfeVO nfe, Distribuidor distribuidor, PessoaJuridica pessoaJuridicaDistribuidor, Endereco endereco) {
+	private DanfeDTO obterDadosDANFE(NfeVO nfe, Distribuidor distribuidor, PessoaJuridica pessoaJuridicaDistribuidor, Endereco endereco, Telefone telefone) {
 		
 		DanfeDTO danfe = new DanfeDTO();
 		
@@ -426,7 +519,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		carregarDanfeDadosPrincipais(danfe, nfe, notaFiscal);
 		
-		carregarDanfeDadosEmissor(danfe, pessoaJuridicaDistribuidor, endereco);
+		carregarDanfeDadosEmissor(danfe, pessoaJuridicaDistribuidor, endereco, telefone);
 
 		carregarDanfeDadosDestinatario(danfe, nfe, notaFiscal);
 		
@@ -507,16 +600,19 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 	}
 	
-	
-	private byte[] gerarDocumentoIreport(List<DanfeDTO> list) throws JRException, URISyntaxException{
+	private byte[] gerarDocumentoIreport(List<DanfeWrapper> list) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
-		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/danfe.jasper");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/danfeWrapper.jasper");
 		
 		String path = url.toURI().getPath();
 		
-		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("SUBREPORT_DIR", Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
+		
+		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
 }
