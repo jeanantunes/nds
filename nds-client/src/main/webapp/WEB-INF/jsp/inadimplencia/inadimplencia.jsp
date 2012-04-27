@@ -306,7 +306,7 @@ $(document).ready(function(){
  
  <!-- COMBO STATUS -->             
  <select name="select" id="idStatusCota" style="width:90px;">
-  <option>Selecione...</option>
+  <option value="none">Selecione...</option>
   <c:forEach items="${itensStatus}" var="status" varStatus="index">
   	 <option value="${status.key}">${status.value}</option>
   </c:forEach>
