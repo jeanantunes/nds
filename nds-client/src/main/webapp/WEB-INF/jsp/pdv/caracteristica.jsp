@@ -61,11 +61,11 @@
   <tr>
     <td>Cluster:</td>
     <td>
-	    <select name="selectCluster" id="selectCluster" style="width:232px;">
+	    <select name="selectCluster" id="selectCluster" style="width:232px;" onchange="PDV.habilitarTipoCluster();">
 	      <option selected="selected">Selecione...</option>
 	      <option value="1">Popular</option>
 	    </select></td>
     </tr>
     </table>
  </fieldset>
-
+ 

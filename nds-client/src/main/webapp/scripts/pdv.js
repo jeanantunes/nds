@@ -194,10 +194,7 @@ var PDV = {
 				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario="+ $(this).val() +"&";
 			 });
 			 
-			 /**
-			  * TODO definir como sera o fluxo principal 
-			  */
-			 //listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.pdvDTO.geradorFluxoPrincipal="+ $("#").val() +"&";
+			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal").val() +"&";
 			 
 			 return listaFluxoSecundario;	
 		},
@@ -365,6 +362,37 @@ var PDV = {
 					}
 				}
 			});
+		},
+		
+		enviarFluxoPrincipal: function (){
+			
+			var txtGeradorFluxoPrincipal ="";
+			var hiddenGeradorFluxoPrincipal=""; 
+			
+			if($("#txtGeradorFluxoPrincipal").val().length == 0){
+				
+				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
+				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
+				$("#selecTipoGeradorFluxo option:selected").remove();
+			}
+			else{
+				
+				txtGeradorFluxoPrincipal = $("#txtGeradorFluxoPrincipal").val();
+				hiddenGeradorFluxoPrincipal=$("#hiddenGeradorFluxoPrincipal").val(); 
+				var option = "<option value='" + hiddenGeradorFluxoPrincipal + "'>" + txtGeradorFluxoPrincipal + "</option>";
+				
+				$("#selecTipoGeradorFluxo").append(option);
+				
+				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
+				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
+				
+				$("#selecTipoGeradorFluxo option:selected").remove();
+			}
+			
+			$("#txtGeradorFluxoPrincipal").val(txtGeradorFluxoPrincipal);
+			$("#hiddenGeradorFluxoPrincipal").val(hiddenGeradorFluxoPrincipal);
+			
+			$("#selecTipoGeradorFluxo").sortOptions();
 		}
 		
 };

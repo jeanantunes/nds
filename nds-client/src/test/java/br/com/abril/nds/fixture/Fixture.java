@@ -29,6 +29,8 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.LicencaMunicipal;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -54,15 +56,27 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
+import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -1805,7 +1819,12 @@ public class Fixture {
 		return entregador;
 	}
 	
-	public static PDV criarPDV(String nome,BigDecimal porcentagemFaturamento,TamanhoPDV tamanhoPDV,Cota cota , Boolean principal, StatusPDV status){
+	public static PDV criarPDV(String nome,BigDecimal porcentagemFaturamento,
+							   TamanhoPDV tamanhoPDV,Cota cota , 
+							   Boolean principal, StatusPDV status,
+							   CaracteristicasPDV caracteristicas,
+							   LicencaMunicipal licencaMunicipal, 
+							   SegmentacaoPDV segmentacao){
 
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
@@ -1814,8 +1833,107 @@ public class Fixture {
 		pdv.setCota(cota);
 		pdv.setPrincipal(principal);
 		pdv.setStatus(status);
-	
+		pdv.setCaracteristicas(caracteristicas);
+		
+		pdv.setLicencaMunicipal(licencaMunicipal);
+		
+		pdv.setSegmentacao(segmentacao);
+		
 		return pdv;
+	}
+	
+	public static CaracteristicasPDV criarCaracteristicaPDV(boolean balcaoCentral, boolean pontoPrincipal, 
+															boolean possuiComputador, boolean possuiLuminoso, 
+															String textoLuminoso){
+		
+		CaracteristicasPDV caracteristicasPDV = new CaracteristicasPDV();
+		caracteristicasPDV.setBalcaoCentral(balcaoCentral);
+		caracteristicasPDV.setPontoPrincipal(pontoPrincipal);
+		caracteristicasPDV.setPossuiComputador(possuiComputador);
+		caracteristicasPDV.setPossuiLuminoso(possuiLuminoso);
+		caracteristicasPDV.setTextoLuminoso(textoLuminoso);
+		
+		return caracteristicasPDV;
+	}
+	
+	public static EspecialidadePDV criarEspecialidadesPDV(Long codigo, String descricao){
+		
+		EspecialidadePDV especialidadePDV  = new EspecialidadePDV();
+		especialidadePDV.setCodigo(codigo);
+		especialidadePDV.setDescricao(descricao);
+		
+		return especialidadePDV;
+	}
+	
+	public static LicencaMunicipal criarLicencaMunicipal(String nomeLicenca, String numeroLicenca, 
+														 TipoLicencaMunicipal tipoLicencaMunicipal){
+		
+		LicencaMunicipal licencaMunicipal = new LicencaMunicipal();
+		licencaMunicipal.setNomeLicenca(nomeLicenca);
+		licencaMunicipal.setNumeroLicenca(numeroLicenca);
+		licencaMunicipal.setTipoLicencaMunicipal(tipoLicencaMunicipal);
+		
+		return licencaMunicipal;
+	}
+	
+	public static MaterialPromocional criarMaterialPromocional(Long codigo, String descricao){
+		
+		MaterialPromocional materialPromocional = new MaterialPromocional();
+		materialPromocional.setCodigo(codigo);
+		materialPromocional.setDescricao(descricao);
+		
+		return materialPromocional;
+	}
+	
+	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV, ClusterPDV clusterPDV, 
+													 TipoCaracteristicaSegmentacaoPDV tipoCaracteristica, 
+													 TipoPontoPDV tipoPontoPDV, TipoClusterPDV tipoClusterPDV){
+		
+		SegmentacaoPDV segmentacaoPDV = new SegmentacaoPDV();
+		segmentacaoPDV.setAreaInfluenciaPDV(areaInfluenciaPDV);
+		segmentacaoPDV.setClusterPDV(clusterPDV);
+		segmentacaoPDV.setTipoCaracteristica(tipoCaracteristica);
+		segmentacaoPDV.setTipoPontoPDV(tipoPontoPDV);
+		segmentacaoPDV.setTipoClusterPDV(tipoClusterPDV);
+		
+		return segmentacaoPDV;
+		
+	}
+	
+	public static AreaInfluenciaPDV criarAreaInfluenciaPDV(Long codigo, String descricao){
+		
+		AreaInfluenciaPDV areaInfluenciaPDV = new AreaInfluenciaPDV();
+		areaInfluenciaPDV.setCodigo(codigo);
+		areaInfluenciaPDV.setDescricao(descricao);
+		
+		return areaInfluenciaPDV;
+	}
+	
+	public static ClusterPDV criarClusterPDV(Long codigo, String descricao){
+		
+		ClusterPDV clusterPDV = new ClusterPDV();
+		clusterPDV.setCodigo(codigo);
+		clusterPDV.setDescricao(descricao);
+		
+		return clusterPDV;
+	}
+	
+	public static TipoPontoPDV criarTipoPontoPDV (Long codigo, String descricao){
+		
+		TipoPontoPDV tipoPdv = new TipoPontoPDV();
+		tipoPdv.setCodigo(codigo);
+		tipoPdv.setDescricao(descricao);
+		
+		return tipoPdv;
+	}
+	
+	public static TipoClusterPDV criarTipoClusterPDV(Long codigo, String descricao){
+		
+		TipoClusterPDV tipoClusterPDV = new TipoClusterPDV();
+		tipoClusterPDV.setCodigo(codigo);
+		tipoClusterPDV.setDescricao(descricao);
+		
+		return tipoClusterPDV;
 	}
 	
 	public static EnderecoPDV criarEnderecoPDV(Endereco endereco, PDV pdv, Boolean principal, TipoEndereco tipoEndereco){
@@ -1838,5 +1956,38 @@ public class Fixture {
 		telefonePDV.setTipoTelefone(tipoTelefone);
 		
 		return telefonePDV;
+	}
+
+	public static TipoLicencaMunicipal criarTipoLicencaMunicipal(Long codigo, String descricao) {
+		
+		TipoLicencaMunicipal tipoLicencaMunicipal = new TipoLicencaMunicipal();
+		tipoLicencaMunicipal.setCodigo(codigo);
+		tipoLicencaMunicipal.setDescricao(descricao);
+		
+		return tipoLicencaMunicipal;
+	}
+	
+	public static PeriodoFuncionamentoPDV gerarPeriodoFuncionamentoPDV(Date horarioFim, Date horarioInicio, 
+																	   PDV pdv, TipoPeriodoFuncionamentoPDV 
+																	   tipoPeriodoFuncionamentoPDV){
+		
+		PeriodoFuncionamentoPDV periodoFuncionamentoPDV = new PeriodoFuncionamentoPDV();
+		
+		periodoFuncionamentoPDV.setHorarioFim(horarioFim);
+		periodoFuncionamentoPDV.setHorarioInicio(horarioInicio);
+		periodoFuncionamentoPDV.setPdv(pdv);
+		periodoFuncionamentoPDV.setTipoPeriodoFuncionamentoPDV(tipoPeriodoFuncionamentoPDV);
+		
+		return periodoFuncionamentoPDV;
+		
+	}
+	
+	public static TipoGeradorFluxoPDV criarTipoGeradorFluxoPDV(Long codigo, String descricao){
+		
+		TipoGeradorFluxoPDV tipoGeradorFluxoPDV  = new TipoGeradorFluxoPDV();
+		tipoGeradorFluxoPDV.setCodigo(codigo);
+		tipoGeradorFluxoPDV.setDescricao(descricao);
+		
+		return tipoGeradorFluxoPDV;
 	}
 }

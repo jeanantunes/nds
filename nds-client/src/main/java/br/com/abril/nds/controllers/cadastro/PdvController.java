@@ -248,6 +248,10 @@ public class PdvController {
 	public void salvarPDV(PdvDTO pdvDTO){		
 		//TODO implementar a logica de validação e salvar os dados na sessão do usuario
 		
+		pdvDTO.setNumeroCota(123);
+		
+		pdvService.salvar(pdvDTO);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
