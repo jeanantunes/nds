@@ -19,18 +19,9 @@ $(function() {
 		    	<legend>Material Promocional</legend>
 			    
 			    <select name="selectMaterialPromocional" size="10" multiple="multiple" id="selectMaterialPromocional" style="height:270px; width:245px;">
-			      <option>Adesivo</option>
-			      <option>Bandeirola</option>
-			      <option>Brindes</option>
-			      <option>Cartaz Grande</option>
-			      <option>Display Acrilico</option>
-			      <option>Display Aramado de Chão</option>
-			      <option>Faixa de Banca</option>
-			      <option>Móbile</option>
-			      <option>Poster</option>
-			      <option>Reprint Capa</option>
-			      <option>Sapateira</option>
-			      <option>Totem</option>
+			      <c:forEach items="${listaMaterialPromocionalPDV}" var="item">
+					      <option value="${item.key}">${item.value}</option>	          
+					  </c:forEach>
 		    	</select>
 		    
 		    </fieldset>

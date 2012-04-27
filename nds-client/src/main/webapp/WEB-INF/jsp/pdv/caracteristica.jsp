@@ -29,11 +29,13 @@
   <tr>
     <td width="123">Tipo de Ponto:</td>
     <td width="392">
-    <select name="selectdTipoPonto" id="selectdTipoPonto" style="width:232px;">
-      <option selected="selected">Selecione...</option>
-      <option value="1">Convencional</option>
-      <option value="2">Alternativo</option>
-    </select></td>
+	    <select name="selectdTipoPonto" id="selectdTipoPonto" style="width:232px;">
+	      <option selected="selected">Selecione...</option>     
+	      <c:forEach items="${listaTipoPontoPDV}" var="item">
+		      <option value="${item.key}">${item.value}</option>	          
+		  </c:forEach>
+	    </select>
+    </td>
     </tr>
     
     <tr>
@@ -41,8 +43,9 @@
 	    <td>
 		    <select style="width:232px;" id="selectCaracteristica" name="selectCaracteristica">
 		      <option selected="selected">Selecione...</option>
-		      <option value="1">Convencional</option>
-		      <option value="2">Alternativo</option>
+		       <c:forEach items="${listaCaracteristicaPDV}" var="item">
+			      <option value="${item.key}">${item.value}</option>	          
+			  </c:forEach>
 		    </select>
 	    </td>
   </tr>
@@ -52,10 +55,9 @@
     <td>
 	    <select name="selectAreainfluencia" id="selectAreainfluencia" style="width:232px;">
 	      <option selected="selected">Selecione....</option>
-	      <option value="1">Residencial</option>
-	      <option value="2">Escritórios / Indústrias</option>
-	      <option value="3">Comercial</option>
-	      <option value="4">Estradas</option>
+	       <c:forEach items="${listaAreaInfluenciaPDV}" var="item">
+	    	  <option value="${item.key}">${item.value}</option>	          
+	  	   </c:forEach>
 	    </select></td>
     </tr>
   <tr>
@@ -63,7 +65,9 @@
     <td>
 	    <select name="selectCluster" id="selectCluster" style="width:232px;" onchange="PDV.habilitarTipoCluster();">
 	      <option selected="selected">Selecione...</option>
-	      <option value="1">Popular</option>
+	      <c:forEach items="${listaClusterPDV}" var="item">
+	    	  <option value="${item.key}">${item.value}</option>	          
+	  	   </c:forEach>
 	    </select></td>
     </tr>
     </table>

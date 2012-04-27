@@ -17,9 +17,11 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.CodigoDescricao;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.service.PdvService;
@@ -67,7 +69,36 @@ public class PdvController {
 		result.include("listaTamanhoPDV",gerarTamanhosPDV(TamanhoPDV.values()));
 		result.include("listaTipoEstabelecimento",gerarTiposEstabelecimento());
 		result.include("listaTipoLicencaMunicipal",gerarTiposLicencaMunicipal());
-				
+		
+		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
+		result.include("listaCaracteristicaPDV",getListaCaracteristica());
+		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterAreasInfluenciaPDV()));
+		result.include("listaClusterPDV",getListaDescricao(pdvService.obterClustersPDV()));
+		result.include("listaEspecialidadePDV",getListaDescricao(pdvService.obterEspecialidadesPDV()));
+		result.include("listaTipoGeradorFluxoPDV",getListaDescricao(pdvService.obterTiposGeradorFluxo()));
+		result.include("listaMaterialPromocionalPDV",getListaDescricao(pdvService.obterMateriaisPromocionalPDV()));
+	}
+	
+	private List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> getListaCaracteristica(){
+		
+		List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> itens = new ArrayList<ItemDTO<TipoCaracteristicaSegmentacaoPDV,String>>();
+		
+		for( TipoCaracteristicaSegmentacaoPDV item: TipoCaracteristicaSegmentacaoPDV.values()) {
+			itens.add(new ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>(item, item.getDescricao()));
+		}
+		
+		return itens;
+	}
+	
+	private List<ItemDTO<Long, String>> getListaDescricao(List< ? extends CodigoDescricao> listaDados){
+		
+		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(CodigoDescricao item: listaDados) {
+			itens.add(new ItemDTO<Long, String>(item.getCodigo(), item.getDescricao()));
+		}
+		
+		return itens;
 	}
 	
 	private Object gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV[] tipos) {

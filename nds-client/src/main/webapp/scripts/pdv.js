@@ -179,8 +179,8 @@ var PDV = {
 			
 			var listaEspecialidades ="";
 			
-			 $("#especialidades_options option").each(function () {
-				 listaEspecialidades = listaEspecialidades + "pdvDTO.especialidades="+ $(this).val() +"&";
+			 $("#especialidades_options option").each(function (index) {
+				 listaEspecialidades = listaEspecialidades + "pdvDTO.especialidades["+index+"]="+ $(this).val() +"&";
              });
    
 			return listaEspecialidades;
@@ -190,11 +190,11 @@ var PDV = {
 			
 			 var listaFluxoSecundario ="";
 			
-			 $("#selectFluxoSecundario option").each(function () {
-				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario="+ $(this).val() +"&";
+			 $("#selectFluxoSecundario option").each(function (index) {
+				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario["+index+"]="+ $(this).val() +"&";
 			 });
 			 
-			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal").val() +"&";
+			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal").val() +"&";
 			 
 			 return listaFluxoSecundario;	
 		},
@@ -203,8 +203,8 @@ var PDV = {
 			
 			var listaMaps ="";
 			
-			 $("#selectMap option").each(function () {
-				 listaMaps = listaMaps + "pdvDTO.maps="+ $(this).val() +"&";
+			 $("#selectMap option").each(function (index) {
+				 listaMaps = listaMaps + "pdvDTO.maps["+index+"]="+ $(this).val() +"&";
             });
   
 			return listaMaps;

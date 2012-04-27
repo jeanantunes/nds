@@ -19,13 +19,9 @@ $(function() {
 		    <legend>Tipo Gerador Fluxo</legend>
 		    
 		    <select name="selecTipoGeradorFluxo" size="10" multiple="multiple" id="selecTipoGeradorFluxo" style="height:267px; width:245px;">
-		      <option>Academia de Ginastica</option>
-		      <option>Aeroporto</option>
-		      <option>Agência de Turismo</option>
-		      <option>Banco</option>
-		      <option>Bazares</option>
-		      <option>Biblioteca</option>
-		      <option>Estática</option>
+		      <c:forEach items="${listaTipoGeradorFluxoPDV}" var="item">
+					      <option value="${item.key}">${item.value}</option>	          
+					  </c:forEach>
 		    </select>
 		    
 		    </fieldset>

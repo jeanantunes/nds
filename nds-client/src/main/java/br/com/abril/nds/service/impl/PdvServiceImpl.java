@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.id.IdentityGenerator.GetGeneratedKeysDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,6 +88,48 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Transactional(readOnly=true)
 	@Override
+	public List<TipoPontoPDV> obterTiposPontoPDV(){
+		
+		return tipoPontoPDVRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV(){
+		
+		return areaInfluenciaPDVRepository.buscarTodos(); 
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<ClusterPDV> obterClustersPDV(){
+		
+		return clusterPDVRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<EspecialidadePDV> obterEspecialidadesPDV(){
+		
+		return especialidadePDVRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(){
+		
+		return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<MaterialPromocional> obterMateriaisPromocionalPDV(){
+		
+		return materialPromocionalRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
 	public List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro) {
 		
 		return pdvRepository.obterPDVsPorCota(filtro);
@@ -145,21 +188,19 @@ public class PdvServiceImpl implements PdvService {
 		
 		pdv =  pdvRepository.merge(pdv);
 		
+		fluxoPDVRepository.merge(obterGeradorFluxoPDV(pdvDTO, pdv));
+		
+		//salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
+		
 		//salvarEndereco(pdvDTO, pdv);
 		//salvarTelefone(pdvDTO, pdv);
-		//salvarGeradorFluxoPDV(pdvDTO, pdv);
-		//salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
+			
 	}
 	
 	private void salvarPeriodoFuncionamentoPDV(PdvDTO pdvDTO,PDV pdv){
 		
 	}
-	
-	private void salvarGeradorFluxoPDV(PdvDTO pdvDTO,PDV pdv){
-		
-		obterGeradorFluxoPDV(pdvDTO, pdv);
-	}
-	
+
 	private void salvarEndereco(PdvDTO pdvDTO,PDV pdv){
 		
 	}
@@ -255,23 +296,28 @@ public class PdvServiceImpl implements PdvService {
 	
 	private GeradorFluxoPDV obterGeradorFluxoPDV(PdvDTO pdvDTO, PDV pdv){
 		
-		GeradorFluxoPDV fluxoPDV = null;
-		
-		if(pdv!= null){
-			fluxoPDV = fluxoPDVRepository.obterGeradorFluxoPDV(pdv.getId());
-		}
+		GeradorFluxoPDV fluxoPDV = pdv.getGeradorFluxoPDV();
 		
 		if(fluxoPDV == null){
 			fluxoPDV = new GeradorFluxoPDV();
 		}
-
-		TipoGeradorFluxoPDV fluxoPrincipal = tipoGeradorFluxoPDVRepsitory.buscarPorId(pdvDTO.getGeradorFluxoPrincipal());
-		fluxoPDV.setPrincipal(fluxoPrincipal);
+		
+		TipoGeradorFluxoPDV fluxoPrincipal = null;
+		
+		if(pdvDTO.getGeradorFluxoPrincipal()!= null){
+			fluxoPrincipal = tipoGeradorFluxoPDVRepsitory.buscarPorId(pdvDTO.getGeradorFluxoPrincipal());
+		}
 		
 		Set<TipoGeradorFluxoPDV> fluxoSecundario = new HashSet<TipoGeradorFluxoPDV>();
-		fluxoSecundario.addAll(tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxo(pdvDTO.getGeradorFluxoSecundario().toArray(new Long[]{})));
 		
+		if(pdvDTO.getGeradorFluxoSecundario()!= null){
+
+			fluxoSecundario.addAll(tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxo(pdvDTO.getGeradorFluxoSecundario().toArray(new Long[]{})));
+		}
+		
+		fluxoPDV.setPrincipal(fluxoPrincipal);
 		fluxoPDV.setSecundarios(fluxoSecundario);
+		fluxoPDV.setPdv(pdv);
 	
 		return fluxoPDV;
 	}

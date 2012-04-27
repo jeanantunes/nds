@@ -4,6 +4,12 @@ import java.util.List;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 
 /**
  * 
@@ -33,4 +39,16 @@ public interface PdvService {
 	List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro);
 	
 	void salvar(PdvDTO pdvDTO);
+	
+	List<TipoPontoPDV> obterTiposPontoPDV();
+	
+	List<AreaInfluenciaPDV> obterAreasInfluenciaPDV();
+	
+	List<ClusterPDV> obterClustersPDV();
+	
+	List<EspecialidadePDV> obterEspecialidadesPDV();
+	
+	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo();
+	
+	List<MaterialPromocional> obterMateriaisPromocionalPDV();
 }
