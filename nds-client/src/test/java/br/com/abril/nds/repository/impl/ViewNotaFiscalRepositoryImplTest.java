@@ -133,6 +133,48 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 			ProdutoEdicao produtoEdicaoCE_3) {
 		
 		
+		String naturezaOperacao = "34345";
+		String formaPagamento = "34535";
+		String horaSaida = "345435";
+		String ambiente = "45243";
+		String protocolo = "";
+		String versao = "";
+		String emissorInscricaoEstadualSubstituto = "";
+		String emissorInscricaoMunicipal = "";
+		BigDecimal valorBaseICMS = BigDecimal.TEN;
+		BigDecimal valorICMS = BigDecimal.TEN;
+		BigDecimal valorBaseICMSSubstituto = BigDecimal.TEN;
+		BigDecimal valorICMSSubstituto = BigDecimal.TEN;
+		BigDecimal valorProdutos = BigDecimal.TEN;
+		BigDecimal valorFrete = BigDecimal.TEN;
+		BigDecimal valorSeguro = BigDecimal.TEN;
+		BigDecimal valorOutro = BigDecimal.TEN;
+		BigDecimal valorIPI = BigDecimal.TEN;
+		BigDecimal valorNF = BigDecimal.TEN;
+		Integer frete = 0;
+		String transportadoraCNPJ = "";
+		String transportadoraNome = "";
+		String transportadoraInscricaoEstadual = "";
+		String transportadoraEndereco = "";
+		String transportadoraMunicipio = "";
+		String transportadoraUF = "";
+		String transportadoraQuantidade = "";
+		String transportadoraEspecie = "";
+		String transportadoraMarca = "";
+		String transportadoraNumeracao = "";
+		BigDecimal transportadoraPesoBruto = BigDecimal.TEN;
+		BigDecimal transportadoraPesoLiquido = BigDecimal.TEN;
+		String transportadoraANTT = "";
+		String transportadoraPlacaVeiculo = "";
+		String transportadoraPlacaVeiculoUF = "";
+		BigDecimal ISSQNTotal = BigDecimal.TEN;
+		BigDecimal ISSQNBase = BigDecimal.TEN;
+		BigDecimal ISSQNValor = BigDecimal.TEN;
+		String informacoesComplementares = "";
+		String numeroFatura = "";
+		BigDecimal valorFatura = BigDecimal.TEN;
+
+		
 		///// ENTRADA FORNECEDOR
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = 
@@ -150,7 +192,47 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 						BigDecimal.TEN, 
 						BigDecimal.ZERO, 
 						BigDecimal.TEN,
-						true);
+						true,
+						naturezaOperacao,                    
+						formaPagamento,                      
+						horaSaida,                           
+						ambiente,                            
+						protocolo,                           
+						versao,                              
+						emissorInscricaoEstadualSubstituto,  
+						emissorInscricaoMunicipal,           
+						valorBaseICMS,                       
+						valorICMS,                           
+						valorBaseICMSSubstituto,            
+						valorICMSSubstituto,                 
+						valorProdutos,                       
+						valorFrete,                          
+						valorSeguro,                         
+						valorOutro,                          
+						valorIPI,                            
+						valorNF,                             
+						frete,                               
+						transportadoraCNPJ,                  
+						transportadoraNome,                  
+						transportadoraInscricaoEstadual,     
+						transportadoraEndereco,              
+						transportadoraMunicipio,             
+						transportadoraUF,                    
+						transportadoraQuantidade,           
+						transportadoraEspecie,               
+						transportadoraMarca,                 
+						transportadoraNumeracao,             
+						transportadoraPesoBruto,             
+						transportadoraPesoLiquido,           
+						transportadoraANTT,                  
+						transportadoraPlacaVeiculo,         
+						transportadoraPlacaVeiculoUF,        
+						ISSQNTotal,                          
+						ISSQNBase,                           
+						ISSQNValor,                          
+						informacoesComplementares,           
+						numeroFatura,                        
+						valorFatura);
 		
 		save(notaFiscalEntradaFornecedorNFE);
 
@@ -184,7 +266,47 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 						BigDecimal.TEN, 
 						BigDecimal.ZERO, 
 						BigDecimal.TEN,
-						true);
+						true,
+						naturezaOperacao,                    
+						formaPagamento,                      
+						horaSaida,                           
+						ambiente,                            
+						protocolo,                           
+						versao,                              
+						emissorInscricaoEstadualSubstituto,  
+						emissorInscricaoMunicipal,           
+						valorBaseICMS,                       
+						valorICMS,                           
+						valorBaseICMSSubstituto,            
+						valorICMSSubstituto,                 
+						valorProdutos,                       
+						valorFrete,                          
+						valorSeguro,                         
+						valorOutro,                          
+						valorIPI,                            
+						valorNF,                             
+						frete,                               
+						transportadoraCNPJ,                  
+						transportadoraNome,                  
+						transportadoraInscricaoEstadual,     
+						transportadoraEndereco,              
+						transportadoraMunicipio,             
+						transportadoraUF,                    
+						transportadoraQuantidade,           
+						transportadoraEspecie,               
+						transportadoraMarca,                 
+						transportadoraNumeracao,             
+						transportadoraPesoBruto,             
+						transportadoraPesoLiquido,           
+						transportadoraANTT,                  
+						transportadoraPlacaVeiculo,         
+						transportadoraPlacaVeiculoUF,        
+						ISSQNTotal,                          
+						ISSQNBase,                           
+						ISSQNValor,                          
+						informacoesComplementares,           
+						numeroFatura,                        
+						valorFatura);
 		
 		
 		save(notaFiscalEntradaCotaNFE);
@@ -218,7 +340,47 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 						BigDecimal.TEN, 
 						BigDecimal.ZERO, 
 						BigDecimal.TEN,
-						true);
+						true,
+						naturezaOperacao,                    
+						formaPagamento,                      
+						horaSaida,                           
+						ambiente,                            
+						protocolo,                           
+						versao,                              
+						emissorInscricaoEstadualSubstituto,  
+						emissorInscricaoMunicipal,           
+						valorBaseICMS,                       
+						valorICMS,                           
+						valorBaseICMSSubstituto,            
+						valorICMSSubstituto,                 
+						valorProdutos,                       
+						valorFrete,                          
+						valorSeguro,                         
+						valorOutro,                          
+						valorIPI,                            
+						valorNF,                             
+						frete,                               
+						transportadoraCNPJ,                  
+						transportadoraNome,                  
+						transportadoraInscricaoEstadual,     
+						transportadoraEndereco,              
+						transportadoraMunicipio,             
+						transportadoraUF,                    
+						transportadoraQuantidade,           
+						transportadoraEspecie,               
+						transportadoraMarca,                 
+						transportadoraNumeracao,             
+						transportadoraPesoBruto,             
+						transportadoraPesoLiquido,           
+						transportadoraANTT,                  
+						transportadoraPlacaVeiculo,         
+						transportadoraPlacaVeiculoUF,        
+						ISSQNTotal,                          
+						ISSQNBase,                           
+						ISSQNValor,                          
+						informacoesComplementares,           
+						numeroFatura,                        
+						valorFatura);
 		
 		
 		save(notaFiscalSaidaFornecedorNFE);
