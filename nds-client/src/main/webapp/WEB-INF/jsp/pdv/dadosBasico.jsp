@@ -1,4 +1,5 @@
 <script>
+
 $(function() {
 	
 	$('#inicioHorario').mask('99:99'); 
@@ -10,6 +11,21 @@ $(function() {
 
 });
 </script>
+
+<div id="dialog-img" title="Incluir Foto do PDV">
+<br />
+
+	<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formBaixaAutomatica"
+		  method="post" enctype="multipart/form-data" >
+	
+		<input type="hidden" name="formUploadAjax" value="true" />
+	
+	<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
+									
+	</form>
+
+
+</div>
 
 <fieldset>
 <legend>Dados Básicos</legend>
@@ -96,7 +112,7 @@ $(function() {
     </td>
     <td width="191" align="center" valign="top">
     	<img src="${pageContext.request.contextPath}/images/no_image.jpeg" width="191" height="136" alt="Banca" /><br />
-    	<a href="javascript:" onclick="popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
+    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
     </td>
   </tr>
 </table>
