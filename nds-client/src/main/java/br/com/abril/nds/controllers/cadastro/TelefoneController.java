@@ -18,7 +18,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneFiador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.TelefoneService;
@@ -66,13 +65,13 @@ public class TelefoneController {
 		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
-		List<TelefoneAssociacaoDTO> listaTelefones = this.obterTelefonesExibicao();
+		List<TelefoneAssociacaoDTO> listaTelefonesExibir = this.obterTelefonesExibicao();
 		
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
 		
-		if (listaTelefones != null){
+		if (listaTelefonesExibir != null){
 			
-			for (TelefoneAssociacaoDTO tDto : listaTelefones){
+			for (TelefoneAssociacaoDTO tDto : listaTelefonesExibir){
 				
 				if (tDto.getTipoTelefone() != null && !telefonesRemover.contains(new Long(tDto.getReferencia()))){
 					
@@ -142,6 +141,18 @@ public class TelefoneController {
 		
 		telefonesSessao.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
 		
+		List<TelefoneAssociacaoDTO> listaExibicao = this.obterTelefonesExibicao();
+		for (int index = 0 ; index < listaExibicao.size() ; index++){
+			
+			if (referencia.equals(listaExibicao.get(index).getReferencia())){
+				
+				listaExibicao.remove(index);
+				
+				this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, listaExibicao);
+				break;
+			}
+		}
+		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSessao);
 		
 		this.pesquisarTelefones(null, null);
@@ -183,7 +194,16 @@ public class TelefoneController {
 		
 		if (telefoneAssociacaoDTO == null){
 			
-			telefoneAssociacaoDTO = this.buscarAssociacaoTelefone(referencia);
+			List<TelefoneAssociacaoDTO> listaExibicao = this.obterTelefonesExibicao();
+			
+			for (TelefoneAssociacaoDTO t : listaExibicao){
+				
+				if (referencia.equals(t.getReferencia())){
+					
+					telefoneAssociacaoDTO = t;
+					break;
+				}
+			}
 			
 			if (telefoneAssociacaoDTO == null){
 				
@@ -197,26 +217,6 @@ public class TelefoneController {
 		}
 		
 		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().serialize();
-	}
-	
-	private TelefoneAssociacaoDTO buscarAssociacaoTelefone(Integer referencia) {
-		
-		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
-		
-		if (idFiador != null){
-			
-			TelefoneFiador telefoneFiador = this.fiadorService.buscarTelefonePorTelefoneFiador(idFiador, referencia.longValue());
-			
-			TelefoneAssociacaoDTO dto = new TelefoneAssociacaoDTO();
-			dto.setPrincipal(telefoneFiador.isPrincipal());
-			dto.setReferencia(referencia);
-			dto.setTelefone(telefoneFiador.getTelefone());
-			dto.setTipoTelefone(telefoneFiador.getTipoTelefone());
-			
-			return dto;
-		}
-		
-		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -307,6 +307,17 @@ public class TelefoneController {
 			for (Integer key : telefones.keySet()){
 				
 				if (telefones.get(key).isPrincipal() && (referencia != null && !referencia.equals(telefones.get(key).getReferencia()))){
+					
+					listaValidacao.add("Já existe um telefone principal.");
+					break;
+				}
+			}
+			
+			List<TelefoneAssociacaoDTO> listaExibicao = this.obterTelefonesExibicao();
+			
+			for (TelefoneAssociacaoDTO dto : listaExibicao){
+				
+				if (dto.isPrincipal() && (referencia != null && !referencia.equals(dto.getReferencia()))){
 					
 					listaValidacao.add("Já existe um telefone principal.");
 					break;

@@ -395,7 +395,7 @@ public class EntregadorController {
 				this.entregadorService.obterEnderecosPorIdEntregador(idEntregador);
 
 		this.session.setAttribute(
-			Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
+			EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
 		);
 
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
@@ -468,8 +468,8 @@ public class EntregadorController {
 	 */
 	public void novoCadastro() {
 		
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
 		
@@ -735,18 +735,18 @@ public class EntregadorController {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 
 		this.entregadorService.processarEnderecos(idEntregador, 
 												  listaEnderecoAssociacaoSalvar, 
 												  listaEnderecoAssociacaoRemover);
 
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 	}
 
 	/*
