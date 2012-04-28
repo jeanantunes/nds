@@ -1,11 +1,12 @@
 package br.com.abril.nds.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.id.IdentityGenerator.GetGeneratedKeysDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
 import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class PdvServiceImpl implements PdvService {
@@ -136,6 +138,70 @@ public class PdvServiceImpl implements PdvService {
 		return pdvRepository.obterPDVsPorCota(filtro);
 	}
 	
+	@Transactional(readOnly=true)
+	@Override
+	public PdvDTO obterPDV(Long idCota, Long idPdv){
+		
+		PDV pdv = pdvRepository.obterPDV(idCota, idPdv);
+		
+		PdvDTO pdvDTO = new PdvDTO();
+		
+		if(pdv!= null){
+			
+			pdvDTO.setStatusPDV(pdv.getStatus());
+
+			pdvDTO.setNomePDV(pdv.getNome());
+
+			pdvDTO.setContato(pdv.getContato());
+			
+			//TODO criar campo na entidade de pdv
+			pdvDTO.setDataInicio(new Date());
+
+			pdvDTO.setSite(pdv.getSite());
+
+			pdvDTO.setEmail(pdv.getEmail());
+
+			pdvDTO.setPontoReferencia(pdv.getPontoReferencia());
+
+			pdvDTO.setDentroDeOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
+
+			pdvDTO.setTipoEstabelecimentoAssociacaoPDV(pdv.getTipoEstabelecimentoPDV());
+
+			pdvDTO.setTamanhoPDV(pdv.getTamanhoPDV());
+
+			pdvDTO.setSistemaIPV(pdv.isPossuiSistemaIPV());
+
+			pdvDTO.setQtdeFuncionarios(pdv.getQtdeFuncionarios());
+			
+			LicencaMunicipal licencaMunicipal = pdv.getLicencaMunicipal();
+			
+			if(licencaMunicipal!= null){
+				pdvDTO.setNumeroLicenca(licencaMunicipal.getNumeroLicenca());
+				pdvDTO.setNomeLicenca(licencaMunicipal.getNomeLicenca());
+				pdvDTO.setTipoLicencaMunicipal(licencaMunicipal.getTipoLicencaMunicipal());
+			}
+			
+			pdvDTO.setPorcentagemFaturamento(pdv.getPorcentagemFaturamento());
+			
+			Set<PeriodoFuncionamentoPDV>periodos = pdv.getPeriodos();
+			
+			if(periodos!= null && !periodos.isEmpty()){
+				
+				List<PeriodoFuncionamentoDTO> listaPeriodos = new ArrayList<PeriodoFuncionamentoDTO>();
+				
+				for(PeriodoFuncionamentoPDV periodo : periodos  ){
+					
+					listaPeriodos.add(new PeriodoFuncionamentoDTO(periodo.getTipoPeriodoFuncionamentoPDV(),
+							DateUtil.formatarData(periodo.getHorarioInicio(),"HH:MM"),
+							DateUtil.formatarData(periodo.getHorarioFim(),"HH:MM")));
+				}				
+				pdvDTO.setPeriodosFuncionamentoDTO(listaPeriodos);
+			}
+		}
+		
+		return pdvDTO;
+	}
+	
 	@Transactional
 	public void salvar(PdvDTO pdvDTO){
 		
@@ -143,7 +209,7 @@ public class PdvServiceImpl implements PdvService {
 			throw new IllegalArgumentException("Parâmetro PDV inválido");
 		}
 		
-		if(pdvDTO.getNumeroCota() == null){
+		if(pdvDTO.getIdCota() == null){
 			throw new IllegalArgumentException("Parâmetro Cota PDV inválido");
 		}
 		
@@ -186,6 +252,10 @@ public class PdvServiceImpl implements PdvService {
 		if(pdvDTO.isDentroDeOutroEstabelecimento()){
 			pdv.setTipoEstabelecimentoPDV(pdvDTO.getTipoEstabelecimentoAssociacaoPDV());
 		}
+		
+		pdv =  pdvRepository.merge(pdv);
+		
+		pdv.setPeriodos(obterPeriodosPDV(pdvDTO, pdv));
 		
 		pdv =  pdvRepository.merge(pdv);
 		
@@ -246,19 +316,30 @@ public class PdvServiceImpl implements PdvService {
 		return segmaSegmentacaoPDV;
 	}
 
-	private Set<PeriodoFuncionamentoPDV> obterPeriodosPDV(PdvDTO pdvDTO) {
+	private Set<PeriodoFuncionamentoPDV> obterPeriodosPDV(PdvDTO pdvDTO,PDV pdv) {
 		
-		Set<PeriodoFuncionamentoPDV> periodoFuncionamento = new HashSet<PeriodoFuncionamentoPDV>();
+		Set<PeriodoFuncionamentoPDV> periodoFuncionamento = pdv.getPeriodos();
 		
-		if(pdvDTO.getId() == null){
+		if(periodoFuncionamento == null){
 			
+			periodoFuncionamento = new HashSet<PeriodoFuncionamentoPDV>();
 			
 		}
 		
-	//	periodoFuncionamento.addAll( periodoFuncionamentoPDVRepository.obterPeriodoFuncionamentoPDV(idPDV));
+		PeriodoFuncionamentoPDV periodo = null;
+		
+		for(PeriodoFuncionamentoDTO periodoDTO : pdvDTO.getPeriodosFuncionamentoDTO()){
+			
+			periodo = new PeriodoFuncionamentoPDV();
+			periodo.setHorarioFim(DateUtil.parseDataPTBR(periodoDTO.getFim()));
+			periodo.setHorarioInicio(DateUtil.parseDataPTBR(periodoDTO.getInicio()));
+			periodo.setTipoPeriodoFuncionamentoPDV(periodoDTO.getTipoPeriodoFuncionamentoPDV());
+			periodo.setPdv(pdv);
+			
+			periodoFuncionamento.add(periodo);
+		}
 		
 		return periodoFuncionamento ;
-		
 	}
 
 	private Set<MaterialPromocional> obterMateriaisPDV(PdvDTO pdvDTO) {
@@ -336,7 +417,7 @@ public class PdvServiceImpl implements PdvService {
 
 	private Cota obterCotaPDV(PdvDTO pdvDTO) {
 		
-		return cotaRepository.obterPorNumerDaCota(pdvDTO.getNumeroCota());
+		return cotaRepository.buscarPorId(pdvDTO.getIdCota());
 	}
 
 	private CaracteristicasPDV obterCaracteristicaPDV(PdvDTO pdvDTO,PDV pdv) {

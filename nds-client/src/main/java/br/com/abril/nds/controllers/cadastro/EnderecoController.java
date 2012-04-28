@@ -1,9 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,9 +15,9 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.service.ConsultaBaseEnderecoService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -41,6 +39,20 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cadastro/endereco")
 public class EnderecoController {
 
+	/**
+	 * Constante que representa o nome do atributo com a lista de endereços 
+	 * armazenado na sessão para serem persistidos na base. 
+	 */
+	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = "listaEnderecosSalvarSessao";
+
+	/**
+	 * Constante que representa o nome do atributo com a lista de endereços 
+	 * armazenado na sessão para serem persistidos na base. 
+	 */
+	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = "listaEnderecosRemoverSessao";
+	
+	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = "listaEnderecosExibirSessao";
+	
 	@Autowired
 	private Result result;
 
@@ -53,58 +65,40 @@ public class EnderecoController {
 	@Autowired
 	private FiadorService fiadorService;
 	
+	@Autowired
+	private EnderecoService enderecoService;
+	
 	@Path("/")
 	public void index() {
 		
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.session.removeAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.session.removeAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		
+		this.session.removeAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
 	}
 
 	/**
 	 * Método que realiza a pesquisa dos endereços cadastrados para uma determinada pessoa.
 	 */
 	@Post
-	@SuppressWarnings("unchecked")
 	public void pesquisarEnderecos(String sortname, String sortorder) {
 
-		List<EnderecoAssociacaoDTO> listaEndereco =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-
-		if (listaEndereco == null) {
-
-			listaEndereco = new ArrayList<EnderecoAssociacaoDTO>();
-		}
+		List<EnderecoAssociacaoDTO> listaEndereco = this.obterEnderecosSessaoSalvar();
 		
-		Set<Long> idsIgnorar = new HashSet<Long>();
+		List<EnderecoAssociacaoDTO> enderecosExibir = this.obterEnderecosSessaoExibir();
 		
-		List<EnderecoAssociacaoDTO> enderecosRemovidos = (List<EnderecoAssociacaoDTO>) 
-				this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		listaEndereco.addAll(enderecosExibir);
+		
+		List<EnderecoAssociacaoDTO> enderecosRemovidos = this.obterEnderecosSessaoRemover();
 		
 		if (enderecosRemovidos != null){
-			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : enderecosRemovidos){
-				idsIgnorar.add(enderecoAssociacaoDTO.getId());
-			}
-		}
-		
-		for (EnderecoAssociacaoDTO enderecosAdicionado : listaEndereco){
-			idsIgnorar.add(enderecosAdicionado.getEndereco().getId());
+			
+			listaEndereco.removeAll(enderecosRemovidos);
 		}
 		
 		TableModel<CellModel> tableModelEndereco = new TableModel<CellModel>();
 
-		List<EnderecoAssociacaoDTO> listaEnderecosBanco = null;
-		
-		Long idFiador = (Long) this.session.getAttribute(FiadorController.ID_FIADOR_EDICAO);
-		
-		if (idFiador != null){
-			
-			listaEnderecosBanco = this.fiadorService.buscarEnderecosFiador(idFiador, idsIgnorar);
-		}
-		
-		if (listaEnderecosBanco != null){
-			listaEndereco.addAll(listaEnderecosBanco);
-		}
 		if (sortname != null) {
 
 			sortorder = sortorder == null ? "asc" : sortorder;
@@ -124,36 +118,46 @@ public class EnderecoController {
 	 * 
 	 * @param enderecoAssociacao
 	 */
-	@SuppressWarnings("unchecked")
 	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
 
 		validarDadosEndereco(enderecoAssociacao);
 
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		if (enderecoAssociacao.isEnderecoPrincipal()) {
 
-		if (listaEnderecoAssociacao == null) {
-
-			listaEnderecoAssociacao = new ArrayList<EnderecoAssociacaoDTO>();		
-		
-		} else if (enderecoAssociacao.isEnderecoPrincipal()) {
-
-			validarExistenciaEnderecoPrincipal(listaEnderecoAssociacao, enderecoAssociacao);
+			validarExistenciaEnderecoPrincipal(enderecoAssociacao);
 		}
-
-		if (listaEnderecoAssociacao.contains(enderecoAssociacao)) {
-
-			int index = listaEnderecoAssociacao.indexOf(enderecoAssociacao);
-
-			listaEnderecoAssociacao.set(index, enderecoAssociacao);
-
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
+		
+		if (enderecoAssociacao.getId() != null){
+			
+			for (int index = 0 ; index < listaEnderecoAssociacao.size() ; index++){
+				
+				if (listaEnderecoAssociacao.get(index).getId().equals(enderecoAssociacao.getId())){
+					
+					listaEnderecoAssociacao.set(index, enderecoAssociacao);
+					break;
+				}
+			}
+			
+			List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
+			
+			for (int index = 0 ; index < listaExibir.size() ; index++){
+				
+				if (listaExibir.get(index).getId().equals(enderecoAssociacao.getId())){
+					
+					listaExibir.remove(index);
+					
+					listaEnderecoAssociacao.add(enderecoAssociacao);
+					break;
+				}
+			}
 		} else {
-
+			
 			listaEnderecoAssociacao.add(enderecoAssociacao);
 		}
 
-		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
+		this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 		
 		this.pesquisarEnderecos(null, null);
 	}
@@ -164,36 +168,41 @@ public class EnderecoController {
 	 * @param idEnderecoAssociacao
 	 */
 	@Post
-	@SuppressWarnings("unchecked")
 	public void removerEndereco(Long idEnderecoAssociacao) {
-
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-
-		EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
-
-		enderecoAssociacao.setId(idEnderecoAssociacao);
-
-		if (listaEnderecoAssociacaoSalvar != null){
-			listaEnderecoAssociacaoSalvar.remove(enderecoAssociacao);
-		}
-
-		this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacaoSalvar);
-
-		if (idEnderecoAssociacao >= 0) {
-
-			List<EnderecoAssociacaoDTO> listaEnderecosRemover = 
-					(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-
-			if (listaEnderecosRemover == null) {
-
-				listaEnderecosRemover = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		EnderecoAssociacaoDTO enderecoRemover = null;
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
+			
+		for (int index = 0 ; index < listaEnderecoAssociacao.size() ; index++){
+			
+			if (listaEnderecoAssociacao.get(index).getId().equals(idEnderecoAssociacao)){
+				
+				enderecoRemover = listaEnderecoAssociacao.remove(index);
+				break;
 			}
-
-			listaEnderecosRemover.add(enderecoAssociacao);
-
-			this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaEnderecosRemover);
 		}
+		
+		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
+		
+		for (int index = 0 ; index < listaExibir.size() ; index++){
+			
+			if (listaExibir.get(index).getId().equals(idEnderecoAssociacao)){
+				
+				if (enderecoRemover == null){
+					enderecoRemover = listaExibir.remove(index);
+				} else {
+					listaExibir.remove(index);
+				}
+				break;
+			}
+		}
+		
+		List<EnderecoAssociacaoDTO> listaRemover = this.obterEnderecosSessaoRemover();
+		
+		listaRemover.add(enderecoRemover);
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaRemover);
 		
 		this.pesquisarEnderecos(null, null);
 	}
@@ -204,44 +213,54 @@ public class EnderecoController {
 	 * @param idEnderecoAssociacao
 	 */
 	@Post
-	@SuppressWarnings("unchecked")
 	public void editarEndereco(Long idEnderecoAssociacao) {
 
-		EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
-
-		enderecoAssociacao.setId(idEnderecoAssociacao);
-
-		List<EnderecoAssociacaoDTO> listaEndereco =
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-
-		int index = listaEndereco.indexOf(enderecoAssociacao);
-
-		enderecoAssociacao = listaEndereco.get(index);
+		EnderecoAssociacaoDTO enderecoAssociacao = null;
+		
+		List<EnderecoAssociacaoDTO> listaEndereco =	this.obterEnderecosSessaoSalvar();
+		
+		for (EnderecoAssociacaoDTO dto : listaEndereco){
+			
+			if (dto.getId().equals(idEnderecoAssociacao)){
+				
+				enderecoAssociacao = dto;
+				break;
+			}
+		}
 		
 		if (enderecoAssociacao == null){
 			
-			Long idFiador = (Long) this.session.getAttribute(FiadorController.ID_FIADOR_EDICAO);
+			List<EnderecoAssociacaoDTO> listaEnderecoExibir =	this.obterEnderecosSessaoExibir();
 			
-			if (idFiador != null){
-				EnderecoFiador enderecoFiador = this.fiadorService.buscarEnderecoPorEnderecoFiador(idFiador, idEnderecoAssociacao);
+			for (EnderecoAssociacaoDTO dto : listaEnderecoExibir){
 				
-				if (enderecoFiador != null){
+				if (dto.getId().equals(idEnderecoAssociacao)){
 					
-					enderecoAssociacao = new EnderecoAssociacaoDTO(
-							enderecoFiador.isPrincipal(), 
-							enderecoFiador.getEndereco(), 
-							enderecoFiador.getTipoEndereco(),
-							null);
-					
-					List<EnderecoAssociacaoDTO> listaEnderecoAssociacao =
-							(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-									Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-					
-					listaEnderecoAssociacao.add(enderecoAssociacao);
-					
-					this.session.setAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
+					enderecoAssociacao = dto;
+					break;
 				}
 			}
+		}
+		
+		if (enderecoAssociacao == null){
+			
+			Endereco endereco = this.enderecoService.buscarEnderecoPorId(idEnderecoAssociacao);
+			
+			if (endereco != null){
+				
+				enderecoAssociacao = new EnderecoAssociacaoDTO(
+						false, 
+						endereco, 
+						null,
+						null);
+				
+				List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
+				
+				listaEnderecoAssociacao.add(enderecoAssociacao);
+				
+				this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
+			}
+			
 		}
 
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
@@ -427,9 +446,10 @@ public class EnderecoController {
 	 * 
 	 * @param listaEnderecoAssociacao
 	 */
-	private void validarExistenciaEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacao,
-													EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
+	private void validarExistenciaEnderecoPrincipal(EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
 
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
+		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
@@ -437,5 +457,57 @@ public class EnderecoController {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
 			}
 		}
+		
+		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaExibir) {
+
+			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
+
+				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<EnderecoAssociacaoDTO> obterEnderecosSessaoSalvar(){
+		
+		List<EnderecoAssociacaoDTO> listaEndereco =
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		
+		if (listaEndereco == null) {
+			
+			listaEndereco = new ArrayList<EnderecoAssociacaoDTO>();
+		}
+		
+		return listaEndereco;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<EnderecoAssociacaoDTO> obterEnderecosSessaoRemover(){
+		
+		List<EnderecoAssociacaoDTO> lista = (List<EnderecoAssociacaoDTO>) 
+				this.session.getAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		
+		if (lista == null){
+			
+			lista = new ArrayList<EnderecoAssociacaoDTO>();
+		}
+		
+		return lista;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<EnderecoAssociacaoDTO> obterEnderecosSessaoExibir(){
+		
+		List<EnderecoAssociacaoDTO> lista = (List<EnderecoAssociacaoDTO>)
+			this.session.getAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
+		
+		if (lista == null){
+			
+			lista = new ArrayList<EnderecoAssociacaoDTO>();
+		}
+		
+		return lista;
 	}
 }

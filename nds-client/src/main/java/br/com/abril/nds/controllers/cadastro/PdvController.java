@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.jrimum.utilix.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
@@ -27,9 +30,11 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -202,9 +207,16 @@ public class PdvController {
 	@Path("/consultar")
 	public void consultarPDVs(Long idCota,String sortname, String sortorder){
 		
-		List<PdvVO>  listaPdvs = getMock();
+		FiltroPdvDTO filtro = new FiltroPdvDTO();
+		filtro.setIdCota(idCota);
 		
-		ordenarListaPdvs(sortname, sortorder, listaPdvs);
+		PaginacaoVO paginacao = new PaginacaoVO(null, null, sortorder);
+		
+		filtro.setPaginacao(paginacao);
+		
+		filtro.setColunaOrdenacao(Util.getEnumByStringValue(FiltroPdvDTO.ColunaOrdenacao.values(),sortname));
+		
+		List<PdvVO>  listaPdvs = getListaPdvs(filtro);
 		
 		TableModel<CellModelKeyValue<PdvVO>> tableModel = new TableModel<CellModelKeyValue<PdvVO>>();
 			
@@ -217,16 +229,33 @@ public class PdvController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private void ordenarListaPdvs(String sortname, String sortorder, List<PdvVO> listaPdvs){
+	private List<PdvVO> getListaPdvs(FiltroPdvDTO filtro){
 		
-		if (sortname != null && !listaPdvs.isEmpty()) {
-
-			sortorder = sortorder == null ? "asc" : sortorder;
-
-			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
-
-			PaginacaoUtil.ordenarEmMemoria(listaPdvs, ordenacao, sortname);
+		List<PdvDTO> listDtos = pdvService.obterPDVsPorCota(filtro);
+		
+		List<PdvVO> listaRetorno = new ArrayList<PdvVO>();
+		
+		PdvVO pdvVO = null;
+		
+		for(PdvDTO pdv : listDtos){
+			
+			pdvVO = new PdvVO();
+			
+			pdvVO.setIdPdv(pdv.getId());
+			pdvVO.setIdCota(pdv.getIdCota());
+			pdvVO.setNomePdv(pdv.getNomePDV());
+			pdvVO.setTipoPonto( pdv.getDescricaoTipoPontoPDV());
+			pdvVO.setContato(pdv.getContato());
+			pdvVO.setTelefone( (pdv.getTelefone()==null)?"":   pdv.getTelefone());
+			pdvVO.setEndereco( (pdv.getEndereco()== null)?"": pdv.getEndereco());
+			pdvVO.setPrincipal(pdv.isPrincipal());
+			pdvVO.setStatus(pdv.getStatusPDV() == null ?"": pdv.getStatusPDV().getDescricao());
+			pdvVO.setFaturamento((pdv.getPorcentagemFaturamento()==null?"":CurrencyUtil.formatarValor(pdv.getPorcentagemFaturamento())));
+		   
+			listaRetorno.add(pdvVO);
 		}
+		
+		return listaRetorno;
 	}
 	
 	@Post
@@ -242,21 +271,6 @@ public class PdvController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV excluido com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
-	
-	public List<PdvVO> getMock(){
-		
-		List<PdvVO> listaPdvs = new ArrayList<PdvVO>();
-		
-		for(int x=0; x<6 ; x++){
-			listaPdvs.add(new PdvVO(x,Long.valueOf(x),Long.valueOf(x),"Nome PDV" + x,"Tipo PDV","CONTATo",
-									"3689-25444","Rua XPTO","Bairro","Cidade",true,"Status","10"));
-		}
-		
-		return listaPdvs;
-		
-		
-	}
-
 		
 	@Post
 	@Path("/editar")
@@ -279,7 +293,7 @@ public class PdvController {
 	public void salvarPDV(PdvDTO pdvDTO){		
 		//TODO implementar a logica de validação e salvar os dados na sessão do usuario
 		
-		pdvDTO.setNumeroCota(123);
+		pdvDTO.setIdCota(1L);
 		
 		pdvService.salvar(pdvDTO);
 		

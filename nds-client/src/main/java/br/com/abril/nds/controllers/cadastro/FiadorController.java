@@ -31,7 +31,6 @@ import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -352,10 +351,10 @@ public class FiadorController {
 				this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecosAdicionar = (List<EnderecoAssociacaoDTO>) 
-				this.httpSession.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+				this.httpSession.getAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecosRemover = (List<EnderecoAssociacaoDTO>) 
-				this.httpSession.getAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+				this.httpSession.getAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 		
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
@@ -516,15 +515,21 @@ public class FiadorController {
 		List<TelefoneAssociacaoDTO> lista = this.fiadorService.buscarTelefonesFiador(idFiador, null);
 		
 		this.httpSession.setAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO, lista);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecos = this.fiadorService.buscarEnderecosFiador(idFiador, null);
+		
+		this.httpSession.setAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR, listaEnderecos);
 	}
 
 	private void limparDadosSessao(){
-		this.httpSession.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.httpSession.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO);
 		this.httpSession.removeAttribute(GarantiasController.LISTA_GARANTIAS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(GarantiasController.LISTA_GARANTIAS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO);

@@ -25,4 +25,6 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 * @return List<PdvDTO>
 	 */
 	List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro);
+	
+	PDV obterPDV(Long idCota,Long idPDV);
 }

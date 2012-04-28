@@ -25,7 +25,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
-import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -256,7 +256,7 @@ public class CotaAusenteController {
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status=TipoMensagem.WARNING;
 		
-		} catch(TipoMovimentoEstoqueInexistente e) {
+		} catch(TipoMovimentoEstoqueInexistenteException e) {
 			mensagens.clear();
 			mensagens.add(e.getMessage());
 			status=TipoMensagem.WARNING;
@@ -305,7 +305,7 @@ public class CotaAusenteController {
 			mensagens.clear();
 			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
 			status=TipoMensagem.WARNING;			
-		}catch(TipoMovimentoEstoqueInexistente e) {
+		}catch(TipoMovimentoEstoqueInexistenteException e) {
 			mensagens.clear();
 			mensagens.add(e.getMessage());
 			status=TipoMensagem.WARNING;
@@ -368,7 +368,7 @@ public class CotaAusenteController {
 			mensagens.clear();
 			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
 			status=TipoMensagem.WARNING;			
-		}catch(TipoMovimentoEstoqueInexistente e) {
+		}catch(TipoMovimentoEstoqueInexistenteException e) {
 			mensagens.clear();
 			mensagens.add(e.getMessage());
 			status=TipoMensagem.WARNING;

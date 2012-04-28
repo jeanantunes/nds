@@ -55,6 +55,8 @@ public interface PdvService {
 	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo();
 	
 	List<MaterialPromocional> obterMateriaisPromocionalPDV();
+	
+	PdvDTO obterPDV(Long idCota, Long idPdv);
 
 	/**
 	 * Obtém lista com os possíveis peridos a serem selecionados

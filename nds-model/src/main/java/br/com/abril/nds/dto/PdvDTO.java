@@ -20,9 +20,11 @@ public class PdvDTO implements Serializable {
 
 	private Long id;
 	
-	private Integer numeroCota;
+	private Long idCota;
 	
 	private StatusPDV statusPDV;
+	
+	private String descricaoTipoPontoPDV;
 	
 	private Date dataInicio;
 	
@@ -491,18 +493,19 @@ public class PdvDTO implements Serializable {
 		this.dentroDeOutroEstabelecimento = dentroDeOutroEstabelecimento;
 	}
 
+	
 	/**
-	 * @return the numeroCota
+	 * @return the idCota
 	 */
-	public Integer getNumeroCota() {
-		return numeroCota;
+	public Long getIdCota() {
+		return idCota;
 	}
 
 	/**
-	 * @param numeroCota the numeroCota to set
+	 * @param idCota the idCota to set
 	 */
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 
 	public List<PeriodoFuncionamentoDTO> getPeriodosFuncionamentoDTO() {
@@ -511,6 +514,20 @@ public class PdvDTO implements Serializable {
 
 	public void setPeriodosFuncionamentoDTO(List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO) {
 		this.periodosFuncionamentoDTO = periodosFuncionamentoDTO;
+	}
+
+	/**
+	 * @return the descricaoTipoPontoPDV
+	 */
+	public String getDescricaoTipoPontoPDV() {
+		return descricaoTipoPontoPDV;
+	}
+
+	/**
+	 * @param descricaoTipoPontoPDV the descricaoTipoPontoPDV to set
+	 */
+	public void setDescricaoTipoPontoPDV(String descricaoTipoPontoPDV) {
+		this.descricaoTipoPontoPDV = descricaoTipoPontoPDV;
 	}
 
 	

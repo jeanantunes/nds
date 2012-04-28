@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.BancoRepository;
@@ -88,11 +89,15 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   		
   		
   		//CRIA UM OBJETO FORMA DE COBRANCA BOLETO NA SESSAO PARA TESTES
-  		@SuppressWarnings("unused")
+  		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
+											  true, BigDecimal.TEN);
+  		save(parametroCobranca);
+  		
 		FormaCobranca formaCobranca = Fixture.formaCobrancaBoleto(false,
 						  			  BigDecimal.ZERO, false, bancoBB,
-						  			  BigDecimal.TEN, BigDecimal.ZERO);
-  		
+						  			  BigDecimal.TEN, BigDecimal.ZERO, parametroCobranca);
+  		save(formaCobranca);
   		
   	}
   	

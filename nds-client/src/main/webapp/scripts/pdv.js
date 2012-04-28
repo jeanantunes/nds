@@ -408,6 +408,37 @@ var PDV = {
 					}
 				}
 			});
+		},
+		
+		enviarFluxoPrincipal: function (){
+			
+			var txtGeradorFluxoPrincipal ="";
+			var hiddenGeradorFluxoPrincipal=""; 
+			
+			if($("#txtGeradorFluxoPrincipal").val().length == 0){
+				
+				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
+				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
+				$("#selecTipoGeradorFluxo option:selected").remove();
+			}
+			else{
+				
+				txtGeradorFluxoPrincipal = $("#txtGeradorFluxoPrincipal").val();
+				hiddenGeradorFluxoPrincipal=$("#hiddenGeradorFluxoPrincipal").val(); 
+				var option = "<option value='" + hiddenGeradorFluxoPrincipal + "'>" + txtGeradorFluxoPrincipal + "</option>";
+				
+				$("#selecTipoGeradorFluxo").append(option);
+				
+				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
+				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
+				
+				$("#selecTipoGeradorFluxo option:selected").remove();
+			}
+			
+			$("#txtGeradorFluxoPrincipal").val(txtGeradorFluxoPrincipal);
+			$("#hiddenGeradorFluxoPrincipal").val(hiddenGeradorFluxoPrincipal);
+			
+			$("#selecTipoGeradorFluxo").sortOptions();
 		}
 		
 };
