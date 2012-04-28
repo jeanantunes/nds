@@ -72,7 +72,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Box box = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(box);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
