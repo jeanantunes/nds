@@ -12,6 +12,7 @@ public class PeriodoFuncionamentoDTO implements Serializable {
 
 	private static final long serialVersionUID = 781210018161144055L;
 
+	private String nomeTipoPeriodo;
 	
 	private TipoPeriodoFuncionamentoPDV tipoPeriodoFuncionamentoPDV;
 
@@ -36,7 +37,7 @@ public class PeriodoFuncionamentoDTO implements Serializable {
 			TipoPeriodoFuncionamentoPDV tipoPeriodoFuncionamentoPDV,
 			String inicio, String fim) {
 		super();
-		this.tipoPeriodoFuncionamentoPDV = tipoPeriodoFuncionamentoPDV;
+		this.setTipoPeriodoFuncionamentoPDV(tipoPeriodoFuncionamentoPDV);
 		this.inicio = inicio;
 		this.fim = fim;
 	}
@@ -66,11 +67,12 @@ public class PeriodoFuncionamentoDTO implements Serializable {
 
 	public void setTipoPeriodoFuncionamentoPDV(
 			TipoPeriodoFuncionamentoPDV tipoPeriodoFuncionamentoPDV) {
+		this.nomeTipoPeriodo = tipoPeriodoFuncionamentoPDV.getDescricao();
 		this.tipoPeriodoFuncionamentoPDV = tipoPeriodoFuncionamentoPDV;
 	}
 	
 	public void setTipoPeriodo(String tipoPeriodo) {
-		this.tipoPeriodoFuncionamentoPDV = TipoPeriodoFuncionamentoPDV.valueOf(tipoPeriodo);
+		this.setTipoPeriodoFuncionamentoPDV(TipoPeriodoFuncionamentoPDV.valueOf(tipoPeriodo));
 	}
 	
 	
@@ -111,6 +113,16 @@ public class PeriodoFuncionamentoDTO implements Serializable {
 		if (tipoPeriodoFuncionamentoPDV != other.tipoPeriodoFuncionamentoPDV)
 			return false;
 		return true;
+	}
+
+
+	public String getNomeTipoPeriodo() {
+		return nomeTipoPeriodo;
+	}
+
+
+	public void setNomeTipoPeriodo(String nomeTipoPeriodo) {
+		this.nomeTipoPeriodo = nomeTipoPeriodo;
 	}
 
 	

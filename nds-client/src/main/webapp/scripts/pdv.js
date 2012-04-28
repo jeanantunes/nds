@@ -116,8 +116,43 @@ var PDV = {
 		carregarDadosEdicao:function (result){
 			
 			PDV.popup_novoPdv();
+			PDV.preencherDadosCadastrais(result);
 		},
 		
+		preencherDadosCadastrais:function(result) {
+			
+			$("#selectStatus").val(result.pdvDTO.statusPDV);
+			$("#dataInicio").val($.format.date(
+					result.pdvDTO.dataInicio.substr(0,10) + 
+						"00:00:00.000","dd/MM/yyyy"));
+			$("#nomePDV").val(result.pdvDTO.nomePDV);
+			$("#contatoPDV").val(result.pdvDTO.contato);
+			$("#sitePDV").val(result.pdvDTO.site);
+			$("#emailPDV").val(result.pdvDTO.email);
+			$("#pontoReferenciaPDV").val(result.pdvDTO.pontoReferencia);
+			$("#dentroOutroEstabelecimento").attr(
+					"checked", result.pdvDTO.dentroDeOutroEstabelecimento ? "checked" : null);
+			$("#selectTipoEstabelecimento").val(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV);
+			$("#selectTamanhoPDV").val(result.pdvDTO.tamanhoPDV);
+			$("#qntFuncionarios").val(result.pdvDTO.qtdeFuncionarios);
+			$("#sistemaIPV").attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
+			$("#porcentagemFaturamento").val(result.pdvDTO.porcentagemFaturamento);
+			$("#selectTipoLicenca").val(result.pdvDTO.tipoLicencaMunicipal);
+			$("#numerolicenca").val(result.pdvDTO.numeroLicenca);
+			$("#nomeLicenca").val(result.pdvDTO.nomeLicenca);
+		
+			result.pdvDTO.periodosFuncionamentoDTO.forEach( function(diaFuncionamento){
+				
+				PDV.diasFuncionamento.push({
+					tipoPeriodo:diaFuncionamento.tipoPeriodoFuncionamentoPDV,
+					descTipoPeriodo:diaFuncionamento.nomeTipoPeriodo,
+					inicio:diaFuncionamento.inicio,
+					fim:diaFuncionamento.fim});						
+			});
+			
+			
+			PDV.montartabelaDiasFuncionamento();
+		},
 		salvarPDV : function(){
 	
 			$.postJSON(contextPath + "/cadastro/pdv/salvar",
@@ -411,6 +446,26 @@ var PDV = {
 				buttons: {
 					"Confirmar": function() {
 						PDV.salvarPDV();
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		}, 
+		popup_img:function () {
+			
+			$( "#dialog-img" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:450,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$('#formBaixaAutomatica').submit();
+						
 						$( this ).dialog( "close" );
 					},
 					"Cancelar": function() {
