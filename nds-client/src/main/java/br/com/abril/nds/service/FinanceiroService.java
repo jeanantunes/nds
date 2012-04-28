@@ -6,6 +6,7 @@ import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -83,8 +84,18 @@ public interface FinanceiroService {
 	public abstract ContratoTransporteDTO obtemContratoTransporte(long idCota);
 	
 	
-	
-	
+	/**
+	 * Obtém o contrato em forma de array de bytes
+	 * @param idCota
+	 * @return Array de bytes do contrato
+	 */
 	byte[] geraImpressaoContrato(Long idCota);
-
+	
+	
+	/**
+	 * Obtém a forma de cobranca principal da cota
+	 * @param idCota
+	 * @return FormaCobrança principal da cota
+	 */
+	 FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota);
 }

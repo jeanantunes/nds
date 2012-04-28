@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -31,17 +30,13 @@ public class ParametroCobrancaCota implements Serializable {
 	@Column(name = "ID")
 	@GeneratedValue(generator = "PARAMETRO_COBRANCA_COTA_SEQ")
 	private Long id;
-	
-	@ManyToOne
-	@JoinColumn(name = "FORMA_COBRANCA_ID")
-	private FormaCobranca formaCobranca;
+
+	@OneToMany(mappedBy="parametroCobrancaCota")
+	private Set<FormaCobranca> formasCobrancaCota = new HashSet<FormaCobranca>();
 	
 	@ManyToOne
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-	
-	@Column(name = "RECEBE_COBRANCA_EMAIL")
-	private boolean recebeCobrancaEmail;
 	
 	@Column(name = "VALOR_MINIMO_COBRANCA")
 	private BigDecimal valorMininoCobranca;
@@ -51,27 +46,6 @@ public class ParametroCobrancaCota implements Serializable {
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
-	
-	@OneToMany(mappedBy="parametroCobrancaCota")
-	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
-	
-	@Embedded
-	private ContaBancaria contaBancariaCota;
-	
-	/**
-	 * Flag indicando se a cobrança é unificada por
-	 * Fornecedor
-	 */
-	@Column(name = "UNIFICA_COBRANCA_FORNECEDOR", nullable = false)
-	private boolean unificaCobrancaFornecedor;
-	
-	/**
-	 * Fornecedores para unificação das cobranças
-	 */
-	@OneToMany
-	@JoinTable(name = "PARAM_COBRANCA_COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "PARAM_COBRANCA_COTA_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
-	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	public Long getId() {
 		return id;
@@ -81,28 +55,12 @@ public class ParametroCobrancaCota implements Serializable {
 		this.id = id;
 	}
 
-	public FormaCobranca getFormaCobranca() {
-		return formaCobranca;
-	}
-
-	public void setFormaCobranca(FormaCobranca formaCobranca) {
-		this.formaCobranca = formaCobranca;
-	}
-
 	public Cota getCota() {
 		return cota;
 	}
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
-	}
-
-	public boolean isRecebeCobrancaEmail() {
-		return recebeCobrancaEmail;
-	}
-
-	public void setRecebeCobrancaEmail(boolean recebeCobrancaEmail) {
-		this.recebeCobrancaEmail = recebeCobrancaEmail;
 	}
 
 	public BigDecimal getValorMininoCobranca() {
@@ -128,38 +86,13 @@ public class ParametroCobrancaCota implements Serializable {
 	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
 		this.politicaSuspensao = politicaSuspensao;
 	}
-	
-	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
-		return concentracaoCobrancaCota;
+
+	public Set<FormaCobranca> getFormasCobrancaCota() {
+		return formasCobrancaCota;
 	}
-	
-	public void setConcentracaoCobrancaCota(
-			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
-		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
-	}
-	
-	public ContaBancaria getContaBancariaCota() {
-		return contaBancariaCota;
-	}
-	
-	public void setContaBancariaCota(ContaBancaria contaBancariaCota) {
-		this.contaBancariaCota = contaBancariaCota;
-	}
-	
-	public boolean isUnificaCobrancaFornecedor() {
-		return unificaCobrancaFornecedor;
-	}
-	
-	public void setUnificaCobrancaFornecedor(boolean unificaCobrancaFornecedor) {
-		this.unificaCobrancaFornecedor = unificaCobrancaFornecedor;
-	}
-	
-	public Set<Fornecedor> getFornecedores() {
-		return fornecedores;
-	}
-	
-	public void setFornecedores(Set<Fornecedor> fornecedores) {
-		this.fornecedores = fornecedores;
+
+	public void setFormasCobrancaCota(Set<FormaCobranca> formasCobrancaCota) {
+		this.formasCobrancaCota = formasCobrancaCota;
 	}
 
 }

@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
@@ -54,10 +55,17 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		PessoaJuridica pj = Fixture.pessoaJuridica("Distrib", "01.001.001/001-00",
 				"000.000.000.00", "distrib@mail.com");
 		
+		
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
+											  true, BigDecimal.TEN);
+  		save(parametroCobranca);
+  		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
-										BigDecimal.ONE, BigDecimal.ONE);
+										BigDecimal.ONE, BigDecimal.ONE, parametroCobranca);
 		save(formaBoleto);
+		
 		
 		PoliticaCobranca politicaCobranca =
 			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");

@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.FinanceiroService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.RotaRoteiroOperacaoService;
@@ -77,7 +79,10 @@ public class ImpressaoBoletosController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
+
+	@Autowired
+	private FinanceiroService financeiroService;
+
 	@Autowired
 	private HttpSession session;
 	
@@ -164,10 +169,13 @@ public class ImpressaoBoletosController {
 			rotaRoteiroVO.setRoteiro((operacao.getRoteiro()!= null)
 									?operacao.getRoteiro().getDescricaoRoteiro():"");
 			
+			FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(operacao.getCota().getId());
+
 			rotaRoteiroVO.setTipoCobranca( ( operacao.getCota()!= null 
-											&& operacao.getCota().getParametroCobranca()!= null 
-											&& operacao.getCota().getParametroCobranca().getFormaCobranca()!= null)
-											? operacao.getCota().getParametroCobranca().getFormaCobranca().getTipoCobranca():null);
+					&& operacao.getCota().getParametroCobranca()!= null 
+					&& formaCobrancaPrincipal!= null)
+					? formaCobrancaPrincipal.getTipoCobranca():null);
+
 		}
 		
 		result.use(Results.json()).from(rotaRoteiroVO,"result").serialize();

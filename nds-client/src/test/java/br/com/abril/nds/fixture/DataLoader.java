@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -1063,33 +1065,67 @@ public class DataLoader {
 
 		FormaCobranca formaBoleto =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-											BigDecimal.ONE, BigDecimal.ONE);
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		FormaCobranca formaBoleto2 =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(30), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		
 		FormaCobranca formaDeposito =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-											BigDecimal.ONE, BigDecimal.ONE);
+											BigDecimal.ONE, BigDecimal.ONE,null);
 		FormaCobranca formaDinheiro =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-											BigDecimal.ONE, BigDecimal.ONE);
-
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		
 		save(session,formaBoleto,formaDeposito,formaDinheiro);
-
-		parametroCobrancaGuilherme = Fixture.parametroCobrancaCota(
-				1, null, cotaGuilherme, 1, formaDinheiro, 
+		
+		
+		
+        Set<FormaCobranca> formasCobranca;
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaDinheiro);
+		parametroCobrancaGuilherme = Fixture.parametroCobrancaCota(formasCobranca,
+				1, null, cotaGuilherme, 1,
 				false, new BigDecimal(1000));
+		save(session, parametroCobrancaGuilherme);
+		formaDinheiro.setParametroCobrancaCota(parametroCobrancaGuilherme);
+		formaDinheiro.setPrincipal(true);
+		save(session,formaDinheiro);
+		
 
-		parametroCobrancaMurilo = Fixture.parametroCobrancaCota(
-				null, new BigDecimal(100), cotaMurilo, 1, formaBoleto, 
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaBoleto);
+		parametroCobrancaMurilo = Fixture.parametroCobrancaCota(formasCobranca,
+				null, new BigDecimal(100), cotaMurilo, 1,
 				false, new BigDecimal(1000));
-
-		parametroCobrancaMariana = Fixture.parametroCobrancaCota(
-				null, null, cotaMariana, 1, formaBoleto, 
+		save(session, parametroCobrancaMurilo);
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaMurilo);
+		formaBoleto.setPrincipal(true);
+		save(session,formaBoleto);
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaBoleto2);
+		parametroCobrancaMariana = Fixture.parametroCobrancaCota(formasCobranca,
+				null, null, cotaMariana, 1,
 				false, new BigDecimal(1000));
-
-		parametroCobrancaOralando = Fixture.parametroCobrancaCota(
-				null, null, cotaOrlando, 1, formaDeposito, 
+		save(session, parametroCobrancaMariana);
+		formaBoleto2.setParametroCobrancaCota(parametroCobrancaMariana);
+		formaBoleto2.setPrincipal(true);
+		save(session,formaBoleto2);
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaDeposito);
+		parametroCobrancaOralando = Fixture.parametroCobrancaCota(formasCobranca,
+				null, null, cotaOrlando, 1,
 				false, new BigDecimal(1000));
-
-		save(session, parametroCobrancaGuilherme, parametroCobrancaMurilo, parametroCobrancaMariana, parametroCobrancaOralando);
+		save(session, parametroCobrancaOralando);
+		formaDeposito.setParametroCobrancaCota(parametroCobrancaOralando);
+		formaDeposito.setPrincipal(true);
+		save(session,formaDeposito);
+		
 	}
 
 	private static void criarRotaRoteiroCota(Session session) {
@@ -2383,24 +2419,27 @@ public class DataLoader {
 	}
 
 	private static void criarDistribuidor(Session session) {
+		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
 				"56003315000147", "333.333.333.333", "distrib_acme@mail.com");
 		save(session, juridicaDistrib);
 
+		
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-												  BigDecimal.ONE, BigDecimal.ONE);
-
+												  BigDecimal.ONE, BigDecimal.ONE, null);
+		
 		formaCheque = Fixture.formaCobrancaCheque(true, new BigDecimal(200), true, bancoHSBC,
-				  BigDecimal.ONE, BigDecimal.ONE);
-
+				  								  BigDecimal.ONE, BigDecimal.ONE, null);
+		
 		formaDeposito = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoHSBC,
-				  BigDecimal.ONE, BigDecimal.ONE);
-
+				  								  BigDecimal.ONE, BigDecimal.ONE, null);
+		
 		formaDinheiro = Fixture.formaCobrancaDinheiro(true, new BigDecimal(200), true, bancoHSBC,
-				  BigDecimal.ONE, BigDecimal.ONE);
-
+				  								  BigDecimal.ONE, BigDecimal.ONE, null);
+		
 		formaTransferenciBancaria = Fixture.formaCobrancaTransferencia(true, new BigDecimal(200), true, bancoHSBC,
-				  BigDecimal.ONE, BigDecimal.ONE);
+				  								  BigDecimal.ONE, BigDecimal.ONE, null);
+		
 
 		save(session, formaBoleto,formaCheque,formaDeposito,formaDinheiro,formaTransferenciBancaria);
 
@@ -2475,30 +2514,72 @@ public class DataLoader {
 
 		cotaLuis = Fixture.cota(888, luis, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaLuis);
+		
 
-
+		
+		Set<FormaCobranca> formasCobranca;
+		
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
-			Fixture.parametroCobrancaCota(1, BigDecimal.TEN, cotaManoel, 1, 
-										  formaBoleto, true, BigDecimal.TEN);
-
+			Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1, 
+					                      true, BigDecimal.TEN);
+		save(session, parametroCobrancaConta);
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
+		formaBoleto.setPrincipal(true);
+		save(session, formaBoleto);
+		
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaCheque);
 		ParametroCobrancaCota parametroCobrancaConta1 = 
-				Fixture.parametroCobrancaCota(2, BigDecimal.TEN, cotaJose, 1, 
-											  formaCheque, true, BigDecimal.TEN);
-
+				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaJose, 1, 
+											  true, BigDecimal.TEN);
+		save(session, parametroCobrancaConta1);
+		formaCheque.setParametroCobrancaCota(parametroCobrancaConta);
+		formaCheque.setPrincipal(true);
+		save(session, formaCheque);
+		
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaDeposito);
 		ParametroCobrancaCota parametroCobrancaConta2 = 
-				Fixture.parametroCobrancaCota(2, BigDecimal.TEN, cotaMaria, 1, 
-											  formaDeposito, true, BigDecimal.TEN);
-
+				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaMaria, 1, 
+											  true, BigDecimal.TEN);
+		save(session, parametroCobrancaConta2);
+		formaDeposito.setParametroCobrancaCota(parametroCobrancaConta);
+		formaDeposito.setPrincipal(true);
+		save(session, formaDeposito);
+		
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaDinheiro);
 		ParametroCobrancaCota parametroCobrancaConta3 = 
-				Fixture.parametroCobrancaCota(2, BigDecimal.TEN, cotaJoao, 1, 
-											  formaDinheiro, false, BigDecimal.TEN);
-
+				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaJoao, 1, 
+											  false, BigDecimal.TEN);
+		save(session, parametroCobrancaConta3);
+		formaDinheiro.setParametroCobrancaCota(parametroCobrancaConta);
+		formaDinheiro.setPrincipal(true);
+		save(session, formaDinheiro);
+		
+		
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaTransferenciBancaria);
 		ParametroCobrancaCota parametroCobrancaConta4 = 
-				Fixture.parametroCobrancaCota(2, BigDecimal.TEN, cotaLuis, 1, 
-											  formaTransferenciBancaria, true, BigDecimal.TEN);
+				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaLuis, 1, 
+											  true, BigDecimal.TEN);
+		save(session, parametroCobrancaConta4);
+		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta);
+		formaTransferenciBancaria.setPrincipal(true);
+		save(session, formaTransferenciBancaria);
+		
 
-
-		save(session, parametroCobrancaConta,parametroCobrancaConta1,parametroCobrancaConta2,parametroCobrancaConta3,parametroCobrancaConta4);
 	}
 
 	private static void criarFornecedores(Session session) {

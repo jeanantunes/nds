@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -31,12 +32,57 @@ public abstract class Contrato implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "DATA_INICIO")
+	private Date dataInicio;
+	
+	@Column(name = "DATA_TERMINO")
+	private Date dataTermino;
+	
+	@Column(name = "PRAZO")
+	private Integer prazo;
+	
+	@Column(name = "AVISO_PREVIO_RESCISAO")
+	private Integer avisoPrevioRescisao;
+	
+	
 	public Long getId() {
 		return id;
 	}
 	
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataTermino() {
+		return dataTermino;
+	}
+
+	public void setDataTermino(Date dataTermino) {
+		this.dataTermino = dataTermino;
+	}
+
+	public Integer getPrazo() {
+		return prazo;
+	}
+
+	public void setPrazo(Integer prazo) {
+		this.prazo = prazo;
+	}
+
+	public Integer getAvisoPrevioRescisao() {
+		return avisoPrevioRescisao;
+	}
+
+	public void setAvisoPrevioRescisao(Integer avisoPrevioRescisao) {
+		this.avisoPrevioRescisao = avisoPrevioRescisao;
 	}
 
 }
