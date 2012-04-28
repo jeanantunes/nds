@@ -103,7 +103,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);

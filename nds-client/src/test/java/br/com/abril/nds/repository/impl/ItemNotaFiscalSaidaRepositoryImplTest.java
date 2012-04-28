@@ -50,7 +50,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();

@@ -844,7 +844,7 @@ public class DataLoader {
 			"manoel@mail.com", "Manoel da Silva");
 			save(session, manoel);
 
-	Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+	Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 	save(session, box1);
 
 	Usuario usuario = Fixture.usuarioJoao();
@@ -3058,10 +3058,10 @@ public class DataLoader {
 
 	private static void criarBox(Session session){
 
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		session.save(box1);
 
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.REPARTE);
+		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO);
 		session.save(box2);
 
 		box300Reparte = Fixture.boxReparte300();
@@ -3487,7 +3487,7 @@ public class DataLoader {
 
 	private static void gerarCargaDadosNotasFiscaisNFE(Session session) {
 
-		Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(session, boxNovo);
 
 		Cota cotaJohnyConsultaEncalhe = null;
