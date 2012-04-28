@@ -8,14 +8,37 @@ $(function() {
 	$("#qntFuncionarios").numeric();
 	$("#numerolicenca").numeric();
 	
+	
+	var options = {
+			success: tratarRetornoUploadImagem,
+	    };
+		
+		$('#formUploadImagem').ajaxForm(options);
 
+		function tratarRetornoUploadImagem(data) {
+			
+			data = replaceAll(data, "<pre>", "");
+			data = replaceAll(data, "</pre>", "");
+			
+			data = replaceAll(data, "<PRE>", "");
+			data = replaceAll(data, "</PRE>", "");
+			
+			var responseJson = jQuery.parseJSON(data);
+			
+			var mensagens = responseJson[0];
+			var status = responseJson[1];
+			
+			if(mensagens!=null && mensagens.length!=0) {
+				exibirMensagem(status,mensagens);
+			}
+		}
 });
 </script>
 
 <div id="dialog-img" title="Incluir Foto do PDV">
 <br />
 
-	<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formBaixaAutomatica"
+	<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formUploadImagem"
 		  method="post" enctype="multipart/form-data" >
 	
 		<input type="hidden" name="formUploadAjax" value="true" />

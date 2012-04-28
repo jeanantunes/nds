@@ -392,7 +392,7 @@ public class PdvController {
 	}
 	
 	@Post
-	public void uploadImagem(UploadedFile uploadedFile, String valorFinanceiro) {
+	public void uploadImagem(UploadedFile uploadedFile) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		List<String> mensagens = new ArrayList<String>();
