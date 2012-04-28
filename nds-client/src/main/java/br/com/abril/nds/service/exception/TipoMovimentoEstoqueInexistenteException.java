@@ -2,13 +2,13 @@ package br.com.abril.nds.service.exception;
 
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 
-public class TipoMovimentoEstoqueInexistente extends Exception {
+public class TipoMovimentoEstoqueInexistenteException extends Exception {
 
 	private static final long serialVersionUID = 5934315384413012367L;
 	
 	private GrupoMovimentoEstoque grupoMovimentoEstoque;
 	
-	public TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque grupoMovimentoEstoque) {
+	public TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque grupoMovimentoEstoque) {
 		super("Movimento de estoque do tipo " + grupoMovimentoEstoque.name() +  " não existe no banco de dados.");
 		this.grupoMovimentoEstoque = grupoMovimentoEstoque;
 	}
