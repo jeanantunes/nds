@@ -352,6 +352,8 @@
 						}
 						
 						$(".chamadaoGrid").flexReload();
+						
+						$("#checkAll").attr("checked", false);
 					},
 				   null,
 				   true
