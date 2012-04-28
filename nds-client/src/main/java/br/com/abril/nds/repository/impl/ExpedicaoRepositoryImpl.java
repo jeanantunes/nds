@@ -173,7 +173,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> 
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		query.setParameter("status",StatusLancamento.EXPEDIDO);
-		query.setParameter("tipoBox", TipoBox.REPARTE);
+		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
 		
 		ScrollableResults results = query.scroll();
 		
@@ -278,7 +278,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> 
 		query.setParameter("dataLancamento", dataLancamento);
 		query.setParameter("status",StatusLancamento.EXPEDIDO);
 		query.setParameter("idBox",idBox);
-		query.setParameter("tipoBox", TipoBox.REPARTE);
+		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
 		
 		
 		return (Long) query.uniqueResult();
