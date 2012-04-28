@@ -11,7 +11,7 @@ $(function() {
 	
 	var options = {
 			success: tratarRetornoUploadImagem,
-	    };
+		};
 		
 		$('#formUploadImagem').ajaxForm(options);
 
@@ -32,7 +32,10 @@ $(function() {
 				exibirMensagem(status,mensagens);
 			}
 		}
+		
 });
+
+
 </script>
 
 <div id="dialog-img" title="Incluir Foto do PDV">
