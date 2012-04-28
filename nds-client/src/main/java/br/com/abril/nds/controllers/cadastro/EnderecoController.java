@@ -13,10 +13,8 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.service.ConsultaBaseEnderecoService;
 import br.com.abril.nds.service.EnderecoService;
-import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -61,9 +59,6 @@ public class EnderecoController {
 	
 	@Autowired
 	private ConsultaBaseEnderecoService consultaBaseEnderecoService;
-	
-	@Autowired
-	private FiadorService fiadorService;
 	
 	@Autowired
 	private EnderecoService enderecoService;
@@ -253,6 +248,8 @@ public class EnderecoController {
 						endereco, 
 						null,
 						null);
+				
+				enderecoAssociacao.setId(System.currentTimeMillis());
 				
 				List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 				

@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
-import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
@@ -45,9 +44,6 @@ public class TelefoneController {
 	private Result result;
 	
 	private HttpSession httpSession;
-	
-	@Autowired
-	private FiadorService fiadorService;
 	
 	@Autowired
 	private TelefoneService telefoneService;
