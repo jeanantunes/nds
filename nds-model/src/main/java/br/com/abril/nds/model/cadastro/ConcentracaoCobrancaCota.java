@@ -29,8 +29,8 @@ public class ConcentracaoCobrancaCota implements Serializable {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "PARAM_COBRANCA_COTA_ID")
-	private ParametroCobrancaCota parametroCobrancaCota;
+	@JoinColumn(name = "FORMA_COBRANCA_ID")
+	private FormaCobranca formaCobranca;
 
 	@Column(name = "DIA_SEMANA", nullable = false)
 	private int codigoDiaSemana;
@@ -43,13 +43,12 @@ public class ConcentracaoCobrancaCota implements Serializable {
 		this.id = id;
 	}
 
-	public ParametroCobrancaCota getParametroCobrancaCota() {
-		return parametroCobrancaCota;
+	public FormaCobranca getFormaCobranca() {
+		return formaCobranca;
 	}
 
-	public void setParametroCobrancaCota(
-			ParametroCobrancaCota parametroCobrancaCota) {
-		this.parametroCobrancaCota = parametroCobrancaCota;
+	public void setFormaCobranca(FormaCobranca formaCobranca) {
+		this.formaCobranca = formaCobranca;
 	}
 
 	public DiaSemana getDiaSemana() {
