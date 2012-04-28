@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,8 +134,62 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 			ProdutoEdicao produtoEdicaoCE_2,
 			ProdutoEdicao produtoEdicaoCE_3) {
 		
+		String 		NCMProduto               = "3424";
+		String 		CFOPProduto              = "24234";
+		Long 		unidadeProduto           = 0L; 
+		String 		CSTProduto               = "2344";
+		String 		CSOSNProduto             = "1233";
+		BigDecimal 	baseCalculoProduto       = BigDecimal.ZERO; 
+		BigDecimal 	aliquotaICMSProduto      = BigDecimal.ZERO; 
+		BigDecimal 	valorICMSProduto         = BigDecimal.ZERO; 
+		BigDecimal 	aliquotaIPIProduto       = BigDecimal.ZERO; 
+		BigDecimal 	valorIPIProduto          = BigDecimal.ZERO; 
+
+		
 		
 		///// ENTRADA FORNECEDOR
+		
+		String naturezaOperacao = "34345";
+		String formaPagamento = "34535";
+		String horaSaida = "345435";
+		String ambiente = "45243";
+		String protocolo = "";
+		String versao = "";
+		String emissorInscricaoEstadualSubstituto = "";
+		String emissorInscricaoMunicipal = "";
+		BigDecimal valorBaseICMS = BigDecimal.TEN;
+		BigDecimal valorICMS = BigDecimal.TEN;
+		BigDecimal valorBaseICMSSubstituto = BigDecimal.TEN;
+		BigDecimal valorICMSSubstituto = BigDecimal.TEN;
+		BigDecimal valorProdutos = BigDecimal.TEN;
+		BigDecimal valorFrete = BigDecimal.TEN;
+		BigDecimal valorSeguro = BigDecimal.TEN;
+		BigDecimal valorOutro = BigDecimal.TEN;
+		BigDecimal valorIPI = BigDecimal.TEN;
+		BigDecimal valorNF = BigDecimal.TEN;
+		Integer frete = 0;
+		String transportadoraCNPJ = "";
+		String transportadoraNome = "";
+		String transportadoraInscricaoEstadual = "";
+		String transportadoraEndereco = "";
+		String transportadoraMunicipio = "";
+		String transportadoraUF = "";
+		String transportadoraQuantidade = "";
+		String transportadoraEspecie = "";
+		String transportadoraMarca = "";
+		String transportadoraNumeracao = "";
+		BigDecimal transportadoraPesoBruto = BigDecimal.TEN;
+		BigDecimal transportadoraPesoLiquido = BigDecimal.TEN;
+		String transportadoraANTT = "";
+		String transportadoraPlacaVeiculo = "";
+		String transportadoraPlacaVeiculoUF = "";
+		BigDecimal ISSQNTotal = BigDecimal.TEN;
+		BigDecimal ISSQNBase = BigDecimal.TEN;
+		BigDecimal ISSQNValor = BigDecimal.TEN;
+		String informacoesComplementares = "";
+		String numeroFatura = "";
+		BigDecimal valorFatura = BigDecimal.TEN;
+
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = 
 				Fixture.notaFiscalEntradaFornecedorNFE(
@@ -150,26 +206,75 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 						BigDecimal.TEN, 
 						BigDecimal.ZERO, 
 						BigDecimal.TEN,
-						true);
+						true,
+						naturezaOperacao,                    
+						formaPagamento,                      
+						horaSaida,                           
+						ambiente,                            
+						protocolo,                           
+						versao,                              
+						emissorInscricaoEstadualSubstituto,  
+						emissorInscricaoMunicipal,           
+						valorBaseICMS,                       
+						valorICMS,                           
+						valorBaseICMSSubstituto,            
+						valorICMSSubstituto,                 
+						valorProdutos,                       
+						valorFrete,                          
+						valorSeguro,                         
+						valorOutro,                          
+						valorIPI,                            
+						valorNF,                             
+						frete,                               
+						transportadoraCNPJ,                  
+						transportadoraNome,                  
+						transportadoraInscricaoEstadual,     
+						transportadoraEndereco,              
+						transportadoraMunicipio,             
+						transportadoraUF,                    
+						transportadoraQuantidade,           
+						transportadoraEspecie,               
+						transportadoraMarca,                 
+						transportadoraNumeracao,             
+						transportadoraPesoBruto,             
+						transportadoraPesoLiquido,           
+						transportadoraANTT,                  
+						transportadoraPlacaVeiculo,         
+						transportadoraPlacaVeiculoUF,        
+						ISSQNTotal,                          
+						ISSQNBase,                           
+						ISSQNValor,                          
+						informacoesComplementares,           
+						numeroFatura,                        
+						valorFatura);  
+						
 		
 		save(notaFiscalEntradaFornecedorNFE);
 
 		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE = 
-				Fixture.itemNotaFiscal(
+				Fixture.itemNotaFiscalEntradaNFE(
 						produtoEdicaoCE, 
-						usuarioJoao,
+						usuarioJoao, 
 						notaFiscalEntradaFornecedorNFE, 
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
-		
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+						TipoLancamento.LANCAMENTO,                         
+						new BigDecimal(50), 
+						NCMProduto, 
+						CFOPProduto, 
+						unidadeProduto, 
+						CSTProduto, 
+						CSOSNProduto, 
+						baseCalculoProduto,
+						aliquotaICMSProduto, 
+						valorICMSProduto, 
+						aliquotaIPIProduto, 
+						valorIPIProduto);
+				
 		save(itemNotaFiscalEntradaNFE);
 		
 		
 		///// ENTRADA COTA
-		
-		//NotaFiscalEntradaCota notaFiscalEntradaCotaNFE = 
 		
 		notaFiscalEntradaCota = 
 				
@@ -187,49 +292,73 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 						BigDecimal.TEN, 
 						BigDecimal.ZERO, 
 						BigDecimal.TEN,
-						true);
+						true,
+						naturezaOperacao,                    
+						formaPagamento,                      
+						horaSaida,                           
+						ambiente,                            
+						protocolo,                           
+						versao,                              
+						emissorInscricaoEstadualSubstituto,  
+						emissorInscricaoMunicipal,           
+						valorBaseICMS,                       
+						valorICMS,                           
+						valorBaseICMSSubstituto,            
+						valorICMSSubstituto,                 
+						valorProdutos,                       
+						valorFrete,                          
+						valorSeguro,                         
+						valorOutro,                          
+						valorIPI,                            
+						valorNF,                             
+						frete,                               
+						transportadoraCNPJ,                  
+						transportadoraNome,                  
+						transportadoraInscricaoEstadual,     
+						transportadoraEndereco,              
+						transportadoraMunicipio,             
+						transportadoraUF,                    
+						transportadoraQuantidade,           
+						transportadoraEspecie,               
+						transportadoraMarca,                 
+						transportadoraNumeracao,             
+						transportadoraPesoBruto,             
+						transportadoraPesoLiquido,           
+						transportadoraANTT,                  
+						transportadoraPlacaVeiculo,         
+						transportadoraPlacaVeiculoUF,        
+						ISSQNTotal,                          
+						ISSQNBase,                           
+						ISSQNValor,                          
+						informacoesComplementares,           
+						numeroFatura,                        
+						valorFatura);
 		
 		
 		save(notaFiscalEntradaCota);
 
 		ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
-				Fixture.itemNotaFiscal(
+				Fixture.itemNotaFiscalEntradaNFE(
 						produtoEdicaoCE, 
-						usuarioJoao,
+						usuarioJoao, 
 						notaFiscalEntradaCota, 
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						Fixture.criarData(22, Calendar.FEBRUARY,2012),
-						TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
-		
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+						TipoLancamento.LANCAMENTO,                         
+						new BigDecimal(50), 
+						NCMProduto, 
+						CFOPProduto, 
+						unidadeProduto, 
+						CSTProduto, 
+						CSOSNProduto, 
+						baseCalculoProduto,
+						aliquotaICMSProduto, 
+						valorICMSProduto, 
+						aliquotaIPIProduto, 
+						valorIPIProduto);
+				
 		save(itemNotaFiscalEntradaNFE_2);
 		
-		///// SAIDA FORNECEDOR
-	
-		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE = 
-				Fixture.notaFiscalSaidaFornecedorNFE(
-						cfop5102, 
-						fornecedorDinap.getJuridica(),
-						333000030L,
-						"30300333330",
-						"0003303",
-						fornecedorDinap,
-						StatusEmissaoNfe.NFE_AUTORIZADA,
-						TipoEmissaoNfe.CONTINGENCIA_DPEC,
-						tipoNotaFiscal,
-						usuarioJoao, 
-						BigDecimal.TEN, 
-						BigDecimal.ZERO, 
-						BigDecimal.TEN,
-						true);
-		
-		
-		save(notaFiscalSaidaFornecedorNFE);
-
-		ItemNotaFiscalSaida itemNotaFiscalSaida = 
-				Fixture.itemNotaFiscalSaida(produtoEdicaoCE, notaFiscalSaidaFornecedorNFE, BigDecimal.TEN);
-		
-		save(itemNotaFiscalSaida);
 
 		
 	}
@@ -238,8 +367,10 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 	public void testObterListaItemNotaFiscalEntradaDadosDanfe() {
 		
 		@SuppressWarnings("unused")
-		List<ItemDanfe> results = itemNotaFiscalEntradaRepository.obterListaItemNotaFiscalEntradaDadosDanfe(notaFiscalEntradaCota.getId());
+		List<ItemDanfe> result = itemNotaFiscalEntradaRepository.obterListaItemNotaFiscalEntradaDadosDanfe(notaFiscalEntradaCota.getId());
 		
+		Assert.assertEquals(1, result.size());
+
 		
 	}
 	

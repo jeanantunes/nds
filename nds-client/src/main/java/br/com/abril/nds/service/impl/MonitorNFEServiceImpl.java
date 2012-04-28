@@ -165,15 +165,17 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosPrincipais(DanfeDTO danfe, NfeVO nfe, NotaFiscal notaFiscal) {
 		
-		String serie 		= notaFiscal.getSerie();
-		Long numeroNF 	    = notaFiscal.getNumero();
-		String chave 		= notaFiscal.getChaveAcesso();
-		Date dataEmissao 	= notaFiscal.getDataEmissao();
-		Date dataSaida 		= notaFiscal.getDataExpedicao();
+		String serie 				= notaFiscal.getSerie();
+		Long numeroNF 	    		= notaFiscal.getNumero();
+		String chave 				= notaFiscal.getChaveAcesso();
+		Date dataEmissao 			= notaFiscal.getDataEmissao();
+		Date dataSaida 				= notaFiscal.getDataExpedicao();
+		BigDecimal valorLiquido  	= notaFiscal.getValorLiquido();
+		BigDecimal valorDesconto	= notaFiscal.getValorDesconto();
 		
-	    String naturezaOperacao = "-"; 	//TODO
-	    String formaPagamento 	= "-"; 	//TODO
-		String horaSaida 		= "-";	//TODO
+	    String naturezaOperacao = notaFiscal.getNaturezaOperacao(); 	
+	    String formaPagamento 	= notaFiscal.getFormaPagamento();
+		String horaSaida 		= notaFiscal.getHoraSaida();
 		
 		int tipoNF = 0;
 		
@@ -183,10 +185,24 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			tipoNF = 1;
 		}
 		
-		String ambiente 	= ""; //TODO
-		String protocolo 	= ""; //TODO
-		String versao		= ""; //TODO
+		String ambiente 	= notaFiscal.getAmbiente();
+		String protocolo 	= notaFiscal.getProtocolo();
+		String versao		= notaFiscal.getVersao();
 
+		
+		BigDecimal ISSQNTotal 				= notaFiscal.getISSQNTotal();
+		BigDecimal ISSQNBase 				= notaFiscal.getISSQNBase();
+		BigDecimal ISSQNValor 				= notaFiscal.getISSQNValor();
+		String informacoesComplementares 	= notaFiscal.getInformacoesComplementares();
+		String numeroFatura 				= notaFiscal.getNumeroFatura();
+		BigDecimal valorFatura 				= notaFiscal.getValorFatura();		
+		
+		danfe.setISSQNTotal(ISSQNTotal);
+		danfe.setISSQNBase(ISSQNBase);
+		danfe.setISSQNValor(ISSQNValor);
+		danfe.setInformacoesComplementares(informacoesComplementares);
+		danfe.setNumeroFatura(numeroFatura);
+		danfe.setValorFatura(valorFatura);
 		danfe.setNaturezaOperacao(naturezaOperacao);
 		danfe.setFormaPagamento(formaPagamento);
 		danfe.setSerie(serie);
@@ -199,7 +215,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		danfe.setChave(chave);
 		danfe.setProtocolo(protocolo);
 		danfe.setVersao(versao);
-
+		danfe.setValorLiquido(valorLiquido);
+		danfe.setValorDesconto(valorDesconto);
 		
 		
 	}
@@ -211,14 +228,14 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * @param pessoaJuridicaDistribuidor
 	 * @param endereco
 	 */
-	private void carregarDanfeDadosEmissor(DanfeDTO danfe, PessoaJuridica pessoaJuridicaDistribuidor, Endereco endereco, Telefone telefone) {
+	private void carregarDanfeDadosEmissor(DanfeDTO danfe, NotaFiscal notaFiscal, PessoaJuridica pessoaJuridicaDistribuidor, Endereco endereco, Telefone telefone) {
 	
 		String emissorCNPJ 							= pessoaJuridicaDistribuidor.getCnpj();
 		String emissorNome 							= pessoaJuridicaDistribuidor.getRazaoSocial();
 		String emissorFantasia 						= pessoaJuridicaDistribuidor.getNomeFantasia();
 		String emissorInscricaoEstadual 			= pessoaJuridicaDistribuidor.getInscricaoEstadual();
-		String emissorInscricaoEstadualSubstituto 	= ""; //TODO 
-		String emissorInscricaoMunicipal 			= "";	
+		String emissorInscricaoEstadualSubstituto 	= notaFiscal.getEmissorInscricaoEstadualSubstituto();
+		String emissorInscricaoMunicipal 			= notaFiscal.getEmissorInscricaoMunicipal();
 		
 		
 		String emissorLogradouro 	= "";
@@ -409,19 +426,18 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * 
 	 * @param danfe
 	 */
-	private void carregarDanfeDadosTributarios(DanfeDTO danfe) {
+	private void carregarDanfeDadosTributarios(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		BigDecimal valorBaseICMS            = BigDecimal.ZERO; //TODO
-		BigDecimal valorICMS                = BigDecimal.ZERO; //TODO
-		BigDecimal valorBaseICMSSubstituto  = BigDecimal.ZERO; //TODO
-		BigDecimal valorICMSSubstituto      = BigDecimal.ZERO; //TODO
-		BigDecimal valorProdutos            = BigDecimal.ZERO; //TODO
-		BigDecimal valorFrete               = BigDecimal.ZERO; //TODO
-		BigDecimal valorSeguro              = BigDecimal.ZERO; //TODO
-		BigDecimal valorDesconto            = BigDecimal.ZERO; //TODO
-		BigDecimal valorOutro               = BigDecimal.ZERO; //TODO
-		BigDecimal valorIPI                 = BigDecimal.ZERO; //TODO
-		BigDecimal valorNF                  = BigDecimal.ZERO; //TODO
+		BigDecimal valorBaseICMS 			= notaFiscal.getValorBaseICMS();
+		BigDecimal valorICMS 				= notaFiscal.getValorICMS();
+		BigDecimal valorBaseICMSSubstituto 	= notaFiscal.getValorBaseICMSSubstituto();
+		BigDecimal valorICMSSubstituto 		= notaFiscal.getValorICMSSubstituto();
+		BigDecimal valorProdutos 			= notaFiscal.getValorProdutos();
+		BigDecimal valorFrete 				= notaFiscal.getValorFrete();
+		BigDecimal valorSeguro 				= notaFiscal.getValorSeguro();
+		BigDecimal valorOutro 				= notaFiscal.getValorOutro();
+		BigDecimal valorIPI 				= notaFiscal.getValorIPI();
+		BigDecimal valorNF 					= notaFiscal.getValorNF();
 		
 		danfe.setValorBaseICMS(valorBaseICMS);
 		danfe.setValorICMS(valorICMS);
@@ -430,7 +446,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		danfe.setValorProdutos(valorProdutos);
 		danfe.setValorFrete(valorFrete);
 		danfe.setValorSeguro(valorSeguro);
-		danfe.setValorDesconto(valorDesconto);
 		danfe.setValorOutro(valorOutro);
 		danfe.setValorIPI(valorIPI);
 		danfe.setValorNF(valorNF);
@@ -443,26 +458,26 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * 
 	 * @param danfe
 	 */
-	private void carregarDanfeDadosTransportadora(DanfeDTO danfe) {
+	private void carregarDanfeDadosTransportadora(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		Integer frete = 0;//TODO
-		String transportadoraCNPJ = "";//TODO
-		String transportadoraNome = "";//TODO
-		String transportadoraInscricaoEstadual = "";//TODO
-		String transportadoraEndereco = "";//TODO
-		String transportadoraMunicipio = "";//TODO
-		String transportadoraUF = "";//TODO
-		String transportadoraQuantidade = "";//TODO
-		String transportadoraEspecie = "";//TODO
-		String transportadoraMarca = "";//TODO
-		String transportadoraNumeracao = "";//TODO
+		Integer frete = notaFiscal.getFrete();
+		String transportadoraCNPJ = notaFiscal.getTransportadoraCNPJ();
+		String transportadoraNome = notaFiscal.getTransportadoraNome();
+		String transportadoraInscricaoEstadual = notaFiscal.getTransportadoraInscricaoEstadual();
+		String transportadoraEndereco = notaFiscal.getTransportadoraEndereco();
+		String transportadoraMunicipio = notaFiscal.getTransportadoraMunicipio();
+		String transportadoraUF = notaFiscal.getTransportadoraUF();
+		String transportadoraQuantidade = notaFiscal.getTransportadoraQuantidade();
+		String transportadoraEspecie = notaFiscal.getTransportadoraEspecie();
+		String transportadoraMarca = notaFiscal.getTransportadoraMarca();
+		String transportadoraNumeracao = notaFiscal.getTransportadoraNumeracao();
 		
-		BigDecimal transportadoraPesoBruto = BigDecimal.ZERO; //TODO
-		BigDecimal transportadoraPesoLiquido = BigDecimal.ZERO; //TODO
+		BigDecimal transportadoraPesoBruto = notaFiscal.getTransportadoraPesoBruto();
+		BigDecimal transportadoraPesoLiquido = notaFiscal.getTransportadoraPesoLiquido();
 		
-		String transportadoraANTT = "";//TODO
-		String transportadoraPlacaVeiculo = "";//TODO
-		String transportadoraPlacaVeiculoUF = "";//TODO
+		String transportadoraANTT = notaFiscal.getTransportadoraANTT();
+		String transportadoraPlacaVeiculo = notaFiscal.getTransportadoraPlacaVeiculo();
+		String transportadoraPlacaVeiculoUF = notaFiscal.getTransportadoraPlacaVeiculoUF();
 
 		danfe.setFrete(frete);
 		danfe.setTransportadoraCNPJ(transportadoraCNPJ);
@@ -519,71 +534,35 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		carregarDanfeDadosPrincipais(danfe, nfe, notaFiscal);
 		
-		carregarDanfeDadosEmissor(danfe, pessoaJuridicaDistribuidor, endereco, telefone);
+		carregarDanfeDadosEmissor(danfe, notaFiscal, pessoaJuridicaDistribuidor, endereco, telefone);
 
 		carregarDanfeDadosDestinatario(danfe, nfe, notaFiscal);
 		
-		carregarDanfeDadosTributarios(danfe);
+		carregarDanfeDadosTributarios(danfe, notaFiscal);
 		
-		carregarDanfeDadosTransportadora(danfe);
+		carregarDanfeDadosTransportadora(danfe, notaFiscal);
 		
 		carregarDadosItensDanfe(danfe, nfe, notaFiscal);
 		
-		BigDecimal ISSQNTotal =  BigDecimal.ZERO; //TODO
-		BigDecimal ISSQNBase  =  BigDecimal.ZERO; //TODO
-		BigDecimal ISSQNValor =  BigDecimal.ZERO; //TODO
-		
-		String informacoesComplementares = "";//TODO
-		
-		String numeroFatura = "";//TODO
-		BigDecimal valorFatura  =  BigDecimal.ZERO; //TODO
-		BigDecimal valorLiquido  =  BigDecimal.ZERO; //TODO 
-		
-		danfe.setISSQNTotal(ISSQNTotal);
-		danfe.setISSQNBase(ISSQNBase);
-		danfe.setISSQNValor(ISSQNValor);
-		danfe.setInformacoesComplementares(informacoesComplementares);
-		danfe.setNumeroFatura(numeroFatura);
-		danfe.setValorFatura(valorFatura);
-		danfe.setValorLiquido(valorLiquido);
+		carregarDadosDuplicatas(danfe, nfe, notaFiscal);
 		
 		return danfe;
 		
 	}
 	
 	
-	//TODO
+	
+	/* TODO : Sem a modelagem do conceito de duplicatas no sistema, refatorar após 
+	 * modelagem de dados e EMS relativa a calculo de duplicatas.
+	 */
 	private void carregarDadosDuplicatas(DanfeDTO danfe, NfeVO nfe, NotaFiscal notaFiscal) {
-		
 		List<Duplicata> faturas = new ArrayList<Duplicata>();
-		
 		danfe.setFaturas(faturas);	
-		
 	}
 	
 	private void carregarDadosItensDanfe(DanfeDTO danfe, NfeVO nfe, NotaFiscal notaFiscal) {
 		
 		List<ItemDanfe> listaItemDanfe = new ArrayList<ItemDanfe>();
-		
-		
-		String 		codigoProduto            = "";
-		String 		descricaoProduto         = "";
-		
-		String 		NCMProduto               = ""; //TODO
-		String 		CFOPProduto              = ""; //TODO
-		Long 		unidadeProduto           = 0L; //TODO
-		
-		BigDecimal 	quantidadeProduto        = BigDecimal.ZERO;
-		BigDecimal 	valorUnitarioProduto     = BigDecimal.ZERO;
-		BigDecimal 	valorTotalProduto        = BigDecimal.ZERO; 
-		
-		String 		CSTProduto               = ""; //TODO
-		String 		CSOSNProduto             = ""; // TODO
-		BigDecimal 	baseCalculoProduto       = BigDecimal.ZERO;  //TODO
-		BigDecimal 	aliquotaICMSProduto      = BigDecimal.ZERO;  //TODO
-		BigDecimal 	valorICMSProduto         = BigDecimal.ZERO;  //TODO
-		BigDecimal 	aliquotaIPIProduto       = BigDecimal.ZERO;  //TODO
-		BigDecimal 	valorIPIProduto          = BigDecimal.ZERO;  //TODO
 		
 		if(TipoOperacao.ENTRADA.equals(nfe.getTipoOperacao())) {
 			
