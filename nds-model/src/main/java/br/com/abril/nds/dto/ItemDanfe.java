@@ -14,7 +14,7 @@ public class ItemDanfe{
 
 	private Long unidadeProduto;
 
-	private Double quantidadeProduto;
+	private BigDecimal quantidadeProduto;
 
 	private BigDecimal valorUnitarioProduto;
 
@@ -73,12 +73,12 @@ public class ItemDanfe{
 	public void setUnidadeProduto(Long unidadeProduto) {
 		this.unidadeProduto = unidadeProduto;
 	}
-
-	public Double getQuantidadeProduto() {
+	
+	public BigDecimal getQuantidadeProduto() {
 		return quantidadeProduto;
 	}
 
-	public void setQuantidadeProduto(Double quantidadeProduto) {
+	public void setQuantidadeProduto(BigDecimal quantidadeProduto) {
 		this.quantidadeProduto = quantidadeProduto;
 	}
 

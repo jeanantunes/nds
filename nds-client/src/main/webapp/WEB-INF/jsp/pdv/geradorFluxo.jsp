@@ -35,7 +35,7 @@ $(function() {
 		      <tr>
 		        <td height="122" valign="top">
 		        	<br />
-		        	<img src="../images/seta_vai_todos.png" width="39" height="30" />
+		        	<a id="linkFluxoPrincipal" onclick="PDV.enviarFluxoPrincipal();" href="javascript:;"><img src="./images/seta_vai_todos.png" width="39" height="30" /></a>
 		        </td>
 		      </tr>
 		      <tr>
@@ -51,7 +51,8 @@ $(function() {
     	<td width="280" valign="top">
 	    	<fieldset style="width:250px!important;">
 	    		<legend>Gerador Fluxo Principal</legend>
-	    		<input name="" type="text" style="width:240px; " />
+	    		<input name="txtGeradorFluxoPrincipal" id="txtGeradorFluxoPrincipal" type="text" style="width:240px;" disabled="disabled" />
+	    		<input type="hidden"name="hiddenGeradorFluxoPrincipal" id="hiddenGeradorFluxoPrincipal" />
 	    	</fieldset>
 	    
     		<fieldset style="margin-top:5px; width:250px!important;">

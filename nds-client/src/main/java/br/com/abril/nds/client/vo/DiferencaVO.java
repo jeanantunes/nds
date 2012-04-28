@@ -47,7 +47,7 @@ public class DiferencaVO implements Serializable {
 	private String tipoDiferenca;
 	
 	@Export(label = "Nota", exhibitionOrder = 7)
-	private String numeroNotaFiscal;
+	private Long numeroNotaFiscal;
 	
 	@Export(label = "Status", exhibitionOrder = 9, alignment = Alignment.CENTER)
 	private String statusAprovacao;
@@ -199,14 +199,14 @@ public class DiferencaVO implements Serializable {
 	/**
 	 * @return the numeroNotaFiscal
 	 */
-	public String getNumeroNotaFiscal() {
+	public Long getNumeroNotaFiscal() {
 		return numeroNotaFiscal;
 	}
 
 	/**
 	 * @param numeroNotaFiscal the numeroNotaFiscal to set
 	 */
-	public void setNumeroNotaFiscal(String numeroNotaFiscal) {
+	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
 		this.numeroNotaFiscal = numeroNotaFiscal;
 	}
 

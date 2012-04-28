@@ -12,8 +12,15 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.ChamadaoRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados
+ * para as pesquisas de consignados do chamadão.
+ * 
+ * @author Discover Technology
+ */
 @Repository
 public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implements ChamadaoRepository {
 
@@ -76,7 +83,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 				.append("else null end) as nomeFornecedor, ")
 			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
 			.append("produtoEdicao.PRECO_VENDA * ")
-			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal "); 
+			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal, ")
+			.append("lancamento.ID as idLancamento ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
@@ -135,7 +143,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG).addScalar("precoCapa")
 			.addScalar("precoComDesconto").addScalar("reparte")
 			.addScalar("nomeFornecedor").addScalar("dataRecolhimento")
-			.addScalar("valorTotal");
+			.addScalar("valorTotal").addScalar("idLancamento", StandardBasicTypes.LONG);
 		
 		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
@@ -172,6 +180,13 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		return (Long) query.uniqueResult();
 	}
 	
+	/**
+	 * Gera a query de consignados da cota.
+	 *   
+	 * @param filtro - filtro da pesquisa
+	 * 
+	 * @return Query
+	 */
 	private StringBuilder gerarQueryConsignados(FiltroChamadaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -197,8 +212,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 	    }
 	            
 	    hql.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
-	        .append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento ")
-	        .append("and lancamento.STATUS = :statusLancamento ")
+	        .append("and ( ")
+	        	.append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
+	        		.append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento) ")
+	        	.append("or (lancamento.STATUS = :statusLancamentoExpedido) ")
+	        .append(") ")
+	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
 	        .append("and (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ")
 	        
 	        .append("and not exists ( ")
@@ -209,7 +228,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 	            .append("where chamadaEncalheCota.COTA_ID = c.ID ")
 	            .append("and chamadaEncalheCota.COTA_ID = cota.ID ")
 	            .append("and chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
-	            .append("and chamadaEncalhe.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe ")
+	            .append("and chamadaEncalhe.TIPO_CHAMADA_ENCALHE in (:chamadaEncalheAntecipada, :chamadaEncalheChamadao) ")
             .append(")");
 		
 		if (filtro != null) {
@@ -242,10 +261,16 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 			return;
 		}
 		
-		//TODO: trazer lançamentos já balanceados?
-		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO.toString());
+		query.setParameter("statusLancamentoBalanceadoRec",
+						   StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
 		
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.toString());
+		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
+		
+		query.setParameter("chamadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA.toString());
+		
+		query.setParameter("chamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.toString());
+		
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.toString());
 		
 		if (filtro.getDataChamadao() != null) {
 			query.setParameter("dataRecolhimento", filtro.getDataChamadao());
@@ -259,6 +284,5 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 	}
-	
 	
 }

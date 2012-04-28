@@ -86,8 +86,6 @@
 		
 		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
 		$(".boletosUnificadosGrid").flexReload();
-		
-		$(".grids").show();
 	}	
 	
 	function getDataFromResult(resultado) {
@@ -428,6 +426,8 @@
 				   "&formaCobranca.quinta="+quinta+            
 				   "&formaCobranca.sexta="+sexta+            
 				   "&formaCobranca.sabado="+sabado);
+		
+		mostrarGrid();
 	}
 	
 	
@@ -459,6 +459,9 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					postarFormaCobranca();
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					
@@ -493,6 +496,29 @@
 	
 	
 	
+	
+	
+	
+	function imprimeContrato(){
+		var idCota = $("#_idCota").val();
+	    document.location.assign("${pageContext.request.contextPath}/cadastro/financeiro/imprimeContrato?idCota="+idCota);
+	}
+	
+	
+	
+	
+	
+	function mostraSemanal(){
+		$( ".semanal" ).show();
+		$( ".mensal" ).hide();
+		};
+	function mostraMensal(){
+		$( ".semanal" ).hide();
+		$( ".mensal" ).show();
+		};
+	
+	
+	
 </script>
 
 
@@ -502,7 +528,7 @@
 #divTrasnsferenciaBancaria,
 #divDeposito {display:none;}
 #dialog-pesq-fornecedor{display:none;}
-.forncedoresSel{display:none;}
+.forncedoresSel, .semanal, .mensal{display:none;}
 #dialog-nova-unificacao, #dialog-excluir-unificacao{display:none;}
 #dialog-excluir-unificacao fieldset{width:430px!important;}
 #dialog-nova-unificacao fieldset {width:440px!important;}
@@ -518,10 +544,10 @@
     
 	    <!--  <div id="tabpf-financeiro" > -->
 	       
-        <input type="hidden" id="_idCota"/>
-        <input type="hidden" id="_numCota"/>
-        <input type="hidden" id="_idFormaCobranca"/>
-        <input type="hidden" id="_idParametroCobranca"/>
+        <input type="hidden" name="_idCota" id="_idCota"/>
+        <input type="hidden" name="_numCota" id="_numCota"/>
+        <input type="hidden" name="_idFormaCobranca" id="_idFormaCobranca"/>
+        <input type="hidden" name="_idParametroCobranca"id="_idParametroCobranca"/>
     
 	    <table width="671" border="0" cellspacing="2" cellpadding="2">
 		      
@@ -567,7 +593,7 @@
 		         <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="exibe_botao_contrato();" />
 		         <span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
 		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO - FUNÇÃO PROVISÓRIA ADICIONADA PARA POSTAR DADOS NA SESSAO -->
-		             <a href="javascript:;" onclick="">Contrato</a>
+		             <a href="javascript:;" onclick="imprimeContrato()">Contrato</a>
 		         </span>
 		     </td>
 		   </tr>
@@ -678,8 +704,24 @@
 		                 
 					     <td width="21" align="left" valign="top">&nbsp;</td>
 					     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
+
+					         <table width="100%" border="0" cellspacing="1" cellpadding="1">
+						         <tr>
+						             <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraMensal();" /></td>
+						             <td width="173">Mensal</td>
+						             <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraSemanal();" /></td>
+						             <td width="173">Semanal</td>
+						         </tr>
+						     </table>
+						    
+						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
+						         <tr>
+						             <td width="68">Todo dia:</td>
+						             <td width="156"><input type="text" name="diaMes" id="diaMes" style="width:60px;"/></td>
+						         </tr>
+						     </table>
 					     
-		                     <table width="100%" border="0" cellspacing="1" cellpadding="1">
+		                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
 							        
 					             <tr>
 					                 <td>
@@ -859,7 +901,7 @@
 	
 				<br clear="all" />
 				<span class="bt_add">
-				    <a href="javascript:;" onclick="postarParametroCobranca();">
+				    <a href="javascript:;" onclick="postarFormaCobranca();">
 				        Incluir Novo
 				    </a>
 				</span>

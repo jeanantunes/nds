@@ -39,6 +39,8 @@ public class ChamadaoVO {
 	
 	@Export(label = "Valor R$", alignment = Alignment.RIGHT, exhibitionOrder = 9)
 	private String valorTotal;
+	
+	private String idLancamento;
 
 	/**
 	 * @return the codigo
@@ -164,6 +166,20 @@ public class ChamadaoVO {
 	 */
 	public void setValorTotal(String valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	/**
+	 * @return the idLancamento
+	 */
+	public String getIdLancamento() {
+		return idLancamento;
+	}
+
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(String idLancamento) {
+		this.idLancamento = idLancamento;
 	}
 
 }

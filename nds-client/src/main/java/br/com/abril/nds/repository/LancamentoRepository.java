@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -33,4 +34,17 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao);
 	 
 	 Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
+	 
+	 /**
+	  * Método que retorna o balanceamento do recolhimento referentes a um periodo e determinados fornecedores.
+	  * 
+	  * @param periodoRecolhimento
+	  * 
+	  * @param listaIdsFornecedores 
+	  * 
+	  * @return List<RecolhimentoDTO>
+	  */
+	 List<RecolhimentoDTO> obterBalanceamentoRecolhimento(List<Date> periodoRecolhimento, 
+			 											  List<Long> fornecedores,
+			 											  GrupoProduto grupoCromo);
 }

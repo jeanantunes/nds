@@ -77,7 +77,7 @@ public class PDFExporter implements Exporter {
 	
 	        HeaderFooter event = new HeaderFooter();
 
-	        pdfWriter.setBoxSize("footer", new Rectangle(250, 54, 559, 788));
+	        pdfWriter.setBoxSize("footer", new Rectangle(250, 24, 559, 788));
 	        
 	        pdfWriter.setPageEvent(event);
 	        

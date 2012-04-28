@@ -139,7 +139,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.notaFiscalEntradaFornecedorNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
-						"11011110",
+						11011110L,
 						"11111000",
 						"11101011101",
 						fornecedorDinap,
@@ -173,7 +173,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.notaFiscalEntradaCotaNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
-						"222220000202",
+						222220000L,
 						"220202022220",
 						"2000022",
 						cota,
@@ -207,7 +207,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.notaFiscalSaidaFornecedorNFE(
 						cfop5102, 
 						fornecedorDinap.getJuridica(),
-						"33300003003",
+						333000030L,
 						"30300333330",
 						"0003303",
 						fornecedorDinap,
@@ -236,39 +236,63 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 	private ViewNotaFiscalRepository viewNotaFiscalRepository;
 	
 	@Test
+	public void testObterQtdeRegistroNotaFiscal() {
+		
+		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+		
+		Integer qtde = viewNotaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
+		
+		Assert.assertEquals(3, qtde.intValue());
+		
+	}
+	
+	
+	@Test
+	public void testObterQtdeRegistroNotaFiscal_Cota() {
+		
+		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+		
+		filtro.setBox(box1.getCodigo());
+		
+		Integer qtde = viewNotaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
+		
+		Assert.assertEquals(1, qtde.intValue());
+		
+	}
+	
+	@Test
 	public void pesquisarNotaFiscal_Todas() {
 		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 		Assert.assertNotNull(lista);
 		Assert.assertEquals(3, lista.size());
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_DESTINATARIO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CNPJ_REMETENTE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.MOVIMENTO_INTEGRACAO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.NOTA);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.SERIE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 		
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.STATUS_NFE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_EMISSAO);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.TIPO_NFE);
-		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
-
+		viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 		
 	}
 	
@@ -278,7 +302,7 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
 		filtro.setBox(box1.getCodigo());
-		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro, true);
+		List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 		Assert.assertNotNull(lista);
 		Assert.assertEquals(1, lista.size());
 		NfeDTO notaNFE = lista.get(0);

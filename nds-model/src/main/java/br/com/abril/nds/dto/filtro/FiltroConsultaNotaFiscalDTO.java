@@ -36,7 +36,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 
 	private String cnpj;
 	
-	private String numeroNota;
+	private Long numeroNota;
 	
 	private String serie;
 	
@@ -256,11 +256,11 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		this.cnpj = cnpj;
 	}
 
-	public String getNumeroNota() {
+	public Long getNumeroNota() {
 		return numeroNota;
 	}
 
-	public void setNumeroNota(String numeroNota) {
+	public void setNumeroNota(Long numeroNota) {
 		this.numeroNota = numeroNota;
 	}
 

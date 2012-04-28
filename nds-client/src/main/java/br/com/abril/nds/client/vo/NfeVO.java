@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -13,8 +14,10 @@ public class NfeVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long idNotaFiscal;
+	
 	@Export(label="Nota")
-	private String numero;
+	private Long numero;
 	
 	@Export(label="Série")
 	private String serie;
@@ -46,12 +49,31 @@ public class NfeVO implements Serializable {
 	@Export(label="Movimento Integração")
 	private String movimentoIntegracao;
 
+	private TipoOperacao tipoOperacao;
+	
+	/**
+	 * Obtém tipoOperacao
+	 *
+	 * @return TipoOperacao
+	 */
+	public TipoOperacao getTipoOperacao() {
+		return tipoOperacao;
+	}
+
+	/**
+	 * Atribuí tipoOperacao
+	 * @param tipoOperacao 
+	 */
+	public void setTipoOperacao(TipoOperacao tipoOperacao) {
+		this.tipoOperacao = tipoOperacao;
+	}
+
 	/**
 	 * Obtém numero
 	 *
-	 * @return String
+	 * @return Long
 	 */
-	public String getNumero() {
+	public Long getNumero() {
 		return numero;
 	}
 
@@ -59,7 +81,7 @@ public class NfeVO implements Serializable {
 	 * Atribuí numero
 	 * @param numero 
 	 */
-	public void setNumero(String numero) {
+	public void setNumero(Long numero) {
 		this.numero = numero;
 	}
 
@@ -233,6 +255,22 @@ public class NfeVO implements Serializable {
 		this.movimentoIntegracao = movimentoIntegracao;
 	}
 
+	/**
+	 * Obtém idNotaFiscal
+	 *
+	 * @return Long
+	 */
+	public Long getIdNotaFiscal() {
+		return idNotaFiscal;
+	}
 
+	/**
+	 * Atribuí idNotaFiscal
+	 * @param idNotaFiscal 
+	 */
+	public void setIdNotaFiscal(Long idNotaFiscal) {
+		this.idNotaFiscal = idNotaFiscal;
+	}
+	
 	
 }

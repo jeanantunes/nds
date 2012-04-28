@@ -1,9 +1,16 @@
 package br.com.abril.nds.service.impl;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +22,8 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancaria;
@@ -23,6 +32,8 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaMensal;
+import br.com.abril.nds.model.cadastro.FormaCobrancaSemanal;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
@@ -34,6 +45,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.util.TipoMensagem;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -62,10 +74,8 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Autowired
 	private ConcentracaoCobrancaCotaRepository concentracaoCobrancaRepository;
 	
-	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-	
 	
 	
 	/**
@@ -161,8 +171,13 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		
 		if (formaCobranca!=null){
 			
-		    /*
-			Set<ConcentracaoCobrancaCota> concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
+			
+			FormaCobrancaSemanal formaSemanal = (FormaCobrancaSemanal) formaCobranca;
+			Set<ConcentracaoCobrancaCota> concentracoesCobranca = formaSemanal.getConcentracaoCobrancaCota();
+			
+			FormaCobrancaMensal formaMensal = (FormaCobrancaMensal) formaCobranca;
+			Integer diaDoMes = formaMensal.getDiaDoMes();
+
 			
 			ContaBancaria contaBancaria = formaCobranca.getContaBancariaCota();
 			
@@ -181,6 +196,9 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				formaCobrancaDTO.setConta(contaBancaria.getConta()!=null?Long.toString(contaBancaria.getConta()):"");
 				formaCobrancaDTO.setContaDigito(contaBancaria.getDvConta());
 			}
+			
+			
+			formaCobrancaDTO.setDiaDoMes(diaDoMes);
 			
 			
 			if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
@@ -218,15 +236,13 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				}
 			}
 			
-			
-			
+
 			Banco banco = formaCobranca.getBanco();
 			if (banco!=null){
 				formaCobrancaDTO.setIdBanco(banco.getId());
 			}
 			formaCobrancaDTO.setTipoCobranca(formaCobranca.getTipoCobranca());
-			
-		    */
+ 
 		}
 		
 		return formaCobrancaDTO;
@@ -292,28 +308,43 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	public void postarFormaCobranca(FormaCobrancaDTO formaCobrancaDTO) {
 		
 		FormaCobranca formaCobranca = null;
+		FormaCobrancaSemanal formaSemanal = null;
+		FormaCobrancaMensal formaMensal = null;
 		ContaBancaria contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
+		Integer diaDoMes = null;
 		
 		Banco banco=this.bancoRepository.buscarPorId(formaCobrancaDTO.getIdBanco());
 		boolean novaFormaCobranca=false;
 		
-        if (formaCobrancaDTO.getTipoCobranca()!=null){
-        	/*
-			formaCobranca = formaCobrancaRepository.obterPorTipoEBanco(formaCobrancaDTO.getTipoCobranca(), banco);
+		if (formaCobrancaDTO.getTipoCobranca()!=null){
+		
 			
+			
+			if (formaCobrancaDTO.getIdFormaCobranca()!=null){
+				
+				formaCobranca = this.formaCobrancaRepository.buscarPorId(formaCobrancaDTO.getIdFormaCobranca());
+				
+			    formaSemanal = (FormaCobrancaSemanal) formaCobranca;
+			    concentracoesCobranca = formaSemanal.getConcentracaoCobrancaCota();
+			
+			    formaMensal = (FormaCobrancaMensal) formaCobranca;
+			    diaDoMes = formaMensal.getDiaDoMes();
+			    
+			}
+			
+		
+
 			if (formaCobranca==null){
 				novaFormaCobranca=true;
             	formaCobranca = new FormaCobranca();
-    			formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
-    			formaCobranca.setBanco(banco);
 		    }
 			else{
 				novaFormaCobranca=false;
 
 		        //APAGA CONCENTRACOES COBRANCA DA COTA
 				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
-					formaCobranca.setConcentracaoCobrancaCota(null);
+					formaSemanal.setConcentracaoCobrancaCota(null);
 					for(ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
 						this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
 					}
@@ -322,7 +353,12 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 			}
 			
 			
+			
+			formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
+			formaCobranca.setBanco(banco);
 			formaCobranca.setRecebeCobrancaEmail(formaCobrancaDTO.isRecebeEmail());
+			formaMensal.setDiaDoMes(diaDoMes);
+			
 			
 			
 	        //CONCENTRACAO COBRANCA (DIAS DA SEMANA)
@@ -331,7 +367,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.DOMINGO);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
@@ -340,7 +376,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.SEGUNDA_FEIRA);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
@@ -349,7 +385,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.TERCA_FEIRA);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
@@ -358,7 +394,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.QUARTA_FEIRA);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
@@ -367,7 +403,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.QUINTA_FEIRA);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
@@ -376,7 +412,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.SEXTA_FEIRA);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
@@ -385,16 +421,16 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				
 				concentracaoCobranca=new ConcentracaoCobrancaCota();
 				concentracaoCobranca.setDiaSemana(DiaSemana.SABADO);
-				concentracaoCobranca.setFormaCobrancaCota(formaCobranca);
+				concentracaoCobranca.setFormaCobranca(formaCobranca);
 				
 				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
 				concentracoesCobranca.add(concentracaoCobranca);
 			}
 			
-			formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
+			formaSemanal.setConcentracaoCobrancaCota(concentracoesCobranca);
 	        
 	  
-			contaBancariaCota = formaCobranca.getContaBancaria();
+			contaBancariaCota = formaCobranca.getContaBancariaCota();
 			contaBancariaCota.setNumeroBanco(formaCobrancaDTO.getNumBanco());
 			contaBancariaCota.setNomeBanco(formaCobrancaDTO.getNomeBanco());
 			contaBancariaCota.setAgencia(Long.getLong(formaCobrancaDTO.getAgencia()));
@@ -413,7 +449,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		    else{
 		    	formaCobrancaRepository.merge(formaCobranca);    	
 			}
-		    */
+		    
         }	
         
     }	
@@ -453,7 +489,6 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	public ContratoTransporteDTO obtemContratoTransporte(long idCota){
 		ContratoTransporteDTO contrato = new ContratoTransporteDTO();
 		
-		
 		Distribuidor distribuidor = distribuidorRepository.obter();	
 		
 		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();		
@@ -485,6 +520,12 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				contratada.setEndereco(enderecoCota.getEndereco());
 			}
 			contrato.setContratada(contratada);
+			
+			contrato.setInicio(cota.getContratoCota().getDataInicio());
+			contrato.setTermino(cota.getContratoCota().getDataTermino());
+			contrato.setPrazo(cota.getContratoCota().getPrazo()!=null?cota.getContratoCota().getPrazo().toString():"");
+			contrato.setAvisoPrevio(cota.getContratoCota().getAvisoPrevioRescisao()!=null?cota.getContratoCota().getAvisoPrevioRescisao().toString():"");
+			
 		}else{
 			throw new IllegalArgumentException("Id da cota não cadastrada");
 		}
@@ -497,5 +538,55 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		return contrato;
 	}
 
+	
+
+	/**
+	 * Gera um relatório à partir de um Objeto com atributos e listas definidas
+	 * @param list
+	 * @param pathJasper
+	 * @return Array de bytes do relatório gerado
+	 * @throws JRException
+	 * @throws URISyntaxException
+	 */
+	private byte[] gerarDocumentoIreport(List<ContratoTransporteDTO> list, String pathJasper) throws JRException, URISyntaxException{
+
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		
+		URL url = Thread.currentThread().getContextClassLoader().getResource(pathJasper);
+		
+		String path = url.toURI().getPath();
+		
+		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
+	}
+	
+	
+	
+	@Override
+	@Transactional(readOnly = true)
+	public byte[] geraImpressaoContrato(Long idCota){
+		
+		byte[] relatorio=null;
+
+		ContratoTransporteDTO contratoDTO = this.obtemContratoTransporte(idCota);
+		List<ContratoTransporteDTO> listaContratos = new ArrayList<ContratoTransporteDTO>();
+		listaContratos.add(contratoDTO);
+		try{
+		    relatorio = this.gerarDocumentoIreport(listaContratos, "/reports/contratoTransporte.jasper");
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Contrato.");
+		}
+		return relatorio;
+	}
+
+
+
+	@Override
+	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		ParametroCobrancaCota parametroCobranca = cota.getParametroCobranca();
+		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalParametro(parametroCobranca);
+	}
+	
 
 }

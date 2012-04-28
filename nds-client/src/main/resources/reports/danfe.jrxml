@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="432"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -54,8 +54,8 @@
 	<parameter name="FAT_NUMERO10" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="FAT_VENCIMENTO10" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="FAT_VALOR10" class="java.lang.Double" isForPrompting="false"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
 		<![CDATA[]]>
@@ -189,7 +189,7 @@
 	<field name="transportadoraPlacaVeiculo" class="java.lang.String">
 		<fieldDescription><![CDATA[transportadoraPlacaVeiculo]]></fieldDescription>
 	</field>
-	<field name="numeroNF" class="java.lang.String">
+	<field name="numeroNF" class="java.lang.Long">
 		<fieldDescription><![CDATA[numeroNF]]></fieldDescription>
 	</field>
 	<field name="valorBaseICMSSubstituto" class="java.math.BigDecimal">

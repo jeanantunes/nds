@@ -1,10 +1,11 @@
 package br.com.abril.nds.service;
 
-import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Interface que define os serviços referentes
@@ -28,12 +29,13 @@ public interface ChamadaoService {
 	/**
 	 * Confima o chamadão das publicações da cota.
 	 * 
-	 * @param listaLancamento - lista de ids de lançamento
-	 * @param numeroCota - número da cota
-	 * @param dataChamadao - data do chamadão
+	 * @param listaChamadao - lista de consignados para o chamadão
+	 * @param filtro - filtro para a pesquisa
 	 * @param chamarTodos - indica se todas as publicações da cota serão recolhidas
+	 * @param usuario - usuário
 	 */
-	void confirmarChamacao(List<Long> listaLancamento, Integer numeroCota,
-			  		  	   Date dataChamadao, boolean chamarTodos);
+	void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
+						   FiltroChamadaoDTO filtro,
+						   boolean chamarTodos, Usuario usuario);
 	
 }
