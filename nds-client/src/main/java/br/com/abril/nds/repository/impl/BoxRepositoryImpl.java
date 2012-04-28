@@ -4,6 +4,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Box;
@@ -60,15 +62,59 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 	}
 	
 	
-	public List<Box> busca(String nome,TipoBox tipoBox, boolean postoAvancado , String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Box> busca(String codigoBox,TipoBox tipoBox, boolean postoAvancado , String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+		
+		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
 		
 		
-		Criteria criteria =  getSession().createCriteria(Box.class);
+		if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(orderBy));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(orderBy));
+		}
 		
-		//criteria.addOrder(Order.asc(propertyName));
+		criteria.setMaxResults(maxResults);
+		criteria.setFirstResult(initialResult);
 		
 		return criteria.list();
 		
+	}
+	
+	
+	@Override
+	public Long quantidade(String codigoBox,TipoBox tipoBox, boolean postoAvancado ){
+		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
+		criteria.setProjection(Projections.rowCount());
+		
+		
+		return (Long)criteria.list().get(0);
+	}
+	
+	/**
+	 * Adiciona as restricoes a consulta.
+	 * @param codigoBox Codigo do box
+	 * @param tipoBox Tipo do Box {@link TipoBox}
+	 * @param postoAvancado Inidica se o Box é um posto avançado.
+	 * @return
+	 */
+	private Criteria addRestrictions(String codigoBox, TipoBox tipoBox,
+			boolean postoAvancado) {
+		Criteria criteria =  getSession().createCriteria(Box.class);	
+		
+		if(codigoBox != null && codigoBox.trim().length() > 0){
+			criteria.add(Restrictions.like("codigo", codigoBox));
+		}
+		
+		if(tipoBox != null){
+			criteria.add(Restrictions.eq("tipoBox", tipoBox));
+		}
+		
+		if(postoAvancado){
+			criteria.add(Restrictions.eq("postoAvancado", true));
+		}
+		return criteria;
 	}
 
 }
