@@ -157,13 +157,15 @@ public class FinanceiroController {
 		//BUSCA FORMAS DE COBRANCA DA COTA
 		List<FormaCobrancaDTO> listaFormasCobranca = this.financeiroService.obterDadosFormasCobrancaPorCota(idCota);
 		
-		TableModel<CellModelKeyValue<FormaCobrancaDTO>> resultado =
+		TableModel<CellModelKeyValue<FormaCobrancaDTO>> tableModel =
 				new TableModel<CellModelKeyValue<FormaCobrancaDTO>>();
 			
-		resultado.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
+		tableModel.setPage(1);
+		tableModel.setTotal(10);
 		
-		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-	}
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
 	
 
 	/**

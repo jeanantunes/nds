@@ -55,7 +55,11 @@ public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Lon
 	    
 	    if (filtroEntregador.getCpfCnpj() != null 
 	    		&& !filtroEntregador.getCpfCnpj().isEmpty()) {
+
+	    	String documentoSemMascara = filtroEntregador.getCpfCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 	    	
+	    	query.setParameter("documentoSemMascara", "%" + documentoSemMascara + "%");
+
 	    	query.setParameter("documento", "%" + filtroEntregador.getCpfCnpj() + "%");
 	    }
 	 
@@ -94,6 +98,10 @@ public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Lon
 	    
 	    if (filtroEntregador.getCpfCnpj() != null 
 	    		&& !filtroEntregador.getCpfCnpj().isEmpty()) {
+
+	    	String documentoSemMascara = filtroEntregador.getCpfCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+
+	    	query.setParameter("documentoSemMascara", "%" + documentoSemMascara + "%");
 	    	
 	    	query.setParameter("documento", "%" + filtroEntregador.getCpfCnpj() + "%");
 	    }
@@ -136,12 +144,12 @@ public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Lon
 	    }
 
 	    if (filtroEntregador.getCpfCnpj() != null && !filtroEntregador.getCpfCnpj().isEmpty()) {
-	    	
+
 	    	condition = condition == "" ? " where " : " and ";
-	    	
+
 	    	builder.append(condition);
-	    	builder.append(" (entregador.pessoa.cpf like :documento ");
-	    	builder.append(" or entregador.pessoa.cnpj like :documento )");
+	    	builder.append(" ((entregador.pessoa.cpf like :documento or entregador.pessoa.cpf like :documentoSemMascara) ");
+	    	builder.append(" or (entregador.pessoa.cnpj like :documento or entregador.pessoa.cnpj like :documentoSemMascara))");
 	    }
 	    
 	    if (filtroEntregador.getApelidoNomeFantasia() != null && !filtroEntregador.getApelidoNomeFantasia().isEmpty()) {

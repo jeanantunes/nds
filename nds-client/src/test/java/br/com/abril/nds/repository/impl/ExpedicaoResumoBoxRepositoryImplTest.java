@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -79,9 +80,15 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		Banco banco = Fixture.hsbc(carteira); 
 		save(banco);
 		
+		
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
+											  true, BigDecimal.TEN);
+  		save(parametroCobranca);
+		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
-										BigDecimal.ONE, BigDecimal.ONE);
+										BigDecimal.ONE, BigDecimal.ONE,parametroCobranca);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
@@ -103,10 +110,10 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		Fornecedor fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorDinap);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		Box box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.REPARTE);
+		Box box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",

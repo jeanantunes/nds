@@ -1,11 +1,14 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -27,6 +30,10 @@ public class Roteiro implements Serializable {
 	@Column(name="DESCRICAO_ROTEIRO")
 	private String descricaoRoteiro;
 	
+	@OneToMany
+	@JoinColumn( name="ROTEIRO_ID")
+	private List<Rota> rotas;
+	
 	public Long getId() {
 		return id;
 	}
@@ -35,15 +42,19 @@ public class Roteiro implements Serializable {
 		this.id = id;
 	}
 
-
 	public String getDescricaoRoteiro() {
 		return descricaoRoteiro;
 	}
 
-
 	public void setDescricaoRoteiro(String descricaoRoteiro) {
 		this.descricaoRoteiro = descricaoRoteiro;
 	}
-	
-	
+
+	public List<Rota> getRotas() {
+		return rotas;
+	}
+
+	public void setRotas(List<Rota> rotas) {
+		this.rotas = rotas;
+	}
 }

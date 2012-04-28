@@ -695,6 +695,11 @@ public class DebitoCreditoCotaController {
 			}
 		}
 
+		if (debitoCredito.getTipoMovimentoFinanceiro().getId() == null) {
+
+			listaMensagens.add("O preenchimento do campo [Tipo de Movimento] é obrigatório.");
+		}
+
 		if (!listaMensagens.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);

@@ -26,6 +26,7 @@ public class FormaCobrancaDTO {
 	String conta;
 	String contaDigito;
 	
+	Integer diaDoMes;
 	boolean domingo;
 	boolean segunda;
 	boolean terca;
@@ -54,7 +55,7 @@ public class FormaCobrancaDTO {
 	public FormaCobrancaDTO(long idCota, long idParametroCobranca, TipoCobranca tipoCobranca, long idBanco,
 			boolean recebeEmail, String numBanco, String nomeBanco,
 			String agencia, String agenciaDigito, String conta,
-			String contaDigito, boolean domingo, boolean segunda,
+			String contaDigito, Integer diaDoMes, boolean domingo, boolean segunda,
 			boolean terca, boolean quarta, boolean quinta, boolean sexta,
 			boolean sabado) {
 		super();
@@ -69,6 +70,7 @@ public class FormaCobrancaDTO {
 		this.agenciaDigito = agenciaDigito;
 		this.conta = conta;
 		this.contaDigito = contaDigito;
+		this.diaDoMes = diaDoMes;
 		this.domingo = domingo;
 		this.segunda = segunda;
 		this.terca = terca;
@@ -204,6 +206,14 @@ public class FormaCobrancaDTO {
 
 	public void setContaDigito(String contaDigito) {
 		this.contaDigito = contaDigito;
+	}
+
+	public Integer getDiaDoMes() {
+		return diaDoMes;
+	}
+
+	public void setDiaDoMes(Integer diaDoMes) {
+		this.diaDoMes = diaDoMes;
 	}
 
 	public boolean isDomingo() {

@@ -64,7 +64,7 @@ public class CotaController {
 	@Post
 	public void novaCota() { 
 
-		this.session.removeAttribute(Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 
 		this.result.nothing();
 	}
@@ -82,7 +82,7 @@ public class CotaController {
 				this.cotaService.obterEnderecosPorIdCota(idCota);
 		
 		this.session.setAttribute(
-			Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
+			EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
 		);
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
@@ -121,11 +121,11 @@ public class CotaController {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						Constantes.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 	}

@@ -464,7 +464,7 @@ var PDV = {
 				buttons: {
 					"Confirmar": function() {
 						
-						$('#formBaixaAutomatica').submit();
+						$('#formUploadImagem').submit();
 						
 						$( this ).dialog( "close" );
 					},

@@ -30,7 +30,7 @@ import br.com.abril.nds.repository.RateioCotaAusenteRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
-import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistente;
+import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.util.TipoMensagem;
  
 @Service 
@@ -58,7 +58,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Transactional
-	public void declararCotaAusenteEnviarSuplementar(Integer numCota, Date data, Long idUsuario) throws TipoMovimentoEstoqueInexistente {
+	public void declararCotaAusenteEnviarSuplementar(Integer numCota, Date data, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException {
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
 		
@@ -70,7 +70,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 	}
 		
-	private CotaAusente gerarCotaAusente(Integer numCota, Date data, Long idUsuario, Cota cota) throws TipoMovimentoEstoqueInexistente{
+	private CotaAusente gerarCotaAusente(Integer numCota, Date data, Long idUsuario, Cota cota) throws TipoMovimentoEstoqueInexistenteException{
 				
 		if(isCotaAusenteNaData(numCota,data)) {
 			throw new InvalidParameterException();
@@ -88,7 +88,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	
 	@Transactional 
 	public void declararCotaAusenteRatearReparte(Integer numCota, Date data, Long idUsuario,
-			List<MovimentoEstoqueCotaDTO> movimentosRateio) throws TipoMovimentoEstoqueInexistente{
+			List<MovimentoEstoqueCotaDTO> movimentosRateio) throws TipoMovimentoEstoqueInexistenteException{
 	
 		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
 		
@@ -129,10 +129,10 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	/**
 	 * Método que cancela uma Cota Ausente e reajusta os movimentos
 	 * @param idCotaAusente
-	 * @throws TipoMovimentoEstoqueInexistente 
+	 * @throws TipoMovimentoEstoqueInexistenteException 
 	 */
 	@Transactional
-	public void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) throws TipoMovimentoEstoqueInexistente {
+	public void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException {
 		
 		Date dataAtual = new Date();
 		
@@ -161,11 +161,11 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
 				
 					if ( tipoMovimento == null ) {
-					 	throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);		
+					 	throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);		
 					} 
 					
 					if ( tipoMovimentoCota == null ) {
-						throw new TipoMovimentoEstoqueInexistente(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
+						throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
 					}
 					
 			
