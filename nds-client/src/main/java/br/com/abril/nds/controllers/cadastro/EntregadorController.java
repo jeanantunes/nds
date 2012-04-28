@@ -160,9 +160,7 @@ public class EntregadorController {
 
 			mensagemSucesso = "Edição realizada com sucesso.";
 		}
-		
-		cpfEntregador = cpfEntregador.replaceAll("\\.", "").replaceAll("-", "");
-		
+
 		PessoaFisica pessoaFisica = this.pessoaFisicaService.buscarPorCpf(cpfEntregador);
 
 		if (pessoaFisica == null) {
@@ -268,8 +266,6 @@ public class EntregadorController {
 			mensagemSucesso = "Edição realizada com sucesso.";
 		}
 
-		cnpjEntregador = cnpjEntregador.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
-		
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpjEntregador);
 		
 		if (pessoaJuridica == null) {
@@ -342,8 +338,6 @@ public class EntregadorController {
 	 */
 	public void obterPessoaFisica(String cpf) {
 		
-		cpf = cpf.replaceAll("\\.", "").replaceAll("-", "");
-		
 		PessoaFisica pessoaFisica = this.pessoaFisicaService.buscarPorCpf(cpf);
 		
 		if (pessoaFisica == null) {
@@ -359,8 +353,6 @@ public class EntregadorController {
 	 * @param cnpj
 	 */
 	public void obterPessoaJuridica(String cnpj) {
-		
-		cnpj = cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 		
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpj);
 		

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobranca" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="0.7009877989627847"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="cidade" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="data" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="nomeDistribuidor" class="java.lang.String" isForPrompting="false"/>
@@ -79,7 +79,7 @@
 			</staticText>
 			<image>
 				<reportElement x="33" y="9" width="101" height="58"/>
-				<imageExpression><![CDATA["C:\\Users\\william.machado\\Desktop\\procuracao\\logo_login.png"]]></imageExpression>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_login.png").toURI().getPath()]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
