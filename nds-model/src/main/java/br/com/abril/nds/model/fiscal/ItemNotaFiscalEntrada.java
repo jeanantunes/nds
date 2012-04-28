@@ -38,6 +38,36 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "NCM_PRODUTO")
+	private String NCMProduto;
+
+	@Column(name = "CFOP_PRODUTO")
+	private String CFOPProduto;
+	
+	@Column(name = "UNIDADE_PRODUTO")
+	private Long unidadeProduto;
+	
+	@Column(name = "CST_PRODUTO")
+	private String CSTProduto;
+	
+	@Column(name = "CSOSN_PRODUTO")
+	private String CSOSNProduto;
+	
+	@Column(name = "BASE_CALCULO_PRODUTO")
+	private BigDecimal baseCalculoProduto;
+	
+	@Column(name = "ALIQUOTA_ICMS_PRODUTO")
+	private BigDecimal aliquotaICMSProduto;
+	
+	@Column(name = "VALOR_ICMS_PRODUTO")
+	private BigDecimal valorICMSProduto;
+	
+	@Column(name = "ALIQUOTA_IPI_PRODUTO")
+	private BigDecimal aliquotaIPIProduto;
+	
+	@Column(name = "VALOR_IPI_PRODUTO")
+	private BigDecimal valorIPIProduto;	
+	
 	@Column(name = "QTDE", nullable = false)
 	private BigDecimal qtde;
 
@@ -150,5 +180,178 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
+
+	/**
+	 * Obtém nCMProduto
+	 *
+	 * @return String
+	 */
+	public String getNCMProduto() {
+		return NCMProduto;
+	}
+
+	/**
+	 * Atribuí nCMProduto
+	 * @param nCMProduto 
+	 */
+	public void setNCMProduto(String nCMProduto) {
+		NCMProduto = nCMProduto;
+	}
+
+	/**
+	 * Obtém cFOPProduto
+	 *
+	 * @return String
+	 */
+	public String getCFOPProduto() {
+		return CFOPProduto;
+	}
+
+	/**
+	 * Atribuí cFOPProduto
+	 * @param cFOPProduto 
+	 */
+	public void setCFOPProduto(String cFOPProduto) {
+		CFOPProduto = cFOPProduto;
+	}
+
+	/**
+	 * Obtém unidadeProduto
+	 *
+	 * @return Long
+	 */
+	public Long getUnidadeProduto() {
+		return unidadeProduto;
+	}
+
+	/**
+	 * Atribuí unidadeProduto
+	 * @param unidadeProduto 
+	 */
+	public void setUnidadeProduto(Long unidadeProduto) {
+		this.unidadeProduto = unidadeProduto;
+	}
+
+	/**
+	 * Obtém cSTProduto
+	 *
+	 * @return String
+	 */
+	public String getCSTProduto() {
+		return CSTProduto;
+	}
+
+	/**
+	 * Atribuí cSTProduto
+	 * @param cSTProduto 
+	 */
+	public void setCSTProduto(String cSTProduto) {
+		CSTProduto = cSTProduto;
+	}
+
+	/**
+	 * Obtém cSOSNProduto
+	 *
+	 * @return String
+	 */
+	public String getCSOSNProduto() {
+		return CSOSNProduto;
+	}
+
+	/**
+	 * Atribuí cSOSNProduto
+	 * @param cSOSNProduto 
+	 */
+	public void setCSOSNProduto(String cSOSNProduto) {
+		CSOSNProduto = cSOSNProduto;
+	}
+
+	/**
+	 * Obtém baseCalculoProduto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getBaseCalculoProduto() {
+		return baseCalculoProduto;
+	}
+
+	/**
+	 * Atribuí baseCalculoProduto
+	 * @param baseCalculoProduto 
+	 */
+	public void setBaseCalculoProduto(BigDecimal baseCalculoProduto) {
+		this.baseCalculoProduto = baseCalculoProduto;
+	}
+
+	/**
+	 * Obtém aliquotaICMSProduto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getAliquotaICMSProduto() {
+		return aliquotaICMSProduto;
+	}
+
+	/**
+	 * Atribuí aliquotaICMSProduto
+	 * @param aliquotaICMSProduto 
+	 */
+	public void setAliquotaICMSProduto(BigDecimal aliquotaICMSProduto) {
+		this.aliquotaICMSProduto = aliquotaICMSProduto;
+	}
+
+	/**
+	 * Obtém valorICMSProduto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getValorICMSProduto() {
+		return valorICMSProduto;
+	}
+
+	/**
+	 * Atribuí valorICMSProduto
+	 * @param valorICMSProduto 
+	 */
+	public void setValorICMSProduto(BigDecimal valorICMSProduto) {
+		this.valorICMSProduto = valorICMSProduto;
+	}
+
+	/**
+	 * Obtém aliquotaIPIProduto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getAliquotaIPIProduto() {
+		return aliquotaIPIProduto;
+	}
+
+	/**
+	 * Atribuí aliquotaIPIProduto
+	 * @param aliquotaIPIProduto 
+	 */
+	public void setAliquotaIPIProduto(BigDecimal aliquotaIPIProduto) {
+		this.aliquotaIPIProduto = aliquotaIPIProduto;
+	}
+
+	/**
+	 * Obtém valorIPIProduto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getValorIPIProduto() {
+		return valorIPIProduto;
+	}
+
+	/**
+	 * Atribuí valorIPIProduto
+	 * @param valorIPIProduto 
+	 */
+	public void setValorIPIProduto(BigDecimal valorIPIProduto) {
+		this.valorIPIProduto = valorIPIProduto;
+	}
+	
+	
+	
 	
 }
