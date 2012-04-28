@@ -11,6 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -394,5 +395,57 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("codigoProduto", codigoProduto);
 		
 		return (Date) query.uniqueResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RecolhimentoDTO> obterBalanceamentoRecolhimento(List<Date> periodoRecolhimento, 
+																List<Long> fornecedores,
+																GrupoProduto grupoCromo) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select ");
+		hql.append(" lancamento.produtoEdicao as produtoEdicao, ");
+		hql.append(" fornecedor.juridica.id as idFornecedor, ");
+		hql.append(" fornecedor.juridica.razaoSocial as nomeFornecedor, ");
+		hql.append(" periodoLancamentoParcial.tipo as parcial, ");
+		hql.append(" estoqueProdutoCota.produtoEdicao.possuiBrinde as possuiBrinde, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append(" case when estoqueProdutoCota.cota.box.postoAvancado = true ");
+		hql.append(" then count(estoqueProdutoCota.cota.box.id) else 0 end as atendida, ");
+		hql.append(" case when estoqueProdutoCota.cota.box.postoAvancado = false ");
+		hql.append(" then count(estoqueProdutoCota.cota.box.id) else 0 end as sede, ");
+		hql.append(" case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo ");
+		hql.append(" then (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
+		hql.append(" else ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) / lancamento.produtoEdicao.pacotePadrao) ");
+		hql.append(" end  as qtdeExemplares, ");
+		hql.append(" ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * lancamento.produtoEdicao.precoVenda) as valorTotal, ");
+		hql.append(" lancamento.produtoEdicao.peso as peso, ");
+		hql.append(" lancamento.dataRecolhimentoDistribuidor as novaData ");
+		hql.append(" from EstoqueProdutoCota estoqueProdutoCota, Lancamento lancamento, PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:periodo) ");
+		hql.append(" and lancamento.status = :statusLancamento ");
+		hql.append(" and fornecedor.id in (:fornecedores) ");
+		hql.append(" and estoqueProdutoCota.produtoEdicao = lancamento.produtoEdicao ");
+		hql.append(" and lancamento.produtoEdicao = periodoLancamentoParcial.lancamentoParcial.produtoEdicao) ");
+		hql.append(" and periodoLancamentoParcial.recolhimento in (:periodo)) ");
+		hql.append(" order by lancamento.dataRecolhimentoDistribuidor ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameterList("periodo", periodoRecolhimento);
+		query.setParameterList("fornecedores", fornecedores);
+		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(RecolhimentoDTO.class));
+
+		return query.list();
 	}
 }

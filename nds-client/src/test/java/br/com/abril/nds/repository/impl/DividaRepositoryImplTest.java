@@ -3,7 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -85,7 +87,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(juridicaDistrib);
 		
 		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-				  												BigDecimal.ONE, BigDecimal.ONE);
+				  												BigDecimal.ONE, BigDecimal.ONE,null);
 		save(formaBoleto);
 		
 		Distribuidor distribuidor = null; 
@@ -101,15 +103,19 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
+		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
-				Fixture.parametroCobrancaCota(1, BigDecimal.TEN, cotaManoel, 1, 
-											  formaBoleto, true, BigDecimal.TEN);
+				Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1, 
+											  true, BigDecimal.TEN);
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
+		formaBoleto.setPrincipal(true);
 		
 		save(parametroCobrancaConta);
 		

@@ -11,6 +11,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
@@ -29,9 +30,14 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 		Banco banco = Fixture.hsbc(carteira); 
 		save(banco);
 				
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
+											  true, BigDecimal.TEN);
+  		save(parametroCobranca);
+		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
-										BigDecimal.ONE, BigDecimal.ONE);
+										BigDecimal.ONE, BigDecimal.ONE,parametroCobranca);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =

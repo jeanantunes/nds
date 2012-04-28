@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 
@@ -142,7 +143,7 @@ public class Fixture {
 	}
 	
 	public static CotaAusente cotaAusenteAtivo(){
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
 				"sys.discover@gmail.com", "Manoel da Silva");	
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -265,7 +266,7 @@ public class Fixture {
 	}
 	
 	public static Box boxReparte300() {
-		return criarBox("300", "Box 300", TipoBox.REPARTE);
+		return criarBox("300", "Box 300", TipoBox.LANCAMENTO);
 	}
 	
 	public static Banco hsbc(Carteira carteira) {
@@ -1736,13 +1737,12 @@ public class Fixture {
 		return divida;
 	}
 	
-	public static FormaCobranca formaCobrancaBoleto(boolean enviaEmail,
+	public static FormaCobranca formaCobrancaBoleto(boolean recebeCobrancaEmail,
 			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
-			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta, ParametroCobrancaCota parametroCobranca) {
 		
 		FormaCobranca formaBoleto = new FormaCobranca();
 		formaBoleto.setAtiva(true);
-		formaBoleto.setEnviaEmail(enviaEmail);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.BOLETO);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
@@ -1750,17 +1750,18 @@ public class Fixture {
 		formaBoleto.setBanco(banco);
 		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
 		formaBoleto.setTaxaMulta(taxaMulta);
+		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
+		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
 	}
 	
-	public static FormaCobranca formaCobrancaDinheiro(boolean enviaEmail,
+	public static FormaCobranca formaCobrancaDinheiro(boolean recebeCobrancaEmail,
 			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
-			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta, ParametroCobrancaCota parametroCobranca) {
 		
 		FormaCobranca formaBoleto = new FormaCobranca();
 		formaBoleto.setAtiva(true);
-		formaBoleto.setEnviaEmail(enviaEmail);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.DINHEIRO);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
@@ -1768,17 +1769,18 @@ public class Fixture {
 		formaBoleto.setBanco(banco);
 		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
 		formaBoleto.setTaxaMulta(taxaMulta);
+		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
+		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
 	}
 	
-	public static FormaCobranca formaCobrancaCheque(boolean enviaEmail,
+	public static FormaCobranca formaCobrancaCheque(boolean recebeCobrancaEmail,
 			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
-			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta, ParametroCobrancaCota parametroCobranca) {
 		
 		FormaCobranca formaBoleto = new FormaCobranca();
 		formaBoleto.setAtiva(true);
-		formaBoleto.setEnviaEmail(enviaEmail);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.CHEQUE);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
@@ -1786,17 +1788,18 @@ public class Fixture {
 		formaBoleto.setBanco(banco);
 		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
 		formaBoleto.setTaxaMulta(taxaMulta);
+		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
+		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
 	}
 	
-	public static FormaCobranca formaCobrancaDeposito(boolean enviaEmail,
+	public static FormaCobranca formaCobrancaDeposito(boolean recebeCobrancaEmail,
 			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
-			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta, ParametroCobrancaCota parametroCobranca) {
 		
 		FormaCobranca formaBoleto = new FormaCobranca();
 		formaBoleto.setAtiva(true);
-		formaBoleto.setEnviaEmail(enviaEmail);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.DEPOSITO);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
@@ -1804,17 +1807,18 @@ public class Fixture {
 		formaBoleto.setBanco(banco);
 		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
 		formaBoleto.setTaxaMulta(taxaMulta);
+		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
+		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
 	}
 	
-	public static FormaCobranca formaCobrancaTransferencia(boolean enviaEmail,
+	public static FormaCobranca formaCobrancaTransferencia(boolean recebeCobrancaEmail,
 			BigDecimal valorMinimo, boolean vctoDiaUtil, Banco banco,
-			BigDecimal taxaJurosMensal, BigDecimal taxaMulta) {
+			BigDecimal taxaJurosMensal, BigDecimal taxaMulta, ParametroCobrancaCota parametroCobranca) {
 		
 		FormaCobranca formaBoleto = new FormaCobranca();
 		formaBoleto.setAtiva(true);
-		formaBoleto.setEnviaEmail(enviaEmail);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.TRANSFERENCIA_BANCARIA);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
@@ -1822,14 +1826,15 @@ public class Fixture {
 		formaBoleto.setBanco(banco);
 		formaBoleto.setTaxaJurosMensal(taxaJurosMensal);
 		formaBoleto.setTaxaMulta(taxaMulta);
+		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
+		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
 	}
 
-	public static ParametroCobrancaCota parametroCobrancaCota(
+	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
-							int fatorVencimento, FormaCobranca formaCobranca,
-							boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
 		
 		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
 		
@@ -1840,10 +1845,9 @@ public class Fixture {
 		
 		parametro.setCota(cota);
 		parametro.setFatorVencimento(fatorVencimento);
-		parametro.setFormaCobranca(formaCobranca);
-		parametro.setRecebeCobrancaEmail(recebeCobrancaEmail);
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
+		parametro.setFormasCobrancaCota(formasCobranca);
 		
 		return parametro;
 	}

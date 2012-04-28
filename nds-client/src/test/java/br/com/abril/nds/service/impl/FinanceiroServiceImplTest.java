@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,7 +59,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
-										BigDecimal.ONE, BigDecimal.ONE);
+										BigDecimal.ONE, BigDecimal.ONE,null);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
@@ -79,7 +81,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		PessoaFisica pessoaFisica = Fixture.pessoaFisica("123.456.789-00","sys.discover@gmail.com", "Cota da Silva");
 		save(pessoaFisica);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.REPARTE);
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaFisica, SituacaoCadastro.ATIVO,box);
@@ -92,9 +94,16 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);
 		save(enderecoDaCota,enderecoCota);
 		
+		
+		
+		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobranca = 
-				Fixture.parametroCobrancaCota(1, null, cota, 1, formaBoleto, 
+				Fixture.parametroCobrancaCota(formasCobranca, 1, null, cota, 1, 
 											  false, new BigDecimal(1000));
+		formaBoleto.setParametroCobrancaCota(parametroCobranca);
+		formaBoleto.setPrincipal(true);
+		
 		save(parametroCobranca);
 		
 		idCota = cota.getId();

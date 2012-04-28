@@ -15,6 +15,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -48,6 +49,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.FinanceiroService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
@@ -99,6 +101,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+
+	@Autowired
+	private FinanceiroService financeiroService;
+
 	
 	@Override
 	@Transactional
@@ -199,9 +205,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	}
 	
 	private boolean verificarCotaTemBanco(Cota cota){
-		if (cota.getParametroCobranca() == null || cota.getParametroCobranca().getFormaCobranca() == null ||
-				cota.getParametroCobranca().getFormaCobranca().getBanco() == null){
-			
+
+		FormaCobranca formaCobtancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+
+		if (cota.getParametroCobranca() == null || formaCobtancaPrincipal == null ||
+				formaCobtancaPrincipal.getBanco() == null){	
 			throw new ValidacaoException(
 					TipoMensagem.ERROR, 
 					"Para pagamento por boleto é necessário que a cota tenha um banco cadastrado. Número da cota sem banco: " + 
@@ -470,7 +478,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 			
 			if (cobranca != null){
-				cobranca.setBanco(cota.getParametroCobranca().getFormaCobranca().getBanco());
+
+				FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+				cobranca.setBanco(formaCobrancaPrincipal.getBanco());
 				cobranca.setCota(cota);
 				cobranca.setDataEmissao(new Date());
 				cobranca.setDivida(novaDivida);
@@ -480,12 +490,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						Util.gerarNossoNumero(
 								cota.getNumeroCota(), 
 								cobranca.getDataEmissao(), 
-								cota.getParametroCobranca().getFormaCobranca().getBanco().getNumeroBanco()));
+								formaCobrancaPrincipal.getBanco().getNumeroBanco()
+								));
+				
 				cobranca.setValor(novaDivida.getValor());
 				
 				this.cobrancaRepository.adicionar(cobranca);
-				
-				if (cota.getParametroCobranca().isRecebeCobrancaEmail()){
+
+				if (formaCobrancaPrincipal.isRecebeCobrancaEmail()){
 					byte[]anexo = this.documentoCobrancaService.gerarDocumentoCobranca(cobranca.getNossoNumero());
 					
 					try {

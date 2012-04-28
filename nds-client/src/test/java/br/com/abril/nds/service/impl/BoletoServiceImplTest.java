@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -78,8 +79,13 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
 		save(pessoaJuridica);
 		
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
+											  true, BigDecimal.TEN);
+  		save(parametroCobranca);
+		
 		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-			  BigDecimal.ONE, BigDecimal.ONE);
+			  BigDecimal.ONE, BigDecimal.ONE,parametroCobranca);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
@@ -89,7 +95,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		distribuidor = Fixture.distribuidor(pessoaJuridica, new Date(), politicaCobranca);
 		save(distribuidor);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.REPARTE);
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaJuridica, SituacaoCadastro.ATIVO,box);

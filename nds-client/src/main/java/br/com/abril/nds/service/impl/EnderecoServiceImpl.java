@@ -126,4 +126,11 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		this.enderecoRepository.removerEnderecos(idsEndereco);
 	}
+
+	@Override
+	@Transactional
+	public Endereco buscarEnderecoPorId(Long idEndereco) {
+		
+		return this.enderecoRepository.buscarPorId(idEndereco);
+	}
 }
