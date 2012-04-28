@@ -174,6 +174,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void verificarSuspenderCota(FiltroChamadaoDTO filtro, Long idCota, Usuario usuario) {
 		
+		filtro.setIdFornecedor(null);
+		
 		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
 			this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
 		
