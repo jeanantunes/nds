@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,12 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.service.CobrancaService;
+import br.com.abril.nds.service.FinanceiroService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
+	
+
+	@Autowired
+	private FinanceiroService financeiroService;
+
 
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -26,12 +34,14 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		BigDecimal valorCalculadoJuros = null;
 
+		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+        
 		if (cota.getParametroCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
+				&& formaCobrancaPrincipal != null
+				&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
 
-			taxaJurosMensal = cota.getParametroCobranca().getFormaCobranca().getTaxaJurosMensal();
-
+			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
+			
 		} else if (distribuidor.getPoliticaCobranca() != null
 				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
 				&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
@@ -51,16 +61,18 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularMulta(Distribuidor distribuidor, Cota cota, BigDecimal valor) {
+		
+		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
 
 		BigDecimal taxaMulta = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoMulta = null;
 
 		if (cota.getParametroCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca().getTaxaMulta() != null) {
+				&& formaCobrancaPrincipal != null
+				&& formaCobrancaPrincipal.getTaxaMulta() != null) {
 
-			taxaMulta = cota.getParametroCobranca().getFormaCobranca().getTaxaMulta();
+			taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
 
 		} else if (distribuidor.getPoliticaCobranca() != null
 				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
@@ -79,6 +91,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public BigDecimal calcularJurosBanco(Banco banco, Distribuidor distribuidor, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
+		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+
 		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoJuros = null;
@@ -87,10 +101,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 			taxaJurosMensal = banco.getJuros();
 		}
 		else if (cota.getParametroCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca() != null
-				&& cota.getParametroCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
+				&& formaCobrancaPrincipal != null
+				&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
 
-			taxaJurosMensal = cota.getParametroCobranca().getFormaCobranca().getTaxaJurosMensal();
+			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
 
 		} else if (distribuidor.getPoliticaCobranca() != null
 				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
@@ -112,6 +126,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularMultaBanco(Banco banco, Distribuidor distribuidor, Cota cota, BigDecimal valor) {
 
+		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+
 		BigDecimal taxaMulta = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoMulta = null;
@@ -124,10 +140,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 				taxaMulta = banco.getMulta();
 			}
 			else if (cota.getParametroCobranca() != null
-					&& cota.getParametroCobranca().getFormaCobranca() != null
-					&& cota.getParametroCobranca().getFormaCobranca().getTaxaMulta() != null) {
+					&& formaCobrancaPrincipal != null
+					&& formaCobrancaPrincipal.getTaxaMulta() != null) {
 	
-				taxaMulta = cota.getParametroCobranca().getFormaCobranca().getTaxaMulta();
+				taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
 	
 			}else if (distribuidor.getPoliticaCobranca() != null
 					&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null

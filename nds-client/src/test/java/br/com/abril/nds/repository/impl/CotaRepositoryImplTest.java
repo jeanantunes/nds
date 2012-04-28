@@ -3,7 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -208,7 +210,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		FormaCobranca formaBoleto =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-											BigDecimal.ONE, BigDecimal.ONE);
+											BigDecimal.ONE, BigDecimal.ONE,null);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
@@ -223,10 +225,15 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		save(distribuidor);
 		
+		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
-				Fixture.parametroCobrancaCota(null, null, cota, 1, 
-											  formaBoleto, true, BigDecimal.TEN);
-			save(parametroCobrancaConta);
+				Fixture.parametroCobrancaCota(formasCobranca, null, null, cota, 1, 
+											  true, BigDecimal.TEN);
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
+		formaBoleto.setPrincipal(true);
+		
+		save(parametroCobrancaConta);
 		
 	}
 	

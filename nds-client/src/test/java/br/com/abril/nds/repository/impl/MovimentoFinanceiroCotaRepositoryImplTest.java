@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -54,9 +55,14 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
 		save(juridicaDistrib);
 		
+		ParametroCobrancaCota parametroCobranca = 
+				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
+											  true, BigDecimal.TEN);
+  		save(parametroCobranca);
+		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
-										BigDecimal.ONE, BigDecimal.ONE);
+										BigDecimal.ONE, BigDecimal.ONE,parametroCobranca);
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
@@ -72,7 +78,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box = Fixture.criarBox("Box-1", "BX-001", TipoBox.REPARTE);
+		Box box = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 		save(box);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
