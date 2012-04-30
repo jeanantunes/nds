@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -77,10 +78,19 @@ public class EnderecoFiadorRepositoryImpl extends
 	}
 	
 	@Override
-	public void excluirEnderecosFiador(Long idFiador){
+	public void excluirEnderecosPorIdFiador(Long idFiador){
 		
 		Query query = this.getSession().createQuery("delete from EnderecoFiador where fiador.id = :idFiador ");
 		query.setParameter("idFiador", idFiador);
+		
+		query.executeUpdate();
+	}
+	
+	@Override
+	public void excluirEnderecosFiador(Collection<Long> idsEnderecoFiador){
+		
+		Query query = this.getSession().createQuery("delete from EnderecoFiador where id in (:idsEnderecoFiador) ");
+		query.setParameterList("idsEnderecoFiador", idsEnderecoFiador);
 		
 		query.executeUpdate();
 	}
