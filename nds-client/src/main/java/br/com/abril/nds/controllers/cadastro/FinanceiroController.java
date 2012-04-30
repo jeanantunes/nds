@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FinanceiroService;
@@ -156,13 +157,14 @@ public class FinanceiroController {
 		
 		//BUSCA FORMAS DE COBRANCA DA COTA
 		List<FormaCobrancaDTO> listaFormasCobranca = this.financeiroService.obterDadosFormasCobrancaPorCota(idCota);
-		
+		int qtdRegistros = this.financeiroService.obterQuantidadeFormasCobrancaCota(idCota);
+				
 		TableModel<CellModelKeyValue<FormaCobrancaDTO>> tableModel =
 				new TableModel<CellModelKeyValue<FormaCobrancaDTO>>();
 			
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
 		tableModel.setPage(1);
-		tableModel.setTotal(10);
+		tableModel.setTotal(qtdRegistros);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
@@ -187,7 +189,7 @@ public class FinanceiroController {
 	
 	@Post
 	@Path("/postarFormaCobranca")
-	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca){	
+	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca,     String tipoFormaCobranca){	
 		
 		validar();
 		
@@ -197,6 +199,13 @@ public class FinanceiroController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
 			}
 		}
+		
+		
+		
+		
+		formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
+		
+		
 		
 		this.financeiroService.postarFormaCobranca(formaCobranca);	
 	    

@@ -102,11 +102,11 @@
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var linkEditar = '<a href="javascript:;" onclick="editarFormaCobranca(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
+			var linkEditar = '<a href="javascript:;" onclick="popup_editar_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
 					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
 					  		  '</a>';
 			
-			var linkExcluir = '<a href="javascript:;" onclick="excluirFormaCobranca(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a href="javascript:;" onclick="popup_excluir_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
 							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -291,7 +291,7 @@
 	
 	
 	function obterFormaCobranca(idFormaCobranca){
-		var data = [{name: 'idFormaCobranca', value: idCota}];
+		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
 		$.postJSON("<c:url value='/cadastro/financeiro/obterFormaCobranca' />",
 				   data,
 				   sucessCallbackFormaCobranca, 
@@ -307,6 +307,7 @@
 		$("#_idFormaCobranca").val(resultado.idFormaCobranca);
 		
 		$("#tipoCobranca").val(resultado.tipoCobranca);
+		$("#tipoFormaCobranca").val(resultado.tipoFormaCobranca);
 		$("#banco").val(resultado.idBanco);
 		$("#numBanco").val(resultado.numBanco);
 		$("#nomeBanco").val(resultado.nomeBanco);
@@ -316,28 +317,28 @@
 	    $("#contaDigito").val(resultado.contaDigito);
 		
 		$("#recebeEmail").val(resultado.recebeEmail);
-		document.formFinanceiro.recebeEmail.checked = resultado.recebeEmail;
+		document.formularioDadosBoleto.recebeEmail.checked = resultado.recebeEmail;
 
 		$("#PS").val(resultado.segunda);
-		document.formFinanceiro.PS.checked = resultado.segunda;
+		document.formularioFormaCobranca.PS.checked = resultado.segunda;
 		
 		$("#PT").val(resultado.terca);
-		document.formFinanceiro.PT.checked = resultado.terca;
+		document.formularioFormaCobranca.PT.checked = resultado.terca;
 		
 		$("#PQ").val(resultado.quarta);
-		document.formFinanceiro.PQ.checked = resultado.quarta;
+		document.formularioFormaCobranca.PQ.checked = resultado.quarta;
 		
 		$("#PQu").val(resultado.quinta);
-		document.formFinanceiro.PQu.checked = resultado.quinta;
+		document.formularioFormaCobranca.PQu.checked = resultado.quinta;
 		
 		$("#PSex").val(resultado.sexta);
-		document.formFinanceiro.PSex.checked = resultado.sexta;
+		document.formularioFormaCobranca.PSex.checked = resultado.sexta;
 		
 		$("#PSab").val(resultado.sabado);
-		document.formFinanceiro.PSab.checked = resultado.sabado;
+		document.formularioFormaCobranca.PSab.checked = resultado.sabado;
 		
 		$("#PDom").val(resultado.domingo);
-		document.formFinanceiro.PDom.checked = resultado.domingo;
+		document.formularioFormaCobranca.PDom.checked = resultado.domingo;
 	}
 	
 	
@@ -350,6 +351,7 @@
 		var idParametroCobranca = $("#_idParametroCobranca").val();
 		
 		var tipoCobranca        = $("#tipoCobranca").val();
+		var tipoFormaCobranca   = $("#tipoFormaCobranca").val();
 		var idBanco             = $("#banco").val();
 		var numBanco            = $("#numBanco").val();
 		var nomeBanco           = $("#nomeBanco").val();
@@ -359,49 +361,49 @@
 		var contaDigito         = $("#contaDigito").val();
 		
 		$("#recebeEmail").val(0);
-		if (document.formFinanceiro.recebeEmail.checked){
+		if (document.formularioDadosBoleto.recebeEmail.checked){
 			$("#recebeEmail").val(1);
 		}
 		var recebeEmail = $("#recebeEmail").val();
 		
 		$("#PS").val(0);
-		if (document.formFinanceiro.PS.checked){
+		if (document.formularioFormaCobranca.PS.checked){
 			$("#PS").val(1);
 		}
 		var segunda = $("#PS").val();
 		
 		$("#PT").val(0);
-		if (document.formFinanceiro.PT.checked){
+		if (document.formularioFormaCobranca.PT.checked){
 			$("#PT").val(1);
 		}
 		var terca = $("#PT").val();
 		
 		$("#PQ").val(0);
-		if (document.formFinanceiro.PQ.checked){
+		if (document.formularioFormaCobranca.PQ.checked){
 			$("#PQ").val(1);
 		}
 		var quarta = $("#PQ").val();
 		
 		$("#PQu").val(0);
-		if (document.formFinanceiro.PQu.checked){
+		if (document.formularioFormaCobranca.PQu.checked){
 			$("#PQu").val(1);
 		}
 		var quinta = $("#PQu").val();
 		
 		$("#PSex").val(0);
-		if (document.formFinanceiro.PSex.checked){
+		if (document.formularioFormaCobranca.PSex.checked){
 			$("#PSex").val(1);
 		}
 		var sexta  = $("#PSex").val();
 		
 		$("#PSab").val(0);
-		if (document.formFinanceiro.PSab.checked){
+		if (document.formularioFormaCobranca.PSab.checked){
 			$("#PSab").val(1);
 		}
 		var sabado = $("#PSab").val();
 		
 		$("#PDom").val(0);
-		if (document.formFinanceiro.PDom.checked){
+		if (document.formularioFormaCobranca.PDom.checked){
 			$("#PDom").val(1);
 		}
 		var domingo  = $("#PDom").val();
@@ -410,7 +412,7 @@
 				   "formaCobranca.idFormaCobranca="+idFormaCobranca+ 
 				   "&formaCobranca.idCota="+idCota+ 
 				   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
-				   "&formaCobranca.tipoCobranca="+tipoCobranca+ 
+				   "&formaCobranca.tipoCobranca="+tipoCobranca+  
 				   "&formaCobranca.idBanco="+idBanco+            
 				   "&formaCobranca.recebeEmail="+recebeEmail+    
 				   "&formaCobranca.numBanco="+numBanco+        
@@ -425,9 +427,10 @@
 				   "&formaCobranca.quarta="+quarta+            
 				   "&formaCobranca.quinta="+quinta+            
 				   "&formaCobranca.sexta="+sexta+            
-				   "&formaCobranca.sabado="+sabado);
+				   "&formaCobranca.sabado="+sabado+
+				   "&tipoFormaCobranca="+tipoFormaCobranca);
 		
-		mostrarGrid();
+		//mostrarGrid();
 	}
 	
 	
@@ -474,6 +477,32 @@
     };
 
     
+    function popup_editar_unificacao(idFormaCobranca) {
+    	
+    	obterFormaCobranca(idFormaCobranca);
+		
+		$( "#dialog-nova-unificacao" ).dialog({
+			resizable: false,
+			height:550,
+			width:500,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					postarFormaCobranca();
+					
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+    };
+    
+    
     function popup_excluir_unificacao() {
     	
 		$( "#dialog-excluir-unificacao" ).dialog({
@@ -483,6 +512,9 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					//excluirFormaCobranca();
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					
@@ -509,13 +541,16 @@
 	
 	
 	function mostraSemanal(){
+		$("#tipoCobranca").val('SEMANAL');
 		$( ".semanal" ).show();
 		$( ".mensal" ).hide();
-		};
+	};
+		
 	function mostraMensal(){
+		$("#tipoCobranca").val('MENSAL');
 		$( ".semanal" ).hide();
 		$( ".mensal" ).show();
-		};
+	};
 	
 	
 	
@@ -540,15 +575,18 @@
 
    <!--PESSOA FISICA - FINANCEIRO -->
     
-    <form name="formFinanceiro" id="formFinanceiro"> 
+     
     
-	    <!--  <div id="tabpf-financeiro" > -->
-	       
-        <input type="hidden" name="_idCota" id="_idCota"/>
-        <input type="hidden" name="_numCota" id="_numCota"/>
-        <input type="hidden" name="_idFormaCobranca" id="_idFormaCobranca"/>
-        <input type="hidden" name="_idParametroCobranca"id="_idParametroCobranca"/>
+    <!--  <div id="tabpf-financeiro" > -->
+       
+    <input type="hidden" name="_idCota" id="_idCota"/>
+    <input type="hidden" name="_numCota" id="_numCota"/>
+    <input type="hidden" name="_idFormaCobranca" id="_idFormaCobranca"/>
+    <input type="hidden" name="_idParametroCobranca"id="_idParametroCobranca"/>
     
+    <input type="hidden" name="tipoFormaCobranca" id="tipoFormaCobranca"/>
+   
+    <form name="formFinanceiro" id="formFinanceiro">
 	    <table width="671" border="0" cellspacing="2" cellpadding="2">
 		      
 		   <tr>
@@ -597,7 +635,7 @@
 		         </span>
 		     </td>
 		   </tr>
-
+	
 		   <tr>
 		     <td>Valor Mínimo R$:</td>
 		     <td>
@@ -635,34 +673,36 @@
 		         </table>
 		      </td>
 		   </tr>
-  
+	 
 		</table>
-		  
+	</form>  
 
-		<strong>Formas de Pagamento</strong>
-		  
-		<table class="boletosUnificadosGrid"></table>
-		  
-		<br clear="all" />
-		  
-		<span class="bt_novos" title="Nova Unificação">
-		    <a href="javascript:;" onclick="popup_nova_unificacao();">
-		        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
-		        Nova Forma de Pagamento
-		    </a>
-		</span>
-				
-				
-	    <br clear="all" />
+	<strong>Formas de Pagamento</strong>
+	  
+	<table class="boletosUnificadosGrid"></table>
+	  
+	<br clear="all" />
+	  
+	<span class="bt_novos" title="Nova Unificação">
+	    <a href="javascript:;" onclick="popup_nova_unificacao();">
+	        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
+	        Nova Forma de Pagamento
+	    </a>
+	</span>
+			
+			
+    <br clear="all" />
 
 
-	    
-	    
-	    
-	    <div id="dialog-nova-unificacao" title="Nova Unificação de Boletos">
-			<fieldset>
-				<legend>Unificar Boletos</legend>
-			    
+    
+    
+    
+    <div id="dialog-nova-unificacao" title="Nova Unificação de Boletos">
+		<fieldset>
+			<legend>Unificar Boletos</legend>
+			
+			<form name="formularioFormaCobranca" id="formularioFormaCobranca">		
+                           
 			    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
 				    
 				     <tr class="header_table">
@@ -704,7 +744,7 @@
 		                 
 					     <td width="21" align="left" valign="top">&nbsp;</td>
 					     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
-
+	
 					         <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						         <tr>
 						             <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraMensal();" /></td>
@@ -721,6 +761,7 @@
 						         </tr>
 						     </table>
 					     
+ 			        
 		                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
 							        
 					             <tr>
@@ -788,10 +829,12 @@
 							
 							 </table>
 							 
+						 	
+							 
 					     </td>
-    
+	   
 		             </tr>  
-
+	
 		         
 					 <tr>
 					    <td valign="top">&nbsp;</td>
@@ -816,11 +859,14 @@
 				     </tr>
 	
 				</table>
-			    
-			    
+				
+		    </form>
+		    
 
-		        <div id="divComboBanco" style="display:none;">   
-		            
+	        <div id="divComboBanco" style="display:none;">   
+	            
+	            <form name="formularioDadosBanco" id="formularioDadosBanco">	
+	            
 	                <table width="417" border="0" cellpadding="2" cellspacing="2">
 	                    <tr>
 				      	  <td colspan="2"><b>Dados do Banco</b></td>
@@ -839,13 +885,16 @@
 				    	 
 				      	</tr>
 	                 </table>
-			        
-		        </div>    
-		        
+	                 
+		         </form>
+	        </div>    
 	        
+        
+        
+	        <div id="divBoleto" style="display:none;">   
 	        
-		        <div id="divBoleto" style="display:none;">   
-
+                <form name="formularioDadosBoleto" id="formularioDadosBoleto">
+                
 			  		<table width="417" border="0" cellpadding="2" cellspacing="2">
 			  		
 				      	<tr>
@@ -856,12 +905,16 @@
 				        
 			        </table>
 			        
-		        </div>   
-        
-        
-        
-		        <div id="divDeposito" style="display:none;">   
-					            
+		        </form>
+		        
+	        </div>   
+       
+       
+       
+	        <div id="divDeposito" style="display:none;">   
+	        
+				<form name="formularioDadosDeposito" id="formularioDadosDeposito">   
+				           
 		      	 	<table width="558" border="0" cellspacing="2" cellpadding="2">
 						  
 						  <tr>
@@ -896,41 +949,41 @@
 						  
 					 </table>
 					 
-		        </div>
-	
-	
-				<br clear="all" />
-				<span class="bt_add">
-				    <a href="javascript:;" onclick="postarFormaCobranca();">
-				        Incluir Novo
-				    </a>
-				</span>
+				 </form>
+				 
+	        </div>
 
 
-		    </fieldset>
-		</div>
-				
-				
-		<div id="dialog-excluir-unificacao" title="Unificação de Boletos">
-		<fieldset>
-			<legend>Exclusão de Unificação de Boletos</legend>
-		    <p>Confirma a exclusão desta Unificação de Boleto</p>
-		</fieldset>
-		</div>
-		
-		
-		<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
-		<fieldset>
-			<legend>Selecione um ou mais Fornecedores para unificação dos boletos</legend>
-		    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
-		      <option>Dinap</option>
-		      <option>FC</option>
-		      <option>Treelog</option>
-		    </select>
-		</fieldset>
-		</div>
+			<br clear="all" />
+			<span class="bt_add">
+			    <a href="javascript:;" onclick="postarFormaCobranca();">
+			        Incluir Novo
+			    </a>
+			</span>
+
+
+	    </fieldset>
+	</div>	
+			
+	<div id="dialog-excluir-unificacao" title="Unificação de Boletos">
+	<fieldset>
+		<legend>Exclusão de Unificação de Boletos</legend>
+	    <p>Confirma a exclusão desta Unificação de Boleto</p>
+	</fieldset>
+	</div>
+	
+	
+	<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
+	<fieldset>
+		<legend>Selecione um ou mais Fornecedores para unificação dos boletos</legend>
+	    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
+	      <option>Dinap</option>
+	      <option>FC</option>
+	      <option>Treelog</option>
+	    </select>
+	</fieldset>
+	</div>
 				    		    
     
-    </form>
     <!-- /PESSOA FISICA - FINANCEIRO -->  
     
