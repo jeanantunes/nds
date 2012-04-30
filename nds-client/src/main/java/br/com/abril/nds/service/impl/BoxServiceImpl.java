@@ -33,7 +33,7 @@ public class BoxServiceImpl implements BoxService{
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor={RelationshipRestrictionException.class})
 	public void remover(Long id) throws RelationshipRestrictionException {
 		Box box = boxRepository.buscarPorId(id);
 		if(box != null){
@@ -46,16 +46,19 @@ public class BoxServiceImpl implements BoxService{
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Box buscarPorId(Long id) {
 		return boxRepository.buscarPorId(id);
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Box merge(Box entity) {
 		return boxRepository.merge(entity);
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<Box> busca(String codigoBox, TipoBox tipoBox,
 			boolean postoAvancado, String orderBy, Ordenacao ordenacao,
 			int initialResult, int maxResults) {
@@ -64,6 +67,7 @@ public class BoxServiceImpl implements BoxService{
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Long quantidade(String codigoBox, TipoBox tipoBox,
 			boolean postoAvancado) {
 		return boxRepository.quantidade(codigoBox, tipoBox, postoAvancado);

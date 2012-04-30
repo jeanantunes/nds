@@ -3092,6 +3092,12 @@ public class DataLoader {
 
 		box300Reparte = Fixture.boxReparte300();
 		session.save(box300Reparte);
+		
+		
+		
+		for (int i = 3; i < 100; i++) {
+			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO));
+		}
 	}
 
 

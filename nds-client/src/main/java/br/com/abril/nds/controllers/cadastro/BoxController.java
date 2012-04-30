@@ -9,10 +9,10 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
-import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 import br.com.abril.nds.util.StringUtil;
-import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
@@ -39,26 +39,19 @@ public class BoxController {
 	public void index() {
 	}
 
-	@Path("/busca")
+	@Path("/busca.json")
 	@Post
 	public void busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
 			String sortname, String sortorder, int rp, int page) {
 		List<Box> boxs = boxService.busca(codigoBox, tipoBox, postoAvancado,
-				sortname, Ordenacao.valueOf(sortorder), page, rp);
+				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page, rp);
 		Long quantidade = boxService.quantidade(codigoBox, tipoBox,
 				postoAvancado);
-
-		TableModel<CellModelKeyValue<Box>> tableModel = new TableModel<CellModelKeyValue<Box>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(boxs));
-		tableModel.setPage(page);
-		tableModel.setTotal(quantidade.intValue());
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
-				.serialize();
+		result.use(FlexiGridJson.class).from(boxs).total(quantidade.intValue()).page(page).serialize();
 
 	}
-
+	@Post
+	@Path("/buscaPorId.json")
 	public void buscaPorId(long id) {
 		Box box = boxService.buscarPorId(id);
 		result.use(Results.json()).withoutRoot().from(box).recursive()
@@ -66,7 +59,7 @@ public class BoxController {
 	}
 
 	@Post
-	@Path("/salvar")
+	@Path("/salvar.json")
 	public void salvar(Box box) {
 		valida(box);
 		boxService.merge(box);
@@ -91,7 +84,17 @@ public class BoxController {
 		if (!listaMensagens.isEmpty()) {			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
 		}
-
+	}
+	
+	@Post
+	@Path("/remove.json")
+	public void remove(long id){
+		try {
+			boxService.remover(id);
+		} catch (RelationshipRestrictionException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+		}
+		result.use(Results.nothing());
 	}
 
 }
