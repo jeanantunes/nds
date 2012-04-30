@@ -75,6 +75,7 @@ import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -1993,5 +1994,14 @@ public class Fixture {
 		tipoGeradorFluxoPDV.setDescricao(descricao);
 		
 		return tipoGeradorFluxoPDV;
+	}
+	
+	public static TipoEstabelecimentoAssociacaoPDV criarTipoEstabelecimentoAssociacaoPDV(Long codigo, String descricao){
+		
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV  = new TipoEstabelecimentoAssociacaoPDV();
+		tipoEstabelecimentoAssociacaoPDV.setCodigo(codigo);
+		tipoEstabelecimentoAssociacaoPDV.setDescricao(descricao);
+		
+		return tipoEstabelecimentoAssociacaoPDV;
 	}
 }

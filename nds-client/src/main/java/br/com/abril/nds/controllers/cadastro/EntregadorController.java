@@ -767,7 +767,7 @@ public class EntregadorController {
 		
 		for (PDV pdv : cota.getPdvs()) {
 			
-			if (pdv.isPrincipal()) {
+			if (pdv.getCaracteristicas().isPontoPrincipal()) {
 				
 				for (EnderecoPDV enderecoPDV : pdv.getEnderecos()) {
 					

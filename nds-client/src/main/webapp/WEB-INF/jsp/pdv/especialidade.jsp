@@ -1,8 +1,6 @@
 <script type="text/javascript">
 $(function() {
-	
-	
-	
+
 	$("select[name='selectEspecialidades']").multiSelect("select[name='selectCaracteristicas']", {trigger: "#linkVoltarTodos"});
 	
 	$("select[name='selectCaracteristicas']").multiSelect("select[name='selectEspecialidades']", {trigger: "#linkEnviarTodos"});

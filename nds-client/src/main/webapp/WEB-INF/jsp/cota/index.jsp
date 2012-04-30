@@ -139,6 +139,7 @@
 		
 		var idCota = $("#_idCotaRef").val();
 		
+		PDV.idCota = idCota;
 		PDV.pesquisarPdvs(idCota);
 	}
 	

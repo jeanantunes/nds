@@ -2,55 +2,41 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-<<<<<<< HEAD
-import org.jrimum.utilix.Collections;
-=======
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.IOUtils;
->>>>>>> refs/remotes/DGBti/master
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
-import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
-import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
-<<<<<<< HEAD
 import br.com.abril.nds.util.CurrencyUtil;
-=======
 import br.com.abril.nds.util.DateUtil;
->>>>>>> refs/remotes/DGBti/master
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -70,18 +56,12 @@ public class PdvController {
 	@Autowired
 	private PdvService pdvService;
 	
+	@Autowired
 	private ServletContext servletContext;
 	
 	private static final String FORMATO_DATA_DIRETORIO = "yyyy-MM-dd";
 	
 	private static final String DIRETORIO_TEMPORARIO_ARQUIVO_BANCO = "images/temp/pdv/";
-	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(PdvController.class);
-	
-	public PdvController(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
 
 	@Path("/")
 	public void index(){
@@ -92,25 +72,86 @@ public class PdvController {
 	 * Carrega dados básicos para abrir tela de PDV
 	 */
 	public void preCarregamento() {
-				
-
+		
 		String dataAtual = new SimpleDateFormat("dd/MM/yyyy").format(new Date());		
 		result.include("dataAtual",dataAtual);
 		result.include("listaStatus",gerarItemStatus(StatusPDV.values()));
-		result.include("listaDiasFuncionamento",gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV.values()));
 		result.include("listaTamanhoPDV",gerarTamanhosPDV(TamanhoPDV.values()));
-		result.include("listaTipoEstabelecimento",gerarTiposEstabelecimento());
-		result.include("listaTipoLicencaMunicipal",gerarTiposLicencaMunicipal());
+		result.include("listaTipoEstabelecimento",getListaDescricao(pdvService.obterTipoEstabelecimentoAssociacaoPDV()));
+		result.include("listaTipoLicencaMunicipal",getListaDescricao(pdvService.obterTipoLicencaMunicipal()));
 		
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
 		result.include("listaCaracteristicaPDV",getListaCaracteristica());
 		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterAreasInfluenciaPDV()));
 		result.include("listaClusterPDV",getListaDescricao(pdvService.obterClustersPDV()));
-		result.include("listaEspecialidadePDV",getListaDescricao(pdvService.obterEspecialidadesPDV()));
-		result.include("listaTipoGeradorFluxoPDV",getListaDescricao(pdvService.obterTiposGeradorFluxo()));
-		result.include("listaMaterialPromocionalPDV",getListaDescricao(pdvService.obterMateriaisPromocionalPDV()));
 	}
 	
+	@Post
+	@Path("/carregarMaterialPromocional")
+	public void carregarMaterialPromocional(List<Long> codigos){
+		
+		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		
+		result.use(Results.json()).from(getListaDescricao(pdvService.obterMateriaisPromocionalPDV(cod)), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/carregarMaterialPromocionalNotIn")
+	public void carregarMaterialPromocionalNotIn(List<Long> codigos){
+		
+		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		
+		result.use(Results.json()).from(getListaDescricao(pdvService.obterMateriaisPromocionalPDVNotIn(cod)), "result").recursive().serialize();
+	}
+
+	@Post
+	@Path("/carregarGeradorFluxo")
+	public void carregarGeradorFluxo(List<Long> codigos){
+		
+		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		
+		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxo(cod)), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/carregarGeradorFluxoNotIn")
+	public void carregarGeradorFluxoNotIn(List<Long> codigos){
+		
+		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		
+		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod)), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/carregarEspecialidades")
+	public void carregarEspecialidades(List<Long> codigos){
+		
+		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		
+		result.use(Results.json()).from(getListaDescricao(pdvService.obterEspecialidadesPDV(cod)), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/carregarEspecialidadesNotIn")
+	public void carregarEspecialidadesNotIn(List<Long> codigos){
+		
+		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		
+		result.use(Results.json()).from(getListaDescricao(pdvService.obterEspecialidadesPDVNotIn(cod)), "result").recursive().serialize();
+	}
+
+	@Post
+	@Path("/carregarPeriodoFuncionamento")
+	public void carregarPeriodoFuncionamento(){
+		
+		result.use(Results.json()).from(gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV.values()), "result").recursive().serialize();
+	}
+
+	/**
+	 * Retorna uma lista de caracteristicas de segmentação do PDV
+	 * 
+	 * @return List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>>
+	 */
 	private List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> getListaCaracteristica(){
 		
 		List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> itens = new ArrayList<ItemDTO<TipoCaracteristicaSegmentacaoPDV,String>>();
@@ -122,6 +163,13 @@ public class PdvController {
 		return itens;
 	}
 	
+	/**
+	 * Retorn uma lista de ItemDTO referente ao tipo especializado de CodigoDescricao
+	 * 
+	 * @param listaDados - lista de dados derivado de CodigoDescricao
+	 * 
+	 * @return List<ItemDTO<Long, String>>
+	 */
 	private List<ItemDTO<Long, String>> getListaDescricao(List< ? extends CodigoDescricao> listaDados){
 		
 		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
@@ -133,6 +181,13 @@ public class PdvController {
 		return itens;
 	}
 	
+	/**
+	 * Retorna uma lista de Tipo de Periodo Funcionamento do PDV
+	 * 
+	 * @param tipos - tipos de periodo de funcionamento do pdv
+	 * 
+	 * @return Object
+	 */
 	private Object gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV[] tipos) {
 		
 		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
@@ -143,35 +198,14 @@ public class PdvController {
 		
 		return itens;
 	}
-
-	private List<ItemDTO<Long, String>> gerarTiposEstabelecimento() {
-		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
-		
-		//TODO obter lista do banco de dados
-		List<TipoEstabelecimentoAssociacaoPDV> licencas = getFakeTiposEstabelecimento();
-		
-		for(TipoEstabelecimentoAssociacaoPDV licenca: licencas) {
-			itens.add(new ItemDTO<Long, String>(licenca.getCodigo(), licenca.getDescricao()));
-		}
-		
-		return itens;
-	}
-
-	private List<TipoEstabelecimentoAssociacaoPDV> getFakeTiposEstabelecimento() {
-		
-		List<TipoEstabelecimentoAssociacaoPDV> estabelecimentos = new ArrayList<TipoEstabelecimentoAssociacaoPDV>();
-		 
-		 estabelecimentos.add(new TipoEstabelecimentoAssociacaoPDV());
-		 estabelecimentos.get(0).setCodigo(1L);
-		 estabelecimentos.get(0).setDescricao("Tipo Estab 1");
-		 
-		 estabelecimentos.add(new TipoEstabelecimentoAssociacaoPDV());
-		 estabelecimentos.get(1).setCodigo(1L);
-		 estabelecimentos.get(1).setDescricao("Tipo Estab 2");
-		 
-		return estabelecimentos;
-	}
-
+	
+	/**
+	 * Retorna uma lista de ItemDTO de Status do PDV
+	 * 
+	 * @param statusPDVs - status de PDV
+	 * 
+	 * @return List<ItemDTO<String, String>>
+	 */
 	private List<ItemDTO<String, String>> gerarItemStatus(StatusPDV[] statusPDVs) {
 		
 		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
@@ -183,6 +217,13 @@ public class PdvController {
 		return itens;
 	}
 	
+	/**
+	 * Retorna uma lista de ItemDTO referente ao tamanho do PDV
+	 * 
+	 * @param statusPDVs - tamanho do PDV
+	 * 
+	 * @return List<ItemDTO<String, String>>
+	 */
 	private List<ItemDTO<String, String>> gerarTamanhosPDV(TamanhoPDV[] tamanhoPDVs) {
 		
 		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
@@ -194,42 +235,6 @@ public class PdvController {
 		return itens;
 	}
 	
-	/**
-	 * Gera dados do combo de Dias de Funcionamento (Aba - Dados Básicos)
-	 * @return
-	 */
-	private List<ItemDTO<String, String>> gerarTiposLicencaMunicipal() {
-		
-		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
-		
-		//TODO obter lista do banco de dados
-		List<LicencaMunicipal> licencas = getFakelicencas();
-		
-		for(LicencaMunicipal licenca: licencas) {
-			itens.add(new ItemDTO<String, String>(licenca.getNumeroLicenca(), licenca.getNomeLicenca()));
-		}
-		
-		return itens;
-	}
-	
-
-	//TODO remover após implementação real
-	private List<LicencaMunicipal> getFakelicencas() {
-		
-		 List<LicencaMunicipal> licencas = new ArrayList<LicencaMunicipal>();
-		 
-		 licencas.add(new LicencaMunicipal());
-		 licencas.get(0).setNumeroLicenca("1");
-		 licencas.get(0).setNomeLicenca("Licenca 1");
-		 
-		 licencas.add(new LicencaMunicipal());
-		 licencas.get(1).setNumeroLicenca("2");
-		 licencas.get(1).setNomeLicenca("Licenca 2");
-		 
-		return licencas;
-	}
-
-
 	@Post
 	@Path("/consultar")
 	public void consultarPDVs(Long idCota,String sortname, String sortorder){
@@ -249,13 +254,20 @@ public class PdvController {
 			
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPdvs));
 		
-		tableModel.setTotal(listaPdvs.size());
+		tableModel.setTotal((listaPdvs.size()>0)? listaPdvs.size():1);
 		
 		tableModel.setPage(1);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
+	/**
+	 * Retorna uma lista de PdvVO
+	 * 
+	 * @param filtro - filtro com os criterios de busca
+	 * 
+	 * @return List<PdvVO>
+	 */
 	private List<PdvVO> getListaPdvs(FiltroPdvDTO filtro){
 		
 		List<PdvDTO> listDtos = pdvService.obterPDVsPorCota(filtro);
@@ -271,13 +283,14 @@ public class PdvController {
 			pdvVO.setIdPdv(pdv.getId());
 			pdvVO.setIdCota(pdv.getIdCota());
 			pdvVO.setNomePdv(pdv.getNomePDV());
-			pdvVO.setTipoPonto( pdv.getDescricaoTipoPontoPDV());
+			pdvVO.setTipoPonto( tratarCampo( pdv.getDescricaoTipoPontoPDV()));
 			pdvVO.setContato(pdv.getContato());
-			pdvVO.setTelefone( (pdv.getTelefone()==null)?"":   pdv.getTelefone());
-			pdvVO.setEndereco( (pdv.getEndereco()== null)?"": pdv.getEndereco());
+			pdvVO.setTelefone( tratarCampo(pdv.getTelefone()));
+			pdvVO.setEndereco( tratarCampo(pdv.getEndereco()));
 			pdvVO.setPrincipal(pdv.isPrincipal());
-			pdvVO.setStatus(pdv.getStatusPDV() == null ?"": pdv.getStatusPDV().getDescricao());
-			pdvVO.setFaturamento((pdv.getPorcentagemFaturamento()==null?"":CurrencyUtil.formatarValor(pdv.getPorcentagemFaturamento())));
+			pdvVO.setStatus( tratarCampo(pdv.getStatusPDV()));
+			pdvVO.setFaturamento((pdv.getPorcentagemFaturamento()==null
+									?"":CurrencyUtil.formatarValor(pdv.getPorcentagemFaturamento())));
 		   
 			listaRetorno.add(pdvVO);
 		}
@@ -285,79 +298,62 @@ public class PdvController {
 		return listaRetorno;
 	}
 	
+	private String tratarCampo(Object valor){
+		
+		return (valor == null)?"":valor.toString();
+	}
+	
 	@Post
 	@Path("/excluir")
 	public void excluirPDV(Long idPdv, Long idCota){
 		
-		if(!pdvService.isExcluirPdv(idPdv)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pdv não pode ser excluido!");
-		}
-		
-		//TODO Chamar componente para exclusão
+		pdvService.excluirPDV(idPdv);
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV excluido com sucesso."),
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 		
 	@Post
 	@Path("/editar")
 	public void editarPDV(Long idPdv, Long idCota){
-		
-		PdvDTO dto = new PdvDTO();
-		dto.setContato("asasaa");
-		dto.setDentroOutroEstabelecimento(Boolean.TRUE);
-		
-		CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
-		caracteristicaDTO.setLuminoso(Boolean.TRUE);
-		
-		dto.setCaracteristicaDTO(caracteristicaDTO);
-		
-		simularDadosBasicos(dto);
-				
-		result.use(Results.json()).from(dto).recursive().serialize();
-	}
 	
-	private void simularDadosBasicos(PdvDTO dto) {
-		dto.setStatusPDV(StatusPDV.SUSPENSO);
-		dto.setNomePDV("Guilherme de Morais");
-		dto.setContato("35561553");
-		dto.setDataInicio(new Date());
-		dto.setSite("www.google.com");
-		dto.setEmail("guilherme@email.com");
-		dto.setPontoReferencia("Ponto de Referencia");
-		dto.setDentroDeOutroEstabelecimento(true);
-		TipoEstabelecimentoAssociacaoPDV tipo= new TipoEstabelecimentoAssociacaoPDV();
-		tipo.setCodigo(123L);
-		tipo.setDescricao("Tipo");
-		dto.setTipoEstabelecimentoAssociacaoPDV(tipo);
-		dto.setTamanhoPDV(TamanhoPDV.SG);
-		dto.setSistemaIPV(true);
-		dto.setQtdeFuncionarios(10);
-		dto.setNumeroLicenca("2234");
-		dto.setPorcentagemFaturamento(new BigDecimal(10));
-		dto.setNomeLicenca("licenca x");
-		TipoLicencaMunicipal tipoLicenca = new TipoLicencaMunicipal();
-		tipo.setCodigo(123L);
-		tipo.setDescricao("TipoLicensa");
-		dto.setTipoLicencaMunicipal(tipoLicenca);
+		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
 		
-		
-		List<PeriodoFuncionamentoDTO> listaPeriodos = new ArrayList<PeriodoFuncionamentoDTO>();
-		listaPeriodos.add(new PeriodoFuncionamentoDTO(TipoPeriodoFuncionamentoPDV.QUARTA_FEIRA,"10:10","10:10"));
-		listaPeriodos.add(new PeriodoFuncionamentoDTO(TipoPeriodoFuncionamentoPDV.TERCA_FEIRA,"10:10","10:10"));
-		listaPeriodos.add(new PeriodoFuncionamentoDTO(TipoPeriodoFuncionamentoPDV.SEGUNDA_FEIRA,"10:10","10:10"));
-		
-		dto.setPeriodosFuncionamentoDTO(listaPeriodos);
+		if(dto!= null){
+			
+			if(dto.getTamanhoPDV() == null){
+				dto.setTipoPontoPDV(new TipoPontoPDV());
+			}
+			
+			if(dto.getTipoEstabelecimentoAssociacaoPDV() == null){
+				dto.setTipoEstabelecimentoAssociacaoPDV(new TipoEstabelecimentoAssociacaoPDV());
+			}
+			
+			if(dto.getTipoLicencaMunicipal()== null){
+				dto.setTipoLicencaMunicipal(new TipoLicencaMunicipal());
+			}
+			
+			if(dto.getTipoPontoPDV() == null){
+				dto.setTipoPontoPDV(new TipoPontoPDV());
+			}
+		}
+			
+		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 
 	@Post
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
-		//TODO implementar a logica de validação e salvar os dados na sessão do usuario
-		
-		pdvDTO.setIdCota(1L);
 		
 		pdvService.salvar(pdvDTO);
+		
+		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo() == -1){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Estabelecimento deve ser informado!");
+		}
+		
+		if(pdvDTO.isExpositor() && pdvDTO.getTipoExpositor().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
@@ -388,9 +384,7 @@ public class PdvController {
 			mensagens.add(e.getMessage());
 			status=TipoMensagem.ERROR;
 		}
-		
-		
-		
+
 		Object[] retorno = new Object[3];
 		retorno[0] = getCombosPeriodos(tiposPeriodosPossiveis);
 		retorno[1] = mensagens;
@@ -429,7 +423,14 @@ public class PdvController {
 		
 		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 	}
-
+	
+	/**
+	 * Retorna uma lista de ItemDTO de tipo periodo funcionamento PDV
+	 * 
+	 * @param tiposPeriodosPossiveis
+	 * 
+	 * @return List<ItemDTO<String, String>>
+	 */
 	private List<ItemDTO<String, String>> getCombosPeriodos(
 			List<TipoPeriodoFuncionamentoPDV> tiposPeriodosPossiveis) {
 		

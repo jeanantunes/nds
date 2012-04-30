@@ -60,8 +60,6 @@ public class PdvDTO implements Serializable {
 	
 	private String nomeLicenca;
 	
-	private boolean dentroDeOutroEstabelecimento;
-	
 	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
 	
 	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
@@ -82,6 +80,41 @@ public class PdvDTO implements Serializable {
     
     private TipoPontoPDV tipoPontoPDV;
     
+    private boolean expositor;
+    
+    private String tipoExpositor;
+    
+    
+	/**
+	 * @return the expositor
+	 */
+	public boolean isExpositor() {
+		return expositor;
+	}
+
+	/**
+	 * @param expositor the expositor to set
+	 */
+	public void setExpositor(boolean expositor) {
+		this.expositor = expositor;
+	}
+
+	
+
+	/**
+	 * @return the tipoExpositor
+	 */
+	public String getTipoExpositor() {
+		return tipoExpositor;
+	}
+
+	/**
+	 * @param tipoExpositor the tipoExpositor to set
+	 */
+	public void setTipoExpositor(String tipoExpositor) {
+		this.tipoExpositor = tipoExpositor;
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -478,21 +511,6 @@ public class PdvDTO implements Serializable {
 	public void setTipoPontoPDV(TipoPontoPDV tipoPontoPDV) {
 		this.tipoPontoPDV = tipoPontoPDV;
 	}
-
-	/**
-	 * @return the dentroDeOutroEstabelecimento
-	 */
-	public boolean isDentroDeOutroEstabelecimento() {
-		return dentroDeOutroEstabelecimento;
-	}
-
-	/**
-	 * @param dentroDeOutroEstabelecimento the dentroDeOutroEstabelecimento to set
-	 */
-	public void setDentroDeOutroEstabelecimento(boolean dentroDeOutroEstabelecimento) {
-		this.dentroDeOutroEstabelecimento = dentroDeOutroEstabelecimento;
-	}
-
 	
 	/**
 	 * @return the idCota

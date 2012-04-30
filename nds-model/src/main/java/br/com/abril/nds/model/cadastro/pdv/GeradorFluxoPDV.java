@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro.pdv;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class GeradorFluxoPDV {
 	@JoinColumn(name = "TIPO_GERADOR_FLUXO_ID")
 	private TipoGeradorFluxoPDV principal;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name = "GERADOR_FLUXO_PDV_TIPO_GERADOR_FLUXO_PDV", joinColumns = {@JoinColumn(name = "GERADOR_FLUXO_PDV_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "TIPO_GERADOR_FLUXO_PDV_ID")})
 	private Set<TipoGeradorFluxoPDV> secundarios = new HashSet<TipoGeradorFluxoPDV>();

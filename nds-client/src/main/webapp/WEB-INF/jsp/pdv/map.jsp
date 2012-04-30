@@ -39,12 +39,27 @@ $(function() {
 	    		
 	    		<legend>Tem espaço para receber o MAP</legend>
 	    		
-	    		<select name="selectMap" id ="selectMap" size="10" multiple="multiple" id="select4" style="height:270px; width:245px;">
+	    		<select name="selectMap" id ="selectMap" size="10" multiple="multiple" style="height:270px; width:245px;">
 				</select>
 				
 			</fieldset>
 		</td>
 	  </tr>
 	</table>
+	
+	<table width="302" cellspacing="1" cellpadding="1" border="0">
+	  <tbody>
+	  	<tr>
+	    	<td width="23"><input type="checkbox" onchange="PDV.mostra_expositor('#expositor');" id="expositor" name="expositor"></td>
+	    	<td width="272">Expositor</td>
+	  	</tr>
+	  	<tr>
+	    	<td>&nbsp;</td>
+	    	<td style="display:none;" class="tipoExpositor">Tipo:
+	    	<input type="text" style="width:150px;" id="tipoExpositor" name="tipoExpositor"></td>
+	  	</tr>
+	  </tbody>
+	</table>
+	
 </fieldset>
 

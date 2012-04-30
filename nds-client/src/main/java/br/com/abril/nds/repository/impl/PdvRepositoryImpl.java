@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -29,6 +31,29 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		super(PDV.class);
 	}
 	
+	@Override
+	public Long obterQntPDV(){
+		
+		Criteria criteria  = getSession().createCriteria(PDV.class);
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		return (Long) criteria.uniqueResult();
+	}
+	
+	public Boolean existePDVPrincipal(){
+		
+		Criteria criteria  = getSession().createCriteria(PDV.class);
+		
+		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", Boolean.TRUE));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		Long quantidade = (Long) criteria.uniqueResult(); 
+		
+		return (quantidade > 0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro){
@@ -40,7 +65,7 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 				.append("  pdv.contato as contato,")
 				.append("  endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
 				.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
-				.append("  pdv.principal as principal,")
+				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
 				.append("  pdv.status as statusPDV ,")
 				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento ,")
 				.append("  pdv.id as id , ")

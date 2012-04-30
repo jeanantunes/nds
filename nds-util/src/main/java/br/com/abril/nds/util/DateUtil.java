@@ -123,7 +123,7 @@ public class DateUtil {
 		return (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 				|| (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY);
 	}
-	
+
 	public static Date parseData(String data, String formato) {
 		
 		try {

@@ -1,16 +1,7 @@
 
 var PDV = {
 		
-		abaDadosBasico:"DADOS_BASICO",
-		abaEndereco:"ENDERECO",
-		abaTelefone:"TELEFONE",
-		abaCaracteristica:"CARACTERISTICA",
-		abaEspecialidade:"ESPECIALIDADE",
-		abaGeradorFluxo:"GERADOR_FLUXO",
-		abaMap:"MAP",
-		
-		abaSelecionada:"",
-		
+		idCota:"",
 		diasFuncionamento:[],
 		
 		pesquisarPdvs: function (idCota){
@@ -56,6 +47,42 @@ var PDV = {
 		
 		carregarAbaDadosBasico: function (result){
 			
+			$("#idPDV").val(result.pdvDTO.id);
+			$("#selectStatus").val(result.pdvDTO.statusPDV);
+			$("#dataInicio").val($.format.date(result.pdvDTO.dataInicio.$.substr(0,10) + "00:00:00.000","dd/MM/yyyy"));
+			$("#nomePDV").val(result.pdvDTO.nomePDV);
+			$("#contatoPDV").val(result.pdvDTO.contato);
+			$("#sitePDV").val(result.pdvDTO.site);
+			$("#emailPDV").val(result.pdvDTO.email);
+			$("#pontoReferenciaPDV").val(result.pdvDTO.pontoReferencia);
+			$("#selectTipoEstabelecimento").val(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
+			$("#selectTamanhoPDV").val(result.pdvDTO.tamanhoPDV);
+			$("#qntFuncionarios").val(result.pdvDTO.qtdeFuncionarios);
+			$("#sistemaIPV").attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
+			$("#porcentagemFaturamento").val(result.pdvDTO.porcentagemFaturamento);
+			$("#selectTipoLicenca").val(result.pdvDTO.tipoLicencaMunicipal.codigo);
+			$("#numerolicenca").val(result.pdvDTO.numeroLicenca);
+			$("#nomeLicenca").val(result.pdvDTO.nomeLicenca);
+			
+			$("#dentroOutroEstabelecimento").attr(
+					"checked", result.pdvDTO.dentroOutroEstabelecimento ? "checked" : null);
+			
+			PDV.opcaoEstabelecimento("#dentroOutroEstabelecimento");
+			
+			if(result.pdvDTO.periodosFuncionamentoDTO.length > 0){
+				
+				result.pdvDTO.periodosFuncionamentoDTO.forEach( function(diaFuncionamento){
+					
+					PDV.diasFuncionamento.push({
+						tipoPeriodo:diaFuncionamento.tipoPeriodoFuncionamentoPDV,
+						descTipoPeriodo:diaFuncionamento.nomeTipoPeriodo,
+						inicio:diaFuncionamento.inicio,
+						fim:diaFuncionamento.fim});						
+				});
+
+				PDV.montartabelaDiasFuncionamento();
+			}
+	
 		},
 		
 		carregarAbaEndereco: function (result){
@@ -68,21 +95,109 @@ var PDV = {
 		
 		carregarAbaCaracteristica: function (result){
 			
+			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.pontoPrincipal,"#ptoPrincipal");
+			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.balcaoCentral,"#balcaoCentral");
+			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.temComputador,"#temComputador");
+			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.luminoso,"#luminoso");
+
+			$("#textoLuminoso").val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
+	        $("#selectdTipoPonto").val(result.pdvDTO.caracteristicaDTO.tipoPonto);
+	        $("#selectCaracteristica").val(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
+	        $("#selectAreainfluencia").val(result.pdvDTO.caracteristicaDTO.areaInfluencia);
+	        $("#selectCluster").val(result.pdvDTO.caracteristicaDTO.cluster);
+	        
+	        if(this.isChecked("#luminoso")){
+				$("#textoLuminoso").removeAttr("disabled");
+			}
+	        else{
+	        	$("#textoLuminoso").attr("disabled","disabled");
+	        }
+	        
+		},
+		
+		atribuirValorChecked:function(valor,idChecked){
+			
+			var cheked = (valor == true)?"checked":null;
+			
+			$(idChecked).attr("checked",cheked);
 		},
 		
 		carregarAbaEspecialidade: function (result){
+	
+			var parametros = [];
 			
+			$.each(result.pdvDTO.especialidades, function(index, valor) {
+				
+				parametros.push({name:'codigos['+ index +']', value: valor});
+		  	});
+			
+			if(parametros.length > 0){
+				
+				PDV.carregarEspecialidade(parametros);
+				PDV.carregarEspecialidadesNotIn(parametros);
+			}
+			else{
+				PDV.carregarCaracteristicaEspecialidade(null);
+			}
+
 		},
 		
 		carregarAbaGeradorFluxo: function (result){
 			
+			var parametros = [];
+			
+			$.each(result.pdvDTO.geradorFluxoSecundario, function(index, valor) {
+				
+				parametros.push({name:'codigos['+ index +']', value: valor});
+		  	});
+			
+			if(parametros.length >  0){
+				
+				PDV.carregarGeradorFluxoSecundario(parametros);
+				
+				parametros.push({name:'codigos['+ (parametros.length) +']', value:result.pdvDTO.geradorFluxoPrincipal});
+				PDV.carregarGeradorFluxoNotIn(parametros);
+				
+				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}];
+				$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
+						parametro, 
+						   function(result){
+					$("#txtGeradorFluxoPrincipal").val(result[0].value.$);
+					$("#hiddenGeradorFluxoPrincipal").val(result[0].key.$);	
+				});
+			}
+			else{
+				PDV.carregarGeradorFluxo(null);
+			}
 		},
 		
 		carregarAbaMap: function (result){
 			
+			var parametros = [];
+			
+			$.each(result.pdvDTO.maps, function(index, valor) {
+				
+				parametros.push({name:'codigos['+ index +']', value: valor});
+		  	});
+			
+			if(parametros.length > 0){
+				
+				PDV.carregarMaterialPromocionalSelecionado(parametros);
+				PDV.carregarMaterialPromocionalNotIn(parametros);
+			}
+			else{
+				PDV.carregarMaterialPromocional(null);
+			}
+			
+			PDV.atribuirValorChecked(result.pdvDTO.expositor, "#expositor");
+			$("#tipoExpositor").val(result.pdvDTO.tipoExpositor); 
+			
+			PDV.mostra_expositor("#expositor");
 		},
 		
 		editarPDV:function (idPdv,idCota,index){
+			
+			PDV.limparCamposTela();
 			
 			$.postJSON(contextPath + "/cadastro/pdv/editar",
 					[{name:"idPdv",value:idPdv},
@@ -116,43 +231,13 @@ var PDV = {
 		carregarDadosEdicao:function (result){
 			
 			PDV.popup_novoPdv();
-			PDV.preencherDadosCadastrais(result);
+			PDV.carregarAbaDadosBasico(result);
+			PDV.carregarAbaCaracteristica(result);
+			PDV.carregarAbaEspecialidade(result);
+			PDV.carregarAbaGeradorFluxo(result);
+			PDV.carregarAbaMap(result);
 		},
 		
-		preencherDadosCadastrais:function(result) {
-			
-			$("#selectStatus").val(result.pdvDTO.statusPDV);
-			$("#dataInicio").val($.format.date(
-					result.pdvDTO.dataInicio.substr(0,10) + 
-						"00:00:00.000","dd/MM/yyyy"));
-			$("#nomePDV").val(result.pdvDTO.nomePDV);
-			$("#contatoPDV").val(result.pdvDTO.contato);
-			$("#sitePDV").val(result.pdvDTO.site);
-			$("#emailPDV").val(result.pdvDTO.email);
-			$("#pontoReferenciaPDV").val(result.pdvDTO.pontoReferencia);
-			$("#dentroOutroEstabelecimento").attr(
-					"checked", result.pdvDTO.dentroDeOutroEstabelecimento ? "checked" : null);
-			$("#selectTipoEstabelecimento").val(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV);
-			$("#selectTamanhoPDV").val(result.pdvDTO.tamanhoPDV);
-			$("#qntFuncionarios").val(result.pdvDTO.qtdeFuncionarios);
-			$("#sistemaIPV").attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
-			$("#porcentagemFaturamento").val(result.pdvDTO.porcentagemFaturamento);
-			$("#selectTipoLicenca").val(result.pdvDTO.tipoLicencaMunicipal);
-			$("#numerolicenca").val(result.pdvDTO.numeroLicenca);
-			$("#nomeLicenca").val(result.pdvDTO.nomeLicenca);
-		
-			result.pdvDTO.periodosFuncionamentoDTO.forEach( function(diaFuncionamento){
-				
-				PDV.diasFuncionamento.push({
-					tipoPeriodo:diaFuncionamento.tipoPeriodoFuncionamentoPDV,
-					descTipoPeriodo:diaFuncionamento.nomeTipoPeriodo,
-					inicio:diaFuncionamento.inicio,
-					fim:diaFuncionamento.fim});						
-			});
-			
-			
-			PDV.montartabelaDiasFuncionamento();
-		},
 		salvarPDV : function(){
 	
 			$.postJSON(contextPath + "/cadastro/pdv/salvar",
@@ -161,6 +246,10 @@ var PDV = {
 					this.getDadosEspecialidade() +"&" + 
 					this.getDadosGeradorFluxo()  +"&" +
 					this.getDadosMap(), function(result){
+				
+				PDV.pesquisarPdvs(PDV.idCota);
+				PDV.limparCamposTela();
+				$("#dialog-pdv").dialog( "close" );
 				
 			},this.errorSalvarPDV,true);
 			
@@ -173,6 +262,8 @@ var PDV = {
 		getDadosBasico: function (){
 			
 			var dados = 
+				"pdvDTO.idCota="								+PDV.idCota + "&" +
+				"pdvDTO.id="									+$("#idPDV").val() + "&" +
 				"pdvDTO.statusPDV="  							+$("#selectStatus").val() + "&" +
 				"pdvDTO.dataInicio="							+$("#dataInicio").val()+ "&" +
 				"pdvDTO.nomePDV="								+$("#nomePDV").val()+ "&" +
@@ -181,7 +272,7 @@ var PDV = {
 				"pdvDTO.email="									+$("#emailPDV").val()+ "&" +
 				"pdvDTO.pontoReferencia="						+$("#pontoReferenciaPDV").val()+ "&" +
 				"pdvDTO.dentroOutroEstabelecimento="	 		+this.isChecked("#dentroOutroEstabelecimento") + "&" +
-				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.id="	+$("#selectTipoEstabelecimento").val()+ "&" +
+				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo="	+$("#selectTipoEstabelecimento").val()+ "&" +
 				"pdvDTO.tamanhoPDV="							+$("#selectTamanhoPDV").val()+ "&" +
 				"pdvDTO.qtdeFuncionarios="						+$("#qntFuncionarios").val()+ "&" +
 				"pdvDTO.sistemaIPV="							+this.isChecked("#sistemaIPV")+ "&" +
@@ -248,6 +339,9 @@ var PDV = {
 			 $("#selectMap option").each(function (index) {
 				 listaMaps = listaMaps + "pdvDTO.maps["+index+"]="+ $(this).val() +"&";
             });
+			 
+			 listaMaps = listaMaps +  "pdvDTO.expositor="+PDV.isChecked("#expositor")+"&" 
+			 					   +  "pdvDTO.tipoExpositor="+$("#tipoExpositor").val(); 
   
 			return listaMaps;
 		},
@@ -272,6 +366,7 @@ var PDV = {
 				$("#textoLuminoso").removeAttr("disabled");
 				$("#textoLuminoso").val("");
 				$("#textoLuminoso").focus();
+
 			}
 			else{
 				$("#textoLuminoso").attr("disabled","disabled");
@@ -426,6 +521,17 @@ var PDV = {
 			});
 		},
 		
+		poupNovoPDV:function(){
+			
+			PDV.limparCamposTela();
+			PDV.carregarMaterialPromocional(null);
+			PDV.carregarGeradorFluxo(null);
+			PDV.carregarCaracteristicaEspecialidade(null);
+			PDV.carregarPeriodosFuncionamento();
+			
+			PDV.popup_novoPdv();
+		},
+		
 		popup_novoPdv:function() {
 			
 			$( "#dialog-pdv" ).dialog({
@@ -436,9 +542,9 @@ var PDV = {
 				buttons: {
 					"Confirmar": function() {
 						PDV.salvarPDV();
-						$( this ).dialog( "close" );
 					},
 					"Cancelar": function() {
+						PDV.limparCamposTela();
 						$( this ).dialog( "close" );
 					}
 				}
@@ -497,6 +603,165 @@ var PDV = {
 				}
 			});
 
+		},
+		
+		carregarPeriodosFuncionamento:function(){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
+					   null, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selectDiasFuncionamento").html(combo);
+			});
+		},
+		
+		carregarMaterialPromocional:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocional",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selectMaterialPromocional").html(combo);
+							$("#selectMaterialPromocional").sortOptions();
+			});
+		},
+		
+		carregarMaterialPromocionalNotIn:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocionalNotIn",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selectMaterialPromocional").html(combo);
+							$("#selectMaterialPromocional").sortOptions();
+			});
+		},
+		
+		carregarMaterialPromocionalSelecionado:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocional",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selectMap").html(combo);
+							$("#selectMap").sortOptions();
+			});
+		},
+			
+		carregarEspecialidade:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidades",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#especialidades_options").html(combo);
+							$("#especialidades_options").sortOptions();
+			});
+		},
+		
+		
+		carregarCaracteristicaEspecialidade:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidades",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#caract_options").html(combo);
+							$("#caract_options").sortOptions();
+			});
+		},
+		
+		carregarEspecialidadesNotIn:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidadesNotIn",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#caract_options").html(combo);
+							$("#caract_options").sortOptions();
+			});
+		},
+
+		carregarGeradorFluxoNotIn:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selecTipoGeradorFluxo").html(combo);
+							$("#selecTipoGeradorFluxo").sortOptions();
+			});
+		},
+		
+		carregarGeradorFluxo:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selecTipoGeradorFluxo").html(combo);
+							$("#selecTipoGeradorFluxo").sortOptions();
+			});
+		},
+		
+		carregarGeradorFluxoSecundario:function(data){
+			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
+					   data, 
+					   function(result){
+							var combo =  montarComboBox(result, false);
+							$("#selectFluxoSecundario").html(combo);
+							$("#selectFluxoSecundario").sortOptions();
+			});
+		},
+		
+		mostra_expositor:function(idChecked){
+			
+			if(PDV.isChecked(idChecked)){
+				$(".tipoExpositor" ).show();
+			}
+			else{
+				$(".tipoExpositor" ).hide();
+				$("#tipoExpositor").val("");
+			}
+		},
+
+		limparCamposTela:function(){
+		
+			$("#selectStatus").val(""); 
+			$("#nomePDV").val("");
+			$("#contatoPDV").val("");
+			$("#sitePDV").val("");
+			$("#emailPDV").val("");
+			$("#pontoReferenciaPDV").val("");
+			$("#dentroOutroEstabelecimento").attr("checked",null);
+			$("#selectTipoEstabelecimento").val("");
+			$("#selectTamanhoPDV").val("");
+			$("#qntFuncionarios").val("");
+			$("#sistemaIPV").attr("checked",null);
+			$("#porcentagemFaturamento").val("");
+			$("#selectTipoLicenca").val("");
+			$("#numerolicenca").val("");
+			$("#nomeLicenca").val("");
+			$("#selectDiasFuncionamento").val("");
+			$("#inicioHorario").val("");
+			$("#fimHorario").val("");
+			$("#divTipoEstabelecimento").hide();
+			
+			PDV.diasFuncionamento = [];
+			
+			PDV.montartabelaDiasFuncionamento();
+			
+			$("#ptoPrincipal").attr("checked",null);
+            $("#balcaoCentral").attr("checked",null);
+            $("#temComputador").attr("checked",null);
+            $("#luminoso").attr("checked",null);
+            $("#textoLuminoso").val("");
+            $("#selectdTipoPonto").val("");
+            $("#selectCaracteristica").val("");
+            $("#selectAreainfluencia").val("");
+            $("#selectCluster").val("");
+            
+            $("#especialidades_options option").remove();
+            
+            $("#selectFluxoSecundario option").remove();
+            
+            $("#selectMap option").remove();
+            
+            $("#hiddenGeradorFluxoPrincipal").val("");
+            $("#txtGeradorFluxoPrincipal").val("");
+            
+            $("#idPDV").val("");
 		}
 		
 };
