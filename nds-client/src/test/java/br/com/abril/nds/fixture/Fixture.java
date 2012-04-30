@@ -2174,7 +2174,6 @@ public class Fixture {
 		pdv.setPorcentagemFaturamento(porcentagemFaturamento);
 		pdv.setTamanhoPDV(tamanhoPDV);
 		pdv.setCota(cota);
-		pdv.setPrincipal(principal);
 		pdv.setStatus(status);
 		pdv.setCaracteristicas(caracteristicas);
 		

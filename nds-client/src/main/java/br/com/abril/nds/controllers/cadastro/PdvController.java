@@ -64,9 +64,6 @@ public class PdvController {
 	private static final String NO_IMAGE = "no_image.jpeg";
 	private static final String DIRETORIO_ARQUIVO = "images/pdv";
 	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(PdvController.class);
-	
 	public PdvController(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
