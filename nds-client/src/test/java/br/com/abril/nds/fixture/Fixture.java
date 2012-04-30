@@ -1755,6 +1755,7 @@ public class Fixture {
 		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
+		
 		return formaBoleto;
 	}
 	
