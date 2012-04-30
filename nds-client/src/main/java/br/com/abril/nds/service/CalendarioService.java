@@ -36,10 +36,11 @@ public interface CalendarioService {
 	 * 
 	 * @param data - data a ser adicionada
 	 * @param numDias - número de dias
-	 * @param diasSemana - dias da semana onde a data deve cair
+	 * @param diasSemanaConcentracaoCobranca - dias da semana onde a data deve cair
+	 * @param diaMesConcentracaoCobranca - dia do mes onde a data deve cair
 	 * 
 	 * @return nova data calculada
  	 */
-	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemana);
+	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, Integer diaMesConcentracaoCobranca);
 
 }

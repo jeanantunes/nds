@@ -76,28 +76,50 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 	
 	@Override
-	public Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemana) {
-		if (diasSemana == null || diasSemana.isEmpty()){
+	public Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, Integer diaMesConcentracaoCobranca) {
+		
+		if (diasSemanaConcentracaoCobranca == null || diasSemanaConcentracaoCobranca.isEmpty() && (diasSemanaConcentracaoCobranca == null)){
+			
 			return this.adicionarDiasUteis(data, numDias);
 		}
 		
-		Calendar dataBase = Calendar.getInstance();
-		dataBase.setTime(data);
-		dataBase.add(Calendar.DAY_OF_MONTH, numDias);
-		
-		boolean dataValida = false;
-		
-		while (!dataValida){
-			while (!diasSemana.contains(dataBase.get(Calendar.DAY_OF_WEEK))){
-				dataBase.add(Calendar.DAY_OF_MONTH, 1);
+		if (diasSemanaConcentracaoCobranca != null && !diasSemanaConcentracaoCobranca.isEmpty()){
+			
+			Calendar dataBase = Calendar.getInstance();
+			dataBase.setTime(data);
+			dataBase.add(Calendar.DAY_OF_MONTH, numDias);
+			
+			boolean dataValida = false;
+			
+			while (!dataValida){
+				while (!diasSemanaConcentracaoCobranca.contains(dataBase.get(Calendar.DAY_OF_WEEK))){
+					dataBase.add(Calendar.DAY_OF_MONTH, 1);
+				}
+				
+				dataBase.setTime(this.adicionarDiasUteis(dataBase.getTime(), 0));
+				
+				dataValida = diasSemanaConcentracaoCobranca.contains(dataBase.get(Calendar.DAY_OF_WEEK));
 			}
 			
-			dataBase.setTime(this.adicionarDiasUteis(dataBase.getTime(), 0));
+			return dataBase.getTime();
+		} else if (diaMesConcentracaoCobranca != null){
 			
-			dataValida = diasSemana.contains(dataBase.get(Calendar.DAY_OF_WEEK));
+			if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca){
+				
+				diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
+			}
+			
+			Calendar dataVencimento = Calendar.getInstance();
+			
+			while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca){
+				
+				dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
+			}
+			
+			return dataVencimento.getTime();
 		}
 		
-		return dataBase.getTime();
+		return Calendar.getInstance().getTime();
 	}
 	
 	private boolean isFeriado(Calendar cal) {

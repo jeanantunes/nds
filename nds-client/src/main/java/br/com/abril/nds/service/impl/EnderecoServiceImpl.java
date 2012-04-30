@@ -50,6 +50,20 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		if (listaEnderecos != null){
 		
+			boolean isEnderecoPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos){
+				
+				if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
+				}
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()){
+					isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
+				}
+			}
+			
 			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEnderecos){
 				
 				this.validarEndereco(enderecoAssociacaoDTO.getEndereco(), enderecoAssociacaoDTO.getTipoEndereco());

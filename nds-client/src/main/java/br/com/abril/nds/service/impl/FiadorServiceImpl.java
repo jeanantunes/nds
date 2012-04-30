@@ -308,23 +308,10 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		if (listaEnderecoAssociacao != null){
 		
-			boolean isEnderecoPrincipal = false;
-			
-			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao){
-				
-				if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
-				}
-				
-				if (enderecoAssociacao.isEnderecoPrincipal()){
-					isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
-				}
-			}
-			
 			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 	
-				EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarPorId(enderecoAssociacao.getId());
+				EnderecoFiador enderecoFiador = 
+						this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 	
 				if (enderecoFiador == null) {
 	
@@ -350,27 +337,29 @@ public class FiadorServiceImpl implements FiadorService {
 
 	private void removerEnderecosFiador(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
-		
 		List<Long> idsEndereco = new ArrayList<Long>();
+		
+		List<Long> idsEnderecoFiador = new ArrayList<Long>();
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-
-			if (enderecoAssociacao.getEndereco() != null){
-				listaEndereco.add(enderecoAssociacao.getEndereco());
+			if (enderecoAssociacao.getEndereco().getId() != null){
+				idsEndereco.add(enderecoAssociacao.getEndereco().getId());
 			}
 
 			EnderecoFiador enderecoFiador = this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 			
 			if (enderecoFiador != null && enderecoFiador.getEndereco() != null){
-				idsEndereco.add(enderecoFiador.getEndereco().getId());
-				
-				this.enderecoFiadorRepository.remover(enderecoFiador);
+				idsEnderecoFiador.add(enderecoFiador.getId());
 			}
 		}
 		
-		if (listaEndereco != null && !listaEndereco.isEmpty()){
+		if (!idsEnderecoFiador.isEmpty()){
+			
+			this.enderecoFiadorRepository.excluirEnderecosFiador(idsEnderecoFiador);
+		}
 		
+		if (!idsEndereco.isEmpty()){
+			
 			this.enderecoRepository.removerEnderecos(idsEndereco);
 		}
 	}
@@ -388,18 +377,6 @@ public class FiadorServiceImpl implements FiadorService {
 		this.telefoneService.cadastrarTelefone(listaTelefones);
 		
 		if (listaTelefones != null){
-			boolean isTelefonePrincipal = false;
-			
-			for (TelefoneAssociacaoDTO dto : listaTelefones){
-				
-				if (isTelefonePrincipal && dto.isPrincipal()){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
-				}
-				
-				if (dto.isPrincipal()){
-					isTelefonePrincipal = dto.isPrincipal();
-				}
-			}
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefones){
 				
@@ -623,7 +600,7 @@ public class FiadorServiceImpl implements FiadorService {
 				}
 			}
 			
-			this.enderecoFiadorRepository.excluirEnderecosFiador(fiador.getId());
+			this.enderecoFiadorRepository.excluirEnderecosPorIdFiador(fiador.getId());
 			
 			this.telefoneFiadorRepository.excluirTelefonesFiador(fiador.getId());
 			

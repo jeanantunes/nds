@@ -140,7 +140,7 @@ public class TelefoneController {
 		List<TelefoneAssociacaoDTO> listaExibicao = this.obterTelefonesExibicao();
 		for (int index = 0 ; index < listaExibicao.size() ; index++){
 			
-			if (referencia.equals(listaExibicao.get(index).getReferencia())){
+			if (referencia != null && referencia.equals(listaExibicao.get(index).getReferencia())){
 				
 				listaExibicao.remove(index);
 				

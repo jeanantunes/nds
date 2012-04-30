@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.model.cadastro.Motorista;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.service.MotoristaService;
 import br.com.abril.nds.service.VeiculoService;
@@ -46,12 +49,12 @@ public class TransportadorController {
 		
 	}
 	
-	public void pesquisarTransportadores(Object filtro, String sortorder, 
+	public void pesquisarTransportadores(FiltroConsultaTransportadorDTO filtro, String sortorder, 
 			String sortname, Integer page, Integer rp, ValidacaoVO validacaoVO){
 		
 	}
 	
-	public void cadastrarTransportador(Object transportador){
+	public void cadastrarTransportador(Transportador transportador){
 		
 	}
 	
@@ -91,7 +94,7 @@ public class TransportadorController {
 		this.motoristaService.excluirMotorista(referencia);
 	}
 	
-	public void cadastrarAssociacao(Long referenciaVeiculo, Long referenciaMotorista, List<Object> listaRotaRoteiro){
+	public void cadastrarAssociacao(Long referenciaVeiculo, Long referenciaMotorista, List<Long> listaRotaRoteiro){
 		
 	}
 	
