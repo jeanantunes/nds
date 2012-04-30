@@ -33,7 +33,6 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -394,7 +393,7 @@ public class PdvController {
 	}
 	
 	@Post
-	public void uploadImagem(UploadedFile uploadedFile) {
+	public void uploadImagem(UploadedFile uploadedFile, Long idPdv) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		List<String> mensagens = new ArrayList<String>();
@@ -405,7 +404,7 @@ public class PdvController {
 			//validarEntradaDados(uploadedFile, valorFinanceiro);
 			
 			//Grava o arquivo em disco e retorna o File do arquivo
-			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
+			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile, idPdv);
 			
 			nomeArquivo = uploadedFile.getFileName();
 			
@@ -432,19 +431,19 @@ public class PdvController {
 		
 	}
 	
-	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
+	private File gravarArquivoTemporario(UploadedFile uploadedFile, Long idPdv) {
 
 		String pathAplicacao = servletContext.getRealPath("");
 		
 		pathAplicacao = pathAplicacao.replace("\\", "/");
-		
-		String dataAtual = DateUtil.formatarData(new Date(), FORMATO_DATA_DIRETORIO);
-		
+				
 		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
 		
 		fileDir.mkdirs();
 		
-		File fileArquivoBanco = new File(fileDir, uploadedFile.getFileName());
+		String nomeArquivo = "pdv" + ( idPdv==null ? "0" : idPdv.toString());
+		
+		File fileArquivoBanco = new File(fileDir, nomeArquivo);
 		
 		FileOutputStream fos = null;
 		

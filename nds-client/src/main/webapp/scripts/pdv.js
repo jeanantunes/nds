@@ -121,6 +121,11 @@ var PDV = {
 		
 		preencherDadosCadastrais:function(result) {
 			
+			if(isThere("${pageContext.request.contextPath}/images/pdv/pdv_" + result.pdvDTO.id)) {
+				$("#idPdv").val(result.pdvDTO.id);
+				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
+			}
+						
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
 			$("#dataInicio").val($.format.date(
 					result.pdvDTO.dataInicio.substr(0,10) + 

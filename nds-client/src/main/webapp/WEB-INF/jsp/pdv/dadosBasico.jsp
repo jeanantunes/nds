@@ -31,11 +31,8 @@ $(function() {
 			var status = responseJson.result[1];
 			var nomeArquivo = responseJson.result[2];
 			
-			if(isThere("${pageContext.request.contextPath}/images/pdv/" + nomeArquivo)) {
-			
-				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
-			}
-			
+			$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
+						
 			if(mensagens!=null && mensagens.length!=0) {
 				exibirMensagem(status,mensagens);
 			}
@@ -43,7 +40,7 @@ $(function() {
 		
 });
 
-function isThere(url) {
+function isValidURLis(url) {
 	var req= new AJ(); // XMLHttpRequest object
 	try {
 		req.open("HEAD", url, false);
@@ -55,7 +52,7 @@ function isThere(url) {
 	}
 }
 
-function AJ() {
+function AjaxObjxt() {
 	var obj;
 	if (window.XMLHttpRequest) obj= new XMLHttpRequest(); 
 	else if (window.ActiveXObject){
@@ -85,6 +82,8 @@ function AJ() {
 		  method="post" enctype="multipart/form-data" >
 	
 		<input type="hidden" name="formUploadAjax" value="true" />
+		
+		<input type="hidden" name="idPdv" />
 	
 	<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
 									
