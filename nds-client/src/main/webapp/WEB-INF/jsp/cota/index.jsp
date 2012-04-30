@@ -137,8 +137,9 @@
 	
 	function carregarPDV(){
 		
-		var idCota = 123;
+		var idCota = $("#_idCotaRef").val();
 		
+		PDV.idCota = idCota;
 		PDV.pesquisarPdvs(idCota);
 	}
 	

@@ -2,7 +2,11 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +31,29 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		super(PDV.class);
 	}
 	
+	@Override
+	public Long obterQntPDV(){
+		
+		Criteria criteria  = getSession().createCriteria(PDV.class);
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		return (Long) criteria.uniqueResult();
+	}
+	
+	public Boolean existePDVPrincipal(){
+		
+		Criteria criteria  = getSession().createCriteria(PDV.class);
+		
+		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", Boolean.TRUE));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		Long quantidade = (Long) criteria.uniqueResult(); 
+		
+		return (quantidade > 0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PdvDTO> obterPDVsPorCota(FiltroPdvDTO filtro){
@@ -34,22 +61,25 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT pdv.nome as nomePDV, " )
-				.append("  pdv.segmentacao.tipoPontoPDV as tipoPontoPDV ,")
+				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
 				.append("  pdv.contato as contato,")
 				.append("  endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
 				.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
-				.append("  pdv.principal as principal,")
+				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
 				.append("  pdv.status as statusPDV ,")
-				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento ")
+				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento ,")
+				.append("  pdv.id as id , ")
+				.append("  cota.id as idCota ")
 		.append(" FROM PDV pdv ")
 		.append(" JOIN pdv.cota cota ")
-		.append(" JOIN pdv.enderecos enderecoPdv ")
-		.append(" JOIN enderecoPdv.endereco endereco ")
-		.append(" JOIN pdv.telefones telefonePdv ")
-		.append(" JOIN telefonePdv.telefone telefone ")
+		.append(" LEFT JOIN pdv.enderecos enderecoPdv ")
+		.append(" LEFT JOIN enderecoPdv.endereco endereco ")
+		.append(" LEFT JOIN pdv.telefones telefonePdv ")
+		.append(" LEFT JOIN telefonePdv.telefone telefone ")
+		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
 		.append(" WHERE cota.id = :idCota ")
-		.append(" and enderecoPdv.principal =:principal ")
-		.append(" and telefonePdv.principal =:principal ");
+		.append(" and (enderecoPdv is null or enderecoPdv.principal =:principal )")
+		.append(" and (telefonePdv is null or telefonePdv.principal =:principal) ");
 		
 		hql.append(getOrdenacaoPDV(filtro));
 		
@@ -122,5 +152,16 @@ public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements 
 		
 		return hql.toString();
 	}
+	
+	public PDV obterPDV(Long idCota,Long idPDV){
+		
+		Criteria criteria = getSession().createCriteria(PDV.class);
+		
+		criteria.add(Restrictions.eq("id", idPDV));
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+		return (PDV) criteria.uniqueResult();
+	}
+	
 	
 }

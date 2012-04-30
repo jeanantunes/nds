@@ -1,8 +1,6 @@
 <script type="text/javascript">
 $(function() {
-	
-	
-	
+
 	$("select[name='selectEspecialidades']").multiSelect("select[name='selectCaracteristicas']", {trigger: "#linkVoltarTodos"});
 	
 	$("select[name='selectCaracteristicas']").multiSelect("select[name='selectEspecialidades']", {trigger: "#linkEnviarTodos"});
@@ -20,16 +18,11 @@ $(function() {
 		    	<legend>Caracteristicas</legend>
 			   
 				<select name="selectCaracteristicas" multiple="true" id="caract_options" size="10" style="height:270px; width:245px;" >
-					<option value="1">Decoração</option>
-					<option value="1">Fasciculos</option>
-					<option value="1">Figurinhas</option>
-					<option value="1">Generalista</option>
-					<option value="1">Informática</option>
-					<option value="1">Moda</option>
-					<option value="1">Quadrinhos</option>
-					<option value="1">Sexo</option>
+					 <c:forEach items="${listaEspecialidadePDV}" var="item">
+					      <option value="${item.key}">${item.value}</option>	          
+					  </c:forEach>
 				</select>
-			
+			    
 	    	</fieldset>
 	    </td>
 	    

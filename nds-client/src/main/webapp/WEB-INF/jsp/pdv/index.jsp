@@ -97,7 +97,7 @@ $("#btnSalvarPDV").keypress(function() {
 <br />
 <table class="PDVsGrid"></table>
 <br />
-<span class="bt_novo"><a href="javascript:;" onclick="PDV.popup_novoPdv();">Novo</a></span>
+<span class="bt_novo"><a href="javascript:;" onclick="PDV.poupNovoPDV();">Novo</a></span>
 
 <br clear="all" />
 
@@ -106,7 +106,11 @@ $("#btnSalvarPDV").keypress(function() {
 </div>
 
 <div id="dialog-pdv" title="PDV Cota">
-
+	
+	<jsp:include page="../messagesDialog.jsp"/>
+	
+	<input type="hidden" name="idPDV" id="idPDV" value=""/>
+	
 	<div id="tabpdv">
 	    <ul>
 	        <li><a href="#tabpdv-1">Dados Básicos</a></li>

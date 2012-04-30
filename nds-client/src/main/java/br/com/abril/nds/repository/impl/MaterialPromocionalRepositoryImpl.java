@@ -25,4 +25,14 @@ public class MaterialPromocionalRepositoryImpl extends AbstractRepository<Materi
 		
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MaterialPromocional> obterMateriaisPromocionalNotIn(Long...codigos){
+		
+		Criteria criteria = super.getSession().createCriteria(MaterialPromocional.class);
+		
+		criteria.add(Restrictions.not(Restrictions.in("codigo", codigos)));
+		
+		return criteria.list();
+	}
 }

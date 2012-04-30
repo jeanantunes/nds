@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 
@@ -23,6 +24,16 @@ public class TipoGeradorFluxoPDVRepsitoryImpl extends AbstractRepository<TipoGer
 		Criteria criteria = super.getSession().createCriteria(TipoGeradorFluxoPDV.class);
 		
 		criteria.add(Restrictions.in("codigo", codigos));
+		
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoNotIn(Long... codigos ){
+		
+		Criteria criteria = super.getSession().createCriteria(TipoGeradorFluxoPDV.class);
+		
+		criteria.add(Restrictions.not(Restrictions.in("codigo", codigos)));
 		
 		return criteria.list();
 	}

@@ -113,5 +113,4 @@ public abstract class CurrencyUtil {
 		NumericToWordsConverter converter = new NumericToWordsConverter(new FormatoDeReal());  
 		return converter.toWords(valor.doubleValue());
 	}
-	
 }

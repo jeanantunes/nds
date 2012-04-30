@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,16 @@ public class EspecialidadePDVRepositoryImpl extends AbstractRepository<Especiali
 		Criteria criteria = super.getSession().createCriteria(EspecialidadePDV.class);
 		
 		criteria.add(Restrictions.in("codigo", codigos));
+		
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<EspecialidadePDV> obterEspecialidadesNotIn(Long... codigos ){
+		
+		Criteria criteria = super.getSession().createCriteria(EspecialidadePDV.class);
+		
+		criteria.add(Restrictions.not(Restrictions.in("codigo", codigos)));
 		
 		return criteria.list();
 	}
