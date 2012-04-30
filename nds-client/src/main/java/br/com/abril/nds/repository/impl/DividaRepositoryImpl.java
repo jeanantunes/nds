@@ -201,7 +201,10 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 				.append(" cobranca.tipoCobranca,")
 				.append(" cobranca.vias, ")
 				.append(" cobranca.nossoNumero, ")
-				.append(" parametroCobranca.recebeCobrancaEmail ")
+				.append(" (select f.recebeCobrancaEmail " +
+						"  from FormaCobranca f " +
+						"  where f.parametroCobrancaCota=parametroCobranca " +
+						"  and f.principal=true) ")
 			.append(")");
 		}
 		

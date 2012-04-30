@@ -58,6 +58,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -1745,6 +1746,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.BOLETO);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1764,6 +1766,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.DINHEIRO);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1783,6 +1786,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.CHEQUE);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1802,6 +1806,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.DEPOSITO);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1821,6 +1826,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.TRANSFERENCIA_BANCARIA);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);

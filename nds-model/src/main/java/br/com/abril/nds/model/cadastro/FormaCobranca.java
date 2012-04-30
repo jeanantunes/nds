@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -24,7 +22,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "FORMA_COBRANCA")
 @SequenceGenerator(name="FORMA_COBRANCA_SEQ", initialValue = 1, allocationSize = 1)
-@DiscriminatorColumn(name = "TIPO_FORMA_COBRANCA", discriminatorType = DiscriminatorType.STRING)
 public class FormaCobranca implements Serializable {
 	
 	/**
@@ -39,6 +36,10 @@ public class FormaCobranca implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COBRANCA", nullable = false)
 	private TipoCobranca tipoCobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_FORMA_COBRANCA", nullable = false)
+	private TipoFormaCobranca tipoFormaCobranca;
 	
 	@ManyToOne
 	@JoinColumn(name = "BANCO_ID")
@@ -64,9 +65,7 @@ public class FormaCobranca implements Serializable {
 	
 	@Column(name = "ATIVA", nullable = false)
 	private boolean ativa;
-	
-	
-	//ATRIBUTOS TRANSFERIDOS DE PARAMETRO COBRANCA COTA
+
 	@Column(name = "RECEBE_COBRANCA_EMAIL")
 	private boolean recebeCobrancaEmail;
 	
@@ -77,13 +76,16 @@ public class FormaCobranca implements Serializable {
 	@JoinTable(name = "PARAM_COBRANCA_COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "PARAM_COBRANCA_COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-	//---
-	
 	
 	@ManyToOne
 	@JoinColumn(name = "PARAMETRO_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
 	
+	@Column(name = "DIA_DO_MES")
+	private Integer diaDoMes;
+	
+	@OneToMany(mappedBy="formaCobranca")
+	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 	
 	public Long getId() {
 		return id;
@@ -101,6 +103,14 @@ public class FormaCobranca implements Serializable {
 		this.tipoCobranca = tipoCobranca;
 	}
 	
+	public TipoFormaCobranca getTipoFormaCobranca() {
+		return tipoFormaCobranca;
+	}
+
+	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
+		this.tipoFormaCobranca = tipoFormaCobranca;
+	}
+
 	public Banco getBanco() {
 		return banco;
 	}
@@ -169,8 +179,6 @@ public class FormaCobranca implements Serializable {
 		this.ativa = ativa;
 	}
 
-	
-
 	public boolean isRecebeCobrancaEmail() {
 		return recebeCobrancaEmail;
 	}
@@ -198,12 +206,25 @@ public class FormaCobranca implements Serializable {
 	public ParametroCobrancaCota getParametroCobrancaCota() {
 		return parametroCobrancaCota;
 	}
-
-	
 	
 	public void setParametroCobrancaCota(ParametroCobrancaCota parametroCobrancaCota) {
 		this.parametroCobrancaCota = parametroCobrancaCota;
 	}
 	
+	public Integer getDiaDoMes() {
+		return diaDoMes;
+	}
+
+	public void setDiaDoMes(Integer diaDoMes) {
+		this.diaDoMes = diaDoMes;
+	}
 	
+	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
+		return concentracaoCobrancaCota;
+	}
+	
+	public void setConcentracaoCobrancaCota(
+			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
+		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
+	}
 }
