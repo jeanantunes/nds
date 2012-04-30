@@ -101,10 +101,11 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(formasCobranca, 1, null, cota, 1, 
 											  false, new BigDecimal(1000));
+		save(parametroCobranca);
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		formaBoleto.setPrincipal(true);
+		save(formaBoleto);
 		
-		save(parametroCobranca);
 		
 		idCota = cota.getId();
 		
