@@ -406,7 +406,7 @@ public class PdvController {
 			//Grava o arquivo em disco e retorna o File do arquivo
 			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile, idPdv);
 			
-			nomeArquivo = uploadedFile.getFileName();
+			nomeArquivo = fileArquivoBanco.getName();
 			
 			mensagens.add(SUCESSO_UPLOAD);
 						
@@ -443,13 +443,13 @@ public class PdvController {
 		
 		String nomeArquivo = "pdv" + ( idPdv==null ? "0" : idPdv.toString());
 		
-		File fileArquivoBanco = new File(fileDir, nomeArquivo);
+		File fileArquivo = new File(fileDir, nomeArquivo);
 		
 		FileOutputStream fos = null;
 		
 		try {
 			
-			fos = new FileOutputStream(fileArquivoBanco);
+			fos = new FileOutputStream(fileArquivo);
 			
 			IOUtils.copyLarge(uploadedFile.getFile(), fos);
 		
@@ -469,6 +469,6 @@ public class PdvController {
 			}
 		}
 		
-		return fileArquivoBanco;
+		return fileArquivo;
 	}
 }
