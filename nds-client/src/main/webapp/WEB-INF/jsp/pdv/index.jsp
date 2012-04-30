@@ -3,6 +3,8 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+
 <script type="text/javascript">
 
 $(".PDVsGrid").flexigrid({
