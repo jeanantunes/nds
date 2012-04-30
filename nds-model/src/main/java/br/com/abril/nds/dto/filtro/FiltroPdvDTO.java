@@ -19,14 +19,14 @@ public class FiltroPdvDTO implements Serializable {
 	
 	public enum ColunaOrdenacao{
 		
-		NOME_PDV(""),
-		TIPO_PONTO(""),
-		CONTATO(""),
-		TELEFONE(""),
-		ENDERECO(""),
-		PRINCIPAL(""),
-		STATUS(""),
-		FATURAMENTO("");
+		NOME_PDV("nomePdv"),
+		TIPO_PONTO("tipoPonto"),
+		CONTATO("contato"),
+		TELEFONE("telefone"),
+		ENDERECO("endereco"),
+		PRINCIPAL("principal"),
+		STATUS("status"),
+		FATURAMENTO("faturamento");
 		
 		private String nomeColuna;
 		

@@ -38,6 +38,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -62,10 +63,18 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -479,7 +488,6 @@ public class DataLoader {
 	private static Estudo estudoSuper1EncalheAnt;
 	private static Estudo estudoSuper2EncalheAnt;
 
-
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -598,10 +606,107 @@ public class DataLoader {
 		gerarCargaDadosNotasFiscaisNFE(session);
 
 		gerarEntregadores(session);
-
+		
+		gerarTiposPontoPDV(session);
+			
+		gerarAreaInfluenciaPDV(session);
+		
+		gerarClusterPDV(session);
+		
+		gerarEspecialidadePDV(session);
+		
+		gerarTipoGeradorFluxoPDV(session);
+		
+		gerarMaterialPromocionalPDV(session);
+		
+		gerarTipoEstabelecimentoAssociacaoPDV(session);
+		
+		gerarTipoLicencaMunicipalPDV(session);
+		
 	}
 
+	
+	private static void gerarTipoLicencaMunicipalPDV(Session session) {
+		
+		TipoLicencaMunicipal tipoLicencaMunicipal = Fixture.criarTipoLicencaMunicipal(10L, "Licença 1");
+		TipoLicencaMunicipal tipoLicencaMunicipal1 = Fixture.criarTipoLicencaMunicipal(11L, "Licença 2");
+		TipoLicencaMunicipal tipoLicencaMunicipal2 = Fixture.criarTipoLicencaMunicipal(12L, "Licença 3");
+		TipoLicencaMunicipal tipoLicencaMunicipal3 = Fixture.criarTipoLicencaMunicipal(13L, "Licença 4");
+		
+		save(session,tipoLicencaMunicipal,tipoLicencaMunicipal1,tipoLicencaMunicipal2,tipoLicencaMunicipal3);
+	}
 
+	private static void gerarTipoEstabelecimentoAssociacaoPDV(Session session) {
+		
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV = Fixture.criarTipoEstabelecimentoAssociacaoPDV(10L, "Galeria");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV1 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(11L, "Hiper / Supermercado");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV2 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(12L, "Shopping");
+		TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV3 = Fixture.criarTipoEstabelecimentoAssociacaoPDV(13L, "Posto Serviço");
+		
+		save(session,tipoEstabelecimentoAssociacaoPDV,tipoEstabelecimentoAssociacaoPDV1,tipoEstabelecimentoAssociacaoPDV2,tipoEstabelecimentoAssociacaoPDV3);
+	}
+
+	private static void gerarMaterialPromocionalPDV(Session session) {
+		
+		MaterialPromocional materialPromocional = Fixture.criarMaterialPromocional(1L, "Adesivo");
+		MaterialPromocional materialPromocional1 = Fixture.criarMaterialPromocional(2L, "Brindes");
+		MaterialPromocional materialPromocional2 = Fixture.criarMaterialPromocional(3L, "Poster");
+		MaterialPromocional materialPromocional3 = Fixture.criarMaterialPromocional(4L, "Bandeirola");
+		MaterialPromocional materialPromocional4 = Fixture.criarMaterialPromocional(5L, "Sapataria");
+		MaterialPromocional materialPromocional5 = Fixture.criarMaterialPromocional(6L, "Cartaz Grande");
+		
+		save(session,materialPromocional,materialPromocional1,materialPromocional2,materialPromocional3,materialPromocional4,materialPromocional5);
+	}
+
+	private static void gerarTipoGeradorFluxoPDV(Session session) {
+		
+		TipoGeradorFluxoPDV tipoGeradorFluxoPDV = Fixture.criarTipoGeradorFluxoPDV(1L, "Cursinho");
+		TipoGeradorFluxoPDV tipoGeradorFluxoPDV1 = Fixture.criarTipoGeradorFluxoPDV(2L, "Superior");
+		TipoGeradorFluxoPDV tipoGeradorFluxoPDV2 = Fixture.criarTipoGeradorFluxoPDV(3L, "Padarias");
+		TipoGeradorFluxoPDV tipoGeradorFluxoPDV3 = Fixture.criarTipoGeradorFluxoPDV(4L, "Restaurantes");
+		TipoGeradorFluxoPDV tipoGeradorFluxoPDV4 = Fixture.criarTipoGeradorFluxoPDV(5L, "Pre-Escola");
+		
+		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
+	}
+
+	private static void gerarEspecialidadePDV(Session session) {
+		
+		EspecialidadePDV especialidadePDV = Fixture.criarEspecialidadesPDV(1L, "Moda");
+		EspecialidadePDV especialidadePDV1 = Fixture.criarEspecialidadesPDV(2L, "Decoração");
+		EspecialidadePDV especialidadePDV2 = Fixture.criarEspecialidadesPDV(3L, "Informatica");
+		EspecialidadePDV especialidadePDV3 = Fixture.criarEspecialidadesPDV(4L, "Sexo");
+		EspecialidadePDV especialidadePDV4 = Fixture.criarEspecialidadesPDV(5L, "Quadrinhos");
+		EspecialidadePDV especialidadePDV5 = Fixture.criarEspecialidadesPDV(6L, "Moda");
+		
+		save(session,especialidadePDV,especialidadePDV1,especialidadePDV2,especialidadePDV3,especialidadePDV4,especialidadePDV5);
+	}
+
+	private static void gerarClusterPDV(Session session) {
+		
+		ClusterPDV clusterPDV = Fixture.criarClusterPDV(1L, "Basico");
+		ClusterPDV clusterPDV1 = Fixture.criarClusterPDV(1L, "Monaco");
+		ClusterPDV clusterPDV2 = Fixture.criarClusterPDV(1L, "Exportador");
+		
+		save(session,clusterPDV,clusterPDV1,clusterPDV2);
+	}
+
+	private static void gerarAreaInfluenciaPDV(Session session) {
+		
+		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
+		AreaInfluenciaPDV areaInfluenciaPDV1 = Fixture.criarAreaInfluenciaPDV(2L, "Residencial XX");
+		AreaInfluenciaPDV areaInfluenciaPDV2 = Fixture.criarAreaInfluenciaPDV(3L, "Estradas");
+		
+		save(session,areaInfluenciaPDV,areaInfluenciaPDV1,areaInfluenciaPDV2);
+	}
+
+	
+	private static void gerarTiposPontoPDV(Session session) {
+
+		TipoPontoPDV tipoPontoPDV  = Fixture.criarTipoPontoPDV(1L, "Residencial");
+		TipoPontoPDV tipoPontoPDV2  = Fixture.criarTipoPontoPDV(2L, "Comercial");
+		
+		save(session,tipoPontoPDV,tipoPontoPDV2);
+	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
 

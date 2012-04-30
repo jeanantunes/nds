@@ -7,4 +7,6 @@ import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 public interface EspecialidadePDVRepository extends Repository<EspecialidadePDV,Long> {
 	
 	List<EspecialidadePDV> obterEspecialidades(Long... codigos );
+	
+	List<EspecialidadePDV> obterEspecialidadesNotIn(Long... codigos );
 }

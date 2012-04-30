@@ -8,8 +8,18 @@ package br.com.abril.nds.model.cadastro.pdv;
  */
 public enum TipoCaracteristicaSegmentacaoPDV {
 	
-	CONVENCIONAL, 
+	CONVENCIONAL("Convencional"), 
 	
-	ALTERNATIVO;
+	ALTERNATIVO("Alternativo");
+	
+	TipoCaracteristicaSegmentacaoPDV(String descricao){
+		this.descricao = descricao;
+	}
+	
+	private String descricao;
+	
+	public String getDescricao() {
+		return descricao;
+	}
 
 }

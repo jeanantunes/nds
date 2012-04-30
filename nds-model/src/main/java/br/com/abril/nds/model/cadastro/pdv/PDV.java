@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro.pdv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
@@ -48,8 +51,8 @@ public class PDV implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "PRINCIPAL", nullable = false)
-	private boolean principal;
+	@Temporal(TemporalType.DATE)
+	private Date dataInclusao;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
@@ -62,10 +65,10 @@ public class PDV implements Serializable {
 	@Column(name = "STATUS_PDV")
 	private StatusPDV status;
 	
-	@OneToMany(mappedBy = "pdv")
+	@OneToMany(mappedBy = "pdv", cascade=CascadeType.REMOVE)
 	private Set<EnderecoPDV> enderecos = new HashSet<EnderecoPDV>();
 	
-	@OneToMany(mappedBy = "pdv")
+	@OneToMany(mappedBy = "pdv",cascade=CascadeType.REMOVE)
 	private Set<TelefonePDV> telefones = new HashSet<TelefonePDV>();
 	
 	/**
@@ -146,7 +149,7 @@ public class PDV implements Serializable {
 	/**
 	 * Períodos de funcionamento do PDV
 	 */
-	@OneToMany(mappedBy = "pdv", cascade ={CascadeType.MERGE,CascadeType.PERSIST})
+	@OneToMany(mappedBy = "pdv", cascade ={CascadeType.REMOVE})
 	private Set<PeriodoFuncionamentoPDV> periodos = new HashSet<PeriodoFuncionamentoPDV>();
 	
 	/**
@@ -165,7 +168,7 @@ public class PDV implements Serializable {
 	 * Especialidades do PDV
 	 * 
 	 */
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name = "PDV_ESPECIALIDADE_PDV", joinColumns = { @JoinColumn(name = "PDV_ID") }, 
 		inverseJoinColumns = { @JoinColumn(name = "ESPECIALIDADE_PDV_ID") })
 	private Set<EspecialidadePDV> especialidades = new HashSet<EspecialidadePDV>();
@@ -173,7 +176,7 @@ public class PDV implements Serializable {
 	/**
 	 * Materiais promocionais do PDV
 	 */
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name = "PDV_MATERIAL_PROMOCIONAL", joinColumns = {@JoinColumn(name = "PDV_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "MATERIAL_PROMOCIONAL_ID")})
 	private Set<MaterialPromocional> materiais = new HashSet<MaterialPromocional>();
@@ -184,7 +187,7 @@ public class PDV implements Serializable {
 	@Column(name = "TIPO_EXPOSITOR")
 	private String tipoExpositor;
 	  	
-	@OneToOne(mappedBy = "pdv")	  	
+	@OneToOne(mappedBy = "pdv",cascade=CascadeType.REMOVE)	  	
 	private GeradorFluxoPDV geradorFluxoPDV;
 	
 	public Long getId() {
@@ -193,14 +196,6 @@ public class PDV implements Serializable {
 	
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public boolean isPrincipal() {
-		return principal;
-	}
-	
-	public void setPrincipal(boolean principal) {
-		this.principal = principal;
 	}
 	
 	public Cota getCota() {
@@ -412,6 +407,20 @@ public class PDV implements Serializable {
 	 */
 	public void setGeradorFluxoPDV(GeradorFluxoPDV geradorFluxoPDV) {
 		this.geradorFluxoPDV = geradorFluxoPDV;
+	}
+
+	/**
+	 * @return the dataInclusao
+	 */
+	public Date getDataInclusao() {
+		return dataInclusao;
+	}
+
+	/**
+	 * @param dataInclusao the dataInclusao to set
+	 */
+	public void setDataInclusao(Date dataInclusao) {
+		this.dataInclusao = dataInclusao;
 	}
 	
 	

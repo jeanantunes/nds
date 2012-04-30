@@ -1,12 +1,21 @@
 package br.com.abril.nds.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+
+
 
 /**
  * 
@@ -17,14 +26,6 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
  */
 public interface PdvService {
 	
-	/**
-	 * Verifica se um pdv pode ser excluído
-	 * 
-	 * @param idPdv  - identificador do PDV
-	 * 
-	 * @return boolean
-	 */
-	boolean isExcluirPdv(Long idPdv);
 	
 	/**
 	 * Retorna uma lista de PDVs referente a uma cota informada.
@@ -37,6 +38,32 @@ public interface PdvService {
 	
 	void salvar(PdvDTO pdvDTO);
 	
+	List<TipoPontoPDV> obterTiposPontoPDV();
+	
+	List<AreaInfluenciaPDV> obterAreasInfluenciaPDV();
+	
+	List<ClusterPDV> obterClustersPDV();
+	
+	List<EspecialidadePDV> obterEspecialidadesPDV(Long... codigos);
+	
+	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(Long... codigos);
+	
+	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoNotIn(Long... codigos);
+	
+	List<MaterialPromocional> obterMateriaisPromocionalPDV(Long... codigos);
+	
+	List<MaterialPromocional> obterMateriaisPromocionalPDVNotIn(Long... codigos);
+	
+	List<TipoEstabelecimentoAssociacaoPDV> obterTipoEstabelecimentoAssociacaoPDV();
+	
+	List<TipoLicencaMunicipal> obterTipoLicencaMunicipal();
+	
+	List<EspecialidadePDV> obterEspecialidadesPDVNotIn(Long... codigos);
+	
+	PdvDTO obterPDV(Long idCota, Long idPdv);
+	
+	void excluirPDV(Long idPdv);
+
 	/**
 	 * Obtém lista com os possíveis peridos a serem selecionados
 	 * 
@@ -52,5 +79,6 @@ public interface PdvService {
 	 * @throws Exception
 	 */
 	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
+
 
 }

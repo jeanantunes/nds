@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -39,7 +42,10 @@ import br.com.abril.nds.repository.PeriodoFuncionamentoPDVRepository;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
+import br.com.abril.nds.repository.TiposEstabelecimentoRepository;
 import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class PdvServiceImpl implements PdvService {
@@ -77,13 +83,113 @@ public class PdvServiceImpl implements PdvService {
 	@Autowired
 	private TipoLicencaMunicipalRepository tipoLicencaMunicipalRepository;
 	
+	@Autowired
+	private TiposEstabelecimentoRepository tiposEstabelecimentoRepository;
+	
+	@Transactional(readOnly=true)
 	@Override
-	public boolean isExcluirPdv(Long idPdv) {
+	public List<TipoPontoPDV> obterTiposPontoPDV(){
 		
-		/**
-		 * TODO definir regra de exclusão de PDV
-		 */
-		return Boolean.TRUE;
+		return tipoPontoPDVRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV(){
+		
+		return areaInfluenciaPDVRepository.buscarTodos(); 
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<ClusterPDV> obterClustersPDV(){
+		
+		return clusterPDVRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<EspecialidadePDV> obterEspecialidadesPDV(Long... codigos){
+		
+		if(codigos.length == 0){
+			
+			return especialidadePDVRepository.buscarTodos();
+		}
+		
+		return especialidadePDVRepository.obterEspecialidades(codigos);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<EspecialidadePDV> obterEspecialidadesPDVNotIn(Long... codigos){
+		
+		if(codigos.length > 0){
+			
+			return especialidadePDVRepository.obterEspecialidadesNotIn(codigos);
+		}
+		
+		return new ArrayList<EspecialidadePDV>();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(Long... codigos){
+		
+		if(codigos.length == 0){
+			
+			return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+		}
+		
+		return tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxo(codigos);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoNotIn(Long... codigos) {
+		
+		if(codigos.length > 0){
+			
+			return tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoNotIn(codigos);
+		}
+		
+		return new ArrayList<TipoGeradorFluxoPDV>();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<MaterialPromocional> obterMateriaisPromocionalPDV(Long...codigos){
+		
+		if(codigos.length == 0){
+			
+			return materialPromocionalRepository.buscarTodos();
+		}
+		
+		return materialPromocionalRepository.obterMateriaisPromocional(codigos);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<MaterialPromocional> obterMateriaisPromocionalPDVNotIn(Long... codigos){
+		
+		if(codigos.length > 0){
+			return materialPromocionalRepository.obterMateriaisPromocionalNotIn(codigos);
+		}
+		
+		return new ArrayList<MaterialPromocional>();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoEstabelecimentoAssociacaoPDV> obterTipoEstabelecimentoAssociacaoPDV() {
+		
+		return tiposEstabelecimentoRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoLicencaMunicipal> obterTipoLicencaMunicipal() {
+		
+		return tipoLicencaMunicipalRepository.buscarTodos();
 	}
 	
 	@Transactional(readOnly=true)
@@ -93,22 +199,75 @@ public class PdvServiceImpl implements PdvService {
 		return pdvRepository.obterPDVsPorCota(filtro);
 	}
 	
+	@Transactional(readOnly=true)
+	@Override
+	public PdvDTO obterPDV(Long idCota, Long idPdv){
+		
+		PDV pdv = pdvRepository.obterPDV(idCota, idPdv);
+		
+		PdvDTO pdvDTO = new PdvDTO();
+		
+		if(pdv!= null){
+			
+			atribuirValorDadosBasico(pdv, pdvDTO);
+			atribuirValorCaracteristica(pdv, pdvDTO);
+			atribuirValorEspecialidade(pdv, pdvDTO);
+			atribuirValorGeradorFluxo(pdv, pdvDTO);
+			atribuirValorMaterialPromocional(pdv, pdvDTO);
+		}
+		
+		return pdvDTO;
+	}
+	
+	
+	
 	@Transactional
+	@Override
+	public void excluirPDV(Long idPdv){
+		
+		PDV pdv = pdvRepository.buscarPorId(idPdv);
+		
+		//TODO verificar se o PDV esta associado a uma Roterização
+		
+		if(pdvRepository.obterQntPDV() == 1 ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido!");
+		}
+		
+		if( pdv.getCaracteristicas()!= null &&  pdv.getCaracteristicas().isPontoPrincipal()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Pelomenos um PDV deve ser um Ponto Principal");
+		}
+		
+		if(pdv!= null){
+			pdvRepository.remover(pdv);
+		}
+	}
+	
+	@Transactional
+	@Override
 	public void salvar(PdvDTO pdvDTO){
 		
 		if(pdvDTO == null){
-			throw new IllegalArgumentException("Parâmetro PDV inválido");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro PDV inválido");
 		}
 		
-		if(pdvDTO.getNumeroCota() == null){
-			throw new IllegalArgumentException("Parâmetro Cota PDV inválido");
+		if(pdvDTO.getNomePDV() == null || pdvDTO.getNomePDV().isEmpty() ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nome do PDV deve ser informado!");
 		}
-		
+
+		if(pdvDTO.getIdCota() == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota PDV inválido");
+		}
+	
 		Cota cota  = obterCotaPDV(pdvDTO);
 		
 		if(cota == null){
-			throw new IllegalArgumentException("Não foi encontrado Cota para inclusão do PDV");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado Cota para inclusão do PDV.");
 		}
+	
+		salvarPDV(pdvDTO, cota);	
+	}
+	
+	private void salvarPDV(PdvDTO pdvDTO, Cota cota){
 		
 		PDV pdv = null;
 		
@@ -118,8 +277,26 @@ public class PdvServiceImpl implements PdvService {
 		
 		if(pdv == null){
 			pdv = new PDV();
+			pdv.setDataInclusao(new Date());
+			
+			if( pdvDTO.getCaracteristicaDTO()!= null && pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
+				
+				if(pdvRepository.existePDVPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser incluído! Já existe PDV incluído como principal.");
+				}
+			}
 		}
 		
+		if( pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
+		
+			if(pdv.getCaracteristicas()!= null && !pdv.getCaracteristicas().isPontoPrincipal()){
+				
+				if(pdvRepository.existePDVPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode der incluído! Já existe PDV incluído como principal.");
+				}
+			}
+		}
+	
 		pdv.setCota(cota);
 		pdv.setNome(pdvDTO.getNomePDV());
 		pdv.setContato(pdvDTO.getContato());
@@ -127,38 +304,39 @@ public class PdvServiceImpl implements PdvService {
 		pdv.setEmail(pdvDTO.getEmail());
 		pdv.setPorcentagemFaturamento(pdvDTO.getPorcentagemFaturamento());
 		pdv.setPossuiSistemaIPV(pdvDTO.isSistemaIPV());
-		pdv.setPrincipal(pdvDTO.isPrincipal());
 		pdv.setQtdeFuncionarios(pdvDTO.getQtdeFuncionarios());
 		pdv.setSite(pdvDTO.getSite());
 		pdv.setStatus(pdvDTO.getStatusPDV());
 		pdv.setTamanhoPDV(pdvDTO.getTamanhoPDV());
-		pdv.setDentroOutroEstabelecimento(pdvDTO.isDentroDeOutroEstabelecimento());
-	
+		pdv.setDentroOutroEstabelecimento(pdvDTO.isDentroOutroEstabelecimento());
 		pdv.setEspecialidades(obterEspecialidadesPDV(pdvDTO));
 		pdv.setLicencaMunicipal(obterLicencaMunicipalPDV(pdvDTO,pdv));
 		pdv.setCaracteristicas(obterCaracteristicaPDV(pdvDTO,pdv));
 		pdv.setMateriais(obterMateriaisPDV(pdvDTO));
 		pdv.setSegmentacao(obterSegmentacaoPDV(pdvDTO,pdv));
+		pdv.setExpositor(pdvDTO.isExpositor());
+		pdv.setTipoExpositor(pdvDTO.getTipoExpositor());
 		
-		if(pdvDTO.isDentroDeOutroEstabelecimento()){
-			pdv.setTipoEstabelecimentoPDV(pdvDTO.getTipoEstabelecimentoAssociacaoPDV());
+		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV()!= null){
+			
+			Long codigo = pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo();
+			
+			TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV = tiposEstabelecimentoRepository.obterTipoEstabelecimentoAssociacaoPDV(codigo);
+			
+			if(tipoEstabelecimentoAssociacaoPDV!=null){
+				pdv.setTipoEstabelecimentoPDV(tipoEstabelecimentoAssociacaoPDV);
+			}
+
 		}
 		
 		pdv =  pdvRepository.merge(pdv);
 		
+		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
+		
+		salvarGeradorFluxo(pdvDTO, pdv);
+	
 		//salvarEndereco(pdvDTO, pdv);
 		//salvarTelefone(pdvDTO, pdv);
-		//salvarGeradorFluxoPDV(pdvDTO, pdv);
-		//salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
-	}
-	
-	private void salvarPeriodoFuncionamentoPDV(PdvDTO pdvDTO,PDV pdv){
-		
-	}
-	
-	private void salvarGeradorFluxoPDV(PdvDTO pdvDTO,PDV pdv){
-		
-		obterGeradorFluxoPDV(pdvDTO, pdv);
 	}
 	
 	private void salvarEndereco(PdvDTO pdvDTO,PDV pdv){
@@ -167,6 +345,41 @@ public class PdvServiceImpl implements PdvService {
 	
 	private void salvarTelefone(PdvDTO pdvDTO,PDV pdv){
 		
+	}
+	
+	private void salvarGeradorFluxo(PdvDTO pdvDTO, PDV pdv){
+		
+		GeradorFluxoPDV geradorFluxoPDV = obterGeradorFluxoPDV(pdvDTO, pdv);
+		
+		if (geradorFluxoPDV!= null){
+			fluxoPDVRepository.merge(geradorFluxoPDV);
+		}
+	}
+	
+	private void salvarPeriodoFuncionamentoPDV(PdvDTO pdvDTO,PDV pdv){
+		
+		if(pdv.getPeriodos()!= null && !pdv.getPeriodos().isEmpty()){
+			
+			for(PeriodoFuncionamentoPDV periodo : pdv.getPeriodos() ){
+				periodoFuncionamentoPDVRepository.remover(periodo);
+			}
+		}
+		
+		if( pdvDTO.getPeriodosFuncionamentoDTO()!= null){
+			
+			PeriodoFuncionamentoPDV periodo = null;
+			
+			for(PeriodoFuncionamentoDTO periodoDTO : pdvDTO.getPeriodosFuncionamentoDTO()){
+				
+				periodo = new PeriodoFuncionamentoPDV();
+				periodo.setHorarioFim(DateUtil.parseData(periodoDTO.getFim(),"HH:mm"));
+				periodo.setHorarioInicio(DateUtil.parseData(periodoDTO.getInicio(),"HH:mm"));
+				periodo.setTipoPeriodoFuncionamentoPDV(periodoDTO.getTipoPeriodoFuncionamentoPDV());
+				periodo.setPdv(pdv);
+				
+				periodoFuncionamentoPDVRepository.adicionar(periodo);
+			}
+		}
 	}
 
 	private SegmentacaoPDV obterSegmentacaoPDV(PdvDTO pdvDTO,PDV pdv) {
@@ -205,21 +418,7 @@ public class PdvServiceImpl implements PdvService {
 		return segmaSegmentacaoPDV;
 	}
 
-	private Set<PeriodoFuncionamentoPDV> obterPeriodosPDV(PdvDTO pdvDTO) {
-		
-		Set<PeriodoFuncionamentoPDV> periodoFuncionamento = new HashSet<PeriodoFuncionamentoPDV>();
-		
-		if(pdvDTO.getId() == null){
-			
-			
-		}
-		
-	//	periodoFuncionamento.addAll( periodoFuncionamentoPDVRepository.obterPeriodoFuncionamentoPDV(idPDV));
-		
-		return periodoFuncionamento ;
-		
-	}
-
+	
 	private Set<MaterialPromocional> obterMateriaisPDV(PdvDTO pdvDTO) {
 		
 		Set<MaterialPromocional> materialPromocional = new HashSet<MaterialPromocional>();
@@ -256,23 +455,33 @@ public class PdvServiceImpl implements PdvService {
 	
 	private GeradorFluxoPDV obterGeradorFluxoPDV(PdvDTO pdvDTO, PDV pdv){
 		
-		GeradorFluxoPDV fluxoPDV = null;
+		TipoGeradorFluxoPDV fluxoPrincipal = null;
 		
-		if(pdv!= null){
-			fluxoPDV = fluxoPDVRepository.obterGeradorFluxoPDV(pdv.getId());
+		if(pdvDTO.getGeradorFluxoPrincipal()!= null){
+			fluxoPrincipal = tipoGeradorFluxoPDVRepsitory.buscarPorId(pdvDTO.getGeradorFluxoPrincipal());
 		}
+		
+		Set<TipoGeradorFluxoPDV> fluxoSecundario = null;
+		
+		if(pdvDTO.getGeradorFluxoSecundario()!= null){
+			
+			fluxoSecundario = new HashSet<TipoGeradorFluxoPDV>();
+			fluxoSecundario.addAll(tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxo(pdvDTO.getGeradorFluxoSecundario().toArray(new Long[]{})));
+		}
+		
+		if(fluxoPrincipal == null && fluxoSecundario == null ){
+			return null;
+		}
+		
+		GeradorFluxoPDV fluxoPDV = pdv.getGeradorFluxoPDV();
 		
 		if(fluxoPDV == null){
 			fluxoPDV = new GeradorFluxoPDV();
 		}
-
-		TipoGeradorFluxoPDV fluxoPrincipal = tipoGeradorFluxoPDVRepsitory.buscarPorId(pdvDTO.getGeradorFluxoPrincipal());
+		
 		fluxoPDV.setPrincipal(fluxoPrincipal);
-		
-		Set<TipoGeradorFluxoPDV> fluxoSecundario = new HashSet<TipoGeradorFluxoPDV>();
-		fluxoSecundario.addAll(tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxo(pdvDTO.getGeradorFluxoSecundario().toArray(new Long[]{})));
-		
 		fluxoPDV.setSecundarios(fluxoSecundario);
+		fluxoPDV.setPdv(pdv);
 	
 		return fluxoPDV;
 	}
@@ -290,7 +499,7 @@ public class PdvServiceImpl implements PdvService {
 
 	private Cota obterCotaPDV(PdvDTO pdvDTO) {
 		
-		return cotaRepository.obterPorNumerDaCota(pdvDTO.getNumeroCota());
+		return cotaRepository.buscarPorId(pdvDTO.getIdCota());
 	}
 
 	private CaracteristicasPDV obterCaracteristicaPDV(PdvDTO pdvDTO,PDV pdv) {
@@ -311,8 +520,123 @@ public class PdvServiceImpl implements PdvService {
 		if(carct.isLuminoso()){
 			caracteristicasPDV.setTextoLuminoso(carct.getTextoLuminoso());
 		}
+		else{
+			caracteristicasPDV.setTextoLuminoso(null);
+		}
 		
 		return caracteristicasPDV;
+	}
+	
+	private void atribuirValorDadosBasico(PDV pdv, PdvDTO pdvDTO){
+		
+		pdvDTO.setId(pdv.getId());
+		pdvDTO.setStatusPDV(pdv.getStatus());
+		pdvDTO.setNomePDV(pdv.getNome());
+		pdvDTO.setContato(pdv.getContato());
+		pdvDTO.setDataInicio(pdv.getDataInclusao());
+		pdvDTO.setSite(pdv.getSite());
+		pdvDTO.setEmail(pdv.getEmail());
+		pdvDTO.setPontoReferencia(pdv.getPontoReferencia());
+		pdvDTO.setDentroOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
+		pdvDTO.setTipoEstabelecimentoAssociacaoPDV(pdv.getTipoEstabelecimentoPDV());
+		pdvDTO.setTamanhoPDV(pdv.getTamanhoPDV());
+		pdvDTO.setSistemaIPV(pdv.isPossuiSistemaIPV());
+		pdvDTO.setQtdeFuncionarios(pdv.getQtdeFuncionarios());
+		pdvDTO.setPorcentagemFaturamento(pdv.getPorcentagemFaturamento());
+	
+		LicencaMunicipal licencaMunicipal = pdv.getLicencaMunicipal();
+		
+		if(licencaMunicipal!= null){
+			pdvDTO.setNumeroLicenca(licencaMunicipal.getNumeroLicenca());
+			pdvDTO.setNomeLicenca(licencaMunicipal.getNomeLicenca());
+			pdvDTO.setTipoLicencaMunicipal(licencaMunicipal.getTipoLicencaMunicipal());
+		}
+		
+		Set<PeriodoFuncionamentoPDV>periodos = pdv.getPeriodos();
+		
+		List<PeriodoFuncionamentoDTO> listaPeriodos = new ArrayList<PeriodoFuncionamentoDTO>();
+		
+		if(periodos!= null && !periodos.isEmpty()){
+
+			for(PeriodoFuncionamentoPDV periodo : periodos  ){
+				
+				listaPeriodos.add(new PeriodoFuncionamentoDTO(periodo.getTipoPeriodoFuncionamentoPDV(),
+						DateUtil.formatarData(periodo.getHorarioInicio(),"HH:mm"),
+						DateUtil.formatarData(periodo.getHorarioFim(),"HH:mm")));
+			}				
+		}
+		
+		pdvDTO.setPeriodosFuncionamentoDTO(listaPeriodos);
+	}
+	
+	private void atribuirValorCaracteristica(PDV pdv, PdvDTO pdvDTO){
+		
+		CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
+		
+		if(pdv.getSegmentacao()!= null){
+
+			caracteristicaDTO.setAreaInfluencia(pdv.getSegmentacao().getAreaInfluenciaPDV().getCodigo());
+			caracteristicaDTO.setCluster(pdv.getSegmentacao().getClusterPDV().getCodigo());
+			caracteristicaDTO.setTipoCaracteristicaSegmentacaoPDV(pdv.getSegmentacao().getTipoCaracteristica());
+			caracteristicaDTO.setTipoPonto(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
+		}
+		
+		if(pdv.getCaracteristicas()!= null){
+			
+			caracteristicaDTO.setBalcaoCentral(pdv.getCaracteristicas().isBalcaoCentral());
+			caracteristicaDTO.setLuminoso(pdv.getCaracteristicas().isPossuiLuminoso());
+			caracteristicaDTO.setPontoPrincipal(pdv.getCaracteristicas().isPontoPrincipal());
+			caracteristicaDTO.setTemComputador(pdv.getCaracteristicas().isPossuiComputador());
+			caracteristicaDTO.setTextoLuminoso(pdv.getCaracteristicas().getTextoLuminoso());
+		}
+		
+		pdvDTO.setCaracteristicaDTO(caracteristicaDTO);
+	}
+	
+	private void atribuirValorEspecialidade(PDV pdv, PdvDTO pdvDTO){
+		
+		pdvDTO.setEspecialidades(new ArrayList<Long>());
+		
+		if(pdv.getEspecialidades()!= null && !pdv.getEspecialidades().isEmpty()){
+			
+			for(EspecialidadePDV esp: pdv.getEspecialidades()){
+				pdvDTO.getEspecialidades().add(esp.getCodigo());
+			}
+		}
+	}
+	
+	private void atribuirValorGeradorFluxo(PDV pdv, PdvDTO pdvDTO){
+		
+		pdvDTO.setGeradorFluxoSecundario(new ArrayList<Long>());
+		
+		if(pdv.getGeradorFluxoPDV()!= null){
+			
+			if(pdv.getGeradorFluxoPDV().getPrincipal()!= null){
+				pdvDTO.setGeradorFluxoPrincipal(pdv.getGeradorFluxoPDV().getPrincipal().getCodigo());
+			}
+			
+			if(pdv.getGeradorFluxoPDV().getSecundarios()!= null && !pdv.getGeradorFluxoPDV().getSecundarios().isEmpty() ){
+				
+				for(TipoGeradorFluxoPDV flx: pdv.getGeradorFluxoPDV().getSecundarios()){
+					pdvDTO.getGeradorFluxoSecundario().add(flx.getCodigo());
+				}
+			}
+		}
+	}
+	
+	private void atribuirValorMaterialPromocional(PDV pdv, PdvDTO pdvDTO){
+		
+		pdvDTO.setMaps(new ArrayList<Long>());
+		
+		if(pdv.getMateriais()!= null && !pdv.getMateriais().isEmpty() ){
+			
+			for(MaterialPromocional mat: pdv.getMateriais()){
+				pdvDTO.getMaps().add(mat.getCodigo());
+			}
+		}
+		
+		pdvDTO.setExpositor(pdv.isExpositor());
+		pdvDTO.setTipoExpositor(pdv.getTipoExpositor());
 	}
 	
 	/**

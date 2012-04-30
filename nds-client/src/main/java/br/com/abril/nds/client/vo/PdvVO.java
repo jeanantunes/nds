@@ -37,11 +37,10 @@ public class PdvVO implements Serializable{
 
 	public PdvVO() {}
 	
-	public PdvVO(int id,Long idPdv,Long idCota,String nomePdv,String tipoPonto,
-				 String contato,String telefone,String endereco,String bairro,
-				 String cidade,boolean isPrincipal, String status,String faturamento) {
+	public PdvVO(Long idPdv,Long idCota,String nomePdv,String tipoPonto,
+				 String contato,String telefone,String endereco,
+				 boolean isPrincipal, String status,String faturamento) {
 		
-		this.id = id;
 		this.idPdv = idPdv;
 		this.idCota = idCota;
 		this.nomePdv = nomePdv;
@@ -49,8 +48,6 @@ public class PdvVO implements Serializable{
 		this.contato = contato;
 		this.telefone = telefone;
 		this.endereco = endereco;
-		this.bairro = bairro;
-		this.cidade = cidade;
 		this.isPrincipal = isPrincipal;
 		this.status = status;
 		this.faturamento = faturamento;

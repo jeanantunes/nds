@@ -20,9 +20,11 @@ public class PdvDTO implements Serializable {
 
 	private Long id;
 	
-	private Integer numeroCota;
+	private Long idCota;
 	
 	private StatusPDV statusPDV;
+	
+	private String descricaoTipoPontoPDV;
 	
 	private Date dataInicio;
 	
@@ -58,8 +60,6 @@ public class PdvDTO implements Serializable {
 	
 	private String nomeLicenca;
 	
-	private boolean dentroDeOutroEstabelecimento;
-	
 	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
 	
 	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
@@ -80,6 +80,41 @@ public class PdvDTO implements Serializable {
     
     private TipoPontoPDV tipoPontoPDV;
     
+    private boolean expositor;
+    
+    private String tipoExpositor;
+    
+    
+	/**
+	 * @return the expositor
+	 */
+	public boolean isExpositor() {
+		return expositor;
+	}
+
+	/**
+	 * @param expositor the expositor to set
+	 */
+	public void setExpositor(boolean expositor) {
+		this.expositor = expositor;
+	}
+
+	
+
+	/**
+	 * @return the tipoExpositor
+	 */
+	public String getTipoExpositor() {
+		return tipoExpositor;
+	}
+
+	/**
+	 * @param tipoExpositor the tipoExpositor to set
+	 */
+	public void setTipoExpositor(String tipoExpositor) {
+		this.tipoExpositor = tipoExpositor;
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -476,33 +511,19 @@ public class PdvDTO implements Serializable {
 	public void setTipoPontoPDV(TipoPontoPDV tipoPontoPDV) {
 		this.tipoPontoPDV = tipoPontoPDV;
 	}
-
+	
 	/**
-	 * @return the dentroDeOutroEstabelecimento
+	 * @return the idCota
 	 */
-	public boolean isDentroDeOutroEstabelecimento() {
-		return dentroDeOutroEstabelecimento;
+	public Long getIdCota() {
+		return idCota;
 	}
 
 	/**
-	 * @param dentroDeOutroEstabelecimento the dentroDeOutroEstabelecimento to set
+	 * @param idCota the idCota to set
 	 */
-	public void setDentroDeOutroEstabelecimento(boolean dentroDeOutroEstabelecimento) {
-		this.dentroDeOutroEstabelecimento = dentroDeOutroEstabelecimento;
-	}
-
-	/**
-	 * @return the numeroCota
-	 */
-	public Integer getNumeroCota() {
-		return numeroCota;
-	}
-
-	/**
-	 * @param numeroCota the numeroCota to set
-	 */
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 
 	public List<PeriodoFuncionamentoDTO> getPeriodosFuncionamentoDTO() {
@@ -511,6 +532,20 @@ public class PdvDTO implements Serializable {
 
 	public void setPeriodosFuncionamentoDTO(List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO) {
 		this.periodosFuncionamentoDTO = periodosFuncionamentoDTO;
+	}
+
+	/**
+	 * @return the descricaoTipoPontoPDV
+	 */
+	public String getDescricaoTipoPontoPDV() {
+		return descricaoTipoPontoPDV;
+	}
+
+	/**
+	 * @param descricaoTipoPontoPDV the descricaoTipoPontoPDV to set
+	 */
+	public void setDescricaoTipoPontoPDV(String descricaoTipoPontoPDV) {
+		this.descricaoTipoPontoPDV = descricaoTipoPontoPDV;
 	}
 
 	
