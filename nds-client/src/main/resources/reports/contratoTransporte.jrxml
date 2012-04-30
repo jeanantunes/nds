@@ -2,159 +2,320 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratoTransporte" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="280"/>
+	<property name="ireport.y" value="14"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#000000">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="avisoPrevio" class="java.lang.String">
+		<fieldDescription><![CDATA[avisoPrevio]]></fieldDescription>
+	</field>
+	<field name="contratada" class="br.com.abril.nds.dto.PessoaContratoDTO">
+		<fieldDescription><![CDATA[contratada]]></fieldDescription>
+	</field>
+	<field name="contratante" class="br.com.abril.nds.dto.PessoaContratoDTO">
+		<fieldDescription><![CDATA[contratante]]></fieldDescription>
+	</field>
+	<field name="inicio" class="java.util.Date">
+		<fieldDescription><![CDATA[inicio]]></fieldDescription>
+	</field>
 	<field name="prazo" class="java.lang.String">
 		<fieldDescription><![CDATA[prazo]]></fieldDescription>
 	</field>
 	<field name="termino" class="java.util.Date">
 		<fieldDescription><![CDATA[termino]]></fieldDescription>
 	</field>
-	<field name="inicio" class="java.util.Date">
-		<fieldDescription><![CDATA[inicio]]></fieldDescription>
-	</field>
-	<field name="avisoPrevio" class="java.lang.String">
-		<fieldDescription><![CDATA[avisoPrevio]]></fieldDescription>
-	</field>
-	<field name="contratante" class="br.com.abril.nds.dto.PessoaContratoDTO">
-		<fieldDescription><![CDATA[contratante]]></fieldDescription>
-	</field>
-	<field name="contratada" class="br.com.abril.nds.dto.PessoaContratoDTO">
-		<fieldDescription><![CDATA[contratada]]></fieldDescription>
-	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="88" splitType="Stretch">
 			<staticText>
-				<reportElement x="33" y="19" width="496" height="34"/>
-				<textElement textAlignment="Center"/>
+				<reportElement x="0" y="56" width="555" height="32"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
 				<text><![CDATA[CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE TRANSPORTE DE REVISTAS
 QUADRO RESUMO
 ]]></text>
 			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="63" height="56"/>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch"/>
+		<band height="23" splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch"/>
-	</columnHeader>
-	<detail>
-		<band height="367" splitType="Stretch">
+		<band height="662" splitType="Stretch">
+			<rectangle>
+				<reportElement x="12" y="32" width="531" height="62"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="12" y="127" width="531" height="92"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="12" y="267" width="531" height="97"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="12" y="375" width="531" height="97"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="12" y="508" width="531" height="100"/>
+			</rectangle>
 			<textField>
-				<reportElement x="17" y="71" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getNome()]]></textFieldExpression>
+				<reportElement x="11" y="32" width="531" height="62"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contratante}.getNome()+", com sede na "+$F{contratante}.getEndereco()+", devidamente inscrita no CNPJ/MF sob n.º "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente (“Contratante”)."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="17" y="107" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getDocumento()]]></textFieldExpression>
+				<reportElement x="12" y="127" width="531" height="92"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getEndereco()+", devidamente inscrita no CNPJ/MF sob n.º "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente (“Contratada”)."]]></textFieldExpression>
 			</textField>
+			<rectangle>
+				<reportElement x="12" y="192" width="116" height="27"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="128" y="192" width="86" height="27"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="214" y="192" width="144" height="27"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="358" y="192" width="185" height="27"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="11" y="287" width="149" height="77"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="160" y="287" width="161" height="77"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="321" y="287" width="222" height="77"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="11" y="395" width="149" height="77"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="321" y="395" width="222" height="77"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="161" y="395" width="159" height="76"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="12" y="508" width="148" height="37"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="356" y="508" width="186" height="37"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="160" y="508" width="197" height="37"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="12" y="219" width="531" height="20"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="12" width="531" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[I-CONTRATANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="107" width="531" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[II-CONTRATADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="247" width="531" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[III-GESTORES DO CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="267" width="531" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="375" width="533" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="545" width="531" height="63"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[4- OBJETO
+Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos serviços de transportes de revistas, nos termos das disposições contidas neste instrumento e conforme descrito no Anexo I, que passa a fazer parte integrante do presente Contrato.
+]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="17" y="143" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getTipoPessoa()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="17" y="178" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getEndereco()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="17" y="212" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getNomeGestor()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="17" y="247" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getTelefones()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="17" y="283" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getEmailGestor()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="17" y="319" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getEnderecoGestor()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="71" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getNome()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="283" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getEmailGestor()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="178" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getEndereco()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="247" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getTelefones()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="107" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getDocumento()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="143" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getTipoPessoa()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="297" y="212" width="100" height="20"/>
+				<reportElement x="50" y="287" width="110" height="77"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{contratante}.getNomeGestor()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="297" y="319" width="100" height="20"/>
+				<reportElement x="160" y="307" width="161" height="21"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{contratante}.getTelefones()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="321" y="307" width="222" height="57"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{contratante}.getEnderecoGestor()]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="397" y="25" width="100" height="20"/>
+			<staticText>
+				<reportElement x="12" y="287" width="38" height="20"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{avisoPrevio}]]></textFieldExpression>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="161" y="328" width="160" height="36"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{contratante}.getEmailGestor()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="160" y="287" width="161" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Tel./e-mail:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="287" width="222" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Endereço]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="161" y="415" width="160" height="21"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{contratada}.getTelefones()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="17" y="25" width="100" height="20"/>
+				<reportElement x="51" y="395" width="110" height="77"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getNomeGestor()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="321" y="395" width="222" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Endereço]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="320" y="415" width="223" height="56"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{contratada}.getEnderecoGestor()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="161" y="395" width="160" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Tel./e-mail:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="162" y="436" width="159" height="36"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{contratada}.getEmailGestor()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="13" y="395" width="38" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="13" y="525" width="148" height="20"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{prazo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="143" y="25" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{termino}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="275" y="25" width="100" height="20"/>
+				<reportElement x="231" y="508" width="126" height="17"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{inicio}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="231" y="525" width="126" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{termino}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="161" y="508" width="70" height="17"/>
+				<textElement/>
+				<text><![CDATA[2-INICIO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="525" width="71" height="20"/>
+				<textElement/>
+				<text><![CDATA[TÉRMINO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="508" width="147" height="17"/>
+				<textElement/>
+				<text><![CDATA[1-PRAZO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="358" y="508" width="184" height="17"/>
+				<textElement/>
+				<text><![CDATA[3-AVISO PRÉVIO PARA RESCISÃO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="358" y="525" width="185" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{avisoPrevio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="488" width="531" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IV-CONDIÇÕES DA CONTRATAÇÃO]]></text>
+			</staticText>
 		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch"/>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch"/>
+		<band height="14" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="15" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch"/>
+		<band height="13" splitType="Stretch"/>
 	</summary>
 </jasperReport>

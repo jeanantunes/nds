@@ -1,4 +1,7 @@
+
+
 <script>
+
 $(function() {
 	
 	$('#inicioHorario').mask('99:99'); 
@@ -7,9 +10,88 @@ $(function() {
 	$("#qntFuncionarios").numeric();
 	$("#numerolicenca").numeric();
 	
+	
+	var options = {
+			success: tratarRetornoUploadImagem,
+		};
+		
+		$('#formBaixaAutomatica').ajaxForm(options);
 
+		function tratarRetornoUploadImagem(data) {
+						
+			data = replaceAll(data, "<pre>", "");
+			data = replaceAll(data, "</pre>", "");
+			
+			data = replaceAll(data, "<PRE>", "");
+			data = replaceAll(data, "</PRE>", "");
+			
+			var responseJson = jQuery.parseJSON(data);
+			
+			var mensagens = responseJson.result[0];
+			var status = responseJson.result[1];
+			var nomeArquivo = responseJson.result[2];
+			
+			if(isThere("${pageContext.request.contextPath}/images/pdv/" + nomeArquivo)) {
+			
+				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
+			}
+			
+			if(mensagens!=null && mensagens.length!=0) {
+				exibirMensagem(status,mensagens);
+			}
+		}
+		
 });
+
+function isThere(url) {
+	var req= new AJ(); // XMLHttpRequest object
+	try {
+		req.open("HEAD", url, false);
+		req.send(null);		
+		return req.status== 200 ? true : false;
+	}
+	catch (er) {
+		return false;
+	}
+}
+
+function AJ() {
+	var obj;
+	if (window.XMLHttpRequest) obj= new XMLHttpRequest(); 
+	else if (window.ActiveXObject){
+		try{
+			obj= new ActiveXObject('MSXML2.XMLHTTP.3.0');
+		}
+		catch(er){
+			try{
+				obj= new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			catch(er){
+				obj= false;
+			}
+		}
+	}
+	return obj;
+}
+
+
 </script>
+
+
+<div id="dialog-img" title="Incluir Foto do PDV">
+<br />
+
+	<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formBaixaAutomatica"
+		  method="post" enctype="multipart/form-data" >
+	
+		<input type="hidden" name="formUploadAjax" value="true" />
+	
+	<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
+									
+	</form>
+
+
+</div>
 
 <fieldset>
 <legend>Dados Básicos</legend>
@@ -95,8 +177,11 @@ $(function() {
 
     </td>
     <td width="191" align="center" valign="top">
-    	<img src="${pageContext.request.contextPath}/images/no_image.jpeg" width="191" height="136" alt="Banca" /><br />
-    	<a href="javascript:" onclick="popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
+    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca" 
+    	  onerror="${pageContext.request.contextPath}/images/pdv/no_image.jpeg"/>
+    	    	
+    	<br />
+    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
     </td>
   </tr>
 </table>

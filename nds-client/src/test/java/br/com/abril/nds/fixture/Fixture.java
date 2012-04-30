@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
+
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
@@ -56,6 +58,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -776,6 +779,52 @@ public class Fixture {
 		return itemNotaFiscal;
 	}
 
+	public static ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE(
+			ProdutoEdicao produtoEdicao,
+			Usuario usuario, 
+			NotaFiscalEntrada notaFiscal, 
+			Date dataLancamento, 
+			Date dataRecolhimento, 
+			TipoLancamento tipoLancamento, 
+			BigDecimal qtde,
+			String 		NCMProduto,
+			String 		CFOPProduto,
+			Long 		unidadeProduto,
+			String 		CSTProduto,
+			String 		CSOSNProduto,
+			BigDecimal 	baseCalculoProduto,
+			BigDecimal 	aliquotaICMSProduto,
+			BigDecimal 	valorICMSProduto,
+			BigDecimal 	aliquotaIPIProduto,
+			BigDecimal 	valorIPIProduto) {
+		
+		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
+		itemNotaFiscal.setOrigem(Origem.MANUAL);
+		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
+		itemNotaFiscal.setQtde(qtde);
+		itemNotaFiscal.setUsuario(usuario);
+		itemNotaFiscal.setNotaFiscal(notaFiscal);
+		itemNotaFiscal.setDataLancamento(dataLancamento);
+		itemNotaFiscal.setDataRecolhimento(dataRecolhimento);
+		itemNotaFiscal.setTipoLancamento(tipoLancamento);
+		
+		itemNotaFiscal.setNCMProduto(NCMProduto);
+		itemNotaFiscal.setCFOPProduto(CFOPProduto);
+		itemNotaFiscal.setUnidadeProduto(unidadeProduto);
+		itemNotaFiscal.setCSTProduto(CSTProduto);
+		itemNotaFiscal.setCSOSNProduto(CSOSNProduto);
+		itemNotaFiscal.setBaseCalculoProduto(baseCalculoProduto);
+		itemNotaFiscal.setAliquotaICMSProduto(aliquotaICMSProduto);
+		itemNotaFiscal.setValorICMSProduto(valorICMSProduto);
+		itemNotaFiscal.setAliquotaIPIProduto(aliquotaIPIProduto);
+		itemNotaFiscal.setValorIPIProduto(valorIPIProduto);
+		
+		return itemNotaFiscal;
+	}
+
+	
+
+	
 	public static ItemNotaFiscalSaida itemNotaFiscalSaida(
 			ProdutoEdicao produtoEdicao,
 			NotaFiscalSaida notaFiscal, 
@@ -790,6 +839,43 @@ public class Fixture {
 		return itemNotaFiscal;
 		
 	}
+
+	public static ItemNotaFiscalSaida itemNotaFiscalSaidaNFE(
+			ProdutoEdicao produtoEdicao,
+			NotaFiscalSaida notaFiscal, 
+			BigDecimal qtde,
+			String		NCMProduto,
+			String 		CFOPProduto,
+			Long 		unidadeProduto,
+			String 		CSTProduto,
+			String 		CSOSNProduto,
+			BigDecimal 	baseCalculoProduto,
+			BigDecimal 	aliquotaICMSProduto,
+			BigDecimal 	valorICMSProduto,
+			BigDecimal 	aliquotaIPIProduto,
+			BigDecimal 	valorIPIProduto) {
+		
+		ItemNotaFiscalSaida itemNotaFiscal = new ItemNotaFiscalSaida();
+		
+		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
+		itemNotaFiscal.setQtde(qtde);
+		itemNotaFiscal.setNotaFiscal(notaFiscal);
+		itemNotaFiscal.setNCMProduto(NCMProduto);
+		itemNotaFiscal.setCFOPProduto(CFOPProduto);
+		itemNotaFiscal.setUnidadeProduto(unidadeProduto);
+		itemNotaFiscal.setCSTProduto(CSTProduto);
+		itemNotaFiscal.setCSOSNProduto(CSOSNProduto);
+		itemNotaFiscal.setBaseCalculoProduto(baseCalculoProduto);
+		itemNotaFiscal.setAliquotaICMSProduto(aliquotaICMSProduto);
+		itemNotaFiscal.setValorICMSProduto(valorICMSProduto);
+		itemNotaFiscal.setAliquotaIPIProduto(aliquotaIPIProduto);
+		itemNotaFiscal.setValorIPIProduto(valorIPIProduto);
+
+		
+		return itemNotaFiscal;
+		
+	}
+
 	
 	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
@@ -872,7 +958,47 @@ public class Fixture {
 			BigDecimal valorBruto, 
 			BigDecimal valorDesconto, 
 			BigDecimal valorLiquido,
-			boolean indEmitida) {
+			boolean indEmitida,
+			String naturezaOperacao,
+			String formaPagamento,
+			String horaSaida,
+			String ambiente,
+			String protocolo,
+			String versao,
+			String emissorInscricaoEstadualSubstituto,
+			String emissorInscricaoMunicipal,
+			BigDecimal valorBaseICMS,
+			BigDecimal valorICMS,
+			BigDecimal valorBaseICMSSubstituto,
+			BigDecimal valorICMSSubstituto,
+			BigDecimal valorProdutos,
+			BigDecimal valorFrete,
+			BigDecimal valorSeguro,
+			BigDecimal valorOutro,
+			BigDecimal valorIPI,
+			BigDecimal valorNF,
+			Integer frete,
+			String transportadoraCNPJ,
+			String transportadoraNome,
+			String transportadoraInscricaoEstadual,
+			String transportadoraEndereco,
+			String transportadoraMunicipio,
+			String transportadoraUF,
+			String transportadoraQuantidade,
+			String transportadoraEspecie,
+			String transportadoraMarca,
+			String transportadoraNumeracao,
+			BigDecimal transportadoraPesoBruto,
+			BigDecimal transportadoraPesoLiquido,
+			String transportadoraANTT,
+			String transportadoraPlacaVeiculo,
+			String transportadoraPlacaVeiculoUF,
+			BigDecimal ISSQNTotal,
+			BigDecimal ISSQNBase,
+			BigDecimal ISSQNValor,
+			String informacoesComplementares,
+			String numeroFatura,
+			BigDecimal valorFatura ) {
 		
 		NotaFiscalEntradaCota notaFiscalEntradaCota = new NotaFiscalEntradaCota();
 		
@@ -895,6 +1021,48 @@ public class Fixture {
 		notaFiscalEntradaCota.setTipoEmissaoNfe(tipoEmissaoNfe);
 		notaFiscalEntradaCota.setEmitida(indEmitida);
 		
+		notaFiscalEntradaCota.setNaturezaOperacao(naturezaOperacao);
+		notaFiscalEntradaCota.setFormaPagamento(formaPagamento);
+		notaFiscalEntradaCota.setHoraSaida(horaSaida);
+		notaFiscalEntradaCota.setAmbiente(ambiente);
+		notaFiscalEntradaCota.setProtocolo(protocolo);
+		notaFiscalEntradaCota.setVersao(versao);
+		notaFiscalEntradaCota.setEmissorInscricaoEstadualSubstituto(emissorInscricaoEstadualSubstituto);
+		notaFiscalEntradaCota.setEmissorInscricaoMunicipal(emissorInscricaoMunicipal);
+		notaFiscalEntradaCota.setValorBaseICMS(valorBaseICMS);
+		notaFiscalEntradaCota.setValorICMS(valorICMS);
+		notaFiscalEntradaCota.setValorBaseICMSSubstituto(valorBaseICMSSubstituto);
+		notaFiscalEntradaCota.setValorICMSSubstituto(valorICMSSubstituto);
+		notaFiscalEntradaCota.setValorProdutos(valorProdutos);
+		notaFiscalEntradaCota.setValorFrete(valorFrete);
+		notaFiscalEntradaCota.setValorSeguro(valorSeguro);
+		notaFiscalEntradaCota.setValorOutro(valorOutro);
+		notaFiscalEntradaCota.setValorIPI(valorIPI);
+		notaFiscalEntradaCota.setValorNF(valorNF);
+		notaFiscalEntradaCota.setFrete(frete);
+		notaFiscalEntradaCota.setTransportadoraCNPJ(transportadoraCNPJ);
+		notaFiscalEntradaCota.setTransportadoraNome(transportadoraNome);
+		notaFiscalEntradaCota.setTransportadoraInscricaoEstadual(transportadoraInscricaoEstadual);
+		notaFiscalEntradaCota.setTransportadoraEndereco(transportadoraEndereco);
+		notaFiscalEntradaCota.setTransportadoraMunicipio(transportadoraMunicipio);
+		notaFiscalEntradaCota.setTransportadoraUF(transportadoraUF);
+		notaFiscalEntradaCota.setTransportadoraQuantidade(transportadoraQuantidade);
+		notaFiscalEntradaCota.setTransportadoraEspecie(transportadoraEspecie);
+		notaFiscalEntradaCota.setTransportadoraMarca(transportadoraMarca);
+		notaFiscalEntradaCota.setTransportadoraNumeracao(transportadoraNumeracao);
+		notaFiscalEntradaCota.setTransportadoraPesoBruto(transportadoraPesoBruto);
+		notaFiscalEntradaCota.setTransportadoraPesoLiquido(transportadoraPesoLiquido);
+		notaFiscalEntradaCota.setTransportadoraANTT(transportadoraANTT);
+		notaFiscalEntradaCota.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
+		notaFiscalEntradaCota.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
+		notaFiscalEntradaCota.setISSQNTotal(ISSQNTotal);
+		notaFiscalEntradaCota.setISSQNBase(ISSQNBase);
+		notaFiscalEntradaCota.setISSQNValor(ISSQNValor);
+		notaFiscalEntradaCota.setInformacoesComplementares(informacoesComplementares);
+		notaFiscalEntradaCota.setNumeroFatura(numeroFatura);
+		notaFiscalEntradaCota.setValorFatura(valorFatura);		
+
+		
 		return notaFiscalEntradaCota;
 		
 	}
@@ -914,7 +1082,47 @@ public class Fixture {
 			BigDecimal valorBruto, 
 			BigDecimal valorDesconto, 
 			BigDecimal valorLiquido,
-			boolean indEmitida) {
+			boolean indEmitida,
+			String naturezaOperacao,
+			String formaPagamento,
+			String horaSaida,
+			String ambiente,
+			String protocolo,
+			String versao,
+			String emissorInscricaoEstadualSubstituto,
+			String emissorInscricaoMunicipal,
+			BigDecimal valorBaseICMS,
+			BigDecimal valorICMS,
+			BigDecimal valorBaseICMSSubstituto,
+			BigDecimal valorICMSSubstituto,
+			BigDecimal valorProdutos,
+			BigDecimal valorFrete,
+			BigDecimal valorSeguro,
+			BigDecimal valorOutro,
+			BigDecimal valorIPI,
+			BigDecimal valorNF,
+			Integer frete,
+			String transportadoraCNPJ,
+			String transportadoraNome,
+			String transportadoraInscricaoEstadual,
+			String transportadoraEndereco,
+			String transportadoraMunicipio,
+			String transportadoraUF,
+			String transportadoraQuantidade,
+			String transportadoraEspecie,
+			String transportadoraMarca,
+			String transportadoraNumeracao,
+			BigDecimal transportadoraPesoBruto,
+			BigDecimal transportadoraPesoLiquido,
+			String transportadoraANTT,
+			String transportadoraPlacaVeiculo,
+			String transportadoraPlacaVeiculoUF,
+			BigDecimal ISSQNTotal,
+			BigDecimal ISSQNBase,
+			BigDecimal ISSQNValor,
+			String informacoesComplementares,
+			String numeroFatura,
+			BigDecimal valorFatura ) {
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
@@ -937,6 +1145,47 @@ public class Fixture {
 		notaFiscalEntradaFornecedor.setTipoEmissaoNfe(tipoEmissaoNfe);
 		notaFiscalEntradaFornecedor.setEmitida(indEmitida);
 		
+		notaFiscalEntradaFornecedor.setNaturezaOperacao(naturezaOperacao);
+		notaFiscalEntradaFornecedor.setFormaPagamento(formaPagamento);
+		notaFiscalEntradaFornecedor.setHoraSaida(horaSaida);
+		notaFiscalEntradaFornecedor.setAmbiente(ambiente);
+		notaFiscalEntradaFornecedor.setProtocolo(protocolo);
+		notaFiscalEntradaFornecedor.setVersao(versao);
+		notaFiscalEntradaFornecedor.setEmissorInscricaoEstadualSubstituto(emissorInscricaoEstadualSubstituto);
+		notaFiscalEntradaFornecedor.setEmissorInscricaoMunicipal(emissorInscricaoMunicipal);
+		notaFiscalEntradaFornecedor.setValorBaseICMS(valorBaseICMS);
+		notaFiscalEntradaFornecedor.setValorICMS(valorICMS);
+		notaFiscalEntradaFornecedor.setValorBaseICMSSubstituto(valorBaseICMSSubstituto);
+		notaFiscalEntradaFornecedor.setValorICMSSubstituto(valorICMSSubstituto);
+		notaFiscalEntradaFornecedor.setValorProdutos(valorProdutos);
+		notaFiscalEntradaFornecedor.setValorFrete(valorFrete);
+		notaFiscalEntradaFornecedor.setValorSeguro(valorSeguro);
+		notaFiscalEntradaFornecedor.setValorOutro(valorOutro);
+		notaFiscalEntradaFornecedor.setValorIPI(valorIPI);
+		notaFiscalEntradaFornecedor.setValorNF(valorNF);
+		notaFiscalEntradaFornecedor.setFrete(frete);
+		notaFiscalEntradaFornecedor.setTransportadoraCNPJ(transportadoraCNPJ);
+		notaFiscalEntradaFornecedor.setTransportadoraNome(transportadoraNome);
+		notaFiscalEntradaFornecedor.setTransportadoraInscricaoEstadual(transportadoraInscricaoEstadual);
+		notaFiscalEntradaFornecedor.setTransportadoraEndereco(transportadoraEndereco);
+		notaFiscalEntradaFornecedor.setTransportadoraMunicipio(transportadoraMunicipio);
+		notaFiscalEntradaFornecedor.setTransportadoraUF(transportadoraUF);
+		notaFiscalEntradaFornecedor.setTransportadoraQuantidade(transportadoraQuantidade);
+		notaFiscalEntradaFornecedor.setTransportadoraEspecie(transportadoraEspecie);
+		notaFiscalEntradaFornecedor.setTransportadoraMarca(transportadoraMarca);
+		notaFiscalEntradaFornecedor.setTransportadoraNumeracao(transportadoraNumeracao);
+		notaFiscalEntradaFornecedor.setTransportadoraPesoBruto(transportadoraPesoBruto);
+		notaFiscalEntradaFornecedor.setTransportadoraPesoLiquido(transportadoraPesoLiquido);
+		notaFiscalEntradaFornecedor.setTransportadoraANTT(transportadoraANTT);
+		notaFiscalEntradaFornecedor.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
+		notaFiscalEntradaFornecedor.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
+		notaFiscalEntradaFornecedor.setISSQNTotal(ISSQNTotal);
+		notaFiscalEntradaFornecedor.setISSQNBase(ISSQNBase);
+		notaFiscalEntradaFornecedor.setISSQNValor(ISSQNValor);
+		notaFiscalEntradaFornecedor.setInformacoesComplementares(informacoesComplementares);
+		notaFiscalEntradaFornecedor.setNumeroFatura(numeroFatura);
+		notaFiscalEntradaFornecedor.setValorFatura(valorFatura);		
+		
 		return notaFiscalEntradaFornecedor;
 		
 	}
@@ -956,7 +1205,47 @@ public class Fixture {
 			BigDecimal valorBruto, 
 			BigDecimal valorDesconto, 
 			BigDecimal valorLiquido,
-			boolean indEmitida) {
+			boolean indEmitida,
+			String naturezaOperacao,
+			String formaPagamento,
+			String horaSaida,
+			String ambiente,
+			String protocolo,
+			String versao,
+			String emissorInscricaoEstadualSubstituto,
+			String emissorInscricaoMunicipal,
+			BigDecimal valorBaseICMS,
+			BigDecimal valorICMS,
+			BigDecimal valorBaseICMSSubstituto,
+			BigDecimal valorICMSSubstituto,
+			BigDecimal valorProdutos,
+			BigDecimal valorFrete,
+			BigDecimal valorSeguro,
+			BigDecimal valorOutro,
+			BigDecimal valorIPI,
+			BigDecimal valorNF,
+			Integer frete,
+			String transportadoraCNPJ,
+			String transportadoraNome,
+			String transportadoraInscricaoEstadual,
+			String transportadoraEndereco,
+			String transportadoraMunicipio,
+			String transportadoraUF,
+			String transportadoraQuantidade,
+			String transportadoraEspecie,
+			String transportadoraMarca,
+			String transportadoraNumeracao,
+			BigDecimal transportadoraPesoBruto,
+			BigDecimal transportadoraPesoLiquido,
+			String transportadoraANTT,
+			String transportadoraPlacaVeiculo,
+			String transportadoraPlacaVeiculoUF,
+			BigDecimal ISSQNTotal,
+			BigDecimal ISSQNBase,
+			BigDecimal ISSQNValor,
+			String informacoesComplementares,
+			String numeroFatura,
+			BigDecimal valorFatura ) {
 		
 		NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedor = new NotaFiscalSaidaFornecedor();
 		
@@ -983,6 +1272,49 @@ public class Fixture {
 		notaFiscalSaidaFornecedor.setStatusEmissaoNfe(statusEmissaoNfe);
 		notaFiscalSaidaFornecedor.setTipoEmissaoNfe(tipoEmissaoNfe);
 		notaFiscalSaidaFornecedor.setEmitida(indEmitida);
+		
+
+		notaFiscalSaidaFornecedor.setNaturezaOperacao(naturezaOperacao);
+		notaFiscalSaidaFornecedor.setFormaPagamento(formaPagamento);
+		notaFiscalSaidaFornecedor.setHoraSaida(horaSaida);
+		notaFiscalSaidaFornecedor.setAmbiente(ambiente);
+		notaFiscalSaidaFornecedor.setProtocolo(protocolo);
+		notaFiscalSaidaFornecedor.setVersao(versao);
+		notaFiscalSaidaFornecedor.setEmissorInscricaoEstadualSubstituto(emissorInscricaoEstadualSubstituto);
+		notaFiscalSaidaFornecedor.setEmissorInscricaoMunicipal(emissorInscricaoMunicipal);
+		notaFiscalSaidaFornecedor.setValorBaseICMS(valorBaseICMS);
+		notaFiscalSaidaFornecedor.setValorICMS(valorICMS);
+		notaFiscalSaidaFornecedor.setValorBaseICMSSubstituto(valorBaseICMSSubstituto);
+		notaFiscalSaidaFornecedor.setValorICMSSubstituto(valorICMSSubstituto);
+		notaFiscalSaidaFornecedor.setValorProdutos(valorProdutos);
+		notaFiscalSaidaFornecedor.setValorFrete(valorFrete);
+		notaFiscalSaidaFornecedor.setValorSeguro(valorSeguro);
+		notaFiscalSaidaFornecedor.setValorOutro(valorOutro);
+		notaFiscalSaidaFornecedor.setValorIPI(valorIPI);
+		notaFiscalSaidaFornecedor.setValorNF(valorNF);
+		notaFiscalSaidaFornecedor.setFrete(frete);
+		notaFiscalSaidaFornecedor.setTransportadoraCNPJ(transportadoraCNPJ);
+		notaFiscalSaidaFornecedor.setTransportadoraNome(transportadoraNome);
+		notaFiscalSaidaFornecedor.setTransportadoraInscricaoEstadual(transportadoraInscricaoEstadual);
+		notaFiscalSaidaFornecedor.setTransportadoraEndereco(transportadoraEndereco);
+		notaFiscalSaidaFornecedor.setTransportadoraMunicipio(transportadoraMunicipio);
+		notaFiscalSaidaFornecedor.setTransportadoraUF(transportadoraUF);
+		notaFiscalSaidaFornecedor.setTransportadoraQuantidade(transportadoraQuantidade);
+		notaFiscalSaidaFornecedor.setTransportadoraEspecie(transportadoraEspecie);
+		notaFiscalSaidaFornecedor.setTransportadoraMarca(transportadoraMarca);
+		notaFiscalSaidaFornecedor.setTransportadoraNumeracao(transportadoraNumeracao);
+		notaFiscalSaidaFornecedor.setTransportadoraPesoBruto(transportadoraPesoBruto);
+		notaFiscalSaidaFornecedor.setTransportadoraPesoLiquido(transportadoraPesoLiquido);
+		notaFiscalSaidaFornecedor.setTransportadoraANTT(transportadoraANTT);
+		notaFiscalSaidaFornecedor.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
+		notaFiscalSaidaFornecedor.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
+		notaFiscalSaidaFornecedor.setISSQNTotal(ISSQNTotal);
+		notaFiscalSaidaFornecedor.setISSQNBase(ISSQNBase);
+		notaFiscalSaidaFornecedor.setISSQNValor(ISSQNValor);
+		notaFiscalSaidaFornecedor.setInformacoesComplementares(informacoesComplementares);
+		notaFiscalSaidaFornecedor.setNumeroFatura(numeroFatura);
+		notaFiscalSaidaFornecedor.setValorFatura(valorFatura);		
+		
 		
 		return notaFiscalSaidaFornecedor;
 		
@@ -1414,6 +1746,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.BOLETO);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1434,6 +1767,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.DINHEIRO);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1453,6 +1787,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.CHEQUE);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1472,6 +1807,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.DEPOSITO);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);
@@ -1491,6 +1827,7 @@ public class Fixture {
 		formaBoleto.setAtiva(true);
 		formaBoleto.setPrincipal(true);
 		formaBoleto.setTipoCobranca(TipoCobranca.TRANSFERENCIA_BANCARIA);
+		formaBoleto.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
 		formaBoleto.setValorMinimoEmissao(valorMinimo);
 		formaBoleto.setVencimentoDiaUtil(vctoDiaUtil);
 		formaBoleto.setBanco(banco);

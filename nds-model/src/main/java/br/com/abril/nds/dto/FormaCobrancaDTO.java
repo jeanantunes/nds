@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class FormaCobrancaDTO {
 	
@@ -16,6 +17,7 @@ public class FormaCobrancaDTO {
 	
 	//DADOS DO FORMULARIO
 	TipoCobranca tipoCobranca;
+	TipoFormaCobranca tipoFormaCobranca;
 	long idBanco;
 	boolean recebeEmail;
 	
@@ -52,7 +54,8 @@ public class FormaCobrancaDTO {
 	}
 	
 	//CONTRUTOR PARA O FORMULARIO
-	public FormaCobrancaDTO(long idCota, long idParametroCobranca, TipoCobranca tipoCobranca, long idBanco,
+	public FormaCobrancaDTO(long idCota, long idParametroCobranca, TipoCobranca tipoCobranca, 
+			TipoFormaCobranca tipoFormaCobranca, long idBanco,
 			boolean recebeEmail, String numBanco, String nomeBanco,
 			String agencia, String agenciaDigito, String conta,
 			String contaDigito, Integer diaDoMes, boolean domingo, boolean segunda,
@@ -62,6 +65,7 @@ public class FormaCobrancaDTO {
 		this.idCota = idCota;
 		this.idParametroCobranca = idParametroCobranca;
 		this.tipoCobranca = tipoCobranca;
+		this.tipoFormaCobranca = tipoFormaCobranca;
 		this.idBanco = idBanco;
 		this.recebeEmail = recebeEmail;
 		this.numBanco = numBanco;
@@ -142,6 +146,14 @@ public class FormaCobrancaDTO {
 
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
+	}
+
+	public TipoFormaCobranca getTipoFormaCobranca() {
+		return tipoFormaCobranca;
+	}
+
+	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
+		this.tipoFormaCobranca = tipoFormaCobranca;
 	}
 
 	public long getIdBanco() {

@@ -3463,12 +3463,64 @@ public class DataLoader {
 
 		save(session, produtoEdicao91, produtoEdicao92, produtoEdicao93);
 
+		String 		NCMProduto               = "3424";
+		String 		CFOPProduto              = "24234";
+		Long 		unidadeProduto           = 0L; 
+		String 		CSTProduto               = "2344";
+		String 		CSOSNProduto             = "1233";
+		BigDecimal 	baseCalculoProduto       = BigDecimal.ZERO; 
+		BigDecimal 	aliquotaICMSProduto      = BigDecimal.ZERO; 
+		BigDecimal 	valorICMSProduto         = BigDecimal.ZERO; 
+		BigDecimal 	aliquotaIPIProduto       = BigDecimal.ZERO; 
+		BigDecimal 	valorIPIProduto          = BigDecimal.ZERO; 
+
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE = null;
 
 		int contador = 0;
 
 		contador = 0;
-
+		
+		String naturezaOperacao = "00001";
+		String formaPagamento = "00002";
+		String horaSaida = "12:00";
+		String ambiente = "000005";
+		String protocolo = "321321";
+		String versao = "0000000885";
+		String emissorInscricaoEstadualSubstituto = "111.565.365.25";
+		String emissorInscricaoMunicipal = "854.632.002.54";
+		BigDecimal valorBaseICMS = BigDecimal.TEN;
+		BigDecimal valorICMS = BigDecimal.TEN;
+		BigDecimal valorBaseICMSSubstituto = BigDecimal.TEN;
+		BigDecimal valorICMSSubstituto = BigDecimal.TEN;
+		BigDecimal valorProdutos = BigDecimal.TEN;
+		BigDecimal valorFrete = BigDecimal.TEN;
+		BigDecimal valorSeguro = BigDecimal.TEN;
+		BigDecimal valorOutro = BigDecimal.TEN;
+		BigDecimal valorIPI = BigDecimal.TEN;
+		BigDecimal valorNF = BigDecimal.TEN;
+		Integer frete = 0;
+		String transportadoraCNPJ = "123.235.284.663-52";
+		String transportadoraNome = "TRANS. ABRIL LTDA";
+		String transportadoraInscricaoEstadual = "465.456.878.34-785";
+		String transportadoraEndereco = "Rua Laranjeiras";
+		String transportadoraMunicipio = "Cachoeira do Itapemirim";
+		String transportadoraUF = "SP";
+		String transportadoraQuantidade = "100";
+		String transportadoraEspecie = "0544400";
+		String transportadoraMarca = "NOVA TRANSP.";
+		String transportadoraNumeracao = "1111111111222";
+		BigDecimal transportadoraPesoBruto = BigDecimal.TEN;
+		BigDecimal transportadoraPesoLiquido = BigDecimal.TEN;
+		String transportadoraANTT = "3454-4454545-345345-54";
+		String transportadoraPlacaVeiculo = "BYS9012";
+		String transportadoraPlacaVeiculoUF = "SP";
+		BigDecimal ISSQNTotal = BigDecimal.TEN;
+		BigDecimal ISSQNBase = BigDecimal.TEN;
+		BigDecimal ISSQNValor = BigDecimal.TEN;
+		String informacoesComplementares = "NENHUMA INFO A COMPLEMENTAR";
+		String numeroFatura = "222222233354";
+		BigDecimal valorFatura = BigDecimal.TEN;
+		
 		while(contador++<10) {
 
 			notaFiscalEntradaFornecedorNFE = Fixture.notaFiscalEntradaFornecedorNFE(
@@ -3480,29 +3532,78 @@ public class DataLoader {
 					fornecedorDinap,
 					StatusEmissaoNfe.NFE_AUTORIZADA,
 					TipoEmissaoNfe.CONTINGENCIA_DPEC,
-
 					tipoNotaFiscalRecebimento,
-
 					usuarioJoao, 
 					BigDecimal.TEN, 
 					BigDecimal.ZERO, 
 					BigDecimal.TEN,
-					true);
-
+					true,
+					naturezaOperacao,                    
+					formaPagamento,                      
+					horaSaida,                           
+					ambiente,                            
+					protocolo,                           
+					versao,                              
+					emissorInscricaoEstadualSubstituto,  
+					emissorInscricaoMunicipal,           
+					valorBaseICMS,                       
+					valorICMS,                           
+					valorBaseICMSSubstituto,            
+					valorICMSSubstituto,                 
+					valorProdutos,                       
+					valorFrete,                          
+					valorSeguro,                         
+					valorOutro,                          
+					valorIPI,                            
+					valorNF,                             
+					frete,                               
+					transportadoraCNPJ,                  
+					transportadoraNome,                  
+					transportadoraInscricaoEstadual,     
+					transportadoraEndereco,              
+					transportadoraMunicipio,             
+					transportadoraUF,                    
+					transportadoraQuantidade,           
+					transportadoraEspecie,               
+					transportadoraMarca,                 
+					transportadoraNumeracao,             
+					transportadoraPesoBruto,             
+					transportadoraPesoLiquido,           
+					transportadoraANTT,                  
+					transportadoraPlacaVeiculo,         
+					transportadoraPlacaVeiculoUF,        
+					ISSQNTotal,                          
+					ISSQNBase,                           
+					ISSQNValor,                          
+					informacoesComplementares,           
+					numeroFatura,                        
+					valorFatura);
+	
 			save(session, notaFiscalEntradaFornecedorNFE);
-
+		
+			
 			ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE = 
-					Fixture.itemNotaFiscal(
+			
+					Fixture.itemNotaFiscalEntradaNFE(
 							produtoEdicao91, 
-							usuarioJoao,
+							usuarioJoao, 
 							notaFiscalEntradaFornecedorNFE, 
-							Fixture.criarData(22, Calendar.FEBRUARY,2012),
-							Fixture.criarData(22, Calendar.FEBRUARY,2012),
-							TipoLancamento.LANCAMENTO,
-							new BigDecimal(50));
+							Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+							Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+							TipoLancamento.LANCAMENTO,                         
+							new BigDecimal(50), 
+							NCMProduto, 
+							CFOPProduto, 
+							unidadeProduto, 
+							CSTProduto, 
+							CSOSNProduto, 
+							baseCalculoProduto,
+							aliquotaICMSProduto, 
+							valorICMSProduto, 
+							aliquotaIPIProduto, 
+							valorIPIProduto);
 
 			save(session, itemNotaFiscalEntradaNFE);
-
 
 		}
 
@@ -3530,26 +3631,72 @@ public class DataLoader {
 							BigDecimal.TEN, 
 							BigDecimal.ZERO, 
 							BigDecimal.TEN,
-							true);
-
-
+							true,
+							naturezaOperacao,                    
+							formaPagamento,                      
+							horaSaida,                           
+							ambiente,                            
+							protocolo,                           
+							versao,                              
+							emissorInscricaoEstadualSubstituto,  
+							emissorInscricaoMunicipal,           
+							valorBaseICMS,                       
+							valorICMS,                           
+							valorBaseICMSSubstituto,            
+							valorICMSSubstituto,                 
+							valorProdutos,                       
+							valorFrete,                          
+							valorSeguro,                         
+							valorOutro,                          
+							valorIPI,                            
+							valorNF,                             
+							frete,                               
+							transportadoraCNPJ,                  
+							transportadoraNome,                  
+							transportadoraInscricaoEstadual,     
+							transportadoraEndereco,              
+							transportadoraMunicipio,             
+							transportadoraUF,                    
+							transportadoraQuantidade,           
+							transportadoraEspecie,               
+							transportadoraMarca,                 
+							transportadoraNumeracao,             
+							transportadoraPesoBruto,             
+							transportadoraPesoLiquido,           
+							transportadoraANTT,                  
+							transportadoraPlacaVeiculo,         
+							transportadoraPlacaVeiculoUF,        
+							ISSQNTotal,                          
+							ISSQNBase,                           
+							ISSQNValor,                          
+							informacoesComplementares,           
+							numeroFatura,                        
+							valorFatura);
+			
+			
 			save(session, notaFiscalEntradaCotaNFE);
 
-			ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = 
-					Fixture.itemNotaFiscal(
-
-							produtoEdicao91, 
-
-							usuarioJoao,
-							notaFiscalEntradaCotaNFE, 
-							Fixture.criarData(22, Calendar.FEBRUARY,2012),
-							Fixture.criarData(22, Calendar.FEBRUARY,2012),
-							TipoLancamento.LANCAMENTO,
-							new BigDecimal(50));
+			ItemNotaFiscalEntrada itemNotaFiscalEntradaNFE_2 = Fixture.itemNotaFiscalEntradaNFE(
+					produtoEdicao91, 
+					usuarioJoao, 
+					notaFiscalEntradaCotaNFE, 
+					Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+					Fixture.criarData(22, Calendar.FEBRUARY,2012),     
+					TipoLancamento.LANCAMENTO,                         
+					new BigDecimal(50), 
+					NCMProduto, 
+					CFOPProduto, 
+					unidadeProduto, 
+					CSTProduto, 
+					CSOSNProduto, 
+					baseCalculoProduto,
+					aliquotaICMSProduto, 
+					valorICMSProduto, 
+					aliquotaIPIProduto, 
+					valorIPIProduto);
 
 			save(session, itemNotaFiscalEntradaNFE_2);			
 		}
-
 
 
 		///// SAIDA FORNECEDOR
@@ -3574,12 +3721,65 @@ public class DataLoader {
 					BigDecimal.TEN, 
 					BigDecimal.ZERO, 
 					BigDecimal.TEN,
-					true);
+					true,
+					naturezaOperacao,                    
+					formaPagamento,                      
+					horaSaida,                           
+					ambiente,                            
+					protocolo,                           
+					versao,                              
+					emissorInscricaoEstadualSubstituto,  
+					emissorInscricaoMunicipal,           
+					valorBaseICMS,                       
+					valorICMS,                           
+					valorBaseICMSSubstituto,            
+					valorICMSSubstituto,                 
+					valorProdutos,                       
+					valorFrete,                          
+					valorSeguro,                         
+					valorOutro,                          
+					valorIPI,                            
+					valorNF,                             
+					frete,                               
+					transportadoraCNPJ,                  
+					transportadoraNome,                  
+					transportadoraInscricaoEstadual,     
+					transportadoraEndereco,              
+					transportadoraMunicipio,             
+					transportadoraUF,                    
+					transportadoraQuantidade,           
+					transportadoraEspecie,               
+					transportadoraMarca,                 
+					transportadoraNumeracao,             
+					transportadoraPesoBruto,             
+					transportadoraPesoLiquido,           
+					transportadoraANTT,                  
+					transportadoraPlacaVeiculo,         
+					transportadoraPlacaVeiculoUF,        
+					ISSQNTotal,                          
+					ISSQNBase,                           
+					ISSQNValor,                          
+					informacoesComplementares,           
+					numeroFatura,                        
+					valorFatura);
 
 			save(session, notaFiscalSaidaFornecedorNFE);
 
 			ItemNotaFiscalSaida itemNotaFiscalSaida = 
-					Fixture.itemNotaFiscalSaida(produtoEdicao91, notaFiscalSaidaFornecedorNFE, BigDecimal.TEN);
+					Fixture.itemNotaFiscalSaidaNFE(
+					produtoEdicao91, 
+					notaFiscalSaidaFornecedorNFE, 
+					BigDecimal.TEN,
+					NCMProduto, 
+					CFOPProduto, 
+					unidadeProduto, 
+					CSTProduto, 
+					CSOSNProduto, 
+					baseCalculoProduto, 
+					aliquotaICMSProduto, 
+					valorICMSProduto, 
+					aliquotaIPIProduto, 
+					valorIPIProduto);
 
 			save(session, itemNotaFiscalSaida);
 

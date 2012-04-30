@@ -1,10 +1,16 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +24,16 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
+import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -33,11 +42,14 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/pdv")
 public class PdvController {
+	
+	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
 	
 	@Autowired
 	private Result result;
@@ -45,9 +57,20 @@ public class PdvController {
 	@Autowired
 	private PdvService pdvService;
 	
+	private ServletContext servletContext;
+	
+	private static final String FORMATO_DATA_DIRETORIO = "yyyy-MM-dd";
+	
+	private static final String NO_IMAGE = "no_image.jpeg";
+	
+	private static final String DIRETORIO_ARQUIVO = "images/pdv";
+	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(PdvController.class);
 	
+	public PdvController(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
 
 	@Path("/")
 	public void index(){
@@ -240,9 +263,44 @@ public class PdvController {
 		
 		dto.setCaracteristicaDTO(caracteristicaDTO);
 		
+		simularDadosBasicos(dto);
+				
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 	
+	private void simularDadosBasicos(PdvDTO dto) {
+		dto.setStatusPDV(StatusPDV.SUSPENSO);
+		dto.setNomePDV("Guilherme de Morais");
+		dto.setContato("35561553");
+		dto.setDataInicio(new Date());
+		dto.setSite("www.google.com");
+		dto.setEmail("guilherme@email.com");
+		dto.setPontoReferencia("Ponto de Referencia");
+		dto.setDentroDeOutroEstabelecimento(true);
+		TipoEstabelecimentoAssociacaoPDV tipo= new TipoEstabelecimentoAssociacaoPDV();
+		tipo.setCodigo(123L);
+		tipo.setDescricao("Tipo");
+		dto.setTipoEstabelecimentoAssociacaoPDV(tipo);
+		dto.setTamanhoPDV(TamanhoPDV.SG);
+		dto.setSistemaIPV(true);
+		dto.setQtdeFuncionarios(10);
+		dto.setNumeroLicenca("2234");
+		dto.setPorcentagemFaturamento(new BigDecimal(10));
+		dto.setNomeLicenca("licenca x");
+		TipoLicencaMunicipal tipoLicenca = new TipoLicencaMunicipal();
+		tipo.setCodigo(123L);
+		tipo.setDescricao("TipoLicensa");
+		dto.setTipoLicencaMunicipal(tipoLicenca);
+		
+		
+		List<PeriodoFuncionamentoDTO> listaPeriodos = new ArrayList<PeriodoFuncionamentoDTO>();
+		listaPeriodos.add(new PeriodoFuncionamentoDTO(TipoPeriodoFuncionamentoPDV.QUARTA_FEIRA,"10:10","10:10"));
+		listaPeriodos.add(new PeriodoFuncionamentoDTO(TipoPeriodoFuncionamentoPDV.TERCA_FEIRA,"10:10","10:10"));
+		listaPeriodos.add(new PeriodoFuncionamentoDTO(TipoPeriodoFuncionamentoPDV.SEGUNDA_FEIRA,"10:10","10:10"));
+		
+		dto.setPeriodosFuncionamentoDTO(listaPeriodos);
+	}
+
 	@Post
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
@@ -333,5 +391,85 @@ public class PdvController {
 		}
 		
 		return itens;
+	}
+	
+	@Post
+	public void uploadImagem(UploadedFile uploadedFile) {
+	
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		List<String> mensagens = new ArrayList<String>();
+		
+		String nomeArquivo = NO_IMAGE; 
+		
+		try {
+			//validarEntradaDados(uploadedFile, valorFinanceiro);
+			
+			//Grava o arquivo em disco e retorna o File do arquivo
+			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
+			
+			nomeArquivo = uploadedFile.getFileName();
+			
+			mensagens.add(SUCESSO_UPLOAD);
+						
+		}catch(Exception e) {
+			mensagens.clear();
+			mensagens.add(e.getMessage());
+			status=TipoMensagem.ERROR;
+		} finally {
+			
+			//Deleta os arquivos dentro do diretório temporário
+			//deletarArquivoTemporario();
+		}
+		
+		
+		Object[] retorno = new Object[3];
+		retorno[0] = mensagens;
+		retorno[1] = status.name();		
+		retorno[2] = nomeArquivo;
+				
+		result.use(PlainJSONSerialization.class)
+			.from(retorno, "result").recursive().serialize();
+		
+	}
+	
+	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
+
+		String pathAplicacao = servletContext.getRealPath("");
+		
+		pathAplicacao = pathAplicacao.replace("\\", "/");
+		
+		String dataAtual = DateUtil.formatarData(new Date(), FORMATO_DATA_DIRETORIO);
+		
+		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
+		
+		fileDir.mkdirs();
+		
+		File fileArquivoBanco = new File(fileDir, uploadedFile.getFileName());
+		
+		FileOutputStream fos = null;
+		
+		try {
+			
+			fos = new FileOutputStream(fileArquivoBanco);
+			
+			IOUtils.copyLarge(uploadedFile.getFile(), fos);
+		
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao gravar o arquivo em disco!");
+			}
+		}
+		
+		return fileArquivoBanco;
 	}
 }
