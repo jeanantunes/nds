@@ -61,7 +61,15 @@ public class PdvController {
 	
 	private static final String FORMATO_DATA_DIRETORIO = "yyyy-MM-dd";
 	
-	private static final String DIRETORIO_TEMPORARIO_ARQUIVO_BANCO = "images/temp/pdv/";
+	private static final String NO_IMAGE = "no_image.jpeg";
+	private static final String DIRETORIO_ARQUIVO = "images/pdv";
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PdvController.class);
+	
+	public PdvController(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
 
 	@Path("/")
 	public void index(){
@@ -444,16 +452,20 @@ public class PdvController {
 	}
 	
 	@Post
-	public void uploadImagem(UploadedFile uploadedFile, String valorFinanceiro) {
+	public void uploadImagem(UploadedFile uploadedFile) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		List<String> mensagens = new ArrayList<String>();
-			
+		
+		String nomeArquivo = NO_IMAGE; 
+		
 		try {
 			//validarEntradaDados(uploadedFile, valorFinanceiro);
 			
 			//Grava o arquivo em disco e retorna o File do arquivo
 			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
+			
+			nomeArquivo = uploadedFile.getFileName();
 			
 			mensagens.add(SUCESSO_UPLOAD);
 						
@@ -468,9 +480,10 @@ public class PdvController {
 		}
 		
 		
-		Object[] retorno = new Object[2];
+		Object[] retorno = new Object[3];
 		retorno[0] = mensagens;
 		retorno[1] = status.name();		
+		retorno[2] = nomeArquivo;
 				
 		result.use(PlainJSONSerialization.class)
 			.from(retorno, "result").recursive().serialize();
@@ -483,9 +496,9 @@ public class PdvController {
 		
 		pathAplicacao = pathAplicacao.replace("\\", "/");
 		
-		String dirDataAtual = DateUtil.formatarData(new Date(), FORMATO_DATA_DIRETORIO);
+		String dataAtual = DateUtil.formatarData(new Date(), FORMATO_DATA_DIRETORIO);
 		
-		File fileDir = new File(pathAplicacao, DIRETORIO_TEMPORARIO_ARQUIVO_BANCO + dirDataAtual);
+		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
 		
 		fileDir.mkdirs();
 		

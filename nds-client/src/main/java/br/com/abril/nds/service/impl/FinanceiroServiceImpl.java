@@ -32,12 +32,11 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.FormaCobrancaMensal;
-import br.com.abril.nds.model.cadastro.FormaCobrancaSemanal;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -172,22 +171,24 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		if (formaCobranca!=null){
 			
 			
-			FormaCobrancaSemanal formaSemanal = (FormaCobrancaSemanal) formaCobranca;
-			Set<ConcentracaoCobrancaCota> concentracoesCobranca = formaSemanal.getConcentracaoCobrancaCota();
+			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
+			Integer diaDoMes=null;
 			
-			FormaCobrancaMensal formaMensal = (FormaCobrancaMensal) formaCobranca;
-			Integer diaDoMes = formaMensal.getDiaDoMes();
+			if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
+			    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
+			}
+			if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.MENSAL){		
+			    diaDoMes = formaCobranca.getDiaDoMes();
+			}
 
 			
-			ContaBancaria contaBancaria = formaCobranca.getContaBancariaCota();
-			
 			formaCobrancaDTO = new FormaCobrancaDTO(); 
-			
-			
 			formaCobrancaDTO.setIdFormaCobranca(formaCobranca.getId());
+			formaCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
 			formaCobrancaDTO.setRecebeEmail(formaCobranca.isRecebeCobrancaEmail());
 	
 			
+			ContaBancaria contaBancaria = formaCobranca.getContaBancariaCota();
 			if (contaBancaria!=null){
 				formaCobrancaDTO.setNumBanco(contaBancaria.getNumeroBanco());
 				formaCobrancaDTO.setNomeBanco(contaBancaria.getNomeBanco());
@@ -198,7 +199,9 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 			}
 			
 			
-			formaCobrancaDTO.setDiaDoMes(diaDoMes);
+			if  (diaDoMes!=null){
+			    formaCobrancaDTO.setDiaDoMes(diaDoMes);
+			}
 			
 			
 			if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
@@ -307,151 +310,139 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Transactional
 	public void postarFormaCobranca(FormaCobrancaDTO formaCobrancaDTO) {
 		
+		
 		FormaCobranca formaCobranca = null;
-		FormaCobrancaSemanal formaSemanal = null;
-		FormaCobrancaMensal formaMensal = null;
 		ContaBancaria contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
 		Integer diaDoMes = null;
 		
+		
 		Banco banco=this.bancoRepository.buscarPorId(formaCobrancaDTO.getIdBanco());
 		boolean novaFormaCobranca=false;
 		
-		if (formaCobrancaDTO.getTipoCobranca()!=null){
-		
 			
-			
-			if (formaCobrancaDTO.getIdFormaCobranca()!=null){
-				
-				formaCobranca = this.formaCobrancaRepository.buscarPorId(formaCobrancaDTO.getIdFormaCobranca());
-				
-			    formaSemanal = (FormaCobrancaSemanal) formaCobranca;
-			    concentracoesCobranca = formaSemanal.getConcentracaoCobrancaCota();
-			
-			    formaMensal = (FormaCobrancaMensal) formaCobranca;
-			    diaDoMes = formaMensal.getDiaDoMes();
-			    
-			}
-			
+		if (formaCobrancaDTO.getIdFormaCobranca()!=null){
+			formaCobranca = this.formaCobrancaRepository.buscarPorId(formaCobrancaDTO.getIdFormaCobranca());
+		}
 		
 
-			if (formaCobranca==null){
-				novaFormaCobranca=true;
-            	formaCobranca = new FormaCobranca();
-		    }
-			else{
-				novaFormaCobranca=false;
+		if (formaCobranca==null){
+			
+			novaFormaCobranca=true;
+			
+			formaCobranca = new FormaCobranca();
+	    }
+		else{
+			novaFormaCobranca=false;
+			
+			concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
+			
+	        //APAGA CONCENTRACOES COBRANCA DA COTA
+			if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+				formaCobranca.setConcentracaoCobrancaCota(null);
+				for(ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
+					this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
+				}
+			}  
+		}
+		
+		
+		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
+		ConcentracaoCobrancaCota concentracaoCobranca;
+		if (formaCobrancaDTO.isDomingo()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.DOMINGO);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		if (formaCobrancaDTO.isSegunda()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.SEGUNDA_FEIRA);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		if (formaCobrancaDTO.isTerca()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.TERCA_FEIRA);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		if (formaCobrancaDTO.isQuarta()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.QUARTA_FEIRA);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		if (formaCobrancaDTO.isQuinta()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.QUINTA_FEIRA);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		if (formaCobrancaDTO.isSexta()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.SEXTA_FEIRA);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		if (formaCobrancaDTO.isSabado()){
+			
+			concentracaoCobranca=new ConcentracaoCobrancaCota();
+			concentracaoCobranca.setDiaSemana(DiaSemana.SABADO);
+			concentracaoCobranca.setFormaCobranca(formaCobranca);
+			
+			this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
+			concentracoesCobranca.add(concentracaoCobranca);
+		}
+		
+		formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
+		
+		
+		formaCobranca.setDiaDoMes(diaDoMes);
+		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
+		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
+		formaCobranca.setBanco(banco);
+		formaCobranca.setRecebeCobrancaEmail(formaCobrancaDTO.isRecebeEmail());
+		 
+		
+		contaBancariaCota = formaCobranca.getContaBancariaCota();
+		contaBancariaCota.setNumeroBanco(formaCobrancaDTO.getNumBanco());
+		contaBancariaCota.setNomeBanco(formaCobrancaDTO.getNomeBanco());
+		contaBancariaCota.setAgencia(Long.getLong(formaCobrancaDTO.getAgencia()));
+		contaBancariaCota.setDvAgencia(formaCobrancaDTO.getAgenciaDigito());
+		contaBancariaCota.setConta(Long.getLong(formaCobrancaDTO.getConta()));
+		contaBancariaCota.setDvConta(formaCobrancaDTO.getContaDigito());
+		
+		formaCobranca.setContaBancariaCota(contaBancariaCota);
 
-		        //APAGA CONCENTRACOES COBRANCA DA COTA
-				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
-					formaSemanal.setConcentracaoCobrancaCota(null);
-					for(ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
-						this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
-					}
-				}  
-				
-			}
-			
-			
-			
-			formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
-			formaCobranca.setBanco(banco);
-			formaCobranca.setRecebeCobrancaEmail(formaCobrancaDTO.isRecebeEmail());
-			formaMensal.setDiaDoMes(diaDoMes);
-			
-			
-			
-	        //CONCENTRACAO COBRANCA (DIAS DA SEMANA)
-			ConcentracaoCobrancaCota concentracaoCobranca;
-			if (formaCobrancaDTO.isDomingo()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.DOMINGO);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			if (formaCobrancaDTO.isSegunda()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.SEGUNDA_FEIRA);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			if (formaCobrancaDTO.isTerca()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.TERCA_FEIRA);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			if (formaCobrancaDTO.isQuarta()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.QUARTA_FEIRA);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			if (formaCobrancaDTO.isQuinta()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.QUINTA_FEIRA);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			if (formaCobrancaDTO.isSexta()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.SEXTA_FEIRA);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			if (formaCobrancaDTO.isSabado()){
-				
-				concentracaoCobranca=new ConcentracaoCobrancaCota();
-				concentracaoCobranca.setDiaSemana(DiaSemana.SABADO);
-				concentracaoCobranca.setFormaCobranca(formaCobranca);
-				
-				this.concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
-				concentracoesCobranca.add(concentracaoCobranca);
-			}
-			
-			formaSemanal.setConcentracaoCobrancaCota(concentracoesCobranca);
-	        
-	  
-			contaBancariaCota = formaCobranca.getContaBancariaCota();
-			contaBancariaCota.setNumeroBanco(formaCobrancaDTO.getNumBanco());
-			contaBancariaCota.setNomeBanco(formaCobrancaDTO.getNomeBanco());
-			contaBancariaCota.setAgencia(Long.getLong(formaCobrancaDTO.getAgencia()));
-			contaBancariaCota.setDvAgencia(formaCobrancaDTO.getAgenciaDigito());
-			contaBancariaCota.setConta(Long.getLong(formaCobrancaDTO.getConta()));
-			contaBancariaCota.setDvConta(formaCobrancaDTO.getContaDigito());
-			
-			formaCobranca.setContaBancariaCota(contaBancariaCota);
-
-			
-		    if(novaFormaCobranca){
-		    	ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
-			    formaCobranca.setParametroCobrancaCota(parametroCobranca);
-			    formaCobrancaRepository.adicionar(formaCobranca);
-		    }    
-		    else{
-		    	formaCobrancaRepository.merge(formaCobranca);    	
-			}
+		
+	    if(novaFormaCobranca){
+	    	ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
+		    formaCobranca.setParametroCobrancaCota(parametroCobranca);
+		    formaCobrancaRepository.adicionar(formaCobranca);
+	    }    
+	    else{
+	    	formaCobrancaRepository.merge(formaCobranca);    	
+		}
 		    
-        }	
-        
     }	
 
 
@@ -464,7 +455,8 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Override
 	@Transactional
 	public List<FormaCobrancaDTO> obterDadosFormasCobrancaPorCota(Long idCota) {
-		List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.buscarTodos();
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaCota(cota);
 		List<FormaCobrancaDTO> formasCobrancaVO = new LinkedList<FormaCobrancaDTO>();
 		for(FormaCobranca formaCobrancaItem:formasCobranca){
 			formasCobrancaVO.add(new FormaCobrancaDTO(formaCobrancaItem.getId(),
@@ -582,10 +574,28 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 
 
 	@Override
+	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
-		ParametroCobrancaCota parametroCobranca = cota.getParametroCobranca();
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalParametro(parametroCobranca);
+		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalCota(cota);
+	}
+
+	
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<FormaCobranca> obterFormasCobrancaCota(Long idCota) {
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		return this.formaCobrancaRepository.obterFormasCobrancaCota(cota);
+	}
+
+
+
+	@Override
+	@Transactional(readOnly = true)
+	public int obterQuantidadeFormasCobrancaCota(Long idCota) {
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		return this.formaCobrancaRepository.obterQuantidadeFormasCobrancaCota(cota);
 	}
 	
 

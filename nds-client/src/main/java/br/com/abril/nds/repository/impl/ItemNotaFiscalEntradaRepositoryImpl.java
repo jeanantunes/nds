@@ -43,16 +43,25 @@ public class ItemNotaFiscalEntradaRepositoryImpl extends
 
 	public List<ItemDanfe> obterListaItemNotaFiscalEntradaDadosDanfe(Long idNotaFiscal) {
 		
-		
 		StringBuffer hql = new StringBuffer("")
 		
 		.append(" select ")
 		
-		.append(" item.produtoEdicao.produto.codigo as codigoProduto, 					")
-		.append(" item.produtoEdicao.produto.codigo as descricaoProduto,   				")
+		.append(" item.produtoEdicao.produto.codigo as codigoProduto,		")
+		.append(" item.produtoEdicao.produto.codigo as descricaoProduto, 	")
 		.append(" item.qtde as quantidadeProduto, ")
-		.append(" item.produtoEdicao.precoVenda as valorUnitarioProduto, 				")
-		.append(" sum(item.produtoEdicao.precoVenda * item.qtde) as valorTotalProduto 	")
+		.append(" item.produtoEdicao.precoVenda as valorUnitarioProduto,	")
+		.append(" (item.produtoEdicao.precoVenda * item.qtde) as valorTotalProduto, ")
+		.append(" item.NCMProduto as NCMProduto,		")
+		.append(" item.CFOPProduto as CFOPProduto,		")
+		.append(" item.unidadeProduto as unidadeProduto,")
+		.append(" item.CSTProduto as CSTProduto, 		")
+		.append(" item.CSOSNProduto as CSOSNProduto, 	")
+		.append(" item.baseCalculoProduto as baseCalculoProduto,	")
+		.append(" item.aliquotaICMSProduto as aliquotaICMSProduto,	")
+		.append(" item.valorICMSProduto as valorICMSProduto,	")
+		.append(" item.aliquotaIPIProduto as aliquotaIPIProduto,	")
+		.append(" item.valorIPIProduto as valorIPIProduto	")
 		
 		.append(" from ItemNotaFiscalEntrada item ")
 
