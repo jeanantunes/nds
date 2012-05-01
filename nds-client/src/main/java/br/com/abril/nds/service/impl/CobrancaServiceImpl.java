@@ -36,8 +36,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
         
-		if (cota.getParametroCobranca() != null
-				&& formaCobrancaPrincipal != null
+		if (formaCobrancaPrincipal != null
 				&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
 
 			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
@@ -68,8 +67,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		BigDecimal valorCalculadoMulta = null;
 
-		if (cota.getParametroCobranca() != null
-				&& formaCobrancaPrincipal != null
+		if (formaCobrancaPrincipal != null
 				&& formaCobrancaPrincipal.getTaxaMulta() != null) {
 
 			taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
