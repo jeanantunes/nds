@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -161,7 +162,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 		}
 		
-		this.verificarSuspenderCota(filtro, cota.getId(), usuario);
+		this.verificarSuspenderCota(filtro, cota, usuario);
 	}
 	
 	/**
@@ -169,19 +170,22 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 * e dependendo do resultado suspende a cota.
 	 * 
 	 * @param filtro - filtro para a pesquisa
-	 * @param idCota - identificador da cota
+	 * @param cota - cota
 	 * @param usuario - usuário
 	 */
-	private void verificarSuspenderCota(FiltroChamadaoDTO filtro, Long idCota, Usuario usuario) {
+	private void verificarSuspenderCota(FiltroChamadaoDTO filtro, Cota cota, Usuario usuario) {
 		
-		filtro.setIdFornecedor(null);
+		if(!SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
 		
-		List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
-			this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
-		
-		if (listaConsignadoCotaChamadao == null || listaConsignadoCotaChamadao.isEmpty()) {
+			filtro.setIdFornecedor(null);
 			
-			this.suspenderCota(idCota, usuario);
+			List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
+				this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+			
+			if (listaConsignadoCotaChamadao == null || listaConsignadoCotaChamadao.isEmpty()) {
+				
+				this.suspenderCota(cota.getId(), usuario);
+			}
 		}
 	}
 	

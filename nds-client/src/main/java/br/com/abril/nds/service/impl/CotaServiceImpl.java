@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -352,7 +351,8 @@ public class CotaServiceImpl implements CotaService {
 		Cota cota = obterPorId(idCota);
 		
 		if(SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
-			throw new InvalidParameterException();
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota já está suspensa!");
 		}
 		
 		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
