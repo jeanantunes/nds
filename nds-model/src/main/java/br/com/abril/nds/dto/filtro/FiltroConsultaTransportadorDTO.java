@@ -15,6 +15,8 @@ public class FiltroConsultaTransportadorDTO implements Serializable {
 	
 	private String nomeFantasia;
 	
+	private String cnpj;
+	
 	private OrdenacaoColunaTransportador ordenacaoColunaTransportador;
 	
 	private PaginacaoVO paginacaoVO;
@@ -54,6 +56,14 @@ public class FiltroConsultaTransportadorDTO implements Serializable {
 
 	public void setNomeFantasia(String nomeFantasia) {
 		this.nomeFantasia = nomeFantasia;
+	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
 	}
 
 	public OrdenacaoColunaTransportador getOrdenacaoColunaTransportador() {

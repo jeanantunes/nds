@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -38,6 +39,8 @@ import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class FiadorServiceImpl implements FiadorService {
@@ -73,10 +76,41 @@ public class FiadorServiceImpl implements FiadorService {
 	@Transactional(readOnly = true)
 	public ConsultaFiadorDTO obterFiadores(FiltroConsultaFiadorDTO filtroConsultaFiadorDTO) {
 		
+		if (filtroConsultaFiadorDTO == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro para pesquisa inválido.");
+		}
+		
+		if (filtroConsultaFiadorDTO.getOrdenacaoColunaFiador() == null){
+			
+			filtroConsultaFiadorDTO.setOrdenacaoColunaFiador(OrdenacaoColunaFiador.CODIGO);
+		}
+		
+		if (filtroConsultaFiadorDTO.getPaginacaoVO() == null){
+			
+			filtroConsultaFiadorDTO.setPaginacaoVO(new PaginacaoVO(1, 15, PaginacaoVO.Ordenacao.ASC.getOrdenacao()));
+		} else {
+			
+			if (filtroConsultaFiadorDTO.getPaginacaoVO().getPaginaAtual() == null){
+				
+				filtroConsultaFiadorDTO.getPaginacaoVO().setPaginaAtual(1);
+			}
+			
+			if (filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina() == null){
+				
+				filtroConsultaFiadorDTO.getPaginacaoVO().setQtdResultadosPorPagina(15);
+			}
+			
+			if (filtroConsultaFiadorDTO.getPaginacaoVO().getOrdenacao() == null){
+				
+				filtroConsultaFiadorDTO.getPaginacaoVO().setOrdenacao(Ordenacao.ASC);
+			}
+		}
+		
 		ConsultaFiadorDTO consultaFiadorDTO = this.fiadorRepository.obterFiadoresCpfCnpj(filtroConsultaFiadorDTO);
 		
 		for (Fiador fiador : consultaFiadorDTO.getListaFiadores()){
-			
+		
 			List<Telefone> telefones = new ArrayList<Telefone>();
 			
 			Telefone telefone = this.telefoneFiadorRepository.pesquisarTelefonePrincipalFiador(fiador.getId());
