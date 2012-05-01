@@ -50,23 +50,21 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	@Override
 	public ConsultaFiadorDTO obterFiadoresCpfCnpj(FiltroConsultaFiadorDTO filtroConsultaFiadorDTO) {
 		
-		StringBuilder hql = new StringBuilder("select f from Fiador f, Pessoa p ");
-		hql.append(" where f.pessoa.id = p.id ");
+		StringBuilder hql = new StringBuilder("select distinct f from Fiador f, Pessoa p ");
+		hql.append(" left join f.telefonesFiador telefonefiador ")
+		   .append(" left join telefonefiador.telefone telefone")
+		   .append(" where f.pessoa.id = p.id ");
 		
 		if (filtroConsultaFiadorDTO.getCpfCnpj() != null &&
 				!filtroConsultaFiadorDTO.getCpfCnpj().isEmpty()){
 			
-			hql.append(" and ");
-			
-			hql.append(" (p.cpf = :cpfCnpj or p.cnpj = :cpfCnpj) ");
+			hql.append(" and (p.cpf = :cpfCnpj or p.cnpj = :cpfCnpj) ");
 		}
 		
 		if (filtroConsultaFiadorDTO.getNome() != null &&
 				!filtroConsultaFiadorDTO.getNome().isEmpty()){
 			
-			hql.append(" and ");
-			
-			hql.append(" (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
+			hql.append(" and (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
 		}
 		
 		Long qtdRegistros = 
@@ -95,22 +93,16 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 			case RG_INSCRICAO:
 				hql.append(" order by p.rg, p.inscricaoEstadual ");
 			break;
+			case TELEFONE:
+				hql.append(" order by telefone.numero ");
+			break;
 		}
 		
 		hql.append(filtroConsultaFiadorDTO.getPaginacaoVO().getOrdenacao());
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		if (filtroConsultaFiadorDTO.getCpfCnpj() != null &&
-				!filtroConsultaFiadorDTO.getCpfCnpj().isEmpty()){
-			
-			query.setParameter("cpfCnpj", filtroConsultaFiadorDTO.getCpfCnpj());
-		}
 		
-		if (filtroConsultaFiadorDTO.getNome() != null &&
-				!filtroConsultaFiadorDTO.getNome().isEmpty()){
-			
-			query.setParameter("nome", "%" + filtroConsultaFiadorDTO.getNome() + "%");
-		}
+		this.setarParametros(query, filtroConsultaFiadorDTO);
 		
 		query.setMaxResults(filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina());
 		
@@ -135,23 +127,28 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	}
 	
 	private Long obterQuantidadeRegistros(String sql, FiltroConsultaFiadorDTO filtroConsultaFiadorDTO){
-		String sqlAux = sql.replace("select f", "select count(f.id)");
-		//sqlAux = sqlAux.substring(0, sqlAux.indexOf(" order "));
+		String sqlAux = sql.replace("select distinct f", "select count(distinct f.id)");
 		
 		Query query = this.getSession().createQuery(sqlAux);
-		if (filtroConsultaFiadorDTO.getCpfCnpj() != null &&
-				!filtroConsultaFiadorDTO.getCpfCnpj().isEmpty()){
-			
-			query.setParameter("cpfCnpj", filtroConsultaFiadorDTO.getCpfCnpj());
-		}
 		
-		if (filtroConsultaFiadorDTO.getNome() != null &&
-				!filtroConsultaFiadorDTO.getNome().isEmpty()){
-			
-			query.setParameter("nome", "%" + filtroConsultaFiadorDTO.getNome() + "%");
-		}
+		this.setarParametros(query, filtroConsultaFiadorDTO);
 		
 		return (Long) query.uniqueResult();
+	}
+	
+	private void setarParametros(Query query, FiltroConsultaFiadorDTO filtro){
+		
+		if (filtro.getCpfCnpj() != null &&
+				!filtro.getCpfCnpj().isEmpty()){
+			
+			query.setParameter("cpfCnpj", filtro.getCpfCnpj());
+		}
+		
+		if (filtro.getNome() != null &&
+				!filtro.getNome().isEmpty()){
+			
+			query.setParameter("nome", "%" + filtro.getNome() + "%");
+		}
 	}
 	
 	@Override

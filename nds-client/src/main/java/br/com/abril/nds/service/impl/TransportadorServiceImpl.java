@@ -8,18 +8,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ConsultaTransportadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.Transportador;
+import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
 import br.com.abril.nds.repository.TransportadorRepository;
 import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Autowired
 	private TransportadorRepository transportadorRepository;
+	
+	@Autowired
+	private TelefoneTransportadorRepositoty telefoneTransportadorRepositoty;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -44,7 +54,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Transactional
 	public void cadastrarTransportador(Transportador transportador) {
 		
-		this.validarDados(transportador);
+		this.validarDadosEntrada(transportador);
 		
 		if (transportador.getId() == null){
 			
@@ -54,8 +64,61 @@ public class TransportadorServiceImpl implements TransportadorService {
 			this.transportadorRepository.alterar(transportador);
 		}
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ConsultaTransportadorDTO consultarTransportadores(FiltroConsultaTransportadorDTO filtro){
+		
+		if (filtro == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro de pesquisa inválido.");
+		}
+		
+		if (filtro.getOrdenacaoColunaTransportador() == null){
+			
+			filtro.setOrdenacaoColunaTransportador(OrdenacaoColunaTransportador.CODIGO);
+		}
+		
+		if (filtro.getPaginacaoVO() == null){
+			
+			filtro.setPaginacaoVO(new PaginacaoVO(1, 15, Ordenacao.ASC.getOrdenacao()));
+		} else {
+			
+			if (filtro.getPaginacaoVO().getPaginaAtual() == null){
+				
+				filtro.getPaginacaoVO().setPaginaAtual(1);
+			}
+			
+			if (filtro.getPaginacaoVO().getQtdResultadosPorPagina() == null){
+				
+				filtro.getPaginacaoVO().setQtdResultadosPorPagina(15);
+			}
+			
+			if (filtro.getPaginacaoVO().getOrdenacao() == null){
+				
+				filtro.getPaginacaoVO().setOrdenacao(Ordenacao.ASC);
+			}
+		}
+		
+		ConsultaTransportadorDTO consultaTransportadorDTO = this.transportadorRepository.pesquisarTransportadoras(filtro);
+		
+		for (Transportador transportador : consultaTransportadorDTO.getTransportadores()){
+			
+			List<Telefone> telefones = new ArrayList<Telefone>();
+			
+			Telefone telefone = this.telefoneTransportadorRepositoty.pesquisarTelefonePrincipalTransportador(transportador.getId());
+			
+			if (telefone != null){
+				telefones.add(telefone);
+			}
+			
+			transportador.getPessoaJuridica().setTelefones(telefones);
+		}
+		
+		return consultaTransportadorDTO;
+	}
 
-	private void validarDados(Transportador transportador) {
+	private void validarDadosEntrada(Transportador transportador) {
 		
 		if (transportador == null){
 			
@@ -81,7 +144,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 			msgs.add("Nome Fantasia é obrigatório.");
 		}
 		
-		if (transportador.getEmail() == null || transportador.getEmail().trim().isEmpty()){
+		if (pessoaJuridica.getEmail() == null || pessoaJuridica.getEmail().trim().isEmpty()){
 			
 			msgs.add("Email é obrigatório");
 		}

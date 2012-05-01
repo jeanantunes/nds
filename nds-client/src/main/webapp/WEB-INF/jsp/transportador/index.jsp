@@ -310,6 +310,32 @@
 				height : 150
 			});
 		});
+		
+		function pesquisarTransportadores(){
+			
+			var data = "filtro.razaoSocial=" + $("#razaoSocialPesquisa").val() + 
+			           "&filtro.nomeFantasia=" + $("#nomeFantasiaPesquisa").val() +
+			           "&filtro.cnpj=" + $("#cnpjPesquisa").val();
+			
+			$.postJSON("<c:url value='/cadastro/transportador/pesquisarTransportadores' />", data, 
+				function(result) {
+					
+					if (result[0].tipoMensagem){
+						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+					}
+					
+					if (result[1] != ""){
+						$(".transportadoraGrid").flexAddData({
+							page: result[1].page, total: result[1].total, rows: result[1].rows
+						});
+						
+						$(".transportadoraGrid").show();
+					} else {
+						$(".transportadoraGrid").hide();
+					}
+				}
+			);
+		}
 	</script>
 	<style>
 		.diasFunc label,.finceiro label {
@@ -502,13 +528,13 @@
 				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 					<tr>
 						<td width="85">Razão Social:</td>
-						<td colspan="3"><input type="text" id="razaoSocial" style="width: 190px;" maxlength="255" /></td>
+						<td colspan="3"><input type="text" id="razaoSocialPesquisa" style="width: 190px;" maxlength="255" /></td>
 						<td width="104">Nome Fantasia:</td>
-						<td width="192"><input type="text" id="nomeFantasia" style="width: 190px;" maxlength="255" /></td>
+						<td width="192"><input type="text" id="nomeFantasiaPesquisa" style="width: 190px;" maxlength="255" /></td>
 						<td width="42">CNPJ:</td>
-						<td width="179"><input type="text" id="cnpj" style="width: 110px;" maxlength="255" /></td>
+						<td width="179"><input type="text" id="cnpjPesquisa" style="width: 110px;" maxlength="255" /></td>
 						<td width="109"><span class="bt_pesquisar">
-							<a href="javascript:;" onclick="mostrar();">Pesquisar</a></span>
+							<a href="javascript:;" onclick="pesquisarTransportadores();">Pesquisar</a></span>
 						</td>
 					</tr>
 				</table>

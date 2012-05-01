@@ -33,9 +33,6 @@ public class Transportador implements Serializable {
 	@JoinColumn(name = "PESSOA_JURIDICA_ID")
 	private PessoaJuridica pessoaJuridica;
 	
-	@Column(name = "EMAIL")
-	private String email;
-	
 	@Column(name = "RESPONSAVEL")
 	private String responsavel;
 	
@@ -43,6 +40,9 @@ public class Transportador implements Serializable {
 	@JoinTable(name = "TRANSPORTADO_ASSOCIACAO", joinColumns = {@JoinColumn(name = "TRANSPORTADOR_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "ASSOCIACAO_ID")})
 	private List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota;
+	
+	@OneToMany(mappedBy = "transportador")
+	private List<TelefoneTransportador> telefonesTransportador;
 
 	public Long getId() {
 		return id;
@@ -60,14 +60,6 @@ public class Transportador implements Serializable {
 		this.pessoaJuridica = pessoaJuridica;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getResponsavel() {
 		return responsavel;
 	}
@@ -83,5 +75,14 @@ public class Transportador implements Serializable {
 	public void setAssociacoesVeiculoMotoristaRota(
 			List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota) {
 		this.associacoesVeiculoMotoristaRota = associacoesVeiculoMotoristaRota;
+	}
+
+	public List<TelefoneTransportador> getTelefonesTransportador() {
+		return telefonesTransportador;
+	}
+
+	public void setTelefonesTransportador(
+			List<TelefoneTransportador> telefonesTransportador) {
+		this.telefonesTransportador = telefonesTransportador;
 	}
 }
