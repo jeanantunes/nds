@@ -6,9 +6,11 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
+import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
@@ -161,6 +163,9 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setLong("id", id);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				CotaRotaRoteiroDTO.class));
+		
 		
 		return query.list();
 	}
