@@ -119,7 +119,10 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
+	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
+	private boolean requerAutorizacaoEncalheSuperaReparte;
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -262,7 +265,15 @@ public class Distribuidor {
 	public void setParametroContratoCota(ParametroContratoCota parametroContratoCota) {
 		this.parametroContratoCota = parametroContratoCota;
 	}
-	
 
+	public boolean isRequerAutorizacaoEncalheSuperaReparte() {
+		return requerAutorizacaoEncalheSuperaReparte;
+	}
+
+	public void setRequerAutorizacaoEncalheSuperaReparte(
+			boolean requerAutorizacaoEncalheSuperaReparte) {
+		this.requerAutorizacaoEncalheSuperaReparte = requerAutorizacaoEncalheSuperaReparte;
+	}
+	
 	
 }
