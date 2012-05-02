@@ -71,7 +71,6 @@ import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -870,7 +869,6 @@ public class DataLoader {
 			"manoel@mail.com", "Manoel da Silva");
 			save(session, manoel);
 
-	Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 	save(session, box1);
 
 	Usuario usuario = Fixture.usuarioJoao();
@@ -3519,8 +3517,7 @@ public class DataLoader {
 
 	private static void gerarCargaDadosNotasFiscaisNFE(Session session) {
 
-		Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-		save(session, boxNovo);
+		save(session, box1);
 
 		Cota cotaJohnyConsultaEncalhe = null;
 
