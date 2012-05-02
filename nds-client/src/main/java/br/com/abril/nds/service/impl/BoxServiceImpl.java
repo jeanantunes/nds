@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 /**
  * Classe de implementação referente ao serviço da entidade 
@@ -52,9 +53,12 @@ public class BoxServiceImpl implements BoxService{
 	}
 
 	@Override
-	@Transactional(readOnly=true)
-	public Box merge(Box entity) {
-		return boxRepository.merge(entity);
+	@Transactional
+	public Box merge(Box entity) throws UniqueConstraintViolationException {
+		if(boxRepository.hasCodigo(entity.getCodigo(), entity.getId())){
+			throw new UniqueConstraintViolationException("Código " + entity.getCodigo() + " do box em uso.");
+		}
+		return boxRepository.merge(entity) ;
 	}
 
 	@Override

@@ -33,6 +33,25 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Override
 	public void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones){
 		
+		if (listaTelefones == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
+		}
+		
+		boolean isTelefonePrincipal = false;
+		
+		for (TelefoneAssociacaoDTO dto : listaTelefones){
+			
+			if (isTelefonePrincipal && dto.isPrincipal()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+			}
+			
+			if (dto.isPrincipal()){
+				isTelefonePrincipal = dto.isPrincipal();
+			}
+		}
+		
 		for (TelefoneAssociacaoDTO associacaoTelefone : listaTelefones){
 			this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
 			

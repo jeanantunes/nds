@@ -68,15 +68,20 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 	 * @return FormaCobranca principal
 	 */
 	@Override
-	public FormaCobranca obterFormaCobrancaPrincipalCota(Cota cota) {
+	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
 		StringBuilder hql = new StringBuilder();
+		
 		hql.append(" select f from FormaCobranca f ");		
-		hql.append(" where f.principal = :pPrincipal ");
-		hql.append(" and f.parametroCobrancaCota.cota = :pCota ");
-        Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("pPrincipal", true);
-        query.setParameter("pCota", cota);
+		hql.append(" where f.principal = :principal ");
+		hql.append(" and f.parametroCobrancaCota.cota.id = :idCota ");
+        
+		Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("principal", true);
+        query.setParameter("idCota", idCota);
+        
         query.setMaxResults(1);
+        
         return (FormaCobranca) query.uniqueResult();
 	}
 

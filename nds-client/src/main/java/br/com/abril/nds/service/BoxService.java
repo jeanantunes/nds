@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -49,8 +50,9 @@ public interface BoxService {
 	 * Atualiza a entidade box do repositorio de dados
 	 * @param entity
 	 * @return o Box
+	 * @throws UniqueConstraintViolationException Lançada caso o codigo do box ja esteja em uso.
 	 */
-	public abstract Box merge(Box entity);
+	public abstract Box merge(Box entity) throws UniqueConstraintViolationException;
 	
 	/**
 	 * Busca o Box por id;

@@ -178,9 +178,9 @@ public class DiferencaEstoqueController {
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {
 				consultaDiferencaVO.setNumeroNotaFiscal(
-					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero());
+					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero().toString());
 			} else {
-				consultaDiferencaVO.setNumeroNotaFiscal(null);
+				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
 			}
 			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
@@ -1063,9 +1063,9 @@ public class DiferencaEstoqueController {
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {
 				consultaDiferencaVO.setNumeroNotaFiscal(
-					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero());
+					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero().toString());
 			} else {
-				consultaDiferencaVO.setNumeroNotaFiscal(null);
+				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
 			}
 			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());

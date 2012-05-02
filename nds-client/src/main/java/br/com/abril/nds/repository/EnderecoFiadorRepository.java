@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -15,5 +16,7 @@ public interface EnderecoFiadorRepository extends Repository<EnderecoFiador, Lon
 
 	EnderecoFiador buscarEnderecoPorEnderecoFiador(Long idEndereco, Long idFiador);
 
-	void excluirEnderecosFiador(Long idFiador);
+	void excluirEnderecosPorIdFiador(Long idFiador);
+
+	void excluirEnderecosFiador(Collection<Long> idsEnderecoFiador);
 }

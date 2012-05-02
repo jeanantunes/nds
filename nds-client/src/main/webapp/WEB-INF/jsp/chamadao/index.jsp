@@ -197,6 +197,13 @@
 		
 		checkAll(input, "checkConsignado");
 		
+		$("input[name='checkConsignado']").each(function() {
+		
+			var checado = this.checked;
+			
+			clickLine(this, checado);
+		});
+		
 		if (input.checked) {
 			
 			duplicarCamposParciais();
@@ -216,6 +223,8 @@
 		$("input[name='checkConsignado']").each(function() {
 		
 			var checado = this.checked;
+			
+			clickLine(this, checado);
 			
 			if (checado) {
 				
@@ -244,6 +253,20 @@
 	
 	function verifyCheckAll() {
 		return ($("#checkAll").attr("checked") == "checked");
+	}
+	
+	function clickLine(inputCheck, select) {
+		
+		var linha = $(inputCheck).parents()[2];
+		
+		if (select) {
+			
+			$(linha).attr("class", "erow trSelected");
+			
+		} else {
+			
+			$(linha).attr("class", "erow");
+		}
 	}
 	
 	function duplicarCamposParciais() {

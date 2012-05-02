@@ -84,40 +84,36 @@ public class FiadorController {
 			String sortname, Integer page, Integer rp, ValidacaoVO validacaoVO){
 		
 		if (filtro == null){
+			
 			filtro = (FiltroConsultaFiadorDTO) this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
 		}
 		
-		if (page == null){
-			page = 1;
-		}
-		
-		if (rp == null){
-			rp = 15;
-		}
-		
 		if (filtro == null){
+			
 			filtro = new FiltroConsultaFiadorDTO();
 		}
 		
 		OrdenacaoColunaFiador orderName = Util.getEnumByStringValue(OrdenacaoColunaFiador.values(), sortname);
-		if (orderName == null){
-			orderName = OrdenacaoColunaFiador.CODIGO;
-		}
-		
-		if (orderName != null){
-			filtro.setOrdenacaoColunaFiador(orderName);
-		}
+		filtro.setOrdenacaoColunaFiador(orderName);
 		
 		if (filtro.getPaginacaoVO() == null){
+			
 			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
 		}
-		
-		if (sortorder != null){
-			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
+			
+		if (page != null){
+			
+			filtro.getPaginacaoVO().setPaginaAtual(page);
 		}
 		
-		if (filtro.getPaginacaoVO().getOrdenacao() == null){
-			filtro.getPaginacaoVO().setOrdenacao(Ordenacao.ASC);
+		if (rp != null){
+			
+			filtro.getPaginacaoVO().setQtdResultadosPorPagina(rp);
+		}
+		
+		if (sortorder != null) {
+			
+			filtro.getPaginacaoVO().setOrdenacao(Util.getEnumByStringValue(Ordenacao.values(), sortorder));
 		}
 		
 		if ((filtro.getNome() == null || filtro.getNome().trim().isEmpty()) && 
@@ -580,7 +576,7 @@ public class FiadorController {
 			listaCellModel.add(cellModel);
 		}
 
-		tableModel.setPage(page);
+		tableModel.setPage(page == null ? 1 : page);
 		tableModel.setRows(listaCellModel);
 		tableModel.setTotal(consulta.getQuantidadePaginas().intValue()); 
 		

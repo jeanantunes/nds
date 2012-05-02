@@ -79,9 +79,13 @@ public class EnderecoController {
 	@Post
 	public void pesquisarEnderecos(String sortname, String sortorder) {
 
-		List<EnderecoAssociacaoDTO> listaEndereco = this.obterEnderecosSessaoSalvar();
+		List<EnderecoAssociacaoDTO> listaEndereco = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoSalvar = this.obterEnderecosSessaoSalvar();
 		
 		List<EnderecoAssociacaoDTO> enderecosExibir = this.obterEnderecosSessaoExibir();
+		
+		listaEndereco.addAll(listaEnderecoSalvar);
 		
 		listaEndereco.addAll(enderecosExibir);
 		
@@ -141,7 +145,11 @@ public class EnderecoController {
 				
 				if (listaExibir.get(index).getId().equals(enderecoAssociacao.getId())){
 					
-					listaExibir.remove(index);
+					EnderecoAssociacaoDTO removido = listaExibir.remove(index);
+					
+					this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR, listaExibir);
+					
+					enderecoAssociacao.getEndereco().setId(removido.getEndereco().getId());
 					
 					listaEnderecoAssociacao.add(enderecoAssociacao);
 					break;

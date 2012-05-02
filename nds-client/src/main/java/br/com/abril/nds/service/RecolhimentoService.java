@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -32,5 +33,8 @@ public interface RecolhimentoService {
 	 * @return {@link RecolhimentoDTO}
 	 */
 	List<RecolhimentoDTO> obterDadosBalanceamentoRecolhimento(Date dataInicial);
+	
+	Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Integer numeroSemana,
+				 											  List<Long> listaIdsFornecedores);
 
 }
