@@ -175,3 +175,34 @@ function removeMascaraPriceFormat(field) {
 	
 	return field;
 }
+
+function isValidURL(url) {
+	var req= new AjaxObj(); // XMLHttpRequest object
+	try {
+		req.open("HEAD", url, false);
+		req.send(null);		
+		return req.status== 200 ? true : false;
+	}
+	catch (er) {
+		return false;
+	}
+}
+
+function AjaxObj() {
+	var obj;
+	if (window.XMLHttpRequest) obj= new XMLHttpRequest(); 
+	else if (window.ActiveXObject){
+		try{
+			obj= new ActiveXObject('MSXML2.XMLHTTP.3.0');
+		}
+		catch(er){
+			try{
+				obj= new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			catch(er){
+				obj= false;
+			}
+		}
+	}
+	return obj;
+}

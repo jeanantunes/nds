@@ -15,62 +15,29 @@ $(function() {
 			success: tratarRetornoUploadImagem,
 		};
 		
-		$('#formBaixaAutomatica').ajaxForm(options);
-
-		function tratarRetornoUploadImagem(data) {
-						
-			data = replaceAll(data, "<pre>", "");
-			data = replaceAll(data, "</pre>", "");
-			
-			data = replaceAll(data, "<PRE>", "");
-			data = replaceAll(data, "</PRE>", "");
-			
-			var responseJson = jQuery.parseJSON(data);
-			
-			var mensagens = responseJson.result[0];
-			var status = responseJson.result[1];
-			var nomeArquivo = responseJson.result[2];
-			
-			$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
-						
-			if(mensagens!=null && mensagens.length!=0) {
-				exibirMensagem(status,mensagens);
-			}
-		}
-		
+		$('#formBaixaAutomatica').ajaxForm(options);		
 });
 
-function isValidURLis(url) {
-	var req= new AJ(); // XMLHttpRequest object
-	try {
-		req.open("HEAD", url, false);
-		req.send(null);		
-		return req.status== 200 ? true : false;
-	}
-	catch (er) {
-		return false;
+function tratarRetornoUploadImagem(data) {
+	
+	data = replaceAll(data, "<pre>", "");
+	data = replaceAll(data, "</pre>", "");
+	
+	data = replaceAll(data, "<PRE>", "");
+	data = replaceAll(data, "</PRE>", "");
+	
+	var responseJson = jQuery.parseJSON(data);
+	
+	var mensagens = responseJson.result[0];
+	var status = responseJson.result[1];
+	var nomeArquivo = responseJson.result[2];
+	
+	$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
+				
+	if(mensagens!=null && mensagens.length!=0) {
+		exibirMensagem(status,mensagens);
 	}
 }
-
-function AjaxObjxt() {
-	var obj;
-	if (window.XMLHttpRequest) obj= new XMLHttpRequest(); 
-	else if (window.ActiveXObject){
-		try{
-			obj= new ActiveXObject('MSXML2.XMLHTTP.3.0');
-		}
-		catch(er){
-			try{
-				obj= new ActiveXObject("Microsoft.XMLHTTP");
-			}
-			catch(er){
-				obj= false;
-			}
-		}
-	}
-	return obj;
-}
-
 
 </script>
 
@@ -83,8 +50,6 @@ function AjaxObjxt() {
 	
 		<input type="hidden" name="formUploadAjax" value="true" />
 		
-		<input type="hidden" name="idPdv" />
-	
 	<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
 									
 	</form>
@@ -137,7 +102,7 @@ function AjaxObjxt() {
       <tr>
         <td>E-mail:</td>
         <td colspan="3">
-        	<input type="text" name="emailPDV" id="emailPDV" style="width:300px;"/>
+        	<input type="text" name="emailPDV" onchange="PDV.validarEmail(this.value);" id="emailPDV" style="width:300px;"/>
         </td>
         </tr>
       <tr>
@@ -180,7 +145,8 @@ function AjaxObjxt() {
     	  onerror="${pageContext.request.contextPath}/images/pdv/no_image.jpeg"/>
     	    	
     	<br />
-    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
+    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a>
+    	<a id="idBtnExcluir" href="javascript:" onclick="PDV.excluirImagem();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
     </td>
   </tr>
 </table>

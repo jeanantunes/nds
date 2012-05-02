@@ -1,11 +1,15 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +22,9 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
@@ -37,6 +43,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
 import br.com.abril.nds.repository.MaterialPromocionalRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PeriodoFuncionamentoPDVRepository;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
@@ -85,6 +92,9 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Autowired
 	private TiposEstabelecimentoRepository tiposEstabelecimentoRepository;
+	
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Transactional(readOnly=true)
 	@Override
@@ -331,6 +341,9 @@ public class PdvServiceImpl implements PdvService {
 		
 		pdv =  pdvRepository.merge(pdv);
 		
+		if(pdvDTO.getImagem() != null) 
+			atualizaImagemPDV(pdvDTO.getImagem(),pdv.getId());
+		
 		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
 		
 		salvarGeradorFluxo(pdvDTO, pdv);
@@ -339,6 +352,48 @@ public class PdvServiceImpl implements PdvService {
 		//salvarTelefone(pdvDTO, pdv);
 	}
 	
+		
+	public void atualizaImagemPDV(InputStream foto, Long idPdv) {
+		
+		//TODO validar código
+		
+		ParametroSistema path = 
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		
+		String dirFile = path + "pdv_" + idPdv + ".jpeg"; 
+		
+		File fileArquivo = new File(dirFile);
+		   		
+		if(fileArquivo.exists())
+			fileArquivo.delete();
+		
+		FileOutputStream fos = null;
+		
+		try {
+						
+			fos = new FileOutputStream(fileArquivo);
+			
+			IOUtils.copyLarge(foto, fos);
+			
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao gravar o arquivo em disco!");
+			}
+		}
+		
+	}
+
 	private void salvarEndereco(PdvDTO pdvDTO,PDV pdv){
 		
 	}
