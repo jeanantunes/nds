@@ -104,7 +104,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
 		if(codigoBox != null && codigoBox.trim().length() > 0){
-			criteria.add(Restrictions.like("codigo", codigoBox));
+			criteria.add(Restrictions.ilike("codigo", codigoBox));
 		}
 		
 		if(tipoBox != null){
@@ -115,6 +115,20 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 			criteria.add(Restrictions.eq("postoAvancado", true));
 		}
 		return criteria;
+	}
+	
+	@Override
+	public boolean hasCodigo(String codigoBox, Long id){
+		Criteria criteria =  getSession().createCriteria(Box.class);	
+		
+		criteria.add(Restrictions.ilike("codigo", codigoBox));
+		if(id != null){
+			criteria.add(Restrictions.ne("id", id));
+		}
+		
+		criteria.setProjection(Projections.rowCount());
+		Long qtd = (Long)criteria.list().get(0);
+		return qtd > 0;
 	}
 
 }
