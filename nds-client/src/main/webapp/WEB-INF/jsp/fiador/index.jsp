@@ -361,7 +361,7 @@
 			limparFormEndereco();
 		    
 		    //telefones
-		    limparCamposTelefone();
+		    FIADOR.limparCamposTelefone();
 		    
 		    //garantias
 		    limparCamposGarantias();
@@ -398,7 +398,7 @@
 				<li><a href="#tab-1">Dados Cadastrais</a></li>
 				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >Sócios</a></li>
 	            <li><a href="#tab-3" onclick="popularGridEnderecos();">Endereços</a></li>
-	            <li><a href="#tab-4" onclick="carregarTelefones();">Telefones</a></li>
+	            <li><a href="#tab-4" onclick="FIADOR.carregarTelefones();">Telefones</a></li>
 	            <li><a href="#tab-5" onclick="carregarGarantias();">Garantia</a></li>
 				<li><a href="#tab-6" onclick="carregarCotasAssociadas();">Cotas Associadas</a></li>
 			</ul>
@@ -422,7 +422,9 @@
 	    	</div>
 	    	
 	        <div id="tab-4">
-	        	<jsp:include page="../telefone/index.jsp"></jsp:include>
+	        	<jsp:include page="../telefone/index.jsp">
+	        		<jsp:param value="FIADOR" name="tela"/>
+	        	</jsp:include>
 			</div>
 			
 			<div id="tab-5">

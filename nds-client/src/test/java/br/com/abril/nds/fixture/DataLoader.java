@@ -71,7 +71,6 @@ import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -870,7 +869,6 @@ public class DataLoader {
 			"manoel@mail.com", "Manoel da Silva");
 			save(session, manoel);
 
-	Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
 	save(session, box1);
 
 	Usuario usuario = Fixture.usuarioJoao();
@@ -2762,33 +2760,33 @@ public class DataLoader {
 
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
 		DistribuicaoFornecedor dinapSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUINTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUINTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor fcSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEXTA_FEIRA,
+				fornecedorFc, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, fcSegunda, fcSexta);
 
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 
 		DistribuicaoFornecedor fcQuartaRecolhimento = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.QUARTA_FEIRA,
+				fornecedorFc, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 
 		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
@@ -3519,8 +3517,7 @@ public class DataLoader {
 
 	private static void gerarCargaDadosNotasFiscaisNFE(Session session) {
 
-		Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-		save(session, boxNovo);
+		save(session, box1);
 
 		Cota cotaJohnyConsultaEncalhe = null;
 

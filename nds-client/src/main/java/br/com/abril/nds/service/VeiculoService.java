@@ -8,6 +8,8 @@ public interface VeiculoService {
 
 	List<Veiculo> buscarVeiculos();
 	
+	Veiculo buscarVeiculoPorId(Long idVeiculo);
+	
 	void cadastarVeiculo(Veiculo veiculo);
 	
 	void excluirVeiculo(Long idVeiculo);

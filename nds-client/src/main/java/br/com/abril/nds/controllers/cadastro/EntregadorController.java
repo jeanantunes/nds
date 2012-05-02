@@ -83,8 +83,22 @@ public class EntregadorController {
 	
 	private static final String NOME_ARQUIVO_PROCURACAO = "procuracao";
 	
+	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoEntregador";
+	
+	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoEntregador";
+	
+	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoEntregador";
+	
+	@Autowired
+	private TelefoneController telefoneController;
+	
 	@Path("/")
 	public void index() { }
+	
+	public EntregadorController(){
+		
+		this.telefoneController.setarParametros(LISTA_TELEFONES_SALVAR_SESSAO, LISTA_TELEFONES_REMOVER_SESSAO, LISTA_TELEFONES_EXIBICAO);
+	}
 
 	/**
 	 * Método responsável por popular a grid de Entregadores.
@@ -376,8 +390,8 @@ public class EntregadorController {
 	 */
 	public void editarEntregador(Long idEntregador) {
 
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);		
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);		
 
 		ProcuracaoEntregador procuracaoEntregador = this.entregadorService.obterProcuracaoEntregadorPorId(idEntregador);
 		
@@ -405,7 +419,7 @@ public class EntregadorController {
 			map.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
 		}
 
-		this.session.setAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO, map);
+		this.session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
 
 		if (entregador.getPessoa() instanceof PessoaFisica) {
 
@@ -467,8 +481,8 @@ public class EntregadorController {
 		
 		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
 		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(new Date()), "result").serialize();
 	}
@@ -822,8 +836,8 @@ public class EntregadorController {
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
 		this.entregadorService.processarTelefones(idEntregador, lista, telefonesRemover);
 
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 	}
 
 	/*
@@ -833,7 +847,7 @@ public class EntregadorController {
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
-				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+				this.session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
 		if (telefonesSessao == null){
 
@@ -849,7 +863,7 @@ public class EntregadorController {
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterTelefonesRemoverSessao(){
 		Set<Long> telefonesSessao = (Set<Long>) 
-				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+				this.session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 
 		if (telefonesSessao == null){
 			telefonesSessao = new HashSet<Long>();
