@@ -26,6 +26,18 @@ public class MotoristaServiceImpl implements MotoristaService {
 		
 		return this.motoristaRepository.buscarTodos();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Motorista buscarMotoristaPorId(Long idMotorista){
+		
+		if (idMotorista == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Motorista é obrigatório.");
+		}
+		
+		return this.motoristaRepository.buscarPorId(idMotorista);
+	}
 
 	@Override
 	@Transactional
