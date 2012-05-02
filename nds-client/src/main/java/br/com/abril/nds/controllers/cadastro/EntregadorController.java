@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -41,9 +40,7 @@ import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.util.CellModel;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -161,6 +158,8 @@ public class EntregadorController {
 			mensagemSucesso = "Edição realizada com sucesso.";
 		}
 
+		cpfEntregador = cpfEntregador.replaceAll("\\.", "").replaceAll("-", "");
+		
 		PessoaFisica pessoaFisica = this.pessoaFisicaService.buscarPorCpf(cpfEntregador);
 
 		if (pessoaFisica == null) {
@@ -258,13 +257,15 @@ public class EntregadorController {
 												   procuracao,
 												   numeroCotaProcuracao,
 												   procuracaoEntregador);
-		
+
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
 		if (idEntregador != null) {
 
 			mensagemSucesso = "Edição realizada com sucesso.";
 		}
+		
+		cnpjEntregador = cnpjEntregador.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpjEntregador);
 		
@@ -338,6 +339,8 @@ public class EntregadorController {
 	 */
 	public void obterPessoaFisica(String cpf) {
 		
+		cpf = cpf.replaceAll("\\.", "").replaceAll("-", "");
+		
 		PessoaFisica pessoaFisica = this.pessoaFisicaService.buscarPorCpf(cpf);
 		
 		if (pessoaFisica == null) {
@@ -353,6 +356,8 @@ public class EntregadorController {
 	 * @param cnpj
 	 */
 	public void obterPessoaJuridica(String cnpj) {
+		
+		cnpj = cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 		
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
