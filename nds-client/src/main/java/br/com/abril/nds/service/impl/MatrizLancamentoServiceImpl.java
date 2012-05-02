@@ -72,7 +72,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			Date dataInicial, List<Long> fornecedores) {
 		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
 		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
-				.buscarDiasDistribuicao(fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
+				.buscarDiasDistribuicaoFornecedor(fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Set<DiaSemana> diasDistribuicao = EnumSet.noneOf(DiaSemana.class);
 		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
 			diasDistribuicao.add(distribuicao.getDiaSemana());
