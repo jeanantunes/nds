@@ -42,12 +42,8 @@ public class ChamadaEncalhe implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "INICIO_RECOLHIMENTO", nullable = false)
-	private Date inicioRecolhimento;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "FINAL_RECOLHIMENTO", nullable = false)
-	private Date finalRecolhimento;
+	@Column(name = "DATA_RECOLHIMENTO", nullable = false)
+	private Date dataRecolhimento;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_CHAMADA_ENCALHE", nullable = false)
@@ -80,34 +76,6 @@ public class ChamadaEncalhe implements Serializable {
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
-	
-	/**
-	 * @return the inicioRecolhimento
-	 */
-	public Date getInicioRecolhimento() {
-		return inicioRecolhimento;
-	}
-	
-	/**
-	 * @param inicioRecolhimento the inicioRecolhimento to set
-	 */
-	public void setInicioRecolhimento(Date inicioRecolhimento) {
-		this.inicioRecolhimento = inicioRecolhimento;
-	}
-	
-	/**
-	 * @return the finalRecolhimento
-	 */
-	public Date getFinalRecolhimento() {
-		return finalRecolhimento;
-	}
-	
-	/**
-	 * @param finalRecolhimento the finalRecolhimento to set
-	 */
-	public void setFinalRecolhimento(Date finalRecolhimento) {
-		this.finalRecolhimento = finalRecolhimento;
-	}
 
 	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
 		return tipoChamadaEncalhe;
@@ -115,6 +83,20 @@ public class ChamadaEncalhe implements Serializable {
 	
 	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
 		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+
+	/**
+	 * @return the dataRecolhimento
+	 */
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	/**
+	 * @param dataRecolhimento the dataRecolhimento to set
+	 */
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
 	}
 
 }

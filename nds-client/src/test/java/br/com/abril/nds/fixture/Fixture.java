@@ -407,21 +407,17 @@ public class Fixture {
 		return lancamento;
 	}
 	
-	public static ChamadaEncalhe chamadaEncalhe(
-			Date inicioRecolhimento, 
-			Date finalRecolhimento, 
-			ProdutoEdicao produtoEdicao, 
-			TipoChamadaEncalhe tipoChamadaEncalhe) {
-		
+	public static ChamadaEncalhe chamadaEncalhe(Date dataRecolhimento, 
+												ProdutoEdicao produtoEdicao, 
+												TipoChamadaEncalhe tipoChamadaEncalhe) {
+											
 		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
 		
-		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
-		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
 		
 		return chamadaEncalhe;
-		
 	}
 	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
