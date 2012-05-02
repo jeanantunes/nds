@@ -448,7 +448,7 @@ public class BoletoServiceImpl implements BoletoService {
 		incrementarBoletosBaixadosComDivergencia(resumoBaixaBoletos);
 		
 		BigDecimal valorJurosCalculado = 
-				cobrancaService.calcularJuros(distribuidor, boleto.getCota(),
+				cobrancaService.calcularJuros(null, boleto.getCota(), distribuidor,
 											  boleto.getValor(), boleto.getDataVencimento(),
 											  pagamento.getDataPagamento());
 		
@@ -464,7 +464,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		BigDecimal valorMultaCalculado = 
-				cobrancaService.calcularMulta(distribuidor, boleto.getCota(),
+				cobrancaService.calcularMulta(null, boleto.getCota(), distribuidor,
 											  boleto.getValor());
 		
 		if (valorMultaCalculado.compareTo(BigDecimal.ZERO) == 1) {
@@ -1104,12 +1104,14 @@ public class BoletoServiceImpl implements BoletoService {
 			if (dataVencimentoUtil.compareTo(dataOperacao) < 0) {
 				
 				//CALCULA JUROS
-				valorJurosCalculado = cobrancaService.calcularJurosBanco(boleto.getBanco(),distribuidor, boleto.getCota(),
-													  boleto.getValor(), boleto.getDataVencimento(),
-													  dataOperacao);
+				valorJurosCalculado =
+					cobrancaService.calcularJuros(boleto.getBanco(), boleto.getCota(), distribuidor,
+												  boleto.getValor(), boleto.getDataVencimento(),
+												  dataOperacao);
 				//CALCULA MULTA
-				valorMultaCalculado = cobrancaService.calcularMultaBanco(boleto.getBanco(),distribuidor, boleto.getCota(),
-													  boleto.getValor());
+				valorMultaCalculado =
+					cobrancaService.calcularMulta(boleto.getBanco(), boleto.getCota(), distribuidor,
+												  boleto.getValor());
 			}
 			
 			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataOperacao) );

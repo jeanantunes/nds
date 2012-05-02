@@ -9,31 +9,36 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 
 public interface CobrancaService {
     
-	public BigDecimal calcularJuros(Distribuidor distribuidor, Cota cota,
+	/**
+	 * Obtém o valor do juros, respeitando a ordem dos parâmetros informados,
+	 * ou seja, se existir taxa de juros no banco informado, utiliza essa taxa.
+	 * Senão utilizada da cota caso exista ou do distribuídor.
+	 * 
+	 * @param banco - banco
+	 * @param cota - cota
+	 * @param distribuidor - distribuidor
+	 * @param valor - valor a ser calculado
+	 * @param dataVencimento - data de vencimento
+	 * @param dataCalculoJuros - data a ser calculado o juros
+	 * 
+	 * @return valor calculado com o juros
+	 */	
+	public BigDecimal calcularJuros(Banco banco, Cota cota, Distribuidor distribuidor,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
 	
-	public BigDecimal calcularMulta(Distribuidor distribuidor, Cota cota, BigDecimal valor);
-	
-	
 	/**
-	 * Obtem juros calculado, considerando parametros do banco
-	 * @param distribuidor
-	 * @param cota
-	 * @param valor
-	 * @param dataVencimento
-	 * @param dataCalculoJuros
-	 * @return
+	 * Obtém o valor da multa, respeitando a ordem dos parâmetros informados,
+	 * ou seja, se existir taxa ou valor de multa no banco informado, utiliza essa informação.
+	 * Senão utilizada da cota caso exista ou do distribuidor.
+	 * 
+	 * @param banco - banco
+	 * @param cota - cota
+	 * @param distribuidor - distribuidor
+	 * @param valor - valor a ser calculado
+	 * 
+	 * @return valor calculado com a multa
 	 */
-	public BigDecimal calcularJurosBanco(Banco banco, Distribuidor distribuidor, Cota cota,
-			BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
+	public BigDecimal calcularMulta(Banco banco, Cota cota,
+									Distribuidor distribuidor, BigDecimal valor);
 	
-    /**
-     * Obtem jmulta calculada, considerando parametros do banco
-     * @param distribuidor
-     * @param cota
-     * @param valor
-     * @return
-     */
-    public BigDecimal calcularMultaBanco(Banco banco, Distribuidor distribuidor, Cota cota, BigDecimal valor);
-
 }

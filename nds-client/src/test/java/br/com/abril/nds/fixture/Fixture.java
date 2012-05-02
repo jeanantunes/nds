@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
@@ -19,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -408,21 +407,17 @@ public class Fixture {
 		return lancamento;
 	}
 	
-	public static ChamadaEncalhe chamadaEncalhe(
-			Date inicioRecolhimento, 
-			Date finalRecolhimento, 
-			ProdutoEdicao produtoEdicao, 
-			TipoChamadaEncalhe tipoChamadaEncalhe) {
-		
+	public static ChamadaEncalhe chamadaEncalhe(Date dataRecolhimento, 
+												ProdutoEdicao produtoEdicao, 
+												TipoChamadaEncalhe tipoChamadaEncalhe) {
+											
 		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
 		
-		chamadaEncalhe.setInicioRecolhimento(inicioRecolhimento);
-		chamadaEncalhe.setFinalRecolhimento(finalRecolhimento);
+		chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(tipoChamadaEncalhe);
 		
 		return chamadaEncalhe;
-		
 	}
 	
 	public static ConferenciaEncalheParcial conferenciaEncalheParcial(
@@ -507,15 +502,27 @@ public class Fixture {
 	}
 
 	public static DistribuicaoFornecedor distribuicaoFornecedor(
-			Distribuidor distribuidor, Fornecedor fornecedor,
-			DiaSemana diaSemana, OperacaoDistribuidor operacaoDistribuidor) {
+			Fornecedor fornecedor, DiaSemana diaSemana,
+			OperacaoDistribuidor operacaoDistribuidor) {
 		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
-		df.setDistribuidor(distribuidor);
 		df.setFornecedor(fornecedor);
 		df.setDiaSemana(diaSemana);
 		df.setOperacaoDistribuidor(operacaoDistribuidor);
-		distribuidor.getDiasDistribuicao().add(df);
+		
 		return df;
+	}
+	
+	public static DistribuicaoDistribuidor distribuicaoDistribuidor(
+											Distribuidor distribuidor, DiaSemana diaSemana,
+											OperacaoDistribuidor operacaoDistribuidor) {
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidor = new DistribuicaoDistribuidor();
+		
+		distribuicaoDistribuidor.setDistribuidor(distribuidor);
+		distribuicaoDistribuidor.setDiaSemana(diaSemana);
+		distribuicaoDistribuidor.setOperacaoDistribuidor(operacaoDistribuidor);
+		
+		return distribuicaoDistribuidor;
 	}
 
 	public static Cota cota(Integer numeroCota, Pessoa pessoa,

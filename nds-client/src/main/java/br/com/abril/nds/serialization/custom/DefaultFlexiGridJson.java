@@ -63,11 +63,11 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
         }
 
         
-        public FlexiGridJson serialize() {
-            serializer.from(wrapper).recursive().serialize();
+        public FlexiGridJson serialize() {        	
+        	serializer.from(wrapper).recursive().serialize();
             return this;
         }
-
+    
        
 
         public FlexiGridJson total(Integer total) {
@@ -77,6 +77,7 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
 
 		@Override
 		public FlexiGridJson page(Integer page) {
+			
 			wrapper.setPage(page);
 			return this;
 		}

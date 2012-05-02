@@ -24,12 +24,12 @@ $(function(){
 	    </fieldset>
 	</div>
 
-	<div id="dialog-excluir" title="Excluir Box">
-		<jsp:include page="../messagesDialog.jsp" />
+	<div id="dialog-excluir" title="Excluir Box">		
 		<p>Confirma a exclus&atilde;o deste Box?</p>
 	</div>
 	
-	<div id="dialog-novo" title="Incluir Novo Box">    
+	<div id="dialog-novo" title="Incluir Novo Box">  
+		<jsp:include page="../messagesDialog.jsp" />  
 	    <table width="356" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>
 	              <td width="112">Box:</td>
@@ -85,7 +85,7 @@ $(function(){
         	<table class="boxGrid"></table>
         </div>
 
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" id="btnNovo"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>

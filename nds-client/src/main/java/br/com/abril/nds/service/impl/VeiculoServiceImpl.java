@@ -26,6 +26,18 @@ public class VeiculoServiceImpl implements VeiculoService {
 		
 		return this.veiculoRepository.buscarTodos();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Veiculo buscarVeiculoPorId(Long idVeiculo){
+		
+		if (idVeiculo == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Veículo é obrigatório.");
+		}
+		
+		return this.veiculoRepository.buscarPorId(idVeiculo);
+	}
 
 	@Override
 	@Transactional

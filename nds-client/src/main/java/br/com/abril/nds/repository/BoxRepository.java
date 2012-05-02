@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -43,4 +44,14 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 */
 	public abstract List<Box> busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
 			String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	/**
+	 * Verifica a existência do Código do {@link Box}.
+	 * @param codigoBox Código do {@link Box} a ser verificado.
+	 * @param id (Opcional) id do {@link Box} a ser ignorado na verificação.
+	 * @return <code>true</code> se o Código ja estiver em uso por um {@link Box} diferente ao do id.
+	 */
+	public abstract boolean hasCodigo(String codigoBox, Long id);
+
+	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
 }

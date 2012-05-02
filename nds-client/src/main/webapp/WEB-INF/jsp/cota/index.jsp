@@ -191,7 +191,7 @@
 			<ul>
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
 			<li><a href="#tabpf-2" onclick="popularGridEnderecos()">Endereços</a></li>			
-			<li><a href="#tabpf-3" onclick="carregarTelefones()">Telefones</a></li>
+			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
 			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
 			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
@@ -206,7 +206,9 @@
 			</div>
 			
 			<div id="tabpf-3">
-				<jsp:include page="../telefone/index.jsp"></jsp:include>
+				<jsp:include page="../telefone/index.jsp">
+					<jsp:param value="COTA" name="tela"/>
+				</jsp:include>
 			</div>
 
 			<div id="tabpf-4">

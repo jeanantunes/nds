@@ -576,8 +576,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Override
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
-		Cota cota = this.cotaRepository.buscarPorId(idCota);
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalCota(cota);
+		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalCota(idCota);
 	}
 
 	

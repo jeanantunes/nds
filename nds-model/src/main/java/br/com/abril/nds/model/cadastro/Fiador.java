@@ -51,6 +51,9 @@ public class Fiador implements Serializable {
 	@JoinTable(name = "FIADOR_SOCIO", joinColumns = {@JoinColumn(name = "FIADOR_ID")}, 
 									  inverseJoinColumns = {@JoinColumn(name = "SOCIO_ID")})
 	private List<Pessoa> socios;
+	
+	@OneToMany(mappedBy = "fiador")
+	private List<TelefoneFiador> telefonesFiador;
 
 	public Long getId() {
 		return id;
@@ -98,5 +101,13 @@ public class Fiador implements Serializable {
 
 	public void setSocios(List<Pessoa> socios) {
 		this.socios = socios;
+	}
+
+	public List<TelefoneFiador> getTelefonesFiador() {
+		return telefonesFiador;
+	}
+
+	public void setTelefonesFiador(List<TelefoneFiador> telefonesFiador) {
+		this.telefonesFiador = telefonesFiador;
 	}
 }
