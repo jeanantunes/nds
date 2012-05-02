@@ -73,13 +73,8 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento = 
-			this.obterMatrizBalanceamentoMock(dataPesquisa, listaIdsFornecedores);
-		
-		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
-		}
-		
+			this.obterMatrizBalanceamento(dataPesquisa, listaIdsFornecedores);
+
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
@@ -119,13 +114,7 @@ public class MatrizRecolhimentoController {
 	@SuppressWarnings("unchecked")
 	public void balancearPorEditor() {
 		
-		Map<Date, List<RecolhimentoDTO>> matrizBalanceamentoAtual =  
-			(Map<Date, List<RecolhimentoDTO>>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
-		
-		if (matrizBalanceamentoAtual == null || matrizBalanceamentoAtual.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
-		}
+		Map<Date, List<RecolhimentoDTO>> matrizBalanceamentoAtual = this.obterMatrizBalanceamento();
 		
 		Map<Date, Long> mapaRecolhimentoEditor = new HashMap<Date, Long>();
 		
@@ -208,7 +197,7 @@ public class MatrizRecolhimentoController {
 	}
 	
 	/*
-	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
+	 * Verifica se já existe a matriz na sessão, caso contrário irá buscá-la a partir dos parâmetros.
 	 */
 	@SuppressWarnings("unchecked")
 	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Date dataBalanceamento, 
@@ -217,16 +206,30 @@ public class MatrizRecolhimentoController {
 		Map<Date, List<RecolhimentoDTO>> matrizBalanceamento =  
 			(Map<Date, List<RecolhimentoDTO>>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
 		
-		if (matrizBalanceamento == null) {
+		if (matrizBalanceamento == null 
+				&& dataBalanceamento != null 
+				&& listaIdsFornecedores != null) {
 
-			matrizBalanceamento = new HashMap<Date, List<RecolhimentoDTO>>();
-
-			matrizBalanceamento.put(dataBalanceamento, null);
+			matrizBalanceamento = this.obterMatrizBalanceamentoMock(dataBalanceamento, listaIdsFornecedores);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO, matrizBalanceamento);
 		}
 		
+		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
 		return matrizBalanceamento; 
+	}
+	
+	/*
+	 * Verifica se já existe a matriz na sessão.
+	 */
+	private Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento() {
+		
+		return this.obterMatrizBalanceamento(null, null); 
 	}
 	
 	/*

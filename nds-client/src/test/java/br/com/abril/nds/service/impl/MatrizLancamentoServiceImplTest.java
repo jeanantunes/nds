@@ -81,20 +81,20 @@ public class MatrizLancamentoServiceImplTest {
 				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao());
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		dinapQuarta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		dinapSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 
 		fcSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		fcSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEXTA_FEIRA,
+				fornecedorFc, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		
 	}
@@ -105,7 +105,7 @@ public class MatrizLancamentoServiceImplTest {
 		List<DistribuicaoFornecedor> distribuicoes = Arrays.asList(
 				dinapSegunda, dinapQuarta, dinapSexta, fcSegunda, fcSexta);
 		Mockito.when(
-				distribuidorRepository.buscarDiasDistribuicao(fornecedores, OperacaoDistribuidor.DISTRIBUICAO))
+				distribuidorRepository.buscarDiasDistribuicaoFornecedor(fornecedores, OperacaoDistribuidor.DISTRIBUICAO))
 				.thenReturn(distribuicoes);
 		List<Date> periodo = Arrays.asList(
 				Fixture.criarData(2, Calendar.MARCH, 2012),
@@ -121,7 +121,7 @@ public class MatrizLancamentoServiceImplTest {
 		Date dataInicial = Fixture.criarData(1, Calendar.MARCH, 2012);
 		service.obterResumoPeriodo(dataInicial, fornecedores);
 
-		Mockito.verify(distribuidorRepository).buscarDiasDistribuicao(
+		Mockito.verify(distribuidorRepository).buscarDiasDistribuicaoFornecedor(
 				fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Mockito.verify(lancamentoRepository).buscarResumosPeriodo(periodo,
 				fornecedores, GrupoProduto.CROMO);
