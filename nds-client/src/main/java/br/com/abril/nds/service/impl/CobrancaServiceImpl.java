@@ -27,7 +27,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularJuros(Distribuidor distribuidor, Cota cota,
+	public BigDecimal calcularJuros(Banco banco, Cota cota, Distribuidor distribuidor,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
 		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
@@ -36,14 +36,18 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
         
-		if (formaCobrancaPrincipal != null
-				&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
+		if (banco != null && banco.getJuros() != null ) {
+			
+			taxaJurosMensal = banco.getJuros();
+		
+		} else if (formaCobrancaPrincipal != null 
+					&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
 
 			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
 			
 		} else if (distribuidor.getPoliticaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
+					&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
+					&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
 
 			taxaJurosMensal = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal();
 		}
@@ -59,7 +63,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularMulta(Distribuidor distribuidor, Cota cota, BigDecimal valor) {
+	public BigDecimal calcularMulta(Banco banco, Cota cota,
+									Distribuidor distribuidor, BigDecimal valor) {
 		
 		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
 
@@ -67,92 +72,32 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		BigDecimal valorCalculadoMulta = null;
 
-		if (formaCobrancaPrincipal != null
-				&& formaCobrancaPrincipal.getTaxaMulta() != null) {
-
-			taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
-
-		} else if (distribuidor.getPoliticaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta() != null) {
-
-			taxaMulta = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta();
-		}
-
-		valorCalculadoMulta = valor.multiply(MathUtil.divide(taxaMulta, new BigDecimal(100)));
-
-		return valorCalculadoMulta;
-	}
-	
-	@Override
-	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularJurosBanco(Banco banco, Distribuidor distribuidor, Cota cota,
-									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
-
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
-
-		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
-
-		BigDecimal valorCalculadoJuros = null;
-
-		if ((banco !=null) && (banco.getJuros()!=null)){
-			taxaJurosMensal = banco.getJuros();
-		}
-		else if (cota.getParametroCobranca() != null
-				&& formaCobrancaPrincipal != null
-				&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
-
-			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
-
-		} else if (distribuidor.getPoliticaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-				&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
-
-			taxaJurosMensal = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal();
-		}
-
-		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
-
-		BigDecimal taxaJurosDiaria = MathUtil.divide(taxaJurosMensal, new BigDecimal(30));
-
-		valorCalculadoJuros = valor.multiply(MathUtil.divide(taxaJurosDiaria, new BigDecimal(100)));
-
-		return valorCalculadoJuros.multiply(new BigDecimal(quantidadeDias));
-	}
-
-	@Override
-	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularMultaBanco(Banco banco, Distribuidor distribuidor, Cota cota, BigDecimal valor) {
-
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
-
-		BigDecimal taxaMulta = BigDecimal.ZERO;
-
-		BigDecimal valorCalculadoMulta = null;
+		if (banco != null && banco.getVrMulta() != null) {
 		
-		if ((banco !=null) && (banco.getVrMulta()!=null)){
 			valorCalculadoMulta = banco.getVrMulta();
-		}
-		else{
-			if ((banco !=null) && (banco.getMulta()!=null)){
+		
+		} else {
+			
+			if (banco != null && banco.getMulta() != null) {
+			
 				taxaMulta = banco.getMulta();
-			}
-			else if (cota.getParametroCobranca() != null
-					&& formaCobrancaPrincipal != null
-					&& formaCobrancaPrincipal.getTaxaMulta() != null) {
+			
+			} else if (formaCobrancaPrincipal != null
+						&& formaCobrancaPrincipal.getTaxaMulta() != null) {
 	
 				taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
 	
-			}else if (distribuidor.getPoliticaCobranca() != null
-					&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-					&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta() != null) {
+			} else if (distribuidor.getPoliticaCobranca() != null
+						&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
+						&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta() != null) {
 	
 				taxaMulta = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta();
 			}
+	
 			valorCalculadoMulta = valor.multiply(MathUtil.divide(taxaMulta, new BigDecimal(100)));
 		}
 		
 		return valorCalculadoMulta;
 	}
-
+	
 }

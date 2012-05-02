@@ -459,8 +459,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						
 						valorCalculadoJuros = 
 								this.cobrancaService.calcularJuros(
-										distribuidor, 
-										cota, 
+										null,
+										cota,
+										distribuidor,
 										vlMovFinanTotal.add(novaDivida.getValor()).subtract(valorMulta), 
 										divida.getCobranca().getDataVencimento(),
 										new Date());
