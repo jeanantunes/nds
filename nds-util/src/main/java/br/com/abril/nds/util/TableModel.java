@@ -19,7 +19,7 @@ public class TableModel<T> implements Serializable {
 	private int total;
 	
 	private List<T> rows;
-
+	
 	/**
 	 * Obtém a page.
 	 * 

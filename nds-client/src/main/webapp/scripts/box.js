@@ -94,7 +94,8 @@ var boxController = {
 			}, {
 				name : "postoAvancado",
 				value : false
-			}]
+			}],
+			newp:1
 		});
 		$(".boxGrid").flexReload();
 	},
