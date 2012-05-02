@@ -2,8 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -66,6 +68,12 @@ public interface BoxService {
 	 * @throws RelationshipRestrictionException Lança quando o box em questão está relacionado há Cota.
 	 */
 	public abstract void remover(Long id)throws RelationshipRestrictionException;
+	
+	
+	/**
+	 * @see BoxRepository#obtemCotaRotaRoteiro(long)
+	 */
+	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
 
 	
 }

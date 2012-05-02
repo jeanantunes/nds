@@ -225,6 +225,40 @@ var boxController = {
 
 		this.bindData(data);
 		this.showPopupEditar('Incluir Novo Box');
+	},
+	
+	gridDetalhe: function(){
+		$(".boxCotaGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'cota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nome',
+				width : 200,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Rota',
+				name : 'rota',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Roteiro',
+				name : 'roteiro',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 570,
+			height : 255
+		});
+
 	}
 };
 

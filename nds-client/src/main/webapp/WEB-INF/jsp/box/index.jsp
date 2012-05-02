@@ -20,7 +20,7 @@ $(function(){
 	<div id="dialog-box" title="Detalhes do Box">
 		<fieldset>
 	    	<legend>Cotas Associadas ao Box</legend>
-	        <table class="box_cotaGrid"></table>
+	        <table class="boxCotaGrid"></table>
 	    </fieldset>
 	</div>
 
