@@ -870,8 +870,8 @@ public class DataLoader {
 			"manoel@mail.com", "Manoel da Silva");
 			save(session, manoel);
 
-	Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-	save(session, box1);
+	//Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+	//save(session, box1);
 
 	Usuario usuario = Fixture.usuarioJoao();
 	save(session, usuario);
@@ -1619,7 +1619,7 @@ public class DataLoader {
 		
 		ParametroSistema parametroPathImagemPDV = 
 				Fixture.parametroSistema(
-					TipoParametroSistema.PATH_IMAGENS_PDV, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\imagens\\pdv\\");
+					TipoParametroSistema.PATH_IMAGENS_PDV, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\images\\pdv\\");
 		session.save(parametroPathImagemPDV);
 		
 		parametroSistema = 
@@ -3524,8 +3524,8 @@ public class DataLoader {
 
 	private static void gerarCargaDadosNotasFiscaisNFE(Session session) {
 
-		Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-		save(session, boxNovo);
+		//Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		//save(session, boxNovo);
 
 		Cota cotaJohnyConsultaEncalhe = null;
 

@@ -1,12 +1,14 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -19,6 +21,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
@@ -361,6 +364,9 @@ public class PdvController {
 		
 		pdvDTO.setImagem((InputStream) session.getAttribute(IMAGEM_PDV));
 		
+		//pdvDTO.setTelefone(sessiom.Map<Integer, TelefoneAssociacaoDTO>);
+		//pdvDTO.setEndereco(endereco);
+		
 		pdvService.salvar(pdvDTO);
 		
 		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo() == -1){
@@ -469,10 +475,11 @@ public class PdvController {
 		
 		try {
 			
-			//Grava o arquivo em disco e retorna o File do arquivo
+			if(((FileInputStream)uploadedFile.getFile()).getChannel().size() > (1024 * 1024 * 5)) {
+				throw new Exception("O arquivo deve ser menor que 5MBs.");
+			}
+			 
 			File fileArquivoBanco = gravarArquivo(uploadedFile);
-			
-			
 			
 			nomeArquivo = fileArquivoBanco.getName();
 			
@@ -495,8 +502,6 @@ public class PdvController {
 	}
 	
 	private File gravarArquivo(UploadedFile uploadedFile) {
-
-		//TODO validar imagem tamanho/formato
 		
 		String pathAplicacao = servletContext.getRealPath("");
 		
@@ -519,6 +524,7 @@ public class PdvController {
 						
 			fos = new FileOutputStream(fileArquivo);
 			
+			((FileInputStream)uploadedFile.getFile()).getChannel().size();
 			IOUtils.copyLarge(uploadedFile.getFile(), fos);
 			
 			session.setAttribute(IMAGEM_PDV, uploadedFile.getFile());

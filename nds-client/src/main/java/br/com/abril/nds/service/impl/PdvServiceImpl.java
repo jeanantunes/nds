@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -361,7 +362,7 @@ public class PdvServiceImpl implements PdvService {
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
 		
 		
-		String dirFile = path + "pdv_" + idPdv + ".jpeg"; 
+		String dirFile = path.getValor().replace("\\", "/") + "pdv_" + idPdv + ".jpeg"; 
 		
 		File fileArquivo = new File(dirFile);
 		   		
@@ -370,9 +371,13 @@ public class PdvServiceImpl implements PdvService {
 		
 		FileOutputStream fos = null;
 		
+		fileArquivo = new File(dirFile);
+		
 		try {
 						
 			fos = new FileOutputStream(fileArquivo);
+			
+			((FileInputStream)foto).getChannel().size();
 			
 			IOUtils.copyLarge(foto, fos);
 			
@@ -387,6 +392,7 @@ public class PdvServiceImpl implements PdvService {
 					fos.close();
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new ValidacaoException(TipoMensagem.ERROR,
 					"Falha ao gravar o arquivo em disco!");
 			}

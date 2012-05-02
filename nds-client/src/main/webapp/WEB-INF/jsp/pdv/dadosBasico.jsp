@@ -35,7 +35,7 @@ function tratarRetornoUploadImagem(data) {
 	$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
 				
 	if(mensagens!=null && mensagens.length!=0) {
-		exibirMensagem(status,mensagens);
+		exibirMensagemDialog(status,mensagens);
 	}
 }
 

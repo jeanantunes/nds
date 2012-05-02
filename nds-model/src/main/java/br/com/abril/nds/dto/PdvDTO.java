@@ -1,10 +1,12 @@
 package br.com.abril.nds.dto;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
@@ -66,9 +68,9 @@ public class PdvDTO implements Serializable {
 	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
 	
 	private EnderecoPdvDTO enderecoPdvDTO;
-	
-    private TelefonePdvDTO telefonePdvDTO;
-    
+		
+	private Map<Integer, TelefoneAssociacaoDTO> telefones;
+	    
     private CaracteristicaDTO caracteristicaDTO;
     
     private List<Long> especialidades;
@@ -145,20 +147,6 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setEnderecoPdvDTO(EnderecoPdvDTO enderecoPdvDTO) {
 		this.enderecoPdvDTO = enderecoPdvDTO;
-	}
-
-	/**
-	 * @return the telefonePdvDTO
-	 */
-	public TelefonePdvDTO getTelefonePdvDTO() {
-		return telefonePdvDTO;
-	}
-
-	/**
-	 * @param telefonePdvDTO the telefonePdvDTO to set
-	 */
-	public void setTelefonePdvDTO(TelefonePdvDTO telefonePdvDTO) {
-		this.telefonePdvDTO = telefonePdvDTO;
 	}
 
 	/**
@@ -562,6 +550,20 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setImagem(InputStream imagem) {
 		this.imagem = imagem;
+	}
+
+	/**
+	 * @return the telefones
+	 */
+	public Map<Integer, TelefoneAssociacaoDTO> getTelefones() {
+		return telefones;
+	}
+
+	/**
+	 * @param telefones the telefones to set
+	 */
+	public void setTelefones(Map<Integer, TelefoneAssociacaoDTO> telefones) {
+		this.telefones = telefones;
 	}
 	
 }
