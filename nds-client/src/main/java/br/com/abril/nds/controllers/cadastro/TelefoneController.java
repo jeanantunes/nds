@@ -35,11 +35,11 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cadastro/telefone")
 public class TelefoneController {
 
-	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessao";
+	private static String LISTA_TELEFONES_SALVAR_SESSAO = "";
 	
-	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessao";
+	private static String LISTA_TELEFONES_REMOVER_SESSAO = "";
 	
-	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicao";
+	private static String LISTA_TELEFONES_EXIBICAO = "";
 	
 	private Result result;
 	
@@ -48,16 +48,56 @@ public class TelefoneController {
 	@Autowired
 	private TelefoneService telefoneService;
 	
+	public enum Tela{
+		
+		FIADOR,
+		COTA,
+		ENTREGADOR;
+		
+		public void setarParametros(){
+			
+			switch (this){
+				case FIADOR:
+					TelefoneController.setarParametros(
+							FiadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							FiadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							FiadorController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case COTA:
+					TelefoneController.setarParametros(
+							CotaController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							CotaController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							CotaController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case ENTREGADOR:
+					TelefoneController.setarParametros(
+							EntregadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							EntregadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							EntregadorController.LISTA_TELEFONES_EXIBICAO);
+				break;
+			}
+		}
+	}
+	
 	public TelefoneController(Result result, HttpSession httpSession){
 		this.result = result;
 		this.httpSession = httpSession;
+	}
+	
+	public static void setarParametros(String listaSalvar, String listaRemover, String listaExibir){
+		
+		LISTA_TELEFONES_SALVAR_SESSAO = listaSalvar;
+		LISTA_TELEFONES_REMOVER_SESSAO = listaRemover;
+		LISTA_TELEFONES_EXIBICAO = listaExibir;
 	}
 	
 	@Path("/")
 	public void index(){}
 	
 	@Post
-	public void pesquisarTelefones(String sortname, String sortorder){
+	public void pesquisarTelefones(Tela tela, String sortname, String sortorder){
+		
+		tela.setarParametros();
 		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
@@ -99,8 +139,10 @@ public class TelefoneController {
 	}
 	
 	@Post
-	public void adicionarTelefone(Integer referencia, String tipoTelefone, String ddd, 
+	public void adicionarTelefone(Tela tela, Integer referencia, String tipoTelefone, String ddd, 
 			String numero, String ramal, boolean principal){
+		
+		tela.setarParametros();
 		
 		this.validarDadosEntrada(tipoTelefone, ddd, numero, principal, referencia);
 		
@@ -140,7 +182,7 @@ public class TelefoneController {
 		List<TelefoneAssociacaoDTO> listaExibicao = this.obterTelefonesExibicao();
 		for (int index = 0 ; index < listaExibicao.size() ; index++){
 			
-			if (referencia.equals(listaExibicao.get(index).getReferencia())){
+			if (referencia != null && referencia.equals(listaExibicao.get(index).getReferencia())){
 				
 				listaExibicao.remove(index);
 				
@@ -151,11 +193,14 @@ public class TelefoneController {
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSessao);
 		
-		this.pesquisarTelefones(null, null);
+		this.pesquisarTelefones(tela, null, null);
 	}
 
 	@Post
-	public void removerTelefone(Integer referencia){
+	public void removerTelefone(Tela tela, Integer referencia){
+		
+		tela.setarParametros();
+		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSalvarSessao = 
 			this.obterTelefonesSalvarSessao();
 		
@@ -179,11 +224,14 @@ public class TelefoneController {
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, telefonesSalvarSessao);
 		
-		this.pesquisarTelefones(null, null);
+		this.pesquisarTelefones(tela, null, null);
 	}
 	
 	@Post
-	public void editarTelefone(Integer referencia){
+	public void editarTelefone(Tela tela, Integer referencia){
+		
+		tela.setarParametros();
+		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
 		TelefoneAssociacaoDTO telefoneAssociacaoDTO = telefonesSessao.get(referencia);
@@ -302,10 +350,20 @@ public class TelefoneController {
 			
 			for (Integer key : telefones.keySet()){
 				
-				if (telefones.get(key).isPrincipal() && (referencia != null && !referencia.equals(telefones.get(key).getReferencia()))){
+				if (referencia == null){
 					
-					listaValidacao.add("Já existe um telefone principal.");
-					break;
+					if (telefones.get(key).isPrincipal()){
+						listaValidacao.add("Já existe um telefone principal.");
+						break;
+					}
+					
+				} else {
+				
+					if (telefones.get(key).isPrincipal() && (!referencia.equals(telefones.get(key).getReferencia()))){
+						
+						listaValidacao.add("Já existe um telefone principal.");
+						break;
+					}
 				}
 			}
 			
@@ -313,10 +371,20 @@ public class TelefoneController {
 			
 			for (TelefoneAssociacaoDTO dto : listaExibicao){
 				
-				if (dto.isPrincipal() && (referencia != null && !referencia.equals(dto.getReferencia()))){
+				if (referencia == null){
 					
-					listaValidacao.add("Já existe um telefone principal.");
-					break;
+					if (dto.isPrincipal()){
+						
+						listaValidacao.add("Já existe um telefone principal.");
+						break;
+					}
+				} else {
+				
+					if (dto.isPrincipal() && (!referencia.equals(dto.getReferencia()))){
+						
+						listaValidacao.add("Já existe um telefone principal.");
+						break;
+					}
 				}
 			}
 		}

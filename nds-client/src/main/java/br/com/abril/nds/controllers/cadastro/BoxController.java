@@ -12,6 +12,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -44,7 +45,7 @@ public class BoxController {
 	public void busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
 			String sortname, String sortorder, int rp, int page) {
 		List<Box> boxs = boxService.busca(codigoBox, tipoBox, postoAvancado,
-				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page, rp);
+				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), --page*rp , rp);
 		Long quantidade = boxService.quantidade(codigoBox, tipoBox,
 				postoAvancado);
 		result.use(FlexiGridJson.class).from(boxs).total(quantidade.intValue()).page(page).serialize();
@@ -54,16 +55,19 @@ public class BoxController {
 	@Path("/buscaPorId.json")
 	public void buscaPorId(long id) {
 		Box box = boxService.buscarPorId(id);
-		result.use(Results.json()).withoutRoot().from(box).recursive()
-				.serialize();
+		result.use(Results.json()).from(box).serialize();
 	}
 
 	@Post
 	@Path("/salvar.json")
 	public void salvar(Box box) {
 		valida(box);
-		boxService.merge(box);
-
+		try {
+			boxService.merge(box);
+		} catch (UniqueConstraintViolationException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+		}
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Box salvo com Sucesso."),"result").recursive().serialize();
 	}
 
 	private void valida(Box box) {
@@ -77,7 +81,7 @@ public class BoxController {
 		}
 		if (box.getTipoBox() == null) {
 			listaMensagens.add("O preenchimento do campo [Tipo Box] é obrigatório.");
-		}else if(box.isPostoAvancado() && TipoBox.LANCAMENTO == box.getTipoBox()){
+		}else if(box.isPostoAvancado() && TipoBox.LANCAMENTO != box.getTipoBox()){
 			listaMensagens.add("Apenas o Tipo Box lançamento pode ser posto avançado.");
 		}
 		

@@ -22,7 +22,7 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipo);
 	
-	FormaCobranca obterFormaCobrancaPrincipalCota(Cota cota);
+	FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota);
 
 	List<FormaCobranca> obterFormasCobrancaCota(Cota cota);
 	

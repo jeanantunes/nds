@@ -48,6 +48,12 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/cadastro/fiador")
 public class FiadorController {
+	
+	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoFiador";
+	
+	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoFiador";
+	
+	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoFiador";
 
 	public static final String ID_FIADOR_EDICAO = "idFiadorEdicaoSessao";
 	
@@ -84,40 +90,36 @@ public class FiadorController {
 			String sortname, Integer page, Integer rp, ValidacaoVO validacaoVO){
 		
 		if (filtro == null){
+			
 			filtro = (FiltroConsultaFiadorDTO) this.httpSession.getAttribute(FILTRO_ULTIMA_PESQUISA_FIADOR);
 		}
 		
-		if (page == null){
-			page = 1;
-		}
-		
-		if (rp == null){
-			rp = 15;
-		}
-		
 		if (filtro == null){
+			
 			filtro = new FiltroConsultaFiadorDTO();
 		}
 		
 		OrdenacaoColunaFiador orderName = Util.getEnumByStringValue(OrdenacaoColunaFiador.values(), sortname);
-		if (orderName == null){
-			orderName = OrdenacaoColunaFiador.CODIGO;
-		}
-		
-		if (orderName != null){
-			filtro.setOrdenacaoColunaFiador(orderName);
-		}
+		filtro.setOrdenacaoColunaFiador(orderName);
 		
 		if (filtro.getPaginacaoVO() == null){
+			
 			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
 		}
-		
-		if (sortorder != null){
-			filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder));
+			
+		if (page != null){
+			
+			filtro.getPaginacaoVO().setPaginaAtual(page);
 		}
 		
-		if (filtro.getPaginacaoVO().getOrdenacao() == null){
-			filtro.getPaginacaoVO().setOrdenacao(Ordenacao.ASC);
+		if (rp != null){
+			
+			filtro.getPaginacaoVO().setQtdResultadosPorPagina(rp);
+		}
+		
+		if (sortorder != null) {
+			
+			filtro.getPaginacaoVO().setOrdenacao(Util.getEnumByStringValue(Ordenacao.values(), sortorder));
 		}
 		
 		if ((filtro.getNome() == null || filtro.getNome().trim().isEmpty()) && 
@@ -252,10 +254,10 @@ public class FiadorController {
 	private void carregarTelefonesEnderecosPessoa(Long id) {
 		
 		Set<Long> telRemover = (Set<Long>) 
-				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+				this.httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		Map<Integer, TelefoneAssociacaoDTO> telSalvar = (Map<Integer, TelefoneAssociacaoDTO>)
-				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
 		if (telSalvar != null){
 			
@@ -267,7 +269,7 @@ public class FiadorController {
 		
 		List<TelefoneAssociacaoDTO> lista = this.telefoneService.buscarTelefonesPorIdPessoa(id, telRemover);
 		
-		this.httpSession.setAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO, lista);
+		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
 	}
 
 	@Post
@@ -357,7 +359,7 @@ public class FiadorController {
 				this.httpSession.getAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
 		
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
-				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAdicionar = new ArrayList<TelefoneAssociacaoDTO>();
 		if (listaTelefone != null){
@@ -367,7 +369,7 @@ public class FiadorController {
 		}
 		
 		Set<Long> listaTelefoneRemover = (Set<Long>) 
-				this.httpSession.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+				this.httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		List<GarantiaCadastrada> listaGarantiaSessao = (List<GarantiaCadastrada>) 
 				this.httpSession.getAttribute(GarantiasController.LISTA_GARANTIAS_SALVAR_SESSAO);
@@ -514,7 +516,7 @@ public class FiadorController {
 		
 		List<TelefoneAssociacaoDTO> lista = this.fiadorService.buscarTelefonesFiador(idFiador, null);
 		
-		this.httpSession.setAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO, lista);
+		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecos = this.fiadorService.buscarEnderecosFiador(idFiador, null);
 		
@@ -527,9 +529,9 @@ public class FiadorController {
 		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
-		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
-		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
-		this.httpSession.removeAttribute(TelefoneController.LISTA_TELEFONES_EXIBICAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_EXIBICAO);
 		this.httpSession.removeAttribute(GarantiasController.LISTA_GARANTIAS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(GarantiasController.LISTA_GARANTIAS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(CotasAssociadasController.LISTA_COTAS_ASSOCIADAS_SALVAR_SESSAO);
@@ -580,7 +582,7 @@ public class FiadorController {
 			listaCellModel.add(cellModel);
 		}
 
-		tableModel.setPage(page);
+		tableModel.setPage(page == null ? 1 : page);
 		tableModel.setRows(listaCellModel);
 		tableModel.setTotal(consulta.getQuantidadePaginas().intValue()); 
 		

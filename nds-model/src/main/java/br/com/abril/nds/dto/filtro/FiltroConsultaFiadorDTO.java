@@ -21,7 +21,8 @@ public class FiltroConsultaFiadorDTO implements Serializable {
 		NOME("nome"),
 		CPF_CNPJ("cpfCnpj"),
 		RG_INSCRICAO("rgInscricao"),
-		EMAIL("email");
+		EMAIL("email"),
+		TELEFONE("telefone");
 		
 		private String nomeColuna;
 		

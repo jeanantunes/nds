@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,8 +26,15 @@ public class Rota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name="CODIGO_ROTA")
+	@Column(name = "CODIGO_ROTA")
 	private String codigoRota;
+	
+	@Column(name = "DESCRICAO_ROTA")
+	private String descricaoRota;
+	
+	@ManyToOne
+	@JoinColumn(name = "ASSOC_VEIC_MOT_ROTA_ID")
+	private AssociacaoVeiculoMotoristaRota associacaoVeiculoMotoristaRota;
 	
 	public Long getId() {
 		return id;
@@ -41,5 +50,22 @@ public class Rota implements Serializable {
 
 	public void setCodigoRota(String codigoRota) {
 		this.codigoRota = codigoRota;
+	}
+
+	public String getDescricaoRota() {
+		return descricaoRota;
+	}
+
+	public void setDescricaoRota(String descricaoRota) {
+		this.descricaoRota = descricaoRota;
+	}
+
+	public AssociacaoVeiculoMotoristaRota getAssociacaoVeiculoMotoristaRota() {
+		return associacaoVeiculoMotoristaRota;
+	}
+
+	public void setAssociacaoVeiculoMotoristaRota(
+			AssociacaoVeiculoMotoristaRota associacaoVeiculoMotoristaRota) {
+		this.associacaoVeiculoMotoristaRota = associacaoVeiculoMotoristaRota;
 	}
 }
