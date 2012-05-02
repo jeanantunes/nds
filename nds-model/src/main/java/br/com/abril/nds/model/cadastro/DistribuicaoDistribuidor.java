@@ -14,18 +14,18 @@ import javax.persistence.Table;
 import br.com.abril.nds.model.DiaSemana;
 
 @Entity
-@Table(name = "DISTRIBUICAO_FORNECEDOR")
-@SequenceGenerator(name="DIST_FORN_SEQ", initialValue = 1, allocationSize = 1)
-public class DistribuicaoFornecedor {
+@Table(name = "DISTRIBUICAO_DISTRIBUIDOR")
+@SequenceGenerator(name="DIST_DISTR_SEQ", initialValue = 1, allocationSize = 1)
+public class DistribuicaoDistribuidor {
 	
 	@Id
-	@GeneratedValue(generator = "DIST_FORN_SEQ")
+	@GeneratedValue(generator = "DIST_DISTR_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "FORNECEDOR_ID")
-	private Fornecedor fornecedor;
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
+	private Distribuidor distribuidor;
 	
 	@Column(name = "DIA_SEMANA", nullable = false)
 	private Integer codigoDiaSemana;
@@ -42,14 +42,14 @@ public class DistribuicaoFornecedor {
 		this.id = id;
 	}
 	
-	public Fornecedor getFornecedor() {
-		return fornecedor;
+	public Distribuidor getDistribuidor() {
+		return distribuidor;
 	}
-	
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
+
+	public void setDistribuidor(Distribuidor distribuidor) {
+		this.distribuidor = distribuidor;
 	}
-	
+
 	public DiaSemana getDiaSemana() {
 		return DiaSemana.getByCodigoDiaSemana(codigoDiaSemana);
 	}
@@ -83,7 +83,7 @@ public class DistribuicaoFornecedor {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DistribuicaoFornecedor other = (DistribuicaoFornecedor) obj;
+		DistribuicaoDistribuidor other = (DistribuicaoDistribuidor) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -94,8 +94,8 @@ public class DistribuicaoFornecedor {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(fornecedor.getJuridica().getNomeFantasia())
-				.append("-").append(getDiaSemana()).append("-")
+		return new StringBuilder()
+				.append(getDiaSemana()).append("-")
 				.append(operacaoDistribuidor).toString();
 	}
 	

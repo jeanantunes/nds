@@ -253,6 +253,7 @@
 				width : 260,
 				height : 150
 			});
+			$(".veiculosGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarVeiculos'/>"});
 		
 			$(".motoristasGrid").flexigrid({
 				dataType : 'json',
@@ -284,6 +285,7 @@
 				width : 260,
 				height : 150
 			});
+			$(".motoristasGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarMotoristas'/>"});
 		
 			$(".boxRotaGrid").flexigrid({
 				dataType : 'json',
@@ -336,6 +338,60 @@
 				}
 			);
 		}
+		
+		function carregarGrids(){
+			
+			$.postJSON("<c:url value='/cadastro/transportador/pesquisarTransportadores' />", data, 
+				function(result) {
+					
+					if (result[0].tipoMensagem){
+						
+						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+					}
+					
+					if (result[1] != ""){
+						
+						$(".veiculosGrid").flexAddData({
+							page: result[1].page, total: result[1].total, rows: result[1].rows
+						});
+						
+						$(".veiculosGrid").show();
+					} else {
+						
+						$(".veiculosGrid").hide();
+					}
+					
+					if (result[2] != ""){
+						
+						$(".motoristasGrid").flexAddData({
+							page: result[2].page, total: result[2].total, rows: result[2].rows
+						});
+						
+						$(".motoristasGrid").show();
+					} else {
+						
+						$(".motoristasGrid").hide();
+					}
+				}
+			);
+		}
+		
+		function pesquisarVeiculos(){
+			
+			
+		}
+		
+		function pesquisarMotoristas(){
+			
+			
+		}
+		
+		function pesquisarRotaRoteiros(){
+			
+			
+		}
+		
+		
 	</script>
 	<style>
 		.diasFunc label,.finceiro label {

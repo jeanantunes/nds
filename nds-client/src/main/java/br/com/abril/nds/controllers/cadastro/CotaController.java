@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -30,6 +30,12 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/cadastro/cota")
 public class CotaController {
+	
+	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoCota";
+	
+	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoCota";
+	
+	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoCota";
 	
 	private Result result;
 
@@ -44,9 +50,18 @@ public class CotaController {
 	
 	@Autowired
 	private PdvController pdvController;
+	
+	@Autowired
+	private TelefoneController telefoneController;
 
 	public CotaController(Result result) {
 		this.result = result;
+	}
+	
+	@PostConstruct
+	public void init(){
+		
+		this.telefoneController.setarParametros(LISTA_TELEFONES_SALVAR_SESSAO, LISTA_TELEFONES_REMOVER_SESSAO, LISTA_TELEFONES_EXIBICAO);
 	}
 
 	
@@ -94,7 +109,7 @@ public class CotaController {
 			map.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
 		}
 		
-		this.session.setAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO, map);
+		this.session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
 		
 		this.result.nothing();
 	}
@@ -144,8 +159,8 @@ public class CotaController {
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
 		this.cotaService.processarTelefones(idCota, lista, telefonesRemover);
 		
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 	}
 	
 	
@@ -153,7 +168,7 @@ public class CotaController {
 	@SuppressWarnings("unchecked")
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
-				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
+				this.session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
 		if (telefonesSessao == null){
 			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
@@ -167,7 +182,7 @@ public class CotaController {
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterTelefonesRemoverSessao(){
 		Set<Long> telefonesSessao = (Set<Long>) 
-				this.session.getAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+				this.session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		if (telefonesSessao == null){
 			telefonesSessao = new HashSet<Long>();
@@ -257,13 +272,9 @@ public class CotaController {
 	
 	@Post
 	public void cancelar(){
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(TelefoneController.LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
-	
-	
-	
-	
 }

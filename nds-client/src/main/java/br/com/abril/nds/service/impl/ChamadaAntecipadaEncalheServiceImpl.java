@@ -129,8 +129,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			chamadaEncalhe = new ChamadaEncalhe();
 		}
 		
-		chamadaEncalhe.setFinalRecolhimento(infoEncalheDTO.getDataAntecipacao());
-		chamadaEncalhe.setInicioRecolhimento(infoEncalheDTO.getDataAntecipacao());
+		chamadaEncalhe.setDataRecolhimento(infoEncalheDTO.getDataAntecipacao());
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
 		

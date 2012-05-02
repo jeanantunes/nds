@@ -71,7 +71,6 @@ import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -487,6 +486,7 @@ public class DataLoader {
 	private static Editor editoraAbril;
 	private static Estudo estudoSuper1EncalheAnt;
 	private static Estudo estudoSuper2EncalheAnt;
+	private static Cota cotaAcme;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -870,8 +870,7 @@ public class DataLoader {
 			"manoel@mail.com", "Manoel da Silva");
 			save(session, manoel);
 
-	//Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-	//save(session, box1);
+	save(session, box1);
 
 	Usuario usuario = Fixture.usuarioJoao();
 	save(session, usuario);
@@ -1252,7 +1251,15 @@ public class DataLoader {
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
+		
+		rota = Fixture.rota("007");
+		session.save(rota);
 
+		roteiro = Fixture.roteiro("Mococa");
+		session.save(roteiro);
+
+		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
+		session.save(rotaRoteiroOperacao);
 	}
 
 	private static void criarDivida(Session session) {
@@ -2625,6 +2632,8 @@ public class DataLoader {
 		cotaLuis = Fixture.cota(888, luis, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaLuis);
 		
+		cotaAcme = Fixture.cota(100000, juridicaAcme, SituacaoCadastro.ATIVO, box1);
+		
 
 		
 		Set<FormaCobranca> formasCobranca;
@@ -2767,33 +2776,33 @@ public class DataLoader {
 
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
 		DistribuicaoFornecedor dinapSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUINTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUINTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor fcSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEXTA_FEIRA,
+				fornecedorFc, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, fcSegunda, fcSexta);
 
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 
 		DistribuicaoFornecedor fcQuartaRecolhimento = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.QUARTA_FEIRA,
+				fornecedorFc, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 
 		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
@@ -3524,8 +3533,7 @@ public class DataLoader {
 
 	private static void gerarCargaDadosNotasFiscaisNFE(Session session) {
 
-		//Box boxNovo = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-		//save(session, boxNovo);
+		save(session, box1);
 
 		Cota cotaJohnyConsultaEncalhe = null;
 
@@ -4110,8 +4118,7 @@ public class DataLoader {
 		save(session, estoqueProdutoCotaJohny);
 
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				Fixture.criarData(10, Calendar.MARCH, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				produtoEdicaoCE, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
@@ -4124,8 +4131,7 @@ public class DataLoader {
 		save(session, estoqueProdutoCotaJohny_2);
 
 		ChamadaEncalhe chamadaEncalhe_2 = Fixture.chamadaEncalhe(
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				Fixture.criarData(10, Calendar.MARCH, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				produtoEdicaoCE_2, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
@@ -4140,7 +4146,6 @@ public class DataLoader {
 
 		ChamadaEncalhe chamadaEncalhe_3 = Fixture.chamadaEncalhe(
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				Fixture.criarData(10, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_3, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
