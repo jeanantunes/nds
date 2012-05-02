@@ -18,21 +18,21 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepository<ChamadaEnca
 	}
 	
 	public ChamadaEncalhe obterPorNumeroEdicaoEDataRecolhimento(ProdutoEdicao produtoEdicao,
-																Date dataFinalRecolhimento,
+																Date dataRecolhimento,
 																TipoChamadaEncalhe tipoChamadaEncalhe) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ")
-			.append(" where chamadaEncalhe.finalRecolhimento =:dataFinalRecolhimento ")
-			.append(" and chamadaEncalhe.tipoChamadaEncalhe =:tipoChamadaEncalhe ")
-			.append(" and chamadaEncalhe.produtoEdicao =:produtoEdicao ");
+			.append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
+			.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
+			.append(" and chamadaEncalhe.produtoEdicao = :produtoEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		query.setParameter("produtoEdicao", produtoEdicao);
-		query.setParameter("dataFinalRecolhimento", dataFinalRecolhimento);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
 		
 		query.setMaxResults(1);
 		

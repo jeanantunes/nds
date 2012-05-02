@@ -4102,8 +4102,7 @@ public class DataLoader {
 		save(session, estoqueProdutoCotaJohny);
 
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				Fixture.criarData(10, Calendar.MARCH, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				produtoEdicaoCE, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
@@ -4116,8 +4115,7 @@ public class DataLoader {
 		save(session, estoqueProdutoCotaJohny_2);
 
 		ChamadaEncalhe chamadaEncalhe_2 = Fixture.chamadaEncalhe(
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				Fixture.criarData(10, Calendar.MARCH, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				produtoEdicaoCE_2, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
@@ -4132,7 +4130,6 @@ public class DataLoader {
 
 		ChamadaEncalhe chamadaEncalhe_3 = Fixture.chamadaEncalhe(
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				Fixture.criarData(10, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_3, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 

@@ -131,8 +131,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				
 				chamadaEncalhe = new ChamadaEncalhe();
 			
-				chamadaEncalhe.setFinalRecolhimento(dataChamadao);
-				chamadaEncalhe.setInicioRecolhimento(dataChamadao);
+				chamadaEncalhe.setDataRecolhimento(dataChamadao);
 				chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 				chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
 				
