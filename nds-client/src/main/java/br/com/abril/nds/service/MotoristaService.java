@@ -8,6 +8,8 @@ public interface MotoristaService {
 
 	List<Motorista> buscarMotoristas();
 	
+	Motorista buscarMotoristaPorId(Long idMotorista);
+	
 	void cadastarMotorista(Motorista motorista);
 	
 	void excluirMotorista(Long idMotorista);
