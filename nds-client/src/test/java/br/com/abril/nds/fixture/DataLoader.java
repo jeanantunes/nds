@@ -487,6 +487,7 @@ public class DataLoader {
 	private static Editor editoraAbril;
 	private static Estudo estudoSuper1EncalheAnt;
 	private static Estudo estudoSuper2EncalheAnt;
+	private static Cota cotaAcme;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -1252,7 +1253,15 @@ public class DataLoader {
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
+		
+		rota = Fixture.rota("007");
+		session.save(rota);
 
+		roteiro = Fixture.roteiro("Mococa");
+		session.save(roteiro);
+
+		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
+		session.save(rotaRoteiroOperacao);
 	}
 
 	private static void criarDivida(Session session) {
@@ -2619,6 +2628,8 @@ public class DataLoader {
 
 		cotaLuis = Fixture.cota(888, luis, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaLuis);
+		
+		cotaAcme = Fixture.cota(100000, juridicaAcme, SituacaoCadastro.ATIVO, box1);
 		
 
 		

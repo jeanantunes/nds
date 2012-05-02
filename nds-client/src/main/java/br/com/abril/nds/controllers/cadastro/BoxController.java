@@ -45,7 +45,7 @@ public class BoxController {
 	public void busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
 			String sortname, String sortorder, int rp, int page) {
 		List<Box> boxs = boxService.busca(codigoBox, tipoBox, postoAvancado,
-				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), --page*rp , rp);
+				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 		Long quantidade = boxService.quantidade(codigoBox, tipoBox,
 				postoAvancado);
 		result.use(FlexiGridJson.class).from(boxs).total(quantidade.intValue()).page(page).serialize();
