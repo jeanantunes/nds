@@ -2760,33 +2760,33 @@ public class DataLoader {
 
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
 		DistribuicaoFornecedor dinapSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUINTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUINTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		DistribuicaoFornecedor fcSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.SEXTA_FEIRA,
+				fornecedorFc, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		save(session, fcSegunda, fcSexta);
 
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 
 		DistribuicaoFornecedor fcQuartaRecolhimento = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFc, DiaSemana.QUARTA_FEIRA,
+				fornecedorFc, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 
 		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
