@@ -137,7 +137,10 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		return qtd > 0;
 	}
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#obtemCotaRotaRoteiro(long)
+	 */
 	@Override
 	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id){
 		
