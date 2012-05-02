@@ -34,7 +34,7 @@ public class Box implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "CODIGO", nullable = false)	
+	@Column(name = "CODIGO", nullable = false,unique=true)	
 	private String codigo;
 	
 	@Enumerated(EnumType.STRING)	
