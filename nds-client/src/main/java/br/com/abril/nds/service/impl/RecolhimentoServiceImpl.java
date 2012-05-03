@@ -53,7 +53,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
-			obterDadosRecolhimento(numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento);
+			this.obterDadosRecolhimento(numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -75,16 +75,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		PeriodoVO periodoRecolhimento = getPeriodoRecolhimento(distribuidor, numeroSemana);
 		
 		List<Date> datasRecolhimentoFornecedor = 
-			obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
+			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
 		
 		List<Date> datasRecolhimentoDistribuidor = 
-			obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
+			this.obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
 		
 		dadosRecolhimento.setListaDiasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setListaDiasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(
-			distribuidor.getCapacidadeRecolhimento());
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
 		return dadosRecolhimento;
 	}
@@ -95,8 +94,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private PeriodoVO getPeriodoRecolhimento(Distribuidor distribuidor, Integer numeroSemana) {
 		
 		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -123,7 +121,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		List<Date> datasRecolhimentoFornecedor = 
-			obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
+			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
 		
 		return datasRecolhimentoFornecedor;
 	}
@@ -146,7 +144,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		List<Date> datasRecolhimentoDistribuidor = 
-			obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
+			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
 		
 		return datasRecolhimentoDistribuidor;
 	}
@@ -159,9 +157,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											  Set<Integer> diasRecolhimentoSemana) {
 		
 		List<Date> datasRecolhimento = 
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(periodoRecolhimento.getDataInicial(),
-														 periodoRecolhimento.getDataFinal(),
-														 diasRecolhimentoSemana);
+			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
+				periodoRecolhimento.getDataInicial(),  
+					periodoRecolhimento.getDataFinal(), diasRecolhimentoSemana);
 		
 		return datasRecolhimento;
 	}
