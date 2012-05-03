@@ -535,6 +535,9 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 			query.setParameter(key, params.get(key));
 		}
 		
+		if (query.uniqueResult() == null)
+			return 0.0;
+		
 		return ((BigDecimal) query.uniqueResult()).doubleValue();
 	}
 }
