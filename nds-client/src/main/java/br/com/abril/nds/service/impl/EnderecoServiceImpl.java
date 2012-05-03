@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -142,9 +143,26 @@ public class EnderecoServiceImpl implements EnderecoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Endereco buscarEnderecoPorId(Long idEndereco) {
 		
 		return this.enderecoRepository.buscarPorId(idEndereco);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<EnderecoAssociacaoDTO> buscarEnderecosPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar){
+		
+		List<EnderecoAssociacaoDTO> ret = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		List<Endereco> lista = this.enderecoRepository.buscarEnderecosPessoa(idPessoa, idsIgnorar);
+		
+		for (Endereco endereco : lista){
+			
+			EnderecoAssociacaoDTO dto = new EnderecoAssociacaoDTO(false, endereco, null, null);
+			ret.add(dto);
+		}
+		
+		return ret;
 	}
 }

@@ -120,4 +120,17 @@ public class TransportadorRepositoryImpl extends
 			query.setParameter("cnpj", filtro.getCnpj());
 		}
 	}
+	
+	@Override
+	public Transportador buscarTransportadorPorCNPJ(String cnpj){
+		
+		StringBuilder hql = new StringBuilder("select t ");
+		hql.append(" from Transportador t ")
+		   .append(" where t.pessoaJuridica.cnpj = :cnpj ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("cnpj", cnpj);
+		
+		return (Transportador) query.uniqueResult();
+	}
 }

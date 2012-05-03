@@ -1,8 +1,14 @@
 <head>
 	<script language="javascript" type="text/javascript">
 		
-		function popup_novo_transportador() {
+		var fecharModalCadastroTransp = false;
 	
+		function popup_novo_transportador() {
+			
+			fecharModalCadastroTransp = false;
+			
+			$('#tabs').tabs('select', 0);
+			
 			$("#dialog-novo").dialog({
 				resizable : false,
 				height : 590,
@@ -18,30 +24,50 @@
 					"Cancelar" : function() {
 						$(this).dialog("close");
 					}
+				},
+				beforeClose: function(event, ui) {
+					
+					if (!fecharModalCadastroTransp){
+						
+						cancelarCadastro();
+						
+						return fecharModalCadastroTransp;
+					}
+					
+					return fecharModalCadastroTransp;
 				}
 			});
 	
-		};
-	
-		function popup_alterar() {
-	
-			$("#dialog-novo").dialog({
-				resizable : false,
-				height : 600,
-				width : 840,
-				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").hide("highlight", {}, 1000, callback);
-	
+		}
+		
+		function cancelarCadastro(){
+			$("#dialog-cancelar-cadastro-transportador").dialog({
+				resizable: false,
+				height:150,
+				width:600,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastro'/>", null, 
+							function(result){
+								
+								fecharModalCadastroTransp = true;
+								
+								$("#dialog-cancelar-cadastro-transportador").dialog("close");
+								$("#dialog-novo").dialog("close");
+							}
+						);
 					},
-					"Cancelar" : function() {
+					"Cancelar": function() {
+						
 						$(this).dialog("close");
+						
+						fecharModalCadastroTransp = false;
 					}
 				}
 			});
-		};
+		}
 	
 		function popup_excluir() {
 	
@@ -60,7 +86,7 @@
 					}
 				}
 			});
-		};
+		}
 	
 		function popup_incluir_veiculo() {
 	
@@ -78,7 +104,7 @@
 					}
 				}
 			});
-		};
+		}
 	
 		function popup_incluir_motorista() {
 	
@@ -96,7 +122,8 @@
 					}
 				}
 			});
-		};
+		}
+		
 		function popup_excluir_associacao() {
 	
 			$("#dialog-excluir-associacao").dialog({
@@ -113,16 +140,57 @@
 					}
 				}
 			});
-		};
+		}
 	
 		$(function() {
 			$("#tabs").tabs();
 			
 			$(".transportadoraGrid").flexigrid({
 				dataType : 'json',
+				preProcess: function(data){
+					if(typeof data.mensagens == "object") {
+						
+						exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+						
+						$(".divTransportadoraGrid").hide();
+						
+					}else{
+						
+						$.each(data.rows, function(index, value) {						
+							
+							var idTransportadora = value.cell.id;								
+							var acao = '<a href="javascript:;" onclick="editarTransportadora('+idTransportadora+');"><img src="'+contextPath+'/images/ico_editar.gif" border="0" hspace="5" />';
+							acao +='</a> <a href="javascript:;" onclick="excluirTransportadora('+idTransportadora+');""><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+							
+							value.cell.acao = acao;
+							
+							var cnpj = value.cell.pessoaJuridica.cnpj;
+							
+							cnpj = cnpj.replace("-", "").replace(".", "").replace(".", "").replace("/", "");
+							
+							value.cell.cnpj = 
+								cnpj.substring(0, 2) + "." + cnpj.substring(2, 5) + "." + cnpj.substring(5, 8) + "/" + cnpj.substring(8, 12) + "-" + cnpj.substring(12, 14);
+							
+							value.cell.razaoSocial = value.cell.pessoaJuridica.razaoSocial;
+							value.cell.email = value.cell.pessoaJuridica.email;
+							
+							if (value.cell.pessoaJuridica.telefones[0]){
+								
+								value.cell.telefone = value.cell.pessoaJuridica.telefones[0].ddd + value.cell.pessoaJuridica.telefones[0].numero;
+							} else {
+								
+								value.cell.telefone = "";
+							}
+						});
+						
+						$(".divTransportadoraGrid").show();
+						
+						return data;	
+					}
+				},
 				colModel : [ {
 					display : 'Código',
-					name : 'codigo',
+					name : 'id',
 					width : 60,
 					sortable : true,
 					align : 'left'
@@ -160,7 +228,7 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				} ],
 				sortname : "codigo",
@@ -172,7 +240,6 @@
 				width : 960,
 				height : 255
 			});
-			$(".transportadoraGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarTransportadores'/>"});
 		
 			$(".associacaoGrid").flexigrid({
 				dataType : 'json',
@@ -311,32 +378,30 @@
 				width : 260,
 				height : 150
 			});
+			
+			$("#cnpj").mask("99.999.999/9999-99");
 		});
 		
 		function pesquisarTransportadores(){
 			
-			var data = "filtro.razaoSocial=" + $("#razaoSocialPesquisa").val() + 
-			           "&filtro.nomeFantasia=" + $("#nomeFantasiaPesquisa").val() +
-			           "&filtro.cnpj=" + $("#cnpjPesquisa").val();
-			
-			$.postJSON("<c:url value='/cadastro/transportador/pesquisarTransportadores' />", data, 
-				function(result) {
-					
-					if (result[0].tipoMensagem){
-						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+			$(".transportadoraGrid").flexOptions(
+					{"url": contextPath + "/cadastro/transportador/pesquisarTransportadores", 
+					 params:[
+						{name:"filtro.razaoSocial", value:$("#razaoSocialPesquisa").val()},
+						{name:"filtro.nomeFantasia", value:$("#nomeFantasiaPesquisa").val()},
+						{name:"filtro.cnpj", value:$("#cnpjPesquisa").val()}]
 					}
-					
-					if (result[1] != ""){
-						$(".transportadoraGrid").flexAddData({
-							page: result[1].page, total: result[1].total, rows: result[1].rows
-						});
-						
-						$(".transportadoraGrid").show();
-					} else {
-						$(".transportadoraGrid").hide();
-					}
-				}
 			);
+			
+			$(".transportadoraGrid").flexReload();
+		}
+		
+		function editarTransportadora(idTransp){
+			alert(idTransp);
+		}
+		
+		function excluirTransportadora(idTransp){
+			alert(idTransp);
 		}
 		
 		function carregarGrids(){
@@ -391,7 +456,26 @@
 			
 		}
 		
-		
+		function buscarPessoaCNPJ(cnpj){
+			
+			if (cnpj != "__.___.___/____-__" && cnpj != ""){
+				
+				$.postJSON("<c:url value='/cadastro/transportador/buscarPessoaCNPJ' />", "cnpj=" + cnpj, 
+					function(result) {
+						
+						if (result[0]){
+							
+							$("#razaoSocial").val(result[0]);
+							$("#nomeFantasia").val(result[1]);
+							$("#email").val(result[2]);
+							$("#inscricaoEstadual").val(result[3]);
+						}
+					},
+					null,
+					true
+				);
+			}
+		}
 	</script>
 	<style>
 		.diasFunc label,.finceiro label {
@@ -431,6 +515,10 @@
 
 	<div id="dialog-excluir" title="Excluir Transportador">
 		<p>Confirma a exclusão deste Transportador</p>
+	</div>
+	
+	<div id="dialog-cancelar-cadastro-transportador" title="Transportadores" style="display: none;">
+		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
 	</div>
 
 	<div id="dialog-incluir-motorista" title="Motoristas">
@@ -475,33 +563,35 @@
 
 
 	<div id="dialog-novo" title="Novo Transportador">
-
+	
+		<jsp:include page="../messagesDialog.jsp" />
+		
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1">Dados Cadastrais</a></li>
 				<li><a href="#tabs-2">Endereços</a></li>
-				<li><a href="#tabs-3">Telefones</a></li>
+				<li><a href="#tabs-3" onclick="TRANSPORTADOR.carregarTelefones();">Telefones</a></li>
 				<li><a href="#tabs-4">Veículos / Motoristas</a></li>
 			</ul>
 			<div id="tabs-1">
 				<table width="730" cellpadding="2" cellspacing="2" style="text-align: left;">
 					<tr>
 						<td width="98">Razão Social:</td>
-						<td width="248"><input type="text" style="width: 230px" /></td>
+						<td width="248"><input type="text" style="width: 230px" id="razaoSocial" maxlength="255" /></td>
 						<td width="113">Nome Fantasia:</td>
-						<td width="243"><input type="text" style="width: 230px" /></td>
+						<td width="243"><input type="text" style="width: 230px" id="nomeFantasia" maxlength="255" /></td>
 					</tr>
 					<tr>
 						<td>E-mail:</td>
-						<td><input type="text" style="width: 230px" /></td>
+						<td><input type="text" style="width: 230px" id="email" maxlength="255" /></td>
 						<td>Responsável:</td>
-						<td><input type="text" style="width: 230px" /></td>
+						<td><input type="text" style="width: 230px" id="responsavel" maxlength="255" /></td>
 					</tr>
 					<tr>
 						<td>CNPJ:</td>
-						<td><input type="text" style="width: 150px" /></td>
+						<td><input type="text" style="width: 150px" id="cnpj" onblur="buscarPessoaCNPJ(this.value);" /></td>
 						<td>Insc. Estadual:</td>
-						<td><input type="text" style="width: 150px" /></td>
+						<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
 					</tr>
 				</table>
 			</div>
@@ -509,7 +599,9 @@
 				<jsp:include page="../endereco/index.jsp"></jsp:include>
 			</div>
 			<div id="tabs-3">
-				<jsp:include page="../telefone/index.jsp"></jsp:include>
+				<jsp:include page="../telefone/index.jsp">
+					<jsp:param value="TRANSPORTADOR" name="tela"/>
+				</jsp:include>
 			</div>
 
 			<div id="tabs-4">
@@ -599,7 +691,7 @@
 			<div class="linha_separa_fields">&nbsp;</div>
 			<fieldset class="classFieldset">
 				<legend>Transportadores Cadastrados</legend>
-				<div class="grids" style="display: none;">
+				<div class="divTransportadoraGrid" style="display: none;">
 					<table class="transportadoraGrid"></table>
 				</div>
 

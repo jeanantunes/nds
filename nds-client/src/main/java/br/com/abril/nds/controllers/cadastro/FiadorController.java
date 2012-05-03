@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TelefoneService;
@@ -54,6 +56,12 @@ public class FiadorController {
 	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoFiador";
 	
 	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoFiador";
+	
+	public static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosSalvarSessaoFiador";
+	
+	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoFiador";
+	
+	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFiador";
 
 	public static final String ID_FIADOR_EDICAO = "idFiadorEdicaoSessao";
 	
@@ -74,6 +82,9 @@ public class FiadorController {
 	@Autowired
 	private TelefoneService telefoneService;
 	
+	@Autowired
+	private EnderecoService enderecoService;
+	
 	public FiadorController(Result result, HttpSession httpSession, Validator validator){
 		this.result = result;
 		this.httpSession = httpSession;
@@ -82,7 +93,10 @@ public class FiadorController {
 	
 	@Path("/")
 	public void index(){
+		
 		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
+		
+		this.limparDadosSessao();
 	}
 	
 	@Post
@@ -270,10 +284,39 @@ public class FiadorController {
 		List<TelefoneAssociacaoDTO> lista = this.telefoneService.buscarTelefonesPorIdPessoa(id, telRemover);
 		
 		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		
+		List<EnderecoAssociacaoDTO> endRemover = (List<EnderecoAssociacaoDTO>)
+				this.httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		List<EnderecoAssociacaoDTO> endSalvar = (List<EnderecoAssociacaoDTO>)
+				this.httpSession.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		Set<Long> idsIgnorar = new HashSet<Long>();
+		
+		for (EnderecoAssociacaoDTO dto : endRemover){
+			
+			if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+				
+				idsIgnorar.add(dto.getEndereco().getId());
+			}
+		}
+		
+		for (EnderecoAssociacaoDTO dto : endSalvar){
+			
+			if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+				
+				idsIgnorar.add(dto.getEndereco().getId());
+			}
+		}
+		
+		List<EnderecoAssociacaoDTO> listaExibir = this.enderecoService.buscarEnderecosPorIdPessoa(id, idsIgnorar);
+		
+		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaExibir);
 	}
 
 	@Post
 	public void buscarPessoaCNPJ(String cnpj){
+		
 		List<String> dados = null;
 		
 		if (cnpj != null){
@@ -430,6 +473,7 @@ public class FiadorController {
 	
 	@Post
 	public void cancelarCadastro(){
+		
 		this.limparDadosSessao();
 		
 		result.use(Results.json()).from("", "result").serialize();
@@ -524,9 +568,9 @@ public class FiadorController {
 	}
 
 	private void limparDadosSessao(){
-		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);

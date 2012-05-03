@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -38,11 +40,33 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		   .append(" and e.id not in (select ec.id from EnderecoCota ec where id in (:ids)) ")
 		   .append(" and e.id not in (select ee.id from EnderecoEntregador ee where id in (:ids)) ")
 		   .append(" and e.id not in (select efi.id from EnderecoFiador efi where id in (:ids)) ")
-		   .append(" and e.id not in (select ef.id from EnderecoFornecedor ef where id in (:ids)) ");
+		   .append(" and e.id not in (select ef.id from EnderecoFornecedor ef where id in (:ids)) ")
+		   .append(" and e.id not in (select et.id from EnderecoTransportador et where id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("ids", idsEndereco);
 		
 		query.executeUpdate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar) {
+		StringBuilder hql = new StringBuilder("select p.enderecos ");
+		hql.append(" from Pessoa p join p.enderecos enderecos ")
+		   .append(" where p.id = :idPessoa ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			hql.append(" and enderecos.id not in (:idsIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idPessoa", idPessoa);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			query.setParameter("idsIgnorar", idsIgnorar);
+		}
+		
+		return query.list();
 	}
 }

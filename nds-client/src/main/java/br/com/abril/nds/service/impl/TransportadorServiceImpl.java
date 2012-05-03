@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,14 +10,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
+import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.Transportador;
+import br.com.abril.nds.repository.EnderecoTransportadorRepository;
+import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
 import br.com.abril.nds.repository.TransportadorRepository;
+import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -30,6 +39,18 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Autowired
 	private TelefoneTransportadorRepositoty telefoneTransportadorRepositoty;
+	
+	@Autowired
+	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private TelefoneService telefoneService;
+	
+	@Autowired
+	private EnderecoService enderecoService;
+	
+	@Autowired
+	private EnderecoTransportadorRepository enderecoTransportadorRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -52,9 +73,26 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	@Override
 	@Transactional
-	public void cadastrarTransportador(Transportador transportador) {
+	public void cadastrarTransportador(Transportador transportador,
+			List<EnderecoAssociacaoDTO> listaEnderecosAdicionar,
+			Set<Long> listaEnderecosRemover,
+			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
+			Set<Long> listaTelefoneRemover,
+			List<AssociacaoVeiculoMotoristaRota> listaAssociacaoAdicionar,
+			Set<Long> listaAssociacaoRemover) {
 		
 		this.validarDadosEntrada(transportador);
+		
+		transportador.getPessoaJuridica().setId(
+				this.pessoaRepository.buscarIdPessoaPorCNPJ(transportador.getPessoaJuridica().getCnpj()));
+		
+		if (transportador.getPessoaJuridica().getId() == null){
+			
+			this.pessoaRepository.adicionar(transportador.getPessoaJuridica());
+		} else {
+			
+			this.pessoaRepository.alterar(transportador.getPessoaJuridica());
+		}
 		
 		if (transportador.getId() == null){
 			
@@ -63,8 +101,68 @@ public class TransportadorServiceImpl implements TransportadorService {
 			
 			this.transportadorRepository.alterar(transportador);
 		}
+		
+		this.processarEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);
+		
+		this.processarTelefones(transportador, listaTelefoneAdicionar, listaTelefoneRemover);
+		
+		this.processarAssocicoes(transportador, listaAssociacaoAdicionar, listaAssociacaoRemover);
 	}
 	
+	private void processarAssocicoes(Transportador transportador, List<AssociacaoVeiculoMotoristaRota> listaAssociacaoAdicionar,
+			Set<Long> listaAssociacaoRemover) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void processarTelefones(Transportador transportador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
+			Set<Long> listaTelefoneRemover) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void processarEnderecos(Transportador transportador, List<EnderecoAssociacaoDTO> listaEnderecosAdicionar, 
+			Set<Long> listaEnderecosRemover) {
+		
+		if (listaEnderecosAdicionar != null && !listaEnderecosAdicionar.isEmpty()){
+			
+			this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar);
+			
+			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
+				
+				EnderecoTransportador enderecoTransportador = 
+						this.enderecoTransportadorRepository.buscarEnderecoPorEnderecoTransportador(
+								dto.getId(), 
+								transportador.getId());
+				
+				if (enderecoTransportador == null){
+					
+					enderecoTransportador = new EnderecoTransportador();
+					enderecoTransportador.setEndereco(dto.getEndereco());
+					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
+					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
+					enderecoTransportador.setTransportador(transportador);
+					
+					this.enderecoTransportadorRepository.adicionar(enderecoTransportador);
+				} else {
+					
+					enderecoTransportador.setEndereco(dto.getEndereco());
+					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
+					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
+					
+					this.enderecoTransportadorRepository.alterar(enderecoTransportador);
+				}
+			}
+		}
+		
+		if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
+			
+			this.enderecoTransportadorRepository.removerEnderecosTransportador(listaEnderecosRemover);
+			
+			this.enderecoService.removerEnderecos(listaEnderecosRemover);
+		}
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public ConsultaTransportadorDTO consultarTransportadores(FiltroConsultaTransportadorDTO filtro){
@@ -187,4 +285,15 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Transportador obterTransportadorPorCNPJ(String cnpj) {
+		
+		if (cnpj == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "CNPJ é obrigatório.");
+		}
+		
+		return this.transportadorRepository.buscarTransportadorPorCNPJ(cnpj);
+	}
 }

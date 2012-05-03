@@ -8,8 +8,6 @@
 		
 		var ${param.tela} = new Telefone('${param.tela}');
 		
-		
-		
 	</script>
 	
 	

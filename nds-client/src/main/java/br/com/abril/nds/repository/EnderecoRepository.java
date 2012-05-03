@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Endereco;
 
@@ -19,4 +21,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	 * @param idsEndereco - Coleção com os ids dos endereços
 	 */
 	void removerEnderecos(Collection<Long> idsEndereco);
+
+	List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar);
 }
