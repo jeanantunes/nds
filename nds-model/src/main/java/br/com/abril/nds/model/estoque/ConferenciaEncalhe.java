@@ -12,6 +12,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+/**
+ * Entidade de abstrai os movimentos de envio de encalhe.
+ * 
+ * @author Discover Technology
+ *
+ */
 @Entity
 @Table(name = "CONFERENCIA_ENCALHE")
 @SequenceGenerator(name="CONFERENCIA_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
