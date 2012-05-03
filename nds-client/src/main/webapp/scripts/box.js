@@ -26,6 +26,8 @@ var boxController = {
 						} else {
 							value.cell.tipoBox = boxController.tipoBoxEnun[value.cell.tipoBox];
 						}
+						
+						value.cell.codigo = '<a href="javascript:;" onclick="boxController.detalhe(' + idBox + ');">'+value.cell.codigo+'</a>';
 					});
 
 					return data;
@@ -118,6 +120,7 @@ var boxController = {
 	},
 	init : function() {
 		this.intGridBox();
+		this.initGridDetalhe();
 		this.bindButtons();
 		this.bindInputEvent();
 	},
@@ -225,40 +228,70 @@ var boxController = {
 
 		this.bindData(data);
 		this.showPopupEditar('Incluir Novo Box');
-	},
-	
-	gridDetalhe: function(){
+	},	
+	initGridDetalhe: function(){
 		$(".boxCotaGrid").flexigrid({
+			preProcess : function(data) {
+				if( typeof data.mensagens == "object") {
+					exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+				} else {
+					return data;
+				}
+			},
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 200,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Rota',
 				name : 'rota',
 				width : 120,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Roteiro',
 				name : 'roteiro',
 				width : 120,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}],
 			width : 570,
 			height : 255
 		});
-
+	},
+	detalheDialog:function(){
+		$( "#dialog-box" ).dialog({
+			resizable: false,
+			height:410,
+			width:630,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	},
+	detalhe:function(id){		
+		$(".boxCotaGrid").flexOptions({
+			"url" : this.path + 'detalhe.json',
+			params : [{
+				name : "id",
+				value : id
+			}],
+			newp:1
+		});
+		$(".boxCotaGrid").flexReload();
+		this.detalheDialog();
 	}
 };
 
