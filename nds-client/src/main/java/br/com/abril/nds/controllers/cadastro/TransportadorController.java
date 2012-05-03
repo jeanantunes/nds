@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColun
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -306,6 +307,19 @@ public class TransportadorController {
 		this.transportadorService.excluirMotorista(referencia);
 		
 		this.carregarMotoristas();
+	}
+	
+	@Post
+	public void pesquisarRotas(){
+		
+		this.result.use(Results.json()).from(this.carregarRotas(), "result");
+	}
+	
+	private List<Rota> carregarRotas(){
+		
+		List<Rota> lista = this.transportadorService.buscarRotas();
+		
+		return lista == null ? new ArrayList<Rota>() : lista;
 	}
 	
 	public void cadastrarAssociacao(Long referenciaVeiculo, Long referenciaMotorista, List<Long> listaRotaRoteiro){

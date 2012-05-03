@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 
@@ -47,4 +48,6 @@ public interface TransportadorService {
 	void cadastarMotorista(Motorista motorista);
 
 	void excluirMotorista(Long idMotorista);
+
+	List<Rota> buscarRotas();
 }

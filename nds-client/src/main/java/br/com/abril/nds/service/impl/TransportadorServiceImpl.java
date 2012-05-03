@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.MotoristaRepository;
 import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
 import br.com.abril.nds.repository.TransportadorRepository;
 import br.com.abril.nds.repository.VeiculoRepository;
@@ -63,6 +65,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Autowired
 	private MotoristaRepository motoristaRepository;
+	
+	@Autowired
+	private RotaRepository rotaRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -532,5 +537,12 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 		
 		this.motoristaRepository.removerPorId(idMotorista);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Rota> buscarRotas(){
+		
+		return this.rotaRepository.buscarTodos();
 	}
 }
