@@ -58,6 +58,12 @@ public class FiadorController {
 	public static final String ID_FIADOR_EDICAO = "idFiadorEdicaoSessao";
 	
 	public static final String FILTRO_ULTIMA_PESQUISA_FIADOR = "filtroUltimaPesquisaFiador";
+
+	public static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosSalvarSessaoFiador";
+
+	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoFiador";
+
+	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoSessaoFiador";
 	
 	private Result result;
 	
@@ -353,10 +359,10 @@ public class FiadorController {
 				this.httpSession.getAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecosAdicionar = (List<EnderecoAssociacaoDTO>) 
-				this.httpSession.getAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+				this.httpSession.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecosRemover = (List<EnderecoAssociacaoDTO>) 
-				this.httpSession.getAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+				this.httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
@@ -520,13 +526,13 @@ public class FiadorController {
 		
 		List<EnderecoAssociacaoDTO> listaEnderecos = this.fiadorService.buscarEnderecosFiador(idFiador, null);
 		
-		this.httpSession.setAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR, listaEnderecos);
+		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 	}
 
 	private void limparDadosSessao(){
-		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
-		this.httpSession.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(SociosController.LISTA_SOCIOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);

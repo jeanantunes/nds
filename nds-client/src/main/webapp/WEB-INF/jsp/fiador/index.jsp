@@ -358,7 +358,7 @@
 			limparDadosCadastraisCPF(1);
 		    
 		    //endere√ßos
-			limparFormEndereco();
+			ENDERECO_FIADOR.limparFormEndereco();
 		    
 		    //telefones
 		    FIADOR.limparCamposTelefone();
@@ -383,7 +383,7 @@
 <body>
 	
 	<div id="dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
-		<p>Confirma esta Exclus√£o?</p>
+		<p>Confirma esta Exclus„o?</p>
 	</div>
 	
 	<div id="dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
@@ -396,8 +396,8 @@
 		<div id="tabs">
 			<ul>
 				<li><a href="#tab-1">Dados Cadastrais</a></li>
-				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >S√≥cios</a></li>
-	            <li><a href="#tab-3" onclick="popularGridEnderecos();">Endere√ßos</a></li>
+				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >SÛcios</a></li>
+	            <li><a href="#tab-3" onclick="ENDERECO_FIADOR.popularGridEnderecos();">EndereÁos</a></li>
 	            <li><a href="#tab-4" onclick="FIADOR.carregarTelefones();">Telefones</a></li>
 	            <li><a href="#tab-5" onclick="carregarGarantias();">Garantia</a></li>
 				<li><a href="#tab-6" onclick="carregarCotasAssociadas();">Cotas Associadas</a></li>
@@ -418,7 +418,9 @@
 			</div>
 	        
 			<div id="tab-3">
-				<jsp:include page="../endereco/index.jsp"></jsp:include>
+				<jsp:include page="../endereco/index.jsp">
+					<jsp:param value="ENDERECO_FIADOR" name="telaEndereco"/>
+				</jsp:include>
 	    	</div>
 	    	
 	        <div id="tab-4">

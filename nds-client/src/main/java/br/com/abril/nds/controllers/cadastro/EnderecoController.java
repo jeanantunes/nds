@@ -41,15 +41,15 @@ public class EnderecoController {
 	 * Constante que representa o nome do atributo com a lista de endereços 
 	 * armazenado na sessão para serem persistidos na base. 
 	 */
-	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = "listaEnderecosSalvarSessao";
+	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = "";
 
 	/**
 	 * Constante que representa o nome do atributo com a lista de endereços 
 	 * armazenado na sessão para serem persistidos na base. 
 	 */
-	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = "listaEnderecosRemoverSessao";
+	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = "";
 	
-	public static final String ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = "listaEnderecosExibirSessao";
+	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = "";
 	
 	@Autowired
 	private Result result;
@@ -63,6 +63,35 @@ public class EnderecoController {
 	@Autowired
 	private EnderecoService enderecoService;
 	
+	public enum Tela{
+		
+		ENDERECO_FIADOR,ENDERECO_COTA,ENDERECO_ENTREGADOR,ENDERECO_PDV;
+		
+		public void setarParametros(){
+			
+			switch (this){
+				case ENDERECO_FIADOR:
+					EnderecoController.setarParametros(
+							FiadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							FiadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							FiadorController.LISTA_ENDERECOS_EXIBICAO);
+				break;
+				case ENDERECO_COTA:
+					EnderecoController.setarParametros(
+							CotaController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							CotaController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							CotaController.LISTA_ENDERECOS_EXIBICAO);
+				break;
+				case ENDERECO_ENTREGADOR:
+					EnderecoController.setarParametros(
+							EntregadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							EntregadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							EntregadorController.LISTA_ENDERECOS_EXIBICAO);
+				break;
+			}
+		}
+	}
+	
 	@Path("/")
 	public void index() {
 		
@@ -72,13 +101,22 @@ public class EnderecoController {
 		
 		this.session.removeAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR);
 	}
+	
+	public static void setarParametros(String listaSalvar, String listaRemover, String listaExibir){
+		
+		ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = listaSalvar;
+		ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = listaRemover;
+		ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = listaExibir;
+	}
 
 	/**
 	 * Método que realiza a pesquisa dos endereços cadastrados para uma determinada pessoa.
 	 */
 	@Post
-	public void pesquisarEnderecos(String sortname, String sortorder) {
-
+	public void pesquisarEnderecos( Tela tela, String sortname, String sortorder) {
+		
+		tela.setarParametros();
+		
 		List<EnderecoAssociacaoDTO> listaEndereco = new ArrayList<EnderecoAssociacaoDTO>();
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoSalvar = this.obterEnderecosSessaoSalvar();
@@ -117,8 +155,10 @@ public class EnderecoController {
 	 * 
 	 * @param enderecoAssociacao
 	 */
-	public void incluirNovoEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
-
+	public void incluirNovoEndereco(Tela tela,EnderecoAssociacaoDTO enderecoAssociacao) {
+		
+		tela.setarParametros();
+		
 		validarDadosEndereco(enderecoAssociacao);
 
 		if (enderecoAssociacao.isEnderecoPrincipal()) {
@@ -162,7 +202,7 @@ public class EnderecoController {
 
 		this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 		
-		this.pesquisarEnderecos(null, null);
+		this.pesquisarEnderecos(tela,null, null);
 	}
 
 	/**
@@ -171,7 +211,9 @@ public class EnderecoController {
 	 * @param idEnderecoAssociacao
 	 */
 	@Post
-	public void removerEndereco(Long idEnderecoAssociacao) {
+	public void removerEndereco(Tela tela,Long idEnderecoAssociacao) {
+		
+		tela.setarParametros();
 		
 		EnderecoAssociacaoDTO enderecoRemover = null;
 		
@@ -207,7 +249,7 @@ public class EnderecoController {
 		
 		this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER, listaRemover);
 		
-		this.pesquisarEnderecos(null, null);
+		this.pesquisarEnderecos(tela,null, null);
 	}
 
 	/**
@@ -216,8 +258,10 @@ public class EnderecoController {
 	 * @param idEnderecoAssociacao
 	 */
 	@Post
-	public void editarEndereco(Long idEnderecoAssociacao) {
-
+	public void editarEndereco(Tela tela,Long idEnderecoAssociacao) {
+		
+		tela.setarParametros();
+		
 		EnderecoAssociacaoDTO enderecoAssociacao = null;
 		
 		List<EnderecoAssociacaoDTO> listaEndereco =	this.obterEnderecosSessaoSalvar();

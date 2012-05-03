@@ -190,19 +190,21 @@
 		<div id="tabpf">
 			<ul>
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
-			<li><a href="#tabpf-2" onclick="popularGridEnderecos()">Endereços</a></li>			
+			<li><a href="#tabpf-2" onclick="ENDERECO_COTA.popularGridEnderecos()">Endere�os</a></li>			
 			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
 			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
 			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
-			<li><a href="#tabpf-7">Distribuição</a></li>
+			<li><a href="#tabpf-7">Distribui��o</a></li>
 			<li><a href="#tabpf-8">Fornecedor</a></li>
 			</ul>
 		
 			<div id="tabpf-1"> </div>
 			
 			<div id="tabpf-2">
-				<jsp:include page="../endereco/index.jsp"></jsp:include>
+				<jsp:include page="../endereco/index.jsp">
+					<jsp:param value="ENDERECO_COTA" name="telaEndereco"/>
+				</jsp:include>
 			</div>
 			
 			<div id="tabpf-3">
