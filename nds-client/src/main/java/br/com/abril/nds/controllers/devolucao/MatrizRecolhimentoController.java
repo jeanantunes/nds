@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -150,9 +151,11 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/balancearPorValor")
-	public void balancearPorValor() {
+	public void balancearPorValor(Integer numeroSemana, List<Long> listaIdsFornecedores) {
 		
-		
+		this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+														  listaIdsFornecedores,
+														  TipoBalanceamentoRecolhimento.VALOR);
 	}
 	
 	@Post
