@@ -107,7 +107,11 @@ $("#btnSalvarPDV").keypress(function() {
 
 <div id="dialog-pdv" title="PDV Cota">
 	
-	<jsp:include page="../messagesDialog.jsp"/>
+	<jsp:include page="../messagesDialog.jsp">
+		
+		<jsp:param value="idModalPDV" name="messageDialog"/>
+	
+	</jsp:include>
 	
 	<input type="hidden" name="idPDV" id="idPDV" value=""/>
 	

@@ -161,7 +161,7 @@
 			var tipoMensagem = result.tipoMensagem;
 			var listaMensagens = result.listaMensagens;
 			if (tipoMensagem && listaMensagens) {
-			 	exibirMensagem(tipoMensagem, listaMensagens);
+				exibirMensagemDialog(tipoMensagem, listaMensagens);
 			 }
 		},
 		

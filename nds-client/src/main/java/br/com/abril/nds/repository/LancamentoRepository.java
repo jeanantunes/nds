@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
@@ -11,6 +12,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
@@ -42,9 +44,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * 
 	  * @param listaIdsFornecedores 
 	  * 
-	  * @return List<RecolhimentoDTO>
+	  * @return List<ProdutoRecolhimentoDTO>
 	  */
-	 List<RecolhimentoDTO> obterBalanceamentoRecolhimento(List<Date> periodoRecolhimento, 
-			 											  List<Long> fornecedores,
-			 											  GrupoProduto grupoCromo);
+	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
+					 											 List<Long> fornecedores,
+					 											 GrupoProduto grupoCromo);
 }
