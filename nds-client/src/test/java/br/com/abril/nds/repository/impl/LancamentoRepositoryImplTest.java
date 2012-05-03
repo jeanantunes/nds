@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -591,7 +591,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Calendar.FEBRUARY, 2012);
 		PeriodoVO periodo = new PeriodoVO(data22022012, data23022012);
 
-		List<RecolhimentoDTO> resumos = lancamentoRepository
+		List<ProdutoRecolhimentoDTO> resumos = lancamentoRepository
 				.obterBalanceamentoRecolhimento(periodo,
 						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 		Assert.assertEquals(2, resumos.size());

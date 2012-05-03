@@ -253,11 +253,11 @@ public class PdvServiceImpl implements PdvService {
 		//TODO verificar se o PDV esta associado a uma Roterização
 		
 		if(pdvRepository.obterQntPDV() == 1 ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Uma cota deve ter pelomenos um PDV cadastrado.");
 		}
 		
 		if( pdv.getCaracteristicas()!= null &&  pdv.getCaracteristicas().isPontoPrincipal()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Pelomenos um PDV deve ser um Ponto Principal");
+			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Pelomenos um PDV deve ser um Ponto Principal.");
 		}
 		
 		if(pdv!= null){
@@ -308,6 +308,13 @@ public class PdvServiceImpl implements PdvService {
 					throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser incluído! Já existe PDV incluído como principal.");
 				}
 			}
+			
+			if(pdvRepository.obterQntPDV() == 0 
+					&& pdvDTO.getCaracteristicaDTO()!= null 
+					&&  !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
+				
+				pdvDTO.getCaracteristicaDTO().setPontoPrincipal(Boolean.TRUE);
+			}
 		}
 		
 		if( pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
@@ -320,6 +327,20 @@ public class PdvServiceImpl implements PdvService {
 			}
 		}
 	
+		tratarDadosParaInclusao(pdvDTO, pdv, cota);
+		
+		pdv =  pdvRepository.merge(pdv);
+		
+		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
+		
+		salvarGeradorFluxo(pdvDTO, pdv);
+	
+		//salvarEndereco(pdvDTO, pdv);
+		//salvarTelefone(pdvDTO, pdv);
+	}
+	
+	private void tratarDadosParaInclusao(PdvDTO pdvDTO,PDV pdv, Cota cota) {
+		
 		pdv.setCota(cota);
 		pdv.setNome(pdvDTO.getNomePDV());
 		pdv.setContato(pdvDTO.getContato());
@@ -349,22 +370,10 @@ public class PdvServiceImpl implements PdvService {
 			if(tipoEstabelecimentoAssociacaoPDV!=null){
 				pdv.setTipoEstabelecimentoPDV(tipoEstabelecimentoAssociacaoPDV);
 			}
-
 		}
-		
-		pdv =  pdvRepository.merge(pdv);
-		
-		if(pdvDTO.getImagem() != null) 
-			atualizaImagemPDV(pdvDTO.getImagem(),pdv.getId());
-		
-		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
-		
-		salvarGeradorFluxo(pdvDTO, pdv);
-	
-		//salvarEndereco(pdvDTO, pdv);
 		processarTelefones(pdvDTO, pdv);
 	}
-	
+
 		
 	public void atualizaImagemPDV(InputStream foto, Long idPdv) {
 		

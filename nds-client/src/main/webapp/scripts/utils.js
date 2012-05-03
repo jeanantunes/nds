@@ -44,15 +44,15 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divError, textError);
 }
 
-function exibirMensagemDialog(tipoMensagem, mensagens) {
+function exibirMensagemDialog(tipoMensagem, mensagens,idDialog) {
 	
-	var divSuccess = $("div[name='effectSuccessDialog']");
-	var divWarning = $("div[name='effectWarningDialog']");
-	var divError = $("div[name='effectErrorDialog']");
+	var divSuccess = $("div[name='"+idDialog+"effectSuccessDialog']");
+	var divWarning = $("div[name='"+idDialog+"effectWarningDialog']");
+	var divError = $("div[name='"+idDialog+"effectErrorDialog']");
 	
-	var textSuccess = $("b[name='idTextSuccessDialog']");
-	var textWarning = $("b[name='idTextWarningDialog']");
-	var textError = $("b[name='idTextErrorDialog']");
+	var textSuccess = $("b[name='"+idDialog+"idTextSuccessDialog']");
+	var textWarning = $("b[name='"+idDialog+"idTextWarningDialog']");
+	var textError = $("b[name='"+idDialog+"idTextErrorDialog']");
 	
 	montarExibicaoMensagem(true, tipoMensagem, mensagens,
 						   divSuccess, textSuccess,
@@ -133,13 +133,19 @@ function clearMessageTimeout() {
 	$('#effectError').hide();
 }
 
-function clearMessageDialogTimeout() {
+function clearMessageDialogTimeout(idDialog) {
 	
 	clearTimeout(messageDialogTimeout);
 	
-	$("div[name='effectSuccessDialog']").hide();
-	$("div[name='effectWarningDialog']").hide();
-	$("div[name='effectErrorDialog']").hide();
+	var dialog = "";
+	
+	if(idDialog){
+		dialog = idDialog;
+	}
+	
+	$("div[name='"+dialog+"effectSuccessDialog']").hide();
+	$("div[name='"+dialog+"effectWarningDialog']").hide();
+	$("div[name='"+dialog+"effectErrorDialog']").hide();
 }
 
 function montarComboBox(result, incluirTodos) {

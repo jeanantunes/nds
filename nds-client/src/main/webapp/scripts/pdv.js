@@ -262,12 +262,11 @@ var PDV = {
 				PDV.limparCamposTela();
 				$("#dialog-pdv").dialog( "close" );
 				
-			},this.errorSalvarPDV,true);
+			},this.errorSalvarPDV,true,"idModalPDV");
 			
 		},
 		
-		errorSalvarPDV: function (){
-			
+		errorSalvarPDV: function (result){
 		},
 		
 		getDadosBasico: function (){
@@ -532,7 +531,11 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout();
 				}
+				
 			});
 		},
 		
@@ -562,6 +565,10 @@ var PDV = {
 						PDV.limparCamposTela();
 						$( this ).dialog( "close" );
 					}
+				},
+				beforeClose: function() {
+					PDV.limparCamposTela();
+					clearMessageDialogTimeout("idModalPDV");
 				}
 			});
 
@@ -615,6 +622,9 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
+				},
+				beforeClose: function() {	
+					clearMessageDialogTimeout();
 				}
 			});
 
@@ -648,7 +658,7 @@ var PDV = {
 					   function(result){
 							var combo =  montarComboBox(result, false);
 							$("#selectDiasFuncionamento").html(combo);
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarMaterialPromocional:function(data){
@@ -658,7 +668,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectMaterialPromocional").html(combo);
 							$("#selectMaterialPromocional").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarMaterialPromocionalNotIn:function(data){
@@ -668,7 +678,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectMaterialPromocional").html(combo);
 							$("#selectMaterialPromocional").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarMaterialPromocionalSelecionado:function(data){
@@ -678,7 +688,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectMap").html(combo);
 							$("#selectMap").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 			
 		carregarEspecialidade:function(data){
@@ -688,7 +698,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#especialidades_options").html(combo);
 							$("#especialidades_options").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		
@@ -699,7 +709,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#caract_options").html(combo);
 							$("#caract_options").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarEspecialidadesNotIn:function(data){
@@ -709,7 +719,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#caract_options").html(combo);
 							$("#caract_options").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 
 		carregarGeradorFluxoNotIn:function(data){
@@ -719,7 +729,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selecTipoGeradorFluxo").html(combo);
 							$("#selecTipoGeradorFluxo").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarGeradorFluxo:function(data){
@@ -729,7 +739,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selecTipoGeradorFluxo").html(combo);
 							$("#selecTipoGeradorFluxo").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarGeradorFluxoSecundario:function(data){
@@ -739,7 +749,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectFluxoSecundario").html(combo);
 							$("#selectFluxoSecundario").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		mostra_expositor:function(idChecked){
@@ -799,6 +809,8 @@ var PDV = {
             $("#txtGeradorFluxoPrincipal").val("");
             
             $("#idPDV").val("");
+            
+            $("#tabpdv").tabs('select', 0);
 		}
 		
 };
