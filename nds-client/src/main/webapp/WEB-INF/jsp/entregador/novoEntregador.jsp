@@ -9,10 +9,10 @@
 				<a href="#dadosCadastrais" id="linkDadosCadastrais">Dados Cadastrais</a>
 			</li>
 			<li>
-				<a href="#manutencaoEnderecos" onclick="popularGridEnderecos()">Endereços</a>
+				<a href="#manutencaoEnderecos" onclick="ENDERECO_ENTREGADOR.popularGridEnderecos()">Endereços</a>
 			</li>
 			<li>
-				<a href="#manutencaoTelefones" onclick="carregarTelefones()">Telefones</a>
+				<a href="#manutencaoTelefones" onclick="ENTREGADOR.carregarTelefones()">Telefones</a>
 			</li>
 		</ul>
 
@@ -21,8 +21,14 @@
 			<jsp:include page="dadosCadastraisPJ.jsp" />
 		</div>
 		
-		<jsp:include page="../endereco/index.jsp" />
-		<jsp:include page="../telefone/index.jsp" />
+		<jsp:include page="../endereco/index.jsp">
+			<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
+		</jsp:include>
+		
+		<jsp:include page="../telefone/index.jsp">
+			<jsp:param value="ENTREGADOR" name="tela"/>
+		</jsp:include>
+		
 
 	</div>
 	
