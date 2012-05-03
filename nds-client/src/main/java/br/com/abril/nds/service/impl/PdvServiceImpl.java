@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -18,12 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
@@ -350,7 +353,7 @@ public class PdvServiceImpl implements PdvService {
 		salvarGeradorFluxo(pdvDTO, pdv);
 	
 		//salvarEndereco(pdvDTO, pdv);
-		//salvarTelefone(pdvDTO, pdv);
+		salvarTelefone(pdvDTO, pdv);
 	}
 	
 		
@@ -404,7 +407,19 @@ public class PdvServiceImpl implements PdvService {
 		
 	}
 	
+	@Transactional
 	private void salvarTelefone(PdvDTO pdvDTO,PDV pdv){
+		
+		List<Telefone> listaTelefones = new ArrayList<Telefone>();
+		if (pdvDTO.getTelefonesAdicionar() != null){
+			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : pdvDTO.getTelefonesAdicionar()){
+				listaTelefones.add(telefoneAssociacaoDTO.getTelefone());
+			}
+		}
+		
+		if (!listaTelefones.isEmpty()){
+			pdv.getCota().getPessoa().setTelefones(listaTelefones);
+		}	
 		
 	}
 	

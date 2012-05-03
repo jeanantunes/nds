@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import antlr.collections.impl.LList;
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -52,6 +54,12 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/cadastro/pdv")
 public class PdvController {
+	
+	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoPDV";
+	
+	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoPDV";
+	
+	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoPDV";
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
 	
@@ -358,13 +366,15 @@ public class PdvController {
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Post
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
 		
 		pdvDTO.setImagem((InputStream) session.getAttribute(IMAGEM_PDV));
 		
-		//pdvDTO.setTelefone(sessiom.Map<Integer, TelefoneAssociacaoDTO>);
+		preencherTelefones(pdvDTO);
+		
 		//pdvDTO.setEndereco(endereco);
 		
 		pdvService.salvar(pdvDTO);
@@ -381,6 +391,29 @@ public class PdvController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	private void preencherTelefones(PdvDTO pdvDTO) {
+
+		pdvDTO.setTelefonesAdicionar(new ArrayList<TelefoneAssociacaoDTO>());
+		
+		@SuppressWarnings("unchecked")
+		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
+				session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		
+		if (listaTelefone != null){
+			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefone.values()){
+				pdvDTO.getTelefonesAdicionar() .add(telefoneAssociacaoDTO);
+			}
+		}
+		
+		@SuppressWarnings("unchecked")
+		Set<Long> listaTelefoneRemover = (Set<Long>) 
+				session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		pdvDTO.setTelefonesRemover(listaTelefoneRemover);
+		
+	}
+
 	@Post
 	@Path("/adicionarPeriodo")
 	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
