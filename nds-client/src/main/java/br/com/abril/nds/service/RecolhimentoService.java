@@ -2,10 +2,11 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
+import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 
 /**
  * Interface que define serviços referentes ao recolhimento.
@@ -34,7 +35,8 @@ public interface RecolhimentoService {
 	 */
 	List<RecolhimentoDTO> obterDadosBalanceamentoRecolhimento(Date dataInicial);
 	
-	Map<Date, List<RecolhimentoDTO>> obterMatrizBalanceamento(Integer numeroSemana,
-				 											  List<Long> listaIdsFornecedores);
+	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
+														  List<Long> listaIdsFornecedores,
+														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento);
 
 }
