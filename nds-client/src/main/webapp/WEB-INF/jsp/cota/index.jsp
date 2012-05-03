@@ -193,7 +193,7 @@
 			<li><a href="#tabpf-2" onclick="ENDERECO_COTA.popularGridEnderecos()">Endereços</a></li>			
 			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
 			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
-			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
+			<li><a href="#tabpf-5" onclick="FINANCEIRO.carregaFinanceiro();">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
 			<li><a href="#tabpf-7">Distribuição</a></li>
 			<li><a href="#tabpf-8">Fornecedor</a></li>
@@ -218,7 +218,9 @@
 			</div> 
 
 			<div id="tabpf-5"> 
-			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
+			    <jsp:include page="../financeiro/index.jsp">
+			        <jsp:param value="FINANCEIRO" name="telaFinanceiro"/>
+			    </jsp:include> 
 			</div>
 			
 			<div id="tabpf-6"> </div>

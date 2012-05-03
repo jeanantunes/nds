@@ -625,6 +625,8 @@ public class DataLoader {
 		
 		gerarTipoLicencaMunicipalPDV(session);
 		
+		//criarCotaFornecedor(session);
+		
 	}
 
 	
@@ -1234,6 +1236,23 @@ public class DataLoader {
 		
 	}
 
+	
+	/*
+	private static void criarCotaFornecedor(Session session) {
+		
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		fornecedores.add(fornecedorAcme);
+		fornecedores.add(fornecedorDinap);
+		fornecedores.add(fornecedorFc);
+		
+		Cota cotaFornecedor1 = Fixture.cota(1111, manoel, SituacaoCadastro.ATIVO,box1);
+		cotaFornecedor1.setFornecedores(fornecedores);
+		save(session, cotaFornecedor1);
+		
+	}
+	*/
+	
+	
 	private static void criarRotaRoteiroCota(Session session) {
 
 		Rota rota = Fixture.rota("005");
@@ -2597,7 +2616,6 @@ public class DataLoader {
 
 	private static void criarCotas(Session session) {
 
-
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(session, cotaManoel);
 
@@ -2704,7 +2722,7 @@ public class DataLoader {
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 	}
-
+	
 	private static void criarUsuarios(Session session) {
 		usuarioJoao = Fixture.usuarioJoao();
 		session.save(usuarioJoao);

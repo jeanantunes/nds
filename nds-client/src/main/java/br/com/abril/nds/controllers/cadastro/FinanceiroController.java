@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -10,17 +11,19 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FinanceiroService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
@@ -59,11 +62,13 @@ public class FinanceiroController {
 
     private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
      
+    
     /**
 	 * Constante que representa o nome do atributo com os dados de 'cota cobranca'
 	 * armazenado na sessão para serem persistidos na base. 
 	 */
 	public static String ATRIBUTO_SESSAO_FINANCEIRO_SALVAR = "financeiroSalvarSessao";
+	
 	
 	/**
 	 * Construtor da classe
@@ -77,6 +82,7 @@ public class FinanceiroController {
 		this.httpResponse = httpResponse;
 	}
 	
+	
 	/**
 	 * Método de chamada da página
 	 * Pré-carrega itens da pagina com informações default.
@@ -86,6 +92,7 @@ public class FinanceiroController {
 		preCarregamento();
 	}
 	
+	
 	/**
 	 * Método de Pré-carregamento de itens da pagina com informações default.
 	 */
@@ -94,7 +101,12 @@ public class FinanceiroController {
 		listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
 		result.include("listaBancos",listaBancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
+		/*
+		Set<Fornecedor> fornecedores = this.cotaService.obterFornecedoresCota(1l);//PARAMETRO IDCOTA
+		result.include("fornecedores",fornecedores);
+		*/
 	}
+	
 	
 	/**
 	 * Método responsável por obter os parametros de cobranca da Cota para a aba 'Financeiro'.
@@ -116,9 +128,10 @@ public class FinanceiroController {
 		if (parametroCobranca==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota encontrada para o código de cota informado.");
 		} 
-		
+
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
+	
 	
 	/**
 	 * Método responsável por obter os dados da uma forma de cobranca do parametro de cobranca da Cota para a aba 'Financeiro'.
@@ -143,6 +156,7 @@ public class FinanceiroController {
 		
 		result.use(Results.json()).from(formaCobranca,"result").recursive().serialize();
 	}
+
 	
 	/**
      * Retorna formas de cobrança da cota para preencher a grid da view
@@ -168,11 +182,11 @@ public class FinanceiroController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
-	
 
+    
 	/**
-	 * Método responsável pos inserir na sessão os dados da aba "financeiro" do cadastro de cota.
-	 * @param cotaCobranca: Value Object com os dados cadastrados ou alterados pelo usuário
+	 * Método responsável por postar na sessão os dados da aba "financeiro" do cadastro de cota.
+	 * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou alterados pelo usuário
 	 */
 	@SuppressWarnings("static-access")
 	@Post
@@ -182,34 +196,63 @@ public class FinanceiroController {
 		validar();
 		
 	    this.session.setAttribute(this.ATRIBUTO_SESSAO_FINANCEIRO_SALVAR, parametroCobranca);
-	    
-	    result.nothing();
+
+	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	
+	/**
+	 *Formata os dados de FormaCobranca, apagando valores que não são compatíveis com o Tipo de Cobranca escolhido.
+	 * @param formaCobranca
+	 */
+	private FormaCobrancaDTO formatarFormaCobranca(FormaCobrancaDTO formaCobranca){
+		if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)){
+	    	formaCobranca.setNumBanco("");
+			formaCobranca.setNomeBanco("");
+			formaCobranca.setAgencia("");
+			formaCobranca.setAgenciaDigito("");
+			formaCobranca.setConta("");
+		    formaCobranca.setContaDigito("");
+	    }
+		else if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+			formaCobranca.setRecebeEmail(false);
+		}    
+		else if (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO){
+			formaCobranca.setRecebeEmail(false);
+			formaCobranca.setNumBanco("");
+			formaCobranca.setNomeBanco("");
+			formaCobranca.setAgencia("");
+			formaCobranca.setAgenciaDigito("");
+			formaCobranca.setConta("");
+		    formaCobranca.setContaDigito("");
+		}    
+		else{
+			formaCobranca.setRecebeEmail(false);
+			formaCobranca.setNumBanco("");
+			formaCobranca.setNomeBanco("");
+			formaCobranca.setAgencia("");
+			formaCobranca.setAgenciaDigito("");
+			formaCobranca.setConta("");
+		    formaCobranca.setContaDigito("");
+		    formaCobranca.setIdBanco(0);
+		}
+		return formaCobranca;
 	}
 	
 	
 	@Post
 	@Path("/postarFormaCobranca")
-	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca,     String tipoFormaCobranca){	
+	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, String tipoFormaCobranca, List<Long> listaIdsFornecedores){	
 		
-		validar();
+		formaCobranca = formatarFormaCobranca(formaCobranca);
 		
-		if (formaCobranca.isRecebeEmail()){
-			Cota cota = this.cotaService.obterPorId(formaCobranca.getIdCota());
-			if (cota.getPessoa().getEmail()==null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
-			}
-		}
+		validarFormaCobranca(formaCobranca);
 		
-		
-		
-		
+		formaCobranca.setFornecedoresId(listaIdsFornecedores);
 		formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
-		
-		
-		
 		this.financeiroService.postarFormaCobranca(formaCobranca);	
 	    
-	    result.nothing();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrado."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	
@@ -228,7 +271,21 @@ public class FinanceiroController {
 	    
 	    this.session.removeAttribute(this.ATRIBUTO_SESSAO_FINANCEIRO_SALVAR);
     }
+  
+    
+    /**
+     * Método responsável por desativar Forma de Cobranca
+     * @param idFormaCobranca
+     */
+    @Post
+	@Path("/excluirFormaCobranca")
+	public void excluirFormaCobranca(Long idFormaCobranca){	
 
+		this.financeiroService.excluirFormaCobranca(idFormaCobranca);	
+	    
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+    
     
     /**
 	 * Exibe o contrato em formato PDF.
@@ -255,6 +312,7 @@ public class FinanceiroController {
 	 * Método responsável pela validação dos dados e rotinas.
 	 */
 	public void validar(){
+		
 		if (validator.hasErrors()) {
 			List<String> mensagens = new ArrayList<String>();
 			for (Message message : validator.getErrors()) {
@@ -263,6 +321,63 @@ public class FinanceiroController {
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
 			throw new ValidacaoException(validacao);
 		}
+		
 	}
+	
+	
+	/**
+	 * Método responsável pela validação dos dados da Forma de Cobranca.
+	 */
+	public void validarFormaCobranca(FormaCobrancaDTO formaCobranca){
+		
+		validar();
+		
+		if(formaCobranca.getTipoCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
+		}
+		
+		if (formaCobranca.getIdBanco()<=0){
+		    if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
+		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
+		    }
+		}
+		
+		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+		    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+			
+			if((formaCobranca.getNomeBanco()==null) || (!"".equals(formaCobranca.getNomeBanco()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
+			}
+			if((formaCobranca.getNumBanco()==null) || (!"".equals(formaCobranca.getNumBanco()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
+			}
+			
+			if((formaCobranca.getConta()==null) || (!"".equals(formaCobranca.getConta()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
+			}
+			if((formaCobranca.getContaDigito()==null) || (!"".equals(formaCobranca.getContaDigito()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
+			}
+			
+			if((formaCobranca.getAgencia()==null) || (!"".equals(formaCobranca.getAgencia()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
+			}
+			if((formaCobranca.getAgenciaDigito()==null) || (!"".equals(formaCobranca.getAgenciaDigito()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
+			}
+		}
+		
+		if (formaCobranca.isRecebeEmail()){
+			Cota cota = this.cotaService.obterPorId(formaCobranca.getIdCota());
+			if (cota.getPessoa().getEmail()==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
+			}
+		}
+	}
+	
 	
 }

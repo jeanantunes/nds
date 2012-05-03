@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -36,6 +38,8 @@ public class FormaCobrancaDTO {
 	boolean quinta;
 	boolean sexta;
 	boolean sabado;
+	
+	List<Long> fornecedoresId;
 	
 	
 	public FormaCobrancaDTO(){
@@ -282,6 +286,14 @@ public class FormaCobrancaDTO {
 
 	public void setSabado(boolean sabado) {
 		this.sabado = sabado;
+	}
+
+	public List<Long> getFornecedoresId() {
+		return fornecedoresId;
+	}
+
+	public void setFornecedoresId(List<Long> fornecedoresId) {
+		this.fornecedoresId = fornecedoresId;
 	}
 
 }

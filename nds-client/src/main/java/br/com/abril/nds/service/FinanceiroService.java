@@ -101,17 +101,24 @@ public interface FinanceiroService {
 	 
 	 
 	 /**
-	 * Obtém lista de forma de cobranca do Parametro de Cobrança
-	 * @param ID do ParametroCobrancaCota
+	 * Obtém lista de forma de cobranca da Cota
+	 * @param ID da Cota
 	 * @return {@link List<FormaCobranca>}
 	 */
 	 List<FormaCobranca> obterFormasCobrancaCota(Long idCota);
 		 
 		 	 
 	 /**
-	 * Obtém quantidade de forma de cobranca do Parametro de Cobrança
-	 * @param ID do  ParametroCobrancaCota
-	 * @return Quantidade de formas de cobrança para o Parametro de Cobranca
+	 * Obtém quantidade de forma de cobranca da Cota
+	 * @param ID da Cota
+	 * @return Quantidade de formas de cobrança para a Cota
 	 */
 	 int obterQuantidadeFormasCobrancaCota(Long idCota);
+	 
+	 
+	 /**
+	 * Exclusão de Forma de Cobranca
+	 * @param ID da Forma de Cobrança
+	 */
+	 void excluirFormaCobranca(Long idFormaCobranca);
 }
