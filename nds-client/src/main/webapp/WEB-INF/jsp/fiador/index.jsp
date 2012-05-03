@@ -383,7 +383,7 @@
 <body>
 	
 	<div id="dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
-		<p>Confirma esta Exclusão?</p>
+		<p>Confirma esta Exclusï¿½o?</p>
 	</div>
 	
 	<div id="dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
@@ -396,8 +396,8 @@
 		<div id="tabs">
 			<ul>
 				<li><a href="#tab-1">Dados Cadastrais</a></li>
-				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >Sócios</a></li>
-	            <li><a href="#tab-3" onclick="ENDERECO_FIADOR.popularGridEnderecos();">Endereços</a></li>
+				<li id="tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >SÃ³cios</a></li>
+	            <li><a href="#tab-3" onclick="ENDERECO_FIADOR.popularGridEnderecos();">EndereÃ§os</a></li>
 	            <li><a href="#tab-4" onclick="FIADOR.carregarTelefones();">Telefones</a></li>
 	            <li><a href="#tab-5" onclick="carregarGarantias();">Garantia</a></li>
 				<li><a href="#tab-6" onclick="carregarCotasAssociadas();">Cotas Associadas</a></li>
