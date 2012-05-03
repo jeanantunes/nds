@@ -47,7 +47,18 @@ var PDV = {
 		
 		carregarAbaDadosBasico: function (result){
 			
+			if(isValidURL(contextPath + "/images/pdv/pdv_" + result.pdvDTO.id + ".jpeg")) {
+				$("#idImagem").attr("src",contextPath + "/images/pdv/pdv_" + result.pdvDTO.id + ".jpeg");
+			} else {
+				$("#idImagem").attr("src",contextPath + "/images/pdv/no_image.jpeg");
+			}
+			
+			$("#idBtnExcluir").click(function() {
+				PDV.excluirImagem(result.pdvDTO.id);
+			});
+			
 			$("#idPDV").val(result.pdvDTO.id);
+			$("#idCotaImagem").val(result.pdvDTO.idCota);
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
 			$("#dataInicio").val($.format.date(result.pdvDTO.dataInicio.$.substr(0,10) + "00:00:00.000","dd/MM/yyyy"));
 			$("#nomePDV").val(result.pdvDTO.nomePDV);
@@ -488,6 +499,10 @@ var PDV = {
 			var mensagens = result[1];
 			var status = result[2];
 			
+			if(mensagens!=null && mensagens.length!=0) {
+				exibirMensagem(status,mensagens);
+			}
+			
 			var combo = $("#selectDiasFuncionamento");
 			combo.clear();
 			
@@ -614,12 +629,28 @@ var PDV = {
 			});
 
 		},
+		
+		excluirImagem :function (idPDV) {
+			
+			$.postJSON(contextPath + "/cadastro/pdv/excluirImagem",
+					   "idPdv=" + idPDV, 
+					   function(result){
+				
+				var mensagens = result[0];
+				var status = result[1];
+				
+				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/no_image.jpeg");
+							
+				if(mensagens!=null && mensagens.length!=0) {
+					exibirMensagem(status,mensagens);
+				}
+			});
+
+		},
 		validarEmail : function (email)	{
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
-			if(er.exec(email))
-				return true;
-			else
-				return false;
+			if(!er.exec(email))
+				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."]);		
 		},
 		carregarPeriodosFuncionamento:function(){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
