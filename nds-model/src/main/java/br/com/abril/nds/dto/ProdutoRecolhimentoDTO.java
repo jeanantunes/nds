@@ -34,11 +34,13 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private Date dataRecolhimento;
 
-	private BigDecimal sede;
+	private BigDecimal expectativaEncalheSede;
 
-	private BigDecimal atendida;
+	private BigDecimal expectativaEncalheAtendida;
 
-	private BigDecimal qtdeExemplares;
+	private BigDecimal qtdeExemplaresEstoqueCota;
+
+	private BigDecimal expectativaEncalhe;
 
 	private BigDecimal valorTotal;
 
@@ -192,45 +194,59 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the sede
+	 * @return the expectativaEncalheSede
 	 */
-	public BigDecimal getSede() {
-		return sede;
+	public BigDecimal getExpectativaEncalheSede() {
+		return expectativaEncalheSede;
 	}
 
 	/**
-	 * @param sede the sede to set
+	 * @param expectativaEncalheSede the expectativaEncalheSede to set
 	 */
-	public void setSede(BigDecimal sede) {
-		this.sede = sede;
+	public void setExpectativaEncalheSede(BigDecimal expectativaEncalheSede) {
+		this.expectativaEncalheSede = expectativaEncalheSede;
 	}
 
 	/**
-	 * @return the atendida
+	 * @return the expectativaEncalheAtendida
 	 */
-	public BigDecimal getAtendida() {
-		return atendida;
+	public BigDecimal getExpectativaEncalheAtendida() {
+		return expectativaEncalheAtendida;
 	}
 
 	/**
-	 * @param atendida the atendida to set
+	 * @param expectativaEncalheAtendida the expectativaEncalheAtendida to set
 	 */
-	public void setAtendida(BigDecimal atendida) {
-		this.atendida = atendida;
+	public void setExpectativaEncalheAtendida(BigDecimal expectativaEncalheAtendida) {
+		this.expectativaEncalheAtendida = expectativaEncalheAtendida;
 	}
 
 	/**
-	 * @return the qtdeExemplares
+	 * @return the qtdeExemplaresEstoqueCota
 	 */
-	public BigDecimal getQtdeExemplares() {
-		return qtdeExemplares;
+	public BigDecimal getQtdeExemplaresEstoqueCota() {
+		return qtdeExemplaresEstoqueCota;
 	}
 
 	/**
-	 * @param qtdeExemplares the qtdeExemplares to set
+	 * @param qtdeExemplaresEstoqueCota the qtdeExemplaresEstoqueCota to set
 	 */
-	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
-		this.qtdeExemplares = qtdeExemplares;
+	public void setQtdeExemplaresEstoqueCota(BigDecimal qtdeExemplaresEstoqueCota) {
+		this.qtdeExemplaresEstoqueCota = qtdeExemplaresEstoqueCota;
+	}
+
+	/**
+	 * @return the expectativaEncalhe
+	 */
+	public BigDecimal getExpectativaEncalhe() {
+		return expectativaEncalhe;
+	}
+
+	/**
+	 * @param expectativaEncalhe the expectativaEncalhe to set
+	 */
+	public void setExpectativaEncalhe(BigDecimal expectativaEncalhe) {
+		this.expectativaEncalhe = expectativaEncalhe;
 	}
 
 	/**
