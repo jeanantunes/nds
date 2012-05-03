@@ -50,9 +50,6 @@ public class Distribuidor {
 	@JoinColumn(name = "PJ_ID")
 	private PessoaJuridica juridica;
 	
-	@OneToMany(mappedBy = "distribuidor")
-	private Set<DistribuicaoFornecedor> diasDistribuicao = new HashSet<DistribuicaoFornecedor>();
-	
 	@Column(name = "FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
 	
@@ -142,14 +139,6 @@ public class Distribuidor {
 	
 	public void setJuridica(PessoaJuridica juridica) {
 		this.juridica = juridica;
-	}
-	
-	public Set<DistribuicaoFornecedor> getDiasDistribuicao() {
-		return diasDistribuicao;
-	}
-	
-	public void setDiasDistribuicao(Set<DistribuicaoFornecedor> diasDistribuicao) {
-		this.diasDistribuicao = diasDistribuicao;
 	}
 	
 	public BigDecimal getFatorDesconto() {

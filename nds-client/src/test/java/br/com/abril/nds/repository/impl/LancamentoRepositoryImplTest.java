@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -41,6 +41,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -583,14 +584,15 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Ignore//TODO:dar continuidade.
 	@Test
 	public void buscarBalanceamentoPeriodo() {
-		
+
 		Date data22022012 = Fixture.criarData(22,
 				Calendar.FEBRUARY, 2012);
 		Date data23022012 = Fixture.criarData(23,
 				Calendar.FEBRUARY, 2012);
-		List<Date> datas = Arrays.asList(data22022012, data23022012);
-		List<RecolhimentoDTO> resumos = lancamentoRepository
-				.obterBalanceamentoRecolhimento(datas,
+		PeriodoVO periodo = new PeriodoVO(data22022012, data23022012);
+
+		List<ProdutoRecolhimentoDTO> resumos = lancamentoRepository
+				.obterBalanceamentoRecolhimento(periodo,
 						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 		Assert.assertEquals(2, resumos.size());
 		

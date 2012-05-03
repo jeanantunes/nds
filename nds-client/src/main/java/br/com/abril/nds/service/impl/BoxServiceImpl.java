@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
@@ -76,11 +77,10 @@ public class BoxServiceImpl implements BoxService{
 			boolean postoAvancado) {
 		return boxRepository.quantidade(codigoBox, tipoBox, postoAvancado);
 	}
-	
-	
-	
-	
-	
-	
-	
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id) {
+		return boxRepository.obtemCotaRotaRoteiro(id);
+	}
 }

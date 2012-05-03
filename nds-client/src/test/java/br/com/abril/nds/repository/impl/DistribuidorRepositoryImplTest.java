@@ -15,6 +15,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -42,6 +43,9 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 	private DistribuicaoFornecedor fcSegunda;
 	private DistribuicaoFornecedor fcSexta;
 	private TipoFornecedor tipoFornecedorPublicacao;
+	
+	private DistribuicaoDistribuidor distribuicaoDistribuidorSegunda;
+	private DistribuicaoDistribuidor distribuicaoDistribuidorTerca;
 	
 	@Before
 	public void setUp() {
@@ -83,23 +87,33 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(fornecedorFC, fornecedorDinap);
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		dinapQuarta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.QUARTA_FEIRA,
+				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		dinapSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 		save(dinapSegunda, dinapQuarta, dinapSexta);
 
 		fcSegunda = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFC, DiaSemana.SEGUNDA_FEIRA,
+				fornecedorFC, DiaSemana.SEGUNDA_FEIRA,
 				OperacaoDistribuidor.DISTRIBUICAO);
 		fcSexta = Fixture.distribuicaoFornecedor(
-				distribuidor, fornecedorFC, DiaSemana.SEXTA_FEIRA,
+				fornecedorFC, DiaSemana.SEXTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO);
 		save(fcSegunda, fcSexta);
+		
+		distribuicaoDistribuidorSegunda =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
+											 OperacaoDistribuidor.RECOLHIMENTO);
+		
+		distribuicaoDistribuidorTerca =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
+												 OperacaoDistribuidor.RECOLHIMENTO);
+		
+		save(distribuicaoDistribuidorSegunda, distribuicaoDistribuidorTerca);
 	}
 	
 	@Test
@@ -110,17 +124,29 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void buscarDiasDistribuicao() {
+	public void buscarDiasDistribuicaoFornecedor() {
 		List<Long> idsFornecedores = new ArrayList<Long>(2);
 		idsFornecedores.add(fornecedorFC.getId());
 		idsFornecedores.add(fornecedorDinap.getId());
 		List<DistribuicaoFornecedor> resultado = distribuidorRepository
-				.buscarDiasDistribuicao(idsFornecedores, OperacaoDistribuidor.DISTRIBUICAO);
+				.buscarDiasDistribuicaoFornecedor(idsFornecedores, OperacaoDistribuidor.DISTRIBUICAO);
 		Assert.assertEquals(3, resultado.size());
 		Assert.assertTrue(resultado.contains(dinapSegunda));
 		Assert.assertTrue(resultado.contains(dinapQuarta));
 		Assert.assertTrue(resultado.contains(fcSegunda));
 		
+	}
+	
+	@Test
+	public void buscarDiasDistribuicaoDistribuidor() {
+		
+		List<DistribuicaoDistribuidor> resultado =
+			distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
+				distribuidor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
+		
+		Assert.assertEquals(2, resultado.size());
+		Assert.assertTrue(resultado.contains(distribuicaoDistribuidorSegunda));
+		Assert.assertTrue(resultado.contains(distribuicaoDistribuidorTerca));
 	}
 
 }

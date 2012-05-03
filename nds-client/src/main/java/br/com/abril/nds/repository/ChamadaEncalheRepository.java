@@ -9,6 +9,6 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Long> {
 	
 	ChamadaEncalhe obterPorNumeroEdicaoEDataRecolhimento(ProdutoEdicao produtoEdicao,
-														 Date dataFinalRecolhimento,
+														 Date dataRecolhimento,
 														 TipoChamadaEncalhe tipoChamadaEncalhe);
 }

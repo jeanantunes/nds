@@ -6,11 +6,15 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
+import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
@@ -103,7 +107,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 			boolean postoAvancado) {
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
-		if(codigoBox != null && codigoBox.trim().length() > 0){
+		if(!StringUtil.isEmpty(codigoBox)){
 			criteria.add(Restrictions.ilike("codigo", codigoBox));
 		}
 		
@@ -117,6 +121,10 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		return criteria;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#hasCodigo(java.lang.String, java.lang.Long)
+	 */
 	@Override
 	public boolean hasCodigo(String codigoBox, Long id){
 		Criteria criteria =  getSession().createCriteria(Box.class);	
@@ -129,6 +137,37 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		criteria.setProjection(Projections.rowCount());
 		Long qtd = (Long)criteria.list().get(0);
 		return qtd > 0;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#obtemCotaRotaRoteiro(long)
+	 */
+	@Override
+	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id){
+		
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select rotaRoteiro.cota.numeroCota as numeroCota,");
+		hql.append("case rotaRoteiro.cota.pessoa.class when 'F' then rotaRoteiro.cota.pessoa.nome when 'J' then rotaRoteiro.cota.pessoa.razaoSocial end  as nomeCota,");
+		hql.append("rotaRoteiro.rota.codigoRota as rota,");
+		hql.append("rotaRoteiro.roteiro.descricaoRoteiro as roteiro");
+		
+		hql.append(" from RotaRoteiroOperacao rotaRoteiro");
+		
+		hql.append(" where rotaRoteiro.cota.box.id = :id");
+		
+		hql.append(" order by roteiro asc, rota asc, numeroCota asc");
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setLong("id", id);
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				CotaRotaRoteiroDTO.class));
+		
+		
+		return query.list();
 	}
 
 }

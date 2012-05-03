@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -45,7 +46,7 @@ public class BoxController {
 	public void busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
 			String sortname, String sortorder, int rp, int page) {
 		List<Box> boxs = boxService.busca(codigoBox, tipoBox, postoAvancado,
-				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), --page*rp , rp);
+				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 		Long quantidade = boxService.quantidade(codigoBox, tipoBox,
 				postoAvancado);
 		result.use(FlexiGridJson.class).from(boxs).total(quantidade.intValue()).page(page).serialize();
@@ -100,5 +101,11 @@ public class BoxController {
 		}
 		result.use(Results.nothing());
 	}
-
+	
+	@Post
+	@Path("/detalhe.json")
+	public void detalhe(long id){		
+		List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id);		
+		result.use(FlexiGridJson.class).from(rotaRoteiroDTOs).total(rotaRoteiroDTOs.size()).page(1).serialize();
+	}
 }
