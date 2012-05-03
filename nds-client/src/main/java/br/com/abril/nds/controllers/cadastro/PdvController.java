@@ -49,6 +49,12 @@ import br.com.caelum.vraptor.view.Results;
 public class PdvController {
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
+
+	public static String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosPDVSalvos";
+
+	public static String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosPDVRemovidos";
+
+	public static String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosPDVExibidos";
 	
 	@Autowired
 	private Result result;
