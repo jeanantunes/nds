@@ -52,7 +52,8 @@ public class TelefoneController {
 		
 		FIADOR,
 		COTA,
-		ENTREGADOR;
+		ENTREGADOR,
+		TRANSPORTADOR;
 		
 		public void setarParametros(){
 			
@@ -74,6 +75,12 @@ public class TelefoneController {
 							EntregadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
 							EntregadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
 							EntregadorController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case TRANSPORTADOR:
+					TelefoneController.setarParametros(
+							TransportadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							TransportadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							TransportadorController.LISTA_TELEFONES_EXIBICAO);
 				break;
 			}
 		}
@@ -109,7 +116,7 @@ public class TelefoneController {
 			
 			for (TelefoneAssociacaoDTO tDto : listaTelefonesExibir){
 				
-				if (tDto.getTipoTelefone() != null && !telefonesRemover.contains(new Long(tDto.getReferencia()))){
+				if (!telefonesRemover.contains(new Long(tDto.getReferencia()))){
 					
 					telefonesSessao.put(tDto.getReferencia(), tDto);
 				}

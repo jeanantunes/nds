@@ -43,6 +43,9 @@ public class Transportador implements Serializable {
 	
 	@OneToMany(mappedBy = "transportador")
 	private List<TelefoneTransportador> telefonesTransportador;
+	
+	@OneToMany(mappedBy = "transportador")
+	private List<EnderecoTransportador> enderecosTransportador;
 
 	public Long getId() {
 		return id;
@@ -84,5 +87,14 @@ public class Transportador implements Serializable {
 	public void setTelefonesTransportador(
 			List<TelefoneTransportador> telefonesTransportador) {
 		this.telefonesTransportador = telefonesTransportador;
+	}
+
+	public List<EnderecoTransportador> getEnderecosTransportador() {
+		return enderecosTransportador;
+	}
+
+	public void setEnderecosTransportador(
+			List<EnderecoTransportador> enderecosTransportador) {
+		this.enderecosTransportador = enderecosTransportador;
 	}
 }

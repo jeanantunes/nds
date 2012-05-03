@@ -47,7 +47,18 @@ var PDV = {
 		
 		carregarAbaDadosBasico: function (result){
 			
+			if(isValidURL(contextPath + "/images/pdv/pdv_" + result.pdvDTO.id + ".jpeg")) {
+				$("#idImagem").attr("src",contextPath + "/images/pdv/pdv_" + result.pdvDTO.id + ".jpeg");
+			} else {
+				$("#idImagem").attr("src",contextPath + "/images/pdv/no_image.jpeg");
+			}
+			
+			$("#idBtnExcluir").click(function() {
+				PDV.excluirImagem(result.pdvDTO.id);
+			});
+			
 			$("#idPDV").val(result.pdvDTO.id);
+			$("#idCotaImagem").val(result.pdvDTO.idCota);
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
 			$("#dataInicio").val($.format.date(result.pdvDTO.dataInicio.$.substr(0,10) + "00:00:00.000","dd/MM/yyyy"));
 			$("#nomePDV").val(result.pdvDTO.nomePDV);
@@ -251,12 +262,11 @@ var PDV = {
 				PDV.limparCamposTela();
 				$("#dialog-pdv").dialog( "close" );
 				
-			},this.errorSalvarPDV,true);
+			},this.errorSalvarPDV,true,"idModalPDV");
 			
 		},
 		
-		errorSalvarPDV: function (){
-			
+		errorSalvarPDV: function (result){
 		},
 		
 		getDadosBasico: function (){
@@ -489,6 +499,10 @@ var PDV = {
 			var mensagens = result[1];
 			var status = result[2];
 			
+			if(mensagens!=null && mensagens.length!=0) {
+				exibirMensagem(status,mensagens);
+			}
+			
 			var combo = $("#selectDiasFuncionamento");
 			combo.clear();
 			
@@ -517,7 +531,11 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout();
 				}
+				
 			});
 		},
 		
@@ -529,6 +547,11 @@ var PDV = {
 			PDV.carregarCaracteristicaEspecialidade(null);
 			PDV.carregarPeriodosFuncionamento();
 			
+			$.postJSON(contextPath + "/cadastro/pdv/novo",
+					"idCota="+PDV.idCota, 
+					null
+			);
+						
 			PDV.popup_novoPdv();
 		},
 		
@@ -547,6 +570,10 @@ var PDV = {
 						PDV.limparCamposTela();
 						$( this ).dialog( "close" );
 					}
+				},
+				beforeClose: function() {
+					PDV.limparCamposTela();
+					clearMessageDialogTimeout("idModalPDV");
 				}
 			});
 
@@ -600,16 +627,35 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
+				},
+				beforeClose: function() {	
+					clearMessageDialogTimeout();
+				}
+			});
+
+		},
+		
+		excluirImagem :function (idPDV) {
+			
+			$.postJSON(contextPath + "/cadastro/pdv/excluirImagem",
+					   "idPdv=" + idPDV, 
+					   function(result){
+				
+				var mensagens = result[0];
+				var status = result[1];
+				
+				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/no_image.jpeg");
+							
+				if(mensagens!=null && mensagens.length!=0) {
+					exibirMensagem(status,mensagens);
 				}
 			});
 
 		},
 		validarEmail : function (email)	{
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
-			if(er.exec(email))
-				return true;
-			else
-				return false;
+			if(!er.exec(email))
+				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."]);		
 		},
 		carregarPeriodosFuncionamento:function(){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
@@ -617,7 +663,7 @@ var PDV = {
 					   function(result){
 							var combo =  montarComboBox(result, false);
 							$("#selectDiasFuncionamento").html(combo);
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarMaterialPromocional:function(data){
@@ -627,7 +673,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectMaterialPromocional").html(combo);
 							$("#selectMaterialPromocional").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarMaterialPromocionalNotIn:function(data){
@@ -637,7 +683,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectMaterialPromocional").html(combo);
 							$("#selectMaterialPromocional").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarMaterialPromocionalSelecionado:function(data){
@@ -647,7 +693,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectMap").html(combo);
 							$("#selectMap").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 			
 		carregarEspecialidade:function(data){
@@ -657,7 +703,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#especialidades_options").html(combo);
 							$("#especialidades_options").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		
@@ -668,7 +714,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#caract_options").html(combo);
 							$("#caract_options").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarEspecialidadesNotIn:function(data){
@@ -678,7 +724,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#caract_options").html(combo);
 							$("#caract_options").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 
 		carregarGeradorFluxoNotIn:function(data){
@@ -688,7 +734,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selecTipoGeradorFluxo").html(combo);
 							$("#selecTipoGeradorFluxo").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarGeradorFluxo:function(data){
@@ -698,7 +744,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selecTipoGeradorFluxo").html(combo);
 							$("#selecTipoGeradorFluxo").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		carregarGeradorFluxoSecundario:function(data){
@@ -708,7 +754,7 @@ var PDV = {
 							var combo =  montarComboBox(result, false);
 							$("#selectFluxoSecundario").html(combo);
 							$("#selectFluxoSecundario").sortOptions();
-			});
+			},null,true,"idModalPDV");
 		},
 		
 		mostra_expositor:function(idChecked){
@@ -768,6 +814,8 @@ var PDV = {
             $("#txtGeradorFluxoPrincipal").val("");
             
             $("#idPDV").val("");
+            
+            $("#tabpdv").tabs('select', 0);
 		}
 		
 };

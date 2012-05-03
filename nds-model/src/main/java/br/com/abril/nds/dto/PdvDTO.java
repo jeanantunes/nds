@@ -1,9 +1,11 @@
 package br.com.abril.nds.dto;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
@@ -65,9 +67,11 @@ public class PdvDTO implements Serializable {
 	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
 	
 	private EnderecoPdvDTO enderecoPdvDTO;
+		
+	private List<TelefoneAssociacaoDTO> telefonesAdicionar;
 	
-    private TelefonePdvDTO telefonePdvDTO;
-    
+	private Set<Long> telefonesRemover;
+	
     private CaracteristicaDTO caracteristicaDTO;
     
     private List<Long> especialidades;
@@ -84,6 +88,7 @@ public class PdvDTO implements Serializable {
     
     private String tipoExpositor;
     
+    private InputStream imagem;
     
 	/**
 	 * @return the expositor
@@ -143,20 +148,6 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setEnderecoPdvDTO(EnderecoPdvDTO enderecoPdvDTO) {
 		this.enderecoPdvDTO = enderecoPdvDTO;
-	}
-
-	/**
-	 * @return the telefonePdvDTO
-	 */
-	public TelefonePdvDTO getTelefonePdvDTO() {
-		return telefonePdvDTO;
-	}
-
-	/**
-	 * @param telefonePdvDTO the telefonePdvDTO to set
-	 */
-	public void setTelefonePdvDTO(TelefonePdvDTO telefonePdvDTO) {
-		this.telefonePdvDTO = telefonePdvDTO;
 	}
 
 	/**
@@ -548,6 +539,46 @@ public class PdvDTO implements Serializable {
 		this.descricaoTipoPontoPDV = descricaoTipoPontoPDV;
 	}
 
+	/**
+	 * @return the imagem
+	 */
+	public InputStream getImagem() {
+		return imagem;
+	}
+
+	/**
+	 * @param imagem the imagem to set
+	 */
+	public void setImagem(InputStream imagem) {
+		this.imagem = imagem;
+	}
 	
+	/**
+	 * @return the telefonesAdicionar
+	 */
+	public List<TelefoneAssociacaoDTO> getTelefonesAdicionar() {
+		return telefonesAdicionar;
+	}
+
+	/**
+	 * @param telefonesAdicionar the telefonesAdicionar to set
+	 */
+	public void setTelefonesAdicionar(List<TelefoneAssociacaoDTO> telefonesAdicionar) {
+		this.telefonesAdicionar = telefonesAdicionar;
+	}
+
+	/**
+	 * @return the telefonesRemover
+	 */
+	public Set<Long> getTelefonesRemover() {
+		return telefonesRemover;
+	}
+
+	/**
+	 * @param listaTelefoneRemover the telefonesRemover to set
+	 */
+	public void setTelefonesRemover(Set<Long> listaTelefoneRemover) {
+		this.telefonesRemover = listaTelefoneRemover;
+	}
 	
 }

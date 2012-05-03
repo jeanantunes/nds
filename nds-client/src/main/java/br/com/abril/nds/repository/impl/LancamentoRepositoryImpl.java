@@ -11,7 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
-import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -20,10 +20,11 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
 public class LancamentoRepositoryImpl extends
@@ -403,9 +404,9 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento,
-																List<Long> fornecedores,
-																GrupoProduto grupoCromo) {
+	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento,
+																	   List<Long> fornecedores,
+																	   GrupoProduto grupoCromo) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -421,13 +422,13 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" then count(estoqueProdutoCota.cota.box.id) else 0 end as atendida, ");
 		hql.append(" case when estoqueProdutoCota.cota.box.postoAvancado = false ");
 		hql.append(" then count(estoqueProdutoCota.cota.box.id) else 0 end as sede, ");
-		hql.append(" case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo ");
-		hql.append(" then (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
-		hql.append(" else ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) / lancamento.produtoEdicao.pacotePadrao) ");
+		hql.append(" case when (lancamento.produtoEdicao.produto.tipoProduto.grupoProduto = :grupoCromo ");
+		hql.append(" and periodoLancamentoParcial.tipo <> :tipoParcial) ");
+		hql.append(" then ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) / lancamento.produtoEdicao.pacotePadrao)  ");
+		hql.append(" else (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
 		hql.append(" end  as qtdeExemplares, ");
 		hql.append(" ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * lancamento.produtoEdicao.precoVenda) as valorTotal, ");
-		hql.append(" lancamento.produtoEdicao.peso as peso, ");
-		hql.append(" lancamento.dataRecolhimentoDistribuidor as novaData ");
+		hql.append(" lancamento.produtoEdicao.peso as peso ");
 		hql.append(" from EstoqueProdutoCota estoqueProdutoCota, Lancamento lancamento, PeriodoLancamentoParcial periodoLancamentoParcial ");
 		hql.append(" join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
 		hql.append(" where lancamento.dataRecolhimentoDistribuidor between :periodoInicial and :periodoFinal ");
@@ -444,9 +445,10 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("periodoInicial", periodoRecolhimento.getDataInicial());
 		query.setParameter("periodoFinal", periodoRecolhimento.getDataFinal());
 		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
 		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(RecolhimentoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 
 		return query.list();
 	}

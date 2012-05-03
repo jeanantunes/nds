@@ -167,7 +167,7 @@ fieldset label {
 						<ul>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
-							<li><a href="Cadastro/cadastro_box.htm">Box</a>
+							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>
 							</li>
@@ -281,7 +281,7 @@ fieldset label {
 							</li>
 							<li><a href="Expedicao/geracao_nfe.htm">Geração de NF-e</a>
 							</li>
-							<li><a href="cotaAusente/index">Cota
+							<li><a href='<c:url value="/cotaAusente/index"/>'>Cota
 									Ausente</a>
 							</li>
 							<li><a href="Expedicao/painel_monitor_nfe.htm">Painel
