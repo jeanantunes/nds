@@ -281,7 +281,7 @@ fieldset label {
 							</li>
 							<li><a href="Expedicao/geracao_nfe.htm">Geração de NF-e</a>
 							</li>
-							<li><a href="cotaAusente/index">Cota
+							<li><a href='<c:url value="/cotaAusente/index"/>'>Cota
 									Ausente</a>
 							</li>
 							<li><a href="Expedicao/painel_monitor_nfe.htm">Painel

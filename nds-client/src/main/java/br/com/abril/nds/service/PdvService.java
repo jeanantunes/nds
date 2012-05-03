@@ -77,7 +77,7 @@ public interface PdvService {
 	 * @param selecionados - Periodos já selecionados
 	 * @return - períodos que ainda podem ser selecionados
 	 */
-	public List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados);
+	List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados);
 	
 	/**
 	 * Valida se uma lista de períodos é valida, de acordo com as regras definidas na EMS 0159
@@ -85,7 +85,6 @@ public interface PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
-
-
+	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
+	
 }

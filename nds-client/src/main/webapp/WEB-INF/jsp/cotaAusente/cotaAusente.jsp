@@ -391,8 +391,10 @@ function getInput(value,id, width,textAlign,onblur,onchange,onkeyup) {
 function popupRateio(movimentos) {
 	
 	mov = movimentos;
-	
+		
 	gerarMovimentos(movimentos);
+	
+	gerarGridRateios(0);
 	
 		$( "#dialog-suplementar" ).dialog({
 			resizable: false,
