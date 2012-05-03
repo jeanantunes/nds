@@ -38,8 +38,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private BigDecimal expectativaEncalheAtendida;
 
-	private BigDecimal qtdeExemplaresEstoqueCota;
-
 	private BigDecimal expectativaEncalhe;
 
 	private BigDecimal valorTotal;
@@ -219,20 +217,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setExpectativaEncalheAtendida(BigDecimal expectativaEncalheAtendida) {
 		this.expectativaEncalheAtendida = expectativaEncalheAtendida;
-	}
-
-	/**
-	 * @return the qtdeExemplaresEstoqueCota
-	 */
-	public BigDecimal getQtdeExemplaresEstoqueCota() {
-		return qtdeExemplaresEstoqueCota;
-	}
-
-	/**
-	 * @param qtdeExemplaresEstoqueCota the qtdeExemplaresEstoqueCota to set
-	 */
-	public void setQtdeExemplaresEstoqueCota(BigDecimal qtdeExemplaresEstoqueCota) {
-		this.qtdeExemplaresEstoqueCota = qtdeExemplaresEstoqueCota;
 	}
 
 	/**
