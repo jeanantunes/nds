@@ -11,6 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
@@ -403,9 +404,9 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento,
-																List<Long> fornecedores,
-																GrupoProduto grupoCromo) {
+	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento,
+																	   List<Long> fornecedores,
+																	   GrupoProduto grupoCromo) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -446,7 +447,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(RecolhimentoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 
 		return query.list();
 	}
