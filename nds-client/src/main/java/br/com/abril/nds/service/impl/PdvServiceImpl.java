@@ -5,10 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
@@ -50,11 +51,13 @@ import br.com.abril.nds.repository.MaterialPromocionalRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PeriodoFuncionamentoPDVRepository;
+import br.com.abril.nds.repository.TelefonePdvRepository;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
 import br.com.abril.nds.repository.TiposEstabelecimentoRepository;
 import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -99,6 +102,12 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
+	
+	@Autowired
+	private TelefonePdvRepository telefonePdvRepository;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 	
 	@Transactional(readOnly=true)
 	@Override
@@ -353,7 +362,7 @@ public class PdvServiceImpl implements PdvService {
 		salvarGeradorFluxo(pdvDTO, pdv);
 	
 		//salvarEndereco(pdvDTO, pdv);
-		salvarTelefone(pdvDTO, pdv);
+		processarTelefones(pdvDTO, pdv);
 	}
 	
 		
@@ -408,7 +417,7 @@ public class PdvServiceImpl implements PdvService {
 	}
 	
 	@Transactional
-	private void salvarTelefone(PdvDTO pdvDTO,PDV pdv){
+	private void processarTelefones(PdvDTO pdvDTO,PDV pdv){
 		
 		List<Telefone> listaTelefones = new ArrayList<Telefone>();
 		if (pdvDTO.getTelefonesAdicionar() != null){
@@ -421,6 +430,48 @@ public class PdvServiceImpl implements PdvService {
 			pdv.getCota().getPessoa().setTelefones(listaTelefones);
 		}	
 		
+		this.salvarTelefonesPdv(pdv, pdvDTO.getTelefonesAdicionar());
+		
+		this.removerTelefonesPdv(pdvDTO.getTelefonesRemover());
+	}
+
+	private void salvarTelefonesPdv(PDV pdv, List<TelefoneAssociacaoDTO> listaTelefones) {
+		
+		this.telefoneService.cadastrarTelefone(listaTelefones);
+		
+		if (listaTelefones != null){
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefones){
+				
+				TelefonePDV telefonePdv = this.telefonePdvRepository.obterTelefonePorTelefonePdv(dto.getTelefone().getId(), pdv.getId());
+				
+				if (telefonePdv == null){
+					telefonePdv = new TelefonePDV();
+					
+					telefonePdv.setPdv(pdv);
+					telefonePdv.setPrincipal(dto.isPrincipal());
+					telefonePdv.setTelefone(dto.getTelefone());
+					telefonePdv.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefonePdvRepository.adicionar(telefonePdv);
+				} else {
+					
+					telefonePdv.setPrincipal(dto.isPrincipal());
+					telefonePdv.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefonePdvRepository.alterar(telefonePdv);
+				}
+			}
+		}
+	}
+
+	private void removerTelefonesPdv(Collection<Long> listaTelefones) {
+		
+		if (listaTelefones != null && !listaTelefones.isEmpty()){
+			this.telefonePdvRepository.removerTelefonesPdv(listaTelefones);
+			
+			this.telefoneService.removerTelefones(listaTelefones);
+		}
 	}
 	
 	private void salvarGeradorFluxo(PdvDTO pdvDTO, PDV pdv){
