@@ -14,7 +14,7 @@ public class ConsultaTransportadorDTO implements Serializable {
 
 	private List<Transportador> transportadores;
 	
-	private Long quantidadePaginas;
+	private Long quantidadeRegistros;
 
 	public List<Transportador> getTransportadores() {
 		return transportadores;
@@ -24,11 +24,11 @@ public class ConsultaTransportadorDTO implements Serializable {
 		this.transportadores = transportadores;
 	}
 
-	public Long getQuantidadePaginas() {
-		return quantidadePaginas;
+	public Long getQuantidadeRegistros() {
+		return quantidadeRegistros;
 	}
 
-	public void setQuantidadePaginas(Long quantidadePaginas) {
-		this.quantidadePaginas = quantidadePaginas;
+	public void setQuantidadeRegistros(Long quantidadeRegistros) {
+		this.quantidadeRegistros = quantidadeRegistros;
 	}
 }

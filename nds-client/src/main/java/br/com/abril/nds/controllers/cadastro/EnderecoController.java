@@ -65,7 +65,7 @@ public class EnderecoController {
 	
 	public enum Tela{
 		
-		ENDERECO_FIADOR,ENDERECO_COTA,ENDERECO_ENTREGADOR,ENDERECO_PDV;
+		ENDERECO_FIADOR,ENDERECO_COTA,ENDERECO_ENTREGADOR,ENDERECO_PDV,ENDERECO_TRANSPORTADOR;
 		
 		public void setarParametros(){
 			
@@ -87,6 +87,12 @@ public class EnderecoController {
 							EntregadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
 							EntregadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
 							EntregadorController.LISTA_ENDERECOS_EXIBICAO);
+				break;
+				case ENDERECO_TRANSPORTADOR:
+					EnderecoController.setarParametros(
+							TransportadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							TransportadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							TransportadorController.LISTA_ENDERECOS_EXIBICAO);
 				break;
 			}
 		}

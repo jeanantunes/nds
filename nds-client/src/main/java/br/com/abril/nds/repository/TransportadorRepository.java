@@ -8,4 +8,6 @@ public interface TransportadorRepository extends
 		Repository<Transportador, Long> {
 
 	ConsultaTransportadorDTO pesquisarTransportadoras(FiltroConsultaTransportadorDTO filtro);
+
+	Transportador buscarTransportadorPorCNPJ(String cnpj);
 }

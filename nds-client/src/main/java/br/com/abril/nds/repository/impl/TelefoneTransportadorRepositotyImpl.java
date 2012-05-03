@@ -1,21 +1,23 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneTransportador;
-import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
 
 @Repository
 public class TelefoneTransportadorRepositotyImpl extends
-		AbstractRepository<Transportador, Long> implements
+		AbstractRepository<TelefoneTransportador, Long> implements
 		TelefoneTransportadorRepositoty {
 
 	public TelefoneTransportadorRepositotyImpl() {
-		super(Transportador.class);
+		super(TelefoneTransportador.class);
 	}
 
 	@Override
@@ -38,5 +40,32 @@ public class TelefoneTransportadorRepositotyImpl extends
 		}
 		
 		return telefoneTransportador == null ? null : telefoneTransportador.getTelefone();
+	}
+
+	@Override
+	public void removerTelefones(Set<Long> listaTelefoneRemover) {
+		
+		Query query = this.getSession().createQuery(
+				"delete from TelefoneTransportador e where e.telefone.id in (:listaTelefoneRemover) ");
+		
+		query.setParameterList("listaTelefoneRemover", listaTelefoneRemover);
+		
+		query.executeUpdate();
+	}
+
+	@Override
+	public TelefoneTransportador buscarTelefonePorTelefoneTransportador(
+			Long idTelefone, Long idTransportador) {
+		
+		StringBuilder hql = new StringBuilder("select t from TelefoneTransportador t ");
+		hql.append(" where t.telefone.id = :idTelefone ")
+		   .append(" and   t.transportador.id = :idTransportador");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idTelefone", idTelefone);
+		query.setParameter("idTransportador", idTransportador);
+		query.setMaxResults(1);
+		
+		return (TelefoneTransportador) query.uniqueResult();
 	}
 }
