@@ -208,6 +208,12 @@ $(function() {
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$( "#idDataDe" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+		$("#idDataDe").mask("99/99/9999");
+		
+		$( "#idDataAte" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+		$("#idDataAte").mask("99/99/9999");
 	});
 	
 $(document).ready(function(){	

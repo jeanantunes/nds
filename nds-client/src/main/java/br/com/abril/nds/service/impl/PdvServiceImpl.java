@@ -334,6 +334,8 @@ public class PdvServiceImpl implements PdvService {
 		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
 		
 		salvarGeradorFluxo(pdvDTO, pdv);
+		
+		atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
 	
 		//salvarEndereco(pdvDTO, pdv);
 		//salvarTelefone(pdvDTO, pdv);
@@ -879,6 +881,42 @@ public class PdvServiceImpl implements PdvService {
 		}
 		
 	}
+	
+	@Transactional
+	@Override
+	public List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota) {
+		
+		if (idCota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		Long idPessoa = cota.getPessoa().getId();
+		
+		
+		Set<Long> telRemover = null;
+		
+		if (idPdv != null) {
+			
+			List<TelefoneAssociacaoDTO> listaTelAssoc =
+					this.telefonePdvRepository.buscarTelefonesPdv(idPdv, null);
+			
+			telRemover = new HashSet<Long>();
+			
+			for (TelefoneAssociacaoDTO dto : listaTelAssoc){
+				
+				telRemover.add(dto.getTelefone().getId());
+			}
+		}
+		
+		List<TelefoneAssociacaoDTO> lista = this.telefoneService.buscarTelefonesPorIdPessoa(idPessoa, telRemover);
+		
+		return lista;
+	}	
 
 
 }

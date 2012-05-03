@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
@@ -79,5 +80,7 @@ public interface PdvService {
 	 * @throws Exception
 	 */
 	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
+
+	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
 	
 }
