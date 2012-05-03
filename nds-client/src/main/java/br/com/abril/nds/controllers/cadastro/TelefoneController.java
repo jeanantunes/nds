@@ -116,7 +116,7 @@ public class TelefoneController {
 			
 			for (TelefoneAssociacaoDTO tDto : listaTelefonesExibir){
 				
-				if (tDto.getTipoTelefone() != null && !telefonesRemover.contains(new Long(tDto.getReferencia()))){
+				if (!telefonesRemover.contains(new Long(tDto.getReferencia()))){
 					
 					telefonesSessao.put(tDto.getReferencia(), tDto);
 				}

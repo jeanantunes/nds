@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.cadastro;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -25,6 +26,8 @@ import br.com.abril.nds.service.MotoristaService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.service.VeiculoService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -96,7 +99,7 @@ public class TransportadorController {
 
 	@Post
 	public void pesquisarTransportadores(FiltroConsultaTransportadorDTO filtro, String sortorder, 
-			String sortname, Integer page, Integer rp, ValidacaoVO validacaoVO){
+			String sortname, Integer page, Integer rp){
 		
 		if (filtro == null){
 			
@@ -138,13 +141,12 @@ public class TransportadorController {
 		if (consulta.getTransportadores().isEmpty()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} else {
-		
-			this.result.use(FlexiGridJson.class)
-				.from(consulta.getTransportadores())
-				.total(consulta.getTransportadores().size())
-				.page(page == null ? 1 : page).serialize();
 		}
+		
+		this.result.use(FlexiGridJson.class)
+			.from(consulta.getTransportadores())
+			.total(consulta.getQuantidadeRegistros().intValue())
+			.page(page == null ? 1 : page).serialize();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -161,16 +163,27 @@ public class TransportadorController {
 		
 		Set<Long> listaEnderecosRemover = new HashSet<Long>();
 		
-		for (EnderecoAssociacaoDTO dto : lisEndRemover){
-			
-			if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+		if (lisEndRemover != null){
+			for (EnderecoAssociacaoDTO dto : lisEndRemover){
 				
-				listaEnderecosRemover.add(dto.getEndereco().getId());
+				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+					
+					listaEnderecosRemover.add(dto.getEndereco().getId());
+				}
 			}
 		}
 		
-		List<TelefoneAssociacaoDTO> listaTelefonesSalvar = (List<TelefoneAssociacaoDTO>) 
+		Map<Integer, TelefoneAssociacaoDTO> listTelSalvar = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		List<TelefoneAssociacaoDTO> listaTelefonesSalvar = new ArrayList<TelefoneAssociacaoDTO>();
+		
+		if (listTelSalvar != null){
+			for (TelefoneAssociacaoDTO dto : listTelSalvar.values()){
+				
+				listaTelefonesSalvar.add(dto);
+			}
+		}
 		
 		Set<Long> listaTelefonesRemover = (Set<Long>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
@@ -178,10 +191,12 @@ public class TransportadorController {
 		this.transportadorService.cadastrarTransportador(transportador, 
 				listaEnderecosSalvar, 
 				listaEnderecosRemover, 
-				listaTelefonesSalvar, 
+				listaTelefonesSalvar,
 				listaTelefonesRemover, 
 				null, 
 				null);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
 	private void validarDadosEntrada(Transportador transportador) {
@@ -208,32 +223,26 @@ public class TransportadorController {
 	@Post
 	public void carregarTelaAssociacao(){
 		
-		Object[] dados = new Object[3];
+		Object[] dados = new Object[2];
 		
-		dados[0] = this.result.use(FlexiGridJson.class)
-				.from(this.pesquisarVeiculos())
-				.total(this.pesquisarVeiculos().size())
-				.page(1).serialize();
+		dados[0] = this.getTableModelVeiculos(this.carregarVeiculos());
 		
-		dados[1] = this.result.use(FlexiGridJson.class)
-				.from(this.carregarMotoristas())
-				.total(this.carregarMotoristas().size())
-				.page(1).serialize();
+		dados[1] = this.getTableModelMotoristas(this.carregarMotoristas());
 		
-		this.result.use(Results.json()).from(dados, "result");
+		this.result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
-	@Post
-	public void carregarVeiculos(){
-		
-		this.result.use(Results.json()).from(this.pesquisarVeiculos(), "result");
-	}
-	
-	private List<Veiculo> pesquisarVeiculos(){
+	private List<Veiculo> carregarVeiculos(){
 		
 		List<Veiculo> lista = this.veiculoService.buscarVeiculos();
 		
 		return lista == null ? new ArrayList<Veiculo>() : lista;
+	}
+	
+	@Post
+	public void pesquisarVeiculos(){
+		
+		this.result.use(Results.json()).from(this.carregarVeiculos(), "result");
 	}
 	
 	@Post
@@ -351,5 +360,55 @@ public class TransportadorController {
 	private void carregarTelefonesEnderecosPessoa(Long id) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private TableModel<CellModelKeyValue<Veiculo>> getTableModelVeiculos(List<Veiculo> listaVeiculos) {
+		
+		TableModel<CellModelKeyValue<Veiculo>> tableModel = new TableModel<CellModelKeyValue<Veiculo>>();
+
+		List<CellModelKeyValue<Veiculo>> listaCellModel = new ArrayList<CellModelKeyValue<Veiculo>>();
+
+		for (Veiculo veiculo : listaVeiculos) {
+			
+			int id  = veiculo.getId() == null ? (int)System.currentTimeMillis() : veiculo.getId().intValue();
+			
+			CellModelKeyValue<Veiculo> cellModel = new CellModelKeyValue<Veiculo>(
+				id,
+				veiculo
+			);
+
+			listaCellModel.add(cellModel);
+		}
+
+		tableModel.setPage(1);
+		tableModel.setRows(listaCellModel);
+		tableModel.setTotal(listaVeiculos.size()); 
+		
+		return tableModel;
+	}
+	
+	private TableModel<CellModelKeyValue<Motorista>> getTableModelMotoristas(List<Motorista> listaMotoristas) {
+		
+		TableModel<CellModelKeyValue<Motorista>> tableModel = new TableModel<CellModelKeyValue<Motorista>>();
+
+		List<CellModelKeyValue<Motorista>> listaCellModel = new ArrayList<CellModelKeyValue<Motorista>>();
+
+		for (Motorista motorista : listaMotoristas) {
+			
+			int id  = motorista.getId() == null ? (int)System.currentTimeMillis() * -1 : motorista.getId().intValue();
+			
+			CellModelKeyValue<Motorista> cellModel = new CellModelKeyValue<Motorista>(
+				id,
+				motorista
+			);
+
+			listaCellModel.add(cellModel);
+		}
+
+		tableModel.setPage(1);
+		tableModel.setRows(listaCellModel);
+		tableModel.setTotal(listaMotoristas.size()); 
+		
+		return tableModel;
 	}
 }

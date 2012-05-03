@@ -16,9 +16,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
@@ -38,13 +40,13 @@ public class TransportadorServiceImpl implements TransportadorService {
 	private TransportadorRepository transportadorRepository;
 	
 	@Autowired
-	private TelefoneTransportadorRepositoty telefoneTransportadorRepositoty;
-	
-	@Autowired
 	private PessoaRepository pessoaRepository;
 	
 	@Autowired
 	private TelefoneService telefoneService;
+	
+	@Autowired
+	private TelefoneTransportadorRepositoty telefoneTransportadorRepositoty;
 	
 	@Autowired
 	private EnderecoService enderecoService;
@@ -83,8 +85,34 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		this.validarDadosEntrada(transportador);
 		
+		transportador.getPessoaJuridica().setCnpj(transportador.getPessoaJuridica().getCnpj().replace(".", "").replace("-", "").replace("/", ""));
+		
 		transportador.getPessoaJuridica().setId(
 				this.pessoaRepository.buscarIdPessoaPorCNPJ(transportador.getPessoaJuridica().getCnpj()));
+		
+		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		
+		if (listaEnderecosAdicionar != null){
+			
+			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
+				
+				listaEndereco.add(dto.getEndereco());
+			}
+		}
+		
+		transportador.getPessoaJuridica().setEnderecos(listaEndereco);
+		
+		List<Telefone> listaTelefone = new ArrayList<Telefone>();
+		
+		if (listaTelefoneAdicionar != null){
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
+				
+				listaTelefone.add(dto.getTelefone());
+			}
+		}
+		
+		transportador.getPessoaJuridica().setTelefones(listaTelefone);
 		
 		if (transportador.getPessoaJuridica().getId() == null){
 			
@@ -117,8 +145,44 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	private void processarTelefones(Transportador transportador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover) {
-		// TODO Auto-generated method stub
 		
+		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
+			
+			this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar);
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
+				
+				TelefoneTransportador telefoneTransportador = 
+						this.telefoneTransportadorRepositoty.buscarTelefonePorTelefoneTransportador(
+								dto.getTelefone().getId(), 
+								transportador.getId());
+				
+				if (telefoneTransportador == null){
+					
+					telefoneTransportador = new TelefoneTransportador();
+					telefoneTransportador.setPrincipal(dto.isPrincipal());
+					telefoneTransportador.setTelefone(dto.getTelefone());
+					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
+					telefoneTransportador.setTransportador(transportador);
+					
+					this.telefoneTransportadorRepositoty.adicionar(telefoneTransportador);
+				} else {
+					
+					telefoneTransportador.setPrincipal(dto.isPrincipal());
+					telefoneTransportador.setTelefone(dto.getTelefone());
+					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefoneTransportadorRepositoty.alterar(telefoneTransportador);
+				}
+			}
+		}
+		
+		if (listaTelefoneRemover != null && !listaTelefoneRemover.isEmpty()){
+			
+			this.telefoneTransportadorRepositoty.removerTelefones(listaTelefoneRemover);
+			
+			this.telefoneService.removerTelefones(listaTelefoneRemover);
+		}
 	}
 
 	private void processarEnderecos(Transportador transportador, List<EnderecoAssociacaoDTO> listaEnderecosAdicionar, 

@@ -67,15 +67,9 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 			hql.append(" and (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
 		}
 		
-		Long qtdRegistros = 
-				this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO);
-		
 		ConsultaFiadorDTO consultaFiadorDTO = new ConsultaFiadorDTO();
 		
-		long qtdPaginas = 
-				(qtdRegistros / filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina());
-		
-		consultaFiadorDTO.setQuantidadePaginas(qtdPaginas == 0 ? 1 : qtdPaginas);
+		consultaFiadorDTO.setQuantidadeRegistros(this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO));
 		
 		switch (filtroConsultaFiadorDTO.getOrdenacaoColunaFiador()){
 			case CODIGO:

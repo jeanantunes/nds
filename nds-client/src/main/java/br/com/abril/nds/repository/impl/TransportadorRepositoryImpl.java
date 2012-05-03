@@ -44,13 +44,7 @@ public class TransportadorRepositoryImpl extends
 			hql.append(" and (tr.pessoaJuridica.cnpj = :cnpj) ");
 		}
 		
-		Long qtdRegistros = 
-				this.obterQuantidadeRegistros(hql.toString(), filtro);
-		
-		long qtdPaginas = 
-				(qtdRegistros / filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-		
-		consultaTransportadorDTO.setQuantidadePaginas(qtdPaginas == 0 ? 1 : qtdPaginas);
+		consultaTransportadorDTO.setQuantidadeRegistros(this.obterQuantidadeRegistros(hql.toString(), filtro));
 		
 		switch (filtro.getOrdenacaoColunaTransportador()){
 			case CODIGO:
@@ -82,12 +76,11 @@ public class TransportadorRepositoryImpl extends
 		query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 		
 		query.setFirstResult(
-				(filtro.getPaginacaoVO().getPaginaAtual() -1) * filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+				(filtro.getPaginacaoVO().getPaginaAtual() - 1) * filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 		
 		List<Transportador> transportador = query.list();
 		
 		consultaTransportadorDTO.setTransportadores(transportador);
-		
 		
 		return consultaTransportadorDTO;
 	}

@@ -3,10 +3,12 @@ package br.com.abril.nds.repository.impl;
 import java.util.Set;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 
+@Repository
 public class EnderecoTransportadorRepositoryImpl extends AbstractRepository<EnderecoTransportador, Long> implements
 		EnderecoTransportadorRepository {
 

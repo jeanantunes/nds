@@ -66,12 +66,6 @@ public class FiadorController {
 	public static final String ID_FIADOR_EDICAO = "idFiadorEdicaoSessao";
 	
 	public static final String FILTRO_ULTIMA_PESQUISA_FIADOR = "filtroUltimaPesquisaFiador";
-
-	public static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosSalvarSessaoFiador";
-
-	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoFiador";
-
-	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoSessaoFiador";
 	
 	private Result result;
 	
@@ -299,19 +293,23 @@ public class FiadorController {
 		
 		Set<Long> idsIgnorar = new HashSet<Long>();
 		
-		for (EnderecoAssociacaoDTO dto : endRemover){
-			
-			if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+		if (endRemover != null){
+			for (EnderecoAssociacaoDTO dto : endRemover){
 				
-				idsIgnorar.add(dto.getEndereco().getId());
+				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+					
+					idsIgnorar.add(dto.getEndereco().getId());
+				}
 			}
 		}
 		
-		for (EnderecoAssociacaoDTO dto : endSalvar){
-			
-			if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+		if (endSalvar != null){
+			for (EnderecoAssociacaoDTO dto : endSalvar){
 				
-				idsIgnorar.add(dto.getEndereco().getId());
+				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+					
+					idsIgnorar.add(dto.getEndereco().getId());
+				}
 			}
 		}
 		
@@ -634,7 +632,7 @@ public class FiadorController {
 
 		tableModel.setPage(page == null ? 1 : page);
 		tableModel.setRows(listaCellModel);
-		tableModel.setTotal(consulta.getQuantidadePaginas().intValue()); 
+		tableModel.setTotal(consulta.getQuantidadeRegistros().intValue()); 
 		
 		return tableModel;
 	}
