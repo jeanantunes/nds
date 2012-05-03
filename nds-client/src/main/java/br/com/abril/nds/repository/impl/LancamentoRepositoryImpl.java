@@ -22,6 +22,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -402,7 +403,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RecolhimentoDTO> obterBalanceamentoRecolhimento(List<Date> periodoRecolhimento, 
+	public List<RecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento,
 																List<Long> fornecedores,
 																GrupoProduto grupoCromo) {
 
@@ -429,18 +430,19 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as novaData ");
 		hql.append(" from EstoqueProdutoCota estoqueProdutoCota, Lancamento lancamento, PeriodoLancamentoParcial periodoLancamentoParcial ");
 		hql.append(" join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
-		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:periodo) ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor between :periodoInicial and :periodoFinal ");
+		hql.append(" and periodoLancamentoParcial.recolhimento between :periodoInicial and :periodoFinal) ");
 		hql.append(" and lancamento.status = :statusLancamento ");
 		hql.append(" and fornecedor.id in (:fornecedores) ");
 		hql.append(" and estoqueProdutoCota.produtoEdicao = lancamento.produtoEdicao ");
 		hql.append(" and lancamento.produtoEdicao = periodoLancamentoParcial.lancamentoParcial.produtoEdicao) ");
-		hql.append(" and periodoLancamentoParcial.recolhimento in (:periodo)) ");
 		hql.append(" order by lancamento.dataRecolhimentoDistribuidor ");
 
 		Query query = getSession().createQuery(hql.toString());
 
-		query.setParameterList("periodo", periodoRecolhimento);
 		query.setParameterList("fornecedores", fornecedores);
+		query.setParameter("periodoInicial", periodoRecolhimento.getDataInicial());
+		query.setParameter("periodoFinal", periodoRecolhimento.getDataFinal());
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
 

@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
@@ -44,7 +45,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * 
 	  * @return List<RecolhimentoDTO>
 	  */
-	 List<RecolhimentoDTO> obterBalanceamentoRecolhimento(List<Date> periodoRecolhimento, 
+	 List<RecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
 			 											  List<Long> fornecedores,
 			 											  GrupoProduto grupoCromo);
 }

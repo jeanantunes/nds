@@ -2633,7 +2633,7 @@ public class DataLoader {
 		save(session, cotaLuis);
 		
 		cotaAcme = Fixture.cota(100000, juridicaAcme, SituacaoCadastro.ATIVO, box1);
-		
+		save(session, cotaAcme);
 
 		
 		Set<FormaCobranca> formasCobranca;
