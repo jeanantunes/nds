@@ -22,10 +22,8 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.MotoristaService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TransportadorService;
-import br.com.abril.nds.service.VeiculoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -55,12 +53,6 @@ public class TransportadorController {
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoTransportador";
 	
 	private static final String ID_TRANSPORTADORA_EDICAO = "idTransportadoraEdicao";
-	
-	@Autowired
-	private MotoristaService motoristaService;
-	
-	@Autowired
-	private VeiculoService veiculoService;
 	
 	@Autowired
 	private TransportadorService transportadorService;
@@ -234,7 +226,7 @@ public class TransportadorController {
 	
 	private List<Veiculo> carregarVeiculos(){
 		
-		List<Veiculo> lista = this.veiculoService.buscarVeiculos();
+		List<Veiculo> lista = this.transportadorService.buscarVeiculos();
 		
 		return lista == null ? new ArrayList<Veiculo>() : lista;
 	}
@@ -248,7 +240,7 @@ public class TransportadorController {
 	@Post
 	public void cadastrarVeiculo(Veiculo veiculo){
 		
-		this.veiculoService.cadastarVeiculo(veiculo);
+		this.transportadorService.cadastarVeiculo(veiculo);
 		
 		this.carregarVeiculos();
 	}
@@ -256,7 +248,7 @@ public class TransportadorController {
 	@Post
 	public void editarVeiculo(Long referencia){
 		
-		Veiculo veiculo = this.veiculoService.buscarVeiculoPorId(referencia);
+		Veiculo veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
 		
 		if (veiculo == null){
 			
@@ -282,7 +274,7 @@ public class TransportadorController {
 	
 	private List<Motorista> carregarMotoristas(){
 		
-		List<Motorista> lista = this.motoristaService.buscarMotoristas();
+		List<Motorista> lista = this.transportadorService.buscarMotoristas();
 		
 		return lista == null ? new ArrayList<Motorista>() : lista;
 	}
@@ -290,7 +282,7 @@ public class TransportadorController {
 	@Post
 	public void cadastrarMotorista(Motorista motorista){
 		
-		this.motoristaService.cadastarMotorista(motorista);
+		this.transportadorService.cadastarMotorista(motorista);
 		
 		this.carregarMotoristas();
 	}
@@ -298,7 +290,7 @@ public class TransportadorController {
 	@Post
 	public void editarMotorista(Long referencia){
 		
-		Motorista motorista = this.motoristaService.buscarMotoristaPorId(referencia);
+		Motorista motorista = this.transportadorService.buscarMotoristaPorId(referencia);
 		
 		if (motorista == null){
 			
@@ -311,7 +303,7 @@ public class TransportadorController {
 	@Post
 	public void excluirMotorista(Long referencia){
 		
-		this.motoristaService.excluirMotorista(referencia);
+		this.transportadorService.excluirMotorista(referencia);
 		
 		this.carregarMotoristas();
 	}

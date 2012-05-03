@@ -36,6 +36,10 @@ public class Rota implements Serializable {
 	@JoinColumn(name = "ASSOC_VEIC_MOT_ROTA_ID")
 	private AssociacaoVeiculoMotoristaRota associacaoVeiculoMotoristaRota;
 	
+	@ManyToOne
+	@JoinColumn(name = "ROTEIRO_ID")
+	private Roteiro roteiro;
+	
 	public Long getId() {
 		return id;
 	}
@@ -67,5 +71,13 @@ public class Rota implements Serializable {
 	public void setAssociacaoVeiculoMotoristaRota(
 			AssociacaoVeiculoMotoristaRota associacaoVeiculoMotoristaRota) {
 		this.associacaoVeiculoMotoristaRota = associacaoVeiculoMotoristaRota;
+	}
+
+	public Roteiro getRoteiro() {
+		return roteiro;
+	}
+
+	public void setRoteiro(Roteiro roteiro) {
+		this.roteiro = roteiro;
 	}
 }

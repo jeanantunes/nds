@@ -8,7 +8,9 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
+import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.Transportador;
+import br.com.abril.nds.model.cadastro.Veiculo;
 
 public interface TransportadorService {
 
@@ -29,4 +31,20 @@ public interface TransportadorService {
 	ConsultaTransportadorDTO consultarTransportadores(FiltroConsultaTransportadorDTO filtro);
 
 	Transportador obterTransportadorPorCNPJ(String cnpj);
+
+	List<Veiculo> buscarVeiculos();
+
+	Veiculo buscarVeiculoPorId(Long idVeiculo);
+
+	void cadastarVeiculo(Veiculo veiculo);
+
+	void excluirVeiculo(Long idVeiculo);
+
+	List<Motorista> buscarMotoristas();
+
+	Motorista buscarMotoristaPorId(Long idMotorista);
+
+	void cadastarMotorista(Motorista motorista);
+
+	void excluirMotorista(Long idMotorista);
 }

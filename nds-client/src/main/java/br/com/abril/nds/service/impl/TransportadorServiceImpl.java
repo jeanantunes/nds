@@ -18,14 +18,18 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
+import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
+import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
+import br.com.abril.nds.repository.MotoristaRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
 import br.com.abril.nds.repository.TransportadorRepository;
+import br.com.abril.nds.repository.VeiculoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.TransportadorService;
@@ -53,6 +57,12 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Autowired
 	private EnderecoTransportadorRepository enderecoTransportadorRepository;
+	
+	@Autowired
+	private VeiculoRepository veiculoRepository;
+	
+	@Autowired
+	private MotoristaRepository motoristaRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -359,5 +369,168 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 		
 		return this.transportadorRepository.buscarTransportadorPorCNPJ(cnpj);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Veiculo> buscarVeiculos() {
+		
+		List<Veiculo> lista = new ArrayList<Veiculo>();
+		
+		Veiculo v = new Veiculo();
+		v.setPlaca("praca");
+		v.setTipoVeiculo("gipão");
+		
+		lista.add(v);
+		
+		return lista;
+		
+		//return this.veiculoRepository.buscarTodos();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Veiculo buscarVeiculoPorId(Long idVeiculo){
+		
+		if (idVeiculo == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Veículo é obrigatório.");
+		}
+		
+		return this.veiculoRepository.buscarPorId(idVeiculo);
+	}
+
+	@Override
+	@Transactional
+	public void cadastarVeiculo(Veiculo veiculo) {
+		
+		if (veiculo == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Veículo é obrigatório");
+		}
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		if (veiculo.getTipoVeiculo() == null || veiculo.getTipoVeiculo().trim().isEmpty()){
+			
+			msgs.add("Tipo veículo é obrigatório.");
+		} else {
+			
+			veiculo.setTipoVeiculo(veiculo.getTipoVeiculo().trim());
+		}
+		
+		if (veiculo.getPlaca() == null || veiculo.getPlaca().trim().isEmpty()){
+			
+			msgs.add("Placa é obrigatório.");
+		} else {
+			veiculo.setPlaca(veiculo.getPlaca().trim());
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+		
+		if (veiculo.getId() == null){
+			
+			this.veiculoRepository.adicionar(veiculo);
+		} else {
+			
+			this.veiculoRepository.alterar(veiculo);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void excluirVeiculo(Long idVeiculo) {
+		
+		if (idVeiculo == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Veículo é obrigatório.");
+		}
+		
+		this.veiculoRepository.removerPorId(idVeiculo);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Motorista> buscarMotoristas() {
+		
+		List<Motorista> lista = new ArrayList<Motorista>();
+		
+		Motorista m = new Motorista();
+		m.setCnh("aaaaaaa");
+		m.setNome("wow");
+		
+		lista.add(m);
+		
+		//return this.motoristaRepository.buscarTodos();
+		
+		return lista;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Motorista buscarMotoristaPorId(Long idMotorista){
+		
+		if (idMotorista == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Motorista é obrigatório.");
+		}
+		
+		return this.motoristaRepository.buscarPorId(idMotorista);
+	}
+
+	@Override
+	@Transactional
+	public void cadastarMotorista(Motorista motorista) {
+		
+		if (motorista == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Motorista é obrigatório");
+		}
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		if (motorista.getNome() == null || motorista.getNome().isEmpty()){
+			
+			msgs.add("Nome é obrigatório");
+		} else {
+			
+			motorista.setNome(motorista.getNome().trim());
+		}
+		
+		if (motorista.getCnh() == null || motorista.getCnh().isEmpty()){
+			
+			msgs.add("CNH é obrigatório");
+		} else {
+			
+			motorista.setCnh(motorista.getCnh().trim());
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+		
+		if (motorista.getId() == null){
+			
+			this.motoristaRepository.adicionar(motorista);
+		} else {
+			
+			this.motoristaRepository.alterar(motorista);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void excluirMotorista(Long idMotorista) {
+		
+		if (idMotorista == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Motorista é obrigatório");
+		}
+		
+		this.motoristaRepository.removerPorId(idMotorista);
 	}
 }
