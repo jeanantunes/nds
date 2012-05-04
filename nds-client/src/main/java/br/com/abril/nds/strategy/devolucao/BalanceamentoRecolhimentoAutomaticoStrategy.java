@@ -2,7 +2,6 @@ package br.com.abril.nds.strategy.devolucao;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -42,10 +41,29 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			
 			BigDecimal expectativaEncalheTotalPrevista = entryExpectativaEncalheTotalDiaria.getValue();
 			
+			Date dataBalanceamento = null;
+			
+			// Verificar qual data utilizar (aproximação)
+			
 			if (!datasRecolhimentoFornecedor.contains(dataRecolhimentoPrevista)) {
 				
-				// Verificar qual data utilizar (aproximação)
+				for (Date dataRecolhimentoFornecedor : datasRecolhimentoFornecedor) {
+					
+					if (dataRecolhimentoPrevista.compareTo(dataRecolhimentoFornecedor) < 0) {
+						
+						dataBalanceamento = dataRecolhimentoFornecedor;
+						
+						break;
+					}
+				}
 			}
+			
+			BigDecimal expectativaEncalheTotalDiaria = 
+				mapaExpectativaEncalheTotalDiariaBalanceamento.get(dataBalanceamento);
+			
+			expectativaEncalheTotalDiaria = expectativaEncalheTotalDiaria.add(expectativaEncalheTotalPrevista);
+			
+			mapaExpectativaEncalheTotalDiariaBalanceamento.put(dataBalanceamento, expectativaEncalheTotalDiaria);
 		}
 		
 		// Verificar se as quantidades excedem a capacidade diária de manuseio
