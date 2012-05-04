@@ -74,14 +74,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		PeriodoVO periodoRecolhimento = getPeriodoRecolhimento(distribuidor, numeroSemana);
 		
-		List<Date> datasRecolhimentoFornecedor = 
+		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
 		
-		List<Date> datasRecolhimentoDistribuidor = 
+		TreeSet<Date> datasRecolhimentoDistribuidor = 
 			this.obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
 		
-		dadosRecolhimento.setListaDiasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
-		dadosRecolhimento.setListaDiasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
+		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
+		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
@@ -106,8 +106,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/*
 	 * Obtém as datas de recolhimento dos fornecedores informados.
 	 */
-	private List<Date> obterDatasRecolhimentoFornecedor(PeriodoVO periodoRecolhimento,
-														List<Long> listaIdsFornecedores) {
+	private TreeSet<Date> obterDatasRecolhimentoFornecedor(PeriodoVO periodoRecolhimento,
+														   List<Long> listaIdsFornecedores) {
 		
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
@@ -120,7 +120,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			diasSemanaFornecedor.add(distribuicaoFornecedor.getDiaSemana().getCodigoDiaSemana());
 		}
 		
-		List<Date> datasRecolhimentoFornecedor = 
+		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
 		
 		return datasRecolhimentoFornecedor;
@@ -129,8 +129,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/*
 	 * Obtém as datas de recolhimento do distribuídor.
 	 */
-	private List<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
-														  PeriodoVO periodoRecolhimento) {
+	private TreeSet<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
+														 PeriodoVO periodoRecolhimento) {
 		
 		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
@@ -143,7 +143,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			diasSemanaDistribuidor.add(distribuicaoDistribuidor.getDiaSemana().getCodigoDiaSemana());
 		}
 		
-		List<Date> datasRecolhimentoDistribuidor = 
+		TreeSet<Date> datasRecolhimentoDistribuidor = 
 			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
 		
 		return datasRecolhimentoDistribuidor;
@@ -153,10 +153,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * Obtém as datas para recolhimento no período informado,
 	 * de acordo com os dias da semana informados.
 	 */
-	private List<Date> obterDatasRecolhimento(PeriodoVO periodoRecolhimento,
-											  Set<Integer> diasRecolhimentoSemana) {
+	private TreeSet<Date> obterDatasRecolhimento(PeriodoVO periodoRecolhimento,
+											 	 Set<Integer> diasRecolhimentoSemana) {
 		
-		List<Date> datasRecolhimento = 
+		TreeSet<Date> datasRecolhimento =
 			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
 				periodoRecolhimento.getDataInicial(),  
 					periodoRecolhimento.getDataFinal(), diasRecolhimentoSemana);

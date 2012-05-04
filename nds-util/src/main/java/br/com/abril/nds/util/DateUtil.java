@@ -3,11 +3,10 @@ package br.com.abril.nds.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -313,9 +312,9 @@ public class DateUtil {
 	 * 
 	 * @return Período de datas filtrado pelos dias da semana
 	 */
-	public static List<Date> obterPeriodoDeAcordoComDiasDaSemana(Date dataInicial, 
-																 Date dataFinal,
-																 Collection<Integer> listaCodigosDiasSemana) {
+	public static TreeSet<Date> obterPeriodoDeAcordoComDiasDaSemana(Date dataInicial, 
+																	Date dataFinal,
+																	Collection<Integer> listaCodigosDiasSemana) {
 		
 		if (dataInicial == null) {
 			
@@ -332,7 +331,7 @@ public class DateUtil {
 			throw new IllegalArgumentException("Códigos de dias da semana inválidos!");
 		}
 		
-		List<Date> datas = new ArrayList<Date>();
+		TreeSet<Date> datas = new TreeSet<Date>();
 		
 		while (dataInicial.before(dataFinal) || dataInicial.equals(dataFinal)) {
 			

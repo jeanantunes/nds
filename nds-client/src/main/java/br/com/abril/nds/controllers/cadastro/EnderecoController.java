@@ -88,11 +88,19 @@ public class EnderecoController {
 							EntregadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
 							EntregadorController.LISTA_ENDERECOS_EXIBICAO);
 				break;
+
+				case ENDERECO_PDV:
+					EnderecoController.setarParametros(
+							PdvController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							PdvController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							PdvController.LISTA_ENDERECOS_EXIBICAO);
+
 				case ENDERECO_TRANSPORTADOR:
 					EnderecoController.setarParametros(
 							TransportadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
 							TransportadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
 							TransportadorController.LISTA_ENDERECOS_EXIBICAO);
+
 				break;
 			}
 		}

@@ -2,7 +2,9 @@ package br.com.abril.nds.service;
 
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Set;
 
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -11,6 +13,7 @@ import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
@@ -63,6 +66,10 @@ public interface PdvService {
 	List<EspecialidadePDV> obterEspecialidadesPDVNotIn(Long... codigos);
 	
 	PdvDTO obterPDV(Long idCota, Long idPdv);
+	
+	List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,	Set<Long> idsIgnorar);
+	
+	EnderecoPDV buscarEnderecoPorEnderecoPDV(Long idPDV, Long idEndereco);
 	
 	void excluirPDV(Long idPdv);
 

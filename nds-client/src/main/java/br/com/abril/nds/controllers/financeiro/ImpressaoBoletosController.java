@@ -289,7 +289,7 @@ public class ImpressaoBoletosController {
 			dividaGeradaVO.setNumeroCota(String.valueOf(divida.getNumeroCota()));
 			dividaGeradaVO.setRota((divida.getRota()== null)?"": divida.getRota());
 			dividaGeradaVO.setRoteiro((divida.getRoteiro()==null)?"": divida.getRoteiro());
-			dividaGeradaVO.setSuportaEmail(divida.getSuportaEmail().toString());
+			dividaGeradaVO.setSuportaEmail( (divida.getSuportaEmail()==null)?Boolean.FALSE.toString():divida.getSuportaEmail().toString());
 			dividaGeradaVO.setTipoCobranca( (divida.getTipoCobranca()!= null)? divida.getTipoCobranca().getDescTipoCobranca():"");
 			dividaGeradaVO.setValor( CurrencyUtil.formatarValor(divida.getValor()));
 			dividaGeradaVO.setVias(String.valueOf(divida.getVias()));

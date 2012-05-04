@@ -246,7 +246,7 @@
 				colModel : [{
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'left'
 				},{
@@ -258,7 +258,7 @@
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 90,
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -268,27 +268,33 @@
 					sortable : true,
 					align : 'right'
 				}, {
+					display : 'Preço Desconto R$',
+					name : 'precoDesconto',
+					width : 110,
+					sortable : true,
+					align : 'right'
+				}, {
 					display : 'Pacote Padrão',
 					name : 'pacotePadrao',
-					width : 110,
+					width : 100,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Exemplares',
 					name : 'quantidade',
-					width : 110,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Tipo de Diferença',
 					name : 'tipoDiferenca',
-					width : 120,
+					width : 110,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Total R$',
 					name : 'valorTotalDiferenca',
-					width : 90,
+					width : 50,
 					sortable : true,
 					align : 'right'
 				}, {

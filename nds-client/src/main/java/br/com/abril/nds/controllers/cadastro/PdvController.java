@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
@@ -63,6 +64,12 @@ public class PdvController {
 	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoPDV";
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
+
+	public static String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosPDVSalvos";
+
+	public static String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosPDVRemovidos";
+
+	public static String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosPDVExibidos";
 	
 	@Autowired
 	private Result result;
@@ -72,6 +79,9 @@ public class PdvController {
 		
 	@Autowired
 	private ServletContext servletContext;
+	
+	@Autowired
+	private HttpSession httpSession;
 	
 	@Autowired
 	private HttpSession session;
@@ -366,11 +376,24 @@ public class PdvController {
 				dto.setTipoPontoPDV(new TipoPontoPDV());
 			}
 		}
+		
+		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv, null);
+		
+		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 			
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
+	
+	@Post
+	public void cancelarCadastro(){
+		
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		result.use(Results.json()).from("", "result").serialize();
+	}
 
-	@SuppressWarnings("unchecked")
 	@Post
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
