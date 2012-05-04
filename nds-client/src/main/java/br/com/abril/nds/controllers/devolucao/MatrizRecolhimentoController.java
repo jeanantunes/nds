@@ -273,13 +273,12 @@ public class MatrizRecolhimentoController {
 				
 				produtoEdicao.setProduto(produto);
 				
-				produtoRecolhimento.setAtendida(BigDecimal.ZERO);
+				produtoRecolhimento.setExpectativaEncalheAtendida(BigDecimal.ZERO);
 				produtoRecolhimento.setDataLancamento(dataLancamento);
 				produtoRecolhimento.setDataRecolhimento(dataRecolhimento);
 				produtoRecolhimento.setNomeEditor("Zé Editor " + i);
 				produtoRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
-				produtoRecolhimento.setQtdeExemplares(new BigDecimal(i));
-				produtoRecolhimento.setSede(new BigDecimal(i));
+				produtoRecolhimento.setExpectativaEncalheSede(new BigDecimal(i));
 				produtoRecolhimento.setValorTotal(new BigDecimal(i));
 				produtoRecolhimento.setProdutoEdicao(produtoEdicao);
 				
@@ -346,8 +345,8 @@ public class MatrizRecolhimentoController {
 				
 				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
 					
-					if (produtoRecolhimento.getAtendida() != null
-							&& produtoRecolhimento.getAtendida().doubleValue() > 0) {
+					if (produtoRecolhimento.getExpectativaEncalheAtendida() != null
+							&& produtoRecolhimento.getExpectativaEncalheAtendida().doubleValue() > 0) {
 						
 						exibeDestaque = true;
 					}
@@ -360,11 +359,6 @@ public class MatrizRecolhimentoController {
 					if (produtoRecolhimento.getProdutoEdicao().getPeso() != null) {
 						
 						pesoTotal = pesoTotal.add(produtoRecolhimento.getProdutoEdicao().getPeso());
-					}
-					
-					if (produtoRecolhimento.getQtdeExemplares() != null) {
-					
-						qtdeExemplares = qtdeExemplares.add(produtoRecolhimento.getQtdeExemplares());
 					}
 					
 					if (produtoRecolhimento.getValorTotal() != null) {

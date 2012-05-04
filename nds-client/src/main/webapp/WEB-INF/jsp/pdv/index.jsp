@@ -119,7 +119,7 @@ $("#btnSalvarPDV").keypress(function() {
 	    <ul>
 	        <li><a href="#tabpdv-1">Dados Básicos</a></li>
 	        <li><a href="#tabpdv-2" onclick="ENDERECO_PDV.popularGridEnderecos();">Endereços</a></li>
-	        <li><a href="#tabpdv-3">Telefones</a></li>
+	        <li><a href="#tabpdv-3" onclick="PDV.carregarTelefones();">Telefones</a></li>
 	        <li><a href="#tabpdv-4">Caract. / Segmentação</a></li>
 	        <li><a href="#tabpdv-5">Especialidade</a></li>
 	        <li><a href="#tabpdv-6">Gerador de Fluxo</a></li>
@@ -130,7 +130,11 @@ $("#btnSalvarPDV").keypress(function() {
 		   
 		   <div id="tabpdv-2"> <jsp:include page="endereco.jsp"/> </div>
 		   
-		   <div id="tabpdv-3"> <jsp:include page="telefone.jsp"/> </div>
+		   <div id="tabpdv-3"> 
+		   		<jsp:include page="../telefone/index.jsp">
+	        		<jsp:param value="PDV" name="tela"/>
+	        	</jsp:include> 
+		   	</div>
 		   
 		   <div id="tabpdv-4"> <jsp:include page="caracteristica.jsp"/> </div>
 		   

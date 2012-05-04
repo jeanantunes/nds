@@ -3721,6 +3721,8 @@ public class DataLoader {
 					numeroFatura,                        
 					valorFatura);
 	
+			notaFiscalEntradaFornecedorNFE.setMovimentoIntegracao("Movimento teste para nota fiscal entrada.");
+			
 			save(session, notaFiscalEntradaFornecedorNFE);
 		
 			

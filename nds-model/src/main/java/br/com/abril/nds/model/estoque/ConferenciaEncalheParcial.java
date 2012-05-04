@@ -16,7 +16,12 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
-
+/**
+ * Entidade que abstrai informações "inputadas" na funcionalidade 
+ * digitação contagem devolução.
+ * 
+ * @author Discover Technology
+ */
 @Entity
 @Table(name = "CONFERENCIA_ENC_PARCIAL")
 @SequenceGenerator(name="CONFERENCIA_ENC_PARCIAL_SEQ", initialValue = 1, allocationSize = 1)

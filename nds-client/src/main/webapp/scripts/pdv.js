@@ -547,6 +547,11 @@ var PDV = {
 			PDV.carregarCaracteristicaEspecialidade(null);
 			PDV.carregarPeriodosFuncionamento();
 			
+			$.postJSON(contextPath + "/cadastro/pdv/novo",
+					"idCota="+PDV.idCota, 
+					null
+			);
+						
 			PDV.popup_novoPdv();
 		},
 		

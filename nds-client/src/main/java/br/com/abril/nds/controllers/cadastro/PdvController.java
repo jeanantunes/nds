@@ -17,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import antlr.collections.impl.LList;
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -117,6 +116,7 @@ public class PdvController {
 		result.include("listaCaracteristicaPDV",getListaCaracteristica());
 		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterAreasInfluenciaPDV()));
 		result.include("listaClusterPDV",getListaDescricao(pdvService.obterClustersPDV()));
+		
 	}
 	
 	@Post
@@ -353,6 +353,8 @@ public class PdvController {
 		session.setAttribute(IMAGEM_PDV, null);
 		
 		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
+		
+		carregarTelefonesPDV(idPdv, idCota);
 		
 		if(dto!= null){
 			
@@ -647,6 +649,27 @@ public class PdvController {
 			file.delete();
 
 	}
+	
+	
+	private void carregarTelefonesPDV(Long idPdv, Long idCota) {
+		
+		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);
+		
+		session.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		session.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
+		session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
+	}
+		
+	@Post
+	@Path("/novo")
+	public void carregarDadosNovoPdv(Long idCota) {
+	
+		carregarTelefonesPDV(null, idCota);
+				
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+		
+	}
+	
 
 	//TODO getRealUsuario
 	public Usuario getUsuario() {
