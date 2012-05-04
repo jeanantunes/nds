@@ -61,13 +61,22 @@ public class PdvController {
 	
 	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoPDV";
 	
-	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
-
 	public static String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosPDVSalvos";
 
 	public static String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosPDVRemovidos";
 
 	public static String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosPDVExibidos";
+	
+	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
+	
+	private static final String NO_IMAGE = "no_image.jpeg";
+	
+	private static final String DIRETORIO_ARQUIVO = "images/pdv";
+	
+	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
+	
+	private static final String IMAGEM_PDV = "imagemPdv";
+	
 	
 	@Autowired
 	private Result result;
@@ -84,16 +93,8 @@ public class PdvController {
 	@Autowired
 	private HttpSession session;
 		
-	private static final String NO_IMAGE = "no_image.jpeg";
-	private static final String DIRETORIO_ARQUIVO = "images/pdv";
 	
-	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
-	
-	private static final String IMAGEM_PDV = "imagemPdv";
-	
-	public PdvController(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+	public PdvController() {}
 
 	@Path("/")
 	public void index(){
@@ -356,6 +357,8 @@ public class PdvController {
 		
 		carregarTelefonesPDV(idPdv, idCota);
 		
+		carregarEndercosPDV(idPdv, idCota);
+		
 		if(dto!= null){
 			
 			if(dto.getTamanhoPDV() == null){
@@ -374,10 +377,6 @@ public class PdvController {
 				dto.setTipoPontoPDV(new TipoPontoPDV());
 			}
 		}
-		
-		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv, null);
-		
-		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 			
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
@@ -400,7 +399,7 @@ public class PdvController {
 		
 		preencherTelefones(pdvDTO);
 		
-		//pdvDTO.setEndereco(endereco);
+		preencherEnderecos(pdvDTO);
 		
 		pdvService.salvar(pdvDTO);
 		
@@ -436,6 +435,29 @@ public class PdvController {
 				session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		pdvDTO.setTelefonesRemover(listaTelefoneRemover);
+		
+	}
+	
+	private void preencherEnderecos(PdvDTO pdvDTO) {
+
+		pdvDTO.setEnderecosAdicionar(new ArrayList<EnderecoAssociacaoDTO>());
+		
+		@SuppressWarnings("unchecked")
+		Map<Integer, EnderecoAssociacaoDTO> listaEndereco = (Map<Integer, EnderecoAssociacaoDTO>) 
+				session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		
+		if (listaEndereco != null){
+			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEndereco.values()){
+				pdvDTO.getEnderecosAdicionar() .add(enderecoAssociacaoDTO);
+			}
+		}
+		
+		@SuppressWarnings("unchecked")
+		Set<Long> listaEnderecoRemover = (Set<Long>) 
+				session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		pdvDTO.setEnderecosRemover(listaEnderecoRemover);
 		
 	}
 
@@ -659,12 +681,25 @@ public class PdvController {
 		session.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
 		session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
 	}
+	
+	private void carregarEndercosPDV(Long idPdv, Long idCota) {
+		
+		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
+		
+		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
+		
+		session.setAttribute(LISTA_TELEFONES_EXIBICAO, listaEnderecos);
+		session.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
+		session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
+	}
 		
 	@Post
 	@Path("/novo")
 	public void carregarDadosNovoPdv(Long idCota) {
 	
 		carregarTelefonesPDV(null, idCota);
+		
+		carregarEndercosPDV(null,idCota);
 				
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 		

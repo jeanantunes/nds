@@ -47,6 +47,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.ClusterPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
@@ -104,11 +105,8 @@ public class PdvServiceImpl implements PdvService {
 	@Autowired
 	private TiposEstabelecimentoRepository tiposEstabelecimentoRepository;
 	
-	//@Autowired
-	///private EnderecoPDVRepository enderecoPDVRepository;
-	
 	@Autowired
-	private EnderecoRepository enderecoRepository;
+	private EnderecoPDVRepository enderecoPDVRepository;
 	
 	@Autowired
 	private EnderecoService enderecoService;
@@ -121,6 +119,9 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Autowired
 	private TelefoneService telefoneService;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	
 	@Transactional(readOnly=true)
@@ -238,27 +239,37 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Transactional(readOnly=true)
 	@Override
-	public List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,	Set<Long> idsIgnorar) {
+	public List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,Long idCota) {
 		
-		/*if (idPDV == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "IdPDV é obrigatório");
+		if (idCota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		Long idPessoa = cota.getPessoa().getId();
+		
+		
+		Set<Long> endRemover = null;
+		
+		if (idPDV != null) {
+			
+			List<EnderecoAssociacaoDTO> listaEnderecolAssoc = this.enderecoPDVRepository.buscaEnderecosPDV(idPDV, null);
+			
+			endRemover = new HashSet<Long>();
+			
+			for (EnderecoAssociacaoDTO dto : listaEnderecolAssoc){
+				
+				endRemover.add(dto.getEndereco().getId());
+			}
 		}
 		
-		List<EnderecoAssociacaoDTO> listaEndAssoc =
-				this.enderecoPDVRepository.buscaEnderecosPDV(idPDV, idsIgnorar);
+		List<EnderecoAssociacaoDTO> lista = this.enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
 		
-		return listaEndAssoc;*/
-		
-		return null;
-	}
-	
-	@Transactional(readOnly = true)
-	@Override
-	public EnderecoPDV buscarEnderecoPorEnderecoPDV(Long idPDV, Long idEndereco) {
-		
-		return null;
-		
-		/*return this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(idEndereco, idPDV);*/
+		return lista;
 	}
 
 	@Transactional(readOnly=true)
@@ -286,8 +297,6 @@ public class PdvServiceImpl implements PdvService {
 	public void excluirPDV(Long idPdv){
 		
 		PDV pdv = pdvRepository.buscarPorId(idPdv);
-		
-		//TODO verificar se o PDV esta associado a uma Roterização
 		
 		if(pdvRepository.obterQntPDV() == 1 ){
 			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Uma cota deve ter pelomenos um PDV cadastrado.");
@@ -372,9 +381,9 @@ public class PdvServiceImpl implements PdvService {
 		
 		salvarGeradorFluxo(pdvDTO, pdv);
 		
-		atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
+		//atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
 	
-		//salvarEndereco(pdvDTO, pdv);
+		salvarEndereco(pdvDTO, pdv);
 		//salvarTelefone(pdvDTO, pdv);
 	}
 	
@@ -462,6 +471,7 @@ public class PdvServiceImpl implements PdvService {
 
 	private void salvarEndereco(PdvDTO pdvDTO,PDV pdv){
 		
+		processarEnderecos(pdvDTO, pdv);
 	}
 	
 	@Transactional
@@ -955,21 +965,22 @@ public class PdvServiceImpl implements PdvService {
 		return lista;
 	}	
 
-/*private void processarEnderecos(PDV pdv,
-List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
-List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
+	private void processarEnderecos(PdvDTO pdvDTO, PDV pdv) {
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = pdvDTO.getEnderecosAdicionar();
+		
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
 		
 			this.salvarEnderecosPDV(pdv, listaEnderecoAssociacaoSalvar);
 		}
 		
-		if (listaEnderecoAssociacaoRemover != null && !listaEnderecoAssociacaoRemover.isEmpty()) {
+		if (pdvDTO.getEnderecosRemover() != null && !pdvDTO.getEnderecosRemover().isEmpty()) {
 		
-			this.removerEnderecosPDV(pdv, listaEnderecoAssociacaoRemover);
+			this.removerEnderecosPDV(pdv, pdvDTO.getEnderecosRemover());
 		}
-	}*/
+	}
 	
-	/*private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+	private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
 		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao);
 		
@@ -1002,18 +1013,17 @@ List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
 		}
 	}
 	
-	private void removerEnderecosPDV(PDV pdv , List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+	private void removerEnderecosPDV(PDV pdv , Set<Long> listaEnderecoAssociacao) {
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 		
 		List<Long> idsEnderecoPDV= new ArrayList<Long>();
 
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-			if (enderecoAssociacao.getEndereco().getId() != null){
-				idsEndereco.add(enderecoAssociacao.getEndereco().getId());
-			}
-
-			EnderecoPDV enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao.getId(), pdv.getId());
+		for (Long enderecoAssociacao : listaEnderecoAssociacao) {
+			
+			idsEndereco.add(enderecoAssociacao);
+			
+			EnderecoPDV enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao, pdv.getId());
 			
 			if (enderecoPDV != null && enderecoPDV.getEndereco() != null){
 				idsEnderecoPDV.add(enderecoPDV.getId());
@@ -1030,6 +1040,5 @@ List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
 			this.enderecoRepository.removerEnderecos(idsEndereco);
 		}
 	}
-*/
 
 }

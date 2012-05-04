@@ -66,11 +66,13 @@ public class PdvDTO implements Serializable {
 	
 	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
 	
-	private EnderecoPdvDTO enderecoPdvDTO;
+	private List<EnderecoAssociacaoDTO> enderecosAdicionar;
 		
 	private List<TelefoneAssociacaoDTO> telefonesAdicionar;
 	
 	private Set<Long> telefonesRemover;
+	
+	private Set<Long> enderecosRemover;
 	
     private CaracteristicaDTO caracteristicaDTO;
     
@@ -107,6 +109,34 @@ public class PdvDTO implements Serializable {
 	
 
 	/**
+	 * @return the enderecosAdicionar
+	 */
+	public List<EnderecoAssociacaoDTO> getEnderecosAdicionar() {
+		return enderecosAdicionar;
+	}
+
+	/**
+	 * @param enderecosAdicionar the enderecosAdicionar to set
+	 */
+	public void setEnderecosAdicionar(List<EnderecoAssociacaoDTO> enderecosAdicionar) {
+		this.enderecosAdicionar = enderecosAdicionar;
+	}
+
+	/**
+	 * @return the enderecosRemover
+	 */
+	public Set<Long> getEnderecosRemover() {
+		return enderecosRemover;
+	}
+
+	/**
+	 * @param enderecosRemover the enderecosRemover to set
+	 */
+	public void setEnderecosRemover(Set<Long> enderecosRemover) {
+		this.enderecosRemover = enderecosRemover;
+	}
+
+	/**
 	 * @return the tipoExpositor
 	 */
 	public String getTipoExpositor() {
@@ -132,22 +162,6 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	
-
-	/**
-	 * @return the enderecoPdvDTO
-	 */
-	public EnderecoPdvDTO getEnderecoPdvDTO() {
-		return enderecoPdvDTO;
-	}
-
-	/**
-	 * @param enderecoPdvDTO the enderecoPdvDTO to set
-	 */
-	public void setEnderecoPdvDTO(EnderecoPdvDTO enderecoPdvDTO) {
-		this.enderecoPdvDTO = enderecoPdvDTO;
 	}
 
 	/**
