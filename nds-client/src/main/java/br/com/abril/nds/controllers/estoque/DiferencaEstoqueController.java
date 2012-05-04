@@ -154,6 +154,8 @@ public class DiferencaEstoqueController {
 		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
+		BigDecimal valorDesconto = null;
+		
 		for (Diferenca diferenca : listaDiferencas) {
 			
 			DiferencaVO consultaDiferencaVO = new DiferencaVO();
@@ -173,7 +175,30 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
+			
+			valorDesconto = BigDecimal.ZERO;
+			
+			if (diferenca.getProdutoEdicao().getDesconto() != null) {
+				
+				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
+			}
+			
+			consultaDiferencaVO.setPrecoDesconto(
+				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
+					.subtract(valorDesconto)));
 
+			if (diferenca.getProdutoEdicao().getPrecoVenda() != null
+					&& diferenca.getProdutoEdicao().getDesconto() != null) {
+				
+				consultaDiferencaVO.setPrecoDesconto(
+					CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
+						.subtract(diferenca.getProdutoEdicao().getDesconto())));
+			
+			} else {
+				
+				consultaDiferencaVO.setPrecoDesconto("");
+			}
+			
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {
@@ -362,6 +387,8 @@ public class DiferencaEstoqueController {
 			listaDiferencas = new HashSet<Diferenca>();
 		}
 		
+		BigDecimal valorDesconto = null;
+		
 		for (DiferencaVO diferencaVO : listaNovasDiferencas) {
 			
 			this.validarNovaDiferenca(diferencaVO, dataMovimento, tipoDiferenca);
@@ -382,17 +409,26 @@ public class DiferencaEstoqueController {
 			
 			BigDecimal valorTotalDiferenca = BigDecimal.ZERO;
 			
+			valorDesconto = BigDecimal.ZERO;
+			
+			if (produtoEdicao.getDesconto() != null) {
+				
+				valorDesconto = produtoEdicao.getDesconto();
+			}
+			
 			if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
 					|| TipoDiferenca.SOBRA_DE.equals(tipoDiferenca)) {
 				
 				valorTotalDiferenca =
-						produtoEdicao.getPrecoVenda().multiply(
-							new BigDecimal(produtoEdicao.getPacotePadrao())).multiply(diferenca.getQtde());
+					produtoEdicao.getPrecoVenda().subtract(valorDesconto).multiply(
+						new BigDecimal(produtoEdicao.getPacotePadrao())).multiply(diferenca.getQtde());
 				
 			} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
 							|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)) {
 				
-				valorTotalDiferenca = produtoEdicao.getPrecoVenda().multiply(diferenca.getQtde());
+				valorTotalDiferenca =
+					produtoEdicao.getPrecoVenda().subtract(
+						valorDesconto).multiply(diferenca.getQtde());
 			}
 			
 			diferenca.setValorTotalDiferenca(valorTotalDiferenca);
@@ -874,6 +910,8 @@ public class DiferencaEstoqueController {
 		
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
+		BigDecimal valorDesconto = null;
+		
 		for (Diferenca diferenca : listaDiferencas) {
 			
 			ProdutoEdicao produtoEdicao = diferenca.getProdutoEdicao();
@@ -892,6 +930,17 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
+			
+			valorDesconto = BigDecimal.ZERO;
+			
+			if (diferenca.getProdutoEdicao().getDesconto() != null) {
+				
+				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
+			}
+			
+			lancamentoDiferenca.setPrecoDesconto(
+				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
+					.subtract(valorDesconto)));
 			
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
@@ -955,6 +1004,8 @@ public class DiferencaEstoqueController {
 		
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
+		BigDecimal valorDesconto = null;
+		
 		for (Diferenca diferenca : listaDiferencas) {
 			
 			ProdutoEdicao produtoEdicao = diferenca.getProdutoEdicao();
@@ -973,6 +1024,17 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
+			
+			valorDesconto = BigDecimal.ZERO;
+			
+			if (diferenca.getProdutoEdicao().getDesconto() != null) {
+				
+				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
+			}
+			
+			lancamentoDiferenca.setPrecoDesconto(
+				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
+					.subtract(valorDesconto)));
 			
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
@@ -1042,6 +1104,8 @@ public class DiferencaEstoqueController {
 		
 		int quantidadeRegistros = diferencaEstoqueService.obterTotalDiferencas(filtro).intValue();
 		
+		BigDecimal valorDesconto = null;
+		
 		for (Diferenca diferenca : listaDiferencas) {
 			
 			DiferencaVO consultaDiferencaVO = new DiferencaVO();
@@ -1058,7 +1122,18 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
-
+			
+			valorDesconto = BigDecimal.ZERO;
+			
+			if (diferenca.getProdutoEdicao().getDesconto() != null) {
+				
+				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
+			}
+			
+			consultaDiferencaVO.setPrecoDesconto(
+				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
+					.subtract(valorDesconto)));
+			
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
 			if (diferenca.getItemRecebimentoFisico() != null) {

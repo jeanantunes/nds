@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * DTO que representa os dados referentes ao balanceamento do recolhimento. 
@@ -16,51 +17,21 @@ public class RecolhimentoDTO implements Serializable {
 
 	private static final long serialVersionUID = -2168766293591158494L;
 
-	private List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento;
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimento;
 	
-	private Map<Date, BigDecimal> mapaQtdeExemplaresTotalDiaria;
+	private TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria;
 	
 	private Long capacidadeRecolhimentoDistribuidor;
 	
-	private List<Date> listaDiasRecolhimentoFornecedor;
+	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
-	private List<Date> listaDiasRecolhimentoDistribuidor;
+	private TreeSet<Date> datasRecolhimentoDistribuidor;
 
 	/**
 	 * Construtor padrão.
 	 */
 	public RecolhimentoDTO() {
 		
-	}
-
-	/**
-	 * @return the listaProdutosRecolhimento
-	 */
-	public List<ProdutoRecolhimentoDTO> getListaProdutosRecolhimento() {
-		return listaProdutosRecolhimento;
-	}
-
-	/**
-	 * @param listaProdutosRecolhimento the listaProdutosRecolhimento to set
-	 */
-	public void setListaProdutosRecolhimento(
-			List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento) {
-		this.listaProdutosRecolhimento = listaProdutosRecolhimento;
-	}
-
-	/**
-	 * @return the mapaQtdeExemplaresTotalDiaria
-	 */
-	public Map<Date, BigDecimal> getMapaQtdeExemplaresTotalDiaria() {
-		return mapaQtdeExemplaresTotalDiaria;
-	}
-
-	/**
-	 * @param mapaQtdeExemplaresTotalDiaria the mapaQtdeExemplaresTotalDiaria to set
-	 */
-	public void setMapaQtdeExemplaresTotalDiaria(
-			Map<Date, BigDecimal> mapaQtdeExemplaresTotalDiaria) {
-		this.mapaQtdeExemplaresTotalDiaria = mapaQtdeExemplaresTotalDiaria;
 	}
 
 	/**
@@ -79,33 +50,63 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the listaDiasRecolhimentoFornecedor
+	 * @return the mapaExpectativaEncalheTotalDiaria
 	 */
-	public List<Date> getListaDiasRecolhimentoFornecedor() {
-		return listaDiasRecolhimentoFornecedor;
+	public TreeMap<Date, BigDecimal> getMapaExpectativaEncalheTotalDiaria() {
+		return mapaExpectativaEncalheTotalDiaria;
 	}
 
 	/**
-	 * @param listaDiasRecolhimentoFornecedor the listaDiasRecolhimentoFornecedor to set
+	 * @param mapaExpectativaEncalheTotalDiaria the mapaExpectativaEncalheTotalDiaria to set
 	 */
-	public void setListaDiasRecolhimentoFornecedor(
-			List<Date> listaDiasRecolhimentoFornecedor) {
-		this.listaDiasRecolhimentoFornecedor = listaDiasRecolhimentoFornecedor;
+	public void setMapaExpectativaEncalheTotalDiaria(
+			TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria) {
+		this.mapaExpectativaEncalheTotalDiaria = mapaExpectativaEncalheTotalDiaria;
 	}
 
 	/**
-	 * @return the listaDiasRecolhimentoDistribuidor
+	 * @return the produtosRecolhimento
 	 */
-	public List<Date> getListaDiasRecolhimentoDistribuidor() {
-		return listaDiasRecolhimentoDistribuidor;
+	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimento() {
+		return produtosRecolhimento;
 	}
 
 	/**
-	 * @param listaDiasRecolhimentoDistribuidor the listaDiasRecolhimentoDistribuidor to set
+	 * @param produtosRecolhimento the produtosRecolhimento to set
 	 */
-	public void setListaDiasRecolhimentoDistribuidor(
-			List<Date> listaDiasRecolhimentoDistribuidor) {
-		this.listaDiasRecolhimentoDistribuidor = listaDiasRecolhimentoDistribuidor;
+	public void setProdutosRecolhimento(
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		this.produtosRecolhimento = produtosRecolhimento;
+	}
+
+	/**
+	 * @return the datasRecolhimentoFornecedor
+	 */
+	public TreeSet<Date> getDatasRecolhimentoFornecedor() {
+		return datasRecolhimentoFornecedor;
+	}
+
+	/**
+	 * @param datasRecolhimentoFornecedor the datasRecolhimentoFornecedor to set
+	 */
+	public void setDatasRecolhimentoFornecedor(
+			TreeSet<Date> datasRecolhimentoFornecedor) {
+		this.datasRecolhimentoFornecedor = datasRecolhimentoFornecedor;
+	}
+
+	/**
+	 * @return the datasRecolhimentoDistribuidor
+	 */
+	public TreeSet<Date> getDatasRecolhimentoDistribuidor() {
+		return datasRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @param datasRecolhimentoDistribuidor the datasRecolhimentoDistribuidor to set
+	 */
+	public void setDatasRecolhimentoDistribuidor(
+			TreeSet<Date> datasRecolhimentoDistribuidor) {
+		this.datasRecolhimentoDistribuidor = datasRecolhimentoDistribuidor;
 	}
 	
 }

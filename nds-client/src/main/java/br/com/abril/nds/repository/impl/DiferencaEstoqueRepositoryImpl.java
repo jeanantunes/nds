@@ -60,6 +60,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				case PRECO_VENDA:
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
+				case PRECO_DESCONTO:
+					hql += "order by diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto ";
+					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
 					break;
@@ -67,9 +70,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 					hql += " order by "
 						+  " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						+  " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) "
+						+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 						+  " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						+  " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 						+  " else 0 end ";
 					break;
 				default:
@@ -175,9 +178,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			hql = " select diferenca, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 					
@@ -231,6 +234,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				case PRECO_VENDA:
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
+				case PRECO_DESCONTO:
+					hql += "order by diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto ";
+					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
 					break;
@@ -247,9 +253,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 					hql += " order by "
 						 + " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						 + " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						 + " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) "
+						 + " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 						 + " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						 + " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 						 + " else 0 end ";
 					break;
 				default:
@@ -328,9 +334,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 			hql = " select diferenca, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 		

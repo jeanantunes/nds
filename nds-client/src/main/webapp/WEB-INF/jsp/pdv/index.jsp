@@ -118,7 +118,7 @@ $("#btnSalvarPDV").keypress(function() {
 	<div id="tabpdv">
 	    <ul>
 	        <li><a href="#tabpdv-1">Dados Básicos</a></li>
-	        <li><a href="#tabpdv-2">Endereços</a></li>
+	        <li><a href="#tabpdv-2" onclick="ENDERECO_PDV.popularGridEnderecos();">Endereços</a></li>
 	        <li><a href="#tabpdv-3" onclick="PDV.carregarTelefones();">Telefones</a></li>
 	        <li><a href="#tabpdv-4">Caract. / Segmentação</a></li>
 	        <li><a href="#tabpdv-5">Especialidade</a></li>

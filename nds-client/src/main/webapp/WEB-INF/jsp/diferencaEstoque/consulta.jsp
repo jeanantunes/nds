@@ -20,13 +20,13 @@
 				colModel : [ {
 					display : 'Data',
 					name : 'dataLancamento',
-					width : 90,
+					width : 70,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 70,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -38,43 +38,49 @@
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Preço Venda R$',
 					name : 'precoVenda',
+					width : 90,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Preço Desconto R$',
+					name : 'precoDesconto',
 					width : 100,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Tipo de Diferença',
 					name : 'tipoDiferenca',
-					width : 110,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Nota',
 					name : 'numeroNotaFiscal',
-					width : 110,
+					width : 104,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Exemplar',
 					name : 'quantidade',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Status',
 					name : 'statusAprovacao',
-					width : 60,
+					width : 45,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Total R$',
 					name : 'valorTotalDiferenca',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'right'
 				} ],

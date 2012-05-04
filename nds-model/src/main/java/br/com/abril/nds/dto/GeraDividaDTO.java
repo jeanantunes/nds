@@ -72,8 +72,6 @@ public class GeraDividaDTO implements Serializable{
 		this.suportaEmail = suportaEmail;
 	}
 	
-	
-	
 	/**
 	 * @return the nossoNumero
 	 */
