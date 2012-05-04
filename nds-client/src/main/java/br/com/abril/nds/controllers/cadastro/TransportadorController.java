@@ -236,9 +236,13 @@ public class TransportadorController {
 			lista =  new ArrayList<Veiculo>();
 		}
 		
-		this.result.use(Results.json()).from(lista, "result");
-		
 		return lista;
+	}
+	
+	@Post
+	public void carregarVeiculos(){
+		
+		this.result.use(Results.json()).from(this.getTableModelVeiculos(this.pesquisarVeiculos()), "result").recursive().serialize();
 	}
 	
 	@Post
@@ -250,7 +254,7 @@ public class TransportadorController {
 		
 		this.httpSession.setAttribute(LISTA_VEICULOS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.nothing());
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 	@Post
@@ -258,13 +262,15 @@ public class TransportadorController {
 		
 		this.transportadorService.cadastrarVeiculos(this.obterVeiculosSessao());
 		
-		this.pesquisarVeiculos();
+		this.carregarVeiculos();
 	}
 	
 	@Post
 	public void cancelarCadastroVeiculos(){
 		
+		this.httpSession.removeAttribute(LISTA_VEICULOS_SALVAR_SESSAO);
 		
+		this.carregarVeiculos();
 	}
 	
 	@Post
@@ -283,9 +289,9 @@ public class TransportadorController {
 	@Post
 	public void excluirVeiculo(Long referencia){
 		
-		this.excluirVeiculo(referencia);
+		this.transportadorService.excluirVeiculo(referencia);
 		
-		this.pesquisarVeiculos();
+		this.result.use(Results.json()).withoutRoot().from(new ValidacaoException(TipoMensagem.SUCCESS, "Operação efetuada com sucesso.")).recursive().serialize();
 	}
 	
 	@SuppressWarnings("unchecked")

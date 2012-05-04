@@ -134,7 +134,7 @@
 									page: result.page, total: result.total, rows: result.rows
 								});
 								
-								$(this).dialog("close");
+								$("#dialog-incluir-veiculo").dialog("close");
 							}
 						);
 					},
@@ -147,7 +147,7 @@
 									page: result.page, total: result.total, rows: result.rows
 								});
 								
-								$(this).dialog("close");
+								$("#dialog-incluir-veiculo").dialog("close");
 							}
 						);
 					}
@@ -167,6 +167,44 @@
 					$("#placa").val("");
 				}
 			);
+		}
+		
+		function excluirVeiculo(idVeiculo){
+			
+			$("#dialog-excluir-veiculo").dialog({
+				resizable : false,
+				height : 170,
+				width : 380,
+				modal : true,
+				buttons : {
+					"Confirmar" : function() {
+						
+						data = [{name:"referencia", value: idVeiculo}];
+						
+						$.postJSON("<c:url value='/cadastro/transportador/excluirVeiculo'/>", data, 
+							function(result){
+								
+								exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens);
+								
+								$(".veiculosGrid").flexReload();
+								
+								$("#dialog-excluir-veiculo").dialog("close");
+							}
+						);
+					},
+					"Cancelar" : function() {
+						
+						$("#dialog-excluir-veiculo").dialog("close");
+					}
+				}
+			});
+			
+			
+		}
+		
+		function editarVeiculo(idVeiculo){
+			
+			
 		}
 	
 		function popup_incluir_motorista() {
@@ -360,6 +398,11 @@
 				dataType : 'json',
 				preProcess: function (data){
 					
+					if (data.result){
+						
+						data = data.result;
+					}
+					
 					$.each(data.rows, function(index, value) {						
 						
 						var idVeiculo = value.id;
@@ -403,7 +446,7 @@
 				height : 150,
 				disableSelect: true
 			});
-			$(".veiculosGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarVeiculos'/>"});
+			$(".veiculosGrid").flexOptions({url: "<c:url value='/cadastro/transportador/carregarVeiculos'/>"});
 		
 			$(".motoristasGrid").flexigrid({
 				dataType : 'json',
@@ -601,6 +644,10 @@
 
 	<div id="dialog-excluir" title="Excluir Transportador">
 		<p>Confirma a exclusão deste Transportador</p>
+	</div>
+	
+	<div id="dialog-excluir-veiculo" title="Excluir Veículo" style="display: none;">
+		<p>Confirma a exclusão deste Veículo</p>
 	</div>
 	
 	<div id="dialog-cancelar-cadastro-transportador" title="Transportadores" style="display: none;">

@@ -380,17 +380,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Transactional(readOnly = true)
 	public List<Veiculo> buscarVeiculos() {
 		
-		List<Veiculo> lista = new ArrayList<Veiculo>();
-		
-		Veiculo v = new Veiculo();
-		v.setPlaca("praca");
-		v.setTipoVeiculo("gipão");
-		
-		lista.add(v);
-		
-		return lista;
-		
-		//return this.veiculoRepository.buscarTodos();
+		return this.veiculoRepository.buscarTodos();
 	}
 	
 	@Override
@@ -423,11 +413,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Override
 	@Transactional
 	public void cadastrarVeiculos(List<Veiculo> veiculos){
-		
-		for (Veiculo veiculo : veiculos){
-			
-			this.validarDadosEntradaVeiculo(veiculo);
-		}
 		
 		for (Veiculo veiculo : veiculos){
 			
@@ -556,7 +541,12 @@ public class TransportadorServiceImpl implements TransportadorService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id Motorista é obrigatório");
 		}
 		
-		this.motoristaRepository.removerPorId(idMotorista);
+		Motorista motorista = this.motoristaRepository.buscarPorId(idMotorista);
+		
+		if (motorista != null){
+			
+			this.motoristaRepository.remover(motorista);
+		}
 	}
 	
 	@Override
