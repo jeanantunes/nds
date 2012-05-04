@@ -75,6 +75,7 @@ import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -4163,8 +4164,6 @@ public class DataLoader {
 
 		save(session, chamadaEncalhe_2);
 
-
-
 		EstoqueProdutoCota estoqueProdutoCotaJohny_3 = 
 				Fixture.estoqueProdutoCota(
 				produtoEdicaoCE_3, cotaJohnyConsultaEncalhe, BigDecimal.TEN, BigDecimal.ZERO);
@@ -4213,6 +4212,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		save(session, conferenciaEncalhe);
+		
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(2, Calendar.MARCH, 2012), 
 				produtoEdicaoCE,
@@ -4225,6 +4228,9 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		save(session, conferenciaEncalhe);
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(3, Calendar.MARCH, 2012), 
 				produtoEdicaoCE,
@@ -4237,6 +4243,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		save(session, conferenciaEncalhe);
 
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4251,6 +4259,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		save(session, conferenciaEncalhe);
+
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(3, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_2,
@@ -4262,8 +4274,11 @@ public class DataLoader {
 				"Aprovado");
 
 		save(session, mec);
-
-
+		
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		save(session, conferenciaEncalhe);
+		
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(4, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_2,
@@ -4276,6 +4291,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
@@ -4289,6 +4306,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(3, Calendar.MARCH, 2012), 
@@ -4302,6 +4321,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
+
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(5, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_3,
@@ -4313,6 +4336,9 @@ public class DataLoader {
 				"Aprovado");
 
 		save(session, mec);
+
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
 
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4327,6 +4353,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(7, Calendar.MARCH, 2012), 
@@ -4340,6 +4368,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
+
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(7, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_3,
@@ -4352,6 +4384,9 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
+		
 	}
 
 
