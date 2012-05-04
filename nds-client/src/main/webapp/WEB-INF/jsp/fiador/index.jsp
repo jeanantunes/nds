@@ -383,7 +383,7 @@
 <body>
 	
 	<div id="dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
-		<p>Confirma esta Exclus�o?</p>
+		<p>Confirma esta Exclusão?</p>
 	</div>
 	
 	<div id="dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
