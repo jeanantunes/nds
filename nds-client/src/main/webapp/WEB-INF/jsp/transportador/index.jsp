@@ -126,13 +126,47 @@
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", null, 
+							function(result){
+								
+								$(".veiculosGrid").flexAddData({
+									page: result.page, total: result.total, rows: result.rows
+								});
+								
+								$(this).dialog("close");
+							}
+						);
 					},
 					"Cancelar" : function() {
-						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroVeiculos'/>", null, 
+							function(result){
+								
+								$(".veiculosGrid").flexAddData({
+									page: result.page, total: result.total, rows: result.rows
+								});
+								
+								$(this).dialog("close");
+							}
+						);
 					}
 				}
 			});
+		}
+		
+		function adicionarVeiculo(){
+			
+			data = [{name:"veiculo.tipoVeiculo", value: $("#tipoVeiculo").val()},
+					{name:"veiculo.placa", value: $("#placa").val()}];
+			
+			$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
+				function(){
+					
+					$("#tipoVeiculo").val("");
+					$("#placa").val("");
+				}
+			);
 		}
 	
 		function popup_incluir_motorista() {
@@ -575,7 +609,7 @@
 
 	<div id="dialog-incluir-motorista" title="Motoristas">
 		<fieldset>
-			<legend>Cadastrar Veículos</legend>
+			<legend>Cadastrar Motorista</legend>
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>
 					<td width="54">Nome:</td>
@@ -599,15 +633,15 @@
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>
 					<td width="95">Tipo de Veículo:</td>
-					<td width="239"><input type="text" style="width: 230px" /></td>
+					<td width="239"><input type="text" style="width: 230px" id="tipoVeiculo" maxlength="255" /></td>
 				</tr>
 				<tr>
 					<td>Placa:</td>
-					<td><input type="text" style="width: 110px" /></td>
+					<td><input type="text" style="width: 110px" id="placa" maxlength="255" /></td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
-					<td><span class="bt_add"><a href="javascript:;">Incluir Novo</a></span></td>
+					<td><span class="bt_add"><a href="javascript:adicionarVeiculo();">Incluir Novo</a></span></td>
 				</tr>
 			</table>
 		</fieldset>

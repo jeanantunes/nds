@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -28,22 +30,34 @@ public class Endereco implements Serializable {
 	@GeneratedValue(generator = "ENDERECO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "BAIRRO")
 	private String bairro;
+	
 	@Column(name = "CEP")
 	private String cep;
+	
 	@Column(name = "CIDADE")
 	private String cidade;
+	
 	@Column(name = "COMPLEMENTO")
 	private String complemento;
+	
 	@Column(name = "TIPO_LOGRADOURO")
 	private String tipoLogradouro;
+	
 	@Column(name = "LOGRADOURO")
 	private String logradouro;
+	
 	@Column(name = "NUMERO")
 	private int numero;
+	
 	@Column(name = "UF")
 	private String uf;
+	
+	@ManyToOne
+	@JoinColumn(name = "PESSOA_ID")
+	private Pessoa pessoa;
 
 	public Long getId() {
 		return id;
@@ -121,6 +135,14 @@ public class Endereco implements Serializable {
 
 	public void setUf(String uf) {
 		this.uf = uf;
+	}
+	
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
 	}
 
 	/**

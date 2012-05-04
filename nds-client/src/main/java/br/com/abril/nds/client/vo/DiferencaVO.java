@@ -35,10 +35,10 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String numeroEdicao;
 	
-	@Export(label = "Preço Venda", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String precoVenda;
 	
-	@Export(label = "Preço Desconto", alignment = Alignment.RIGHT, exhibitionOrder = 6)
+	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
 	private String precoDesconto;
 	
 	private String pacotePadrao;
