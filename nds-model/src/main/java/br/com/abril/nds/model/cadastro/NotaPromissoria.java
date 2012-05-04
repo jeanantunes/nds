@@ -46,12 +46,7 @@ public class NotaPromissoria implements Serializable {
 	private Double valor;
 	
 	@Column(name="VALOR_EXTENSO")
-	private String valorExtenso;	
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name="validade")
-	private Date validade;
-	
+	private String valorExtenso;
 	
 	@OneToOne(optional=false)
 	@JoinColumn(name="COTA_GARANTIA_NOTA_PROMISSORIA_ID")
@@ -113,20 +108,7 @@ public class NotaPromissoria implements Serializable {
 		this.valorExtenso = valorExtenso;
 	}
 
-	/**
-	 * @return the validade
-	 */
-	public Date getValidade() {
-		return validade;
-	}
-
-	/**
-	 * @param validade the validade to set
-	 */
-	public void setValidade(Date validade) {
-		this.validade = validade;
-	}
-
+	
 	/**
 	 * @return the cotaGarantiaNotaPromissoria
 	 */
