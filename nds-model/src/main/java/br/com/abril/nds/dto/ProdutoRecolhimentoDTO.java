@@ -32,7 +32,9 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private Date dataLancamento;
 
-	private Date dataRecolhimento;
+	private Date dataRecolhimentoPrevista;
+	
+	private Date dataRecolhimentoDistribuidor;
 
 	private BigDecimal expectativaEncalheSede;
 
@@ -178,20 +180,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the dataRecolhimento
-	 */
-	public Date getDataRecolhimento() {
-		return dataRecolhimento;
-	}
-
-	/**
-	 * @param dataRecolhimento the dataRecolhimento to set
-	 */
-	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
-	}
-
-	/**
 	 * @return the expectativaEncalheSede
 	 */
 	public BigDecimal getExpectativaEncalheSede() {
@@ -259,6 +247,34 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setNovaData(Date novaData) {
 		this.novaData = novaData;
+	}
+
+	/**
+	 * @return the dataRecolhimentoPrevista
+	 */
+	public Date getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
+	}
+
+	/**
+	 * @param dataRecolhimentoPrevista the dataRecolhimentoPrevista to set
+	 */
+	public void setDataRecolhimentoPrevista(Date dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
+	}
+
+	/**
+	 * @return the dataRecolhimentoDistribuidor
+	 */
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @param dataRecolhimentoDistribuidor the dataRecolhimentoDistribuidor to set
+	 */
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
 
 }
