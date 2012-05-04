@@ -3,7 +3,7 @@
 <script>
 
 $(function() {
-	
+		
 	$('#inicioHorario').mask('99:99'); 
 	$('#fimHorario').mask('99:99'); 
 	$("#porcentagemFaturamento").numeric();

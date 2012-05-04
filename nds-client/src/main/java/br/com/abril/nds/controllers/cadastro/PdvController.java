@@ -26,7 +26,9 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -373,7 +375,7 @@ public class PdvController {
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
 		
-		pdvDTO.setImagem((InputStream) session.getAttribute(IMAGEM_PDV));
+		pdvDTO.setImagem((FileInputStream) session.getAttribute(IMAGEM_PDV));
 		
 		preencherTelefones(pdvDTO);
 		
@@ -544,9 +546,11 @@ public class PdvController {
 				
 		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
 		
+		atualizaImagemPDV((FileInputStream)uploadedFile.getFile(),1L,pathAplicacao, DIRETORIO_ARQUIVO);
+		
 		fileDir.mkdirs();
 
-		String nomeArquivo = "pdv_temp";
+		String nomeArquivo = "pdv_temp.jpeg";
 		
 		File fileArquivo = new File(fileDir, nomeArquivo);
 			
@@ -559,8 +563,10 @@ public class PdvController {
 						
 			fos = new FileOutputStream(fileArquivo);
 			
+			uploadedFile.getFile().reset();
+			
 			((FileInputStream)uploadedFile.getFile()).getChannel().size();
-			IOUtils.copyLarge(uploadedFile.getFile(), fos);
+			IOUtils.copyLarge(((FileInputStream)uploadedFile.getFile()), fos);
 			
 			session.setAttribute(IMAGEM_PDV, uploadedFile.getFile());
 			
@@ -583,6 +589,44 @@ public class PdvController {
 		return fileArquivo;
 	}
 
+	public void atualizaImagemPDV(FileInputStream foto, Long idPdv,String path, String diretorio) {
+				
+		File fileDir = new File(path, diretorio);
+		
+		fileDir.mkdirs();
+
+		String nomeArquivo = "pdv_" + idPdv + ".jpeg";
+		
+		File fileArquivo = new File(fileDir, nomeArquivo);		
+		
+		if(fileArquivo.exists())
+			fileArquivo.delete();
+		
+		FileOutputStream fos = null;
+		
+		try {
+						
+			fos = new FileOutputStream(fileArquivo);
+			
+			IOUtils.copyLarge(foto, fos);
+			
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao gravar o arquivo em disco!");
+			}
+		}	
+	}
+	
 	@Post
 	@Path("/excluirImagem")
 	public void excluirImagem(Long idPdv) {
