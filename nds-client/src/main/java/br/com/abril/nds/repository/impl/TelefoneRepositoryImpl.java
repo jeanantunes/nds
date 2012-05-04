@@ -35,12 +35,12 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Telefone> buscarTelefonesPessoa(Long idPessoa, Set<Long> idsIgnorar) {
-		StringBuilder hql = new StringBuilder("select p.telefones ");
-		hql.append(" from Pessoa p join p.telefones telefones ")
-		   .append(" where p.id = :idPessoa ");
+		StringBuilder hql = new StringBuilder("select telefone ");
+		hql.append(" from Telefone telefone ")
+		   .append(" where telefone.pessoa.id = :idPessoa ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			hql.append(" and telefones.id not in (:idsIgnorar) ");
+			hql.append(" and telefone.id not in (:idsIgnorar) ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());

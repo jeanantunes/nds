@@ -118,4 +118,17 @@ public class TelefoneFiadorRepositoryImpl extends AbstractRepository<TelefoneFia
 		
 		query.executeUpdate();
 	}
+
+	@Override
+	public boolean verificarTelefonePrincipalFiador(Long id) {
+		
+		Query query = this.getSession().createQuery(
+				"select t.id from TelefoneFiador t where t.fiador.id = :id and t.principal = :indTrue");
+		
+		query.setParameter("id", id);
+		query.setParameter("indTrue", true);
+		query.setMaxResults(1);
+		
+		return query.uniqueResult() != null;
+	}
 }

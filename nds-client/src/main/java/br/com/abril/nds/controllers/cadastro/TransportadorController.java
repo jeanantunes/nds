@@ -55,6 +55,8 @@ public class TransportadorController {
 	
 	private static final String ID_TRANSPORTADORA_EDICAO = "idTransportadoraEdicao";
 	
+	private static final String LISTA_VEICULOS_SALVAR_SESSAO = "listaVeiculosSalvarSessao";
+	
 	@Autowired
 	private TransportadorService transportadorService;
 	
@@ -218,32 +220,51 @@ public class TransportadorController {
 		
 		Object[] dados = new Object[2];
 		
-		dados[0] = this.getTableModelVeiculos(this.carregarVeiculos());
+		dados[0] = this.getTableModelVeiculos(this.pesquisarVeiculos());
 		
 		dados[1] = this.getTableModelMotoristas(this.carregarMotoristas());
 		
 		this.result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
-	private List<Veiculo> carregarVeiculos(){
+	@Post
+	public List<Veiculo> pesquisarVeiculos(){
 		
 		List<Veiculo> lista = this.transportadorService.buscarVeiculos();
 		
-		return lista == null ? new ArrayList<Veiculo>() : lista;
+		if (lista == null){
+			lista =  new ArrayList<Veiculo>();
+		}
+		
+		this.result.use(Results.json()).from(lista, "result");
+		
+		return lista;
 	}
 	
 	@Post
-	public void pesquisarVeiculos(){
+	public void adicionarVeiculo(Veiculo veiculo){
 		
-		this.result.use(Results.json()).from(this.carregarVeiculos(), "result");
+		List<Veiculo> lista = this.obterVeiculosSessao();
+		
+		lista.add(veiculo);
+		
+		this.httpSession.setAttribute(LISTA_VEICULOS_SALVAR_SESSAO, lista);
+		
+		this.result.use(Results.nothing());
 	}
 	
 	@Post
-	public void cadastrarVeiculo(Veiculo veiculo){
+	public void cadastrarVeiculos(){
 		
-		this.transportadorService.cadastarVeiculo(veiculo);
+		this.transportadorService.cadastrarVeiculos(this.obterVeiculosSessao());
 		
-		this.carregarVeiculos();
+		this.pesquisarVeiculos();
+	}
+	
+	@Post
+	public void cancelarCadastroVeiculos(){
+		
+		
 	}
 	
 	@Post
@@ -264,7 +285,16 @@ public class TransportadorController {
 		
 		this.excluirVeiculo(referencia);
 		
-		this.carregarVeiculos();
+		this.pesquisarVeiculos();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Veiculo> obterVeiculosSessao(){
+		
+		List<Veiculo> listaVeiculos = (List<Veiculo>) 
+				this.httpSession.getAttribute(LISTA_VEICULOS_SALVAR_SESSAO);
+		
+		return listaVeiculos == null ? new ArrayList<Veiculo>() : listaVeiculos;
 	}
 	
 	@Post

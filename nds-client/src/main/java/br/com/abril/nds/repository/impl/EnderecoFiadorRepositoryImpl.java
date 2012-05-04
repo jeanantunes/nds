@@ -94,4 +94,17 @@ public class EnderecoFiadorRepositoryImpl extends
 		
 		query.executeUpdate();
 	}
+
+	@Override
+	public boolean verificarEnderecoPrincipalFiador(Long id) {
+		
+		Query query = this.getSession().createQuery(
+				"select t.id from EnderecoFiador t where t.fiador.id = :id and t.principal = :indTrue");
+		
+		query.setParameter("id", id);
+		query.setParameter("indTrue", true);
+		query.setMaxResults(1);
+		
+		return query.uniqueResult() != null;
+	}
 }
