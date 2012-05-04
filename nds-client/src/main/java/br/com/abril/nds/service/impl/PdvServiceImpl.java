@@ -982,7 +982,7 @@ public class PdvServiceImpl implements PdvService {
 	
 	private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao);
+		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao,pdv.getCota().getPessoa());
 		
 		if (listaEnderecoAssociacao != null){
 		
