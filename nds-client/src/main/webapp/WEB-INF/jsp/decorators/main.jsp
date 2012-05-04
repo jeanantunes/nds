@@ -233,7 +233,7 @@ fieldset label {
 					<li><span class="classEstoque">&nbsp;</span><a
 						href="javascript:;">Estoque</a>
 						<ul>
-							<li><a href="<c:url value="estoque/consultaNotas"/>">Consulta
+							<li><a href="<c:url value="/estoque/consultaNotas"/>">Consulta
 									de Notas</a>
 							</li>
 							<li><a href='<c:url value="/estoque/diferenca/consulta"/>'>Consulta

@@ -204,7 +204,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 				.append(" (select f.recebeCobrancaEmail " +
 						"  from FormaCobranca f " +
 						"  where f.parametroCobrancaCota=parametroCobranca " +
-						"  and f.principal=true) ")
+						"  and f.principal=true group by f.principal )")
 			.append(")");
 		}
 		

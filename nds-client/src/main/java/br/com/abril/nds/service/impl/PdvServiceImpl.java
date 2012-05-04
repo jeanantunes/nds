@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CaracteristicaDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -45,6 +47,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.ClusterPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
 import br.com.abril.nds.repository.MaterialPromocionalRepository;
@@ -56,6 +59,7 @@ import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
 import br.com.abril.nds.repository.TiposEstabelecimentoRepository;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
@@ -100,6 +104,15 @@ public class PdvServiceImpl implements PdvService {
 	@Autowired
 	private TiposEstabelecimentoRepository tiposEstabelecimentoRepository;
 	
+	//@Autowired
+	///private EnderecoPDVRepository enderecoPDVRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private EnderecoService enderecoService;
+	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
 	
@@ -108,6 +121,7 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Autowired
 	private TelefoneService telefoneService;
+
 	
 	@Transactional(readOnly=true)
 	@Override
@@ -224,6 +238,31 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Transactional(readOnly=true)
 	@Override
+	public List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,	Set<Long> idsIgnorar) {
+		
+		/*if (idPDV == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdPDV é obrigatório");
+		}
+		
+		List<EnderecoAssociacaoDTO> listaEndAssoc =
+				this.enderecoPDVRepository.buscaEnderecosPDV(idPDV, idsIgnorar);
+		
+		return listaEndAssoc;*/
+		
+		return null;
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EnderecoPDV buscarEnderecoPorEnderecoPDV(Long idPDV, Long idEndereco) {
+		
+		return null;
+		
+		/*return this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(idEndereco, idPDV);*/
+	}
+
+	@Transactional(readOnly=true)
+	@Override
 	public PdvDTO obterPDV(Long idCota, Long idPdv){
 		
 		PDV pdv = pdvRepository.obterPDV(idCota, idPdv);
@@ -241,9 +280,7 @@ public class PdvServiceImpl implements PdvService {
 		
 		return pdvDTO;
 	}
-	
-	
-	
+
 	@Transactional
 	@Override
 	public void excluirPDV(Long idPdv){
@@ -448,7 +485,7 @@ public class PdvServiceImpl implements PdvService {
 
 	private void salvarTelefonesPdv(PDV pdv, List<TelefoneAssociacaoDTO> listaTelefones) {
 		
-		this.telefoneService.cadastrarTelefone(listaTelefones);
+		this.telefoneService.cadastrarTelefone(listaTelefones, pdv.getCota().getPessoa());
 		
 		if (listaTelefones != null){
 			
@@ -918,5 +955,81 @@ public class PdvServiceImpl implements PdvService {
 		return lista;
 	}	
 
+/*private void processarEnderecos(PDV pdv,
+List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
+		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
+		
+			this.salvarEnderecosPDV(pdv, listaEnderecoAssociacaoSalvar);
+		}
+		
+		if (listaEnderecoAssociacaoRemover != null && !listaEnderecoAssociacaoRemover.isEmpty()) {
+		
+			this.removerEnderecosPDV(pdv, listaEnderecoAssociacaoRemover);
+		}
+	}*/
+	
+	/*private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+
+		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao);
+		
+		if (listaEnderecoAssociacao != null){
+		
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+	
+				EnderecoPDV enderecoPDV = 
+						this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao.getId(), pdv.getId());
+	
+				if (enderecoPDV == null) {
+	
+					enderecoPDV = new EnderecoPDV();
+					enderecoPDV.setPdv(pdv);
+					
+					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
+					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+					
+					this.enderecoPDVRepository.adicionar(enderecoPDV);
+				} else {
+					
+					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
+					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+					
+					this.enderecoPDVRepository.alterar(enderecoPDV);
+				}
+			}
+		}
+	}
+	
+	private void removerEnderecosPDV(PDV pdv , List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+		
+		List<Long> idsEndereco = new ArrayList<Long>();
+		
+		List<Long> idsEnderecoPDV= new ArrayList<Long>();
+
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+			if (enderecoAssociacao.getEndereco().getId() != null){
+				idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+			}
+
+			EnderecoPDV enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao.getId(), pdv.getId());
+			
+			if (enderecoPDV != null && enderecoPDV.getEndereco() != null){
+				idsEnderecoPDV.add(enderecoPDV.getId());
+			}
+		}
+		
+		if (!idsEnderecoPDV.isEmpty()){
+			
+			this.enderecoPDVRepository.excluirEnderecosPDV(idsEnderecoPDV);
+		}
+		
+		if (!idsEndereco.isEmpty()){
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
+	}
+*/
 
 }

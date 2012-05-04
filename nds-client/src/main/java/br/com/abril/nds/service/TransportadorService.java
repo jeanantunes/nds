@@ -37,7 +37,9 @@ public interface TransportadorService {
 
 	Veiculo buscarVeiculoPorId(Long idVeiculo);
 
-	void cadastarVeiculo(Veiculo veiculo);
+	void cadastrarVeiculo(Veiculo veiculo);
+	
+	void cadastrarVeiculos(List<Veiculo> veiculos);
 
 	void excluirVeiculo(Long idVeiculo);
 

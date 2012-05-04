@@ -52,12 +52,12 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar) {
-		StringBuilder hql = new StringBuilder("select p.enderecos ");
-		hql.append(" from Pessoa p join p.enderecos enderecos ")
-		   .append(" where p.id = :idPessoa ");
+		StringBuilder hql = new StringBuilder("select endereco ");
+		hql.append(" from Endereco endereco ")
+		   .append(" where endereco.pessoa.id = :idPessoa ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			hql.append(" and enderecos.id not in (:idsIgnorar) ");
+			hql.append(" and endereco.id not in (:idsIgnorar) ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());

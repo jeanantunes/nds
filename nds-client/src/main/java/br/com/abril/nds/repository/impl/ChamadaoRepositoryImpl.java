@@ -40,7 +40,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		hql.append("SELECT ")
 			.append(" sum(estoqueProdCota.QTDE_RECEBIDA ")
 			.append(" - estoqueProdCota.QTDE_DEVOLVIDA) as qtdExemplaresTotal, ")
-			.append(" sum(produtoEdicao.PRECO_VENDA * ")
+			.append(" sum((produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) * ")
 			.append(" (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA)) as valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
@@ -67,8 +67,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 			.append("produto.CODIGO as codigoProduto, ")
 			.append("produto.NOME as nomeProduto, ")
 			.append("produtoEdicao.NUMERO_EDICAO as numeroEdicao, ")
-			.append("produtoEdicao.PRECO_VENDA as precoCapa, ")
-			.append("produtoEdicao.DESCONTO as precoComDesconto, ")
+			.append("produtoEdicao.PRECO_VENDA as precoVenda, ")
+			.append("(produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) as precoDesconto, ")
 			.append("estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA as reparte, ")
 			.append("(case ")
 				.append("when (select count(produtoFor.fornecedores_id) from produto_fornecedor produtoFor ")
@@ -82,7 +82,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 					.append("and fornecedor.JURIDICA_ID = pessoa.ID and produtoFor.PRODUTO_ID = produto.ID) ")
 				.append("else null end) as nomeFornecedor, ")
 			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
-			.append("produtoEdicao.PRECO_VENDA * ")
+			.append("(produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) * ")
 			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal, ")
 			.append("lancamento.ID as idLancamento ");
 		
@@ -104,12 +104,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 					hql.append(" order by numeroEdicao ");
 					break;
 				
-				case PRECO_CAPA:
-					hql.append(" order by precoCapa ");
+				case PRECO_VENDA:
+					hql.append(" order by precoVenda ");
 					break;
 					
-				case VALOR_DESCONTO:
-					hql.append(" order by precoComDesconto ");
+				case PRECO_DESCONTO:
+					hql.append(" order by precoDesconto ");
 					break;
 					
 				case REPARTE:
@@ -140,8 +140,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implem
 		
 		Query query = this.getSession().createSQLQuery(hql.toString())
 			.addScalar("codigoProduto").addScalar("nomeProduto")
-			.addScalar("numeroEdicao", StandardBasicTypes.LONG).addScalar("precoCapa")
-			.addScalar("precoComDesconto").addScalar("reparte")
+			.addScalar("numeroEdicao", StandardBasicTypes.LONG).addScalar("precoVenda")
+			.addScalar("precoDesconto").addScalar("reparte")
 			.addScalar("nomeFornecedor").addScalar("dataRecolhimento")
 			.addScalar("valorTotal").addScalar("idLancamento", StandardBasicTypes.LONG);
 		

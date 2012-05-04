@@ -35,26 +35,29 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String numeroEdicao;
 	
-	@Export(label = "Preço Venda", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String precoVenda;
+	
+	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
+	private String precoDesconto;
 	
 	private String pacotePadrao;
 	
-	@Export(label = "Exemplar", alignment = Alignment.RIGHT, exhibitionOrder = 8)
+	@Export(label = "Exemplar", alignment = Alignment.RIGHT, exhibitionOrder = 9)
 	private BigDecimal quantidade;
 	
-	@Export(label = "Tipo de Diferença", exhibitionOrder = 6)
+	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
 	private String tipoDiferenca;
 	
-	@Export(label = "Nota", exhibitionOrder = 7)
+	@Export(label = "Nota", exhibitionOrder = 8)
 	private String numeroNotaFiscal;
 	
-	@Export(label = "Status", exhibitionOrder = 9, alignment = Alignment.CENTER)
+	@Export(label = "Status", exhibitionOrder = 10, alignment = Alignment.CENTER)
 	private String statusAprovacao;
 	
 	private String motivoAprovacao;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 10)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 11)
 	private String valorTotalDiferenca;
 	
 	private BigDecimal qtdeEstoqueAtual;
@@ -152,6 +155,20 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setPrecoVenda(String precoVenda) {
 		this.precoVenda = precoVenda;
+	}
+
+	/**
+	 * @return the precoDesconto
+	 */
+	public String getPrecoDesconto() {
+		return precoDesconto;
+	}
+
+	/**
+	 * @param precoDesconto the precoDesconto to set
+	 */
+	public void setPrecoDesconto(String precoDesconto) {
+		this.precoDesconto = precoDesconto;
 	}
 
 	/**
