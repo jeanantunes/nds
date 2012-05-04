@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -37,6 +39,10 @@ public class Telefone implements Serializable {
 	
 	@Column(name = "DDD")
 	private String ddd;
+	
+	@ManyToOne
+	@JoinColumn(name = "PESSOA_ID")
+	private Pessoa pessoa;
 
 	public Long getId() {
 		return id;
@@ -68,6 +74,14 @@ public class Telefone implements Serializable {
 
 	public void setDdd(String ddd) {
 		this.ddd = ddd;
+	}
+	
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
 	}
 	
 	public String toString(){

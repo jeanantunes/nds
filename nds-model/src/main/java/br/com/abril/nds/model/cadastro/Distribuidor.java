@@ -116,6 +116,10 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
+	
+	@OneToMany(mappedBy="distribuidor")
+	private List<TipoGarantiaAceita> tiposGarantiasAceita;
+	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
 
@@ -254,6 +258,22 @@ public class Distribuidor {
 	public void setParametroContratoCota(ParametroContratoCota parametroContratoCota) {
 		this.parametroContratoCota = parametroContratoCota;
 	}
+
+	/**
+	 * @return the tiposGarantiasAceita
+	 */
+	public List<TipoGarantiaAceita> getTiposGarantiasAceita() {
+		return tiposGarantiasAceita;
+	}
+
+	/**
+	 * @param tiposGarantiasAceita the tiposGarantiasAceita to set
+	 */
+	public void setTiposGarantiasAceita(
+			List<TipoGarantiaAceita> tiposGarantiasAceita) {
+		this.tiposGarantiasAceita = tiposGarantiasAceita;
+	}
+	
 
 	public boolean isRequerAutorizacaoEncalheSuperaReparte() {
 		return requerAutorizacaoEncalheSuperaReparte;

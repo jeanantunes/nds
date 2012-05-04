@@ -35,15 +35,15 @@
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 80,
+				display : 'Preço Venda R$',
+				name : 'precoVenda',
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Desconto R$',
-				name : 'valorDesconto',
-				width : 80,
+				display : 'Preço Desconto R$',
+				name : 'precoDesconto',
+				width : 110,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -55,7 +55,7 @@
 			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
-				width : 150,
+				width : 130,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -67,7 +67,7 @@
 			}, {
 				display : 'Valor R$',
 				name : 'valorTotal',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -201,7 +201,7 @@
 		
 			var checado = this.checked;
 			
-			clickLine(this, checado);
+			clickLineFlexigrid(this, checado);
 		});
 		
 		if (input.checked) {
@@ -224,7 +224,7 @@
 		
 			var checado = this.checked;
 			
-			clickLine(this, checado);
+			clickLineFlexigrid(this, checado);
 			
 			if (checado) {
 				
@@ -253,20 +253,6 @@
 	
 	function verifyCheckAll() {
 		return ($("#checkAll").attr("checked") == "checked");
-	}
-	
-	function clickLine(inputCheck, select) {
-		
-		var linha = $(inputCheck).parents()[2];
-		
-		if (select) {
-			
-			$(linha).attr("class", "erow trSelected");
-			
-		} else {
-			
-			$(linha).attr("class", "erow");
-		}
 	}
 	
 	function duplicarCamposParciais() {

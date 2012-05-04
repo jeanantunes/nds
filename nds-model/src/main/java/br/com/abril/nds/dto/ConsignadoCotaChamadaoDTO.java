@@ -14,9 +14,9 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	
 	private Long numeroEdicao;
 	
-	private BigDecimal precoCapa;
+	private BigDecimal precoVenda;
 	
-	private BigDecimal precoComDesconto;
+	private BigDecimal precoDesconto;
 	
 	private BigDecimal reparte;
 	
@@ -71,31 +71,31 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	}
 
 	/**
-	 * @return the precoCapa
+	 * @return the precoVenda
 	 */
-	public BigDecimal getPrecoCapa() {
-		return precoCapa;
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
 	}
 
 	/**
-	 * @param precoCapa the precoCapa to set
+	 * @param precoVenda the precoVenda to set
 	 */
-	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
 	}
 
 	/**
-	 * @return the precoComDesconto
+	 * @return the precoDesconto
 	 */
-	public BigDecimal getPrecoComDesconto() {
-		return precoComDesconto;
+	public BigDecimal getPrecoDesconto() {
+		return precoDesconto;
 	}
 
 	/**
-	 * @param precoComDesconto the precoComDesconto to set
+	 * @param precoDesconto the precoDesconto to set
 	 */
-	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.precoComDesconto = precoComDesconto;
+	public void setPrecoDesconto(BigDecimal precoDesconto) {
+		this.precoDesconto = precoDesconto;
 	}
 
 	/**

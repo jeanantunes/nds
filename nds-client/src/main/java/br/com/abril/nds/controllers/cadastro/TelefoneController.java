@@ -267,7 +267,7 @@ public class TelefoneController {
 			}
 		}
 		
-		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().serialize();
+		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().exclude("telefone.pessoa").serialize();
 	}
 
 	@SuppressWarnings("unchecked")

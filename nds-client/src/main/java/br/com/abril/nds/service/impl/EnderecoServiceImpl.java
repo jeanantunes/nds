@@ -13,6 +13,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.service.EnderecoService;
@@ -47,7 +48,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 	
 	@Override
 	@Transactional
-	public void cadastrarEnderecos(List<EnderecoAssociacaoDTO> listaEnderecos){
+	public void cadastrarEnderecos(List<EnderecoAssociacaoDTO> listaEnderecos, Pessoa pessoa){
 		
 		if (listaEnderecos != null){
 		
@@ -68,6 +69,8 @@ public class EnderecoServiceImpl implements EnderecoService {
 			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEnderecos){
 				
 				this.validarEndereco(enderecoAssociacaoDTO.getEndereco(), enderecoAssociacaoDTO.getTipoEndereco());
+				
+				enderecoAssociacaoDTO.getEndereco().setPessoa(pessoa);
 				
 				if (enderecoAssociacaoDTO.getEndereco().getId() == null){
 					
@@ -139,7 +142,10 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Transactional
 	public void removerEnderecos(Collection<Long> idsEndereco) {
 		
-		this.enderecoRepository.removerEnderecos(idsEndereco);
+		if (idsEndereco != null && !idsEndereco.isEmpty()){
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
 	}
 
 	@Override
@@ -159,7 +165,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		for (Endereco endereco : lista){
 			
-			EnderecoAssociacaoDTO dto = new EnderecoAssociacaoDTO(false, endereco, null, null);
+			EnderecoAssociacaoDTO dto = new EnderecoAssociacaoDTO(false, null, null, endereco);
 			ret.add(dto);
 		}
 		

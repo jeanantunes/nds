@@ -200,7 +200,12 @@ public class EntregadorController {
 		entregador.setPessoa(pessoaFisica);
 		entregador.setCodigo(codigoEntregador);
 		entregador.setComissionado(isComissionado);
-		entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
+		
+		if (percentualComissao != null && !percentualComissao.isEmpty()) {
+
+			entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
+		}
+		
 		entregador.setProcuracao(procuracao);
 
 		if (procuracao && numeroCotaProcuracao == null) {
@@ -306,7 +311,12 @@ public class EntregadorController {
 
 		entregador.setCodigo(codigoEntregador);
 		entregador.setComissionado(isComissionado);
-		entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
+		
+		if (percentualComissao != null && !percentualComissao.isEmpty()) {
+
+			entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao )));
+		}
+
 		entregador.setProcuracao(procuracao);
 		entregador.setPessoa(pessoaJuridica);
 

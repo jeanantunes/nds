@@ -103,7 +103,7 @@
 			<tr>
 			  <td>&nbsp;</td>
 			  <td>
-			  	<span class="bt_add" id="${param.telaEndereco}.btnIncluirNovoEndereco">
+			  	<span class="bt_add" id="${param.telaEndereco}btnIncluirNovoEndereco">
 			  		<a href="javascript:;" onclick="${param.telaEndereco}.incluirNovoEndereco();" id="${param.telaEndereco}linkIncluirNovoEndereco">Incluir Novo</a>
 			  	</span>
 			  </td>

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -62,11 +64,11 @@ public class DateUtilTest {
 		listaCodigosDiasSemana.add(Calendar.THURSDAY);
 		listaCodigosDiasSemana.add(Calendar.SUNDAY);
 		
-		List<Date> periodo = 
+		Set<Date> periodo = 
 			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
 				dataInicial, dataFinal, listaCodigosDiasSemana);
 		
-		List<Date> periodoEsperado = new ArrayList<Date>();
+		Set<Date> periodoEsperado = new TreeSet<Date>();
 		
 		periodoEsperado.add(DateUtil.parseDataPTBR("15/04/2012"));
 		periodoEsperado.add(DateUtil.parseDataPTBR("16/04/2012"));
