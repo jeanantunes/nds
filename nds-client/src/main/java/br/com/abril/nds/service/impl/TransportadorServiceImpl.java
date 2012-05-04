@@ -163,7 +163,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
 			
-			this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar);
+			this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar, transportador.getPessoaJuridica());
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
 				
@@ -205,7 +205,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		if (listaEnderecosAdicionar != null && !listaEnderecosAdicionar.isEmpty()){
 			
-			this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar);
+			this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar, transportador.getPessoaJuridica());
 			
 			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
 				
@@ -407,7 +407,35 @@ public class TransportadorServiceImpl implements TransportadorService {
 
 	@Override
 	@Transactional
-	public void cadastarVeiculo(Veiculo veiculo) {
+	public void cadastrarVeiculo(Veiculo veiculo) {
+		
+		this.validarDadosEntradaVeiculo(veiculo);
+		
+		if (veiculo.getId() == null){
+			
+			this.veiculoRepository.adicionar(veiculo);
+		} else {
+			
+			this.veiculoRepository.alterar(veiculo);
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void cadastrarVeiculos(List<Veiculo> veiculos){
+		
+		for (Veiculo veiculo : veiculos){
+			
+			this.validarDadosEntradaVeiculo(veiculo);
+		}
+		
+		for (Veiculo veiculo : veiculos){
+			
+			this.cadastrarVeiculo(veiculo);
+		}
+	}
+
+	private void validarDadosEntradaVeiculo(Veiculo veiculo) {
 		
 		if (veiculo == null){
 			
@@ -434,14 +462,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 		if (!msgs.isEmpty()){
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
-		}
-		
-		if (veiculo.getId() == null){
-			
-			this.veiculoRepository.adicionar(veiculo);
-		} else {
-			
-			this.veiculoRepository.alterar(veiculo);
 		}
 	}
 
