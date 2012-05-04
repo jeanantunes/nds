@@ -328,10 +328,18 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO.setNomeProduto(dto.getNomeProduto());
 			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
 			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
-			digitacaoContagemDevolucaoVO.setDiferenca(String.valueOf( (dto.getDiferenca() == null)?BigDecimal.ZERO.intValue():dto.getDiferenca().intValue()));
 			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
+			
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
+			
+			if(dto.getQtdNota()==null) {
+				digitacaoContagemDevolucaoVO.setDiferenca("");
+			} else {
+				digitacaoContagemDevolucaoVO.setDiferenca(String.valueOf( (dto.getDiferenca() == null)?BigDecimal.ZERO.intValue():dto.getDiferenca().intValue()));
+			}
+			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
+			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);

@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +21,6 @@ import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
-import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -116,17 +114,6 @@ public class PainelMonitorNFEController {
 			
 		}
 	}
-	
-	/**
-	 * Valida o preenchimento obrigatório do campo informado.
-	 */
-	private void validarPreenchimentoObrigatorio(List<String> mensagens, String field, String label){
-		
-		if (field == null || field.isEmpty()) {
-			mensagens.add(" O preenchimento do campo " + field + " é obrigatório ");
-		} 
-		
-	}	
 	
 	private List<String> validarCampos(String dataInicial, String dataFinal) {
 		

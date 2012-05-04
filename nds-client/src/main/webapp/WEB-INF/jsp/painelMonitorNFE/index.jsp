@@ -118,8 +118,15 @@ var PainelMonitorNFE = {
 				value.cell.sel = '<input type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>'+hiddenField;
 				
 				var descMovimentoIntegracao = value.cell.movimentoIntegracao;
+
+				var tooltipMovimentoIntegracao = '';
 				
-				var tooltipMovimentoIntegracao = '<a href="javascript:;"><img title="'+descMovimentoIntegracao+'" src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" hspace="3"/></a>';
+				if(typeof descMovimentoIntegracao == 'undefined') {
+					tooltipMovimentoIntegracao = " - ";
+				} else {
+					tooltipMovimentoIntegracao = '<a href="javascript:;"><img title="'+descMovimentoIntegracao+'" src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" hspace="3"/></a>';
+				}
+				
 				
 				value.cell.movimentoIntegracao = tooltipMovimentoIntegracao;
 				

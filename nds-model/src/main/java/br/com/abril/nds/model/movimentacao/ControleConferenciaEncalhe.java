@@ -13,6 +13,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * Entidade que abstrai a sinalização do status da 
+ * conferência de encalhe.
+ * 
+ * @author Discover Technology 
+ *
+ */
 @Entity
 @Table(name = "CONTROLE_CONFERENCIA_ENCALHE")
 @SequenceGenerator(name="CTRL_CONF_ENCALHE_SEQ", initialValue = 1, allocationSize = 1)
