@@ -116,6 +116,10 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
+	
+	@OneToMany(mappedBy="distribuidor")
+	private List<TipoGarantiaAceita> tiposGarantiasAceita;
+	
 
 	public Long getId() {
 		return id;
@@ -250,6 +254,21 @@ public class Distribuidor {
 	 */
 	public void setParametroContratoCota(ParametroContratoCota parametroContratoCota) {
 		this.parametroContratoCota = parametroContratoCota;
+	}
+
+	/**
+	 * @return the tiposGarantiasAceita
+	 */
+	public List<TipoGarantiaAceita> getTiposGarantiasAceita() {
+		return tiposGarantiasAceita;
+	}
+
+	/**
+	 * @param tiposGarantiasAceita the tiposGarantiasAceita to set
+	 */
+	public void setTiposGarantiasAceita(
+			List<TipoGarantiaAceita> tiposGarantiasAceita) {
+		this.tiposGarantiasAceita = tiposGarantiasAceita;
 	}
 	
 
