@@ -22,11 +22,11 @@ public class ChamadaoVO {
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 3)
 	private String edicao;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
-	private String precoCapa;
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
+	private String precoVenda;
 	
-	@Export(label = "Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
-	private String valorDesconto;
+	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	private String precoDesconto;
 	
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String reparte;
@@ -85,31 +85,31 @@ public class ChamadaoVO {
 	}
 
 	/**
-	 * @return the precoCapa
+	 * @return the precoVenda
 	 */
-	public String getPrecoCapa() {
-		return precoCapa;
+	public String getPrecoVenda() {
+		return precoVenda;
 	}
 
 	/**
-	 * @param precoCapa the precoCapa to set
+	 * @param precoVenda the precoVenda to set
 	 */
-	public void setPrecoCapa(String precoCapa) {
-		this.precoCapa = precoCapa;
+	public void setPrecoVenda(String precoVenda) {
+		this.precoVenda = precoVenda;
 	}
 
 	/**
-	 * @return the valorDesconto
+	 * @return the precoDesconto
 	 */
-	public String getValorDesconto() {
-		return valorDesconto;
+	public String getPrecoDesconto() {
+		return precoDesconto;
 	}
 
 	/**
-	 * @param valorDesconto the valorDesconto to set
+	 * @param precoDesconto the precoDesconto to set
 	 */
-	public void setValorDesconto(String valorDesconto) {
-		this.valorDesconto = valorDesconto;
+	public void setPrecoDesconto(String precoDesconto) {
+		this.precoDesconto = precoDesconto;
 	}
 
 	/**
