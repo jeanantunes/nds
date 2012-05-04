@@ -21,13 +21,17 @@
 			<jsp:include page="dadosCadastraisPJ.jsp" />
 		</div>
 		
-		<jsp:include page="../endereco/index.jsp">
-			<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
-		</jsp:include>
+		<div id="manutencaoEnderecos">
+			<jsp:include page="../endereco/index.jsp">
+				<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
+			</jsp:include>
+		</div>
 		
-		<jsp:include page="../telefone/index.jsp">
-			<jsp:param value="ENTREGADOR" name="tela"/>
-		</jsp:include>
+		<div id="manutencaoTelefones">
+			<jsp:include page="../telefone/index.jsp">
+				<jsp:param value="ENTREGADOR" name="tela"/>
+			</jsp:include>
+		</div>
 		
 
 	</div>

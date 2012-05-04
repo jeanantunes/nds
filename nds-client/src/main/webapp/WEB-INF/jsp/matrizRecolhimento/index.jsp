@@ -27,7 +27,7 @@
 						}
 						
 						rows += '<label>' + resumo.dataFormatada;
-						rows += '<a href="javascript:;" onclick="mudaGrid();" style="float: right;">';
+						rows += '<a href="javascript:;" onclick="visualizarMatrizBalanceamentoPorDia(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
 						rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
 						rows += '</a>';
 						rows += '</label>';
@@ -76,6 +76,94 @@
 					
 				}
 			);
+		}
+		
+		function visualizarMatrizBalanceamentoPorDia(data) {
+			
+			$(".balanceamentoGrid").flexOptions({
+				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizBalanceamentoPorDia' />",
+				params: [
+			         {name:'dataFormatada', value: data}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".balanceamentoGrid").flexReload();
+		}
+		
+		function executarPreProcessamento(resultado) {
+			
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return resultado;
+			}
+			
+			$.each(resultado.rows, function(index, row) {
+				
+				var inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
+								   + ' value="' + row.cell.sequencia + '"'
+								   + ' style="width: 25px;" />';
+								   
+			   	var inputNovaData = '<input type="text" id="novaData' + row.id + '"'
+								  + ' value="' + row.cell.novaData + '"'
+			   					  + ' style="width:65px; margin-right:5px; float:left;" />';
+			   				
+			   	var divRecarregarData = '<div class="bt_atualizarIco">'
+			   						  + '<a href="javascript:;">&nbsp;</a></div>';
+				
+   				var novaData = inputNovaData + divRecarregarData;
+			   				
+				var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
+							   + ' name="checkBalanceamento"'
+							   + ' value="' + row.id + '"'
+							   + ' onclick="checarBalanceamento()" />';
+					
+		   		row.cell.sequencia = inputSequencia;
+				row.cell.novaData = novaData;
+				row.cell.reprogramar = inputCheck;
+			});
+				
+			$(".grids").show();
+			
+			$("#fieldsetGrids").show();
+			
+			$("#bt_fechar").show();
+			
+			return resultado;
+		}
+		
+		function checarBalanceamento() {
+			
+			$("input[name='checkBalanceamento']").each(function() {
+			
+				var checado = this.checked;
+				
+				clickLineFlexigrid(this, checado);
+				
+				if (!checado) {
+					
+					$("#checkAllBalanceamento").attr("checked", false);
+				}
+			});
+		}
+		
+		function selecionarTodos(input) {
+			
+			checkAll(input, "checkBalanceamento");
+			
+			$("input[name='checkBalanceamento']").each(function() {
+			
+				var checado = this.checked;
+				
+				clickLineFlexigrid(this, checado);
+			});
 		}
 	
 		function obterParametrosPesquisa() {
@@ -160,7 +248,9 @@
 		}
 	
 		function inicializar() {
-				
+			
+			iniciarGrid();
+			
 			$("#dataPesquisa").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -174,6 +264,125 @@
 			$("input[name='numeroSemana']").numeric();
 
 			carregarDadosPesquisa();
+		}
+		
+		function iniciarGrid() {
+			
+			$(".balanceamentoGrid").flexigrid({
+				preProcess: executarPreProcessamento,
+				dataType : 'json',
+				colModel : [ {
+					display : 'SM',
+					name : 'sequencia',
+					width : 33,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 50,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'numeroEdicao',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Preço Capa R$',
+					name : 'precoCapa',
+					width : 45,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Fornecedor',
+					name : 'fornecedor',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Editor',
+					name : 'editor',
+					width : 40,
+					sortable : true,
+					align : 'left',
+				}, {
+					display : 'Parcial',
+					name : 'parcial',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Brinde',
+					name : 'brinde',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Lançamento',
+					name : 'dataLancamento',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Recolhimento',
+					name : 'dataRecolhimento',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Sede',
+					name : 'sede',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Atendida',
+					name : 'atendida',
+					width : 50,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Exemplar',
+					name : 'qtdeExemplares',
+					width : 45,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Total R$',
+					name : 'valorTotal',
+					width : 50,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Nova Data',
+					name : 'novaData',
+					width : 110,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Reprog.',
+					name : 'reprogramar',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "sequencia",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180
+			});
 		}
 		
 		$(function() {
@@ -272,6 +481,11 @@
 							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Valor
 						</a>
 					</span>
+					<span class="bt_novos" title="Salvar Conferência">
+						<a href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_salvar.gif'/>">Salvar
+						</a>
+					</span>
 				</td>
 				
 				<td width="207">
@@ -302,6 +516,12 @@
 		
 		<div class="grids" style="display: none;">
 
+			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float:right; display:none;">
+				<a href="javascript:;" onclick="fechaGrid();">
+					<img src="../images/ico_excluir.gif" hspace="5" border="0"/>Fechar
+				</a>
+			</span>
+
 			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right; display: none;">
 				
 				<a href="javascript:;" onclick="fechaGrid();">
@@ -327,7 +547,7 @@
 					<td width="150">
 						<span class="bt_sellAll">
 							<label for="sel">Selecionar Todos</label>
-							<input type="checkbox" name="Todos" id="sel" onclick="checkAll();" style="float: left;" />
+							<input type="checkbox" name="checkAllBalanceamento" id="checkAllBalanceamento" onclick="selecionarTodos(this);" style="float: left;" />
 						</span>
 					</td>
 				</tr>
@@ -337,7 +557,7 @@
 		<!-- GRID -->
 		
 		<div id="gridMatriz" style="display: none;">
-			<table class="balanceamentoGrid"></table>
+			<table class="balanceamentoGrid2"></table>
 		</div>
 		
 	</fieldset>
