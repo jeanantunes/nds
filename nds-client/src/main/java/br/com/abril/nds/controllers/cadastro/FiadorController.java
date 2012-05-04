@@ -402,11 +402,67 @@ public class FiadorController {
 		List<EnderecoAssociacaoDTO> listaEnderecosAdicionar = (List<EnderecoAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
+		if (listaEnderecosAdicionar == null || listaEnderecosAdicionar.isEmpty()){
+			
+			List<EnderecoAssociacaoDTO> listaEnderecosExibir = (List<EnderecoAssociacaoDTO>) 
+					this.httpSession.getAttribute(LISTA_ENDERECOS_EXIBICAO);
+			
+			if (listaEnderecosExibir == null || listaEnderecosExibir.isEmpty()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 endereço.");
+			}
+			
+			boolean valido = false;
+			
+			for (EnderecoAssociacaoDTO dto : listaEnderecosExibir){
+			
+				if (dto.getTipoEndereco() != null){
+					
+					valido = true;
+					break;
+				}
+			}
+			
+			
+			if (!valido){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 endereço.");
+			}
+		}
+		
 		List<EnderecoAssociacaoDTO> listaEnderecosRemover = (List<EnderecoAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		if (listaTelefone == null || listaTelefone.keySet().isEmpty()){
+			
+			List<TelefoneAssociacaoDTO> list = (List<TelefoneAssociacaoDTO>) 
+					this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
+			
+			if (list == null || list.isEmpty()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 telefone.");
+			}
+			
+			boolean valido = false;
+			
+			for (TelefoneAssociacaoDTO dto : list){
+			
+				if (dto.getTipoTelefone() != null){
+					
+					valido = true;
+					break;
+				}
+			}
+			
+			
+			if (!valido){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 telefone.");
+			}
+		}
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAdicionar = new ArrayList<TelefoneAssociacaoDTO>();
 		if (listaTelefone != null){

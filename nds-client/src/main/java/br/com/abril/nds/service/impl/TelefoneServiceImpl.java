@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
@@ -31,7 +32,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 	
 	@Transactional
 	@Override
-	public void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones){
+	public void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones, Pessoa pessoa){
 		
 		if (listaTelefones == null){
 			
@@ -54,6 +55,8 @@ public class TelefoneServiceImpl implements TelefoneService {
 		
 		for (TelefoneAssociacaoDTO associacaoTelefone : listaTelefones){
 			this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
+			
+			associacaoTelefone.getTelefone().setPessoa(pessoa);
 			
 			if (associacaoTelefone.getTelefone().getId() == null){
 				this.telefoneRepository.adicionar(associacaoTelefone.getTelefone());
@@ -115,7 +118,11 @@ public class TelefoneServiceImpl implements TelefoneService {
 	@Override
 	public void removerTelefones(Collection<Long> listaTelefones) {
 		try {
-			this.telefoneRepository.removerTelefones(listaTelefones);
+			
+			if (listaTelefones != null && !listaTelefones.isEmpty()){
+				
+				this.telefoneRepository.removerTelefones(listaTelefones);
+			}
 		} catch (Exception e) {
 			//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
 			//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer

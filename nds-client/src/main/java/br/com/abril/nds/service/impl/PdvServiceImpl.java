@@ -512,7 +512,7 @@ public class PdvServiceImpl implements PdvService {
 
 	private void salvarTelefonesPdv(PDV pdv, List<TelefoneAssociacaoDTO> listaTelefones) {
 		
-		this.telefoneService.cadastrarTelefone(listaTelefones);
+		this.telefoneService.cadastrarTelefone(listaTelefones, pdv.getCota().getPessoa());
 		
 		if (listaTelefones != null){
 			
