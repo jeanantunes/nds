@@ -63,6 +63,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		DESCRICAO_PRODUTO("descricaoProduto"),
 		NUMERO_EDICAO("numeroEdicao"),
 		PRECO_VENDA("precoVenda"),
+		PRECO_DESCONTO("precoDesconto"),
 		TIPO_DIFERENCA("tipoDiferenca"),
 		NUMERO_NOTA_FISCAL("numeroNotaFiscal"),
 		QUANTIDADE("quantidade"),
