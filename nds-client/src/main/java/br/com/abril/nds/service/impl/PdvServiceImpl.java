@@ -24,8 +24,6 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.EnderecoFiador;
-import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -49,7 +47,6 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.ClusterPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
@@ -107,8 +104,8 @@ public class PdvServiceImpl implements PdvService {
 	@Autowired
 	private TiposEstabelecimentoRepository tiposEstabelecimentoRepository;
 	
-	@Autowired
-	private EnderecoPDVRepository enderecoPDVRepository;
+	//@Autowired
+	///private EnderecoPDVRepository enderecoPDVRepository;
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
@@ -243,21 +240,25 @@ public class PdvServiceImpl implements PdvService {
 	@Override
 	public List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,	Set<Long> idsIgnorar) {
 		
-		if (idPDV == null){
+		/*if (idPDV == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdPDV é obrigatório");
 		}
 		
 		List<EnderecoAssociacaoDTO> listaEndAssoc =
 				this.enderecoPDVRepository.buscaEnderecosPDV(idPDV, idsIgnorar);
 		
-		return listaEndAssoc;
+		return listaEndAssoc;*/
+		
+		return null;
 	}
 	
 	@Transactional(readOnly = true)
 	@Override
 	public EnderecoPDV buscarEnderecoPorEnderecoPDV(Long idPDV, Long idEndereco) {
 		
-		return this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(idEndereco, idPDV);
+		return null;
+		
+		/*return this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(idEndereco, idPDV);*/
 	}
 
 	@Transactional(readOnly=true)
@@ -916,7 +917,7 @@ public class PdvServiceImpl implements PdvService {
 		
 	}
 	
-	private void processarEnderecos(PDV pdv,
+	/*private void processarEnderecos(PDV pdv,
 			   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
 			   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
 
@@ -929,9 +930,9 @@ public class PdvServiceImpl implements PdvService {
 		
 			this.removerEnderecosPDV(pdv, listaEnderecoAssociacaoRemover);
 		}
-	}
+	}*/
 	
-	private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+	/*private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
 		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao);
 		
@@ -992,6 +993,6 @@ public class PdvServiceImpl implements PdvService {
 			this.enderecoRepository.removerEnderecos(idsEndereco);
 		}
 	}
-
+*/
 
 }
