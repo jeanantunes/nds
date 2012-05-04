@@ -23,7 +23,7 @@ public class FiltroConsultaTransportadorDTO implements Serializable {
 	
 	public enum OrdenacaoColunaTransportador{
 		
-		CODIGO("codigo"),
+		CODIGO("id"),
 		RAZAO_SOCIAL("razaoSocial"),
 		CNPJ("cnpj"),
 		RESPONSAVEL("responsavel"),

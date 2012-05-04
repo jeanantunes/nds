@@ -120,7 +120,10 @@ public class Distribuidor {
 	@OneToMany(mappedBy="distribuidor")
 	private List<TipoGarantiaAceita> tiposGarantiasAceita;
 	
+	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
+	private boolean requerAutorizacaoEncalheSuperaReparte;
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -272,5 +275,14 @@ public class Distribuidor {
 	}
 	
 
+	public boolean isRequerAutorizacaoEncalheSuperaReparte() {
+		return requerAutorizacaoEncalheSuperaReparte;
+	}
+
+	public void setRequerAutorizacaoEncalheSuperaReparte(
+			boolean requerAutorizacaoEncalheSuperaReparte) {
+		this.requerAutorizacaoEncalheSuperaReparte = requerAutorizacaoEncalheSuperaReparte;
+	}
+	
 	
 }

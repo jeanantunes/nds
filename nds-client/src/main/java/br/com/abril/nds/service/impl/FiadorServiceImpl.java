@@ -199,13 +199,14 @@ public class FiadorServiceImpl implements FiadorService {
 					this.pessoaRepository.alterar(conjuge);
 				}
 			}
-		}
-		
-		if (fiador.getPessoa() instanceof PessoaFisica){
 			
 			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCPF(((PessoaFisica) fiador.getPessoa()).getCpf());
 			fiador.getPessoa().setId(idPessoa);
 		} else {
+			
+			PessoaJuridica pessoaJuridica = (PessoaJuridica)fiador.getPessoa();
+			
+			pessoaJuridica.setCnpj(pessoaJuridica.getCnpj().replace(".", "").replace("-", "").replace("/", ""));
 			
 			Long idPessoa = this.pessoaRepository.buscarIdPessoaPorCNPJ(((PessoaJuridica) fiador.getPessoa()).getCnpj());
 			fiador.getPessoa().setId(idPessoa);

@@ -64,6 +64,7 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 		DESCRICAO_PRODUTO("descricaoProduto"),
 		NUMERO_EDICAO("numeroEdicao"),
 		PRECO_VENDA("precoVenda"),
+		PRECO_DESCONTO("precoDesconto"),
 		PACOTE_PADRAO("pacotePadrao"),
 		QUANTIDADE("quantidade"),
 		TIPO_DIFERENCA("tipoDiferenca"),

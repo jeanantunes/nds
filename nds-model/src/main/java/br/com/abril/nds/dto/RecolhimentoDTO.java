@@ -3,9 +3,9 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * DTO que representa os dados referentes ao balanceamento do recolhimento. 
@@ -17,35 +17,15 @@ public class RecolhimentoDTO implements Serializable {
 
 	private static final long serialVersionUID = -2168766293591158494L;
 
-	private Long sequencia;
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimento;
 	
-	private ProdutoEdicao produtoEdicao;
-
-	private Long idFornecedor;
+	private TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria;
 	
-	private String nomeFornecedor;
-
-	private Long idEditor;
-
-	private String nomeEditor;
-
-	private TipoLancamentoParcial parcial;
+	private Long capacidadeRecolhimentoDistribuidor;
 	
-	private boolean possuiChamada;
-
-	private Date dataLancamento;
-
-	private Date dataRecolhimento;
-
-	private BigDecimal sede;
-
-	private BigDecimal atendida;
-
-	private BigDecimal qtdeExemplares;
-
-	private BigDecimal valorTotal;
-
-	private Date novaData;
+	private TreeSet<Date> datasRecolhimentoFornecedor;
+	
+	private TreeSet<Date> datasRecolhimentoDistribuidor;
 
 	/**
 	 * Construtor padrão.
@@ -55,213 +35,78 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the sequencia
+	 * @return the capacidadeRecolhimentoDistribuidor
 	 */
-	public Long getSequencia() {
-		return sequencia;
+	public Long getCapacidadeRecolhimentoDistribuidor() {
+		return capacidadeRecolhimentoDistribuidor;
 	}
 
 	/**
-	 * @param sequencia the sequencia to set
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
 	 */
-	public void setSequencia(Long sequencia) {
-		this.sequencia = sequencia;
+	public void setCapacidadeRecolhimentoDistribuidor(
+			Long capacidadeRecolhimentoDistribuidor) {
+		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 
 	/**
-	 * @return the produtoEdicao
+	 * @return the mapaExpectativaEncalheTotalDiaria
 	 */
-	public ProdutoEdicao getProdutoEdicao() {
-		return produtoEdicao;
+	public TreeMap<Date, BigDecimal> getMapaExpectativaEncalheTotalDiaria() {
+		return mapaExpectativaEncalheTotalDiaria;
 	}
 
 	/**
-	 * @param produtoEdicao the produtoEdicao to set
+	 * @param mapaExpectativaEncalheTotalDiaria the mapaExpectativaEncalheTotalDiaria to set
 	 */
-	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		this.produtoEdicao = produtoEdicao;
+	public void setMapaExpectativaEncalheTotalDiaria(
+			TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria) {
+		this.mapaExpectativaEncalheTotalDiaria = mapaExpectativaEncalheTotalDiaria;
 	}
 
 	/**
-	 * @return the idFornecedor
+	 * @return the produtosRecolhimento
 	 */
-	public Long getIdFornecedor() {
-		return idFornecedor;
+	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimento() {
+		return produtosRecolhimento;
 	}
 
 	/**
-	 * @param idFornecedor the idFornecedor to set
+	 * @param produtosRecolhimento the produtosRecolhimento to set
 	 */
-	public void setIdFornecedor(Long idFornecedor) {
-		this.idFornecedor = idFornecedor;
+	public void setProdutosRecolhimento(
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		this.produtosRecolhimento = produtosRecolhimento;
 	}
 
 	/**
-	 * @return the nomeFornecedor
+	 * @return the datasRecolhimentoFornecedor
 	 */
-	public String getNomeFornecedor() {
-		return nomeFornecedor;
+	public TreeSet<Date> getDatasRecolhimentoFornecedor() {
+		return datasRecolhimentoFornecedor;
 	}
 
 	/**
-	 * @param nomeFornecedor the nomeFornecedor to set
+	 * @param datasRecolhimentoFornecedor the datasRecolhimentoFornecedor to set
 	 */
-	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
+	public void setDatasRecolhimentoFornecedor(
+			TreeSet<Date> datasRecolhimentoFornecedor) {
+		this.datasRecolhimentoFornecedor = datasRecolhimentoFornecedor;
 	}
 
 	/**
-	 * @return the idEditor
+	 * @return the datasRecolhimentoDistribuidor
 	 */
-	public Long getIdEditor() {
-		return idEditor;
+	public TreeSet<Date> getDatasRecolhimentoDistribuidor() {
+		return datasRecolhimentoDistribuidor;
 	}
 
 	/**
-	 * @param idEditor the idEditor to set
+	 * @param datasRecolhimentoDistribuidor the datasRecolhimentoDistribuidor to set
 	 */
-	public void setIdEditor(Long idEditor) {
-		this.idEditor = idEditor;
-	}
-
-	/**
-	 * @return the nomeEditor
-	 */
-	public String getNomeEditor() {
-		return nomeEditor;
-	}
-
-	/**
-	 * @param nomeEditor the nomeEditor to set
-	 */
-	public void setNomeEditor(String nomeEditor) {
-		this.nomeEditor = nomeEditor;
-	}
-
-	/**
-	 * @return the parcial
-	 */
-	public TipoLancamentoParcial getParcial() {
-		return parcial;
-	}
-
-	/**
-	 * @param parcial the parcial to set
-	 */
-	public void setParcial(TipoLancamentoParcial parcial) {
-		this.parcial = parcial;
-	}
-
-	/**
-	 * @return the possuiChamada
-	 */
-	public boolean isPossuiChamada() {
-		return possuiChamada;
-	}
-
-	/**
-	 * @param possuiChamada the possuiChamada to set
-	 */
-	public void setPossuiChamada(boolean possuiChamada) {
-		this.possuiChamada = possuiChamada;
-	}
-
-	/**
-	 * @return the dataLancamento
-	 */
-	public Date getDataLancamento() {
-		return dataLancamento;
-	}
-
-	/**
-	 * @param dataLancamento the dataLancamento to set
-	 */
-	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = dataLancamento;
-	}
-
-	/**
-	 * @return the dataRecolhimento
-	 */
-	public Date getDataRecolhimento() {
-		return dataRecolhimento;
-	}
-
-	/**
-	 * @param dataRecolhimento the dataRecolhimento to set
-	 */
-	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
-	}
-
-	/**
-	 * @return the sede
-	 */
-	public BigDecimal getSede() {
-		return sede;
-	}
-
-	/**
-	 * @param sede the sede to set
-	 */
-	public void setSede(BigDecimal sede) {
-		this.sede = sede;
-	}
-
-	/**
-	 * @return the atendida
-	 */
-	public BigDecimal getAtendida() {
-		return atendida;
-	}
-
-	/**
-	 * @param atendida the atendida to set
-	 */
-	public void setAtendida(BigDecimal atendida) {
-		this.atendida = atendida;
-	}
-
-	/**
-	 * @return the qtdeExemplares
-	 */
-	public BigDecimal getQtdeExemplares() {
-		return qtdeExemplares;
-	}
-
-	/**
-	 * @param qtdeExemplares the qtdeExemplares to set
-	 */
-	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
-		this.qtdeExemplares = qtdeExemplares;
-	}
-
-	/**
-	 * @return the valorTotal
-	 */
-	public BigDecimal getValorTotal() {
-		return valorTotal;
-	}
-
-	/**
-	 * @param valorTotal the valorTotal to set
-	 */
-	public void setValorTotal(BigDecimal valorTotal) {
-		this.valorTotal = valorTotal;
-	}
-
-	/**
-	 * @return the novaData
-	 */
-	public Date getNovaData() {
-		return novaData;
-	}
-
-	/**
-	 * @param novaData the novaData to set
-	 */
-	public void setNovaData(Date novaData) {
-		this.novaData = novaData;
+	public void setDatasRecolhimentoDistribuidor(
+			TreeSet<Date> datasRecolhimentoDistribuidor) {
+		this.datasRecolhimentoDistribuidor = datasRecolhimentoDistribuidor;
 	}
 	
 }

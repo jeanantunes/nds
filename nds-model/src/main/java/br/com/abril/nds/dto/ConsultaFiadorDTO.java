@@ -11,7 +11,7 @@ public class ConsultaFiadorDTO implements Serializable {
 	
 	private List<Fiador> listaFiadores;
 	
-	private Long quantidadePaginas;
+	private Long quantidadeRegistros;
 
 	public List<Fiador> getListaFiadores() {
 		return listaFiadores;
@@ -21,11 +21,11 @@ public class ConsultaFiadorDTO implements Serializable {
 		this.listaFiadores = listaFiadores;
 	}
 
-	public Long getQuantidadePaginas() {
-		return quantidadePaginas;
+	public Long getQuantidadeRegistros() {
+		return quantidadeRegistros;
 	}
 
-	public void setQuantidadePaginas(Long quantidadePaginas) {
-		this.quantidadePaginas = quantidadePaginas;
+	public void setQuantidadeRegistros(Long quantidadeRegistros) {
+		this.quantidadeRegistros = quantidadeRegistros;
 	}
 }

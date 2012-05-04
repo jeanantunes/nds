@@ -94,7 +94,7 @@ public class ExtratoEdicaoController {
 			
 		} 
 		
-		result.use(Results.json()).from(resultado, "result").serialize();
+		result.use(Results.json()).withoutRoot().from(resultado).serialize();
 		
 	}
 	

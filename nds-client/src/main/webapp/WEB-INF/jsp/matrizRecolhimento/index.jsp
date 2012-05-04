@@ -63,6 +63,20 @@
 				}
 			);
 		}
+		
+		function balancearPorValor() {
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
+				obterParametrosPesquisa(),
+				function() {
+					
+				},
+				function() {
+					
+				}
+			);
+		}
 	
 		function obterParametrosPesquisa() {
 
@@ -254,7 +268,7 @@
 						</a>
 					</span>
 					<span class="bt_confirmar_novo" title="Balancear Volume / Valor">
-						<a onclick="popup_balanceamento_1();" href="javascript:;">
+						<a onclick="balancearPorValor();" href="javascript:;">
 							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Valor
 						</a>
 					</span>

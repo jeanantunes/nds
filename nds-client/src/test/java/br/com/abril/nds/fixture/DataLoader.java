@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -540,6 +541,7 @@ public class DataLoader {
 		criarBox(session);
 		criarFornecedores(session);
 		criarDiasDistribuicaoFornecedores(session);
+		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
 		criarEditores(session);
 		criarTiposProduto(session);
@@ -1623,7 +1625,12 @@ public class DataLoader {
 				TipoParametroSistema.PATH_IMAGENS_CAPA, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 
 		session.save(parametroSistema);
-
+		
+		ParametroSistema parametroPathImagemPDV = 
+				Fixture.parametroSistema(
+					TipoParametroSistema.PATH_IMAGENS_PDV, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\images\\pdv\\");
+		session.save(parametroPathImagemPDV);
+		
 		parametroSistema = 
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7");
 
@@ -2803,6 +2810,28 @@ public class DataLoader {
 		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}
 
+	private static void criarDiasDistribuicaoDistribuidor(Session session) {
+		
+		DistribuicaoDistribuidor recolhimentoDistribuidorTerca =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
+											 OperacaoDistribuidor.RECOLHIMENTO);
+		
+		DistribuicaoDistribuidor recolhimentoDistribuidorQuinta =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+											 OperacaoDistribuidor.RECOLHIMENTO);
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorTerca =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
+											 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+											 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		save(session, recolhimentoDistribuidorTerca, recolhimentoDistribuidorQuinta,
+					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorQuinta);
+	}
+	
 	private static void gerarCargaDiferencaEstoque(Session session,
 												   int quantidadeRegistros,
 												   ProdutoEdicao produtoEdicao, 
@@ -3692,6 +3721,8 @@ public class DataLoader {
 					numeroFatura,                        
 					valorFatura);
 	
+			notaFiscalEntradaFornecedorNFE.setMovimentoIntegracao("Movimento teste para nota fiscal entrada.");
+			
 			save(session, notaFiscalEntradaFornecedorNFE);
 		
 			

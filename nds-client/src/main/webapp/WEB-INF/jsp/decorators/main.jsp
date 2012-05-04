@@ -281,7 +281,7 @@ fieldset label {
 							</li>
 							<li><a href="Expedicao/geracao_nfe.htm">Geração de NF-e</a>
 							</li>
-							<li><a href="cotaAusente/index">Cota
+							<li><a href='<c:url value="/cotaAusente/index"/>'>Cota
 									Ausente</a>
 							</li>
 							<li><a href="Expedicao/painel_monitor_nfe.htm">Painel
@@ -340,7 +340,9 @@ fieldset label {
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
-							<li><a href="devolucao/digitacao/contagem/">Digitação
+							<li>
+							
+							<a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
 									de Contagem para Devolução</a>
 							</li>
 							<li><a href="Devolucao/help_devolucao.htm">Help</a>

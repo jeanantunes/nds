@@ -88,18 +88,16 @@ public class EntregadorController {
 	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoEntregador";
 	
 	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoEntregador";
-	
-	@Autowired
-	private TelefoneController telefoneController;
+
+	public static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosSalvarSessaoEntregador";
+
+	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoEntregador";
+
+	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoEntregador";
 	
 	@Path("/")
 	public void index() { }
 	
-	public EntregadorController(){
-		
-		this.telefoneController.setarParametros(LISTA_TELEFONES_SALVAR_SESSAO, LISTA_TELEFONES_REMOVER_SESSAO, LISTA_TELEFONES_EXIBICAO);
-	}
-
 	/**
 	 * Método responsável por popular a grid de Entregadores.
 	 * 
@@ -405,8 +403,7 @@ public class EntregadorController {
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
 				this.entregadorService.obterEnderecosPorIdEntregador(idEntregador);
 
-		this.session.setAttribute(
-			EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
+		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao
 		);
 
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
@@ -479,8 +476,8 @@ public class EntregadorController {
 	 */
 	public void novoCadastro() {
 		
-		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
@@ -746,18 +743,18 @@ public class EntregadorController {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+						LISTA_ENDERECOS_SALVAR_SESSAO);
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+						LISTA_ENDERECOS_REMOVER_SESSAO);
 
 		this.entregadorService.processarEnderecos(idEntregador, 
 												  listaEnderecoAssociacaoSalvar, 
 												  listaEnderecoAssociacaoRemover);
 
-		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
-		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 	}
 
 	/*

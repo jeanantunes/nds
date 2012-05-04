@@ -36,6 +36,12 @@ public class CotaController {
 	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoCota";
 	
 	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoCota";
+
+	public static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecoSalvarSessaoCota";
+
+	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecoRemoverSessaoCota";
+
+	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
 	
 	private Result result;
 
@@ -50,21 +56,12 @@ public class CotaController {
 	
 	@Autowired
 	private PdvController pdvController;
-	
-	@Autowired
-	private TelefoneController telefoneController;
 
 	public CotaController(Result result) {
 		this.result = result;
 	}
 	
-	@PostConstruct
-	public void init(){
-		
-		this.telefoneController.setarParametros(LISTA_TELEFONES_SALVAR_SESSAO, LISTA_TELEFONES_REMOVER_SESSAO, LISTA_TELEFONES_EXIBICAO);
-	}
 
-	
 	@Path("/")
 	public void index() {
 		
@@ -74,12 +71,11 @@ public class CotaController {
 		
 	}
 	
-	
 
 	@Post
 	public void novaCota() { 
 
-		this.session.removeAttribute(EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 
 		this.result.nothing();
 	}
@@ -97,7 +93,7 @@ public class CotaController {
 				this.cotaService.obterEnderecosPorIdCota(idCota);
 		
 		this.session.setAttribute(
-			EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao
+			LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao
 		);
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
@@ -136,11 +132,11 @@ public class CotaController {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR);
+						LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						EnderecoController.ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER);
+						LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 	}
@@ -176,8 +172,7 @@ public class CotaController {
 		
 		return telefonesSessao;
 	}
-	
-	
+
 	
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterTelefonesRemoverSessao(){
