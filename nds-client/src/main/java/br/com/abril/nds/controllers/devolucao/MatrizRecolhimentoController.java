@@ -275,10 +275,11 @@ public class MatrizRecolhimentoController {
 				
 				produtoRecolhimento.setExpectativaEncalheAtendida(BigDecimal.ZERO);
 				produtoRecolhimento.setDataLancamento(dataLancamento);
-				produtoRecolhimento.setDataRecolhimento(dataRecolhimento);
+				produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
+				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 				produtoRecolhimento.setNomeEditor("Zé Editor " + i);
 				produtoRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
-				produtoRecolhimento.setExpectativaEncalheSede(new BigDecimal(i));
+				produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(i));
 				produtoRecolhimento.setValorTotal(new BigDecimal(i));
 				produtoRecolhimento.setProdutoEdicao(produtoEdicao);
 				
