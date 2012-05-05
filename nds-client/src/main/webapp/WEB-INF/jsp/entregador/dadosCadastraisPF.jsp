@@ -36,22 +36,31 @@
 			{'cpf': cpf},
 			function(result) {
 
-				$("#nomeEntregador").val(result.nome);
-				$("#apelido").val(result.apelido);
-				$("#cpf").val(result.cpf).mask("999.999.999-99");
-				$("#rg").val(result.rg).mask("99.999.999-9");
-				$("#dataNascimento").val(result.dataNascimento).mask("99/99/9999");
-				$("#orgaoEmissor").val(result.orgaoEmissor);
-				$("#ufOrgaoEmissor").val(result.ufOrgaoEmissor);
-				$("#estadoCivil").val(result.estadoCivil);
-				$("#sexo").val(result.sexo);
-				$("#nacionalidade").val(result.nacionalidade);
-				$("#natural").val(result.natural);
-				$("#emailPF").val(result.email);
+				if (result.id) {
 
+					$("#nomeEntregador").val(result.nome);
+					$("#apelido").val(result.apelido);
+					$("#cpf").val(result.cpf).mask("999.999.999-99");
+					$("#rg").val(result.rg).mask("99.999.999-9");
+					$("#dataNascimento").val(result.dataNascimento).mask("99/99/9999");
+					$("#orgaoEmissor").val(result.orgaoEmissor);
+					$("#ufOrgaoEmissor").val(result.ufOrgaoEmissor);
+					$("#estadoCivil").val(result.estadoCivil);
+					$("#sexo").val(result.sexo);
+					$("#nacionalidade").val(result.nacionalidade);
+					$("#natural").val(result.natural);
+					$("#emailPF").val(result.email);
+
+				} else {
+
+					if ($("#nomeEntregador").val() != '') {
+						
+						$("#nomeEntregador").focus();	
+					}
+				}
 			},
 			function(result) {
-				
+
 				$("#nomeEntregador").val("");
 				$("#apelido").val("");
 				$("#cpf").val("");
@@ -76,6 +85,7 @@
 	
 	$(function() {
 
+		$("#dataNascimento").mask("99/99/9999");
 		$("#cpf").mask("999.999.999-99");
 		$("#rgProcuradorProcuracaoPF").mask("99.999.999-9");
 		$("input[id^='percentualComissaoPF']").maskMoney({
@@ -99,23 +109,23 @@
        </tr>
        <tr>
            <td width="118">Nome:</td>
-           <td width="237"><input type="text"  readonly="readonly" id="nomeEntregador" style="width:230px " /></td>
+           <td width="237"><input type="text"  id="nomeEntregador" style="width:230px " /></td>
            <td width="134">Apelido:</td>
-           <td colspan="3"><input type="text"  readonly="readonly" id="apelido" style="width:230px" /></td>
+           <td colspan="3"><input type="text"  id="apelido" style="width:230px" /></td>
        </tr>
        <tr>
          <td>CPF:</td>
          <td><input type="text" name="cpf" id="cpf" style="width:150px" onblur="obterPessoaFisica($(this).val())" /></td>
          <td>R. G.:</td>
-         <td colspan="3"><input type="text" readonly="readonly" id="rg" style="width:150px" /></td>
+         <td colspan="3"><input type="text" id="rg" style="width:150px" /></td>
        </tr>
        <tr>
          <td>Data Nascimento:</td>
-         <td><input type="text" readonly="readonly" id="dataNascimento" style="width:150px" /></td>
+         <td><input type="text" id="dataNascimento" style="width:150px" /></td>
          <td>Orgão Emissor:</td>
-         <td width="59"><input type="text" readonly="readonly" id="orgaoEmissor" style="width:50px" /></td>
+         <td width="59"><input type="text" id="orgaoEmissor" style="width:50px" /></td>
          <td width="31">UF:</td>
-         <td width="135"><select disabled="disabled" id="ufOrgaoEmissor" style="width:50px">
+         <td width="135"><select id="ufOrgaoEmissor" style="width:50px">
            <option selected="selected"> </option>
            <option>RJ</option>
            <option>SP</option>
@@ -123,7 +133,7 @@
        </tr>
        <tr>
          <td>Estado Civil:</td>
-         <td><select disabled="disabled" id="estadoCivil" style="width:155px;">
+         <td><select id="estadoCivil" style="width:155px;">
            <option selected="selected"></option>
            <option value="SOLTEIRO">Solteiro</option>
            <option value="CASADO">Casado</option>
@@ -131,7 +141,7 @@
            <option value="VIUVO">Víuvo</option>
          </select></td>
          <td>Sexo:</td>
-         <td colspan="3"><select disabled="disabled" id="sexo" style="width:155px">
+         <td colspan="3"><select id="sexo" style="width:155px">
              <option selected="selected"></option>
              <option value="MASCULINO">Masculino</option>
              <option value="FEMININO">Feminino</option>
@@ -139,13 +149,13 @@
        </tr>
        <tr>
          <td>Nacionalidade:</td>
-         <td><input type="text" style="width:150px" id="nacionalidade" readonly="readonly"/></td>
+         <td><input type="text" style="width:150px" id="nacionalidade" /></td>
          <td>Natural:</td>
-         <td colspan="3"><input type="text" readonly="readonly" id="natural" style="width:150px" /></td>
+         <td colspan="3"><input type="text" id="natural" style="width:150px" /></td>
        </tr>
        <tr>
          <td>E-mail:</td>
-         <td><input type="text" readonly="readonly" id="emailPF" style="width:230px" /></td>
+         <td><input type="text" id="emailPF" style="width:230px" /></td>
          <td>&nbsp;</td>
          <td colspan="3">&nbsp;</td>
        </tr>

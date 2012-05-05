@@ -1,19 +1,22 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.planejamento.Lancamento;
+
 /**
- * Entidade de abstrai os movimentos de envio de encalhe.
+ * Entidade de abstrai os movimentos da cota especificos de envio de encalhe 
+ * e auxilia a identificar com qual dataRecolhimento original o movimento esta 
+ * relacionado (devido a possibilidade de um envio de encalhe antecipado).
  * 
  * @author Discover Technology
  *
@@ -35,17 +38,11 @@ public class ConferenciaEncalhe implements Serializable {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
-	
-	/**
-	 * O campo abaixo refere-se a dataRecolhimento original 
-	 * registrada na tbl Lancamento. Esta data é necessaria
-	 * aqui pois o movimento de envio encalhe pode ter ocorrido
-	 * antecipadamente, e com este campo sera possível identificar
-	 * a qual data de recolhimento original este pertence.
-	 */
-	@Column(name = "DATA_RECOLHIMENTO", nullable = false)
-	private Date dataRecolhimento;
 
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "LANCAMENTO_ID")
+	private Lancamento lancamento;
+	
 	/**
 	 * Obtém id
 	 *
@@ -81,21 +78,20 @@ public class ConferenciaEncalhe implements Serializable {
 	}
 
 	/**
-	 * Obtém dataRecolhimento
+	 * Obtém lancamento
 	 *
-	 * @return Date
+	 * @return Lancamento
 	 */
-	public Date getDataRecolhimento() {
-		return dataRecolhimento;
+	public Lancamento getLancamento() {
+		return lancamento;
 	}
 
 	/**
-	 * Atribuí dataRecolhimento
-	 * @param dataRecolhimento 
+	 * Atribuí lancamento
+	 * @param lancamento 
 	 */
-	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+	public void setLancamento(Lancamento lancamento) {
+		this.lancamento = lancamento;
 	}
-	
-	
+		
 }
