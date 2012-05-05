@@ -81,6 +81,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -1484,6 +1485,19 @@ public class Fixture {
 		movimentoEstoque.setStatus(statusAprovacao);
 		movimentoEstoque.setMotivo(motivo);
 		return movimentoEstoque;
+	}
+	
+	public static ConferenciaEncalhe conferenciaEncalhe(
+			Lancamento lancamento, 
+			MovimentoEstoqueCota movimentoEstoqueCota) {
+		
+		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
+		
+		conferenciaEncalhe.setLancamento(lancamento);
+		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
+		
+		return conferenciaEncalhe;
+		
 	}
 	
 	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){

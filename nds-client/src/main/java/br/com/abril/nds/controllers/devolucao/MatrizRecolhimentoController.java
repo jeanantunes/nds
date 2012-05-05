@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -22,9 +25,13 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -106,8 +113,122 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/exibirMatrizBalanceamentoPorDia")
-	public void exibirMatrizBalanceamentoDoDia() {
+	@SuppressWarnings("unchecked")
+	public void exibirMatrizBalanceamentoDoDia(String dataFormatada, String sortorder,
+											   String sortname, Integer page, Integer rp) {
 
+		if (dataFormatada == null || dataFormatada.trim().isEmpty()) {
+		
+			return;
+		}
+		
+		Date data = DateUtil.parseDataPTBR(dataFormatada);
+
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamento =
+			(Map<Date, List<ProdutoRecolhimentoDTO>>)
+				httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
+		
+		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDia = matrizBalanceamento.get(data);
+		
+		if (listaProdutoRecolhimentoDia != null && !listaProdutoRecolhimentoDia.isEmpty()) {
+		
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+			processarBalanceamento(listaProdutoRecolhimentoDia, paginacao, sortname);
+		}
+	}
+	
+	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDia,
+										PaginacaoVO paginacao, String sortname) {
+		
+		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO =
+			new LinkedList<ProdutoRecolhimentoVO>();
+		
+		ProdutoRecolhimentoVO produtoRecolhimentoVO = null;
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDia) {
+			
+			produtoRecolhimentoVO = new ProdutoRecolhimentoVO();
+			
+			if (produtoRecolhimentoDTO.getSequencia() != null) {
+				produtoRecolhimentoVO.setSequencia(
+					produtoRecolhimentoDTO.getSequencia().toString());
+			} else {
+				produtoRecolhimentoVO.setSequencia(null);
+			}
+				
+			produtoRecolhimentoVO.setCodigoProduto(
+				produtoRecolhimentoDTO.getProdutoEdicao().getProduto().getCodigo());
+			
+			produtoRecolhimentoVO.setNomeProduto(
+				produtoRecolhimentoDTO.getProdutoEdicao().getProduto().getNome());
+			
+			produtoRecolhimentoVO.setNumeroEdicao(
+				produtoRecolhimentoDTO.getProdutoEdicao().getNumeroEdicao().toString());
+			
+//			produtoRecolhimentoVO.setPrecoCapa(
+//				CurrencyUtil.formatarValor(produtoRecolhimentoDTO.get));
+
+			produtoRecolhimentoVO.setFornecedor(produtoRecolhimentoDTO.getNomeFornecedor());
+			
+			produtoRecolhimentoVO.setEditor(produtoRecolhimentoDTO.getNomeEditor());
+			
+			if (produtoRecolhimentoDTO.getParcial() != null) {
+				produtoRecolhimentoVO.setParcial(produtoRecolhimentoDTO.getParcial().toString());
+			} else {
+				produtoRecolhimentoVO.setParcial("");
+			}
+				
+//			produtoRecolhimentoVO.setBrinde(produtoRecolhimentoDTO.get);
+
+			produtoRecolhimentoVO.setDataLancamento(
+				DateUtil.formatarDataPTBR(produtoRecolhimentoDTO.getDataLancamento()));
+
+			produtoRecolhimentoVO.setDataRecolhimento(
+				DateUtil.formatarDataPTBR(produtoRecolhimentoDTO.getDataRecolhimentoDistribuidor()));
+			
+			if (produtoRecolhimentoDTO.getExpectativaEncalheSede() != null) {
+				produtoRecolhimentoVO.setSede(
+					CurrencyUtil.formatarValor(produtoRecolhimentoDTO.getExpectativaEncalheSede()));
+			} else {
+				produtoRecolhimentoVO.setSede("");
+			}
+			
+			if (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null) {
+				produtoRecolhimentoVO.setAtendida(
+					CurrencyUtil.formatarValor(produtoRecolhimentoDTO.getExpectativaEncalheAtendida()));
+			} else {
+				produtoRecolhimentoVO.setAtendida("");
+			}
+			
+			if (produtoRecolhimentoDTO.getExpectativaEncalhe() != null) {
+				produtoRecolhimentoVO.setQtdeExemplares(
+					CurrencyUtil.formatarValor(produtoRecolhimentoDTO.getExpectativaEncalhe()));
+			} else {
+				produtoRecolhimentoVO.setQtdeExemplares("");
+			}
+			
+			produtoRecolhimentoVO.setValorTotal(
+				CurrencyUtil.formatarValor(produtoRecolhimentoDTO.getValorTotal()));
+			
+			produtoRecolhimentoVO.setNovaData("");
+			
+			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
+		}
+		
+		int totalRegistros = listaProdutoRecolhimentoVO.size();
+		
+		listaProdutoRecolhimentoVO =
+			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao, sortname);
+		
+		TableModel<CellModelKeyValue<ProdutoRecolhimentoVO>> tableModel =
+			new TableModel<CellModelKeyValue<ProdutoRecolhimentoVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaProdutoRecolhimentoVO));
+		tableModel.setPage(paginacao.getPaginaAtual());
+		tableModel.setTotal(totalRegistros);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	@Post
@@ -226,7 +347,7 @@ public class MatrizRecolhimentoController {
 				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
 		}
 		
-		return matrizBalanceamento; 
+		return matrizBalanceamento;
 	}
 	
 	/*
@@ -273,6 +394,7 @@ public class MatrizRecolhimentoController {
 				
 				produtoEdicao.setProduto(produto);
 				
+				produtoRecolhimento.setSequencia((long) i);
 				produtoRecolhimento.setExpectativaEncalheAtendida(BigDecimal.ZERO);
 				produtoRecolhimento.setDataLancamento(dataLancamento);
 				produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
