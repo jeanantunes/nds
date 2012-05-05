@@ -1,6 +1,6 @@
 package br.com.abril.nds.dto;
 
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -90,7 +90,7 @@ public class PdvDTO implements Serializable {
     
     private String tipoExpositor;
     
-    private InputStream imagem;
+    private FileInputStream imagem;
     
 	/**
 	 * @return the expositor
@@ -556,14 +556,14 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the imagem
 	 */
-	public InputStream getImagem() {
+	public FileInputStream getImagem() {
 		return imagem;
 	}
 
 	/**
 	 * @param imagem the imagem to set
 	 */
-	public void setImagem(InputStream imagem) {
+	public void setImagem(FileInputStream imagem) {
 		this.imagem = imagem;
 	}
 	
