@@ -29,8 +29,8 @@
 	
 	function limparFormsTabs() {
 		
-		limparFormEndereco();
-		limparCamposTelefone();
+		ENDERECO_COTA.limparFormEndereco();
+		COTA.limparCamposTelefone();
 
 	}
 

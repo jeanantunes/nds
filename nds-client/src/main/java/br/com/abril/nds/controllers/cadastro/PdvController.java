@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.record.chart.EndRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
@@ -355,7 +357,7 @@ public class PdvController {
 		
 		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
 		
-		carregarTelefonesPDV(idPdv, idCota);
+		//carregarTelefonesPDV(idPdv, idCota);
 		
 		carregarEndercosPDV(idPdv, idCota);
 		
@@ -397,7 +399,7 @@ public class PdvController {
 		
 		pdvDTO.setImagem((InputStream) session.getAttribute(IMAGEM_PDV));
 		
-		preencherTelefones(pdvDTO);
+		//preencherTelefones(pdvDTO);
 		
 		preencherEnderecos(pdvDTO);
 		
@@ -438,27 +440,26 @@ public class PdvController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void preencherEnderecos(PdvDTO pdvDTO) {
-
-		pdvDTO.setEnderecosAdicionar(new ArrayList<EnderecoAssociacaoDTO>());
+	
+		List<EnderecoAssociacaoDTO> listaEnderecosSalvos = 
+				(List<EnderecoAssociacaoDTO>) session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
-		@SuppressWarnings("unchecked")
-		Map<Integer, EnderecoAssociacaoDTO> listaEndereco = (Map<Integer, EnderecoAssociacaoDTO>) 
-				session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		pdvDTO.setEnderecosAdicionar(listaEnderecosSalvos);
 		
+		List<EnderecoAssociacaoDTO> listaEnderecosExcluidos = 
+				(List<EnderecoAssociacaoDTO>) session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
-		if (listaEndereco != null){
-			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEndereco.values()){
-				pdvDTO.getEnderecosAdicionar() .add(enderecoAssociacaoDTO);
+		if(listaEnderecosExcluidos!= null && !listaEnderecosExcluidos.isEmpty()){
+			
+			pdvDTO.setEnderecosRemover(new HashSet<Long>());
+			
+			for(EnderecoAssociacaoDTO endereco :  listaEnderecosExcluidos){
+				
+				pdvDTO.getEnderecosRemover().add(endereco.getId());
 			}
 		}
-		
-		@SuppressWarnings("unchecked")
-		Set<Long> listaEnderecoRemover = (Set<Long>) 
-				session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
-		
-		pdvDTO.setEnderecosRemover(listaEnderecoRemover);
-		
 	}
 
 	@Post
