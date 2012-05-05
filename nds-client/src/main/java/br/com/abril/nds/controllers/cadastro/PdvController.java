@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -27,7 +25,9 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -74,25 +75,23 @@ public class PdvController {
 	
 	@Autowired
 	private PdvService pdvService;
-		
-	@Autowired
-	private ServletContext servletContext;
-	
+			
 	@Autowired
 	private HttpSession httpSession;
 	
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 		
 	private static final String NO_IMAGE = "no_image.jpeg";
-	private static final String DIRETORIO_ARQUIVO = "images/pdv";
 	
 	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
 	
-	public PdvController(ServletContext servletContext) {
-		this.servletContext = servletContext;
+	public PdvController() {
 	}
 
 	@Path("/")
@@ -396,14 +395,16 @@ public class PdvController {
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
 		
-		pdvDTO.setImagem((InputStream) session.getAttribute(IMAGEM_PDV));
+		pdvDTO.setImagem((FileInputStream) session.getAttribute(IMAGEM_PDV));
 		
 		preencherTelefones(pdvDTO);
 		
 		//pdvDTO.setEndereco(endereco);
-		
+		try{
 		pdvService.salvar(pdvDTO);
-		
+		}catch(Exception e ) {
+			e.printStackTrace();
+		}
 		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo() == -1){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Estabelecimento deve ser informado!");
 		}
@@ -561,15 +562,14 @@ public class PdvController {
 	
 	private File gravarArquivo(UploadedFile uploadedFile) {
 		
-		String pathAplicacao = servletContext.getRealPath("");
-		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-				
-		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+						
+		File fileDir = new File(path.getValor().replace("\\", "/"));
 		
 		fileDir.mkdirs();
 
-		String nomeArquivo = "pdv_temp";
+		String nomeArquivo = "pdv_temp.jpeg";
 		
 		File fileArquivo = new File(fileDir, nomeArquivo);
 			
@@ -581,11 +581,11 @@ public class PdvController {
 		try {
 						
 			fos = new FileOutputStream(fileArquivo);
-			
+						
 			((FileInputStream)uploadedFile.getFile()).getChannel().size();
-			IOUtils.copyLarge(uploadedFile.getFile(), fos);
+			IOUtils.copyLarge(((FileInputStream)uploadedFile.getFile()), fos);
 			
-			session.setAttribute(IMAGEM_PDV, uploadedFile.getFile());
+			session.setAttribute(IMAGEM_PDV, new FileInputStream(new File(fileDir, nomeArquivo)));
 			
 		} catch (Exception e) {
 			
@@ -605,7 +605,7 @@ public class PdvController {
 		
 		return fileArquivo;
 	}
-
+	
 	@Post
 	@Path("/excluirImagem")
 	public void excluirImagem(Long idPdv) {
@@ -639,11 +639,10 @@ public class PdvController {
 		if(idPdv == null)
 			return;
 		
-		String pathAplicacao = servletContext.getRealPath("");
-		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-				
-		File file = new File(pathAplicacao, DIRETORIO_ARQUIVO + "pdv_" + idPdv + ".jpeg"); 
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+						
+		File file = new File(path.getValor().replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
 		   		
 		if(file.exists())
 			file.delete();
@@ -665,7 +664,7 @@ public class PdvController {
 	public void carregarDadosNovoPdv(Long idCota) {
 	
 		carregarTelefonesPDV(null, idCota);
-				
+	
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 		
 	}

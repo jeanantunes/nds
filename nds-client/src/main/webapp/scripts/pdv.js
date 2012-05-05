@@ -644,7 +644,7 @@ var PDV = {
 				var mensagens = result[0];
 				var status = result[1];
 				
-				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/no_image.jpeg");
+				$("#idImagem").attr("src", contextPath + "/images/pdv/no_image.jpeg");
 							
 				if(mensagens!=null && mensagens.length!=0) {
 					exibirMensagem(status,mensagens);
@@ -769,7 +769,8 @@ var PDV = {
 		},
 
 		limparCamposTela:function(){
-		
+			
+			$("#idImagem").attr("src",  contextPath + "/images/pdv/no_image.jpeg");
 			$("#selectStatus").val(""); 
 			$("#nomePDV").val("");
 			$("#contatoPDV").val("");

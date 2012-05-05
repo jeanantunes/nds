@@ -62,7 +62,7 @@ public class TelefonePdvRepositoryImpl extends AbstractRepository<TelefonePDV, L
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
 		   .append(" (t.principal, t.telefone, t.tipoTelefone, telefonePessoa) ")
-		   .append(" from TelefonePdv t, Telefone telefonePessoa ")
+		   .append(" from TelefonePDV t, Telefone telefonePessoa ")
 		   .append(" where t.pdv.id = :idPdv ")
 		   .append("   and t.telefone.id = telefonePessoa.id ");
 		

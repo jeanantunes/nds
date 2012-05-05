@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -372,7 +373,8 @@ public class PdvServiceImpl implements PdvService {
 		
 		salvarGeradorFluxo(pdvDTO, pdv);
 		
-		atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
+		if(pdvDTO.getImagem() != null)
+			atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
 	
 		//salvarEndereco(pdvDTO, pdv);
 		//salvarTelefone(pdvDTO, pdv);
@@ -413,31 +415,32 @@ public class PdvServiceImpl implements PdvService {
 		processarTelefones(pdvDTO, pdv);
 	}
 
-		
-	public void atualizaImagemPDV(InputStream foto, Long idPdv) {
+	@Transactional	
+	public void atualizaImagemPDV(FileInputStream foto, Long idPdv) {
 		
 		//TODO validar código
 		
 		ParametroSistema path = 
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+				
+		
+		File fileDir = new File(path.getValor().replace("\\", "/"));
+		
+		fileDir.mkdirs();
+
+		String nomeArquivo = "pdv_" + idPdv + ".jpeg";
+		
+		File fileArquivo = new File(fileDir, nomeArquivo);		
 		
 		
-		String dirFile = path.getValor().replace("\\", "/") + "pdv_" + idPdv + ".jpeg"; 
-		
-		File fileArquivo = new File(dirFile);
-		   		
 		if(fileArquivo.exists())
 			fileArquivo.delete();
 		
 		FileOutputStream fos = null;
 		
-		fileArquivo = new File(dirFile);
-		
 		try {
 						
 			fos = new FileOutputStream(fileArquivo);
-			
-			((FileInputStream)foto).getChannel().size();
 			
 			IOUtils.copyLarge(foto, fos);
 			
@@ -452,11 +455,36 @@ public class PdvServiceImpl implements PdvService {
 					fos.close();
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 				throw new ValidacaoException(TipoMensagem.ERROR,
 					"Falha ao gravar o arquivo em disco!");
 			}
 		}
+		
+		/*
+		
+		File fileArquivo = new File(dirFile);
+		   		
+		if(fileArquivo.exists())
+			fileArquivo.delete();
+				
+		fileArquivo = new File(dirFile);
+		
+		try {
+			
+			((FileInputStream)foto).getChannel().size();
+			
+			fileArquivo.createNewFile();
+			
+			IOUtils.copyLarge(foto, new FileOutputStream(fileArquivo));
+									
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		}*/
 		
 	}
 
