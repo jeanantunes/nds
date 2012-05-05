@@ -141,8 +141,7 @@ function tratarRetornoUploadImagem(data) {
 
     </td>
     <td width="191" align="center" valign="top">
-    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca" 
-    	  onerror="${pageContext.request.contextPath}/images/pdv/no_image.jpeg"/>
+    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca"/>
     	    	
     	<br />
     	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a>

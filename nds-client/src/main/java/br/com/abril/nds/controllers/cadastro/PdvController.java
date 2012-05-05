@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -38,6 +36,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -46,6 +45,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.stella.validation.LogicOrComposedValidator;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -76,25 +76,23 @@ public class PdvController {
 	
 	@Autowired
 	private PdvService pdvService;
-		
-	@Autowired
-	private ServletContext servletContext;
-	
+			
 	@Autowired
 	private HttpSession httpSession;
 	
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 		
 	private static final String NO_IMAGE = "no_image.jpeg";
-	private static final String DIRETORIO_ARQUIVO = "images/pdv";
 	
 	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
 	
-	public PdvController(ServletContext servletContext) {
-		this.servletContext = servletContext;
+	public PdvController() {
 	}
 
 	@Path("/")
@@ -403,9 +401,11 @@ public class PdvController {
 		preencherTelefones(pdvDTO);
 		
 		//pdvDTO.setEndereco(endereco);
-		
+		try{
 		pdvService.salvar(pdvDTO);
-		
+		}catch(Exception e ) {
+			e.printStackTrace();
+		}
 		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo() == -1){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Estabelecimento deve ser informado!");
 		}
@@ -563,13 +563,10 @@ public class PdvController {
 	
 	private File gravarArquivo(UploadedFile uploadedFile) {
 		
-		String pathAplicacao = servletContext.getRealPath("");
-		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-				
-		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
-		
-		atualizaImagemPDV((FileInputStream)uploadedFile.getFile(),1L,pathAplicacao, DIRETORIO_ARQUIVO);
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+						
+		File fileDir = new File(path.getValor().replace("\\", "/"));
 		
 		fileDir.mkdirs();
 
@@ -585,13 +582,11 @@ public class PdvController {
 		try {
 						
 			fos = new FileOutputStream(fileArquivo);
-			
-			uploadedFile.getFile().reset();
-			
+						
 			((FileInputStream)uploadedFile.getFile()).getChannel().size();
 			IOUtils.copyLarge(((FileInputStream)uploadedFile.getFile()), fos);
 			
-			session.setAttribute(IMAGEM_PDV, uploadedFile.getFile());
+			session.setAttribute(IMAGEM_PDV, new FileInputStream(new File(fileDir, nomeArquivo)));
 			
 		} catch (Exception e) {
 			
@@ -610,44 +605,6 @@ public class PdvController {
 		}
 		
 		return fileArquivo;
-	}
-
-	public void atualizaImagemPDV(FileInputStream foto, Long idPdv,String path, String diretorio) {
-				
-		File fileDir = new File(path, diretorio);
-		
-		fileDir.mkdirs();
-
-		String nomeArquivo = "pdv_" + idPdv + ".jpeg";
-		
-		File fileArquivo = new File(fileDir, nomeArquivo);		
-		
-		if(fileArquivo.exists())
-			fileArquivo.delete();
-		
-		FileOutputStream fos = null;
-		
-		try {
-						
-			fos = new FileOutputStream(fileArquivo);
-			
-			IOUtils.copyLarge(foto, fos);
-			
-		} catch (Exception e) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,
-				"Falha ao gravar o arquivo em disco!");
-		
-		} finally {
-			try { 
-				if (fos != null) {
-					fos.close();
-				}
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-					"Falha ao gravar o arquivo em disco!");
-			}
-		}	
 	}
 	
 	@Post
@@ -683,11 +640,10 @@ public class PdvController {
 		if(idPdv == null)
 			return;
 		
-		String pathAplicacao = servletContext.getRealPath("");
-		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-				
-		File file = new File(pathAplicacao, DIRETORIO_ARQUIVO + "pdv_" + idPdv + ".jpeg"); 
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+						
+		File file = new File(path.getValor().replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
 		   		
 		if(file.exists())
 			file.delete();
@@ -709,7 +665,7 @@ public class PdvController {
 	public void carregarDadosNovoPdv(Long idCota) {
 	
 		carregarTelefonesPDV(null, idCota);
-				
+	
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 		
 	}

@@ -373,7 +373,8 @@ public class PdvServiceImpl implements PdvService {
 		
 		salvarGeradorFluxo(pdvDTO, pdv);
 		
-		atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
+		if(pdvDTO.getImagem() != null)
+			atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
 	
 		//salvarEndereco(pdvDTO, pdv);
 		//salvarTelefone(pdvDTO, pdv);
