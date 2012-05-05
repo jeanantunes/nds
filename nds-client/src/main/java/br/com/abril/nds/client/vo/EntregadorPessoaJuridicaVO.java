@@ -8,16 +8,29 @@ import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 
 public class EntregadorPessoaJuridicaVO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1500282702636525652L;
-
+	
+	private String inicioAtividadeFormatada;
+	
 	private Entregador entregador;
 
 	private ProcuracaoEntregador procuracaoEntregador;
 	
 	private PessoaJuridica pessoaJuridica;
+
+	/**
+	 * @return the inicioAtividadeFormatada
+	 */
+	public String getInicioAtividadeFormatada() {
+		return inicioAtividadeFormatada;
+	}
+
+	/**
+	 * @param inicioAtividadeFormatada the inicioAtividadeFormatada to set
+	 */
+	public void setInicioAtividadeFormatada(String inicioAtividadeFormatada) {
+		this.inicioAtividadeFormatada = inicioAtividadeFormatada;
+	}
 
 	/**
 	 * @return the entregador
@@ -60,36 +73,6 @@ public class EntregadorPessoaJuridicaVO implements Serializable {
 	public void setPessoaJuridica(PessoaJuridica pessoaJuridica) {
 		this.pessoaJuridica = pessoaJuridica;
 	}
-	
-//	private String codigoBox;
-//
-//	private Pessoa pessoa;
-//	
-//	private List<PDV> pdvs = new ArrayList<PDV>();
-//
-//	private SituacaoCadastro situacaoCadastro;
-//	
-//	private BigDecimal fatorDesconto;
-//	
-//	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
-//	
-//	private ContratoCota contratoCota;
-//
-//	private String numeroPermissao;
-//	
-//	private String procurador;
-//	
-//	private EstadoCivil estadoCivil;
-//
-//	private String endereco;
-//	
-//	private String rg;
-//	
-//	private String profissao;
-//	
-//	private String nacionalidade;
-//	
-//	private ProcuracaoEntregador procuracaoEntregador;
 
 	
 }
