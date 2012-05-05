@@ -67,9 +67,7 @@ public interface PdvService {
 	
 	PdvDTO obterPDV(Long idCota, Long idPdv);
 	
-	List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,	Set<Long> idsIgnorar);
-	
-	EnderecoPDV buscarEnderecoPorEnderecoPDV(Long idPDV, Long idEndereco);
+	List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,Long idCota);
 	
 	void excluirPDV(Long idPdv);
 
