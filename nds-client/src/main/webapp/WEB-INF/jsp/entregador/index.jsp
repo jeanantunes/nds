@@ -136,9 +136,9 @@
 	}
 	
 	function cadastrarEntregador(isCadastroPF, imprimir) {
-		
+
 		var data = new Array();
-		
+
 		var url;
 
 		if (isCadastroPF) {
@@ -160,6 +160,19 @@
 			data.push({name: 'procuracaoEntregador.nacionalidade', value: $("#nacionalidadeProcuradorProcuracaoPF").val()});
 			data.push({name: 'procuracaoEntregador.profissao', value: $("#profissaoProcuradorProcuracaoPF").val()});
 
+			data.push({name: 'pessoaFisica.cpf', value: $("#cpf").val()});
+			data.push({name: 'pessoaFisica.nome', value: $("#nomeEntregador").val()});
+			data.push({name: 'pessoaFisica.apelido', value: $("#apelido").val()});
+			data.push({name: 'pessoaFisica.rg', value: $("#rg").val()});
+			data.push({name: 'pessoaFisica.dataNascimento', value: $("#dataNascimento").val()});
+			data.push({name: 'pessoaFisica.orgaoEmissor', value: $("#orgaoEmissor").val()});
+			data.push({name: 'pessoaFisica.ufOrgaoEmissor', value: $("#ufOrgaoEmissor").val()});
+			data.push({name: 'pessoaFisica.estadoCivil', value: $("#estadoCivil").val()});
+			data.push({name: 'pessoaFisica.sexo', value: $("#sexo").val()});
+			data.push({name: 'pessoaFisica.nacionalidade', value: $("#nacionalidade").val()});
+			data.push({name: 'pessoaFisica.natural', value: $("#natural").val()});
+			data.push({name: 'pessoaFisica.email', value: $("#emailPF").val()});
+
 			url = '<c:url value="/cadastro/entregador/cadastrarEntregadorPessoaFisica" />';
 
 		} else {
@@ -180,6 +193,12 @@
 			data.push({name: 'procuracaoEntregador.rg', value: $("#rgProcuradorProcuracaoPJ").val()});
 			data.push({name: 'procuracaoEntregador.nacionalidade', value: $("#nacionalidadeProcuradorProcuracaoPJ").val()});
 			data.push({name: 'procuracaoEntregador.profissao', value: $("#profissaoProcuradorProcuracaoPJ").val()});
+
+			data.push({name: 'pessoaJuridica.razaoSocial', value: $("#razaoSocial").val()});
+			data.push({name: 'pessoaJuridica.nomeFantasia', value: $("#nomeFantasia").val()});
+			data.push({name: 'pessoaJuridica.cnpj', value: $("#cnpj").val()});
+			data.push({name: 'pessoaJuridica.inscricaoEstadual', value: $("#inscricaoEstadual").val()});
+			data.push({name: 'pessoaJuridica.email', value: $("#emailPJ").val()});
 
 			url = '<c:url value="/cadastro/entregador/cadastrarEntregadorPessoaJuridica" />';
 		}
@@ -231,17 +250,18 @@
 
 					$("#idEntregadorPF").val(result.entregador.id);
 					$("#codigoEntregadorPF").val(result.entregador.codigo);
-					$("#inicioAtividadePF").html(result.entregador.inicioAtividade.$);
+					$("#inicioAtividadePF").html(result.inicioAtividadeFormatada);
 					$("#nomeEntregador").val(result.pessoaFisica.nome);
 					$("#apelido").val(result.pessoaFisica.apelido);
 					$("#cpf").val(result.pessoaFisica.cpf).mask("999.999.999-99");
 					$("#rg").val(result.pessoaFisica.rg).mask("99.999.999-9");
-					$("#dataNascimento").val(result.pessoaFisica.dataNascimento ? result.pessoaFisica.dataNascimento.$ : "").mask("99/99/9999");
+					$("#dataNascimento").val(result.dataNascimentoEntregadorFormatada).mask("99/99/9999");
 					$("#orgaoEmissor").val(result.pessoaFisica.orgaoEmissor);
 					$("#ufOrgaoEmissor").val(result.pessoaFisica.ufOrgaoEmissor);
 					$("#estadoCivil").val(result.pessoaFisica.estadoCivil);
 					$("#sexo").val(result.pessoaFisica.sexo);
 					$("#nacionalidade").val(result.pessoaFisica.nacionalidade);
+					$("#natural").val(result.pessoaFisica.natural);
 					$("#emailPF").val(result.pessoaFisica.email);
 					$("#percentualComissaoPF").val(result.entregador.percentualComissao);
 
@@ -280,7 +300,7 @@
 
 					$("#idEntregadorPJ").val(result.entregador.id);
 					$("#codigoEntregadorPJ").val(result.entregador.codigo);
-					$("#inicioAtividadePJ").html(result.entregador.inicioAtividade.$);
+					$("#inicioAtividadePJ").html(result.inicioAtividadeFormatada);
 					$("#razaoSocial").val(result.pessoaJuridica.razaoSocial);
 					$("#nomeFantasia").val(result.pessoaJuridica.nomeFantasia);
 					$("#cnpj").val(result.pessoaJuridica.cnpj).mask("99.999.999/9999-99");
