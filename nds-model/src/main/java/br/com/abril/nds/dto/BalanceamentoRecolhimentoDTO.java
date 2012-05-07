@@ -18,7 +18,7 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4498486203318581867L;
 	
-	private Map<Date, List<RecolhimentoDTO>> matrizRecolhimento;
+	private Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
 
 	/**
 	 * Construtor padrão.
@@ -30,15 +30,14 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	/**
 	 * @return the matrizRecolhimento
 	 */
-	public Map<Date, List<RecolhimentoDTO>> getMatrizRecolhimento() {
+	public Map<Date, List<ProdutoRecolhimentoDTO>> getMatrizRecolhimento() {
 		return matrizRecolhimento;
 	}
 
 	/**
 	 * @param matrizRecolhimento the matrizRecolhimento to set
 	 */
-	public void setMatrizRecolhimento(
-			Map<Date, List<RecolhimentoDTO>> matrizRecolhimento) {
+	public void setMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		this.matrizRecolhimento = matrizRecolhimento;
 	}
 	

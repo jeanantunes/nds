@@ -141,7 +141,7 @@ public class Fixture {
 
 	public static PessoaJuridica juridicaFC() {
 		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
-				"fc@mail.com");
+				"fc@mail.com", "99.999-9");
 	}
 	
 	public static CotaAusente cotaAusenteAtivo(){
@@ -155,12 +155,12 @@ public class Fixture {
 
 	public static PessoaJuridica juridicaDinap() {		
 		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
-				"dinap@mail.com");
+				"dinap@mail.com", "99.999-8");
 	}
 	
 	public static PessoaJuridica juridicaAcme() {
 		return pessoaJuridica("ACME", "11.222.333/0001-00", "111.222.333.444",
-				"acme@mail.com");
+				"acme@mail.com", "99.999-7");
 	}
 
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
@@ -313,12 +313,13 @@ public class Fixture {
 	}
 
 	public static PessoaJuridica pessoaJuridica(String razaoSocial,
-			String cnpj, String ie, String email) {
+			String cnpj, String ie, String email, String im) {
 		PessoaJuridica juridica = new PessoaJuridica();
 		juridica.setRazaoSocial(razaoSocial);
 		juridica.setNomeFantasia(razaoSocial);
 		juridica.setCnpj(cnpj);
 		juridica.setInscricaoEstadual(ie);
+		juridica.setInscricaoMunicipal(im);
 		juridica.setEmail(email);
 		return juridica;
 	}
@@ -491,9 +492,11 @@ public class Fixture {
 		return lancamento;
 	}
 
-	public static Distribuidor distribuidor(PessoaJuridica juridica,
+	public static Distribuidor distribuidor(Integer codigo, PessoaJuridica juridica,
 			Date dataOperacao, PoliticaCobranca politicaCobranca) {
 		Distribuidor distribuidor = new Distribuidor();
+		
+		distribuidor.setCodigo(codigo);
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);

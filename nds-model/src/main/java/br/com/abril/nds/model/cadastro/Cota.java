@@ -118,6 +118,9 @@ public class Cota implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
+	@Column(name = "QTDE_PDV", nullable = true)
+	private Integer qtdePDV;
+	
 	public Long getId() {
 		return id;
 	}
@@ -274,6 +277,14 @@ public class Cota implements Serializable {
 		this.fornecedores = fornecedores;
 	}
 
+	public Integer getQtdePDV() {
+		return qtdePDV;
+	}
+	
+	public void setQtdePDV(Integer qtdePDV) {
+		this.qtdePDV = qtdePDV;
+	}
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -304,4 +315,5 @@ public class Cota implements Serializable {
 			return false;
 		return true;
 	}
+
 }
