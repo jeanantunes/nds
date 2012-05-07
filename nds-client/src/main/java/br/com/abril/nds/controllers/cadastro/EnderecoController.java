@@ -495,7 +495,7 @@ public class EnderecoController {
 
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
-				(enderecoAssociacao.getTipoEndereco() == null)?"":enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
+				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
 				enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),
