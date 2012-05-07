@@ -493,15 +493,17 @@ public class Fixture {
 	}
 
 	public static Distribuidor distribuidor(Integer codigo, PessoaJuridica juridica,
-			Date dataOperacao, PoliticaCobranca politicaCobranca) {
+											Date dataOperacao, PoliticaCobranca politicaCobranca) {
+		
 		Distribuidor distribuidor = new Distribuidor();
 		
 		distribuidor.setCodigo(codigo);
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);
-		distribuidor.setCapacidadeDistribuicao(10000);
-		distribuidor.setCapacidadeRecolhimento(10000L);
+		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		
 		return distribuidor;
 	}
 
