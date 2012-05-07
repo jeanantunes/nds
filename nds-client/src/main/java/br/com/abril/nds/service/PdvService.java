@@ -88,7 +88,5 @@ public interface PdvService {
 	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
-	
-	void atualizaImagemPDV(FileInputStream foto, Long idPdv) ;
-	
+		
 }
