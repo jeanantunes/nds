@@ -426,7 +426,6 @@ public class ConsultaEncalheController {
 		
 		for(ConsultaEncalheDTO consultaEncalheDTO : listaConsultaEncalheDTO) {
 			
-			idProdutoEdicao 	= "";//TODO: remover apos testes//(consultaEncalheDTO.getIdProdutoEdicao() != null) ? consultaEncalheDTO.getIdProdutoEdicao().toString() : "";
 			codigoProduto 		= (consultaEncalheDTO.getCodigoProduto() != null) ? consultaEncalheDTO.getCodigoProduto() : "";
 			nomeProduto 		= (consultaEncalheDTO.getNomeProduto() != null) ? consultaEncalheDTO.getNomeProduto() : "";
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
@@ -436,8 +435,14 @@ public class ConsultaEncalheController {
 			encalhe 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getEncalhe());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
 			total 				= getValorMonetarioFormatado(consultaEncalheDTO.getTotal());
-			recolhimento 		= (consultaEncalheDTO.getRecolhimento()!=null) ? consultaEncalheDTO.getRecolhimento().toString() : "";
+			
+			if(consultaEncalheDTO.getRecolhimento()<=0) {
+				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+			} else {
+				recolhimento = (consultaEncalheDTO.getRecolhimento()!=null) ? (consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA) : "" ;
+			}
 
+			
 			consultaEncalheVO = new ConsultaEncalheVO();
 			
 			consultaEncalheVO.setIdProdutoEdicao(idProdutoEdicao);
@@ -450,8 +455,7 @@ public class ConsultaEncalheController {
 			consultaEncalheVO.setEncalhe(encalhe);
 			consultaEncalheVO.setFornecedor(fornecedor);
 			consultaEncalheVO.setTotal(total);
-			consultaEncalheVO.setRecolhimento(recolhimento + SUFIXO_DIA);
-			
+			consultaEncalheVO.setRecolhimento(recolhimento);
 			
 			listaResultadosVO.add(consultaEncalheVO);
 		}

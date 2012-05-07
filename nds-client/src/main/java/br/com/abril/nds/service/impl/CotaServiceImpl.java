@@ -256,7 +256,7 @@ public class CotaServiceImpl implements CotaService {
 
 	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
 		
-		this.telefoneService.cadastrarTelefone(listaTelefonesCota);
+		this.telefoneService.cadastrarTelefone(listaTelefonesCota, cota.getPessoa());
 		
 		if (listaTelefonesCota != null){
 			boolean isTelefonePrincipal = false;

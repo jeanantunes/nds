@@ -181,3 +181,17 @@ function removeMascaraPriceFormat(field) {
 	
 	return field;
 }
+
+function clickLineFlexigrid(inputCheck, select) {
+	
+	var linha = $(inputCheck).parents()[2];
+	
+	if (select) {
+		
+		$(linha).attr("class", "erow trSelected");
+		
+	} else {
+		
+		$(linha).attr("class", "erow");
+	}
+}

@@ -6,22 +6,22 @@
 	
 	<script type="text/javascript">
 		
-		var ${param.tela} = new Telefone('${param.tela}');
+		var ${param.tela} = new Telefone('${param.tela}','${param.message}');
 		
 	</script>
 	
 	
 </head>
-	<div id="manutencaoTelefones" title="Telefones">
+	<div id="${param.tela}manutencaoTelefones" title="Telefones">
 		
-		<div id="dialog-excluir" title="Telefones">
+		<div id="${param.tela}dialog-excluir" title="Telefones" style="display: none;">
 			<p>Confirma esta Exclusão?</p>
 		</div>
 		<table width="280" cellpadding="2" cellspacing="2" style="text-align:left ">
 			<tr>
 				<td width="72">Tipo:</td>
 				<td width="192">
-					<select onchange="${param.tela}.opcaoTel(this.value, 'trRamalId', 'lblRamalId', 'ramal');" style="width:174px;" id="tipoTelefone">
+					<select onchange="${param.tela}.opcaoTel(this.value, 'trRamalId', 'lblRamalId', 'ramal');" style="width:174px;" id="${param.tela}tipoTelefone">
 						<option value="" selected="selected">Selecione</option>
 						<option value="COMERCIAL">Comercial</option>
 						<option value="CELULAR">Celular</option>
@@ -34,13 +34,13 @@
 			<tr>
 				<td>Telefone: </td>
 				<td>
-					<input type="text" style="width:40px" id="ddd" maxlength="255" />-<input type="text" style="width:110px" id="numeroTelefone" maxlength="255"/>
+					<input type="text" style="width:40px" id="${param.tela}ddd" maxlength="255" />-<input type="text" style="width:110px" id="${param.tela}numeroTelefone" maxlength="255"/>
 				</td>
 			</tr>
-			<tr id="trRamalId">
-				<td id="lblRamalId">Ramal: </td>
+			<tr id="${param.tela}trRamalId">
+				<td id="${param.tela}lblRamalId">Ramal: </td>
 				<td>
-					<input type="text" style="width:40px; float:left;" id="ramal" maxlength="255"/>
+					<input type="text" style="width:40px; float:left;" id="${param.tela}ramal" maxlength="255"/>
 				</td>
 			</tr>
 			<tr>
@@ -48,12 +48,12 @@
 					<label for="principal1">Principal:</label>
 				</td>
 				<td class="complementar">
-					<input type="checkbox" name="principal1" id="telefonePrincipal" />
+					<input type="checkbox" name="principal1" id="${param.tela}telefonePrincipal" />
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td><span class="bt_add"><a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="botaoAddEditar">Incluir Novo</a></span></td>
+				<td><span class="bt_add"><a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar">Incluir Novo</a></span></td>
 			</tr>
 		</table>
 		
@@ -63,9 +63,9 @@
 		
 		<br />
 		
-		<table id="telefonesGrid"></table>
+		<table id="${param.tela}telefonesGrid"></table>
 		
 		<br/>
 		
-		<input type="hidden" id="referenciaHidden"/>
+		<input type="hidden" id="${param.tela}referenciaHidden"/>
 </div>

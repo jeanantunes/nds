@@ -2,6 +2,7 @@
 var PDV = {
 		
 		idCota:"",
+		fecharModalCadastroPDV:false,
 		diasFuncionamento:[],
 		
 		pesquisarPdvs: function (idCota){
@@ -47,7 +48,18 @@ var PDV = {
 		
 		carregarAbaDadosBasico: function (result){
 			
+			if(result.pdvDTO.pathImagem) {
+				$("#idImagem").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+			} else {
+				$("#idImagem").attr("src",contextPath + "/images/pdv/no_image.jpeg");
+			}
+			
+			$("#idBtnExcluir").click(function() {
+				PDV.excluirImagem(result.pdvDTO.id);
+			});
+			
 			$("#idPDV").val(result.pdvDTO.id);
+			$("#idCotaImagem").val(result.pdvDTO.idCota);
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
 			$("#dataInicio").val($.format.date(result.pdvDTO.dataInicio.$.substr(0,10) + "00:00:00.000","dd/MM/yyyy"));
 			$("#nomePDV").val(result.pdvDTO.nomePDV);
@@ -83,14 +95,6 @@ var PDV = {
 				PDV.montartabelaDiasFuncionamento();
 			}
 	
-		},
-		
-		carregarAbaEndereco: function (result){
-			
-		},
-		
-		carregarAbaTelefone: function (result){
-			
 		},
 		
 		carregarAbaCaracteristica: function (result){
@@ -203,7 +207,7 @@ var PDV = {
 					[{name:"idPdv",value:idPdv},
 					 {name:"idCota",value:idCota}
 					 ], function(result){
-				
+				PDV.fecharModalCadastroPDV = false;
 				PDV.carregarDadosEdicao(result);
 				
 			},PDV.errorEditarPDV,true); 
@@ -247,9 +251,10 @@ var PDV = {
 					this.getDadosGeradorFluxo()  +"&" +
 					this.getDadosMap(), function(result){
 				
+				$("#dialog-pdv").dialog( "close" );
+				PDV.fecharModalCadastroPDV = true;
 				PDV.pesquisarPdvs(PDV.idCota);
 				PDV.limparCamposTela();
-				$("#dialog-pdv").dialog( "close" );
 				
 			},this.errorSalvarPDV,true,"idModalPDV");
 			
@@ -300,7 +305,7 @@ var PDV = {
 	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
 	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + $("#textoLuminoso").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoPonto="      + $("#selectdTipoPonto").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.caracteristica=" + $("#selectCaracteristica").val()+"&"+
+	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+$("#selectCaracteristica").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
 						
@@ -377,8 +382,8 @@ var PDV = {
 			
 			var tipoPeriodo = $("#selectDiasFuncionamento").val();
 			var inicioHorario = $("#inicioHorario").val();
-			var fimHorario = $("#fimHorario").val();
-			
+			var fimHorario = $("#fimHorario").val();		
+						
 			var parametros = [];
 			
 			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
@@ -395,9 +400,14 @@ var PDV = {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/adicionarPeriodo",
 					parametros, 
-					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);}
+					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);},
+					null,
+					true,
+					"idModalPDV"
 			);
 		},
+		
+	
 		
 		retornoAdicaoDiaFuncionamento: 	function(result){
 			
@@ -450,7 +460,10 @@ var PDV = {
 				 tr.append("<td width='138'>&nbsp; "+ inputHidden+"</td>");
 				 tr.append("<td width='249' class='diasFunc'>"+ row.descTipoPeriodo +"</td>");
 				 tr.append("<td width='47'>&nbsp;</td>");
-				 tr.append("<td width='100'>"+ row.inicio +" as "+ row.fim +"</td>");
+				
+				 var as = (row.descTipoPeriodo == '24 horas' ? '':' as ');
+				 tr.append("<td width='100'>"+ row.inicio + as + row.fim +"</td>");
+								 
 				 tr.append("<td width='227'>"+
 				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent(),"+index+");'" +
 				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
@@ -488,6 +501,10 @@ var PDV = {
 			var mensagens = result[1];
 			var status = result[2];
 			
+			if(mensagens!=null && mensagens.length!=0) {
+				exibirMensagem(status,mensagens);
+			}
+			
 			var combo = $("#selectDiasFuncionamento");
 			combo.clear();
 			
@@ -516,13 +533,41 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				},
-				beforeClose: function() {
-					clearMessageDialogTimeout();
 				}
-				
 			});
 		},
+		
+		cancelarCadastro:function(){
+			
+			$("#dialog-cancelar-cadastro-pdv").dialog({
+				resizable: false,
+				height:150,
+				width:600,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$.postJSON(contextPath +'/cadastro/pdv/cancelarCadastro', null, 
+							
+							function(result){
+								
+								PDV.fecharModalCadastroPDV = true;
+								PDV.limparCamposTela();
+								
+								$("#dialog-close").dialog("close");
+								$("#dialog-cancelar-cadastro-pdv").dialog("close");
+								$("#dialog-pdv").dialog("close");
+							}
+						);
+					},
+					"Cancelar": function() {
+						PDV.fecharModalCadastroPDV = false;
+						$(this).dialog("close");
+					}
+				}
+			});
+		},
+	
 		
 		poupNovoPDV:function(){
 			
@@ -532,7 +577,13 @@ var PDV = {
 			PDV.carregarCaracteristicaEspecialidade(null);
 			PDV.carregarPeriodosFuncionamento();
 			
-			PDV.popup_novoPdv();
+			$.postJSON(contextPath + "/cadastro/pdv/novo",
+					"idCota="+PDV.idCota, 
+					function(){
+						PDV.popup_novoPdv();
+						PDV.fecharModalCadastroPDV = false;
+					}
+			);
 		},
 		
 		popup_novoPdv:function() {
@@ -544,16 +595,28 @@ var PDV = {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						PDV.fecharModalCadastroPDV = true;
 						PDV.salvarPDV();
 					},
 					"Cancelar": function() {
-						PDV.limparCamposTela();
+						PDV.fecharModalCadastroPDV = false;
 						$( this ).dialog( "close" );
 					}
 				},
-				beforeClose: function() {
-					PDV.limparCamposTela();
+				beforeClose: function(event, ui) {
+				
 					clearMessageDialogTimeout("idModalPDV");
+					clearMessageDialogTimeout();
+						
+					if (!PDV.fecharModalCadastroPDV){
+						
+						PDV.cancelarCadastro();
+						
+						return PDV.fecharModalCadastroPDV;
+					}
+						
+					return PDV.fecharModalCadastroPDV;
+					
 				}
 			});
 
@@ -614,17 +677,39 @@ var PDV = {
 			});
 
 		},
+		
+		excluirImagem :function (idPDV) {
+			
+			$.postJSON(contextPath + "/cadastro/pdv/excluirImagem",
+					   "idPdv=" + idPDV, 
+					   function(result){
+				
+				var mensagens = result[0];
+				var status = result[1];
+				
+				$("#idImagem").attr("src", contextPath + "/images/pdv/no_image.jpeg");
+							
+				if(mensagens!=null && mensagens.length!=0) {
+					exibirMensagem(status,mensagens);
+				}
+			});
+
+		},
 		validarEmail : function (email)	{
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
-			if(er.exec(email))
-				return true;
-			else
-				return false;
+			if(!er.exec(email)) {
+				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."],'idModalPDV');	
+				$("#emailPDV").focus();
+			}
 		},
 		carregarPeriodosFuncionamento:function(){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
 					   null, 
 					   function(result){
+							
+							result.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
+							result.splice(6,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "-------------------------"}});
+							
 							var combo =  montarComboBox(result, false);
 							$("#selectDiasFuncionamento").html(combo);
 			},null,true,"idModalPDV");
@@ -733,7 +818,8 @@ var PDV = {
 		},
 
 		limparCamposTela:function(){
-		
+			
+			$("#idImagem").attr("src",  contextPath + "/images/pdv/no_image.jpeg");
 			$("#selectStatus").val(""); 
 			$("#nomePDV").val("");
 			$("#contatoPDV").val("");
@@ -780,6 +866,18 @@ var PDV = {
             $("#idPDV").val("");
             
             $("#tabpdv").tabs('select', 0);
+		},
+		
+		selecionarDiaFuncionamento: function() {
+			
+			if($("#selectDiasFuncionamento").val()=='VINTE_QUATRO_HORAS') {
+				$("#inicioHorario").attr('disabled', 'desabled');
+				$("#fimHorario").attr('disabled', 'desabled');
+				
+			} else {
+				$("#inicioHorario").attr('disabled', null);
+				$("#fimHorario").attr('disabled', null);
+			}
 		}
 		
 };

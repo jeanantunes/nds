@@ -75,6 +75,7 @@ import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -1644,7 +1645,12 @@ public class DataLoader {
 				TipoParametroSistema.PATH_IMAGENS_CAPA, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
 
 		session.save(parametroSistema);
-
+		
+		ParametroSistema parametroPathImagemPDV = 
+				Fixture.parametroSistema(
+					TipoParametroSistema.PATH_IMAGENS_PDV, "\\images\\pdv\\");
+		session.save(parametroPathImagemPDV);
+				
 		parametroSistema = 
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7");
 
@@ -2554,7 +2560,7 @@ public class DataLoader {
 	private static void criarDistribuidor(Session session) {
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com");
+				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		
@@ -2582,7 +2588,7 @@ public class DataLoader {
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
 
-		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
@@ -2924,7 +2930,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -3154,13 +3160,13 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000.000.000.000", "sys.discover@gmail.com");
+				"10000000000100", "000.000.000.000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11111111000111", "111.111.111.111", "sys.discover@gmail.com");
+				"11111111000111", "111.111.111.111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222.222.222.222", "sys.discover@gmail.com");
+				"22222222000122", "222.222.222.222", "sys.discover@gmail.com", "99.999-9");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93081738000101", "333.333.333.333", "sys.discover@gmail.com");
+				"93081738000101", "333.333.333.333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("31943508895",
 				"sys.discover@gmail.com", "Manoel da Silva");
@@ -3387,7 +3393,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
@@ -3444,13 +3450,13 @@ public class DataLoader {
 			estudo.setQtdeReparte(new BigDecimal(10));
 			save(session,estudo);
 
-			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i,"99.999-9");
 			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
 					estudo, cota);
 			save(session,pessoa,cota,estudoCota);		
 
-			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);
@@ -3734,6 +3740,8 @@ public class DataLoader {
 					numeroFatura,                        
 					valorFatura);
 	
+			notaFiscalEntradaFornecedorNFE.setMovimentoIntegracao("Movimento teste para nota fiscal entrada.");
+			
 			save(session, notaFiscalEntradaFornecedorNFE);
 		
 			
@@ -4174,8 +4182,6 @@ public class DataLoader {
 
 		save(session, chamadaEncalhe_2);
 
-
-
 		EstoqueProdutoCota estoqueProdutoCotaJohny_3 = 
 				Fixture.estoqueProdutoCota(
 				produtoEdicaoCE_3, cotaJohnyConsultaEncalhe, BigDecimal.TEN, BigDecimal.ZERO);
@@ -4224,6 +4230,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		save(session, conferenciaEncalhe);
+		
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(2, Calendar.MARCH, 2012), 
 				produtoEdicaoCE,
@@ -4236,6 +4246,9 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		save(session, conferenciaEncalhe);
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(3, Calendar.MARCH, 2012), 
 				produtoEdicaoCE,
@@ -4248,6 +4261,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		save(session, conferenciaEncalhe);
 
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4262,6 +4277,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		save(session, conferenciaEncalhe);
+
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(3, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_2,
@@ -4273,8 +4292,11 @@ public class DataLoader {
 				"Aprovado");
 
 		save(session, mec);
-
-
+		
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		save(session, conferenciaEncalhe);
+		
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(4, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_2,
@@ -4287,6 +4309,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
@@ -4300,6 +4324,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(3, Calendar.MARCH, 2012), 
@@ -4313,6 +4339,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
+
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(5, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_3,
@@ -4324,6 +4354,9 @@ public class DataLoader {
 				"Aprovado");
 
 		save(session, mec);
+
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
 
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4338,6 +4371,8 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(7, Calendar.MARCH, 2012), 
@@ -4351,6 +4386,10 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
+
+		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(7, Calendar.MARCH, 2012), 
 				produtoEdicaoCE_3,
@@ -4363,6 +4402,9 @@ public class DataLoader {
 
 		save(session, mec);
 
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		save(session, conferenciaEncalhe);
+		
 	}
 
 

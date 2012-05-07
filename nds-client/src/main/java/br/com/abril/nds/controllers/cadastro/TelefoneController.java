@@ -52,7 +52,9 @@ public class TelefoneController {
 		
 		FIADOR,
 		COTA,
-		ENTREGADOR;
+		ENTREGADOR,
+		TRANSPORTADOR,
+		TELEFONE_PDV;
 		
 		public void setarParametros(){
 			
@@ -74,6 +76,18 @@ public class TelefoneController {
 							EntregadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
 							EntregadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
 							EntregadorController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case TRANSPORTADOR:
+					TelefoneController.setarParametros(
+							TransportadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							TransportadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							TransportadorController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case TELEFONE_PDV:
+					TelefoneController.setarParametros(
+							PdvController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							PdvController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							PdvController.LISTA_TELEFONES_EXIBICAO);
 				break;
 			}
 		}
@@ -109,7 +123,7 @@ public class TelefoneController {
 			
 			for (TelefoneAssociacaoDTO tDto : listaTelefonesExibir){
 				
-				if (tDto.getTipoTelefone() != null && !telefonesRemover.contains(new Long(tDto.getReferencia()))){
+				if (!telefonesRemover.contains(new Long(tDto.getReferencia()))){
 					
 					telefonesSessao.put(tDto.getReferencia(), tDto);
 				}
@@ -260,7 +274,7 @@ public class TelefoneController {
 			}
 		}
 		
-		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().serialize();
+		this.result.use(Results.json()).from(telefoneAssociacaoDTO == null ? "" : telefoneAssociacaoDTO, "result").recursive().exclude("telefone.pessoa").serialize();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -346,6 +360,9 @@ public class TelefoneController {
 		}
 		
 		if (principal){
+			
+			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+			
 			Map<Integer, TelefoneAssociacaoDTO> telefones = this.obterTelefonesSalvarSessao();
 			
 			for (Integer key : telefones.keySet()){
@@ -353,16 +370,21 @@ public class TelefoneController {
 				if (referencia == null){
 					
 					if (telefones.get(key).isPrincipal()){
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+												
+						if( !telefonesRemover.contains(key) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
 					}
 					
 				} else {
 				
 					if (telefones.get(key).isPrincipal() && (!referencia.equals(telefones.get(key).getReferencia()))){
 						
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+						if( !telefonesRemover.contains(key) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
 					}
 				}
 			}
@@ -375,15 +397,20 @@ public class TelefoneController {
 					
 					if (dto.isPrincipal()){
 						
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+						if( !telefonesRemover.contains(dto.getTelefone().getId()) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
+						
 					}
 				} else {
 				
 					if (dto.isPrincipal() && (!referencia.equals(dto.getReferencia()))){
 						
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+						if( !telefonesRemover.contains(dto.getTelefone().getId()) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
 					}
 				}
 			}

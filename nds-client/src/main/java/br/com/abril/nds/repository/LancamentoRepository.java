@@ -49,4 +49,14 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
 					 											 List<Long> fornecedores,
 					 											 GrupoProduto grupoCromo);
+	 
+	 /**
+	  * Método que verifica a existência de uma chamada de encalhe do tipo Matriz Recolhimento
+	  * para o período especificado.
+	  * 
+	  * @param periodo - Período a ser utilizado na pesquisa.
+	  * 
+	  * @return caso exista chamada: true, caso não exista: false.
+	  */
+	 boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(PeriodoVO periodo);
 }

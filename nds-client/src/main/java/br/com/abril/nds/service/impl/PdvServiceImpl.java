@@ -1,32 +1,44 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CaracteristicaDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
@@ -34,16 +46,22 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.ClusterPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EnderecoPDVRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
 import br.com.abril.nds.repository.MaterialPromocionalRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PeriodoFuncionamentoPDVRepository;
+import br.com.abril.nds.repository.TelefonePdvRepository;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
 import br.com.abril.nds.repository.TiposEstabelecimentoRepository;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -85,6 +103,25 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Autowired
 	private TiposEstabelecimentoRepository tiposEstabelecimentoRepository;
+	
+	@Autowired
+	private EnderecoPDVRepository enderecoPDVRepository;
+	
+	@Autowired
+	private EnderecoService enderecoService;
+	
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
+	
+	@Autowired
+	private TelefonePdvRepository telefonePdvRepository;
+	
+	@Autowired
+	private TelefoneService telefoneService;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+
 	
 	@Transactional(readOnly=true)
 	@Override
@@ -201,6 +238,50 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Transactional(readOnly=true)
 	@Override
+	public List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,Long idCota) {
+		
+		if (idCota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		Long idPessoa = cota.getPessoa().getId();
+		
+		Set<Long> endRemover = new HashSet<Long>();
+		
+		List<EnderecoAssociacaoDTO> listRetorno = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		if (idPDV != null) {
+			
+			List<EnderecoAssociacaoDTO> listaEnderecolAssoc = this.enderecoPDVRepository.buscaEnderecosPDV(idPDV, null);
+			
+			if(listaEnderecolAssoc!= null && !listaEnderecolAssoc.isEmpty()){
+				
+				listRetorno.addAll(listaEnderecolAssoc);
+
+				for (EnderecoAssociacaoDTO dto : listaEnderecolAssoc){
+					
+					endRemover.add(dto.getEndereco().getId());
+				}
+			}
+		}
+		
+		List<EnderecoAssociacaoDTO> lista = this.enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
+		
+		if (lista!= null && !lista.isEmpty()){
+			
+			listRetorno.addAll(lista);
+		}
+		
+		return listRetorno;
+	}
+
+	@Transactional(readOnly=true)
+	@Override
 	public PdvDTO obterPDV(Long idCota, Long idPdv){
 		
 		PDV pdv = pdvRepository.obterPDV(idCota, idPdv);
@@ -218,16 +299,12 @@ public class PdvServiceImpl implements PdvService {
 		
 		return pdvDTO;
 	}
-	
-	
-	
+
 	@Transactional
 	@Override
 	public void excluirPDV(Long idPdv){
 		
 		PDV pdv = pdvRepository.buscarPorId(idPdv);
-		
-		//TODO verificar se o PDV esta associado a uma Roterização
 		
 		if(pdvRepository.obterQntPDV() == 1 ){
 			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Uma cota deve ter pelomenos um PDV cadastrado.");
@@ -311,9 +388,13 @@ public class PdvServiceImpl implements PdvService {
 		salvarPeriodoFuncionamentoPDV(pdvDTO, pdv);
 		
 		salvarGeradorFluxo(pdvDTO, pdv);
+		
+		if(pdvDTO.getImagem() != null)
+			atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId(), pdvDTO.getPathAplicacao());
+
 	
-		//salvarEndereco(pdvDTO, pdv);
-		//salvarTelefone(pdvDTO, pdv);
+		salvarEndereco(pdvDTO, pdv);
+		processarTelefones(pdvDTO, pdv);
 	}
 	
 	private void tratarDadosParaInclusao(PdvDTO pdvDTO,PDV pdv, Cota cota) {
@@ -350,12 +431,127 @@ public class PdvServiceImpl implements PdvService {
 		}
 	}
 
+	@Transactional	
+	public void atualizaImagemPDV(FileInputStream foto, Long idPdv, String pathAplicacao) {
+				
+		
+		ParametroSistema pathPDV = 
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+								
+		File fileDir = new File((pathAplicacao + pathPDV.getValor()).replace("\\", "/"));
+		
+				
+		fileDir.mkdirs();
+
+		String nomeArquivo = "pdv_" + idPdv + ".jpeg";
+		
+		File fileArquivo = new File(fileDir, nomeArquivo);		
+		
+		
+		if(fileArquivo.exists())
+			fileArquivo.delete();
+		
+		FileOutputStream fos = null;
+		
+		try {
+						
+			fos = new FileOutputStream(fileArquivo);
+			
+			IOUtils.copyLarge(foto, fos);
+			
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao gravar o arquivo em disco!");
+			}
+		}
+	}
+
 	private void salvarEndereco(PdvDTO pdvDTO,PDV pdv){
 		
+		processarEnderecos(pdvDTO, pdv);
 	}
 	
-	private void salvarTelefone(PdvDTO pdvDTO,PDV pdv){
+	@Transactional
+	private void processarTelefones(PdvDTO pdvDTO,PDV pdv){
 		
+		
+		if (pdvDTO.getTelefonesAdicionar() != null && !pdvDTO.getTelefonesAdicionar().isEmpty()) {
+			
+			this.validarInclusaoEdicaoTelefonePrincipal(pdvDTO.getTelefonesAdicionar());
+			
+		}
+			
+		if (pdvDTO.getTelefonesRemover() != null && !pdvDTO.getTelefonesRemover().isEmpty()) {
+		
+			this.validarExcluirTelefonePrincipal(pdv, pdvDTO.getTelefonesRemover(),pdvDTO.getTelefonesAdicionar());
+			
+		}
+		
+		
+		
+		List<Telefone> listaTelefones = new ArrayList<Telefone>();
+		if (pdvDTO.getTelefonesAdicionar() != null){
+			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : pdvDTO.getTelefonesAdicionar()){
+				listaTelefones.add(telefoneAssociacaoDTO.getTelefone());
+			}
+		}
+		
+		if (!listaTelefones.isEmpty()){
+			pdv.getCota().getPessoa().setTelefones(listaTelefones);
+		}	
+		
+		this.salvarTelefonesPdv(pdv, pdvDTO.getTelefonesAdicionar());
+		
+		this.removerTelefonesPdv(pdvDTO.getTelefonesRemover());
+	}
+
+	private void salvarTelefonesPdv(PDV pdv, List<TelefoneAssociacaoDTO> listaTelefones) {
+		
+		this.telefoneService.cadastrarTelefone(listaTelefones, pdv.getCota().getPessoa());
+		
+		if (listaTelefones != null){
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefones){
+				
+				TelefonePDV telefonePdv = this.telefonePdvRepository.obterTelefonePorTelefonePdv(dto.getTelefone().getId(), pdv.getId());
+				
+				if (telefonePdv == null){
+					telefonePdv = new TelefonePDV();
+					
+					telefonePdv.setPdv(pdv);
+					telefonePdv.setPrincipal(dto.isPrincipal());
+					telefonePdv.setTelefone(dto.getTelefone());
+					telefonePdv.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefonePdvRepository.adicionar(telefonePdv);
+				} else {
+					
+					telefonePdv.setPrincipal(dto.isPrincipal());
+					telefonePdv.setTipoTelefone(dto.getTipoTelefone());
+					
+					this.telefonePdvRepository.alterar(telefonePdv);
+				}
+			}
+		}
+	}
+
+	private void removerTelefonesPdv(Collection<Long> listaTelefones) {
+		
+		if (listaTelefones != null && !listaTelefones.isEmpty()){
+			this.telefonePdvRepository.removerTelefonesPdv(listaTelefones);
+			
+			this.telefoneService.removerTelefones(listaTelefones);
+		}
 	}
 	
 	private void salvarGeradorFluxo(PdvDTO pdvDTO, PDV pdv){
@@ -668,7 +864,7 @@ public class PdvServiceImpl implements PdvService {
 				selecionados.remove(selecionados.size() - 1);
 				
 				possiveis.add(periodo);
-			} catch (Exception e) {
+			} catch (ValidacaoException e) {
 				selecionados.remove(selecionados.size() - 1);
 			}
 		}
@@ -681,7 +877,7 @@ public class PdvServiceImpl implements PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception {
+	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) {
 		
 		List<TipoPeriodoFuncionamentoPDV> listaTipos = new ArrayList<TipoPeriodoFuncionamentoPDV>();
 		
@@ -695,7 +891,9 @@ public class PdvServiceImpl implements PdvService {
 			
 			if(listaTipos.size()>1) {
 				
-				throw new Exception("Ao selecionar " + TipoPeriodoFuncionamentoPDV.DIARIA.getDescricao() + ", nenhum outro item deve ser incluido.");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.DIARIA.getDescricao() 
+						+ ", nenhum outro item deve ser incluido.");
 			} 
 		
 		}
@@ -704,7 +902,8 @@ public class PdvServiceImpl implements PdvService {
 			
 			if(listaTipos.size() > 1) {
 				
-				throw new Exception("Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluido.");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluido.");
 			} 
 		
 		} 
@@ -717,7 +916,8 @@ public class PdvServiceImpl implements PdvService {
 				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.QUINTA_FEIRA)
 				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.SEXTA_FEIRA)) {
 				
-				throw new Exception("Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.SEGUNDA_SEXTA.getDescricao()+"', não é permitido a selecao específica de um dia da semana.");				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.SEGUNDA_SEXTA.getDescricao()+"', não é permitido a selecao específica de um dia da semana.");				
 			}
 		} 
 		
@@ -726,7 +926,9 @@ public class PdvServiceImpl implements PdvService {
 			if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.SABADO)
 				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.DOMINGO)) {
 				
-				throw new Exception("Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.FINAIS_SEMANA.getDescricao()+"', não é permitido a definição específíca para sábado ou domingo.");				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.FINAIS_SEMANA.getDescricao() 
+						+"', não é permitido a definição específíca para sábado ou domingo.");				
 			}
 		}		
 	}
@@ -737,7 +939,7 @@ public class PdvServiceImpl implements PdvService {
 	 * @param periodos - periodos
 	 * @throws Exception - Exceção ao encontrar registro duplicado.
 	 */
-	private void validarDuplicidadeDePeriodo(List<TipoPeriodoFuncionamentoPDV> periodos) throws Exception {
+	private void validarDuplicidadeDePeriodo(List<TipoPeriodoFuncionamentoPDV> periodos) {
 		
 		for(TipoPeriodoFuncionamentoPDV item : periodos) {
 			int count=0;
@@ -745,8 +947,8 @@ public class PdvServiceImpl implements PdvService {
 				if(item.equals(itemComparado)) {
 					count++;
 					if(count>1) {
-						throw new Exception("O período " + 
-								item.getDescricao() + 
+						throw new ValidacaoException(TipoMensagem.WARNING, 
+								"O período " +  item.getDescricao() + 
 								" foi incluido a lista mais de uma vez.");
 					}
 				}
@@ -754,6 +956,240 @@ public class PdvServiceImpl implements PdvService {
 		}
 		
 	}
+	
+	@Transactional
+	@Override
+	public List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota) {
+		
+		if (idCota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		Long idPessoa = cota.getPessoa().getId();
+		
+		
+		Set<Long> telRemover = null;
+		
+		List<TelefoneAssociacaoDTO> listaTelAssoc = null;
+		
+		if (idPdv != null) {
+			
+			listaTelAssoc = this.telefonePdvRepository.buscarTelefonesPdv(idPdv, null);
+			
+			telRemover = new HashSet<Long>();
+			
+			for (TelefoneAssociacaoDTO dto : listaTelAssoc){
+				
+				telRemover.add(dto.getTelefone().getId());
+			}
+		}
+		
+		List<TelefoneAssociacaoDTO> lista = this.telefoneService.buscarTelefonesPorIdPessoa(idPessoa, telRemover);
+		
+		if (lista!= null && !lista.isEmpty()){
+			
+			if(listaTelAssoc==null)
+				listaTelAssoc = new ArrayList<TelefoneAssociacaoDTO>();
+			
+			listaTelAssoc.addAll(lista);
+		}
+		
+		return listaTelAssoc;
+	}	
 
+	private void processarEnderecos(PdvDTO pdvDTO, PDV pdv) {
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = pdvDTO.getEnderecosAdicionar();
+		
+
+		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			this.validarInclusaoEdicaoEnderecoPrincipal(listaEnderecoAssociacaoSalvar);
+			
+			this.salvarEnderecosPDV(pdv, listaEnderecoAssociacaoSalvar);
+		}
+			
+		if (pdvDTO.getEnderecosRemover() != null && !pdvDTO.getEnderecosRemover().isEmpty()) {
+		
+			this.validarExcluirEnderecoPrincipal(pdv, pdvDTO.getEnderecosRemover(),listaEnderecoAssociacaoSalvar);
+			
+			this.removerEnderecosPDV(pdv, pdvDTO.getEnderecosRemover());
+		}
+	}
+	
+	private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+
+		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao,pdv.getCota().getPessoa());
+		
+		if (listaEnderecoAssociacao != null){
+		
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+	
+				EnderecoPDV enderecoPDV = 
+						this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao.getId(), pdv.getId());
+	
+				if (enderecoPDV == null) {
+	
+					enderecoPDV = new EnderecoPDV();
+					enderecoPDV.setPdv(pdv);
+					
+					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
+					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+					
+					this.enderecoPDVRepository.adicionar(enderecoPDV);
+				} else {
+					
+					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
+					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+					
+					this.enderecoPDVRepository.alterar(enderecoPDV);
+				}
+			}
+		}
+	}
+	
+	private void removerEnderecosPDV(PDV pdv , Set<Long> listaEnderecoAssociacao) {
+		
+		List<Long> idsEndereco = new ArrayList<Long>();
+		
+		List<Long> idsEnderecoPDV= new ArrayList<Long>();
+
+		for (Long enderecoAssociacao : listaEnderecoAssociacao) {
+			
+			idsEndereco.add(enderecoAssociacao);
+			
+			EnderecoPDV enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao, pdv.getId());
+			
+			if (enderecoPDV != null && enderecoPDV.getEndereco() != null){
+				idsEnderecoPDV.add(enderecoPDV.getId());
+			}
+		}
+		
+		if (!idsEnderecoPDV.isEmpty()){
+			
+			this.enderecoPDVRepository.excluirEnderecosPDV(idsEnderecoPDV);
+		}
+		
+		if (!idsEndereco.isEmpty()){
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
+	}
+
+	private void validarExcluirEnderecoPrincipal(PDV pdv,Set<Long> listaEnderecoAssociacao, List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar) {
+			
+		if(this.existeEnderecoPrincipal(listaEnderecoAssociacaoSalvar)){
+			return ;
+		}
+		
+		if(pdv.getEnderecos()!= null 
+				&& !pdv.getEnderecos().isEmpty()
+				&& pdv.getEnderecos().size() > 1){
+				
+			if(pdv.getEnderecos().size() == listaEnderecoAssociacao.size() ){
+				return;
+			}
+			
+			this.validarExclusaoEnderecoPrincipal(pdv, listaEnderecoAssociacao);
+		}
+	}
+	
+	private void validarExcluirTelefonePrincipal(PDV pdv,Set<Long> listaTelefoneAssociacao, List<TelefoneAssociacaoDTO> listaTelefoneAssociacaoSalvar) {
+		
+		if(this.existeTelefonePrincipal(listaTelefoneAssociacaoSalvar)){
+			return ;
+		}
+		
+		if(pdv.getTelefones()!= null 
+				&& !pdv.getTelefones().isEmpty()
+				&& pdv.getTelefones().size() > 1){
+				
+			if(pdv.getTelefones().size() == listaTelefoneAssociacao.size() ){
+				return;
+			}
+			
+			this.validarExclusaoTelefonePrincipal(pdv, listaTelefoneAssociacao);
+		}
+	}
+	
+	private void validarExclusaoTelefonePrincipal(PDV pdv,Set<Long> listaTelefoneAssociacao){
+		
+		for(Long idTelefone : listaTelefoneAssociacao){
+			
+			for( TelefonePDV tel : pdv.getTelefones()){
+				
+				if(tel.getTelefone().getId().equals(idTelefone) &&  tel.isPrincipal() ){
+					throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um telefone associado ao PDV deve ser principal!");
+				}
+			}
+		}
+	}
+	
+	private void validarExclusaoEnderecoPrincipal(PDV pdv,Set<Long> listaEnderecoAssociacao){
+		
+		for(Long idEndereco : listaEnderecoAssociacao){
+			
+			for( EnderecoPDV end : pdv.getEnderecos()){
+				
+				if(end.getEndereco().getId().equals(idEndereco) &&  end.isPrincipal() ){
+					throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+				}
+			}
+		}
+	}
+	
+	private void validarInclusaoEdicaoEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar){
+		
+		if(!this.existeEnderecoPrincipal(listaEnderecoAssociacaoSalvar)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+		}
+	}
+		
+	private boolean existeEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar){
+		
+		if(listaEnderecoAssociacaoSalvar!= null){
+		
+			for(EnderecoAssociacaoDTO end : listaEnderecoAssociacaoSalvar){
+				
+				if(end.isEnderecoPrincipal()){
+					return  Boolean.TRUE;
+				}
+			}
+		}
+		
+		return Boolean.FALSE;
+	}
+	
+	private void validarInclusaoEdicaoTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefoneAssociacaoSalvar){
+		
+		if(!this.existeTelefonePrincipal(listaTelefoneAssociacaoSalvar)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um telegone associado ao PDV deve ser principal!");
+		}
+	}
+	
+
+	private boolean existeTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefoneAssociacaoSalvar){
+		
+		if(listaTelefoneAssociacaoSalvar!= null){
+		
+			for(TelefoneAssociacaoDTO end : listaTelefoneAssociacaoSalvar){
+				
+				if(end.isPrincipal()){
+					return  Boolean.TRUE;
+				}
+			}
+		}
+		
+		return Boolean.FALSE;
+	}
 
 }

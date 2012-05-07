@@ -32,13 +32,15 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private Date dataLancamento;
 
-	private Date dataRecolhimento;
+	private Date dataRecolhimentoPrevista;
+	
+	private Date dataRecolhimentoDistribuidor;
 
-	private BigDecimal sede;
+	private BigDecimal expectativaEncalheSede;
 
-	private BigDecimal atendida;
+	private BigDecimal expectativaEncalheAtendida;
 
-	private BigDecimal qtdeExemplares;
+	private BigDecimal expectativaEncalhe;
 
 	private BigDecimal valorTotal;
 
@@ -178,59 +180,45 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the dataRecolhimento
+	 * @return the expectativaEncalheSede
 	 */
-	public Date getDataRecolhimento() {
-		return dataRecolhimento;
+	public BigDecimal getExpectativaEncalheSede() {
+		return expectativaEncalheSede;
 	}
 
 	/**
-	 * @param dataRecolhimento the dataRecolhimento to set
+	 * @param expectativaEncalheSede the expectativaEncalheSede to set
 	 */
-	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+	public void setExpectativaEncalheSede(BigDecimal expectativaEncalheSede) {
+		this.expectativaEncalheSede = expectativaEncalheSede;
 	}
 
 	/**
-	 * @return the sede
+	 * @return the expectativaEncalheAtendida
 	 */
-	public BigDecimal getSede() {
-		return sede;
+	public BigDecimal getExpectativaEncalheAtendida() {
+		return expectativaEncalheAtendida;
 	}
 
 	/**
-	 * @param sede the sede to set
+	 * @param expectativaEncalheAtendida the expectativaEncalheAtendida to set
 	 */
-	public void setSede(BigDecimal sede) {
-		this.sede = sede;
+	public void setExpectativaEncalheAtendida(BigDecimal expectativaEncalheAtendida) {
+		this.expectativaEncalheAtendida = expectativaEncalheAtendida;
 	}
 
 	/**
-	 * @return the atendida
+	 * @return the expectativaEncalhe
 	 */
-	public BigDecimal getAtendida() {
-		return atendida;
+	public BigDecimal getExpectativaEncalhe() {
+		return expectativaEncalhe;
 	}
 
 	/**
-	 * @param atendida the atendida to set
+	 * @param expectativaEncalhe the expectativaEncalhe to set
 	 */
-	public void setAtendida(BigDecimal atendida) {
-		this.atendida = atendida;
-	}
-
-	/**
-	 * @return the qtdeExemplares
-	 */
-	public BigDecimal getQtdeExemplares() {
-		return qtdeExemplares;
-	}
-
-	/**
-	 * @param qtdeExemplares the qtdeExemplares to set
-	 */
-	public void setQtdeExemplares(BigDecimal qtdeExemplares) {
-		this.qtdeExemplares = qtdeExemplares;
+	public void setExpectativaEncalhe(BigDecimal expectativaEncalhe) {
+		this.expectativaEncalhe = expectativaEncalhe;
 	}
 
 	/**
@@ -259,6 +247,34 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setNovaData(Date novaData) {
 		this.novaData = novaData;
+	}
+
+	/**
+	 * @return the dataRecolhimentoPrevista
+	 */
+	public Date getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
+	}
+
+	/**
+	 * @param dataRecolhimentoPrevista the dataRecolhimentoPrevista to set
+	 */
+	public void setDataRecolhimentoPrevista(Date dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
+	}
+
+	/**
+	 * @return the dataRecolhimentoDistribuidor
+	 */
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @param dataRecolhimentoDistribuidor the dataRecolhimentoDistribuidor to set
+	 */
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
 
 }

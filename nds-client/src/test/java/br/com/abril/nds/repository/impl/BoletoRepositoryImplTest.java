@@ -58,7 +58,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	public void setup() {
 		
 		//CRIA UM OBJETO PESSOA NA SESSAO PARA TESTES
-		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
+		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com", "99.999-9");
 		save(pessoaJuridica);
 		
 		//CRIA UM OBJETO BOX NA SESSAO PARA TESTES

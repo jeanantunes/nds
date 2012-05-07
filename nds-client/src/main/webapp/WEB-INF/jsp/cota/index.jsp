@@ -29,8 +29,8 @@
 	
 	function limparFormsTabs() {
 		
-		limparFormEndereco();
-		limparCamposTelefone();
+		ENDERECO_COTA.limparFormEndereco();
+		COTA.limparCamposTelefone();
 
 	}
 
@@ -47,10 +47,12 @@
 	}
 	
     function novaCota() {
-		
+		    	
 		var idCota = prompt("Digite o id da nova cota.");
 		
 		if (idCota) {
+			
+			PDV.idCota =  idCota;
 			
 			popup_cpf(idCota);
 			

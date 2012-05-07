@@ -3,7 +3,7 @@
 <script>
 
 $(function() {
-	
+		
 	$('#inicioHorario').mask('99:99'); 
 	$('#fimHorario').mask('99:99'); 
 	$("#porcentagemFaturamento").numeric();
@@ -15,65 +15,33 @@ $(function() {
 			success: tratarRetornoUploadImagem,
 		};
 		
-		$('#formBaixaAutomatica').ajaxForm(options);
-
-		function tratarRetornoUploadImagem(data) {
-						
-			data = replaceAll(data, "<pre>", "");
-			data = replaceAll(data, "</pre>", "");
-			
-			data = replaceAll(data, "<PRE>", "");
-			data = replaceAll(data, "</PRE>", "");
-			
-			var responseJson = jQuery.parseJSON(data);
-			
-			var mensagens = responseJson.result[0];
-			var status = responseJson.result[1];
-			var nomeArquivo = responseJson.result[2];
-			
-			if(isThere("${pageContext.request.contextPath}/images/pdv/" + nomeArquivo)) {
-			
-				$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
-			}
-			
-			if(mensagens!=null && mensagens.length!=0) {
-				exibirMensagem(status,mensagens);
-			}
-		}
-		
+		$('#formBaixaAutomatica').ajaxForm(options);		
 });
 
-function isThere(url) {
-	var req= new AJ(); // XMLHttpRequest object
-	try {
-		req.open("HEAD", url, false);
-		req.send(null);		
-		return req.status== 200 ? true : false;
-	}
-	catch (er) {
-		return false;
+function tratarRetornoUploadImagem(data) {
+	
+	data = replaceAll(data, "<pre>", "");
+	data = replaceAll(data, "</pre>", "");
+	
+	data = replaceAll(data, "<PRE>", "");
+	data = replaceAll(data, "</PRE>", "");
+	
+	var responseJson = jQuery.parseJSON(data);
+	
+	var mensagens = responseJson.result[0];
+	var status = responseJson.result[1];
+	var pathArquivo = responseJson.result[2];
+		
+	if(pathArquivo) {
+		$("#idImagem").attr("src","${pageContext.request.contextPath}/" + pathArquivo);
+	} else {
+		$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/no_image.jpeg");
+	}	
+	
+	if(mensagens!=null && mensagens.length!=0) {
+		exibirMensagemDialog(status,mensagens);
 	}
 }
-
-function AJ() {
-	var obj;
-	if (window.XMLHttpRequest) obj= new XMLHttpRequest(); 
-	else if (window.ActiveXObject){
-		try{
-			obj= new ActiveXObject('MSXML2.XMLHTTP.3.0');
-		}
-		catch(er){
-			try{
-				obj= new ActiveXObject("Microsoft.XMLHTTP");
-			}
-			catch(er){
-				obj= false;
-			}
-		}
-	}
-	return obj;
-}
-
 
 </script>
 
@@ -85,7 +53,7 @@ function AJ() {
 		  method="post" enctype="multipart/form-data" >
 	
 		<input type="hidden" name="formUploadAjax" value="true" />
-	
+		
 	<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
 									
 	</form>
@@ -138,7 +106,7 @@ function AJ() {
       <tr>
         <td>E-mail:</td>
         <td colspan="3">
-        	<input type="text" name="emailPDV" id="emailPDV" style="width:300px;"/>
+        	<input type="text" name="emailPDV" onchange="PDV.validarEmail(this.value);" id="emailPDV" style="width:300px;"/>
         </td>
         </tr>
       <tr>
@@ -177,11 +145,11 @@ function AJ() {
 
     </td>
     <td width="191" align="center" valign="top">
-    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca" 
-    	  onerror="${pageContext.request.contextPath}/images/pdv/no_image.jpeg"/>
+    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca"/>
     	    	
     	<br />
-    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a><a href="javascript:"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
+    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a>
+    	<a id="idBtnExcluir" href="javascript:" onclick="PDV.excluirImagem();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
     </td>
   </tr>
 </table>
@@ -189,7 +157,7 @@ function AJ() {
       <tr>
 	    <td width="135">Dias Funcionamento:</td>
 	    <td width="252" class="diasFunc">
-	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" style="width:230px;">
+	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" onchange="PDV.selecionarDiaFuncionamento(this)" style="width:230px;">
 		      
 		      <option value="-1" selected="selected">Selecione</option>
 		      

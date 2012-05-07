@@ -76,7 +76,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
-		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
+		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com", "99.999-9");
 		save(pessoaJuridica);
 		
 		ParametroCobrancaCota parametroCobranca = 
@@ -92,7 +92,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
 		save(politicaCobranca);
 		
-		distribuidor = Fixture.distribuidor(pessoaJuridica, new Date(), politicaCobranca);
+		distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicaCobranca);
 		save(distribuidor);
 		
 		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);

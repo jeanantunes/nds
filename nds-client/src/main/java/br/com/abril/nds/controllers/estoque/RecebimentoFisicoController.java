@@ -221,6 +221,10 @@ public class RecebimentoFisicoController {
 		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoService.obterRecebimentoFisicoPorNotaFiscal(idNotaFiscal);
 		
+		if(recebimentoFisico == null) {
+			return false;
+		}
+		
 		if(recebimentoFisico.getStatusConfirmacao().equals(StatusConfirmacao.CONFIRMADO)){
 			return true;
 		}

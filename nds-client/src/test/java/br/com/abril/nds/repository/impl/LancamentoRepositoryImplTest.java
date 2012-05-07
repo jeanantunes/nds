@@ -34,9 +34,11 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -58,6 +60,10 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
+	
+	private ChamadaEncalhe chamadaEncalhe;
+	private ChamadaEncalhe chamadaEncalhe1;
+	private ChamadaEncalhe chamadaEncalhe2;
 
 	@Before
 	public void setUp() {
@@ -244,6 +250,43 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
 				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		chamadaEncalhe = new ChamadaEncalhe();
+		
+		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		chamadaEncalhe.setDataRecolhimento(calendar.getTime());
+		
+		chamadaEncalhe.setProdutoEdicao(veja1);
+		
+		save(veja, veja1, chamadaEncalhe);
+
+		chamadaEncalhe1 = new ChamadaEncalhe();
+		
+		chamadaEncalhe1.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
+		
+		calendar.add(Calendar.DAY_OF_MONTH, 5);
+
+		chamadaEncalhe1.setDataRecolhimento(calendar.getTime());
+		
+		chamadaEncalhe1.setProdutoEdicao(veja1);
+		
+		save(chamadaEncalhe1);
+
+		chamadaEncalhe2 = new ChamadaEncalhe();
+		
+		chamadaEncalhe2.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
+		
+		calendar.add(Calendar.DAY_OF_MONTH, 5);
+		
+		chamadaEncalhe2.setDataRecolhimento(calendar.getTime());
+		
+		chamadaEncalhe2.setProdutoEdicao(veja1);
+		
+		save(chamadaEncalhe2);
+
 	}
 
 	@Test
@@ -613,5 +656,47 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 //				CurrencyUtil.formatarValor(resumo2302.getQtdeExemplares()));
 //		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(101.20)),
 //				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
+	}
+	
+	@Test
+	public void verificarMatrizRecolhimentoComChamadaEncalhe() {
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		PeriodoVO periodo = new PeriodoVO();
+
+		periodo.setDataInicial(calendar.getTime());
+
+		calendar.add(Calendar.DAY_OF_MONTH, +5);
+		
+		periodo.setDataFinal(calendar.getTime());
+		
+		boolean existeChamadaEncalhe =
+				this.lancamentoRepository.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodo);
+		
+		Assert.assertTrue(existeChamadaEncalhe);
+	}
+
+	@Test
+	public void verificarMatrizRecolhimentoSemChamadaEncalhe() {
+		
+		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
+		
+		update(chamadaEncalhe);
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		PeriodoVO periodo = new PeriodoVO();
+
+		periodo.setDataInicial(calendar.getTime());
+
+		calendar.add(Calendar.DAY_OF_MONTH, +5);
+		
+		periodo.setDataFinal(calendar.getTime());
+		
+		boolean existeChamadaEncalhe =
+				this.lancamentoRepository.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodo);
+		
+		Assert.assertFalse(existeChamadaEncalhe);
 	}
 }

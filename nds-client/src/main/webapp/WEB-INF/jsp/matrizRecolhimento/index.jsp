@@ -13,7 +13,7 @@
 					
 					var rows = '<tr>';
 
-					$.each(result, function(index, resumo) {
+					$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
 						
 						rows += '<td>';
 
@@ -27,7 +27,7 @@
 						}
 						
 						rows += '<label>' + resumo.dataFormatada;
-						rows += '<a href="javascript:;" onclick="mudaGrid();" style="float: right;">';
+						rows += '<a href="javascript:;" onclick="visualizarMatrizBalanceamentoPorDia(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
 						rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
 						rows += '</a>';
 						rows += '</label>';
@@ -53,6 +53,17 @@
 				    
 				    $("#tableResumoPeriodoBalanceamento").append(rows);
 
+				    var matrizFechada = result.matrizFechada;
+				    
+				    if (matrizFechada) {
+				    	
+				    	bloquearLinks();
+				    	
+				    } else {
+				    	
+				    	habilitarLinks();
+				    }
+				    
 				    $("#resumoPeriodo").show();
 
 				    $("#fieldsetGrids").hide();
@@ -64,18 +75,133 @@
 			);
 		}
 		
-		function balancearPorValor() {
+		function bloquearLinks() {
 			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
-				obterParametrosPesquisa(),
-				function() {
+			bloquearLink("linkConfirmar");
+			bloquearLink("linkEditor");
+			bloquearLink("linkValor");
+			bloquearLink("linkSalvar");
+			bloquearLink("linkMatrizFornecedor");
+			bloquearLink("linkConfiguracaoInicial");
+			bloquearLink("linkFechar");
+			bloquearLink("linkReprogramar");
+		}
+		
+		function habilitarLinks() {
+			
+			habilitarLink("linkConfirmar", confirmar);
+			habilitarLink("linkEditor", balancearPorEditor);
+			habilitarLink("linkValor", balancearPorValor);
+			habilitarLink("linkSalvar", salvar);
+			habilitarLink("linkMatrizFornecedor", balancearMatrizFornecedor);
+			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
+			habilitarLink("linkFechar", fechar);
+			habilitarLink("linkReprogramar", reprogramar);
+		}
+		
+		function bloquearLink(idLink) {
+			
+			var link = $("#" + idLink);
+			link.addClass("linkDisabled");
+			link.unbind("click");
+			link.css("text-decoration", "none");
+		}
+		
+		function habilitarLink(idLink, funcao) {
+			
+			var link = $("#" + idLink);
+			link.removeClass("linkDisabled");
+			link.unbind("click");
+			link.bind("click", funcao);
+			link.css("text-decoration", "");
+		}		
+		
+		function visualizarMatrizBalanceamentoPorDia(data) {
+			
+			$(".balanceamentoGrid").flexOptions({
+				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizBalanceamentoPorDia' />",
+				params: [
+			         {name:'dataFormatada', value: data}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".balanceamentoGrid").flexReload();
+		}
+		
+		function executarPreProcessamento(resultado) {
+			
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return resultado;
+			}
+			
+			$.each(resultado.rows, function(index, row) {
+				
+				var inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
+								   + ' value="' + row.cell.sequencia + '"'
+								   + ' style="width: 25px;" />';
+								   
+			   	var inputNovaData = '<input type="text" id="novaData' + row.id + '"'
+								  + ' value="' + row.cell.novaData + '"'
+			   					  + ' style="width:65px; margin-right:5px; float:left;" />';
+			   				
+			   	var divRecarregarData = '<div class="bt_atualizarIco">'
+			   						  + '<a href="javascript:;">&nbsp;</a></div>';
+				
+   				var novaData = inputNovaData + divRecarregarData;
+			   				
+				var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
+							   + ' name="checkBalanceamento"'
+							   + ' value="' + row.id + '"'
+							   + ' onclick="checarBalanceamento()" />';
 					
-				},
-				function() {
+		   		row.cell.sequencia = inputSequencia;
+				row.cell.novaData = novaData;
+				row.cell.reprogramar = inputCheck;
+			});
+				
+			$(".grids").show();
+			
+			$("#fieldsetGrids").show();
+			
+			$("#bt_fechar").show();
+			
+			return resultado;
+		}
+		
+		function checarBalanceamento() {
+			
+			$("input[name='checkBalanceamento']").each(function() {
+			
+				var checado = this.checked;
+				
+				clickLineFlexigrid(this, checado);
+				
+				if (!checado) {
 					
+					$("#checkAllBalanceamento").attr("checked", false);
 				}
-			);
+			});
+		}
+		
+		function selecionarTodos(input) {
+			
+			checkAll(input, "checkBalanceamento");
+			
+			$("input[name='checkBalanceamento']").each(function() {
+			
+				var checado = this.checked;
+				
+				clickLineFlexigrid(this, checado);
+			});
 		}
 	
 		function obterParametrosPesquisa() {
@@ -160,7 +286,9 @@
 		}
 	
 		function inicializar() {
-				
+			
+			iniciarGrid();
+			
 			$("#dataPesquisa").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -174,6 +302,167 @@
 			$("input[name='numeroSemana']").numeric();
 
 			carregarDadosPesquisa();
+		}
+		
+		function iniciarGrid() {
+			
+			$(".balanceamentoGrid").flexigrid({
+				preProcess: executarPreProcessamento,
+				dataType : 'json',
+				colModel : [ {
+					display : 'SM',
+					name : 'sequencia',
+					width : 33,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 50,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'numeroEdicao',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Preço Capa R$',
+					name : 'precoCapa',
+					width : 45,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Fornecedor',
+					name : 'fornecedor',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Editor',
+					name : 'editor',
+					width : 40,
+					sortable : true,
+					align : 'left',
+				}, {
+					display : 'Parcial',
+					name : 'parcial',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Brinde',
+					name : 'brinde',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Lançamento',
+					name : 'dataLancamento',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Recolhimento',
+					name : 'dataRecolhimento',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Sede',
+					name : 'sede',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Atendida',
+					name : 'atendida',
+					width : 50,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Exemplar',
+					name : 'qtdeExemplares',
+					width : 45,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Total R$',
+					name : 'valorTotal',
+					width : 50,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Nova Data',
+					name : 'novaData',
+					width : 110,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Reprog.',
+					name : 'reprogramar',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "sequencia",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180
+			});
+		}
+		
+		function confirmar() {
+			
+		}
+		
+		function balancearPorEditor() {
+			
+		}
+		
+		function balancearPorValor() {
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
+				obterParametrosPesquisa(),
+				function() {
+					
+				},
+				function() {
+					
+				}
+			);
+		}
+		
+		function salvar() {
+			
+		}
+		
+		function balancearMatrizFornecedor() {
+			
+		}
+		
+		function voltarConfiguracaoInicial() {
+			
+		}
+		
+		function fechar() {
+			
+		}
+		
+		function reprogramar() {
+			
 		}
 		
 		$(function() {
@@ -253,8 +542,8 @@
 			<tr>
 				<td width="115">
 					<span class="bt_confirmar_novo" title="Confirmar balanceamento">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
+						<a id="linkConfirmar" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Confirmar
 						</a>
 					</span>
 				</td>
@@ -263,29 +552,34 @@
 				</td>
 				<td width="296">
 					<span class="bt_confirmar_novo" title="Balancear Editor">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Editor
+						<a id="linkEditor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Editor
 						</a>
 					</span>
 					<span class="bt_confirmar_novo" title="Balancear Volume / Valor">
-						<a onclick="balancearPorValor();" href="javascript:;">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Valor
+						<a id="linkValor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Valor
+						</a>
+					</span>
+					<span class="bt_novos" title="Salvar">
+						<a id="linkSalvar" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_salvar.gif'/>">Salvar
 						</a>
 					</span>
 				</td>
 				
 				<td width="207">
 					<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
-						<a href="javascript:;" onclick="mostra_matriz();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_detalhes.png'/>">Matriz Fornecedor
+						<a id="linkMatrizFornecedor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_detalhes.png'/>">Matriz Fornecedor
 						</a>
 					</span>
 				</td>
 				
 				<td width="215">
 					<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
-						<a href="javascript:;">
-							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />
+						<a id="linkConfiguracaoInicial" href="javascript:;">
+							<img src="<c:url value='/images/bt_devolucao.png'/>" border="0" hspace="5" />
 							Voltar Configuração Inicial
 						</a>
 					</span>
@@ -303,9 +597,9 @@
 		<div class="grids" style="display: none;">
 
 			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right; display: none;">
-				
-				<a href="javascript:;" onclick="fechaGrid();">
-					<img src="<c:url value='images/ico_excluir.gif'/>" hspace="5" border="0" />Fechar
+				<a id="linkFechar" href="javascript:;">
+					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
+						 hspace="5" border="0" />Fechar
 				</a>
 			</span>
 
@@ -317,8 +611,8 @@
 				<tr>
 					<td width="152">
 						<span class="bt_novos" title="Reprogramar">
-							<a href="javascript:;" onclick="popup();">
-								<img src="<c:url value='images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
+							<a id="linkReprogramar" href="javascript:;">
+								<img src="<c:url value='/images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
 							</a>
 						</span>
 					</td>
@@ -327,7 +621,7 @@
 					<td width="150">
 						<span class="bt_sellAll">
 							<label for="sel">Selecionar Todos</label>
-							<input type="checkbox" name="Todos" id="sel" onclick="checkAll();" style="float: left;" />
+							<input type="checkbox" name="checkAllBalanceamento" id="checkAllBalanceamento" onclick="selecionarTodos(this);" style="float: left;" />
 						</span>
 					</td>
 				</tr>
@@ -337,7 +631,7 @@
 		<!-- GRID -->
 		
 		<div id="gridMatriz" style="display: none;">
-			<table class="balanceamentoGrid"></table>
+			<table class="balanceamentoGrid2"></table>
 		</div>
 		
 	</fieldset>

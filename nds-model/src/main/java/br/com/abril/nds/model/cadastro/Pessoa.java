@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -40,14 +39,12 @@ public abstract class Pessoa implements Serializable {
 	private Long id;
 	
 	@Column(name = "EMAIL")
-	private String email;	
+	private String email;
 	
-	@OneToMany
-	@JoinColumn(name = "PESSOA_ID")
+	@OneToMany(mappedBy = "pessoa")
 	public List<Endereco> enderecos = new ArrayList<Endereco>();
 	
-	@OneToMany
-	@JoinColumn(name = "PESSOA_ID")
+	@OneToMany(mappedBy = "pessoa")
 	public List<Telefone> telefones = new ArrayList<Telefone>();
 	
 	public Long getId() {

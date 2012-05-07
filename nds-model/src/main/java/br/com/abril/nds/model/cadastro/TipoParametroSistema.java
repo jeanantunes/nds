@@ -9,6 +9,8 @@ public enum TipoParametroSistema {
 
 	PATH_IMAGENS_CAPA, 
 	
+	PATH_IMAGENS_PDV, 
+	
 	/**
 	 * Número de dias permitido para lançamento de uma
 	 * diferença de estoque do tipo FALTA DE.

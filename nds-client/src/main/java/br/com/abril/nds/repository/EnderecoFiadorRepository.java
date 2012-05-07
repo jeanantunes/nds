@@ -19,4 +19,6 @@ public interface EnderecoFiadorRepository extends Repository<EnderecoFiador, Lon
 	void excluirEnderecosPorIdFiador(Long idFiador);
 
 	void excluirEnderecosFiador(Collection<Long> idsEnderecoFiador);
+
+	boolean verificarEnderecoPrincipalFiador(Long id, Set<Long> idsIgnorar);
 }

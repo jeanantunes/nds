@@ -1,7 +1,5 @@
 package br.com.abril.nds.model.cadastro.pdv;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Enumeração com os tipos de período de funcionamento do PDV

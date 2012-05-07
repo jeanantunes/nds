@@ -22,12 +22,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * 
 	 * @param filtro
-	 * @param idTipoMovimento
 	 * @param indQtdEncalheAposPrimeiroDia
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
+	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia);
 	
 	/**
 	 * Obtém a quantidade de itens da consulta de encalhe.
@@ -35,12 +34,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * a quantidade de itens do encalhe sumarizada do primeiro dia.
 	 * 
 	 * @param filtro
-	 * @param idTipoMovimento
 	 * @param indQtdEncalheAposPrimeiroDia
 	 * 
 	 * @return Qtde -  BigDecimal
 	 */
-	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento, boolean indQtdEncalheAposPrimeiroDia);
+	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia);
 	
 	/**
 	 * Pesquisa uma lista de ContagemDevolucao.
@@ -99,20 +97,18 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
 	 * 
 	 * @param filtro
-	 * @param idTipoMovimento
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento);
+	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
 	 * 
 	 * @param filtro
-	 * @param idTipoMovimento
 	 * 
 	 * @return List - ConsultaEncalhe
 	 */
-	public  List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro, Long idTipoMovimento);
+	public  List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 }

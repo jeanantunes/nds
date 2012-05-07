@@ -204,7 +204,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 				.append(" (select f.recebeCobrancaEmail " +
 						"  from FormaCobranca f " +
 						"  where f.parametroCobrancaCota=parametroCobranca " +
-						"  and f.principal=true) ")
+						"  and f.principal=true group by f.principal )")
 			.append(")");
 		}
 		
@@ -534,6 +534,9 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
 		}
+		
+		if (query.uniqueResult() == null)
+			return 0.0;
 		
 		return ((BigDecimal) query.uniqueResult()).doubleValue();
 	}

@@ -18,8 +18,10 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4498486203318581867L;
 	
-	private Map<Date, List<RecolhimentoDTO>> matrizRecolhimento;
+	private Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
 
+	private boolean matrizFechada;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -30,16 +32,29 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	/**
 	 * @return the matrizRecolhimento
 	 */
-	public Map<Date, List<RecolhimentoDTO>> getMatrizRecolhimento() {
+	public Map<Date, List<ProdutoRecolhimentoDTO>> getMatrizRecolhimento() {
 		return matrizRecolhimento;
 	}
 
 	/**
 	 * @param matrizRecolhimento the matrizRecolhimento to set
 	 */
-	public void setMatrizRecolhimento(
-			Map<Date, List<RecolhimentoDTO>> matrizRecolhimento) {
+	public void setMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		this.matrizRecolhimento = matrizRecolhimento;
+	}
+
+	/**
+	 * @return the matrizFechada
+	 */
+	public boolean isMatrizFechada() {
+		return matrizFechada;
+	}
+
+	/**
+	 * @param matrizFechada the matrizFechada to set
+	 */
+	public void setMatrizFechada(boolean matrizFechada) {
+		this.matrizFechada = matrizFechada;
 	}
 	
 }

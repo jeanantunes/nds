@@ -11,12 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -48,44 +46,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Transactional(readOnly = true)
-	public List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodoBalanceamento(Date dataInicial, 
-																			   List<Long> listaIdsFornecedores) {
-
-		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
-		
-		List<DistribuicaoFornecedor> recolhimentos = 
-			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
-				listaIdsFornecedores, OperacaoDistribuidor.RECOLHIMENTO);
-		
-		Set<Integer> listaCodigosDiasSemana = new TreeSet<Integer>();
-		
-		for (DistribuicaoFornecedor recolhimento : recolhimentos) {
-			
-			listaCodigosDiasSemana.add(recolhimento.getDiaSemana().getCodigoDiaSemana());
-		}
-
-		List<Date> periodoRecolhimento = 
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(dataInicial, dataFinal, listaCodigosDiasSemana);
-		
-		return this.lancamentoRepository.buscarResumosPeriodoRecolhimento(
-				periodoRecolhimento, listaIdsFornecedores, GrupoProduto.CROMO);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public List<RecolhimentoDTO> obterDadosBalanceamentoRecolhimento(Date dataInicial) {
-
-		
-		return null;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	@Transactional(readOnly = true)
 	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
@@ -93,7 +53,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
-			obterDadosRecolhimento(numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento);
+			this.obterDadosRecolhimento(numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -101,14 +61,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
 	}
 	
-	/**
+	/*
 	 * Monta o DTO com as informações para realização do balanceamento.
-	 * 
-	 * @param numeroSemana - número da semana 
-	 * @param listaIdsFornecedores - lista de identificadores dos fornecedores
-	 * @param tipoBalanceamento - tipo de balanceamento
-	 * 
-	 * @return {@link RecolhimentoDTO}
 	 */
 	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
 			 									   List<Long> listaIdsFornecedores,
@@ -120,34 +74,27 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		PeriodoVO periodoRecolhimento = getPeriodoRecolhimento(distribuidor, numeroSemana);
 		
-		List<Date> datasRecolhimentoFornecedor = 
-			obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
+		TreeSet<Date> datasRecolhimentoFornecedor = 
+			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
 		
-		List<Date> datasRecolhimentoDistribuidor = 
-			obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
+		TreeSet<Date> datasRecolhimentoDistribuidor = 
+			this.obterDatasRecolhimentoDistribuidor(distribuidor, periodoRecolhimento);
 		
-		dadosRecolhimento.setListaDiasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
-		dadosRecolhimento.setListaDiasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
+		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
+		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(
-			distribuidor.getCapacidadeRecolhimento());
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
 		return dadosRecolhimento;
 	}
 
-	/**
+	/*
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
-	 * 
-	 * @param distribuidor - distribuídor
-	 * @param numeroSemana - número da semana
-	 * 
-	 * @return período de recolhimento
 	 */
 	private PeriodoVO getPeriodoRecolhimento(Distribuidor distribuidor, Integer numeroSemana) {
 		
 		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -156,16 +103,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return periodoRecolhimento;
 	}
 	
-	/**
+	/*
 	 * Obtém as datas de recolhimento dos fornecedores informados.
-	 * 
-	 * @param periodoRecolhimento - perídos de recolhimento
-	 * @param listaIdsFornecedores - lista com os identificadores dos fornecedores
-	 * 
-	 * @return lista de datas para recolhimento
 	 */
-	private List<Date> obterDatasRecolhimentoFornecedor(PeriodoVO periodoRecolhimento,
-														List<Long> listaIdsFornecedores) {
+	private TreeSet<Date> obterDatasRecolhimentoFornecedor(PeriodoVO periodoRecolhimento,
+														   List<Long> listaIdsFornecedores) {
 		
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
@@ -178,22 +120,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			diasSemanaFornecedor.add(distribuicaoFornecedor.getDiaSemana().getCodigoDiaSemana());
 		}
 		
-		List<Date> datasRecolhimentoFornecedor = 
-			obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
+		TreeSet<Date> datasRecolhimentoFornecedor = 
+			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaFornecedor);
 		
 		return datasRecolhimentoFornecedor;
 	}
 	
-	/**
+	/*
 	 * Obtém as datas de recolhimento do distribuídor.
-	 * 
-	 * @param distribuidor - distribuídor
-	 * @param periodoRecolhimento - período de recolhimento
-	 * 
-	 * @return lista de datas para recolhimento
 	 */
-	private List<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
-														  PeriodoVO periodoRecolhimento) {
+	private TreeSet<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
+														 PeriodoVO periodoRecolhimento) {
 		
 		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
@@ -206,28 +143,23 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			diasSemanaDistribuidor.add(distribuicaoDistribuidor.getDiaSemana().getCodigoDiaSemana());
 		}
 		
-		List<Date> datasRecolhimentoDistribuidor = 
-			obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
+		TreeSet<Date> datasRecolhimentoDistribuidor = 
+			this.obterDatasRecolhimento(periodoRecolhimento, diasSemanaDistribuidor);
 		
 		return datasRecolhimentoDistribuidor;
 	}
 	
-	/**
+	/*
 	 * Obtém as datas para recolhimento no período informado,
 	 * de acordo com os dias da semana informados.
-	 * 
-	 * @param periodoRecolhimento - período de recolhimento
-	 * @param diasRecolhimentoSemana - códigos dos dias de recolhimento da semana
-	 * 
-	 * @return lista de datas para recolhimento
 	 */
-	private List<Date> obterDatasRecolhimento(PeriodoVO periodoRecolhimento,
-											  Set<Integer> diasRecolhimentoSemana) {
+	private TreeSet<Date> obterDatasRecolhimento(PeriodoVO periodoRecolhimento,
+											 	 Set<Integer> diasRecolhimentoSemana) {
 		
-		List<Date> datasRecolhimento = 
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(periodoRecolhimento.getDataInicial(),
-														 periodoRecolhimento.getDataFinal(),
-														 diasRecolhimentoSemana);
+		TreeSet<Date> datasRecolhimento =
+			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
+				periodoRecolhimento.getDataInicial(),  
+					periodoRecolhimento.getDataFinal(), diasRecolhimentoSemana);
 		
 		return datasRecolhimento;
 	}

@@ -52,7 +52,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		save(banco);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
+				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		ParametroCobrancaCota parametroCobranca = 
@@ -68,7 +68,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		PoliticaCobranca politicaCobranca =
 			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
 		
-		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		save(distribuidor);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito =

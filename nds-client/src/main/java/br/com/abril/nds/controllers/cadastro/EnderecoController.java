@@ -65,7 +65,7 @@ public class EnderecoController {
 	
 	public enum Tela{
 		
-		ENDERECO_FIADOR,ENDERECO_COTA,ENDERECO_ENTREGADOR,ENDERECO_PDV;
+		ENDERECO_FIADOR,ENDERECO_COTA,ENDERECO_ENTREGADOR,ENDERECO_PDV,ENDERECO_TRANSPORTADOR;
 		
 		public void setarParametros(){
 			
@@ -87,6 +87,21 @@ public class EnderecoController {
 							EntregadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
 							EntregadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
 							EntregadorController.LISTA_ENDERECOS_EXIBICAO);
+				break;
+
+				case ENDERECO_PDV:
+					EnderecoController.setarParametros(
+							PdvController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							PdvController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							PdvController.LISTA_ENDERECOS_EXIBICAO);
+				break;
+
+				case ENDERECO_TRANSPORTADOR:
+					EnderecoController.setarParametros(
+							TransportadorController.LISTA_ENDERECOS_SALVAR_SESSAO, 
+							TransportadorController.LISTA_ENDERECOS_REMOVER_SESSAO, 
+							TransportadorController.LISTA_ENDERECOS_EXIBICAO);
+
 				break;
 			}
 		}
@@ -312,7 +327,7 @@ public class EnderecoController {
 			
 		}
 
-		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
+		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().exclude("endereco.pessoa").serialize();
 	}
 
 	/**
@@ -480,7 +495,7 @@ public class EnderecoController {
 
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
-				enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
+				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
 				enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),

@@ -118,7 +118,7 @@ public class PDV implements Serializable {
 	 * Tamanho do PDV
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TAMANHO_PDV")
+	@Column(name = "TAMANHO_PDV", nullable = true)
 	private TamanhoPDV tamanhoPDV;
 	
 	/**
@@ -181,8 +181,8 @@ public class PDV implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "MATERIAL_PROMOCIONAL_ID")})
 	private Set<MaterialPromocional> materiais = new HashSet<MaterialPromocional>();
 	  	
-	@Column(name = "EXPOSITOR", nullable = false)  	
-	private boolean expositor;
+	@Column(name = "EXPOSITOR", nullable = true)  	
+	private Boolean expositor;
 		
 	@Column(name = "TIPO_EXPOSITOR")
 	private String tipoExpositor;
@@ -370,14 +370,14 @@ public class PDV implements Serializable {
 	/**
 	 * @return the expositor
 	 */
-	public boolean isExpositor() {
+	public Boolean isExpositor() {
 		return expositor;
 	}
 
 	/**
 	 * @param expositor the expositor to set
 	 */
-	public void setExpositor(boolean expositor) {
+	public void setExpositor(Boolean expositor) {
 		this.expositor = expositor;
 	}
 

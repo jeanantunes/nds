@@ -2,8 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
@@ -62,6 +64,8 @@ public interface PdvService {
 	
 	PdvDTO obterPDV(Long idCota, Long idPdv);
 	
+	List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,Long idCota);
+	
 	void excluirPDV(Long idPdv);
 
 	/**
@@ -70,7 +74,7 @@ public interface PdvService {
 	 * @param selecionados - Periodos já selecionados
 	 * @return - períodos que ainda podem ser selecionados
 	 */
-	public List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados);
+	List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados);
 	
 	/**
 	 * Valida se uma lista de períodos é valida, de acordo com as regras definidas na EMS 0159
@@ -78,7 +82,8 @@ public interface PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
+	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) ;
 
-
+	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
+		
 }

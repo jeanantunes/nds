@@ -1,4 +1,4 @@
-function Endereco(paramTela) {
+function Endereco(paramTela,paramMessage) {
 
 	this.confirmarExclusaoEndereco = function (idEndereco) {
 		
@@ -29,7 +29,8 @@ function Endereco(paramTela) {
 
 			exibirMensagemDialog(
 				data.mensagens.tipoMensagem, 
-				data.mensagens.listaMensagens
+				data.mensagens.listaMensagens,
+				paramMessage
 			);
 
 			return;
@@ -49,9 +50,9 @@ function Endereco(paramTela) {
 			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id);
 		}
 
-		if ($(".enderecosGrid").css('display') == 'none') {
+		if ($("."+paramTela+"enderecosGrid").css('display') == 'none') {
 
-			$(".enderecosGrid").show();
+			$("."+paramTela+"enderecosGrid").show();
 		}
 
 		return data;
@@ -79,13 +80,13 @@ function Endereco(paramTela) {
 			contextPath+'/cadastro/endereco/pesquisarEnderecos',
 			"tela=" + paramTela,
 			function(result) {
-				$(".enderecosGrid").flexAddData({
+				$("."+paramTela+"enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});	
 				
 				_this.limparFormEndereco();
 				
-				$("#tipoEndereco").focus();
+				$("#"+paramTela+"tipoEndereco").focus();
 			},
 			function(result) {
 				
@@ -97,7 +98,7 @@ function Endereco(paramTela) {
 	
 	this.incluirNovoEndereco = function () {
 
-		var formData = $("#formEnderecos").serializeArray();
+		var formData = $("#"+paramTela+"formEnderecos").serializeArray();
 		
 		var _this = this;
 		
@@ -105,27 +106,29 @@ function Endereco(paramTela) {
 			contextPath+'/cadastro/endereco/incluirNovoEndereco',
 			formData,
 			function(result) {
-				$(".enderecosGrid").flexAddData({
+				$("."+paramTela+"enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});	
 				
 				_this.limparFormEndereco();
 				
-				$("#tipoEndereco").focus();
+				$("#"+paramTela+"tipoEndereco").focus();
 			},
 			function(result) {
 				
 				_this.processarResultadoConsultaEndereco(result);
 			},
-			true
+			true,
+			paramMessage
 		);
 	};
 
 	this.editarEndereco = function(idEndereco) {
-
-		$("#linkIncluirNovoEndereco").html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
-		$("#btnIncluirNovoEndereco").removeClass();
-		$("#btnIncluirNovoEndereco").addClass("bt_novos");
+		
+		$("#"+paramTela+"linkIncluirNovoEndereco").html("");
+		$("#"+paramTela+"linkIncluirNovoEndereco").html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
+		$("#"+paramTela+"btnIncluirNovoEndereco").removeClass("bt_add");
+		$("#"+paramTela+"btnIncluirNovoEndereco").addClass("bt_novos");
 		
 		var data = "tela=" + paramTela +"&idEnderecoAssociacao=" + idEndereco;
 		
@@ -133,20 +136,21 @@ function Endereco(paramTela) {
 				contextPath+'/cadastro/endereco/editarEndereco',
 				data,
 			function(result) {
-				$("#idEndereco").val(result.id);
-				$("#tipoEndereco").val(result.tipoEndereco);
-				$("#cep").val(result.endereco.cep);
-				$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
-				$("#logradouro").val(result.endereco.logradouro);
-				$("#numero").val(result.endereco.numero);
-				$("#complemento").val(result.endereco.complemento);
-				$("#bairro").val(result.endereco.bairro);
-				$("#cidade").val(result.endereco.cidade);
-				$("#uf").val(result.endereco.uf);
-				$("#principal").attr("checked", result.enderecoPrincipal);
+				$("#"+paramTela+"idEndereco").val(result.id);
+				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
+				$("#"+paramTela+"cep").val(result.endereco.cep);
+				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);
+				$("#"+paramTela+"logradouro").val(result.endereco.logradouro);
+				$("#"+paramTela+"numero").val(result.endereco.numero);
+				$("#"+paramTela+"complemento").val(result.endereco.complemento);
+				$("#"+paramTela+"bairro").val(result.endereco.bairro);
+				$("#"+paramTela+"cidade").val(result.endereco.cidade);
+				$("#"+paramTela+"uf").val(result.endereco.uf);
+				$("#"+paramTela+"principal").attr("checked", result.enderecoPrincipal);
 			},
 			null, 
-			true
+			true,
+			paramMessage
 		);
 	};
 
@@ -160,7 +164,7 @@ function Endereco(paramTela) {
 			contextPath+'/cadastro/endereco/removerEndereco',
 			data,
 			function(result) {
-				$(".enderecosGrid").flexAddData({
+				$("."+paramTela+"enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});		
 			},
@@ -174,7 +178,7 @@ function Endereco(paramTela) {
 
 	this.popup = function () {
 
-		$("#manutencaoEnderecos").dialog({
+		$("#"+paramTela+"manutencaoEnderecos").dialog({
 			resizable: false,
 			height:640,
 			width:840,
@@ -191,32 +195,32 @@ function Endereco(paramTela) {
 	
 	this.limparFormEndereco = function () {
 
-		$("#linkIncluirNovoEndereco").html("Incluir Novo");
-		$("#btnIncluirNovoEndereco").removeClass();
-		$("#btnIncluirNovoEndereco").addClass("bt_add");
+		$("#"+paramTela+"linkIncluirNovoEndereco").html("Incluir Novo");
+		$("#"+paramTela+"btnIncluirNovoEndereco").removeClass();
+		$("#"+paramTela+"btnIncluirNovoEndereco").addClass("bt_add");
 
-		$("#idEndereco").val("");
-		$("#tipoEndereco").val("");
-		$("#cep").val("");
-		$("#tipoLogradouro").val("");
-		$("#logradouro").val("");
-		$("#numero").val("");
-		$("#complemento").val("");
-		$("#bairro").val("");
-		$("#cidade").val("");
-		$("#uf").val("");
-		$("#principal").attr("checked", false);
+		$("#"+paramTela+"idEndereco").val("");
+		$("#"+paramTela+"tipoEndereco").val("");
+		$("#"+paramTela+"cep").val("");
+		$("#"+paramTela+"tipoLogradouro").val("");
+		$("#"+paramTela+"logradouro").val("");
+		$("#"+paramTela+"numero").val("");
+		$("#"+paramTela+"complemento").val("");
+		$("#"+paramTela+"bairro").val("");
+		$("#"+paramTela+"cidade").val("");
+		$("#"+paramTela+"uf").val("");
+		$("#"+paramTela+"principal").attr("checked", false);
 	};
 	
 	$(function() {
 		
 		var _this = this;
 		
-		$("#cep").mask("99999-999");
-		$("#uf").mask("aa");
-		$("#numero").numeric();
+		$("#"+paramTela+"cep").mask("99999-999");
+		$("#"+paramTela+"uf").mask("aa");
+		$("#"+paramTela+"numero").numeric();
 		
-		$("#linkIncluirNovoEndereco").keypress(function() {
+		$("#"+paramTela+"linkIncluirNovoEndereco").keypress(function() {
 			
 			var keynum = 0;
 	          
@@ -237,32 +241,35 @@ function Endereco(paramTela) {
 	
 	this.pesquisarEnderecoPorCep = function () {
 	
-		var cep =  $("#cep").val();
+		var cep =  $("#"+paramTela+"cep").val();
 		
 		$.postJSON(
 				contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 
 			function(result) {
-				$("#idEndereco").val(result.id);
-				$("#tipoEndereco").val(result.tipoEndereco);
-				$("#cep").val(result.endereco.cep);
-				$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
-				$("#logradouro").val(result.endereco.logradouro);
-				$("#numero").val(result.endereco.numero);
-				$("#complemento").val(result.endereco.complemento);
-				$("#bairro").val(result.endereco.bairro);
-				$("#cidade").val(result.endereco.cidade);
-				$("#uf").val(result.endereco.uf);
-				$("#principal").attr("checked", result.enderecoPrincipal);
+				$("#"+paramTela+"idEndereco").val(result.id);
+				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
+				$("#"+paramTela+"cep").val(result.endereco.cep);
+				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);
+				$("#"+paramTela+"logradouro").val(result.endereco.logradouro);
+				$("#"+paramTela+"numero").val(result.endereco.numero);
+				$("#"+paramTela+"complemento").val(result.endereco.complemento);
+				$("#"+paramTela+"bairro").val(result.endereco.bairro);
+				$("#"+paramTela+"cidade").val(result.endereco.cidade);
+				$("#"+paramTela+"uf").val(result.endereco.uf);
+				$("#"+paramTela+"principal").attr("checked", result.enderecoPrincipal);
 			},
 			null, 
-			true
+			true,
+			paramMessage
 		);
 	};
 	
 	this.popularGrid = function(){
 		
-		$(".enderecosGrid").flexigrid({
+		var nomeGrid = paramTela +"enderecosGrid";
+		
+		$("."+nomeGrid).flexigrid({
 			preProcess: this.processarResultadoConsultaEndereco,
 			dataType : 'json',
 			colModel : [  {

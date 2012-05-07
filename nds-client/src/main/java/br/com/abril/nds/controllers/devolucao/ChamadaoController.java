@@ -126,11 +126,11 @@ public class ChamadaoController {
 			chamadaoVO.setProduto(consignadoCotaChamadao.getNomeProduto());
 			chamadaoVO.setEdicao(consignadoCotaChamadao.getNumeroEdicao().toString());
 			
-			chamadaoVO.setPrecoCapa(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoCapa()));
+			chamadaoVO.setPrecoVenda(
+				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoVenda()));
 			
-			chamadaoVO.setValorDesconto(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoComDesconto()));
+			chamadaoVO.setPrecoDesconto(
+				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoDesconto()));
 			
 			chamadaoVO.setReparte(consignadoCotaChamadao.getReparte().toString());
 			chamadaoVO.setFornecedor(consignadoCotaChamadao.getNomeFornecedor());
@@ -362,16 +362,16 @@ public class ChamadaoController {
 			chamadaoVO.setProduto(consignadoCotaChamadao.getNomeProduto());
 			chamadaoVO.setEdicao(consignadoCotaChamadao.getNumeroEdicao().toString());
 			
-			chamadaoVO.setPrecoCapa(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoCapa()));
+			chamadaoVO.setPrecoVenda(
+				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoVenda()));
 			
-			if (consignadoCotaChamadao.getPrecoComDesconto() != null) {
+			if (consignadoCotaChamadao.getPrecoDesconto() != null) {
 				
-				chamadaoVO.setValorDesconto(
-					CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoComDesconto()));
+				chamadaoVO.setPrecoDesconto(
+					CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoDesconto()));
 				
 			} else {
-				chamadaoVO.setValorDesconto("");
+				chamadaoVO.setPrecoDesconto("");
 			}
 			
 			chamadaoVO.setReparte(consignadoCotaChamadao.getReparte().toString());

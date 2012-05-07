@@ -42,6 +42,9 @@ public class Distribuidor {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "CODIGO", nullable = false)
+	private Integer codigo;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
@@ -75,13 +78,13 @@ public class Distribuidor {
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_DISTRIBUICAO", nullable = false)
-	private long capacidadeDistribuicao;
+	private BigDecimal capacidadeDistribuicao;
 	
 	/**
 	 * Capacidade de recolhimento diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_RECOLHIMENTO", nullable = false)
-	private long capacidadeRecolhimento;
+	private BigDecimal capacidadeRecolhimento;
 	
 	/**
 	 * Número de reprogramações permitidas no lançamento
@@ -116,7 +119,14 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
+	
+	@OneToMany(mappedBy="distribuidor")
+	private List<TipoGarantiaAceita> tiposGarantiasAceita;
+	
+	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
+	private boolean requerAutorizacaoEncalheSuperaReparte;
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -189,19 +199,19 @@ public class Distribuidor {
 		this.telefones = telefones;
 	}
 
-	public long getCapacidadeDistribuicao() {
+	public BigDecimal getCapacidadeDistribuicao() {
 		return capacidadeDistribuicao;
 	}
 
-	public void setCapacidadeDistribuicao(long capacidadeDistribuicao) {
+	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
-	public long getCapacidadeRecolhimento() {
+	public BigDecimal getCapacidadeRecolhimento() {
 		return capacidadeRecolhimento;
 	}
 
-	public void setCapacidadeRecolhimento(long capacidadeRecolhimento) {
+	public void setCapacidadeRecolhimento(BigDecimal capacidadeRecolhimento) {
 		this.capacidadeRecolhimento = capacidadeRecolhimento;
 	}
 	
@@ -251,7 +261,44 @@ public class Distribuidor {
 	public void setParametroContratoCota(ParametroContratoCota parametroContratoCota) {
 		this.parametroContratoCota = parametroContratoCota;
 	}
+
+	/**
+	 * @return the tiposGarantiasAceita
+	 */
+	public List<TipoGarantiaAceita> getTiposGarantiasAceita() {
+		return tiposGarantiasAceita;
+	}
+
+	/**
+	 * @param tiposGarantiasAceita the tiposGarantiasAceita to set
+	 */
+	public void setTiposGarantiasAceita(
+			List<TipoGarantiaAceita> tiposGarantiasAceita) {
+		this.tiposGarantiasAceita = tiposGarantiasAceita;
+	}
 	
 
+	public boolean isRequerAutorizacaoEncalheSuperaReparte() {
+		return requerAutorizacaoEncalheSuperaReparte;
+	}
+
+	public void setRequerAutorizacaoEncalheSuperaReparte(
+			boolean requerAutorizacaoEncalheSuperaReparte) {
+		this.requerAutorizacaoEncalheSuperaReparte = requerAutorizacaoEncalheSuperaReparte;
+	}
+
+	/**
+	 * @return the codigo
+	 */
+	public Integer getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(Integer codigo) {
+		this.codigo = codigo;
+	}
 	
 }

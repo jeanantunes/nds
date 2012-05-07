@@ -153,6 +153,7 @@ public class EntregadorController {
 												boolean procuracao,
 												String cpfEntregador, 
 												Integer numeroCotaProcuracao,
+												PessoaFisica pessoaFisica,
 												ProcuracaoEntregador procuracaoEntregador) {
 
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
@@ -172,14 +173,16 @@ public class EntregadorController {
 
 		cpfEntregador = cpfEntregador.replaceAll("\\.", "").replaceAll("-", "");
 		
-		PessoaFisica pessoaFisica = this.pessoaFisicaService.buscarPorCpf(cpfEntregador);
+		PessoaFisica pessoaFisicaExistente = this.pessoaFisicaService.buscarPorCpf(cpfEntregador);
 
-		if (pessoaFisica == null) {
+		if (pessoaFisicaExistente == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa física inválida.");
+			pessoaFisica.setCpf(cpfEntregador);
+			
+			pessoaFisicaExistente = this.pessoaFisicaService.salvarPessoaFisica(pessoaFisica);
 		}
-		
-		if (this.entregadorService.isPessoaJaCadastrada(pessoaFisica.getId(), idEntregador)) {
+
+		if (this.entregadorService.isPessoaJaCadastrada(pessoaFisicaExistente.getId(), idEntregador)) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa física já cadastrada para outro entregador.");
 		}
@@ -197,10 +200,15 @@ public class EntregadorController {
 			entregador = this.entregadorService.buscarPorId(idEntregador);
 		}
 		
-		entregador.setPessoa(pessoaFisica);
+		entregador.setPessoa(pessoaFisicaExistente);
 		entregador.setCodigo(codigoEntregador);
 		entregador.setComissionado(isComissionado);
-		entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
+		
+		if (percentualComissao != null && !percentualComissao.isEmpty()) {
+
+			entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
+		}
+		
 		entregador.setProcuracao(procuracao);
 
 		if (procuracao && numeroCotaProcuracao == null) {
@@ -260,6 +268,7 @@ public class EntregadorController {
 												  boolean procuracao,
 												  String cnpjEntregador,
 												  Integer numeroCotaProcuracao,
+												  PessoaJuridica pessoaJuridica,
 												  ProcuracaoEntregador procuracaoEntregador) {
 
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
@@ -279,14 +288,16 @@ public class EntregadorController {
 		
 		cnpjEntregador = cnpjEntregador.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 
-		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpjEntregador);
+		PessoaJuridica pessoaJuridicaExistente = this.pessoaJuridicaService.buscarPorCnpj(cnpjEntregador);
 		
-		if (pessoaJuridica == null) {
+		if (pessoaJuridicaExistente == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa jurídica inválida.");
+			pessoaJuridica.setCnpj(cnpjEntregador);
+			
+			pessoaJuridicaExistente = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
 		}
 		
-		if (this.entregadorService.isPessoaJaCadastrada(pessoaJuridica.getId(), idEntregador)) {
+		if (this.entregadorService.isPessoaJaCadastrada(pessoaJuridicaExistente.getId(), idEntregador)) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa jurídica já cadastrada para outro entregador.");
 		}
@@ -306,9 +317,14 @@ public class EntregadorController {
 
 		entregador.setCodigo(codigoEntregador);
 		entregador.setComissionado(isComissionado);
-		entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
+		
+		if (percentualComissao != null && !percentualComissao.isEmpty()) {
+
+			entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao )));
+		}
+
 		entregador.setProcuracao(procuracao);
-		entregador.setPessoa(pessoaJuridica);
+		entregador.setPessoa(pessoaJuridicaExistente);
 
 		if (procuracao && numeroCotaProcuracao == null) {
 
@@ -357,7 +373,7 @@ public class EntregadorController {
 		
 		if (pessoaFisica == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa não encontrada.");
+			pessoaFisica = new PessoaFisica();
 		}
 		
 		this.result.use(Results.json()).from(pessoaFisica, "result").serialize();
@@ -375,7 +391,7 @@ public class EntregadorController {
 		
 		if (pessoaJuridica == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa não encontrada.");
+			pessoaJuridica = new PessoaJuridica();
 		}
 		
 		this.result.use(Results.json()).from(pessoaJuridica, "result").serialize();
@@ -403,8 +419,7 @@ public class EntregadorController {
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
 				this.entregadorService.obterEnderecosPorIdEntregador(idEntregador);
 
-		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao
-		);
+		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao);
 
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
 				this.entregadorService.buscarTelefonesEntregador(idEntregador);
@@ -424,6 +439,11 @@ public class EntregadorController {
 
 			entregadorPessoaFisica.setEntregador(entregador);
 			
+			entregadorPessoaFisica.setDataNascimentoEntregadorFormatada(
+					DateUtil.formatarDataPTBR(((PessoaFisica) entregador.getPessoa()).getDataNascimento()));
+			
+			entregadorPessoaFisica.setInicioAtividadeFormatada(DateUtil.formatarDataPTBR(entregador.getInicioAtividade()));
+			
 			entregadorPessoaFisica.setProcuracaoEntregador(entregador.getProcuracaoEntregador());
 
 			entregadorPessoaFisica.setPessoaFisica((PessoaFisica) entregador.getPessoa());
@@ -437,6 +457,8 @@ public class EntregadorController {
 			EntregadorPessoaJuridicaVO entregadorPessoaJuridica = new EntregadorPessoaJuridicaVO();
 
 			entregadorPessoaJuridica.setEntregador(entregador);
+			
+			entregadorPessoaJuridica.setInicioAtividadeFormatada(DateUtil.formatarDataPTBR(entregador.getInicioAtividade()));
 
 			entregadorPessoaJuridica.setProcuracaoEntregador(entregador.getProcuracaoEntregador());
 

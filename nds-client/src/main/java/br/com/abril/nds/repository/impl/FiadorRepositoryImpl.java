@@ -67,15 +67,9 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 			hql.append(" and (p.nome like :nome or p.razaoSocial like :nome or p.nomeFantasia like :nome) ");
 		}
 		
-		Long qtdRegistros = 
-				this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO);
-		
 		ConsultaFiadorDTO consultaFiadorDTO = new ConsultaFiadorDTO();
 		
-		long qtdPaginas = 
-				(qtdRegistros / filtroConsultaFiadorDTO.getPaginacaoVO().getQtdResultadosPorPagina());
-		
-		consultaFiadorDTO.setQuantidadePaginas(qtdPaginas == 0 ? 1 : qtdPaginas);
+		consultaFiadorDTO.setQuantidadeRegistros(this.obterQuantidadeRegistros(hql.toString(), filtroConsultaFiadorDTO));
 		
 		switch (filtroConsultaFiadorDTO.getOrdenacaoColunaFiador()){
 			case CODIGO:
@@ -192,9 +186,9 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	@Override
 	public List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar){
 		
-		StringBuilder hql = new StringBuilder("select f.cotasAssociadas ");
-		hql.append(" from Fiador f, Cota c ")
-		   .append(" where f.id = :idFiador and c.fiador.id = f.id ");
+		StringBuilder hql = new StringBuilder("select c ");
+		hql.append(" from Cota c ")
+		   .append(" where c.fiador.id = :idFiador ");
 		
 		if (cotasIgnorar != null && !cotasIgnorar.isEmpty()){
 			hql.append(" and c.id not in (:cotasIgnorar) ");

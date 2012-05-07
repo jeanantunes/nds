@@ -1,8 +1,16 @@
 <head>
 	<script language="javascript" type="text/javascript">
 		
-		function popup_novo_transportador() {
+		var fecharModalCadastroTransp = false;
 	
+		function popup_novo_transportador() {
+			
+			limparCamposCadastroTransportador();
+			
+			fecharModalCadastroTransp = false;
+			
+			$('#tabs').tabs('select', 0);
+			
 			$("#dialog-novo").dialog({
 				resizable : false,
 				height : 590,
@@ -10,38 +18,85 @@
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").show("highlight", {}, 1000, callback);
-						$(".grids").show();
+						
+						var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial").val()},
+									{name:"transportador.pessoaJuridica.nomeFantasia", value:$("#nomeFantasia").val()},
+									{name:"transportador.pessoaJuridica.email", value:$("#email").val()},
+									{name:"transportador.pessoaJuridica.cnpj", value:$("#cnpj").val()},
+									{name:"transportador.pessoaJuridica.inscricaoEstadual", value:$("#inscEstadual").val()},
+									{name:"transportador.responsavel", value:$("#responsavel").val()}];
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cadastrarTransportador'/>", data, 
+							function(result){
+								
+								fecharModalCadastroTransp = true;
+								
+								$("#dialog-cancelar-cadastro-transportador").dialog("close");
+								$("#dialog-novo").dialog("close");
+								
+								exibirMensagem(result.tipoMensagem, result.listaMensagens);
+								
+								$(".transportadoraGrid").flexReload();
+							}
+						);
 	
 					},
 					"Cancelar" : function() {
 						$(this).dialog("close");
 					}
+				},
+				beforeClose: function(event, ui) {
+					
+					if (!fecharModalCadastroTransp){
+						
+						cancelarCadastro();
+						
+						return fecharModalCadastroTransp;
+					}
+					
+					return fecharModalCadastroTransp;
 				}
 			});
 	
-		};
-	
-		function popup_alterar() {
-	
-			$("#dialog-novo").dialog({
-				resizable : false,
-				height : 600,
-				width : 840,
-				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").hide("highlight", {}, 1000, callback);
-	
+		}
+		
+		function limparCamposCadastroTransportador(){
+			$("#razaoSocial").val("");
+			$("#nomeFantasia").val("");
+			$("#email").val("");
+			$("#cnpj").val("");
+			$("#inscEstadual").val("");
+			$("#responsavel").val("");
+		}
+		
+		function cancelarCadastro(){
+			$("#dialog-cancelar-cadastro-transportador").dialog({
+				resizable: false,
+				height:150,
+				width:600,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastro'/>", null, 
+							function(result){
+								
+								fecharModalCadastroTransp = true;
+								
+								$("#dialog-cancelar-cadastro-transportador").dialog("close");
+								$("#dialog-novo").dialog("close");
+							}
+						);
 					},
-					"Cancelar" : function() {
+					"Cancelar": function() {
+						
 						$(this).dialog("close");
+						
+						fecharModalCadastroTransp = false;
 					}
 				}
 			});
-		};
+		}
 	
 		function popup_excluir() {
 	
@@ -60,10 +115,15 @@
 					}
 				}
 			});
-		};
+		}
 	
 		function popup_incluir_veiculo() {
-	
+			
+			$("#btnAddVeiculo").show();
+			
+			$("#tipoVeiculo").val("");
+			$("#placa").val("");
+			
 			$("#dialog-incluir-veiculo").dialog({
 				resizable : false,
 				height : 'auto',
@@ -71,17 +131,134 @@
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", null, 
+							function(result){
+								
+								$(".veiculosGrid").flexAddData({
+									page: result.page, total: result.total, rows: result.rows
+								});
+								
+								$("#dialog-incluir-veiculo").dialog("close");
+							}
+						);
 					},
 					"Cancelar" : function() {
-						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroVeiculos'/>", null, 
+							function(result){
+								
+								$(".veiculosGrid").flexAddData({
+									page: result.page, total: result.total, rows: result.rows
+								});
+								
+								$("#dialog-incluir-veiculo").dialog("close");
+							}
+						);
 					}
 				}
 			});
-		};
+		}
+		
+		function adicionarVeiculo(){
+			
+			data = [{name:"veiculo.tipoVeiculo", value: $("#tipoVeiculo").val()},
+					{name:"veiculo.placa", value: $("#placa").val()}];
+			
+			$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
+				function(){
+					
+					$("#tipoVeiculo").val("");
+					$("#placa").val("");
+					
+					$("#tipoVeiculo").focus();
+				}
+			);
+		}
+		
+		function excluirVeiculo(idVeiculo){
+			
+			$("#dialog-excluir-veiculo").dialog({
+				resizable : false,
+				height : 170,
+				width : 380,
+				modal : true,
+				buttons : {
+					"Confirmar" : function() {
+						
+						data = [{name:"referencia", value: idVeiculo}];
+						
+						$.postJSON("<c:url value='/cadastro/transportador/excluirVeiculo'/>", data, 
+							function(result){
+								
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								
+								$(".veiculosGrid").flexReload();
+								
+								$("#dialog-excluir-veiculo").dialog("close");
+							}
+						);
+					},
+					"Cancelar" : function() {
+						
+						$("#dialog-excluir-veiculo").dialog("close");
+					}
+				}
+			});
+		}
+		
+		function editarVeiculo(idVeiculo){
+			
+			$.postJSON("<c:url value='/cadastro/transportador/editarVeiculo'/>", "referencia=" + idVeiculo, 
+				function(result){
+					
+					var idVeiculo = result.id;
+					
+					$("#tipoVeiculo").val(result.tipoVeiculo);
+					$("#placa").val(result.placa);
+					
+					$("#btnAddVeiculo").hide();
+				
+					$("#dialog-incluir-veiculo").dialog({
+						resizable : false,
+						height : 'auto',
+						width : 420,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								var data = [{name: "veiculo.id", value: idVeiculo},
+								            {name: "veiculo.tipoVeiculo", value: $("#tipoVeiculo").val()},
+								            {name: "veiculo.placa", value: $("#placa").val()}];
+								
+								$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", data, 
+									function(result){
+										
+										exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+										
+										$(".veiculosGrid").flexReload();
+										
+										$("#dialog-incluir-veiculo").dialog("close");
+									}
+								);
+							},
+							"Cancelar" : function() {
+								$("#dialog-incluir-veiculo").dialog("close");
+								$("#btnAddVeiculo").show();
+							}
+						}
+					});
+				}
+			);
+		}
 	
 		function popup_incluir_motorista() {
 	
+			$("#btnAddMotorista").show();
+			
+			$("#nomeMotorista").val("");
+			$("#cnhMotorista").val("");
+			
 			$("#dialog-incluir-motorista").dialog({
 				resizable : false,
 				height : 'auto',
@@ -89,40 +266,177 @@
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cadastrarMotoristas'/>", null, 
+							function(result){
+								
+								$(".motoristasGrid").flexAddData({
+									page: result.page, total: result.total, rows: result.rows
+								});
+								
+								$("#dialog-incluir-motorista").dialog("close");
+							}
+						);
 					},
 					"Cancelar" : function() {
-						$(this).dialog("close");
+						
+						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroMotoristas'/>", null, 
+							function(result){
+								
+								$(".motoristasGrid").flexAddData({
+									page: result.page, total: result.total, rows: result.rows
+								});
+								
+								$("#dialog-incluir-motorista").dialog("close");
+							}
+						);
 					}
 				}
 			});
-		};
-		function popup_excluir_associacao() {
-	
-			$("#dialog-excluir-associacao").dialog({
+		}
+		
+		function adicionarMotorista(){
+			
+			data = [{name:"motorista.nome", value: $("#nomeMotorista").val()},
+					{name:"motorista.cnh", value: $("#cnhMotorista").val()}];
+			
+			$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
+				function(){
+					
+					$("#nomeMotorista").val("");
+					$("#cnhMotorista").val("");
+					
+					$("#nomeMotorista").focus();
+				}
+			);
+		}
+		
+		function excluirMotorista(idMotorista){
+				
+			$("#dialog-excluir-motorista").dialog({
 				resizable : false,
-				height : 'auto',
+				height : 170,
 				width : 380,
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
+						
+						data = [{name:"referencia", value: idMotorista}];
+						
+						$.postJSON("<c:url value='/cadastro/transportador/excluirMotorista'/>", data, 
+							function(result){
+								
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								
+								$(".motoristasGrid").flexReload();
+								
+								$("#dialog-excluir-motorista").dialog("close");
+							}
+						);
 					},
 					"Cancelar" : function() {
-						$(this).dialog("close");
+						
+						$("#dialog-excluir-motorista").dialog("close");
 					}
 				}
 			});
-		};
+		}
+		
+		function editarMotorista(idMotorista){
+			
+			$.postJSON("<c:url value='/cadastro/transportador/editarMotorista'/>", "referencia=" + idMotorista, 
+				function(result){
+					
+					var idMotorista = result.id;
+					
+					$("#nomeMotorista").val(result.nome);
+					$("#cnhMotorista").val(result.cnh);
+					
+					$("#btnAddMotorista").hide();
+				
+					$("#dialog-incluir-motorista").dialog({
+						resizable : false,
+						height : 'auto',
+						width : 420,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								var data = [{name: "motorista.id", value: idMotorista},
+								            {name: "motorista.nome", value: $("#nomeMotorista").val()},
+								            {name: "motorista.cnh", value: $("#cnhMotorista").val()}];
+								
+								$.postJSON("<c:url value='/cadastro/transportador/cadastrarMotoristas'/>", data, 
+									function(result){
+										
+										exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+										
+										$(".motoristasGrid").flexReload();
+										
+										$("#dialog-incluir-motorista").dialog("close");
+									}
+								);
+							},
+							"Cancelar" : function() {
+								$("#dialog-incluir-motorista").dialog("close");
+								$("#btnAddMotorista").show();
+							}
+						}
+					});
+				}
+			);
+		}
 	
 		$(function() {
 			$("#tabs").tabs();
 			
 			$(".transportadoraGrid").flexigrid({
 				dataType : 'json',
+				preProcess: function(data){
+					if(typeof data.mensagens == "object") {
+						
+						exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+						
+						$(".divTransportadoraGrid").hide();
+						
+					}else{
+						
+						$.each(data.rows, function(index, value) {						
+							
+							var idTransportadora = value.cell.id;								
+							var acao = '<a href="javascript:;" onclick="editarTransportadora('+idTransportadora+');"><img src="'+contextPath+'/images/ico_editar.gif" border="0" hspace="5" />';
+							acao +='</a> <a href="javascript:;" onclick="excluirTransportadora('+idTransportadora+');""><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+							
+							value.cell.acao = acao;
+							
+							var cnpj = value.cell.pessoaJuridica.cnpj;
+							
+							cnpj = cnpj.replace("-", "").replace(".", "").replace(".", "").replace("/", "");
+							
+							value.cell.cnpj = 
+								cnpj.substring(0, 2) + "." + cnpj.substring(2, 5) + "." + cnpj.substring(5, 8) + "/" + cnpj.substring(8, 12) + "-" + cnpj.substring(12, 14);
+							
+							value.cell.razaoSocial = value.cell.pessoaJuridica.razaoSocial;
+							value.cell.email = value.cell.pessoaJuridica.email;
+							
+							if (value.cell.pessoaJuridica.telefones[0]){
+								
+								value.cell.telefone = value.cell.pessoaJuridica.telefones[0].ddd + " - " + 
+									value.cell.pessoaJuridica.telefones[0].numero;
+							} else {
+								
+								value.cell.telefone = "";
+							}
+						});
+						
+						$(".divTransportadoraGrid").show();
+						
+						return data;	
+					}
+				},
 				colModel : [ {
 					display : 'Código',
-					name : 'codigo',
+					name : 'id',
 					width : 60,
 					sortable : true,
 					align : 'left'
@@ -160,7 +474,7 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				} ],
 				sortname : "codigo",
@@ -170,12 +484,44 @@
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 255,
+				disableSelect: true
 			});
-			$(".transportadoraGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarTransportadores'/>"});
 		
 			$(".associacaoGrid").flexigrid({
 				dataType : 'json',
+				preProcess: function (data){
+					
+					if (data.result){
+						
+						data = data.result;
+					}
+					
+					$.each(data.rows, function(index, value) {
+						
+						var idAssoc = value.id;
+						
+						var acao = '<a href="javascript:;" onclick="excluirAssociacao('+ idAssoc +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						
+						value.cell.acao = acao;
+						
+						var tipoVeiculo = value.cell.veiculo.tipoVeiculo;
+						var placa = value.cell.veiculo.placa;
+						var nome = value.cell.motorista.nome;
+						var cnh = value.cell.motorista.cnh;
+						var rota = value.cell.rota.descricaoRota;
+						var roteiro = value.cell.rota.descricaoRoteiro;
+						
+						value.cell.veiculo = tipoVeiculo;
+						value.cell.placa = placa;
+						value.cell.motorista = nome;
+						value.cell.cnh = cnh;
+						value.cell.rota = rota;
+						value.cell.roteiro = roteiro;
+					});
+					
+					return data;
+				},
 				colModel : [ {
 					display : 'Veículo',
 					name : 'veiculo',
@@ -216,20 +562,43 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 30,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				} ],
 				width : 820,
-				height : 100
+				height : 100,
+				disableSelect: true
 			});
+			$(".associacaoGrid").flexOptions({url: "<c:url value='/cadastro/transportador/carregarAssociacoes'/>"});
 		
 			$(".veiculosGrid").flexigrid({
 				dataType : 'json',
+				preProcess: function (data){
+					
+					if (data.result){
+						
+						data = data.result;
+					}
+					
+					$.each(data.rows, function(index, value) {						
+						
+						var idVeiculo = value.id;
+						
+						value.cell.sel = '<input type="radio" name="radioVeiculo" value="'+ idVeiculo +'"/>';
+						
+						var acao = '<a href="javascript:;" onclick="editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
+						acao +='</a> <a href="javascript:;" onclick="excluirVeiculo('+ idVeiculo +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						
+						value.cell.acao = acao;
+					});
+					
+					return data;
+				},
 				colModel : [ {
 					display : ' ',
 					name : 'sel',
 					width : 20,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				}, {
 					display : 'Tipo',
@@ -247,21 +616,43 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 37,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				} ],
 				width : 260,
-				height : 150
+				height : 150,
+				disableSelect: true
 			});
-			$(".veiculosGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarVeiculos'/>"});
+			$(".veiculosGrid").flexOptions({url: "<c:url value='/cadastro/transportador/carregarVeiculos'/>"});
 		
 			$(".motoristasGrid").flexigrid({
 				dataType : 'json',
+				preProcess: function (data){
+					
+					if (data.result){
+						
+						data = data.result;
+					}
+					
+					$.each(data.rows, function(index, value) {						
+						
+						var idMotorista = value.id;
+						
+						value.cell.sel = '<input type="radio" name="radioMotorista" value="'+ idMotorista +'"/>';
+						
+						var acao = '<a href="javascript:;" onclick="editarMotorista('+ idMotorista +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
+						acao +='</a> <a href="javascript:;" onclick="excluirMotorista('+ idMotorista +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						
+						value.cell.acao = acao;
+					});
+					
+					return data;
+				},
 				colModel : [ {
 					display : ' ',
 					name : 'sel',
 					width : 20,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				}, {
 					display : 'Nome',
@@ -271,7 +662,7 @@
 					align : 'left'
 				}, {
 					display : 'CNH',
-					name : 'CNH',
+					name : 'cnh',
 					width : 55,
 					sortable : true,
 					align : 'left'
@@ -279,119 +670,242 @@
 					display : 'Ação',
 					name : 'acao',
 					width : 37,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				} ],
 				width : 260,
-				height : 150
+				height : 150,
+				disableSelect: true
 			});
-			$(".motoristasGrid").flexOptions({url: "<c:url value='/cadastro/transportador/pesquisarMotoristas'/>"});
+			$(".motoristasGrid").flexOptions({url: "<c:url value='/cadastro/transportador/carregarMotoristas'/>"});
 		
 			$(".boxRotaGrid").flexigrid({
 				dataType : 'json',
+				preProcess: function (data){
+					
+					if (data.result){
+						
+						data = data.result;
+					}
+					
+					$.each(data.rows, function(index, value) {						
+						
+						var disabled = 'disabled="disabled"';
+						
+						if (value.cell.disponivel){
+							
+							disabled = "";
+						}
+						
+						value.cell.checks = '<input type="checkbox" '+ disabled +' name="checkRota" value="'+ value.cell.idRota +'"/>';
+					});
+					
+					return data;
+				},
 				colModel : [ {
 					display : ' ',
 					name : 'checks',
 					width : 20,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				}, {
 					display : 'Rota',
-					name : 'rota',
+					name : 'descricaoRota',
 					width : 91,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Roteiro',
-					name : 'roteiro',
+					name : 'descricaoRoteiro',
 					width : 91,
 					sortable : true,
 					align : 'left'
 				} ],
 				width : 260,
-				height : 150
+				height : 150,
+				disableSelect: true
 			});
+			$(".boxRotaGrid").flexOptions({url: "<c:url value='/cadastro/transportador/carregarRotas'/>"});
+			
+			$("#cnpj").mask("99.999.999/9999-99");
 		});
 		
 		function pesquisarTransportadores(){
 			
-			var data = "filtro.razaoSocial=" + $("#razaoSocialPesquisa").val() + 
-			           "&filtro.nomeFantasia=" + $("#nomeFantasiaPesquisa").val() +
-			           "&filtro.cnpj=" + $("#cnpjPesquisa").val();
-			
-			$.postJSON("<c:url value='/cadastro/transportador/pesquisarTransportadores' />", data, 
-				function(result) {
-					
-					if (result[0].tipoMensagem){
-						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+			$(".transportadoraGrid").flexOptions(
+					{"url": contextPath + "/cadastro/transportador/pesquisarTransportadores", 
+					 params:[
+						{name:"filtro.razaoSocial", value:$("#razaoSocialPesquisa").val()},
+						{name:"filtro.nomeFantasia", value:$("#nomeFantasiaPesquisa").val()},
+						{name:"filtro.cnpj", value:$("#cnpjPesquisa").val()}]
 					}
-					
-					if (result[1] != ""){
-						$(".transportadoraGrid").flexAddData({
-							page: result[1].page, total: result[1].total, rows: result[1].rows
-						});
-						
-						$(".transportadoraGrid").show();
-					} else {
-						$(".transportadoraGrid").hide();
-					}
-				}
 			);
+			
+			$(".transportadoraGrid").flexReload();
+		}
+		
+		function editarTransportadora(idTransp){
+			alert(idTransp);
+		}
+		
+		function excluirTransportadora(idTransp){
+			alert(idTransp);
 		}
 		
 		function carregarGrids(){
 			
-			$.postJSON("<c:url value='/cadastro/transportador/pesquisarTransportadores' />", data, 
+			$.postJSON("<c:url value='/cadastro/transportador/carregarTelaAssociacao' />", null, 
 				function(result) {
 					
-					if (result[0].tipoMensagem){
+					if (result[0] != ""){
 						
-						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
+						$(".veiculosGrid").flexAddData({
+							page: result[0].page, total: result[0].total, rows: result[0].rows
+						});
 					}
 					
 					if (result[1] != ""){
 						
-						$(".veiculosGrid").flexAddData({
+						$(".motoristasGrid").flexAddData({
 							page: result[1].page, total: result[1].total, rows: result[1].rows
 						});
-						
-						$(".veiculosGrid").show();
-					} else {
-						
-						$(".veiculosGrid").hide();
 					}
 					
 					if (result[2] != ""){
 						
-						$(".motoristasGrid").flexAddData({
+						$(".boxRotaGrid").flexAddData({
 							page: result[2].page, total: result[2].total, rows: result[2].rows
 						});
+					}
+					
+					if (result[3] != ""){
 						
-						$(".motoristasGrid").show();
-					} else {
-						
-						$(".motoristasGrid").hide();
+						$(".associacaoGrid").flexAddData({
+							page: result[3].page, total: result[3].total, rows: result[3].rows
+						});
 					}
 				}
 			);
 		}
 		
-		function pesquisarVeiculos(){
+		function buscarPessoaCNPJ(cnpj){
+			
+			if (cnpj != "__.___.___/____-__" && cnpj != ""){
+				
+				$.postJSON("<c:url value='/cadastro/transportador/buscarPessoaCNPJ' />", "cnpj=" + cnpj, 
+					function(result) {
+						
+						if (result[0]){
+							
+							$("#razaoSocial").val(result[0]);
+							$("#nomeFantasia").val(result[1]);
+							$("#email").val(result[2]);
+							$("#inscricaoEstadual").val(result[3]);
+						}
+					},
+					null,
+					true
+				);
+			}
+		}
+		
+		function confirmarAssociacao(){
+			
+			var idVeiculo = $("input:radio[name='radioVeiculo']:checked").val();
+			var idMotorista = $("input:radio[name='radioMotorista']:checked").val();
+			var idsRotas = $("input:checkbox[name='checkRota']:checked").val();
+			
+			if (!idVeiculo){
+				
+				alert("Escolha um veículo.");
+				return;
+			}
+			
+			if (!idMotorista){
+				
+				alert("Escolha um motorista.");
+				return;
+			}
+			
+			if (!idsRotas){
+				
+				alert("Escolha pelo menos uma rota.");
+				return;
+			}
+			
+			var tipoVeiculo = $("input:radio[name='radioVeiculo']:checked").parent().parent().parent().children()[1].children[0].innerHTML;
+			var placaVeiculo = $("input:radio[name='radioVeiculo']:checked").parent().parent().parent().children()[2].children[0].innerHTML;
+			
+			var nomeMotorista = $("input:radio[name='radioMotorista']:checked").parent().parent().parent().children()[1].children[0].innerHTML;
+			var cnhMotorista = $("input:radio[name='radioMotorista']:checked").parent().parent().parent().children()[2].children[0].innerHTML;
+			
+			var data = [];
+			
+			data.push({name: "veiculo.id", value: idVeiculo});
+			data.push({name: "veiculo.tipoVeiculo", value: tipoVeiculo});
+			data.push({name: "veiculo.placa", value: placaVeiculo});
+			data.push({name: "motorista.id", value: idMotorista});
+			data.push({name: "motorista.nome", value: nomeMotorista});
+			data.push({name: "motorista.cnh", value: cnhMotorista});
+			
+			$.each($("input:checkbox[name='checkRota']:checked"), function(index, value){
+				
+				var id = $(value).val();
+				var rota = $(value).parent().parent().parent().children()[1].children[0].innerHTML;
+				var roteiro = $(value).parent().parent().parent().children()[2].children[0].innerHTML;
+				
+				data.push({name:'rotas['+ index +'].idRota', value: id});
+				data.push({name:'rotas['+ index +'].descricaoRota', value: rota});
+				data.push({name:'rotas['+ index +'].descricaoRoteiro', value: roteiro});
+			});
+			
+			$.postJSON("<c:url value='/cadastro/transportador/cadastrarAssociacao' />", data, 
+				function(result) {
+					
+					$(".associacaoGrid").flexAddData({
+						page: result.page, total: result.total, rows: result.rows
+					});
+					
+					$(".boxRotaGrid").flexReload();
+				},
+				null,
+				true
+			);
+		}
+		
+		function excluirAssociacao(referencia){
+			
+			$("#dialog-excluir-associacao").dialog({
+				resizable : false,
+				height : 'auto',
+				width : 380,
+				modal : true,
+				buttons : {
+					"Confirmar" : function() {
+						$.postJSON("<c:url value='/cadastro/transportador/excluirAssociacao' />", 
+							[{name:"referencia", value: referencia}], 
+							function(result) {
+								
+								$(".associacaoGrid").flexReload();
+								
+								$(".boxRotaGrid").flexReload();
+								
+								$("#dialog-excluir-associacao").dialog("close");
+							},
+							null,
+							true
+						);
+					},
+					"Cancelar" : function() {
+						
+						$("#dialog-excluir-associacao").dialog("close");
+					}
+				}
+			});
+			
 			
 			
 		}
-		
-		function pesquisarMotoristas(){
-			
-			
-		}
-		
-		function pesquisarRotaRoteiros(){
-			
-			
-		}
-		
-		
 	</script>
 	<style>
 		.diasFunc label,.finceiro label {
@@ -432,22 +946,34 @@
 	<div id="dialog-excluir" title="Excluir Transportador">
 		<p>Confirma a exclusão deste Transportador</p>
 	</div>
+	
+	<div id="dialog-excluir-veiculo" title="Excluir Veículo" style="display: none;">
+		<p>Confirma a exclusão deste Veículo</p>
+	</div>
+	
+	<div id="dialog-excluir-motorista" title="Excluir Motorista" style="display: none;">
+		<p>Confirma a exclusão deste Motorista</p>
+	</div>
+	
+	<div id="dialog-cancelar-cadastro-transportador" title="Transportadores" style="display: none;">
+		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+	</div>
 
 	<div id="dialog-incluir-motorista" title="Motoristas">
 		<fieldset>
-			<legend>Cadastrar Veículos</legend>
+			<legend>Cadastrar Motorista</legend>
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>
 					<td width="54">Nome:</td>
-					<td width="280"><input type="text" style="width: 230px" /></td>
+					<td width="280"><input type="text" style="width: 230px" id="nomeMotorista" maxlength="255" /></td>
 				</tr>
 				<tr>
 					<td>CNH:</td>
-					<td><input type="text" style="width: 110px" /></td>
+					<td><input type="text" style="width: 110px" id="cnhMotorista" maxlength="255" /></td>
 				</tr>
-				<tr>
+				<tr id="btnAddMotorista">
 					<td>&nbsp;</td>
-					<td><span class="bt_add"><a href="javascript:;">Incluir Novo</a></span></td>
+					<td><span class="bt_add"><a href="javascript:adicionarMotorista();">Incluir Novo</a></span></td>
 				</tr>
 			</table>
 		</fieldset>
@@ -459,15 +985,15 @@
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>
 					<td width="95">Tipo de Veículo:</td>
-					<td width="239"><input type="text" style="width: 230px" /></td>
+					<td width="239"><input type="text" style="width: 230px" id="tipoVeiculo" maxlength="255" /></td>
 				</tr>
 				<tr>
 					<td>Placa:</td>
-					<td><input type="text" style="width: 110px" /></td>
+					<td><input type="text" style="width: 110px" id="placa" maxlength="255" /></td>
 				</tr>
-				<tr>
+				<tr id="btnAddVeiculo">
 					<td>&nbsp;</td>
-					<td><span class="bt_add"><a href="javascript:;">Incluir Novo</a></span></td>
+					<td><span class="bt_add"><a href="javascript:adicionarVeiculo();">Incluir Novo</a></span></td>
 				</tr>
 			</table>
 		</fieldset>
@@ -475,41 +1001,49 @@
 
 
 	<div id="dialog-novo" title="Novo Transportador">
-
+	
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="_aaa" name="messageDialog"/>
+		</jsp:include>
+		
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1">Dados Cadastrais</a></li>
-				<li><a href="#tabs-2">Endereços</a></li>
-				<li><a href="#tabs-3">Telefones</a></li>
-				<li><a href="#tabs-4">Veículos / Motoristas</a></li>
+				<li><a href="#tabs-2" onclick="ENDERECO_TRANSPORTADOR.popularGridEnderecos();">Endereços</a></li>
+				<li><a href="#tabs-3" onclick="TRANSPORTADOR.carregarTelefones();">Telefones</a></li>
+				<li><a href="#tabs-4" onclick="carregarGrids();">Veículos / Motoristas</a></li>
 			</ul>
 			<div id="tabs-1">
 				<table width="730" cellpadding="2" cellspacing="2" style="text-align: left;">
 					<tr>
 						<td width="98">Razão Social:</td>
-						<td width="248"><input type="text" style="width: 230px" /></td>
+						<td width="248"><input type="text" style="width: 230px" id="razaoSocial" maxlength="255" /></td>
 						<td width="113">Nome Fantasia:</td>
-						<td width="243"><input type="text" style="width: 230px" /></td>
+						<td width="243"><input type="text" style="width: 230px" id="nomeFantasia" maxlength="255" /></td>
 					</tr>
 					<tr>
 						<td>E-mail:</td>
-						<td><input type="text" style="width: 230px" /></td>
+						<td><input type="text" style="width: 230px" id="email" maxlength="255" /></td>
 						<td>Responsável:</td>
-						<td><input type="text" style="width: 230px" /></td>
+						<td><input type="text" style="width: 230px" id="responsavel" maxlength="255" /></td>
 					</tr>
 					<tr>
 						<td>CNPJ:</td>
-						<td><input type="text" style="width: 150px" /></td>
+						<td><input type="text" style="width: 150px" id="cnpj" onblur="buscarPessoaCNPJ(this.value);" /></td>
 						<td>Insc. Estadual:</td>
-						<td><input type="text" style="width: 150px" /></td>
+						<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
 					</tr>
 				</table>
 			</div>
 			<div id="tabs-2">
-				<jsp:include page="../endereco/index.jsp"></jsp:include>
+				<jsp:include page="../endereco/index.jsp">
+					<jsp:param value="ENDERECO_TRANSPORTADOR" name="telaEndereco"/>
+				</jsp:include>
 			</div>
 			<div id="tabs-3">
-				<jsp:include page="../telefone/index.jsp"></jsp:include>
+				<jsp:include page="../telefone/index.jsp">
+					<jsp:param value="TRANSPORTADOR" name="tela"/>
+				</jsp:include>
 			</div>
 
 			<div id="tabs-4">
@@ -551,7 +1085,7 @@
 						</td>
 						<td valign="top">
 							<span class="bt_confirmar_novo"	title="Confirmar">
-								<a href="javascript:;">
+								<a href="javascript:;" onclick="confirmarAssociacao();">
 									<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar Associação
 								</a>
 							</span>
@@ -599,7 +1133,7 @@
 			<div class="linha_separa_fields">&nbsp;</div>
 			<fieldset class="classFieldset">
 				<legend>Transportadores Cadastrados</legend>
-				<div class="grids" style="display: none;">
+				<div class="divTransportadoraGrid" style="display: none;">
 					<table class="transportadoraGrid"></table>
 				</div>
 
