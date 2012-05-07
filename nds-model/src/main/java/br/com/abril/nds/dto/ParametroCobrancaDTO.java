@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
-
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 public class ParametroCobrancaDTO {

@@ -132,9 +132,9 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		System.out.println(contratoTransporteDTO);
 		Assert.assertNotNull(contratoTransporteDTO);
 		Assert.assertNotNull(contratoTransporteDTO.getContratada());
-		Assert.assertNotNull(contratoTransporteDTO.getContratada().getEndereco());
+		Assert.assertNotNull(contratoTransporteDTO.getContratada().getDescEndereco());
 		Assert.assertNotNull(contratoTransporteDTO.getContratante());
-		Assert.assertNotNull(contratoTransporteDTO.getContratante().getEndereco());
+		Assert.assertNotNull(contratoTransporteDTO.getContratante().getDescEndereco());
 	}
 	
 	

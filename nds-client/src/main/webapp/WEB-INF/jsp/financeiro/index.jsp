@@ -5,47 +5,21 @@
 <script language="javascript" type="text/javascript">
 
 
-	
-	function carregaFinanceiro(){
-		var idCota = $("#_idCotaRef").val();
-		obterParametroCobranca(idCota);
-		exibe_botao_contrato();
-		mostrarGrid();
-	}
-
-	
-	function exibe_botao_contrato(){
-		if (document.formFinanceiro.contrato.checked){
-			$('#botaoContrato').show();
-		}
-		else{
-			$('#botaoContrato').hide();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-    $(function() {	
+	//GRID DE FORMAS DE COBRANÇA
+	$(function() {	
 		$(".boletosUnificadosGrid").flexigrid({
 			preProcess: getDataFromResult,
 			dataType : 'json',
 			colModel : [  {
 				display : 'Fornecedores',
 				name : 'fornecedor',
-				width : 120,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Concentração de Pagamento',
 				name : 'concentracaoPagto',
-				width : 170,
+				width : 220,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -67,32 +41,105 @@
 				sortable : false,
 				align : 'center'
 			}],
-			width : 770,
+			sortname : "Fornecedores",
+			sortorder : "asc",
+			showTableToggleBtn : true,
+			width : 870,
 			height : 150
 		});
-    });	
-    
-    function mostrarGrid() {
+	});	
+
+
+
+
+
+
+
+	$(function() {			
+		$("#fatorVencimento").numeric();
+		$("#valorMinimo").numeric();
+		$("#comissao").numeric();
+		$("#qtdDividasAberto").numeric();
+		$("#vrDividasAberto").numeric();
+		
+		$("#numBanco").numeric();
+		$("#nomeBanco").numeric();
+		$("#agencia").numeric();
+		$("#agenciaDigito").numeric();
+		$("#conta").numeric();
+	    $("#contaDigito").numeric();
+	    $("#diaDoMes").numeric();
+	});
+
+	
+
+	
+	
+	
+
+	//PRÉ CARREGAMENTO DA PAGINA
+	function carregaFinanceiro(){
+		$("#_idParametroCobranca").val("");
+		$("#_idCota").val("");
+		$("#_numCota").val("");
+		var idCota = $("#_idCotaRef").val();
+		obterParametroCobranca(idCota);
+		mostrarGrid(idCota);
+	}
+	
+	function montarTrRadioBox(result,name,nameItemIdent) {
+
+		var options = "";
+		
+		$.each(result, function(index, row) {
+
+			options += "<tr> <td width='23'>";
+			options += "<input id='" + nameItemIdent + row.key.$ +"' value='" + row.key.$ + "' name='"+name+"' type='checkbox' />";
+			options += "</td> <td width='138'>";	
+			options += "<label for='" + nameItemIdent + row.key.$ +"' >"+ row.value.$ +"</label>";
+		    options += "</td>";
+		    options += "</tr>";   
+
+		});
+		
+		return options;
+	}
+	
+	function carregarFornecedoresRelacionados(idCota){
+		var data = [{name: 'idCota', value: idCota}];
+		$.postJSON("<c:url value='/cadastro/financeiro/fornecedoresCota' />",
+				   data,
+				   sucessCallbackCarregarFornecedores,
+				   null,
+				   true);
+	}
+	
+	function sucessCallbackCarregarFornecedores(result) {
+	    var radioBoxes =  montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
+		$("#fornecedoresCota").html(radioBoxes);
+	}
+	
+    function mostrarGrid(idCota) {
     	
 		/*PASSAGEM DE PARAMETROS*/
 		$(".boletosUnificadosGrid").flexOptions({
 			/*METODO QUE RECEBERA OS PARAMETROS*/
 			url: "<c:url value='/cadastro/financeiro/obterFormasCobranca' />",
-			params: [
-			         {name:'idCota', value:$("#_idCotaRef").val()},
-			        ] ,
+			params: [{name:'idCota', value:idCota}],
 			        newp: 1
 		});
 		
 		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
 		$(".boletosUnificadosGrid").flexReload();
+		
+		$(".grids").show();
 	}	
 	
 	function getDataFromResult(resultado) {
 		
 		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
 		if (resultado.mensagens) {
-			exibirMensagem(
+			exibirMensagemDialog(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
@@ -117,84 +164,82 @@
 		
 		return resultado;
 	}
-    
-    
-    
-    
-    
-    
-
+   
 	
 	
 	
 	
 	
-
 	
-	function limparDivDeposito() {
-		$("#numBanco").val("");
-		$("#nomeBanco").val("");
-		$("#agencia").val("");
-		$("#agenciaDigito").val("");
-		$("#conta").val("");
-	    $("#contaDigito").val("");
+    //MODOS DE EXIBIÇÃO 
+	function exibe_botao_contrato(contrato){
+		if (contrato){
+			$('#botaoContrato').show();
+		}
+		else{
+			$('#botaoContrato').hide();
+		}
 	}
-	
-	
-	
-    function limparDivComboBanco() {
-    	$("#banco").val("");
-	}
-	
-    
-    
-    function limparDivBoleto() {
-    	$("#recebeEmail").val("");
-    }
-    
-    
 
 	function opcaoPagto(op){
 		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
 			$('#divComboBanco').show();
-			$('#divBoleto').show();
-			limparDivDeposito();
+			$('#divRecebeEmail').show();
+			$('#divDadosBancarios').hide();
 	    }
 		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
 			$('#divComboBanco').show();
-			limparDivBoleto();
-			limparDivDeposito();
+			$('#divDadosBancarios').show();
+			$('#divRecebeEmail').hide();
 		}    
 		else if (op=='DEPOSITO'){
-			$('#divDeposito').show();
-			limparDivBoleto();
-			limparDivComboBanco();
+			$('#divDadosBancarios').hide();
+			$('#divRecebeEmail').hide();
+			$('#divComboBanco').show();
 		}    
 		else{
-			limparDivBoleto();
-			limparDivDeposito();
-			limparDivComboBanco();
-			$('#divBoleto').hide();
+			$('#divRecebeEmail').hide();
 			$('#divComboBanco').hide();
-			$('#divDeposito').hide();
+			$('#divDadosBancarios').hide();
 		}
 		
 	};
 	
+	function mostraSemanal(){
+		$("#tipoFormaCobranca").val('SEMANAL');
+		document.formularioFormaCobranca.mensal.checked = false;
+		$( ".semanal" ).show();
+		$( ".mensal" ).hide();
+	};
+		
+	function mostraMensal(){
+		$("#tipoFormaCobranca").val('MENSAL');
+		document.formularioFormaCobranca.semanal.checked = false;
+		$( ".semanal" ).hide();
+		$( ".mensal" ).show();
+	};
+	
+	function opcaoTipoFormaCobranca(op){
+		if (op=='SEMANAL'){
+			document.formularioFormaCobranca.semanal.checked = true;
+			document.formularioFormaCobranca.mensal.checked = false;
+			mostraSemanal();
+	    }
+		else if (op=='MENSAL'){
+			document.formularioFormaCobranca.semanal.checked = false;
+			document.formularioFormaCobranca.mensal.checked = true;
+			mostraMensal();
+		}    
+	};
+	
+
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	//PARAMETROS DE COBRANÇA
 	function obterParametroCobranca(idCota){
 		var data = [{name: 'idCota', value: idCota}];
 		$.postJSON("<c:url value='/cadastro/financeiro/obterParametroCobranca' />",
@@ -203,9 +248,7 @@
 				   null,
 				   true);
 	}
-	
-	
-	
+
 	function sucessCallbackParametroCobranca(resultado) {
 		
 		//hidden
@@ -220,16 +263,16 @@
 		
 		$("#contrato").val(resultado.contrato);
 		document.formFinanceiro.contrato.checked = resultado.contrato;
+		exibe_botao_contrato(resultado.contrato);
 
 		$("#valorMinimo").val(resultado.valorMinimo);
 		$("#comissao").val(resultado.comissao);
 		$("#qtdDividasAberto").val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto").val(resultado.vrDividasAberto);
 		
+		carregarFornecedoresRelacionados(resultado.idCota);
 	}
-	
-	
-	
+
 	function postarParametroCobranca() {
 		
 		//hidden
@@ -256,7 +299,7 @@
 		var qtdDividasAberto = $("#qtdDividasAberto").val();
 		var vrDividasAberto = $("#vrDividasAberto").val();
 		
-		$.postJSON("<c:url value='/cadastro/financeiro/postarParametroCobrancaSessao'/>",
+		$.postJSON("<c:url value='/cadastro/financeiro/postarParametroCobranca'/>",
 				   "parametroCobranca.idParametroCobranca="+idParametroCobranca+ 
 				   "&parametroCobranca.idCota="+idCota+ 
 				   "&parametroCobranca.numCota="+numCota+    
@@ -266,10 +309,11 @@
 				   "&parametroCobranca.valorMinimo="+valorMinimo+        
 				   "&parametroCobranca.comissao="+comissao+          
 				   "&parametroCobranca.qtdDividasAberto="+qtdDividasAberto+   
-				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto);
+				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto,
+				   null,
+				   null,
+				   true);
 	}
-
-
 	
 	
 	
@@ -277,18 +321,47 @@
 	
 	
 	
+	//FORMAS DE COBRANÇA
+	function preparaNovaFormaCobranca(){
+		
+		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
+			document.getElementById("fornecedor_"+$(this).val()).checked = false;
+		});
+		
+		$( ".semanal" ).hide();
+		$( ".mensal" ).hide();
+		document.formularioFormaCobranca.mensal.checked = false;
+		document.formularioFormaCobranca.semanal.checked = false;
+		
+		$("#_idFormaCobranca").val("");
+		$("#tipoCobranca").val("");
+		$("#tipoFormaCobranca").val("");
+		$("#banco").val("");
+		$("#numBanco").val("");
+		$("#nomeBanco").val("");
+		$("#agencia").val("");
+		$("#agenciaDigito").val("");
+		$("#conta").val("");
+	    $("#contaDigito").val("");
+	    $("#diaDoMes").val("");
+		document.formularioDadosBoleto.recebeEmail.checked = false;
+		document.formularioFormaCobranca.PS.checked = false;
+		document.formularioFormaCobranca.PT.checked = false;
+		document.formularioFormaCobranca.PQ.checked = false;
+		document.formularioFormaCobranca.PQu.checked = false;
+		document.formularioFormaCobranca.PSex.checked = false;
+		document.formularioFormaCobranca.PSab.checked = false;
+		document.formularioFormaCobranca.PDom.checked = false;
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	function obterFornecedoresUnificados(unificados) {
+		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
+			document.getElementById("fornecedor_"+$(this).val()).checked = false;
+		});
+		for(i=0;i<unificados.length;i++){
+			document.getElementById("fornecedor_"+unificados[i]).checked = true;
+		}
+	}
 	
 	function obterFormaCobranca(idFormaCobranca){
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
@@ -298,9 +371,7 @@
 				   null,
 				   true);
 	}
-	
-	
-	
+
 	function sucessCallbackFormaCobranca(resultado) {
 		
 		//hidden
@@ -315,6 +386,7 @@
 		$("#agenciaDigito").val(resultado.agenciaDigito);
 		$("#conta").val(resultado.conta);
 	    $("#contaDigito").val(resultado.contaDigito);
+	    $("#diaDoMes").val(resultado.diaDoMes);
 		
 		$("#recebeEmail").val(resultado.recebeEmail);
 		document.formularioDadosBoleto.recebeEmail.checked = resultado.recebeEmail;
@@ -339,11 +411,23 @@
 		
 		$("#PDom").val(resultado.domingo);
 		document.formularioFormaCobranca.PDom.checked = resultado.domingo;
+		
+		opcaoPagto(resultado.tipoCobranca);
+		opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+		obterFornecedoresUnificados(resultado.fornecedoresId);
 	}
 	
+	function obterFornecedoresMarcados() {
+		var fornecedorMarcado = "";
+		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
+			fornecedorMarcado += 'listaIdsFornecedores=' + $(this).val() + '&';
+		});
+		return fornecedorMarcado;
+	}
 	
-	
-	function postarFormaCobranca() {
+	function postarFormaCobranca(novo, incluirSemFechar) {
+		
+		var telaMensagem="idModalUnificacao";
 		
 		//hidden
 		var idFormaCobranca = $("#_idFormaCobranca").val();
@@ -359,7 +443,8 @@
 		var agenciaDigito       = $("#agenciaDigito").val();
 		var conta               = $("#conta").val();
 		var contaDigito         = $("#contaDigito").val();
-		
+		var diaDoMes            = $("#diaDoMes").val();
+
 		$("#recebeEmail").val(0);
 		if (document.formularioDadosBoleto.recebeEmail.checked){
 			$("#recebeEmail").val(1);
@@ -408,29 +493,107 @@
 		}
 		var domingo  = $("#PDom").val();
 		 	
-		$.postJSON("<c:url value='/cadastro/financeiro/postarFormaCobranca'/>",
-				   "formaCobranca.idFormaCobranca="+idFormaCobranca+ 
-				   "&formaCobranca.idCota="+idCota+ 
-				   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
-				   "&formaCobranca.tipoCobranca="+tipoCobranca+  
-				   "&formaCobranca.idBanco="+idBanco+            
-				   "&formaCobranca.recebeEmail="+recebeEmail+    
-				   "&formaCobranca.numBanco="+numBanco+        
-				   "&formaCobranca.nomeBanco="+nomeBanco+          
-				   "&formaCobranca.agencia="+agencia+            
-				   "&formaCobranca.agenciaDigito="+agenciaDigito+     
-				   "&formaCobranca.conta="+conta+              
-				   "&formaCobranca.contaDigito="+contaDigito+        
-				   "&formaCobranca.domingo="+domingo+    
-				   "&formaCobranca.segunda="+segunda+            
-				   "&formaCobranca.terca="+terca+            
-				   "&formaCobranca.quarta="+quarta+            
-				   "&formaCobranca.quinta="+quinta+            
-				   "&formaCobranca.sexta="+sexta+            
-				   "&formaCobranca.sabado="+sabado+
-				   "&tipoFormaCobranca="+tipoFormaCobranca);
-		
-		//mostrarGrid();
+		if (novo) {
+			$.postJSON("<c:url value='/cadastro/financeiro/postarFormaCobranca'/>",
+					   "formaCobranca.idCota="+idCota+ 
+					   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
+					   "&formaCobranca.tipoCobranca="+tipoCobranca+  
+					   "&formaCobranca.idBanco="+idBanco+            
+					   "&formaCobranca.recebeEmail="+recebeEmail+    
+					   "&formaCobranca.numBanco="+numBanco+        
+					   "&formaCobranca.nomeBanco="+nomeBanco+          
+					   "&formaCobranca.agencia="+agencia+            
+					   "&formaCobranca.agenciaDigito="+agenciaDigito+     
+					   "&formaCobranca.conta="+conta+              
+					   "&formaCobranca.contaDigito="+contaDigito+        
+					   "&formaCobranca.domingo="+domingo+    
+					   "&formaCobranca.segunda="+segunda+            
+					   "&formaCobranca.terca="+terca+            
+					   "&formaCobranca.quarta="+quarta+            
+					   "&formaCobranca.quinta="+quinta+            
+					   "&formaCobranca.sexta="+sexta+            
+					   "&formaCobranca.sabado="+sabado+
+					   "&formaCobranca.diaDoMes="+diaDoMes+
+					   "&tipoFormaCobranca="+tipoFormaCobranca+
+					   "&"+obterFornecedoresMarcados(),
+					   function(mensagens) {
+				           $("#dialog-unificacao").dialog("close");
+				           if (incluirSemFechar){
+				               popup_nova_unificacao();
+				           }
+				           else{
+				        	   telaMensagem=null;
+				        	   if (mensagens){
+								   var tipoMensagem = mensagens.tipoMensagem;
+								   var listaMensagens = mensagens.listaMensagens;
+								   if (tipoMensagem && listaMensagens) {
+								       exibirMensagem(tipoMensagem, listaMensagens);
+							       }
+				        	   }	   
+				           }
+				           mostrarGrid(idCota);
+		               },
+					   null,
+					   true,
+					   telaMensagem);
+		}
+		else{
+			$.postJSON("<c:url value='/cadastro/financeiro/postarFormaCobranca'/>",
+					   "formaCobranca.idFormaCobranca="+idFormaCobranca+ 
+					   "&formaCobranca.idCota="+idCota+ 
+					   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
+					   "&formaCobranca.tipoCobranca="+tipoCobranca+  
+					   "&formaCobranca.idBanco="+idBanco+            
+					   "&formaCobranca.recebeEmail="+recebeEmail+    
+					   "&formaCobranca.numBanco="+numBanco+        
+					   "&formaCobranca.nomeBanco="+nomeBanco+          
+					   "&formaCobranca.agencia="+agencia+            
+					   "&formaCobranca.agenciaDigito="+agenciaDigito+     
+					   "&formaCobranca.conta="+conta+              
+					   "&formaCobranca.contaDigito="+contaDigito+        
+					   "&formaCobranca.domingo="+domingo+    
+					   "&formaCobranca.segunda="+segunda+            
+					   "&formaCobranca.terca="+terca+            
+					   "&formaCobranca.quarta="+quarta+            
+					   "&formaCobranca.quinta="+quinta+            
+					   "&formaCobranca.sexta="+sexta+            
+					   "&formaCobranca.sabado="+sabado+
+					   "&formaCobranca.diaDoMes="+diaDoMes+
+					   "&tipoFormaCobranca="+tipoFormaCobranca+
+					   "&"+obterFornecedoresMarcados(),
+					   function(mensagens) {
+				           $("#dialog-unificacao").dialog("close");
+				           if (incluirSemFechar){
+				               popup_nova_unificacao();
+				           }
+				           else{
+				        	   telaMensagem=null;
+				        	   if (mensagens){
+								   var tipoMensagem = mensagens.tipoMensagem;
+								   var listaMensagens = mensagens.listaMensagens;
+								   if (tipoMensagem && listaMensagens) {
+								       exibirMensagem(tipoMensagem, listaMensagens);
+							       }
+				        	   }
+				           }
+				           mostrarGrid(idCota);
+		               },
+					   null,
+					   true,
+					   telaMensagem);
+	    }
+	}
+	
+	function excluirFormaCobranca(idFormaCobranca){
+		var idCota = $("#_idCota").val();
+		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
+		$.postJSON("<c:url value='/cadastro/financeiro/excluirFormaCobranca' />",
+				   data,
+				   function(){
+				       mostrarGrid(idCota);
+				   },
+				   null,
+				   true);
 	}
 	
 	
@@ -438,72 +601,59 @@
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	//POPUPS
 	function popup_nova_unificacao() {
 		
-		$( "#dialog-nova-unificacao" ).dialog({
+		 preparaNovaFormaCobranca();
+		
+		$( "#dialog-unificacao" ).dialog({
 			resizable: false,
-			height:550,
+			height:630,
 			width:500,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Confirmar": function() {	
 					
-					postarFormaCobranca();
-					
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					
+					postarFormaCobranca(true,false);
+
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout("idModalUnificacao");
+		    }
 		});
     };
 
-    
     function popup_editar_unificacao(idFormaCobranca) {
     	
     	obterFormaCobranca(idFormaCobranca);
 		
-		$( "#dialog-nova-unificacao" ).dialog({
+		$( "#dialog-unificacao" ).dialog({
 			resizable: false,
-			height:550,
+			height:630,
 			width:500,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					
-					postarFormaCobranca();
-					
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					
+					postarFormaCobranca(false,false);
+
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout("idModalUnificacao");
+		    }
 		});
     };
     
-    
-    function popup_excluir_unificacao() {
+    function popup_excluir_unificacao(idFormaCobranca) {
     	
 		$( "#dialog-excluir-unificacao" ).dialog({
 			resizable: false,
@@ -513,16 +663,17 @@
 			buttons: {
 				"Confirmar": function() {
 					
-					//excluirFormaCobranca();
+					excluirFormaCobranca(idFormaCobranca);
 					
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout("idModalUnificacao");
+		    }
 		});
 	};
 	
@@ -531,6 +682,8 @@
 	
 	
 	
+	
+	//IMPRESSÃO DO CONTRATO
 	function imprimeContrato(){
 		var idCota = $("#_idCota").val();
 	    document.location.assign("${pageContext.request.contextPath}/cadastro/financeiro/imprimeContrato?idCota="+idCota);
@@ -540,42 +693,36 @@
 	
 	
 	
-	function mostraSemanal(){
-		$("#tipoCobranca").val('SEMANAL');
-		$( ".semanal" ).show();
-		$( ".mensal" ).hide();
-	};
-		
-	function mostraMensal(){
-		$("#tipoCobranca").val('MENSAL');
-		$( ".semanal" ).hide();
-		$( ".mensal" ).show();
-	};
+	//INCLUSÃO DE NOVA UNIFICAÇÃO SEM SAIR DO POPUP
+	function incluirNovaUnificacao(){
+	    postarFormaCobranca(false,true);
+	}
 	
 	
 	
+	
+
 </script>
 
 
 <style>
 
-#divBoleto,
+#divRecebeEmail,
 #divTrasnsferenciaBancaria,
-#divDeposito {display:none;}
+#divDadosBancarios {display:none;}
 #dialog-pesq-fornecedor{display:none;}
 .forncedoresSel, .semanal, .mensal{display:none;}
-#dialog-nova-unificacao, #dialog-excluir-unificacao{display:none;}
+#dialog-unificacao, #dialog-excluir-unificacao{display:none;}
 #dialog-excluir-unificacao fieldset{width:430px!important;}
-#dialog-nova-unificacao fieldset {width:440px!important;}
+#dialog-unificacao fieldset {width:440px!important;}
 
 </style>
 
 
 </head>
-
-   <!--PESSOA FISICA - FINANCEIRO -->
+	
+    <!--PESSOA FISICA - FINANCEIRO -->
     
-     
     
     <!--  <div id="tabpf-financeiro" > -->
        
@@ -585,15 +732,25 @@
     <input type="hidden" name="_idParametroCobranca"id="_idParametroCobranca"/>
     
     <input type="hidden" name="tipoFormaCobranca" id="tipoFormaCobranca"/>
-   
+
     <form name="formFinanceiro" id="formFinanceiro">
-	    <table width="671" border="0" cellspacing="2" cellpadding="2">
+    
+	    <table width="770" border="0" cellspacing="1" cellpadding="1">
 		      
 		   <tr>
+		   
+		     <td width="212">Contrato:</td>
+		     <td width="254">
+		         <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="exibe_botao_contrato(this.checked);" />
+		         <span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
+		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO - FUNÇÃO PROVISÓRIA ADICIONADA PARA POSTAR DADOS NA SESSAO -->
+		             <a href="javascript:;" onclick="imprimeContrato()">Contrato</a>
+		         </span>
+		     </td>
 		      
-		     <td>Fator Vencimento em D+:</td>
+		     <td width="168">Fator Vencimento em D+:</td>
 		       
-		     <td>
+		     <td width="123">
 			     <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
 			       <option>1</option>
 			       <option>2</option>
@@ -621,59 +778,48 @@
 		   </tr>
 		   
 		   <tr>
+		     
+		     <td>Valor Mínimo R$:</td>
+		     <td>
+		         <input maxlength="15" name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
+		     </td>
+		     
+		     <td>Comissão %:</td>
+		     <td>
+		         <input maxlength="15" name="comissao" id="comissao" type="text" style="width:60px;" />
+		     </td>
+		     
+		   </tr>
+		   
+		   <tr>
 		     <td>Sugere Suspensão:</td>
 		     <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" /></td>
 		   </tr>
-		      
+
 		   <tr>
-		     <td>Contrato:</td>
-		     <td>
-		         <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="exibe_botao_contrato();" />
-		         <span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
-		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO - FUNÇÃO PROVISÓRIA ADICIONADA PARA POSTAR DADOS NA SESSAO -->
-		             <a href="javascript:;" onclick="imprimeContrato()">Contrato</a>
-		         </span>
-		     </td>
-		   </tr>
-	
-		   <tr>
-		     <td>Valor Mínimo R$:</td>
-		     <td>
-		         <input name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
-		     </td>
-		   </tr>
-		      
-		   <tr>
-		     <td>Comissão %:</td>
-		     <td>
-		         <input name="comissao" id="comissao" type="text" style="width:60px;" />
-		     </td>
-		   </tr>
-		      
-		   <tr>
-		     <td height="23">Sugere Suspensão quando:</td>
-		     <td>
+		     <td height="23">Sugere Suspensão quando atingir:</td>
+		     <td  colspan="3">
 			     <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			           
 			        <tr>
-			           <td width="36%">Qtde de dividas em aberto:</td>
+			           <td width="31%">Qtde de dividas em aberto:</td>
 			            
-			           <td width="15%">
-			               <input type="text" name="qtdDividasAberto" id="qtdDividasAberto" style="width:60px;" />
+			           <td width="13%">
+			               <input maxlength="15" type="text" name="qtdDividasAberto" id="qtdDividasAberto" style="width:60px;" />
 			           </td>
 			            
-			           <td width="6%">ou</td>
-			           <td width="7%">R$: </td>
+			           <td width="8%">ou</td>
+			           <td width="6%">R$: </td>
 			            
-			           <td width="36%">
-			               <input type="text" name="vrDividasAberto" id="vrDividasAberto" style="width:60px;" />
+			           <td width="42%">
+			               <input maxlength="15" type="text" name="vrDividasAberto" id="vrDividasAberto" style="width:60px;" />
 			           </td>
 			       </tr>
 			       
 		         </table>
 		      </td>
 		   </tr>
-	 
+
 		</table>
 	</form>  
 
@@ -693,11 +839,12 @@
 			
     <br clear="all" />
 
-
-    
-    
-    
-    <div id="dialog-nova-unificacao" title="Nova Unificação de Boletos">
+    <div id="dialog-unificacao" title="Nova Unificação de Boletos">
+		
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="idModalUnificacao" name="messageDialog"/>
+		</jsp:include>
+		
 		<fieldset>
 			<legend>Unificar Boletos</legend>
 			
@@ -712,44 +859,30 @@
 				     </tr>
 				     
 			         <tr>
-			             <td width="170" align="left" valign="top" style="border:1px solid #ccc;"><table width="168" border="0" cellspacing="1" cellpadding="1">
-			             
-			             <tr>
-			                 <td width="23"><input type="checkbox" name="checkbox12" id="checkbox6" /></td>
-			                 <td width="138">Abril</td>
-			             </tr>
-			             
-			             <tr>
-			                 <td><input type="checkbox" name="checkbox11" id="checkbox5" /></td>
-			                 <td>Treelog</td>
-			             </tr>
-			             
-			             <tr>
-			                 <td><input type="checkbox" name="checkbox10" id="checkbox4" /></td>
-			                 <td>Dinap</td>
-			             </tr>
-			             
-				         <tr>
-				             <td><input type="checkbox" name="checkbox8" id="checkbox3" /></td>
-				             <td>FC</td>
-				         </tr>
-				         
-			             </table>
-			             
-		                 <p><br clear="all" />
-			                 <br clear="all" />
-			                 <br clear="all" />
-			                 <br clear="all" />
-		                 </p></td>
+			             <td width="170" align="left" valign="top" style="border:1px solid #ccc;">
+
+			                 <table width="168" border="0" cellspacing="1" cellpadding="1">
+
+                                <div id="fornecedoresCota"/>
+ 
+				             </table>
+				             
+			                 <p><br clear="all" />
+				                 <br clear="all" />
+				                 <br clear="all" />
+				                 <br clear="all" />
+			                 </p>
+			                 
+		                 </td>
 		                 
 					     <td width="21" align="left" valign="top">&nbsp;</td>
 					     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
 	
 					         <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						         <tr>
-						             <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraMensal();" /></td>
+						             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="mostraMensal();" /></td>
 						             <td width="173">Mensal</td>
-						             <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraSemanal();" /></td>
+						             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="mostraSemanal();" /></td>
 						             <td width="173">Semanal</td>
 						         </tr>
 						     </table>
@@ -757,7 +890,7 @@
 						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
 						         <tr>
 						             <td width="68">Todo dia:</td>
-						             <td width="156"><input type="text" name="diaMes" id="diaMes" style="width:60px;"/></td>
+						             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
 						         </tr>
 						     </table>
 					     
@@ -891,7 +1024,7 @@
 	        
         
         
-	        <div id="divBoleto" style="display:none;">   
+	        <div id="divRecebeEmail" style="display:none;">   
 	        
                 <form name="formularioDadosBoleto" id="formularioDadosBoleto">
                 
@@ -911,7 +1044,7 @@
        
        
        
-	        <div id="divDeposito" style="display:none;">   
+	        <div id="divDadosBancarios" style="display:none;">   
 	        
 				<form name="formularioDadosDeposito" id="formularioDadosDeposito">   
 				           
@@ -923,21 +1056,21 @@
 						  
 						  <tr>
 						    <td width="88">Num. Banco:</td>
-						    <td width="120"><input type="text" id="numBanco" name="numBanco" style="width:60px;" /></td>
+						    <td width="120"><input maxlength="25" type="text" id="numBanco" name="numBanco" style="width:60px;" /></td>
 						    <td width="47">Nome:</td>
-						    <td width="277"><input type="text" id="nomeBanco" name="nomeBanco" style="width:150px;" /></td>
+						    <td width="277"><input maxlength="40" type="text" id="nomeBanco" name="nomeBanco" style="width:150px;" /></td>
 						  </tr>
 						  
 						  <tr>
 						    <td>Agência:</td>
-						    <td><input type="text" id="agencia" name="agencia" style="width:60px;" />
+						    <td><input maxlength="25" type="text" id="agencia" name="agencia" style="width:60px;" />
 						      -
-						      <input type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
+						      <input maxlength="1" type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
 						    <td>Conta:</td>
 						    <td>
-						        <input type="text" id="conta" name="conta" style="width:60px;" />
+						        <input maxlength="25" type="text" id="conta" name="conta" style="width:60px;" />
 						      -
-						        <input type="text" id="contaDigito" name="contaDigito" style="width:30px;" /></td>
+						        <input maxlength="1" type="text" id="contaDigito" name="contaDigito" style="width:30px;" /></td>
 						  </tr>
 						  
 						  <tr>
@@ -956,7 +1089,7 @@
 
 			<br clear="all" />
 			<span class="bt_add">
-			    <a href="javascript:;" onclick="postarFormaCobranca();">
+			    <a href="javascript:;" onclick="incluirNovaUnificacao();">
 			        Incluir Novo
 			    </a>
 			</span>

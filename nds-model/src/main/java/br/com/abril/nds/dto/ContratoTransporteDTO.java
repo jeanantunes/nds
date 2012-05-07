@@ -26,6 +26,9 @@ public class ContratoTransporteDTO implements Serializable {
 	private String prazo;
 	private String avisoPrevio;
 	
+	private String complemento;
+	private String condicoes;
+	
 	public String getPrazo() {
 		return prazo;
 	}
@@ -62,12 +65,29 @@ public class ContratoTransporteDTO implements Serializable {
 	public void setTermino(Date termino) {
 		this.termino = termino;
 	}
+	public String getComplemento() {
+		return complemento;
+	}
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+	public String getCondicoes() {
+		return condicoes;
+	}
+	public void setCondicoes(String condicoes) {
+		this.condicoes = condicoes;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((avisoPrevio == null) ? 0 : avisoPrevio.hashCode());
+		result = prime * result
+				+ ((complemento == null) ? 0 : complemento.hashCode());
+		result = prime * result
+				+ ((condicoes == null) ? 0 : condicoes.hashCode());
 		result = prime * result
 				+ ((contratada == null) ? 0 : contratada.hashCode());
 		result = prime * result
@@ -77,6 +97,7 @@ public class ContratoTransporteDTO implements Serializable {
 		result = prime * result + ((termino == null) ? 0 : termino.hashCode());
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -90,6 +111,16 @@ public class ContratoTransporteDTO implements Serializable {
 			if (other.avisoPrevio != null)
 				return false;
 		} else if (!avisoPrevio.equals(other.avisoPrevio))
+			return false;
+		if (complemento == null) {
+			if (other.complemento != null)
+				return false;
+		} else if (!complemento.equals(other.complemento))
+			return false;
+		if (condicoes == null) {
+			if (other.condicoes != null)
+				return false;
+		} else if (!condicoes.equals(other.condicoes))
 			return false;
 		if (contratada == null) {
 			if (other.contratada != null)
@@ -123,9 +154,8 @@ public class ContratoTransporteDTO implements Serializable {
 		return "ContratoTransporteDTO [contratante=" + contratante
 				+ ", contratada=" + contratada + ", inicio=" + inicio
 				+ ", termino=" + termino + ", prazo=" + prazo
-				+ ", avisoPrevio=" + avisoPrevio + "]";
+				+ ", avisoPrevio=" + avisoPrevio + ", complemento="
+				+ complemento + ", condicoes=" + condicoes + "]";
 	}
 	
-	
-
 }
