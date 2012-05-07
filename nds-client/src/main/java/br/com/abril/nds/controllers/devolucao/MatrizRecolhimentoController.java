@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -61,9 +62,9 @@ public class MatrizRecolhimentoController {
 	@Autowired
 	private FornecedorService fornecedorService;
 	
-	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO = "mapaRecolhimento";
+	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO = "balanceamentoRecolhimento";
 	
-	private static final String ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL = "mapaRecolhimentoInicial";
+	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL = "balanceamentoRecolhimentoInicial";
 	
 	@Get
 	@Path("/")
@@ -80,13 +81,13 @@ public class MatrizRecolhimentoController {
 		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamento = 
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			this.obterMatrizBalanceamento(dataPesquisa, listaIdsFornecedores);
 
-		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamento);
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL, balanceamentoRecolhimento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
-			this.obterResumoPeriodoBalanceamento(matrizBalanceamento);
+			this.obterResumoPeriodoBalanceamento(balanceamentoRecolhimento.getMatrizRecolhimento());
 		
 		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
@@ -113,7 +114,6 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/exibirMatrizBalanceamentoPorDia")
-	@SuppressWarnings("unchecked")
 	public void exibirMatrizBalanceamentoDoDia(String dataFormatada, String sortorder,
 											   String sortname, Integer page, Integer rp) {
 
@@ -124,17 +124,22 @@ public class MatrizRecolhimentoController {
 		
 		Date data = DateUtil.parseDataPTBR(dataFormatada);
 
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamento =
-			(Map<Date, List<ProdutoRecolhimentoDTO>>)
-				httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			(BalanceamentoRecolhimentoDTO)
+				httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
-		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDia = matrizBalanceamento.get(data);
-		
-		if (listaProdutoRecolhimentoDia != null && !listaProdutoRecolhimentoDia.isEmpty()) {
-		
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		if (balanceamentoRecolhimento != null
+				&& balanceamentoRecolhimento.getMatrizRecolhimento() != null) {
 			
-			processarBalanceamento(listaProdutoRecolhimentoDia, paginacao, sortname);
+			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDia =
+				balanceamentoRecolhimento.getMatrizRecolhimento().get(data);
+			
+			if (listaProdutoRecolhimentoDia != null && !listaProdutoRecolhimentoDia.isEmpty()) {
+			
+				PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+				
+				processarBalanceamento(listaProdutoRecolhimentoDia, paginacao, sortname);
+			}
 		}
 	}
 	
@@ -259,13 +264,18 @@ public class MatrizRecolhimentoController {
 			
 		}
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamentoEditor =
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
+		
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoEditor =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
-		this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO_INICIAL, matrizBalanceamentoEditor);
+		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimentoEditor);
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL,
+									  balanceamentoRecolhimento);
 		
 		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento = 
-			this.obterResumoPeriodoBalanceamento(matrizBalanceamentoEditor);
+			this.obterResumoPeriodoBalanceamento(matrizRecolhimentoEditor);
 		
 		this.result.use(Results.json()).from(resumoPeriodoBalanceamento, "result").serialize();
 	}
@@ -325,29 +335,33 @@ public class MatrizRecolhimentoController {
 	 * Verifica se já existe a matriz na sessão, caso contrário irá buscá-la a partir dos parâmetros.
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizBalanceamento(Date dataBalanceamento, 
-																	  		 List<Long> listaIdsFornecedores) {
+	private BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Date dataBalanceamento, 
+																  List<Long> listaIdsFornecedores) {
 
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamento =  
-			(Map<Date, List<ProdutoRecolhimentoDTO>>)
-				this.httpSession.getAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO);
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =  
+			(BalanceamentoRecolhimentoDTO)
+				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
-		if (matrizBalanceamento == null 
+		if ((balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null)
 				&& dataBalanceamento != null 
 				&& listaIdsFornecedores != null) {
 
-			matrizBalanceamento = this.obterMatrizBalanceamentoMock(dataBalanceamento, listaIdsFornecedores);
+			balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
 			
-			this.httpSession.setAttribute(ATRIBUTO_SESSAO_MAPA_RECOLHIMENTO, matrizBalanceamento);
+			balanceamentoRecolhimento.setMatrizRecolhimento(
+				this.obterMatrizRecolhimentoMock(dataBalanceamento, listaIdsFornecedores));
+			
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO, balanceamentoRecolhimento);
 		}
 		
-		if (matrizBalanceamento == null || matrizBalanceamento.isEmpty()) {
+		if (balanceamentoRecolhimento.getMatrizRecolhimento() == null) {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
 		}
 		
-		return matrizBalanceamento;
+		return balanceamentoRecolhimento;
 	}
 	
 	/*
@@ -355,17 +369,25 @@ public class MatrizRecolhimentoController {
 	 */
 	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizBalanceamento() {
 		
-		return this.obterMatrizBalanceamento(null, null); 
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			this.obterMatrizBalanceamento(null, null);
+		
+		if (balanceamentoRecolhimento == null) {
+			
+			return null;
+		}
+		
+		return balanceamentoRecolhimento.getMatrizRecolhimento(); 
 	}
 	
 	/*
 	 * MOCK:
 	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
 	 */
-	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizBalanceamentoMock(Date dataBalanceamento, 
-																	  	  		 List<Long> listaIdsFornecedores) {
+	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizRecolhimentoMock(Date dataBalanceamento, 
+																	  	  		List<Long> listaIdsFornecedores) {
 
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamento = 
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		Date dataLancamento = DateUtil.parseDataPTBR("11/04/2012");
@@ -408,10 +430,14 @@ public class MatrizRecolhimentoController {
 				listaProdutosRecolhimento.add(produtoRecolhimento);
 			}
 			
-			matrizBalanceamento.put(dataRecolhimento, listaProdutosRecolhimento);
+			matrizRecolhimento.put(dataRecolhimento, listaProdutosRecolhimento);
 		}
 		
-		return matrizBalanceamento; 
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
+		
+		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
+		
+		return matrizRecolhimento; 
 	}
 
 	/*
@@ -420,12 +446,13 @@ public class MatrizRecolhimentoController {
 	private List<ProdutoRecolhimentoDTO> obterBalanceamentoDia(Date dataRecolhimento, 
 															   List<Long> listaIdsFornecedores) {
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamento = 
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			this.obterMatrizBalanceamento(dataRecolhimento, listaIdsFornecedores);
 
-		if (matrizBalanceamento != null) {
+		if (balanceamentoRecolhimento != null
+				&& balanceamentoRecolhimento.getMatrizRecolhimento() != null) {
 			
-			return matrizBalanceamento.get(dataRecolhimento);
+			return balanceamentoRecolhimento.getMatrizRecolhimento().get(dataRecolhimento);
 		}
 		
 		return null;
