@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -34,10 +35,10 @@ public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 		//this.cotaService.obterEnderecosPorIdCota(idCota)
 		
 		
-		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH_TESTE", "01.001.001/001-00", "000.000.000.00", "lh@mail.com");
+		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH_TESTE", "01.001.001/001-00", "000.000.000.00", "lh@mail.com","100");
 		save(pessoaJuridica);
 		
-		PessoaJuridica pessoaJuridica2 = Fixture.pessoaJuridica("LH_TESTE2", "01.001.001/001-10", "000.000.000.00", "lh2@mail.com");
+		PessoaJuridica pessoaJuridica2 = Fixture.pessoaJuridica("LH_TESTE2", "01.001.001/001-10", "000.000.000.00", "lh2@mail.com","200");
 		save(pessoaJuridica2);
 		
 		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
@@ -62,7 +63,7 @@ public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 	public void obterFornecedoresCota(){ 
 		Cota cota = cotaService.obterPorNumeroDaCota(170022);
 		Assert.assertTrue(cota!=null);
-		Set<Fornecedor> fornecedores = this.cotaService.obterFornecedoresCota(cota.getId());
+		List<Fornecedor> fornecedores = this.cotaService.obterFornecedoresCota(cota.getId());
 		Assert.assertTrue(fornecedores.size() > 0);	
 	}
 	

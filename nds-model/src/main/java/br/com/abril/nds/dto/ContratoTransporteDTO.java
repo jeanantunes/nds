@@ -27,6 +27,7 @@ public class ContratoTransporteDTO implements Serializable {
 	private String avisoPrevio;
 	
 	private String complemento;
+	private String condicoes;
 	
 	public String getPrazo() {
 		return prazo;
@@ -70,6 +71,12 @@ public class ContratoTransporteDTO implements Serializable {
 	public void setComplemento(String complemento) {
 		this.complemento = complemento;
 	}
+	public String getCondicoes() {
+		return condicoes;
+	}
+	public void setCondicoes(String condicoes) {
+		this.condicoes = condicoes;
+	}
 	
 	@Override
 	public int hashCode() {
@@ -79,6 +86,8 @@ public class ContratoTransporteDTO implements Serializable {
 				+ ((avisoPrevio == null) ? 0 : avisoPrevio.hashCode());
 		result = prime * result
 				+ ((complemento == null) ? 0 : complemento.hashCode());
+		result = prime * result
+				+ ((condicoes == null) ? 0 : condicoes.hashCode());
 		result = prime * result
 				+ ((contratada == null) ? 0 : contratada.hashCode());
 		result = prime * result
@@ -108,6 +117,11 @@ public class ContratoTransporteDTO implements Serializable {
 				return false;
 		} else if (!complemento.equals(other.complemento))
 			return false;
+		if (condicoes == null) {
+			if (other.condicoes != null)
+				return false;
+		} else if (!condicoes.equals(other.condicoes))
+			return false;
 		if (contratada == null) {
 			if (other.contratada != null)
 				return false;
@@ -135,14 +149,13 @@ public class ContratoTransporteDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
 	@Override
 	public String toString() {
 		return "ContratoTransporteDTO [contratante=" + contratante
 				+ ", contratada=" + contratada + ", inicio=" + inicio
 				+ ", termino=" + termino + ", prazo=" + prazo
 				+ ", avisoPrevio=" + avisoPrevio + ", complemento="
-				+ complemento + "]";
+				+ complemento + ", condicoes=" + condicoes + "]";
 	}
-
+	
 }

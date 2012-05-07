@@ -120,6 +120,6 @@ public interface CotaService {
 
 	List<Cota> obterCotaAssociadaFiador(Long idFiador);
 	
-	Set<Fornecedor> obterFornecedoresCota(Long idCota);
+	List<Fornecedor> obterFornecedoresCota(Long idCota);
 	
 }

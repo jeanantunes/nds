@@ -429,8 +429,13 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional
-	public Set<Fornecedor> obterFornecedoresCota(Long idCota) {
+	public List<Fornecedor> obterFornecedoresCota(Long idCota) {
 		Cota cota = this.obterPorId(idCota);
-		return cota.getFornecedores();
+		Set<Fornecedor> fornecedores = cota.getFornecedores();
+		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
+		for(Fornecedor itemFornecedor:fornecedores){
+			listaFornecedores.add(itemFornecedor);
+		}
+		return listaFornecedores;
 	}
 }

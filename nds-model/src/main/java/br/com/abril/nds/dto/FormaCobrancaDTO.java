@@ -20,14 +20,14 @@ public class FormaCobrancaDTO {
 	//DADOS DO FORMULARIO
 	TipoCobranca tipoCobranca;
 	TipoFormaCobranca tipoFormaCobranca;
-	long idBanco;
+	Long idBanco;
 	boolean recebeEmail;
 	
 	String numBanco;
 	String nomeBanco;
-	String agencia;
+	Long agencia;
 	String agenciaDigito;
-	String conta;
+	Long conta;
 	String contaDigito;
 	
 	Integer diaDoMes;
@@ -59,9 +59,9 @@ public class FormaCobrancaDTO {
 	
 	//CONTRUTOR PARA O FORMULARIO
 	public FormaCobrancaDTO(long idCota, long idParametroCobranca, TipoCobranca tipoCobranca, 
-			TipoFormaCobranca tipoFormaCobranca, long idBanco,
+			TipoFormaCobranca tipoFormaCobranca, Long idBanco,
 			boolean recebeEmail, String numBanco, String nomeBanco,
-			String agencia, String agenciaDigito, String conta,
+			Long agencia, String agenciaDigito, Long conta,
 			String contaDigito, Integer diaDoMes, boolean domingo, boolean segunda,
 			boolean terca, boolean quarta, boolean quinta, boolean sexta,
 			boolean sabado) {
@@ -160,11 +160,11 @@ public class FormaCobrancaDTO {
 		this.tipoFormaCobranca = tipoFormaCobranca;
 	}
 
-	public long getIdBanco() {
+	public Long getIdBanco() {
 		return idBanco;
 	}
 
-	public void setIdBanco(long idBanco) {
+	public void setIdBanco(Long idBanco) {
 		this.idBanco = idBanco;
 	}
 
@@ -192,11 +192,11 @@ public class FormaCobrancaDTO {
 		this.nomeBanco = nomeBanco;
 	}
 
-	public String getAgencia() {
+	public Long getAgencia() {
 		return agencia;
 	}
 
-	public void setAgencia(String agencia) {
+	public void setAgencia(Long agencia) {
 		this.agencia = agencia;
 	}
 
@@ -208,11 +208,11 @@ public class FormaCobrancaDTO {
 		this.agenciaDigito = agenciaDigito;
 	}
 
-	public String getConta() {
+	public Long getConta() {
 		return conta;
 	}
 
-	public void setConta(String conta) {
+	public void setConta(Long conta) {
 		this.conta = conta;
 	}
 

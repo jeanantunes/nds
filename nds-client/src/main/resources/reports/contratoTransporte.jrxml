@@ -26,26 +26,29 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="condicoes" class="java.lang.String">
+		<fieldDescription><![CDATA[condicoes]]></fieldDescription>
+	</field>
 	<field name="contratante" class="br.com.abril.nds.dto.PessoaContratoDTO">
 		<fieldDescription><![CDATA[contratante]]></fieldDescription>
-	</field>
-	<field name="complemento" class="java.lang.String">
-		<fieldDescription><![CDATA[complemento]]></fieldDescription>
-	</field>
-	<field name="avisoPrevio" class="java.lang.String">
-		<fieldDescription><![CDATA[avisoPrevio]]></fieldDescription>
-	</field>
-	<field name="contratada" class="br.com.abril.nds.dto.PessoaContratoDTO">
-		<fieldDescription><![CDATA[contratada]]></fieldDescription>
 	</field>
 	<field name="termino" class="java.util.Date">
 		<fieldDescription><![CDATA[termino]]></fieldDescription>
 	</field>
+	<field name="prazo" class="java.lang.String">
+		<fieldDescription><![CDATA[prazo]]></fieldDescription>
+	</field>
 	<field name="inicio" class="java.util.Date">
 		<fieldDescription><![CDATA[inicio]]></fieldDescription>
 	</field>
-	<field name="prazo" class="java.lang.String">
-		<fieldDescription><![CDATA[prazo]]></fieldDescription>
+	<field name="contratada" class="br.com.abril.nds.dto.PessoaContratoDTO">
+		<fieldDescription><![CDATA[contratada]]></fieldDescription>
+	</field>
+	<field name="avisoPrevio" class="java.lang.String">
+		<fieldDescription><![CDATA[avisoPrevio]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[complemento]]></fieldDescription>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -84,14 +87,14 @@ QUADRO RESUMO
 				<textElement textAlignment="Justified">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{contratante}.getNome()+", com sede na "+$F{contratante}.getEndereco()+", devidamente inscrita no CNPJ/MF sob n.º "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente (“Contratante”)."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratante}.getNome()+", com sede na "+$F{contratante}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratante')."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="12" y="242" width="531" height="92"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getEndereco()+", devidamente inscrita no CNPJ/MF sob n.º "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente (“Contratada”)."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratada')."]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="12" y="307" width="116" height="27"/>
@@ -132,13 +135,6 @@ QUADRO RESUMO
 			<rectangle>
 				<reportElement x="160" y="623" width="197" height="37"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="12" y="334" width="531" height="20"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="12" y="127" width="531" height="20"/>
 				<textElement>
@@ -191,12 +187,12 @@ Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos 
 			<textField>
 				<reportElement x="160" y="422" width="161" height="21"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{contratante}.getTelefones()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratante}.getDescTelefones()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="321" y="422" width="222" height="57"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratante}.getEnderecoGestor()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratante}.getDescEnderecoGestor()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="12" y="402" width="38" height="20"/>
@@ -221,7 +217,7 @@ Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos 
 			<textField>
 				<reportElement x="161" y="530" width="160" height="21"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{contratada}.getTelefones()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratada}.getDescTelefones()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="51" y="510" width="110" height="77"/>
@@ -236,7 +232,7 @@ Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos 
 			<textField>
 				<reportElement x="320" y="530" width="223" height="56"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{contratada}.getEnderecoGestor()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratada}.getDescEnderecoGestor()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="161" y="510" width="160" height="20"/>
@@ -314,14 +310,19 @@ Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos 
 				<reportElement x="14" y="959" width="528" height="149"/>
 				<textElement/>
 				<textFieldExpression><![CDATA["Pelo presente instrumento,"+
-$F{contratante}.getNome()+", com sede na "+$F{contratante}.getEndereco()+", devidamente inscrita no CNPJ/MF sob n.º "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente (“Contratante”)."+
+$F{contratante}.getNome()+", com sede na "+$F{contratante}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratante')."+
 "E, de outro lado,"+
-$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getEndereco()+", devidamente inscrita no CNPJ/MF sob n.º "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente (“Contratada” e, conjuntamente com a Contratante, as “Partes”)."]]></textFieldExpression>
+$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratada' e, conjuntamente com a Contratante, as 'Partes')."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="14" y="1118" width="528" height="304"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{complemento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="334" width="531" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{condicoes}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
