@@ -13,7 +13,7 @@
 					
 					var rows = '<tr>';
 
-					$.each(result, function(index, resumo) {
+					$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
 						
 						rows += '<td>';
 
@@ -53,6 +53,17 @@
 				    
 				    $("#tableResumoPeriodoBalanceamento").append(rows);
 
+				    var matrizFechada = result.matrizFechada;
+				    
+				    if (matrizFechada) {
+				    	
+				    	bloquearLinks();
+				    	
+				    } else {
+				    	
+				    	habilitarLinks();
+				    }
+				    
 				    $("#resumoPeriodo").show();
 
 				    $("#fieldsetGrids").hide();
@@ -64,7 +75,31 @@
 			);
 		}
 		
-		function desabilitarLink(idLink) {
+		function bloquearLinks() {
+			
+			bloquearLink("linkConfirmar");
+			bloquearLink("linkEditor");
+			bloquearLink("linkValor");
+			bloquearLink("linkSalvar");
+			bloquearLink("linkMatrizFornecedor");
+			bloquearLink("linkConfiguracaoInicial");
+			bloquearLink("linkFechar");
+			bloquearLink("linkReprogramar");
+		}
+		
+		function habilitarLinks() {
+			
+			habilitarLink("linkConfirmar", confirmar);
+			habilitarLink("linkEditor", balancearPorEditor);
+			habilitarLink("linkValor", balancearPorValor);
+			habilitarLink("linkSalvar", salvar);
+			habilitarLink("linkMatrizFornecedor", balancearMatrizFornecedor);
+			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
+			habilitarLink("linkFechar", fechar);
+			habilitarLink("linkReprogramar", reprogramar);
+		}
+		
+		function bloquearLink(idLink) {
 			
 			var link = $("#" + idLink);
 			link.addClass("linkDisabled");
@@ -76,6 +111,7 @@
 			
 			var link = $("#" + idLink);
 			link.removeClass("linkDisabled");
+			link.unbind("click");
 			link.bind("click", funcao);
 			link.css("text-decoration", "");
 		}		
@@ -266,8 +302,6 @@
 			$("input[name='numeroSemana']").numeric();
 
 			carregarDadosPesquisa();
-			
-			bindingFuncoesClick();
 		}
 		
 		function iniciarGrid() {
@@ -387,18 +421,6 @@
 				width : 960,
 				height : 180
 			});
-		}
-		
-		function bindingFuncoesClick() {
-			
-			$("#linkConfirmar").bind("click", confirmar);
-			$("#linkEditor").bind("click", balancearPorEditor);
-			$("#linkValor").bind("click", balancearPorValor);
-			$("#linkSalvar").bind("click", salvar);
-			$("#linkMatrizFornecedor").bind("click", balancearMatrizFornecedor);
-			$("#linkConfiguracaoInicial").bind("click", voltarConfiguracaoInicial);
-			$("#linkFechar").bind("click", fechar);
-			$("#linkReprogramar").bind("click", reprogramar);
 		}
 		
 		function confirmar() {
