@@ -64,19 +64,21 @@
 			);
 		}
 		
-		function balancearPorValor() {
+		function desabilitarLink(idLink) {
 			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
-				obterParametrosPesquisa(),
-				function() {
-					
-				},
-				function() {
-					
-				}
-			);
+			var link = $("#" + idLink);
+			link.addClass("linkDisabled");
+			link.unbind("click");
+			link.css("text-decoration", "none");
 		}
+		
+		function habilitarLink(idLink, funcao) {
+			
+			var link = $("#" + idLink);
+			link.removeClass("linkDisabled");
+			link.bind("click", funcao);
+			link.css("text-decoration", "");
+		}		
 		
 		function visualizarMatrizBalanceamentoPorDia(data) {
 			
@@ -264,6 +266,8 @@
 			$("input[name='numeroSemana']").numeric();
 
 			carregarDadosPesquisa();
+			
+			bindingFuncoesClick();
 		}
 		
 		function iniciarGrid() {
@@ -385,6 +389,60 @@
 			});
 		}
 		
+		function bindingFuncoesClick() {
+			
+			$("#linkConfirmar").bind("click", confirmar);
+			$("#linkEditor").bind("click", balancearPorEditor);
+			$("#linkValor").bind("click", balancearPorValor);
+			$("#linkSalvar").bind("click", salvar);
+			$("#linkMatrizFornecedor").bind("click", balancearMatrizFornecedor);
+			$("#linkConfiguracaoInicial").bind("click", voltarConfiguracaoInicial);
+			$("#linkFechar").bind("click", fechar);
+			$("#linkReprogramar").bind("click", reprogramar);
+		}
+		
+		function confirmar() {
+			
+		}
+		
+		function balancearPorEditor() {
+			
+		}
+		
+		function balancearPorValor() {
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
+				obterParametrosPesquisa(),
+				function() {
+					
+				},
+				function() {
+					
+				}
+			);
+		}
+		
+		function salvar() {
+			
+		}
+		
+		function balancearMatrizFornecedor() {
+			
+		}
+		
+		function voltarConfiguracaoInicial() {
+			
+		}
+		
+		function fechar() {
+			
+		}
+		
+		function reprogramar() {
+			
+		}
+		
 		$(function() {
 
 			inicializar();
@@ -462,8 +520,8 @@
 			<tr>
 				<td width="115">
 					<span class="bt_confirmar_novo" title="Confirmar balanceamento">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
+						<a id="linkConfirmar" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Confirmar
 						</a>
 					</span>
 				</td>
@@ -472,17 +530,17 @@
 				</td>
 				<td width="296">
 					<span class="bt_confirmar_novo" title="Balancear Editor">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Editor
+						<a id="linkEditor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Editor
 						</a>
 					</span>
 					<span class="bt_confirmar_novo" title="Balancear Volume / Valor">
-						<a onclick="balancearPorValor();" href="javascript:;">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Valor
+						<a id="linkValor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Valor
 						</a>
 					</span>
-					<span class="bt_novos" title="Salvar Conferência">
-						<a href="javascript:;">
+					<span class="bt_novos" title="Salvar">
+						<a id="linkSalvar" href="javascript:;">
 							<img border="0" hspace="5" src="<c:url value='/images/ico_salvar.gif'/>">Salvar
 						</a>
 					</span>
@@ -490,16 +548,16 @@
 				
 				<td width="207">
 					<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
-						<a href="javascript:;" onclick="mostra_matriz();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_detalhes.png'/>">Matriz Fornecedor
+						<a id="linkMatrizFornecedor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_detalhes.png'/>">Matriz Fornecedor
 						</a>
 					</span>
 				</td>
 				
 				<td width="215">
 					<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
-						<a href="javascript:;">
-							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />
+						<a id="linkConfiguracaoInicial" href="javascript:;">
+							<img src="<c:url value='/images/bt_devolucao.png'/>" border="0" hspace="5" />
 							Voltar Configuração Inicial
 						</a>
 					</span>
@@ -516,16 +574,10 @@
 		
 		<div class="grids" style="display: none;">
 
-			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float:right; display:none;">
-				<a href="javascript:;" onclick="fechaGrid();">
-					<img src="../images/ico_excluir.gif" hspace="5" border="0"/>Fechar
-				</a>
-			</span>
-
 			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right; display: none;">
-				
-				<a href="javascript:;" onclick="fechaGrid();">
-					<img src="<c:url value='images/ico_excluir.gif'/>" hspace="5" border="0" />Fechar
+				<a id="linkFechar" href="javascript:;">
+					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
+						 hspace="5" border="0" />Fechar
 				</a>
 			</span>
 
@@ -537,8 +589,8 @@
 				<tr>
 					<td width="152">
 						<span class="bt_novos" title="Reprogramar">
-							<a href="javascript:;" onclick="popup();">
-								<img src="<c:url value='images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
+							<a id="linkReprogramar" href="javascript:;">
+								<img src="<c:url value='/images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
 							</a>
 						</span>
 					</td>

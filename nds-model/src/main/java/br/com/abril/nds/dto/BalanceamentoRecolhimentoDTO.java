@@ -20,6 +20,8 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	
 	private Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
 
+	private boolean matrizFechada;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -39,6 +41,20 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	 */
 	public void setMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		this.matrizRecolhimento = matrizRecolhimento;
+	}
+
+	/**
+	 * @return the matrizFechada
+	 */
+	public boolean isMatrizFechada() {
+		return matrizFechada;
+	}
+
+	/**
+	 * @param matrizFechada the matrizFechada to set
+	 */
+	public void setMatrizFechada(boolean matrizFechada) {
+		this.matrizFechada = matrizFechada;
 	}
 	
 }
