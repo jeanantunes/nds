@@ -249,16 +249,12 @@ var PDV = {
 					this.getDadosCaracteristica() +"&" + 
 					this.getDadosEspecialidade() +"&" + 
 					this.getDadosGeradorFluxo()  +"&" +
-					this.getDadosMap(), function(mensagens){
+					this.getDadosMap(), function(result){
 				
 				$("#dialog-pdv").dialog( "close" );
 				PDV.fecharModalCadastroPDV = true;
 				PDV.pesquisarPdvs(PDV.idCota);
 				PDV.limparCamposTela();
-				
-				if(mensagens){
-					exibirMensagemDialog("SUCCESS", "Operação realizada com sucesso!");
-				}
 				
 			},this.errorSalvarPDV,true,"idModalPDV");
 			
