@@ -48,7 +48,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(100L);
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
