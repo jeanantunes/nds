@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -87,6 +88,9 @@ public class PdvController {
 
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
+	
+	@Autowired
+	private ServletContext servletContext;
 
 	public PdvController() {}
 
@@ -382,10 +386,8 @@ public class PdvController {
 		ParametroSistema pathPDV = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
 		
-		ParametroSistema pathAplicacao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
 		
-		File file = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"),"pdv_" + dto.getId() + ".jpeg");
+		File file = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"),"pdv_" + dto.getId() + ".jpeg");
 		   		
 		if(file.exists()) 
 			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
@@ -427,10 +429,11 @@ public class PdvController {
 		
 		pdvDTO.setImagem((FileInputStream) httpSession.getAttribute(IMAGEM_PDV));
 		
+		pdvDTO.setPathAplicacao(servletContext.getRealPath(""));
+		
 		preencherTelefones(pdvDTO);
 		
 		preencherEnderecos(pdvDTO);
-		
 		
 		pdvService.salvar(pdvDTO);
 		
@@ -615,10 +618,8 @@ public class PdvController {
 		ParametroSistema pathPDV = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
 		
-		ParametroSistema pathAplicacao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
 						
-		File fileDir = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"));
+		File fileDir = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"));
 		
 		fileDir.mkdirs();
 
@@ -694,11 +695,8 @@ public class PdvController {
 		
 		ParametroSistema pathPDV = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
-		
-		ParametroSistema pathAplicacao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
 						
-		File file = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
+		File file = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
 		   		
 		if(file.exists())
 			file.delete();

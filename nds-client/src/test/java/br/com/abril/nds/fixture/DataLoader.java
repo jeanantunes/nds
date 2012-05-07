@@ -1629,14 +1629,9 @@ public class DataLoader {
 		
 		ParametroSistema parametroPathImagemPDV = 
 				Fixture.parametroSistema(
-					TipoParametroSistema.PATH_IMAGENS_PDV, "images\\pdv\\");
+					TipoParametroSistema.PATH_IMAGENS_PDV, "\\images\\pdv\\");
 		session.save(parametroPathImagemPDV);
-		
-		ParametroSistema parametroPathAplicacao = 
-				Fixture.parametroSistema(
-					TipoParametroSistema.PATH_APLICACAO, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\");
-		session.save(parametroPathAplicacao);
-		
+				
 		parametroSistema = 
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7");
 

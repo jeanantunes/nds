@@ -390,7 +390,7 @@ public class PdvServiceImpl implements PdvService {
 		salvarGeradorFluxo(pdvDTO, pdv);
 		
 		if(pdvDTO.getImagem() != null)
-			atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId());
+			atualizaImagemPDV(pdvDTO.getImagem(), pdv.getId(), pdvDTO.getPathAplicacao());
 
 	
 		salvarEndereco(pdvDTO, pdv);
@@ -432,16 +432,13 @@ public class PdvServiceImpl implements PdvService {
 	}
 
 	@Transactional	
-	public void atualizaImagemPDV(FileInputStream foto, Long idPdv) {
+	public void atualizaImagemPDV(FileInputStream foto, Long idPdv, String pathAplicacao) {
 				
 		
 		ParametroSistema pathPDV = 
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
-		
-		ParametroSistema pathAplicacao = 
-				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
-						
-		File fileDir = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"));
+								
+		File fileDir = new File((pathAplicacao + pathPDV.getValor()).replace("\\", "/"));
 		
 				
 		fileDir.mkdirs();
