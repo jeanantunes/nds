@@ -1,0 +1,55 @@
+package br.com.abril.nds.client.vo;
+
+import java.io.Serializable;
+import java.util.List;
+
+import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
+
+public class ResultadoResumoBalanceamentoVO implements Serializable {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 2795532975752879190L;
+
+	private List<ResumoPeriodoBalanceamentoDTO> listaResumoPeriodoBalanceamento;
+	
+	private boolean matrizFechada;
+	
+	/**
+	 * Construtor padrão.
+	 */
+	public ResultadoResumoBalanceamentoVO() {
+		
+	}
+
+	/**
+	 * @return the listaResumoPeriodoBalanceamento
+	 */
+	public List<ResumoPeriodoBalanceamentoDTO> getListaResumoPeriodoBalanceamento() {
+		return listaResumoPeriodoBalanceamento;
+	}
+
+	/**
+	 * @param listaResumoPeriodoBalanceamento the listaResumoPeriodoBalanceamento to set
+	 */
+	public void setListaResumoPeriodoBalanceamento(
+			List<ResumoPeriodoBalanceamentoDTO> listaResumoPeriodoBalanceamento) {
+		this.listaResumoPeriodoBalanceamento = listaResumoPeriodoBalanceamento;
+	}
+
+	/**
+	 * @return the matrizFechada
+	 */
+	public boolean isMatrizFechada() {
+		return matrizFechada;
+	}
+
+	/**
+	 * @param matrizFechada the matrizFechada to set
+	 */
+	public void setMatrizFechada(boolean matrizFechada) {
+		this.matrizFechada = matrizFechada;
+	}
+
+}

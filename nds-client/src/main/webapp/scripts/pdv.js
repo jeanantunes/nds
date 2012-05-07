@@ -386,8 +386,8 @@ var PDV = {
 			
 			var tipoPeriodo = $("#selectDiasFuncionamento").val();
 			var inicioHorario = $("#inicioHorario").val();
-			var fimHorario = $("#fimHorario").val();
-			
+			var fimHorario = $("#fimHorario").val();		
+						
 			var parametros = [];
 			
 			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
@@ -404,9 +404,14 @@ var PDV = {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/adicionarPeriodo",
 					parametros, 
-					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);}
+					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);},
+					null,
+					true,
+					"idModalPDV"
 			);
 		},
+		
+	
 		
 		retornoAdicaoDiaFuncionamento: 	function(result){
 			
@@ -459,7 +464,10 @@ var PDV = {
 				 tr.append("<td width='138'>&nbsp; "+ inputHidden+"</td>");
 				 tr.append("<td width='249' class='diasFunc'>"+ row.descTipoPeriodo +"</td>");
 				 tr.append("<td width='47'>&nbsp;</td>");
-				 tr.append("<td width='100'>"+ row.inicio +" as "+ row.fim +"</td>");
+				
+				 var as = (row.descTipoPeriodo == '24 horas' ? '':' as ');
+				 tr.append("<td width='100'>"+ row.inicio + as + row.fim +"</td>");
+								 
 				 tr.append("<td width='227'>"+
 				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent(),"+index+");'" +
 				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
@@ -693,8 +701,10 @@ var PDV = {
 		},
 		validarEmail : function (email)	{
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
-			if(!er.exec(email))
-				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."]);		
+			if(!er.exec(email)) {
+				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."],'idModalPDV');	
+				$("#emailPDV").focus();
+			}
 		},
 		carregarPeriodosFuncionamento:function(){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
@@ -856,6 +866,18 @@ var PDV = {
             $("#idPDV").val("");
             
             $("#tabpdv").tabs('select', 0);
+		},
+		
+		selecionarDiaFuncionamento: function() {
+			
+			if($("#selectDiasFuncionamento").val()=='VINTE_QUATRO_HORAS') {
+				$("#inicioHorario").attr('disabled', 'desabled');
+				$("#fimHorario").attr('disabled', 'desabled');
+				
+			} else {
+				$("#inicioHorario").attr('disabled', null);
+				$("#fimHorario").attr('disabled', null);
+			}
 		}
 		
 };

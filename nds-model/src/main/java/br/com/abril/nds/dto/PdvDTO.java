@@ -94,6 +94,8 @@ public class PdvDTO implements Serializable {
     
     private String pathImagem;
     
+    private String pathAplicacao;
+    
 	/**
 	 * @return the expositor
 	 */
@@ -603,6 +605,14 @@ public class PdvDTO implements Serializable {
 
 	public void setPathImagem(String pathImagem) {
 		this.pathImagem = pathImagem;
+	}
+
+	public String getPathAplicacao() {
+		return pathAplicacao;
+	}
+
+	public void setPathAplicacao(String pathAplicacao) {
+		this.pathAplicacao = pathAplicacao;
 	}
 	
 }
