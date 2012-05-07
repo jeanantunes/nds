@@ -305,7 +305,7 @@ var PDV = {
 	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
 	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + $("#textoLuminoso").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoPonto="      + $("#selectdTipoPonto").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.caracteristica=" + $("#selectCaracteristica").val()+"&"+
+	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+$("#selectCaracteristica").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
 						
