@@ -97,14 +97,6 @@ var PDV = {
 	
 		},
 		
-		carregarAbaEndereco: function (result){
-			
-		},
-		
-		carregarAbaTelefone: function (result){
-			
-		},
-		
 		carregarAbaCaracteristica: function (result){
 			
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.pontoPrincipal,"#ptoPrincipal");
@@ -215,7 +207,7 @@ var PDV = {
 					[{name:"idPdv",value:idPdv},
 					 {name:"idCota",value:idCota}
 					 ], function(result){
-				
+				PDV.fecharModalCadastroPDV = false;
 				PDV.carregarDadosEdicao(result);
 				
 			},PDV.errorEditarPDV,true); 
@@ -259,9 +251,10 @@ var PDV = {
 					this.getDadosGeradorFluxo()  +"&" +
 					this.getDadosMap(), function(result){
 				
+				$("#dialog-pdv").dialog( "close" );
+				PDV.fecharModalCadastroPDV = true;
 				PDV.pesquisarPdvs(PDV.idCota);
 				PDV.limparCamposTela();
-				$("#dialog-pdv").dialog( "close" );
 				
 			},this.errorSalvarPDV,true,"idModalPDV");
 			
@@ -568,8 +561,8 @@ var PDV = {
 						);
 					},
 					"Cancelar": function() {
-						$(this).dialog("close");
 						PDV.fecharModalCadastroPDV = false;
+						$(this).dialog("close");
 					}
 				}
 			});
@@ -586,15 +579,14 @@ var PDV = {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/novo",
 					"idCota="+PDV.idCota, 
-					null
+					function(){
+						PDV.popup_novoPdv();
+						PDV.fecharModalCadastroPDV = false;
+					}
 			);
-						
-			PDV.popup_novoPdv();
 		},
 		
 		popup_novoPdv:function() {
-			
-			PDV.fecharModalCadastroPDV = false;
 			
 			$( "#dialog-pdv" ).dialog({
 				resizable: false,
@@ -603,9 +595,11 @@ var PDV = {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						PDV.fecharModalCadastroPDV = true;
 						PDV.salvarPDV();
 					},
 					"Cancelar": function() {
+						PDV.fecharModalCadastroPDV = false;
 						$( this ).dialog( "close" );
 					}
 				},
