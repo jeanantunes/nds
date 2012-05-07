@@ -1,6 +1,7 @@
 package br.com.abril.nds.strategy.devolucao;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +45,12 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 	 */
 	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizRecolhimento(RecolhimentoDTO dadosRecolhimento) {
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
-
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
+			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
+		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaBalanceado = 
-			this.balancearMapaExpectativaEncalheTotalDiaria(dadosRecolhimento);
-		
-		// Verificar se as quantidades excedem a capacidade diária de manuseio
-		
+			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
+
 		// Separar quantidade de produtos-edição para não quebrar entre os dias
 		
 		// Verificar qual quantidade de produto melhor se encaixa em cada dia com capacidade disponível
@@ -65,11 +65,12 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 	}
 	
 	/*
-	 * Efetua o balanceamento da expectativa de encalhe dos dias fora das datas de recolhimento para as datas possíveis.
+	 * Gera a matriz de recolhimento balanceada nas datas determinadas.
 	 */
-	private Map<Date, BigDecimal> balancearMapaExpectativaEncalheTotalDiaria(RecolhimentoDTO dadosRecolhimento) {
+	private Map<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
 		
-		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaBalanceado = new TreeMap<Date, BigDecimal>();
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
+			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
@@ -80,20 +81,114 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
 			
-			BigDecimal expectativaEncalheTotalPrevista = entryExpectativaEncalheTotalDiaria.getValue();
+			BigDecimal expectativaEncalheABalancear = entryExpectativaEncalheTotalDiaria.getValue();
 			
 			Date dataBalanceamento = 
 				this.obterDataRecolhimentoPermitida(datasRecolhimentoFornecedor, dataRecolhimentoPrevista);
+
+			List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = 
+				this.obterProdutosRecolhimentoPorData(dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
 			
-			BigDecimal expectativaEncalheTotalDiaria = 
-				mapaExpectativaEncalheTotalDiariaBalanceado.get(dataBalanceamento);
+			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = 
+				matrizRecolhimentoBalanceada.get(dataBalanceamento);
 			
-			expectativaEncalheTotalDiaria = expectativaEncalheTotalDiaria.add(expectativaEncalheTotalPrevista);
+			// Verificar se a expectativa de encalhe excede a capacidade diária de manuseio
 			
-			mapaExpectativaEncalheTotalDiariaBalanceado.put(dataBalanceamento, expectativaEncalheTotalDiaria);
+			if (produtosRecolhimentoNaData != null) {
+				
+				BigDecimal capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+				
+				BigDecimal expectativaEncalheNaData = this.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
+				
+				if (expectativaEncalheNaData.add(expectativaEncalheABalancear).compareTo(capacidadeManuseio) > 0) {
+					
+					
+				}
+			}
+			
+			matrizRecolhimentoBalanceada.put(dataBalanceamento, produtosRecolhimentoFiltrados);
 		}
 		
-		return mapaExpectativaEncalheTotalDiariaBalanceado;
+		return matrizRecolhimentoBalanceada;
+	}
+	
+	/*
+	 * Obtém a expectativa de encalhe total dos produtos para recolhimento.
+	 */
+	private BigDecimal obterExpectativaEncalheTotal(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		BigDecimal expectativaEncalheTotal = BigDecimal.ZERO;
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			if (produtoRecolhimento.getExpectativaEncalhe() != null) {
+			
+				expectativaEncalheTotal = 
+					expectativaEncalheTotal.add(produtoRecolhimento.getExpectativaEncalhe());
+			}
+		}
+		
+		return expectativaEncalheTotal;
+	}
+	
+	/*
+	 * Obtém os produtos de recolhimento de uma determinada data.
+	 */
+	private List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+																		  Date dataRecolhimentoDesejada) {
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = new ArrayList<ProdutoRecolhimentoDTO>();
+		
+		if (produtosRecolhimento == null 
+				|| produtosRecolhimento.isEmpty()
+				|| dataRecolhimentoDesejada == null) {
+			
+			return produtosRecolhimentoFiltrados;
+		}
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+				
+				produtosRecolhimentoFiltrados.add(produtoRecolhimento);
+			}
+		}
+		
+		return produtosRecolhimentoFiltrados;
+	}
+	
+	/*
+	 * Gera o mapa de expectativa de encalhe total diária de acordo com a matriz de recolhimento.
+	 */
+	private Map<Date, BigDecimal> gerarMapaExpectativaEncalheTotalDiaria(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+		
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
+		
+		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
+			
+			return mapaExpectativaEncalheTotalDiaria;
+		}
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento : matrizRecolhimento.entrySet()) {
+			
+			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
+			
+			BigDecimal expectativaEncalheTotalDiaria = BigDecimal.ZERO;
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+				
+				if (produtoRecolhimento.getExpectativaEncalhe() != null) {
+				
+					expectativaEncalheTotalDiaria = 
+						expectativaEncalheTotalDiaria.add(produtoRecolhimento.getExpectativaEncalhe());
+				}
+			}
+			
+			mapaExpectativaEncalheTotalDiaria.put(dataRecolhimento, expectativaEncalheTotalDiaria);
+		}
+		
+		return mapaExpectativaEncalheTotalDiaria;
 	}
 	
 	/*
