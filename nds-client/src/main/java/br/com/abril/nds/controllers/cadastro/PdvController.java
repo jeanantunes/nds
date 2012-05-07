@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.hssf.record.chart.EndRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
@@ -87,7 +86,7 @@ public class PdvController {
 			
 	@Autowired
 	private HttpSession httpSession;
-	
+
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 
@@ -348,13 +347,11 @@ public class PdvController {
 	@Path("/editar")
 	public void editarPDV(Long idPdv, Long idCota){
 		
-		httpSession.setAttribute(IMAGEM_PDV, null);
-		
 		limparDadosSessao();
-		
+
 		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
 		
-		//carregarTelefonesPDV(idPdv, idCota);
+		carregarTelefonesPDV(idPdv, idCota);
 		
 		carregarEndercosPDV(idPdv, idCota);
 		
@@ -385,6 +382,12 @@ public class PdvController {
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_EXIBICAO);
+		
+		httpSession.setAttribute(IMAGEM_PDV, null);
 	}
 
 	@Post
@@ -675,8 +678,7 @@ public class PdvController {
 			file.delete();
 
 	}
-	
-	
+
 	private void carregarTelefonesPDV(Long idPdv, Long idCota) {
 		
 		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);

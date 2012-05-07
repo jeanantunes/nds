@@ -22,5 +22,5 @@ public interface TelefoneFiadorRepository extends Repository<TelefoneFiador, Lon
 
 	void excluirTelefonesFiador(Long idFiador);
 
-	boolean verificarTelefonePrincipalFiador(Long id);
+	boolean verificarTelefonePrincipalFiador(Long id, Set<Long> idsIgnorar);
 }
