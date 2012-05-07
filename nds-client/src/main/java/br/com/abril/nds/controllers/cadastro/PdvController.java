@@ -491,6 +491,9 @@ public class PdvController {
 	@Path("/adicionarPeriodo")
 	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
 		
+		if(novoPeriodo.getTipoPeriodoFuncionamentoPDV() == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve selecionado.");
+		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
 		List<String> mensagens = new ArrayList<String>();
