@@ -249,12 +249,16 @@ var PDV = {
 					this.getDadosCaracteristica() +"&" + 
 					this.getDadosEspecialidade() +"&" + 
 					this.getDadosGeradorFluxo()  +"&" +
-					this.getDadosMap(), function(result){
+					this.getDadosMap(), function(mensagens){
 				
 				$("#dialog-pdv").dialog( "close" );
 				PDV.fecharModalCadastroPDV = true;
 				PDV.pesquisarPdvs(PDV.idCota);
 				PDV.limparCamposTela();
+				
+				if(mensagens){
+					exibirMensagemDialog("SUCCESS", "Operação realizada com sucesso!");
+				}
 				
 			},this.errorSalvarPDV,true,"idModalPDV");
 			
@@ -305,7 +309,7 @@ var PDV = {
 	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
 	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + $("#textoLuminoso").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoPonto="      + $("#selectdTipoPonto").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.caracteristica=" + $("#selectCaracteristica").val()+"&"+
+	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+$("#selectCaracteristica").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
 						

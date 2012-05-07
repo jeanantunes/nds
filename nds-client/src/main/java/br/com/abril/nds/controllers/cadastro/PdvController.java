@@ -431,7 +431,6 @@ public class PdvController {
 		
 		preencherEnderecos(pdvDTO);
 		
-		
 		pdvService.salvar(pdvDTO);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
