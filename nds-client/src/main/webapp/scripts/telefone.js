@@ -128,8 +128,6 @@ function Telefone(paramTela,message) {
 
 	this.adicionarTelefone = function() {
 
-		alert(message);
-		
 		var data = "tela=" + paramTela + "&referencia="
 				+ $("#"+paramTela+"referenciaHidden").val() + "&tipoTelefone="
 				+ $("#"+paramTela+"tipoTelefone").val() + "&ddd=" + $("#"+paramTela+"ddd").val()
