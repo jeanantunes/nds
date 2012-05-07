@@ -2,6 +2,7 @@
 var PDV = {
 		
 		idCota:"",
+		fecharModalCadastroPDV:false,
 		diasFuncionamento:[],
 		
 		pesquisarPdvs: function (idCota){
@@ -531,13 +532,41 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				},
-				beforeClose: function() {
-					clearMessageDialogTimeout();
 				}
-				
 			});
 		},
+		
+		cancelarCadastro:function(){
+			
+			$("#dialog-cancelar-cadastro-pdv").dialog({
+				resizable: false,
+				height:150,
+				width:600,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						$.postJSON(contextPath +'/cadastro/pdv/cancelarCadastro', null, 
+							
+							function(result){
+								
+								PDV.fecharModalCadastroPDV = true;
+								PDV.limparCamposTela();
+								
+								$("#dialog-close").dialog("close");
+								$("#dialog-cancelar-cadastro-pdv").dialog("close");
+								$("#dialog-pdv").dialog("close");
+							}
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+						PDV.fecharModalCadastroPDV = false;
+					}
+				}
+			});
+		},
+	
 		
 		poupNovoPDV:function(){
 			
@@ -557,6 +586,8 @@ var PDV = {
 		
 		popup_novoPdv:function() {
 			
+			PDV.fecharModalCadastroPDV = false;
+			
 			$( "#dialog-pdv" ).dialog({
 				resizable: false,
 				height:600,
@@ -567,13 +598,23 @@ var PDV = {
 						PDV.salvarPDV();
 					},
 					"Cancelar": function() {
-						PDV.limparCamposTela();
 						$( this ).dialog( "close" );
 					}
 				},
-				beforeClose: function() {
-					PDV.limparCamposTela();
+				beforeClose: function(event, ui) {
+				
 					clearMessageDialogTimeout("idModalPDV");
+					clearMessageDialogTimeout();
+						
+					if (!PDV.fecharModalCadastroPDV){
+						
+						PDV.cancelarCadastro();
+						
+						return PDV.fecharModalCadastroPDV;
+					}
+						
+					return PDV.fecharModalCadastroPDV;
+					
 				}
 			});
 

@@ -84,7 +84,7 @@ public class PdvController {
 			
 	@Autowired
 	private HttpSession httpSession;
-		
+
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 
@@ -345,8 +345,8 @@ public class PdvController {
 	@Path("/editar")
 	public void editarPDV(Long idPdv, Long idCota){
 		
-		httpSession.setAttribute(IMAGEM_PDV, null);
-		
+		limparDadosSessao();
+
 		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
 		
 		carregarTelefonesPDV(idPdv, idCota);
@@ -390,13 +390,24 @@ public class PdvController {
 		if(file.exists()) 
 			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
 	}
-
-	@Post
-	public void cancelarCadastro(){
+	private void limparDadosSessao() {
 		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_EXIBICAO);
+		
+		httpSession.setAttribute(IMAGEM_PDV, null);
+	}
+
+	@Post
+	@Path("/cancelarCadastro")
+	public void cancelarCadastro(){
+		
+		limparDadosSessao();
 		
 		result.use(Results.json()).from("", "result").serialize();
 	}
@@ -693,8 +704,7 @@ public class PdvController {
 			file.delete();
 
 	}
-	
-	
+
 	private void carregarTelefonesPDV(Long idPdv, Long idCota) {
 		
 		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);
@@ -716,7 +726,9 @@ public class PdvController {
 	@Post
 	@Path("/novo")
 	public void carregarDadosNovoPdv(Long idCota) {
-	
+		
+		limparDadosSessao();
+		
 		carregarTelefonesPDV(null, idCota);
 		
 		carregarEndercosPDV(null,idCota);
