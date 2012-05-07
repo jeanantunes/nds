@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -16,7 +19,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
+import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.MotoristaRepository;
 import br.com.abril.nds.repository.PessoaRepository;
@@ -69,6 +72,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Autowired
 	private RotaRepository rotaRepository;
 	
+	@Autowired
+	private AssociacaoVeiculoMotoristaRotaRepository associacaoVeiculoMotoristaRotaRepository;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Transportador buscarTransportadorPorId(Long idTransportador) {
@@ -95,7 +101,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 			Set<Long> listaEnderecosRemover,
 			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover,
-			List<AssociacaoVeiculoMotoristaRota> listaAssociacaoAdicionar,
+			List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar,
 			Set<Long> listaAssociacaoRemover) {
 		
 		this.validarDadosEntrada(transportador);
@@ -104,30 +110,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		transportador.getPessoaJuridica().setId(
 				this.pessoaRepository.buscarIdPessoaPorCNPJ(transportador.getPessoaJuridica().getCnpj()));
-		
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
-		
-		if (listaEnderecosAdicionar != null){
-			
-			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
-				
-				listaEndereco.add(dto.getEndereco());
-			}
-		}
-		
-		transportador.getPessoaJuridica().setEnderecos(listaEndereco);
-		
-		List<Telefone> listaTelefone = new ArrayList<Telefone>();
-		
-		if (listaTelefoneAdicionar != null){
-			
-			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
-				
-				listaTelefone.add(dto.getTelefone());
-			}
-		}
-		
-		transportador.getPessoaJuridica().setTelefones(listaTelefone);
 		
 		if (transportador.getPessoaJuridica().getId() == null){
 			
@@ -152,10 +134,54 @@ public class TransportadorServiceImpl implements TransportadorService {
 		this.processarAssocicoes(transportador, listaAssociacaoAdicionar, listaAssociacaoRemover);
 	}
 	
-	private void processarAssocicoes(Transportador transportador, List<AssociacaoVeiculoMotoristaRota> listaAssociacaoAdicionar,
+	private void processarAssocicoes(Transportador transportador, List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar,
 			Set<Long> listaAssociacaoRemover) {
-		// TODO Auto-generated method stub
 		
+		if (listaAssociacaoRemover != null && !listaAssociacaoRemover.isEmpty()){
+			
+			this.associacaoVeiculoMotoristaRotaRepository.removerAssociacaoPorId(listaAssociacaoRemover);
+		}
+		
+		if (listaAssociacaoAdicionar != null && !listaAssociacaoAdicionar.isEmpty()){
+			
+			Map<AssociacaoVeiculoMotoristaRota, List<Rota>> mapAssoc = 
+					new HashMap<AssociacaoVeiculoMotoristaRota, List<Rota>>();
+			
+			for (AssociacaoVeiculoMotoristaRotaDTO dto : listaAssociacaoAdicionar){
+				
+				AssociacaoVeiculoMotoristaRota assoc = new AssociacaoVeiculoMotoristaRota();
+				assoc.setId(dto.getId());
+				assoc.setMotorista(dto.getMotorista());
+				assoc.setVeiculo(dto.getVeiculo());
+				
+				if (mapAssoc.containsKey(assoc)){
+					
+					List<Rota> lista = mapAssoc.get(dto.getId());
+					
+					Rota rota = new Rota();
+					rota.setId(dto.getRota().getIdRota());
+					
+					lista.add(rota);
+					
+				} else {
+					
+					List<Rota> lista = mapAssoc.get(dto.getId());
+					
+					Rota rota = new Rota();
+					rota.setId(dto.getRota().getIdRota());
+					
+					mapAssoc.put(assoc, lista);
+				}
+			}
+			
+			for (AssociacaoVeiculoMotoristaRota assoc : mapAssoc.keySet()){
+				
+				assoc.setRotas(mapAssoc.get(assoc.getId()));
+				assoc.setId(null);
+				
+				this.associacaoVeiculoMotoristaRotaRepository.adicionar(assoc);
+			}
+		}
 	}
 
 	private void processarTelefones(Transportador transportador, List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
@@ -470,6 +496,16 @@ public class TransportadorServiceImpl implements TransportadorService {
 	}
 	
 	@Override
+	@Transactional
+	public void cadastrarMotoristas(List<Motorista> motoristas){
+		
+		for (Motorista motorista : motoristas){
+			
+			this.cadastarMotorista(motorista);
+		}
+	}
+	
+	@Override
 	@Transactional(readOnly = true)
 	public Motorista buscarMotoristaPorId(Long idMotorista){
 		
@@ -484,6 +520,19 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Override
 	@Transactional
 	public void cadastarMotorista(Motorista motorista) {
+		
+		this.validarDadosEntradaMotorista(motorista);
+		
+		if (motorista.getId() == null){
+			
+			this.motoristaRepository.adicionar(motorista);
+		} else {
+			
+			this.motoristaRepository.alterar(motorista);
+		}
+	}
+
+	private void validarDadosEntradaMotorista(Motorista motorista) {
 		
 		if (motorista == null){
 			
@@ -511,14 +560,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 		if (!msgs.isEmpty()){
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
-		}
-		
-		if (motorista.getId() == null){
-			
-			this.motoristaRepository.adicionar(motorista);
-		} else {
-			
-			this.motoristaRepository.alterar(motorista);
 		}
 	}
 

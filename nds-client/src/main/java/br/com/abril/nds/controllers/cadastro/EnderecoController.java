@@ -94,6 +94,7 @@ public class EnderecoController {
 							PdvController.LISTA_ENDERECOS_SALVAR_SESSAO, 
 							PdvController.LISTA_ENDERECOS_REMOVER_SESSAO, 
 							PdvController.LISTA_ENDERECOS_EXIBICAO);
+				break;
 
 				case ENDERECO_TRANSPORTADOR:
 					EnderecoController.setarParametros(

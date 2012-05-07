@@ -1,8 +1,8 @@
 <head>
 <script>
-	
+
 	function showProcuracaoPJ(show) {
-		
+
 		if (show) {
 
 			$(".arqProcuracaoPJ").show();
@@ -47,12 +47,21 @@
 			{'cnpj': cnpj},
 			function(result) {
 
-				$("#razaoSocial").val(result.razaoSocial);
-				$("#nomeFantasia").val(result.nomeFantasia);
-				$("#cnpj").val(result.cnpj).mask("99.999.999/9999-99");
-				$("#inscricaoEstadual").val(result.inscricaoEstadual).mask("999.999.999.999");
-				$("#emailPJ").val(result.email);
+				if (result.id) {
 
+					$("#razaoSocial").val(result.razaoSocial);
+					$("#nomeFantasia").val(result.nomeFantasia);
+					$("#cnpj").val(result.cnpj).mask("99.999.999/9999-99");
+					$("#inscricaoEstadual").val(result.inscricaoEstadual).mask("999.999.999.999");
+					$("#emailPJ").val(result.email);	
+
+				} else {
+
+					if ($("#razaoSocial").val() != '') {
+
+						$("#razaoSocial").focus();
+					}
+				}
 			},
 			function(result) {
 
@@ -85,19 +94,19 @@
     </tr>
     <tr>
       <td>Razão Social:</td>
-      <td><input type="text" readonly="readonly" id="razaoSocial" style="width:230px " /></td>
+      <td><input type="text" id="razaoSocial" style="width:230px " /></td>
       <td>Nome Fantasia:</td>
-      <td><input type="text" readonly="readonly" id="nomeFantasia" style="width:230px " /></td>
+      <td><input type="text" id="nomeFantasia" style="width:230px " /></td>
     </tr>
     <tr>
       <td>CNPJ:</td>
       <td><input type="text" id="cnpj" style="width:230px" onblur="obterPessoaJuridica($(this).val())" /></td>
       <td>Inscrição Estadual:</td>
-      <td><input type="text" readonly="readonly" id="inscricaoEstadual" style="width:230px" /></td>
+      <td><input type="text" id="inscricaoEstadual" style="width:230px" /></td>
     </tr>
     <tr>
         <td width="128">E-mail:</td>
-        <td width="234"><input type="text" readonly="readonly" id="emailPJ" style="width:230px" /></td>
+        <td width="234"><input type="text" id="emailPJ" style="width:230px" /></td>
         <td width="138">&nbsp;</td>
         <td width="237">&nbsp;</td>
     </tr>
@@ -129,7 +138,7 @@
         </tr>
       </table></td>
       <td>&nbsp;
-      	
+
       </td>
       <td>&nbsp;</td>
     </tr>

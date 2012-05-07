@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -66,9 +67,7 @@ public interface PdvService {
 	
 	PdvDTO obterPDV(Long idCota, Long idPdv);
 	
-	List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,	Set<Long> idsIgnorar);
-	
-	EnderecoPDV buscarEnderecoPorEnderecoPDV(Long idPDV, Long idEndereco);
+	List<EnderecoAssociacaoDTO> buscarEnderecosPDV(Long idPDV,Long idCota);
 	
 	void excluirPDV(Long idPdv);
 
@@ -89,5 +88,7 @@ public interface PdvService {
 	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
+	
+	void atualizaImagemPDV(FileInputStream foto, Long idPdv) ;
 	
 }
