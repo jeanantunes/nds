@@ -706,6 +706,10 @@ var PDV = {
 			$.postJSON(contextPath + "/cadastro/pdv/carregarPeriodoFuncionamento",
 					   null, 
 					   function(result){
+							
+							result.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
+							result.splice(6,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "-------------------------"}});
+							
 							var combo =  montarComboBox(result, false);
 							$("#selectDiasFuncionamento").html(combo);
 			},null,true,"idModalPDV");
