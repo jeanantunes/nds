@@ -226,7 +226,7 @@ public class FiadorController {
 			
 			if (fisica != null){
 				
-				if (isFiador){
+				if (isFiador && !socio){
 					this.carregarTelefonesEnderecosPessoa(fisica.getId());
 				}
 				

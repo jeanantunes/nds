@@ -120,13 +120,27 @@ public class TelefoneFiadorRepositoryImpl extends AbstractRepository<TelefoneFia
 	}
 
 	@Override
-	public boolean verificarTelefonePrincipalFiador(Long id) {
+	public boolean verificarTelefonePrincipalFiador(Long id, Set<Long> idsIgnorar) {
 		
-		Query query = this.getSession().createQuery(
-				"select t.id from TelefoneFiador t where t.fiador.id = :id and t.principal = :indTrue");
+		StringBuilder hql = new StringBuilder("select t.id");
+		hql.append(" from TelefoneFiador t ")
+		   .append(" where t.fiador.id = :id and t.principal = :indTrue ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			hql.append(" and t.telefone.id not in (:idsIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("id", id);
 		query.setParameter("indTrue", true);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
 		query.setMaxResults(1);
 		
 		return query.uniqueResult() != null;

@@ -26,9 +26,6 @@
 		
 		function modalCadastroFiador(paramCpfCnpj){
 			
-			$("#inicioAtividadeNovo").show();
-			$("#inicioAtividadeEdicao").hide();
-			
 			fecharModalCadastroFiador = false;
 			
 			limparCamposCadastroFiador();
@@ -467,7 +464,7 @@
         	</div>
 
             <span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick="popupCadastroFiadorCPF();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
+            	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
             </span>
         	
         	<span class="bt_novos" title="Novo">

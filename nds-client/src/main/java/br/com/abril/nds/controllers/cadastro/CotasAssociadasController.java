@@ -90,6 +90,10 @@ public class CotasAssociadasController {
 		
 		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
 		
+		List<AssociacaoCota> listaExibir = new ArrayList<CotasAssociadasController.AssociacaoCota>();
+		
+		listaExibir.addAll(listaAssociacaoSessao);
+		
 		if (idFiador != null){
 			//buscar no server
 			List<Cota> listaAssociacaoCotaFiador = 
@@ -105,7 +109,7 @@ public class CotasAssociadasController {
 					associacaoCota.setNomeCota(((PessoaJuridica) cota.getPessoa()).getRazaoSocial());
 				}
 				
-				listaAssociacaoSessao.add(associacaoCota);
+				listaExibir.add(associacaoCota);
 			}
 		}
 		
@@ -115,10 +119,10 @@ public class CotasAssociadasController {
 
 			Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 			
-			PaginacaoUtil.ordenarEmMemoria(listaAssociacaoSessao, ordenacao, sortname);
+			PaginacaoUtil.ordenarEmMemoria(listaExibir, ordenacao, sortname);
 		}
 		
-		this.result.use(Results.json()).from(getTableModelListaAssociacao(listaAssociacaoSessao), "result").recursive().serialize();
+		this.result.use(Results.json()).from(getTableModelListaAssociacao(listaExibir), "result").recursive().serialize();
 	}
 	
 	@Post

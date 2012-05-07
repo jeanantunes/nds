@@ -47,7 +47,7 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 		query.setParameter("idPessoa", idPessoa);
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			query.setParameter("idsIgnorar", idsIgnorar);
+			query.setParameterList("idsIgnorar", idsIgnorar);
 		}
 		
 		return query.list();
