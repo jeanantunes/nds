@@ -42,6 +42,9 @@ public class Distribuidor {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "CODIGO", nullable = false)
+	private Integer codigo;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
@@ -283,6 +286,19 @@ public class Distribuidor {
 			boolean requerAutorizacaoEncalheSuperaReparte) {
 		this.requerAutorizacaoEncalheSuperaReparte = requerAutorizacaoEncalheSuperaReparte;
 	}
-	
+
+	/**
+	 * @return the codigo
+	 */
+	public Integer getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(Integer codigo) {
+		this.codigo = codigo;
+	}
 	
 }

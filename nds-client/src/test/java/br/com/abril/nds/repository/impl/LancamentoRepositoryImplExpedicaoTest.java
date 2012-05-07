@@ -69,7 +69,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		for(Integer i=1000;i<1050; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"0"+ i, "000.000.000.000", "acme@mail.com");
+					"0"+ i, "000.000.000.000", "acme@mail.com", "99.999-9");
 			save(juridica);
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
@@ -130,13 +130,13 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			estudo.setQtdeReparte(new BigDecimal(10));
 			save(estudo);
 			
-			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i);
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
 					estudo, cota);
 			save(pessoa,cota,estudoCota);		
 			
-			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "02" + i, "ie"+i, "email"+i);
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "02" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota2 = Fixture.cota(i+3000, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);
