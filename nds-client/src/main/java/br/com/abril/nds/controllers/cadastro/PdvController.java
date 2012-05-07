@@ -74,8 +74,6 @@ public class PdvController {
 	
 	private static final String NO_IMAGE = "no_image.jpeg";
 	
-	private static final String DIRETORIO_ARQUIVO = "images/pdv";
-	
 	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
@@ -89,9 +87,6 @@ public class PdvController {
 			
 	@Autowired
 	private HttpSession httpSession;
-	
-	@Autowired
-	private HttpSession session;
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
@@ -353,7 +348,9 @@ public class PdvController {
 	@Path("/editar")
 	public void editarPDV(Long idPdv, Long idCota){
 		
-		session.setAttribute(IMAGEM_PDV, null);
+		httpSession.setAttribute(IMAGEM_PDV, null);
+		
+		limparDadosSessao();
 		
 		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
 		
@@ -383,12 +380,18 @@ public class PdvController {
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 	
-	@Post
-	public void cancelarCadastro(){
+	private void limparDadosSessao() {
 		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+	}
+
+	@Post
+	@Path("/cancelarCadastro")
+	public void cancelarCadastro(){
+		
+		limparDadosSessao();
 		
 		result.use(Results.json()).from("", "result").serialize();
 	}
@@ -406,7 +409,7 @@ public class PdvController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
 		}
 		
-		pdvDTO.setImagem((FileInputStream) session.getAttribute(IMAGEM_PDV));
+		pdvDTO.setImagem((FileInputStream) httpSession.getAttribute(IMAGEM_PDV));
 		
 		preencherTelefones(pdvDTO);
 		
@@ -425,7 +428,7 @@ public class PdvController {
 		
 		@SuppressWarnings("unchecked")
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
-				session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+				httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
 		
 		if (listaTelefone != null){
@@ -436,7 +439,7 @@ public class PdvController {
 		
 		@SuppressWarnings("unchecked")
 		Set<Long> listaTelefoneRemover = (Set<Long>) 
-				session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+				httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		pdvDTO.setTelefonesRemover(listaTelefoneRemover);
 		
@@ -446,12 +449,12 @@ public class PdvController {
 	private void preencherEnderecos(PdvDTO pdvDTO) {
 	
 		List<EnderecoAssociacaoDTO> listaEnderecosSalvos = 
-				(List<EnderecoAssociacaoDTO>) session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		pdvDTO.setEnderecosAdicionar(listaEnderecosSalvos);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecosExcluidos = 
-				(List<EnderecoAssociacaoDTO>) session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		if(listaEnderecosExcluidos!= null && !listaEnderecosExcluidos.isEmpty()){
 			
@@ -609,7 +612,7 @@ public class PdvController {
 			((FileInputStream)uploadedFile.getFile()).getChannel().size();
 			IOUtils.copyLarge(((FileInputStream)uploadedFile.getFile()), fos);
 			
-			session.setAttribute(IMAGEM_PDV, new FileInputStream(new File(fileDir, nomeArquivo)));
+			httpSession.setAttribute(IMAGEM_PDV, new FileInputStream(new File(fileDir, nomeArquivo)));
 			
 		} catch (Exception e) {
 			
@@ -658,7 +661,7 @@ public class PdvController {
 	
 	private void excluirArquivo(Long idPdv) {
 		
-		session.setAttribute(IMAGEM_PDV, null);
+		httpSession.setAttribute(IMAGEM_PDV, null);
 		
 		if(idPdv == null)
 			return;
@@ -678,26 +681,26 @@ public class PdvController {
 		
 		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);
 		
-		session.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
-		session.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
-		session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
+		httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
+		httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
 	}
 	
 	private void carregarEndercosPDV(Long idPdv, Long idCota) {
 		
 		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
 		
-		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
-		
-		session.setAttribute(LISTA_TELEFONES_EXIBICAO, listaEnderecos);
-		session.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
-		session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
+		httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
+		httpSession.setAttribute(LISTA_ENDERECOS_REMOVER_SESSAO, null);
+		httpSession.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, null);
 	}
 		
 	@Post
 	@Path("/novo")
 	public void carregarDadosNovoPdv(Long idCota) {
-	
+		
+		limparDadosSessao();
+		
 		carregarTelefonesPDV(null, idCota);
 		
 		carregarEndercosPDV(null,idCota);
