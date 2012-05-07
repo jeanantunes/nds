@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -23,7 +22,6 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaService;
 
-@Ignore
 public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -31,10 +29,7 @@ public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setup() {
-		
-		//this.cotaService.obterEnderecosPorIdCota(idCota)
-		
-		
+
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH_TESTE", "01.001.001/001-00", "000.000.000.00", "lh@mail.com","100");
 		save(pessoaJuridica);
 		
@@ -52,19 +47,14 @@ public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 		fornecedores.add(fornecedor1);
 		fornecedores.add(fornecedor2);
 		
-		Cota cota = Fixture.cota(170022, pessoaJuridica, SituacaoCadastro.ATIVO,box);
-		cota.setFornecedores(fornecedores);
-		save(cota);
-		
 	}
 	
 	
+	@Ignore
 	@Test
-	public void obterFornecedoresCota(){ 
-		Cota cota = cotaService.obterPorNumeroDaCota(170022);
-		Assert.assertTrue(cota!=null);
-		List<Fornecedor> fornecedores = this.cotaService.obterFornecedoresCota(cota.getId());
-		Assert.assertTrue(fornecedores.size() > 0);	
+	public void testeObterFornecedoresCota(){ 
+		List<Fornecedor> fornecedores = this.cotaService.obterFornecedoresCota(1l);
+		Assert.assertTrue(fornecedores!=null);	
 	}
 	
 }
