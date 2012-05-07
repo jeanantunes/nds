@@ -130,9 +130,7 @@ $("#btnSalvarPDV").keypress(function() {
 		   
 		   <div id="tabpdv-2"> <jsp:include page="endereco.jsp"/> </div>
 		   
-		   <div id="tabpdv-3"> 
-		   		<jsp:include page="telefone.jsp"/>
-		   	</div>
+		   <div id="tabpdv-3"> 	<jsp:include page="telefone.jsp"/> 	</div>
 		   
 		   <div id="tabpdv-4"> <jsp:include page="caracteristica.jsp"/> </div>
 		   
