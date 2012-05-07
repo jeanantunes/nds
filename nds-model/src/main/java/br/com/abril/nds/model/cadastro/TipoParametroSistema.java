@@ -11,6 +11,8 @@ public enum TipoParametroSistema {
 	
 	PATH_IMAGENS_PDV, 
 	
+	PATH_APLICACAO,
+	
 	
 	/**
 	 * Número de dias permitido para lançamento de uma

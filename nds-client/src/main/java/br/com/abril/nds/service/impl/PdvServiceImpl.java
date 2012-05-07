@@ -3,8 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -436,12 +434,16 @@ public class PdvServiceImpl implements PdvService {
 	@Transactional	
 	public void atualizaImagemPDV(FileInputStream foto, Long idPdv) {
 				
-		ParametroSistema path = 
+		
+		ParametroSistema pathPDV = 
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		ParametroSistema pathAplicacao = 
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
+						
+		File fileDir = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"));
+		
 				
-		
-		File fileDir = new File(path.getValor().replace("\\", "/"));
-		
 		fileDir.mkdirs();
 
 		String nomeArquivo = "pdv_" + idPdv + ".jpeg";
