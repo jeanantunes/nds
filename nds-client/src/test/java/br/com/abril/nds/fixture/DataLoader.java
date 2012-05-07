@@ -2541,7 +2541,7 @@ public class DataLoader {
 	private static void criarDistribuidor(Session session) {
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com");
+				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		
@@ -2569,7 +2569,7 @@ public class DataLoader {
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
 
-		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
@@ -2912,7 +2912,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -3142,13 +3142,13 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000.000.000.000", "sys.discover@gmail.com");
+				"10000000000100", "000.000.000.000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11111111000111", "111.111.111.111", "sys.discover@gmail.com");
+				"11111111000111", "111.111.111.111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222.222.222.222", "sys.discover@gmail.com");
+				"22222222000122", "222.222.222.222", "sys.discover@gmail.com", "99.999-9");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93081738000101", "333.333.333.333", "sys.discover@gmail.com");
+				"93081738000101", "333.333.333.333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("31943508895",
 				"sys.discover@gmail.com", "Manoel da Silva");
@@ -3375,7 +3375,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
@@ -3432,13 +3432,13 @@ public class DataLoader {
 			estudo.setQtdeReparte(new BigDecimal(10));
 			save(session,estudo);
 
-			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i,"99.999-9");
 			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
 					estudo, cota);
 			save(session,pessoa,cota,estudoCota);		
 
-			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);
