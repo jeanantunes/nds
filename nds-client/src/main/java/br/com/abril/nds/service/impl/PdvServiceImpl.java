@@ -434,12 +434,16 @@ public class PdvServiceImpl implements PdvService {
 	@Transactional	
 	public void atualizaImagemPDV(FileInputStream foto, Long idPdv) {
 				
-		ParametroSistema path = 
+		
+		ParametroSistema pathPDV = 
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		ParametroSistema pathAplicacao = 
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
+						
+		File fileDir = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"));
+		
 				
-		
-		File fileDir = new File(path.getValor().replace("\\", "/"));
-		
 		fileDir.mkdirs();
 
 		String nomeArquivo = "pdv_" + idPdv + ".jpeg";

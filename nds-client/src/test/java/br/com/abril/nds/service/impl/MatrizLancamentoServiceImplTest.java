@@ -67,13 +67,13 @@ public class MatrizLancamentoServiceImplTest {
 			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com");
-		Distribuidor distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		
 		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com");
+				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com", "99.999-9");
 		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
-				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com");
+				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com", "99.999-9");
 		
 		Fornecedor fornecedorDinap = Fixture.fornecedor(juridicaDinap,
 				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao());

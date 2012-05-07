@@ -48,8 +48,8 @@ var PDV = {
 		
 		carregarAbaDadosBasico: function (result){
 			
-			if(isValidURL(contextPath + "/images/pdv/pdv_" + result.pdvDTO.id + ".jpeg")) {
-				$("#idImagem").attr("src",contextPath + "/images/pdv/pdv_" + result.pdvDTO.id + ".jpeg");
+			if(result.pdvDTO.pathImagem) {
+				$("#idImagem").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
 			} else {
 				$("#idImagem").attr("src",contextPath + "/images/pdv/no_image.jpeg");
 			}

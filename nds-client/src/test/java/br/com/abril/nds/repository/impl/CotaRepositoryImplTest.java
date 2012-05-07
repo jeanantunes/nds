@@ -78,7 +78,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(abril);
 		
 		pessoaJuridica = 
-			Fixture.pessoaJuridica("FC", "01.001.001/001-00", "000.000.000.00", "fc@mail.com");
+			Fixture.pessoaJuridica("FC", "01.001.001/001-00", "000.000.000.00", "fc@mail.com", "99.999-9");
 
 		save(pessoaJuridica);
 
@@ -217,7 +217,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
 		save(politicaCobranca);
 				
-		Distribuidor distribuidor = Fixture.distribuidor(pessoaJuridica, new Date(), politicaCobranca);
+		Distribuidor distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicaCobranca);
 		
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));

@@ -70,9 +70,7 @@ public class PdvController {
 	public static String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosPDVExibidos";
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
-	
-	private static final String NO_IMAGE = "no_image.jpeg";
-	
+			
 	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
@@ -355,6 +353,8 @@ public class PdvController {
 		
 		carregarEndercosPDV(idPdv, idCota);
 		
+		tratarPathImagem(dto);
+		
 		if(dto!= null){
 			
 			if(dto.getTamanhoPDV() == null){
@@ -377,6 +377,19 @@ public class PdvController {
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 	
+	private void tratarPathImagem(PdvDTO dto) {
+		
+		ParametroSistema pathPDV = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		ParametroSistema pathAplicacao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
+		
+		File file = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"),"pdv_" + dto.getId() + ".jpeg");
+		   		
+		if(file.exists()) 
+			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
+	}
 	private void limparDadosSessao() {
 		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
@@ -560,9 +573,16 @@ public class PdvController {
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		List<String> mensagens = new ArrayList<String>();
 		
-		String nomeArquivo = NO_IMAGE; 
+		String nomeArquivo = null; 
+		
+		String path = null;
 		
 		try {
+			
+			ParametroSistema pathPDV = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+			
+			path = pathPDV.getValor().replace("\\", "/");
 			
 			if(((FileInputStream)uploadedFile.getFile()).getChannel().size() > (1024 * 1024 * 5)) {
 				throw new Exception("O arquivo deve ser menor que 5MBs.");
@@ -583,7 +603,7 @@ public class PdvController {
 		Object[] retorno = new Object[3];
 		retorno[0] = mensagens;
 		retorno[1] = status.name();		
-		retorno[2] = nomeArquivo;
+		retorno[2] = path + nomeArquivo;
 				
 		result.use(PlainJSONSerialization.class)
 			.from(retorno, "result").recursive().serialize();
@@ -592,10 +612,13 @@ public class PdvController {
 	
 	private File gravarArquivo(UploadedFile uploadedFile) {
 		
-		ParametroSistema path = 
+		ParametroSistema pathPDV = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		ParametroSistema pathAplicacao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
 						
-		File fileDir = new File(path.getValor().replace("\\", "/"));
+		File fileDir = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"));
 		
 		fileDir.mkdirs();
 
@@ -669,10 +692,13 @@ public class PdvController {
 		if(idPdv == null)
 			return;
 		
-		ParametroSistema path = 
+		ParametroSistema pathPDV = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		ParametroSistema pathAplicacao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_APLICACAO);
 						
-		File file = new File(path.getValor().replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
+		File file = new File((pathAplicacao.getValor() + pathPDV.getValor()).replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
 		   		
 		if(file.exists())
 			file.delete();

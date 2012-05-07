@@ -31,11 +31,17 @@ public class Endereco implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "CODIGO_BAIRRO", nullable = true)
+	private Integer codigoBairro;
+	
 	@Column(name = "BAIRRO")
 	private String bairro;
 	
 	@Column(name = "CEP")
 	private String cep;
+	
+	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true)
+	private Integer codigoCidadeIBGE;
 	
 	@Column(name = "CIDADE")
 	private String cidade;
@@ -145,6 +151,22 @@ public class Endereco implements Serializable {
 		this.pessoa = pessoa;
 	}
 
+	public Integer getCodigoBairro() {
+		return codigoBairro;
+	}
+
+	public void setCodigoBairro(Integer codigoBairro) {
+		this.codigoBairro = codigoBairro;
+	}
+	
+	public Integer getCodigoCidadeIBGE() {
+		return codigoCidadeIBGE;
+	}
+
+	public void setCodigoCidadeIBGE(Integer codigoCidadeIBGE) {
+		this.codigoCidadeIBGE = codigoCidadeIBGE;
+	}
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -175,4 +197,5 @@ public class Endereco implements Serializable {
 			return false;
 		return true;
 	}
+
 }
