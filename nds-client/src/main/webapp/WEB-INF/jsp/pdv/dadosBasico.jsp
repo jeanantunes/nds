@@ -157,7 +157,7 @@ function tratarRetornoUploadImagem(data) {
       <tr>
 	    <td width="135">Dias Funcionamento:</td>
 	    <td width="252" class="diasFunc">
-	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" style="width:230px;">
+	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" onchange="PDV.selecionarDiaFuncionamento(this)" style="width:230px;">
 		      
 		      <option value="-1" selected="selected">Selecione</option>
 		      

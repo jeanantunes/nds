@@ -864,7 +864,7 @@ public class PdvServiceImpl implements PdvService {
 				selecionados.remove(selecionados.size() - 1);
 				
 				possiveis.add(periodo);
-			} catch (Exception e) {
+			} catch (ValidacaoException e) {
 				selecionados.remove(selecionados.size() - 1);
 			}
 		}
@@ -877,7 +877,7 @@ public class PdvServiceImpl implements PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception {
+	public void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) {
 		
 		List<TipoPeriodoFuncionamentoPDV> listaTipos = new ArrayList<TipoPeriodoFuncionamentoPDV>();
 		
@@ -891,7 +891,9 @@ public class PdvServiceImpl implements PdvService {
 			
 			if(listaTipos.size()>1) {
 				
-				throw new Exception("Ao selecionar " + TipoPeriodoFuncionamentoPDV.DIARIA.getDescricao() + ", nenhum outro item deve ser incluido.");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.DIARIA.getDescricao() 
+						+ ", nenhum outro item deve ser incluido.");
 			} 
 		
 		}
@@ -900,7 +902,8 @@ public class PdvServiceImpl implements PdvService {
 			
 			if(listaTipos.size() > 1) {
 				
-				throw new Exception("Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluido.");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluido.");
 			} 
 		
 		} 
@@ -913,7 +916,8 @@ public class PdvServiceImpl implements PdvService {
 				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.QUINTA_FEIRA)
 				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.SEXTA_FEIRA)) {
 				
-				throw new Exception("Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.SEGUNDA_SEXTA.getDescricao()+"', não é permitido a selecao específica de um dia da semana.");				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.SEGUNDA_SEXTA.getDescricao()+"', não é permitido a selecao específica de um dia da semana.");				
 			}
 		} 
 		
@@ -922,7 +926,9 @@ public class PdvServiceImpl implements PdvService {
 			if (listaTipos.contains(TipoPeriodoFuncionamentoPDV.SABADO)
 				|| listaTipos.contains(TipoPeriodoFuncionamentoPDV.DOMINGO)) {
 				
-				throw new Exception("Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.FINAIS_SEMANA.getDescricao()+"', não é permitido a definição específíca para sábado ou domingo.");				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Ao selecionar o período de '"+TipoPeriodoFuncionamentoPDV.FINAIS_SEMANA.getDescricao() 
+						+"', não é permitido a definição específíca para sábado ou domingo.");				
 			}
 		}		
 	}
@@ -933,7 +939,7 @@ public class PdvServiceImpl implements PdvService {
 	 * @param periodos - periodos
 	 * @throws Exception - Exceção ao encontrar registro duplicado.
 	 */
-	private void validarDuplicidadeDePeriodo(List<TipoPeriodoFuncionamentoPDV> periodos) throws Exception {
+	private void validarDuplicidadeDePeriodo(List<TipoPeriodoFuncionamentoPDV> periodos) {
 		
 		for(TipoPeriodoFuncionamentoPDV item : periodos) {
 			int count=0;
@@ -941,8 +947,8 @@ public class PdvServiceImpl implements PdvService {
 				if(item.equals(itemComparado)) {
 					count++;
 					if(count>1) {
-						throw new Exception("O período " + 
-								item.getDescricao() + 
+						throw new ValidacaoException(TipoMensagem.WARNING, 
+								"O período " +  item.getDescricao() + 
 								" foi incluido a lista mais de uma vez.");
 					}
 				}
