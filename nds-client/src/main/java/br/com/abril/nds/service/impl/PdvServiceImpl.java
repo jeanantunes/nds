@@ -993,6 +993,9 @@ public class PdvServiceImpl implements PdvService {
 		
 		if (lista!= null && !lista.isEmpty()){
 			
+			if(listaTelAssoc==null)
+				listaTelAssoc = new ArrayList<TelefoneAssociacaoDTO>();
+			
 			listaTelAssoc.addAll(lista);
 		}
 		
