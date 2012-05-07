@@ -1,4 +1,4 @@
-function Telefone(paramTela) {
+function Telefone(paramTela,message) {
 
 	this.popupTelefone = function() {
 
@@ -73,7 +73,9 @@ function Telefone(paramTela) {
 		
 		if (data.mensagens) {
 			
-			exibirMensagemDialog(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			exibirMensagemDialog(data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens,
+					message);
 			
 			return;
 		}
@@ -126,6 +128,8 @@ function Telefone(paramTela) {
 
 	this.adicionarTelefone = function() {
 
+		alert(message);
+		
 		var data = "tela=" + paramTela + "&referencia="
 				+ $("#"+paramTela+"referenciaHidden").val() + "&tipoTelefone="
 				+ $("#"+paramTela+"tipoTelefone").val() + "&ddd=" + $("#"+paramTela+"ddd").val()
@@ -151,7 +155,8 @@ function Telefone(paramTela) {
 						$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
 					}, 
 					null, 
-					true
+					true,
+					message
 		);
 	};
 
@@ -186,7 +191,8 @@ function Telefone(paramTela) {
 				  					$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
 								}, 
 								null, 
-								true
+								true,
+								message
 					);
 				},
 				"Cancelar" : function() {
@@ -222,7 +228,7 @@ function Telefone(paramTela) {
 
 						_this.opcaoTel(result.tipoTelefone, 'trRamalId', 'lblRamalId', 'ramal');
 					}
-				}, null, true);
+				}, null, true, message);
 	};
 
 	this.limparCamposTelefone = function() {
@@ -278,7 +284,8 @@ function Telefone(paramTela) {
 						$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
 					}, 
 					null, 
-					true
+					true,
+					message
 		);
 	};
 
