@@ -93,7 +93,8 @@
 		$("#dataChamadao").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
+			buttonImageOnly: true,
+			defaultDate: new Date()
 		});
 		
 		$("#dataChamadao").mask("99/99/9999");

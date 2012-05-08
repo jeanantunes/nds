@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -127,5 +128,7 @@ public interface CotaService {
 	 * @return DTO com dados de distribuiçãos
 	 */
 	DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota);
+	
+	List<Fornecedor> obterFornecedoresCota(Long idCota);
 	
 }

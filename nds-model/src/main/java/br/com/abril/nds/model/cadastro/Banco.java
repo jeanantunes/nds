@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -44,6 +46,7 @@ public class Banco implements Serializable {
 	@JoinColumn(name = "CARTEIRA_ID")
 	private Carteira carteira;
 	@Column(name = "MOEDA", nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Moeda moeda;
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;

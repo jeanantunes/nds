@@ -49,7 +49,14 @@ public class ParametroContratoCota {
 	@Lob
 	@Column(name = "COMPLEMENTO_CONTRATO")
 	private String complementoContrato; 
-
+	
+	/**
+	 * Condições de Contratação
+	 */
+	@Lob
+	@Column(name = "CONDICOES_CONTRATACAO")
+	private String condicoesContratacao; 
+	
 	/**
 	 * @return the id
 	 */
@@ -104,6 +111,14 @@ public class ParametroContratoCota {
 	 */
 	public void setComplementoContrato(String complementoContrato) {
 		this.complementoContrato = complementoContrato;
+	}
+
+	public String getCondicoesContratacao() {
+		return condicoesContratacao;
+	}
+
+	public void setCondicoesContratacao(String condicoesContratacao) {
+		this.condicoesContratacao = condicoesContratacao;
 	}
 
 }

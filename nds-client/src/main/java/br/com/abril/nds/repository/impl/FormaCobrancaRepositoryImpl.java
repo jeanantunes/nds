@@ -70,18 +70,13 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 	@Override
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
 		StringBuilder hql = new StringBuilder();
-		
 		hql.append(" select f from FormaCobranca f ");		
 		hql.append(" where f.principal = :principal ");
 		hql.append(" and f.parametroCobrancaCota.cota.id = :idCota ");
-        
 		Query query = super.getSession().createQuery(hql.toString());
-        
         query.setParameter("principal", true);
         query.setParameter("idCota", idCota);
-        
         query.setMaxResults(1);
-        
         return (FormaCobranca) query.uniqueResult();
 	}
 
@@ -97,6 +92,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select f from FormaCobranca f ");		
 		hql.append(" where f.parametroCobrancaCota.cota = :pCota ");
+		hql.append(" and f.ativa = true ");
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pCota", cota);
         return query.list();
@@ -113,9 +109,26 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select f from FormaCobranca f ");		
 		hql.append(" where f.parametroCobrancaCota.cota = :pCota ");
+		hql.append(" and f.ativa = true ");
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pCota", cota);
         return query.list().size();
+	}
+	
+	/**
+	 * Desativa forma de cobrança
+	 * @param idBanco
+	 */
+	@Override
+	public void desativarFormaCobranca(long idFormaCobranca) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" update FormaCobranca f ");		
+		hql.append(" set f.ativa = :ativa ");
+		hql.append(" where f.id  = :idFormaCobranca ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("ativa", false);
+        query.setParameter("idFormaCobranca", idFormaCobranca);
+		query.executeUpdate();
 	}
 
 }

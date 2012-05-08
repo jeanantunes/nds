@@ -7,32 +7,36 @@ import br.com.abril.nds.util.DateUtil;
 
 public enum DiaSemana {
 	
-	DOMINGO(Calendar.SUNDAY), 
-	SEGUNDA_FEIRA(Calendar.MONDAY), 
-	TERCA_FEIRA(Calendar.TUESDAY), 
-	QUARTA_FEIRA(Calendar.WEDNESDAY),
-	QUINTA_FEIRA(Calendar.THURSDAY), 
-	SEXTA_FEIRA(Calendar.FRIDAY), 
-	SABADO(Calendar.SATURDAY);
+	DOMINGO(Calendar.SUNDAY,"Domingo"), 
+	SEGUNDA_FEIRA(Calendar.MONDAY,"Segunda"), 
+	TERCA_FEIRA(Calendar.TUESDAY,"Terça"), 
+	QUARTA_FEIRA(Calendar.WEDNESDAY,"Quarta"),
+	QUINTA_FEIRA(Calendar.THURSDAY,"Quinta"), 
+	SEXTA_FEIRA(Calendar.FRIDAY,"Sexta"), 
+	SABADO(Calendar.SATURDAY,"Sábado");
 	
 	private int codigoDiaSemana;
+	private String descricaDiaSemana;
 	
-	private DiaSemana(int codigoDiaSemana){
+	private DiaSemana(int codigoDiaSemana,String descricaDiaSemana){
 		this.codigoDiaSemana = codigoDiaSemana;
+		this.descricaDiaSemana = descricaDiaSemana;
 	}
 
 	public int getCodigoDiaSemana() {
 		return codigoDiaSemana;
 	}
 	
+	public String getDescricaoDiaSemana(){
+		return descricaDiaSemana;
+	}
+	
 	public static DiaSemana getByCodigoDiaSemana(Integer codigo){
-		
 		for (DiaSemana diaSemana : DiaSemana.values()){
 			if (codigo.equals(diaSemana.getCodigoDiaSemana())){
 				return diaSemana;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -40,4 +44,5 @@ public enum DiaSemana {
 
 		return getByCodigoDiaSemana(DateUtil.obterDiaDaSemana(date));
 	}
+	
 }
