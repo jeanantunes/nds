@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
+import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -425,5 +426,18 @@ public class CotaServiceImpl implements CotaService {
 	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
 
 		return this.cotaRepository.obterCotaPDVPorNumeroDaCota(numeroCota);
+	}
+
+	@Override
+	@Transactional
+	public DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota) {
+		
+		if(idCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id da cota não informado.");
+		}
+		
+		DistribuicaoDTO dto = new DistribuicaoDTO();
+				
+		return dto;
 	}
 }

@@ -145,6 +145,13 @@
 		PDV.pesquisarPdvs(idCota);
 	}
 	
+function carregarDistribuicao(idCota){
+		
+		var idCota = $("#_idCotaRef").val();
+		
+		DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota(idCota);
+}
+	
 </script>
 <style>
 
@@ -197,7 +204,7 @@
 			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
 			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
 			<li><a href="#tabpf-6">Bancos</a></li>
-			<li><a href="#tabpf-7">Distribuição</a></li>
+			<li><a href="#tabpf-7" onclick="carregarDistribuicao();">Distribuição</a></li>
 			<li><a href="#tabpf-8">Fornecedor</a></li>
 			</ul>
 		
@@ -224,8 +231,14 @@
 			</div>
 			
 			<div id="tabpf-6"> </div>
+				
+			<div id="tabpf-7">
 			
-			<div id="tabpf-7"> </div>
+				<jsp:include page="../distribuicao/distribuicao.jsp">
+					<jsp:param value="DISTRIB_COTA_CPF" name="tela"/>
+				</jsp:include>
+					
+			</div>
 			
 			<div id="tabpf-8"> </div>
 		
