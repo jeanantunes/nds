@@ -88,7 +88,7 @@ public class TelefoneTransportadorRepositotyImpl extends
 		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
 		   .append(" (t.principal, t.telefone, t.tipoTelefone, telefonePessoa) ")
 		   .append(" from TelefoneTransportador t, Telefone telefonePessoa ")
-		   .append(" where t.transportador.id = :id ")
+		   .append(" where t.transportador.pessoaJuridica.id = :id ")
 		   .append("   and t.telefone.id = telefonePessoa.id ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
@@ -105,5 +105,33 @@ public class TelefoneTransportadorRepositotyImpl extends
 		}
 		
 		return query.list();
+	}
+
+	@Override
+	public boolean verificarTelefonePrincipalTransportador(Long id,
+			Set<Long> idsIgnorar) {
+		
+		StringBuilder hql = new StringBuilder("select t.id");
+		hql.append(" from TelefoneTransportador t ")
+		   .append(" where t.transportador.id = :id and t.principal = :indTrue ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			hql.append(" and t.telefone.id not in (:idsIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("id", id);
+		query.setParameter("indTrue", true);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
+		query.setMaxResults(1);
+		
+		return query.uniqueResult() != null;
 	}
 }
