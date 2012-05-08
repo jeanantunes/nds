@@ -84,6 +84,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					postarParametroCobranca();
 					salvarCota();
 					$( this ).dialog( "close" );
 					$(".grids").show();

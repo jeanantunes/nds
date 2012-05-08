@@ -25,7 +25,7 @@ public class TelefonePdvRepositoryImpl extends AbstractRepository<TelefonePDV, L
 	@Override
 	public void removerTelefonesPdv(Collection<Long> listaTelefones) {
 		
-		StringBuilder hql = new StringBuilder("delete from TelefonePdv ");
+		StringBuilder hql = new StringBuilder("delete from TelefonePDV ");
 		hql.append(" where telefone.id in (:ids) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());

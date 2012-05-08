@@ -39,7 +39,7 @@ public abstract class Pessoa implements Serializable {
 	private Long id;
 	
 	@Column(name = "EMAIL")
-	private String email;	
+	private String email;
 	
 	@OneToMany(mappedBy = "pessoa")
 	public List<Endereco> enderecos = new ArrayList<Endereco>();

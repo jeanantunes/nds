@@ -55,7 +55,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 		PessoaJuridica pj = Fixture.pessoaJuridica("Distrib", "01.001.001/001-00",
-				"000.000.000.00", "distrib@mail.com");
+				"000.000.000.00", "distrib@mail.com", "99.999-9");
 		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
@@ -65,7 +65,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		PoliticaCobranca politicaCobranca =
 			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
 		
-		Distribuidor distribuidor = Fixture.distribuidor(pj, new Date(), politicaCobranca);
+		Distribuidor distribuidor = Fixture.distribuidor(1, pj, new Date(), politicaCobranca);
 
 		save(pj);
 		save(distribuidor);
@@ -132,9 +132,9 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		System.out.println(contratoTransporteDTO);
 		Assert.assertNotNull(contratoTransporteDTO);
 		Assert.assertNotNull(contratoTransporteDTO.getContratada());
-		Assert.assertNotNull(contratoTransporteDTO.getContratada().getEndereco());
+		Assert.assertNotNull(contratoTransporteDTO.getContratada().getDescEndereco());
 		Assert.assertNotNull(contratoTransporteDTO.getContratante());
-		Assert.assertNotNull(contratoTransporteDTO.getContratante().getEndereco());
+		Assert.assertNotNull(contratoTransporteDTO.getContratante().getDescEndereco());
 	}
 	
 	

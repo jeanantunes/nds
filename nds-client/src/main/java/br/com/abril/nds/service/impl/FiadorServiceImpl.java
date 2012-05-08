@@ -240,9 +240,13 @@ public class FiadorServiceImpl implements FiadorService {
 			
 			boolean existePrincipal = false;
 			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
 			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
 				
 				if (dto.isPrincipal()){
+					
+					idsIgnorar.add(dto.getTelefone().getId());
 					
 					existePrincipal = true;
 					break;
@@ -253,7 +257,7 @@ public class FiadorServiceImpl implements FiadorService {
 				
 				if (fiador.getId() != null){
 					
-					if (this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId())){
+					if (this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId(), idsIgnorar)){
 						
 						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 telefone principal é permitido.");
 					}
@@ -262,22 +266,13 @@ public class FiadorServiceImpl implements FiadorService {
 				
 				if (fiador.getId() != null){
 					
-					if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId())){
+					if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId(), idsIgnorar)){
 						
 						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
 					}
 				} else {
 					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
-				}
-			}
-		} else {
-			
-			if (fiador.getId() != null){
-			
-				if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId())){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos 1 telefone principal.");
 				}
 			}
 		}
@@ -288,6 +283,8 @@ public class FiadorServiceImpl implements FiadorService {
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
 			boolean existePrincipal = false;
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
 			
 			for (EnderecoAssociacaoDTO dto : listaEnderecoAssociacaoSalvar){
 				
@@ -302,7 +299,7 @@ public class FiadorServiceImpl implements FiadorService {
 				
 				if (fiador.getId() != null){
 					
-					if (this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId())){
+					if (this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId(), idsIgnorar)){
 						
 						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 endereço principal é permitido.");
 					}
@@ -311,20 +308,11 @@ public class FiadorServiceImpl implements FiadorService {
 				
 				if (fiador.getId() != null){
 					
-					if (!this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId())){
+					if (!this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId(), idsIgnorar)){
 						
 						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
 					}
 				} else {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
-				}
-			}
-		} else {
-			
-			if (fiador.getId() != null){
-				
-				if (!this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId())){
 					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
 				}

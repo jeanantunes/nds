@@ -24,6 +24,7 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 		   .append(" and t.id not in (select tc.telefone.id from TelefoneCota tc where tc.telefone.id in (:ids)) ")
 		   .append(" and t.id not in (select tf.telefone.id from TelefoneFornecedor tf where tf.telefone.id in (:ids)) ")
 		   .append(" and t.id not in (select te.telefone.id from TelefoneEntregador te where te.telefone.id in (:ids)) ")
+		   .append(" and t.id not in (select tp.telefone.id from TelefonePDV tp where tp.telefone.id in (:ids)) ")
 		   .append(" and t.id not in (select tfi.telefone.id from TelefoneFiador tfi where tfi.telefone.id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -47,7 +48,7 @@ public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> i
 		query.setParameter("idPessoa", idPessoa);
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			query.setParameter("idsIgnorar", idsIgnorar);
+			query.setParameterList("idsIgnorar", idsIgnorar);
 		}
 		
 		return query.list();

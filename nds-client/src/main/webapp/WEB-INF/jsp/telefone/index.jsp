@@ -6,7 +6,7 @@
 	
 	<script type="text/javascript">
 		
-		var ${param.tela} = new Telefone('${param.tela}');
+		var ${param.tela} = new Telefone('${param.tela}','${param.message}');
 		
 	</script>
 	
@@ -14,7 +14,7 @@
 </head>
 	<div id="${param.tela}manutencaoTelefones" title="Telefones">
 		
-		<div id="${param.tela}dialog-excluir" title="Telefones">
+		<div id="${param.tela}dialog-excluir" title="Telefones" style="display: none;">
 			<p>Confirma esta Exclusão?</p>
 		</div>
 		<table width="280" cellpadding="2" cellspacing="2" style="text-align:left ">

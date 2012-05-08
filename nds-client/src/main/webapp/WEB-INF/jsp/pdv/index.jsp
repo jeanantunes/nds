@@ -105,6 +105,10 @@ $("#btnSalvarPDV").keypress(function() {
 	<p>Confirmar exclusão PDV ?</p>
 </div>
 
+<div id="dialog-cancelar-cadastro-pdv" title="PDV" style="display: none;">
+		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
+</div>
+
 <div id="dialog-pdv" title="PDV Cota">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -130,9 +134,7 @@ $("#btnSalvarPDV").keypress(function() {
 		   
 		   <div id="tabpdv-2"> <jsp:include page="endereco.jsp"/> </div>
 		   
-		   <div id="tabpdv-3"> 
-		   		<jsp:include page="telefone.jsp"/>
-		   	</div>
+		   <div id="tabpdv-3"> 	<jsp:include page="telefone.jsp"/> 	</div>
 		   
 		   <div id="tabpdv-4"> <jsp:include page="caracteristica.jsp"/> </div>
 		   

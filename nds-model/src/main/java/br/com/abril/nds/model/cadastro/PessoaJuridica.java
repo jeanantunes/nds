@@ -31,6 +31,9 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 	
 	@Column(name = "INSC_ESTADUAL")
 	private String inscricaoEstadual;
+	
+	@Column(name = "INSC_MUNICIPAL")
+	private String inscricaoMunicipal;
 
 	public String getRazaoSocial() {
 		return razaoSocial;
@@ -62,6 +65,14 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 
 	public void setInscricaoEstadual(String inscricaoEstadual) {
 		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
 
 	@Override

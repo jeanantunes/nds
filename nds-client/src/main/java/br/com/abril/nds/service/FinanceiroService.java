@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -40,6 +41,14 @@ public interface FinanceiroService {
 	 * @return comboTiposPagamento: formas de cobrança cadastrados
 	 */
     List<ItemDTO<TipoCobranca, String>> getComboTiposCobranca();
+    
+    
+    /**
+   	 * Método responsável por obter combo de fornecedores relacionados com a Cota
+   	 * @param idCota
+   	 * @return comboFornecedores: fornecedores relacionados com a Cota
+   	 */
+    List<ItemDTO<Long, String>> getComboFornecedoresCota(Long idCota);
     
     
     /**
@@ -101,17 +110,24 @@ public interface FinanceiroService {
 	 
 	 
 	 /**
-	 * Obtém lista de forma de cobranca do Parametro de Cobrança
-	 * @param ID do ParametroCobrancaCota
+	 * Obtém lista de forma de cobranca da Cota
+	 * @param ID da Cota
 	 * @return {@link List<FormaCobranca>}
 	 */
 	 List<FormaCobranca> obterFormasCobrancaCota(Long idCota);
 		 
 		 	 
 	 /**
-	 * Obtém quantidade de forma de cobranca do Parametro de Cobrança
-	 * @param ID do  ParametroCobrancaCota
-	 * @return Quantidade de formas de cobrança para o Parametro de Cobranca
+	 * Obtém quantidade de forma de cobranca da Cota
+	 * @param ID da Cota
+	 * @return Quantidade de formas de cobrança para a Cota
 	 */
 	 int obterQuantidadeFormasCobrancaCota(Long idCota);
+	 
+	 
+	 /**
+	 * Exclusão de Forma de Cobranca
+	 * @param ID da Forma de Cobrança
+	 */
+	 void excluirFormaCobranca(Long idFormaCobranca);
 }
