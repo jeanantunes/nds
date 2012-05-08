@@ -1,6 +1,9 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
@@ -39,5 +42,11 @@ public interface CotaGarantiaService {
 	 * @throws RelationshipRestrictionException Caso ocorra um violação de relacionamento na entidade.
 	 */
 	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws RelationshipRestrictionException;
+	
+	/**
+	 * @return
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obtemTiposGarantiasAceitas()
+	 */
+	public abstract List<TipoGarantia> obtemTiposGarantiasAceitas();
 
 }

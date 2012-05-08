@@ -1,10 +1,10 @@
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
 
-<<script type="text/javascript">
+<script type="text/javascript">
+var tipoCotaGarantia;
 $(function(){
-	var notaPromissoria = new NotaPromissoria($("#_idCotaRef").val());	
-	
+		tipoCotaGarantia = new TipoCotaGarantia();
 });
 </script>
 <table width="755" cellpadding="2" cellspacing="2"
@@ -16,19 +16,7 @@ $(function(){
 
 		<td width="631">
 			<select id="tipoGarantiaSelect" style="width: 250px;">
-
 				<option value="" selected="selected">Selecione...</option>
-
-				<option value="1">Fiador</option>
-
-				<option value="2">Cheque Cau &ccedil;&atilde;o</option>
-
-				<option value="3">Nota Promiss&oacute;ria</option>
-
-				<option value="4">Im&oacute;vel</option>
-
-				<option value="5">Cau &ccedil;&atilde;o Liquida</option>
-
 		</select></td>
 
 	</tr>
