@@ -1,6 +1,9 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
+import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
 
 /**
@@ -14,11 +17,27 @@ public interface CotaGarantiaService {
 	
 	
 	
+	/**
+	 * Salva no repositorio de dados a garantia da cota.
+	 * @param entity garantia da cota.
+	 * @return
+	 */
+	public abstract CotaGarantia salva(CotaGarantia entity);
 	
 	/**
-	 * Salva os imoveis de garantia da cota.
-	 * @param cotaGarantiaImovel
+	 * Recupera a garantia da cota.
+	 * @param idCota Id da cota.
+	 * @return
 	 */
-	public void salvaImoveis(CotaGarantiaImovel cotaGarantiaImovel);
+	public abstract CotaGarantia getByCota(Long idCota);
+	
+	/**
+	 * Salva no repositorio de dados a garantia de nota promissoria.
+	 * @param notaPromissoria Nota Promissoria
+	 * @param idCota Id da Cota
+	 * @return
+	 * @throws RelationshipRestrictionException Caso ocorra um violação de relacionamento na entidade.
+	 */
+	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws RelationshipRestrictionException;
 
 }
