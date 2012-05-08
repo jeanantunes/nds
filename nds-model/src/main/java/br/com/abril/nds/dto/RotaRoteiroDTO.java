@@ -19,12 +19,17 @@ public class RotaRoteiroDTO implements Serializable {
 	
 	public RotaRoteiroDTO(){}
 
-	public RotaRoteiroDTO(Long idRota, String descricaoRota,
-			String descricaoRoteiro) {
+	public RotaRoteiroDTO(Long idRota, String descricaoRota, String descricaoRoteiro) {
 
 		this.idRota = idRota;
 		this.descricaoRota = descricaoRota;
 		this.descricaoRoteiro = descricaoRoteiro;
+	}
+	
+	public RotaRoteiroDTO(Long idRota, String descricaoRota, String descricaoRoteiro, Long idAssoc){
+		
+		this(idRota, descricaoRota, descricaoRoteiro);
+		this.disponivel = idAssoc == null;
 	}
 
 	public Long getIdRota() {

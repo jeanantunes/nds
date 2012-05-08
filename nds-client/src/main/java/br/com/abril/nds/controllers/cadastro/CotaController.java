@@ -7,14 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -53,7 +54,7 @@ public class CotaController {
 	
 	@Autowired
 	private FinanceiroController financeiroController;
-	
+		
 	@Autowired
 	private PdvController pdvController;
 
@@ -68,10 +69,8 @@ public class CotaController {
 		//Pré carregamento da aba "financeiro" 
 		this.financeiroController.preCarregamento();
 		this.pdvController.preCarregamento();
-		
 	}
 	
-
 	@Post
 	public void novaCota() { 
 
@@ -268,5 +267,28 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		this.result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Post
+	public void carregarDistribuicaoCota(Long idCota) {
+		
+		DistribuicaoDTO dto = cotaService.obterDadosDistribuicaoCota(idCota);
+		
+		dto.setTiposEntrega(gerarTiposEntrega());
+		
+		this.result.use(Results.json()).from(dto, "result").serialize();
+	}
+
+
+	private List<ItemDTO<Long, String>> gerarTiposEntrega() {
+		
+		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
+		
+		itens.add(new ItemDTO<Long, String>(1L, "Tipo1"));
+		itens.add(new ItemDTO<Long, String>(1L, "Tipo2"));
+		itens.add(new ItemDTO<Long, String>(1L, "Tipo3"));
+		itens.add(new ItemDTO<Long, String>(1L, "Tipo4"));
+		
+		return itens;
 	}
 }

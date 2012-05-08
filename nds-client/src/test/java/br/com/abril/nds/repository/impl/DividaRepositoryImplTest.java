@@ -119,7 +119,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		save(parametroCobrancaConta);
 		
-		Rota rota = Fixture.rota("Rota1232");
+		Rota rota = Fixture.rota("Rota1232", "Rota 1232");
 		save(rota);
 		
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
