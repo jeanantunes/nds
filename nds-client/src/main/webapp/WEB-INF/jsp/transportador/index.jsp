@@ -372,7 +372,7 @@
 								            {name: "motorista.nome", value: $("#nomeMotorista").val()},
 								            {name: "motorista.cnh", value: $("#cnhMotorista").val()}];
 								
-								$.postJSON("<c:url value='/cadastro/transportador/adicionarrMotorista'/>", data, 
+								$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
 									function(result){
 										
 										exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);

@@ -38,7 +38,8 @@ public interface TransportadorService {
 
 	Transportador obterTransportadorPorCNPJ(String cnpj);
 
-	List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar);
+	List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar, 
+			String sortname, String sortorder);
 
 	Veiculo buscarVeiculoPorId(Long idVeiculo);
 
@@ -48,7 +49,8 @@ public interface TransportadorService {
 
 	void excluirVeiculo(Long idVeiculo);
 
-	List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar);
+	List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder);
 
 	Motorista buscarMotoristaPorId(Long idMotorista);
 
@@ -65,7 +67,7 @@ public interface TransportadorService {
 	List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(
 			Long idTransportador, Set<Long> idsIgnorar);
 
-	List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao();
+	List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(String sortname, String sortorder);
 
 	List<Long> buscarIdsRotasPorAssociacao(Set<Long> assocRemovidas);
 }

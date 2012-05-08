@@ -55,8 +55,8 @@ public class Endereco implements Serializable {
 	@Column(name = "LOGRADOURO")
 	private String logradouro;
 	
-	@Column(name = "NUMERO")
-	private int numero;
+	@Column(name = "NUMERO", nullable = true)
+	private Integer numero;
 	
 	@Column(name = "UF")
 	private String uf;
@@ -127,11 +127,11 @@ public class Endereco implements Serializable {
 		this.logradouro = logradouro;
 	}
 
-	public int getNumero() {
+	public Integer getNumero() {
 		return numero;
 	}
 
-	public void setNumero(int numero) {
+	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
 
