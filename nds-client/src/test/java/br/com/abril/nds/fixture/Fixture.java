@@ -504,6 +504,7 @@ public class Fixture {
 		distribuidor.setPoliticaCobranca(politicaCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		
 		return distribuidor;
 	}

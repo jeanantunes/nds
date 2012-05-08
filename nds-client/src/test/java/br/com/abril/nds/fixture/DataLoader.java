@@ -2798,9 +2798,11 @@ public class DataLoader {
 		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
 
 		tipoMovimentoReparteCotaAusente = Fixture.tipoMovimentoReparteCotaAusente();
-
+		
 		tipoMovimentoRestautacaoReparteCotaAusente = Fixture.tipoMovimentoRestauracaoReparteCotaAusente();
 
+		save(session,tipoMovimentoReparteCotaAusente,tipoMovimentoRestautacaoReparteCotaAusente);
+		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinanceiroRecebimentoReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
