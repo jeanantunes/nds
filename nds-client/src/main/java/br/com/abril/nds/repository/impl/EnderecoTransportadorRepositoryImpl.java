@@ -62,7 +62,7 @@ public class EnderecoTransportadorRepositoryImpl extends AbstractRepository<Ende
 		hql.append(EnderecoAssociacaoDTO.class.getCanonicalName())
 		   .append(" (t.principal, t.endereco, t.tipoEndereco, enderecoPessoa) ")
 		   .append(" from EnderecoTransportador t, Endereco enderecoPessoa ")
-		   .append(" where t.transportador.id = :id ")
+		   .append(" where t.transportador.pessoaJuridica.id = :id ")
 		   .append("   and t.endereco.id = enderecoPessoa.id ");
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
@@ -79,5 +79,32 @@ public class EnderecoTransportadorRepositoryImpl extends AbstractRepository<Ende
 		}
 		
 		return query.list();
+	}
+
+	@Override
+	public boolean verificarEnderecoPrincipalTransportador(Long id,
+			Set<Long> idsIgnorar) {
+		
+		StringBuilder hql = new StringBuilder("select t.id ");
+		hql.append(" from EnderecoTransportador t ")
+		   .append(" where t.transportador.id = :id and t.principal = :indTrue ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			hql.append(" and t.endereco.id not in (:idsIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
+		query.setParameter("id", id);
+		query.setParameter("indTrue", true);
+		query.setMaxResults(1);
+		
+		return query.uniqueResult() != null;
 	}
 }
