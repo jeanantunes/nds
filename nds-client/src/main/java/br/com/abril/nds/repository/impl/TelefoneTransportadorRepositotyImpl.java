@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
@@ -7,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
@@ -67,5 +69,41 @@ public class TelefoneTransportadorRepositotyImpl extends
 		query.setMaxResults(1);
 		
 		return (TelefoneTransportador) query.uniqueResult();
+	}
+
+	@Override
+	public void excluirTelefonesTransportador(Long id) {
+		
+		Query query = this.getSession().createQuery("delete from TelefoneTransportador where transportador.id = :id");
+		query.setParameter("id", id);
+		
+		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TelefoneAssociacaoDTO> buscarTelefonesTransportador(Long id, Set<Long> idsIgnorar) {
+		
+		StringBuilder hql = new StringBuilder("select new ");
+		hql.append(TelefoneAssociacaoDTO.class.getCanonicalName())
+		   .append(" (t.principal, t.telefone, t.tipoTelefone, telefonePessoa) ")
+		   .append(" from TelefoneTransportador t, Telefone telefonePessoa ")
+		   .append(" where t.transportador.id = :id ")
+		   .append("   and t.telefone.id = telefonePessoa.id ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			hql.append(" and t.telefone.id not in (:idsIgnorar) ");
+		}
+		
+		hql.append(" order by t.tipoTelefone ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("id", id);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
+		return query.list();
 	}
 }

@@ -93,6 +93,7 @@
         $('[name="selectSexoConjuge"]:eq('+ indiceAba +')').val("");
         $('[name="nacionalidadeConjugeCpf"]:eq('+ indiceAba +')').val("");
         $('[name="naturalConjugeCpf"]:eq('+ indiceAba +')').val("");
+        $('[name="checkboxSocioPrincipal"]:eq('+ indiceAba +')').uncheck();
 	}
 	
 	$(function(){

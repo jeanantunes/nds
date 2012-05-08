@@ -275,6 +275,12 @@ public class FiadorServiceImpl implements FiadorService {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
 				}
 			}
+		} else {
+			
+			if (this.telefoneFiadorRepository.pesquisarTelefonePrincipalFiador(fiador.getId()) == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
+			}
 		}
 	}
 
@@ -316,6 +322,12 @@ public class FiadorServiceImpl implements FiadorService {
 					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
 				}
+			}
+		} else {
+			
+			if (!this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId(), null)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
 			}
 		}
 	}
