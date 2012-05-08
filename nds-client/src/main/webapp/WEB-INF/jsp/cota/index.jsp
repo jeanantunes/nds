@@ -206,7 +206,7 @@ function carregarDistribuicao(idCota){
 			<li><a href="#tabpf-5" onclick="void(0);">Garantia</a></li>
 			<li><a href="#tabpf-6" onclick="carregaFinanceiro();">Financeiro</a></li>
 			<li><a href="#tabpf-7">Bancos</a></li>
-			<li><a href="#tabpf-7" onclick="carregarDistribuicao();">Distribuição</a></li>
+			<li><a href="#tabpf-8" onclick="carregarDistribuicao();">Distribuição</a></li>
 			<li><a href="#tabpf-9">Fornecedor</a></li>
 			</ul>
 		
@@ -236,6 +236,10 @@ function carregarDistribuicao(idCota){
 			</div>
 			
 			<div id="tabpf-7">
+				Bancos
+			</div>
+			
+			<div id="tabpf-8">
 			
 				<jsp:include page="../distribuicao/distribuicao.jsp">
 					<jsp:param value="DISTRIB_COTA_CPF" name="tela"/>

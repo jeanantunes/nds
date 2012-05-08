@@ -33,8 +33,8 @@ function Distribuicao(tela) {
 		D.set('box',dto.box);
 		D.set('assistComercial',dto.assistComercial);
 		D.set('tipoEntrega',dto.tipoEntrega);
-		D.set('observacao',dto.observacao);
 		D.set('arrendatario',dto.arrendatario);
+		D.set('observacao',dto.observacao);
 		D.set('repPorPontoVenda',dto.repPorPontoVenda);
 		D.set('solNumAtras',dto.solNumAtras);
 		D.set('recebeRecolhe',dto.recebeRecolhe);
@@ -47,6 +47,10 @@ function Distribuicao(tela) {
 		
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
+		
+		D.$('qtdePDV').attr('disabled', dto.qtdeAutomatica?'disabled':'');
+			
+		
 	},
 	this.limparDados = function() {
 		
@@ -56,34 +60,53 @@ function Distribuicao(tela) {
 	this.carregarDadosDistribuicaoCota = function(idCota) {
 		
 		$.postJSON(contextPath + "/cadastro/cota/carregarDistribuicaoCota",
-				{name:"idCota",value:idCota}, 
-				D.setDados(result), null, true); 
+				"idCota=" + idCota ,
+				function(result) {
+					D.setDados(result);
+				},
+				null, true); 
 	},
 	
 	
 	this.montarComboTipoEntrega = function(itensDTO) {
 		
 		var combo =  montarComboBox(itensDTO, false);
-		$("#" + tela + "tipoEntrega").html(combo);
-		$("#" + tela + "tipoEntrega").sortOptions();
+		D.$("tipoEntrega").html(combo);
+		D.$("tipoEntrega").sortOptions();
 	},
 	
-	this.set = function(item,value,campo) {
+	this.set = function(campo,value) {
 		
 		value = (value)? value : '';
 		
-		if(campo) {
-			$("#" + tela + item).attr(campo,value);
+		var elemento = D.$(campo);
+		
+		if(elemento.attr('type') == 'checkbox') {
+			elemento.attr('checked', (value) ? 'checked':'');
 		} else {
-			$("#" + tela + item).val(value);
+			elemento.val(value);
 		}
 	},
 	
-	this.get = function(item) {
-		return $("#" + tela + item).val();
+	this.get = function(campo) {
+		
+		var elemento = D.$(campo);
+		
+		if(elemento.attr('type') == 'checkbox') {
+			return (elemento.attr('checked') == 'checked') ;
+		} else {
+			return elemento.val();
+		}
+		
+	},
+	
+	this.$ = function(campo) {
+		
+		 return $("#" + tela + campo);
 	};
 	
 	$(function() {
-		$("#"+tela+"numCota").numeric();
+		D.$("numCota").numeric();
+		D.$("qtdePDV").numeric();
 	});
 }

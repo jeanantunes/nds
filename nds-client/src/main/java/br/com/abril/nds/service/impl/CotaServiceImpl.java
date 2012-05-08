@@ -436,10 +436,27 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id da cota não informado.");
 		}
 		
-		//TODO Preencher DTO
+		//TODO Preencher DTO com dados reais
 		
 		DistribuicaoDTO dto = new DistribuicaoDTO();
-				
+		dto.setNumCota(111);
+		dto.setQtdePDV(112);
+		dto.setQtdeAutomatica(true);
+		dto.setBox("113");
+		dto.setAssistComercial("114");
+		dto.setTipoEntrega(3L);
+		dto.setArrendatario(true);
+		dto.setObservacao("Observação");
+		dto.setRepPorPontoVenda(true);
+		dto.setSolNumAtras(true);
+		dto.setRecebeRecolhe(true);
+		dto.setNeImpresso(true);
+		dto.setNeEmail(true);
+		dto.setCeImpresso(true);
+		dto.setCeEmail(true);
+		dto.setSlipImpresso(true);
+		dto.setSlipEmail(true);
+		
 		return dto;
 	}
 

@@ -276,18 +276,23 @@ public class CotaController {
 		
 		dto.setTiposEntrega(gerarTiposEntrega());
 		
-		this.result.use(Results.json()).from(dto, "result").serialize();
+		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
-
+	
+	@Post
+	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) {
+		
+		//this.result.use(Results.json()).from(dto, "result").recursive().serialize();
+	}
 
 	private List<ItemDTO<Long, String>> gerarTiposEntrega() {
 		
 		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
 		
 		itens.add(new ItemDTO<Long, String>(1L, "Tipo1"));
-		itens.add(new ItemDTO<Long, String>(1L, "Tipo2"));
-		itens.add(new ItemDTO<Long, String>(1L, "Tipo3"));
-		itens.add(new ItemDTO<Long, String>(1L, "Tipo4"));
+		itens.add(new ItemDTO<Long, String>(2L, "Tipo2"));
+		itens.add(new ItemDTO<Long, String>(3L, "Tipo3"));
+		itens.add(new ItemDTO<Long, String>(4L, "Tipo4"));
 		
 		return itens;
 	}
