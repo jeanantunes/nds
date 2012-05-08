@@ -46,6 +46,12 @@ public class ProdutoEdicao implements Serializable {
 	@GeneratedValue(generator = "PROD_ED_SEQ")
 	@Column(name = "ID")
 	protected Long id;
+
+	@Column(name  = "CODIGO_DE_BARRAS", nullable = false)
+	protected String codigoDeBarras;
+
+	@Column(name  = "codigoSM", nullable = false)
+	protected Long codigoSM;
 	
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
@@ -193,6 +199,22 @@ public class ProdutoEdicao implements Serializable {
 	
 	public void setPermiteValeDesconto(boolean permiteValeDesconto) {
 		this.permiteValeDesconto = permiteValeDesconto;
+	}
+	
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
+	}
+
+	public Long getCodigoSM() {
+		return codigoSM;
+	}
+
+	public void setCodigoSM(Long codigoSM) {
+		this.codigoSM = codigoSM;
 	}
 
 	@Override
