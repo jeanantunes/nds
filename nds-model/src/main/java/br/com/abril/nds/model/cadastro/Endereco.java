@@ -127,11 +127,11 @@ public class Endereco implements Serializable {
 		this.logradouro = logradouro;
 	}
 
-	public int getNumero() {
+	public Integer getNumero() {
 		return numero;
 	}
 
-	public void setNumero(int numero) {
+	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
 
