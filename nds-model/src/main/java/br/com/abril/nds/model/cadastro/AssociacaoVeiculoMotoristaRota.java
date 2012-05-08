@@ -1,20 +1,19 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ASSOC_VEIC_MOT_ROTA")
+@Table(name = "ASSOC_VEICULO_MOTORISTA_ROTA")
 @SequenceGenerator(name="ASSOC_VEIC_MOT_ROTA_SEQ", initialValue = 1, allocationSize = 1)
 public class AssociacaoVeiculoMotoristaRota implements Serializable {
 
@@ -28,6 +27,10 @@ public class AssociacaoVeiculoMotoristaRota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@ManyToOne
+	@JoinColumn(name = "TRANSPORTADOR_ID")
+	private Transportador transportador;
+	
 	@OneToOne
 	@JoinColumn(name = "VEICULO")
 	private Veiculo veiculo;
@@ -36,8 +39,17 @@ public class AssociacaoVeiculoMotoristaRota implements Serializable {
 	@JoinColumn(name = "MOTORISTA")
 	private Motorista motorista;
 	
-	@OneToMany(mappedBy = "associacaoVeiculoMotoristaRota")
-	private List<Rota> rotas;
+	@OneToOne
+	@JoinColumn(name = "ROTA")
+	private Rota rota;
+
+	public Transportador getTransportador() {
+		return transportador;
+	}
+
+	public void setTransportador(Transportador transportador) {
+		this.transportador = transportador;
+	}
 
 	public Long getId() {
 		return id;
@@ -63,12 +75,12 @@ public class AssociacaoVeiculoMotoristaRota implements Serializable {
 		this.motorista = motorista;
 	}
 
-	public List<Rota> getRotas() {
-		return rotas;
+	public Rota getRota() {
+		return rota;
 	}
 
-	public void setRotas(List<Rota> rotas) {
-		this.rotas = rotas;
+	public void setRota(Rota rota) {
+		this.rota = rota;
 	}
 
 	@Override

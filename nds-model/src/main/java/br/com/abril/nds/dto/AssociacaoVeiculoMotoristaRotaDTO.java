@@ -16,7 +16,7 @@ public class AssociacaoVeiculoMotoristaRotaDTO implements Serializable {
 		
 		if (id == null){
 			
-			this.id = new Long((int)System.currentTimeMillis() * -1);
+			this.id = (long) (Math.random() * -10000);
 		} else {
 			
 			this.id = id;

@@ -178,13 +178,22 @@
 						$('[name="selectSexoConjuge"]:eq(1)').val(result[18]);
 						$('[name="nacionalidadeConjugeCpf"]:eq(1)').val(result[19]);
 						$('[name="naturalConjugeCpf"]:eq(1)').val(result[20]);
+						
+						if (result[21] == "true"){
+							$('[name="checkboxSocioPrincipal"]:eq(1)').check();
+						} else {
+							$('[name="checkboxSocioPrincipal"]:eq(1)').uncheck();
+						}
+					} else {
+						
+						if (result[11] == "true"){
+							$('[name="checkboxSocioPrincipal"]:eq(1)').check();
+						} else {
+							$('[name="checkboxSocioPrincipal"]:eq(1)').uncheck();
+						}
 					}
 					
-					if (result[21] == "true"){
-						$('[name="checkboxSocioPrincipal"]:eq(1)').check();
-					} else {
-						$('[name="checkboxSocioPrincipal"]:eq(1)').uncheck();
-					}
+					
 					
 					$("#idSocioEdicao").val(referencia);
 				}

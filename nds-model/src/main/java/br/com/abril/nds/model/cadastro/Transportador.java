@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -36,9 +35,13 @@ public class Transportador implements Serializable {
 	@Column(name = "RESPONSAVEL")
 	private String responsavel;
 	
-	@OneToMany
-	@JoinTable(name = "TRANSPORTADO_ASSOCIACAO", joinColumns = {@JoinColumn(name = "TRANSPORTADOR_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "ASSOCIACAO_ID")})
+	@OneToMany(mappedBy = "transportador")
+	private List<Veiculo> veiculos;
+	
+	@OneToMany(mappedBy = "transportador")
+	private List<Motorista> motoristas;
+	
+	@OneToMany(mappedBy = "transportador")
 	private List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota;
 	
 	@OneToMany(mappedBy = "transportador")
@@ -71,6 +74,14 @@ public class Transportador implements Serializable {
 		this.responsavel = responsavel;
 	}
 
+	public List<Veiculo> getVeiculos() {
+		return veiculos;
+	}
+
+	public void setVeiculos(List<Veiculo> veiculos) {
+		this.veiculos = veiculos;
+	}
+
 	public List<AssociacaoVeiculoMotoristaRota> getAssociacoesVeiculoMotoristaRota() {
 		return associacoesVeiculoMotoristaRota;
 	}
@@ -96,5 +107,13 @@ public class Transportador implements Serializable {
 	public void setEnderecosTransportador(
 			List<EnderecoTransportador> enderecosTransportador) {
 		this.enderecosTransportador = enderecosTransportador;
+	}
+
+	public List<Motorista> getMotoristas() {
+		return motoristas;
+	}
+
+	public void setMotoristas(List<Motorista> motoristas) {
+		this.motoristas = motoristas;
 	}
 }
