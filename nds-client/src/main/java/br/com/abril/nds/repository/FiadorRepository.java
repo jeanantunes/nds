@@ -29,7 +29,7 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 
 	List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar);
 
-	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
+	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota, Set<Long> idsIgnorar);
 
 	PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf);
 }

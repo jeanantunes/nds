@@ -161,7 +161,7 @@ public class CotasAssociadasController {
 			
 			if (idFiador != null){
 				
-				add = !this.fiadorService.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+				add = !this.fiadorService.verificarAssociacaoFiadorCota(idFiador, numeroCota, this.obterListaAssociacaoRemover());
 			}
 		}
 		
