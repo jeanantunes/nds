@@ -127,7 +127,7 @@ public class SociosController {
 	@Post
 	public void adicionarSocio(PessoaFisica pessoa, Integer referencia){
 		
-		this.validarDadosEntrada(pessoa);
+		this.validarDadosEntrada(pessoa, referencia == null ? null : referencia.longValue());
 		
 		List<SocioCadastrado> listaSociosSessao = this.obterListaSociosSalvarSessao();
 		
@@ -135,6 +135,7 @@ public class SociosController {
 		
 		for (int index = 0 ; index < listaSociosSessao.size() ; index++){
 			if (listaSociosSessao.get(index).getReferencia().equals(referencia)){
+				pessoa.setId(referencia.longValue());
 				listaSociosSessao.get(index).setPessoa(pessoa);
 				novoSocio = false;
 				break;
@@ -144,7 +145,8 @@ public class SociosController {
 		if (novoSocio){
 			SocioCadastrado novoSocioCadastrado = new SocioCadastrado();
 			novoSocioCadastrado.setPessoa(pessoa);
-			novoSocioCadastrado.setReferencia((int) new Date().getTime());
+			pessoa.setId(referencia == null ? null : referencia.longValue());
+			novoSocioCadastrado.setReferencia(referencia == null ? (int) new Date().getTime() : referencia);
 			listaSociosSessao.add(novoSocioCadastrado);
 			
 			this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSociosSessao);
@@ -153,7 +155,7 @@ public class SociosController {
 		this.pesquisarSociosFiador(null, null);
 	}
 	
-	private void validarDadosEntrada(PessoaFisica pessoa) {
+	private void validarDadosEntrada(PessoaFisica pessoa, Long ref) {
 		
 		List<String> msgsValidacao = new ArrayList<String>();
 		
@@ -167,7 +169,9 @@ public class SociosController {
 			
 			for (SocioCadastrado socioCadastrado : listaSociosSessao){
 				
-				if (socioCadastrado.getPessoa().getCpf().equals(pessoa.getCpf())){
+				if (socioCadastrado.getPessoa().getCpf().equals(pessoa.getCpf()) && 
+						socioCadastrado.getReferencia() != null && 
+						!socioCadastrado.getReferencia().equals(ref.intValue())){
 					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Sócio com o CPF " + Util.adicionarMascaraCPF(pessoa.getCpf()) + " já adicionado.");
 				}
@@ -265,19 +269,15 @@ public class SociosController {
 				
 				if (pessoaFisica != null) {
 					
-					
-					
 					for (int index = 0 ; index < listaSociosSessao.size() ; index++){
 						
-						if (listaSociosSessao.get(index).getPessoa().getId().equals(pessoaFisica.getId())){
-							
+						if (listaSociosSessao.get(index).getPessoa().getId() != null &&
+								listaSociosSessao.get(index).getPessoa().getId().equals(pessoaFisica.getId())){
 							
 							listaSociosSessao.get(index).setPessoa(pessoaFisica);
 							break;
 						}
 					}
-					
-					
 					
 					this.httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO, listaSociosSessao);
 				}

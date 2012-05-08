@@ -6,10 +6,11 @@ import java.util.Set;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
+import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
-import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 
@@ -24,6 +25,10 @@ public interface TransportadorService {
 			Set<Long> listaEnderecosRemover,
 			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
 			Set<Long> listaTelefoneRemover,
+			List<Veiculo> listaVeiculosAdicionar,
+			Set<Long> listaVeiculosRemover,
+			List<Motorista> listaMotoristasAdicionar,
+			Set<Long> listaMotoristasRemover,
 			List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar,
 			Set<Long> listaAssociacaoRemover);
 	
@@ -33,7 +38,7 @@ public interface TransportadorService {
 
 	Transportador obterTransportadorPorCNPJ(String cnpj);
 
-	List<Veiculo> buscarVeiculos();
+	List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar);
 
 	Veiculo buscarVeiculoPorId(Long idVeiculo);
 
@@ -43,7 +48,7 @@ public interface TransportadorService {
 
 	void excluirVeiculo(Long idVeiculo);
 
-	List<Motorista> buscarMotoristas();
+	List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar);
 
 	Motorista buscarMotoristaPorId(Long idMotorista);
 
@@ -51,7 +56,16 @@ public interface TransportadorService {
 
 	void excluirMotorista(Long idMotorista);
 
-	List<Rota> buscarRotas();
-
 	void cadastrarMotoristas(List<Motorista> motoristas);
+
+	List<TelefoneAssociacaoDTO> buscarTelefonesTransportador(Long id, Set<Long> idsIgnorar);
+
+	List<EnderecoAssociacaoDTO> buscarEnderecosTransportador(Long id, Set<Long> idsIgnorar);
+
+	List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(
+			Long idTransportador, Set<Long> idsIgnorar);
+
+	List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao();
+
+	List<Long> buscarIdsRotasPorAssociacao(Set<Long> assocRemovidas);
 }

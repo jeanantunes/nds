@@ -1889,9 +1889,10 @@ public class Fixture {
 		
 		return parametro;
 	}
-	public static Rota rota(String codigoRota){
+	public static Rota rota(String codigoRota, String descricaoRota){
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
+		rota.setDescricaoRota(descricaoRota);
 		return rota;
 	}
 	
