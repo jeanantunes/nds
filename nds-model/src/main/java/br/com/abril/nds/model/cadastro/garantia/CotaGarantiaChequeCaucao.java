@@ -5,6 +5,7 @@ package br.com.abril.nds.model.cadastro.garantia;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -20,12 +21,12 @@ public class CotaGarantiaChequeCaucao extends CotaGarantia {
 	 * 
 	 */
 	private static final long serialVersionUID = -1237737954973314146L;
-	
-	
-	@OneToOne(optional=false, cascade={CascadeType.ALL}, mappedBy="cotaGarantiaChequeCaucao")
+		
+	@OneToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="CHEQUE_CAUCAO_ID")
 	private Cheque cheque;
 
-
+	
 	/**
 	 * @return the cheque
 	 */
