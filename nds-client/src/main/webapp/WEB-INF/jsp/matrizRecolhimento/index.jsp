@@ -42,10 +42,8 @@
 						rows += '<span class="span_1">Valor Total:</span>';
 						rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
 						rows += '</div>';
-						rows += '</td>';					  
+						rows += '</td>';
 				    });	
-
-					
 				    
 				    rows += "</tr>";
 
@@ -59,9 +57,21 @@
 				    	
 				    	bloquearLinks();
 				    	
+				    	bloquearCheckAll();
+				    	
+				    	$(".balanceamentoGrid").flexOptions({
+				    		disableSelect : true
+				    	});
+				    	
 				    } else {
 				    	
 				    	habilitarLinks();
+				    	
+				    	habilitarCheckAll();
+				    	
+				    	$(".balanceamentoGrid").flexOptions({
+				    		disableSelect : false
+				    	});
 				    }
 				    
 				    $("#resumoPeriodo").show();
@@ -75,6 +85,16 @@
 			);
 		}
 		
+		function bloquearCheckAll() {
+			
+			$("#checkAllBalanceamento").disable();
+		}
+		
+		function habilitarCheckAll() {
+			
+			$("#checkAllBalanceamento").enable();
+		}
+		
 		function bloquearLinks() {
 			
 			bloquearLink("linkConfirmar");
@@ -83,7 +103,6 @@
 			bloquearLink("linkSalvar");
 			bloquearLink("linkMatrizFornecedor");
 			bloquearLink("linkConfiguracaoInicial");
-			bloquearLink("linkFechar");
 			bloquearLink("linkReprogramar");
 		}
 		
@@ -95,7 +114,6 @@
 			habilitarLink("linkSalvar", salvar);
 			habilitarLink("linkMatrizFornecedor", balancearMatrizFornecedor);
 			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
-			habilitarLink("linkFechar", fechar);
 			habilitarLink("linkReprogramar", reprogramar);
 		}
 		
@@ -114,12 +132,13 @@
 			link.unbind("click");
 			link.bind("click", funcao);
 			link.css("text-decoration", "");
-		}		
+		}
 		
 		function visualizarMatrizBalanceamentoPorDia(data) {
 			
 			$(".balanceamentoGrid").flexOptions({
 				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizBalanceamentoPorDia' />",
+				onSuccess: executarAposProcessamento,
 				params: [
 			         {name:'dataFormatada', value: data}
 			    ],
@@ -145,24 +164,57 @@
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
-								   + ' value="' + row.cell.sequencia + '"'
-								   + ' style="width: 25px;" />';
+				var inputSequencia;
 								   
-			   	var inputNovaData = '<input type="text" id="novaData' + row.id + '"'
-								  + ' value="' + row.cell.novaData + '"'
-			   					  + ' style="width:65px; margin-right:5px; float:left;" />';
-			   				
-			   	var divRecarregarData = '<div class="bt_atualizarIco">'
-			   						  + '<a href="javascript:;">&nbsp;</a></div>';
+			   	var inputNovaData ;
+			   	
+				var divRecarregarData;
 				
+				var inputCheck;
+			   					  
+			    if (row.cell.bloquearLinkData) {
+
+			    	inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
+								   + 	   ' value="' + row.cell.sequencia + '"'
+								   +	   ' style="width: 25px;" disabled="disabled" />';
+									   
+					inputNovaData = '<input type="text" id="novaData' + row.id + '"'
+								  + 	  ' name="novaData"'			  
+								  + 	  ' value="' + row.cell.novaData + '"'
+								  + 	  ' style="width:65px; margin-right:5px; float:left;"'
+								  +       ' disabled="disabled" />';
+
+			    	divRecarregarData = '<div class="bt_atualizarIco linkDisabled">'
+ 						  			  + '  <a style="cursor: default;" href="javascript:;">&nbsp;</a>'
+ 						  			  + '</div>';
+ 						  			  
+			    	inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
+					   		   +       ' name="checkBalanceamento"'
+					   		   +       ' value="' + row.id + '" disabled="disabled" />';
+			    
+			    } else {
+			    
+			    	inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
+								   + 	   ' value="' + row.cell.sequencia + '"'
+								   +	   ' style="width: 25px;" />';
+									   
+					inputNovaData = '<input type="text" id="novaData' + row.id + '"'
+								  + 	  ' name="novaData"'
+								  + 	  ' value="' + row.cell.novaData + '"'
+								  + 	  ' style="width:65px; margin-right:5px; float:left;" />';
+			    	
+			    	divRecarregarData = '<div class="bt_atualizarIco">'
+ 						  			  +   '<a href="javascript:;" onclick="atualizarData();">&nbsp;</a>'
+ 						  			  + '</div>';
+ 						  			  
+			    	inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
+					   		   +       ' name="checkBalanceamento"'
+					   		   +       ' value="' + row.id + '"'
+					   		   +       ' onclick="checarBalanceamento()" />';
+			    }
+			   	
    				var novaData = inputNovaData + divRecarregarData;
-			   				
-				var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
-							   + ' name="checkBalanceamento"'
-							   + ' value="' + row.id + '"'
-							   + ' onclick="checarBalanceamento()" />';
-					
+			   						
 		   		row.cell.sequencia = inputSequencia;
 				row.cell.novaData = novaData;
 				row.cell.reprogramar = inputCheck;
@@ -172,9 +224,16 @@
 			
 			$("#fieldsetGrids").show();
 			
-			$("#bt_fechar").show();
-			
 			return resultado;
+		}
+		
+		function executarAposProcessamento() {
+			
+			$("input[name='novaData']").datepicker({
+				dateFormat: 'dd/mm/yy'
+			});
+			
+			$("input[name='novaData']").mask("99/99/9999");
 		}
 		
 		function checarBalanceamento() {
@@ -334,20 +393,20 @@
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Preço Capa R$',
-					name : 'precoCapa',
+					display : 'Preço Venda R$',
+					name : 'precoVenda',
 					width : 45,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Fornecedor',
-					name : 'fornecedor',
+					name : 'nomeFornecedor',
 					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Editor',
-					name : 'editor',
+					name : 'nomeEditor',
 					width : 40,
 					sortable : true,
 					align : 'left',
@@ -377,19 +436,19 @@
 					align : 'center'
 				}, {
 					display : 'Sede',
-					name : 'sede',
+					name : 'encalheSede',
 					width : 40,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Atendida',
-					name : 'atendida',
+					name : 'encalheAtendida',
 					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Exemplar',
-					name : 'qtdeExemplares',
+					name : 'encalhe',
 					width : 45,
 					sortable : true,
 					align : 'center'
@@ -403,13 +462,13 @@
 					display : 'Nova Data',
 					name : 'novaData',
 					width : 110,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Reprog.',
 					name : 'reprogramar',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "sequencia",
@@ -459,6 +518,7 @@
 		
 		function fechar() {
 			
+			$(".grids").hide();
 		}
 		
 		function reprogramar() {
@@ -548,7 +608,7 @@
 					</span>
 				</td>
 				<td width="117">
-					<strong>Balancear por:</strong>
+					<strong>Balanceamento por:</strong>
 				</td>
 				<td width="296">
 					<span class="bt_confirmar_novo" title="Balancear Editor">
@@ -596,15 +656,16 @@
 		
 		<div class="grids" style="display: none;">
 
-			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right; display: none;">
-				<a id="linkFechar" href="javascript:;">
+			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
+				<a id="linkFechar" href="javascript:;" onclick="fechar();">
 					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 						 hspace="5" border="0" />Fechar
 				</a>
 			</span>
 
-			<!-- GRID -->
+			<br clear="all" />
 			
+			<!-- GRID -->
 			<table class="balanceamentoGrid"></table>
 			
 			<table width="950" border="0" cellspacing="2" cellpadding="2">

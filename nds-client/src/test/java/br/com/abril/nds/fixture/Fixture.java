@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -493,15 +494,17 @@ public class Fixture {
 	}
 
 	public static Distribuidor distribuidor(Integer codigo, PessoaJuridica juridica,
-			Date dataOperacao, PoliticaCobranca politicaCobranca) {
+											Date dataOperacao, PoliticaCobranca politicaCobranca) {
+		
 		Distribuidor distribuidor = new Distribuidor();
 		
 		distribuidor.setCodigo(codigo);
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticaCobranca(politicaCobranca);
-		distribuidor.setCapacidadeDistribuicao(10000);
-		distribuidor.setCapacidadeRecolhimento(10000L);
+		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		
 		return distribuidor;
 	}
 
@@ -536,8 +539,6 @@ public class Fixture {
 		cota.setPessoa(pessoa);
 		cota.setSituacaoCadastro(situacaoCadastro);
 		cota.setBox(box);
-		ContratoCota contratoCota = criarContratoCota(cota, true);
-		cota.setContratoCota(contratoCota);
 		cota.setInicioAtividade(new Date());
 		return cota;
 	}
@@ -1596,10 +1597,14 @@ public class Fixture {
 	}
 	
 	public static ContratoCota criarContratoCota(Cota cota,
-			boolean exigeDocSuspensao) {
+			boolean exigeDocSuspensao, Date dataInicio, Date dataTermino, Integer prazo, Integer aviso) {
 		ContratoCota contratoCota = new ContratoCota();
 		contratoCota.setCota(cota);
 		contratoCota.setExigeDocumentacaoSuspencao(exigeDocSuspensao);
+		contratoCota.setDataInicio(dataInicio);
+		contratoCota.setDataTermino(dataTermino);
+		contratoCota.setPrazo(prazo);
+		contratoCota.setAvisoPrevioRescisao(aviso);
 		return contratoCota;
 	}
 	
@@ -2365,4 +2370,14 @@ public class Fixture {
 		
 		return tipoEstabelecimentoAssociacaoPDV;
 	}
+	
+	public static ParametroContratoCota criarParametroContratoCota(String complemento, String condicoes, Integer diasAviso, Integer duracaoContrato){
+		ParametroContratoCota parametroContratoCota = new ParametroContratoCota();
+		parametroContratoCota.setComplementoContrato(complemento);
+		parametroContratoCota.setCondicoesContratacao(condicoes);
+		parametroContratoCota.setDiasAvisoRescisao(diasAviso);
+		parametroContratoCota.setDuracaoContratoCota(duracaoContrato);
+		return parametroContratoCota;
+	}
+	
 }

@@ -15,11 +15,11 @@ public class ProdutoRecolhimentoVO {
 	
 	private String numeroEdicao;
 	
-	private String precoCapa;
+	private String precoVenda;
 	
-	private String fornecedor;
+	private String nomeFornecedor;
 	
-	private String editor;
+	private String nomeEditor;
 	
 	private String parcial;
 	
@@ -29,15 +29,17 @@ public class ProdutoRecolhimentoVO {
 	
 	private String dataRecolhimento;
 	
-	private String sede;
+	private String encalheSede;
 	
-	private String atendida;
+	private String encalheAtendida;
 	
-	private String qtdeExemplares;
+	private String encalhe;
 	
 	private String valorTotal;
 	
 	private String novaData;
+	
+	private boolean bloquearLinkData;
 
 	/**
 	 * @return the sequencia
@@ -96,45 +98,45 @@ public class ProdutoRecolhimentoVO {
 	}
 
 	/**
-	 * @return the precoCapa
+	 * @return the precoVenda
 	 */
-	public String getPrecoCapa() {
-		return precoCapa;
+	public String getPrecoVenda() {
+		return precoVenda;
 	}
 
 	/**
-	 * @param precoCapa the precoCapa to set
+	 * @param precoVenda the precoVenda to set
 	 */
-	public void setPrecoCapa(String precoCapa) {
-		this.precoCapa = precoCapa;
+	public void setPrecoVenda(String precoVenda) {
+		this.precoVenda = precoVenda;
 	}
 
 	/**
-	 * @return the fornecedor
+	 * @return the nomeFornecedor
 	 */
-	public String getFornecedor() {
-		return fornecedor;
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
 	}
 
 	/**
-	 * @param fornecedor the fornecedor to set
+	 * @param nomeFornecedor the nomeFornecedor to set
 	 */
-	public void setFornecedor(String fornecedor) {
-		this.fornecedor = fornecedor;
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
 	}
 
 	/**
-	 * @return the editor
+	 * @return the nomeEditor
 	 */
-	public String getEditor() {
-		return editor;
+	public String getNomeEditor() {
+		return nomeEditor;
 	}
 
 	/**
-	 * @param editor the editor to set
+	 * @param nomeEditor the nomeEditor to set
 	 */
-	public void setEditor(String editor) {
-		this.editor = editor;
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
 	}
 
 	/**
@@ -194,45 +196,45 @@ public class ProdutoRecolhimentoVO {
 	}
 
 	/**
-	 * @return the sede
+	 * @return the encalheSede
 	 */
-	public String getSede() {
-		return sede;
+	public String getEncalheSede() {
+		return encalheSede;
 	}
 
 	/**
-	 * @param sede the sede to set
+	 * @param encalheSede the encalheSede to set
 	 */
-	public void setSede(String sede) {
-		this.sede = sede;
+	public void setEncalheSede(String encalheSede) {
+		this.encalheSede = encalheSede;
 	}
 
 	/**
-	 * @return the atendida
+	 * @return the encalheAtendida
 	 */
-	public String getAtendida() {
-		return atendida;
+	public String getEncalheAtendida() {
+		return encalheAtendida;
 	}
 
 	/**
-	 * @param atendida the atendida to set
+	 * @param encalheAtendida the encalheAtendida to set
 	 */
-	public void setAtendida(String atendida) {
-		this.atendida = atendida;
+	public void setEncalheAtendida(String encalheAtendida) {
+		this.encalheAtendida = encalheAtendida;
 	}
 
 	/**
-	 * @return the qtdeExemplares
+	 * @return the encalhe
 	 */
-	public String getQtdeExemplares() {
-		return qtdeExemplares;
+	public String getEncalhe() {
+		return encalhe;
 	}
 
 	/**
-	 * @param qtdeExemplares the qtdeExemplares to set
+	 * @param encalhe the encalhe to set
 	 */
-	public void setQtdeExemplares(String qtdeExemplares) {
-		this.qtdeExemplares = qtdeExemplares;
+	public void setEncalhe(String encalhe) {
+		this.encalhe = encalhe;
 	}
 
 	/**
@@ -261,6 +263,20 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setNovaData(String novaData) {
 		this.novaData = novaData;
-	}	
+	}
+
+	/**
+	 * @return the bloquearLinkData
+	 */
+	public boolean isBloquearLinkData() {
+		return bloquearLinkData;
+	}
+
+	/**
+	 * @param bloquearLinkData the bloquearLinkData to set
+	 */
+	public void setBloquearLinkData(boolean bloquearLinkData) {
+		this.bloquearLinkData = bloquearLinkData;
+	}
 	
 }

@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -72,8 +73,8 @@ public class FormaCobranca implements Serializable {
 	@Embedded
 	private ContaBancaria contaBancariaCota;
 	
-	@OneToMany
-	@JoinTable(name = "PARAM_COBRANCA_COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "PARAM_COBRANCA_COTA_ID")}, 
+	@ManyToMany
+	@JoinTable(name = "FORMA_COBRANCA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORMA_COBRANCA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
