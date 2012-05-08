@@ -74,6 +74,9 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
 	
+	@OneToMany(mappedBy = "cota")
+	private Set<TelefoneCota> telefones = new HashSet<TelefoneCota>();
+	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@OneToOne(mappedBy = "cota")
 	private ContratoCota contratoCota;
@@ -283,6 +286,14 @@ public class Cota implements Serializable {
 	
 	public void setQtdePDV(Integer qtdePDV) {
 		this.qtdePDV = qtdePDV;
+	}
+
+	public Set<TelefoneCota> getTelefones() {
+		return telefones;
+	}
+
+	public void setTelefones(Set<TelefoneCota> telefones) {
+		this.telefones = telefones;
 	}
 
 	/**

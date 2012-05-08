@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -21,6 +23,16 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 public interface CotaService {
 
+	/**
+	 * 
+	 * Retorna uma lista de Cotas en função dos filtros informado.
+	 * 
+	 * @param filtro - filtro com as opções de consulta
+	 * 
+	 * @return List<CotaDTO>
+	 */
+	List<CotaDTO> obterCotas(FiltroCotaDTO filtro);
+	
 	Cota obterPorNumeroDaCota(Integer numeroCota);
 
 	List<Cota> obterCotasPorNomePessoa(String nome);

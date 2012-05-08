@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -78,6 +80,13 @@ public class CotaServiceImpl implements CotaService {
 	private TelefoneService telefoneService;
 	
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
+
+		return cotaRepository.obterCotas(filtro);
+	}
+	
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
 		

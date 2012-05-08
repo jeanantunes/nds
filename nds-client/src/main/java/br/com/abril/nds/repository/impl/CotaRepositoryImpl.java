@@ -19,10 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -512,4 +514,112 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		return (EnderecoCota) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT cota.numeroCota as numeroCota, ")
+				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
+				.append(" else null end as nomePessoa, ")
+				.append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
+				.append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
+				.append(" else null end as numeroCpfCnpj, ")
+				.append(" pdv.contato as contato ," )
+				.append(" telefone.ddd || '-'|| telefone.numero as telefone ,")
+				.append(" pessoa.email as email ,")
+				.append(" cota.situacaoCadastro as status ")
+		.append(" FROM Cota cota ")
+		.append(" join cota.pessoa pessoa ")
+		.append(" join cota.pdvs pdv ")
+		.append(" left join cota.telefones telefonesCota ")
+		.append(" left join telefonesCota.telefone telefone ")
+		
+		.append(" WHERE" )
+		.append(" ( telefonesCota.principal is null OR telefonesCota.principal=:principal ) ")
+		.append(" AND pdv.caracteristicas.pontoPrincipal=:principal ");
+		
+		if(filtro.getNumeroCota()!= null){
+			hql.append(" AND cota.numeroCota=:numeroCota ");
+		}
+		
+		if(filtro.getNumeroCpfCnpj()!= null){
+			hql.append(" AND ( pessoa.cpf =:numeroCpfCnpj OR  pessoa.cnpj=:numeroCpfCnpj ) ");
+		}
+		
+		hql.append(this.ordenarConsultaCota(filtro));
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("principal", Boolean.TRUE);
+		
+		if(filtro.getNumeroCota()!= null){
+			query.setParameter("numeroCota", filtro.getNumeroCota());
+		}
+		
+		if(filtro.getNumeroCpfCnpj()!= null){
+			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj());
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+	
+	/**
+	 * Retorna string sql de ordenação da consulta de cotas
+	 * 
+	 * @param filtro - filtro com opção de ordenação escolhida
+	 * @return String
+	 */
+	private String ordenarConsultaCota(FiltroCotaDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if(filtro.getOrdemColuna()!= null){
+			
+			switch (filtro.getOrdemColuna()) {
+			
+				case NUMERO_COTA:
+					hql.append(" ORDER BY numeroCota ");
+					break;
+				
+				case NOME_PESSOA:
+					hql.append(" ORDER BY nomePessoa ");
+					break;
+				
+				case NUMERO_CPF_CNPJ:
+					hql.append(" ORDER BY numeroCpfCnpj ");
+					break;
+					
+				case CONTATO:
+					hql.append(" ORDER BY contato ");
+					break;
+					
+				case TELEFONE:
+					hql.append(" ORDER BY telefone ");
+					break;
+					
+				case EMAIL:
+					hql.append(" ORDER BY email ");
+					break;
+					
+				case STATUS:
+					hql.append(" ORDER BY status ");
+					break;
+				
+				default:
+					hql.append(" ORDER BY numeroCota ");
+			}
+		}
+		
+		if ( filtro.getPaginacao()!= null && filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+		}
+		
+		return hql.toString();
+	}
+	
 }

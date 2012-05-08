@@ -43,6 +43,7 @@ public class CotaController {
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
 	
+	@Autowired
 	private Result result;
 
 	@Autowired
@@ -70,7 +71,6 @@ public class CotaController {
 		this.pdvController.preCarregamento();
 		
 	}
-	
 
 	@Post
 	public void novaCota() { 
@@ -80,8 +80,6 @@ public class CotaController {
 		this.result.nothing();
 	}
 	
-
-
 	@Post
 	public void editarCota(Long idCota) { 
 
@@ -110,8 +108,7 @@ public class CotaController {
 		this.result.nothing();
 	}
 	
-	
-	
+
 	@Post
 	public void salvarCota(Long idCota) {
 
@@ -124,7 +121,6 @@ public class CotaController {
 		
 		this.result.nothing();
 	}
-	
 	
 	
 	@SuppressWarnings("unchecked")
@@ -159,8 +155,6 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 	}
 	
-	
-	
 	@SuppressWarnings("unchecked")
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
@@ -186,8 +180,6 @@ public class CotaController {
 		return telefonesSessao;
 	}
 
-	
-	
 	@Post
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
@@ -216,8 +208,6 @@ public class CotaController {
 		}		
 	}
 
-	
-	
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
@@ -241,9 +231,7 @@ public class CotaController {
 		
 		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
 	}
-	
-	
-	
+
 	@Post
 	public void pesquisarPorNome(String nomeCota) {
 		
@@ -262,8 +250,6 @@ public class CotaController {
 			
 		this.result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
-	
-	
 	
 	@Post
 	public void cancelar(){
