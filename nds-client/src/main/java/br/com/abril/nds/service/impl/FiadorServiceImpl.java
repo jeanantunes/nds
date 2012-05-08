@@ -141,28 +141,15 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		this.validarDadosFiador(fiador, sociosAdicionar);
 		
-		this.validarDadosEntradaEnderecos(fiador, listaEnderecosAdicionar);
+		this.validarDadosEntradaEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
-		this.validarDadosEntradaTelefone(fiador, listaTelefoneAdicionar);
-		
-		if (fiador.getId() != null && fiador.getPessoa().getId() == null){
-		
-			fiador.getPessoa().setId(this.fiadorRepository.buscarIdPessoaFiador(fiador.getId()));
-		}
-		
-		if (!listaGarantiaAdicionar.isEmpty()){
-			fiador.setGarantias(listaGarantiaAdicionar);
-		}
+		this.validarDadosEntradaTelefone(fiador, listaTelefoneAdicionar, listaTelefoneRemover);
 		
 		List<Cota> listaCotas = new ArrayList<Cota>();
 		if (listaCotasAssociar != null){
 			for (Integer numeroCota : listaCotasAssociar){
 				listaCotas.add(this.cotaRepository.obterPorNumerDaCota(numeroCota));
 			}
-		}
-		
-		if (!listaCotas.isEmpty()){
-			fiador.setCotasAssociadas(listaCotas);
 		}
 		
 		if (fiador.getPessoa() instanceof PessoaFisica){
@@ -204,25 +191,17 @@ public class FiadorServiceImpl implements FiadorService {
 			this.processarSocios(fiador, sociosAdicionar, sociosRemover);
 		}
 		
-		if (fiador.getPessoa().getId() == null){
-			
-			this.pessoaRepository.adicionar(fiador.getPessoa());
-		} else {
-			
-			this.pessoaRepository.alterar(fiador.getPessoa());
-		}
+		this.pessoaRepository.merge(fiador.getPessoa());
 		
 		if (fiador.getId() == null){
 			
 			fiador.setInicioAtividade(new Date());
-			
-			this.fiadorRepository.adicionar(fiador);
 		} else {
 			
 			fiador.setInicioAtividade(this.fiadorRepository.buscarDataInicioAtividadeFiadorPorId(fiador.getId()));
-			
-			this.fiadorRepository.alterar(fiador);
 		}
+		
+		this.fiadorRepository.merge(fiador);
 		
 		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
@@ -234,7 +213,7 @@ public class FiadorServiceImpl implements FiadorService {
 	}
 
 	private void validarDadosEntradaTelefone(Fiador fiador,
-			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar) {
+			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar, Set<Long> idsTelefonesRemover) {
 		
 		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
 			
@@ -244,13 +223,21 @@ public class FiadorServiceImpl implements FiadorService {
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
 				
-				if (dto.isPrincipal()){
+				if (dto.getTelefone() != null && dto.getTelefone().getId() != null){
 					
 					idsIgnorar.add(dto.getTelefone().getId());
+				}
+				
+				if (dto.isPrincipal()){
 					
 					existePrincipal = true;
 					break;
 				}
+			}
+			
+			if (idsTelefonesRemover != null && !idsTelefonesRemover.isEmpty()){
+				
+				idsIgnorar.addAll(idsTelefonesRemover);
 			}
 			
 			if (existePrincipal){
@@ -277,14 +264,15 @@ public class FiadorServiceImpl implements FiadorService {
 			}
 		} else {
 			
-			if (this.telefoneFiadorRepository.pesquisarTelefonePrincipalFiador(fiador.getId()) == null){
+			if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId(), idsTelefonesRemover)){
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
 			}
 		}
 	}
 
-	private void validarDadosEntradaEnderecos(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar) {
+	private void validarDadosEntradaEnderecos(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+			List<EnderecoAssociacaoDTO> listaEnderecosRemover) {
 		
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
@@ -294,10 +282,25 @@ public class FiadorServiceImpl implements FiadorService {
 			
 			for (EnderecoAssociacaoDTO dto : listaEnderecoAssociacaoSalvar){
 				
+				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+					
+					idsIgnorar.add(dto.getEndereco().getId());
+				}
+				
 				if (dto.isEnderecoPrincipal()){
 					
 					existePrincipal = true;
 					break;
+				}
+			}
+			
+			if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
+				
+				for (EnderecoAssociacaoDTO dto : listaEnderecosRemover){
+					
+					if (dto != null && dto.getEndereco() != null && dto.getEndereco().getId() != null){
+						idsIgnorar.add(dto.getEndereco().getId());
+					}
 				}
 			}
 			
@@ -325,7 +328,19 @@ public class FiadorServiceImpl implements FiadorService {
 			}
 		} else {
 			
-			if (!this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId(), null)){
+			Set<Long> idsEnderecosIgnorar = new HashSet<Long>();
+			
+			if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
+				
+				for (EnderecoAssociacaoDTO dto : listaEnderecosRemover){
+					
+					if (dto.getId() != null){
+						idsEnderecosIgnorar.add(dto.getId());
+					}
+				}
+			}
+			
+			if (!this.enderecoFiadorRepository.verificarEnderecoPrincipalFiador(fiador.getId(), idsEnderecosIgnorar)){
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
 			}
@@ -805,7 +820,7 @@ public class FiadorServiceImpl implements FiadorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota) {
+	public boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota, Set<Long> idsIgnorar) {
 		
 		if (idFiador == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id fiador é obrigatório.");
@@ -815,7 +830,7 @@ public class FiadorServiceImpl implements FiadorService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
 		
-		return this.fiadorRepository.verificarAssociacaoFiadorCota(idFiador, numeroCota);
+		return this.fiadorRepository.verificarAssociacaoFiadorCota(idFiador, numeroCota, idsIgnorar);
 	}
 
 	@Override

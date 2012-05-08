@@ -465,14 +465,15 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar) {
+	public List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder) {
 		
 		if (idTransportador == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id transportador é obrigatório.");
 		}
 		
-		return this.veiculoRepository.buscarVeiculosPorTransportador(idTransportador, idsIgnorar);
+		return this.veiculoRepository.buscarVeiculosPorTransportador(idTransportador, idsIgnorar, sortname, sortorder);
 	}
 	
 	@Override
@@ -556,14 +557,15 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar) {
+	public List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder) {
 		
 		if (idTransportador == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id transportador é obrigatório.");
 		}
 		
-		return this.motoristaRepository.buscarMotoristasPorTransportador(idTransportador, idsIgnorar);
+		return this.motoristaRepository.buscarMotoristasPorTransportador(idTransportador, idsIgnorar, sortname, sortorder);
 	}
 	
 	@Override
@@ -648,9 +650,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(){
+	public List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(String sortname, String sortorder){
 		
-		return this.rotaRepository.buscarRotasRoteiroAssociacao();
+		return this.rotaRepository.buscarRotasRoteiroAssociacao(sortname, sortorder);
 	}
 
 	@Override

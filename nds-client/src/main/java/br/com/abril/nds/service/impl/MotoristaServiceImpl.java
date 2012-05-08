@@ -23,14 +23,15 @@ public class MotoristaServiceImpl implements MotoristaService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar) {
+	public List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder) {
 		
 		if (idTransportador == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id Transportador é obrigatório.");
 		}
 		
-		return this.motoristaRepository.buscarMotoristasPorTransportador(idTransportador, idsIgnorar);
+		return this.motoristaRepository.buscarMotoristasPorTransportador(idTransportador, idsIgnorar, sortname, sortorder);
 	}
 	
 	@Override
