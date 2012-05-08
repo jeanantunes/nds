@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -48,12 +49,9 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
-	public void testSalva() {
-		
-		
+	public void testSalvaNotaPromissoria() {
 		
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
-		
 		
 		notaPromissoria.setValor(10000D);
 		notaPromissoria.setVencimento(new Date());
@@ -69,8 +67,38 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
 		
+		assertNotNull(cotaGarantia);
+	}
+	
+	@Test
+	public void testSalvaChequeCalcao() {
+		
+		CotaGarantia cotaGarantia = null;
+		
+		Cheque cheque = new Cheque();
+		
+		cheque.setNumeroBanco("321");
+		cheque.setNomeBanco("Banco Panamericano");
+		cheque.setAgencia(312L);
+		cheque.setDvAgencia("3");
+		cheque.setConta(444444L);
+		cheque.setDvConta("0");
+		cheque.setValor(2500000D);
+		cheque.setNumeroCheque("123456");
+		cheque.setEmissao(new Date());
+		cheque.setValidade(new Date());
+		cheque.setCorrentista("Senor Abravanel");
+		
+		try {
+			
+			cotaGarantia = cotaGarantiaService.salvaChequeCaucao(cheque, cota.getId());
+			
+		} catch (RelationshipRestrictionException e) {
+			
+			e.printStackTrace();
+		}
 		
 		assertNotNull(cotaGarantia);
 	}
-
+	
 }

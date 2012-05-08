@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
@@ -13,9 +15,6 @@ import br.com.abril.nds.service.exception.RelationshipRestrictionException;
  * @author Discover Technology
  */
 public interface CotaGarantiaService {
-	
-	
-	
 	
 	/**
 	 * Salva no repositorio de dados a garantia da cota.
@@ -36,8 +35,17 @@ public interface CotaGarantiaService {
 	 * @param notaPromissoria Nota Promissoria
 	 * @param idCota Id da Cota
 	 * @return
-	 * @throws RelationshipRestrictionException Caso ocorra um violação de relacionamento na entidade.
+	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
 	 */
 	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws RelationshipRestrictionException;
 
+	
+	/**
+	 * Salva no repositorio de dados a garantia de um cheque caução.
+	 * @param cheque Cheque
+	 * @param idCota Id da Cota
+	 * @return cotaGarantiaChequeCaucao salva no respositório.
+	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
+	 */
+	public abstract CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota) throws RelationshipRestrictionException;
 }

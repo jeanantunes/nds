@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -68,16 +70,18 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		CotaGarantiaNotaPromissoria cotaGarantiaNota = (CotaGarantiaNotaPromissoria) cotaGarantiaRepository.getByCota(idCota);		
 		
-		if(cotaGarantiaNota == null){
-			cotaGarantiaNota =  new CotaGarantiaNotaPromissoria();
+		if(cotaGarantiaNota == null) {
+			
+			cotaGarantiaNota =  new CotaGarantiaNotaPromissoria();		
+			
+			Cota cota = cotaRepository.buscarPorId(idCota);
+			
+			if (cota == null ) {
+				throw new RelationshipRestrictionException("Cota " + idCota+ " não encotrada.");
+			}
+			cotaGarantiaNota.setCota(cota);
 		}
 		
-		Cota cota =  cotaRepository.buscarPorId(idCota);
-		if(cota == null ){
-			throw new RelationshipRestrictionException("Cota " + idCota+ " não encotrada.");
-		}
-		
-		cotaGarantiaNota.setCota(cota);
 		cotaGarantiaNota.setData(new Date());
 		
 		cotaGarantiaNota.setNotaPromissoria(notaPromissoria);
@@ -85,4 +89,37 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		return (CotaGarantiaNotaPromissoria) cotaGarantiaRepository.merge(cotaGarantiaNota);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * 
+	 * @see br.com.abril.nds.service.CotaGarantiaService#salvaChequeCaucao
+	 * (br.com.abril.nds.model.cadastro.Cheque, java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota)
+			throws RelationshipRestrictionException {
+		
+		CotaGarantiaChequeCaucao cotaGarantiaCheque = (CotaGarantiaChequeCaucao) cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantiaCheque == null) {
+			
+			cotaGarantiaCheque = new CotaGarantiaChequeCaucao();
+			
+			Cota cota = cotaRepository.buscarPorId(idCota);
+			
+			if (cota == null) {
+				throw new RelationshipRestrictionException("Cota " + idCota + " não encontrada.");
+			}
+			
+			cotaGarantiaCheque.setCota(cota);
+		}
+		
+		cotaGarantiaCheque.setData(new Date());
+		
+		cotaGarantiaCheque.setCheque(cheque);
+		
+		return (CotaGarantiaChequeCaucao) cotaGarantiaRepository.merge(cotaGarantiaCheque);
+	}
+	
 }
