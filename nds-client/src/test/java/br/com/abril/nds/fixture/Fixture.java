@@ -60,6 +60,8 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -2378,6 +2380,17 @@ public class Fixture {
 		parametroContratoCota.setDiasAvisoRescisao(diasAviso);
 		parametroContratoCota.setDuracaoContratoCota(duracaoContrato);
 		return parametroContratoCota;
+	}
+	
+	
+	public static TipoGarantiaAceita criarTipoGarantiaAceita(Distribuidor distribuidor, TipoGarantia tipoGarantia){
+		TipoGarantiaAceita tipoGarantiaAceita = new TipoGarantiaAceita();
+		
+		tipoGarantiaAceita.setDistribuidor(distribuidor);
+		tipoGarantiaAceita.setTipoGarantia(tipoGarantia);
+		
+		return tipoGarantiaAceita;
+		
 	}
 	
 }
