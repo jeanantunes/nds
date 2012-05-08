@@ -82,7 +82,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(manoel);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com");
+				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		
 		save(juridicaDistrib);
 		
@@ -95,7 +95,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		PoliticaCobranca politicaCobranca =
 				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
 		
-		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		distribuidor.getFormasCobranca().add(formaBoleto);
 		
 		save(distribuidor);

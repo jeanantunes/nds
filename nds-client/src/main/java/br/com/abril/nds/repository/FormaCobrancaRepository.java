@@ -28,4 +28,6 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	int obterQuantidadeFormasCobrancaCota(Cota cota);
 	
+	void desativarFormaCobranca(long idFormaCobranca);
+	
 }

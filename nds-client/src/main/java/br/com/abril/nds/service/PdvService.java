@@ -1,8 +1,6 @@
 package br.com.abril.nds.service;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Set;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.PdvDTO;
@@ -13,7 +11,6 @@ import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
-import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
@@ -85,10 +82,8 @@ public interface PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) throws Exception;
+	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) ;
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
-	
-	void atualizaImagemPDV(FileInputStream foto, Long idPdv) ;
-	
+		
 }

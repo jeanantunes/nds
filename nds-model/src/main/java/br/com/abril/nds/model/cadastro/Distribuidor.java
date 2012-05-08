@@ -42,6 +42,9 @@ public class Distribuidor {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "CODIGO", nullable = false)
+	private Integer codigo;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
@@ -75,13 +78,13 @@ public class Distribuidor {
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_DISTRIBUICAO", nullable = false)
-	private long capacidadeDistribuicao;
+	private BigDecimal capacidadeDistribuicao;
 	
 	/**
 	 * Capacidade de recolhimento diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_RECOLHIMENTO", nullable = false)
-	private long capacidadeRecolhimento;
+	private BigDecimal capacidadeRecolhimento;
 	
 	/**
 	 * Número de reprogramações permitidas no lançamento
@@ -104,9 +107,16 @@ public class Distribuidor {
 	private boolean executaRecolhimentoParcial;
 	
 	/**
+	 * Flag indicando se o distribuidor possui preenchimento automático de Quantidade de PDVs
+	 * (Aba de Distribuidor-Cadastro de Cota)
+	 */
+	@Column(name = "AUTO_PREENCHE_QTDE_PDV", nullable = false)
+	private boolean preenchimentoAutomaticoPDV;
+	
+	/**
 	 * Fator em número de dias para o cálculo do relançamento parcial
 	 */
-	@Column(name = "FATOR_RELANCAMENTO_PARCIAL", nullable = false)
+	@Column(name = "FATOR_RELANCAMENTO_PARCIAL",  nullable = false)
 	private int fatorRelancamentoParcial;
 	
 	/**
@@ -196,19 +206,19 @@ public class Distribuidor {
 		this.telefones = telefones;
 	}
 
-	public long getCapacidadeDistribuicao() {
+	public BigDecimal getCapacidadeDistribuicao() {
 		return capacidadeDistribuicao;
 	}
 
-	public void setCapacidadeDistribuicao(long capacidadeDistribuicao) {
+	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
-	public long getCapacidadeRecolhimento() {
+	public BigDecimal getCapacidadeRecolhimento() {
 		return capacidadeRecolhimento;
 	}
 
-	public void setCapacidadeRecolhimento(long capacidadeRecolhimento) {
+	public void setCapacidadeRecolhimento(BigDecimal capacidadeRecolhimento) {
 		this.capacidadeRecolhimento = capacidadeRecolhimento;
 	}
 	
@@ -283,6 +293,33 @@ public class Distribuidor {
 			boolean requerAutorizacaoEncalheSuperaReparte) {
 		this.requerAutorizacaoEncalheSuperaReparte = requerAutorizacaoEncalheSuperaReparte;
 	}
-	
+
+	/**
+	 * @return the codigo
+	 */
+	public Integer getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(Integer codigo) {
+		this.codigo = codigo;
+	}
+
+	/**
+	 * @return the preenchimentoAutomaticoPDV
+	 */
+	public boolean isPreenchimentoAutomaticoPDV() {
+		return preenchimentoAutomaticoPDV;
+	}
+
+	/**
+	 * @param preenchimentoAutomaticoPDV the preenchimentoAutomaticoPDV to set
+	 */
+	public void setPreenchimentoAutomaticoPDV(boolean preenchimentoAutomaticoPDV) {
+		this.preenchimentoAutomaticoPDV = preenchimentoAutomaticoPDV;
+	}
 	
 }

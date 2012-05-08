@@ -25,6 +25,23 @@ public class PessoaContratoDTO implements Serializable {
 	
 	private TipoPessoa tipoPessoa;
 	
+    private Endereco endereco;
+	
+	private String nomeGestor;
+	
+	private List<Telefone> telefones;
+	
+	private String descTelefones;
+	
+	private String emailGestor;
+	
+	private Endereco enderecoGestor;    
+	
+	private String descEndereco;
+	
+	private String descEnderecoGestor;
+	
+	
 	public String getNome() {
 		return nome;
 	}
@@ -89,29 +106,53 @@ public class PessoaContratoDTO implements Serializable {
 		this.enderecoGestor = enderecoGestor;
 	}
 
-	private Endereco endereco;
-	
-	private String nomeGestor;
-	
-	private List<Telefone> telefones;
-	
-	private String emailGestor;
-	
-	private Endereco enderecoGestor;
+	public String getDescTelefones() {
+		return descTelefones;
+	}
+
+	public void setDescTelefones(String descTelefones) {
+		this.descTelefones = descTelefones;
+	}
+
+	public String getDescEndereco() {
+		return descEndereco;
+	}
+
+	public void setDescEndereco(String descEndereco) {
+		this.descEndereco = descEndereco;
+	}
+
+	public String getDescEnderecoGestor() {
+		return descEnderecoGestor;
+	}
+
+	public void setDescEnderecoGestor(String descEnderecoGestor) {
+		this.descEnderecoGestor = descEnderecoGestor;
+	}
 
 	@Override
 	public String toString() {
 		return "PessoaContratoDTO [nome=" + nome + ", documento=" + documento
 				+ ", tipoPessoa=" + tipoPessoa + ", endereco=" + endereco
 				+ ", nomeGestor=" + nomeGestor + ", telefones=" + telefones
-				+ ", emailGestor=" + emailGestor + ", enderecoGestor="
-				+ enderecoGestor + "]";
+				+ ", descTelefones=" + descTelefones + ", emailGestor="
+				+ emailGestor + ", enderecoGestor=" + enderecoGestor
+				+ ", descEndereco=" + descEndereco + ", descEnderecoGestor="
+				+ descEnderecoGestor + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((descEndereco == null) ? 0 : descEndereco.hashCode());
+		result = prime
+				* result
+				+ ((descEnderecoGestor == null) ? 0 : descEnderecoGestor
+						.hashCode());
+		result = prime * result
+				+ ((descTelefones == null) ? 0 : descTelefones.hashCode());
 		result = prime * result
 				+ ((documento == null) ? 0 : documento.hashCode());
 		result = prime * result
@@ -139,6 +180,21 @@ public class PessoaContratoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		PessoaContratoDTO other = (PessoaContratoDTO) obj;
+		if (descEndereco == null) {
+			if (other.descEndereco != null)
+				return false;
+		} else if (!descEndereco.equals(other.descEndereco))
+			return false;
+		if (descEnderecoGestor == null) {
+			if (other.descEnderecoGestor != null)
+				return false;
+		} else if (!descEnderecoGestor.equals(other.descEnderecoGestor))
+			return false;
+		if (descTelefones == null) {
+			if (other.descTelefones != null)
+				return false;
+		} else if (!descTelefones.equals(other.descTelefones))
+			return false;
 		if (documento == null) {
 			if (other.documento != null)
 				return false;
@@ -178,7 +234,6 @@ public class PessoaContratoDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 
 }

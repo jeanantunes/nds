@@ -23,6 +23,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -1234,7 +1236,7 @@ public class DataLoader {
 		save(session,formaDeposito);
 		
 	}
-
+	
 	private static void criarRotaRoteiroCota(Session session) {
 
 		Rota rota = Fixture.rota("005", "Rota 005");
@@ -1629,9 +1631,9 @@ public class DataLoader {
 		
 		ParametroSistema parametroPathImagemPDV = 
 				Fixture.parametroSistema(
-					TipoParametroSistema.PATH_IMAGENS_PDV, "C:\\Users\\guilherme.morais\\Desktop\\DEPLOY\\nds-client\\images\\pdv\\");
+					TipoParametroSistema.PATH_IMAGENS_PDV, "\\images\\pdv\\");
 		session.save(parametroPathImagemPDV);
-		
+				
 		parametroSistema = 
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7");
 
@@ -2541,7 +2543,7 @@ public class DataLoader {
 	private static void criarDistribuidor(Session session) {
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com");
+				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		
@@ -2569,7 +2571,7 @@ public class DataLoader {
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
 
-		distribuidor = Fixture.distribuidor(juridicaDistrib, new Date(), politicaCobranca);
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
@@ -2578,6 +2580,18 @@ public class DataLoader {
 		distribuidor.getFormasCobranca().add(formaDeposito);
 		distribuidor.getFormasCobranca().add(formaDinheiro);
 		distribuidor.getFormasCobranca().add(formaTransferenciBancaria);
+		
+		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("CONSIDERANDO QUE:"+
+																					 "\n"+"(i)	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
+																					 "\n"+"(ii)	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
+																					 "\n"+"(iii)	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
+																					 "\n"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
+																					 "\n"+"1.	OBJETO DO CONTRATO"+
+																					 "\n"+"1.1.	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
+																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
+		save(session, parametroContrato);
+		
+		distribuidor.setParametroContratoCota(parametroContrato);
 
 		save(session, distribuidor);
 	}
@@ -2603,44 +2617,79 @@ public class DataLoader {
 
 	private static void criarCotas(Session session) {
 
-
+		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		fornecedores.add(fornecedorAcme);
+		fornecedores.add(fornecedorDinap);
+		fornecedores.add(fornecedorFc);
+		cotaManoel.setFornecedores(fornecedores);
+		
 		save(session, cotaManoel);
+		ContratoCota contrato = Fixture.criarContratoCota(cotaManoel,true,DateUtil.parseData("01/01/2012", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato);
+		
 
 		cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(session, cotaJose);
+		ContratoCota contrato2 = Fixture.criarContratoCota(cotaJose,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato2);
 
+		
 		cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaMaria);
-
+		ContratoCota contrato3 = Fixture.criarContratoCota(cotaMaria,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato3);
+		
+	
 		cotaGuilherme = Fixture.cota(333, guilherme, SituacaoCadastro.ATIVO,box2);
 		cotaGuilherme.setSugereSuspensao(true);
 		save(session, cotaGuilherme);
-
+		ContratoCota contrato4 = Fixture.criarContratoCota(cotaGuilherme,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato4);
+		
+		
 		cotaMurilo= Fixture.cota(22345, murilo, SituacaoCadastro.ATIVO,box2);
 		cotaMurilo.setSugereSuspensao(true);
 		save(session, cotaMurilo);
-
+		ContratoCota contrato5 = Fixture.criarContratoCota(cotaMurilo,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato5);
+		
+		
 		cotaMariana = Fixture.cota(32345, mariana, SituacaoCadastro.ATIVO,box1);
 		cotaMariana.setSugereSuspensao(true);
 		save(session, cotaMariana);
-
+		ContratoCota contrato6 = Fixture.criarContratoCota(cotaMariana,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato6);
+		
+		
 		cotaOrlando = Fixture.cota(4444, orlando, SituacaoCadastro.INATIVO,box1);
 		cotaOrlando.setSugereSuspensao(false);
 		save(session, cotaOrlando);
-
+		ContratoCota contrato7 = Fixture.criarContratoCota(cotaOrlando,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato7);
+		
+		
 		cotaJoao = Fixture.cota(9999, joao, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaJoao);
-
+		ContratoCota contrato8 = Fixture.criarContratoCota(cotaJoao,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato8);
+		
+		
 		cotaLuis = Fixture.cota(888, luis, SituacaoCadastro.ATIVO,box2);
 		save(session, cotaLuis);
+		ContratoCota contrato9 = Fixture.criarContratoCota(cotaLuis,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato9);
+
 		
 		cotaAcme = Fixture.cota(100000, juridicaAcme, SituacaoCadastro.ATIVO, box1);
 		save(session, cotaAcme);
-
+		ContratoCota contrato10 = Fixture.criarContratoCota(cotaAcme,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		save(session, contrato10);
+		
 		
 		Set<FormaCobranca> formasCobranca;
-		
 		
 		
 		formasCobranca = new HashSet<FormaCobranca>();
@@ -2710,7 +2759,7 @@ public class DataLoader {
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 	}
-
+	
 	private static void criarUsuarios(Session session) {
 		usuarioJoao = Fixture.usuarioJoao();
 		session.save(usuarioJoao);
@@ -2749,9 +2798,11 @@ public class DataLoader {
 		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
 
 		tipoMovimentoReparteCotaAusente = Fixture.tipoMovimentoReparteCotaAusente();
-
+		
 		tipoMovimentoRestautacaoReparteCotaAusente = Fixture.tipoMovimentoRestauracaoReparteCotaAusente();
 
+		save(session,tipoMovimentoReparteCotaAusente,tipoMovimentoRestautacaoReparteCotaAusente);
+		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinanceiroRecebimentoReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
@@ -2912,7 +2963,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -3142,15 +3193,15 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000.000.000.000", "sys.discover@gmail.com");
+				"10000000000100", "000.000.000.000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11111111000111", "111.111.111.111", "sys.discover@gmail.com");
+				"11111111000111", "111.111.111.111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222.222.222.222", "sys.discover@gmail.com");
+				"22222222000122", "222.222.222.222", "sys.discover@gmail.com", "99.999-9");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93081738000101", "333.333.333.333", "sys.discover@gmail.com");
+				"93081738000101", "333.333.333.333", "sys.discover@gmail.com", "99.999-9");
 
-		manoel = Fixture.pessoaFisica("31943508895",
+		manoel = Fixture.pessoaFisica("10732815665",
 				"sys.discover@gmail.com", "Manoel da Silva");
 
 		jose = Fixture.pessoaFisica("12345678901",
@@ -3375,7 +3426,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com");
+					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
@@ -3432,13 +3483,13 @@ public class DataLoader {
 			estudo.setQtdeReparte(new BigDecimal(10));
 			save(session,estudo);
 
-			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i,"99.999-9");
 			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
 					estudo, cota);
 			save(session,pessoa,cota,estudoCota);		
 
-			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i);
+			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "CNPK" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota2 = Fixture.cota(i, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
 			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
 					estudo, cota2);

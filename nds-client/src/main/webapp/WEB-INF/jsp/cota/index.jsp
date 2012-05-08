@@ -3,7 +3,6 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
-
 <script language="javascript" type="text/javascript">
 	
 	function popup_cnpj() {
@@ -85,6 +84,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					postarParametroCobranca();
 					salvarCota();
 					$( this ).dialog( "close" );
 					$(".grids").show();
@@ -145,6 +145,13 @@
 		PDV.pesquisarPdvs(idCota);
 	}
 	
+function carregarDistribuicao(idCota){
+		
+		var idCota = $("#_idCotaRef").val();
+		
+		DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota(idCota);
+}
+	
 </script>
 <style>
 
@@ -153,6 +160,7 @@
 	
 	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
 	
+	#tabpj-5 fieldset, #tabpf-5 fieldset {width:755px!important;}
 	
 		
 </style>
@@ -195,10 +203,11 @@
 			<li><a href="#tabpf-2" onclick="ENDERECO_COTA.popularGridEnderecos()">Endereços</a></li>			
 			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
 			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
-			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
-			<li><a href="#tabpf-6">Bancos</a></li>
-			<li><a href="#tabpf-7">Distribuição</a></li>
-			<li><a href="#tabpf-8">Fornecedor</a></li>
+			<li><a href="#tabpf-5" onclick="void(0);">Garantia</a></li>
+			<li><a href="#tabpf-6" onclick="carregaFinanceiro();">Financeiro</a></li>
+			<li><a href="#tabpf-7">Bancos</a></li>
+			<li><a href="#tabpf-7" onclick="carregarDistribuicao();">Distribuição</a></li>
+			<li><a href="#tabpf-9">Fornecedor</a></li>
 			</ul>
 		
 			<div id="tabpf-1"> </div>
@@ -218,16 +227,25 @@
 			<div id="tabpf-4">
 				 <jsp:include page="../pdv/index.jsp"></jsp:include>
 			</div> 
-
 			<div id="tabpf-5"> 
+				<jsp:include page="../cotaGarantia/index.jsp"></jsp:include>
+			</div>
+
+			<div id="tabpf-6"> 
 			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
 			</div>
 			
-			<div id="tabpf-6"> </div>
+			<div id="tabpf-7">
 			
-			<div id="tabpf-7"> </div>
+				<jsp:include page="../distribuicao/distribuicao.jsp">
+					<jsp:param value="DISTRIB_COTA_CPF" name="tela"/>
+				</jsp:include>
+					
+			</div>
 			
 			<div id="tabpf-8"> </div>
+			
+			<div id="tabpf-9"> </div>
 		
 		</div>
 		

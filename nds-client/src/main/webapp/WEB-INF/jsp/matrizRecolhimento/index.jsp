@@ -13,7 +13,7 @@
 					
 					var rows = '<tr>';
 
-					$.each(result, function(index, resumo) {
+					$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
 						
 						rows += '<td>';
 
@@ -42,10 +42,8 @@
 						rows += '<span class="span_1">Valor Total:</span>';
 						rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
 						rows += '</div>';
-						rows += '</td>';					  
+						rows += '</td>';
 				    });	
-
-					
 				    
 				    rows += "</tr>";
 
@@ -53,6 +51,29 @@
 				    
 				    $("#tableResumoPeriodoBalanceamento").append(rows);
 
+				    var matrizFechada = result.matrizFechada;
+				    
+				    if (matrizFechada) {
+				    	
+				    	bloquearLinks();
+				    	
+				    	bloquearCheckAll();
+				    	
+				    	$(".balanceamentoGrid").flexOptions({
+				    		disableSelect : true
+				    	});
+				    	
+				    } else {
+				    	
+				    	habilitarLinks();
+				    	
+				    	habilitarCheckAll();
+				    	
+				    	$(".balanceamentoGrid").flexOptions({
+				    		disableSelect : false
+				    	});
+				    }
+				    
 				    $("#resumoPeriodo").show();
 
 				    $("#fieldsetGrids").hide();
@@ -64,24 +85,60 @@
 			);
 		}
 		
-		function balancearPorValor() {
+		function bloquearCheckAll() {
 			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
-				obterParametrosPesquisa(),
-				function() {
-					
-				},
-				function() {
-					
-				}
-			);
+			$("#checkAllBalanceamento").disable();
+		}
+		
+		function habilitarCheckAll() {
+			
+			$("#checkAllBalanceamento").enable();
+		}
+		
+		function bloquearLinks() {
+			
+			bloquearLink("linkConfirmar");
+			bloquearLink("linkEditor");
+			bloquearLink("linkValor");
+			bloquearLink("linkSalvar");
+			bloquearLink("linkMatrizFornecedor");
+			bloquearLink("linkConfiguracaoInicial");
+			bloquearLink("linkReprogramar");
+		}
+		
+		function habilitarLinks() {
+			
+			habilitarLink("linkConfirmar", confirmar);
+			habilitarLink("linkEditor", balancearPorEditor);
+			habilitarLink("linkValor", balancearPorValor);
+			habilitarLink("linkSalvar", salvar);
+			habilitarLink("linkMatrizFornecedor", balancearMatrizFornecedor);
+			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
+			habilitarLink("linkReprogramar", reprogramar);
+		}
+		
+		function bloquearLink(idLink) {
+			
+			var link = $("#" + idLink);
+			link.addClass("linkDisabled");
+			link.unbind("click");
+			link.css("text-decoration", "none");
+		}
+		
+		function habilitarLink(idLink, funcao) {
+			
+			var link = $("#" + idLink);
+			link.removeClass("linkDisabled");
+			link.unbind("click");
+			link.bind("click", funcao);
+			link.css("text-decoration", "");
 		}
 		
 		function visualizarMatrizBalanceamentoPorDia(data) {
 			
 			$(".balanceamentoGrid").flexOptions({
 				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizBalanceamentoPorDia' />",
+				onSuccess: executarAposProcessamento,
 				params: [
 			         {name:'dataFormatada', value: data}
 			    ],
@@ -107,24 +164,57 @@
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
-								   + ' value="' + row.cell.sequencia + '"'
-								   + ' style="width: 25px;" />';
+				var inputSequencia;
 								   
-			   	var inputNovaData = '<input type="text" id="novaData' + row.id + '"'
-								  + ' value="' + row.cell.novaData + '"'
-			   					  + ' style="width:65px; margin-right:5px; float:left;" />';
-			   				
-			   	var divRecarregarData = '<div class="bt_atualizarIco">'
-			   						  + '<a href="javascript:;">&nbsp;</a></div>';
+			   	var inputNovaData ;
+			   	
+				var divRecarregarData;
 				
+				var inputCheck;
+			   					  
+			    if (row.cell.bloquearLinkData) {
+
+			    	inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
+								   + 	   ' value="' + row.cell.sequencia + '"'
+								   +	   ' style="width: 25px;" disabled="disabled" />';
+									   
+					inputNovaData = '<input type="text" id="novaData' + row.id + '"'
+								  + 	  ' name="novaData"'			  
+								  + 	  ' value="' + row.cell.novaData + '"'
+								  + 	  ' style="width:65px; margin-right:5px; float:left;"'
+								  +       ' disabled="disabled" />';
+
+			    	divRecarregarData = '<div class="bt_atualizarIco linkDisabled">'
+ 						  			  + '  <a style="cursor: default;" href="javascript:;">&nbsp;</a>'
+ 						  			  + '</div>';
+ 						  			  
+			    	inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
+					   		   +       ' name="checkBalanceamento"'
+					   		   +       ' value="' + row.id + '" disabled="disabled" />';
+			    
+			    } else {
+			    
+			    	inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
+								   + 	   ' value="' + row.cell.sequencia + '"'
+								   +	   ' style="width: 25px;" />';
+									   
+					inputNovaData = '<input type="text" id="novaData' + row.id + '"'
+								  + 	  ' name="novaData"'
+								  + 	  ' value="' + row.cell.novaData + '"'
+								  + 	  ' style="width:65px; margin-right:5px; float:left;" />';
+			    	
+			    	divRecarregarData = '<div class="bt_atualizarIco">'
+ 						  			  +   '<a href="javascript:;" onclick="atualizarData();">&nbsp;</a>'
+ 						  			  + '</div>';
+ 						  			  
+			    	inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
+					   		   +       ' name="checkBalanceamento"'
+					   		   +       ' value="' + row.id + '"'
+					   		   +       ' onclick="checarBalanceamento()" />';
+			    }
+			   	
    				var novaData = inputNovaData + divRecarregarData;
-			   				
-				var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
-							   + ' name="checkBalanceamento"'
-							   + ' value="' + row.id + '"'
-							   + ' onclick="checarBalanceamento()" />';
-					
+			   						
 		   		row.cell.sequencia = inputSequencia;
 				row.cell.novaData = novaData;
 				row.cell.reprogramar = inputCheck;
@@ -134,9 +224,16 @@
 			
 			$("#fieldsetGrids").show();
 			
-			$("#bt_fechar").show();
-			
 			return resultado;
+		}
+		
+		function executarAposProcessamento() {
+			
+			$("input[name='novaData']").datepicker({
+				dateFormat: 'dd/mm/yy'
+			});
+			
+			$("input[name='novaData']").mask("99/99/9999");
 		}
 		
 		function checarBalanceamento() {
@@ -296,20 +393,20 @@
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Preço Capa R$',
-					name : 'precoCapa',
+					display : 'Preço Venda R$',
+					name : 'precoVenda',
 					width : 45,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Fornecedor',
-					name : 'fornecedor',
+					name : 'nomeFornecedor',
 					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Editor',
-					name : 'editor',
+					name : 'nomeEditor',
 					width : 40,
 					sortable : true,
 					align : 'left',
@@ -339,19 +436,19 @@
 					align : 'center'
 				}, {
 					display : 'Sede',
-					name : 'sede',
+					name : 'encalheSede',
 					width : 40,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Atendida',
-					name : 'atendida',
+					name : 'encalheAtendida',
 					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Exemplar',
-					name : 'qtdeExemplares',
+					name : 'encalhe',
 					width : 45,
 					sortable : true,
 					align : 'center'
@@ -365,13 +462,13 @@
 					display : 'Nova Data',
 					name : 'novaData',
 					width : 110,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Reprog.',
 					name : 'reprogramar',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "sequencia",
@@ -383,6 +480,49 @@
 				width : 960,
 				height : 180
 			});
+		}
+		
+		function confirmar() {
+			
+		}
+		
+		function balancearPorEditor() {
+			
+		}
+		
+		function balancearPorValor() {
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
+				obterParametrosPesquisa(),
+				function() {
+					
+				},
+				function() {
+					
+				}
+			);
+		}
+		
+		function salvar() {
+			
+		}
+		
+		function balancearMatrizFornecedor() {
+			
+		}
+		
+		function voltarConfiguracaoInicial() {
+			
+		}
+		
+		function fechar() {
+			
+			$(".grids").hide();
+		}
+		
+		function reprogramar() {
+			
 		}
 		
 		$(function() {
@@ -462,27 +602,27 @@
 			<tr>
 				<td width="115">
 					<span class="bt_confirmar_novo" title="Confirmar balanceamento">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Confirmar
+						<a id="linkConfirmar" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Confirmar
 						</a>
 					</span>
 				</td>
 				<td width="117">
-					<strong>Balancear por:</strong>
+					<strong>Balanceamento por:</strong>
 				</td>
 				<td width="296">
 					<span class="bt_confirmar_novo" title="Balancear Editor">
-						<a href="javascript:;" onclick="popup_balanceamento();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Editor
+						<a id="linkEditor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Editor
 						</a>
 					</span>
 					<span class="bt_confirmar_novo" title="Balancear Volume / Valor">
-						<a onclick="balancearPorValor();" href="javascript:;">
-							<img border="0" hspace="5" src="<c:url value='images/ico_check.gif'/>">Valor
+						<a id="linkValor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Valor
 						</a>
 					</span>
-					<span class="bt_novos" title="Salvar Conferência">
-						<a href="javascript:;">
+					<span class="bt_novos" title="Salvar">
+						<a id="linkSalvar" href="javascript:;">
 							<img border="0" hspace="5" src="<c:url value='/images/ico_salvar.gif'/>">Salvar
 						</a>
 					</span>
@@ -490,16 +630,16 @@
 				
 				<td width="207">
 					<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
-						<a href="javascript:;" onclick="mostra_matriz();">
-							<img border="0" hspace="5" src="<c:url value='images/ico_detalhes.png'/>">Matriz Fornecedor
+						<a id="linkMatrizFornecedor" href="javascript:;">
+							<img border="0" hspace="5" src="<c:url value='/images/ico_detalhes.png'/>">Matriz Fornecedor
 						</a>
 					</span>
 				</td>
 				
 				<td width="215">
 					<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
-						<a href="javascript:;">
-							<img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />
+						<a id="linkConfiguracaoInicial" href="javascript:;">
+							<img src="<c:url value='/images/bt_devolucao.png'/>" border="0" hspace="5" />
 							Voltar Configuração Inicial
 						</a>
 					</span>
@@ -516,29 +656,24 @@
 		
 		<div class="grids" style="display: none;">
 
-			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float:right; display:none;">
-				<a href="javascript:;" onclick="fechaGrid();">
-					<img src="../images/ico_excluir.gif" hspace="5" border="0"/>Fechar
+			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
+				<a id="linkFechar" href="javascript:;" onclick="fechar();">
+					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
+						 hspace="5" border="0" />Fechar
 				</a>
 			</span>
 
-			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right; display: none;">
-				
-				<a href="javascript:;" onclick="fechaGrid();">
-					<img src="<c:url value='images/ico_excluir.gif'/>" hspace="5" border="0" />Fechar
-				</a>
-			</span>
-
-			<!-- GRID -->
+			<br clear="all" />
 			
+			<!-- GRID -->
 			<table class="balanceamentoGrid"></table>
 			
 			<table width="950" border="0" cellspacing="2" cellpadding="2">
 				<tr>
 					<td width="152">
 						<span class="bt_novos" title="Reprogramar">
-							<a href="javascript:;" onclick="popup();">
-								<img src="<c:url value='images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
+							<a id="linkReprogramar" href="javascript:;">
+								<img src="<c:url value='/images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
 							</a>
 						</span>
 					</td>

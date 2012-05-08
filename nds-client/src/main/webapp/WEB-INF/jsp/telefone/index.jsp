@@ -6,7 +6,7 @@
 	
 	<script type="text/javascript">
 		
-		var ${param.tela} = new Telefone('${param.tela}');
+		var ${param.tela} = new Telefone('${param.tela}','${param.message}');
 		
 	</script>
 	

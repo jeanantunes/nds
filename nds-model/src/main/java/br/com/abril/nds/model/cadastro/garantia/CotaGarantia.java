@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,7 +47,7 @@ public abstract class CotaGarantia implements Serializable{
 	private Long id;
 	
 	
-	@ManyToOne(optional = false)
+	@OneToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
@@ -56,8 +56,7 @@ public abstract class CotaGarantia implements Serializable{
 	@Column(name="DATA")
 	private Date data;
 	
-	@Column(name="ATIVO")
-	private boolean ativo;
+
 
 	public Long getId() {
 		return id;
@@ -82,16 +81,4 @@ public abstract class CotaGarantia implements Serializable{
 	public void setData(Date data) {
 		this.data = data;
 	}
-
-	public boolean isAtivo() {
-		return ativo;
-	}
-
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
-	}
-	
-	
-	
-	
 }

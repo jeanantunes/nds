@@ -72,6 +72,10 @@ public class PeriodoFuncionamentoDTO implements Serializable {
 	}
 	
 	public void setTipoPeriodo(String tipoPeriodo) {
+		
+		if(tipoPeriodo == null || tipoPeriodo.equals("-1"))
+			return;
+		
 		this.setTipoPeriodoFuncionamentoPDV(TipoPeriodoFuncionamentoPDV.valueOf(tipoPeriodo));
 	}
 	

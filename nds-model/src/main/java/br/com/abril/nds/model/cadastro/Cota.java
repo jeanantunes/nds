@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -91,6 +92,9 @@ public class Cota implements Serializable {
 	
 	@OneToOne(mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
+		
+	@Embedded
+	private ParametroDistribuicaoCota parametroDistribuicao;
 	
 	@OneToMany
 	@JoinColumn( name="ID_COTA")
@@ -304,4 +308,19 @@ public class Cota implements Serializable {
 			return false;
 		return true;
 	}
+
+	/**
+	 * @return the parametroDistribuicao
+	 */
+	public ParametroDistribuicaoCota getParametroDistribuicao() {
+		return parametroDistribuicao;
+	}
+
+	/**
+	 * @param parametroDistribuicao the parametroDistribuicao to set
+	 */
+	public void setParametroDistribuicao(ParametroDistribuicaoCota parametroDistribuicao) {
+		this.parametroDistribuicao = parametroDistribuicao;
+	}
+
 }

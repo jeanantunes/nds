@@ -1,22 +1,36 @@
 
+<style>
+	
+.complementar label {
+   margin-left: 5px;
+   margin-right: 5px;
+   vertical-align: super;
+   float: left;
+}
+
+.complementar input {
+	float: left;
+}
+
+</style>
+
 
 <fieldset>
 <legend>Características</legend>
 <table width="777" border="0" cellspacing="1" cellpadding="1">
   <tr>
-
     <td colspan="2" class="complementar" colspan="2">
     	  <input name="pontoPrincipal" type="checkbox" value="" id="ptoPrincipal" />
-	      <label for="ptoPrincipal">Ponto Principal</label>
+	      <label for="pontoPrincipal" >Ponto Principal</label>
 	      <br clear="all" />
 	      <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
-	      <label for="balcaoCentral">Balcão Central</label>
+	      <label for="balcaoCentral" >Balcão Central</label>
 	      <br clear="all" />
 	      <input name="temComputador" type="checkbox" value="" id="temComputador" />
-	      <label for="temComputador">Tem Computador?</label>
+	      <label for="temComputador" >Tem Computador?</label>
 	      <br clear="all" />
 	      <input name="luminoso" type="checkbox" value="" id="luminoso" onclick="PDV.opcaoTextoLuminoso('#luminoso')" />
-	      <label for="luminoso">Luminoso</label>
+	      <label for="luminoso" >Luminoso</label>
 	      <textarea name="textoLuminoso" cols="" rows="2" style="width:610px;" id="textoLuminoso" disabled="disabled"></textarea>
       </td>
   </tr>
@@ -63,7 +77,7 @@
   <tr>
     <td>Cluster:</td>
     <td>
-	    <select name="selectCluster" id="selectCluster" style="width:232px;" onchange="PDV.habilitarTipoCluster();">
+	    <select name="selectCluster" id="selectCluster" style="width:232px;">
 	      <option selected="selected">Selecione...</option>
 	      <c:forEach items="${listaClusterPDV}" var="item">
 	    	  <option value="${item.key}">${item.value}</option>	          

@@ -46,7 +46,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("FC",
-				"01.001.001/001-00", "000.000.000.00", "fc@mail.com");
+				"01.001.001/001-00", "000.000.000.00", "fc@mail.com", "99.999-9");
 
 		save(pessoaJuridica);
 
