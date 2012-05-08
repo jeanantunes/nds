@@ -3,7 +3,7 @@
 <script>
 
 $(function() {
-	
+		
 	$('#inicioHorario').mask('99:99'); 
 	$('#fimHorario').mask('99:99'); 
 	$("#porcentagemFaturamento").numeric();
@@ -30,10 +30,14 @@ function tratarRetornoUploadImagem(data) {
 	
 	var mensagens = responseJson.result[0];
 	var status = responseJson.result[1];
-	var nomeArquivo = responseJson.result[2];
+	var pathArquivo = responseJson.result[2];
+		
+	if(pathArquivo) {
+		$("#idImagem").attr("src","${pageContext.request.contextPath}/" + pathArquivo);
+	} else {
+		$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/no_image.jpeg");
+	}	
 	
-	$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/" + nomeArquivo);
-				
 	if(mensagens!=null && mensagens.length!=0) {
 		exibirMensagemDialog(status,mensagens);
 	}
@@ -141,8 +145,7 @@ function tratarRetornoUploadImagem(data) {
 
     </td>
     <td width="191" align="center" valign="top">
-    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca" 
-    	  onerror="${pageContext.request.contextPath}/images/pdv/no_image.jpeg"/>
+    	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca"/>
     	    	
     	<br />
     	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a>
@@ -154,7 +157,7 @@ function tratarRetornoUploadImagem(data) {
       <tr>
 	    <td width="135">Dias Funcionamento:</td>
 	    <td width="252" class="diasFunc">
-	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" style="width:230px;">
+	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" onchange="PDV.selecionarDiaFuncionamento(this)" style="width:230px;">
 		      
 		      <option value="-1" selected="selected">Selecione</option>
 		      

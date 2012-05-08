@@ -21,7 +21,7 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria;
 	
-	private Long capacidadeRecolhimentoDistribuidor;
+	private BigDecimal capacidadeRecolhimentoDistribuidor;
 	
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
@@ -37,7 +37,7 @@ public class RecolhimentoDTO implements Serializable {
 	/**
 	 * @return the capacidadeRecolhimentoDistribuidor
 	 */
-	public Long getCapacidadeRecolhimentoDistribuidor() {
+	public BigDecimal getCapacidadeRecolhimentoDistribuidor() {
 		return capacidadeRecolhimentoDistribuidor;
 	}
 
@@ -45,7 +45,7 @@ public class RecolhimentoDTO implements Serializable {
 	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
 	 */
 	public void setCapacidadeRecolhimentoDistribuidor(
-			Long capacidadeRecolhimentoDistribuidor) {
+			BigDecimal capacidadeRecolhimentoDistribuidor) {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 

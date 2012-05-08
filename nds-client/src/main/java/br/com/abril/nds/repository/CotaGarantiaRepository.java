@@ -8,5 +8,12 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
  *
  */
 public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
-
+	
+	
+	/**
+	 * Recupera a garantia da cota.
+	 * @param idCota Id da cota.
+	 * @return
+	 */
+	public CotaGarantia getByCota(Long idCota);
 }

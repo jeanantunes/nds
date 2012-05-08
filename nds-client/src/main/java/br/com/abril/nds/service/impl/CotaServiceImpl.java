@@ -18,6 +18,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -423,7 +424,18 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional
 	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
-
 		return this.cotaRepository.obterCotaPDVPorNumeroDaCota(numeroCota);
+	}
+
+	@Override
+	@Transactional
+	public List<Fornecedor> obterFornecedoresCota(Long idCota) {
+		Cota cota = this.obterPorId(idCota);
+		Set<Fornecedor> fornecedores = cota.getFornecedores();
+		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
+		for(Fornecedor itemFornecedor:fornecedores){
+			listaFornecedores.add(itemFornecedor);
+		}
+		return listaFornecedores;
 	}
 }

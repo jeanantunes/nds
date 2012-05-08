@@ -10,14 +10,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 
 /**
  * @author Diego Fernandes
@@ -47,10 +43,6 @@ public class NotaPromissoria implements Serializable {
 	
 	@Column(name="VALOR_EXTENSO")
 	private String valorExtenso;
-	
-	@OneToOne(optional=false)
-	@JoinColumn(name="COTA_GARANTIA_NOTA_PROMISSORIA_ID")
-	private CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria;
 
 	/**
 	 * @return the id
@@ -107,25 +99,5 @@ public class NotaPromissoria implements Serializable {
 	public void setValorExtenso(String valorExtenso) {
 		this.valorExtenso = valorExtenso;
 	}
-
-	
-	/**
-	 * @return the cotaGarantiaNotaPromissoria
-	 */
-	public CotaGarantiaNotaPromissoria getCotaGarantiaNotaPromissoria() {
-		return cotaGarantiaNotaPromissoria;
-	}
-
-	/**
-	 * @param cotaGarantiaNotaPromissoria the cotaGarantiaNotaPromissoria to set
-	 */
-	public void setCotaGarantiaNotaPromissoria(
-			CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria) {
-		this.cotaGarantiaNotaPromissoria = cotaGarantiaNotaPromissoria;
-	}
-	
-	
-	
-	
 
 }

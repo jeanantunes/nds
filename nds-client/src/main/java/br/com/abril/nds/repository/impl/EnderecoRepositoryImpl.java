@@ -41,7 +41,8 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		   .append(" and e.id not in (select ee.id from EnderecoEntregador ee where id in (:ids)) ")
 		   .append(" and e.id not in (select efi.id from EnderecoFiador efi where id in (:ids)) ")
 		   .append(" and e.id not in (select ef.id from EnderecoFornecedor ef where id in (:ids)) ")
-		   .append(" and e.id not in (select et.id from EnderecoTransportador et where id in (:ids)) ");
+		   .append(" and e.id not in (select et.id from EnderecoTransportador et where id in (:ids)) ")
+		   .append(" and e.id not in (select ep.id from EnderecoPDV ep where id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("ids", idsEndereco);
@@ -64,7 +65,7 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		query.setParameter("idPessoa", idPessoa);
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			query.setParameter("idsIgnorar", idsIgnorar);
+			query.setParameterList("idsIgnorar", idsIgnorar);
 		}
 		
 		return query.list();

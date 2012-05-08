@@ -170,7 +170,7 @@
 	}
 </script>
 <table width="280" cellpadding="2" cellspacing="2" style="text-align: left;">
-	<div class="dialog-excluir" id="dialog-excluir" title="Cotas Associadas">
+	<div class="dialog-excluir" id="dialog-excluir" title="Cotas Associadas" style="display: none;">
 		<p>Confirma esta Exclusão?</p>
 	</div>
 	<tr>

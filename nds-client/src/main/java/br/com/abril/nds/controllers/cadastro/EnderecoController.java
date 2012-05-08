@@ -94,6 +94,7 @@ public class EnderecoController {
 							PdvController.LISTA_ENDERECOS_SALVAR_SESSAO, 
 							PdvController.LISTA_ENDERECOS_REMOVER_SESSAO, 
 							PdvController.LISTA_ENDERECOS_EXIBICAO);
+				break;
 
 				case ENDERECO_TRANSPORTADOR:
 					EnderecoController.setarParametros(
@@ -494,7 +495,7 @@ public class EnderecoController {
 
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
-				enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
+				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
 				enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),

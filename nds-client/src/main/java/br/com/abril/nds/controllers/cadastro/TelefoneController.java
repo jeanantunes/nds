@@ -53,7 +53,8 @@ public class TelefoneController {
 		FIADOR,
 		COTA,
 		ENTREGADOR,
-		TRANSPORTADOR;
+		TRANSPORTADOR,
+		TELEFONE_PDV;
 		
 		public void setarParametros(){
 			
@@ -81,6 +82,12 @@ public class TelefoneController {
 							TransportadorController.LISTA_TELEFONES_SALVAR_SESSAO, 
 							TransportadorController.LISTA_TELEFONES_REMOVER_SESSAO, 
 							TransportadorController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case TELEFONE_PDV:
+					TelefoneController.setarParametros(
+							PdvController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							PdvController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							PdvController.LISTA_TELEFONES_EXIBICAO);
 				break;
 			}
 		}
@@ -353,6 +360,9 @@ public class TelefoneController {
 		}
 		
 		if (principal){
+			
+			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+			
 			Map<Integer, TelefoneAssociacaoDTO> telefones = this.obterTelefonesSalvarSessao();
 			
 			for (Integer key : telefones.keySet()){
@@ -360,16 +370,21 @@ public class TelefoneController {
 				if (referencia == null){
 					
 					if (telefones.get(key).isPrincipal()){
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+												
+						if( !telefonesRemover.contains(key) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
 					}
 					
 				} else {
 				
 					if (telefones.get(key).isPrincipal() && (!referencia.equals(telefones.get(key).getReferencia()))){
 						
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+						if( !telefonesRemover.contains(key) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
 					}
 				}
 			}
@@ -382,15 +397,20 @@ public class TelefoneController {
 					
 					if (dto.isPrincipal()){
 						
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+						if( !telefonesRemover.contains(dto.getTelefone().getId()) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
+						
 					}
 				} else {
 				
 					if (dto.isPrincipal() && (!referencia.equals(dto.getReferencia()))){
 						
-						listaValidacao.add("Já existe um telefone principal.");
-						break;
+						if( !telefonesRemover.contains(dto.getTelefone().getId()) ) {						
+							listaValidacao.add("Já existe um telefone principal.");
+							break;
+						}
 					}
 				}
 			}

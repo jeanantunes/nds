@@ -1,6 +1,6 @@
 package br.com.abril.nds.dto;
 
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -66,11 +66,13 @@ public class PdvDTO implements Serializable {
 	
 	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
 	
-	private EnderecoPdvDTO enderecoPdvDTO;
+	private List<EnderecoAssociacaoDTO> enderecosAdicionar;
 		
 	private List<TelefoneAssociacaoDTO> telefonesAdicionar;
 	
 	private Set<Long> telefonesRemover;
+	
+	private Set<Long> enderecosRemover;
 	
     private CaracteristicaDTO caracteristicaDTO;
     
@@ -88,7 +90,11 @@ public class PdvDTO implements Serializable {
     
     private String tipoExpositor;
     
-    private InputStream imagem;
+    private FileInputStream imagem;
+    
+    private String pathImagem;
+    
+    private String pathAplicacao;
     
 	/**
 	 * @return the expositor
@@ -105,6 +111,34 @@ public class PdvDTO implements Serializable {
 	}
 
 	
+
+	/**
+	 * @return the enderecosAdicionar
+	 */
+	public List<EnderecoAssociacaoDTO> getEnderecosAdicionar() {
+		return enderecosAdicionar;
+	}
+
+	/**
+	 * @param enderecosAdicionar the enderecosAdicionar to set
+	 */
+	public void setEnderecosAdicionar(List<EnderecoAssociacaoDTO> enderecosAdicionar) {
+		this.enderecosAdicionar = enderecosAdicionar;
+	}
+
+	/**
+	 * @return the enderecosRemover
+	 */
+	public Set<Long> getEnderecosRemover() {
+		return enderecosRemover;
+	}
+
+	/**
+	 * @param enderecosRemover the enderecosRemover to set
+	 */
+	public void setEnderecosRemover(Set<Long> enderecosRemover) {
+		this.enderecosRemover = enderecosRemover;
+	}
 
 	/**
 	 * @return the tipoExpositor
@@ -132,22 +166,6 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	
-
-	/**
-	 * @return the enderecoPdvDTO
-	 */
-	public EnderecoPdvDTO getEnderecoPdvDTO() {
-		return enderecoPdvDTO;
-	}
-
-	/**
-	 * @param enderecoPdvDTO the enderecoPdvDTO to set
-	 */
-	public void setEnderecoPdvDTO(EnderecoPdvDTO enderecoPdvDTO) {
-		this.enderecoPdvDTO = enderecoPdvDTO;
 	}
 
 	/**
@@ -542,14 +560,14 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the imagem
 	 */
-	public InputStream getImagem() {
+	public FileInputStream getImagem() {
 		return imagem;
 	}
 
 	/**
 	 * @param imagem the imagem to set
 	 */
-	public void setImagem(InputStream imagem) {
+	public void setImagem(FileInputStream imagem) {
 		this.imagem = imagem;
 	}
 	
@@ -579,6 +597,22 @@ public class PdvDTO implements Serializable {
 	 */
 	public void setTelefonesRemover(Set<Long> listaTelefoneRemover) {
 		this.telefonesRemover = listaTelefoneRemover;
+	}
+
+	public String getPathImagem() {
+		return pathImagem;
+	}
+
+	public void setPathImagem(String pathImagem) {
+		this.pathImagem = pathImagem;
+	}
+
+	public String getPathAplicacao() {
+		return pathAplicacao;
+	}
+
+	public void setPathAplicacao(String pathAplicacao) {
+		this.pathAplicacao = pathAplicacao;
 	}
 	
 }

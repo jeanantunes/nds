@@ -1,8 +1,10 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -27,14 +29,19 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancaria;
+import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.BancoRepository;
@@ -43,7 +50,9 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -60,6 +69,9 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private CotaService cotaService;
 		
 	@Autowired
 	private BancoRepository bancoRepository;
@@ -76,9 +88,14 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	
 	
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
+	 * @param TipoCobranca
 	 * @return comboBancos: bancos cadastrados
 	 */
 	@Transactional(readOnly=true)
@@ -94,10 +111,10 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	
 	
-	 /**
-	  * Método responsável por obter tipos de cobrança para preencher combo da camada view
-	  * @return comboTiposPagamento: Tipos de cobrança padrão.
-	  */
+	/**
+	 * Método responsável por obter tipos de cobrança para preencher combo da camada view
+	 * @return comboTiposPagamento: Tipos de cobrança padrão.
+	 */
 	@Override
 	public List<ItemDTO<TipoCobranca, String>> getComboTiposCobranca() {
 		List<ItemDTO<TipoCobranca,String>> comboTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
@@ -105,6 +122,23 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 			comboTiposCobranca.add(new ItemDTO<TipoCobranca,String>(itemTipoCobranca, itemTipoCobranca.getDescTipoCobranca()));
 		}
 		return comboTiposCobranca;
+	}
+	
+	
+	
+	/**
+	  * Método responsável por obter combo de Fornecedores relacionados com a Cota
+	  * @param idCota
+	  * @return comboFornecedores: Fornecedores relacionados com a cota.
+	  */
+	@Override
+	public List<ItemDTO<Long, String>> getComboFornecedoresCota(Long idCota) {
+		List<Fornecedor> fornecedores = this.cotaService.obterFornecedoresCota(idCota);
+		List<ItemDTO<Long,String>> comboFornecedores = new ArrayList<ItemDTO<Long,String>>();
+		for (Fornecedor itemFornecedor: fornecedores){
+			comboFornecedores.add(new ItemDTO<Long,String>(itemFornecedor.getId(), itemFornecedor.getJuridica().getRazaoSocial()));
+		}
+		return comboFornecedores;
 	}
 	
 	
@@ -119,33 +153,37 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	public ParametroCobrancaDTO obterDadosParametroCobrancaPorCota(Long idCota) {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
-
+		PoliticaSuspensao politicaSuspensao = null; 
+		ParametroCobrancaCota parametroCobranca = null;
+		
 		ParametroCobrancaDTO parametroCobrancaDTO = null;
 		if (cota!=null){
 			
-			
-			ParametroCobrancaCota parametroCobranca = cota.getParametroCobranca();
-				
-			PoliticaSuspensao politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
-
-			parametroCobrancaDTO = new ParametroCobrancaDTO(); 
-
-			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
-			parametroCobrancaDTO.setIdCota(cota.getId());
-			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
-			parametroCobrancaDTO.setComissao(cota.getFatorDesconto());
-			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
-			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
-			
+			parametroCobranca = cota.getParametroCobranca();
 			
 			if (parametroCobranca!=null){
-				parametroCobrancaDTO.setFatorVencimento(parametroCobranca.getFatorVencimento());
-				parametroCobrancaDTO.setValorMinimo(parametroCobranca.getValorMininoCobranca());
-			}
 
-			if (politicaSuspensao!=null){
-				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
-				parametroCobrancaDTO.setVrDividasAberto(politicaSuspensao.getValor());
+				parametroCobrancaDTO = new ParametroCobrancaDTO(); 
+	
+				parametroCobrancaDTO.setIdCota(cota.getId());
+				parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
+				parametroCobrancaDTO.setComissao((cota.getFatorDesconto()!=null?cota.getFatorDesconto():BigDecimal.ZERO));
+				parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
+				parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
+				
+				if (parametroCobranca!=null){
+					parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
+					parametroCobrancaDTO.setFatorVencimento(parametroCobranca.getFatorVencimento());
+					parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
+					
+					politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+					
+					if (politicaSuspensao!=null){
+						parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
+						parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
+					}
+					
+				}
 			}
 		}
 
@@ -154,7 +192,6 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	
     
-	//TODO: Alterações no modelo de dados necessárias
 	/**
 	 * Método responsável por obter os dados da forma de cobranca
 	 * @param idFormaCobranca: ID da forma de cobranca
@@ -192,9 +229,9 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 			if (contaBancaria!=null){
 				formaCobrancaDTO.setNumBanco(contaBancaria.getNumeroBanco());
 				formaCobrancaDTO.setNomeBanco(contaBancaria.getNomeBanco());
-				formaCobrancaDTO.setAgencia(contaBancaria.getDvAgencia());
+				formaCobrancaDTO.setAgencia(contaBancaria.getAgencia());
 				formaCobrancaDTO.setAgenciaDigito(contaBancaria.getDvAgencia());
-				formaCobrancaDTO.setConta(contaBancaria.getConta()!=null?Long.toString(contaBancaria.getConta()):"");
+				formaCobrancaDTO.setConta(contaBancaria.getConta());
 				formaCobrancaDTO.setContaDigito(contaBancaria.getDvConta());
 			}
 			
@@ -245,6 +282,16 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 				formaCobrancaDTO.setIdBanco(banco.getId());
 			}
 			formaCobrancaDTO.setTipoCobranca(formaCobranca.getTipoCobranca());
+			
+			
+			Set<Fornecedor> fornecedores = formaCobranca.getFornecedores();
+			List<Long> fornecedoresID = new ArrayList<Long>();
+			if (fornecedores!=null){
+			    for(Fornecedor itemFornecedor:fornecedores){
+				    fornecedoresID.add(itemFornecedor.getId());
+			    }
+			    formaCobrancaDTO.setFornecedoresId(fornecedoresID);
+			}		
  
 		}
 		
@@ -260,36 +307,58 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Override
 	@Transactional
 	public void postarParametroCobranca(ParametroCobrancaDTO parametroCobrancaDTO) {
-
+		
+		ParametroCobrancaCota parametroCobranca= null;
+        PoliticaSuspensao politicaSuspensao = null;
+        Cota cota = null;
+        boolean novo=false;
+		
 		//COTA
-		Cota cota = cotaRepository.buscarPorId(parametroCobrancaDTO.getIdCota());
+		cota = cotaRepository.buscarPorId(parametroCobrancaDTO.getIdCota());
 
 		if (cota!=null){
+			
 
 			//PARAMETROS DE COBRANCA DA COTA
-			ParametroCobrancaCota parametroCobranca = cota.getParametroCobranca();
+			parametroCobranca = cota.getParametroCobranca();
 			
-			//POLITICA DE SUSPENSAO DO PARAMETRO DE COBRANCA DA COTA
-			PoliticaSuspensao politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+			
+			if (parametroCobranca==null){
+				novo=true;
+				parametroCobranca = new ParametroCobrancaCota();
+			}
+			else{
+				novo=false;
+				//POLITICA DE SUSPENSAO DO PARAMETRO DE COBRANCA DA COTA
+				politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+			}
 
-			
-			parametroCobranca = (parametroCobranca==null?new ParametroCobrancaCota():parametroCobranca);
-			
-			politicaSuspensao = (politicaSuspensao==null?new PoliticaSuspensao():politicaSuspensao);
-
-			
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
-			parametroCobranca.setValorMininoCobranca(parametroCobrancaDTO.getValorMinimo());
-			
-			
-			politicaSuspensao.setNumeroAcumuloDivida(parametroCobrancaDTO.getQtdDividasAberto());
-			politicaSuspensao.setValor(parametroCobrancaDTO.getVrDividasAberto());
+			parametroCobranca.setValorMininoCobranca((parametroCobrancaDTO.getValorMinimo()!=null?parametroCobrancaDTO.getValorMinimo():BigDecimal.ZERO));
 
+			
+
+			if (politicaSuspensao == null){
+				politicaSuspensao = new PoliticaSuspensao();
+			}
+			politicaSuspensao.setNumeroAcumuloDivida((parametroCobrancaDTO.getQtdDividasAberto()!=null?parametroCobrancaDTO.getQtdDividasAberto():0));
+			politicaSuspensao.setValor((parametroCobrancaDTO.getVrDividasAberto()!=null?parametroCobrancaDTO.getVrDividasAberto():BigDecimal.ZERO));
+			
 			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
 			
 			
+			
+			if (novo){
+				parametroCobranca.setCota(cota);
+				this.parametroCobrancaCotaRepository.adicionar(parametroCobranca);
+			}
+			else{
+				this.parametroCobrancaCotaRepository.merge(parametroCobranca);
+			}
+			
+			
 			cota.setParametroCobranca(parametroCobranca);
-			cota.setFatorDesconto(parametroCobrancaDTO.getComissao());
+			cota.setFatorDesconto((parametroCobrancaDTO.getComissao()!=null?parametroCobrancaDTO.getComissao():BigDecimal.ZERO));
 			cota.setSugereSuspensao(parametroCobrancaDTO.isSugereSuspensao());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
 			
@@ -301,7 +370,6 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	
 	
 
-	//TODO: Alterações no modelo de dados necessárias
 	/**
 	 * Método responsável por alterar ou incluir uma forma de cobranca dos parametros de cobranca da cota
 	 * @param Dados da forma de cobranca do parametro de cobranca da cota
@@ -314,11 +382,13 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		FormaCobranca formaCobranca = null;
 		ContaBancaria contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
-		Integer diaDoMes = null;
-		
-		
-		Banco banco=this.bancoRepository.buscarPorId(formaCobrancaDTO.getIdBanco());
+		Banco banco = null;
 		boolean novaFormaCobranca=false;
+		
+		
+		if (formaCobrancaDTO.getIdBanco()!=null){
+		    banco=this.bancoRepository.buscarPorId(formaCobrancaDTO.getIdBanco());
+		}
 		
 			
 		if (formaCobrancaDTO.getIdFormaCobranca()!=null){
@@ -327,9 +397,8 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		
 
 		if (formaCobranca==null){
-			
 			novaFormaCobranca=true;
-			
+
 			formaCobranca = new FormaCobranca();
 	    }
 		else{
@@ -347,7 +416,12 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		}
 		
 		
+		FormaCobranca formaCobrancaPrincipal = this.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		formaCobranca.setPrincipal(formaCobrancaPrincipal==null);
+
+		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
+		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
 		ConcentracaoCobrancaCota concentracaoCobranca;
 		if (formaCobrancaDTO.isDomingo()){
 			
@@ -413,10 +487,12 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 			concentracoesCobranca.add(concentracaoCobranca);
 		}
 		
-		formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
+		if(concentracoesCobranca.size()>0){
+		    formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
+		}
 		
 		
-		formaCobranca.setDiaDoMes(diaDoMes);
+		formaCobranca.setDiaDoMes(formaCobrancaDTO.getDiaDoMes());
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
@@ -424,19 +500,43 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		 
 		
 		contaBancariaCota = formaCobranca.getContaBancariaCota();
+		if(contaBancariaCota==null){
+			contaBancariaCota = new ContaBancaria();
+		}
 		contaBancariaCota.setNumeroBanco(formaCobrancaDTO.getNumBanco());
 		contaBancariaCota.setNomeBanco(formaCobrancaDTO.getNomeBanco());
-		contaBancariaCota.setAgencia(Long.getLong(formaCobrancaDTO.getAgencia()));
+	    contaBancariaCota.setAgencia(formaCobrancaDTO.getAgencia());
 		contaBancariaCota.setDvAgencia(formaCobrancaDTO.getAgenciaDigito());
-		contaBancariaCota.setConta(Long.getLong(formaCobrancaDTO.getConta()));
+		contaBancariaCota.setConta(formaCobrancaDTO.getConta());
 		contaBancariaCota.setDvConta(formaCobrancaDTO.getContaDigito());
 		
 		formaCobranca.setContaBancariaCota(contaBancariaCota);
 
 		
+		formaCobranca.setAtiva(true);
+		
+		if ((formaCobrancaDTO.getFornecedoresId()!=null)&&(formaCobrancaDTO.getFornecedoresId().size()>0)){
+			Fornecedor fornecedor;
+		    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		    for (Long idFornecedor:formaCobrancaDTO.getFornecedoresId()){
+		    	fornecedor = fornecedorService.obterFornecedorPorId(idFornecedor);
+		    	if (fornecedor!=null){
+		    	    fornecedores.add(fornecedor);
+		    	}
+		    }
+		    if (fornecedores.size()>0){
+			    formaCobranca.setFornecedores(fornecedores);
+		    }
+		}
+		
 	    if(novaFormaCobranca){
 	    	ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
 		    formaCobranca.setParametroCobrancaCota(parametroCobranca);
+
+		    formaCobranca.setTaxaJurosMensal((formaCobranca.getTaxaJurosMensal()==null?BigDecimal.ZERO:formaCobranca.getTaxaJurosMensal()));
+		    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta()==null?BigDecimal.ZERO:formaCobranca.getTaxaMulta()));
+		    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao()==null?BigDecimal.ZERO:formaCobranca.getValorMinimoEmissao()));
+
 		    formaCobrancaRepository.adicionar(formaCobranca);
 	    }    
 	    else{
@@ -457,17 +557,53 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	public List<FormaCobrancaDTO> obterDadosFormasCobrancaPorCota(Long idCota) {
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaCota(cota);
-		List<FormaCobrancaDTO> formasCobrancaVO = new LinkedList<FormaCobrancaDTO>();
+		List<FormaCobrancaDTO> formasCobrancaDTO = new LinkedList<FormaCobrancaDTO>();
+		
+		String strConcentracoes="";
+		String strFornecedores="";
+		Set<ConcentracaoCobrancaCota> concentracoes = new HashSet<ConcentracaoCobrancaCota>();
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		
 		for(FormaCobranca formaCobrancaItem:formasCobranca){
-			formasCobrancaVO.add(new FormaCobrancaDTO(formaCobrancaItem.getId(),
-					                                 "Fornecedor Teste",
-					                                 "Concentração Teste",
-					                                 formaCobrancaItem.getTipoCobranca().getDescTipoCobranca(),
-					                                 formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta()
-					                                )
+			
+			strConcentracoes="";
+			strFornecedores="";
+			
+			concentracoes = formaCobrancaItem.getConcentracaoCobrancaCota();
+			fornecedores = formaCobrancaItem.getFornecedores();
+			
+			if(formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+				if ((concentracoes!=null)&&(!concentracoes.isEmpty())){
+					for (ConcentracaoCobrancaCota itemConcentracao:concentracoes){
+						if (!"".equals(strConcentracoes)){
+							strConcentracoes = strConcentracoes + "/";
+						}
+						strConcentracoes = strConcentracoes + itemConcentracao.getDiaSemana().getDescricaoDiaSemana();
+					}
+				}				
+			}
+			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiaDoMes();
+			}				
+			
+			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
+				for (Fornecedor itemFornecedor:fornecedores){
+					if (!"".equals(strFornecedores)){
+						strFornecedores = strFornecedores + "/";
+					}
+					strFornecedores = strFornecedores + itemFornecedor.getJuridica().getRazaoSocial();
+				}
+			}
+			
+			formasCobrancaDTO.add(new FormaCobrancaDTO(formaCobrancaItem.getId(),
+					                                   strFornecedores,
+					                                   strConcentracoes,
+					                                   (formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
+					                                   (formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():"")
+					                                  )
 			                    );
 		}
-		return formasCobrancaVO;
+		return formasCobrancaDTO;
 	}
 
 	
@@ -479,6 +615,7 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	@Override
 	@Transactional(readOnly = true)
 	public ContratoTransporteDTO obtemContratoTransporte(long idCota){
+		
 		ContratoTransporteDTO contrato = new ContratoTransporteDTO();
 		
 		Distribuidor distribuidor = distribuidorRepository.obter();	
@@ -486,47 +623,104 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();		
 		PessoaContratoDTO contratante = new PessoaContratoDTO();		
 		
-		contratante.setNome(pessoaJuridica.getNome());
-		contratante.setDocumento(pessoaJuridica.getDocumento());
+		contratante.setNome((pessoaJuridica.getNome()!=null?pessoaJuridica.getNome():""));
+		contratante.setDocumento((pessoaJuridica.getDocumento()!=null?pessoaJuridica.getDocumento():""));
 		contratante.setTipoPessoa(TipoPessoa.JURIDICA);
+
 		
-		EnderecoDistribuidor enderecoDistribuidor= distribuidorRepository.obterEnderecoPrincipal();
 		
-		if (enderecoDistribuidor != null) {
-			contratante.setEndereco(enderecoDistribuidor.getEndereco());
+		
+		Endereco endereco = distribuidorRepository.obterEnderecoPrincipal().getEndereco();
+		String descEndereco="";
+		if (endereco!=null){
+			descEndereco = descEndereco + 
+					       endereco.getLogradouro()+", "+
+					       endereco.getNumero()+" - "+
+					       endereco.getBairro()+" - "+
+					       endereco.getCidade()+"-"+
+					       endereco.getUf();
 		}
+		
+		contratante.setDescEndereco(descEndereco);
+		contratante.setDescEnderecoGestor(descEndereco);
+		
+		
+		
+		
+		String descTelefones = "";
+		for (Telefone itemTelefone:distribuidor.getJuridica().getTelefones()){
+			descTelefones=descTelefones+"("+itemTelefone.getDdd()+")"+itemTelefone.getNumero()+"    ";
+		}
+		contratante.setDescTelefones(descTelefones);
+		
+		contratante.setNomeGestor((pessoaJuridica.getNome()!=null?pessoaJuridica.getNome():""));
+		contratante.setEmailGestor((pessoaJuridica.getEmail()!=null?pessoaJuridica.getEmail():""));
+		
 		contrato.setContratante(contratante);
 		
-		
-		
+
 		Cota cota = cotaRepository.buscarPorId(idCota);	
 		if (cota!=null) {
-			PessoaContratoDTO contratada = new PessoaContratoDTO();
-			contratada.setNome(cota.getPessoa().getNome());
-			contratada.setDocumento(cota.getPessoa().getDocumento());
 			
+			PessoaContratoDTO contratada = new PessoaContratoDTO();
+			
+			contratada.setNome((cota.getPessoa().getNome()!=null?cota.getPessoa().getNome():""));
+			contratada.setDocumento((cota.getPessoa().getDocumento()!=null?cota.getPessoa().getDocumento():""));
+
 			contratante.setTipoPessoa((cota.getPessoa()instanceof PessoaJuridica)?TipoPessoa.JURIDICA:TipoPessoa.FISICA);
-			EnderecoCota enderecoCota = cotaRepository
-					.obterEnderecoPrincipal(cota.getId());
-			if (enderecoCota != null) {
-				contratada.setEndereco(enderecoCota.getEndereco());
+
+			
+			
+			
+			EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota.getId());
+			endereco = enderecoCota.getEndereco();
+			descEndereco="";
+			if (endereco!=null){
+				descEndereco = descEndereco + 
+						       endereco.getLogradouro()+", "+
+						       endereco.getNumero()+" - "+
+						       endereco.getBairro()+" - "+
+						       endereco.getCidade()+"-"+
+						       endereco.getUf();
 			}
+			
+			contratada.setDescEndereco(descEndereco);
+			contratada.setDescEnderecoGestor(descEndereco);
+			
+
+			
+			
+			descTelefones = "";
+			for (Telefone itemTelefone:cota.getPessoa().getTelefones()){
+				descTelefones=descTelefones+"("+itemTelefone.getDdd()+")"+itemTelefone.getNumero()+"    ";
+			}
+			contratada.setDescTelefones(descTelefones);
+			
+			contratada.setNomeGestor((pessoaJuridica.getNome()!=null?pessoaJuridica.getNome():""));
+			contratada.setEmailGestor((pessoaJuridica.getEmail()!=null?pessoaJuridica.getEmail():""));
+			
 			contrato.setContratada(contratada);
 			
-			contrato.setInicio(cota.getContratoCota().getDataInicio());
-			contrato.setTermino(cota.getContratoCota().getDataTermino());
-			contrato.setPrazo(cota.getContratoCota().getPrazo()!=null?cota.getContratoCota().getPrazo().toString():"");
-			contrato.setAvisoPrevio(cota.getContratoCota().getAvisoPrevioRescisao()!=null?cota.getContratoCota().getAvisoPrevioRescisao().toString():"");
+			
+			ContratoCota contratoCota = cota.getContratoCota();
+			if (contratoCota!=null){
+				contrato.setInicio(cota.getContratoCota().getDataInicio());
+				contrato.setTermino(cota.getContratoCota().getDataTermino());
+				contrato.setPrazo(cota.getContratoCota().getPrazo()!=null?cota.getContratoCota().getPrazo().toString():"");
+			}
+			
+			ParametroContratoCota parametroContrato= distribuidor.getParametroContratoCota();
+			if (parametroContrato!=null){
+				contrato.setAvisoPrevio( Integer.toString(parametroContrato.getDiasAvisoRescisao()));
+			    contrato.setComplemento(distribuidor.getParametroContratoCota().getComplementoContrato());
+			    contrato.setCondicoes(parametroContrato.getCondicoesContratacao());
+			}
+			
 			
 		}else{
 			throw new IllegalArgumentException("Id da cota não cadastrada");
 		}
-		
-		
-		//TODO: Dados dos gestores do Contrato
-		
-		//TODO: Dados da contratação(Prazo, Inicio e Termino e Aviso Prévio para Recisão)
-		
+
 		return contrato;
 	}
 
@@ -596,6 +790,14 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		return this.formaCobrancaRepository.obterQuantidadeFormasCobrancaCota(cota);
 	}
-	
 
+
+	
+	@Override
+	@Transactional
+	public void excluirFormaCobranca(Long idFormaCobranca) {
+		this.formaCobrancaRepository.desativarFormaCobranca(idFormaCobranca);
+	}
+
+	
 }

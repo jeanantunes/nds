@@ -3,10 +3,10 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,9 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -36,10 +38,12 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -61,39 +65,35 @@ public class PdvController {
 	
 	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoPDV";
 	
-	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
-
 	public static String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosPDVSalvos";
 
 	public static String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosPDVRemovidos";
 
 	public static String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosPDVExibidos";
 	
+	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
+			
+	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
+	
+	private static final String IMAGEM_PDV = "imagemPdv";
+	
+	
 	@Autowired
 	private Result result;
 	
 	@Autowired
 	private PdvService pdvService;
-		
-	@Autowired
-	private ServletContext servletContext;
-	
+			
 	@Autowired
 	private HttpSession httpSession;
+
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 	
 	@Autowired
-	private HttpSession session;
-		
-	private static final String NO_IMAGE = "no_image.jpeg";
-	private static final String DIRETORIO_ARQUIVO = "images/pdv";
-	
-	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
-	
-	private static final String IMAGEM_PDV = "imagemPdv";
-	
-	public PdvController(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+	private ServletContext servletContext;
+
+	public PdvController() {}
 
 	@Path("/")
 	public void index(){
@@ -350,11 +350,15 @@ public class PdvController {
 	@Path("/editar")
 	public void editarPDV(Long idPdv, Long idCota){
 		
-		session.setAttribute(IMAGEM_PDV, null);
-		
+		limparDadosSessao();
+
 		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
 		
 		carregarTelefonesPDV(idPdv, idCota);
+		
+		carregarEndercosPDV(idPdv, idCota);
+		
+		tratarPathImagem(dto);
 		
 		if(dto!= null){
 			
@@ -374,20 +378,39 @@ public class PdvController {
 				dto.setTipoPontoPDV(new TipoPontoPDV());
 			}
 		}
-		
-		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv, null);
-		
-		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 			
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}
 	
-	@Post
-	public void cancelarCadastro(){
+	private void tratarPathImagem(PdvDTO dto) {
+		
+		ParametroSistema pathPDV = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
+		
+		File file = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"),"pdv_" + dto.getId() + ".jpeg");
+		   		
+		if(file.exists()) 
+			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
+	}
+	private void limparDadosSessao() {
 		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		this.httpSession.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_TELEFONES_EXIBICAO);
+		
+		httpSession.setAttribute(IMAGEM_PDV, null);
+	}
+
+	@Post
+	@Path("/cancelarCadastro")
+	public void cancelarCadastro(){
+		
+		limparDadosSessao();
 		
 		result.use(Results.json()).from("", "result").serialize();
 	}
@@ -396,14 +419,7 @@ public class PdvController {
 	@Path("/salvar")
 	public void salvarPDV(PdvDTO pdvDTO){		
 		
-		pdvDTO.setImagem((InputStream) session.getAttribute(IMAGEM_PDV));
-		
-		preencherTelefones(pdvDTO);
-		
-		//pdvDTO.setEndereco(endereco);
-		
-		pdvService.salvar(pdvDTO);
-		
+	
 		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo() == -1){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Estabelecimento deve ser informado!");
 		}
@@ -411,6 +427,16 @@ public class PdvController {
 		if(pdvDTO.isExpositor() && pdvDTO.getTipoExpositor().isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
 		}
+		
+		pdvDTO.setImagem((FileInputStream) httpSession.getAttribute(IMAGEM_PDV));
+		
+		pdvDTO.setPathAplicacao(servletContext.getRealPath(""));
+		
+		preencherTelefones(pdvDTO);
+		
+		preencherEnderecos(pdvDTO);
+		
+		pdvService.salvar(pdvDTO);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
@@ -422,7 +448,7 @@ public class PdvController {
 		
 		@SuppressWarnings("unchecked")
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
-				session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+				httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
 		
 		if (listaTelefone != null){
@@ -433,15 +459,40 @@ public class PdvController {
 		
 		@SuppressWarnings("unchecked")
 		Set<Long> listaTelefoneRemover = (Set<Long>) 
-				session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+				httpSession.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
 		pdvDTO.setTelefonesRemover(listaTelefoneRemover);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void preencherEnderecos(PdvDTO pdvDTO) {
+	
+		List<EnderecoAssociacaoDTO> listaEnderecosSalvos = 
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		pdvDTO.setEnderecosAdicionar(listaEnderecosSalvos);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosExcluidos = 
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		if(listaEnderecosExcluidos!= null && !listaEnderecosExcluidos.isEmpty()){
+			
+			pdvDTO.setEnderecosRemover(new HashSet<Long>());
+			
+			for(EnderecoAssociacaoDTO endereco :  listaEnderecosExcluidos){
+				
+				pdvDTO.getEnderecosRemover().add(endereco.getId());
+			}
+		}
 	}
 
 	@Post
 	@Path("/adicionarPeriodo")
 	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
+		
+		if(novoPeriodo.getTipoPeriodoFuncionamentoPDV() == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve selecionado.");
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -453,17 +504,25 @@ public class PdvController {
 			periodos = new ArrayList<PeriodoFuncionamentoDTO>();
 		}
 		
-		try {
+		if( !TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao().equals(novoPeriodo.getNomeTipoPeriodo()) ) {
+ 		
+			if(novoPeriodo.getInicio() == null || novoPeriodo.getInicio().trim().isEmpty()) {
+				throw new ValidacaoException(
+						TipoMensagem.WARNING,"Horário de início não não foi preenchido corretamente.");
+			}
+	
+			if(novoPeriodo.getFim() == null || novoPeriodo.getFim().trim().isEmpty()) {
+				throw new ValidacaoException(
+						TipoMensagem.WARNING,"Horário de términio não não foi preenchido corretamente.");
+			}
 			
-			pdvService.validarPeriodos(periodos);
-			periodos.add(novoPeriodo);
-			tiposPeriodosPossiveis = pdvService.getPeriodosPossiveis(periodos);
-						
-		}catch(Exception e) {
-			mensagens.clear();
-			mensagens.add(e.getMessage());
-			status=TipoMensagem.ERROR;
+			validarHorario(novoPeriodo);
 		}
+		
+		pdvService.validarPeriodos(periodos);
+		periodos.add(novoPeriodo);
+		tiposPeriodosPossiveis = pdvService.getPeriodosPossiveis(periodos);
+					
 
 		Object[] retorno = new Object[3];
 		retorno[0] = getCombosPeriodos(tiposPeriodosPossiveis);
@@ -473,6 +532,26 @@ public class PdvController {
 		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 	}
 	
+	private void validarHorario(PeriodoFuncionamentoDTO novoPeriodo) {
+		
+		try {
+			
+			Date inicio = DateUtil.parseData(novoPeriodo.getInicio(), "hh:mm");
+			Date fim = DateUtil.parseData(novoPeriodo.getFim(), "hh:mm");
+						
+			if(DateUtil.isDataInicialMaiorDataFinal(inicio, fim)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Hora de início deve ser menor que de fim.");
+			}
+			
+		} catch(ValidacaoException ve) {
+			throw ve;
+		}catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Horário inválido.");
+		}
+		
+		
+	}
+
 	@Post
 	@Path("/obterPeriodosPossiveis")
 	public void obterPeriodosPossiveis(List<PeriodoFuncionamentoDTO> periodos){		
@@ -529,9 +608,16 @@ public class PdvController {
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		List<String> mensagens = new ArrayList<String>();
 		
-		String nomeArquivo = NO_IMAGE; 
+		String nomeArquivo = null; 
+		
+		String path = null;
 		
 		try {
+			
+			ParametroSistema pathPDV = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+			
+			path = pathPDV.getValor().replace("\\", "/");
 			
 			if(((FileInputStream)uploadedFile.getFile()).getChannel().size() > (1024 * 1024 * 5)) {
 				throw new Exception("O arquivo deve ser menor que 5MBs.");
@@ -552,7 +638,7 @@ public class PdvController {
 		Object[] retorno = new Object[3];
 		retorno[0] = mensagens;
 		retorno[1] = status.name();		
-		retorno[2] = nomeArquivo;
+		retorno[2] = path + nomeArquivo;
 				
 		result.use(PlainJSONSerialization.class)
 			.from(retorno, "result").recursive().serialize();
@@ -561,15 +647,15 @@ public class PdvController {
 	
 	private File gravarArquivo(UploadedFile uploadedFile) {
 		
-		String pathAplicacao = servletContext.getRealPath("");
+		ParametroSistema pathPDV = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
 		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-				
-		File fileDir = new File(pathAplicacao, DIRETORIO_ARQUIVO);
+						
+		File fileDir = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"));
 		
 		fileDir.mkdirs();
 
-		String nomeArquivo = "pdv_temp";
+		String nomeArquivo = "pdv_temp.jpeg";
 		
 		File fileArquivo = new File(fileDir, nomeArquivo);
 			
@@ -581,11 +667,11 @@ public class PdvController {
 		try {
 						
 			fos = new FileOutputStream(fileArquivo);
-			
+						
 			((FileInputStream)uploadedFile.getFile()).getChannel().size();
-			IOUtils.copyLarge(uploadedFile.getFile(), fos);
+			IOUtils.copyLarge(((FileInputStream)uploadedFile.getFile()), fos);
 			
-			session.setAttribute(IMAGEM_PDV, uploadedFile.getFile());
+			httpSession.setAttribute(IMAGEM_PDV, new FileInputStream(new File(fileDir, nomeArquivo)));
 			
 		} catch (Exception e) {
 			
@@ -605,7 +691,7 @@ public class PdvController {
 		
 		return fileArquivo;
 	}
-
+	
 	@Post
 	@Path("/excluirImagem")
 	public void excluirImagem(Long idPdv) {
@@ -634,40 +720,62 @@ public class PdvController {
 	
 	private void excluirArquivo(Long idPdv) {
 		
-		session.setAttribute(IMAGEM_PDV, null);
+		httpSession.setAttribute(IMAGEM_PDV, null);
 		
 		if(idPdv == null)
 			return;
 		
-		String pathAplicacao = servletContext.getRealPath("");
-		
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-				
-		File file = new File(pathAplicacao, DIRETORIO_ARQUIVO + "pdv_" + idPdv + ".jpeg"); 
+		ParametroSistema pathPDV = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_IMAGENS_PDV);
+						
+		File file = new File((servletContext.getRealPath("") + pathPDV.getValor()).replace("\\", "/"),"pdv_" + idPdv + ".jpeg");
 		   		
 		if(file.exists())
 			file.delete();
 
 	}
-	
-	
+
 	private void carregarTelefonesPDV(Long idPdv, Long idCota) {
 		
 		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);
 		
-		session.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
-		session.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
-		session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
+		httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
+		httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
+	}
+	
+	/**
+	 * Carrega endereços ligados ao PDV e Cota
+	 * Dados serão utilizados pelo componente de Endereço
+	 * 
+	 * @param idPdv - Id do PDV
+	 * @param idCota - Id da Cota
+	 */
+	private void carregarEndercosPDV(Long idPdv, Long idCota) {
+		
+		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
+		
+		httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
+		httpSession.setAttribute(LISTA_ENDERECOS_REMOVER_SESSAO, null);
+		httpSession.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, null);
 	}
 		
+	/**
+	 * Carrega dados  de Telefone e Endereço da cota para novo PDV
+	 * 
+	 * @param idCota - Id da Cota
+	 */
 	@Post
 	@Path("/novo")
 	public void carregarDadosNovoPdv(Long idCota) {
-	
-		carregarTelefonesPDV(null, idCota);
-				
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 		
+		limparDadosSessao();
+		
+		carregarTelefonesPDV(null, idCota);
+		
+		carregarEndercosPDV(null,idCota);
+
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
 

@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -451,5 +452,29 @@ public class LancamentoRepositoryImpl extends
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 
 		return query.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(PeriodoVO periodo) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select count(chamadaEncalhe) ")
+		   .append(" from ChamadaEncalhe chamadaEncalhe ")
+		   .append(" where chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
+		   .append(" and chamadaEncalhe.dataRecolhimento between :dataInicial and :dataFinal ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		query.setParameter("dataInicial", periodo.getDataInicial());
+		query.setParameter("dataFinal", periodo.getDataFinal());
+		
+		Long quantidadeRegistrosEncontrados = (Long) query.uniqueResult();
+		
+		return quantidadeRegistrosEncontrados > 0;
 	}
 }
