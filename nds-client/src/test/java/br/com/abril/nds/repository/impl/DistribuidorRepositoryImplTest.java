@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
@@ -113,7 +115,14 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
 												 OperacaoDistribuidor.RECOLHIMENTO);
 		
-		save(distribuicaoDistribuidorSegunda, distribuicaoDistribuidorTerca);
+		save(distribuicaoDistribuidorSegunda, distribuicaoDistribuidorTerca);		
+		
+		for(TipoGarantia tipo:TipoGarantia.values()){
+			save(Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
+		}
+		
+		
+		
 	}
 	
 	@Test
@@ -147,6 +156,15 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(2, resultado.size());
 		Assert.assertTrue(resultado.contains(distribuicaoDistribuidorSegunda));
 		Assert.assertTrue(resultado.contains(distribuicaoDistribuidorTerca));
+	}
+	
+	
+	@Test
+	public void obtemTiposGarantiasAceitas(){
+		List<TipoGarantia> garantias =  distribuidorRepository.obtemTiposGarantiasAceitas();
+		
+		Assert.assertEquals(TipoGarantia.values().length, garantias.size());
+		Assert.assertTrue(garantias.containsAll(Arrays.asList(TipoGarantia.values())));
 	}
 
 }
