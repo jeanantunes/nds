@@ -2,13 +2,12 @@ package br.com.abril.nds.model.cadastro.garantia;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 
 @Entity
-@Table(name="COTA_GARANTIA_NOTA_PROMISSORIA")
 public class CotaGarantiaNotaPromissoria extends CotaGarantia {
 
 	/**
@@ -16,7 +15,8 @@ public class CotaGarantiaNotaPromissoria extends CotaGarantia {
 	 */
 	private static final long serialVersionUID = 8745281038847495684L;
 	
-	@OneToOne(mappedBy="cotaGarantiaNotaPromissoria",cascade={CascadeType.ALL})
+	@OneToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="NOTA_PROMISSORIA_ID")
 	private NotaPromissoria notaPromissoria;
 
 	/**
