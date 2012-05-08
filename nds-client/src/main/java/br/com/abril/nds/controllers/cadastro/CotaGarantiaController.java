@@ -8,7 +8,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
@@ -69,8 +68,7 @@ public class CotaGarantiaController {
 	
 	@Get("/getTiposGarantia.json")
 	public void getTiposGarantia(){
-		List<TipoGarantia> cotaGarantias = null;
-		
+		List<TipoGarantia> cotaGarantias = cotaGarantiaService.obtemTiposGarantiasAceitas();		
 		result.use(Results.json()). withoutRoot().from(cotaGarantias).recursive().serialize();
 	}
 }

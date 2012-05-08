@@ -391,7 +391,6 @@ public class ChamadaoController {
 		TableModel<CellModelKeyValue<ChamadaoVO>> tableModel =
 			new TableModel<CellModelKeyValue<ChamadaoVO>>();
 		
-		//tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaChamadao));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		tableModel.setTotal(qtdeTotalRegistros);
 		
