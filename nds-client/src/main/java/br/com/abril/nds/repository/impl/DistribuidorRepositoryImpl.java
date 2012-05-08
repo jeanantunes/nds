@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,8 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
 @Repository
@@ -85,6 +88,18 @@ public class DistribuidorRepositoryImpl extends
 		criteria.setMaxResults(1);
 		
 		return (EnderecoDistribuidor) criteria.uniqueResult();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obtemTiposGarantiasAceitas()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoGarantia> obtemTiposGarantiasAceitas() {		
+		Criteria criteria =  getSession().createCriteria(TipoGarantiaAceita.class);		
+		criteria.setProjection(Projections.property("tipoGarantia"));
+		return criteria.list();
 	}
 	
 

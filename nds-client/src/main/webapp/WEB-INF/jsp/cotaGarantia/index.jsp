@@ -1,7 +1,12 @@
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
 
-
+<<script type="text/javascript">
+$(function(){
+	var notaPromissoria = new NotaPromissoria($("#_idCotaRef").val());	
+	
+});
+</script>
 <table width="755" cellpadding="2" cellspacing="2"
 	style="text-align: left;">
 
@@ -9,8 +14,8 @@
 
 		<td width="108">Tipo de Garantia:</td>
 
-		<td width="631"><select name="" style="width: 250px;"
-			onchange="opcaoTipoGarantiaPf(this.value);">
+		<td width="631">
+			<select id="tipoGarantiaSelect" style="width: 250px;">
 
 				<option value="" selected="selected">Selecione...</option>
 
@@ -31,7 +36,7 @@
 </table>
 
 
-<div id="cotaGarantiaNotaPromissoriaPanel">
+<div id="cotaGarantiaNotaPromissoriaPanel" style="display: none;">
 	<fieldset>
 		<legend>Nota Promiss&oacute;ria</legend>
 
@@ -77,10 +82,9 @@
 			<tr>
 
 				<td>&nbsp;</td>
-
 				<td colspan="3"><span class="bt_novos" title="Imprimir"><a
-						href="../nota_promissoria.htm" target="_blank"><img
-							src="../images/ico_impressora.gif" alt="Imprimir" hspace="5"
+						href="javascript:void(0);" id="cotaGarantiaNotaPromissoriaImprimir" target="_blank"><img
+							src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5"
 							border="0" />Imprimir</a></span></td>
 
 			</tr>
