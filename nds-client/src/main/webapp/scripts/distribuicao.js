@@ -51,9 +51,7 @@ function Distribuicao(tela) {
 	 * @param dto - objeto Espelho de DistribuicaoDTO esperado (br.com.abril.nds.dto) 
 	 */
 	this.setDados = function(dto) {
-		
-		D.get
-		
+				
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
 		
