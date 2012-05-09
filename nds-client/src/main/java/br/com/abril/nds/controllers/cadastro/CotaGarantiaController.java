@@ -63,7 +63,7 @@ public class CotaGarantiaController {
 		
 		result.use(Results.json())
 		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
-				"Cheque Cau��o salvo com Sucesso."), "result")
+				"Cheque Caução salvo com Sucesso."), "result")
 		.recursive().serialize();
 	}
 	
