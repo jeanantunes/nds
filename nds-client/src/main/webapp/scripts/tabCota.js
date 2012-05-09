@@ -1,8 +1,8 @@
-function TabCota(tabName) {
+function TabCota(tabName , funcaoSalvarInicial) {
 	
 	var T = this;
 	
-	this.funcaoSalvar=null;
+	this.funcaoSalvar = funcaoSalvarInicial;
 	
 	this.novaAba=null;
 		
@@ -15,37 +15,44 @@ function TabCota(tabName) {
 		
 		/**DADOS CADASTRAIS**/
 		case 0: 
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js)(tabCota.js) - Salvar Dados Cadastrais.');};
+			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Dados Cadastrais.');
 			break;
-		
+			
 		/**ENDERECOS**/
 		case 1:
-			
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar enderecos.');};
 			ENDERECO_COTA.popularGridEnderecos();
 			break;
 		
 		/**TELEFONES**/
 		case 2: 
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Telefones.');};
 			COTA.carregarTelefones();
 			break;
 
 		/**PDV**/
 		case 3: 
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados PDV.');};
 			carregarPDV();
 			break;
 		
 		/**GARANTIA**/
 		case 4: 
-			void(0);
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Garantia.');};
+			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Garantia.');
 			break;
 		
 		/**FINANCEIRO**/
 		case 5:
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados Financeiro.');};
 			carregaFinanceiro();
 			break;
 
 		/**BANCOS**/		
 		case 6:
-			T.funcaoSalvar = function(){return false;};
+			T.funcaoSalvar = function(){return confirm('Deseja sair da aba sem salvar? \n//TODO - Definir método(tabCota.js) - Salvar Dados Bancos.'); };
+			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Bancos.');
 			break;
 		
 		/**DISTRIBUICAO**/
@@ -56,6 +63,8 @@ function TabCota(tabName) {
 		
 		/**FORNECEDOR**/
 		case 8:
+			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados Fornecedor.');};
+			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Fornecedor.');
 			break;
 		}
 		
@@ -81,9 +90,10 @@ function TabCota(tabName) {
 		    	}
 		    	
 		    	T.novaAba = ui.index;
-		    	T.funcaoSalvar(T.abrirNovaAba);
 		    	
-		    	return false;
+		    	return T.funcaoSalvar(T.abrirNovaAba);
+		    	
+		    	//return false;
 		    }
 		});	
 		
