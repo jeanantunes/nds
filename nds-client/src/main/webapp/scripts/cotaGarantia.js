@@ -3,10 +3,10 @@
  * @returns {NotaPromissoria}
  */
 function NotaPromissoria(idCota) {
+	this.idCota = idCota;
 	this.bindEvents();
 	this.get();
 	this.toggle();
-	this.idCota = idCota;
 };
 NotaPromissoria.prototype.path = contextPath + "/cadastro/garantia/";
 NotaPromissoria.prototype.notaPromissoria = {
@@ -44,20 +44,20 @@ NotaPromissoria.prototype.processPost = function(objectName, object) {
 NotaPromissoria.prototype.get = function() {
 
 	var _this = this;
-	$.getJSON(this.path + 'getByCota.json', {
+	$.postJSON(this.path + 'getByCota.json', {
 		'idCota' : this.idCota
 	}, function(data) {
+
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
-
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
-		} else {
+		} else if (data.cotaGarantia && data.cotaGarantia.notaPromissoria) {
 			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
 			_this.dataBind();
 		}
 
-	},null, true);
+	}, null, true);
 };
 
 NotaPromissoria.prototype.toggle = function() {
@@ -69,6 +69,11 @@ NotaPromissoria.prototype.dataBind = function() {
 	$("#cotaGarantiaNotaPromissoriaVencimento").val(
 			this.notaPromissoria.vencimento.$);
 	$("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor);
+	$("#cotaGarantiaNotaPromissoriaValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
 	$("#cotaGarantiaNotaPromissoriavalorExtenso").val(
 			this.notaPromissoria.valorExtenso);
 };
@@ -76,7 +81,8 @@ NotaPromissoria.prototype.dataBind = function() {
 NotaPromissoria.prototype.dataUnBind = function() {
 	this.notaPromissoria.vencimento = $(
 			"#cotaGarantiaNotaPromissoriaVencimento").val();
-	this.notaPromissoria.valor = $("#cotaGarantiaNotaPromissoriaValor").val();
+	this.notaPromissoria.valor = $("#cotaGarantiaNotaPromissoriaValor")
+			.unmask() / 100;
 	this.notaPromissoria.valorExtenso = $(
 			"#cotaGarantiaNotaPromissoriavalorExtenso").val();
 };
@@ -84,6 +90,11 @@ NotaPromissoria.prototype.dataUnBind = function() {
 NotaPromissoria.prototype.bindEvents = function() {
 	var _this = this;
 	$("#cotaGarantiaNotaPromissoriaVencimento").mask("99/99/9999");
+	$("#cotaGarantiaNotaPromissoriaValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
 	$("#cotaGarantiaNotaPromissoriaImprimir").bind('click', function() {
 		_this.salva(function() {
 			_this.imprimi();
@@ -97,7 +108,6 @@ NotaPromissoria.prototype.imprimi = function() {
 
 function TipoCotaGarantia() {
 	this.get();
-	this.idCota = 1;
 	this.controller = null;
 };
 TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
@@ -112,7 +122,7 @@ TipoCotaGarantia.prototype.tipo = {
 	},
 	'IMOVEL' : {
 		label : 'Imóvel',
-		class : null
+		controller : null
 	},
 	'NOTA_PROMISSORIA' : {
 		label : 'Nota Promissória',
@@ -135,7 +145,7 @@ TipoCotaGarantia.prototype.get = function() {
 			_this.bindData(data);
 		}
 
-	},null,true);
+	}, null, true);
 };
 TipoCotaGarantia.prototype.bindData = function(data) {
 	var select = document.getElementById("tipoGarantiaSelect");
@@ -147,31 +157,39 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 		var tipo = data[index];
 		var option = document.createElement("option");
 		option.text = this.tipo[tipo].label;
-		option.value = tipo;		
-		select.add(option, null);
+		option.value = tipo;
+		try {
+			select.add(option, select.options[null]);
+		} catch (e) {
+			select.add(option, null);
+		}
 	}
-	
-	//this.bindEvents();
+
+	// this.bindEvents();
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
-	var _this =  this;
+	var _this = this;
 	$("#tipoGarantiaSelect").change(function(eventObject) {
-		var valor =  $(this).val();
-		if(valor.length > 0 ){
+		var valor = $(this).val();
+		if (valor.length > 0) {
 			_this.changeController(valor);
 		}
 	}).change();
 };
 
-TipoCotaGarantia.prototype.changeController =  function(tipo){
-	
+TipoCotaGarantia.prototype.changeController = function(tipo) {
+
 	console.log(tipo);
-	if(this.controller ){
+	if (this.controller) {
 		this.controller.toggle();
 		this.controller = null;
 	}
-	
+
 	var obj = this.tipo[tipo].controller;
-	this.controller = new obj(this.idCota);	
+	this.controller = new obj(this.getIdCota());
+};
+
+TipoCotaGarantia.prototype.getIdCota = function() {
+	return $('#_idCotaRef').val();
 };
