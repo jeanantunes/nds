@@ -240,7 +240,7 @@ TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
 TipoCotaGarantia.prototype.tipo = {
 	'FIADOR' : {
 		label : 'Fiador',
-		controller : null
+		controller : Fiador
 	},
 	'CHEQUE_CAUCAO' : {
 		label : 'Cheque Caução',
@@ -319,3 +319,56 @@ TipoCotaGarantia.prototype.changeController = function(tipo) {
 TipoCotaGarantia.prototype.getIdCota = function() {
 	return $('#_idCotaRef').val();
 };
+
+
+function Fiador(idCota){
+	this.idCota = idCota;
+	this.bindEvents();
+	
+}
+Fiador.prototype.path = contextPath + "/cadastro/garantia/";
+Fiador.prototype.toggle = function() {
+	$('#cotaGarantiaNotaPromissoriaPanel').toggle();
+};
+
+Fiador.prototype.bindEvents = function() {
+	$("#cotaGarantiaFiadorSearchName").autocomplete({
+		source : function(request, response) {
+			$.postJSON(this.path + 'buscaFiador.json', {
+				name : request.term,
+				maxResults:6
+			}, function(data) {
+				response($.map(data.items, function(item) {
+					return {
+						label : item.value,
+						value : item.key
+					}
+				}));
+
+			}, null, true);
+
+		},
+		minLength : 3,
+		select : function(event, ui) {
+			log(ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+		},
+		open : function() {
+			$(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+		},
+		close : function() {
+			$(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+		}
+	});
+};
+
+
+
+
+
+
+
+
+
+
+
+

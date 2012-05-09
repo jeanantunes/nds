@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
@@ -89,4 +90,11 @@ public class CotaGarantiaController {
 		List<TipoGarantia> cotaGarantias = cotaGarantiaService.obtemTiposGarantiasAceitas();		
 		result.use(Results.json()). withoutRoot().from(cotaGarantias).recursive().serialize();
 	}
+
+	@Post("/buscaFiador.json")
+	public void buscaFiador(String nome, int maxResults) {
+		List<ItemDTO<Long, String>> listFiador = cotaGarantiaService.buscaFiador(nome, maxResults);		
+		result.use(Results.json()).withoutRoot().from(listFiador).recursive().serialize();
+	}
+	
 }
