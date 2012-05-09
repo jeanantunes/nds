@@ -137,6 +137,7 @@ function Endereco(paramTela,paramMessage) {
 				data,
 			function(result) {
 				$("#"+paramTela+"idEndereco").val(result.id);
+				$("#"+paramTela+"enderecoid").val(result.endereco.id);
 				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
 				$("#"+paramTela+"cep").val(result.endereco.cep);
 				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);

@@ -10,14 +10,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 
 /**
  * @author Diego Fernandes
@@ -73,11 +69,7 @@ public class Cheque implements Serializable {
 	
 	@Column(name="CORRENTISTA")
 	private String correntista;
-	
-	@OneToOne(optional=false)
-	@JoinColumn(name="COTA_GARANTIA_CHEQUE_CAUCAO_ID")
-	private CotaGarantiaChequeCaucao cotaGarantiaChequeCaucao;
-
+		
 	/**
 	 * @return the id
 	 */
@@ -246,18 +238,4 @@ public class Cheque implements Serializable {
 		this.correntista = correntista;
 	}
 
-	/**
-	 * @return the cotaGarantiaChequeCaucao
-	 */
-	public CotaGarantiaChequeCaucao getCotaGarantiaChequeCaucao() {
-		return cotaGarantiaChequeCaucao;
-	}
-
-	/**
-	 * @param cotaGarantiaChequeCaucao the cotaGarantiaChequeCaucao to set
-	 */
-	public void setCotaGarantiaChequeCaucao(
-			CotaGarantiaChequeCaucao cotaGarantiaChequeCaucao) {
-		this.cotaGarantiaChequeCaucao = cotaGarantiaChequeCaucao;
-	}
 }

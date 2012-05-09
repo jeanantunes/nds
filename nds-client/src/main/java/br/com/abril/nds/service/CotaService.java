@@ -129,6 +129,14 @@ public interface CotaService {
 	 */
 	DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota);
 	
+	
 	List<Fornecedor> obterFornecedoresCota(Long idCota);
+
+	/**
+	 * Salvar dados de Distribuição da cota
+	 * 
+	 * @param distribuicao - DTO que representa os dados de Distribuição da cota
+	 */
+	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
 	
 }

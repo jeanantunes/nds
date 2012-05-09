@@ -37,6 +37,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
+		Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
+		
 		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = balanceamentoRecolhimento.getMatrizRecolhimento();
 		
 		Assert.assertNotNull(matrizRecolhimento);

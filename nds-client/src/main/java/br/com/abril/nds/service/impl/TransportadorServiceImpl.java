@@ -110,6 +110,10 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		this.validarDadosEntrada(transportador);
 		
+		this.validarDadosEntradaEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);
+		
+		this.validarDadosEntradaTelefone(transportador, listaTelefoneAdicionar, listaTelefoneRemover);
+		
 		transportador.getPessoaJuridica().setCnpj(transportador.getPessoaJuridica().getCnpj().replace(".", "").replace("-", "").replace("/", ""));
 		
 		transportador.getPessoaJuridica().setId(
@@ -142,6 +146,133 @@ public class TransportadorServiceImpl implements TransportadorService {
 		this.processarAssocicoes(transportador, listaAssociacaoAdicionar, listaAssociacaoRemover);
 	}
 	
+	private void validarDadosEntradaTelefone(Transportador transportador,
+			List<TelefoneAssociacaoDTO> listaTelefoneAdicionar,
+			Set<Long> listaTelefoneRemover) {
+		
+		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
+			
+			boolean existePrincipal = false;
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
+				
+				if (dto.getTelefone() != null && dto.getTelefone().getId() != null){
+					
+					idsIgnorar.add(dto.getTelefone().getId());
+				}
+				
+				if (dto.isPrincipal()){
+					
+					existePrincipal = true;
+					break;
+				}
+			}
+			
+			if (listaTelefoneRemover != null && !listaTelefoneRemover.isEmpty()){
+				
+				idsIgnorar.addAll(listaTelefoneRemover);
+			}
+			
+			if (existePrincipal){
+				
+				if (transportador.getId() != null){
+					
+					if (this.telefoneTransportadorRepositoty.verificarTelefonePrincipalTransportador(transportador.getId(), idsIgnorar)){
+						
+						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 telefone principal é permitido.");
+					}
+				}
+			} else {
+				
+				if (transportador.getId() != null){
+					
+					if (!this.telefoneTransportadorRepositoty.verificarTelefonePrincipalTransportador(transportador.getId(), idsIgnorar)){
+						
+						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
+					}
+				} else {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
+				}
+			}
+		} else {
+			
+			if (!this.telefoneTransportadorRepositoty.verificarTelefonePrincipalTransportador(transportador.getId(), listaTelefoneRemover)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
+			}
+		}
+	}
+
+	private void validarDadosEntradaEnderecos(Transportador transportador,
+			List<EnderecoAssociacaoDTO> listaEnderecosAdicionar,
+			Set<Long> listaEnderecosRemover) {
+		
+		if (listaEnderecosAdicionar != null && !listaEnderecosAdicionar.isEmpty()) {
+			
+			boolean existePrincipal = false;
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
+				
+				if (dto.getEndereco() != null && dto.getEndereco().getId() != null){
+					
+					idsIgnorar.add(dto.getEndereco().getId());
+				}
+				
+				if (dto.isEnderecoPrincipal()){
+					
+					existePrincipal = true;
+					break;
+				}
+			}
+			
+			if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
+				
+				idsIgnorar.addAll(listaEnderecosRemover);
+			}
+			
+			if (existePrincipal){
+				
+				if (transportador.getId() != null){
+					
+					if (this.enderecoTransportadorRepository.verificarEnderecoPrincipalTransportador(transportador.getId(), idsIgnorar)){
+						
+						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 endereço principal é permitido.");
+					}
+				}
+			} else {
+				
+				if (transportador.getId() != null){
+					
+					if (!this.enderecoTransportadorRepository.verificarEnderecoPrincipalTransportador(transportador.getId(), idsIgnorar)){
+						
+						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
+					}
+				} else {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
+				}
+			}
+		} else {
+			
+			Set<Long> idsEnderecosIgnorar = new HashSet<Long>();
+			
+			if (listaEnderecosRemover != null && !listaEnderecosRemover.isEmpty()){
+				
+				idsEnderecosIgnorar.addAll(listaEnderecosRemover);
+			}
+			
+			if (!this.enderecoTransportadorRepository.verificarEnderecoPrincipalTransportador(transportador.getId(), idsEnderecosIgnorar)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 endereço principal.");
+			}
+		}
+	}
+
 	private void processarMotoristas(Transportador transportador,
 			List<Motorista> listaMotoristasAdicionar,
 			Set<Long> listaMotoristasRemover) {
