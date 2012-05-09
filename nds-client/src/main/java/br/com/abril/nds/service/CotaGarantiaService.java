@@ -4,10 +4,12 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
@@ -48,7 +50,16 @@ public interface CotaGarantiaService {
 	 * @see br.com.abril.nds.repository.DistribuidorRepository#obtemTiposGarantiasAceitas()
 	 */
 	public abstract List<TipoGarantia> obtemTiposGarantiasAceitas();
-
+	
+	
+	/**
+	 * Salva no repositorio de dados a garantia de imóvel.
+	 * @param listaImovel lista de imóveis
+	 * @param idCota Id da cota
+	 * @return
+	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
+	 */
+	public abstract CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota) throws RelationshipRestrictionException;
 	
 	/**
 	 * Salva no repositorio de dados a garantia de um cheque caução.
