@@ -1,0 +1,27 @@
+package br.com.abril.nds.integracao.engine;
+
+/**
+ * Enum com as chaves das propriedades que vão no header da mensagem
+ * 
+ * @author jonatas.junior
+ */
+public enum MessageHeaderProperties {
+
+	URI("URI"),
+	PAYLOAD("PAYLOAD"),
+	FILE_NAME("FILE_NAME"),
+	FILE_CREATION_DATE("FILE_CREATION_DATE,"),
+	LINE_NUMBER("LINE_NUMBER"),
+	USER_NAME("USER_NAME"),
+	INTERFACE("INTERFACE");
+	
+	private String value;
+	
+	private MessageHeaderProperties(String value) {
+		this.value = value;
+	}
+	
+	public String getValue() {
+		return this.value;
+	}
+}
