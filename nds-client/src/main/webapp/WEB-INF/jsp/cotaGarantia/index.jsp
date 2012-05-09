@@ -59,4 +59,82 @@ $(function(){
 		</table>
 	</fieldset>
 </div>
+
+<div id="cotaGarantiaChequeCaucaoPanel" style="display: none;">
+	<fieldset>
+		<legend>Dados Banc&aacute;rios</legend>
+		<table width="601" border="0" cellspacing="2" cellpadding="2">
+			<tr>
+				<td width="138">Num. Banco:</td>
+				<td width="122"><input type="text"
+					name="cotaGarantiaChequeCaucaoNumeroBanco"
+					id="cotaGarantiaChequeCaucaoNumeroBanco" style="width: 60px;" /></td>
+
+				<td width="82">Nome:</td>
+				<td width="233"><input type="text"
+					name="cotaGarantiaChequeCaucaoNomeBanco"
+					id="cotaGarantiaChequeCaucaoNomeBanco" style="width: 200px;" /></td>
+			</tr>
+
+			<tr>
+				<td>Ag&ecirc;ncia:</td>
+				<td><input type="text" name="cotaGarantiaChequeCaucaoAgencia"
+					id="cotaGarantiaChequeCaucaoAgencia" style="width: 60px;" />- <input
+					type="text" name="cotaGarantiaChequeCaucaoDvAgencia"
+					id="cotaGarantiaChequeCaucaoDvAgencia" style="width: 30px;" /></td>
+
+				<td>Conta:</td>
+				<td><input type="text" name="cotaGarantiaChequeCaucaoConta"
+					id="cotaGarantiaChequeCaucaoConta" style="width: 60px;" />- <input
+					type="text" name="cotaGarantiaChequeCaucaoDvConta"
+					id="cotaGarantiaChequeCaucaoDvConta" style="width: 30px;" /></td>
+			</tr>
+
+			<tr>
+				<td>N&ordm; Cheque:</td>
+				<td><input type="text"
+					name="cotaGarantiaChequeCaucaoNumeroCheque"
+					id="cotaGarantiaChequeCaucaoNumeroCheque" style="width: 107px;" />
+				</td>
+				<td>Valor R$:</td>
+				<td><input type="text" name="cotaGarantiaChequeCaucaoValor"
+					id="cotaGarantiaChequeCaucaoValor"
+					style="width: 108px; text-align: right;" /></td>
+			</tr>
+			<tr>
+				<td>Data do Cheque:</td>
+				<td><input type="text" name="cotaGarantiaChequeCaucaoEmissao"
+					id="cotaGarantiaChequeCaucaoEmissao" style="width: 107px;" /></td>
+				<td>Validade:</td>
+				<td><input type="text" name="cotaGarantiaChequeCaucaoValidade"
+					id="cotaGarantiaChequeCaucaoValidade"
+					style="width: 108px; text-align: right;" /></td>
+			</tr>
+			<tr>
+				<td>Nome Correntista:</td>
+				<td colspan="3"><input type="text"
+					name="cotaGarantiaChequeCaucaoCorrentista"
+					id="cotaGarantiaChequeCaucaoCorrentista" style="width: 345px;" />
+				</td>
+			</tr>
+
+			<tr>
+				<td>Imagem Cheque:</td>
+				<td colspan="3">
+					<input name="fileField" type="file"
+					id="fileField" size="58" />
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+	<br clear="all" /> <br />
+	<fieldset>
+		<legend>Foto Cheque</legend>
+		<br />
+		<div align="center">
+			<img src="../images/cheque.jpg" />
+		</div>
+	</fieldset>
+</div>
+
 <br clear="all" />
