@@ -90,21 +90,21 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		dinapQuarta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		dinapSexta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.RECOLHIMENTO);
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 		save(dinapSegunda, dinapQuarta, dinapSexta);
 
 		fcSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorFC, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		fcSexta = Fixture.distribuicaoFornecedor(
 				fornecedorFC, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.RECOLHIMENTO);
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 		save(fcSegunda, fcSexta);
 		
 		distribuicaoDistribuidorSegunda =
