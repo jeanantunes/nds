@@ -13,16 +13,16 @@ public class DistribuicaoDTO implements Serializable  {
 
 	private static final long serialVersionUID = 7056333731558241749L;
 
-	
-	private String numCota;
+	private Integer numCota;
 	private Integer qtdePDV;
+	private Boolean qtdeAutomatica;
 	private String box;
 	private String assistComercial;
 	private Long tipoEntrega;
 	private String observacao;
 	private Boolean arrendatario;
-	private String repPorPontoVenda;
-	private String solNumAtras;
+	private Boolean repPorPontoVenda;
+	private Boolean solNumAtras;
 	private Boolean recebeRecolhe;
 	private Boolean neImpresso;
 	private Boolean neEmail;
@@ -40,14 +40,14 @@ public class DistribuicaoDTO implements Serializable  {
 	/**
 	 * @return the numCota
 	 */
-	public String getNumCota() {
+	public Integer getNumCota() {
 		return numCota;
 	}
 
 	/**
 	 * @param numCota the numCota to set
 	 */
-	public void setNumCota(String numCota) {
+	public void setNumCota(Integer numCota) {
 		this.numCota = numCota;
 	}
 
@@ -134,35 +134,7 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setArrendatario(Boolean arrendatario) {
 		this.arrendatario = arrendatario;
 	}
-
-	/**
-	 * @return the repPorPontoVenda
-	 */
-	public String getRepPorPontoVenda() {
-		return repPorPontoVenda;
-	}
-
-	/**
-	 * @param repPorPontoVenda the repPorPontoVenda to set
-	 */
-	public void setRepPorPontoVenda(String repPorPontoVenda) {
-		this.repPorPontoVenda = repPorPontoVenda;
-	}
-
-	/**
-	 * @return the solNumAtras
-	 */
-	public String getSolNumAtras() {
-		return solNumAtras;
-	}
-
-	/**
-	 * @param solNumAtras the solNumAtras to set
-	 */
-	public void setSolNumAtras(String solNumAtras) {
-		this.solNumAtras = solNumAtras;
-	}
-
+	
 	/**
 	 * @return the recebeRecolhe
 	 */
@@ -274,6 +246,46 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setTiposEntrega(List<ItemDTO<Long, String>> tiposEntrega) {
 		this.tiposEntrega = tiposEntrega;
 	}
-	
-	
+
+	/**
+	 * @return the repPorPontoVenda
+	 */
+	public Boolean getRepPorPontoVenda() {
+		return repPorPontoVenda;
+	}
+
+	/**
+	 * @param repPorPontoVenda the repPorPontoVenda to set
+	 */
+	public void setRepPorPontoVenda(Boolean repPorPontoVenda) {
+		this.repPorPontoVenda = repPorPontoVenda;
+	}
+
+	/**
+	 * @return the solNumAtras
+	 */
+	public Boolean getSolNumAtras() {
+		return solNumAtras;
+	}
+
+	/**
+	 * @param solNumAtras the solNumAtras to set
+	 */
+	public void setSolNumAtras(Boolean solNumAtras) {
+		this.solNumAtras = solNumAtras;
+	}
+
+	/**
+	 * @return the qtdeAutomatica
+	 */
+	public Boolean getQtdeAutomatica() {
+		return qtdeAutomatica;
+	}
+
+	/**
+	 * @param qtdeAutomatica the qtdeAutomatica to set
+	 */
+	public void setQtdeAutomatica(Boolean qtdeAutomatica) {
+		this.qtdeAutomatica = qtdeAutomatica;
+	}	
 }
