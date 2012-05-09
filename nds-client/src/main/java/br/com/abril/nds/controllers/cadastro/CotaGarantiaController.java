@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -64,6 +65,22 @@ public class CotaGarantiaController {
 		result.use(Results.json())
 		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
 				"Cheque Caução salvo com Sucesso."), "result")
+		.recursive().serialize();
+	}
+	
+	@Post
+	@Path("/salvaImovel.json")
+	public void salvaImovel(List<Imovel> listaImoveis, Long idCota) {
+		try {
+			cotaGarantiaService.salvaImovel(listaImoveis, idCota);
+		} catch (RelationshipRestrictionException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					e.getMessage()));
+		}
+		
+		result.use(Results.json())
+		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+				"Imóveis salvos com Sucesso."), "result")
 		.recursive().serialize();
 	}
 	
