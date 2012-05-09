@@ -53,6 +53,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
+		TreeSet<Date> datasRecolhimentoFornecedor = dadosRecolhimento.getDatasRecolhimentoFornecedor();
+		
 		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiaria : 
 				mapaExpectativaEncalheTotalDiaria.entrySet()) {
 			
@@ -63,8 +65,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			this.balancearProdutosRecolhimentoComChamada(
 				matrizRecolhimentoBalanceada, dadosRecolhimento, dataRecolhimentoPrevista);
 
-			TreeSet<Date> datasRecolhimentoFornecedor = dadosRecolhimento.getDatasRecolhimentoFornecedor();
-			
 			this.balancearProdutosRecolhimento(matrizRecolhimentoBalanceada, dataRecolhimentoPrevista, 
 				datasRecolhimentoFornecedor, dadosRecolhimento, expectativaEncalheABalancear);
 		}
@@ -92,7 +92,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			this.obterProdutosRecolhimentoBalanceaveisPorData(
 				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
 		
-		if (!validarCapacidadeRecolhimentoDistribuidor(
+		if (!validarLimiteCapacidadeRecolhimentoDistribuidor(
 				produtosRecolhimentoNaData, capacidadeManuseio, expectativaEncalheABalancear)) {
 			
 			// Separar quantidade de produtos-edição para não quebrar entre os dias
@@ -144,9 +144,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 	/*
 	 * Valida se a capacidade de manuseio do distribuidor é excedida com o encalhe a ser balanceado.
 	 */
-	private boolean validarCapacidadeRecolhimentoDistribuidor(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
-															  BigDecimal capacidadeManuseio,
-															  BigDecimal expectativaEncalheABalancear) {
+	private boolean validarLimiteCapacidadeRecolhimentoDistribuidor(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+															  		BigDecimal capacidadeManuseio,
+															  		BigDecimal expectativaEncalheABalancear) {
 		
 		if (produtosRecolhimento != null) {
 

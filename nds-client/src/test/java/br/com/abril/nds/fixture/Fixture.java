@@ -2385,7 +2385,6 @@ public class Fixture {
 		parametroContratoCota.setDuracaoContratoCota(duracaoContrato);
 		return parametroContratoCota;
 	}
-<<<<<<< HEAD
 
 	public static TipoEntrega criarTipoEntrega(Long id, String descricao) {
 		TipoEntrega tipoEntrega = new TipoEntrega();
@@ -2422,8 +2421,7 @@ public class Fixture {
 		parametroDistribuicaoCota.setSlipEmail(slipEmail);
 		
 		return parametroDistribuicaoCota;
-=======
-	
+	}
 	
 	public static TipoGarantiaAceita criarTipoGarantiaAceita(Distribuidor distribuidor, TipoGarantia tipoGarantia){
 		TipoGarantiaAceita tipoGarantiaAceita = new TipoGarantiaAceita();
@@ -2432,8 +2430,6 @@ public class Fixture {
 		tipoGarantiaAceita.setTipoGarantia(tipoGarantia);
 		
 		return tipoGarantiaAceita;
-		
->>>>>>> eabc5be1057d2ebbc98813559bc846ca440238a7
 	}
 	
 }
