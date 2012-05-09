@@ -5,6 +5,51 @@
 
 <script language="javascript" type="text/javascript">
 	
+	var funcaoSalvar;
+	
+	function carregaDadosNovaAba(abaSelecionada) {
+			
+		switch(abaSelecionada) {
+		
+		case 0: //DADOS CADASTRAIS
+			break;
+		
+		case 1: //ENDERECOS
+			ENDERECO_COTA.popularGridEnderecos();
+			break;
+		
+		case 2: //TELEFONES
+			COTA.carregarTelefones();
+			break;
+		
+		case 3: //PDV
+			carregarPDV();
+			break;
+		
+		case 4: //GARANTIA
+			void(0);
+			break;
+		
+		case 5: //FINANCEIRO
+			carregaFinanceiro();
+			break;
+		
+		case 6: //BANCOS
+			funcaoSalvar = function(){return false;};
+			break;
+		
+		case 7: //DISTRIBUICAO
+			funcaoSalvar = DISTRIB_COTA_CPF.salvar;
+			DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota( $('#_idCotaRef').val() );
+			break;
+		
+		case 8: //FORNECEDOR
+			break;
+		}
+		
+	}
+	
+	
 	function popup_cnpj() {
 		
 		$( "#dialog-cnpj" ).dialog({
@@ -115,6 +160,9 @@
 	  
 	function salvarCota(){
 		
+		if(funcaoSalvar)
+			funcaoSalvar();
+		
 		$.ajax({
 			type: 'POST',
 			url: '<c:url value="/cadastro/cota/salvarCota" />',
@@ -128,52 +176,6 @@
 		$( this ).dialog( "close" );
 	}
 	
-	function carregaNovaAba(abaSelecionada) {
-		
-		func = null;
-		
-		switch(abaSelecionada) {
-    	
-    	case 0: //DADOS CADASTRAIS
-    		break;
-    	
-    	case 1: //ENDERECOS
-    		ENDERECO_COTA.popularGridEnderecos();
-    		break;
-    	
-    	case 2: //TELEFONES
-    		COTA.carregarTelefones();
-    		break;
-    	
-    	case 3: //PDV
-    		carregarPDV();
-    		break;
-    	
-    	case 4: //GARANTIA
-    		void(0);
-    		break;
-    	
-    	case 5: //FINANCEIRO
-    		carregaFinanceiro();
-    		break;
-    	
-    	case 6: //BANCOS
-    		funcaoSalvar = function(){return false;};
-    		break;
-    	
-    	case 7: //DISTRIBUICAO
-    		funcaoSalvar = DISTRIB_COTA_CPF.salvar;
-    		DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota( $('#_idCotaRef').val() );
-    		break;
-    	
-    	case 8: //FORNECEDOR
-    		break;
-    	}
-		
-	}
-	
-	var funcaoSalvar;
-	var mudancaAbaPermitida = false;
 	var novaAba;
 	
 	$(function() {
@@ -189,7 +191,7 @@
 		    select: function(event, ui) {
 		    			    	
 		    	if(!funcaoSalvar) {
-		    		return true;
+		    		return;
 		    	}
 		    	
 		    	novaAba = ui.index;
@@ -202,10 +204,8 @@
 		
 		$("#tabpf").tabs({
 			
-		    show: function(event, ui) {
-				
-		    	carregaNovaAba(ui.index);
-		    	return true;
+		    show: function(event, ui) {				
+		    	carregaDadosNovaAba(ui.index);
 		    }
 		});		
 		
