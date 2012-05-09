@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -49,20 +50,33 @@ public class CotaGarantiaController {
 				.recursive().serialize();
 	}
 
-	@Post("/getByCota.json")
-	public void getByCota(Long idCota){
-		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+	@Post
+	@Path("/salvaChequeCaucao.json")
+	public void salvaChequeCaucao(Cheque chequeCaucao, Long idCota) {
 		
-		if (cotaGarantia != null) {
-			result.use(Results.json()).from(cotaGarantia, "cotaGarantia")
-					.exclude("cota").recursive().serialize();
-		}else{
-			result.use(Results.json()).from("OK").serialize();
+		try {
+			cotaGarantiaService.salvaChequeCaucao(chequeCaucao, idCota);
+		} catch (RelationshipRestrictionException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					e.getMessage()));
 		}
 		
-		
+		result.use(Results.json())
+		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+				"Cheque Caução salvo com Sucesso."), "result")
+		.recursive().serialize();
 	}
 	
+	@Post("/getByCota.json")
+	public void getByCota(Long idCota) {
+		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+		
+		if (cotaGarantia != null) {			
+			result.use(Results.json()).from(cotaGarantia, "cotaGarantia").exclude("cota").recursive().serialize();		
+		}else{			
+			result.use(Results.json()).from("OK").serialize();		
+		}	
+	}
 	
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id){
