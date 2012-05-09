@@ -106,6 +106,100 @@ NotaPromissoria.prototype.imprimi = function() {
 	window.open(this.path + 'impriNotaPromissoria/' + this.notaPromissoria.id);
 };
 
+function ChequeCaucao(idCota) {
+	this.bindEvents();
+	this.get();
+	this.idCota=idCota;
+};
+ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
+ChequeCaucao.prototype.chequeCaucao = {
+	id : null,
+	numeroBanco : null,
+	nomeBanco : null,
+	agencia : null,
+	dvAgencia : null,
+	conta : null,
+	dvConta :null,
+	valor : null,
+	numeroCheque : null,
+	emissao : null,
+	validade : null,
+	correntista : null
+};
+
+ChequeCaucao.prototype.processPost = function(objectName, object) {
+	var obj = {};
+	for ( var propriedade in object) {
+		obj[objectName + '.' + propriedade] = object[propriedade];
+	}
+	return obj;
+};
+
+ChequeCaucao.prototype.salva = function(callBack) {
+	this.dataUnBind();
+	var postData = this.processPost('chequeCaucao', this.chequeCaucao);
+	postData['idCota'] = this.idCota;
+
+	$.postJSON(this.path + 'salvaChequeCaucao.json', postData,
+			function(data) {
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+				callBack();
+
+			}, null, true);
+};
+
+
+ChequeCaucao.prototype.toggle = function() {
+	$('#cotaGarantiaChequeCaucaoPanel').toggle();
+};
+
+ChequeCaucao.prototype.dataBind = function() {
+	
+	$("cotaGarantiaChequeCaucaoNumeroBanco").val(this.chequeCaucao.numeroBanco);
+	$("cotaGarantiaChequeCaucaoNomeBanco").val(this.chequeCaucao.nomeBanco);
+	$("cotaGarantiaChequeCaucaoAgencia").val(this.chequeCaucao.agencia);
+	$("cotaGarantiaChequeCaucaoDvAgencia").val(this.chequeCaucao.dvAgencia);
+	$("cotaGarantiaChequeCaucaoConta").val(this.chequeCaucao.conta);
+	$("cotaGarantiaChequeCaucaoDvConta").val(this.chequeCaucao.dvConta);
+	$("cotaGarantiaChequeCaucaoNumeroCheque").val(this.chequeCaucao.numeroCheque);
+	$("cotaGarantiaChequeCaucaoValor").val(this.chequeCaucao.valor);
+	$("cotaGarantiaChequeCaucaoEmissao").val(this.chequeCaucao.emissao);
+	$("cotaGarantiaChequeCaucaoValidade").val(this.chequeCaucao.validade);
+	$("cotaGarantiaChequeCaucaoCorrentista").val(this.chequeCaucao.correntista);
+	
+};
+
+ChequeCaucao.prototype.dataUnBind = function() {
+	
+	this.chequeCaucao.numeroBanco = $("cotaGarantiaChequeCaucaoNumeroBanco").val();
+	this.chequeCaucao.nomeBanco = $("cotaGarantiaChequeCaucaoNomeBanco").val();
+	this.chequeCaucao.agencia = $("cotaGarantiaChequeCaucaoAgencia").val();
+	this.chequeCaucao.dvAgencia = $("cotaGarantiaChequeCaucaoDvAgencia").val();
+	this.chequeCaucao.conta = $("cotaGarantiaChequeCaucaoConta").val();
+	this.chequeCaucao.dvConta = $("cotaGarantiaChequeCaucaoDvConta").val();
+	this.chequeCaucao.numeroCheque = $("cotaGarantiaChequeCaucaoNumeroCheque").val();
+	this.chequeCaucao.valor = $("cotaGarantiaChequeCaucaoValor").val();
+	this.chequeCaucao.emissao = $("cotaGarantiaChequeCaucaoEmissao").val();
+	this.chequeCaucao.validade = $("cotaGarantiaChequeCaucaoValidade").val();
+	this.chequeCaucao.correntista = $("cotaGarantiaChequeCaucaoCorrentista").val();
+	
+};
+
+ChequeCaucao.prototype.bindEvents = function() {
+		
+	$("#cotaGarantiaChequeCaucaoValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+};
+
 function TipoCotaGarantia() {
 	this.get();
 	this.controller = null;
