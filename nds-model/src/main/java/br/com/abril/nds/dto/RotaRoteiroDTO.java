@@ -15,7 +15,7 @@ public class RotaRoteiroDTO implements Serializable {
 
 	private String descricaoRoteiro;
 	
-	private boolean disponivel = true;
+	private boolean disponivel;
 	
 	public RotaRoteiroDTO(){}
 

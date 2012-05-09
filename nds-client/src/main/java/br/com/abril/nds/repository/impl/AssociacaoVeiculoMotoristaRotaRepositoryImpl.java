@@ -66,4 +66,66 @@ public class AssociacaoVeiculoMotoristaRotaRepositoryImpl extends
 		
 		return (List<Long>) query.list();
 	}
+	
+	@Override
+	public boolean verificarAssociacaoMotorista(Long idMotorista, Set<Long> idsIgnorar) {
+		
+		StringBuilder hql = new StringBuilder("select count (m.id) ");
+		hql.append(" from Motorista m, AssociacaoVeiculoMotoristaRota a ")
+		   .append(" where m.id = :idMotorista ")
+		   .append(" and m.id = a.motorista.id ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			hql.append(" and a.id not in (:idsIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idMotorista", idMotorista);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
+		return (Long)query.uniqueResult() > 0;
+	}
+
+	@Override
+	public boolean verificarAssociacaoVeiculo(Long idVeiculo, Set<Long> idsIgnorar) {
+		
+		StringBuilder hql = new StringBuilder("select count (m.id) ");
+		hql.append(" from Veiculo m, AssociacaoVeiculoMotoristaRota a ")
+		   .append(" where m.id = :idVeiculo ")
+		   .append(" and m.id = a.veiculo.id ");
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			hql.append(" and a.id not in (:idsIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idVeiculo", idVeiculo);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
+		
+		return (Long)query.uniqueResult() > 0;
+	}
+
+	@Override
+	public boolean verificarAssociacaoRotaRoteiro(Long idRota) {
+		
+		StringBuilder hql = new StringBuilder("select count (m.id) ");
+		hql.append(" from Rota m, AssociacaoVeiculoMotoristaRota a ")
+		   .append(" where m.id = :idRota ")
+		   .append(" and m.id = a.rota.id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idRota", idRota);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
 }
