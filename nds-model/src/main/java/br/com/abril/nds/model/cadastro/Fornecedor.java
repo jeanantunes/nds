@@ -34,6 +34,8 @@ public class Fornecedor implements Serializable {
 	@GeneratedValue(generator = "FORNECEDOR_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	@Column(name = "COD_INTERFACE", nullable = true)
+	private Integer codigoInterface;
 	@Column(name = "TIPO_CONTRATO")
 	private String tipoContrato;
 	@Column(name = "PERMITE_BALANCEAMENTO", nullable = false)
@@ -108,6 +110,14 @@ public class Fornecedor implements Serializable {
 		this.tipoFornecedor = tipoFornecedor;
 	}
 
+	public Integer getCodigoInterface() {
+		return codigoInterface;
+	}
+
+	public void setCodigoInterface(Integer codigoInterface) {
+		this.codigoInterface = codigoInterface;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -132,7 +142,5 @@ public class Fornecedor implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }
