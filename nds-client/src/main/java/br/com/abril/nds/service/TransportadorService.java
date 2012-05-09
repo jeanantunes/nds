@@ -70,4 +70,10 @@ public interface TransportadorService {
 	List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(String sortname, String sortorder);
 
 	List<Long> buscarIdsRotasPorAssociacao(Set<Long> assocRemovidas);
+
+	boolean verificarAssociacaoMotorista(Long idMotorista, Set<Long> idsIgnorar);
+
+	boolean verificarAssociacaoVeiculo(Long referencia, Set<Long> idsIgnorar);
+
+	boolean verificarAssociacaoRotaRoteiro(Long idRota);
 }
