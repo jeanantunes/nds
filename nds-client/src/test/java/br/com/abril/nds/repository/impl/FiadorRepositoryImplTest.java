@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
@@ -98,4 +100,14 @@ public class FiadorRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Assert.assertNotNull(consultaFiadorDTO);
 	}
+
+	@Test
+	public void buscaFiador() {
+		List<ItemDTO<Long, String>> dtos =  fiadorRepository.buscaFiador("", 12);
+		
+		Assert.assertEquals(2, dtos.size());
+	}
+	
+	
+	
 }

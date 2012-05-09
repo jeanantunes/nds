@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
@@ -245,5 +247,27 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		query.setMaxResults(1);
 		
 		return (PessoaFisica) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults){
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT fiador.id as key, ")
+			.append("CASE fiador.pessoa.class WHEN 'F' THEN fiador.pessoa.nome WHEN 'J' THEN fiador.pessoa.razaoSocial END  as value ")
+			.append("FROM Fiador fiador ")
+			.append("WHERE ")
+			.append("lower(fiador.pessoa.nome) like :nome or lower(fiador.pessoa.razaoSocial) like :nome");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		
+		query.setString("nome", nome.toLowerCase() + "%");
+		query.setMaxResults(maxResults);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		return query.list();
+		
 	}
 }
