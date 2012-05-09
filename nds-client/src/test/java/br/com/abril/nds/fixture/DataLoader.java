@@ -58,6 +58,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -2613,6 +2614,12 @@ public class DataLoader {
 		distribuidor.setParametroContratoCota(parametroContrato);
 
 		save(session, distribuidor);
+		
+		
+		
+		for(TipoGarantia tipo:TipoGarantia.values()){
+			save(session,Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
+		}
 	}
 
 	private static void criarEnderecoDistribuidor(Session session){

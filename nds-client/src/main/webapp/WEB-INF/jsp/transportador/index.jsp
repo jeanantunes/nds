@@ -35,7 +35,7 @@
 								exibirMensagem(result.tipoMensagem, result.listaMensagens);
 								
 								$(".transportadoraGrid").flexReload();
-							}
+							},null, true, "idModalCadastroTransportador"
 						);
 	
 					},
@@ -193,7 +193,7 @@
 						$.postJSON("<c:url value='/cadastro/transportador/excluirVeiculo'/>", data, 
 							function(result){
 								
-								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 								
 								$(".veiculosGrid").flexReload();
 								
@@ -236,7 +236,7 @@
 								$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
 									function(result){
 										
-										exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+										//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 										
 										$(".veiculosGrid").flexReload();
 										
@@ -332,7 +332,7 @@
 						$.postJSON("<c:url value='/cadastro/transportador/excluirMotorista'/>", data, 
 							function(result){
 								
-								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 								
 								$(".motoristasGrid").flexReload();
 								
@@ -372,10 +372,10 @@
 								            {name: "motorista.nome", value: $("#nomeMotorista").val()},
 								            {name: "motorista.cnh", value: $("#cnhMotorista").val()}];
 								
-								$.postJSON("<c:url value='/cadastro/transportador/adicionarrMotorista'/>", data, 
+								$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
 									function(result){
 										
-										exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+										//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
 										
 										$(".motoristasGrid").flexReload();
 										
@@ -1058,7 +1058,9 @@
 	<div id="dialog-novo" title="Novo Transportador">
 	
 		<jsp:include page="../messagesDialog.jsp">
-			<jsp:param value="_aaa" name="messageDialog"/>
+		
+			<jsp:param value="idModalCadastroTransportador" name="messageDialog"/>
+
 		</jsp:include>
 		
 		<div id="tabs">
@@ -1160,13 +1162,6 @@
 	
 	<div class="corpo">
 		<div class="container">
-
-			<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Transportador < evento > com < status >.</b>
-				</p>
-			</div>
 
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Transportador </legend>

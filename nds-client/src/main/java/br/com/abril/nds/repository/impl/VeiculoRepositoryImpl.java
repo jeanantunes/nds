@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -21,10 +22,29 @@ public class VeiculoRepositoryImpl extends AbstractRepository<Veiculo, Long>
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar) {
+	public List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar, 
+			String sortname, String sortorder) {
 		
 		Criteria criteria = this.getSession().createCriteria(Veiculo.class);
 		criteria.add(Restrictions.eq("transportador.id", idTransportador));
+		
+		String property = null;
+		
+		if ("tipoVeiculo".equals(sortname)){
+			
+			property = "tipoVeiculo";
+		} else {
+			
+			property = "placa";
+		}
+		
+		if ("asc".equals(sortorder)){
+			
+			criteria.addOrder(Order.asc(property));
+		} else {
+			
+			criteria.addOrder(Order.desc(property));
+		}
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			

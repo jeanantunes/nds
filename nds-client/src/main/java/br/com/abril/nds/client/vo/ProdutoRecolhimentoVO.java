@@ -7,6 +7,8 @@ package br.com.abril.nds.client.vo;
  */
 public class ProdutoRecolhimentoVO {
 
+	private String idLancamento;
+	
 	private String sequencia;
 	
 	private String codigoProduto;
@@ -39,7 +41,23 @@ public class ProdutoRecolhimentoVO {
 	
 	private String novaData;
 	
-	private boolean bloquearLinkData;
+	private boolean bloqueioDataRecolhimento;
+	
+	private boolean bloqueioMatrizFechada;
+
+	/**
+	 * @return the idLancamento
+	 */
+	public String getIdLancamento() {
+		return idLancamento;
+	}
+
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(String idLancamento) {
+		this.idLancamento = idLancamento;
+	}
 
 	/**
 	 * @return the sequencia
@@ -266,17 +284,31 @@ public class ProdutoRecolhimentoVO {
 	}
 
 	/**
-	 * @return the bloquearLinkData
+	 * @return the bloqueioDataRecolhimento
 	 */
-	public boolean isBloquearLinkData() {
-		return bloquearLinkData;
+	public boolean isBloqueioDataRecolhimento() {
+		return bloqueioDataRecolhimento;
 	}
 
 	/**
-	 * @param bloquearLinkData the bloquearLinkData to set
+	 * @param bloqueioDataRecolhimento the bloqueioDataRecolhimento to set
 	 */
-	public void setBloquearLinkData(boolean bloquearLinkData) {
-		this.bloquearLinkData = bloquearLinkData;
+	public void setBloqueioDataRecolhimento(boolean bloqueioDataRecolhimento) {
+		this.bloqueioDataRecolhimento = bloqueioDataRecolhimento;
 	}
-	
+
+	/**
+	 * @return the bloqueioMatrizFechada
+	 */
+	public boolean isBloqueioMatrizFechada() {
+		return bloqueioMatrizFechada;
+	}
+
+	/**
+	 * @param bloqueioMatrizFechada the bloqueioMatrizFechada to set
+	 */
+	public void setBloqueioMatrizFechada(boolean bloqueioMatrizFechada) {
+		this.bloqueioMatrizFechada = bloqueioMatrizFechada;
+	}
+
 }

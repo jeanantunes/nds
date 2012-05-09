@@ -1,10 +1,13 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
@@ -54,5 +57,18 @@ public class CotaGarantiaController {
 		result.use(Results.json()).from(cotaGarantia,"cotaGarantia").exclude("cota").recursive().serialize();
 		
 		
+	}
+	
+	
+	@Get("/impriNotaPromissoria/{id}")
+	public void impriNotaPromissoria(Long id){
+		//TODO: chamada do relatorio para nota.
+		result.nothing();
+	}
+	
+	@Get("/getTiposGarantia.json")
+	public void getTiposGarantia(){
+		List<TipoGarantia> cotaGarantias = cotaGarantiaService.obtemTiposGarantiasAceitas();		
+		result.use(Results.json()). withoutRoot().from(cotaGarantias).recursive().serialize();
 	}
 }

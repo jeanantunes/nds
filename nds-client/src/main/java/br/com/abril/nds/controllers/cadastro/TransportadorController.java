@@ -333,7 +333,9 @@ public class TransportadorController {
 			List<Veiculo> lista = 
 					this.transportadorService.buscarVeiculosPorTransportador(
 							idTransportadorEdicao, 
-							this.obterVeiculosSessaoRemover());
+							this.obterVeiculosSessaoRemover(),
+							sortname,
+							sortorder);
 			
 			if (lista == null){
 				
@@ -479,7 +481,9 @@ public class TransportadorController {
 			List<Motorista> lista = 
 					this.transportadorService.buscarMotoristasPorTransportador(
 							idTransportadorEdicao, 
-							this.obterMotoristasSessaoRemover());
+							this.obterMotoristasSessaoRemover(),
+							sortname,
+							sortorder);
 			
 			if (lista == null){
 				lista =  new ArrayList<Motorista>();
@@ -614,9 +618,9 @@ public class TransportadorController {
 	}
 
 	@Post
-	public List<RotaRoteiroDTO> pesquisarRotas(){
+	public List<RotaRoteiroDTO> pesquisarRotas(String sortname, String sortorder){
 		
-		List<RotaRoteiroDTO> lista = this.transportadorService.buscarRotasRoteiroAssociacao();
+		List<RotaRoteiroDTO> lista = this.transportadorService.buscarRotasRoteiroAssociacao(sortname, sortorder);
 		
 		if (lista == null){
 			
@@ -637,7 +641,7 @@ public class TransportadorController {
 	
 	private List<RotaRoteiroDTO> processarRotaRoteiroDisponivel(String sortname, String sortorder){
 		
-		List<RotaRoteiroDTO> rotas = this.pesquisarRotas();
+		List<RotaRoteiroDTO> rotas = this.pesquisarRotas(sortname, sortorder);
 		
 		Set<Long> assocRemovidas = this.obterAssociacoesRemoverSessao();
 		
