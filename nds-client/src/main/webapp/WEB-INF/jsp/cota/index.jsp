@@ -128,6 +128,54 @@
 		$( this ).dialog( "close" );
 	}
 	
+	function carregaNovaAba(abaSelecionada) {
+		
+		func = null;
+		
+		switch(abaSelecionada) {
+    	
+    	case 0: //DADOS CADASTRAIS
+    		break;
+    	
+    	case 1: //ENDERECOS
+    		ENDERECO_COTA.popularGridEnderecos();
+    		break;
+    	
+    	case 2: //TELEFONES
+    		COTA.carregarTelefones();
+    		break;
+    	
+    	case 3: //PDV
+    		carregarPDV();
+    		break;
+    	
+    	case 4: //GARANTIA
+    		void(0);
+    		break;
+    	
+    	case 5: //FINANCEIRO
+    		carregaFinanceiro();
+    		break;
+    	
+    	case 6: //BANCOS
+    		funcaoSalvar = function(){return false;};
+    		break;
+    	
+    	case 7: //DISTRIBUICAO
+    		funcaoSalvar = DISTRIB_COTA_CPF.salvar;
+    		DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota( $('#_idCotaRef').val() );
+    		break;
+    	
+    	case 8: //FORNECEDOR
+    		break;
+    	}
+		
+	}
+	
+	var funcaoSalvar;
+	var mudancaAbaPermitida = false;
+	var novaAba;
+	
 	$(function() {
 		
 		$( "#tabpf" ).tabs();
@@ -135,7 +183,40 @@
 		$( "#tabpj" ).tabs();
 		
 		$( "#tabpdv" ).tabs();
+			
+		$("#tabpf").tabs({
+						
+		    select: function(event, ui) {
+		    			    	
+		    	if(!funcaoSalvar) {
+		    		return true;
+		    	}
+		    	
+		    	novaAba = ui.index;
+		    	
+		    	funcaoSalvar(irParaNovaAba);
+		    	
+		    	return false;
+		    }
+		});	
+		
+		$("#tabpf").tabs({
+			
+		    show: function(event, ui) {
+				
+		    	carregaNovaAba(ui.index);
+		    	return true;
+		    }
+		});		
+		
 	});
+	
+	function irParaNovaAba() {
+		
+		funcaoSalvar = null;
+		
+		$("#tabpf").tabs('select', novaAba);
+	}
 	
 	function carregarPDV(){
 		
@@ -144,13 +225,6 @@
 		PDV.idCota = idCota;
 		PDV.pesquisarPdvs(idCota);
 	}
-	
-function carregarDistribuicao(idCota){
-		
-		var idCota = $("#_idCotaRef").val();
-		
-		DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota(idCota);
-}
 	
 </script>
 <style>
@@ -200,13 +274,13 @@ function carregarDistribuicao(idCota){
 		<div id="tabpf">
 			<ul>
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
-			<li><a href="#tabpf-2" onclick="ENDERECO_COTA.popularGridEnderecos()">Endereços</a></li>			
-			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
-			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
-			<li><a href="#tabpf-5" onclick="void(0);">Garantia</a></li>
-			<li><a href="#tabpf-6" onclick="carregaFinanceiro();">Financeiro</a></li>
+			<li><a href="#tabpf-2">Endereços</a></li>			
+			<li><a href="#tabpf-3">Telefones</a></li>
+			<li><a href="#tabpf-4">PDV</a></li>
+			<li><a href="#tabpf-5">Garantia</a></li>
+			<li><a href="#tabpf-6">Financeiro</a></li>
 			<li><a href="#tabpf-7">Bancos</a></li>
-			<li><a href="#tabpf-8" onclick="carregarDistribuicao();">Distribuição</a></li>
+			<li><a href="#tabpf-8">Distribuição</a></li>
 			<li><a href="#tabpf-9">Fornecedor</a></li>
 			</ul>
 		

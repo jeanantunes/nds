@@ -19,7 +19,9 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -54,7 +56,10 @@ public class CotaController {
 	
 	@Autowired
 	private FinanceiroController financeiroController;
-		
+	
+	@Autowired
+	private TipoEntregaService tipoEntregaService;
+	
 	@Autowired
 	private PdvController pdvController;
 
@@ -269,6 +274,11 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	/**
+	 * Carrega dados de Distribuição da cota
+	 * 
+	 * @param idCota - Código da cota
+	 */
 	@Post
 	public void carregarDistribuicaoCota(Long idCota) {
 		
@@ -279,20 +289,30 @@ public class CotaController {
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Persiste no banco os dados de Distribuição da cota
+	 * @param distribuicao - DTO que representa os dados de distribuição da cota
+	 */
 	@Post
 	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) {
 		
-		//this.result.use(Results.json()).from(dto, "result").recursive().serialize();
+		cotaService.salvarDistribuicaoCota(distribuicao);
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 
+	/**
+	 * Gera combos de Tipo de Entrega
+	 * 
+	 * @return
+	 */
 	private List<ItemDTO<Long, String>> gerarTiposEntrega() {
 		
 		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
 		
-		itens.add(new ItemDTO<Long, String>(1L, "Tipo1"));
-		itens.add(new ItemDTO<Long, String>(2L, "Tipo2"));
-		itens.add(new ItemDTO<Long, String>(3L, "Tipo3"));
-		itens.add(new ItemDTO<Long, String>(4L, "Tipo4"));
+		for(TipoEntrega item: tipoEntregaService.obterTodos()) {
+			itens.add(new ItemDTO<Long, String>(item.getId(), item.getDescricao()));
+		}
 		
 		return itens;
 	}

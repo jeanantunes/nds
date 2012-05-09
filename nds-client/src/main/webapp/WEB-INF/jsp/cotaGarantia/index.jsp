@@ -80,7 +80,7 @@
 
 				<td colspan="3"><span class="bt_novos" title="Imprimir"><a
 						href="../nota_promissoria.htm" target="_blank"><img
-							src="../images/ico_impressora.gif" alt="Imprimir" hspace="5"
+							src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5"
 							border="0" />Imprimir</a></span></td>
 
 			</tr>

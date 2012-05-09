@@ -13,7 +13,6 @@ public class DistribuicaoDTO implements Serializable  {
 
 	private static final long serialVersionUID = 7056333731558241749L;
 
-	
 	private Integer numCota;
 	private Integer qtdePDV;
 	private Boolean qtdeAutomatica;
@@ -288,7 +287,5 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setQtdeAutomatica(Boolean qtdeAutomatica) {
 		this.qtdeAutomatica = qtdeAutomatica;
-	}
-	
-	
+	}	
 }

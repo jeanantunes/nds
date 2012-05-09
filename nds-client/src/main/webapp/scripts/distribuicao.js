@@ -2,6 +2,25 @@ function Distribuicao(tela) {
 	
 	var D = this;
 	
+	/**
+	 * Envia dados da tela para serem salvos no controller
+	 * 
+	 * @return false - define que a não sairá da tela, responsabilidade deixada para o método de callback
+	 */
+	this.salvar = function(funcaoIrParaNovaAba) {
+		
+		$.postJSON(contextPath + "/cadastro/cota/salvarDistribuicaoCota",
+				D.getDados(),
+				funcaoIrParaNovaAba,
+				null, true);
+		
+		return false;		
+	},
+		
+	/**
+	 * Retorna todos os dados da tela no padrão utilizado pelo VRaptor
+	 * @return Espelho de DistribuicaoDTO (br.com.abril.nds.dto) 
+	 */
 	this.getDados = function() {
 	
 		var data = [];
@@ -26,37 +45,56 @@ function Distribuicao(tela) {
 		return data;
 	},
 	
+	/**
+	 * Preenche a tela
+	 * 
+	 * @param dto - objeto Espelho de DistribuicaoDTO esperado (br.com.abril.nds.dto) 
+	 */
 	this.setDados = function(dto) {
 		
-		D.set('numCota',dto.numCota);
-		D.set('qtdePDV',dto.qtdePDV);
-		D.set('box',dto.box);
-		D.set('assistComercial',dto.assistComercial);
-		D.set('tipoEntrega',dto.tipoEntrega);
-		D.set('arrendatario',dto.arrendatario);
-		D.set('observacao',dto.observacao);
-		D.set('repPorPontoVenda',dto.repPorPontoVenda);
-		D.set('solNumAtras',dto.solNumAtras);
-		D.set('recebeRecolhe',dto.recebeRecolhe);
-		D.set('neImpresso',dto.neImpresso);
-		D.set('neEmail',dto.neEmail);
-		D.set('ceImpresso',dto.ceImpresso);
-		D.set('ceEmail',dto.ceEmail);
-		D.set('slipImpresso',dto.slipImpresso);
-		D.set('slipEmail',dto.slipEmail);
+		D.get
 		
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
 		
-		D.$('qtdePDV').attr('disabled', dto.qtdeAutomatica?'disabled':'');
-			
+		D.set('numCota',			dto.numCota);
+		D.set('qtdePDV',			dto.qtdePDV ? dto.qtdePDV.toString() : '' );
+		D.set('box',				dto.box);
+		D.set('assistComercial',	dto.assistComercial);
+		D.set('tipoEntrega',		dto.tipoEntrega);
+		D.set('arrendatario',		dto.arrendatario);
+		D.set('observacao',			dto.observacao);
+		D.set('repPorPontoVenda',	dto.repPorPontoVenda);
+		D.set('solNumAtras',		dto.solNumAtras);
+		D.set('recebeRecolhe',		dto.recebeRecolhe);
+		D.set('neImpresso',			dto.neImpresso);
+		D.set('neEmail',			dto.neEmail);
+		D.set('ceImpresso',			dto.ceImpresso);
+		D.set('ceEmail',			dto.ceEmail);
+		D.set('slipImpresso',		dto.slipImpresso);
+		D.set('slipEmail',			dto.slipEmail);
+		
+		
+		if(dto.qtdeAutomatica) {
+			D.$('qtdePDV').attr('disabled','disabled');
+		} else {
+			D.$('qtdePDV').removeAttr('disabled');
+		}			
 		
 	},
+	
+	/**
+	 * Limpa campos da tela
+	 */
 	this.limparDados = function() {
 		
 		D.setDados(null);
 	},
 	
+	/**
+	 * Busca no banco os dados de Distribuição da Cota e preenche a tela
+	 * @param idCota - Código da cota
+	 */
 	this.carregarDadosDistribuicaoCota = function(idCota) {
 		
 		$.postJSON(contextPath + "/cadastro/cota/carregarDistribuicaoCota",
@@ -67,7 +105,10 @@ function Distribuicao(tela) {
 				null, true); 
 	},
 	
-	
+	/**
+	 * Gera combo de de Tipo de Entrega
+	 * @param itensDTO - objeto espelho de ItemDTO (br.com.abril.nds.dto)
+	 */
 	this.montarComboTipoEntrega = function(itensDTO) {
 		
 		var combo =  montarComboBox(itensDTO, false);
@@ -75,19 +116,34 @@ function Distribuicao(tela) {
 		D.$("tipoEntrega").sortOptions();
 	},
 	
+	/**
+	 * Atribui valor a um campo da tela
+	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false
+	 * 
+	 * @param campo - Campo a ser alterado
+	 * @param value - valor
+	 */
 	this.set = function(campo,value) {
-		
-		value = (value)? value : '';
-		
+				
 		var elemento = D.$(campo);
 		
 		if(elemento.attr('type') == 'checkbox') {
-			elemento.attr('checked', (value) ? 'checked':'');
+			
+			if(value) {
+				elemento.attr('checked','checked');
+			} else {
+				elemento.removeAttr('checked');
+			}
+						
 		} else {
 			elemento.val(value);
 		}
 	},
 	
+	/**
+	 * Obtém valor de elemento da tela
+	 * @param campo - de onde o valor será obtido
+	 */
 	this.get = function(campo) {
 		
 		var elemento = D.$(campo);
@@ -100,6 +156,9 @@ function Distribuicao(tela) {
 		
 	},
 	
+	/**
+	 * Obtém elemento da tela
+	 */
 	this.$ = function(campo) {
 		
 		 return $("#" + tela + campo);

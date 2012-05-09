@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -58,6 +59,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
@@ -2380,6 +2382,43 @@ public class Fixture {
 		parametroContratoCota.setDiasAvisoRescisao(diasAviso);
 		parametroContratoCota.setDuracaoContratoCota(duracaoContrato);
 		return parametroContratoCota;
+	}
+
+	public static TipoEntrega criarTipoEntrega(Long id, String descricao) {
+		TipoEntrega tipoEntrega = new TipoEntrega();
+		
+		tipoEntrega.setId(id);
+		tipoEntrega.setDescricao(descricao);
+		
+		return tipoEntrega;
+	}
+
+	public static ParametroDistribuicaoCota criarParametroDistribuidor(Integer qtdePDV,
+			String assistenteComercial, TipoEntrega tipoEntrega,
+			String observacao, Boolean arrendatario,
+			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
+			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
+			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
+			Boolean chamadaEncalheEmail, Boolean slipImpresso, Boolean slipEmail) {
+		
+		ParametroDistribuicaoCota parametroDistribuicaoCota = new ParametroDistribuicaoCota();
+		
+		parametroDistribuicaoCota.setQtdePDV(qtdePDV);
+		parametroDistribuicaoCota.setAssistenteComercial(assistenteComercial);
+		parametroDistribuicaoCota.setTipoEntrega(tipoEntrega);
+		parametroDistribuicaoCota.setArrendatario(arrendatario);
+		parametroDistribuicaoCota.setObservacao(observacao);
+		parametroDistribuicaoCota.setRepartePorPontoVenda(repartePorPontoVenda);
+		parametroDistribuicaoCota.setSolicitaNumAtras(solicitaNumAtras);
+		parametroDistribuicaoCota.setRecebeRecolheParcias(recebeRecolheParcias);
+		parametroDistribuicaoCota.setNotaEnvioImpresso(notaEnvioImpresso);
+		parametroDistribuicaoCota.setNotaEnvioEmail(notaEnvioEmail);
+		parametroDistribuicaoCota.setChamadaEncalheImpresso(chamadaEncalheImpresso);
+		parametroDistribuicaoCota.setChamadaEncalheEmail(chamadaEncalheEmail);
+		parametroDistribuicaoCota.setSlipImpresso(slipImpresso);
+		parametroDistribuicaoCota.setSlipEmail(slipEmail);
+		
+		return parametroDistribuicaoCota;
 	}
 	
 }

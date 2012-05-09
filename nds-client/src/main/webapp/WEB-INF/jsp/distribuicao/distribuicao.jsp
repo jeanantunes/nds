@@ -4,7 +4,9 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicao.js"></script>
 	
 	<script type="text/javascript">		
-		var ${param.tela} = new Distribuicao('${param.tela}');		
+		
+		var ${param.tela} = new Distribuicao('${param.tela}');	
+		
 	</script>
 </head>
 
@@ -35,7 +37,7 @@
 
 <!-- Tipo de Entrega -->
 <select id="${param.tela}tipoEntrega" name="select4"  style="width:155px">
-	<option selected="selected"> </option>
+	<option selected="selected">...</option>
 	
 	<c:forEach items="${listaTipoEntrega}" var="item">
 		<option value="${item.key}">${item.value}</option>	          

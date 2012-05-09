@@ -46,6 +46,7 @@ import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -65,6 +66,7 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -491,6 +493,11 @@ public class DataLoader {
 	private static Estudo estudoSuper1EncalheAnt;
 	private static Estudo estudoSuper2EncalheAnt;
 	private static Cota cotaAcme;
+	
+	private static TipoEntrega tipoCotaRetira;
+	private static TipoEntrega tipoEntregaEmBanca;
+	private static TipoEntrega tipoEntregador;
+	
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -546,6 +553,7 @@ public class DataLoader {
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
+		criarDistribuicaoCota(session);
 		criarEditores(session);
 		criarTiposProduto(session);
 		criarProdutos(session);
@@ -628,9 +636,20 @@ public class DataLoader {
 		
 		gerarTipoLicencaMunicipalPDV(session);
 		
+		gerarTipoEntrega(session);
+		
 	}
 
 	
+	private static void gerarTipoEntrega(Session session) {
+		
+		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira");
+		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca");
+		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador");
+		
+		save(session,tipoCotaRetira,tipoEntregaEmBanca,tipoEntregador);
+	}
+
 	private static void gerarTipoLicencaMunicipalPDV(Session session) {
 		
 		TipoLicencaMunicipal tipoLicencaMunicipal = Fixture.criarTipoLicencaMunicipal(10L, "Licença 1");
@@ -2753,6 +2772,22 @@ public class DataLoader {
 
 	}
 
+	private static void criarDistribuicaoCota(Session session) {
+		
+		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
+				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!", 
+				true, true, true, true, true, true, true, true, true, true);
+		
+		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
+				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!", 
+				false, false, false, false, false, false, false, false, false, false);
+				
+		cotaJoao.setParametroDistribuicao(parametroJoao);
+		cotaGuilherme.setParametroDistribuicao(parametroGuilherme);
+		
+		save(session, cotaJoao, cotaGuilherme);
+	}
+	
 	private static void criarFornecedores(Session session) {
 		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
