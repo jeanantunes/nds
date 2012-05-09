@@ -3,52 +3,11 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
+
 <script language="javascript" type="text/javascript">
 	
-	var funcaoSalvar;
-	
-	function carregaDadosNovaAba(abaSelecionada) {
-			
-		switch(abaSelecionada) {
-		
-		case 0: //DADOS CADASTRAIS
-			break;
-		
-		case 1: //ENDERECOS
-			ENDERECO_COTA.popularGridEnderecos();
-			break;
-		
-		case 2: //TELEFONES
-			COTA.carregarTelefones();
-			break;
-		
-		case 3: //PDV
-			carregarPDV();
-			break;
-		
-		case 4: //GARANTIA
-			void(0);
-			break;
-		
-		case 5: //FINANCEIRO
-			carregaFinanceiro();
-			break;
-		
-		case 6: //BANCOS
-			funcaoSalvar = function(){return false;};
-			break;
-		
-		case 7: //DISTRIBUICAO
-			funcaoSalvar = DISTRIB_COTA_CPF.salvar;
-			DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota( $('#_idCotaRef').val() );
-			break;
-		
-		case 8: //FORNECEDOR
-			break;
-		}
-		
-	}
-	
+	var tabCPF = new TabCota('tabpf');
 	
 	function popup_cnpj() {
 		
@@ -160,8 +119,8 @@
 	  
 	function salvarCota(){
 		
-		if(funcaoSalvar)
-			funcaoSalvar();
+		if(tabCPF.funcaoSalvar)
+			tabCPF.funcaoSalvar();
 		
 		$.ajax({
 			type: 'POST',
@@ -175,49 +134,7 @@
 		
 		$( this ).dialog( "close" );
 	}
-	
-	var novaAba;
-	
-	$(function() {
 		
-		$( "#tabpf" ).tabs();
-		
-		$( "#tabpj" ).tabs();
-		
-		$( "#tabpdv" ).tabs();
-			
-		$("#tabpf").tabs({
-						
-		    select: function(event, ui) {
-		    			    	
-		    	if(!funcaoSalvar) {
-		    		return;
-		    	}
-		    	
-		    	novaAba = ui.index;
-		    	
-		    	funcaoSalvar(irParaNovaAba);
-		    	
-		    	return false;
-		    }
-		});	
-		
-		$("#tabpf").tabs({
-			
-		    show: function(event, ui) {				
-		    	carregaDadosNovaAba(ui.index);
-		    }
-		});		
-		
-	});
-	
-	function irParaNovaAba() {
-		
-		funcaoSalvar = null;
-		
-		$("#tabpf").tabs('select', novaAba);
-	}
-	
 	function carregarPDV(){
 		
 		var idCota = $("#_idCotaRef").val();
