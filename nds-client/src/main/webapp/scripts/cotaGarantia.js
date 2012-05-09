@@ -324,24 +324,27 @@ TipoCotaGarantia.prototype.getIdCota = function() {
 function Fiador(idCota){
 	this.idCota = idCota;
 	this.bindEvents();
+	this.toggle();
 	
 }
 Fiador.prototype.path = contextPath + "/cadastro/garantia/";
 Fiador.prototype.toggle = function() {
-	$('#cotaGarantiaNotaPromissoriaPanel').toggle();
+	$('#cotaGarantiaFiadorPanel').toggle();
 };
 
 Fiador.prototype.bindEvents = function() {
+	var _this = this;
 	$("#cotaGarantiaFiadorSearchName").autocomplete({
 		source : function(request, response) {
-			$.postJSON(this.path + 'buscaFiador.json', {
-				name : request.term,
+			$.postJSON(_this.path + 'buscaFiador.json', {
+				nome : request.term,
 				maxResults:6
 			}, function(data) {
 				response($.map(data.items, function(item) {
 					return {
-						label : item.value,
-						value : item.key
+						label : item.value.$,
+						value : item.value.$,
+						key:item.key.$
 					}
 				}));
 
@@ -350,7 +353,7 @@ Fiador.prototype.bindEvents = function() {
 		},
 		minLength : 3,
 		select : function(event, ui) {
-			log(ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+			console.log(ui.item ? "Selected: " +ui.item.key+' '  + ui.item.label : "Nothing selected, input was " + this.value);
 		},
 		open : function() {
 			$(this).removeClass("ui-corner-all").addClass("ui-corner-top");

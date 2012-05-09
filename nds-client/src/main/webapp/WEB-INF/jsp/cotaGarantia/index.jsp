@@ -73,7 +73,7 @@
 		<table width="755" cellpadding="2" cellspacing="2"
 			style="text-align: left;">
 			<tr>
-				<td width="150"><strong>Nome / Razão Social:</strong></td>
+				<td width="150"><strong>Nome / Raz&atilde;o Social:</strong></td>
 
 				<td width="212"><input type="text" id="cotaGarantiaFiadorSearchName" /></td>
 
@@ -93,7 +93,7 @@
 		<table width="755" cellpadding="2" cellspacing="2"
 			style="text-align: left;">
 			<tr>
-				<td width="154"><strong>Nome / Razão Social:</strong></td>
+				<td width="154"><strong>Nome / Raz&atilde;o Social:</strong></td>
 
 				<td width="272"><span id="cotaGarantiaFiadorNome"></span></td>
 
@@ -102,7 +102,7 @@
 				<td width="214"><span id="cotaGarantiaFiadorDoc"></span</td>
 			</tr>
 			<tr>
-				<td><strong>Endereço:</strong></td>
+				<td><strong>Endere&ccedil;o:</strong></td>
 				<td colspan="3"><span id="cotaGarantiaFiadorEndereco"></span</td>
 			</tr>
 			<tr>

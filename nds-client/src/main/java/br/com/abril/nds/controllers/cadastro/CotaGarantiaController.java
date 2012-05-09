@@ -111,7 +111,7 @@ public class CotaGarantiaController {
 	@Post("/buscaFiador.json")
 	public void buscaFiador(String nome, int maxResults) {
 		List<ItemDTO<Long, String>> listFiador = cotaGarantiaService.buscaFiador(nome, maxResults);		
-		result.use(Results.json()).withoutRoot().from(listFiador).recursive().serialize();
+		result.use(Results.json()).from(listFiador,"items").recursive().serialize();
 	}
 	
 }

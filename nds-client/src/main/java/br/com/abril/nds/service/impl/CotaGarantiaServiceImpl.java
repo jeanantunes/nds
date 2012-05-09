@@ -182,6 +182,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 * @see br.com.abril.nds.service.CotaGarantiaService#buscaFiador(java.lang.String, int)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults) {
 		return fiadorRepository.buscaFiador(nome, maxResults);
 	}
