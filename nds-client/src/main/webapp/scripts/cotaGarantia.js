@@ -193,3 +193,24 @@ TipoCotaGarantia.prototype.changeController = function(tipo) {
 TipoCotaGarantia.prototype.getIdCota = function() {
 	return $('#_idCotaRef').val();
 };
+
+
+function Fiador(idCota){
+	this.idCota = idCota;
+}
+Fiador.prototype.toggle = function() {
+	$('#cotaGarantiaNotaPromissoriaPanel').toggle();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
