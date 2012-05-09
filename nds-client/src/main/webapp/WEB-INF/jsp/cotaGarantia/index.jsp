@@ -15,7 +15,7 @@ $(function(){
 		<td width="108">Tipo de Garantia:</td>
 
 		<td width="631">
-			<select id="tipoGarantiaSelect" style="width: 250px;">
+			<select id="tipoGarantiaSelect" onchange="tipoCotaGarantia.changeController($(this).val());" style="width: 250px;">
 				<option value="" selected="selected">Selecione...</option>
 		</select></td>
 

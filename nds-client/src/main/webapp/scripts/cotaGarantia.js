@@ -5,7 +5,7 @@
 function NotaPromissoria(idCota) {
 	this.bindEvents();
 	this.get();
-	//this.toggle();
+	this.toggle();
 	this.idCota = idCota;
 };
 NotaPromissoria.prototype.path = contextPath + "/cadastro/garantia/";
@@ -51,7 +51,7 @@ NotaPromissoria.prototype.get = function() {
 		var listaMensagens = data.listaMensagens;
 
 		if (tipoMensagem && listaMensagens) {
-			//exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagem(tipoMensagem, listaMensagens);
 		} else {
 			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
 			_this.dataBind();
@@ -97,19 +97,18 @@ NotaPromissoria.prototype.imprimi = function() {
 
 function TipoCotaGarantia() {
 	this.get();
-	this.bindEvents();
 	this.idCota = 1;
-	this.editor = null;
+	this.controller = null;
 };
 TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
 TipoCotaGarantia.prototype.tipo = {
 	'FIADOR' : {
 		label : 'Fiador',
-		class : null
+		controller : null
 	},
 	'CHEQUE_CAUCAO' : {
 		label : 'Cheque Caução',
-		class : null
+		controller : null
 	},
 	'IMOVEL' : {
 		label : 'Imóvel',
@@ -117,11 +116,11 @@ TipoCotaGarantia.prototype.tipo = {
 	},
 	'NOTA_PROMISSORIA' : {
 		label : 'Nota Promissória',
-		class : NotaPromissoria
+		controller : NotaPromissoria
 	},
 	'CAUCAO_LIQUIDA' : {
 		label : 'Caução Liquida',
-		class : null
+		controller : null
 	}
 };
 TipoCotaGarantia.prototype.get = function() {
@@ -147,27 +146,32 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	for ( var index in data) {
 		var tipo = data[index];
 		var option = document.createElement("option");
-
 		option.text = this.tipo[tipo].label;
-		option.value = tipo;
-		try {
-			// for IE earlier than version 8
-			select.add(option, select.options[null]);
-		} catch (e) {
-			select.add(option, null);
-		}
-
+		option.value = tipo;		
+		select.add(option, null);
 	}
+	
+	//this.bindEvents();
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
 	var _this =  this;
-	$("#tipoGarantiaSelect").bind('change', function() {
+	$("#tipoGarantiaSelect").change(function(eventObject) {
 		var valor =  $(this).val();
 		if(valor.length > 0 ){
-			var obj = _this.tipo[valor];
-			_this.editor = new obj.class(_this.idCota);
-			_this.editor.toggle();
+			_this.changeController(valor);
 		}
-	});
+	}).change();
+};
+
+TipoCotaGarantia.prototype.changeController =  function(tipo){
+	
+	console.log(tipo);
+	if(this.controller ){
+		this.controller.toggle();
+		this.controller = null;
+	}
+	
+	var obj = this.tipo[tipo].controller;
+	this.controller = new obj(this.idCota);	
 };
