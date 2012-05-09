@@ -135,6 +135,25 @@ ChequeCaucao.prototype.processPost = function(objectName, object) {
 	return obj;
 };
 
+ChequeCaucao.prototype.get = function() {
+
+	var _this = this;
+	$.postJSON(this.path + 'getByCota.json', {
+		'idCota' : this.idCota
+	}, function(data) {
+
+		var tipoMensagem = data.tipoMensagem;
+		var listaMensagens = data.listaMensagens;
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagem(tipoMensagem, listaMensagens);
+		} else if (data.cotaGarantia && data.cotaGarantia.notaPromissoria) {
+			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
+			_this.dataBind();
+		}
+
+	}, null, true);
+};
+
 ChequeCaucao.prototype.salva = function(callBack) {
 	this.dataUnBind();
 	var postData = this.processPost('chequeCaucao', this.chequeCaucao);
