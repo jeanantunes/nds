@@ -205,7 +205,7 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 	}
 
 	@Override
-	public boolean verificarAssociacaoFiadorCota(Long idFiador,	Integer numeroCota) {
+	public boolean verificarAssociacaoFiadorCota(Long idFiador,	Integer numeroCota, Set<Long> idsIgnorar) {
 		
 		StringBuilder hql = new StringBuilder("select count (c.id) ");
 		hql.append(" from Fiador f, Cota c ")
@@ -213,9 +213,19 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		   .append(" and   f.id = :idFiador ")
 		   .append(" and   c.numeroCota = :numeroCota ");
 		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			hql.append(" and c.id not in (:idsIgnorar) ");
+		}
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idFiador", idFiador);
 		query.setParameter("numeroCota", numeroCota);
+		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			query.setParameterList("idsIgnorar", idsIgnorar);
+		}
 		
 		return ((Long)query.uniqueResult()) > 0;
 	}

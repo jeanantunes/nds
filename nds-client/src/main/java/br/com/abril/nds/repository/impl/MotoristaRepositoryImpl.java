@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -21,10 +22,29 @@ public class MotoristaRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar) {
+	public List<Motorista> buscarMotoristasPorTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder) {
 		
 		Criteria criteria = this.getSession().createCriteria(Motorista.class);
 		criteria.add(Restrictions.eq("transportador.id", idTransportador));
+		
+		String property = null;
+		
+		if ("nome".equals(sortname)){
+			
+			property = "nome";
+		} else {
+			
+			property = "cnh";
+		}
+		
+		if ("asc".equals(sortorder)){
+			
+			criteria.addOrder(Order.asc(property));
+		} else {
+			
+			criteria.addOrder(Order.desc(property));
+		}
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			

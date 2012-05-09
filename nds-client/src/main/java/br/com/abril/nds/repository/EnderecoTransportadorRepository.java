@@ -15,4 +15,7 @@ public interface EnderecoTransportadorRepository extends Repository<EnderecoTran
 	void excluirEnderecosPorIdTransportador(Long id);
 
 	List<EnderecoAssociacaoDTO> buscarEnderecosTransportador(Long id, Set<Long> idsIgnorar);
+
+	boolean verificarEnderecoPrincipalTransportador(Long id,
+			Set<Long> idsIgnorar);
 }

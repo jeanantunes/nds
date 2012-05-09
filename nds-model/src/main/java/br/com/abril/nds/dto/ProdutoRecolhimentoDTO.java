@@ -14,6 +14,8 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4687524586257381194L;
 	
+	private Long idLancamento;
+	
 	private Long sequencia;
 	
 	private ProdutoEdicao produtoEdicao;
@@ -52,6 +54,22 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	public ProdutoRecolhimentoDTO() {
 		
 	}
+	
+	/**
+	 * @return the idLancamento
+	 */
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+
+
 
 	/**
 	 * @return the sequencia

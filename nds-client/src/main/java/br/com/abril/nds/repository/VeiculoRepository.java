@@ -7,7 +7,8 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 
 public interface VeiculoRepository extends Repository<Veiculo, Long> {
 
-	public List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar);
+	public List<Veiculo> buscarVeiculosPorTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder);
 	
 	void removerPorId(Long idVeiculo);
 

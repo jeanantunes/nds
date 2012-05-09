@@ -47,7 +47,7 @@ public interface FiadorService {
 	
 	List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar);
 
-	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
+	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota, Set<Long> idsIgnorar);
 	
 	Fiador obterFiadorPorCPF(String cpf);
 

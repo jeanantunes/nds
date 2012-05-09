@@ -16,30 +16,25 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 	public RotaRepositoryImpl() {
 		super(Rota.class);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Rota> buscarRotasRoteiro() {
-		
-		StringBuilder hql = new StringBuilder("select r ");
-		hql.append(" from Rota r ")
-		   .append(" where r.roteiro.id is not null ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		return query.list();
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(){
+	public List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(String sortname, String sortorder){
 		
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(RotaRoteiroDTO.class.getCanonicalName())
 		   .append("(r.id, r.descricaoRota, r.roteiro.descricaoRoteiro, a.id)")
 		   .append(" from AssociacaoVeiculoMotoristaRota a right join a.rota r ")
 		   .append(" where r.roteiro.id is not null ")
-		   .append(" and (a.rota.id = r.id or a.rota.id is null)");
+		   .append(" and (a.rota.id = r.id or a.rota.id is null) ");
+		
+		if ("descricaoRota".equals(sortname)){
+			
+			hql.append(" order by r.descricaoRota ").append("asc".equals(sortorder) ? "asc" : "desc" );
+		} else {
+			
+			hql.append(" order by r.roteiro.descricaoRoteiro ").append("asc".equals(sortorder) ? "asc" : "desc" );
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

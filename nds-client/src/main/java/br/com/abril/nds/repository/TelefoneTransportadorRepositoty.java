@@ -18,4 +18,6 @@ public interface TelefoneTransportadorRepositoty extends Repository<TelefoneTran
 	void excluirTelefonesTransportador(Long id);
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesTransportador(Long id, Set<Long> idsIgnorar);
+
+	boolean verificarTelefonePrincipalTransportador(Long id, Set<Long> idsIgnorar);
 }

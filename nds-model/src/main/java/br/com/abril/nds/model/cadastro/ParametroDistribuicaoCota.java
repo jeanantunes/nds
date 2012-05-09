@@ -29,7 +29,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 	private Boolean arrendatario;
 	
 	@Column(name = "REPARTE_POR_PONTO_VENDA", nullable = true)
-	private String repartePorPontoVenda;
+	private Boolean repartePorPontoVenda;
 	
 	@Column(name = "SOLICITA_NUM_ATRASADOS", nullable = true)
 	private Boolean solicitaNumAtras;
@@ -54,6 +54,35 @@ public class ParametroDistribuicaoCota implements Serializable {
 	
 	@Column(name = "SLIP_EMAIL", nullable = true)
 	private Boolean slipEmail;
+
+	
+	public ParametroDistribuicaoCota(){
+		
+	}
+	
+	public ParametroDistribuicaoCota(Integer qtdePDV,
+			String assistenteComercial, TipoEntrega tipoEntrega,
+			String observacao, Boolean arrendatario,
+			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
+			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
+			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
+			Boolean chamadaEncalheEmail, Boolean slipImpresso, Boolean slipEmail) {
+		super();
+		this.qtdePDV = qtdePDV;
+		this.assistenteComercial = assistenteComercial;
+		this.tipoEntrega = tipoEntrega;
+		this.observacao = observacao;
+		this.arrendatario = arrendatario;
+		this.repartePorPontoVenda = repartePorPontoVenda;
+		this.solicitaNumAtras = solicitaNumAtras;
+		this.recebeRecolheParcias = recebeRecolheParcias;
+		this.notaEnvioImpresso = notaEnvioImpresso;
+		this.notaEnvioEmail = notaEnvioEmail;
+		this.chamadaEncalheImpresso = chamadaEncalheImpresso;
+		this.chamadaEncalheEmail = chamadaEncalheEmail;
+		this.slipImpresso = slipImpresso;
+		this.slipEmail = slipEmail;
+	}
 
 	/**
 	 * @return the qtdePDV
@@ -128,14 +157,14 @@ public class ParametroDistribuicaoCota implements Serializable {
 	/**
 	 * @return the repartePorPontoVenda
 	 */
-	public String getRepartePorPontoVenda() {
+	public Boolean getRepartePorPontoVenda() {
 		return repartePorPontoVenda;
 	}
 
 	/**
 	 * @param repartePorPontoVenda the repartePorPontoVenda to set
 	 */
-	public void setRepartePorPontoVenda(String repartePorPontoVenda) {
+	public void setRepartePorPontoVenda(Boolean repartePorPontoVenda) {
 		this.repartePorPontoVenda = repartePorPontoVenda;
 	}
 

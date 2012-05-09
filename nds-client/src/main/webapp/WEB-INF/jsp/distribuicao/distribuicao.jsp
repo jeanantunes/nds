@@ -4,7 +4,9 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicao.js"></script>
 	
 	<script type="text/javascript">		
-		var ${param.tela} = new Distribuicao('${param.tela}');		
+		
+		var ${param.tela} = new Distribuicao('${param.tela}');	
+		
 	</script>
 </head>
 
@@ -13,7 +15,7 @@
             <td>Cota:</td>
             <td>
  <!-- Num Cota -->
- <input id="${param.tela}numCota" type="text" style="width:100px" /></td>
+ <input id="${param.tela}numCota" disabled="disabled" type="text" style="width:100px" /></td>
             <td>Qtde. PDV:</td>
             <td>
 <!-- Qtde PDV -->            
@@ -23,7 +25,7 @@
             <td width="120">Box:</td>
             <td width="320">
 <!-- Box -->           
-<input id="${param.tela}box" type="text" style="width:100px" /></td>
+<input id="${param.tela}box" disabled="disabled" type="text" style="width:100px" /></td>
             <td width="116">Assist. Comercial:</td>
             <td width="171">
 <!-- Assist. Comercial -->
@@ -35,7 +37,7 @@
 
 <!-- Tipo de Entrega -->
 <select id="${param.tela}tipoEntrega" name="select4"  style="width:155px">
-	<option selected="selected"> </option>
+	<option selected="selected">...</option>
 	
 	<c:forEach items="${listaTipoEntrega}" var="item">
 		<option value="${item.key}">${item.value}</option>	          

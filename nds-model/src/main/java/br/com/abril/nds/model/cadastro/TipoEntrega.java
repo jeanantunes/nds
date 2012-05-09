@@ -30,7 +30,15 @@ public class TipoEntrega implements Serializable  {
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 	
+	public TipoEntrega() {
+		
+	}
 	
+	public TipoEntrega(Long id, String descricao) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+	}
 	/**
 	 * @return the id
 	 */
