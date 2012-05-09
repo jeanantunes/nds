@@ -49,12 +49,16 @@ public class CotaGarantiaController {
 				.recursive().serialize();
 	}
 
-	@Get
-	@Path("/getByCota.json")
+	@Post("/getByCota.json")
 	public void getByCota(Long idCota){
 		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
-		result.use(Results.json()).from(cotaGarantia,"cotaGarantia").exclude("cota").recursive().serialize();
+		if (cotaGarantia != null) {
+			result.use(Results.json()).from(cotaGarantia, "cotaGarantia")
+					.exclude("cota").recursive().serialize();
+		}else{
+			result.use(Results.json()).from("OK").serialize();
+		}
 		
 		
 	}
