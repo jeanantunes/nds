@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -19,15 +20,12 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
  */
 public interface FinanceiroService {
 
-	
-	
     /**
      * Obtém parametros de Cobranca da cota
      * @param idCota
      * @return Data Transfer Object com parametros de Cobranca da cota 
      */
     ParametroCobrancaDTO obterDadosParametroCobrancaPorCota(Long idCota);
-    
     
     /**
 	 * Método responsável por obter bancos relacionados ao tipo de cobrança para preencher combo da camada view
@@ -42,6 +40,11 @@ public interface FinanceiroService {
 	 */
     List<ItemDTO<TipoCobranca, String>> getComboTiposCobranca();
     
+    /**
+	 * Método responsável por obter formas de emissao para preencher combo da camada view
+	 * @return comboFormasEmissao: formas de emissão cadastrados
+	 */
+    List<ItemDTO<FormaEmissao, String>> getComboFormasEmissao();
     
     /**
    	 * Método responsável por obter combo de fornecedores relacionados com a Cota
@@ -49,7 +52,6 @@ public interface FinanceiroService {
    	 * @return comboFornecedores: fornecedores relacionados com a Cota
    	 */
     List<ItemDTO<Long, String>> getComboFornecedoresCota(Long idCota);
-    
     
     /**
      * Posta parametros de Cobranca da cota

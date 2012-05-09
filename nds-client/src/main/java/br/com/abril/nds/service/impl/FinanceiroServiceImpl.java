@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -142,6 +143,21 @@ public class FinanceiroServiceImpl implements FinanceiroService {
 	}
 	
 	
+	
+	/**
+	  * Método responsável por obter combo de Formas de Emissão
+	  * @return comboFormasEmissao: Formas de emissão
+	  */
+	@Override
+	public List<ItemDTO<FormaEmissao, String>> getComboFormasEmissao() {
+		List<ItemDTO<FormaEmissao,String>> comboFormasEmissao =  new ArrayList<ItemDTO<FormaEmissao,String>>();
+		for (FormaEmissao itemFormaEmissao: FormaEmissao.values()){
+			comboFormasEmissao.add(new ItemDTO<FormaEmissao,String>(itemFormaEmissao, itemFormaEmissao.getDescFormaEmissao()));
+		}
+		return comboFormasEmissao;
+	}
+
+
 	
 	/**
 	 * Método responsável por obter os parametros de cobranca da cota
