@@ -1,8 +1,9 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.model.cadastro.Cheque;
 import java.util.List;
 
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -68,4 +69,12 @@ public interface CotaGarantiaService {
 	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
 	 */
 	public abstract CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota) throws RelationshipRestrictionException;
+
+	/**
+	 * @param nome
+	 * @param maxResults
+	 * @return
+	 * @see br.com.abril.nds.repository.FiadorRepository#buscaFiador(java.lang.String, int)
+	 */
+	public abstract List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults);
 }

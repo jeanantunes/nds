@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
@@ -39,6 +41,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private FiadorRepository fiadorRepository;
 
 	/*
 	 * (non-Javadoc)
@@ -171,6 +176,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		cotaGarantiaImovel.setImoveis(listaImoveis);
 		
 		return (CotaGarantiaImovel) cotaGarantiaRepository.merge(cotaGarantiaImovel);
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#buscaFiador(java.lang.String, int)
+	 */
+	@Override
+	public List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults) {
+		return fiadorRepository.buscaFiador(nome, maxResults);
 	}
 	
 }

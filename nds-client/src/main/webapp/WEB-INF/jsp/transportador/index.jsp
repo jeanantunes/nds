@@ -144,7 +144,7 @@
 						$("#dialog-incluir-veiculo").dialog("close");
 					},
 					"Cancelar" : function() {
-						
+						/*
 						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroVeiculos'/>", null, 
 							function(result){
 								
@@ -154,7 +154,8 @@
 								
 								$("#dialog-incluir-veiculo").dialog("close");
 							}
-						);
+						);*/
+						$("#dialog-incluir-veiculo").dialog("close");
 					}
 				}
 			});
@@ -193,7 +194,7 @@
 						$.postJSON("<c:url value='/cadastro/transportador/excluirVeiculo'/>", data, 
 							function(result){
 								
-								//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
 								
 								$(".veiculosGrid").flexReload();
 								
@@ -283,7 +284,7 @@
 						$("#dialog-incluir-motorista").dialog("close");
 					},
 					"Cancelar" : function() {
-						
+						/*
 						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroMotoristas'/>", null, 
 							function(result){
 								
@@ -293,7 +294,8 @@
 								
 								$("#dialog-incluir-motorista").dialog("close");
 							}
-						);
+						);*/
+						$("#dialog-incluir-motorista").dialog("close");
 					}
 				}
 			});
@@ -332,7 +334,7 @@
 						$.postJSON("<c:url value='/cadastro/transportador/excluirMotorista'/>", data, 
 							function(result){
 								
-								//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
 								
 								$(".motoristasGrid").flexReload();
 								
@@ -873,21 +875,26 @@
 			var idMotorista = $("input:radio[name='radioMotorista']:checked").val();
 			var idsRotas = $("input:checkbox[name='checkRota']:checked").val();
 			
+			var msgs = [];
+			
 			if (!idVeiculo){
 				
-				alert("Escolha um veículo.");
-				return;
+				msgs.push("Escolha um veículo.");
 			}
 			
 			if (!idMotorista){
 				
-				alert("Escolha um motorista.");
-				return;
+				msgs.push("Escolha um motorista.");
 			}
 			
 			if (!idsRotas){
 				
-				alert("Escolha pelo menos uma rota.");
+				msgs.push("Escolha pelo menos uma rota.");
+			}
+			
+			if (msgs.length > 0){
+				
+				exibirMensagemDialog("WARNING", msgs, "idModalCadastroTransportador");
 				return;
 			}
 			
