@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -101,4 +104,34 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		assertNotNull(cotaGarantia);
 	}
 	
+	@Test
+	public void testSalvaImovel() {
+		
+		CotaGarantia cotaGarantia = null;
+		
+		List<Imovel> listaImoveis = new ArrayList<Imovel>();
+		
+		for (int i = 0 ; i <= 5; i++) {
+			
+			Imovel imovel = new Imovel();
+			
+			imovel.setProprietario("Proprietario0"+i);
+			imovel.setEndereco("Endereço0"+i);
+			imovel.setNumeroRegistro(i+"001");
+			imovel.setValor((i+1)*1000D);
+			imovel.setObservacao("Obs: "+i+"000");
+			
+			listaImoveis.add(imovel);
+		}
+		
+		try {
+			
+			cotaGarantia = cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
+			
+		} catch (RelationshipRestrictionException e) {
+			e.printStackTrace();
+		}
+		
+		assertNotNull(cotaGarantia);
+	}
 }
