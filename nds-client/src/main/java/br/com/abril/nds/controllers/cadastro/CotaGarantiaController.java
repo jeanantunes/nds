@@ -63,18 +63,20 @@ public class CotaGarantiaController {
 		
 		result.use(Results.json())
 		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
-				"Cheque Caução salvo com Sucesso."), "result")
+				"Cheque Cauï¿½ï¿½o salvo com Sucesso."), "result")
 		.recursive().serialize();
 	}
 	
 	@Post("/getByCota.json")
-<<<<<<< .mine=======	@Get
-	@Path("/getByCota.json")
->>>>>>> .theirs	public void getByCota(Long idCota){
+	public void getByCota(Long idCota) {
 		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
-		if (cotaGarantia != null) {			result.use(Results.json()).from(cotaGarantia, "cotaGarantia")					.exclude("cota").recursive().serialize();		}else{			result.use(Results.json()).from("OK").serialize();		}	}
-	
+		if (cotaGarantia != null) {			
+			result.use(Results.json()).from(cotaGarantia, "cotaGarantia").exclude("cota").recursive().serialize();		
+		}else{			
+			result.use(Results.json()).from("OK").serialize();		
+		}	
+	}
 	
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id){
