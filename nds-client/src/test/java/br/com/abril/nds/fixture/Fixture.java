@@ -137,9 +137,13 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class Fixture {
@@ -515,9 +519,10 @@ public class Fixture {
 
 	public static DistribuicaoFornecedor distribuicaoFornecedor(
 			Fornecedor fornecedor, DiaSemana diaSemana,
-			OperacaoDistribuidor operacaoDistribuidor) {
+			OperacaoDistribuidor operacaoDistribuidor, Distribuidor distribuidor) {
 		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
 		df.setFornecedor(fornecedor);
+		df.setDistribuidor(distribuidor);
 		df.setDiaSemana(diaSemana);
 		df.setOperacaoDistribuidor(operacaoDistribuidor);
 		
@@ -2432,4 +2437,24 @@ public class Fixture {
 		return tipoGarantiaAceita;
 	}
 	
+	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
+																		 LancamentoParcial lancamentoParcial,
+																		 Date recolhimento,
+																		 StatusLancamentoParcial status,
+																		 TipoLancamentoParcial tipo) {
+		
+		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
+		
+		parcial.setLancamento(lancamento);
+		
+		parcial.setLancamentoParcial(lancamentoParcial);
+		
+		parcial.setRecolhimento(recolhimento);
+		
+		parcial.setStatus(status);
+		
+		parcial.setTipo(tipo);
+		
+		return parcial;
+	}
 }
