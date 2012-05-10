@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
@@ -29,7 +30,16 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 
 	List<Cota> obterCotasAssociadaFiador(Long idFiador, Set<Long> cotasIgnorar);
 
-	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota);
+	boolean verificarAssociacaoFiadorCota(Long idFiador, Integer numeroCota, Set<Long> idsIgnorar);
 
 	PessoaFisica buscarSocioFiadorPorCPF(Long idFiador, String cpf);
+	
+	/**
+	 * Busca imprecisa o Fiador.</br>
+	 * O nome é comparado pelo inicio.
+	 * @param nome Nome
+	 * @param maxResults quantidade maxima de resultados
+	 * @return <code>key</code> valorizado com o ID e <code>value</code com o Nome
+	 */
+	public abstract List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults);
 }

@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.devolucao;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +27,10 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -83,9 +82,7 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimento(dataPesquisa, listaIdsFornecedores);
-
-		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL, balanceamentoRecolhimento);
+			this.obterBalanceamentoRecolhimentoInicial(null, dataPesquisa, listaIdsFornecedores);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -94,55 +91,239 @@ public class MatrizRecolhimentoController {
 	}
 	
 	@Post
-	@Path("/configurarNovaDataRecolhimento")
-	public void configurarNovaDataRecolhimento() {
+	@Path("/confirmar")
+	public void confirmar() {
 		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+			(BalanceamentoRecolhimentoDTO)
+				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
+		//TODO:
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), Constantes.PARAM_MSGS)
+				.recursive().serialize();
 	}
 	
 	@Post
-	@Path("/reprogramar")
-	public void reprogramar() {
+	@Path("/balancearPorEditor")
+	public void balancearPorEditor(Integer numeroSemana, Date dataPesquisa,
+								   List<Long> listaIdsFornecedores) {
+		
+		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+			this.obterBalanceamentoRecolhimentoEditor(dataPesquisa, listaIdsFornecedores);
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 		
 		
+//		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamentoAtual =
+//			this.obterMatrizBalanceamento();
+//		
+//		Map<Date, Long> mapaRecolhimentoEditor = new HashMap<Date, Long>();
+//		
+//		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizBalanceamentoAtual.entrySet()) {
+//			
+//			Date dataRecolhimento = entry.getKey();
+//			
+//			List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento = entry.getValue();
+//			
+//			if (listaProdutosRecolhimento == null || listaProdutosRecolhimento.isEmpty()) {
+//				
+//				continue;
+//			}
+//			
+//			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
+//				
+//				//mapaRecolhimentoEditor.put(entry.getKey(), k);
+//			}
+//			
+//			
+//		}
+//		
+//		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
+//		
+//		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoEditor =
+//			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+//		
+//		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimentoEditor);
+//		
+//		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL,
+//									  balanceamentoRecolhimento);
+//		
+//		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+//			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+//		
+//		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").serialize();
 	}
 	
 	@Post
-	@Path("/exibirMatrizBalanceamento")
-	public void exibirMatrizBalanceamento() {
+	@Path("/balancearPorValor")
+	public void balancearPorValor(Integer numeroSemana, Date dataPesquisa,
+			   					  List<Long> listaIdsFornecedores) {
 		
+		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+			this.obterBalanceamentoRecolhimentoValor(dataPesquisa, listaIdsFornecedores);
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
 	@Post
-	@Path("/exibirMatrizBalanceamentoPorDia")
-	public void exibirMatrizBalanceamentoDoDia(String dataFormatada, String sortorder,
-											   String sortname, Integer page, Integer rp) {
-
-		if (dataFormatada == null || dataFormatada.trim().isEmpty()) {
+	@Path("/salvar")
+	public void salvar() {
 		
-			return;
-		}
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+			(BalanceamentoRecolhimentoDTO)
+				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
-		Date data = DateUtil.parseDataPTBR(dataFormatada);
-
+		//TODO:
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento da matriz de recolhimento salvo com sucesso!"), Constantes.PARAM_MSGS)
+				.recursive().serialize();
+	}
+	
+	@Post
+	@Path("/exibirMatrizFornecedor")
+	public void exibirMatrizFornecedor(String dataFormatada, String sortorder,
+									   String sortname, Integer page, Integer rp) {
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
 			(BalanceamentoRecolhimentoDTO)
 				httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		
-		if (balanceamentoRecolhimento != null
-				&& balanceamentoRecolhimento.getMatrizRecolhimento() != null) {
+	
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
-			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDia =
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento =
+			new ArrayList<ProdutoRecolhimentoDTO>();
+		
+		Date data = null;
+		
+		if (dataFormatada != null && !dataFormatada.trim().isEmpty()) {
+		
+			data = DateUtil.parseDataPTBR(dataFormatada);
+		}
+		
+		if (data != null) {
+			
+			listaProdutoRecolhimento =
 				balanceamentoRecolhimento.getMatrizRecolhimento().get(data);
 			
-			if (listaProdutoRecolhimentoDia != null && !listaProdutoRecolhimentoDia.isEmpty()) {
+		} else {
 			
-				PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-				
-				processarBalanceamento(listaProdutoRecolhimentoDia, balanceamentoRecolhimento.isMatrizFechada(),
-									   paginacao, sortname);
+			for (Map.Entry<Date,List<ProdutoRecolhimentoDTO>> entry :
+					balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
+			
+				listaProdutoRecolhimento.addAll(entry.getValue());
 			}
 		}
+		
+		if (listaProdutoRecolhimento != null && !listaProdutoRecolhimento.isEmpty()) {
+		
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+			processarBalanceamento(listaProdutoRecolhimento, balanceamentoRecolhimento.isMatrizFechada(),
+								   paginacao, sortname);
+		}
+	}
+	
+	@Post
+	@Path("/voltarConfiguracaoOriginal")
+	public void voltarConfiguracaoOriginal() {
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+			(BalanceamentoRecolhimentoDTO)
+				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL);
+		
+		balanceamentoRecolhimento = 
+			this.obterBalanceamentoRecolhimentoInicial(balanceamentoRecolhimento, null, null);
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/reprogramarSelecionados")
+	public void reprogramarSelecionados(List<ProdutoRecolhimentoVO> listaProdutoRecolhimento,
+										boolean selecionarTodos,
+									    String novaDataFormatada) {
+		
+		//TODO: verificar necessidade de submeter selecionar todos
+		
+		System.out.println(listaProdutoRecolhimento.size());
+		
+		if (novaDataFormatada != null) {
+			
+			Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+			
+			if (novaData.compareTo(DateUtil.removerTimestamp(new Date())) == 0) {
+				
+				throw new ValidacaoException(
+					new ValidacaoVO(TipoMensagem.ERROR, "Data inválida"));
+			}
+		}
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	@Post
+	@Path("/reprogramarRecolhimentoUnico")
+	public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoVO produtoRecolhimento) {
+		
+		System.out.println(produtoRecolhimento);
+		
+		//TODO:
+		
+		if (produtoRecolhimento != null) {
+			
+			if (produtoRecolhimento.getNovaData() != null) {
+				
+				Date novaData = DateUtil.parseDataPTBR(produtoRecolhimento.getNovaData());
+				
+				if (novaData.compareTo(DateUtil.removerTimestamp(new Date())) == 0) {
+					
+					throw new ValidacaoException(
+						new ValidacaoVO(TipoMensagem.ERROR, "Data inválida"));
+				}
+			}
+		}
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	@Post
+	@Path("/atualizarResumoBalanceamento")
+	public void atualizarResumoBalanceamento() {
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+			(BalanceamentoRecolhimentoDTO)
+				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+		
+		//TODO: inicial?
+		balanceamentoRecolhimento = 
+			this.obterBalanceamentoRecolhimentoInicial(balanceamentoRecolhimento, null, null);
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDia,
@@ -156,6 +337,8 @@ public class MatrizRecolhimentoController {
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDia) {
 			
 			produtoRecolhimentoVO = new ProdutoRecolhimentoVO();
+			
+			produtoRecolhimentoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
 			
 			if (produtoRecolhimentoDTO.getSequencia() != null) {
 				produtoRecolhimentoVO.setSequencia(
@@ -227,7 +410,10 @@ public class MatrizRecolhimentoController {
 				produtoRecolhimentoVO.setNovaData("");
 			}
 			
-			produtoRecolhimentoVO.setBloquearLinkData(matrizFechada);
+			produtoRecolhimentoVO.setBloqueioMatrizFechada(matrizFechada);
+			
+			produtoRecolhimentoVO.setBloqueioDataRecolhimento(
+				produtoRecolhimentoDTO.isPossuiChamada());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
@@ -240,77 +426,25 @@ public class MatrizRecolhimentoController {
 		TableModel<CellModelKeyValue<ProdutoRecolhimentoVO>> tableModel =
 			new TableModel<CellModelKeyValue<ProdutoRecolhimentoVO>>();
 		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaProdutoRecolhimentoVO));
 		tableModel.setPage(paginacao.getPaginaAtual());
 		tableModel.setTotal(totalRegistros);
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-	}
-	
-	@Post
-	@Path("/balancearPorEditor")
-	public void balancearPorEditor() {
+		List<CellModelKeyValue<ProdutoRecolhimentoVO>> listaCellModel =
+			new ArrayList<CellModelKeyValue<ProdutoRecolhimentoVO>>();
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizBalanceamentoAtual = this.obterMatrizBalanceamento();
+		CellModelKeyValue<ProdutoRecolhimentoVO> cellModel = null;
 		
-		Map<Date, Long> mapaRecolhimentoEditor = new HashMap<Date, Long>();
-		
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizBalanceamentoAtual.entrySet()) {
+		for (ProdutoRecolhimentoVO vo : listaProdutoRecolhimentoVO) {
 			
-			Date dataRecolhimento = entry.getKey();
+			cellModel =
+				new CellModelKeyValue<ProdutoRecolhimentoVO>(Integer.valueOf(vo.getIdLancamento()), vo);
 			
-			List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento = entry.getValue();
-			
-			if (listaProdutosRecolhimento == null || listaProdutosRecolhimento.isEmpty()) {
-				
-				continue;
-			}
-			
-			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
-				
-				//mapaRecolhimentoEditor.put(entry.getKey(), k);
-			}
-			
-			
+			listaCellModel.add(cellModel);
 		}
 		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
+		tableModel.setRows(listaCellModel);
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoEditor =
-			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
-		
-		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimentoEditor);
-		
-		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL,
-									  balanceamentoRecolhimento);
-		
-		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
-			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
-		
-		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").serialize();
-	}
-	
-	@Post
-	@Path("/balancearPorValor")
-	public void balancearPorValor(Integer numeroSemana, List<Long> listaIdsFornecedores) {
-		
-		this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
-														  listaIdsFornecedores,
-														  TipoBalanceamentoRecolhimento.VALOR);
-	}
-	
-	@Post
-	@Path("/voltarConfiguracaoOriginal")
-	public void voltarConfiguracaoOriginal() {
-		
-		
-	}
-	
-	@Post
-	@Path("/confirmar")
-	public void confirmar() {
-		
-		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	/*
@@ -341,28 +475,89 @@ public class MatrizRecolhimentoController {
 		}
 	}
 	
-	/*
-	 * Verifica se já existe a matriz na sessão, caso contrário irá buscá-la a partir dos parâmetros.
-	 */
-	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimento(Date dataBalanceamento, 
-																  	    List<Long> listaIdsFornecedores) {
-
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			(BalanceamentoRecolhimentoDTO)
-				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoInicial(
+												BalanceamentoRecolhimentoDTO balanceamentoRecolhimento,
+												Date dataBalanceamento, 
+												List<Long> listaIdsFornecedores) {
 		
 		if ((balanceamentoRecolhimento == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null)
 				&& dataBalanceamento != null 
 				&& listaIdsFornecedores != null) {
 
+			//TODO: chamar o método para balanceamento automático do service
+			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
 			
-			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO, balanceamentoRecolhimento);
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL,
+										  balanceamentoRecolhimento);
+			
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
+										  balanceamentoRecolhimento);
 		}
 		
-		if (balanceamentoRecolhimento.getMatrizRecolhimento() == null) {
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		return balanceamentoRecolhimento;
+	}
+	
+	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoEditor(
+																	Date dataBalanceamento,
+																	List<Long> listaIdsFornecedores) {
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			new BalanceamentoRecolhimentoDTO();
+		
+		if (dataBalanceamento != null && listaIdsFornecedores != null) {
+
+			//TODO: chamar o método para balanceamento por editor do service
+			
+			balanceamentoRecolhimento = 
+				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
+			
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
+										  balanceamentoRecolhimento);
+		}
+		
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		return balanceamentoRecolhimento;
+	}
+	
+	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoValor(
+																	Date dataBalanceamento, 
+																	List<Long> listaIdsFornecedores) {
+	
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			new BalanceamentoRecolhimentoDTO();
+		
+		if (dataBalanceamento != null && listaIdsFornecedores != null) {
+
+			//TODO: chamar o método para balanceamento por valor do service
+			
+			balanceamentoRecolhimento = 
+				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
+			
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
+										  balanceamentoRecolhimento);
+		}
+		
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
@@ -372,24 +567,7 @@ public class MatrizRecolhimentoController {
 	}
 	
 	/*
-	 * Verifica se já existe a matriz na sessão.
-	 */
-	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizBalanceamento() {
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
-			this.obterBalanceamentoRecolhimento(null, null);
-		
-		if (balanceamentoRecolhimento == null) {
-			
-			return null;
-		}
-		
-		return balanceamentoRecolhimento.getMatrizRecolhimento(); 
-	}
-	
-	/*
 	 * MOCK:
-	 * Verifica se já existe a matriz na sessão, caso contrário irá criá-la a partir do dia parametrizado.
 	 */
 	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoMock(Date dataBalanceamento, 
 																	 		List<Long> listaIdsFornecedores) {
@@ -423,6 +601,7 @@ public class MatrizRecolhimentoController {
 				
 				produtoEdicao.setProduto(produto);
 				
+				produtoRecolhimento.setIdLancamento((long) i);
 				produtoRecolhimento.setSequencia((long) i);
 				produtoRecolhimento.setExpectativaEncalheAtendida(BigDecimal.ZERO);
 				produtoRecolhimento.setExpectativaEncalheSede(BigDecimal.ZERO);
@@ -434,6 +613,7 @@ public class MatrizRecolhimentoController {
 				produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(i));
 				produtoRecolhimento.setValorTotal(new BigDecimal(i));
 				produtoRecolhimento.setProdutoEdicao(produtoEdicao);
+				produtoRecolhimento.setPossuiChamada(false);
 				
 				listaProdutosRecolhimento.add(produtoRecolhimento);
 			}
@@ -448,24 +628,6 @@ public class MatrizRecolhimentoController {
 		balanceamentoRecolhimento.setMatrizFechada(false);
 		
 		return balanceamentoRecolhimento;
-	}
-
-	/*
-	 * Retorna os dados do recolhimento referente a um dia especifico.
-	 */
-	private List<ProdutoRecolhimentoDTO> obterBalanceamentoDia(Date dataRecolhimento, 
-															   List<Long> listaIdsFornecedores) {
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimento(dataRecolhimento, listaIdsFornecedores);
-
-		if (balanceamentoRecolhimento != null
-				&& balanceamentoRecolhimento.getMatrizRecolhimento() != null) {
-			
-			return balanceamentoRecolhimento.getMatrizRecolhimento().get(dataRecolhimento);
-		}
-		
-		return null;
 	}
 	
 	/*

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
+import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
@@ -141,7 +142,23 @@ public interface CotaService {
 	//void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
 
 	List<Cota> obterCotaAssociadaFiador(Long idFiador);
+
+	/**
+	 * Obtém dados de Distribuição da cota
+	 * 
+	 * @param idCota - Código da cota
+	 * @return DTO com dados de distribuiçãos
+	 */
+	DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota);
+	
 	
 	List<Fornecedor> obterFornecedoresCota(Long idCota);
+
+	/**
+	 * Salvar dados de Distribuição da cota
+	 * 
+	 * @param distribuicao - DTO que representa os dados de Distribuição da cota
+	 */
+	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
 	
 }

@@ -8,6 +8,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	
@@ -26,5 +27,11 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	 * @return endereço principal do distribuidor.
 	 */
 	public abstract EnderecoDistribuidor obterEnderecoPrincipal();
+	
+	/**
+	 * Recupera os tipos de garantias aceitas pelo distribuidor.
+	 * @return
+	 */
+	public List<TipoGarantia> obtemTiposGarantiasAceitas();
 
 }

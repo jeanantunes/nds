@@ -36,7 +36,7 @@ public class TipoGarantiaAceita implements Serializable {
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	private TipoCotaGarantia tipoCotaGarantia;
+	private TipoGarantia tipoGarantia;
 	
 	
 	@ManyToOne(optional=false)
@@ -57,14 +57,14 @@ public class TipoGarantiaAceita implements Serializable {
 
 
 
-	public TipoCotaGarantia getTipoCotaGarantia() {
-		return tipoCotaGarantia;
+	public TipoGarantia getTipoGarantia() {
+		return tipoGarantia;
 	}
 
 
 
-	public void setTipoCotaGarantia(TipoCotaGarantia tipoCotaGarantia) {
-		this.tipoCotaGarantia = tipoCotaGarantia;
+	public void setTipoGarantia(TipoGarantia tipoGarantia) {
+		this.tipoGarantia = tipoGarantia;
 	}
 
 

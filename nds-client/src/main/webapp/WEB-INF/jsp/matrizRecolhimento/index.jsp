@@ -6,77 +6,14 @@
 
 		function pesquisar() {
 
+			fecharGridBalanceamento();
+			
 			$.postJSON(
 				"<c:url value='/devolucao/balanceamentoMatriz/pesquisar' />", 
 				obterParametrosPesquisa(),
 				function(result) {
 					
-					var rows = '<tr>';
-
-					$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
-						
-						rows += '<td>';
-
-						if (resumo.exibeDestaque) {
-
-							rows += '<div class="box_resumo alert">';
-							
-						} else {
-
-							rows += '<div class="box_resumo">';
-						}
-						
-						rows += '<label>' + resumo.dataFormatada;
-						rows += '<a href="javascript:;" onclick="visualizarMatrizBalanceamentoPorDia(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
-						rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
-						rows += '</a>';
-						rows += '</label>';
-						rows += '<span class="span_1">Qtde. Títulos:</span>';	 
-						rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';	
-						rows += '<span class="span_1">Qtde. Exempl.:</span>';	
-						rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
-						rows += '<span class="span_1">Qtde. Parciais:</span>';	
-						rows += '<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';	
-						rows += '<span class="span_1">Peso Total:</span>';
-						rows += '<span class="span_2">' + resumo.pesoTotalFormatado + '</span>';
-						rows += '<span class="span_1">Valor Total:</span>';
-						rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
-						rows += '</div>';
-						rows += '</td>';
-				    });	
-				    
-				    rows += "</tr>";
-
-				    $("#tableResumoPeriodoBalanceamento").empty();
-				    
-				    $("#tableResumoPeriodoBalanceamento").append(rows);
-
-				    var matrizFechada = result.matrizFechada;
-				    
-				    if (matrizFechada) {
-				    	
-				    	bloquearLinks();
-				    	
-				    	bloquearCheckAll();
-				    	
-				    	$(".balanceamentoGrid").flexOptions({
-				    		disableSelect : true
-				    	});
-				    	
-				    } else {
-				    	
-				    	habilitarLinks();
-				    	
-				    	habilitarCheckAll();
-				    	
-				    	$(".balanceamentoGrid").flexOptions({
-				    		disableSelect : false
-				    	});
-				    }
-				    
-				    $("#resumoPeriodo").show();
-
-				    $("#fieldsetGrids").hide();
+					montarResumoPeriodoBalanceamento(result);
 				},
 				function() {
 
@@ -85,14 +22,82 @@
 			);
 		}
 		
+		function montarResumoPeriodoBalanceamento(result) {
+			
+			var rows = '<tr>';
+
+			$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
+				
+				rows += '<td>';
+
+				if (resumo.exibeDestaque) {
+
+					rows += '<div class="box_resumo alert">';
+					
+				} else {
+
+					rows += '<div class="box_resumo">';
+				}
+				
+				rows += '<label>' + resumo.dataFormatada;
+				rows += '<a href="javascript:;" onclick="visualizarMatrizBalanceamentoPorDia(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
+				rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
+				rows += '</a>';
+				rows += '</label>';
+				rows += '<span class="span_1">Qtde. Títulos:</span>';	 
+				rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';	
+				rows += '<span class="span_1">Qtde. Exempl.:</span>';	
+				rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+				rows += '<span class="span_1">Qtde. Parciais:</span>';	
+				rows += '<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';	
+				rows += '<span class="span_1">Peso Total:</span>';
+				rows += '<span class="span_2">' + resumo.pesoTotalFormatado + '</span>';
+				rows += '<span class="span_1">Valor Total:</span>';
+				rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
+				rows += '</div>';
+				rows += '</td>';
+		    });	
+		    
+		    rows += "</tr>";
+
+		    $("#tableResumoPeriodoBalanceamento").empty();
+		    
+		    $("#tableResumoPeriodoBalanceamento").append(rows);
+
+		    var matrizFechada = result.matrizFechada;
+		    
+		    if (matrizFechada) {
+		    	
+		    	bloquearLinks();
+		    	
+		    	bloquearCheckAll();
+		    	
+		    	$(".balanceamentoGrid").flexOptions({
+		    		disableSelect : true
+		    	});
+		    	
+		    } else {
+		    	
+		    	habilitarLinks();
+		    	
+		    	habilitarCheckAll();
+		    	
+		    	$(".balanceamentoGrid").flexOptions({
+		    		disableSelect : false
+		    	});
+		    }
+		    
+		    $("#resumoPeriodo").show();
+		}
+		
 		function bloquearCheckAll() {
 			
-			$("#checkAllBalanceamento").disable();
+			$("#checkAllReprogramar").disable();
 		}
 		
 		function habilitarCheckAll() {
 			
-			$("#checkAllBalanceamento").enable();
+			$("#checkAllReprogramar").enable();
 		}
 		
 		function bloquearLinks() {
@@ -112,9 +117,9 @@
 			habilitarLink("linkEditor", balancearPorEditor);
 			habilitarLink("linkValor", balancearPorValor);
 			habilitarLink("linkSalvar", salvar);
-			habilitarLink("linkMatrizFornecedor", balancearMatrizFornecedor);
+			habilitarLink("linkMatrizFornecedor", exibirMatrizFornecedor);
 			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
-			habilitarLink("linkReprogramar", reprogramar);
+			habilitarLink("linkReprogramar", reprogramarSelecionados);
 		}
 		
 		function bloquearLink(idLink) {
@@ -137,7 +142,7 @@
 		function visualizarMatrizBalanceamentoPorDia(data) {
 			
 			$(".balanceamentoGrid").flexOptions({
-				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizBalanceamentoPorDia' />",
+				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
 				onSuccess: executarAposProcessamento,
 				params: [
 			         {name:'dataFormatada', value: data}
@@ -149,6 +154,8 @@
 		}
 		
 		function executarPreProcessamento(resultado) {
+			
+			deselectCheckAll();
 			
 			if (resultado.mensagens) {
 
@@ -164,60 +171,9 @@
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var inputSequencia;
-								   
-			   	var inputNovaData ;
-			   	
-				var divRecarregarData;
-				
-				var inputCheck;
-			   					  
-			    if (row.cell.bloquearLinkData) {
-
-			    	inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
-								   + 	   ' value="' + row.cell.sequencia + '"'
-								   +	   ' style="width: 25px;" disabled="disabled" />';
-									   
-					inputNovaData = '<input type="text" id="novaData' + row.id + '"'
-								  + 	  ' name="novaData"'			  
-								  + 	  ' value="' + row.cell.novaData + '"'
-								  + 	  ' style="width:65px; margin-right:5px; float:left;"'
-								  +       ' disabled="disabled" />';
-
-			    	divRecarregarData = '<div class="bt_atualizarIco linkDisabled">'
- 						  			  + '  <a style="cursor: default;" href="javascript:;">&nbsp;</a>'
- 						  			  + '</div>';
- 						  			  
-			    	inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
-					   		   +       ' name="checkBalanceamento"'
-					   		   +       ' value="' + row.id + '" disabled="disabled" />';
-			    
-			    } else {
-			    
-			    	inputSequencia = '<input type="text" id="sequencia' + row.id + '"'
-								   + 	   ' value="' + row.cell.sequencia + '"'
-								   +	   ' style="width: 25px;" />';
-									   
-					inputNovaData = '<input type="text" id="novaData' + row.id + '"'
-								  + 	  ' name="novaData"'
-								  + 	  ' value="' + row.cell.novaData + '"'
-								  + 	  ' style="width:65px; margin-right:5px; float:left;" />';
-			    	
-			    	divRecarregarData = '<div class="bt_atualizarIco">'
- 						  			  +   '<a href="javascript:;" onclick="atualizarData();">&nbsp;</a>'
- 						  			  + '</div>';
- 						  			  
-			    	inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
-					   		   +       ' name="checkBalanceamento"'
-					   		   +       ' value="' + row.id + '"'
-					   		   +       ' onclick="checarBalanceamento()" />';
-			    }
-			   	
-   				var novaData = inputNovaData + divRecarregarData;
-			   						
-		   		row.cell.sequencia = inputSequencia;
-				row.cell.novaData = novaData;
-				row.cell.reprogramar = inputCheck;
+				row.cell.sequencia = gerarInputSequencia(row);
+				row.cell.novaData = gerarHTMLNovaData(row);
+				row.cell.reprogramar = gerarCheckReprogramar(row);
 			});
 				
 			$(".grids").show();
@@ -225,6 +181,78 @@
 			$("#fieldsetGrids").show();
 			
 			return resultado;
+		}
+		
+		function gerarInputSequencia(row) {
+			
+			var retornoHTML;
+			
+			if (row.cell.bloqueioMatrizFechada) {
+				
+				retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
+						    + 	    ' value="' + row.cell.sequencia + '"'
+						    +	    ' style="width: 25px;" disabled="disabled"'
+						    +	    ' name="sequencia" />';
+			} else {
+				
+				retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
+						    + 	    ' value="' + row.cell.sequencia + '"'
+						    +	    ' style="width: 25px;"'
+						    +	    ' name="sequencia" />';
+			}
+			
+			return retornoHTML;
+		}
+		
+		function gerarHTMLNovaData(row) {
+			
+			var retornoHTML;
+			
+			if (row.cell.bloqueioMatrizFechada
+					|| row.cell.bloqueioDataRecolhimento) {
+				
+				retornoHTML = '<input type="text" id="novaData' + row.id + '"'
+						    + 	    ' name="novaData"'			  
+							+ 	    ' value="' + row.cell.novaData + '"'
+							+ 	    ' style="width:65px; margin-right:5px; float:left;"'
+							+       ' disabled="disabled" />';
+				
+				retornoHTML += '<div class="bt_atualizarIco linkDisabled">'
+					  		 + '  <a style="cursor: default;" href="javascript:;">&nbsp;</a>'
+					  		 + '</div>';
+			} else {
+				
+				retornoHTML = '<input type="text" id="novaData' + row.id + '"'
+							+ 	    ' name="novaData"'
+							+ 	    ' value="' + row.cell.novaData + '"'
+							+ 	    ' style="width:65px; margin-right:5px; float:left;" />';
+				
+			  	retornoHTML += '<div class="bt_atualizarIco">'
+  							 +   '<a href="javascript:;" onclick="reprogramarRecolhimentoUnico(\'' + row.id + '\');">&nbsp;</a>'
+					  		 + '</div>';
+			}
+			
+			return retornoHTML;
+		}
+		
+		function gerarCheckReprogramar(row) {
+			
+			var retornoHTML;
+			
+			if (row.cell.bloqueioMatrizFechada) {
+				
+				retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
+		   		   			+       ' name="checkReprogramar"'
+		   		   			+       ' value="' + row.id + '" disabled="disabled" />';
+			} else {
+				
+				retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
+		   		   			+       ' name="checkReprogramar"'
+		   		   			+       ' value="' + row.id + '"'
+		   		   			+       ' onclick="checarBalanceamento()" />';
+			}
+			
+			return retornoHTML;
 		}
 		
 		function executarAposProcessamento() {
@@ -238,7 +266,7 @@
 		
 		function checarBalanceamento() {
 			
-			$("input[name='checkBalanceamento']").each(function() {
+			$("input[name='checkReprogramar']").each(function() {
 			
 				var checado = this.checked;
 				
@@ -246,16 +274,16 @@
 				
 				if (!checado) {
 					
-					$("#checkAllBalanceamento").attr("checked", false);
+					deselectCheckAll();
 				}
 			});
 		}
 		
 		function selecionarTodos(input) {
 			
-			checkAll(input, "checkBalanceamento");
+			checkAll(input, "checkReprogramar");
 			
-			$("input[name='checkBalanceamento']").each(function() {
+			$("input[name='checkReprogramar']").each(function() {
 			
 				var checado = this.checked;
 				
@@ -348,6 +376,15 @@
 			
 			iniciarGrid();
 			
+			inicializarDatas();
+			
+			$("input[name='numeroSemana']").numeric();
+
+			carregarDadosPesquisa();
+		}
+		
+		function inicializarDatas() {
+			
 			$("#dataPesquisa").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -356,11 +393,16 @@
 				defaultDate: new Date()
 			});
 
+			$("#novaDataRecolhimento").datepicker({
+				showOn : "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly : true,
+				dateFormat: 'dd/mm/yy',
+			});
+
 			$("#dataPesquisa").mask("99/99/9999");
 			
-			$("input[name='numeroSemana']").numeric();
-
-			carregarDadosPesquisa();
+			$("#novaDataRecolhimento").mask("99/99/9999");
 		}
 		
 		function iniciarGrid() {
@@ -484,45 +526,258 @@
 		
 		function confirmar() {
 			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />"
+			);
 		}
 		
 		function balancearPorEditor() {
 			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorEditor' />",
+				obterParametrosPesquisa(),
+				function(result) {
+					
+					montarResumoPeriodoBalanceamento(result);
+				},
+				function() {
+					
+					$("#resumoPeriodo").hide();
+				}
+			);
 		}
 		
 		function balancearPorValor() {
 			
+			fecharGridBalanceamento();
+			
 			$.postJSON(
 				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
 				obterParametrosPesquisa(),
-				function() {
+				function(result) {
 					
+					montarResumoPeriodoBalanceamento(result);
 				},
 				function() {
 					
+					$("#resumoPeriodo").hide();
 				}
 			);
 		}
 		
 		function salvar() {
 			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/salvar' />"
+			);
 		}
 		
-		function balancearMatrizFornecedor() {
+		function exibirMatrizFornecedor() {
 			
+			$(".balanceamentoGrid").flexOptions({
+				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
+				onSuccess: executarAposProcessamento,
+				params: null,
+			    newp: 1,
+			});
+			
+			$(".balanceamentoGrid").flexReload();
 		}
 		
 		function voltarConfiguracaoInicial() {
 			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/voltarConfiguracaoOriginal' />",
+				null,
+				function(result) {
+					
+					montarResumoPeriodoBalanceamento(result);
+				},
+				function() {
+					
+					$("#resumoPeriodo").hide();
+				}
+			);
 		}
 		
-		function fechar() {
+		function reprogramarSelecionados() {
+			
+			$("#dialogReprogramarBalanceamento").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						processarReprogramacao();
+					},
+					"Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
+				},
+				beforeClose: function() {
+					
+					$("#novaDataRecolhimento").val("");
+					
+					clearMessageDialogTimeout();
+				}
+			});
+		}
+		
+		function processarReprogramacao() {
+			
+			var linhasDaGrid = $('.balanceamentoGrid tr');
+			
+			var listaProdutoRecolhimento = "";
+			
+			var checkAllSelected = verifyCheckAll();
+			
+			if (!checkAllSelected) {
+				
+				$.each(linhasDaGrid, function(index, value) {
+					
+					var linha = $(value);
+					
+					var colunaCheck = linha.find("td")[16];
+					
+					var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
+					
+					var checked = inputCheck.attr("checked") == "checked";
+					
+					if (checked) {
+						
+						var idLinha = linha.attr("id");
+						
+						var idLancamento = idLinha.replace("row", "");
+						
+						var sequencia = obterValorInputColuna(linha, 0, "sequencia");
+						var codProduto = obterValorColuna(linha, 1);
+						var numEdicao = obterValorColuna(linha, 3);
+						var novaData = obterValorInputColuna(linha, 15, "novaData");
+						
+						var linhaSelecionada = 'listaProdutoRecolhimento[' + index + '].idLancamento=' + idLancamento + '&';
+						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].sequencia=' + sequencia + '&';
+						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].codigoProduto=' + codProduto + '&';
+						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].numeroEdicao=' + numEdicao + '&';
+						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].novaData=' + novaData + '&';
+						
+						listaProdutoRecolhimento = (listaProdutoRecolhimento + linhaSelecionada);
+					}
+				});
+			}
+			
+			var novaData = $("#novaDataRecolhimento").val();
+			
+			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarSelecionados' />",
+					   listaProdutoRecolhimento
+					   		+ "&selecionarTodos=" + checkAllSelected
+					   		+ "&novaDataFormatada=" + novaData,
+					   function(result) {
+					   		
+							$("#dialogReprogramarBalanceamento").dialog("close");
+				
+					   		atualizarResumoBalanceamento();
+					   		
+					   		deselectCheckAll();
+					   },
+					   null,
+					   true
+			);
+		}
+		
+		function reprogramarRecolhimentoUnico(paramIdLancamento) {
+			
+			var linhasDaGrid = $('.balanceamentoGrid tr');
+			
+			var linhaSelecionada;
+			
+			$.each(linhasDaGrid, function(index, value) {
+				
+				var linha = $(value);
+				
+				var idLinha = linha.attr("id");
+				
+				var idLancamento = idLinha.replace("row", "");
+				
+				if (idLancamento == paramIdLancamento) {
+					
+					var sequencia = obterValorInputColuna(linha, 0, "sequencia");
+					var novaData = obterValorInputColuna(linha, 15, "novaData");
+					
+					linhaSelecionada = 'produtoRecolhimento.idLancamento=' + idLancamento + '&';
+					linhaSelecionada += 'produtoRecolhimento.sequencia=' + sequencia + '&';
+					linhaSelecionada += 'produtoRecolhimento.novaData=' + novaData + '&';
+				}
+			});
+			
+			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico' />",
+					   linhaSelecionada,
+					   function(result) {
+					   
+					   		atualizarResumoBalanceamento();
+					   }
+			);
+		}
+		
+		function fecharGridBalanceamento() {
 			
 			$(".grids").hide();
+			
+			deselectCheckAll();
 		}
 		
-		function reprogramar() {
+		function atualizarResumoBalanceamento() {
 			
+			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/atualizarResumoBalanceamento' />",
+					   null,
+					   function(result) {
+					   	
+					   		montarResumoPeriodoBalanceamento(result);
+					   		
+					   		$(".balanceamentoGrid").flexReload();
+					   },
+					   function() {
+					   
+						   fecharGridBalanceamento();
+						   
+						   $("#resumoPeriodo").hide();
+					   }
+			);
+		}
+		
+		function obterValorColuna(linha, posicao) {
+			
+			var coluna = linha.find("td")[posicao];
+			
+			return $(coluna).find("div").html();
+		}
+		
+		function obterValorInputColuna(linha, posicao, inputName) {
+			
+			var coluna = linha.find("td")[posicao];
+			
+			var input = $(coluna).find("div").find('input[name="' + inputName + '"]');
+			
+			return $(input).val();
+		}
+		
+		function verifyCheckAll() {
+			return ($("#checkAllReprogramar").attr("checked") == "checked");
+		}
+		
+		function deselectCheckAll() {
+			
+			$("#checkAllReprogramar").attr("checked", false);
 		}
 		
 		$(function() {
@@ -533,6 +788,17 @@
 </head>
 
 <body>
+	
+	<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
+	    
+	    <jsp:include page="../messagesDialog.jsp" />
+	    
+	    <p>
+		    <strong>Nova Data:</strong>
+		    <input name="novaDataRecolhimento" type="text"
+		    	   style="width:80px;" id="novaDataRecolhimento" />
+	    </p>
+	</div>
 	
 	<!-- Filtro de Pesquisa -->
 	
@@ -657,7 +923,7 @@
 		<div class="grids" style="display: none;">
 
 			<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
-				<a id="linkFechar" href="javascript:;" onclick="fechar();">
+				<a id="linkFechar" href="javascript:;" onclick="fecharGridBalanceamento();">
 					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 						 hspace="5" border="0" />Fechar
 				</a>
@@ -682,7 +948,7 @@
 					<td width="150">
 						<span class="bt_sellAll">
 							<label for="sel">Selecionar Todos</label>
-							<input type="checkbox" name="checkAllBalanceamento" id="checkAllBalanceamento" onclick="selecionarTodos(this);" style="float: left;" />
+							<input type="checkbox" name="checkAllReprogramar" id="checkAllReprogramar" onclick="selecionarTodos(this);" style="float: left;" />
 						</span>
 					</td>
 				</tr>

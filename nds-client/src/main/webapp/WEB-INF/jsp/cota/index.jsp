@@ -11,23 +11,14 @@
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
+
 <script language="javascript" type="text/javascript">
 	
-	$(".ui-dialog-titlebar-close").click(function() {
-
-		$("#tabpf").tabs('select', 0);
-			MANTER_COTA.limparFormsTabs();
-	});
-	
-	  	
 	$(function() {
-		
-		$( "#tabpf" ).tabs();
-		
-		$( "#tabpj" ).tabs();
-		
+
 		$( "#tabpdv" ).tabs();
-		
+
 		$("#descricaoPessoa").autocomplete({source: ""});
 	
 		$(".pessoasGrid").flexigrid({
@@ -102,6 +93,8 @@
 	
 	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
 	
+	#tabpj-5 fieldset, #tabpf-5 fieldset {width:755px!important;}
+
 </style>
 
 </head>

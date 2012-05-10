@@ -46,6 +46,7 @@ import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -57,6 +58,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -65,6 +67,7 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -74,8 +77,6 @@ import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -493,6 +494,11 @@ public class DataLoader {
 	private static Estudo estudoSuper1EncalheAnt;
 	private static Estudo estudoSuper2EncalheAnt;
 	private static Cota cotaAcme;
+	
+	private static TipoEntrega tipoCotaRetira;
+	private static TipoEntrega tipoEntregaEmBanca;
+	private static TipoEntrega tipoEntregador;
+	
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -548,6 +554,7 @@ public class DataLoader {
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
+		criarDistribuicaoCota(session);
 		criarEditores(session);
 		criarTiposProduto(session);
 		criarProdutos(session);
@@ -630,17 +637,18 @@ public class DataLoader {
 		
 		gerarTipoLicencaMunicipalPDV(session);
 		
-		gerarPDV(session);
+		gerarTipoEntrega(session);
 		
 	}
 
 	
-	private static void gerarPDV(Session session) {
+	private static void gerarTipoEntrega(Session session) {
 		
-		PDV pdv = Fixture.criarPDV("Teste", null, TamanhoPDV.G, cotaManoel, Boolean.TRUE, null, null, null, null);
+		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira");
+		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca");
+		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador");
 		
-		save(session, pdv);
-		
+		save(session,tipoCotaRetira,tipoEntregaEmBanca,tipoEntregador);
 	}
 
 	private static void gerarTipoLicencaMunicipalPDV(Session session) {
@@ -1251,7 +1259,7 @@ public class DataLoader {
 	
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Rota rota = Fixture.rota("005");
+		Rota rota = Fixture.rota("005", "Rota 005");
 		session.save(rota);
 
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
@@ -1260,7 +1268,7 @@ public class DataLoader {
 		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 
-		rota = Fixture.rota("004");
+		rota = Fixture.rota("004", "Rota 004");
 		session.save(rota);
 
 		roteiro = Fixture.roteiro("Interlagos");
@@ -1269,7 +1277,7 @@ public class DataLoader {
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 		
-		rota = Fixture.rota("007");
+		rota = Fixture.rota("007", "Rota 007");
 		session.save(rota);
 
 		roteiro = Fixture.roteiro("Mococa");
@@ -2606,6 +2614,12 @@ public class DataLoader {
 		distribuidor.setParametroContratoCota(parametroContrato);
 
 		save(session, distribuidor);
+		
+		
+		
+		for(TipoGarantia tipo:TipoGarantia.values()){
+			save(session,Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
+		}
 	}
 
 	private static void criarEnderecoDistribuidor(Session session){
@@ -2765,6 +2779,22 @@ public class DataLoader {
 
 	}
 
+	private static void criarDistribuicaoCota(Session session) {
+		
+		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
+				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!", 
+				true, true, true, true, true, true, true, true, true, true);
+		
+		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
+				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!", 
+				false, false, false, false, false, false, false, false, false, false);
+				
+		cotaJoao.setParametroDistribuicao(parametroJoao);
+		cotaGuilherme.setParametroDistribuicao(parametroGuilherme);
+		
+		save(session, cotaJoao, cotaGuilherme);
+	}
+	
 	private static void criarFornecedores(Session session) {
 		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -2810,9 +2840,11 @@ public class DataLoader {
 		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
 
 		tipoMovimentoReparteCotaAusente = Fixture.tipoMovimentoReparteCotaAusente();
-
+		
 		tipoMovimentoRestautacaoReparteCotaAusente = Fixture.tipoMovimentoRestauracaoReparteCotaAusente();
 
+		save(session,tipoMovimentoReparteCotaAusente,tipoMovimentoRestautacaoReparteCotaAusente);
+		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinanceiroRecebimentoReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
@@ -2841,33 +2873,33 @@ public class DataLoader {
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
 		DistribuicaoFornecedor dinapSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUINTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor fcSexta = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		save(session, fcSegunda, fcSexta);
 
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.RECOLHIMENTO);
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 
 		DistribuicaoFornecedor fcQuartaRecolhimento = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.RECOLHIMENTO);
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 
 		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}

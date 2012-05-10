@@ -75,6 +75,9 @@ public class Produto implements Serializable {
 	@Column(name = "PARCIAL")
 	private boolean parcial;
 	
+	@Column(name = "COD_CONTEXTO", nullable = true)
+	private Integer codigoContexto;
+
 	public Long getId() {
 		return id;
 	}
@@ -157,6 +160,14 @@ public class Produto implements Serializable {
 	
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
+	}
+	
+	public Integer getCodigoContexto() {
+		return codigoContexto;
+	}
+
+	public void setCodigoContexto(Integer codigoContexto) {
+		this.codigoContexto = codigoContexto;
 	}
 	
 	public Fornecedor getFornecedor() {

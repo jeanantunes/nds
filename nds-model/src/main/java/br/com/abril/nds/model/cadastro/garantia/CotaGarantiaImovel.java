@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -23,8 +24,8 @@ public class CotaGarantiaImovel extends CotaGarantia {
 	 */
 	private static final long serialVersionUID = 8619127785856466565L;
 	
-	
-	@OneToMany(mappedBy="cotaGarantiaImovel",cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL})
+	@JoinColumn(name="IMOVEL_ID")
 	private List<Imovel> imoveis;
 
 

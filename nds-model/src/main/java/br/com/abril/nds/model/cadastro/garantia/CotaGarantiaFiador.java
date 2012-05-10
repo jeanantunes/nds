@@ -23,7 +23,7 @@ public class CotaGarantiaFiador extends CotaGarantia {
 	private static final long serialVersionUID = -8954847105572780016L;
 	
 	
-	@ManyToOne(optional=false,fetch=FetchType.EAGER)
+	@ManyToOne(optional=true,fetch=FetchType.EAGER)
 	@JoinColumn(name="FIADOR_ID")
 	private Fiador fiador;
 

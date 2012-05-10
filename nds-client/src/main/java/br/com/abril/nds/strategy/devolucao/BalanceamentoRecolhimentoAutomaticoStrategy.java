@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
@@ -33,35 +33,12 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			return balanceamentoRecolhimento; 
 		}
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = this.obterMatrizRecolhimento(dadosRecolhimento);
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
+			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
 		return balanceamentoRecolhimento;
-	}
-	
-	/*
-	 * Obtém a matriz de recolhimento
-	 */
-	private Map<Date, List<ProdutoRecolhimentoDTO>> obterMatrizRecolhimento(RecolhimentoDTO dadosRecolhimento) {
-		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
-			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
-		
-		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaBalanceado = 
-			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
-
-		// Separar quantidade de produtos-edição para não quebrar entre os dias
-		
-		// Verificar qual quantidade de produto melhor se encaixa em cada dia com capacidade disponível
-		// (ordenar pela menor quantidade mas verificar qual melhor completa o total da capacidade)
-		
-		// Gerenciar sobras (jogar nos dias que não excedem a capacidade de manuseio)
-		
-		// Quando todas capacidades estiverem excedidas dar preferência para maior PEB 
-		// (verificar dia de recolhimento previsto do produto)
-		
-		return matrizRecolhimento;
 	}
 	
 	/*
@@ -74,7 +51,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
-		Set<Date> datasRecolhimentoFornecedor = dadosRecolhimento.getDatasRecolhimentoFornecedor();
+		TreeSet<Date> datasRecolhimentoFornecedor = dadosRecolhimento.getDatasRecolhimentoFornecedor();
 		
 		for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiaria : 
 				mapaExpectativaEncalheTotalDiaria.entrySet()) {
@@ -82,34 +59,107 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
 			
 			BigDecimal expectativaEncalheABalancear = entryExpectativaEncalheTotalDiaria.getValue();
-			
-			Date dataBalanceamento = 
-				this.obterDataRecolhimentoPermitida(datasRecolhimentoFornecedor, dataRecolhimentoPrevista);
 
-			List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = 
-				this.obterProdutosRecolhimentoPorData(dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
-			
-			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = 
-				matrizRecolhimentoBalanceada.get(dataBalanceamento);
-			
-			// Verificar se a expectativa de encalhe excede a capacidade diária de manuseio
-			
-			if (produtosRecolhimentoNaData != null) {
-				
-				BigDecimal capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
-				
-				BigDecimal expectativaEncalheNaData = this.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
-				
-				if (expectativaEncalheNaData.add(expectativaEncalheABalancear).compareTo(capacidadeManuseio) > 0) {
-					
-					
-				}
-			}
-			
-			matrizRecolhimentoBalanceada.put(dataBalanceamento, produtosRecolhimentoFiltrados);
+			this.balancearProdutosRecolhimentoComChamada(
+				matrizRecolhimentoBalanceada, dadosRecolhimento, dataRecolhimentoPrevista);
+
+			this.balancearProdutosRecolhimento(matrizRecolhimentoBalanceada, dataRecolhimentoPrevista, 
+				datasRecolhimentoFornecedor, dadosRecolhimento, expectativaEncalheABalancear);
 		}
 		
 		return matrizRecolhimentoBalanceada;
+	}
+	
+	/*
+	 * Balanceia os produtos do recolhimento na matriz.
+	 */
+	private void balancearProdutosRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada, 
+						   					   Date dataRecolhimentoPrevista,
+						   					   TreeSet<Date> datasRecolhimento,
+											   RecolhimentoDTO dadosRecolhimento,
+											   BigDecimal expectativaEncalheABalancear) {
+		
+		Date dataBalanceamento = 
+			this.obterDataRecolhimentoPermitida(datasRecolhimento, dataRecolhimentoPrevista);
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimentoBalanceada.get(dataBalanceamento);
+		
+		BigDecimal capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis = 
+			this.obterProdutosRecolhimentoBalanceaveisPorData(
+				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
+		
+		if (!validarLimiteCapacidadeRecolhimentoDistribuidor(
+				produtosRecolhimentoNaData, capacidadeManuseio, expectativaEncalheABalancear)) {
+			
+			// Separar quantidade de produtos-edição para não quebrar entre os dias
+			
+			// Verificar qual quantidade de produto melhor se encaixa em cada dia com capacidade disponível
+			// (ordenar pela menor quantidade mas verificar qual melhor completa o total da capacidade)
+			// OBS: Verificar se há chamada (chamadão ou antecipada) e não pode mover
+			
+			// Gerenciar sobras (jogar nos dias que não excedem a capacidade de manuseio)
+			
+			// Quando todas capacidades estiverem excedidas dar preferência para maior PEB 
+			// (verificar dia de recolhimento previsto do produto)
+			
+			Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = 
+				this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimentoBalanceada);
+			
+			for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiariaAtual :
+					mapaExpectativaEncalheTotalDiariaAtual.entrySet()) {
+				
+				
+			}
+						
+		} else {
+			
+			if (produtosRecolhimentoNaData != null) {
+				
+				produtosRecolhimentoNaData.addAll(produtosRecolhimentoBalanceaveis);
+				
+			} else {
+				
+				produtosRecolhimentoNaData = produtosRecolhimentoBalanceaveis;
+			}
+			
+			matrizRecolhimentoBalanceada.put(dataBalanceamento, produtosRecolhimentoNaData);
+		}
+	}
+	
+	/*
+	 * Balanceia os produtos do recolhimento que possuem chamada (antecipada ou chamadão) na matriz.
+	 */
+	private void balancearProdutosRecolhimentoComChamada(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+														 RecolhimentoDTO dadosRecolhimento,
+														 Date dataRecolhimentoPrevista) {
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = 
+			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(
+				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
+		
+		if (!produtosRecolhimentoNaoBalanceaveis.isEmpty()) {
+			
+			matrizRecolhimento.put(dataRecolhimentoPrevista, produtosRecolhimentoNaoBalanceaveis);
+		}
+	}
+	
+	/*
+	 * Valida se a capacidade de manuseio do distribuidor é excedida com o encalhe a ser balanceado.
+	 */
+	private boolean validarLimiteCapacidadeRecolhimentoDistribuidor(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+															  		BigDecimal capacidadeManuseio,
+															  		BigDecimal expectativaEncalheABalancear) {
+		
+		if (produtosRecolhimento != null) {
+
+			BigDecimal expectativaEncalheTotalAtualNaData = this.obterExpectativaEncalheTotal(produtosRecolhimento);
+			
+			return (expectativaEncalheTotalAtualNaData.add(expectativaEncalheABalancear).compareTo(capacidadeManuseio) <= 0);
+		}
+		
+		return true;
 	}
 	
 	/*
@@ -132,10 +182,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 	}
 	
 	/*
-	 * Obtém os produtos de recolhimento de uma determinada data.
+	 * Obtém os produtos de recolhimento não balanceáveis (possuem chamada antecipada ou chamadão) de uma determinada data.
 	 */
-	private List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
-																		  Date dataRecolhimentoDesejada) {
+	private List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+																		  				 Date dataRecolhimentoDesejada) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = new ArrayList<ProdutoRecolhimentoDTO>();
 		
@@ -147,6 +197,38 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 		}
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+
+			if (produtoRecolhimento.isPossuiChamada() 
+					&& produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+				
+				produtosRecolhimentoFiltrados.add(produtoRecolhimento);
+			}
+		}
+		
+		return produtosRecolhimentoFiltrados;
+	}
+	
+	/*
+	 * Obtém os produtos de recolhimento balanceáveis (não possuem chamadão ou chamada antecipada) de uma determinada data.
+	 */
+	private List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+																		  			  Date dataRecolhimentoDesejada) {
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = new ArrayList<ProdutoRecolhimentoDTO>();
+		
+		if (produtosRecolhimento == null 
+				|| produtosRecolhimento.isEmpty()
+				|| dataRecolhimentoDesejada == null) {
+			
+			return produtosRecolhimentoFiltrados;
+		}
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			if (produtoRecolhimento.isPossuiChamada()) {
+				
+				continue;
+			}
 			
 			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
@@ -195,34 +277,46 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 	 *  Obtém uma data de recolhimento de acordo as datas de recolhimento permitidas, efetuando
 	 *  a aproximação de datas se necessário.
 	 */
-	private Date obterDataRecolhimentoPermitida(Set<Date> datasRecolhimentoPermitidas, Date dataRecolhimentoPrevista) {
+	private Date obterDataRecolhimentoPermitida(TreeSet<Date> datasRecolhimentoPermitidas, Date dataRecolhimentoPrevista) {
 
-		Date dataRecolhimentoPermitida = null;
+		Date dataRecolhimentoEscolhida = null;
 		
 		if (!datasRecolhimentoPermitidas.contains(dataRecolhimentoPrevista)) {
-			
-			for (Date dataRecolhimentoFornecedor : datasRecolhimentoPermitidas) {
+
+			for (Date dataRecolhimentoPermitida : datasRecolhimentoPermitidas) {
 				
-				if (dataRecolhimentoPrevista.compareTo(dataRecolhimentoFornecedor) < 0) {
+				if (dataRecolhimentoPrevista.compareTo(dataRecolhimentoPermitida) <= 0) {
 					
-					dataRecolhimentoPermitida = dataRecolhimentoFornecedor;
+					dataRecolhimentoEscolhida = dataRecolhimentoPermitida;
 					
 					break;
 				}
 			}
 			
-			if (dataRecolhimentoPermitida == null) {
+			if (dataRecolhimentoEscolhida == null) {
+
+				for (Date dataRecolhimentoPermitida : datasRecolhimentoPermitidas.descendingSet()) {
+					
+					if (dataRecolhimentoPrevista.compareTo(dataRecolhimentoPermitida) >= 0) {
+						
+						dataRecolhimentoEscolhida = dataRecolhimentoPermitida;
+						
+						break;
+					}
+				}
 				
-				throw new RuntimeException(
-					"Data de recolhimento fora da semana de recolhimento: " + dataRecolhimentoPrevista);
+				if (dataRecolhimentoEscolhida == null) {
+				
+					throw new RuntimeException(
+						"Data de recolhimento fora da semana de recolhimento: " + dataRecolhimentoPrevista);
+				}
 			}
-			
 		} else {
 			
-			dataRecolhimentoPermitida = dataRecolhimentoPrevista;
+			dataRecolhimentoEscolhida = dataRecolhimentoPrevista;
 		}
 			
-		return dataRecolhimentoPermitida;
+		return dataRecolhimentoEscolhida;
 	}
 	
 	/*
