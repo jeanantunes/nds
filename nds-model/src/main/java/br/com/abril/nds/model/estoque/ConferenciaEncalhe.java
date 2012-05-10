@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 
 /**
@@ -42,7 +44,15 @@ public class ConferenciaEncalhe implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-	
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
+	private ChamadaEncalheCota chamadaEncalheCota;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID")
+	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
+
 	/**
 	 * Obtém id
 	 *
@@ -93,5 +103,41 @@ public class ConferenciaEncalhe implements Serializable {
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
 	}
+
+	/**
+	 * Obtém chamadaEncalheCota
+	 *
+	 * @return ChamadaEncalheCota
+	 */
+	public ChamadaEncalheCota getChamadaEncalheCota() {
+		return chamadaEncalheCota;
+	}
+
+	/**
+	 * Atribuí chamadaEncalheCota
+	 * @param chamadaEncalheCota 
+	 */
+	public void setChamadaEncalheCota(ChamadaEncalheCota chamadaEncalheCota) {
+		this.chamadaEncalheCota = chamadaEncalheCota;
+	}
+
+	/**
+	 * Obtém controleConferenciaEncalheCota
+	 *
+	 * @return ControleConferenciaEncalheCota
+	 */
+	public ControleConferenciaEncalheCota getControleConferenciaEncalheCota() {
+		return controleConferenciaEncalheCota;
+	}
+
+	/**
+	 * Atribuí controleConferenciaEncalheCota
+	 * @param controleConferenciaEncalheCota 
+	 */
+	public void setControleConferenciaEncalheCota(
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+		this.controleConferenciaEncalheCota = controleConferenciaEncalheCota;
+	}
+	
 		
 }

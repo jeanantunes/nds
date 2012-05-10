@@ -309,9 +309,10 @@ fieldset label {
 							<li>
 								<a href='<c:url value="/devolucao/chamadao"/>'>Chamadão</a>
 							</li>
-							<li><a
-								href="Recolhimento/conferencia_encalhe_jornaleiro.htm">Conferência
-									de Encalhe Cota</a>
+							<li>
+								<a href='<c:url value="/devolucao/conferenciaEncalhe/"/>'>
+									Conferência de Encalhe Cota
+								</a>
 							</li>
 							<li><a
 								href="Recolhimento/conferencia_encalhe_jornaleiro_contingencia.htm">Conferência

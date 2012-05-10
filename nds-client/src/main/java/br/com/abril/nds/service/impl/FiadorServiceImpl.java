@@ -165,7 +165,7 @@ public class FiadorServiceImpl implements FiadorService {
 					this.pessoaRepository.adicionar(conjuge);
 				} else {
 					
-					this.pessoaRepository.alterar(conjuge);
+					this.pessoaRepository.merge(conjuge);
 				}
 			}
 			
@@ -373,7 +373,7 @@ public class FiadorServiceImpl implements FiadorService {
 							this.pessoaRepository.adicionar(conjuge);
 						} else {
 							
-							this.pessoaRepository.alterar(conjuge);
+							this.pessoaRepository.merge(conjuge);
 						}
 					}
 					
@@ -386,7 +386,7 @@ public class FiadorServiceImpl implements FiadorService {
 					this.pessoaRepository.adicionar(socio);
 				} else {
 					
-					this.pessoaRepository.alterar(socio);
+					this.pessoaRepository.merge(socio);
 				}
 			}
 		}

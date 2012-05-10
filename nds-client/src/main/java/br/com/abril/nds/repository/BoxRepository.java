@@ -18,6 +18,26 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 public interface BoxRepository extends Repository<Box,Long> {
 	
 	/**
+	 * Obtém lista de box de um tipo de box relacionado a determinado usuário.
+	 * 
+	 * @param idUsuario
+	 * 
+	 * @return Box
+	 */
+	public List<Box> obterBoxUsuario(Long idUsuario, TipoBox tipoBox) ;
+
+	
+	/**
+	 * Obtém lista de Box de acordo com tipoBox.
+	 * 
+	 * @param tipoBox
+	 * 
+	 * @return List - Box
+	 */
+	List<Box> obterListaBox(TipoBox tipoBox);
+
+	
+	/**
 	 * Retorna uma lista de boxes referente um determinado produto.
 	 * @param codigoProduto - código do propduto
 	 * @return List<Box>
