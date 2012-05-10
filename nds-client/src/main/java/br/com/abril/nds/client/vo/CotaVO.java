@@ -26,6 +26,16 @@ public class CotaVO implements Serializable {
 	
 	private String codigoBox;
 	
+	private String numeroCpfCnpj;
+	
+	private String contato;
+	
+	private String telefone;
+	
+	private String email;
+	
+	private String status; 
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -114,6 +124,46 @@ public class CotaVO implements Serializable {
 	 */
 	public void setCodigoBox(String codigoBox) {
 		this.codigoBox = codigoBox;
+	}
+
+	public String getNumeroCpfCnpj() {
+		return numeroCpfCnpj;
+	}
+
+	public void setNumeroCpfCnpj(String numeroCpfCnpj) {
+		this.numeroCpfCnpj = numeroCpfCnpj;
+	}
+
+	public String getContato() {
+		return contato;
+	}
+
+	public void setContato(String contato) {
+		this.contato = contato;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	/* (non-Javadoc)

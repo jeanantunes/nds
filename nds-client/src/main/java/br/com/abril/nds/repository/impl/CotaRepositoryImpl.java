@@ -521,34 +521,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT cota.numeroCota as numeroCota, ")
-				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
-				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
-				.append(" else null end as nomePessoa, ")
-				.append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
-				.append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
-				.append(" else null end as numeroCpfCnpj, ")
-				.append(" pdv.contato as contato ," )
-				.append(" telefone.ddd || '-'|| telefone.numero as telefone ,")
-				.append(" pessoa.email as email ,")
-				.append(" cota.situacaoCadastro as status ")
-		.append(" FROM Cota cota ")
-		.append(" join cota.pessoa pessoa ")
-		.append(" join cota.pdvs pdv ")
-		.append(" left join cota.telefones telefonesCota ")
-		.append(" left join telefonesCota.telefone telefone ")
-		
-		.append(" WHERE" )
-		.append(" ( telefonesCota.principal is null OR telefonesCota.principal=:principal ) ")
-		.append(" AND pdv.caracteristicas.pontoPrincipal=:principal ");
-		
-		if(filtro.getNumeroCota()!= null){
-			hql.append(" AND cota.numeroCota=:numeroCota ");
-		}
-		
-		if(filtro.getNumeroCpfCnpj()!= null){
-			hql.append(" AND ( pessoa.cpf =:numeroCpfCnpj OR  pessoa.cnpj=:numeroCpfCnpj ) ");
-		}
+		hql.append(this.getSqlPesquisaCota(filtro, Boolean.FALSE));
 		
 		hql.append(this.ordenarConsultaCota(filtro));
 		
@@ -559,13 +532,89 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 		
-		if(filtro.getNumeroCpfCnpj()!= null){
+		if(filtro.getNumeroCpfCnpj()!= null && !filtro.getNumeroCpfCnpj().trim().isEmpty() ){
 			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj());
+		}
+		
+		if(filtro.getNomeCota()!= null && !filtro.getNomeCota().trim().isEmpty()){
+			query.setParameter("nomeCota", filtro.getNomeCota()+ "%");
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 		
 		return query.list();
+	}
+	
+	public Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(this.getSqlPesquisaCota(filtro, Boolean.TRUE));
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("principal", Boolean.TRUE);
+		
+		if(filtro.getNumeroCota()!= null){
+			query.setParameter("numeroCota", filtro.getNumeroCota());
+		}
+		
+		if(filtro.getNumeroCpfCnpj()!= null && !filtro.getNumeroCpfCnpj().trim().isEmpty() ){
+			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj());
+		}
+		
+		if(filtro.getNomeCota()!= null && !filtro.getNomeCota().trim().isEmpty()){
+			query.setParameter("nomeCota", filtro.getNomeCota() + "%");
+		}
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	private String getSqlPesquisaCota(FiltroCotaDTO filtro, boolean isCount){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if(isCount){
+			hql.append(" select count ( cota.numeroCota ) ");
+		}
+		else {
+		
+			hql.append("SELECT cota.numeroCota as numeroCota, ")
+				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
+				.append(" else null end as nomePessoa, ")
+				.append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
+				.append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
+				.append(" else null end as numeroCpfCnpj, ")
+				.append(" pdv.contato as contato ," )
+				.append(" telefone.ddd || '-'|| telefone.numero as telefone ,")
+				.append(" pessoa.email as email ,")
+				.append(" cota.situacaoCadastro as status ");
+		}
+		
+		hql.append(" FROM Cota cota ")
+			.append(" join cota.pessoa pessoa ")
+			.append(" join cota.pdvs pdv ")
+			.append(" left join cota.telefones telefonesCota ")
+			.append(" left join telefonesCota.telefone telefone ")
+			
+			.append(" WHERE" )
+			.append(" ( telefonesCota.principal is null OR telefonesCota.principal=:principal ) ")
+			.append(" AND pdv.caracteristicas.pontoPrincipal=:principal ");
+		
+		if(filtro.getNumeroCota()!= null){
+			hql.append(" AND cota.numeroCota=:numeroCota ");
+		}
+		
+		if(filtro.getNumeroCpfCnpj()!= null && !filtro.getNumeroCpfCnpj().trim().isEmpty() ){
+			hql.append(" AND ( pessoa.cpf =:numeroCpfCnpj OR  pessoa.cnpj=:numeroCpfCnpj ) ");
+		}
+		
+		if(filtro.getNomeCota()!= null && !filtro.getNomeCota().trim().isEmpty()){
+			
+			hql.append(" AND ( upper(pessoa.nome) like upper(:nomePessoa) OR  upper(pessoa.razaoSocial) like  upper(:nomePessoa ) )");
+		}
+		
+		return hql.toString();
 	}
 	
 	/**
@@ -613,11 +662,13 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long> implement
 				default:
 					hql.append(" ORDER BY numeroCota ");
 			}
+			
+			if ( filtro.getPaginacao()!= null && filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+			
 		}
 		
-		if ( filtro.getPaginacao()!= null && filtro.getPaginacao().getOrdenacao() != null) {
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
-		}
 		
 		return hql.toString();
 	}

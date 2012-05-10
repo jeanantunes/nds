@@ -43,4 +43,9 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	public List<Fornecedor> obterFornecedoresDeProduto(String codigoProduto,
 													   GrupoFornecedor grupoFornecedor);
 	
+	
+	List<Fornecedor> obterFornecedoresCota(Long idCota);
+	
+	List<Fornecedor> obterFornecedoresNaoReferenciadosComCota(Long idCota);
+	
 }

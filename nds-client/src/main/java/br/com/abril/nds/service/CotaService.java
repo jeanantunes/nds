@@ -26,13 +26,23 @@ public interface CotaService {
 
 	/**
 	 * 
-	 * Retorna uma lista de Cotas en função dos filtros informado.
+	 * Retorna uma lista de Cotas em função dos filtros informado.
 	 * 
 	 * @param filtro - filtro com as opções de consulta
 	 * 
 	 * @return List<CotaDTO>
 	 */
 	List<CotaDTO> obterCotas(FiltroCotaDTO filtro);
+	
+	/**
+	 * 
+	 * Retorna a quantidade de Cotas em função dos filtros informado.
+	 * 
+	 * @param filtro - filtro com as opções de consulta
+	 * 
+	 * @return Long
+	 */
+	Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro);
 	
 	Cota obterPorNumeroDaCota(Integer numeroCota);
 

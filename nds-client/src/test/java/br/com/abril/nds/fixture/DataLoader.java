@@ -74,6 +74,8 @@ import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -628,9 +630,19 @@ public class DataLoader {
 		
 		gerarTipoLicencaMunicipalPDV(session);
 		
+		gerarPDV(session);
+		
 	}
 
 	
+	private static void gerarPDV(Session session) {
+		
+		PDV pdv = Fixture.criarPDV("Teste", null, TamanhoPDV.G, cotaManoel, Boolean.TRUE, null, null, null, null);
+		
+		save(session, pdv);
+		
+	}
+
 	private static void gerarTipoLicencaMunicipalPDV(Session session) {
 		
 		TipoLicencaMunicipal tipoLicencaMunicipal = Fixture.criarTipoLicencaMunicipal(10L, "Licença 1");

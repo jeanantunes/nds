@@ -89,6 +89,13 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	@Transactional(readOnly = true)
+	@Override
+	public Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro) {
+
+		return cotaRepository.obterQuantidadeCotasPesquisadas(filtro);
+	}
+	
+	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
 		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);

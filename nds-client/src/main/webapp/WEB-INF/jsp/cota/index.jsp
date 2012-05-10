@@ -3,132 +3,23 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
+
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
+
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
 <script language="javascript" type="text/javascript">
 	
-	function popup_cnpj() {
-		
-		$( "#dialog-cnpj" ).dialog({
-			resizable: false,
-			height:640,
-			width:840,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	}
-	
-	function limparFormsTabs() {
-		
-		ENDERECO_COTA.limparFormEndereco();
-		COTA.limparCamposTelefone();
+	$(".ui-dialog-titlebar-close").click(function() {
 
-	}
-
-	function editarCota() {
-		
-		var idCota = prompt("Digite o id da cota a ser editada.");
-		
-		if (idCota) {
-			
-			popup_cpf(idCota);
-			
-			$("#_idCotaRef").val(idCota);
-		}
-	}
-	
-    function novaCota() {
-		    	
-		var idCota = prompt("Digite o id da nova cota.");
-		
-		if (idCota) {
-			
-			PDV.idCota =  idCota;
-			
-			popup_cpf(idCota);
-			
-			$("#_idCotaRef").val(idCota);
-		}
-	}
-	
-	function popup_cpf(idCota) {
-
-		if (idCota) {
-
-			$.ajax({
-				type: 'POST',
-				url: '<c:url value="/cadastro/cota/editarCota" />',
-				data: { "idCota": idCota }
-			});
-		
-		} else {
-			
-			$.ajax({
-				type: 'POST',
-				url: '<c:url value="/cadastro/cota/novaCota" />'
-			});
-		}
-
-		$( "#dialog-cpf" ).dialog({
-			resizable: false,
-			height:640,
-			width:950,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					postarParametroCobranca();
-					salvarCota();
-					$( this ).dialog( "close" );
-					$(".grids").show();
-					
-				},
-				"Cancelar": function() {
-					$.postJSON(
-						'<c:url value="/cadastro/cota/cancelar" />',
-						null,
-						function() {
-							limparFormsTabs();
-							$("#tabpf").tabs('select', 0);
-							$( this ).dialog( "close" );
-						},
-						null, 
-						true
-					);
-				}
-			}
-		});
-
-		$(".ui-dialog-titlebar-close").click(function() {
-
-			$("#tabpf").tabs('select', 0);
-			limparFormsTabs();
-		});
-	}
-	  
-	function salvarCota(){
-		
-		$.ajax({
-			type: 'POST',
-			url: '<c:url value="/cadastro/cota/salvarCota" />',
-			data: { "idCota" : $("#_idCotaRef").val() }
-		});
-
-		limparFormsTabs();
-		
 		$("#tabpf").tabs('select', 0);
-		
-		$( this ).dialog( "close" );
-	}
+			MANTER_COTA.limparFormsTabs();
+	});
 	
+	  	
 	$(function() {
 		
 		$( "#tabpf" ).tabs();
@@ -136,16 +27,73 @@
 		$( "#tabpj" ).tabs();
 		
 		$( "#tabpdv" ).tabs();
-	});
-	
-	function carregarPDV(){
 		
-		var idCota = $("#_idCotaRef").val();
-		
-		PDV.idCota = idCota;
-		PDV.pesquisarPdvs(idCota);
-	}
+		$("#descricaoPessoa").autocomplete({source: ""});
 	
+		$(".pessoasGrid").flexigrid({
+			preProcess: MANTER_COTA.executarPreProcessamento,
+			dataType : 'json',
+			colModel : [  {
+				display : 'Código',
+				name : 'numero',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome / Razação Social',
+				name : 'nome',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'CPF/CNPJ',
+				name : 'numeroCpfCnpj',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Contato',
+				name : 'contato',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Telefone',
+				name : 'telefone',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'E-Mail',
+				name : 'email',
+				width : 210,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Status',
+				name : 'status',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "numero",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		});
+	
+	});	
+		
 </script>
 <style>
 
@@ -154,31 +102,76 @@
 	
 	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
 	
-	
-		
 </style>
 
 </head>
 
 <body>
+	
+	<div id="dialog-excluirCota" title="Atenção" style="display:none">
+		<p>Confirmar exclusão Cota ?</p>
+	</div>
+	
+ 	<fieldset class="classFieldset">
+  	   <legend> Pesquisar Cotas</legend>
+       <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+           <tr>
+             <td width="31">Cota:</td>
+             <td colspan="3">
+             		
+             		<input name="numCota" 
+	              		   id="numCota" 
+	              		   type="text"
+	              		   maxlength="11"
+	              		   style="width:70px; 
+	              		   float:left; margin-right:5px;"
+	              		    />
+          		
+             </td>
+               <td width="127">Nome / Razão Social:</td>
+               <td width="204">
+               
+               		<input   name="descricaoPessoa" 
+				      		 id="descricaoPessoa" 
+				      		 type="text" 
+				      		 class="nome_jornaleiro" 
+				      		 maxlength="255"
+				      		 style="width:130px;"
+				      		 onkeyup="PESSOA.autoCompletarPorNome('#descricaoPessoa');" />
+               </td>
+               <td width="72">CPF / CNPJ:</td>
+               <td width="253">
+               		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:150px;" maxlength="14"/>
+               </td>
+               <td width="104">
+	               	<span class="bt_pesquisar">
+	               		<a href="javascript:;" onclick="MANTER_COTA.pesquisar();">Pesquisar</a>
+	               	</span>
+               </td>
+           </tr>
+         </table>
 
+     </fieldset>
+      
+    <div class="linha_separa_fields">&nbsp;</div>
+	
 	<fieldset class="classFieldset">
 	
 		<legend>Cotas Cadastradas</legend>
 	
-		<div class="grids" style="display: none;">
+		<div class="grids" id="grids" style="display: none;">
 			<table class="pessoasGrid"></table>
 		</div>
-
+		
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="novaCota();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo CPF
+			<a href="javascript:;" onclick="COTA_CPF.novoCPF();">
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CPF
 			</a>
 		</span>
 		
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="editarCota();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Editar CPF
+			<a href="javascript:;" onclick="COTA_CNPJ.novoCNPJ();">
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CNPJ
 			</a>
 		</span>
 
@@ -186,52 +179,8 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 
-	<div id="dialog-cpf" title="Nova Cota">
-
-		<jsp:include page="../messagesDialog.jsp" />
-
-		<div id="tabpf">
-			<ul>
-			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
-			<li><a href="#tabpf-2" onclick="ENDERECO_COTA.popularGridEnderecos()">Endereços</a></li>			
-			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
-			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
-			<li><a href="#tabpf-5" onclick="carregaFinanceiro();">Financeiro</a></li>
-			<li><a href="#tabpf-6">Bancos</a></li>
-			<li><a href="#tabpf-7">Distribuição</a></li>
-			<li><a href="#tabpf-8">Fornecedor</a></li>
-			</ul>
-		
-			<div id="tabpf-1"> </div>
-			
-			<div id="tabpf-2">
-				<jsp:include page="../endereco/index.jsp">
-					<jsp:param value="ENDERECO_COTA" name="telaEndereco"/>
-				</jsp:include>
-			</div>
-			
-			<div id="tabpf-3">
-				<jsp:include page="../telefone/index.jsp">
-					<jsp:param value="COTA" name="tela"/>
-				</jsp:include>
-			</div>
-
-			<div id="tabpf-4">
-				 <jsp:include page="../pdv/index.jsp"></jsp:include>
-			</div> 
-
-			<div id="tabpf-5"> 
-			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
-			</div>
-			
-			<div id="tabpf-6"> </div>
-			
-			<div id="tabpf-7"> </div>
-			
-			<div id="tabpf-8"> </div>
-		
-		</div>
-		
-	</div>
-	<input type="hidden" id="_idCotaRef"/>
+	<jsp:include page="dialogCPF.jsp"/>
+	
+	<jsp:include page="dialogCNPJ.jsp"/>
+	
 </body>

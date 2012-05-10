@@ -143,4 +143,13 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return List<CotaDTO>
 	 */
 	List<CotaDTO> obterCotas(FiltroCotaDTO filtro);
+	
+	/**
+	 * Retorna a quantidade de Cotas cadastradas para manutenção de edição e exclusão
+	 * 
+	 * @param filtro - opções de filtro para consulta
+	 * 
+	 * @return Long
+	 */
+	Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro);
 }

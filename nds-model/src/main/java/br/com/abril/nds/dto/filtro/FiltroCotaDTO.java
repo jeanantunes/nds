@@ -13,21 +13,30 @@ public class FiltroCotaDTO implements Serializable {
 
 	private Integer numeroCota;
 	
+	private String nomeCota;
+	
 	private String numeroCpfCnpj;
 	
 	private PaginacaoVO paginacao;
 	
 	private OrdemColuna ordemColuna;
 	
+	public FiltroCotaDTO() {}
+	
+	public FiltroCotaDTO(Integer numeroCota, String nomeCota ,String numeroCpfCnpj) {
+		this.numeroCota = numeroCota;
+		this.numeroCpfCnpj = numeroCpfCnpj;
+	}
+	
 	public enum OrdemColuna{
 		
-		NUMERO_COTA(""),
-		NOME_PESSOA(""),
-		NUMERO_CPF_CNPJ(""),
-		CONTATO(""),
-		TELEFONE(""),
-		EMAIL(""),
-		STATUS("");
+		NUMERO_COTA("numero"),
+		NOME_PESSOA("nome"),
+		NUMERO_CPF_CNPJ("numeroCpfCnpj"),
+		CONTATO("contato"),
+		TELEFONE("telefone"),
+		EMAIL("email"),
+		STATUS("status");
 		
 		private String descricao;
 		
@@ -97,6 +106,22 @@ public class FiltroCotaDTO implements Serializable {
 	public void setOrdemColuna(OrdemColuna ordemColuna) {
 		this.ordemColuna = ordemColuna;
 	}
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+	
+	
 	
 	
 }
