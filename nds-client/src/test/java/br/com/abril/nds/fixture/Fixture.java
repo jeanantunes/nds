@@ -2436,6 +2436,19 @@ public class Fixture {
 		return tipoGarantiaAceita;
 	}
 	
+	public static LancamentoParcial criarLancamentoParcial(ProdutoEdicao produtoEdicao, 
+														   Date lancamentoInicial, 
+														   Date recolhimentoFinal) {
+		
+		LancamentoParcial lancamentoParcial = new LancamentoParcial();
+		
+		lancamentoParcial.setProdutoEdicao(produtoEdicao);
+		lancamentoParcial.setLancamentoInicial(lancamentoInicial);
+		lancamentoParcial.setRecolhimentoFinal(recolhimentoFinal);
+		
+		return lancamentoParcial;
+	}
+	
 	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
 																		 LancamentoParcial lancamentoParcial,
 																		 Date recolhimento,
