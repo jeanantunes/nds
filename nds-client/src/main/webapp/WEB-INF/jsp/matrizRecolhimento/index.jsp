@@ -141,6 +141,8 @@
 		
 		function visualizarMatrizBalanceamentoPorDia(data) {
 			
+			$("#dataBalanceamentoHidden").val(data);
+			
 			$(".balanceamentoGrid").flexOptions({
 				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
 				onSuccess: executarAposProcessamento,
@@ -164,8 +166,15 @@
 					resultado.mensagens.listaMensagens
 				);
 				
-				$(".grids").hide();
+				fecharGridBalanceamento()
 
+				return resultado;
+			}
+			
+			if (resultado.rows == 0) {
+				
+				fecharGridBalanceamento();
+				
 				return resultado;
 			}
 			
@@ -580,6 +589,8 @@
 		
 		function exibirMatrizFornecedor() {
 			
+			$("#dataBalanceamentoHidden").val("");
+			
 			$(".balanceamentoGrid").flexOptions({
 				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
 				onSuccess: executarAposProcessamento,
@@ -642,7 +653,7 @@
 			
 			var checkAllSelected = verifyCheckAll();
 			
-			if (!checkAllSelected) {
+			//TODO: if (!checkAllSelected) {
 				
 				$.each(linhasDaGrid, function(index, value) {
 					
@@ -663,25 +674,30 @@
 						var sequencia = obterValorInputColuna(linha, 0, "sequencia");
 						var codProduto = obterValorColuna(linha, 1);
 						var numEdicao = obterValorColuna(linha, 3);
+						var dataRecolhimento = obterValorColuna(linha, 10);
 						var novaData = obterValorInputColuna(linha, 15, "novaData");
 						
 						var linhaSelecionada = 'listaProdutoRecolhimento[' + index + '].idLancamento=' + idLancamento + '&';
 						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].sequencia=' + sequencia + '&';
 						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].codigoProduto=' + codProduto + '&';
 						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].numeroEdicao=' + numEdicao + '&';
+						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].dataRecolhimento=' + dataRecolhimento + '&';
 						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].novaData=' + novaData + '&';
 						
 						listaProdutoRecolhimento = (listaProdutoRecolhimento + linhaSelecionada);
 					}
 				});
-			}
+			//}
 			
 			var novaData = $("#novaDataRecolhimento").val();
+			
+			var dataAntiga = $("#dataBalanceamentoHidden").val();
 			
 			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarSelecionados' />",
 					   listaProdutoRecolhimento
 					   		+ "&selecionarTodos=" + checkAllSelected
-					   		+ "&novaDataFormatada=" + novaData,
+					   		+ "&novaDataFormatada=" + novaData
+					   		+ "&dataAntigaFormatada=" + dataAntiga,
 					   function(result) {
 					   		
 							$("#dialogReprogramarBalanceamento").dialog("close");
@@ -712,16 +728,21 @@
 				if (idLancamento == paramIdLancamento) {
 					
 					var sequencia = obterValorInputColuna(linha, 0, "sequencia");
+					var dataRecolhimento = obterValorColuna(linha, 10, "novaData");
 					var novaData = obterValorInputColuna(linha, 15, "novaData");
 					
 					linhaSelecionada = 'produtoRecolhimento.idLancamento=' + idLancamento + '&';
 					linhaSelecionada += 'produtoRecolhimento.sequencia=' + sequencia + '&';
+					linhaSelecionada += 'produtoRecolhimento.dataRecolhimento=' + dataRecolhimento + '&';
 					linhaSelecionada += 'produtoRecolhimento.novaData=' + novaData + '&';
 				}
 			});
 			
+			var dataAntiga = $("#dataBalanceamentoHidden").val();
+			
 			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico' />",
-					   linhaSelecionada,
+					   linhaSelecionada
+					   		+ "&dataAntigaFormatada=" + dataAntiga,
 					   function(result) {
 					   
 					   		atualizarResumoBalanceamento();
@@ -931,6 +952,8 @@
 
 			<br clear="all" />
 			
+			<input type="hidden" id="dataBalanceamentoHidden" />
+			
 			<!-- GRID -->
 			<table class="balanceamentoGrid"></table>
 			
@@ -954,13 +977,6 @@
 				</tr>
 			</table>
 		</div>
-		
-		<!-- GRID -->
-		
-		<div id="gridMatriz" style="display: none;">
-			<table class="balanceamentoGrid2"></table>
-		</div>
-		
 	</fieldset>
 	
 	<div class="linha_separa_fields">&nbsp;</div>
