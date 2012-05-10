@@ -57,7 +57,7 @@ public class ConferenciaEncalheController {
 	
 	public void pesquisarCota() {
 		
-		InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota();
+		InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(null);
 		
 		ResultadoConsultaConferenciaEncalheVO resultConsultaConferenciaEncalhe = new ResultadoConsultaConferenciaEncalheVO();
 		
