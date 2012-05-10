@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,10 +17,14 @@ import br.com.abril.nds.client.vo.ResultadoConsultaConferenciaEncalheVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -35,6 +40,8 @@ public class ConferenciaEncalheController {
 	private static final String LISTA_CONFERENCIA_ENCALHE = "listaConferenciaEncalhe";
 	
 	private static final String VALOR_ENCALHE_JORNALEIRO = "valorEncalheJornaleiro";
+	
+	private static final String ID_BOX_LOGADO = "idBoxLogado";
 	
 	@Autowired
 	private Result result;
@@ -52,7 +59,36 @@ public class ConferenciaEncalheController {
 	}
 	
 	private void carregarComboBoxEncalhe() {
-		//TODO: codificar
+		
+		List<ItemDTO<Long, Box>> boxes = new ArrayList<ItemDTO<Long,Box>>();
+		
+		Box b = new Box();
+		b.setCodigo("aaa");
+		b.setId(1L);
+		b.setNome("Brow");
+		b.setPostoAvancado(true);
+		b.setTipoBox(TipoBox.LANCAMENTO);
+		
+		boxes.add(new ItemDTO<Long, Box>(b.getId(), b));
+		
+		b = new Box();
+		b.setCodigo("bbb");
+		b.setId(2L);
+		b.setNome("ieié");
+		b.setPostoAvancado(false);
+		b.setTipoBox(TipoBox.RECOLHIMENTO);
+		
+		boxes.add(new ItemDTO<Long, Box>(b.getId(), b));
+		
+		this.result.include("boxes", boxes);
+	}
+	
+	@Post
+	public void salvarIdBoxSessao(Long idBox){
+		
+		this.session.setAttribute(ID_BOX_LOGADO, idBox);
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 	public void pesquisarCota() {
