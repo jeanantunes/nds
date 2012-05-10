@@ -8,10 +8,12 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -112,6 +114,12 @@ public class CotaGarantiaController {
 	public void buscaFiador(String nome, int maxResults) {
 		List<ItemDTO<Long, String>> listFiador = cotaGarantiaService.buscaFiador(nome, maxResults);		
 		result.use(Results.json()).from(listFiador,"items").recursive().serialize();
+	}
+	
+	@Post("/getFiador.json")
+	public void getFiador(Long idFiador) {
+		Fiador fiador = cotaGarantiaService.getFiador(idFiador);	
+		result.use(CustomJson.class).from(fiador).serialize();
 	}
 	
 }

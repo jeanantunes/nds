@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 @Entity
 @Table(name = "GARANTIA")
 @SequenceGenerator(name="GARANTIA_SEQ", initialValue = 1, allocationSize = 1)
@@ -30,6 +32,7 @@ public class Garantia implements Serializable {
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
+	@JsonBackReference
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_FIADOR")
 	private Fiador fiador;

@@ -353,7 +353,7 @@ Fiador.prototype.bindEvents = function() {
 		},
 		minLength : 3,
 		select : function(event, ui) {
-			console.log(ui.item ? "Selected: " +ui.item.key+' '  + ui.item.label : "Nothing selected, input was " + this.value);
+			_this.getFiador(ui.item.key);
 		},
 		open : function() {
 			$(this).removeClass("ui-corner-all").addClass("ui-corner-top");
@@ -363,10 +363,51 @@ Fiador.prototype.bindEvents = function() {
 		}
 	});
 };
+Fiador.prototype.getFiador = function(idFiador){
+	var _this =  this;
+	$.postJSON(this.path + "getFiador.json", {
+				idFiador:idFiador
+			}, function(data) {
+				_this.fiador=data;
+				_this.bindData();
+				_this.toggleDados();
+			}, null, true);
+};
 
 
-
-
+Fiador.prototype.toggleDados = function() {
+	$('#cotaGarantiaFiadorDadosPanel').toggle();
+};
+Fiador.prototype.bindData = function(){
+	
+	var nome;
+	var doc;
+	if(this.fiador.pessoa.nome){
+		nome = this.fiador.pessoa.nome;
+		doc  = this.fiador.pessoa.cpf;
+	}else{
+		nome = this.fiador.pessoa.razaoSocial;
+		doc  = this.fiador.pessoa.cnpj;
+	}
+	console.log();
+	$("#cotaGarantiaFiadorNome").html(nome);
+	$("#cotaGarantiaFiadorDoc").html(doc);
+	
+	
+	var endereco = this.fiador.pessoa.enderecos[0];	
+	var strEndereco = endereco.tipoLogradouro + ' '+ endereco.logradouro +', ' +endereco.numero+' - '+ endereco.bairro + ' - ' + endereco.cidade+'/'+ endereco.uf;
+	
+	$("#cotaGarantiaFiadorEndereco").html(strEndereco);
+	var telefone;
+	
+	for(var i in this.fiador.telefonesFiador){
+		if(this.fiador.telefonesFiador[i].principal){
+			telefone =this.fiador.telefonesFiador[i];
+		}
+	}	
+	
+	$("#cotaGarantiaFiadorTelefone").html('('+telefone.telefone.ddd + ') ' + telefone.telefone.numero );
+};
 
 
 

@@ -88,7 +88,7 @@
 
 	<br clear="all" /> <br />
 
-	<fieldset class="cotaGarantiaFiadorDadosPanel" style="display: none;">
+	<fieldset id="cotaGarantiaFiadorDadosPanel" style="display: none;">
 		<legend>Dados do Fiador</legend>
 		<table width="755" cellpadding="2" cellspacing="2"
 			style="text-align: left;">
