@@ -73,7 +73,7 @@
 		/*PASSAGEM DE PARAMETROS*/
 		$(".parametrosGrid").flexOptions({
 			/*METODO QUE RECEBERA OS PARAMETROS*/
-			url: "<c:url value='/distribuidor/parametrosCobranca/consultaParametrosCobranca' />",
+			url: "<c:url value='/distribuidor/parametroCobranca/consultaParametrosCobranca' />",
 			params: [
 			         {name:'idBanco', value:$("#filtroBanco").val()},
 			         {name:'tipoCobranca', value:$("#filtroTipoCobranca").val()}
@@ -150,7 +150,7 @@
 		
 		var formaEmissao = $("#formaEmissao").val();
 
-		$.postJSON("<c:url value='/distribuidor/parametrosCobranca/novoParametroCobranca'/>",
+		$.postJSON("<c:url value='/distribuidor/parametroCobranca/novoParametroCobranca'/>",
 				   "tipoCobranca="+tipoCobranca+
 				   "&banco="+ banco +
 				   "&valorMinimo="+ valorMinimo+
@@ -194,7 +194,7 @@
 		
 		var formaEmissao = $("#formaEmissao").val();
 
-		$.postJSON("<c:url value='/distribuidor/parametrosCobranca/alteraParametroCobranca'/>",
+		$.postJSON("<c:url value='/distribuidor/parametroCobranca/alteraParametroCobranca'/>",
 				   "idParametro="+idParametro+
 				   "&tipoCobranca="+tipoCobranca+
 				   "&banco="+ banco +
@@ -223,7 +223,7 @@
 	
 	function editarParametro(idParametro){
 		var data = [{name: 'idParametro', value: idParametro}];
-		$.postJSON("<c:url value='/distribuidor/parametrosCobranca/buscaParametroCobranca' />",
+		$.postJSON("<c:url value='/distribuidor/parametroCobranca/buscaParametroCobranca' />",
 				   data,
 				   sucessCallbackCadastroBanco, 
 				   fecharDialogs);
@@ -252,7 +252,7 @@
 	
     function desativarParametro(idParametro) {
     	var data = [{name: 'idParametro', value: idParametro}];
-		$.postJSON("<c:url value='/distribuidor/parametrosCobranca/desativaParametroCobranca'/>",
+		$.postJSON("<c:url value='/distribuidor/parametroCobranca/desativaParametroCobranca'/>",
 				   data,
 				   function(result) {
 			           mostrarGridConsulta();

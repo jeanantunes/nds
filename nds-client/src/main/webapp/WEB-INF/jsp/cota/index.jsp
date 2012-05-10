@@ -18,6 +18,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
@@ -218,12 +219,13 @@
 			<div id="tabpf-4">
 				 <jsp:include page="../pdv/index.jsp"></jsp:include>
 			</div> 
+			
 			<div id="tabpf-5"> 
 				<jsp:include page="../cotaGarantia/index.jsp"></jsp:include>
 			</div>
 
 			<div id="tabpf-6"> 
-			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
+			    <jsp:include page="../parametroCobrancaCota/index.jsp"></jsp:include> 
 			</div>
 			
 			<div id="tabpf-7">

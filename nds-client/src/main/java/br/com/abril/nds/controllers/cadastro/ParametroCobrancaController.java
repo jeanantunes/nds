@@ -15,7 +15,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.service.BancoService;
-import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametroCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -37,8 +37,8 @@ import br.com.caelum.vraptor.view.Results;
  */
 
 @Resource
-@Path("/distribuidor/parametrosCobranca")
-public class ParametrosCobrancaDistribuidorController {
+@Path("/distribuidor/parametroCobranca")
+public class ParametroCobrancaController {
 	
 	@Autowired
 	private ParametroCobrancaService parametroCobrancaService;
@@ -47,7 +47,7 @@ public class ParametrosCobrancaDistribuidorController {
 	private BancoService bancoService;
 	
 	@Autowired
-	private FinanceiroService financeiroService;
+	private ParametroCobrancaCotaService financeiroService;
 	
     private Result result;
     
@@ -68,7 +68,7 @@ public class ParametrosCobrancaDistribuidorController {
 	 * @param httpSession
 	 * @param httpResponse
 	 */
-	public ParametrosCobrancaDistribuidorController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
+	public ParametroCobrancaController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
 		this.result = result;
 		this.httpSession = httpSession;
 	}
