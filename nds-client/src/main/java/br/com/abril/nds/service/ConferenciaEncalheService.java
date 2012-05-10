@@ -69,13 +69,17 @@ public interface ConferenciaEncalheService {
 
 	public void inserirDadosNotaFiscalCota();
 
-	/*
-	* Obtem os dados sumarizados de encalhe da cota, e se esta estiver
-	* com sua conferencia reaberta retorna tambem a lista do que ja foi
-	* conferido.
-	*
-	*/
-	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota();
+	/**
+	 * Obtém os dados sumarizados de encalhe da cota, e se esta estiver
+	 * com sua conferencia sendo reaberta retorna tambem a lista do que ja foi
+	 * conferido.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return InfoConferenciaEncalheCota
+	 */
+	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota);
+
 	
 	
 	public ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(String codigoDeBarras);

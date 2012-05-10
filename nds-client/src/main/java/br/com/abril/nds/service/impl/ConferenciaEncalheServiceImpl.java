@@ -167,6 +167,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#validarExistenciaChamadaEncalheParaCotaProdutoEdicao(java.lang.Integer, java.lang.Long)
@@ -203,13 +204,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public void inserirDadosNotaFiscalCota() {
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterInfoConferenciaEncalheCota(java.lang.Integer)
+	 */
+	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
+		
+		if(controleConferenciaEncalheCota!=null) {
+			
+			//TODO
+			
+		}
 
-   /**
-	* Obtem os dados sumarizados de encalhe da cota, e se esta estiver
-	* com sua conferencia reaberta retorna tambem a lista do que ja foi
-	* conferido.
-	*/
-	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota() {
 		
 		//TODO
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = new InfoConferenciaEncalheCota();
