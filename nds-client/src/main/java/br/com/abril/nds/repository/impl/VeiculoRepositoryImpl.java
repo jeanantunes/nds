@@ -28,14 +28,19 @@ public class VeiculoRepositoryImpl extends AbstractRepository<Veiculo, Long>
 		Criteria criteria = this.getSession().createCriteria(Veiculo.class);
 		criteria.add(Restrictions.eq("transportador.id", idTransportador));
 		
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
+			
+			criteria.add(Restrictions.not(Restrictions.in("id", idsIgnorar)));
+		}
+		
 		String property = null;
 		
-		if ("tipoVeiculo".equals(sortname)){
-			
-			property = "tipoVeiculo";
-		} else {
+		if ("placa".equals(sortname)){
 			
 			property = "placa";
+		} else {
+			
+			property = "tipoVeiculo";
 		}
 		
 		if ("asc".equals(sortorder)){
@@ -44,11 +49,6 @@ public class VeiculoRepositoryImpl extends AbstractRepository<Veiculo, Long>
 		} else {
 			
 			criteria.addOrder(Order.desc(property));
-		}
-		
-		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
-			
-			criteria.add(Restrictions.not(Restrictions.in("id", idsIgnorar)));
 		}
 		
 		return criteria.list();

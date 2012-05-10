@@ -108,7 +108,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 			List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar,
 			Set<Long> listaAssociacaoRemover) {
 		
-		this.validarDadosEntrada(transportador);
+		this.validarDadosEntrada(transportador, listaVeiculosAdicionar, listaMotoristasAdicionar, listaAssociacaoAdicionar);
 		
 		this.validarDadosEntradaEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
@@ -139,11 +139,16 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		this.processarTelefones(transportador, listaTelefoneAdicionar, listaTelefoneRemover);
 		
-		this.processarVeiculos(transportador, listaVeiculosAdicionar, listaVeiculosRemover);
+		if (listaAssociacaoRemover != null && !listaAssociacaoRemover.isEmpty()){
 		
-		this.processarMotoristas(transportador, listaMotoristasAdicionar, listaMotoristasRemover);
+			this.associacaoVeiculoMotoristaRotaRepository.removerAssociacaoPorId(listaAssociacaoRemover);
+			
+			this.processarVeiculos(transportador, listaVeiculosAdicionar, listaVeiculosRemover);
+			
+			this.processarMotoristas(transportador, listaMotoristasAdicionar, listaMotoristasRemover);
+		}
 		
-		this.processarAssocicoes(transportador, listaAssociacaoAdicionar, listaAssociacaoRemover);
+		this.processarAssocicoes(transportador, listaAssociacaoAdicionar);
 	}
 	
 	private void validarDadosEntradaTelefone(Transportador transportador,
@@ -324,13 +329,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 	}
 
-	private void processarAssocicoes(Transportador transportador, List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar,
-			Set<Long> listaAssociacaoRemover) {
-		
-		if (listaAssociacaoRemover != null && !listaAssociacaoRemover.isEmpty()){
-			
-			this.associacaoVeiculoMotoristaRotaRepository.removerAssociacaoPorId(listaAssociacaoRemover);
-		}
+	private void processarAssocicoes(Transportador transportador, List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar) {
 		
 		if (listaAssociacaoAdicionar != null && !listaAssociacaoAdicionar.isEmpty()){
 			
@@ -485,7 +484,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 		return consultaTransportadorDTO;
 	}
 
-	private void validarDadosEntrada(Transportador transportador) {
+	private void validarDadosEntrada(Transportador transportador, List<Veiculo> listaVeiculosAdicionar, 
+			List<Motorista> listaMotoristasAdicionar, 
+			List<AssociacaoVeiculoMotoristaRotaDTO> listaAssociacaoAdicionar) {
 		
 		if (transportador == null){
 			
@@ -529,6 +530,77 @@ public class TransportadorServiceImpl implements TransportadorService {
 		if (pessoaJuridica.getInscricaoEstadual() == null || pessoaJuridica.getInscricaoEstadual().trim().isEmpty()){
 			
 			msgs.add("Insc. Estadual é obrigatório.");
+		}
+		
+		if (listaMotoristasAdicionar != null && !listaMotoristasAdicionar.isEmpty()){
+			
+			for (Motorista motorista : listaMotoristasAdicionar){
+				
+				if (motorista == null){
+					
+					msgs.add("Motorista é obrigatório.");
+				} else {
+				
+					if (motorista.getNome() == null || motorista.getNome().trim().isEmpty()){
+						
+						msgs.add("Nome motorista é obrigatório.");
+					}
+					
+					if (motorista.getCnh() == null || motorista.getCnh().trim().isEmpty()){
+						
+						msgs.add("CNH é obrigatório.");
+					}
+				}
+			}
+		}
+		
+		if (listaVeiculosAdicionar != null && !listaVeiculosAdicionar.isEmpty()){
+			
+			for (Veiculo veiculo : listaVeiculosAdicionar){
+				
+				if (veiculo == null){
+					
+					msgs.add("Veículo é obrigatório.");
+				} else {
+				
+					if (veiculo.getTipoVeiculo() == null || veiculo.getTipoVeiculo().trim().isEmpty()){
+						
+						msgs.add("Tipo de Veículo é obrigatório.");
+					}
+					
+					if (veiculo.getPlaca() == null || veiculo.getPlaca().trim().isEmpty()){
+						
+						msgs.add("Placa é obrigatório.");
+					}
+				}
+			}
+		}
+		
+		if (listaAssociacaoAdicionar != null && !listaAssociacaoAdicionar.isEmpty()){
+			
+			for (AssociacaoVeiculoMotoristaRotaDTO dto : listaAssociacaoAdicionar){
+				
+				if (dto == null){
+					
+					msgs.add("Associação é obrigatório.");
+				} else {
+					
+					if (dto.getMotorista() == null){
+						
+						msgs.add("Motorista da associação é obrigatório.");
+					}
+					
+					if (dto.getVeiculo() == null){
+						
+						msgs.add("Veiculo da associação é obrigatório.");
+					}
+					
+					if (dto.getRota() == null || dto.getRota().getIdRota() == null){
+						
+						msgs.add("Rota/Roteiro da associação é obrigatório.");
+					}
+				}
+			}
 		}
 		
 		if (!msgs.isEmpty()){
@@ -812,14 +884,16 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(Long idTransportador, Set<Long> idsIgnorar){
+	public List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder){
 		
 		if (idTransportador == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id transportador é obrigatório.");
 		}
 		
-		return this.associacaoVeiculoMotoristaRotaRepository.buscarAssociacoesTransportador(idTransportador, idsIgnorar);
+		return this.associacaoVeiculoMotoristaRotaRepository.buscarAssociacoesTransportador(
+				idTransportador, idsIgnorar, sortname, sortorder);
 	}
 
 	@Transactional(readOnly = true)
@@ -832,5 +906,41 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 		
 		return this.associacaoVeiculoMotoristaRotaRepository.buscarIdsRotasPorAssociacao(assocRemovidas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public boolean verificarAssociacaoMotorista(Long idMotorista, Set<Long> idsIgnorar) {
+		
+		if (idMotorista == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id motorista é obrigatório.");
+		}
+		
+		return this.associacaoVeiculoMotoristaRotaRepository.verificarAssociacaoMotorista(idMotorista, idsIgnorar);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public boolean verificarAssociacaoVeiculo(Long idVeiculo, Set<Long> idsIgnorar) {
+		
+		if (idVeiculo == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id veículo é obrigatório.");
+		}
+		
+		return this.associacaoVeiculoMotoristaRotaRepository.verificarAssociacaoVeiculo(idVeiculo, idsIgnorar);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public boolean verificarAssociacaoRotaRoteiro(Long idRota) {
+		
+		if (idRota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id rota é obrigatório.");
+		}
+		
+		return this.associacaoVeiculoMotoristaRotaRepository.verificarAssociacaoRotaRoteiro(idRota);
 	}
 }

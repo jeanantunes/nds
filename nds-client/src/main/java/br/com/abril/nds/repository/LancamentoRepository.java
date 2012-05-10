@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
-import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -24,9 +23,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
 			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo);
-	
-	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodoRecolhimento(
-		List<Date> periodoRecolhimento, List<Long> fornecedores, GrupoProduto grupoCromo);
 	
 	List<Lancamento> obterLancamentosNaoExpedidos(
 			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo);

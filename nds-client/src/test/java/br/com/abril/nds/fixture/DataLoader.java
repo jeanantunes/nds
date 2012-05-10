@@ -2873,33 +2873,33 @@ public class DataLoader {
 	private static void criarDiasDistribuicaoFornecedores(Session session) {
 		DistribuicaoFornecedor dinapSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor dinapQuarta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor dinapQuinta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUINTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor dinapSexta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		save(session, dinapSegunda, dinapQuarta, dinapQuinta, dinapSexta);
 
 		DistribuicaoFornecedor fcSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		DistribuicaoFornecedor fcSexta = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		save(session, fcSegunda, fcSexta);
 
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.RECOLHIMENTO);
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 
 		DistribuicaoFornecedor fcQuartaRecolhimento = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.RECOLHIMENTO);
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 
 		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}

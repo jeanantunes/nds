@@ -165,7 +165,7 @@ public class FiadorServiceImpl implements FiadorService {
 					this.pessoaRepository.adicionar(conjuge);
 				} else {
 					
-					this.pessoaRepository.alterar(conjuge);
+					this.pessoaRepository.merge(conjuge);
 				}
 			}
 			
@@ -191,17 +191,23 @@ public class FiadorServiceImpl implements FiadorService {
 			this.processarSocios(fiador, sociosAdicionar, sociosRemover);
 		}
 		
-		this.pessoaRepository.merge(fiador.getPessoa());
+		if (fiador.getId() == null){
+			
+			this.pessoaRepository.adicionar(fiador.getPessoa());
+		} else {
+			
+			this.pessoaRepository.merge(fiador.getPessoa());
+		}
 		
 		if (fiador.getId() == null){
 			
 			fiador.setInicioAtividade(new Date());
+			this.fiadorRepository.adicionar(fiador);
 		} else {
 			
 			fiador.setInicioAtividade(this.fiadorRepository.buscarDataInicioAtividadeFiadorPorId(fiador.getId()));
+			this.fiadorRepository.merge(fiador);
 		}
-		
-		this.fiadorRepository.merge(fiador);
 		
 		this.processarEnderecos(fiador, listaEnderecosAdicionar, listaEnderecosRemover);
 		
@@ -367,7 +373,7 @@ public class FiadorServiceImpl implements FiadorService {
 							this.pessoaRepository.adicionar(conjuge);
 						} else {
 							
-							this.pessoaRepository.alterar(conjuge);
+							this.pessoaRepository.merge(conjuge);
 						}
 					}
 					
@@ -380,7 +386,7 @@ public class FiadorServiceImpl implements FiadorService {
 					this.pessoaRepository.adicionar(socio);
 				} else {
 					
-					this.pessoaRepository.alterar(socio);
+					this.pessoaRepository.merge(socio);
 				}
 			}
 		}

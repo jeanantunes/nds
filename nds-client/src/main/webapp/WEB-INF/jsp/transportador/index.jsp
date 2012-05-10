@@ -144,7 +144,7 @@
 						$("#dialog-incluir-veiculo").dialog("close");
 					},
 					"Cancelar" : function() {
-						
+						/*
 						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroVeiculos'/>", null, 
 							function(result){
 								
@@ -154,7 +154,8 @@
 								
 								$("#dialog-incluir-veiculo").dialog("close");
 							}
-						);
+						);*/
+						$("#dialog-incluir-veiculo").dialog("close");
 					}
 				}
 			});
@@ -174,7 +175,7 @@
 					$("#placa").val("");
 					
 					$("#tipoVeiculo").focus();
-				}
+				}, null, true, "idModalCadastroVeiculo"
 			);
 		}
 		
@@ -193,7 +194,7 @@
 						$.postJSON("<c:url value='/cadastro/transportador/excluirVeiculo'/>", data, 
 							function(result){
 								
-								//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
 								
 								$(".veiculosGrid").flexReload();
 								
@@ -234,14 +235,12 @@
 								            {name: "veiculo.placa", value: $("#placa").val()}];
 								
 								$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
-									function(result){
-										
-										//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+									function(){
 										
 										$(".veiculosGrid").flexReload();
 										
 										$("#dialog-incluir-veiculo").dialog("close");
-									}
+									}, null, true, "idModalCadastroVeiculo"
 								);
 							},
 							"Cancelar" : function() {
@@ -283,7 +282,7 @@
 						$("#dialog-incluir-motorista").dialog("close");
 					},
 					"Cancelar" : function() {
-						
+						/*
 						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroMotoristas'/>", null, 
 							function(result){
 								
@@ -293,7 +292,8 @@
 								
 								$("#dialog-incluir-motorista").dialog("close");
 							}
-						);
+						);*/
+						$("#dialog-incluir-motorista").dialog("close");
 					}
 				}
 			});
@@ -313,7 +313,7 @@
 					$("#cnhMotorista").val("");
 					
 					$("#nomeMotorista").focus();
-				}
+				}, null, true, "idModalCadastroMotorista"
 			);
 		}
 		
@@ -332,7 +332,7 @@
 						$.postJSON("<c:url value='/cadastro/transportador/excluirMotorista'/>", data, 
 							function(result){
 								
-								//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
 								
 								$(".motoristasGrid").flexReload();
 								
@@ -375,12 +375,10 @@
 								$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
 									function(result){
 										
-										//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
-										
 										$(".motoristasGrid").flexReload();
 										
 										$("#dialog-incluir-motorista").dialog("close");
-									}
+									}, null, true, "idModalCadastroMotorista"
 								);
 							},
 							"Cancelar" : function() {
@@ -873,21 +871,26 @@
 			var idMotorista = $("input:radio[name='radioMotorista']:checked").val();
 			var idsRotas = $("input:checkbox[name='checkRota']:checked").val();
 			
+			var msgs = [];
+			
 			if (!idVeiculo){
 				
-				alert("Escolha um veículo.");
-				return;
+				msgs.push("Escolha um veículo.");
 			}
 			
 			if (!idMotorista){
 				
-				alert("Escolha um motorista.");
-				return;
+				msgs.push("Escolha um motorista.");
 			}
 			
 			if (!idsRotas){
 				
-				alert("Escolha pelo menos uma rota.");
+				msgs.push("Escolha pelo menos uma rota.");
+			}
+			
+			if (msgs.length > 0){
+				
+				exibirMensagemDialog("WARNING", msgs, "idModalCadastroTransportador");
 				return;
 			}
 			
@@ -1016,6 +1019,13 @@
 
 	<div id="dialog-incluir-motorista" title="Motoristas">
 		<fieldset>
+			
+			<jsp:include page="../messagesDialog.jsp">
+		
+				<jsp:param value="idModalCadastroMotorista" name="messageDialog"/>
+	
+			</jsp:include>
+			
 			<legend>Cadastrar Motorista</legend>
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>
@@ -1036,6 +1046,13 @@
 
 	<div id="dialog-incluir-veiculo" title="Veículos">
 		<fieldset>
+			
+			<jsp:include page="../messagesDialog.jsp">
+		
+				<jsp:param value="idModalCadastroVeiculo" name="messageDialog"/>
+	
+			</jsp:include>
+			
 			<legend>Cadastrar Veículos</legend>
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>

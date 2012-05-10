@@ -519,9 +519,10 @@ public class Fixture {
 
 	public static DistribuicaoFornecedor distribuicaoFornecedor(
 			Fornecedor fornecedor, DiaSemana diaSemana,
-			OperacaoDistribuidor operacaoDistribuidor) {
+			OperacaoDistribuidor operacaoDistribuidor, Distribuidor distribuidor) {
 		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
 		df.setFornecedor(fornecedor);
+		df.setDistribuidor(distribuidor);
 		df.setDiaSemana(diaSemana);
 		df.setOperacaoDistribuidor(operacaoDistribuidor);
 		

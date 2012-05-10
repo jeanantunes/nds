@@ -179,40 +179,6 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodoRecolhimento(List<Date> periodoRecolhimento, 
-																				List<Long> fornecedores,
-																				GrupoProduto grupoCromo) {
-		
-		StringBuilder hql = new StringBuilder("select lancamento.dataRecolhimentoDistribuidor as data, ");
-		
-		hql.append("count(lancamento.produtoEdicao) as qtdeTitulos, ");
-		hql.append("sum(case when lancamento.produtoEdicao.produto.tipoProduto.grupoProduto <> :grupoCromo then (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
-		hql.append("else ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) / lancamento.produtoEdicao.pacotePadrao) end ) as qtdeExemplares, ");
-		hql.append("sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * lancamento.produtoEdicao.peso) as pesoTotal, ");
-		hql.append("sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * lancamento.produtoEdicao.precoVenda) as valorTotal, ");
-		hql.append("(case when lancamento.produtoEdicao.produto.parcial = true then count(lancamento.produtoEdicao) else 0 end) as qtdeTitulosParciais ");
-		hql.append("from EstoqueProdutoCota estoqueProdutoCota, Lancamento lancamento ");
-		hql.append("join lancamento.produtoEdicao.produto.fornecedores as fornecedor ");
-		hql.append("where lancamento.dataRecolhimentoDistribuidor in (:periodo) ");
-		hql.append("and lancamento.status = :statusLancamento ");
-		hql.append("and fornecedor.id in (:fornecedores) ");
-		hql.append("and estoqueProdutoCota.produtoEdicao = lancamento.produtoEdicao ");
-		hql.append("group by lancamento.dataRecolhimentoDistribuidor ");
-		hql.append("order by lancamento.dataRecolhimentoDistribuidor ");
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameterList("periodo", periodoRecolhimento);
-		query.setParameterList("fornecedores", fornecedores);
-		query.setParameter("grupoCromo", grupoCromo);
-		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoPeriodoBalanceamentoDTO.class));
-		
-		return query.list();
-	}
-	
-	@SuppressWarnings("unchecked")
 	public List<Lancamento> obterLancamentosNaoExpedidos(
 			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 				
