@@ -135,6 +135,7 @@ import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -1524,14 +1525,35 @@ public class Fixture {
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
 			Lancamento lancamento, 
-			MovimentoEstoqueCota movimentoEstoqueCota) {
+			MovimentoEstoqueCota movimentoEstoqueCota,
+			ChamadaEncalheCota chamadaEncalheCota,
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
 		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
+		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
+		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
 		
 		return conferenciaEncalhe;
+		
+	}
+	
+	public static ChamadaEncalheCota chamadaEncalheCota(
+			ChamadaEncalhe chamadaEncalhe,
+			boolean conferido,
+			Cota cota,
+			BigDecimal qtdePrevista) {
+		
+		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+		
+		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+		chamadaEncalheCota.setConferido(conferido);
+		chamadaEncalheCota.setCota(cota);
+		chamadaEncalheCota.setQtdePrevista(qtdePrevista);
+		
+		return chamadaEncalheCota;
 		
 	}
 	

@@ -47,10 +47,10 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	protected Long id;
 
-	@Column(name  = "CODIGO_DE_BARRAS", nullable = false)
+	@Column(name  = "CODIGO_DE_BARRAS")
 	protected String codigoDeBarras;
 
-	@Column(name  = "codigoSM", nullable = false)
+	@Column(name  = "codigoSM")
 	protected Long codigoSM;
 	
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
