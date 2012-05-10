@@ -6,23 +6,61 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
+import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 
 public interface ConferenciaEncalheService {
-
+	
+	/**
+	 * Retorna uma lista de box de recolhimento.
+	 * 
+	 * @return List - Box
+	 */
 	public List<Box> obterListaBoxEncalhe();
 	
+	/**
+	 * Retorna o código do box de recolhimento relacionado 
+	 * ao usuário em questão (caso exista).
+	 * 
+	 * @param idUsuario
+	 * 
+	 * @return String
+	 */
 	public String obterBoxPadraoUsuario(Long idUsuario);
 
-   /*
-	* Verifica se o encalhe para esta cota ja foi conferido,
-	* caso positivo retorna true.
-	* 
-	* Lancara uma exception caso: 
-	* 	Não haja chamada de encalhe prevista (or) 
-	*   Não possa reabrir conferencia devido a data de operacao. 
-	*/
-	public boolean verificarCotaProcessada(Integer numeroCota);
+	/**
+	 * Método faz seguintes verificações:
+	 * 
+	 * Se a cota ja possui uma conferencia de encalhe 
+	 * para a data de operação atual, caso positivo, será lancada 
+	 * uma exception para informando que é necessaria a reabertura
+	 * desta conferência.
+	 * 
+	 * Senão, é verificado se existe alguma chamada de encalhe para
+	 * a cota em questão. Se nenhuma chamada de encalhe atual ou 
+	 * futura for encontrada, é lançada exception informando que não
+	 * existe uma chamada de encalhe prevista para esta cota.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @throws ConferenciaEncalheExistenteException
+	 * @throws ChamadaEncalheCotaInexistenteException
+	 */
+	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
 
+	/**
+	 * Valida a existência de chamada de encalhe de acordo com a
+	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
+	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual). 
+	 * 
+	 * @param numeroCota
+	 * @param idProdutoEdicao
+	 * 
+	 * @throws ChamadaEncalheCotaInexistenteException
+	 */
+	public void validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException;
+
+	
    /*
 	* Verifica cota emite NFe.  
 	* Caso positivo retorna true
@@ -49,13 +87,6 @@ public interface ConferenciaEncalheService {
 	 */
 	public Object obterListaDadosProdutoEdicao(String codigoOuNome);
 	
-   /*
-	* Cada produto que é adicionado na conferencia de encalhe dever ser                 
-	* verificado se existe uma chamada de encalhe para o mesmo.                         
-	*                                                                                
-	* Retorna dados do produto caso o mesmo esteja na chamada de encalhe em andamento.  
-	*/
-	public void verificarProdutoExistenciaChamadaEncalhe(Long idProdutoEdicao);
 	
 	
 	public void salvarDadosConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);

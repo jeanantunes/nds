@@ -127,6 +127,13 @@ public class Distribuidor {
 	private boolean requerAutorizacaoEncalheSuperaReparte;
 
 	
+	/**
+	 * Parâmetro relativo a quantidade de dias após a data de recolhimento 
+	 * que um envio de encalhe pode ser aceito pelo distribuidor.
+	 */
+	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
+	private int qtdDiasEncalheAtrasadoAceitavel = 4;
+	
 	public Long getId() {
 		return id;
 	}
@@ -299,6 +306,15 @@ public class Distribuidor {
 	 */
 	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
+	}
+
+	public int getQtdDiasEncalheAtrasadoAceitavel() {
+		return qtdDiasEncalheAtrasadoAceitavel;
+	}
+
+	public void setQtdDiasEncalheAtrasadoAceitavel(
+			int qtdDiasEncalheAtrasadoAceitavel) {
+		this.qtdDiasEncalheAtrasadoAceitavel = qtdDiasEncalheAtrasadoAceitavel;
 	}
 	
 }

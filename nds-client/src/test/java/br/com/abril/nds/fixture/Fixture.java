@@ -126,6 +126,7 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -454,6 +455,26 @@ public class Fixture {
 		controleConferenciaEncalhe.setStatus(statusOperacao);
 		
 		return controleConferenciaEncalhe;
+	}
+
+	public static ControleConferenciaEncalheCota controleConferenciaEncalheCota (
+			ControleConferenciaEncalhe controleConferenciaEncalhe,
+			Cota cota,
+			Date dataInicio,
+			Date dataFim,
+			Date dataOperacao,
+			StatusOperacao statusOperacao) {
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
+		
+		controleConferenciaEncalheCota.setControleConferenciaEncalhe(controleConferenciaEncalhe);
+		controleConferenciaEncalheCota.setCota(cota);
+		controleConferenciaEncalheCota.setDataInicio(dataInicio);
+		controleConferenciaEncalheCota.setDataFim(dataFim);
+		controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
+		controleConferenciaEncalheCota.setStatus(statusOperacao);
+		
+		return controleConferenciaEncalheCota;
 	}
 	
 	public static ControleContagemDevolucao controleContagemDevolucao (

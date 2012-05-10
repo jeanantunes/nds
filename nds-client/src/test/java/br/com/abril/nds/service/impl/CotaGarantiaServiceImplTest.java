@@ -32,7 +32,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 	public void setUp() throws Exception {
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("FC",
-				"01.001.001/001-00", "000.000.000.00", "fc@mail.com");
+				"01.001.001/001-00", "000.000.000.00", "fc@mail.com", "");
 
 		save(pessoaJuridica);
 

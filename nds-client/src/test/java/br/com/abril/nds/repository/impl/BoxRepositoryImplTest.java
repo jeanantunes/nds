@@ -41,8 +41,10 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 			save(box);
 		}
 		
-		
-		
+		for (int i = 0; i < 3; i++) {
+			box = Fixture.criarBox("RecBox-" + i, "RECBX-" + i, TipoBox.RECOLHIMENTO);
+			save(box);
+		}
 		
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("FC",
@@ -123,4 +125,16 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(list.size(), 2);
 	}
 
+	@Test
+	public void testObterListaBox() {
+	
+		List<Box> listaBoxRecolhimento =  boxRepository.obterListaBox(TipoBox.RECOLHIMENTO);
+		
+		Assert.assertEquals(3, listaBoxRecolhimento.size());
+		
+		
+	}
+
+	
+	
 }
