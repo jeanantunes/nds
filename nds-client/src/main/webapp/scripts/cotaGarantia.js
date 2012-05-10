@@ -106,10 +106,15 @@ NotaPromissoria.prototype.imprimi = function() {
 	window.open(this.path + 'impriNotaPromissoria/' + this.notaPromissoria.id);
 };
 
+/**
+ * @param idCota
+ * @returns {ChequeCaucao}
+ */
 function ChequeCaucao(idCota) {
+	this.idCota = idCota;
 	this.bindEvents();
 	this.get();
-	this.idCota=idCota;
+	this.toggle();
 };
 ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
 ChequeCaucao.prototype.chequeCaucao = {
@@ -146,8 +151,8 @@ ChequeCaucao.prototype.get = function() {
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
-		} else if (data.cotaGarantia && data.cotaGarantia.notaPromissoria) {
-			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
+		} else if (data.cotaGarantia && data.cotaGarantia.chequeCaucao) {
+			_this.chequeCaucao = data.cotaGarantia.chequeCaucao;
 			_this.dataBind();
 		}
 
@@ -167,7 +172,9 @@ ChequeCaucao.prototype.salva = function(callBack) {
 				if (tipoMensagem && listaMensagens) {
 					exibirMensagem(tipoMensagem, listaMensagens);
 				}
-				callBack();
+				if(callBack){
+					callBack();
+				}
 
 			}, null, true);
 };
@@ -179,38 +186,44 @@ ChequeCaucao.prototype.toggle = function() {
 
 ChequeCaucao.prototype.dataBind = function() {
 	
-	$("cotaGarantiaChequeCaucaoNumeroBanco").val(this.chequeCaucao.numeroBanco);
-	$("cotaGarantiaChequeCaucaoNomeBanco").val(this.chequeCaucao.nomeBanco);
-	$("cotaGarantiaChequeCaucaoAgencia").val(this.chequeCaucao.agencia);
-	$("cotaGarantiaChequeCaucaoDvAgencia").val(this.chequeCaucao.dvAgencia);
-	$("cotaGarantiaChequeCaucaoConta").val(this.chequeCaucao.conta);
-	$("cotaGarantiaChequeCaucaoDvConta").val(this.chequeCaucao.dvConta);
-	$("cotaGarantiaChequeCaucaoNumeroCheque").val(this.chequeCaucao.numeroCheque);
-	$("cotaGarantiaChequeCaucaoValor").val(this.chequeCaucao.valor);
-	$("cotaGarantiaChequeCaucaoEmissao").val(this.chequeCaucao.emissao);
-	$("cotaGarantiaChequeCaucaoValidade").val(this.chequeCaucao.validade);
-	$("cotaGarantiaChequeCaucaoCorrentista").val(this.chequeCaucao.correntista);
+	$("#cotaGarantiaChequeCaucaoNumeroBanco").val(this.chequeCaucao.numeroBanco);
+	$("#cotaGarantiaChequeCaucaoNomeBanco").val(this.chequeCaucao.nomeBanco);
+	$("#cotaGarantiaChequeCaucaoAgencia").val(this.chequeCaucao.agencia);
+	$("#cotaGarantiaChequeCaucaoDvAgencia").val(this.chequeCaucao.dvAgencia);
+	$("#cotaGarantiaChequeCaucaoConta").val(this.chequeCaucao.conta);
+	$("#cotaGarantiaChequeCaucaoDvConta").val(this.chequeCaucao.dvConta);
+	$("#cotaGarantiaChequeCaucaoNumeroCheque").val(this.chequeCaucao.numeroCheque);
+	$("#cotaGarantiaChequeCaucaoValor").val(this.chequeCaucao.valor);
+	$("#cotaGarantiaChequeCaucaoValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	$("#cotaGarantiaChequeCaucaoEmissao").val(this.chequeCaucao.emissao);
+	$("#cotaGarantiaChequeCaucaoValidade").val(this.chequeCaucao.validade);
+	$("#cotaGarantiaChequeCaucaoCorrentista").val(this.chequeCaucao.correntista);
 	
 };
 
 ChequeCaucao.prototype.dataUnBind = function() {
 	
-	this.chequeCaucao.numeroBanco = $("cotaGarantiaChequeCaucaoNumeroBanco").val();
-	this.chequeCaucao.nomeBanco = $("cotaGarantiaChequeCaucaoNomeBanco").val();
-	this.chequeCaucao.agencia = $("cotaGarantiaChequeCaucaoAgencia").val();
-	this.chequeCaucao.dvAgencia = $("cotaGarantiaChequeCaucaoDvAgencia").val();
-	this.chequeCaucao.conta = $("cotaGarantiaChequeCaucaoConta").val();
-	this.chequeCaucao.dvConta = $("cotaGarantiaChequeCaucaoDvConta").val();
-	this.chequeCaucao.numeroCheque = $("cotaGarantiaChequeCaucaoNumeroCheque").val();
-	this.chequeCaucao.valor = $("cotaGarantiaChequeCaucaoValor").val();
-	this.chequeCaucao.emissao = $("cotaGarantiaChequeCaucaoEmissao").val();
-	this.chequeCaucao.validade = $("cotaGarantiaChequeCaucaoValidade").val();
-	this.chequeCaucao.correntista = $("cotaGarantiaChequeCaucaoCorrentista").val();
+	this.chequeCaucao.numeroBanco = $("#cotaGarantiaChequeCaucaoNumeroBanco").val();
+	this.chequeCaucao.nomeBanco = $("#cotaGarantiaChequeCaucaoNomeBanco").val();
+	this.chequeCaucao.agencia = $("#cotaGarantiaChequeCaucaoAgencia").val();
+	this.chequeCaucao.dvAgencia = $("#cotaGarantiaChequeCaucaoDvAgencia").val();
+	this.chequeCaucao.conta = $("#cotaGarantiaChequeCaucaoConta").val();
+	this.chequeCaucao.dvConta = $("#cotaGarantiaChequeCaucaoDvConta").val();
+	this.chequeCaucao.numeroCheque = $("#cotaGarantiaChequeCaucaoNumeroCheque").val();
+	this.chequeCaucao.valor = $("#cotaGarantiaChequeCaucaoValor").unmask() / 100;;
+	this.chequeCaucao.emissao = $("#cotaGarantiaChequeCaucaoEmissao").val();
+	this.chequeCaucao.validade = $("#cotaGarantiaChequeCaucaoValidade").val();
+	this.chequeCaucao.correntista = $("#cotaGarantiaChequeCaucaoCorrentista").val();
 	
 };
 
 ChequeCaucao.prototype.bindEvents = function() {
-		
+	$("#cotaGarantiaChequeCaucaoEmissao").mask("99/99/9999");
+	$("#cotaGarantiaChequeCaucaoValidade").mask("99/99/9999");
 	$("#cotaGarantiaChequeCaucaoValor").priceFormat({
 		allowNegative : true,
 		centsSeparator : ',',
@@ -227,11 +240,11 @@ TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
 TipoCotaGarantia.prototype.tipo = {
 	'FIADOR' : {
 		label : 'Fiador',
-		controller : null
+		controller : Fiador
 	},
 	'CHEQUE_CAUCAO' : {
 		label : 'Cheque Caução',
-		controller : null
+		controller : ChequeCaucao
 	},
 	'IMOVEL' : {
 		label : 'Imóvel',
@@ -306,3 +319,59 @@ TipoCotaGarantia.prototype.changeController = function(tipo) {
 TipoCotaGarantia.prototype.getIdCota = function() {
 	return $('#_idCotaRef').val();
 };
+
+
+function Fiador(idCota){
+	this.idCota = idCota;
+	this.bindEvents();
+	this.toggle();
+	
+}
+Fiador.prototype.path = contextPath + "/cadastro/garantia/";
+Fiador.prototype.toggle = function() {
+	$('#cotaGarantiaFiadorPanel').toggle();
+};
+
+Fiador.prototype.bindEvents = function() {
+	var _this = this;
+	$("#cotaGarantiaFiadorSearchName").autocomplete({
+		source : function(request, response) {
+			$.postJSON(_this.path + 'buscaFiador.json', {
+				nome : request.term,
+				maxResults:6
+			}, function(data) {
+				response($.map(data.items, function(item) {
+					return {
+						label : item.value.$,
+						value : item.value.$,
+						key:item.key.$
+					}
+				}));
+
+			}, null, true);
+
+		},
+		minLength : 3,
+		select : function(event, ui) {
+			console.log(ui.item ? "Selected: " +ui.item.key+' '  + ui.item.label : "Nothing selected, input was " + this.value);
+		},
+		open : function() {
+			$(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+		},
+		close : function() {
+			$(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+		}
+	});
+};
+
+
+
+
+
+
+
+
+
+
+
+

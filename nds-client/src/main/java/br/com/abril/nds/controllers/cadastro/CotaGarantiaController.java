@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -67,6 +69,22 @@ public class CotaGarantiaController {
 		.recursive().serialize();
 	}
 	
+	@Post
+	@Path("/salvaImovel.json")
+	public void salvaImovel(List<Imovel> listaImoveis, Long idCota) {
+		try {
+			cotaGarantiaService.salvaImovel(listaImoveis, idCota);
+		} catch (RelationshipRestrictionException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					e.getMessage()));
+		}
+		
+		result.use(Results.json())
+		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+				"Imóveis salvos com Sucesso."), "result")
+		.recursive().serialize();
+	}
+	
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
 		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
@@ -89,4 +107,11 @@ public class CotaGarantiaController {
 		List<TipoGarantia> cotaGarantias = cotaGarantiaService.obtemTiposGarantiasAceitas();		
 		result.use(Results.json()). withoutRoot().from(cotaGarantias).recursive().serialize();
 	}
+
+	@Post("/buscaFiador.json")
+	public void buscaFiador(String nome, int maxResults) {
+		List<ItemDTO<Long, String>> listFiador = cotaGarantiaService.buscaFiador(nome, maxResults);		
+		result.use(Results.json()).from(listFiador,"items").recursive().serialize();
+	}
+	
 }

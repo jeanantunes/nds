@@ -119,7 +119,7 @@
 			habilitarLink("linkSalvar", salvar);
 			habilitarLink("linkMatrizFornecedor", exibirMatrizFornecedor);
 			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
-			habilitarLink("linkReprogramar", reprogramar);
+			habilitarLink("linkReprogramar", reprogramarSelecionados);
 		}
 		
 		function bloquearLink(idLink) {
@@ -142,7 +142,7 @@
 		function visualizarMatrizBalanceamentoPorDia(data) {
 			
 			$(".balanceamentoGrid").flexOptions({
-				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizBalanceamentoPorDia' />",
+				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
 				onSuccess: executarAposProcessamento,
 				params: [
 			         {name:'dataFormatada', value: data}
@@ -154,6 +154,8 @@
 		}
 		
 		function executarPreProcessamento(resultado) {
+			
+			deselectCheckAll();
 			
 			if (resultado.mensagens) {
 
@@ -226,7 +228,7 @@
 							+ 	    ' style="width:65px; margin-right:5px; float:left;" />';
 				
 			  	retornoHTML += '<div class="bt_atualizarIco">'
-					  		 +   '<a href="javascript:;" onclick="atualizarData();">&nbsp;</a>'
+  							 +   '<a href="javascript:;" onclick="reprogramarRecolhimentoUnico(\'' + row.id + '\');">&nbsp;</a>'
 					  		 + '</div>';
 			}
 			
@@ -272,7 +274,7 @@
 				
 				if (!checado) {
 					
-					$("#checkAllReprogramar").attr("checked", false);
+					deselectCheckAll();
 				}
 			});
 		}
@@ -374,6 +376,15 @@
 			
 			iniciarGrid();
 			
+			inicializarDatas();
+			
+			$("input[name='numeroSemana']").numeric();
+
+			carregarDadosPesquisa();
+		}
+		
+		function inicializarDatas() {
+			
 			$("#dataPesquisa").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
@@ -382,11 +393,16 @@
 				defaultDate: new Date()
 			});
 
+			$("#novaDataRecolhimento").datepicker({
+				showOn : "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly : true,
+				dateFormat: 'dd/mm/yy',
+			});
+
 			$("#dataPesquisa").mask("99/99/9999");
 			
-			$("input[name='numeroSemana']").numeric();
-
-			carregarDadosPesquisa();
+			$("#novaDataRecolhimento").mask("99/99/9999");
 		}
 		
 		function iniciarGrid() {
@@ -510,67 +526,21 @@
 		
 		function confirmar() {
 			
+			fecharGridBalanceamento();
+			
 			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
-				null,
-				function() {
-					
-				}
+				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />"
 			);
 		}
 		
 		function balancearPorEditor() {
 			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorEditor' />",
-				null,
-				function() {
-					
-				}
-			);
-		}
-		
-		function balancearPorValor() {
-			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
-				null,
-				function() {
-					
-				}
-			);
-		}
-		
-		function salvar() {
-			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/salvar' />",
-				null,
-				function() {
-					
-				}
-			);
-		}
-		
-		function exibirMatrizFornecedor() {
-			
-			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
-				null,
-				function() {
-					
-				}
-			);
-		}
-		
-		function voltarConfiguracaoInicial() {
-			
 			fecharGridBalanceamento();
 			
 			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/voltarConfiguracaoOriginal' />",
-				null,
-				function() {
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorEditor' />",
+				obterParametrosPesquisa(),
+				function(result) {
 					
 					montarResumoPeriodoBalanceamento(result);
 				},
@@ -581,7 +551,90 @@
 			);
 		}
 		
-		function reprogramar() {
+		function balancearPorValor() {
+			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
+				obterParametrosPesquisa(),
+				function(result) {
+					
+					montarResumoPeriodoBalanceamento(result);
+				},
+				function() {
+					
+					$("#resumoPeriodo").hide();
+				}
+			);
+		}
+		
+		function salvar() {
+			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/salvar' />"
+			);
+		}
+		
+		function exibirMatrizFornecedor() {
+			
+			$(".balanceamentoGrid").flexOptions({
+				url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
+				onSuccess: executarAposProcessamento,
+				params: null,
+			    newp: 1,
+			});
+			
+			$(".balanceamentoGrid").flexReload();
+		}
+		
+		function voltarConfiguracaoInicial() {
+			
+			fecharGridBalanceamento();
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/voltarConfiguracaoOriginal' />",
+				null,
+				function(result) {
+					
+					montarResumoPeriodoBalanceamento(result);
+				},
+				function() {
+					
+					$("#resumoPeriodo").hide();
+				}
+			);
+		}
+		
+		function reprogramarSelecionados() {
+			
+			$("#dialogReprogramarBalanceamento").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						processarReprogramacao();
+					},
+					"Cancelar": function() {
+						
+						$(this).dialog("close");
+					}
+				},
+				beforeClose: function() {
+					
+					$("#novaDataRecolhimento").val("");
+					
+					clearMessageDialogTimeout();
+				}
+			});
+		}
+		
+		function processarReprogramacao() {
 			
 			var linhasDaGrid = $('.balanceamentoGrid tr');
 			
@@ -623,26 +676,56 @@
 				});
 			}
 			
-			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramar' />",
-					   listaProdutoRecolhimento + "&selecionarTodos=" + checkAllSelected,
+			var novaData = $("#novaDataRecolhimento").val();
+			
+			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarSelecionados' />",
+					   listaProdutoRecolhimento
+					   		+ "&selecionarTodos=" + checkAllSelected
+					   		+ "&novaDataFormatada=" + novaData,
 					   function(result) {
-							
-							//$("#dialog-confirm").dialog("close");
-							
-							var tipoMensagem = result.tipoMensagem;
-							var listaMensagens = result.listaMensagens;
-							
-							if (tipoMensagem && listaMensagens) {
-								
-								exibirMensagem(tipoMensagem, listaMensagens);
-							}
-							
-							$(".balanceamentoGrid").flexReload();
-							
-							$("#checkAllReprogramar").attr("checked", false);
-						},
+					   		
+							$("#dialogReprogramarBalanceamento").dialog("close");
+				
+					   		atualizarResumoBalanceamento();
+					   		
+					   		deselectCheckAll();
+					   },
 					   null,
-					   false
+					   true
+			);
+		}
+		
+		function reprogramarRecolhimentoUnico(paramIdLancamento) {
+			
+			var linhasDaGrid = $('.balanceamentoGrid tr');
+			
+			var linhaSelecionada;
+			
+			$.each(linhasDaGrid, function(index, value) {
+				
+				var linha = $(value);
+				
+				var idLinha = linha.attr("id");
+				
+				var idLancamento = idLinha.replace("row", "");
+				
+				if (idLancamento == paramIdLancamento) {
+					
+					var sequencia = obterValorInputColuna(linha, 0, "sequencia");
+					var novaData = obterValorInputColuna(linha, 15, "novaData");
+					
+					linhaSelecionada = 'produtoRecolhimento.idLancamento=' + idLancamento + '&';
+					linhaSelecionada += 'produtoRecolhimento.sequencia=' + sequencia + '&';
+					linhaSelecionada += 'produtoRecolhimento.novaData=' + novaData + '&';
+				}
+			});
+			
+			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico' />",
+					   linhaSelecionada,
+					   function(result) {
+					   
+					   		atualizarResumoBalanceamento();
+					   }
 			);
 		}
 		
@@ -650,7 +733,26 @@
 			
 			$(".grids").hide();
 			
-			$("#checkAllReprogramar").attr("checked", false);
+			deselectCheckAll();
+		}
+		
+		function atualizarResumoBalanceamento() {
+			
+			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/atualizarResumoBalanceamento' />",
+					   null,
+					   function(result) {
+					   	
+					   		montarResumoPeriodoBalanceamento(result);
+					   		
+					   		$(".balanceamentoGrid").flexReload();
+					   },
+					   function() {
+					   
+						   fecharGridBalanceamento();
+						   
+						   $("#resumoPeriodo").hide();
+					   }
+			);
 		}
 		
 		function obterValorColuna(linha, posicao) {
@@ -673,6 +775,11 @@
 			return ($("#checkAllReprogramar").attr("checked") == "checked");
 		}
 		
+		function deselectCheckAll() {
+			
+			$("#checkAllReprogramar").attr("checked", false);
+		}
+		
 		$(function() {
 
 			inicializar();
@@ -681,6 +788,17 @@
 </head>
 
 <body>
+	
+	<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
+	    
+	    <jsp:include page="../messagesDialog.jsp" />
+	    
+	    <p>
+		    <strong>Nova Data:</strong>
+		    <input name="novaDataRecolhimento" type="text"
+		    	   style="width:80px;" id="novaDataRecolhimento" />
+	    </p>
+	</div>
 	
 	<!-- Filtro de Pesquisa -->
 	

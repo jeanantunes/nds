@@ -82,20 +82,20 @@ public class MatrizLancamentoServiceImplTest {
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		dinapQuarta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		dinapSexta = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 
 		fcSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		fcSexta = Fixture.distribuicaoFornecedor(
 				fornecedorFc, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO);
+				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		
 	}
 	
