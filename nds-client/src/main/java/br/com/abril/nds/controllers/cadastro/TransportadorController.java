@@ -844,14 +844,14 @@ public class TransportadorController {
 			idsRotasRemovidas = this.transportadorService.buscarIdsRotasPorAssociacao(assocRemovidas);
 		}
 		
-		rotas: for (RotaRoteiroDTO rota : rotas){
+		for (RotaRoteiroDTO rota : rotas){
 			
 			for (AssociacaoVeiculoMotoristaRotaDTO dto : this.obterAssociacoesSalvarSessao()){
 				
 				if (dto.getRota().getIdRota().equals(rota.getIdRota())){
 					
 					rota.setDisponivel(false);
-					break rotas;
+					break;
 				} else {
 					
 					rota.setDisponivel(true);
