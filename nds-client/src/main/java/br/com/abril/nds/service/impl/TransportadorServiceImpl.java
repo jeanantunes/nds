@@ -142,11 +142,11 @@ public class TransportadorServiceImpl implements TransportadorService {
 		if (listaAssociacaoRemover != null && !listaAssociacaoRemover.isEmpty()){
 		
 			this.associacaoVeiculoMotoristaRotaRepository.removerAssociacaoPorId(listaAssociacaoRemover);
-			
-			this.processarVeiculos(transportador, listaVeiculosAdicionar, listaVeiculosRemover);
-			
-			this.processarMotoristas(transportador, listaMotoristasAdicionar, listaMotoristasRemover);
 		}
+		
+		this.processarVeiculos(transportador, listaVeiculosAdicionar, listaVeiculosRemover);
+		
+		this.processarMotoristas(transportador, listaMotoristasAdicionar, listaMotoristasRemover);
 		
 		this.processarAssocicoes(transportador, listaAssociacaoAdicionar);
 	}
@@ -631,8 +631,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 			this.veiculoRepository.removerVeiculos(transportador.getId(), null);
 			
 			this.motoristaRepository.removerMotoristas(transportador.getId(), null);
-			
-			this.transportadorRepository.remover(transportador);
 			
 			Set<Long> idsTelefone = new HashSet<Long>();
 			for (Telefone telefone : transportador.getPessoaJuridica().getTelefones()){
