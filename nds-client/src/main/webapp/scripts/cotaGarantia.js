@@ -106,6 +106,8 @@ NotaPromissoria.prototype.imprimi = function() {
 	window.open(this.path + 'impriNotaPromissoria/' + this.notaPromissoria.id);
 };
 
+
+//**************** CHEQUE CAUCAO PROTOTYPE ********************//
 /**
  * @param idCota
  * @returns {ChequeCaucao}
@@ -179,7 +181,6 @@ ChequeCaucao.prototype.salva = function(callBack) {
 			}, null, true);
 };
 
-
 ChequeCaucao.prototype.toggle = function() {
 	$('#cotaGarantiaChequeCaucaoPanel').toggle();
 };
@@ -214,7 +215,7 @@ ChequeCaucao.prototype.dataUnBind = function() {
 	this.chequeCaucao.conta = $("#cotaGarantiaChequeCaucaoConta").val();
 	this.chequeCaucao.dvConta = $("#cotaGarantiaChequeCaucaoDvConta").val();
 	this.chequeCaucao.numeroCheque = $("#cotaGarantiaChequeCaucaoNumeroCheque").val();
-	this.chequeCaucao.valor = $("#cotaGarantiaChequeCaucaoValor").unmask() / 100;;
+	this.chequeCaucao.valor = $("#cotaGarantiaChequeCaucaoValor").unmask() / 100;
 	this.chequeCaucao.emissao = $("#cotaGarantiaChequeCaucaoEmissao").val();
 	this.chequeCaucao.validade = $("#cotaGarantiaChequeCaucaoValidade").val();
 	this.chequeCaucao.correntista = $("#cotaGarantiaChequeCaucaoCorrentista").val();
@@ -222,6 +223,8 @@ ChequeCaucao.prototype.dataUnBind = function() {
 };
 
 ChequeCaucao.prototype.bindEvents = function() {
+	$("#cotaGarantiaChequeCaucaoAgencia").numeric();
+	$("#cotaGarantiaChequeCaucaoConta").numeric();
 	$("#cotaGarantiaChequeCaucaoEmissao").mask("99/99/9999");
 	$("#cotaGarantiaChequeCaucaoValidade").mask("99/99/9999");
 	$("#cotaGarantiaChequeCaucaoValor").priceFormat({
@@ -232,6 +235,171 @@ ChequeCaucao.prototype.bindEvents = function() {
 	
 };
 
+//**************** IMOVEL PROTOTYPE ********************//
+/**
+ * @param idCota
+ * @returns {Imovel}
+ */
+function Imovel(idCota) {
+	this.idCota = idCota;
+	this.bindEvents();
+	this.get();
+	this.toggle();
+	this.popularGrid();
+};
+
+Imovel.prototype.path = contextPath + "/cadastro/garantia/";
+Imovel.prototype.imovel = {
+	id : null,
+	proprietario : null,
+	endereco : null,
+	numeroRegistro : null,
+	valor : null,
+	observacao : null
+};
+
+Imovel.prototype.processPost = function(objectName, object) {
+	var obj = {};
+	for ( var propriedade in object) {
+		obj[objectName + '.' + propriedade] = object[propriedade];
+	}
+	return obj;
+};
+
+Imovel.prototype.toggle = function() {
+	$('#cotaGarantiaImovelPanel').toggle();
+};
+
+Imovel.prototype.get = function() {
+
+	var _this = this;
+	$.postJSON(this.path + 'getByCota.json', {
+		'idCota' : this.idCota
+	}, function(data) {
+
+		var tipoMensagem = data.tipoMensagem;
+		var listaMensagens = data.listaMensagens;
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagem(tipoMensagem, listaMensagens);
+		} else if (data.cotaGarantia && data.cotaGarantia.imovel) {
+			_this.imovel = data.cotaGarantia.imovel;
+			_this.dataBind();
+		}
+
+	}, null, true);
+};
+
+Imovel.prototype.incluirImovel = function(callBack) {
+	this.dataUnBind();
+	var postData = this.processPost('imovel', this.imovel);
+	postData['idCota'] = this.idCota;
+
+	$.postJSON(this.path + 'incluirImovel.json', postData,
+			function(data) {
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+				if(callBack){
+					callBack();
+				}
+
+			}, null, true);
+};
+
+Imovel.prototype.dataBind = function() {
+	
+	$("#cotaGarantiaImovelProprietario").val(this.imovel.proprietario);
+	$("#cotaGarantiaImovelEndereco").val(this.imovel.endereco);
+	$("#cotaGarantiaImovelNumeroRegistro").val(this.imovel.numeroRegistro);
+	$("#cotaGarantiaImovelValor").val(this.imovel.valor);
+	$("#cotaGarantiaImovelValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	$("#cotaGarantiaImovelObservacao").val(this.imovel.observacao);
+};
+
+Imovel.prototype.dataUnBind = function() {
+	
+	this.imovel.proprietario = $("#cotaGarantiaImovelProprietario").val();
+	this.imovel.endereco = $("#cotaGarantiaImovelEndereco").val();
+	this.imovel.numeroRegistro = $("#cotaGarantiaImovelNumeroRegistro").val();
+	this.imovel.valor = $("#cotaGarantiaImovelValor").unmask() / 100;
+	this.imovel.observacao = $("#cotaGarantiaImovelObservacao").val();
+};
+
+
+Imovel.prototype.bindEvents = function() {
+	
+	var _this = this;
+	$("#cotaGarantiaImovelIncluirNovo").click(function(){
+		_this.incluirImovel();
+	});
+	
+	$("#cotaGarantiaImovelValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+};
+
+Imovel.prototype.popularGrid = function() {
+	
+	$(".cotaGarantiaImovelGrid").flexigrid({
+		dataType : 'json',
+		colModel : [  
+		{
+			display : 'Proprietário',
+			name : 'proprietario',
+			width : 115,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Endereço',
+			name : 'endereco',
+			width : 150,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'N° Registro',
+			name : 'numeroRegistro',
+			width : 80,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Valor R$',
+			name : 'valor',
+			width : 80,
+			sortable : true,
+			align : 'right'
+		},{
+			display : 'Observação',
+			name : 'observacao',
+			width : 180,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Ação',
+			name : 'acao',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}
+		
+		],
+		width : 740,
+		height : 150,
+		sortorder: "asc",
+		sortname: "",
+		singleSelect: true
+	});
+};
+
+//**************** TIPO GARANTIA PROTOTYPE ********************//
 function TipoCotaGarantia() {
 	this.get();
 	this.controller = null;
@@ -248,7 +416,7 @@ TipoCotaGarantia.prototype.tipo = {
 	},
 	'IMOVEL' : {
 		label : 'Imóvel',
-		controller : null
+		controller : Imovel
 	},
 	'NOTA_PROMISSORIA' : {
 		label : 'Nota Promissória',
@@ -320,7 +488,7 @@ TipoCotaGarantia.prototype.getIdCota = function() {
 	return $('#_idCotaRef').val();
 };
 
-
+//**************** FIADOR PROTOTYPE ********************//
 function Fiador(idCota){
 	this.idCota = idCota;
 	this.bindEvents();

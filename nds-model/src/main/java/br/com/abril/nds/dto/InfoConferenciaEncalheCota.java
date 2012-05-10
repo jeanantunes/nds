@@ -1,0 +1,87 @@
+package br.com.abril.nds.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
+public class InfoConferenciaEncalheCota implements Serializable {
+	
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
+	
+	private List<DebitoCreditoCotaDTO> listaDebitoCreditoCota;
+	
+	private BigDecimal reparte;
+	
+	private BigDecimal encalhe;
+	
+	private BigDecimal valorVendaDia;
+	
+	private BigDecimal totalDebitoCreditoCota;
+	
+	private BigDecimal valorPagar;
+	
+	
+	public BigDecimal getValorVendaDia() {
+		return valorVendaDia;
+	}
+
+	public void setValorVendaDia(BigDecimal valorVendaDia) {
+		this.valorVendaDia = valorVendaDia;
+	}
+
+	public BigDecimal getTotalDebitoCreditoCota() {
+		return totalDebitoCreditoCota;
+	}
+
+	public void setTotalDebitoCreditoCota(BigDecimal totalDebitoCreditoCota) {
+		this.totalDebitoCreditoCota = totalDebitoCreditoCota;
+	}
+
+	public BigDecimal getValorPagar() {
+		return valorPagar;
+	}
+
+	public void setValorPagar(BigDecimal valorPagar) {
+		this.valorPagar = valorPagar;
+	}
+
+	public List<ConferenciaEncalheDTO> getListaConferenciaEncalhe() {
+		return listaConferenciaEncalhe;
+	}
+
+	public void setListaConferenciaEncalhe(
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		this.listaConferenciaEncalhe = listaConferenciaEncalhe;
+	}
+
+	public List<DebitoCreditoCotaDTO> getListaDebitoCreditoCota() {
+		return listaDebitoCreditoCota;
+	}
+
+	public void setListaDebitoCreditoCota(
+			List<DebitoCreditoCotaDTO> listaDebitoCreditoCota) {
+		this.listaDebitoCreditoCota = listaDebitoCreditoCota;
+	}
+
+	public BigDecimal getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte;
+	}
+
+	public BigDecimal getEncalhe() {
+		return encalhe;
+	}
+
+	public void setEncalhe(BigDecimal encalhe) {
+		this.encalhe = encalhe;
+	}
+	
+}

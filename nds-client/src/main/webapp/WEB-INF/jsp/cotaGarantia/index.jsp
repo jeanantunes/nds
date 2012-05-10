@@ -1,8 +1,12 @@
-<script language="javascript" type="text/javascript"
+<script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
+	
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-
+	
+<script language="text/javascript" type="text/javascript" 
+	src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	
 <script type="text/javascript">
 	var tipoCotaGarantia;
 	$(function() {
@@ -12,7 +16,7 @@
 <table width="755" cellpadding="2" cellspacing="2"
 	style="text-align: left;">
 	<tr>
-		<td width="108">Tipo de Garantia:</td>
+		<td width="112">Tipo de Garantia:</td>
 		<td width="631"><select id="tipoGarantiaSelect"
 			onchange="tipoCotaGarantia.changeController($(this).val());"
 			style="width: 250px;">
@@ -62,7 +66,6 @@
 		</table>
 	</fieldset>
 </div>
-<br clear="all" />
 
 <div id="cotaGarantiaFiadorPanel" style="display: none;">
 
@@ -120,9 +123,6 @@
 
 	</fieldset>
 </div>
-<br clear="all" />
-
-<br />
 
 <div id="cotaGarantiaChequeCaucaoPanel" style="display: none;">
 	<fieldset>
@@ -196,7 +196,61 @@
 		<legend>Foto Cheque</legend>
 		<br />
 		<div align="center">
-			<img src="../images/cheque.jpg" />
+			<img src="" />
+		</div>
+	</fieldset>
+</div>
+
+<div id="cotaGarantiaImovelPanel" style="display: none;">
+	<fieldset>
+		<legend>Im&oacute;vel</legend>
+		<table width="755" border="0" cellpadding="2" cellspacing="2"
+			style="text-align: left;">
+			<tbody>
+				<tr>
+					<td width="106">Propriet&aacute;rio:</td>
+					<td width="635"><input type="text"
+						name="cotaGarantiaImovelProprietario"
+						id="cotaGarantiaImovelProprietario" style="width: 250px;"></td>
+				</tr>
+				<tr>
+					<td>Endere&ccedil;o:</td>
+					<td><input type="text" name="cotaGarantiaImovelEndereco"
+						id="cotaGarantiaImovelEndereco" style="width: 450px;"></td>
+				</tr>
+				<tr>
+					<td>N&uacute;mero Registro:</td>
+					<td><input type="text" name="cotaGarantiaImovelNumeroRegistro"
+						id="cotaGarantiaImovelNumeroRegistro" style="width: 250px;"></td>
+				</tr>
+				<tr>
+					<td>Valor R$:</td>
+					<td><input type="text" name="cotaGarantiaImovelValor"
+						id="cotaGarantiaImovelValor"
+						style="width: 100px; text-align: right;"></td>
+				</tr>
+				<tr>
+					<td>Observa&ccedil;&atilde;o:</td>
+					<td><textarea name="cotaGarantiaImovelObservacao" rows="3"
+							id="cotaGarantiaImovelObservacao" style="width: 450px;"></textarea></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td><span class="bt_add"> <a href="javascript:;"
+							id="cotaGarantiaImovelIncluirNovo">Incluir
+								Novo</a>
+					</span></td>
+
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<br clear="all"> <br>
+
+	<fieldset>
+		<legend>Im&oacute;veis Cadastradas</legend>
+		<div class="flexigrid" style="width: 740px;">
+			<table class="cotaGarantiaImovelGrid"></table>
 		</div>
 	</fieldset>
 </div>
