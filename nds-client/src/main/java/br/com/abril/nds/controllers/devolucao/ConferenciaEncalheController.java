@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ConferenciaEncalheVO;
-import br.com.abril.nds.client.vo.ConsultaEncalheVO;
 import br.com.abril.nds.client.vo.DebitoCreditoCotaVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaConferenciaEncalheVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
