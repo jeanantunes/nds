@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -32,7 +36,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 	public void setUp() throws Exception {
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("FC",
-				"01.001.001/001-00", "000.000.000.00", "fc@mail.com", "");
+				"01.001.001/001-00", "000.000.000.00", "fc@mail.com", "9999-999");
 
 		save(pessoaJuridica);
 
@@ -48,12 +52,9 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
-	public void testSalva() {
-		
-		
+	public void testSalvaNotaPromissoria() {
 		
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
-		
 		
 		notaPromissoria.setValor(10000D);
 		notaPromissoria.setVencimento(new Date());
@@ -69,8 +70,68 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
 		
+		assertNotNull(cotaGarantia);
+	}
+	
+	@Test
+	public void testSalvaChequeCalcao() {
+		
+		CotaGarantia cotaGarantia = null;
+		
+		Cheque cheque = new Cheque();
+		
+		cheque.setNumeroBanco("321");
+		cheque.setNomeBanco("Banco Panamericano");
+		cheque.setAgencia(312L);
+		cheque.setDvAgencia("3");
+		cheque.setConta(444444L);
+		cheque.setDvConta("0");
+		cheque.setValor(2500000D);
+		cheque.setNumeroCheque("123456");
+		cheque.setEmissao(new Date());
+		cheque.setValidade(new Date());
+		cheque.setCorrentista("Senor Abravanel");
+		
+		try {
+			
+			cotaGarantia = cotaGarantiaService.salvaChequeCaucao(cheque, cota.getId());
+			
+		} catch (RelationshipRestrictionException e) {
+			
+			e.printStackTrace();
+		}
 		
 		assertNotNull(cotaGarantia);
 	}
-
+	
+	@Test
+	public void testSalvaImovel() {
+		
+		CotaGarantia cotaGarantia = null;
+		
+		List<Imovel> listaImoveis = new ArrayList<Imovel>();
+		
+		for (int i = 0 ; i <= 5; i++) {
+			
+			Imovel imovel = new Imovel();
+			
+			imovel.setProprietario("Proprietario0"+i);
+			imovel.setEndereco("Endereço0"+i);
+			imovel.setNumeroRegistro(i+"001");
+			imovel.setValor((i+1)*1000D);
+			imovel.setObservacao("Obs: "+i+"000");
+			
+			listaImoveis.add(imovel);
+		}
+		
+		try {
+			
+			cotaGarantia = cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
+			
+		} catch (RelationshipRestrictionException e) {
+			e.printStackTrace();
+		}
+		
+		assertNotNull(cotaGarantia);
+	}
 }

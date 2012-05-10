@@ -61,7 +61,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		cota.setSugereSuspensao(true);
 		save(cota);
 		
-		Rota rota = Fixture.rota("005");
+		Rota rota = Fixture.rota("005", "Rota 005");
 		save(rota);
 
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
@@ -75,7 +75,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		cota.setSugereSuspensao(true);
 		
 		save(cota);
-		rota = Fixture.rota("004");
+		rota = Fixture.rota("004", "Rota 004");
 		save(rota);
 
 		roteiro = Fixture.roteiro("Interlagos");

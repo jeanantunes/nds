@@ -9,12 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 
 /**
  * @author Diego Fernandes
@@ -51,12 +47,6 @@ public class Imovel implements Serializable {
 	@Column(name="OBSERVACAO")
 	private String observacao;
 	
-	
-	@ManyToOne(optional=false)
-	@JoinColumn(name="COTA_GARANTIA_IMOVEL_ID")
-	private CotaGarantiaImovel cotaGarantiaImovel;
-
-
 	/**
 	 * @return the id
 	 */
@@ -152,19 +142,4 @@ public class Imovel implements Serializable {
 		this.observacao = observacao;
 	}
 
-
-	/**
-	 * @return the cotaGarantiaImovel
-	 */
-	public CotaGarantiaImovel getCotaGarantiaImovel() {
-		return cotaGarantiaImovel;
-	}
-
-
-	/**
-	 * @param cotaGarantiaImovel the cotaGarantiaImovel to set
-	 */
-	public void setCotaGarantiaImovel(CotaGarantiaImovel cotaGarantiaImovel) {
-		this.cotaGarantiaImovel = cotaGarantiaImovel;
-	}
 }

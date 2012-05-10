@@ -23,6 +23,8 @@
 		
 		<input type="hidden" name="enderecoAssociacao.id" id="${param.telaEndereco}idEndereco"/>
 		
+		<input type="hidden" name="enderecoAssociacao.endereco.id" id="${param.telaEndereco}enderecoid"/>
+		
 		<input type="hidden" name="tela" id="${param.telaEndereco}telaEndereco" value="${param.telaEndereco}"/>
 		
 		<table width="754" cellpadding="2" cellspacing="2" style="text-align:left ">

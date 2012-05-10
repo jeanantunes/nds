@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
+import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -35,8 +37,10 @@ import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -78,6 +82,11 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	private TelefoneService telefoneService;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoEntregaRepository tipoEntregaRepository;
 
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
@@ -429,6 +438,60 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional
+	public DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota) {
+		
+		if(idCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id da cota não informado.");
+		}
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
+		}
+		
+		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
+		
+		boolean qtdePDVAutomatico = distribuidorService.obter().isPreenchimentoAutomaticoPDV();
+				
+		DistribuicaoDTO dto = new DistribuicaoDTO();
+		
+		dto.setNumCota(cota.getNumeroCota());
+		
+		dto.setBox(cota.getBox().getNome());
+		
+		if(qtdePDVAutomatico) {	
+			dto.setQtdePDV( (cota.getPdvs()!=null) ? cota.getPdvs().size() : 0);
+			dto.setQtdeAutomatica(true);
+		}
+		
+		if(parametro == null) {
+			return dto;
+		}
+		
+		if(!qtdePDVAutomatico) {
+			dto.setQtdePDV(parametro.getQtdePDV());
+		}
+		
+		dto.setAssistComercial(parametro.getAssistenteComercial());
+		dto.setTipoEntrega( (parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getId());
+		dto.setArrendatario(parametro.getArrendatario());
+		dto.setObservacao(parametro.getObservacao());
+		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
+		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
+		dto.setRecebeRecolhe(parametro.getRecebeRecolheParcias());
+		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
+		dto.setNeEmail(parametro.getNotaEnvioEmail());
+		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
+		dto.setCeEmail(parametro.getChamadaEncalheEmail());
+		dto.setSlipImpresso(parametro.getSlipImpresso());
+		dto.setSlipEmail(parametro.getSlipEmail());
+		
+		return dto;
+	}
+
+	@Override
+	@Transactional
 	public List<Fornecedor> obterFornecedoresCota(Long idCota) {
 		Cota cota = this.obterPorId(idCota);
 		Set<Fornecedor> fornecedores = cota.getFornecedores();
@@ -437,5 +500,40 @@ public class CotaServiceImpl implements CotaService {
 			listaFornecedores.add(itemFornecedor);
 		}
 		return listaFornecedores;
+	}
+
+	@Override
+	@Transactional
+	public void salvarDistribuicaoCota(DistribuicaoDTO dto) {
+		
+		if(dto==null || dto.getNumCota()==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
+		}
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(dto.getNumCota());		
+		
+		if( cota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
+		}
+		
+		ParametroDistribuicaoCota parametros = new ParametroDistribuicaoCota();
+		parametros.setQtdePDV(dto.getQtdePDV());
+		parametros.setAssistenteComercial(dto.getAssistComercial());
+		parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
+		parametros.setArrendatario(dto.getArrendatario());
+		parametros.setObservacao(dto.getObservacao());
+		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
+		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
+		parametros.setRecebeRecolheParcias(dto.getRecebeRecolhe());
+		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
+		parametros.setNotaEnvioEmail(dto.getNeEmail());
+		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
+		parametros.setChamadaEncalheEmail(dto.getCeEmail());
+		parametros.setSlipImpresso(dto.getSlipImpresso());
+		parametros.setSlipEmail(dto.getSlipEmail());
+		
+		cota.setParametroDistribuicao(parametros);
+		
+		cotaRepository.merge(cota);
 	}
 }

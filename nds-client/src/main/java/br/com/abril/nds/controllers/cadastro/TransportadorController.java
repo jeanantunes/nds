@@ -19,9 +19,9 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -59,7 +59,11 @@ public class TransportadorController {
 	
 	private static final String LISTA_VEICULOS_SALVAR_SESSAO = "listaVeiculosSalvarSessao";
 	
+	private static final String LISTA_VEICULOS_REMOVER_SESSAO = "listaVeiculosRemoverSessao";
+	
 	private static final String LISTA_MOTORISTAS_SALVAR_SESSAO = "listaMotoristasSalvarSessao";
+	
+	private static final String LISTA_MOTORISTAS_REMOVER_SESSAO = "listaMotoristasRemoverSessao";
 	
 	private static final String LISTA_ASSOCIACOES_SALVAR_SESSAO = "listaAssociacoesSalvarSessao";
 	
@@ -100,6 +104,10 @@ public class TransportadorController {
 		this.httpSession.removeAttribute(ID_TRANSPORTADORA_EDICAO);
 		this.httpSession.removeAttribute(LISTA_ASSOCIACOES_SALVAR_SESSAO);
 		this.httpSession.removeAttribute(LISTA_ASSOCIACOES_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_VEICULOS_SALVAR_SESSAO);
+		this.httpSession.removeAttribute(LISTA_VEICULOS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_MOTORISTAS_REMOVER_SESSAO);
+		this.httpSession.removeAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO);
 	}
 
 	@Post
@@ -139,6 +147,11 @@ public class TransportadorController {
 		if (sortname != null){
 			
 			filtro.setOrdenacaoColunaTransportador(Util.getEnumByStringValue(OrdenacaoColunaTransportador.values(), sortname));
+		}
+		
+		if (filtro.getCnpj() != null){
+			
+			filtro.setCnpj(filtro.getCnpj().replace(".", "").replace("/", "").replace("-", ""));
 		}
 		
 		ConsultaTransportadorDTO consulta = this.transportadorService.consultarTransportadores(filtro);
@@ -195,30 +208,139 @@ public class TransportadorController {
 		
 		List<AssociacaoVeiculoMotoristaRotaDTO> listaAssocAdd = this.obterAssociacoesSalvarSessao();
 		
-		Set<Long> listaAssocRemover = this.obterAssociacoesRemoverSessao();
+		List<Veiculo> listaVeiculosSalvar = this.obterVeiculosSessao();
+		for (Veiculo v : listaVeiculosSalvar){
+			
+			for (AssociacaoVeiculoMotoristaRotaDTO assoc : listaAssocAdd){
+				
+				if (v.getId() != null && v.getId().equals(assoc.getVeiculo().getId())){
+					
+					assoc.setVeiculo(v);
+				}
+			}
+			
+			if (v.getId() != null && v.getId() < 0){
+				v.setId(null);
+			}
+		}
 		
+		List<Motorista> listaMotoristasSalvar = this.obterMotoristasSessao();
+		for (Motorista v : listaMotoristasSalvar){
+			
+			for (AssociacaoVeiculoMotoristaRotaDTO assoc : listaAssocAdd){
+				
+				if (v.getId() != null && v.getId().equals(assoc.getMotorista().getId())){
+					
+					assoc.setMotorista(v);
+				}
+			}
+			
+			if (v.getId() != null && v.getId() < 0){
+				v.setId(null);
+			}
+		}
+		
+		transportador.setId((Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO));
+
 		this.transportadorService.cadastrarTransportador(transportador, 
 				listaEnderecosSalvar, 
 				listaEnderecosRemover, 
 				listaTelefonesSalvar,
 				listaTelefonesRemover, 
-				listaAssocAdd, 
-				listaAssocRemover);
+				listaVeiculosSalvar,
+				this.obterVeiculosSessaoRemover(),
+				listaMotoristasSalvar,
+				this.obterMotoristasSessaoRemover(),
+				listaAssocAdd,
+				this.obterAssociacoesRemoverSessao());
+		
+		this.limparDadosSessao();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
 	private void validarDadosEntrada(Transportador transportador) {
 		
+		if (transportador == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Transportador é obrigatório.");
+		}
 		
+		PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
+		
+		if (pessoaJuridica == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha os dados referentes a pessoa jurídica.");
+		}
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		if (pessoaJuridica.getRazaoSocial() == null || pessoaJuridica.getRazaoSocial().trim().isEmpty()){
+			
+			msgs.add("Razão social é obrigatório.");
+		}
+		
+		if (pessoaJuridica.getNomeFantasia() == null || pessoaJuridica.getNomeFantasia().trim().isEmpty()){
+			
+			msgs.add("Nome fantasia é obrigatório.");
+		}
+		
+		if (pessoaJuridica.getEmail() == null || pessoaJuridica.getEmail().trim().isEmpty()){
+			
+			msgs.add("Email é obrigatório.");
+		}
+		
+		if (transportador.getResponsavel() == null || transportador.getResponsavel().trim().isEmpty()){
+			
+			msgs.add("Responsável é obrigatório.");
+		}
+		
+		if (pessoaJuridica.getCnpj() == null || pessoaJuridica.getCnpj().trim().isEmpty()){
+			
+			msgs.add("CNPJ é obrigatório.");
+		}
+		
+		if (pessoaJuridica.getInscricaoEstadual() == null || pessoaJuridica.getInscricaoEstadual().trim().isEmpty()){
+			
+			msgs.add("Insc. Estadual é obrigatório.");
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
 	}
 
+	@Post
 	public void editarTransportador(Long referencia){
 		
+		this.httpSession.setAttribute(ID_TRANSPORTADORA_EDICAO, referencia);
+		
+		Transportador transportador = this.transportadorService.buscarTransportadorPorId(referencia);
+		
+		List<String> dados = new ArrayList<String>();
+		
+		if (transportador != null){
+			
+			dados.add(transportador.getPessoaJuridica().getRazaoSocial());
+			dados.add(transportador.getPessoaJuridica().getNomeFantasia());
+			dados.add(transportador.getPessoaJuridica().getEmail());
+			dados.add(transportador.getResponsavel());
+			dados.add(Util.adicionarMascaraCNPJ(transportador.getPessoaJuridica().getCnpj()));
+			dados.add(transportador.getPessoaJuridica().getInscricaoEstadual());
+			
+			this.carregarTelefonesEnderecosPessoa(transportador.getPessoaJuridica().getId());
+		}
+		
+		this.result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
+	@Post
 	public void excluirTransportador(Long referencia){
 		
+		this.transportadorService.excluirTransportador(referencia);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso.")).recursive().serialize();
 	}
 	
 	@Post
@@ -234,47 +356,118 @@ public class TransportadorController {
 		
 		Object[] dados = new Object[4];
 		
-		dados[0] = this.getTableModelVeiculos(this.pesquisarVeiculos());
+		dados[0] = this.getTableModelVeiculos(this.pesquisarVeiculos(null, null));
 		
-		dados[1] = this.getTableModelMotoristas(this.pesquisarMotoristas());
+		dados[1] = this.getTableModelMotoristas(this.pesquisarMotoristas(null, null));
 		
-		dados[2] = this.getTableModelRotaRoteiro(this.processarRotaRoteiroDisponivel());
+		dados[2] = this.getTableModelRotaRoteiro(this.processarRotaRoteiroDisponivel(null, null));
 		
-		dados[3] = this.getTableModelAssociacoes(this.pesquisarAssociacoes());
+		dados[3] = this.getTableModelAssociacoes(this.pesquisarAssociacoes(null, null));
 		
 		this.result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
 	@Post
-	public List<Veiculo> pesquisarVeiculos(){
+	public List<Veiculo> pesquisarVeiculos(String sortname, String sortorder){
 		
-		List<Veiculo> lista = this.transportadorService.buscarVeiculos();
+		Long idTransportadorEdicao = (Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO);
 		
-		if (lista == null){
-			lista =  new ArrayList<Veiculo>();
+		if (idTransportadorEdicao == null){
+			
+			return this.obterVeiculosSessao();
+		} else {
+			
+			List<Veiculo> lista = 
+					this.transportadorService.buscarVeiculosPorTransportador(
+							idTransportadorEdicao, 
+							this.obterVeiculosSessaoRemover(),
+							sortname,
+							sortorder);
+			
+			if (lista == null){
+				
+				lista = new ArrayList<Veiculo>();
+			}
+			
+			for (Veiculo veiculo : lista){
+				
+				veiculo.setTransportador(null);
+			}
+			
+			lista.addAll(this.obterVeiculosSessao());
+			
+			return lista;
 		}
-		
-		return lista;
 	}
 	
 	@Post
-	public void carregarVeiculos(){
+	public void carregarVeiculos(String sortname, String sortorder){
 		
-		this.result.use(Results.json()).from(this.getTableModelVeiculos(this.pesquisarVeiculos()), "result").recursive().serialize();
+		this.result.use(
+				Results.json()).from(
+						this.getTableModelVeiculos(this.pesquisarVeiculos(sortname, sortorder)), "result").recursive().serialize();
 	}
 	
 	@Post
 	public void adicionarVeiculo(Veiculo veiculo){
 		
+		this.validarDadosEntradaVeiculo(veiculo);
+		
 		List<Veiculo> lista = this.obterVeiculosSessao();
 		
-		lista.add(veiculo);
+		boolean add = true;
+		
+		for (int i = 0 ; i < lista.size() ; i++){
+			
+			if (lista.get(i).equals(veiculo)){
+				
+				lista.set(i, veiculo);
+				add = false;
+				break;
+			}
+		}
+		
+		if (veiculo.getId() == null){
+			
+			veiculo.setId(new Long((int) System.currentTimeMillis() *-1));
+		}
+		
+		if (add){
+		
+			lista.add(veiculo);
+		}
 		
 		this.httpSession.setAttribute(LISTA_VEICULOS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	private void validarDadosEntradaVeiculo(Veiculo veiculo) {
+		
+		if (veiculo == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Veículo é obrigatório.");
+		}
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		if (veiculo.getTipoVeiculo() == null || veiculo.getTipoVeiculo().trim().isEmpty()){
+			
+			msgs.add("Tipo de Veículo é obrigatório.");
+		}
+		
+		if (veiculo.getPlaca() == null || veiculo.getPlaca().trim().isEmpty()){
+			
+			msgs.add("Placa é obrigatório.");
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+	}
+
+	/*
 	@Post
 	public void cadastrarVeiculos(Veiculo veiculo){
 		
@@ -290,23 +483,40 @@ public class TransportadorController {
 		
 		this.carregarVeiculos();
 	}
-	
+	*/
+	/*
 	@Post
 	public void cancelarCadastroVeiculos(){
 		
 		this.httpSession.removeAttribute(LISTA_VEICULOS_SALVAR_SESSAO);
 		
-		this.carregarVeiculos();
+		this.carregarVeiculos(null, null);
 	}
-	
+	*/
 	@Post
 	public void editarVeiculo(Long referencia){
 		
-		Veiculo veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
+		Veiculo veiculo = null;
+		
+		List<Veiculo> listaVeiculos = this.obterVeiculosSessao();
+		
+		for (Veiculo v : listaVeiculos){
+			
+			if ((v.getId().equals(referencia))){
+				
+				veiculo = v;
+				break;
+			}
+		}
 		
 		if (veiculo == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Veículo de Id: " + referencia + " não encontrado.");
+			veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
+			
+			if (veiculo == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Veículo de Id: " + referencia + " não encontrado.");
+			}
 		}
 		
 		this.result.use(Results.json()).from(veiculo, "result").serialize();
@@ -315,11 +525,60 @@ public class TransportadorController {
 	@Post
 	public void excluirVeiculo(Long referencia){
 		
-		this.transportadorService.excluirVeiculo(referencia);
+		if (referencia != null){
+			
+			List<AssociacaoVeiculoMotoristaRotaDTO> assocSalvar = this.obterAssociacoesSalvarSessao();
+			
+			for (AssociacaoVeiculoMotoristaRotaDTO asc : assocSalvar){
+				
+				if (referencia.equals(asc.getVeiculo().getId())){
+					
+					this.result.use(Results.json()).from(
+							new ValidacaoVO(
+									TipoMensagem.WARNING, 
+									"Exclusão não permitida, esse motorista ja faz parte de uma associação."), "result").recursive().serialize();
+					return;
+				}
+			}
+			
+			Set<Long> assocRemover = this.obterAssociacoesRemoverSessao();
+			
+			if (this.transportadorService.verificarAssociacaoVeiculo(referencia, assocRemover)){
+				
+				this.result.use(Results.json()).from(
+						new ValidacaoVO(
+								TipoMensagem.WARNING, 
+								"Exclusão não permitida, esse motorista ja faz parte de uma associação."), "result").recursive().serialize();
+				return;
+			}
+			
+			Set<Long> set = this.obterVeiculosSessaoRemover();
+			
+			set.add(referencia);
+			
+			this.httpSession.setAttribute(LISTA_VEICULOS_REMOVER_SESSAO, set);
+			
+			List<Veiculo> listaSalvar = this.obterVeiculosSessao();
+			
+			Veiculo v = new Veiculo();
+			v.setId(referencia);
+			
+			listaSalvar.remove(v);
+			
+			this.httpSession.setAttribute(LISTA_VEICULOS_SALVAR_SESSAO, listaSalvar);
+		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Set<Long> obterVeiculosSessaoRemover() {
+		
+		Set<Long> set = (Set<Long>) this.httpSession.getAttribute(LISTA_VEICULOS_REMOVER_SESSAO);
+		
+		return set == null ? new HashSet<Long>() : set;
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<Veiculo> obterVeiculosSessao(){
 		
@@ -330,35 +589,105 @@ public class TransportadorController {
 	}
 	
 	@Post
-	public List<Motorista> pesquisarMotoristas(){
+	public List<Motorista> pesquisarMotoristas(String sortname, String sortorder){
 		
-		List<Motorista> lista = this.transportadorService.buscarMotoristas();
+		Long idTransportadorEdicao = (Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO);
 		
-		if (lista == null){
-			lista =  new ArrayList<Motorista>();
+		if (idTransportadorEdicao == null){
+			
+			return this.obterMotoristasSessao();
+		} else {
+			
+			List<Motorista> lista = 
+					this.transportadorService.buscarMotoristasPorTransportador(
+							idTransportadorEdicao, 
+							this.obterMotoristasSessaoRemover(),
+							sortname,
+							sortorder);
+			
+			if (lista == null){
+				lista =  new ArrayList<Motorista>();
+			}
+			
+			for (Motorista motorista : lista){
+				
+				motorista.setTransportador(null);
+			}
+			
+			lista.addAll(this.obterMotoristasSessao());
+			
+			return lista;
 		}
-		
-		return lista;
 	}
 	
 	@Post
-	public void carregarMotoristas(){
+	public void carregarMotoristas(String sortname, String sortorder){
 		
-		this.result.use(Results.json()).from(this.getTableModelMotoristas(this.pesquisarMotoristas()), "result").recursive().serialize();
+		this.result.use(
+				Results.json()).from(
+						this.getTableModelMotoristas(
+								this.pesquisarMotoristas(sortname, sortorder)), "result").recursive().serialize();
 	}
 	
 	@Post
 	public void adicionarMotorista(Motorista motorista){
 		
+		this.validarDadosEntradaMotorista(motorista);
+		
 		List<Motorista> lista = this.obterMotoristasSessao();
 		
-		lista.add(motorista);
+		boolean add = true;
+		
+		for (int i = 0 ; i < lista.size() ; i++){
+			
+			if (lista.get(i).equals(motorista)){
+				
+				add = false;
+				lista.set(i, motorista);
+				break;
+			}
+		}
+		
+		if (motorista.getId() == null){
+			
+			motorista.setId(new Long((int) System.currentTimeMillis() * -1));
+		}
+		
+		if (add){
+		
+			lista.add(motorista);
+		}
 		
 		this.httpSession.setAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	private void validarDadosEntradaMotorista(Motorista motorista) {
+		
+		if (motorista == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Motorista é obrigatório.");
+		}
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		if (motorista.getNome() == null || motorista.getNome().trim().isEmpty()){
+			
+			msgs.add("Nome motorista é obrigatório.");
+		}
+		
+		if (motorista.getCnh() == null || motorista.getCnh().trim().isEmpty()){
+			
+			msgs.add("CNH é obrigatório.");
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<Motorista> obterMotoristasSessao() {
 		
@@ -368,6 +697,7 @@ public class TransportadorController {
 		return listaVeiculos == null ? new ArrayList<Motorista>() : listaVeiculos;
 	}
 
+	/*
 	@Post
 	public void cadastrarMotoristas(Motorista motorista){
 		
@@ -383,23 +713,40 @@ public class TransportadorController {
 		
 		this.carregarMotoristas();
 	}
-	
+	*/
+	/*
 	@Post
 	public void cancelarCadastroMotoristas(){
 		
 		this.httpSession.removeAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO);
 		
-		this.carregarMotoristas();
+		this.carregarMotoristas(null, null);
 	}
-	
+	*/
 	@Post
 	public void editarMotorista(Long referencia){
 		
-		Motorista motorista = this.transportadorService.buscarMotoristaPorId(referencia);
+		Motorista motorista = null;
+		
+		List<Motorista> lista = this.obterMotoristasSessao();
+		
+		for (Motorista m : lista){
+			
+			if (m.getId().equals(referencia)){
+				
+				motorista = m;
+				break;
+			}
+		}
 		
 		if (motorista == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Motorista de Id: " + referencia + " não encontrado.");
+			motorista = this.transportadorService.buscarMotoristaPorId(referencia);
+			
+			if (motorista == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Motorista de Id: " + referencia + " não encontrado.");
+			}
 		}
 		
 		this.result.use(Results.json()).from(motorista, "result").serialize();
@@ -408,55 +755,116 @@ public class TransportadorController {
 	@Post
 	public void excluirMotorista(Long referencia){
 		
-		this.transportadorService.excluirMotorista(referencia);
-		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
-	}
-	
-	@Post
-	public List<RotaRoteiroDTO> pesquisarRotas(){
-		
-		List<Rota> lista = this.transportadorService.buscarRotas();
-		
-		if (lista == null || lista.isEmpty()){
+		if (referencia != null){
 			
-			return new ArrayList<RotaRoteiroDTO>();
-		} else {
+			List<AssociacaoVeiculoMotoristaRotaDTO> assocSalvar = this.obterAssociacoesSalvarSessao();
 			
-			List<RotaRoteiroDTO> ret = new ArrayList<RotaRoteiroDTO>();
-			
-			for (Rota rota : lista){
+			for (AssociacaoVeiculoMotoristaRotaDTO asc : assocSalvar){
 				
-				ret.add(new RotaRoteiroDTO(rota.getId(), rota.getDescricaoRota(), rota.getRoteiro().getDescricaoRoteiro()));
+				if (referencia.equals(asc.getMotorista().getId())){
+					
+					this.result.use(Results.json()).from(
+							new ValidacaoVO(
+									TipoMensagem.WARNING, 
+									"Exclusão não permitida, esse motorista ja faz parte de uma associação."), "result").recursive().serialize();
+					return;
+				}
 			}
 			
-			return ret;
+			Set<Long> assocRemover = this.obterAssociacoesRemoverSessao();
+			
+			if (this.transportadorService.verificarAssociacaoMotorista(referencia, assocRemover)){
+				
+				this.result.use(Results.json()).from(
+						new ValidacaoVO(
+								TipoMensagem.WARNING, 
+								"Exclusão não permitida, esse motorista ja faz parte de uma associação."), "result").recursive().serialize();
+				return;
+			}
+			
+			Set<Long> set = this.obterMotoristasSessaoRemover();
+			
+			set.add(referencia);
+			
+			this.httpSession.setAttribute(LISTA_MOTORISTAS_REMOVER_SESSAO, set);
+			
+			List<Motorista> listaSalvar = this.obterMotoristasSessao();
+			
+			Motorista v = new Motorista();
+			v.setId(referencia);
+			
+			listaSalvar.remove(v);
+			
+			this.httpSession.setAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO, listaSalvar);
 		}
+		
+		this.result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Set<Long> obterMotoristasSessaoRemover() {
+		
+		Set<Long> set = (Set<Long>) this.httpSession.getAttribute(LISTA_MOTORISTAS_REMOVER_SESSAO);
+		
+		return set == null ? new HashSet<Long>() : set;
+	}
+
+	@Post
+	public List<RotaRoteiroDTO> pesquisarRotas(String sortname, String sortorder){
+		
+		List<RotaRoteiroDTO> lista = this.transportadorService.buscarRotasRoteiroAssociacao(sortname, sortorder);
+		
+		if (lista == null){
+			
+			lista = new ArrayList<RotaRoteiroDTO>();
+		}
+		
+		return lista;
 	}
 	
 	@Post
-	public void carregarRotas(){
+	public void carregarRotas(String sortname, String sortorder){
 		
-		this.result.use(Results.json()).from(this.getTableModelRotaRoteiro(this.processarRotaRoteiroDisponivel()), "result").recursive().serialize();
+		this.result.use(
+				Results.json()).from(
+						this.getTableModelRotaRoteiro(
+								this.processarRotaRoteiroDisponivel(sortname, sortorder)), "result").recursive().serialize();
 	}
 	
-	private List<RotaRoteiroDTO> processarRotaRoteiroDisponivel(){
+	private List<RotaRoteiroDTO> processarRotaRoteiroDisponivel(String sortname, String sortorder){
 		
-		List<RotaRoteiroDTO> rotas = this.pesquisarRotas();
+		List<RotaRoteiroDTO> rotas = this.pesquisarRotas(sortname, sortorder);
 		
-		for (RotaRoteiroDTO rota : rotas){
+		Set<Long> assocRemovidas = this.obterAssociacoesRemoverSessao();
+		
+		List<Long> idsRotasRemovidas = null;
+		
+		if (assocRemovidas != null && !assocRemovidas.isEmpty()){
+			
+			idsRotasRemovidas = this.transportadorService.buscarIdsRotasPorAssociacao(assocRemovidas);
+		}
+		
+		rotas: for (RotaRoteiroDTO rota : rotas){
 			
 			for (AssociacaoVeiculoMotoristaRotaDTO dto : this.obterAssociacoesSalvarSessao()){
-			
+				
 				if (dto.getRota().getIdRota().equals(rota.getIdRota())){
 					
 					rota.setDisponivel(false);
-					break;
+					break rotas;
 				} else {
 					
 					rota.setDisponivel(true);
 					continue;
 				}
+			}
+			
+			if (idsRotasRemovidas != null && idsRotasRemovidas.contains(rota.getIdRota())){
+				
+				rota.setDisponivel(true);
+			} else if (this.transportadorService.verificarAssociacaoRotaRoteiro(rota.getIdRota())) {
+				
+				rota.setDisponivel(false);
 			}
 		}
 		
@@ -478,7 +886,7 @@ public class TransportadorController {
 			this.httpSession.setAttribute(LISTA_ASSOCIACOES_SALVAR_SESSAO, lista);
 		}
 		
-		this.result.use(Results.json()).from(this.getTableModelAssociacoes(this.obterAssociacoesSalvarSessao()), "result").recursive().serialize();
+		this.result.use(Results.json()).from(this.getTableModelAssociacoes(this.pesquisarAssociacoes(null, null)), "result").recursive().serialize();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -491,16 +899,59 @@ public class TransportadorController {
 	}
 	
 	@Post
-	public List<AssociacaoVeiculoMotoristaRotaDTO> pesquisarAssociacoes(){
+	public List<AssociacaoVeiculoMotoristaRotaDTO> pesquisarAssociacoes(String sortname, String sortorder){
 		
+		Long idTransportador = (Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO);
 		
-		return this.obterAssociacoesSalvarSessao();
+		List<AssociacaoVeiculoMotoristaRotaDTO> listaExibir = new ArrayList<AssociacaoVeiculoMotoristaRotaDTO>();
+		
+		List<AssociacaoVeiculoMotoristaRotaDTO> listaSalvar = this.obterAssociacoesSalvarSessao();
+		
+		if (idTransportador != null){
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			idsIgnorar.addAll(this.obterAssociacoesRemoverSessao());
+			
+			for (AssociacaoVeiculoMotoristaRotaDTO assoc : listaSalvar){
+				
+				if (assoc.getId() != null && assoc.getId() > 0){
+					
+					idsIgnorar.add(assoc.getId());
+				}
+			}
+			
+			List<AssociacaoVeiculoMotoristaRota> listaAssocsBanco =
+					this.transportadorService.buscarAssociacoesTransportador(idTransportador, idsIgnorar, sortname, sortorder);
+			
+			for (AssociacaoVeiculoMotoristaRota assocBanco : listaAssocsBanco){
+				
+				assocBanco.getMotorista().setTransportador(null);
+				assocBanco.getVeiculo().setTransportador(null);
+				assocBanco.setTransportador(null);
+				
+				AssociacaoVeiculoMotoristaRotaDTO dto = 
+						new AssociacaoVeiculoMotoristaRotaDTO(assocBanco.getId(), 
+								assocBanco.getVeiculo(), 
+								assocBanco.getMotorista(), 
+								new  RotaRoteiroDTO(1L, assocBanco.getRota().getDescricaoRota(), assocBanco.getRota().getRoteiro().getDescricaoRoteiro()));
+				
+				listaExibir.add(dto);
+			}
+		}
+		
+		listaExibir.addAll(listaSalvar);
+		
+		return listaExibir;
 	}
 	
 	@Post
-	public void carregarAssociacoes(){
+	public void carregarAssociacoes(String sortname, String sortorder){
 		
-		this.result.use(Results.json()).from(this.getTableModelAssociacoes(this.pesquisarAssociacoes()), "result").recursive().serialize();
+		this.result.use(
+				Results.json()).from(
+						this.getTableModelAssociacoes(
+								this.pesquisarAssociacoes(sortname, sortorder)), "result").recursive().serialize();
 	}
 	
 	@Post
@@ -513,13 +964,17 @@ public class TransportadorController {
 			removerAssoc.add(referencia);
 		}
 		
+		this.httpSession.setAttribute(LISTA_ASSOCIACOES_REMOVER_SESSAO, removerAssoc);
+		
 		List<AssociacaoVeiculoMotoristaRotaDTO> listaAssocSalvar = this.obterAssociacoesSalvarSessao();
 		
 		AssociacaoVeiculoMotoristaRotaDTO assoc = new AssociacaoVeiculoMotoristaRotaDTO(referencia, null, null, null);
 		
 		listaAssocSalvar.remove(assoc);
 		
-		this.processarRotaRoteiroDisponivel();
+		this.httpSession.setAttribute(LISTA_ASSOCIACOES_SALVAR_SESSAO, listaAssocSalvar);
+		
+		this.processarRotaRoteiroDisponivel(null, null);
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
@@ -566,8 +1021,14 @@ public class TransportadorController {
 	}
 	
 	private void carregarTelefonesEnderecosPessoa(Long id) {
-		// TODO Auto-generated method stub
 		
+		List<TelefoneAssociacaoDTO> lista = this.transportadorService.buscarTelefonesTransportador(id, null);
+		
+		this.httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecos = this.transportadorService.buscarEnderecosTransportador(id, null);
+		
+		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 	}
 	
 	private TableModel<CellModelKeyValue<Veiculo>> getTableModelVeiculos(List<Veiculo> listaVeiculos) {
@@ -578,7 +1039,7 @@ public class TransportadorController {
 
 		for (Veiculo veiculo : listaVeiculos) {
 			
-			int id  = veiculo.getId() == null ? (int)System.currentTimeMillis() : veiculo.getId().intValue();
+			int id  = veiculo.getId() == null ? (int)System.currentTimeMillis() * -1 : veiculo.getId().intValue();
 			
 			CellModelKeyValue<Veiculo> cellModel = new CellModelKeyValue<Veiculo>(
 				id,

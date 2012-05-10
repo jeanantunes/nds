@@ -107,9 +107,16 @@ public class Distribuidor {
 	private boolean executaRecolhimentoParcial;
 	
 	/**
+	 * Flag indicando se o distribuidor possui preenchimento automático de Quantidade de PDVs
+	 * (Aba de Distribuidor-Cadastro de Cota)
+	 */
+	@Column(name = "AUTO_PREENCHE_QTDE_PDV", nullable = false)
+	private boolean preenchimentoAutomaticoPDV;
+	
+	/**
 	 * Fator em número de dias para o cálculo do relançamento parcial
 	 */
-	@Column(name = "FATOR_RELANCAMENTO_PARCIAL", nullable = false)
+	@Column(name = "FATOR_RELANCAMENTO_PARCIAL",  nullable = false)
 	private int fatorRelancamentoParcial;
 	
 	/**
@@ -306,6 +313,20 @@ public class Distribuidor {
 	 */
 	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
+	}
+
+	/**
+	 * @return the preenchimentoAutomaticoPDV
+	 */
+	public boolean isPreenchimentoAutomaticoPDV() {
+		return preenchimentoAutomaticoPDV;
+	}
+
+	/**
+	 * @param preenchimentoAutomaticoPDV the preenchimentoAutomaticoPDV to set
+	 */
+	public void setPreenchimentoAutomaticoPDV(boolean preenchimentoAutomaticoPDV) {
+		this.preenchimentoAutomaticoPDV = preenchimentoAutomaticoPDV;
 	}
 
 	public int getQtdDiasEncalheAtrasadoAceitavel() {

@@ -104,7 +104,7 @@ public class EnderecoFiadorRepositoryImpl extends
 		
 		if (idsIgnorar != null && !idsIgnorar.isEmpty()){
 			
-			hql.append(" and t.id not in (:idsIgnorar) ");
+			hql.append(" and t.endereco.id not in (:idsIgnorar) ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());

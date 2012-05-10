@@ -24,6 +24,10 @@ public class DistribuicaoFornecedor {
 	private Long id;
 	
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
+	private Distribuidor distribuidor;
+	
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
 	
@@ -67,6 +71,14 @@ public class DistribuicaoFornecedor {
 		this.operacaoDistribuidor = operacaoDistribuidor;
 	}
 	
+	public Distribuidor getDistribuidor() {
+		return distribuidor;
+	}
+
+	public void setDistribuidor(Distribuidor distribuidor) {
+		this.distribuidor = distribuidor;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -98,7 +110,5 @@ public class DistribuicaoFornecedor {
 				.append("-").append(getDiaSemana()).append("-")
 				.append(operacaoDistribuidor).toString();
 	}
-	
-	
-	
+
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -91,6 +92,9 @@ public class Cota implements Serializable {
 	
 	@OneToOne(mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
+		
+	@Embedded
+	private ParametroDistribuicaoCota parametroDistribuicao;
 	
 	@OneToMany
 	@JoinColumn( name="ID_COTA")
@@ -117,9 +121,6 @@ public class Cota implements Serializable {
 	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-	
-	@Column(name = "QTDE_PDV", nullable = true)
-	private Integer qtdePDV;
 	
 	public Long getId() {
 		return id;
@@ -277,14 +278,6 @@ public class Cota implements Serializable {
 		this.fornecedores = fornecedores;
 	}
 
-	public Integer getQtdePDV() {
-		return qtdePDV;
-	}
-	
-	public void setQtdePDV(Integer qtdePDV) {
-		this.qtdePDV = qtdePDV;
-	}
-
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -314,6 +307,20 @@ public class Cota implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the parametroDistribuicao
+	 */
+	public ParametroDistribuicaoCota getParametroDistribuicao() {
+		return parametroDistribuicao;
+	}
+
+	/**
+	 * @param parametroDistribuicao the parametroDistribuicao to set
+	 */
+	public void setParametroDistribuicao(ParametroDistribuicaoCota parametroDistribuicao) {
+		this.parametroDistribuicao = parametroDistribuicao;
 	}
 
 }

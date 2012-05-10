@@ -3,7 +3,11 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
+
 <script language="javascript" type="text/javascript">
+	
+	var tabCPF = new TabCota('tabpf');
 	
 	function popup_cnpj() {
 		
@@ -115,6 +119,9 @@
 	  
 	function salvarCota(){
 		
+		if(tabCPF.funcaoSalvar)
+			tabCPF.funcaoSalvar();
+		
 		$.ajax({
 			type: 'POST',
 			url: '<c:url value="/cadastro/cota/salvarCota" />',
@@ -127,16 +134,7 @@
 		
 		$( this ).dialog( "close" );
 	}
-	
-	$(function() {
 		
-		$( "#tabpf" ).tabs();
-		
-		$( "#tabpj" ).tabs();
-		
-		$( "#tabpdv" ).tabs();
-	});
-	
 	function carregarPDV(){
 		
 		var idCota = $("#_idCotaRef").val();
@@ -193,11 +191,11 @@
 		<div id="tabpf">
 			<ul>
 			<li><a href="#tabpf-1">Dados Cadastrais</a></li>
-			<li><a href="#tabpf-2" onclick="ENDERECO_COTA.popularGridEnderecos()">Endereços</a></li>			
-			<li><a href="#tabpf-3" onclick="COTA.carregarTelefones()">Telefones</a></li>
-			<li><a href="#tabpf-4" onclick="carregarPDV()">PDV</a></li>
-			<li><a href="#tabpf-5" onclick="void(0);">Garantia</a></li>
-			<li><a href="#tabpf-6" onclick="carregaFinanceiro();">Financeiro</a></li>
+			<li><a href="#tabpf-2">Endereços</a></li>			
+			<li><a href="#tabpf-3">Telefones</a></li>
+			<li><a href="#tabpf-4">PDV</a></li>
+			<li><a href="#tabpf-5">Garantia</a></li>
+			<li><a href="#tabpf-6">Financeiro</a></li>
 			<li><a href="#tabpf-7">Bancos</a></li>
 			<li><a href="#tabpf-8">Distribuição</a></li>
 			<li><a href="#tabpf-9">Fornecedor</a></li>
@@ -228,7 +226,17 @@
 			    <jsp:include page="../financeiro/index.jsp"></jsp:include> 
 			</div>
 			
-			<div id="tabpf-7"> </div>
+			<div id="tabpf-7">
+				Bancos
+			</div>
+			
+			<div id="tabpf-8">
+			
+				<jsp:include page="../distribuicao/distribuicao.jsp">
+					<jsp:param value="DISTRIB_COTA_CPF" name="tela"/>
+				</jsp:include>
+					
+			</div>
 			
 			<div id="tabpf-8"> </div>
 			
