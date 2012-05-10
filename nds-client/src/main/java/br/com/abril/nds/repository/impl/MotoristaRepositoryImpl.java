@@ -29,14 +29,19 @@ public class MotoristaRepositoryImpl extends
 		Criteria criteria = this.getSession().createCriteria(Motorista.class);
 		criteria.add(Restrictions.eq("transportador.id", idTransportador));
 
+		if (idsIgnorar != null && !idsIgnorar.isEmpty()) {
+
+			criteria.add(Restrictions.not(Restrictions.in("id", idsIgnorar)));
+		}
+		
 		String property = null;
 
-		if ("nome".equals(sortname)) {
-
-			property = "nome";
-		} else {
+		if ("cnh".equals(sortname)) {
 
 			property = "cnh";
+		} else {
+
+			property = "nome";
 		}
 
 		if ("asc".equals(sortorder)) {
@@ -45,11 +50,6 @@ public class MotoristaRepositoryImpl extends
 		} else {
 
 			criteria.addOrder(Order.desc(property));
-		}
-
-		if (idsIgnorar != null && !idsIgnorar.isEmpty()) {
-
-			criteria.add(Restrictions.not(Restrictions.in("id", idsIgnorar)));
 		}
 
 		return criteria.list();

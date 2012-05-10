@@ -884,14 +884,16 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(Long idTransportador, Set<Long> idsIgnorar){
+	public List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder){
 		
 		if (idTransportador == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id transportador é obrigatório.");
 		}
 		
-		return this.associacaoVeiculoMotoristaRotaRepository.buscarAssociacoesTransportador(idTransportador, idsIgnorar);
+		return this.associacaoVeiculoMotoristaRotaRepository.buscarAssociacoesTransportador(
+				idTransportador, idsIgnorar, sortname, sortorder);
 	}
 
 	@Transactional(readOnly = true)

@@ -439,7 +439,7 @@ public class TransportadorController {
 		
 		this.httpSession.setAttribute(LISTA_VEICULOS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	private void validarDadosEntradaVeiculo(Veiculo veiculo) {
@@ -496,11 +496,27 @@ public class TransportadorController {
 	@Post
 	public void editarVeiculo(Long referencia){
 		
-		Veiculo veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
+		Veiculo veiculo = null;
+		
+		List<Veiculo> listaVeiculos = this.obterVeiculosSessao();
+		
+		for (Veiculo v : listaVeiculos){
+			
+			if ((v.getId().equals(referencia))){
+				
+				veiculo = v;
+				break;
+			}
+		}
 		
 		if (veiculo == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Veículo de Id: " + referencia + " não encontrado.");
+			veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
+			
+			if (veiculo == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Veículo de Id: " + referencia + " não encontrado.");
+			}
 		}
 		
 		this.result.use(Results.json()).from(veiculo, "result").serialize();
@@ -644,7 +660,7 @@ public class TransportadorController {
 		
 		this.httpSession.setAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	private void validarDadosEntradaMotorista(Motorista motorista) {
@@ -710,11 +726,27 @@ public class TransportadorController {
 	@Post
 	public void editarMotorista(Long referencia){
 		
-		Motorista motorista = this.transportadorService.buscarMotoristaPorId(referencia);
+		Motorista motorista = null;
+		
+		List<Motorista> lista = this.obterMotoristasSessao();
+		
+		for (Motorista m : lista){
+			
+			if (m.getId().equals(referencia)){
+				
+				motorista = m;
+				break;
+			}
+		}
 		
 		if (motorista == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Motorista de Id: " + referencia + " não encontrado.");
+			motorista = this.transportadorService.buscarMotoristaPorId(referencia);
+			
+			if (motorista == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Motorista de Id: " + referencia + " não encontrado.");
+			}
 		}
 		
 		this.result.use(Results.json()).from(motorista, "result").serialize();
@@ -890,7 +922,7 @@ public class TransportadorController {
 			}
 			
 			List<AssociacaoVeiculoMotoristaRota> listaAssocsBanco =
-					this.transportadorService.buscarAssociacoesTransportador(idTransportador, idsIgnorar);
+					this.transportadorService.buscarAssociacoesTransportador(idTransportador, idsIgnorar, sortname, sortorder);
 			
 			for (AssociacaoVeiculoMotoristaRota assocBanco : listaAssocsBanco){
 				
