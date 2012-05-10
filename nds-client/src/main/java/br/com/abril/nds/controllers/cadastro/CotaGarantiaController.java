@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -52,9 +54,10 @@ public class CotaGarantiaController {
 				.recursive().serialize();
 	}
 
-	@Post
-	@Path("/salvaChequeCaucao.json")
+	@Post("/salvaChequeCaucao.json")
 	public void salvaChequeCaucao(Cheque chequeCaucao, Long idCota) {
+		
+		validaChequeCaucao(chequeCaucao);
 		
 		try {
 			cotaGarantiaService.salvaChequeCaucao(chequeCaucao, idCota);
@@ -69,8 +72,7 @@ public class CotaGarantiaController {
 		.recursive().serialize();
 	}
 	
-	@Post
-	@Path("/salvaImovel.json")
+	@Post("/salvaImovel.json")
 	public void salvaImovel(List<Imovel> listaImoveis, Long idCota) {
 		try {
 			cotaGarantiaService.salvaImovel(listaImoveis, idCota);
@@ -114,4 +116,90 @@ public class CotaGarantiaController {
 		result.use(Results.json()).from(listFiador,"items").recursive().serialize();
 	}
 	
+	@Post("/incluirImovel.json")
+	public void incluirImovel(Imovel imovel) {
+		validaImovel(imovel);
+		//TODO: criar lista de imovel e add na sessão.
+	}
+	
+	/**
+	 * @param cheque cheque para ser validado
+	 */
+	private void validaChequeCaucao(Cheque cheque) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (StringUtil.isEmpty(cheque.getNumeroBanco())) {
+			listaMensagens.add("O preenchimento do campo [Num. Banco] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(cheque.getNomeBanco())) {
+			listaMensagens.add("O preenchimento do campo [Nome] é obrigatório");
+		}
+		
+		if (cheque.getAgencia() == null || StringUtil.isEmpty(cheque.getDvAgencia())) {
+			listaMensagens.add("O preenchimento do campo [Agência] é obrigatório");
+		}
+		
+		if (cheque.getConta() == null || StringUtil.isEmpty(cheque.getDvConta())) {
+			listaMensagens.add("O preenchimento do campo [Conta] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(cheque.getNumeroCheque())) {
+			listaMensagens.add("O preenchimento do campo [Nº Cheque] é obrigatório");
+		}
+		
+		if (cheque.getValor() == null) {
+			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
+		}
+		
+		if (cheque.getEmissao() == null) {
+			listaMensagens.add("O preenchimento do campo [Data do Cheque] é obrigatório");
+		}
+		
+		if (cheque.getValidade() == null) {
+			listaMensagens.add("O preenchimento do campo [Validade] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(cheque.getCorrentista())) {
+			listaMensagens.add("O preenchimento do campo [Nome Correntista] é obrigatório");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+		}
+	}
+		
+	/**
+	 * @param imovel imóvel para ser validado.
+	 */
+	private void validaImovel(Imovel imovel) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (StringUtil.isEmpty(imovel.getProprietario())) {
+			listaMensagens.add("O preenchimento do campo [Proprietário] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(imovel.getEndereco())) {
+			listaMensagens.add("O preenchimento do campo [Endereço] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(imovel.getNumeroRegistro())) {
+			listaMensagens.add("O preenchimento do campo [Número Registro] é obrigatório");
+		}
+		
+		if (imovel.getValor() == null) {
+			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(imovel.getObservacao())) {
+			listaMensagens.add("O preenchimento do campo [Observação] é obrigatório");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+		}
+	}
+		
 }
