@@ -13,7 +13,13 @@ public interface AssociacaoVeiculoMotoristaRotaRepository extends
 	void removerAssociacaoTransportador(Long id);
 
 	List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(
-			Long idTransportador, Set<Long> idsIgnorar);
+			Long idTransportador, Set<Long> idsIgnorar, String sortname, String sortorder);
 
 	List<Long> buscarIdsRotasPorAssociacao(Set<Long> assocRemovidas);
+
+	boolean verificarAssociacaoMotorista(Long idMotorista, Set<Long> idsIgnorar);
+
+	boolean verificarAssociacaoVeiculo(Long idVeiculo, Set<Long> idsIgnorar);
+
+	boolean verificarAssociacaoRotaRoteiro(Long idRota);
 }

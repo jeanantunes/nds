@@ -2,11 +2,9 @@ package br.com.abril.nds.strategy.devolucao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -106,9 +104,15 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 			// Quando todas capacidades estiverem excedidas dar preferência para maior PEB 
 			// (verificar dia de recolhimento previsto do produto)
 			
-			Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaBalanceado = 
+			Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = 
 				this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimentoBalanceada);
 			
+			for (Map.Entry<Date, BigDecimal> entryExpectativaEncalheTotalDiariaAtual :
+					mapaExpectativaEncalheTotalDiariaAtual.entrySet()) {
+				
+				
+			}
+						
 		} else {
 			
 			if (produtosRecolhimentoNaData != null) {
@@ -150,9 +154,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 		
 		if (produtosRecolhimento != null) {
 
-			BigDecimal expectativaEncalheNaData = this.obterExpectativaEncalheTotal(produtosRecolhimento);
+			BigDecimal expectativaEncalheTotalAtualNaData = this.obterExpectativaEncalheTotal(produtosRecolhimento);
 			
-			return (expectativaEncalheNaData.add(expectativaEncalheABalancear).compareTo(capacidadeManuseio) <= 0);
+			return (expectativaEncalheTotalAtualNaData.add(expectativaEncalheABalancear).compareTo(capacidadeManuseio) <= 0);
 		}
 		
 		return true;

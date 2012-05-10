@@ -130,16 +130,22 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class Fixture {
@@ -459,6 +465,26 @@ public class Fixture {
 		
 		return controleConferenciaEncalhe;
 	}
+
+	public static ControleConferenciaEncalheCota controleConferenciaEncalheCota (
+			ControleConferenciaEncalhe controleConferenciaEncalhe,
+			Cota cota,
+			Date dataInicio,
+			Date dataFim,
+			Date dataOperacao,
+			StatusOperacao statusOperacao) {
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
+		
+		controleConferenciaEncalheCota.setControleConferenciaEncalhe(controleConferenciaEncalhe);
+		controleConferenciaEncalheCota.setCota(cota);
+		controleConferenciaEncalheCota.setDataInicio(dataInicio);
+		controleConferenciaEncalheCota.setDataFim(dataFim);
+		controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
+		controleConferenciaEncalheCota.setStatus(statusOperacao);
+		
+		return controleConferenciaEncalheCota;
+	}
 	
 	public static ControleContagemDevolucao controleContagemDevolucao (
 			StatusOperacao statusOperacao,
@@ -515,9 +541,10 @@ public class Fixture {
 
 	public static DistribuicaoFornecedor distribuicaoFornecedor(
 			Fornecedor fornecedor, DiaSemana diaSemana,
-			OperacaoDistribuidor operacaoDistribuidor) {
+			OperacaoDistribuidor operacaoDistribuidor, Distribuidor distribuidor) {
 		DistribuicaoFornecedor df = new DistribuicaoFornecedor();
 		df.setFornecedor(fornecedor);
+		df.setDistribuidor(distribuidor);
 		df.setDiaSemana(diaSemana);
 		df.setOperacaoDistribuidor(operacaoDistribuidor);
 		
@@ -1498,14 +1525,35 @@ public class Fixture {
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
 			Lancamento lancamento, 
-			MovimentoEstoqueCota movimentoEstoqueCota) {
+			MovimentoEstoqueCota movimentoEstoqueCota,
+			ChamadaEncalheCota chamadaEncalheCota,
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
 		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
+		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
+		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
 		
 		return conferenciaEncalhe;
+		
+	}
+	
+	public static ChamadaEncalheCota chamadaEncalheCota(
+			ChamadaEncalhe chamadaEncalhe,
+			boolean conferido,
+			Cota cota,
+			BigDecimal qtdePrevista) {
+		
+		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+		
+		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+		chamadaEncalheCota.setConferido(conferido);
+		chamadaEncalheCota.setCota(cota);
+		chamadaEncalheCota.setQtdePrevista(qtdePrevista);
+		
+		return chamadaEncalheCota;
 		
 	}
 	
@@ -2432,4 +2480,24 @@ public class Fixture {
 		return tipoGarantiaAceita;
 	}
 	
+	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
+																		 LancamentoParcial lancamentoParcial,
+																		 Date recolhimento,
+																		 StatusLancamentoParcial status,
+																		 TipoLancamentoParcial tipo) {
+		
+		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
+		
+		parcial.setLancamento(lancamento);
+		
+		parcial.setLancamentoParcial(lancamentoParcial);
+		
+		parcial.setRecolhimento(recolhimento);
+		
+		parcial.setStatus(status);
+		
+		parcial.setTipo(tipo);
+		
+		return parcial;
+	}
 }

@@ -172,15 +172,17 @@ public class EntregadorController {
 		}
 
 		cpfEntregador = cpfEntregador.replaceAll("\\.", "").replaceAll("-", "");
-		
+
+		pessoaFisica.setCpf(cpfEntregador);
+
 		PessoaFisica pessoaFisicaExistente = this.pessoaFisicaService.buscarPorCpf(cpfEntregador);
 
-		if (pessoaFisicaExistente == null) {
-			
-			pessoaFisica.setCpf(cpfEntregador);
-			
-			pessoaFisicaExistente = this.pessoaFisicaService.salvarPessoaFisica(pessoaFisica);
+		if (pessoaFisicaExistente != null) {
+
+			pessoaFisica.setId(pessoaFisicaExistente.getId());
 		}
+
+		pessoaFisicaExistente = this.pessoaFisicaService.salvarPessoaFisica(pessoaFisica);
 
 		if (this.entregadorService.isPessoaJaCadastrada(pessoaFisicaExistente.getId(), idEntregador)) {
 
@@ -288,14 +290,16 @@ public class EntregadorController {
 		
 		cnpjEntregador = cnpjEntregador.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 
+		pessoaJuridica.setCnpj(cnpjEntregador);
+		
 		PessoaJuridica pessoaJuridicaExistente = this.pessoaJuridicaService.buscarPorCnpj(cnpjEntregador);
 		
-		if (pessoaJuridicaExistente == null) {
-			
-			pessoaJuridica.setCnpj(cnpjEntregador);
-			
-			pessoaJuridicaExistente = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
+		if (pessoaJuridicaExistente != null) {
+		
+			pessoaJuridica.setId(pessoaJuridicaExistente.getId());
 		}
+
+		pessoaJuridicaExistente = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
 		
 		if (this.entregadorService.isPessoaJaCadastrada(pessoaJuridicaExistente.getId(), idEntregador)) {
 

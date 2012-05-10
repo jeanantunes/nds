@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.Cota;
  * conferência de encalhe da cota.
  * 
  * @author Discover Technology 
- *
  */
 @Entity
 @Table(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA")
@@ -41,15 +40,19 @@ public class ControleConferenciaEncalheCota {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_FIM", nullable = false)
 	private Date dataFim;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_OPERACAO", nullable = false)
+	private Date dataOperacao;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusOperacao status;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
@@ -106,6 +109,23 @@ public class ControleConferenciaEncalheCota {
 	}
 
 	/**
+	 * Obtém dataOperacao
+	 *
+	 * @return Date
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	/**
+	 * Atribuí dataOperacao
+	 * @param dataOperacao 
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
+	}
+
+	/**
 	 * Obtém status
 	 *
 	 * @return StatusOperacao
@@ -121,7 +141,7 @@ public class ControleConferenciaEncalheCota {
 	public void setStatus(StatusOperacao status) {
 		this.status = status;
 	}
-
+	
 	/**
 	 * Obtém cota
 	 *
@@ -156,8 +176,7 @@ public class ControleConferenciaEncalheCota {
 			ControleConferenciaEncalhe controleConferenciaEncalhe) {
 		this.controleConferenciaEncalhe = controleConferenciaEncalhe;
 	}
-	
-	
+
 	
 	
 }

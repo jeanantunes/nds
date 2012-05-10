@@ -7,16 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
@@ -37,6 +42,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private FiadorRepository fiadorRepository;
 
 	/*
 	 * (non-Javadoc)
@@ -138,8 +146,61 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	public List<TipoGarantia> obtemTiposGarantiasAceitas() {
 		return distribuidorRepository.obtemTiposGarantiasAceitas();
 	}
-	
-	
-	
 
+	/* 
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#salvaImovel
+	 * (br.com.abril.nds.model.cadastro.Imovel, java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota)
+			throws RelationshipRestrictionException {
+		
+		CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantiaImovel == null) {
+			
+			cotaGarantiaImovel = new CotaGarantiaImovel();
+			
+			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			if (cota == null) {
+				throw new RelationshipRestrictionException("Cota " + idCota + " não encontrada.");
+			}
+			
+			cotaGarantiaImovel.setCota(cota);
+		}
+		
+		cotaGarantiaImovel.setData(new Date());
+		
+		cotaGarantiaImovel.setImoveis(listaImoveis);
+		
+		return (CotaGarantiaImovel) cotaGarantiaRepository.merge(cotaGarantiaImovel);
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#buscaFiador(java.lang.String, int)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults) {
+		return fiadorRepository.buscaFiador(nome, maxResults);
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#getFiador(long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Fiador getFiador(long idFiador){
+		
+		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
+		
+		fiador.getTelefonesFiador().size();
+		fiador.getGarantias().size();
+		fiador.getPessoa().getEnderecos().size();
+		return fiador;
+	}
+	
 }
