@@ -82,8 +82,8 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 	$(function() {
 		
-		if(funcaoSalvar) {
-			funcaoSalvar();
+		if(T.funcaoSalvar) {
+			T.funcaoSalvar();
     	}
 		
 		$( "#" + tabName ).tabs();
