@@ -45,7 +45,7 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 		/**FINANCEIRO**/
 		case 5:
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados Financeiro.');};
+			T.funcaoSalvar = function(){postarParametroCobranca();};
 			carregaFinanceiro();
 			break;
 

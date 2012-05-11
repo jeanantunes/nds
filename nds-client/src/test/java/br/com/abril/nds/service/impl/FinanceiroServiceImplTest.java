@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
-import br.com.abril.nds.dto.ParametroCobrancaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -33,13 +33,13 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 
 
 public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private FinanceiroService financeiroService;
+	private ParametroCobrancaCotaService financeiroService;
 	
 	private  Long idCota;
 	
@@ -113,7 +113,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterDadosParametroCobrancaPorCota(){
-		ParametroCobrancaDTO financeiroVO = this.financeiroService.obterDadosParametroCobrancaPorCota(idCota);
+		ParametroCobrancaCotaDTO financeiroVO = this.financeiroService.obterDadosParametroCobrancaPorCota(idCota);
 		Assert.assertTrue(financeiroVO!=null);
 	}
 	

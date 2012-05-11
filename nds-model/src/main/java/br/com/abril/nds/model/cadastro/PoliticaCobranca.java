@@ -53,6 +53,9 @@ public class PoliticaCobranca {
 	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
 	private String mensagemEmailCobranca;
 	
+	@Column(name = "PRINCIPAL", nullable = false)
+	private boolean principal;
+	
 	public Long getId() {
 		return id;
 	}
@@ -147,6 +150,14 @@ public class PoliticaCobranca {
 
 	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
 	}
 	
 }

@@ -131,4 +131,25 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 		query.executeUpdate();
 	}
 
+	/**
+	 * Obtem lista de Formas de Cobrança por Cota e Tipo de Cobrança
+	 * @param idCota
+	 * @param tipoCobranca
+	 * @return List<formaCobranca>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select f from FormaCobranca f");		
+		hql.append(" where f.parametroCobrancaCota.cota.id = :pIdCota ");
+		hql.append(" and f.tipoCobranca = :pTipoCobranca ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("pIdCota", idCota);
+        query.setParameter("pTipoCobranca", tipoCobranca);
+        return query.list();
+        
+	}
+
 }
