@@ -424,7 +424,7 @@ public class EnderecoController {
 			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
 		}
 
-		if (endereco.getNumero() <= 0) {
+		if (endereco.getNumero() == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
 		}
@@ -446,7 +446,7 @@ public class EnderecoController {
 		
 		if (!listaMensagens.isEmpty()) {
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
 	}
 	
@@ -518,7 +518,7 @@ public class EnderecoController {
 
 			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
 
-				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
 			}
 		}
 		
@@ -528,7 +528,7 @@ public class EnderecoController {
 
 			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
 
-				throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um endereço principal.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
 			}
 		}
 	}
