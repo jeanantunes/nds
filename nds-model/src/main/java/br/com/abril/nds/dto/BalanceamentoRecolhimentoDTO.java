@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,8 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	
 	private Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
 
+	private BigDecimal capacidadeRecolhimentoDistribuidor;
+	
 	private boolean matrizFechada;
 	
 	/**
@@ -55,6 +58,21 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	 */
 	public void setMatrizFechada(boolean matrizFechada) {
 		this.matrizFechada = matrizFechada;
+	}
+
+	/**
+	 * @return the capacidadeRecolhimentoDistribuidor
+	 */
+	public BigDecimal getCapacidadeRecolhimentoDistribuidor() {
+		return capacidadeRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
+	 */
+	public void setCapacidadeRecolhimentoDistribuidor(
+			BigDecimal capacidadeRecolhimentoDistribuidor) {
+		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 	
 }
