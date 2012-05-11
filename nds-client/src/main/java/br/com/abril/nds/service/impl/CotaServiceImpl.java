@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -29,6 +30,8 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -536,4 +539,19 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaRepository.merge(cota);
 	}
+	
+	
+	/**
+	 * Método responsável por obter tipos de cota para preencher combo da camada view
+	 * @return comboTiposCota: Tipos de cota padrão.
+	 */
+	@Override
+	public List<ItemDTO<TipoCota, String>> getComboTiposCota() {
+		List<ItemDTO<TipoCota,String>> comboTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
+		for (TipoCota itemTipoCota: TipoCota.values()){
+			comboTiposCota.add(new ItemDTO<TipoCota,String>(itemTipoCota, itemTipoCota.getDescTipoCota()));
+		}
+		return comboTiposCota;
+	}
+	
 }

@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 @Entity
 @Table(name = "TELEFONE_FIADOR")
 @SequenceGenerator(name="TELEFONE_FIADOR_SEQ", initialValue = 1, allocationSize = 1)
@@ -18,7 +20,7 @@ public class TelefoneFiador extends AssociacaoTelefone {
 	@GeneratedValue(generator = "TELEFONE_FIADOR_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
+	@JsonBackReference
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "FIADOR_ID")
 	private Fiador fiador;

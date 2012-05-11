@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratoTransporte" pageWidth="595" pageHeight="3000" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="1325"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -54,7 +54,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="1442" splitType="Stretch">
+		<band height="1541" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="56" width="555" height="32"/>
 				<textElement textAlignment="Center">
@@ -85,16 +85,16 @@ QUADRO RESUMO
 			<textField>
 				<reportElement x="11" y="147" width="531" height="62"/>
 				<textElement textAlignment="Justified">
-					<font size="10" isBold="false"/>
+					<font size="10" isStrikeThrough="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{contratante}.getNome()+", com sede na "+$F{contratante}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratante')."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratante}.getNome()+", com sede na "+$F{contratante}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob "+new String("nº.".getBytes("ISO-8859-1"),"UTF-8")+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratante')."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="12" y="242" width="531" height="92"/>
 				<textElement>
-					<font size="10"/>
+					<font size="10" isStrikeThrough="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratada')."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob "+new String("nº.".getBytes("ISO-8859-1"),"UTF-8")+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratada')."]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="12" y="307" width="116" height="27"/>
@@ -176,8 +176,7 @@ QUADRO RESUMO
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[4- OBJETO
-Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos serviços de transportes de revistas, nos termos das disposições contidas neste instrumento e conforme descrito no Anexo I, que passa a fazer parte integrante do presente Contrato.
-]]></text>
+Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos serviços de transportes de revistas, nos termos das disposições contidas neste instrumento e conforme descrito no Anexo I, que passa a fazer parte integrante do presente Contrato.]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="50" y="402" width="110" height="77"/>
@@ -310,13 +309,13 @@ Este contrato tem por objeto a prestação, pela Contratada à Contratante, dos 
 				<reportElement x="14" y="959" width="528" height="149"/>
 				<textElement/>
 				<textFieldExpression><![CDATA["Pelo presente instrumento,"+
-$F{contratante}.getNome()+", com sede na "+$F{contratante}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratante')."+
+$F{contratante}.getNome()+", com sede na "+$F{contratante}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob "+new String("nº.".getBytes("ISO-8859-1"),"UTF-8")+$F{contratante}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratante')."+
 "E, de outro lado,"+
-$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob número "+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratada' e, conjuntamente com a Contratante, as 'Partes')."]]></textFieldExpression>
+$F{contratada}.getNome()+", com sede na  "+$F{contratada}.getDescEndereco()+", devidamente inscrita no CNPJ/MF sob "+new String("nº.".getBytes("ISO-8859-1"),"UTF-8")+$F{contratada}.getDocumento()+", neste ato, por seus representantes infra-assinados, doravante denominada simplesmente ('Contratada' e, conjuntamente com a Contratante, as 'Partes')."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="14" y="1118" width="528" height="304"/>
-				<textElement/>
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="13" y="1130" width="528" height="411"/>
+				<textElement markup="html"/>
 				<textFieldExpression><![CDATA[$F{complemento}]]></textFieldExpression>
 			</textField>
 			<textField>

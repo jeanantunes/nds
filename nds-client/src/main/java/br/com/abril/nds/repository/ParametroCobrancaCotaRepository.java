@@ -10,5 +10,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
  *
  */
 public interface ParametroCobrancaCotaRepository extends Repository<ParametroCobrancaCota,Long>{
+	
+	
 
 }

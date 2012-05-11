@@ -50,7 +50,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
@@ -104,7 +104,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
-	private FinanceiroService financeiroService;
+	private ParametroCobrancaCotaService financeiroService;
 
 	
 	@Override
