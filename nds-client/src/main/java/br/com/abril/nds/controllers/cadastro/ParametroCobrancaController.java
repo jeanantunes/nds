@@ -1,14 +1,17 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -160,7 +163,7 @@ public class ParametroCobrancaController {
 	 */
 	@Post
 	@Path("/novoParametroCobranca")
-	public void novoParametroCobranca(ParametroCobrancaVO parametros){
+	public void novoParametroCobranca(ParametroCobrancaDTO parametros){
 		
 		Banco banco = this.bancoService.obterBancoPorId(1l);//!!!
 

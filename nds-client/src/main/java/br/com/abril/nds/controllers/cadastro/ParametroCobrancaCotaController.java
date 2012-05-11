@@ -209,7 +209,7 @@ public class ParametroCobrancaCotaController {
 
     
 	/**
-	 * Método responsável por postar na sessão os dados da aba "financeiro" do cadastro de cota.
+	 * Método responsável por postar os dados do parametro de cobrança da cota.
 	 * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou alterados pelo usuário
 	 */
 	@Post
@@ -221,6 +221,10 @@ public class ParametroCobrancaCotaController {
 	    List<FormaCobranca> formasCobranca = this.financeiroService.obterFormasCobrancaCota(parametroCobranca.getIdCota());
 		if ((formasCobranca==null)||(formasCobranca.size()<=0)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Adicione ao menos uma Forma de Cobrança para a Cota.");
+		}
+		
+		if(parametroCobranca.getTipoCota()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
 		}
 		
 		this.financeiroService.postarParametroCobranca(parametroCobranca);	
@@ -443,11 +447,14 @@ public class ParametroCobrancaCotaController {
 			}
 		}
 		
+		//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
 		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
 			if (!this.financeiroService.validarFormaCobrancaMensal(formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), formaCobranca.getDiaDoMes())){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 			}
 		}
+		
+		//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
 		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			if (!this.financeiroService.validarFormaCobrancaSemanal(formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), 
 																	formaCobranca.isDomingo(),

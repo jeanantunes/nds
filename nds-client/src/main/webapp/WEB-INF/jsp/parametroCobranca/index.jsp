@@ -149,20 +149,27 @@
 		var envioEmail = $("#envioEmail").val();
 		
 		var formaEmissao = $("#formaEmissao").val();
+		
+		$("#principal").val(0);
+    	if (document.formularioParametro.principal.checked){
+    		$("#principal").val(1);
+		}
+		var principal      = $("#principal").val();
 
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/novoParametroCobranca'/>",
-				   "tipoCobranca="+tipoCobranca+
-				   "&banco="+ banco +
-				   "&valorMinimo="+ valorMinimo+
-				   "&taxaMulta="+ taxaMulta +
-				   "&valorMulta="+ valorMulta+
-				   "&taxaJuros="+ taxaJuros+
-				   "&instrucoes="+ instrucoes+
-				   "&acumulaDivida="+ acumulaDivida+
-				   "&vencimentoDiaUtil="+ vencimentoDiaUtil+
-				   "&unificada="+ unificada+
-				   "&envioEmail="+ envioEmail+
-				   "&formaEmissao="+ formaEmissao,
+				   "parametros.tipoCobranca="+tipoCobranca+
+				   "&parametros.idBanco="+ banco +
+				   "&parametros.valorMinimo="+ valorMinimo+
+				   "&parametros.taxaMulta="+ taxaMulta +
+				   "&parametros.valorMulta="+ valorMulta+
+				   "&parametros.taxaJuros="+ taxaJuros+
+				   "&parametros.instrucoes="+ instrucoes+
+				   "&parametros.acumulaDivida="+ acumulaDivida+
+				   "&parametros.vencimentoDiaUtil="+ vencimentoDiaUtil+
+				   "&parametros.unificada="+ unificada+
+				   "&parametros.envioEmail="+ envioEmail+
+				   "&parametros.formaEmissao="+ formaEmissao+
+				   "&parametros.principal="+ principal,
 				   function(result) {
 			           fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;
@@ -193,21 +200,28 @@
 		var envioEmail = $("#envioEmail").val();
 		
 		var formaEmissao = $("#formaEmissao").val();
+		
+		$("#principal").val(0);
+    	if (document.formularioNovoParametro.principal.checked){
+    		$("#principal").val(1);
+		}
+		var principal      = $("#principal").val();
 
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/alteraParametroCobranca'/>",
-				   "idParametro="+idParametro+
-				   "&tipoCobranca="+tipoCobranca+
-				   "&banco="+ banco +
-				   "&valorMinimo="+ valorMinimo+
-				   "&taxaMulta="+ taxaMulta +
-				   "&valorMulta="+ valorMulta+
-				   "&taxaJuros="+ taxaJuros+
-				   "&instrucoes="+ instrucoes+
-				   "&acumulaDivida="+ acumulaDivida+
-				   "&vencimentoDiaUtil="+ vencimentoDiaUtil+
-				   "&unificada="+ unificada+
-				   "&envioEmail="+ envioEmail+
-				   "&formaEmissao="+ formaEmissao,
+				   "parametros.idParametro="+idParametro+
+				   "&parametros.tipoCobranca="+tipoCobranca+
+				   "&parametros.idBanco="+ banco +
+				   "&parametros.valorMinimo="+ valorMinimo+
+				   "&parametros.taxaMulta="+ taxaMulta +
+				   "&parametros.valorMulta="+ valorMulta+
+				   "&parametros.taxaJuros="+ taxaJuros+
+				   "&parametros.instrucoes="+ instrucoes+
+				   "&parametros.acumulaDivida="+ acumulaDivida+
+				   "&parametros.vencimentoDiaUtil="+ vencimentoDiaUtil+
+				   "&parametros.unificada="+ unificada+
+				   "&parametros.envioEmail="+ envioEmail+
+				   "&parametros.formaEmissao="+ formaEmissao+
+				   "&parametros.principal="+ principal,
 				   function(result) {
 			           fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;
@@ -231,21 +245,23 @@
 	
 	function sucessCallbackCadastroBanco(resultado) {
 		
-		$("#tipoCobranca").val(resultado.);
-		$("#banco").val(resultado.);
-		$("#valorMinimo").val(resultado.);
-		$("#taxaMulta").val(resultado.);
-		$("#valorMulta").val(resultado.);
-		$("#taxaJuros").val(resultado.);
-		$("#instrucoes").val(resultado.);
+		$("#tipoCobranca").val(resultado.tipoCobranca);
+		$("#banco").val(resultado.idBanco);
+		$("#valorMinimo").val(resultado.valorMinimo);
+		$("#taxaMulta").val(resultado.taxaMulta);
+		$("#valorMulta").val(resultado.valorMulta);
+		$("#taxaJuros").val(resultado.taxaJuros);
+		$("#instrucoes").val(resultado.instrucoes);
 
-		$("#acumulaDivida").val(resultado.);
-		$("#vencimentoDiaUtil").val(resultado.);
-		$("#unificada").val(resultado.);
-		$("#envioEmail").val(resultado.);
+		$("#acumulaDivida").val(resultado.acumulaDivida);
+		$("#vencimentoDiaUtil").val(resultado.vencimentoDiaUtil);
+		$("#unificada").val(resultado.unificada);
+		$("#envioEmail").val(resultado.envioEmail);
 		
-		$("#formaEmissao").val(resultado.);
+		$("#formaEmissao").val(resultado.formaEmissao);
 		
+		$("#principal").val(resultado.principal);
+		document.formularioParametro.principal.checked = resultado.principal;
 		
 		popup_alterar();
 	}
@@ -386,116 +402,129 @@
 
 
 <div id="dialog-novo" title="Incluir Forma de Recebimento">
-	<table width="809" border="0" cellspacing="2" cellpadding="2">
-	   
-	   
-	   <tr>
-	     <td width="144">Forma de Pagamento:</td>
-	     <td>
-	     
-		      <select name="tipoCobranca" id="tipoCobranca" style="width:150px;">
-                   <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
-			          <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
-			       </c:forEach>
-	          </select>  
-	          
-	     </td>
-	     
-	     <td width="204">Acumula Dívida:</td>
-	     <td width="234">
-		     <select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
-		        <option>Sim</option>
-		        <option>Não</option>
-		     </select>
-	     </td>
-	   </tr>
-	   
-	   
-	   <tr>
-		    <td width="144">Banco:</td>
-		    <td>
+
+    <form id="formularioParametro" name="formularioParametro">
+
+		<table width="809" border="0" cellspacing="2" cellpadding="2">
+		   
+		   <tr>
+		       <td width="200">Principal</td>
+			   <td width="200">
+			       <input name="principal" type="checkbox"
+			       id="principal" style="float: left;" value="" checked="checked" />
+			   </td>
+		   </tr>
+		   
+		   <tr>
+		     <td width="144">Forma de Pagamento:</td>
+		     <td>
+		     
+			      <select name="tipoCobranca" id="tipoCobranca" style="width:150px;">
+	                   <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
+				          <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
+				       </c:forEach>
+		          </select>  
+		          
+		     </td>
+		     
+		     <td width="204">Acumula Dívida:</td>
+		     <td width="234">
+			     <select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
+			        <option>Sim</option>
+			        <option>Não</option>
+			     </select>
+		     </td>
+		   </tr>
+		   
+		   
+		   <tr>
+			    <td width="144">Banco:</td>
+			    <td>
+			    
+				    <select name="banco" id="banco" style="width:150px;">
+	                   <c:forEach varStatus="counter" var="banco" items="${listaBancos}">
+				          <option value="${banco.key}">${banco.value}</option>
+				       </c:forEach>
+		            </select>
+		            
+			    </td>
+			    
+			    <td>Vencimentos somente em dia útil:</td>
+			    <td>
+				    <select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
+				      <option>Sim</option>
+				      <option>Não</option>
+				    </select>
+			    </td>
+		   </tr>
+		   
+		   
+		   <tr>
+			    <td valign="top">Valor Mínimo Emissão:</td>
+			    <td valign="top">
+			        <input type="text" name="valorMinimo" id="valorMinimo" style="width:100px;" />
+			    </td>
+			    
+			    <td>Cobrança Unificada:</td>
+			    <td>
+				    <select name="unificada" id="unificada" style="width:80px;">
+				      <option>Sim</option>
+				      <option>Não</option>
+				    </select>
+			        <br clear="all" />
+			    </td>
+		    </tr>
 		    
-			    <select name="banco" id="banco" style="width:150px;">
-                   <c:forEach varStatus="counter" var="banco" items="${listaBancos}">
-			          <option value="${banco.key}">${banco.value}</option>
-			       </c:forEach>
-	            </select>
-	            
-		    </td>
 		    
-		    <td>Vencimentos somente em dia útil:</td>
-		    <td>
-			    <select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
+		    <tr>
+			    <td>Multa  %:</td>
+			    <td width="201"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			        <tr>
+			          <td width="37%">
+			              <input type="text" name="taxaMulta" id="taxaMulta" style="width:70px;" />
+			          </td>
+			          <td width="24%">&nbsp;ou  R$:</td>
+			          <td width="39%">
+			              <input type="text" name="valorMulta" id="valorMulta" style="width:70px;" />
+			          </td>
+			        </tr>
+			    </table></td>
+			    <td width="204">Envio por E-mail:</td>
+			    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
 			      <option>Sim</option>
 			      <option>Não</option>
-			    </select>
-		    </td>
-	   </tr>
-	   
-	   
-	   <tr>
-		    <td valign="top">Valor Mínimo Emissão:</td>
-		    <td valign="top">
-		        <input type="text" name="valorMinimo" id="valorMinimo" style="width:100px;" />
-		    </td>
+			    </select></td>
+		    </tr>
+		  
+		  
+		    <tr>
+			    <td>Juros%:</td>
+			    <td><input type="text" name="taxaJuros" id="taxaJuros" style="width:100px;" /></td>
+			    <td>Impressão:</td>
+			    
+			    <td>
+			        
+				    <select name="formaEmissao" id="formaEmissao" style="width:150px;">
+	                   <c:forEach varStatus="counter" var="formaEmissao" items="${listaFormasEmissao}">
+				          <option value="${formaEmissao.key}">${formaEmissao.value}</option>
+				       </c:forEach>
+		            </select>
+	 
+			    </td>
+		    </tr>
+		  
+		  
+		    <tr>
+			    <td valign="top">Instruções:</td>
+			    <td colspan="3">
+			        <textarea name="instrucoes" rows="4" id="instrucoes" style="width:645px;"></textarea>
+			    </td>
+		    </tr>
 		    
-		    <td>Cobrança Unificada:</td>
-		    <td>
-			    <select name="unificada" id="unificada" style="width:80px;">
-			      <option>Sim</option>
-			      <option>Não</option>
-			    </select>
-		        <br clear="all" />
-		    </td>
-	    </tr>
-	    
-	    
-	    <tr>
-		    <td>Multa  %:</td>
-		    <td width="201"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-		        <tr>
-		          <td width="37%">
-		              <input type="text" name="taxaMulta" id="taxaMulta" style="width:70px;" />
-		          </td>
-		          <td width="24%">&nbsp;ou  R$:</td>
-		          <td width="39%">
-		              <input type="text" name="valorMulta" id="valorMulta" style="width:70px;" />
-		          </td>
-		        </tr>
-		    </table></td>
-		    <td width="204">Envio por E-mail:</td>
-		    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
-		      <option>Sim</option>
-		      <option>Não</option>
-		    </select></td>
-	    </tr>
-	  
-	  
-	    <tr>
-		    <td>Juros%:</td>
-		    <td><input type="text" name="taxaJuros" id="taxaJuros" style="width:100px;" /></td>
-		    <td>Impressão:</td>
-		    
-		    <td>
-		        
-			    <select name="formaEmissao" id="formaEmissao" style="width:150px;">
-                   <c:forEach varStatus="counter" var="formaEmissao" items="${listaFormasEmissao}">
-			          <option value="${formaEmissao.key}">${formaEmissao.value}</option>
-			       </c:forEach>
-	            </select>
- 
-		    </td>
-	    </tr>
-	  
-	  
-	    <tr>
-		    <td valign="top">Instruções:</td>
-		    <td colspan="3">
-		        <textarea name="instrucoes" rows="4" id="instrucoes" style="width:645px;"></textarea>
-		    </td>
-	    </tr>
-	    
-	</table>
+		</table>
+		
+    </form>		
+    
 </div>
 
 <div class="container">	
@@ -544,7 +573,7 @@
     	  <table class="parametrosGrid"></table>
       </div>
 
-      <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+      <span class="bt_novo" title="Novo"><a href="javascript:;" onclick="popup();">Novo</a></span>
    </fieldset>
   
    <div class="linha_separa_fields">&nbsp;</div>

@@ -11,6 +11,7 @@ public class ParametroCobrancaVO {
 	String cobrancaUnificada;
 	String formaEmissao;
 	String evioPorEmail;
+	boolean principal;
 	
 	
 	public String getFormaPagamento() {
@@ -77,6 +78,14 @@ public class ParametroCobrancaVO {
 		this.idParametro = idParametro;
 	}
 	
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,13 +105,14 @@ public class ParametroCobrancaVO {
 				+ ((formaPagamento == null) ? 0 : formaPagamento.hashCode());
 		result = prime * result
 				+ ((idParametro == null) ? 0 : idParametro.hashCode());
+		result = prime * result + (principal ? 1231 : 1237);
 		result = prime
 				* result
 				+ ((valorMinimoEmissao == null) ? 0 : valorMinimoEmissao
 						.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -146,6 +156,8 @@ public class ParametroCobrancaVO {
 			if (other.idParametro != null)
 				return false;
 		} else if (!idParametro.equals(other.idParametro))
+			return false;
+		if (principal != other.principal)
 			return false;
 		if (valorMinimoEmissao == null) {
 			if (other.valorMinimoEmissao != null)
