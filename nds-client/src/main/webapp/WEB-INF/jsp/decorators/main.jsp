@@ -263,6 +263,8 @@ fieldset label {
 							<li><a href="<c:url value='/lancamento/furoProduto'/>">Furo de
 									Produto</a>
 							</li>
+							<li><a href="<c:url value='/lancamento/relatorioVendas'/>">Relatório de Vendas</a>
+							</li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>
 							</li>
 						</ul></li>
