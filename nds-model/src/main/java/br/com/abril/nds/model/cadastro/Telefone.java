@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -39,7 +41,7 @@ public class Telefone implements Serializable {
 	
 	@Column(name = "DDD")
 	private String ddd;
-	
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;

@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -60,7 +62,7 @@ public class Endereco implements Serializable {
 	
 	@Column(name = "UF")
 	private String uf;
-	
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;

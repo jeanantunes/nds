@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -77,4 +78,12 @@ public interface CotaGarantiaService {
 	 * @see br.com.abril.nds.repository.FiadorRepository#buscaFiador(java.lang.String, int)
 	 */
 	public abstract List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults);
+	
+	/**
+	 * Recupera o fiador por id
+	 * @param idFiador
+	 * @return
+	 * @see br.com.abril.nds.repository.FiadorRepository#buscarPorId(Long)
+	 */
+	public Fiador getFiador(long idFiador);
 }
