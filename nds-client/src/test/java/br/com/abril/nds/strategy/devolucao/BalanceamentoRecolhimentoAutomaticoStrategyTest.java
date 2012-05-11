@@ -33,12 +33,18 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
 
+		RecolhimentoDTO dadosRecolhimento = this.obterDadosRecolhimentoLimiteCapacidadeManuseio();
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(this.obterDadosRecolhimentoLimiteCapacidadeManuseio());
+			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
 		Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
+		
+		Assert.assertEquals(
+			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
+				balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
 		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = balanceamentoRecolhimento.getMatrizRecolhimento();
 		
@@ -70,12 +76,18 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
 
+		RecolhimentoDTO dadosRecolhimento = this.obterDadosRecolhimentoExcedemLimiteCapacidadeManuseio();
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			balanceamentoRecolhimentoStrategy.balancear(this.obterDadosRecolhimentoExcedemLimiteCapacidadeManuseio());
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
 		Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
+		
+		Assert.assertEquals(
+			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
+				balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
 		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = balanceamentoRecolhimento.getMatrizRecolhimento();
 		
