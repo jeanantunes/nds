@@ -14,7 +14,7 @@ import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
-import br.com.abril.nds.serialization.custom.CustomJson;
+//import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 import br.com.abril.nds.util.StringUtil;
@@ -207,7 +207,7 @@ public class CotaGarantiaController {
 	@Post("/getFiador.json")
 	public void getFiador(Long idFiador) {
 		Fiador fiador = cotaGarantiaService.getFiador(idFiador);	
-		result.use(CustomJson.class).from(fiador).serialize();
+		//result.use(CustomJson.class).from(fiador).serialize();
 	}
 	
 }

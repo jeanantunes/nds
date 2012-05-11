@@ -822,7 +822,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (int i=0; i<idFornecedores.size();i++){
-				if (itemFormaCobranca.getFornecedores().contains(idFornecedores.get(i))){
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
+				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
 					if (diaDoMes==itemFormaCobranca.getDiaDoMes()){
 						res=false;
 					}
@@ -839,9 +840,33 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	public boolean validarFormaCobrancaSemanal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
 			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
 		
-
-		
-		return false;
+		boolean res=true;
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca);
+		for (FormaCobranca itemFormaCobranca:formas){
+			for (int i=0; i<idFornecedores.size();i++){
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
+				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
+					
+					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){
+						
+						if (
+								(domingo && (itemConcentracao.getDiaSemana()==DiaSemana.DOMINGO))||
+								(segunda && (itemConcentracao.getDiaSemana()==DiaSemana.SEGUNDA_FEIRA))||
+								(terca && (itemConcentracao.getDiaSemana()==DiaSemana.TERCA_FEIRA))||
+								(quarta && (itemConcentracao.getDiaSemana()==DiaSemana.QUARTA_FEIRA))||
+								(quinta && (itemConcentracao.getDiaSemana()==DiaSemana.QUINTA_FEIRA))||
+								(sexta && (itemConcentracao.getDiaSemana()==DiaSemana.SEXTA_FEIRA))||
+								(sabado && (itemConcentracao.getDiaSemana()==DiaSemana.SABADO))
+						    ){
+							res=false;
+						}
+	
+					}
+	
+				}
+			}
+		}
+		return res;
 	}
 
 	

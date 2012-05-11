@@ -449,7 +449,8 @@ public class ParametroCobrancaCotaController {
 			}
 		}
 		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-			if (!this.financeiroService.validarFormaCobrancaSemanal(formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), formaCobranca.isDomingo(),
+			if (!this.financeiroService.validarFormaCobrancaSemanal(formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), 
+																	formaCobranca.isDomingo(),
 																    formaCobranca.isSegunda(),
 																    formaCobranca.isTerca(),
 																    formaCobranca.isQuarta(),
