@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -40,6 +42,10 @@ public class LancamentoParcial {
 	
 	@Column(name = "RECOLHIMENTO_FINAL", nullable = false)
 	private Date recolhimentoFinal;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS", nullable = false)
+	private StatusLancamentoParcial status;
 
 	/**
 	 * @return the id
@@ -95,6 +101,20 @@ public class LancamentoParcial {
 	 */
 	public void setRecolhimentoFinal(Date recolhimentoFinal) {
 		this.recolhimentoFinal = recolhimentoFinal;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public StatusLancamentoParcial getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(StatusLancamentoParcial status) {
+		this.status = status;
 	}
 
 }

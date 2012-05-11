@@ -2,6 +2,9 @@ function TabCota(tabName , funcaoSalvarInicial) {
 	
 	var T = this;
 	
+	/**
+	 * Função que será chamada ao realizar a mudança de abas
+	 */
 	this.funcaoSalvar = funcaoSalvarInicial;
 	
 	this.novaAba=null;
@@ -78,6 +81,10 @@ function TabCota(tabName , funcaoSalvarInicial) {
 	};
 		
 	$(function() {
+		
+		if(funcaoSalvar) {
+			funcaoSalvar();
+    	}
 		
 		$( "#" + tabName ).tabs();
 				
