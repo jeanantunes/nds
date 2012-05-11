@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -53,6 +54,13 @@ public class ConferenciaEncalhe implements Serializable {
 	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID")
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 
+	@Column(name = "OBSERVACAO")
+	private String observacao;
+	
+	@Column(name = "JURAMENTADA")
+	private boolean juramentada;
+	
+	
 	/**
 	 * Obtém id
 	 *
@@ -138,6 +146,40 @@ public class ConferenciaEncalhe implements Serializable {
 			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		this.controleConferenciaEncalheCota = controleConferenciaEncalheCota;
 	}
-	
+
+	/**
+	 * Obtém observacao
+	 *
+	 * @return String
+	 */
+	public String getObservacao() {
+		return observacao;
+	}
+
+	/**
+	 * Atribuí observacao
+	 * @param observacao 
+	 */
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	/**
+	 * Obtém juramentada
+	 *
+	 * @return boolean
+	 */
+	public boolean isJuramentada() {
+		return juramentada;
+	}
+
+	/**
+	 * Atribuí juramentada
+	 * @param juramentada 
+	 */
+	public void setJuramentada(boolean juramentada) {
+		this.juramentada = juramentada;
+	}
+
 		
 }

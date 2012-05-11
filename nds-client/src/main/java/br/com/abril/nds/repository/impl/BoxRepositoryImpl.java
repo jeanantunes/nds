@@ -36,6 +36,10 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		super(Box.class);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#obterListaBox(br.com.abril.nds.model.cadastro.TipoBox)
+	 */
 	public List<Box> obterListaBox(TipoBox tipoBox) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -55,6 +59,10 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#obterBoxUsuario(java.lang.Long, br.com.abril.nds.model.cadastro.TipoBox)
+	 */
 	public List<Box> obterBoxUsuario(Long idUsuario, TipoBox tipoBox) {
 		
 		StringBuilder hql = new StringBuilder();
