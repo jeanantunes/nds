@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -10,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -44,13 +46,12 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
-public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRepositoryImplTest {
+public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
 	
 	private Lancamento lancamentoVeja;
     private Fornecedor fornecedorFC;
@@ -308,20 +309,33 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 			
 	}
 	
+	
+	@SuppressWarnings("unused")
 	@Test
-	public void testObterControleConferenciaEncalhe() {
+	public void testObterListaConferenciaEncalheCota() {
 		
-		Integer numeroCota = cotaManoel.getNumeroCota();
+		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
 		
-		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe =  conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota);
 		
-		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(
-				numeroCota, 
-				dataOperacao);
-		
-		Assert.assertNotNull(controleConferenciaEncalheCota);
+		Assert.assertEquals(3, listaConferenciaEncalhe.size());
 		
 	}
+
+	@SuppressWarnings("unused")
+	@Test
+	public void testObterValorTotalConferenciaEncalheCota() {
+		
+		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
+		
+		BigDecimal valorTotalEncalheCota =  
+				conferenciaEncalheRepository.obterValorTotalConferenciaEncalheCota(idControleConferenciaEncalheCota);
+		
+		Assert.assertNotNull(valorTotalEncalheCota);
+		
+	}
+
+	
+	
 
 }

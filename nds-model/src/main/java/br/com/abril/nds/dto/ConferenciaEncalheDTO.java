@@ -14,6 +14,7 @@ public class ConferenciaEncalheDTO {
 	private BigDecimal desconto;
 	private BigDecimal valorTotal;
 	private Integer dia;
+	private String observacao;
 	private boolean juramentada;
 	
 	
@@ -83,6 +84,13 @@ public class ConferenciaEncalheDTO {
 	public void setJuramentada(boolean juramentada) {
 		this.juramentada = juramentada;
 	}
+	public String getObservacao() {
+		return observacao;
+	}
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	
 	
 	
 }

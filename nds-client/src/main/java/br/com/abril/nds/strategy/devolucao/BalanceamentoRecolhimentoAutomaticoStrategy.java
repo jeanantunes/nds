@@ -38,6 +38,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy implements Balanceament
 		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
+		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
+			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+		
 		return balanceamentoRecolhimento;
 	}
 	
