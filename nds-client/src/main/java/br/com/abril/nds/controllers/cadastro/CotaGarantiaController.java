@@ -205,8 +205,8 @@ public class CotaGarantiaController {
 	}
 		
 	@Post("/getFiador.json")
-	public void getFiador(Long idFiador) {
-		Fiador fiador = cotaGarantiaService.getFiador(idFiador);	
+	public void getFiador(Long idFiador, String doc) {
+		Fiador fiador = cotaGarantiaService.getFiador(idFiador, doc);	
 		result.use(CustomJson.class).from(fiador).serialize();
 	}
 	

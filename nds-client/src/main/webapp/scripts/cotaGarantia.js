@@ -531,11 +531,20 @@ Fiador.prototype.bindEvents = function() {
 			$(this).removeClass("ui-corner-top").addClass("ui-corner-all");
 		}
 	});
+	
+	 $("#cotaGarantiaFiadorSearchDoc").keypress(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {    
+        	$("#cotaGarantiaFiadorSearchName").val("");        
+            _this.getFiador(null,$("#cotaGarantiaFiadorSearchDoc").val());
+        } 
+    });
+	
 };
-Fiador.prototype.getFiador = function(idFiador){
+Fiador.prototype.getFiador = function(idFiador, doc){
 	var _this =  this;
 	$.postJSON(this.path + "getFiador.json", {
-				idFiador:idFiador
+				idFiador:idFiador,
+				doc:doc
 			}, function(data) {
 				_this.fiador=data;
 				_this.bindData();

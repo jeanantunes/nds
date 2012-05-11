@@ -24,6 +24,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
+import br.com.abril.nds.util.StringUtil;
 
 /**
  * 
@@ -189,14 +190,21 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	}
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.CotaGarantiaService#getFiador(long)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#getFiador(java.lang.Long, java.lang.String)
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Fiador getFiador(long idFiador){
+	public Fiador getFiador(Long idFiador, String doc){
 		
-		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
+		Fiador fiador;
 		
+		if (idFiador != null) {
+			fiador = fiadorRepository.buscarPorId(idFiador);
+		}else if(!StringUtil.isEmpty(doc)){ 
+			fiador = fiadorRepository.obterPorCpfCnpj(doc);
+		}else{
+			throw new IllegalArgumentException("Ao menos um parametro deve ser diferente de null.");
+		}
 		fiador.getTelefonesFiador().size();
 		fiador.getGarantias().size();
 		fiador.getPessoa().getEnderecos().size();
