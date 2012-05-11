@@ -493,6 +493,7 @@ function Fiador(idCota){
 	this.idCota = idCota;
 	this.bindEvents();
 	this.toggle();
+	this.initGrid();
 	
 }
 Fiador.prototype.path = contextPath + "/cadastro/garantia/";
@@ -575,8 +576,39 @@ Fiador.prototype.bindData = function(){
 	}	
 	
 	$("#cotaGarantiaFiadorTelefone").html('('+telefone.telefone.ddd + ') ' + telefone.telefone.numero );
+	
+	var rows =  new Array();
+	for(var id in this.fiador.garantias){
+		rows[id] = {"id": id,"cell":this.fiador.garantias[id]};
+	}
+	
+	
+	$("#cotaGarantiaFiadorGarantiasGrid").flexAddData({rows:rows,page:1,total:1}  );	
+	//$("#cotaGarantiaFiadorGarantiasGrid").flexReload();
 };
+Fiador.prototype.initGrid =  function() {
+	$("#cotaGarantiaFiadorGarantiasGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Descrição',
+				name : 'descricao',
+				width : 550,
+				sortable : false,
+				align : 'left'
 
+			}, {
+
+				display : 'Valor R$',
+				name : 'valor',
+				width : 140,
+				sortable : false,
+				align : 'right'
+
+			}],
+			width : 740,
+			height : 150
+		});
+};
 
 
 
