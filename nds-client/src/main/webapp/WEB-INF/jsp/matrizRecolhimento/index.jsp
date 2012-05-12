@@ -4,6 +4,42 @@
 
 	<script type="text/javascript">
 
+		function verificarBalanceamentosAlterados(funcao) {
+			
+			$.postJSON(
+				"<c:url value='/devolucao/balanceamentoMatriz/verificarBalanceamentosAlterados' />",
+				null,
+				function(result) {
+					
+					if (result == "true") {
+						
+						$("#dialog-confirm").dialog({
+							resizable: false,
+							height:'auto',
+							width:600,
+							modal: true,
+							buttons: {
+								"Confirmar": function() {
+									
+									funcao();
+									
+									$(this).dialog("close");
+								},
+								"Cancelar": function() {
+									
+									$(this).dialog("close");
+								}
+							}
+						});
+						
+					} else {
+						
+						funcao();
+					}
+				}
+			);
+		}
+	
 		function pesquisar() {
 
 			fecharGridBalanceamento();
@@ -131,7 +167,7 @@
 		function habilitarLinks() {
 			
 			habilitarLink("linkConfirmar", confirmar);
-			habilitarLink("linkEditor", balancearPorEditor);
+			habilitarLink("linkEditor", function( ){ verificarBalanceamentosAlterados(balancearPorEditor); });
 			habilitarLink("linkValor", balancearPorValor);
 			habilitarLink("linkSalvar", salvar);
 			habilitarLink("linkMatrizFornecedor", exibirMatrizFornecedor);
@@ -835,6 +871,15 @@
 
 <body>
 	
+	<div id="dialog-confirm" title="Balanceamento da Matriz de Recolhimento">
+		
+		<jsp:include page="../messagesDialog.jsp" />
+		
+		<p>Ao prosseguir com essa ação você perderá seus dados não salvos ou confirmados. Deseja prosseguir?</p>
+		   
+	</div>
+	
+	
 	<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
 	    
 	    <jsp:include page="../messagesDialog.jsp" />
@@ -888,7 +933,7 @@
 				</td>
 				<td width="164">
 					<span class="bt_pesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
+						<a href="javascript:;" onclick="verificarBalanceamentosAlterados(pesquisar);">Pesquisar</a>
 					</span>
 				</td>
 			</tr>

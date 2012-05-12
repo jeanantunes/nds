@@ -70,6 +70,8 @@ public class MatrizRecolhimentoController {
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO = "balanceamentoRecolhimento";
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL = "balanceamentoRecolhimentoInicial";
+
+	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
 	@Get
 	@Path("/")
@@ -91,6 +93,8 @@ public class MatrizRecolhimentoController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		removerAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
@@ -124,6 +128,8 @@ public class MatrizRecolhimentoController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
 		
+		removerAtributoAlteracaoSessao();
+		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
@@ -139,6 +145,8 @@ public class MatrizRecolhimentoController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		removerAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
@@ -210,6 +218,8 @@ public class MatrizRecolhimentoController {
 			
 			this.result.use(Results.json()).from(Results.nothing()).serialize();
 		}
+		
+		removerAtributoAlteracaoSessao();
 	}
 	
 	@Post
@@ -225,6 +235,8 @@ public class MatrizRecolhimentoController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		removerAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
@@ -248,6 +260,8 @@ public class MatrizRecolhimentoController {
 		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
 		
 		atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
+		
+		adicionarAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
@@ -280,6 +294,8 @@ public class MatrizRecolhimentoController {
 		
 		atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
 		
+		adicionarAtributoAlteracaoSessao();
+		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
@@ -303,6 +319,31 @@ public class MatrizRecolhimentoController {
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+	}
+
+	@Post
+	@Path("/verificarBalanceamentosAlterados")
+	public void verificarBalanceamentosAlterados() {
+		
+		Boolean balanceamentoAlterado =
+			(Boolean) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO);
+		
+		if (balanceamentoAlterado == null) {
+			
+			balanceamentoAlterado = false;
+		}
+		
+		this.result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
+	}
+	
+	private void adicionarAtributoAlteracaoSessao() {
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
+	}
+	
+	private void removerAtributoAlteracaoSessao() {
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
 	}
 	
 	private void atualizarMapaRecolhimento(List<ProdutoRecolhimentoVO> listaProdutoRecolhimento,
