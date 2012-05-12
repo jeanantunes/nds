@@ -769,6 +769,7 @@ public class MatrizRecolhimentoController {
 				produtoRecolhimento.setPossuiChamada(false);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
 				
+				produtoRecolhimento.setIdProdutoEdicao((long) i);
 				produtoRecolhimento.setCodigoProduto("" + i);
 				produtoRecolhimento.setNomeProduto("Produto " + i);
 				produtoRecolhimento.setNumeroEdicao(1L);

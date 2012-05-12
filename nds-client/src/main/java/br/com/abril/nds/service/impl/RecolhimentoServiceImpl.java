@@ -104,7 +104,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
 			
 			if (listaProdutoRecolhimentoDTO == null
-					|| !listaProdutoRecolhimentoDTO.isEmpty()) {
+					|| listaProdutoRecolhimentoDTO.isEmpty()) {
 			
 				continue;
 			}
@@ -134,7 +134,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
 			
 			if (listaProdutoRecolhimentoDTO == null
-					|| !listaProdutoRecolhimentoDTO.isEmpty()) {
+					|| listaProdutoRecolhimentoDTO.isEmpty()) {
 			
 				continue;
 			}

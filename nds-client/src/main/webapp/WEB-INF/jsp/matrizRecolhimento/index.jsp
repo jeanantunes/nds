@@ -557,7 +557,12 @@
 			fecharGridBalanceamento();
 			
 			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />"
+				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
+				null,
+				function(result) {
+					
+					$("#resumoPeriodo").hide();
+				}
 			);
 		}
 		
@@ -574,7 +579,7 @@
 					
 					montarResumoPeriodoBalanceamento(result);
 				},
-				function() {
+				function(result) {
 					
 					$("#resumoPeriodo").hide();
 				}
