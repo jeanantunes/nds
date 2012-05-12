@@ -149,6 +149,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (listaEstoqueProdutoCota == null
 						|| listaEstoqueProdutoCota.isEmpty()) {
+
+//					TODO: trecho comentado para testes na tela
+					
+//					throw new ValidacaoException(TipoMensagem.WARNING,
+//						"Estoque produto cota não encontrado!");
 					
 					continue;
 				}
@@ -158,6 +163,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					gerarChamadaEncalhe(estoqueProdutoCota, produtoRecolhimento.getNovaData());
 				}
 			}
+			
+			//TODO: chamar componente de cadastro de lançamentos parciais
 		}
 	}
 	
@@ -166,15 +173,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		Lancamento lancamento =
 			lancamentoRepository.buscarPorId(produtoRecolhimento.getIdLancamento());
 		
-		if (lancamento != null) {
+		if (lancamento == null) {
+		
+//			TODO: trecho comentado para testes na tela
 			
-			lancamento.setDataRecolhimentoDistribuidor(produtoRecolhimento.getNovaData());
-			lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
-			lancamento.setStatus(StatusLancamento.BALANCEADO_RECOLHIMENTO);
-			lancamento.setDataStatus(new Date());
+//			throw new ValidacaoException(TipoMensagem.WARNING,
+//				"Lançamento não encontrado!");
 			
-			lancamentoRepository.merge(lancamento);
+			return;
 		}
+			
+		lancamento.setDataRecolhimentoDistribuidor(produtoRecolhimento.getNovaData());
+		lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
+		lancamento.setStatus(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		lancamento.setDataStatus(new Date());
+		
+		lancamentoRepository.merge(lancamento);
 	}
 	
 	private void gerarChamadaEncalhe(EstoqueProdutoCota estoqueProdutoCota, Date dataRecolhimento) {
