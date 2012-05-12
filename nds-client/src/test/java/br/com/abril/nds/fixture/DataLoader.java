@@ -166,7 +166,7 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 
-	private static  TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
+	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
@@ -819,7 +819,7 @@ public class DataLoader {
 		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
 		save(session,itemRecebimentoFisico);
 
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoBravo1, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico);
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoBravo1, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
 		save(session,lancamento);	
 
 		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicaoBravo1);
@@ -944,7 +944,7 @@ public class DataLoader {
 	ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
 	save(session, itemRecebimentoFisico);
 
-	Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico);
+	Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
 	save(session, lancamento);	
 
 	Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
@@ -2095,7 +2095,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
-						itemRecebimentoFisico,expedicao);
+						itemRecebimentoFisico,expedicao, 1);
 		session.save(lancamentoVeja1);
 
 		lancamentoVeja2 = Fixture
@@ -2108,7 +2108,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null,expedicao);
+						null,expedicao, 1);
 		session.save(lancamentoVeja2);
 
 		lancamentoSuper1 = Fixture
@@ -2119,7 +2119,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
 								new Date(), new BigDecimal(100), StatusLancamento.EXPEDIDO,
-								null,expedicao);
+								null,expedicao, 1);
 		session.save(lancamentoSuper1);
 
 		lancamentoCapricho1 = Fixture
@@ -2130,7 +2130,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
 								new Date(), new BigDecimal(1000), StatusLancamento.EXPEDIDO,
-								null,expedicao);
+								null,expedicao, 1);
 		session.save(lancamentoCapricho1);			
 
 
@@ -2147,7 +2147,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.ESTUDO_FECHADO,
-						itemRecebimentoFisico);
+						itemRecebimentoFisico, 1);
 		session.save(lancamentoVeja1);
 
 		lancamentoVeja2 = Fixture
@@ -2160,7 +2160,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.BALANCEADO,
 
-						null);
+						null, 1);
 		session.save(lancamentoVeja2);
 
 		lancamentoSuper1 = Fixture
@@ -2171,7 +2171,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
 								new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO,
-								null);
+								null, 1);
 		session.save(lancamentoSuper1);
 
 		lancamentoCapricho1 = Fixture
@@ -2182,12 +2182,12 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
 								new Date(), new BigDecimal(1000), StatusLancamento.CONFIRMADO,
-								null);
+								null, 1);
 		session.save(lancamentoCapricho1);
 
 
 		lancamentoCocaCola = Fixture.lancamento(TipoLancamento.LANCAMENTO,cocaColaLight , 
-				new Date(), new Date(), new Date(), new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico);
+				new Date(), new Date(), new Date(), new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico, 1);
 		save(session, lancamentoCocaCola);
 
 
@@ -2198,7 +2198,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
-						null);
+						null, 1);
 		session.save(lancamentoVeja1EcncalheAnt);
 
 		lancamentoVeja2EcncalheAnt = Fixture
@@ -2210,7 +2210,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null);
+						null, 1);
 		session.save(lancamentoVeja2EcncalheAnt);
 
 
@@ -2222,7 +2222,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
 								new Date(), new BigDecimal(500), StatusLancamento.CONFIRMADO,
-								itemInfoExame1);
+								itemInfoExame1, 1);
 		session.save(lancamentoInfoExame1);
 
 		lancamentoQuatroRodas1 = Fixture
@@ -2233,7 +2233,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
 								new Date(), new BigDecimal(1500), StatusLancamento.CONFIRMADO,
-								itemQuatroRodas1);
+								itemQuatroRodas1, 1);
 		session.save(lancamentoQuatroRodas1);
 
 		lancamentoBoaForma1 = Fixture
@@ -2244,7 +2244,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBoaForma1.getPeb()), new Date(),
 								new Date(), new BigDecimal(190), StatusLancamento.CONFIRMADO,
-								itemBoaForma1);
+								itemBoaForma1, 1);
 		session.save(lancamentoBoaForma1);
 
 		lancamentoBravo1 = Fixture
@@ -2255,7 +2255,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBravo1.getPeb()), new Date(),
 								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
-								itemBravo1);
+								itemBravo1, 1);
 		session.save(lancamentoBravo1);
 
 		lancamentoCaras1 = Fixture
@@ -2266,7 +2266,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
 								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
-								itemCaras1);
+								itemCaras1, 1);
 		session.save(lancamentoCaras1);
 
 
@@ -2279,7 +2279,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
 								new Date(), new BigDecimal(350), StatusLancamento.CONFIRMADO,
-								itemCasaClaudia1);
+								itemCasaClaudia1, 1);
 		session.save(lancamentoCasaClaudia1);
 
 		lancamentoClaudia1 = Fixture
@@ -2290,7 +2290,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoClaudia1.getPeb()), new Date(),
 								new Date(), new BigDecimal(400), StatusLancamento.CONFIRMADO,
-								itemClaudia1);
+								itemClaudia1, 1);
 		session.save(lancamentoClaudia1);
 
 
@@ -2302,7 +2302,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoContigo1.getPeb()), new Date(),
 								new Date(), new BigDecimal(185), StatusLancamento.CONFIRMADO,
-								itemContigo1);
+								itemContigo1, 1);
 		session.save(lancamentoContigo1);
 
 		lancamentoManequim1 = Fixture
@@ -2313,7 +2313,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoManequim1.getPeb()), new Date(),
 								new Date(), new BigDecimal(225), StatusLancamento.CONFIRMADO,
-								itemManequim1);
+								itemManequim1, 1);
 		session.save(lancamentoManequim1);
 
 		lancamentoNatGeo1 = Fixture
@@ -2324,7 +2324,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoNatGeo1.getPeb()), new Date(),
 								new Date(), new BigDecimal(75), StatusLancamento.CONFIRMADO,
-								itemNatGeo1);
+								itemNatGeo1, 1);
 		session.save(lancamentoNatGeo1);
 
 		lancamentoPlacar1 = Fixture
@@ -2335,7 +2335,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoPlacar1.getPeb()), new Date(),
 								new Date(), new BigDecimal(195), StatusLancamento.CONFIRMADO,
-								itemPlacar1);
+								itemPlacar1, 1);
 		session.save(lancamentoPlacar1);
 
 		lancamentoSuper1EcncalheAnt = Fixture
@@ -2345,7 +2345,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
-						null);
+						null, 1);
 		session.save(lancamentoSuper1EcncalheAnt);
 
 		lancamentoSuper2EcncalheAnt = Fixture
@@ -2357,7 +2357,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null);
+						null, 1);
 		session.save(lancamentoSuper2EcncalheAnt);
 
 	}
@@ -2605,13 +2605,13 @@ public class DataLoader {
 		distribuidor.getFormasCobranca().add(formaDinheiro);
 		distribuidor.getFormasCobranca().add(formaTransferenciBancaria);
 		
-		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("CONSIDERANDO QUE:"+
-																					 "\n"+"(i)	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
-																					 "\n"+"(ii)	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
-																					 "\n"+"(iii)	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
-																					 "\n"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
-																					 "\n"+"1.	OBJETO DO CONTRATO"+
-																					 "\n"+"1.1.	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
+		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
+																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
+																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
+																					 "<br>"+"<b>(iii)</b>	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
+																					 "<br>"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
+																					 "<br><br>"+"<font color='blue'><b>1.	OBJETO DO CONTRATO</b><br></font>"+
+																					 "<br>"+"<b>1.1.</b>	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
 																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
 		save(session, parametroContrato);
 		
@@ -3092,7 +3092,7 @@ public class DataLoader {
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					new BigDecimal(100), 
 					StatusLancamento.EXPEDIDO, 
-					listaRecebimentos);
+					listaRecebimentos, 1);
 			lancamento.setReparte(new BigDecimal(10));
 			lancamento.setExpedicao(expedicao);
 			session.save(lancamento);
@@ -3519,7 +3519,7 @@ public class DataLoader {
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					new BigDecimal(100), 
 					StatusLancamento.CONFIRMADO, 
-					itemFisico);
+					itemFisico, 1);
 			lancamento.setReparte(new BigDecimal(10));
 			save(session,lancamento);
 
@@ -4175,7 +4175,7 @@ public class DataLoader {
 				new Date(),
 				new BigDecimal(100),
 				StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-				itemRecebimentoFisicoProdutoCE);
+				itemRecebimentoFisicoProdutoCE, 1);
 
 		lancamentoRevistaCE.getRecebimentos().add(itemRecebimentoFisicoProdutoCE);
 
@@ -4195,7 +4195,7 @@ public class DataLoader {
 				new Date(),
 				new BigDecimal(100),
 				StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-				itemRecebimentoFisicoProdutoCE_2);
+				itemRecebimentoFisicoProdutoCE_2, 1);
 
 		lancamentoRevistaCE_2.getRecebimentos().add(itemRecebimentoFisicoProdutoCE_2);
 
@@ -4215,7 +4215,7 @@ public class DataLoader {
 				new Date(),
 				new BigDecimal(100),
 				StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-				itemRecebimentoFisicoProdutoCE_3);
+				itemRecebimentoFisicoProdutoCE_3, 1);
 
 		lancamentoRevistaCE_3.getRecebimentos().add(itemRecebimentoFisicoProdutoCE_3);
 

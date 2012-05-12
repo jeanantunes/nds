@@ -5,9 +5,9 @@ import java.util.List;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ParametroCobrancaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -17,17 +17,14 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
  * @author Discover Technology
  *
  */
-public interface FinanceiroService {
+public interface ParametroCobrancaCotaService {
 
-	
-	
     /**
      * Obtém parametros de Cobranca da cota
      * @param idCota
      * @return Data Transfer Object com parametros de Cobranca da cota 
      */
-    ParametroCobrancaDTO obterDadosParametroCobrancaPorCota(Long idCota);
-    
+    ParametroCobrancaCotaDTO obterDadosParametroCobrancaPorCota(Long idCota);
     
     /**
 	 * Método responsável por obter bancos relacionados ao tipo de cobrança para preencher combo da camada view
@@ -42,6 +39,11 @@ public interface FinanceiroService {
 	 */
     List<ItemDTO<TipoCobranca, String>> getComboTiposCobranca();
     
+    /**
+	 * Método responsável por obter formas de emissao para preencher combo da camada view
+	 * @return comboFormasEmissao: formas de emissão cadastrados
+	 */
+    List<ItemDTO<FormaEmissao, String>> getComboFormasEmissao();
     
     /**
    	 * Método responsável por obter combo de fornecedores relacionados com a Cota
@@ -50,12 +52,11 @@ public interface FinanceiroService {
    	 */
     List<ItemDTO<Long, String>> getComboFornecedoresCota(Long idCota);
     
-    
     /**
      * Posta parametros de Cobranca da cota
      * @param Data Transfer Object com parametros de Cobranca da cota 
      */
-    void postarParametroCobranca(ParametroCobrancaDTO cotaCobranca);
+    void postarParametroCobranca(ParametroCobrancaCotaDTO cotaCobranca);
     
     /**
      * Posta forma de Cobranca
@@ -130,4 +131,32 @@ public interface FinanceiroService {
 	 * @param ID da Forma de Cobrança
 	 */
 	 void excluirFormaCobranca(Long idFormaCobranca);
+	 
+	 
+	 /**
+	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor, Concentração e Tipo)
+	 * @param tipoCobranca
+	 * @param idFornecedor
+	 * @param diaDoMes
+	 * @return Boolean
+	 */
+	 boolean validarFormaCobrancaMensal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Integer diaDoMes);
+		 
+	 
+	 /**
+	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja cadastrar(Valida por Fornecedor, Concentração e Tipo)
+	 * @param TipoCobranca
+	 * @param idFornecedor
+	 * @param domingo
+	 * @param segunda
+	 * @param terca
+	 * @param quarta
+	 * @param quinta
+	 * @param sexta
+	 * @param sabado
+	 * @return Boolean
+	 */
+	 boolean validarFormaCobrancaSemanal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
+		 	 
+	 
 }

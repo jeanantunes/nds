@@ -116,7 +116,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(), 
 				new Date(), 
 				BigDecimal.TEN,
-				StatusLancamento.CONFIRMADO, null);
+				StatusLancamento.CONFIRMADO, null, 1);
 		
 		save(lancamento);
 		

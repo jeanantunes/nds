@@ -157,7 +157,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					new BigDecimal(100), 
 					StatusLancamento.EXPEDIDO, 
-					listaRecebimentos);
+					listaRecebimentos, 1);
 			lancamento.setReparte(new BigDecimal(10));
 			lancamento.setExpedicao(expedicao);
 			save(lancamento);

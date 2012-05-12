@@ -13,7 +13,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.service.CobrancaService;
-import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 
@@ -22,7 +22,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 
 	@Autowired
-	private FinanceiroService financeiroService;
+	private ParametroCobrancaCotaService financeiroService;
 
 
 	@Override

@@ -13,6 +13,8 @@
 				obterParametrosPesquisa(),
 				function(result) {
 					
+					$("#numeroSemanaHidden").val($("#numeroSemana").val());
+					
 					montarResumoPeriodoBalanceamento(result);
 				},
 				function() {
@@ -44,16 +46,29 @@
 				rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
 				rows += '</a>';
 				rows += '</label>';
-				rows += '<span class="span_1">Qtde. Títulos:</span>';	 
-				rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';	
-				rows += '<span class="span_1">Qtde. Exempl.:</span>';	
-				rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
-				rows += '<span class="span_1">Qtde. Parciais:</span>';	
+				rows += '<span class="span_1">Qtde. Títulos:</span>';
+				rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';
+				
+				if (resumo.excedeCapacidadeDistribuidor) {
+					
+					rows += '<span class="span_1">Qtde. Exempl.:</span>';
+					rows += '<span name="qtdeExemplares" class="span_2 redLabel"'
+					rows += 'title="A quantidade de exemplares excede a capacidade de manuseio ';
+					rows += result.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
+					rows += resumo.qtdeExemplaresFormatada + '</span>';
+				
+				} else {
+				
+					rows += '<span class="span_1">Qtde. Exempl.:</span>';	
+					rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+				}
+				
+				rows += '<span class="span_1">Qtde. Parciais:</span>';
 				rows += '<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';	
 				rows += '<span class="span_1">Peso Total:</span>';
 				rows += '<span class="span_2">' + resumo.pesoTotalFormatado + '</span>';
 				rows += '<span class="span_1">Valor Total:</span>';
-				rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>'
+				rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>';
 				rows += '</div>';
 				rows += '</td>';
 		    });	
@@ -64,6 +79,8 @@
 		    
 		    $("#tableResumoPeriodoBalanceamento").append(rows);
 
+		    $("span[name='qtdeExemplares']").tooltip();
+		    
 		    var matrizFechada = result.matrizFechada;
 		    
 		    if (matrizFechada) {
@@ -166,7 +183,7 @@
 					resultado.mensagens.listaMensagens
 				);
 				
-				fecharGridBalanceamento()
+				fecharGridBalanceamento();
 
 				return resultado;
 			}
@@ -200,14 +217,14 @@
 				
 				retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
 						    + 	    ' value="' + row.cell.sequencia + '"'
-						    +	    ' style="width: 25px;" disabled="disabled"'
-						    +	    ' name="sequencia" />';
+						    +	    ' style="width: 30px;" disabled="disabled"'
+						    +	    ' name="sequencia" maxlength="4" />';
 			} else {
 				
 				retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
 						    + 	    ' value="' + row.cell.sequencia + '"'
-						    +	    ' style="width: 25px;"'
-						    +	    ' name="sequencia" />';
+						    +	    ' style="width: 30px;"'
+						    +	    ' name="sequencia" maxlength="4" />';
 			}
 			
 			return retornoHTML;
@@ -271,6 +288,8 @@
 			});
 			
 			$("input[name='novaData']").mask("99/99/9999");
+			
+			$("input[name='sequencia']").numeric(false);
 		}
 		
 		function checarBalanceamento() {
@@ -538,7 +557,12 @@
 			fecharGridBalanceamento();
 			
 			$.postJSON(
-				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />"
+				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
+				null,
+				function(result) {
+					
+					$("#resumoPeriodo").hide();
+				}
 			);
 		}
 		
@@ -551,9 +575,11 @@
 				obterParametrosPesquisa(),
 				function(result) {
 					
+					$("#numeroSemanaHidden").val($("#numeroSemana").val());
+					
 					montarResumoPeriodoBalanceamento(result);
 				},
-				function() {
+				function(result) {
 					
 					$("#resumoPeriodo").hide();
 				}
@@ -568,6 +594,8 @@
 				"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
 				obterParametrosPesquisa(),
 				function(result) {
+					
+					$("#numeroSemanaHidden").val($("#numeroSemana").val());
 					
 					montarResumoPeriodoBalanceamento(result);
 				},
@@ -652,52 +680,46 @@
 			var listaProdutoRecolhimento = "";
 			
 			var checkAllSelected = verifyCheckAll();
-			
-			//TODO: if (!checkAllSelected) {
 				
-				$.each(linhasDaGrid, function(index, value) {
+			$.each(linhasDaGrid, function(index, value) {
+				
+				var linha = $(value);
+				
+				var colunaCheck = linha.find("td")[16];
+				
+				var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
+				
+				var checked = inputCheck.attr("checked") == "checked";
+				
+				if (checked) {
 					
-					var linha = $(value);
+					var idLinha = linha.attr("id");
 					
-					var colunaCheck = linha.find("td")[16];
+					var idLancamento = idLinha.replace("row", "");
 					
-					var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
+					var sequencia = obterValorInputColuna(linha, 0, "sequencia");
+					var novaData = obterValorInputColuna(linha, 15, "novaData");
 					
-					var checked = inputCheck.attr("checked") == "checked";
+					var linhaSelecionada = 'listaProdutoRecolhimento[' + index + '].idLancamento=' + idLancamento + '&';
+					linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].sequencia=' + sequencia + '&';
+					linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].novaData=' + novaData + '&';
 					
-					if (checked) {
-						
-						var idLinha = linha.attr("id");
-						
-						var idLancamento = idLinha.replace("row", "");
-						
-						var sequencia = obterValorInputColuna(linha, 0, "sequencia");
-						var codProduto = obterValorColuna(linha, 1);
-						var numEdicao = obterValorColuna(linha, 3);
-						var dataRecolhimento = obterValorColuna(linha, 10);
-						var novaData = obterValorInputColuna(linha, 15, "novaData");
-						
-						var linhaSelecionada = 'listaProdutoRecolhimento[' + index + '].idLancamento=' + idLancamento + '&';
-						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].sequencia=' + sequencia + '&';
-						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].codigoProduto=' + codProduto + '&';
-						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].numeroEdicao=' + numEdicao + '&';
-						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].dataRecolhimento=' + dataRecolhimento + '&';
-						linhaSelecionada += 'listaProdutoRecolhimento[' + index + '].novaData=' + novaData + '&';
-						
-						listaProdutoRecolhimento = (listaProdutoRecolhimento + linhaSelecionada);
-					}
-				});
-			//}
+					listaProdutoRecolhimento = (listaProdutoRecolhimento + linhaSelecionada);
+				}
+			});
 			
 			var novaData = $("#novaDataRecolhimento").val();
 			
 			var dataAntiga = $("#dataBalanceamentoHidden").val();
 			
+			var numeroSemana = $("#numeroSemanaHidden").val();
+			
 			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarSelecionados' />",
 					   listaProdutoRecolhimento
 					   		+ "&selecionarTodos=" + checkAllSelected
 					   		+ "&novaDataFormatada=" + novaData
-					   		+ "&dataAntigaFormatada=" + dataAntiga,
+					   		+ "&dataAntigaFormatada=" + dataAntiga
+					   		+ "&numeroSemana=" + numeroSemana,
 					   function(result) {
 					   		
 							$("#dialogReprogramarBalanceamento").dialog("close");
@@ -740,9 +762,12 @@
 			
 			var dataAntiga = $("#dataBalanceamentoHidden").val();
 			
+			var numeroSemana = $("#numeroSemanaHidden").val();
+			
 			$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico' />",
 					   linhaSelecionada
-					   		+ "&dataAntigaFormatada=" + dataAntiga,
+					   		+ "&dataAntigaFormatada=" + dataAntiga
+					   		+ "&numeroSemana=" + numeroSemana,
 					   function(result) {
 					   
 					   		atualizarResumoBalanceamento();
@@ -953,6 +978,8 @@
 			<br clear="all" />
 			
 			<input type="hidden" id="dataBalanceamentoHidden" />
+			
+			<input type="hidden" id="numeroSemanaHidden" />
 			
 			<!-- GRID -->
 			<table class="balanceamentoGrid"></table>

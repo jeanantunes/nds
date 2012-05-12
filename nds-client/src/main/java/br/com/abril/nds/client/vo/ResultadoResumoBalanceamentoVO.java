@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -15,6 +16,8 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	private List<ResumoPeriodoBalanceamentoDTO> listaResumoPeriodoBalanceamento;
 	
 	private boolean matrizFechada;
+	
+	private BigDecimal capacidadeRecolhimentoDistribuidor;
 	
 	/**
 	 * Construtor padrão.
@@ -50,6 +53,21 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	 */
 	public void setMatrizFechada(boolean matrizFechada) {
 		this.matrizFechada = matrizFechada;
+	}
+
+	/**
+	 * @return the capacidadeRecolhimentoDistribuidor
+	 */
+	public BigDecimal getCapacidadeRecolhimentoDistribuidor() {
+		return capacidadeRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
+	 */
+	public void setCapacidadeRecolhimentoDistribuidor(
+			BigDecimal capacidadeRecolhimentoDistribuidor) {
+		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 
 }
