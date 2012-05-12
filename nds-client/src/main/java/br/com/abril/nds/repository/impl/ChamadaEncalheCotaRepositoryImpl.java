@@ -92,8 +92,17 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("conferido", conferido);
 
-		query.setParameter("dataRecolhimento", dataRecolhimento);
+		//query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		query.setParameter("dataOperacao", dataRecolhimento);
+		
+		if(idProdutoEdicao!=null) {
+			
+			query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		}
 		
 		Long qtde = (Long) query.uniqueResult();
 		

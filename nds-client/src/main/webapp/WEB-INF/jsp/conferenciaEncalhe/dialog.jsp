@@ -31,7 +31,7 @@
 						function(){
 							
 							$("#dialog-logado").dialog("close");
-							$('#pesq_cota').focus();
+							$('#numeroCota').focus();
 						}
 					);
 				},
@@ -39,6 +39,9 @@
 					$(this).dialog("close");
 					$('#pesq_cota').focus();
 				}
+			}, open : function(){
+				
+				$("#boxLogado").focus();
 			}
 		});
 	};
@@ -132,14 +135,14 @@
 	    <label>Confirma Box de Encalhe: </label>
 	    <select name="boxes" style="width:150px;" id="boxLogado">
 			<c:forEach var="item" items="${boxes}">
-		       <option value="${item.key}">${item.value.nome}</option>
+		       <option value="${item.id}">${item.nome}</option>
 		    </c:forEach>
 	    </select>
 	</fieldset>
 </div>
 
 <div id="dialog-pesquisar" title="Pesquisa de Produtos" style="display:none;">
-	<fieldset>
+	<fieldset style="width: 510px">
 		<legend>Pesquisar Produto</legend>
 		<table width="100%" border="0" cellspacing="1" cellpadding="2">
 			<tr>
@@ -202,16 +205,16 @@
 	<table width="670" border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td width="119">Núm. Nota Fiscal:</td>
-		    <td width="321"><input type="text" name="textfield" id="textfield" style="width:200px;" /></td>
+		    <td width="321"><input type="text" id="numNotaFiscal" style="width:200px;" /></td>
 		    <td width="106">Série:</td>
-		    <td width="111"><input type="text" name="textfield2" id="textfield2" style="width:80px;" /></td>
+		    <td width="111"><input type="text" id="serieNotaFiscal" style="width:80px;" /></td>
   		</tr>
   		<tr>
 		    <td>Data:</td>
-		    <td><input type="text" name="textfield3" id="textfield3" style="width:80px;" /></td>
+		    <td><input type="text" id="dataNotaFiscal" style="width:80px;" /></td>
 		    <td>Valor Total R$:</td>
 		    <td>
-		    	<input type="text" name="textfield4" id="textfield4" style="width:80px; text-align:right;" onblur="validarVlr();" />
+		    	<input type="text" id="valorNotaFiscal" style="width:80px; text-align:right;" />
 		    </td>
 		</tr>
 		<tr>
@@ -219,9 +222,9 @@
 			<td>
 				<table width="300" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-				        <td width="26"><input type="radio" name="radio" id="radio" value="radio" /></td>
+				        <td width="26"><input type="radio" name="radioNFE" id="radioNFEsim" value="S" /></td>
 				        <td width="71" valign="bottom">Sim</td>
-				        <td width="20"><input type="radio" name="radio" id="radio2" value="radio" /></td>
+				        <td width="20"><input type="radio" name="radioNFE" id="radioNFEnao" value="N" /></td>
 				        <td width="183" valign="bottom">Não</td>
 	      			</tr>
 	    		</table>
@@ -232,18 +235,9 @@
 		<tr>
 		    <td>Chave de Acesso:</td>
 	    	<td colspan="3">
-	    		<input type="text" name="textfield6" id="textfield6" style="width:510px;" />
+	    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
 	    	</td>
     	</tr>
-    	<tr>
-			<td>&nbsp;</td>
-			<td colspan="3">
-				<div id="effect_1" style="padding: 0 .7em; width:500px; float:right!important;" class="ui-state-highlight ui-corner-all"> 
-            		<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-            		<b>Nota Fiscal e Encalhe com diferença.</b></p>
-				</div>
-			</td>
-		</tr>
 		<tr>
 			<td>&nbsp;</td>
 			<td colspan="3">
@@ -256,7 +250,7 @@
 </div>
 
 <div id="dialog-alert" title="Nota Fiscal">
-	<fieldset>
+	<fieldset style="width: 410px;">
 		<legend>Nota Fiscal</legend>
 	    <p>Existe Nota Fiscal para esta Cota?</p>
 	</fieldset>

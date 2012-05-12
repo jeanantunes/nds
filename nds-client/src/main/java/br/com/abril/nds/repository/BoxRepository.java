@@ -81,4 +81,6 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return
 	 */
 	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
+	
+	String obterCodigoBoxPadraoUsuario(Long idUsuario);
 }
