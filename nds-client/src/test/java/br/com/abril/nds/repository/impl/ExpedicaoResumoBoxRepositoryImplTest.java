@@ -230,7 +230,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja1.getPeb()), new Date(),
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
-						itemRecebimentoFisico,expedicao1);
+						itemRecebimentoFisico,expedicao1, 1);
 
 		save(lancamentoVeja1);
 		
@@ -245,7 +245,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoVeja2.getPeb()), new Date(),
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
-						null,expedicao2);
+						null,expedicao2, 1);
 		save(lancamentoVeja2);
 
 		Expedicao expedicao3 = Fixture.expedicao(usuarioJoao,Fixture.criarData(1, 3, 2010));
@@ -259,7 +259,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
 								new Date(), new BigDecimal(100), StatusLancamento.EXPEDIDO,
-								null,expedicao3);
+								null,expedicao3, 1);
 
 		save(lancamentoSuper1);
 		
@@ -274,7 +274,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
 								new Date(), new BigDecimal(1000), StatusLancamento.EXPEDIDO,
-								null,expedicao4);
+								null,expedicao4, 1);
 
 		save(lancamentoCapricho1);
 		

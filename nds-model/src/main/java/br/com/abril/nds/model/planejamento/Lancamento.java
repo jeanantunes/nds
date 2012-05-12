@@ -94,7 +94,10 @@ public class Lancamento implements Serializable {
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
 	
 	@Column(name = "NUMERO_REPROGRAMACOES")
-	private int numeroReprogramacoes;
+	private Integer numeroReprogramacoes;
+	
+	@Column(name = "SEQUENCIA_MATRIZ", nullable = false)
+	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
 	@ManyToOne
@@ -215,14 +218,22 @@ public class Lancamento implements Serializable {
 		this.recebimentos.add(itemRecebimentoFisico);
 	}
 	
-	public int getNumeroReprogramacoes() {
+	public Integer getNumeroReprogramacoes() {
 		return numeroReprogramacoes;
 	}
 	
-	public void setNumeroReprogramacoes(int numeroReprogramacoes) {
+	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
 		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 	
+	public Integer getSequenciaMatriz() {
+		return sequenciaMatriz;
+	}
+
+	public void setSequenciaMatriz(Integer sequenciaMatriz) {
+		this.sequenciaMatriz = sequenciaMatriz;
+	}
+
 	public Estudo getEstudo() {
 		return estudo;
 	}
