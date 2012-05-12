@@ -83,7 +83,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Lancamento lancamentoVeja1 =
 			Fixture.lancamentoExpedidos(TipoLancamento.LANCAMENTO, produtoEdicaoVeja1, new Date(),
 										DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
-										BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null);
+										BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		save(lancamentoVeja1);
 	}
 	

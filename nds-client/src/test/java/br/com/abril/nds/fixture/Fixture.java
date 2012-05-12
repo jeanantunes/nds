@@ -400,8 +400,8 @@ public class Fixture {
 
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte,
-			StatusLancamento statusLancamento, ItemRecebimentoFisico recebimento) {
+			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			ItemRecebimentoFisico recebimento, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -413,10 +413,13 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.setSequenciaMatriz(sequenciaMatriz);
 		
 		if (recebimento != null) {
 			lancamento.addRecebimento(recebimento);
 		}
+		
+		
 		return lancamento;
 	}
 	
@@ -502,8 +505,8 @@ public class Fixture {
 	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte,
-			StatusLancamento statusLancamento, ItemRecebimentoFisico recebimento,Expedicao expedicao) {
+			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			ItemRecebimentoFisico recebimento,Expedicao expedicao, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -517,9 +520,12 @@ public class Fixture {
 		lancamento.setDataRecolhimentoDistribuidor(drp);
 		lancamento.setExpedicao(expedicao);
 		lancamento.setExpedicao(expedicao);
+		lancamento.setSequenciaMatriz(sequenciaMatriz);
+		
 		if (recebimento != null) {
 			lancamento.addRecebimento(recebimento);
 		}
+		
 		return lancamento;
 	}
 
@@ -1578,8 +1584,8 @@ public class Fixture {
 	
 	public static Lancamento lancamentos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte,
-			StatusLancamento statusLancamento, List<ItemRecebimentoFisico> recebimentos) {
+			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			List<ItemRecebimentoFisico> recebimentos, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -1591,10 +1597,12 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.setSequenciaMatriz(sequenciaMatriz);
 		
 		for(ItemRecebimentoFisico x : recebimentos){
 			lancamento.addRecebimento(x);
 		}
+		
 		
 		return lancamento;
 	}
