@@ -117,9 +117,13 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -2601,13 +2605,13 @@ public class DataLoader {
 		distribuidor.getFormasCobranca().add(formaDinheiro);
 		distribuidor.getFormasCobranca().add(formaTransferenciBancaria);
 		
-		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("CONSIDERANDO QUE:"+
-																					 "\n"+"(i)	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
-																					 "\n"+"(ii)	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
-																					 "\n"+"(iii)	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
-																					 "\n"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
-																					 "\n"+"1.	OBJETO DO CONTRATO"+
-																					 "\n"+"1.1.	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
+		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
+																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
+																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
+																					 "<br>"+"<b>(iii)</b>	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
+																					 "<br>"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
+																					 "<br><br>"+"<font color='blue'><b>1.	OBJETO DO CONTRATO</b><br></font>"+
+																					 "<br>"+"<b>1.1.</b>	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
 																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
 		save(session, parametroContrato);
 		
@@ -4231,7 +4235,6 @@ public class DataLoader {
 		save(session, cotaJohnyConsultaEncalhe);
 
 
-
 		EstoqueProdutoCota estoqueProdutoCotaJohny = 
 				Fixture.estoqueProdutoCota(
 				produtoEdicaoCE, cotaJohnyConsultaEncalhe, BigDecimal.TEN, BigDecimal.ZERO);
@@ -4291,6 +4294,53 @@ public class DataLoader {
 		save(session, tipoNotaFiscal);
 
 		/**
+		 * CHAMADA ENCALHE COTA
+		 */
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe, 
+				false, 
+				cotaJohnyConsultaEncalhe, 
+				BigDecimal.TEN);
+		save(session, chamadaEncalheCota);
+		
+		ChamadaEncalheCota chamadaEncalheCota_2 = Fixture.chamadaEncalheCota(
+				chamadaEncalhe_2, 
+				false, 
+				cotaJohnyConsultaEncalhe, 
+				BigDecimal.TEN);
+		save(session, chamadaEncalheCota_2);
+		
+		ChamadaEncalheCota chamadaEncalheCota_3 = Fixture.chamadaEncalheCota(
+				chamadaEncalhe_3, 
+				false, 
+				cotaJohnyConsultaEncalhe, 
+				BigDecimal.TEN);
+		save(session, chamadaEncalheCota_3);
+		
+		
+		/**
+		 * CONTROLE CONFERENCIA ENCALHE 
+		 */
+		ControleConferenciaEncalhe controleConferenciaEncalhe = 
+				Fixture.controleConferenciaEncalhe(StatusOperacao.EM_ANDAMENTO, Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		save(session, controleConferenciaEncalhe);
+		
+		
+		/**
+		 * CONTROLE CONFERENCIA ENCALHE COTA
+		 */
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
+				controleConferenciaEncalhe, 
+				cotaJohnyConsultaEncalhe, 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				StatusOperacao.CONCLUIDO);
+		
+		save(session, controleConferenciaEncalheCota);
+		
+		
+		/**
 		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
 		 */
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4305,7 +4355,8 @@ public class DataLoader {
 
 		save(session, mec);
 
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4321,7 +4372,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4336,7 +4387,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4352,7 +4403,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4368,7 +4419,7 @@ public class DataLoader {
 
 		save(session, mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4384,7 +4435,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4399,7 +4450,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4414,7 +4465,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4430,7 +4481,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4446,7 +4497,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4461,7 +4512,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4477,7 +4528,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 	}

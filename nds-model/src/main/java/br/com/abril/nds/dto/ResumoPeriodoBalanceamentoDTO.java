@@ -22,6 +22,7 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 	private String valorTotalFormatado;
 	private Long qtdeTitulosParciais;
 	private boolean exibeDestaque;
+	private boolean excedeCapacidadeDistribuidor;
 	
 	public Date getData() {
 		return data;
@@ -127,6 +128,20 @@ public class ResumoPeriodoBalanceamentoDTO implements Serializable {
 	 */
 	public void setExibeDestaque(boolean exibeDestaque) {
 		this.exibeDestaque = exibeDestaque;
+	}
+
+	/**
+	 * @return the excedeCapacidadeDistribuidor
+	 */
+	public boolean isExcedeCapacidadeDistribuidor() {
+		return excedeCapacidadeDistribuidor;
+	}
+
+	/**
+	 * @param excedeCapacidadeDistribuidor the excedeCapacidadeDistribuidor to set
+	 */
+	public void setExcedeCapacidadeDistribuidor(boolean excedeCapacidadeDistribuidor) {
+		this.excedeCapacidadeDistribuidor = excedeCapacidadeDistribuidor;
 	}
 	
 }

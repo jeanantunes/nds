@@ -2,6 +2,9 @@ function TabCota(tabName , funcaoSalvarInicial) {
 	
 	var T = this;
 	
+	/**
+	 * Função que será chamada ao realizar a mudança de abas
+	 */
 	this.funcaoSalvar = funcaoSalvarInicial;
 	
 	this.novaAba=null;
@@ -45,7 +48,7 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 		/**FINANCEIRO**/
 		case 5:
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados Financeiro.');};
+			T.funcaoSalvar = function(){postarParametroCobranca();};
 			carregaFinanceiro();
 			break;
 
@@ -78,6 +81,10 @@ function TabCota(tabName , funcaoSalvarInicial) {
 	};
 		
 	$(function() {
+		
+		if(T.funcaoSalvar) {
+			T.funcaoSalvar();
+    	}
 		
 		$( "#" + tabName ).tabs();
 				

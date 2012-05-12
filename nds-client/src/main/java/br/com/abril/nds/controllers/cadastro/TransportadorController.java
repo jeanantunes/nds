@@ -377,10 +377,24 @@ public class TransportadorController {
 			return this.obterVeiculosSessao();
 		} else {
 			
+			List<Veiculo> veiculosSalvar = this.obterVeiculosSessao();
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (Veiculo veiculoSalvar : veiculosSalvar){
+				
+				if (veiculoSalvar.getId() != null){
+					
+					idsIgnorar.add(veiculoSalvar.getId());
+				}
+			}
+			
+			idsIgnorar.addAll(this.obterVeiculosSessaoRemover());
+			
 			List<Veiculo> lista = 
 					this.transportadorService.buscarVeiculosPorTransportador(
 							idTransportadorEdicao, 
-							this.obterVeiculosSessaoRemover(),
+							idsIgnorar,
 							sortname,
 							sortorder);
 			
@@ -598,10 +612,24 @@ public class TransportadorController {
 			return this.obterMotoristasSessao();
 		} else {
 			
+			List<Motorista> motoristasSalvar = this.obterMotoristasSessao();
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (Motorista motoristaSalvar : motoristasSalvar){
+				
+				if (motoristaSalvar.getId() != null){
+					
+					idsIgnorar.add(motoristaSalvar.getId());
+				}
+			}
+			
+			idsIgnorar.addAll(this.obterMotoristasSessaoRemover());
+			
 			List<Motorista> lista = 
 					this.transportadorService.buscarMotoristasPorTransportador(
 							idTransportadorEdicao, 
-							this.obterMotoristasSessaoRemover(),
+							idsIgnorar,
 							sortname,
 							sortorder);
 			
@@ -844,14 +872,14 @@ public class TransportadorController {
 			idsRotasRemovidas = this.transportadorService.buscarIdsRotasPorAssociacao(assocRemovidas);
 		}
 		
-		rotas: for (RotaRoteiroDTO rota : rotas){
+		for (RotaRoteiroDTO rota : rotas){
 			
 			for (AssociacaoVeiculoMotoristaRotaDTO dto : this.obterAssociacoesSalvarSessao()){
 				
 				if (dto.getRota().getIdRota().equals(rota.getIdRota())){
 					
 					rota.setDisponivel(false);
-					break rotas;
+					break;
 				} else {
 					
 					rota.setDisponivel(true);
@@ -932,8 +960,8 @@ public class TransportadorController {
 				
 				AssociacaoVeiculoMotoristaRotaDTO dto = 
 						new AssociacaoVeiculoMotoristaRotaDTO(assocBanco.getId(), 
-								assocBanco.getVeiculo(), 
-								assocBanco.getMotorista(), 
+								this.obterVeiculoEditado(assocBanco.getVeiculo()), 
+								this.obterMotoristaEditado(assocBanco.getMotorista()), 
 								new  RotaRoteiroDTO(1L, assocBanco.getRota().getDescricaoRota(), assocBanco.getRota().getRoteiro().getDescricaoRoteiro()));
 				
 				listaExibir.add(dto);
@@ -943,6 +971,36 @@ public class TransportadorController {
 		listaExibir.addAll(listaSalvar);
 		
 		return listaExibir;
+	}
+	
+	private Veiculo obterVeiculoEditado(Veiculo veiculoParam){
+		
+		List<Veiculo> listaVeiculoSalvar = this.obterVeiculosSessao();
+		
+		for (Veiculo veiculo : listaVeiculoSalvar){
+			
+			if (veiculo.getId().equals(veiculoParam.getId())){
+				
+				return veiculo;
+			}
+		}
+		
+		return veiculoParam;
+	}
+	
+	private Motorista obterMotoristaEditado(Motorista motoristaParam){
+		
+		List<Motorista> listaMotoristaSalvar = this.obterMotoristasSessao();
+		
+		for (Motorista motorista : listaMotoristaSalvar){
+			
+			if (motorista.getId().equals(motoristaParam.getId())){
+				
+				return motorista;
+			}
+		}
+		
+		return motoristaParam;
 	}
 	
 	@Post

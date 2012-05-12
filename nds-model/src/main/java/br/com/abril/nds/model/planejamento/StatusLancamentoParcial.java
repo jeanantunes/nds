@@ -8,7 +8,16 @@ package br.com.abril.nds.model.planejamento;
  */
 public enum StatusLancamentoParcial {
 		
-	PROJETADO, 
-	RECOLHIDO;
-
+	PROJETADO("Projetado"), 
+	RECOLHIDO("Recolhido");
+	
+	private String descricao;
+	
+	private StatusLancamentoParcial(String descricao) {
+		this.descricao = descricao;
+	}
+	
+	public String toString() {
+		return descricao;
+	}
 }

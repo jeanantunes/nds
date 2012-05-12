@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -185,6 +186,21 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional(readOnly = true)
 	public List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults) {
 		return fiadorRepository.buscaFiador(nome, maxResults);
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#getFiador(long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Fiador getFiador(long idFiador){
+		
+		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
+		
+		fiador.getTelefonesFiador().size();
+		fiador.getGarantias().size();
+		fiador.getPessoa().getEnderecos().size();
+		return fiador;
 	}
 	
 }

@@ -215,7 +215,7 @@ public class BancoController {
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 
-		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,instrucoes);
+		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,instrucoes,juros,multa,vrMulta);
 		
 		long lAgencia = Long.parseLong(agencia);
 		long lConta = Long.parseLong(conta);
@@ -296,7 +296,7 @@ public class BancoController {
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 		
-		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,instrucoes);
+		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,moeda,carteira,instrucoes,juros,multa,vrMulta);
 		
 		if (ativo==0){
 			if (this.bancoService.verificarPendencias(idBanco)){
@@ -353,7 +353,10 @@ public class BancoController {
 								  	  String digito,
 								  	  Moeda moeda,
 								  	  Carteira carteira,
-								  	  String instrucoes){
+								  	  String instrucoes,
+								  	  BigDecimal juros,
+								  	  BigDecimal multa,
+								  	  BigDecimal vrMulta){
 		
 		if (validator.hasErrors()) {
 			List<String> mensagens = new ArrayList<String>();
@@ -409,6 +412,13 @@ public class BancoController {
 
 		if ((instrucoes==null)||("".equals(instrucoes))){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Digite as intruções.");
+		}
+		
+		if(juros==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Especifique a taxa de juros.");
+		}
+        if((multa==null)&&(vrMulta==null)){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Especifique a taxa ou o valor da multa.");
 		}
 		
 	}
