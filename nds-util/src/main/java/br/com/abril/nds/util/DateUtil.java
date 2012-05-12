@@ -347,5 +347,32 @@ public class DateUtil {
 		
 		return datas;
 	}
+
+	/**
+	 * Valida se a data está entre o período informado.
+	 * 
+	 * @param dataComparacao - data para comparação
+	 * @param dataInicial - data inicial do período
+	 * @param dataFinal - data final do período
+	 * 
+	 * @return flag indicando se a data está entre o período
+	 */
+	public static boolean validarDataEntrePeriodo(Date dataComparacao,
+												  Date dataInicial,
+												  Date dataFinal) {
+		
+		boolean periodoInvalido = isDataInicialMaiorDataFinal(dataInicial, dataFinal);
+		
+		if (!periodoInvalido && dataComparacao != null) {
+		
+			if (dataComparacao.compareTo(dataInicial) >= 0
+					&& dataComparacao.compareTo(dataFinal) <= 0) {
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 }
