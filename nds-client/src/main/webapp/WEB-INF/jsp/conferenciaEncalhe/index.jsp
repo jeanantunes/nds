@@ -17,22 +17,46 @@
 				
 				var numeroCota = jQuery("#numeroCota").val();
 				
+				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarCota'/>", 
+					[{name : 'numeroCota', value : numeroCota}],
+					function(result){
+					
+						if (result){
+							
+							$(".dadosFiltro").show();
+							
+							$("#nomeCota").text(result[0]);
+							$("#statusCota").text(result[1]);
+							
+							popup_alert();
+						}
+					},
+					function (){
+						
+						$(".dadosFiltro").hide();
+						$("#numeroCota").focus();
+					},
+					false,
+					"idTelaConferenciaEncalhe"
+				);
+			},
+			
+			carregarListaConferencia : function(){
+				
 				$(".conferenciaEncalheGrid").flexOptions({
-					url : '<c:url value="/devolucao/conferenciaEncalhe/pesquisarCota"/>',
+					url : '<c:url value="/devolucao/conferenciaEncalhe/carregarListaConferencia"/>',
 					preProcess : ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe,
-					dataType : 'json',
-					params : [ {
-					name : 'numeroCota',
-					value : numeroCota
-					} ]
+					dataType : 'json'
 				});
 				
 				$(".conferenciaEncalheGrid").flexReload();
+				
+				ultimoCodeBar = $("#cod_barras").focus();
 			},
 	
 			preProcessarConsultaConferenciaEncalhe : function(result) {
 	
-				var modeloConferenciaEncalhe = result.tableModelConferenciaEncalhe;
+				var modeloConferenciaEncalhe = result[0];
 	
 				$.each(modeloConferenciaEncalhe.rows, 
 						function(index, value) {
@@ -41,40 +65,27 @@
 							var inputExemplares = '<input style="width:50px;" value="' + valorExemplares + '"/>';
 							
 							value.cell.qtdExemplar = inputExemplares;
-	
-							var valorCodigoDeBarras = value.cell.codigoDeBarras;
-							var inputCodigoDeBarras = '<input style="width:150px;" disabled="disabled" value="' + valorCodigoDeBarras + '"/>';
-							value.cell.codigoDeBarras = inputCodigoDeBarras;
 							
-							var valorCodigoSM = value.cell.codigoSM;
-							var inputCodigoSM = '<input style="width:40px;" disabled="disabled" value="' + valorCodigoSM + '"/>';
-							value.cell.codigoSM = inputCodigoSM;
-							
-							var valorCodigoProduto = value.cell.codigo;
-							var inputCodigoProduto = '<input style="width:50px;" disabled="disabled" value="' + valorCodigoProduto + '"/>';
-							value.cell.codigo = inputCodigoProduto;
-							
-							var valorJuramentada = value.cell.juramentada;
-							
-							var inputCheckBoxJuramentada = '';
-							
-							if (valorJuramentada) {
-								inputCheckBoxJuramentada = '<input type="checkbox" checked="checked" name="checkgroup" style="float: left; margin-right: 25px;"/>';
-							} else {
-								inputCheckBoxJuramentada = '<input type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>';
-							}
+							var inputCheckBoxJuramentada = 
+								'<input type="checkbox" ' + (value.cell.juramentada ? 'checked="checked"' : '')  + ' name="checkGroupJuramentada" style="align: center;"/>';
 							
 							value.cell.juramentada = inputCheckBoxJuramentada;
 							
 							var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
-							value.cell.detalhes = '<a href="javascript:;" onclick="alert(' + index + ');">' + imgDetalhar + '</a>';
+							value.cell.detalhes = '<a href="javascript:;" onclick="alert(' + value.cell.codigo + ');">' + imgDetalhar + '</a>';
 							
 							var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-							value.cell.acao = '<a href="javascript:;" onclick="alert(' + index + ');">' + imgExclusao + '</a>';
+							value.cell.acao = '<a href="javascript:;" onclick="alert(' + value.cell.codigo + ');">' + imgExclusao + '</a>';
 						}
 				);
+				
+				$("#totalReparte").text(result[1]);
+				$("#totalEncalhe").text(result[2]);
+				$("#valorVendaDia").text(result[3]);
+				$("#totalOutrosValores").text(result[4]);
+				$("#valorAPagar").text(result[5]);
 	
-				return result.tableModelConferenciaEncalhe;
+				return modeloConferenciaEncalhe;
 			},
 			
 			pesqProdutosGridModel : [ {
@@ -321,6 +332,164 @@
 	
 			$("#pesq_prod").autocomplete({source : ""});
 			
+			$("#numeroCota").numeric();
+			
+			$("#qtdeExemplar").numeric();
+			
+			$("#vlrCE").numeric();
+			
+			$("#dataNotaFiscal").mask("99/99/9999");
+			
+			$("#valorNotaFiscal").numeric();
+			
+			$("#sm").numeric();
+			
+			$("#numeroCota").keypress(function(e) {
+				
+				if(e.keyCode == 13) {
+					
+					ConferenciaEncalhe.pesquisarCota();
+				}
+			});
+			
+			$("#vlrCE").keypress(function(e) {
+				
+				if (e.keyCode == 13) {
+					
+					$("#qtdeExemplar").focus();
+				}
+			});
+			
+			var ultimoCodeBar = "";
+			var ultimoSM = "";
+			var ultimoCodigo = "";
+			
+			$('#cod_barras').keypress(function(e) {
+				
+				if (e.keyCode == 13) {
+					
+					if (ultimoCodeBar != "" && ultimoCodeBar == $("#cod_barras").val()){
+						
+						var qtd = $("#qtdeExemplar").val() == "" ? 0 : parseInt($("#qtdeExemplar").val());
+						
+						$("#qtdeExemplar").val(qtd + 1);
+					} else {
+						
+						var data = [{name: "codigoBarra", value: $("#cod_barras").val()}, {name: "sm", value: ""}, {name: "codigo", value: ""}];
+						
+						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarProdutoEdicao'/>", data,
+							function(result){
+							
+								ultimoCodeBar = result.codigoDeBarras;
+								ultimoSM = result.codigoSM;
+								ultimoCodigo = result.id;
+								
+								$("#nomeProduto").text(result.produto.nome);
+								$("#edicaoProduto").text(result.numeroEdicao);
+								$("#precoCapa").text(result.precoVenda);
+								$("#desconto").text(result.desconto);
+								$("#valorTotal").text(parseDouble(result.precoVenda)  - parseDouble(result.desconto));
+								
+								$("#qtdeExemplar").val("1");
+								ultimoCodeBar = $("#cod_barras").val();
+							},
+							function(){
+								
+								$("#cod_barras").focus();
+							}
+						);
+					}
+				}
+			});
+			
+			$('#sm').keypress(function(e) {
+				
+				if (e.keyCode == 13) {
+					
+					if (ultimoSM != "" && ultimoSM == $("#sm").val()){
+						
+						var qtd = $("#qtdeExemplar").val() == "" ? 0 : parseInt($("#qtdeExemplar").val());
+						
+						$("#qtdeExemplar").val(qtd + 1);
+					} else {
+						
+						var data = [{name: "codigoBarra", value: ""}, {name: "sm", value: $("#sm").val()}, {name: "codigo", value: ""}];
+						
+						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarProdutoEdicao'/>", data,
+							function(result){
+							
+								ultimoCodeBar = result.codigoDeBarras;
+								ultimoSM = result.codigoSM;
+								ultimoCodigo = result.id;
+								
+								$("#nomeProduto").text(result.produto.nome);
+								$("#edicaoProduto").text(result.numeroEdicao);
+								$("#precoCapa").text(result.precoVenda);
+								$("#desconto").text(result.desconto);
+								$("#valorTotal").text(parseDouble(result.precoVenda)  - parseDouble(result.desconto));
+								
+								$("#qtdeExemplar").val("1");
+								ultimoSM = $("#sm").val();
+							},
+							function (){
+								
+								$("#sm").focus();
+							}
+						);
+					}
+				}
+			});
+			
+			$('#codProduto').keypress(function(e) {
+				
+				if (e.keyCode == 13) {
+					
+					popup_pesquisar();
+				}
+			});
+			
+			$("#pesq_prod").keypress(function (e){
+				
+				if (e.keyCode == 13) {
+					$(".conferenciaEncalheGrid #row1").show();
+					$("#dialog-pesquisar").dialog("destroy");
+					$('.dadosIncluir').fadeIn('fast');
+					$('#codProduto').focus();
+				
+					if (ultimoCodigo != "" && ultimoCodigo == $("#pesq_prod").val()){
+						
+						var qtd = $("#qtdeExemplar").val() == "" ? 0 : parseInt($("#qtdeExemplar").val());
+						
+						$("#qtdeExemplar").val(qtd + 1);
+					} else {
+						
+						var data = [{name: "codigoBarra", value: ""}, {name: "sm", value: ""}, {name: "codigo", value: $("#pesq_prod").val()}];
+						
+						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarProdutoEdicao'/>", data,
+							function(result){
+							
+								ultimoCodeBar = result.codigoDeBarras;
+								ultimoSM = result.codigoSM;
+								ultimoCodigo = result.id;
+								
+								$("#nomeProduto").text(result.produto.nome);
+								$("#edicaoProduto").text(result.numeroEdicao);
+								$("#precoCapa").text(result.precoVenda);
+								$("#desconto").text(result.desconto);
+								$("#valorTotal").text(parseDouble(result.precoVenda)  - parseDouble(result.desconto));
+								
+								$("#qtdeExemplar").val("1");
+								ultimoCodigo = $("#pesq_prod").val();
+							},
+							function (){
+								
+								$("#codProduto").focus();
+							}
+						);
+					}
+				}
+			});
+			
 			popup_logado();
 		});
 	
@@ -354,17 +523,22 @@
 				modal : true,
 				buttons : {
 					"Sim" : function() {
+						
 						$(this).dialog("close");
 						popup_notaFiscal();
-						$("#vlrCE").focus();
-	
 					},
 					"Não" : function() {
+						
 						$(this).dialog("close");
+						$("#vlrCE").focus();
 					}
+				}, open : function(){
+					
+					$(this).parent('div').find('button:contains("Sim")').focus();
 				}
 			});
-	
+			
+			$("#dialog-alert").show();
 		};
 	
 		function popup_notaFiscal() {
@@ -376,12 +550,18 @@
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
+						
 						$(this).dialog("close");
-	
+						ConferenciaEncalhe.carregarListaConferencia();
 					},
 					"Cancelar" : function() {
+						
 						$(this).dialog("close");
+						ConferenciaEncalhe.carregarListaConferencia();
 					}
+				}, open : function(){
+					
+					$("#numNotaFiscal").focus();
 				}
 			});
 	
@@ -503,38 +683,7 @@
 		}
 		
 		function incluir_cod_barras() {
-			$('#cod_barras').keypress(function(e) {
-				if (e.keyCode == 13) {
-					$('.dadosIncluir').fadeIn('fast');
-					$('#juramentada').focus();
-	
-				}
-			});
-		}
-	
-		function incluir_SM() {
-			$('#sm').keypress(function(e) {
-				if (e.keyCode == 13) {
-					$('.dadosIncluir').fadeIn('fast');
-					$('#qtdeExemplar').focus();
-				}
-			});
-		}
-	
-		function incluir_qtde() {
-			$('#qtdeExemplar').keypress(function(e) {
-				if (e.keyCode == 13) {
-	
-				}
-			});
-		}
-	
-		function pesquisar_produtos() {
-			$('#codProduto').keypress(function(e) {
-				if (e.keyCode == 13) {
-					popup_pesquisar();
-				}
-			});
+			
 		}
 	
 		function incluir_grid() {
@@ -551,15 +700,7 @@
 		}
 	
 		function mostrar_produtos() {
-			$('#pesq_prod').keypress(function(e) {
-				if (e.keyCode == 13) {
-					$(".conferenciaEncalheGrid #row1").show();
-					$("#dialog-pesquisar").dialog("destroy");
-					$('.dadosIncluir').fadeIn('fast');
-					$('#codProduto').focus();
-				}
-	
-			});
+
 		}
 	
 		function fechar_produtos() {
@@ -577,18 +718,6 @@
 					popup_alert();
 				}
 			});
-		}
-	
-		function vaiVlr() {
-			$('#vlrCE').keypress(function(e) {
-				if (e.keyCode == 13) {
-					$("#qtdeExemplar").focus();
-				}
-			});
-		}
-	
-		function validarVlr() {
-			$("#effect_1").fadeIn("slow");
 		}
 		
 		shortcut.add("F2", function() {
@@ -613,13 +742,13 @@
 
 <body>
 
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idTelaConferenciaEncalhe" name="messageDialog"/>
+	</jsp:include>
+
 	<jsp:include page="dialog.jsp" />
 
 	<div class="container">
-
-		<jsp:include page="../messagesDialog.jsp">
-			<jsp:param value="idTelaConferenciaEncalhe" name="messageDialog"/>
-		</jsp:include>
 
 		<fieldset class="classFieldset">
 
@@ -644,7 +773,7 @@
 					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
 					<td width="100">
 						<span class="dadosFiltro">
-							<input type="text" onkeypress="vaiVlr();" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" />
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" />
 						</span>
 					</td>
 				</tr>
@@ -695,24 +824,18 @@
 					<td width="31">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="class_linha_1" align="center"
-						style="border-left: 1px solid #666; border-bottom: 1px solid #666;"><input
-						name="qtdeExemplar" type="text" id="qtdeExemplar"
-						style="width: 60px; text-align: center;"
-						onkeypress="incluir_qtde();" /></td>
-					<td class="class_linha_1" align="center"
-						style="border-bottom: 1px solid #666;"><input
-						name="cod_barras" type="text" id="cod_barras"
-						style="width: 160px;" value="" onkeypress="incluir_cod_barras();" />
+					<td class="class_linha_1" align="center" style="border-left: 1px solid #666; border-bottom: 1px solid #666;">
+						<input name="qtdeExemplar" type="text" id="qtdeExemplar" style="width: 60px; text-align: center;"/>
 					</td>
-					<td class="class_linha_1" align="center"
-						style="border-bottom: 1px solid #666;"><input name="sm"
-						type="text" id="sm" style="width: 40px;"
-						onkeypress="incluir_SM();" /></td>
-					<td class="class_linha_1" align="center"
-						style="border-bottom: 1px solid #666; border-right: 1px solid #666;"><input
-						name="codProduto" type="text" id="codProduto"
-						style="width: 100px;" onkeypress="popup_pesquisar();" /></td>
+					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
+						<input name="cod_barras" type="text" id="cod_barras" style="width: 160px;"/>
+					</td>
+					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
+						<input name="sm" type="text" id="sm" style="width: 40px;" />
+					</td>
+					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666; border-right: 1px solid #666;">
+						<input name="codProduto" type="text" id="codProduto" style="width: 100px;" />
+					</td>
 					<td class="class_linha_2" id="nomeProduto"></td>
 					<td class="class_linha_2" align="center" id="edicaoProduto"></td>
 					<td class="class_linha_2" align="center" id="precoCapa"></td>
@@ -726,8 +849,7 @@
 				</tr>
 			</table>
 			
-			<div class="grids"
-				style="display: block; clear: left; margin-top: 10px;">
+			<div class="grids" style="display: block; clear: left; margin-top: 10px;">
 
 				<table class="conferenciaEncalheGrid"></table>
 

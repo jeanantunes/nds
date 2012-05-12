@@ -16,7 +16,7 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return List - Box
 	 */
-	public List<Box> obterListaBoxEncalhe();
+	public List<Box> obterListaBoxEncalhe(Long idUsuario);
 	
 	/**
 	 * Retorna o código do box de recolhimento relacionado 
@@ -80,11 +80,11 @@ public interface ConferenciaEncalheService {
 	 */
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota);
 
+	ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws ChamadaEncalheCotaInexistenteException;
 	
+	ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException;
 	
-	public ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(String codigoDeBarras);
-	
-	public ProdutoEdicao pesquisarProdutoEdicaoPorSM();
+	ProdutoEdicao pesquisarProdutoEdicaoPorSM(Integer numeroCota, Long sm) throws ChamadaEncalheCotaInexistenteException;
 	
 	/*
 	 * Traz uma lista de codigoProduto - nomeProduto -  numeroEdicao
