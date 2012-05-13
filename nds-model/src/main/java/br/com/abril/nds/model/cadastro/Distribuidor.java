@@ -132,7 +132,9 @@ public class Distribuidor {
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
-
+    
+	@Column(name="QNT_DIAS_REUTILIZACAO_CODIGO_COTA")
+	private Long qntDiasReutilizacaoCodigoCota;
 	
 	public Long getId() {
 		return id;
@@ -321,5 +323,22 @@ public class Distribuidor {
 	public void setPreenchimentoAutomaticoPDV(boolean preenchimentoAutomaticoPDV) {
 		this.preenchimentoAutomaticoPDV = preenchimentoAutomaticoPDV;
 	}
+
+	/**
+	 * @return the qntDiasReutilizacaoCodigoCota
+	 */
+	public Long getQntDiasReutilizacaoCodigoCota() {
+		return qntDiasReutilizacaoCodigoCota;
+	}
+
+	/**
+	 * @param qntDiasReutilizacaoCodigoCota the qntDiasReutilizacaoCodigoCota to set
+	 */
+	public void setQntDiasReutilizacaoCodigoCota(
+			Long qntDiasReutilizacaoCodigoCota) {
+		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
+	}
+	
+	
 	
 }

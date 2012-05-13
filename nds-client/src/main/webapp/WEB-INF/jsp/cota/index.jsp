@@ -1,6 +1,8 @@
 <head>
 <title>NDS - Novo Distrib</title>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
+
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
@@ -11,7 +13,7 @@
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
-<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
+
 
 <script language="javascript" type="text/javascript">
 	
@@ -20,6 +22,10 @@
 		$( "#tabpdv" ).tabs();
 
 		$("#descricaoPessoa").autocomplete({source: ""});
+		
+		$("#numCota").numeric();
+		
+		$("#txtCPF_CNPJ").numeric();
 	
 		$(".pessoasGrid").flexigrid({
 			preProcess: MANTER_COTA.executarPreProcessamento,
@@ -172,8 +178,6 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 
-	<jsp:include page="dialogCPF.jsp"/>
-	
-	<jsp:include page="dialogCNPJ.jsp"/>
+	<jsp:include page="dialogCota.jsp"/>
 	
 </body>

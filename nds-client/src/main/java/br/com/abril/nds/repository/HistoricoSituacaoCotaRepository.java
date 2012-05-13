@@ -31,5 +31,14 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	 * @return Total de registros
 	 */
 	Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro);
+	
+	/**
+	 * Retorna o ultimo histórico de status da cota inativo 
+	 * 
+	 * @param numeroCota - número da cota
+	 * 
+	 * @return HistoricoSituacaoCota 
+	 */
+	HistoricoSituacaoCota obterUltimoHistoricoInativo(Integer numeroCota);
 
 }

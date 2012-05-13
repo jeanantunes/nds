@@ -161,4 +161,17 @@ public interface CotaService {
 	 */
 	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
 	
+	/**
+	 * Salva os dados básicos da cota 
+	 * 
+	 * @param cotaDto
+	 */
+	Long salvarCota(CotaDTO cotaDto);
+	
+	void excluirCota(Long idCota);
+	
+	CotaDTO obterDadosCadastraisCota(Long idCota);
+	
+	Integer gerarNumeroSugestaoCota();
+	
 }

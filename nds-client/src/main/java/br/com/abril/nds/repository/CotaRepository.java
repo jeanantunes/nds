@@ -152,4 +152,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return Long
 	 */
 	Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro);
+	
+	Integer gerarSugestaoNumeroCota();
 }

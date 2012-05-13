@@ -3,11 +3,17 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 public class CotaDTO implements Serializable {
-
+	
+	public enum TipoPessoa {
+		JURIDICA,FISICA;
+	}
+	
 	/**
 	 * Serial version UID
 	 */
@@ -28,11 +34,17 @@ public class CotaDTO implements Serializable {
 	
 	private String email;
 	
-	private SituacaoCadastro status; 
+	private SituacaoCadastro status;
+	
+	private Long idCota;
 
 	/**
 	 * Atributos utilizados no cadastro da cota
 	 */
+	
+	private Long idBox;
+	
+	private TipoPessoa tipoPessoa;
 	
 	private Date dataInclusao;
 	
@@ -58,7 +70,7 @@ public class CotaDTO implements Serializable {
 
 	private Integer historicoSegundaCota;
 	
-	private Integer historicoterceiraCota;
+	private Integer historicoTerceiraCota;
 	
 	private BigDecimal historicoPrimeiraPorcentagem;
 	
@@ -66,9 +78,28 @@ public class CotaDTO implements Serializable {
 	
 	private BigDecimal historicoTerceiraPorcentagem;
 	
-	private String classificacaoSelecionada;
+	private ClassificacaoEspectativaFaturamento classificacaoSelecionada;
+	
+	private List<ItemDTO<String, String>> listaClassificacao;
+	
+	private String numeroCPF;
+
 	
 	
+	/**
+	 * @return the numeroCPF
+	 */
+	public String getNumeroCPF() {
+		return numeroCPF;
+	}
+
+	/**
+	 * @param numeroCPF the numeroCPF to set
+	 */
+	public void setNumeroCPF(String numeroCPF) {
+		this.numeroCPF = numeroCPF;
+	}
+
 	/**
 	 * @return the numeroCota
 	 */
@@ -165,6 +196,48 @@ public class CotaDTO implements Serializable {
 	 */
 	public void setStatus(SituacaoCadastro status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the idCota
+	 */
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	/**
+	 * @param idCota the idCota to set
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	/**
+	 * @return the idBox
+	 */
+	public Long getIdBox() {
+		return idBox;
+	}
+
+	/**
+	 * @param idBox the idBox to set
+	 */
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
+	}
+
+	/**
+	 * @return the tipoPessoa
+	 */
+	public TipoPessoa getTipoPessoa() {
+		return tipoPessoa;
+	}
+
+	/**
+	 * @param tipoPessoa the tipoPessoa to set
+	 */
+	public void setTipoPessoa(TipoPessoa tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
 	}
 
 	/**
@@ -338,15 +411,15 @@ public class CotaDTO implements Serializable {
 	/**
 	 * @return the historicoterceiraCota
 	 */
-	public Integer getHistoricoterceiraCota() {
-		return historicoterceiraCota;
+	public Integer getHistoricoTerceiraCota() {
+		return historicoTerceiraCota;
 	}
 
 	/**
 	 * @param historicoterceiraCota the historicoterceiraCota to set
 	 */
-	public void setHistoricoterceiraCota(Integer historicoterceiraCota) {
-		this.historicoterceiraCota = historicoterceiraCota;
+	public void setHistoricoTerceiraCota(Integer historicoterceiraCota) {
+		this.historicoTerceiraCota = historicoterceiraCota;
 	}
 
 	/**
@@ -397,18 +470,33 @@ public class CotaDTO implements Serializable {
 	/**
 	 * @return the classificacaoSelecionada
 	 */
-	public String getClassificacaoSelecionada() {
+	public ClassificacaoEspectativaFaturamento getClassificacaoSelecionada() {
 		return classificacaoSelecionada;
 	}
 
 	/**
 	 * @param classificacaoSelecionada the classificacaoSelecionada to set
 	 */
-	public void setClassificacaoSelecionada(String classificacaoSelecionada) {
+	public void setClassificacaoSelecionada(
+			ClassificacaoEspectativaFaturamento classificacaoSelecionada) {
 		this.classificacaoSelecionada = classificacaoSelecionada;
 	}
 
-	
+	/**
+	 * @return the listaClassificacao
+	 */
+	public List<ItemDTO<String, String>> getListaClassificacao() {
+		return listaClassificacao;
+	}
+
+	/**
+	 * @param listaClassificacao the listaClassificacao to set
+	 */
+	public void setListaClassificacao(
+			List<ItemDTO<String, String>> listaClassificacao) {
+		this.listaClassificacao = listaClassificacao;
+	}
+
 	
 	
 }

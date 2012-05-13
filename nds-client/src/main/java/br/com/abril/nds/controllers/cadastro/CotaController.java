@@ -17,18 +17,22 @@ import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -38,6 +42,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -80,6 +86,9 @@ public class CotaController {
 	
 	@Autowired
 	private PdvController pdvController;
+	
+	@Autowired
+	private PessoaJuridicaService pessoaJuridicaService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
@@ -281,57 +290,88 @@ public class CotaController {
 	}
 	
 	@Post
+	@Path("/obterDadosCNPJ")
+	public void obterDadosCNPJ(String numeroCnpj){
+		
+		if(numeroCnpj!= null){
+			
+			numeroCnpj = numeroCnpj.replace(".", "").replace("-", "").replace("/", "");
+			
+			PessoaJuridica pessoaJ = pessoaJuridicaService.buscarPorCnpj(numeroCnpj.trim());
+			
+			CotaDTO cotaDTO = new CotaDTO();
+			
+			if(pessoaJ!= null){
+				cotaDTO.setInscricaoEstadual(pessoaJ.getInscricaoEstadual());
+				cotaDTO.setInscricaoMunicipal(pessoaJ.getInscricaoMunicipal());
+				cotaDTO.setEmail(pessoaJ.getEmail());
+				cotaDTO.setNomeFantasia(pessoaJ.getNomeFantasia());
+				cotaDTO.setRazaoSocial(pessoaJ.getRazaoSocial());	
+			}
+			
+			result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+		}
+		else{
+			result.use(Results.json()).from("", "result").recursive().serialize();
+		}
+
+	}
+	
+	@Post
 	@Path("/incluirNovoCNPJ")
-	public void prepararDadosInclusaoCotaCNPJ(){
+	public void prepararDadosInclusaoCota(){
 		
 		DadosCotaVO dadosCotaVO = new DadosCotaVO();
-		
-		//TODO obter sugestaao numero de cota
-		dadosCotaVO.setNumeroSugestaoCota(1234);
-		
+	
+		dadosCotaVO.setNumeroSugestaoCota(cotaService.gerarNumeroSugestaoCota());	
 		dadosCotaVO.setDataInicioAtividade(DateUtil.formatarDataPTBR(new Date()));
 		dadosCotaVO.setStatus(SituacaoCadastro.PENDENTE.toString());
-		
-		//TODO obter lista de Classificação
-		
-		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
-		listaClassificacao.add(new ItemDTO<String, String>("1", "AA - Faturamento - Mais de 1 PDV"));
-		listaClassificacao.add(new ItemDTO<String, String>("2", "A - Faturamento Acima de R$ 3.500,00"));
-		listaClassificacao.add(new ItemDTO<String, String>("3", "B - Faturamento entre R$ 1.500,00 - R$ 3.499"));
-		listaClassificacao.add(new ItemDTO<String, String>("4", "C - Faturamento Abaixo R$ 1.499,00"));
-		
-		dadosCotaVO.setListaClassificacao(listaClassificacao);
+		dadosCotaVO.setListaClassificacao(getListaClassificacao());
 		
 		result.use(Results.json()).from(dadosCotaVO, "result").recursive().serialize();
+	}
+	
+	private List<ItemDTO<String, String>> getListaClassificacao(){
+		
+		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
+		
+		for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
+			
+			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+		}
+		
+		return listaClassificacao;
 	}
 	
 	@Post
 	@Path("/salvarCotaCNPJ")
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
 		
-		//TODO salvar as informações de cota
+		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
+		cotaDTO.setNumeroCnpj(cotaDTO.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		Long idCota = cotaService.salvarCota(cotaDTO);
+		cotaDTO.setIdCota(idCota);
+		
+		result.use(Results.json()).from(cotaDTO, "result").serialize();
 	}
 
 	@Post
 	@Path("/editar")
-	public void editar(Integer numeroCota){
+	public void editar(Long idCota){
 		
-		//TODO implementar a parte de edicao dos dados
-		
-		Boolean pessoaFisica = Boolean.TRUE;
-		
-		result.use(Results.json()).from(pessoaFisica.toString(),"result").serialize();
+		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
+		cotaDTO.setListaClassificacao(getListaClassificacao());
+	
+		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
 	
 	@Post
 	@Path("/excluir")
-	public void excluir(Integer numeroCota){
-		
-		//TODO chamar metodo de exclusão da cota 
+	public void excluir(Long idCota){
+			
+		cotaService.excluirCota(idCota); 
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
@@ -348,30 +388,40 @@ public class CotaController {
 			if(list!= null && !list.isEmpty()){
 				
 				fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-				
-				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-						Constantes.PARAM_MSGS).recursive().serialize();
 			}
-			else{
-		
-				result.use(Results.json()).from("","result").serialize();
-			}	
 		}else {
 			
 			fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-					Constantes.PARAM_MSGS).recursive().serialize();
 		}
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/salvarDescontos")
-	public void salvarDescontos(List<Long> descontos){
+	public void salvarDescontos(List<Long> descontos,Long idCota){
 		
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/salvarEnderecos")
+	public void salvarEnderecos(Long idCota){
+		
+		processarEnderecosCota(idCota);
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/salvarTelefones")
+	public void salvarTelefones(Long idCota){
+		
+		processarTelefonesCota(idCota);
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
 	@Post
@@ -478,6 +528,7 @@ public class CotaController {
 		for(CotaDTO dto : listaCotas){
 			
 			cotaVO = new CotaVO();
+			cotaVO.setIdCota(dto.getIdCota());
 			cotaVO.setNumero(dto.getNumeroCota());
 			cotaVO.setNome(dto.getNomePessoa());
 			cotaVO.setContato( tratarValor( dto.getContato() ));

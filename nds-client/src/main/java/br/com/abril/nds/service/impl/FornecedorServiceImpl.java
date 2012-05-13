@@ -135,15 +135,23 @@ public class FornecedorServiceImpl implements FornecedorService {
 		Set<Fornecedor> listaFonecedores = new HashSet<Fornecedor>();
 		
 		if(fornecedores != null && !fornecedores.isEmpty()){
+			
+			Fornecedor fornecedor = null;
+			
 			for(Long  fn :  fornecedores ){
 				
-				listaFonecedores.add( fornecedorRepository.buscarPorId(fn) );
+				fornecedor = fornecedorRepository.buscarPorId(fn) ;
+				
+				if(fornecedor != null){
+					listaFonecedores.add( fornecedor );
+				}
+
 			}
 		}
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		cota.setFornecedores(listaFonecedores);
 		
-		cotaRepository.merge(cota);
+		cotaRepository.alterar(cota);
 	}
 }

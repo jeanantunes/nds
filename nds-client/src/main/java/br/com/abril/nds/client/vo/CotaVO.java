@@ -16,6 +16,8 @@ public class CotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -7996603170304278590L;
 
+	private Long idCota;
+	
 	private Integer numero;
 	
 	private String nome;
@@ -44,6 +46,20 @@ public class CotaVO implements Serializable {
 		
 	}
 	
+	
+	
+	public Long getIdCota() {
+		return idCota;
+	}
+
+
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+
+
 	/**
 	 * Construtor.
 	 * 

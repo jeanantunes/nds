@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -59,7 +61,7 @@ public class Cota implements Serializable {
 	@Column(name = "POSSUI_CONTRATO", nullable = false)
 	private boolean possuiContrato;
 	
-	@OneToMany(mappedBy = "cota")
+	@OneToMany(mappedBy = "cota", cascade={CascadeType.REMOVE})
 	private List<PDV> pdvs = new ArrayList<PDV>();
 
 	@Enumerated(EnumType.STRING)
@@ -82,7 +84,7 @@ public class Cota implements Serializable {
 	@OneToOne(mappedBy = "cota")
 	private ContratoCota contratoCota;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name = "BOX_ID")
 	private Box box; 
 	
@@ -120,13 +122,26 @@ public class Cota implements Serializable {
 	/**
 	 * Fornecedores associados à Cota
 	 */
-	@OneToMany
+	@ManyToMany
 	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
-	@Column(name  ="QNT_PDV")
-	private Integer qtdePDV;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "CLASSIFICACAO_ESPECTATIVA_FATURAMENTO")
+	private ClassificacaoEspectativaFaturamento classificacaoEspectativaFaturamento;
+	
+	@Embedded
+	private ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica;
+	
+	@OneToOne(mappedBy = "cota",cascade={CascadeType.REMOVE})
+	private BaseReferenciaCota baseReferenciaCota;
+	
+	@OneToMany(cascade={CascadeType.REMOVE})
+	@JoinTable(name = "COTA_TIPO_DESCONTO", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "TIPO_DESCONTO_ID")})
+	private Set<TipoDesconto> tiposDescontoCota;
+	
 	
 	public Long getId() {
 		return id;
@@ -284,14 +299,6 @@ public class Cota implements Serializable {
 		this.fornecedores = fornecedores;
 	}
 
-	public Integer getQtdePDV() {
-		return qtdePDV;
-	}
-	
-	public void setQtdePDV(Integer qtdePDV) {
-		this.qtdePDV = qtdePDV;
-	}
-
 	public Set<TelefoneCota> getTelefones() {
 		return telefones;
 	}
@@ -299,13 +306,72 @@ public class Cota implements Serializable {
 	public void setTelefones(Set<TelefoneCota> telefones) {
 		this.telefones = telefones;
 	}
+	
+	/**
+	 * @return the parametrosCotaNotaFiscalEletronica
+	 */
+	public ParametrosCotaNotaFiscalEletronica getParametrosCotaNotaFiscalEletronica() {
+		return parametrosCotaNotaFiscalEletronica;
+	}
 
+	/**
+	 * @param parametrosCotaNotaFiscalEletronica the parametrosCotaNotaFiscalEletronica to set
+	 */
+	public void setParametrosCotaNotaFiscalEletronica(
+			ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica) {
+		this.parametrosCotaNotaFiscalEletronica = parametrosCotaNotaFiscalEletronica;
+	}
+
+	/**
+	 * @return the classificacaoEspectativaFaturamento
+	 */
+	public ClassificacaoEspectativaFaturamento getClassificacaoEspectativaFaturamento() {
+		return classificacaoEspectativaFaturamento;
+	}
+
+	/**
+	 * @param classificacaoEspectativaFaturamento the classificacaoEspectativaFaturamento to set
+	 */
+	public void setClassificacaoEspectativaFaturamento(
+			ClassificacaoEspectativaFaturamento classificacaoEspectativaFaturamento) {
+		this.classificacaoEspectativaFaturamento = classificacaoEspectativaFaturamento;
+	}
+	
+	/**
+	 * @return the baseReferenciaCota
+	 */
+	public BaseReferenciaCota getBaseReferenciaCota() {
+		return baseReferenciaCota;
+	}
+
+	/**
+	 * @param baseReferenciaCota the baseReferenciaCota to set
+	 */
+	public void setBaseReferenciaCota(BaseReferenciaCota baseReferenciaCota) {
+		this.baseReferenciaCota = baseReferenciaCota;
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
+	}
+
+	/**
+	 * @return the tiposDescontoCota
+	 */
+	public Set<TipoDesconto> getTiposDescontoCota() {
+		return tiposDescontoCota;
+	}
+
+	/**
+	 * @param tiposDescontoCota the tiposDescontoCota to set
+	 */
+	public void setTiposDescontoCota(Set<TipoDesconto> tiposDescontoCota) {
+		this.tiposDescontoCota = tiposDescontoCota;
 	}
 
 	/**
