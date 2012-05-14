@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -12,7 +13,6 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
-import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
 
 /**
@@ -42,9 +42,9 @@ public interface CotaGarantiaService {
 	 * @param notaPromissoria Nota Promissoria
 	 * @param idCota Id da Cota
 	 * @return
-	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
+	 * @throws ValidacaoException Caso ocorra uma violação de relacionamento na entidade.
 	 */
-	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws RelationshipRestrictionException;
+	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws ValidacaoException;
 	
 	/**
 	 * @return
@@ -58,18 +58,18 @@ public interface CotaGarantiaService {
 	 * @param listaImovel lista de imóveis
 	 * @param idCota Id da cota
 	 * @return
-	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
+	 * @throws ValidacaoException Caso ocorra uma violação de relacionamento na entidade.
 	 */
-	public abstract CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota) throws RelationshipRestrictionException;
+	public abstract CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota) throws ValidacaoException;
 	
 	/**
 	 * Salva no repositorio de dados a garantia de um cheque caução.
 	 * @param cheque Cheque
 	 * @param idCota Id da Cota
 	 * @return cotaGarantiaChequeCaucao salva no respositório.
-	 * @throws RelationshipRestrictionException Caso ocorra uma violação de relacionamento na entidade.
+	 * @throws ValidacaoException Caso ocorra uma violação de relacionamento na entidade.
 	 */
-	public abstract CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota) throws RelationshipRestrictionException;
+	public abstract CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota) throws ValidacaoException;
 
 	/**
 	 * @param nome
@@ -87,4 +87,7 @@ public interface CotaGarantiaService {
 	 * @see br.com.abril.nds.repository.FiadorRepository#buscarPorId(Long)
 	 */
 	public Fiador getFiador(Long idFiador, String doc);
+
+	public abstract void salvaFiador(Long idFiador, Long idCota)
+			throws ValidacaoException;
 }
