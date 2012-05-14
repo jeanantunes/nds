@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 @Entity
 @DiscriminatorValue(value = "COTA")
 public class ContratoCota extends Contrato implements Serializable {
@@ -16,7 +18,7 @@ public class ContratoCota extends Contrato implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = -2620583362349546771L;
-	
+	@JsonBackReference
 	@OneToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;

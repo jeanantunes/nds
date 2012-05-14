@@ -71,7 +71,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional(readOnly = true)
 	public CotaGarantia getByCota(Long idCota) {
-		return cotaGarantiaRepository.getByCota(idCota);
+		
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		return cotaGarantia;
 	}
 
 	/*
@@ -209,11 +211,18 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					"Ao menos um parametro deve ser diferente de null."));
 		}
 		if (fiador != null) {
-			fiador.getTelefonesFiador().size();
-			fiador.getGarantias().size();
-			fiador.getPessoa().getEnderecos().size();
+			initFiador(fiador);
 		}
 		return fiador;
+	}
+
+	/**
+	 * @param fiador
+	 */
+	private void initFiador(Fiador fiador) {
+		fiador.getTelefonesFiador().size();
+		fiador.getGarantias().size();
+		fiador.getPessoa().getEnderecos().size();
 	}
 	@Transactional
 	@Override
