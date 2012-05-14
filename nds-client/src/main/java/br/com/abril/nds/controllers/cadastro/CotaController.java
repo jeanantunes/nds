@@ -348,7 +348,6 @@ public class CotaController {
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
-		cotaDTO.setNumeroCnpj(cotaDTO.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
 		
 		Long idCota = cotaService.salvarCota(cotaDTO);
 		cotaDTO.setIdCota(idCota);

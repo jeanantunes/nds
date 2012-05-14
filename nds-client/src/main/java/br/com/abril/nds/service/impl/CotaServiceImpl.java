@@ -61,6 +61,7 @@ import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -754,16 +755,21 @@ public class CotaServiceImpl implements CotaService {
 			
 			CPFValidator cpfValidator = new CPFValidator();
 			try{
-				//cpfValidator.assertValid(cotaDto.getN);
+				cpfValidator.assertValid(cotaDto.getNumeroCPF());
 				
 			}catch(InvalidStateException e){
 				throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF inválido!");
 			}
 		}
 		
+		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"E-mail inválido!");
+		}
 		
+		if( cotaDto.getEmailNF()!= null && !cotaDto.getEmailNF().isEmpty() && !Util.validarEmail(cotaDto.getEmailNF())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"E-mail NF-e inválido!");
+		}
 		
-
 	}
 
 	private void processarDadosPDV(Cota cota,CotaDTO cotaDTO) {
@@ -869,7 +875,7 @@ public class CotaServiceImpl implements CotaService {
 	    	
 	    	if( TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
 	    		
-	    		pessoa  = pessoaJuridicaRepository.buscarPorCnpj(cotaDto.getNumeroCnpj());
+	    		pessoa  = pessoaJuridicaRepository.buscarPorCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
 	    		
 	    		if(pessoa == null){
 	    			pessoa = new PessoaJuridica();
@@ -881,7 +887,7 @@ public class CotaServiceImpl implements CotaService {
 	    
     	if ( pessoa instanceof  PessoaJuridica  ){
     		
-    		((PessoaJuridica) pessoa).setCnpj(cotaDto.getNumeroCnpj());
+    		((PessoaJuridica) pessoa).setCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
     		((PessoaJuridica) pessoa).setInscricaoEstadual(cotaDto.getInscricaoEstadual());
     		((PessoaJuridica) pessoa).setInscricaoMunicipal(cotaDto.getInscricaoMunicipal());
     		((PessoaJuridica) pessoa).setNomeFantasia(cotaDto.getNomeFantasia());

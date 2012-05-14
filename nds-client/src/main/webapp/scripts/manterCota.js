@@ -333,11 +333,13 @@ var COTA_CNPJ = {
 		
 	novoCNPJ:function(){
 		
-		$("#tabCota" ).tabs( "option", "enabled", [] );
+		$( "#tabCota" ).tabs({ selected: 0 });
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 		MANTER_COTA.idCota="";
 		MANTER_COTA.numeroCota="";
+		
+		COTA_CNPJ.limparCampos();
 		
 		$.postJSON(
 				contextPath + "/cadastro/cota/incluirNovoCNPJ",
@@ -359,7 +361,9 @@ var COTA_CNPJ = {
 	
 	editarCNPJ:function(result){
 		
-		$("#tabCota" ).tabs( "option", "enabled", [9] );
+		COTA_CNPJ.limparCampos();
+		
+		$( "#tabCota" ).tabs({ selected:0 });
 		
 		$("#numeroCota").val(result.numeroCota);
 		$("#email").val(result.email);
@@ -405,11 +409,39 @@ var COTA_CNPJ = {
 			
 					MANTER_COTA.idCota = result.idCota;
 					MANTER_COTA.numeroCota = result.numeroCota;
+					
 					callback();
 				},
 				null,
 				true
 		);
+	},
+	
+	limparCampos:function(){
+		
+		$("#numeroCota").val("");
+		$("#email").val("");
+		$("#status").val("");
+		$("#dataInclusao").html("");
+		$("#razaoSocial").val("");
+		$("#nomeFantasia").val("");
+		$("#numeroCnpj").val("");
+		$("#inscricaoEstadual").val("");
+		$("#inscricaoMunicipal").val("");
+		$("#emailNF").val("");
+		$("#emiteNFE").attr("checked", null);
+		$("#classificacaoSelecionada").val("");
+		$("#historicoPrimeiraCota").val("");
+		$("#historicoPrimeiraPorcentagem").val("" );
+		$("#historicoSegundaCota").val("");
+		$("#historicoSegundaPorcentagem").val("");
+		$("#historicoTerceiraCota").val("");
+		$("#historicoTerceiraPorcentagem").val("");
+		$("#periodoCotaDe").val("");
+		$("#periodoCotaAte").val("");
+		
+		clearMessageDialogTimeout(null);
+		
 	},
 	
 	carregarDadosCNPJ: function(idCampo){

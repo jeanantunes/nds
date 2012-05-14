@@ -549,11 +549,23 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
-			query.setParameter("nomeCota", filtro.getNomeCota() + "%");
+			query.setParameter("nomeCota",  "%" + filtro.getNomeCota() + "%" );
 		}
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				CotaDTO.class));
+		
+		if (filtro.getPaginacao() != null) {
+
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao()
+						.getQtdResultadosPorPagina());
+			}
+		}
 
 		return query.list();
 	}
@@ -578,7 +590,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
-			query.setParameter("nomeCota", filtro.getNomeCota() + "%");
+			query.setParameter("nomeCota", "%" + filtro.getNomeCota() + "%");
 		}
 
 		return (Long) query.uniqueResult();
@@ -628,7 +640,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(pessoa.nome) like upper(:nomePessoa) OR  upper(pessoa.razaoSocial) like  upper(:nomePessoa ) )");
+			hql.append(" AND ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
 		}
 
 		return hql.toString();

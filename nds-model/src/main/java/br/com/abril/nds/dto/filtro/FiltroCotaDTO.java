@@ -26,6 +26,7 @@ public class FiltroCotaDTO implements Serializable {
 	public FiltroCotaDTO(Integer numeroCota, String nomeCota ,String numeroCpfCnpj) {
 		this.numeroCota = numeroCota;
 		this.numeroCpfCnpj = numeroCpfCnpj;
+		this.nomeCota = nomeCota;
 	}
 	
 	public enum OrdemColuna{
@@ -45,6 +46,12 @@ public class FiltroCotaDTO implements Serializable {
 		}
 		
 		public String getDescricao(){
+			return this.descricao;
+		}
+		
+		@Override
+		public String toString() {
+			
 			return this.descricao;
 		}
 	}
@@ -119,6 +126,57 @@ public class FiltroCotaDTO implements Serializable {
 	 */
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime * result
+				+ ((numeroCpfCnpj == null) ? 0 : numeroCpfCnpj.hashCode());
+		result = prime * result
+				+ ((ordemColuna == null) ? 0 : ordemColuna.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroCotaDTO other = (FiltroCotaDTO) obj;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		if (numeroCpfCnpj == null) {
+			if (other.numeroCpfCnpj != null)
+				return false;
+		} else if (!numeroCpfCnpj.equals(other.numeroCpfCnpj))
+			return false;
+		if (ordemColuna != other.ordemColuna)
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		return true;
 	}
 	
 	

@@ -68,7 +68,7 @@
             	<input type="text" name="cotaDTO.historicoPrimeiraCota" id="historicoPrimeiraCota" style="width:70px; margin-right:10px;" /></td>
             <td width="30" align="center">%</td>
             <td width="132">
-            	<input type="text" name="cotaDTO.historicoPrimeiraPorcentagem" id="historicoPrimeiraPorcentagem" maxlength="3" style="width:50px;" /></td>
+            	<input type="text" name="cotaDTO.historicoPrimeiraPorcentagem" id="historicoPrimeiraPorcentagem" maxlength="4" style="width:50px;" /></td>
             </tr>
           <tr>
             <td>Cota:</td>
@@ -76,7 +76,7 @@
             	<input type="text" name="cotaDTO.historicoSegundaCota" id="historicoSegundaCota" style="width:70px; margin-right:10px;" /></td>
             <td align="center">%</td>
             <td>
-            	<input type="text" name="cotaDTO.historicoSegundaPorcentagem" id="historicoSegundaPorcentagem" maxlength="3" style="width:50px;" /></td>
+            	<input type="text" name="cotaDTO.historicoSegundaPorcentagem" id="historicoSegundaPorcentagem" maxlength="4" style="width:50px;" /></td>
             </tr>
           <tr>
             <td>Cota:</td>
@@ -84,7 +84,7 @@
             	<input type="text" name="cotaDTO.historicoTerceiraCota" id="historicoTerceiraCota" style="width:70px; margin-right:10px;" /></td>
             <td align="center">%</td>
             <td>
-            	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagem" maxlength="3" style="width:50px;" /></td>
+            	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagem" maxlength="4" style="width:50px;" /></td>
           </tr>
         </table></td>
       </tr>

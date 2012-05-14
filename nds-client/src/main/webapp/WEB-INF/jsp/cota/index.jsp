@@ -76,7 +76,7 @@
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numero",
