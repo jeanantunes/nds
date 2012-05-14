@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +72,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional(readOnly = true)
 	public CotaGarantia getByCota(Long idCota) {
-		return cotaGarantiaRepository.getByCota(idCota);
+		
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		return cotaGarantia;
 	}
 
 	/*
@@ -160,16 +163,15 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 			cotaGarantiaImovel = new CotaGarantiaImovel();
 			cotaGarantiaImovel.setCota(getCota(idCota));
-		
-		} else {
 			
-			this.cotaGarantiaRepository.remover(cotaGarantiaImovel);
 		}
-
+		
+		cotaGarantiaImovel.setImoveis(new ArrayList<Imovel>());
+		cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.merge(cotaGarantiaImovel);		
 		cotaGarantiaImovel.setData(new Date());
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
-
+		
 		return (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
 	}
@@ -209,15 +211,22 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					"Ao menos um parametro deve ser diferente de null."));
 		}
 		if (fiador != null) {
-			fiador.getTelefonesFiador().size();
-			fiador.getGarantias().size();
-			fiador.getPessoa().getEnderecos().size();
+			initFiador(fiador);
 		}
 		return fiador;
 	}
+
+	/**
+	 * @param fiador
+	 */
+	private void initFiador(Fiador fiador) {
+		fiador.getTelefonesFiador().size();
+		fiador.getGarantias().size();
+		fiador.getPessoa().getEnderecos().size();
+	}
 	@Transactional
 	@Override
-	public void salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
+	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
 		CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantiaRepository
 				.getByCota(idCota);
 		if (cotaGarantiaFiador == null) {
@@ -233,8 +242,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					"Fiador "+idFiador+ " não existe."));
 		}
 		cotaGarantiaFiador.setFiador(fiador);
+		cotaGarantiaFiador.setData(new Date());
 		
-		cotaGarantiaRepository.merge(cotaGarantiaFiador);
+		return (CotaGarantiaFiador)cotaGarantiaRepository.merge(cotaGarantiaFiador);
 
 	}
 

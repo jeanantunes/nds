@@ -47,6 +47,7 @@ public class Imovel implements Serializable {
 	@Column(name="OBSERVACAO")
 	private String observacao;
 	
+	
 	/**
 	 * @return the id
 	 */
