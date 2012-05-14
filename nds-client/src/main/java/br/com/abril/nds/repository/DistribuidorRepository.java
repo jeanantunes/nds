@@ -1,8 +1,10 @@
 package br.com.abril.nds.repository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -33,5 +35,10 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	 * @return
 	 */
 	public List<TipoGarantia> obtemTiposGarantiasAceitas();
+
+	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(Date dataDe,
+			Date dataAte, String codigoFornecedor, String codigoProduto,
+			String nomeProduto, String edicaoProduto, String codigoEditor,
+			String codigoCota, String nomeCota, String municipio);
 
 }
