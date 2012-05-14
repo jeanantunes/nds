@@ -968,6 +968,12 @@ public class TransportadorController {
 			}
 		}
 		
+		for (AssociacaoVeiculoMotoristaRotaDTO dto : listaSalvar){
+			
+			dto.setVeiculo(this.obterVeiculoEditado(dto.getVeiculo()));
+			dto.setMotorista(this.obterMotoristaEditado(dto.getMotorista()));
+		}
+		
 		listaExibir.addAll(listaSalvar);
 		
 		return listaExibir;
