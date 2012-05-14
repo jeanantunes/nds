@@ -355,5 +355,3 @@ $(function() {
 	</div>
 
 </body>
-
-</html>

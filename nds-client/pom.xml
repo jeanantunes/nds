@@ -131,6 +131,11 @@
 			<artifactId>barbecue</artifactId>
 		</dependency>
 
+        <dependency>
+        	<groupId>com.fasterxml</groupId>
+        	<artifactId>jackson-module-hibernate</artifactId>
+        	<version>1.9.1</version>
+        </dependency>
 	</dependencies>
 
 	<build>	

@@ -39,9 +39,12 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -231,7 +234,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja);
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
@@ -280,6 +283,48 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(mecJorn);
 		
 		/**
+		 * CHAMADA ENCALHE
+		 */
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				veja1, 
+				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+
+		save(chamadaEncalhe);
+		
+		/**
+		 * CHAMADA ENCALHE COTA
+		 */
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe, 
+				false, 
+				cotaManoel, 
+				BigDecimal.TEN);
+		save(chamadaEncalheCota);
+		
+		/**
+		 * CONTROLE CONFERENCIA ENCALHE 
+		 */
+		ControleConferenciaEncalhe controleConferenciaEncalhe = 
+				Fixture.controleConferenciaEncalhe(StatusOperacao.EM_ANDAMENTO, Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		save(controleConferenciaEncalhe);
+		
+		
+		/**
+		 * CONTROLE CONFERENCIA ENCALHE COTA
+		 */
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
+				controleConferenciaEncalhe, 
+				cotaManoel, 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				StatusOperacao.CONCLUIDO);
+		
+		save(controleConferenciaEncalheCota);
+		
+		
+		/**
 		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
 		 */
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -290,7 +335,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				estoqueProdutoCota,
 				new BigDecimal(12), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 
@@ -300,7 +345,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(25), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		
@@ -310,7 +355,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(14), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		
@@ -320,7 +365,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
@@ -329,7 +374,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		
@@ -339,7 +384,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		
@@ -361,7 +406,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja);
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
@@ -403,6 +448,36 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(chamadaEncalhe);
 		
 		/**
+		 * CHAMADA ENCALHE COTA
+		 */
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe, 
+				false, 
+				cotaManoel, 
+				BigDecimal.TEN);
+		save(chamadaEncalheCota);
+		
+		/**
+		 * CONTROLE CONFERENCIA ENCALHE 
+		 */
+		ControleConferenciaEncalhe controleConferenciaEncalhe = 
+				Fixture.controleConferenciaEncalhe(StatusOperacao.EM_ANDAMENTO, Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		save(controleConferenciaEncalhe);
+		
+		
+		/**
+		 * CONTROLE CONFERENCIA ENCALHE COTA
+		 */
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
+				controleConferenciaEncalhe, 
+				cotaManoel, 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				StatusOperacao.CONCLUIDO);
+		
+		save(controleConferenciaEncalheCota);		
+		/**
 		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
 		 */
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -415,7 +490,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -428,7 +503,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		
@@ -442,7 +517,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 	
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 			
 	}

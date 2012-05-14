@@ -1,73 +1,426 @@
 package br.com.abril.nds.service.impl;
 
-public class ConferenciaEncalheServiceImpl {
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
+import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
+
+@Service
+public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
 	
-	/**
-	 * Metodos a serem implementados na conferencia de encalhe EMS 005
+//TODO - Remover apos testes
+	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheMockada() {
+		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = new ArrayList<ConferenciaEncalheDTO>();
+		
+		int contador = 0;
+		
+		ConferenciaEncalheDTO conferencia = null;
+		
+		while(contador++ < 10) {
+			
+			conferencia = new ConferenciaEncalheDTO();
+			
+			conferencia.setCodigo(""+contador);
+			conferencia.setCodigoDeBarras(""+contador);
+			conferencia.setCodigoSM(1L+contador);
+			conferencia.setDesconto(BigDecimal.ONE);
+			conferencia.setDia(1);
+			conferencia.setJuramentada(contador < 5 ? true : false);
+			conferencia.setNomeProduto("PRODUTONOME_"+contador);
+			conferencia.setNumeroEdicao(1L+contador);
+			conferencia.setPrecoCapa(BigDecimal.ONE);
+			conferencia.setQtdExemplar(BigDecimal.TEN);
+			conferencia.setValorTotal(BigDecimal.ONE);
+			
+			listaConferenciaEncalhe.add(conferencia);
+			
+		}
+		
+		return listaConferenciaEncalhe;
+		
+	}
+	
+	private List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCota(Integer numeroCota) {
+		
+		//TODO implementar logica
+		return null;
+		
+//		String[] tipoOperacao = {"DEBITO", "CREDITO"};
+//		
+//		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = new ArrayList<DebitoCreditoCotaDTO>();
+//		
+//		int contador = 0;
+//		
+//		DebitoCreditoCotaDTO debitoCreditoCota = null;
+//		
+//		while(contador++ < 10) {
+//			
+//			debitoCreditoCota = new DebitoCreditoCotaDTO();
+//			
+//			debitoCreditoCota.setTipoLancamento(tipoOperacao[(contador%2)]);
+//			debitoCreditoCota.setValor(new BigDecimal(contador));
+//			debitoCreditoCota.setDataLancamento(new Date());
+//			debitoCreditoCota.setDataVencimento(new Date());
+//			debitoCreditoCota.setNumeroCota(123);
+//	
+//			listaDebitoCreditoCota.add(debitoCreditoCota);
+//			
+//		}
+//		
+//		return listaDebitoCreditoCota;
+		
+	}
+	
+	@Autowired
+	private BoxRepository boxRepository;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
+	
+	@Autowired 
+	private DistribuidorService distribuidorService; 
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
+	
+	@Autowired
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterListaBoxEncalhe()
 	 */
+	@Transactional(readOnly = true)
+	public List<Box> obterListaBoxEncalhe(Long idUsuario) {
 	
-	// obterListaBoxEncalhe()
+		List<Box> listaBoxEncalhe = boxRepository.obterListaBox(TipoBox.RECOLHIMENTO);
+		
+		if (idUsuario == null){
+			
+			return listaBoxEncalhe;
+		}
+		
+		String codigoBoxPadraoUsuario = this.obterBoxPadraoUsuario(idUsuario);
+		
+		if (codigoBoxPadraoUsuario == null){
+			
+			return listaBoxEncalhe;
+		}
+		
+		List<Box> boxes = new ArrayList<Box>();
+			
+		for (Box box : listaBoxEncalhe){
+			
+			if (box.getCodigo().equals(codigoBoxPadraoUsuario)){
+				
+				boxes.add(box);
+				listaBoxEncalhe.remove(box);
+				break;
+			}
+		}
+		
+		boxes.addAll(listaBoxEncalhe);
+		
+		return boxes;
+	}
 	
-	// obterBoxPadraoUsuario()
-	
-	// verificarCotaProcessada() - 			 Verifica se o encalhe para esta cota ja foi conferido.
-	//										 Caso positivo retorna true.
-	//                                       Caso não haja chamada de encalhe prevista ou não pocessa reabrir
-	//									     conferencia devido a data de operacao lancara uma exception.
-	
-	// verificarCotaEmiteNFe() - 			 Verifica cota emite NFe.
-	//										 Caso positivo retorna true
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterBoxPadraoUsuario(java.lang.Long)
+	 */
+	public String obterBoxPadraoUsuario(Long idUsuario) {
+		
+		/*List<Box> listaBoxEncalhe = boxRepository.obterBoxUsuario(idUsuario, TipoBox.RECOLHIMENTO);
+		
+		if(listaBoxEncalhe != null && !listaBoxEncalhe.isEmpty()) {
+			
+			Box boxRecolhimentoUsuario = listaBoxEncalhe.get(0);
+			
+			return boxRecolhimentoUsuario.getCodigo();
+		}*/
+		
+		if (idUsuario == null){
+			
+			return null;
+		}
+		
+		return this.boxRepository.obterCodigoBoxPadraoUsuario(idUsuario);
+		
+	}
 
-	// inserirDadosNotaFiscalCota()
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#verificarChamadaEncalheCota(java.lang.Integer)
+	 */
+	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
+		
+		if(controleConferenciaEncalheCota!=null) {
+			throw new ConferenciaEncalheExistenteException();
+		}
+		
+		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+		
+		boolean encalheConferido = false;
+		
+		boolean indPesquisaCEFutura = true;
+		
+		Long qtdeRegistroChamadaEncalhe = 
+				chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, null, indPesquisaCEFutura, encalheConferido);
+		
+		if(qtdeRegistroChamadaEncalhe == 0L) {
+			throw new ChamadaEncalheCotaInexistenteException();
+		}
+		
+	}
 	
-	//
-	// obterDadosEncalheCota() - obtem os dados sumarizados de encalhe da cota, e se esta estiver
-	//						  	 com sua conferencia reaberta retorna tambem a lista do que ja foi
-	//						  	 conferido.
-	//	
-	//	   Dados sumarizado de encalhe:
-	//
-	//		->  Reparte,  
-	//		->  ( - ) Encalhe, 
-	//		->  Valor Venda Dia, 
-	//		->  ( + )Outros valores, (Carregar tmb lista de outros valores)
-	//		->  ( = )Valor a pagar R$
 	
-	//	verificarProdutoExistenciaChamadaEncalhe() - cada produto que é adicionado na conferencia de encalhe dever ser
-	//												 verificado se existe uma chamada de encalhe para o mesmo.
-	//
-	//												 Retorna dados do produto caso o mesmo esteja na chamada de encalhe em andamento.
-	
-	
-	
-	// salvarDadosConferenciaEncalhe()
-	
-	// finalizarConferenciaEncalhe() - (caso valor nota esteja diferente do encalhe requisitar correcao)
-	
-	// - gerarDiferencas() - caso existam diferencas
-	
-	//    					Se diferenca maior (valor nota maior que valor fisico do encalhe)
-	//					    	Disparar a EMS NFe de Venda
-	//
-	//						Se diferenca menor (valor nota menor que valor fisico do encalhe).
-	//							Disparar workflow administrativo NFe devolucao de remessa em consignacao pelo PDV
-	//							apenas da diferenca...
-	
-	
-	// - gerarDivida() - 
-	
-	//   - gerarDividaChamadaEncalheAntecipada()
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#validarExistenciaChamadaEncalheParaCotaProdutoEdicao(java.lang.Integer, java.lang.Long)
+	 */
+	public void validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
+		
+		boolean encalheConferido = false;
+		
+		boolean indPesquisaCEFutura = true;
+
+		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacao = distribuidor.getDataOperacao();
+		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
+		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+		
+		Long qtdeRegistroChamadaEncalhe = 
+				chamadaEncalheCotaRepository.
+				obterQtdListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido);
+		
+		
+		if(qtdeRegistroChamadaEncalhe == 0) {
+			throw new ChamadaEncalheCotaInexistenteException();
+		}
+		
+		
+	}
+
 
 	
-	// - gerarDocumentosConferenciaEncalhe()- Apos finalizar conferencia de encalhe sera verificado
-	//									     quais documentos serao gerados e se os mesmos serao impressos
-	//										 ou enviados por email.
-	//		- gerarSlip()
+	public boolean verificarCotaEmiteNFe() {
+		return false;
+	}
+
+	public void inserirDadosNotaFiscalCota() {
+	}
 	
-	//		- gerarBoleto()
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterInfoConferenciaEncalheCota(java.lang.Integer)
+	 */
+	@Transactional(readOnly = true)
+	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
+		
+		InfoConferenciaEncalheCota infoConfereciaEncalheCota = new InfoConferenciaEncalheCota();
+		
+		if(controleConferenciaEncalheCota!=null) {
+			
+			List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
+			
+			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+			infoConfereciaEncalheCota.setEncalhe(conferenciaEncalheRepository.obterValorTotalConferenciaEncalheCota(controleConferenciaEncalheCota.getId()));
+			
+			
+		} else {
+			
+			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
+			
+		}
+
+		BigDecimal reparte = null;//TODO calcularReparteCota(numeroCota);
+		
+		BigDecimal totalDebitoCreditoCota = null;//TODOcalcularTotalDebitoCreditoCota(numeroCota);
+		
+		BigDecimal valorPagar = null;//TODO calcularValorPagarCota(numeroCota);
+		
+		BigDecimal valorVendaDia = null;//TODO calcularVendaDiaCota(numeroCota);
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = obterListaDebitoCreditoCota(numeroCota);
+		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
+		
+		infoConfereciaEncalheCota.setReparte(reparte);
+		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(totalDebitoCreditoCota);
+		infoConfereciaEncalheCota.setValorPagar(valorPagar);
+		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
+		infoConfereciaEncalheCota.setListaConferenciaEncalhe(this.obterListaConferenciaEncalheMockada());
+		
+		return infoConfereciaEncalheCota;
+		
+	}
 	
-	//		- gerarRecibo()
+	
+	@Transactional(readOnly = true)
+	public ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (idProdutoEdicao == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+		}
+		
+		return produtoEdicao;
+	}
+	
+	@Transactional(readOnly = true)
+	public ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (codigoDeBarras == null || codigoDeBarras.trim().isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+		}
+		
+		return produtoEdicao;
+	}
+	
+	@Transactional(readOnly = true)
+	public ProdutoEdicao pesquisarProdutoEdicaoPorSM(Integer numeroCota, Long sm) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (sm == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSM(sm);
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+		}
+		
+		return produtoEdicao;
+	}
+	
+	/*
+	 * Traz uma lista de codigoProduto - nomeProduto -  numeroEdicao
+	 */
+	public Object obterListaDadosProdutoEdicao(String codigoOuNome) {
+		//TODO
+		return null;
+	}
 	
 	
+	
+	public void salvarDadosConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+	}
+	
+	// (caso valor nota esteja diferente do encalhe requisitar correcao)
+	public void finalizarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+	}
+	
+	private void gerarDiferencas() {
+		//TODO
+	}
+	
+	private void gerarDivida() {
+		
+	}
+	
+	private void gerarDividaChamadaEncalheAntecipada() {
+		
+	}
+	
+   /*
+	* Apos finalizar conferencia de encalhe sera verificado        
+	* quais documentos serao gerados e se os mesmos serao impressos
+	* ou enviados por email.                                       
+	*/
+	private void gerarDocumentosConferenciaEncalhe() {
+		//TODO
+	}
+	
+	private void gerarSlip() {
+		//TODO
+	}
+	
+	private void gerarBoleto() {
+		//TODO
+	}
+	
+	private void gerarRecibo() {
+		//TODO
+	}
 	
 }

@@ -65,7 +65,7 @@ public interface TransportadorService {
 	List<EnderecoAssociacaoDTO> buscarEnderecosTransportador(Long id, Set<Long> idsIgnorar);
 
 	List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(
-			Long idTransportador, Set<Long> idsIgnorar);
+			Long idTransportador, Set<Long> idsIgnorar, String sortname, String sortorder);
 
 	List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(String sortname, String sortorder);
 

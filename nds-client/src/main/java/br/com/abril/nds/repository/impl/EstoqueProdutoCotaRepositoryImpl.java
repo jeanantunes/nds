@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -48,6 +49,23 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		query.setMaxResults(1);
 		
 		return (EstoqueProdutoCota) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select estoqueProdutoCota ")
+		   .append(" from EstoqueProdutoCota estoqueProdutoCota ")
+		   .append(" where estoqueProdutoCota.produtoEdicao.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return query.list();
 	}
 	
 	public BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota) {

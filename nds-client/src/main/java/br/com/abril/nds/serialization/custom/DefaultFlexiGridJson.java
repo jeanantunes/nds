@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 @Component
 public class DefaultFlexiGridJson implements FlexiGridJson {
 	
-	 private XStreamSerializer serializer;
+	private XStreamSerializer serializer;
     private XStream xstream;
     private TableModel wrapper;
 

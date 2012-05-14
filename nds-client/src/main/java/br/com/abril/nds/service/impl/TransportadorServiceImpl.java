@@ -142,11 +142,11 @@ public class TransportadorServiceImpl implements TransportadorService {
 		if (listaAssociacaoRemover != null && !listaAssociacaoRemover.isEmpty()){
 		
 			this.associacaoVeiculoMotoristaRotaRepository.removerAssociacaoPorId(listaAssociacaoRemover);
-			
-			this.processarVeiculos(transportador, listaVeiculosAdicionar, listaVeiculosRemover);
-			
-			this.processarMotoristas(transportador, listaMotoristasAdicionar, listaMotoristasRemover);
 		}
+		
+		this.processarVeiculos(transportador, listaVeiculosAdicionar, listaVeiculosRemover);
+		
+		this.processarMotoristas(transportador, listaMotoristasAdicionar, listaMotoristasRemover);
 		
 		this.processarAssocicoes(transportador, listaAssociacaoAdicionar);
 	}
@@ -632,8 +632,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 			
 			this.motoristaRepository.removerMotoristas(transportador.getId(), null);
 			
-			this.transportadorRepository.remover(transportador);
-			
 			Set<Long> idsTelefone = new HashSet<Long>();
 			for (Telefone telefone : transportador.getPessoaJuridica().getTelefones()){
 				
@@ -884,14 +882,16 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(Long idTransportador, Set<Long> idsIgnorar){
+	public List<AssociacaoVeiculoMotoristaRota> buscarAssociacoesTransportador(Long idTransportador, Set<Long> idsIgnorar,
+			String sortname, String sortorder){
 		
 		if (idTransportador == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id transportador é obrigatório.");
 		}
 		
-		return this.associacaoVeiculoMotoristaRotaRepository.buscarAssociacoesTransportador(idTransportador, idsIgnorar);
+		return this.associacaoVeiculoMotoristaRotaRepository.buscarAssociacoesTransportador(
+				idTransportador, idsIgnorar, sortname, sortorder);
 	}
 
 	@Transactional(readOnly = true)

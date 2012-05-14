@@ -377,10 +377,24 @@ public class TransportadorController {
 			return this.obterVeiculosSessao();
 		} else {
 			
+			List<Veiculo> veiculosSalvar = this.obterVeiculosSessao();
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (Veiculo veiculoSalvar : veiculosSalvar){
+				
+				if (veiculoSalvar.getId() != null){
+					
+					idsIgnorar.add(veiculoSalvar.getId());
+				}
+			}
+			
+			idsIgnorar.addAll(this.obterVeiculosSessaoRemover());
+			
 			List<Veiculo> lista = 
 					this.transportadorService.buscarVeiculosPorTransportador(
 							idTransportadorEdicao, 
-							this.obterVeiculosSessaoRemover(),
+							idsIgnorar,
 							sortname,
 							sortorder);
 			
@@ -439,7 +453,7 @@ public class TransportadorController {
 		
 		this.httpSession.setAttribute(LISTA_VEICULOS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	private void validarDadosEntradaVeiculo(Veiculo veiculo) {
@@ -496,11 +510,27 @@ public class TransportadorController {
 	@Post
 	public void editarVeiculo(Long referencia){
 		
-		Veiculo veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
+		Veiculo veiculo = null;
+		
+		List<Veiculo> listaVeiculos = this.obterVeiculosSessao();
+		
+		for (Veiculo v : listaVeiculos){
+			
+			if ((v.getId().equals(referencia))){
+				
+				veiculo = v;
+				break;
+			}
+		}
 		
 		if (veiculo == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Veículo de Id: " + referencia + " não encontrado.");
+			veiculo = this.transportadorService.buscarVeiculoPorId(referencia);
+			
+			if (veiculo == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Veículo de Id: " + referencia + " não encontrado.");
+			}
 		}
 		
 		this.result.use(Results.json()).from(veiculo, "result").serialize();
@@ -582,10 +612,24 @@ public class TransportadorController {
 			return this.obterMotoristasSessao();
 		} else {
 			
+			List<Motorista> motoristasSalvar = this.obterMotoristasSessao();
+			
+			Set<Long> idsIgnorar = new HashSet<Long>();
+			
+			for (Motorista motoristaSalvar : motoristasSalvar){
+				
+				if (motoristaSalvar.getId() != null){
+					
+					idsIgnorar.add(motoristaSalvar.getId());
+				}
+			}
+			
+			idsIgnorar.addAll(this.obterMotoristasSessaoRemover());
+			
 			List<Motorista> lista = 
 					this.transportadorService.buscarMotoristasPorTransportador(
 							idTransportadorEdicao, 
-							this.obterMotoristasSessaoRemover(),
+							idsIgnorar,
 							sortname,
 							sortorder);
 			
@@ -644,7 +688,7 @@ public class TransportadorController {
 		
 		this.httpSession.setAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO, lista);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	private void validarDadosEntradaMotorista(Motorista motorista) {
@@ -710,11 +754,27 @@ public class TransportadorController {
 	@Post
 	public void editarMotorista(Long referencia){
 		
-		Motorista motorista = this.transportadorService.buscarMotoristaPorId(referencia);
+		Motorista motorista = null;
+		
+		List<Motorista> lista = this.obterMotoristasSessao();
+		
+		for (Motorista m : lista){
+			
+			if (m.getId().equals(referencia)){
+				
+				motorista = m;
+				break;
+			}
+		}
 		
 		if (motorista == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Motorista de Id: " + referencia + " não encontrado.");
+			motorista = this.transportadorService.buscarMotoristaPorId(referencia);
+			
+			if (motorista == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Motorista de Id: " + referencia + " não encontrado.");
+			}
 		}
 		
 		this.result.use(Results.json()).from(motorista, "result").serialize();
@@ -812,14 +872,14 @@ public class TransportadorController {
 			idsRotasRemovidas = this.transportadorService.buscarIdsRotasPorAssociacao(assocRemovidas);
 		}
 		
-		rotas: for (RotaRoteiroDTO rota : rotas){
+		for (RotaRoteiroDTO rota : rotas){
 			
 			for (AssociacaoVeiculoMotoristaRotaDTO dto : this.obterAssociacoesSalvarSessao()){
 				
 				if (dto.getRota().getIdRota().equals(rota.getIdRota())){
 					
 					rota.setDisponivel(false);
-					break rotas;
+					break;
 				} else {
 					
 					rota.setDisponivel(true);
@@ -890,7 +950,7 @@ public class TransportadorController {
 			}
 			
 			List<AssociacaoVeiculoMotoristaRota> listaAssocsBanco =
-					this.transportadorService.buscarAssociacoesTransportador(idTransportador, idsIgnorar);
+					this.transportadorService.buscarAssociacoesTransportador(idTransportador, idsIgnorar, sortname, sortorder);
 			
 			for (AssociacaoVeiculoMotoristaRota assocBanco : listaAssocsBanco){
 				
@@ -900,8 +960,8 @@ public class TransportadorController {
 				
 				AssociacaoVeiculoMotoristaRotaDTO dto = 
 						new AssociacaoVeiculoMotoristaRotaDTO(assocBanco.getId(), 
-								assocBanco.getVeiculo(), 
-								assocBanco.getMotorista(), 
+								this.obterVeiculoEditado(assocBanco.getVeiculo()), 
+								this.obterMotoristaEditado(assocBanco.getMotorista()), 
 								new  RotaRoteiroDTO(1L, assocBanco.getRota().getDescricaoRota(), assocBanco.getRota().getRoteiro().getDescricaoRoteiro()));
 				
 				listaExibir.add(dto);
@@ -911,6 +971,36 @@ public class TransportadorController {
 		listaExibir.addAll(listaSalvar);
 		
 		return listaExibir;
+	}
+	
+	private Veiculo obterVeiculoEditado(Veiculo veiculoParam){
+		
+		List<Veiculo> listaVeiculoSalvar = this.obterVeiculosSessao();
+		
+		for (Veiculo veiculo : listaVeiculoSalvar){
+			
+			if (veiculo.getId().equals(veiculoParam.getId())){
+				
+				return veiculo;
+			}
+		}
+		
+		return veiculoParam;
+	}
+	
+	private Motorista obterMotoristaEditado(Motorista motoristaParam){
+		
+		List<Motorista> listaMotoristaSalvar = this.obterMotoristasSessao();
+		
+		for (Motorista motorista : listaMotoristaSalvar){
+			
+			if (motorista.getId().equals(motoristaParam.getId())){
+				
+				return motorista;
+			}
+		}
+		
+		return motoristaParam;
 	}
 	
 	@Post

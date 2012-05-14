@@ -79,7 +79,7 @@ public class CotaController {
 	private HttpSession session;
 	
 	@Autowired
-	private FinanceiroController financeiroController;
+	private ParametroCobrancaCotaController financeiroController;
 	
 	@Autowired
 	private TipoEntregaService tipoEntregaService;

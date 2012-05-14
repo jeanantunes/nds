@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -35,6 +36,56 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		super(Box.class);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#obterListaBox(br.com.abril.nds.model.cadastro.TipoBox)
+	 */
+	public List<Box> obterListaBox(TipoBox tipoBox) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select box from Box box ");
+		
+		hql.append(" where ");
+		
+		hql.append(" box.tipoBox = :tipoBox ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoBox", tipoBox);
+		
+		return query.list();
+		
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#obterBoxUsuario(java.lang.Long, br.com.abril.nds.model.cadastro.TipoBox)
+	 */
+	public List<Box> obterBoxUsuario(Long idUsuario, TipoBox tipoBox) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select parametroUsuarioBox.box from ParametroUsuarioBox parametroUsuarioBox ");
+		
+		hql.append(" where ");
+		
+		hql.append(" parametroUsuarioBox.usuario.id = :idUsuario ");
+		
+		hql.append(" and parametroUsuarioBox.box.tipoBox = :tipoBox ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idUsuario", idUsuario);
+
+		query.setParameter("tipoBox", tipoBox);
+		
+		return query.list();
+		
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Box> obterBoxPorProduto(String codigoProduto) {
@@ -168,6 +219,19 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		
 		return query.list();
+	}
+
+	@Override
+	public String obterCodigoBoxPadraoUsuario(Long idUsuario) {
+		
+		StringBuilder hql = new StringBuilder("select p.box.codigo ");
+		hql.append(" from ParametroUsuarioBox p ")
+		   .append(" where p.usuario.id = :idUsuario");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idUsuario", idUsuario);
+		
+		return (String) query.uniqueResult();
 	}
 
 }

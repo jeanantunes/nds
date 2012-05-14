@@ -59,5 +59,9 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return {@link List<ProdutoEdicao>}
 	 */
 	List<ProdutoEdicao> obterListaProdutoEdicao(Produto produto, ProdutoEdicao produtoEdicao);
+
+	ProdutoEdicao obterProdutoEdicaoPorCodigoBarra(String codigoBarra);
+
+	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 	
 }

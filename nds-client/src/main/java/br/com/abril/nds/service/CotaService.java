@@ -8,11 +8,13 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -161,6 +163,7 @@ public interface CotaService {
 	 */
 	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
 	
+
 	/**
 	 * Salva os dados básicos da cota 
 	 * 
@@ -173,5 +176,13 @@ public interface CotaService {
 	CotaDTO obterDadosCadastraisCota(Long idCota);
 	
 	Integer gerarNumeroSugestaoCota();
+
+	
+	/**
+	 * Método responsável por obter tipos de cota para preencher combo da camada view
+	 * @return comboTiposCota: Tipos de cota padrão.
+	 */
+	public List<ItemDTO<TipoCota, String>> getComboTiposCota();
+
 	
 }

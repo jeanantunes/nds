@@ -175,7 +175,7 @@
 					$("#placa").val("");
 					
 					$("#tipoVeiculo").focus();
-				}
+				}, null, true, "idModalCadastroVeiculo"
 			);
 		}
 		
@@ -235,14 +235,13 @@
 								            {name: "veiculo.placa", value: $("#placa").val()}];
 								
 								$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
-									function(result){
-										
-										//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+									function(){
 										
 										$(".veiculosGrid").flexReload();
+										$(".associacaoGrid").flexReload();
 										
 										$("#dialog-incluir-veiculo").dialog("close");
-									}
+									}, null, true, "idModalCadastroVeiculo"
 								);
 							},
 							"Cancelar" : function() {
@@ -315,7 +314,7 @@
 					$("#cnhMotorista").val("");
 					
 					$("#nomeMotorista").focus();
-				}
+				}, null, true, "idModalCadastroMotorista"
 			);
 		}
 		
@@ -377,12 +376,11 @@
 								$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
 									function(result){
 										
-										//exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
-										
 										$(".motoristasGrid").flexReload();
+										$(".associacaoGrid").flexReload();
 										
 										$("#dialog-incluir-motorista").dialog("close");
-									}
+									}, null, true, "idModalCadastroMotorista"
 								);
 							},
 							"Cancelar" : function() {
@@ -860,7 +858,7 @@
 							$("#razaoSocial").val(result[0]);
 							$("#nomeFantasia").val(result[1]);
 							$("#email").val(result[2]);
-							$("#inscricaoEstadual").val(result[3]);
+							$("#inscEstadual").val(result[3]);
 						}
 					},
 					null,
@@ -1023,6 +1021,13 @@
 
 	<div id="dialog-incluir-motorista" title="Motoristas">
 		<fieldset>
+			
+			<jsp:include page="../messagesDialog.jsp">
+		
+				<jsp:param value="idModalCadastroMotorista" name="messageDialog"/>
+	
+			</jsp:include>
+			
 			<legend>Cadastrar Motorista</legend>
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>
@@ -1043,6 +1048,13 @@
 
 	<div id="dialog-incluir-veiculo" title="Veículos">
 		<fieldset>
+			
+			<jsp:include page="../messagesDialog.jsp">
+		
+				<jsp:param value="idModalCadastroVeiculo" name="messageDialog"/>
+	
+			</jsp:include>
+			
 			<legend>Cadastrar Veículos</legend>
 			<table width="350" cellpadding="2" cellspacing="2" style="text-align: left;">
 				<tr>

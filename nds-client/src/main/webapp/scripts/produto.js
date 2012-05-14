@@ -87,6 +87,15 @@ var produto = {
 		});
 	},
 	
+	exibirAutoCompleteEdicao : function(result, idEdicao) {
+		
+		$(idEdicao).autocomplete({
+			source : result,
+			minLength: 0,
+			delay : 0,
+		});
+	},
+	
 	//Pesquisar por nome do produto
 	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		

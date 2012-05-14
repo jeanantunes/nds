@@ -1,9 +1,9 @@
 function TabCota(tabName) {
 	
 	var T = this;
-	
+
 	this.funcaoSalvar = null;
-	
+
 	this.novaAba=null;
 		
 	/**
@@ -40,7 +40,9 @@ function TabCota(tabName) {
 		
 		/**Fornecedor**/
 		case 5:
+
 			MANTER_COTA.carregarFornecedores();
+
 			break;
 
 		/**Desconto**/		
@@ -82,6 +84,10 @@ function TabCota(tabName) {
 	};
 		
 	$(function() {
+		
+		if(T.funcaoSalvar) {
+			T.funcaoSalvar();
+    	}
 		
 		$( "#" + tabName ).tabs();
 				

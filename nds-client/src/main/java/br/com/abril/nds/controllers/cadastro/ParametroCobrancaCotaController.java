@@ -12,15 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ParametroCobrancaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
@@ -35,13 +36,13 @@ import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path("/cadastro/financeiro")
-public class FinanceiroController {
+@Path("/cota/parametroCobrancaCota")
+public class ParametroCobrancaCotaController {
 	
 	private Result result;
 
 	@Autowired
-	private FinanceiroService financeiroService;
+	private ParametroCobrancaCotaService financeiroService;
 	
 	@Autowired
 	private BancoService bancoService;
@@ -60,6 +61,8 @@ public class FinanceiroController {
      
     private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
     
+    private static List<ItemDTO<TipoCota,String>> listaTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
+    
     
     /**
 	 * Constante que representa o nome do atributo com os dados de 'cota cobranca'
@@ -74,7 +77,7 @@ public class FinanceiroController {
 	 * @param session
 	 * @param httpResponse
 	 */
-	public FinanceiroController(Result result, HttpServletResponse httpResponse) {
+	public ParametroCobrancaCotaController(Result result, HttpServletResponse httpResponse) {
 		this.result = result;
 		this.httpResponse = httpResponse;
 	}
@@ -96,8 +99,10 @@ public class FinanceiroController {
 	public void preCarregamento(){
 		listaBancos = this.bancoService.getComboBancos();
 		listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
+		listaTiposCota = this.cotaService.getComboTiposCota();
 		result.include("listaBancos",listaBancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
+		result.include("listaTiposCota",listaTiposCota);
 	}
 
 	
@@ -128,12 +133,12 @@ public class FinanceiroController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O código da cota informado náo é válido.");
 		} 
 
-		ParametroCobrancaDTO parametroCobranca = this.financeiroService.obterDadosParametroCobrancaPorCota(idCota);
+		ParametroCobrancaCotaDTO parametroCobranca = this.financeiroService.obterDadosParametroCobrancaPorCota(idCota);
 		
 		
 		if (parametroCobranca==null){
 			
-		    parametroCobranca = new ParametroCobrancaDTO();
+		    parametroCobranca = new ParametroCobrancaCotaDTO();
 		    parametroCobranca.setIdCota(idCota);
 		    parametroCobranca.setComissao(BigDecimal.ZERO);
 		    parametroCobranca.setContrato(false);
@@ -204,18 +209,22 @@ public class FinanceiroController {
 
     
 	/**
-	 * Método responsável por postar na sessão os dados da aba "financeiro" do cadastro de cota.
+	 * Método responsável por postar os dados do parametro de cobrança da cota.
 	 * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou alterados pelo usuário
 	 */
 	@Post
 	@Path("/postarParametroCobranca")
-	public void postarParametroCobranca(ParametroCobrancaDTO parametroCobranca){	
+	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
 		
 		//validar();
 		
 	    List<FormaCobranca> formasCobranca = this.financeiroService.obterFormasCobrancaCota(parametroCobranca.getIdCota());
 		if ((formasCobranca==null)||(formasCobranca.size()<=0)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Adicione ao menos uma Forma de Cobrança para a Cota.");
+		}
+		
+		if(parametroCobranca.getTipoCota()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
 		}
 		
 		this.financeiroService.postarParametroCobranca(parametroCobranca);	
@@ -437,6 +446,29 @@ public class FinanceiroController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
 			}
 		}
+		
+		//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+			if (!this.financeiroService.validarFormaCobrancaMensal(formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), formaCobranca.getDiaDoMes())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
+			}
+		}
+		
+		//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+			if (!this.financeiroService.validarFormaCobrancaSemanal(formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), 
+																	formaCobranca.isDomingo(),
+																    formaCobranca.isSegunda(),
+																    formaCobranca.isTerca(),
+																    formaCobranca.isQuarta(),
+																    formaCobranca.isQuinta(),
+																    formaCobranca.isSexta(),
+																    formaCobranca.isSabado())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
+			}
+			
+		}	
+		
 	}
 	
 	

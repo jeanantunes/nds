@@ -136,6 +136,13 @@ public class Distribuidor {
 	@Column(name="QNT_DIAS_REUTILIZACAO_CODIGO_COTA")
 	private Long qntDiasReutilizacaoCodigoCota;
 	
+	/**
+	 * Parâmetro relativo a quantidade de dias após a data de recolhimento 
+	 * que um envio de encalhe pode ser aceito pelo distribuidor.
+	 */
+	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
+	private int qtdDiasEncalheAtrasadoAceitavel = 4;
+	
 	public Long getId() {
 		return id;
 	}
@@ -334,11 +341,25 @@ public class Distribuidor {
 	/**
 	 * @param qntDiasReutilizacaoCodigoCota the qntDiasReutilizacaoCodigoCota to set
 	 */
-	public void setQntDiasReutilizacaoCodigoCota(
-			Long qntDiasReutilizacaoCodigoCota) {
+	public void setQntDiasReutilizacaoCodigoCota(Long qntDiasReutilizacaoCodigoCota) {
 		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
 	}
-	
-	
+
+	/**
+	 * @return the qtdDiasEncalheAtrasadoAceitavel
+	 */
+	public int getQtdDiasEncalheAtrasadoAceitavel() {
+		return qtdDiasEncalheAtrasadoAceitavel;
+	}
+
+	/**
+	 * @param qtdDiasEncalheAtrasadoAceitavel the qtdDiasEncalheAtrasadoAceitavel to set
+	 */
+	public void setQtdDiasEncalheAtrasadoAceitavel(
+			int qtdDiasEncalheAtrasadoAceitavel) {
+		this.qtdDiasEncalheAtrasadoAceitavel = qtdDiasEncalheAtrasadoAceitavel;
+	}
+
+
 	
 }

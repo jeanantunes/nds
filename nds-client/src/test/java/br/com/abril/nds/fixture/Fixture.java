@@ -130,10 +130,12 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -398,8 +400,8 @@ public class Fixture {
 
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte,
-			StatusLancamento statusLancamento, ItemRecebimentoFisico recebimento) {
+			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			ItemRecebimentoFisico recebimento, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -411,10 +413,13 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.setSequenciaMatriz(sequenciaMatriz);
 		
 		if (recebimento != null) {
 			lancamento.addRecebimento(recebimento);
 		}
+		
+		
 		return lancamento;
 	}
 	
@@ -463,6 +468,26 @@ public class Fixture {
 		
 		return controleConferenciaEncalhe;
 	}
+
+	public static ControleConferenciaEncalheCota controleConferenciaEncalheCota (
+			ControleConferenciaEncalhe controleConferenciaEncalhe,
+			Cota cota,
+			Date dataInicio,
+			Date dataFim,
+			Date dataOperacao,
+			StatusOperacao statusOperacao) {
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
+		
+		controleConferenciaEncalheCota.setControleConferenciaEncalhe(controleConferenciaEncalhe);
+		controleConferenciaEncalheCota.setCota(cota);
+		controleConferenciaEncalheCota.setDataInicio(dataInicio);
+		controleConferenciaEncalheCota.setDataFim(dataFim);
+		controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
+		controleConferenciaEncalheCota.setStatus(statusOperacao);
+		
+		return controleConferenciaEncalheCota;
+	}
 	
 	public static ControleContagemDevolucao controleContagemDevolucao (
 			StatusOperacao statusOperacao,
@@ -480,8 +505,8 @@ public class Fixture {
 	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte,
-			StatusLancamento statusLancamento, ItemRecebimentoFisico recebimento,Expedicao expedicao) {
+			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			ItemRecebimentoFisico recebimento,Expedicao expedicao, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -495,9 +520,12 @@ public class Fixture {
 		lancamento.setDataRecolhimentoDistribuidor(drp);
 		lancamento.setExpedicao(expedicao);
 		lancamento.setExpedicao(expedicao);
+		lancamento.setSequenciaMatriz(sequenciaMatriz);
+		
 		if (recebimento != null) {
 			lancamento.addRecebimento(recebimento);
 		}
+		
 		return lancamento;
 	}
 
@@ -1503,14 +1531,35 @@ public class Fixture {
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
 			Lancamento lancamento, 
-			MovimentoEstoqueCota movimentoEstoqueCota) {
+			MovimentoEstoqueCota movimentoEstoqueCota,
+			ChamadaEncalheCota chamadaEncalheCota,
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
 		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
+		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
+		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
 		
 		return conferenciaEncalhe;
+		
+	}
+	
+	public static ChamadaEncalheCota chamadaEncalheCota(
+			ChamadaEncalhe chamadaEncalhe,
+			boolean conferido,
+			Cota cota,
+			BigDecimal qtdePrevista) {
+		
+		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+		
+		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+		chamadaEncalheCota.setConferido(conferido);
+		chamadaEncalheCota.setCota(cota);
+		chamadaEncalheCota.setQtdePrevista(qtdePrevista);
+		
+		return chamadaEncalheCota;
 		
 	}
 	
@@ -1535,8 +1584,8 @@ public class Fixture {
 	
 	public static Lancamento lancamentos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte,
-			StatusLancamento statusLancamento, List<ItemRecebimentoFisico> recebimentos) {
+			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			List<ItemRecebimentoFisico> recebimentos, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
 		lancamento.setDataStatus(dataStatus);
@@ -1548,10 +1597,12 @@ public class Fixture {
 		lancamento.setDataLancamentoDistribuidor(dlp);
 		lancamento.setDataRecolhimentoPrevista(drp);
 		lancamento.setDataRecolhimentoDistribuidor(drp);
+		lancamento.setSequenciaMatriz(sequenciaMatriz);
 		
 		for(ItemRecebimentoFisico x : recebimentos){
 			lancamento.addRecebimento(x);
 		}
+		
 		
 		return lancamento;
 	}
@@ -2435,6 +2486,19 @@ public class Fixture {
 		tipoGarantiaAceita.setTipoGarantia(tipoGarantia);
 		
 		return tipoGarantiaAceita;
+	}
+	
+	public static LancamentoParcial criarLancamentoParcial(ProdutoEdicao produtoEdicao, 
+														   Date lancamentoInicial, 
+														   Date recolhimentoFinal) {
+		
+		LancamentoParcial lancamentoParcial = new LancamentoParcial();
+		
+		lancamentoParcial.setProdutoEdicao(produtoEdicao);
+		lancamentoParcial.setLancamentoInicial(lancamentoInicial);
+		lancamentoParcial.setRecolhimentoFinal(recolhimentoFinal);
+		
+		return lancamentoParcial;
 	}
 	
 	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
