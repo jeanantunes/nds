@@ -73,4 +73,88 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+	
+	public BigDecimal obterValorTotalReparteCota(
+			Integer numeroCota, 
+			List<Long> listaIdProdutoEdicao, 
+			Long idDistribuidor,
+			Long idCota,
+			Long idProdutoEdicao) {
+		
+		String subQueryConsultaValorComissionamento = getSubQueryConsultaValorComissionamento();
+		
+		StringBuilder hql = new StringBuilder();
+		
+			hql.append(" select ")
+			
+			.append(" estoqueProdutoCota.qtdeRecebida * ")
+			
+			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  / ")
+			
+			.append( subQueryConsultaValorComissionamento )
+			
+			.append(" ) ) ")
+			
+			.append(" from EstoqueProdutoCota estoqueProdutoCota ")
+			
+			.append(" join estoqueProdutoCota.cota cota ")
+			
+			.append(" join estoqueProdutoCota.produtoEdicao produtoEdicao ")
+			
+			.append(" where ")
+			
+			.append(" produtoEdicao.id in   :listaIdProdutoEdicao ")
+
+			.append(" and cota.numeroCota = :numeroCota 				");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
+		
+		query.setParameter("numeroCota", numeroCota);
+
+		query.setParameter("idDistribuidor", idDistribuidor);
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	
+	/**
+	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
+	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 
+	 * 
+	 * @return String
+	 */
+	public static String getSubQueryConsultaValorComissionamento() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
+		
+		hql.append(" ( case when ( cota.fatorComissao is not null ) then cota.fatorComissao  else  ");
+		
+		hql.append(" ( case when ( distribuidor.fatorComissao is not null ) then distribuidor.fatorComissao else 0 )  ");
+		
+		hql.append(" ) ");
+		
+		hql.append(" from ProdutoEdicao pe, Cota cota, Distribuidor distribuidor   ");
+		
+		hql.append(" where ");
+		
+		hql.append(" cota.id = :idCota and ");
+
+		hql.append(" pe.id = :idProdutoEdicao and ");
+
+		hql.append(" distribuidor.id = :idDistribuidor ");
+		
+		return hql.toString();
+		
+	}
+	
+	
 }
