@@ -237,7 +237,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String emissorInscricaoEstadualSubstituto 	= notaFiscal.getEmissorInscricaoEstadualSubstituto();
 		String emissorInscricaoMunicipal 			= notaFiscal.getEmissorInscricaoMunicipal();
 		
-		
 		String emissorLogradouro 	= "";
 		String emissorNumero 		= "";
 		String emissorBairro 		= "";
