@@ -23,7 +23,6 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaGarantiaService;
-import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 
 public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 	
@@ -61,12 +60,9 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		notaPromissoria.setValorExtenso("Mil Conto");
 		
-		try {
+	
 			cotaGarantiaService.salvaNotaPromissoria(notaPromissoria,cota.getId());
-		} catch (RelationshipRestrictionException e) {
-			
-			e.printStackTrace();
-		}
+		
 		
 		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
 		
@@ -92,14 +88,10 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		cheque.setValidade(new Date());
 		cheque.setCorrentista("Senor Abravanel");
 		
-		try {
-			
+		
 			cotaGarantia = cotaGarantiaService.salvaChequeCaucao(cheque, cota.getId());
 			
-		} catch (RelationshipRestrictionException e) {
-			
-			e.printStackTrace();
-		}
+		
 		
 		assertNotNull(cotaGarantia);
 	}
@@ -124,13 +116,10 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			listaImoveis.add(imovel);
 		}
 		
-		try {
+		
 			
 			cotaGarantia = cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
-			
-		} catch (RelationshipRestrictionException e) {
-			e.printStackTrace();
-		}
+		
 		
 		assertNotNull(cotaGarantia);
 	}
