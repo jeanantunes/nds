@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,6 +60,9 @@ public class ConferenciaEncalhe implements Serializable {
 	
 	@Column(name = "JURAMENTADA")
 	private boolean juramentada;
+	
+	@Column(name = "QTDE_INFORMADA")
+	private BigDecimal qtdeInformada;
 	
 	
 	/**
@@ -181,5 +185,22 @@ public class ConferenciaEncalhe implements Serializable {
 		this.juramentada = juramentada;
 	}
 
+	/**
+	 * Obtém qtdeInformada
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getQtdeInformada() {
+		return qtdeInformada;
+	}
+
+	/**
+	 * Atribuí qtdeInformada
+	 * @param qtdeInformada 
+	 */
+	public void setQtdeInformada(BigDecimal qtdeInformada) {
+		this.qtdeInformada = qtdeInformada;
+	}
+	
 		
 }

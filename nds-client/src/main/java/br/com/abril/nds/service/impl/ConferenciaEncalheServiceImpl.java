@@ -22,6 +22,7 @@ import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -114,6 +115,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	/*
 	 * (non-Javadoc)
@@ -268,10 +272,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(controleConferenciaEncalheCota!=null) {
 			
-			List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
+			List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = 
+					conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
+							controleConferenciaEncalheCota.getId(), 
+							distribuidor.getId());
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
-			infoConfereciaEncalheCota.setEncalhe(conferenciaEncalheRepository.obterValorTotalConferenciaEncalheCota(controleConferenciaEncalheCota.getId()));
+			
+			infoConfereciaEncalheCota.setEncalhe(null);//TODO: calcular este valor no front end...
 			
 			
 		} else {
@@ -279,8 +287,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
 			
 		}
+		
+		List<Long> listaIdProdutoEdicao = null;
+		//TODO obter a lista de idProdutoEdicao 
+		//que constam na chamada de encalhe atual da cota em questão
 
-		BigDecimal reparte = null;//TODO calcularReparteCota(numeroCota);
+		BigDecimal reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
 		
 		BigDecimal totalDebitoCreditoCota = null;//TODOcalcularTotalDebitoCreditoCota(numeroCota);
 		

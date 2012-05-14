@@ -29,4 +29,26 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	 * @return @return {@link List<EstoqueProdutoCota>}
 	 */
 	List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao);
+	
+	/**
+	 * Obtém o valor total de reparte para cota especifica 
+	 * O valor do produto utilizado no calculo é o precoVenda subtraido
+	 * do desconto. 
+	 * 
+	 * Sendo que o valor de desconto utilizado pode ser o 
+	 * parametrizado na entidade ProdutoEdicao (campo desconto), Cota (campo fatorDesconto) ou 
+	 * Distribuidor (campo fatorDesconto), sendo utilizado o valor que for encontrado primeiro
+	 * nesta ordem.
+	 * 
+	 * @param numeroCota
+	 * @param listaIdProdutoEdicao
+	 * @param idDistribuidor
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterValorTotalReparteCota(
+			Integer numeroCota, 
+			List<Long> listaIdProdutoEdicao, 
+			Long idDistribuidor);
+	
 }
