@@ -212,7 +212,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 		return fiador;
 	}
-
+	@Transactional
+	@Override
 	public void salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
 		CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantiaRepository
 				.getByCota(idCota);
