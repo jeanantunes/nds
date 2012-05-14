@@ -82,12 +82,18 @@ public interface CotaGarantiaService {
 	/**
 	 * Recupera o fiador por id
 	 * @param idFiador
-	 * @param doc TODO
+	 * @param doc Documento de identificação do Fiador
 	 * @return
 	 * @see br.com.abril.nds.repository.FiadorRepository#buscarPorId(Long)
 	 */
 	public Fiador getFiador(Long idFiador, String doc);
-
+	
+	/**
+	 * Salva no repositorio de dados a garantia de um fiador.
+	 * @param idFiador
+	 * @param idCota
+	 * @throws ValidacaoException
+	 */
 	public abstract void salvaFiador(Long idFiador, Long idCota)
 			throws ValidacaoException;
 }
