@@ -95,9 +95,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 	public BigDecimal obterValorTotalReparteCota(
 			Integer numeroCota, 
 			List<Long> listaIdProdutoEdicao, 
-			Long idDistribuidor,
-			Long idCota,
-			Long idProdutoEdicao) {
+			Long idDistribuidor) {
 		
 		String subQueryConsultaValorComissionamento = getSubQueryConsultaValorComissionamento();
 		
@@ -105,13 +103,13 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		
 			hql.append(" select ")
 			
-			.append(" estoqueProdutoCota.qtdeRecebida * ")
+			.append(" sum( estoqueProdutoCota.qtdeRecebida * ")
 			
-			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  / ")
+			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  *  ( ")
 			
 			.append( subQueryConsultaValorComissionamento )
 			
-			.append(" ) ) ")
+			.append(" / 100 ) ) ) ) ")
 			
 			.append(" from EstoqueProdutoCota estoqueProdutoCota ")
 			
@@ -121,9 +119,10 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 			
 			.append(" where ")
 			
-			.append(" produtoEdicao.id in   :listaIdProdutoEdicao ")
+			.append(" produtoEdicao.id in ( :listaIdProdutoEdicao ) ")
 
-			.append(" and cota.numeroCota = :numeroCota 				");
+			.append(" and cota.numeroCota = :numeroCota ");
+			
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -132,10 +131,6 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		query.setParameter("numeroCota", numeroCota);
 
 		query.setParameter("idDistribuidor", idDistribuidor);
-		
-		query.setParameter("idCota", idCota);
-		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -147,27 +142,27 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 	 * 
 	 * @return String
 	 */
-	public static String getSubQueryConsultaValorComissionamento() {
+	private static String getSubQueryConsultaValorComissionamento() {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
+		hql.append(" ( select case when ( pe.desconto is not null ) then pe.desconto else ");
 		
-		hql.append(" ( case when ( cota.fatorComissao is not null ) then cota.fatorComissao  else  ");
+		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
 		
-		hql.append(" ( case when ( distribuidor.fatorComissao is not null ) then distribuidor.fatorComissao else 0 )  ");
+		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end  ");
 		
-		hql.append(" ) ");
+		hql.append(" ) end ");
 		
-		hql.append(" from ProdutoEdicao pe, Cota cota, Distribuidor distribuidor   ");
+		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
 		
 		hql.append(" where ");
 		
-		hql.append(" cota.id = :idCota and ");
+		hql.append(" ct.id = cota.id and ");
 
-		hql.append(" pe.id = :idProdutoEdicao and ");
+		hql.append(" pe.id = produtoEdicao.id and ");
 
-		hql.append(" distribuidor.id = :idDistribuidor ");
+		hql.append(" distribuidor.id = :idDistribuidor ) ");
 		
 		return hql.toString();
 		

@@ -11,30 +11,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Moeda;
-import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
-import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -56,17 +45,9 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 
-public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImplTest {
-	
-	@Autowired
-	private ConferenciaEncalheRepository conferenciaEncalheRepository;
-	
-	private static FormaCobranca formaBoleto;
-	private static Carteira carteiraSemRegistro;
-	private static Distribuidor distribuidor;
-	private static Banco bancoHSBC;
+public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	private Lancamento lancamentoVeja;
     private Fornecedor fornecedorFC;
@@ -75,26 +56,21 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 	private TipoFornecedor tipoFornecedorPublicacao;
 	private Cota cotaManoel;
 	
-	
 	private ItemRecebimentoFisico itemRecebimentoFisico1Veja;
 	private ItemRecebimentoFisico itemRecebimentoFisico2Veja;
 	
 	private ProdutoEdicao veja1;
 	private ProdutoEdicao quatroRoda2;
 	
-	
 	private CFOP cfop;
 	private TipoNotaFiscal tipoNotaFiscal;
 	private Usuario usuario;
 	private Date dataRecebimento;
-	
+
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 	
 	@Before
 	public void setUpGeral() {
-		
-		criarDistribuidor();
-		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -124,7 +100,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		veja1 = Fixture.produtoEdicao(1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
 		
-		veja1.setDesconto(BigDecimal.TEN);
+		veja1.setDesconto(BigDecimal.ZERO);
 
 		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN,
@@ -326,74 +302,53 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		save(conferenciaEncalhe);
 			
 	}
+
+
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
-	
-	
-	public void criarDistribuidor() {
-		
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		
-		save(carteiraSemRegistro);
-		
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
-		
-		save(bancoHSBC);
-		
-		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
-		save(juridicaDistrib);
-		
-		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-												  BigDecimal.ONE, BigDecimal.ONE, null);
 
-		save(formaBoleto);
-
-		distribuidor = null;
-		
-		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
-
-		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
-		politicaSuspensao.setValor(new BigDecimal(0));
-
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
-
-		distribuidor.setPoliticaSuspensao(politicaSuspensao);
-		
-		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
-																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
-																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
-																					 "<br>"+"<b>(iii)</b>	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
-																					 "<br>"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
-																					 "<br><br>"+"<font color='blue'><b>1.	OBJETO DO CONTRATO</b><br></font>"+
-																					 "<br>"+"<b>1.1.</b>	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
-																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
-		save(parametroContrato);
-		
-		distribuidor.setParametroContratoCota(parametroContrato);
-
-		distribuidor.setFatorDesconto(BigDecimal.TEN);
-		
-		save(distribuidor);
-		
-	}
-	
-	
-	@SuppressWarnings("unused")
 	@Test
-	public void testObterListaConferenciaEncalheCota() {
+	public void testObterListaChamaEncalheCota(){
 		
-		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
+		Integer numeroCota = 123;
+		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+		Long idProdutoEdicao = veja1.getId(); 
+		boolean indPesquisaCEFutura = true; 
+		boolean conferido = false;
 		
-		List<ConferenciaEncalheDTO> listaConferenciaEncalhe =  conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota, distribuidor.getId());
+		List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.obterListaChamaEncalheCota(
+				numeroCota, 
+				dataOperacao, 
+				idProdutoEdicao, 
+				indPesquisaCEFutura, 
+				conferido);
 		
-		Assert.assertEquals(3, listaConferenciaEncalhe.size());
+		Assert.assertEquals(1, listaChamadaEncalheCota.size());
+		
+	}
+	
+	@Test
+	public void testObterQtdListaChamaEncalheCota(){
+
+		Integer numeroCota = 123;
+		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
+		Long idProdutoEdicao = veja1.getId();
+		boolean indPesquisaCEFutura = true; 
+		boolean conferido = false;
+		
+		Long qtde = chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(
+				numeroCota, 
+				dataOperacao, 
+				idProdutoEdicao, 
+				indPesquisaCEFutura, 
+				conferido);
+		
+		Assert.assertEquals(1, qtde.intValue());
+		
 		
 	}
 
 	
 	
-
 }
