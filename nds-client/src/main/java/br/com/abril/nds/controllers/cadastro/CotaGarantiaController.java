@@ -29,9 +29,10 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cadastro/garantia")
 public class CotaGarantiaController {
 
+		
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
-
+	
 	private Result result;
 
 	public CotaGarantiaController(Result result) {
@@ -78,14 +79,13 @@ public class CotaGarantiaController {
 
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
-		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(idCota);
-
-		if (cotaGarantia != null) {
-			result.use(Results.json()).from(cotaGarantia, "cotaGarantia")
-					.exclude("cota").recursive().serialize();
-		} else {
-			result.use(Results.json()).from("OK").serialize();
-		}
+		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+		
+		if (cotaGarantia != null) {			
+			result.use(Results.json()).from(cotaGarantia, "cotaGarantia").exclude("cota").recursive().serialize();		
+		}else{			
+			result.use(CustomJson.class).from("OK").serialize();		
+		}	
 	}
 
 	@Get("/impriNotaPromissoria/{id}")
@@ -110,15 +110,16 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
+
 	@Post("/incluirImovel.json")
 	public void incluirImovel(Imovel imovel) {
 		validaImovel(imovel);
-		// TODO: criar lista de imovel e add na sessão.
+						
+		result.use(Results.json()).from(imovel, "imovel").serialize();
 	}
 
 	/**
-	 * @param cheque
-	 *            cheque para ser validado
+	 * @param cheque para ser validado
 	 */
 	private void validaChequeCaucao(Cheque cheque) {
 
@@ -177,8 +178,7 @@ public class CotaGarantiaController {
 	}
 
 	/**
-	 * @param imovel
-	 *            imóvel para ser validado.
+	 * @param imóvel para ser validado.
 	 */
 	private void validaImovel(Imovel imovel) {
 
@@ -214,7 +214,7 @@ public class CotaGarantiaController {
 					listaMensagens));
 		}
 	}
-
+	
 	@Post("/getFiador.json")
 	public void getFiador(Long idFiador, String documento) {
 		Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);

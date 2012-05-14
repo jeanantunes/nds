@@ -153,14 +153,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota)
 			throws ValidacaoException {
-
-		CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository
-				.getByCota(idCota);
-
+		
+		CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.getByCota(idCota);
+				
 		if (cotaGarantiaImovel == null) {
 
 			cotaGarantiaImovel = new CotaGarantiaImovel();
 			cotaGarantiaImovel.setCota(getCota(idCota));
+		
+		} else {
+			
+			this.cotaGarantiaRepository.remover(cotaGarantiaImovel);
 		}
 
 		cotaGarantiaImovel.setData(new Date());
