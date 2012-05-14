@@ -37,34 +37,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	
 	private List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCota(Integer numeroCota) {
-		
 		//TODO implementar logica
 		return null;
-		
-//		String[] tipoOperacao = {"DEBITO", "CREDITO"};
-//		
-//		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = new ArrayList<DebitoCreditoCotaDTO>();
-//		
-//		int contador = 0;
-//		
-//		DebitoCreditoCotaDTO debitoCreditoCota = null;
-//		
-//		while(contador++ < 10) {
-//			
-//			debitoCreditoCota = new DebitoCreditoCotaDTO();
-//			
-//			debitoCreditoCota.setTipoLancamento(tipoOperacao[(contador%2)]);
-//			debitoCreditoCota.setValor(new BigDecimal(contador));
-//			debitoCreditoCota.setDataLancamento(new Date());
-//			debitoCreditoCota.setDataVencimento(new Date());
-//			debitoCreditoCota.setNumeroCota(123);
-//	
-//			listaDebitoCreditoCota.add(debitoCreditoCota);
-//			
-//		}
-//		
-//		return listaDebitoCreditoCota;
-		
 	}
 	
 	@Autowired
