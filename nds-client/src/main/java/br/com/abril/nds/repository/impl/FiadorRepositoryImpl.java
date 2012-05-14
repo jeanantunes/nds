@@ -47,6 +47,22 @@ public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> imple
 		
 		return (Fiador) query.uniqueResult();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.FiadorRepository#obterPorCpfCnpj(java.lang.String)
+	 */
+	@Override
+	public Fiador obterPorCpfCnpj(String doc){
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from Fiador fiador ")
+		   .append("where fiador.pessoa.cpf = :doc or fiador.pessoa.cnpj = :doc");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("doc", doc);
+		return (Fiador) query.uniqueResult();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

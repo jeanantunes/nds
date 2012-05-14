@@ -1,16 +1,18 @@
 package br.com.abril.nds.serialization.custom;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.codehaus.jackson.map.SerializationConfig;
 
 import br.com.caelum.vraptor.View;
-import br.com.caelum.vraptor.interceptor.TypeNameExtractor;
+import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.serialization.ProxyInitializer;
 
 import com.fasterxml.jackson.module.hibernate.HibernateModule;
 
@@ -22,14 +24,31 @@ public class CustomJson implements View {
 
 	private Object obj;
 
-	public CustomJson(HttpServletResponse response,
-			TypeNameExtractor extractor, ProxyInitializer initializer)
+	public CustomJson(HttpServletResponse response,Localization localization)
 			throws IOException {
-		
+
 		this.response = response;
 		mapper = new ObjectMapper();
 		mapper.registerModule(new HibernateModule());
-		mapper.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS,
+				false);
+		mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES,
+				false);
+		
+		
+		Locale locale = localization.getLocale();
+		if (locale == null) {
+			locale = Locale.getDefault();
+		}
+		
+		DateFormat df = DateFormat
+				.getDateInstance(DateFormat.MEDIUM, locale);
+		df.setLenient(false);
+		mapper.setDateFormat(df);
 
 	}
 
@@ -38,11 +57,10 @@ public class CustomJson implements View {
 		return this;
 	}
 
-	
-	public CustomJson serialize(){
+	public CustomJson serialize() {
 		try {
-			mapper.writeValue(response.getOutputStream(), this.obj);
-		}  catch (IOException e) {
+			mapper.writeValue(response.getWriter(), this.obj);
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		return this;

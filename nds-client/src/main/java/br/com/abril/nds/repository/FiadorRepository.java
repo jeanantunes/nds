@@ -42,4 +42,11 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 	 * @return <code>key</code> valorizado com o ID e <code>value</code com o Nome
 	 */
 	public abstract List<ItemDTO<Long, String>> buscaFiador(String nome, int maxResults);
+	
+	/**
+	 * Obtem o fiador por CPF ou CNPJ
+	 * @param doc CPF ou CNPJ
+	 * @return Fiador
+	 */
+	public abstract Fiador obterPorCpfCnpj(String doc);
 }
