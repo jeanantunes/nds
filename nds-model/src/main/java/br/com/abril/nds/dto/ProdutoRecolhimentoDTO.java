@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.util.Util;
 
 public class ProdutoRecolhimentoDTO implements Serializable {
 
@@ -272,12 +273,13 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param parcial the parcial to set
+	 * @param parcial em formato de String para ser convertida.
 	 */
-	public void setParcial(TipoLancamentoParcial parcial) {
-		this.parcial = parcial;
+	public void setParcial(String parcial) {
+		
+		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
 	}
-
+	
 	/**
 	 * @return the possuiChamada
 	 */

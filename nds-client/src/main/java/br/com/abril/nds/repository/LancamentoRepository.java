@@ -47,6 +47,20 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 					 											 GrupoProduto grupoCromo);
 	 
 	 /**
+	  * Método que retorna o balanceamento do recolhimento referentes a um periodo 
+	  * ordernados por editor e data de recolhimento do distribuidor.
+	  * 
+	  * @param periodoRecolhimento
+	  * 
+	  * @param listaIdsFornecedores 
+	  * 
+	  * @return List<ProdutoRecolhimentoDTO>
+	  */
+	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(PeriodoVO periodoRecolhimento, 
+								 											  List<Long> fornecedores,
+								 											  GrupoProduto grupoCromo);
+	 
+	 /**
 	  * Método que verifica a existência de uma chamada de encalhe do tipo Matriz Recolhimento
 	  * para o período especificado.
 	  * 
