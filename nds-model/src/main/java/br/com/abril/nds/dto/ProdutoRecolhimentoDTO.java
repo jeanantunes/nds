@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 
 public class ProdutoRecolhimentoDTO implements Serializable {
@@ -14,11 +13,25 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4687524586257381194L;
 	
+	private Long idProdutoEdicao;
+	
+	private Long numeroEdicao;
+
+	private BigDecimal precoVenda;
+
+	private boolean possuiBrinde;
+
+	private BigDecimal peso;
+
+	private BigDecimal desconto = BigDecimal.ZERO;
+
+	private String codigoProduto;
+
+	private String nomeProduto;
+	
 	private Long idLancamento;
 	
 	private Long sequencia;
-	
-	private ProdutoEdicao produtoEdicao;
 
 	private Long idFornecedor;
 	
@@ -56,6 +69,118 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 	
 	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	/**
+	 * @return the numeroEdicao
+	 */
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	/**
+	 * @param numeroEdicao the numeroEdicao to set
+	 */
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+	/**
+	 * @return the precoVenda
+	 */
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
+	}
+
+	/**
+	 * @param precoVenda the precoVenda to set
+	 */
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
+	}
+
+	/**
+	 * @return the possuiBrinde
+	 */
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
+	}
+
+	/**
+	 * @param possuiBrinde the possuiBrinde to set
+	 */
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
+	}
+
+	/**
+	 * @return the peso
+	 */
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	/**
+	 * @param peso the peso to set
+	 */
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
+	}
+
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+	
+	/**
+	 * @return the codigoProduto
+	 */
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	/**
+	 * @return the nomeProduto
+	 */
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	/**
+	 * @param nomeProduto the nomeProduto to set
+	 */
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
+
+	/**
 	 * @return the idLancamento
 	 */
 	public Long getIdLancamento() {
@@ -69,8 +194,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 		this.idLancamento = idLancamento;
 	}
 
-
-
 	/**
 	 * @return the sequencia
 	 */
@@ -83,20 +206,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setSequencia(Long sequencia) {
 		this.sequencia = sequencia;
-	}
-
-	/**
-	 * @return the produtoEdicao
-	 */
-	public ProdutoEdicao getProdutoEdicao() {
-		return produtoEdicao;
-	}
-
-	/**
-	 * @param produtoEdicao the produtoEdicao to set
-	 */
-	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		this.produtoEdicao = produtoEdicao;
 	}
 
 	/**

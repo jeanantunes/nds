@@ -221,4 +221,17 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		return query.list();
 	}
 
+	@Override
+	public String obterCodigoBoxPadraoUsuario(Long idUsuario) {
+		
+		StringBuilder hql = new StringBuilder("select p.box.codigo ");
+		hql.append(" from ParametroUsuarioBox p ")
+		   .append(" where p.usuario.id = :idUsuario");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idUsuario", idUsuario);
+		
+		return (String) query.uniqueResult();
+	}
+
 }

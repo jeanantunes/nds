@@ -7,61 +7,64 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
 	
 //TODO - Remover apos testes
-//	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheMockada() {
-//		
-//		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = new ArrayList<ConferenciaEncalheDTO>();
-//		
-//		int contador = 0;
-//		
-//		ConferenciaEncalheDTO conferencia = null;
-//		
-//		while(contador++ < 10) {
-//			
-//			conferencia = new ConferenciaEncalheDTO();
-//			
-//			conferencia.setCodigo(""+contador);
-//			conferencia.setCodigoDeBarras(""+contador);
-//			conferencia.setCodigoSM(1L+contador);
-//			conferencia.setDesconto(BigDecimal.ONE);
-//			conferencia.setDia(1);
-//			conferencia.setJuramentada(true);
-//			conferencia.setNomeProduto("PRODUTONOME_"+contador);
-//			conferencia.setNumeroEdicao(1L+contador);
-//			conferencia.setPrecoCapa(BigDecimal.ONE);
-//			conferencia.setQtdExemplar(BigDecimal.TEN);
-//			conferencia.setValorTotal(BigDecimal.ONE);
-//			
-//			listaConferenciaEncalhe.add(conferencia);
-//			
-//		}
-//		
-//		return listaConferenciaEncalhe;
-//		
-//	}
+	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheMockada() {
+		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = new ArrayList<ConferenciaEncalheDTO>();
+		
+		int contador = 0;
+		
+		ConferenciaEncalheDTO conferencia = null;
+		
+		while(contador++ < 10) {
+			
+			conferencia = new ConferenciaEncalheDTO();
+			
+			conferencia.setCodigo(""+contador);
+			conferencia.setCodigoDeBarras(""+contador);
+			conferencia.setCodigoSM(1L+contador);
+			conferencia.setDesconto(BigDecimal.ONE);
+			conferencia.setDia(1);
+			conferencia.setJuramentada(contador < 5 ? true : false);
+			conferencia.setNomeProduto("PRODUTONOME_"+contador);
+			conferencia.setNumeroEdicao(1L+contador);
+			conferencia.setPrecoCapa(BigDecimal.ONE);
+			conferencia.setQtdExemplar(BigDecimal.TEN);
+			conferencia.setValorTotal(BigDecimal.ONE);
+			
+			listaConferenciaEncalhe.add(conferencia);
+			
+		}
+		
+		return listaConferenciaEncalhe;
+		
+	}
 	
 	private List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCota(Integer numeroCota) {
 		
@@ -109,16 +112,45 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private ConferenciaEncalheRepository conferenciaEncalheRepository;
 	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterListaBoxEncalhe()
 	 */
-	public List<Box> obterListaBoxEncalhe() {
+	@Transactional(readOnly = true)
+	public List<Box> obterListaBoxEncalhe(Long idUsuario) {
 	
 		List<Box> listaBoxEncalhe = boxRepository.obterListaBox(TipoBox.RECOLHIMENTO);
-	
-		return listaBoxEncalhe;
 		
+		if (idUsuario == null){
+			
+			return listaBoxEncalhe;
+		}
+		
+		String codigoBoxPadraoUsuario = this.obterBoxPadraoUsuario(idUsuario);
+		
+		if (codigoBoxPadraoUsuario == null){
+			
+			return listaBoxEncalhe;
+		}
+		
+		List<Box> boxes = new ArrayList<Box>();
+			
+		for (Box box : listaBoxEncalhe){
+			
+			if (box.getCodigo().equals(codigoBoxPadraoUsuario)){
+				
+				boxes.add(box);
+				listaBoxEncalhe.remove(box);
+				break;
+			}
+		}
+		
+		boxes.addAll(listaBoxEncalhe);
+		
+		return boxes;
 	}
 	
 	/*
@@ -127,16 +159,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	public String obterBoxPadraoUsuario(Long idUsuario) {
 		
-		List<Box> listaBoxEncalhe = boxRepository.obterBoxUsuario(idUsuario, TipoBox.RECOLHIMENTO);
+		/*List<Box> listaBoxEncalhe = boxRepository.obterBoxUsuario(idUsuario, TipoBox.RECOLHIMENTO);
 		
 		if(listaBoxEncalhe != null && !listaBoxEncalhe.isEmpty()) {
 			
 			Box boxRecolhimentoUsuario = listaBoxEncalhe.get(0);
 			
 			return boxRecolhimentoUsuario.getCodigo();
+		}*/
+		
+		if (idUsuario == null){
+			
+			return null;
 		}
 		
-		return null;
+		return this.boxRepository.obterCodigoBoxPadraoUsuario(idUsuario);
 		
 	}
 
@@ -215,6 +252,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterInfoConferenciaEncalheCota(java.lang.Integer)
 	 */
+	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -257,24 +295,80 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(totalDebitoCreditoCota);
 		infoConfereciaEncalheCota.setValorPagar(valorPagar);
 		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
-		
+		infoConfereciaEncalheCota.setListaConferenciaEncalhe(this.obterListaConferenciaEncalheMockada());
 		
 		return infoConfereciaEncalheCota;
 		
 	}
 	
 	
-	
-	
-	
-	public ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(String codigoDeBarras) {
-		//TODO
-		return null;
+	@Transactional(readOnly = true)
+	public ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (idProdutoEdicao == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+		}
+		
+		return produtoEdicao;
 	}
 	
-	public ProdutoEdicao pesquisarProdutoEdicaoPorSM() {
-		//TODO
-		return null;
+	@Transactional(readOnly = true)
+	public ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (codigoDeBarras == null || codigoDeBarras.trim().isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+		}
+		
+		return produtoEdicao;
+	}
+	
+	@Transactional(readOnly = true)
+	public ProdutoEdicao pesquisarProdutoEdicaoPorSM(Integer numeroCota, Long sm) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (sm == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSM(sm);
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+		}
+		
+		return produtoEdicao;
 	}
 	
 	/*

@@ -107,7 +107,7 @@
 	
 	function carregarFornecedoresRelacionados(idCota){
 		var data = [{name: 'idCota', value: idCota}];
-		$.postJSON("<c:url value='/cadastro/financeiro/fornecedoresCota' />",
+		$.postJSON("<c:url value='/cota/parametroCobrancaCota/fornecedoresCota' />",
 				   data,
 				   sucessCallbackCarregarFornecedores,
 				   null,
@@ -124,7 +124,7 @@
 		/*PASSAGEM DE PARAMETROS*/
 		$(".boletosUnificadosGrid").flexOptions({
 			/*METODO QUE RECEBERA OS PARAMETROS*/
-			url: "<c:url value='/cadastro/financeiro/obterFormasCobranca' />",
+			url: "<c:url value='/cota/parametroCobrancaCota/obterFormasCobranca' />",
 			params: [{name:'idCota', value:idCota}],
 			        newp: 1
 		});
@@ -242,7 +242,7 @@
 	//PARAMETROS DE COBRANÇA
 	function obterParametroCobranca(idCota){
 		var data = [{name: 'idCota', value: idCota}];
-		$.postJSON("<c:url value='/cadastro/financeiro/obterParametroCobranca' />",
+		$.postJSON("<c:url value='/cota/parametroCobrancaCota/obterParametroCobranca' />",
 				   data,
 				   sucessCallbackParametroCobranca, 
 				   null,
@@ -269,6 +269,7 @@
 		$("#comissao").val(resultado.comissao);
 		$("#qtdDividasAberto").val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto").val(resultado.vrDividasAberto);
+		$("#tipoCota").val(resultado.tipoCota);
 		
 		carregarFornecedoresRelacionados(resultado.idCota);
 	}
@@ -280,7 +281,7 @@
 		var idCota = $("#_idCota").val();
 		var numCota = $("#_numCota").val();
 		
-		var fatorVencimento     = $("#fatorVencimento").val();
+		var fatorVencimento  = $("#fatorVencimento").val();
 		
 		$("#sugereSuspensao").val(0);
 		if (document.formFinanceiro.sugereSuspensao.checked){
@@ -298,8 +299,9 @@
 		var comissao = $("#comissao").val();
 		var qtdDividasAberto = $("#qtdDividasAberto").val();
 		var vrDividasAberto = $("#vrDividasAberto").val();
+		var tipoCota = $("#tipoCota").val();
 		
-		$.postJSON("<c:url value='/cadastro/financeiro/postarParametroCobranca'/>",
+		$.postJSON("<c:url value='/cota/parametroCobrancaCota/postarParametroCobranca'/>",
 				   "parametroCobranca.idParametroCobranca="+idParametroCobranca+ 
 				   "&parametroCobranca.idCota="+idCota+ 
 				   "&parametroCobranca.numCota="+numCota+    
@@ -309,9 +311,14 @@
 				   "&parametroCobranca.valorMinimo="+valorMinimo+        
 				   "&parametroCobranca.comissao="+comissao+          
 				   "&parametroCobranca.qtdDividasAberto="+qtdDividasAberto+   
-				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto,
-				   null,
-				   null,
+				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto+
+				   "&parametroCobranca.tipoCota="+tipoCota,
+				   function(){
+			           return true;
+				   },
+				   function(){
+			           return false;
+				   },
 				   true);
 	}
 	
@@ -365,7 +372,7 @@
 	
 	function obterFormaCobranca(idFormaCobranca){
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
-		$.postJSON("<c:url value='/cadastro/financeiro/obterFormaCobranca' />",
+		$.postJSON("<c:url value='/cota/parametroCobrancaCota/obterFormaCobranca' />",
 				   data,
 				   sucessCallbackFormaCobranca, 
 				   null,
@@ -494,7 +501,7 @@
 		var domingo  = $("#PDom").val();
 		 	
 		if (novo) {
-			$.postJSON("<c:url value='/cadastro/financeiro/postarFormaCobranca'/>",
+			$.postJSON("<c:url value='/cota/parametroCobrancaCota/postarFormaCobranca'/>",
 					   "formaCobranca.idCota="+idCota+ 
 					   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
 					   "&formaCobranca.tipoCobranca="+tipoCobranca+  
@@ -538,7 +545,7 @@
 					   telaMensagem);
 		}
 		else{
-			$.postJSON("<c:url value='/cadastro/financeiro/postarFormaCobranca'/>",
+			$.postJSON("<c:url value='/cota/parametroCobrancaCota/postarFormaCobranca'/>",
 					   "formaCobranca.idFormaCobranca="+idFormaCobranca+ 
 					   "&formaCobranca.idCota="+idCota+ 
 					   "&formaCobranca.idParametroCobranca="+idParametroCobranca+ 
@@ -587,7 +594,7 @@
 	function excluirFormaCobranca(idFormaCobranca){
 		var idCota = $("#_idCota").val();
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
-		$.postJSON("<c:url value='/cadastro/financeiro/excluirFormaCobranca' />",
+		$.postJSON("<c:url value='/cota/parametroCobrancaCota/excluirFormaCobranca' />",
 				   data,
 				   function(){
 				       mostrarGrid(idCota);
@@ -686,7 +693,7 @@
 	//IMPRESSÃO DO CONTRATO
 	function imprimeContrato(){
 		var idCota = $("#_idCota").val();
-	    document.location.assign("${pageContext.request.contextPath}/cadastro/financeiro/imprimeContrato?idCota="+idCota);
+	    document.location.assign("${pageContext.request.contextPath}/cota/parametroCobrancaCota/imprimeContrato?idCota="+idCota);
 	}
 	
 	
@@ -752,39 +759,44 @@
 		       
 		     <td width="123">
 			     <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
-			       <option>1</option>
-			       <option>2</option>
-			       <option>3</option>
-			       <option>4</option>
-			       <option>5</option>
-			       <option>6</option>
-			       <option>7</option>
-			       <option>8</option>
-			       <option>9</option>
-			       <option>10</option>
-			       <option>11</option>
-			       <option>12</option>
-			       <option>13</option>
-			       <option>14</option>
-			       <option>15</option>
-			       <option>16</option>
-			       <option>17</option>
-			       <option>18</option>
-			       <option>19</option>
-			       <option>20</option>
+			       <option value="1">1</option>
+			       <option value="2">2</option>
+			       <option value="3">3</option>
+			       <option value="4">4</option>
+			       <option value="5">5</option>
+			       <option value="6">6</option>
+			       <option value="7">7</option>
+			       <option value="8">8</option>
+			       <option value="9">9</option>
+			       <option value="10">10</option>
+			       <option value="11">11</option>
+			       <option value="12">12</option>
+			       <option value="13">13</option>
+			       <option value="14">14</option>
+			       <option value="15">15</option>
+			       <option value="16">16</option>
+			       <option value="17">17</option>
+			       <option value="18">18</option>
+			       <option value="19">19</option>
+			       <option value="20">20</option>
 			     </select>
 		     </td>
 		     
 		   </tr>
 		   
 		   <tr>
-		     
-		     <td>Valor Mínimo R$:</td>
-		     <td>
-		         <input maxlength="15" name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
-		     </td>
-		     
-		     <td>Comissão %:</td>
+		   
+		    <td>Tipo da Cota:</td>
+			 <td>
+		       <select name="tipoCota" id="tipoCota" style="width:150px;">
+                  <option value="">Selecione</option>
+                  <c:forEach varStatus="counter" var="itemTipoCota" items="${listaTiposCota}">
+                      <option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
+                  </c:forEach>
+               </select> 
+             </td>  
+             
+             <td>Comissão %:</td>
 		     <td>
 		         <input maxlength="15" name="comissao" id="comissao" type="text" style="width:60px;" />
 		     </td>
@@ -792,11 +804,20 @@
 		   </tr>
 		   
 		   <tr>
+		   
 		     <td>Sugere Suspensão:</td>
-		     <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" /></td>
+		     <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" />
+		     </td>
+		     
+		     <td>Valor Mínimo R$:</td>
+		     <td>
+		         <input maxlength="15" name="valorMinimo" id="valorMinimo" type="text" style="width:60px;" />
+		     </td>
+		     
 		   </tr>
 
 		   <tr>
+		   
 		     <td height="23">Sugere Suspensão quando atingir:</td>
 		     <td  colspan="3">
 			     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -818,6 +839,7 @@
 			       
 		         </table>
 		      </td>
+		      
 		   </tr>
 
 		</table>
@@ -1063,12 +1085,12 @@
 						  
 						  <tr>
 						    <td>Agência:</td>
-						    <td><input maxlength="25" type="text" id="agencia" name="agencia" style="width:60px;" />
+						    <td><input maxlength="17" type="text" id="agencia" name="agencia" style="width:60px;" />
 						      -
 						      <input maxlength="1" type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
 						    <td>Conta:</td>
 						    <td>
-						        <input maxlength="25" type="text" id="conta" name="conta" style="width:60px;" />
+						        <input maxlength="17" type="text" id="conta" name="conta" style="width:60px;" />
 						      -
 						        <input maxlength="1" type="text" id="contaDigito" name="contaDigito" style="width:30px;" /></td>
 						  </tr>

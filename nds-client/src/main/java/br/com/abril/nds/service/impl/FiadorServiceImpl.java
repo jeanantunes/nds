@@ -191,7 +191,7 @@ public class FiadorServiceImpl implements FiadorService {
 			this.processarSocios(fiador, sociosAdicionar, sociosRemover);
 		}
 		
-		if (fiador.getId() == null){
+		if (fiador.getPessoa().getId() == null){
 			
 			this.pessoaRepository.adicionar(fiador.getPessoa());
 		} else {

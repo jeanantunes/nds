@@ -202,7 +202,7 @@ public class BancoServiceImpl implements BancoService {
 		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
 		List<Banco> bancos = bancoRepository.buscarTodos();
 		for (Banco itemBanco : bancos){
-			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+" - "+itemBanco.getNome()));
+			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+"-"+itemBanco.getNome()+" "+itemBanco.getConta()+"-"+itemBanco.getDvConta()));
 		}
 		return comboBancos;
 	}

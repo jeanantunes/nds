@@ -238,6 +238,7 @@
 									function(){
 										
 										$(".veiculosGrid").flexReload();
+										$(".associacaoGrid").flexReload();
 										
 										$("#dialog-incluir-veiculo").dialog("close");
 									}, null, true, "idModalCadastroVeiculo"
@@ -376,6 +377,7 @@
 									function(result){
 										
 										$(".motoristasGrid").flexReload();
+										$(".associacaoGrid").flexReload();
 										
 										$("#dialog-incluir-motorista").dialog("close");
 									}, null, true, "idModalCadastroMotorista"

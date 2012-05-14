@@ -206,7 +206,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
-						itemRecebimentoFisico);
+						itemRecebimentoFisico, 1);
 		save(lancamentoVeja1);
 		
 		Lancamento lancamentoVeja2 = Fixture
@@ -218,7 +218,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null);
+						null, 1);
 		save(lancamentoVeja2);
 		
 		Estudo estudoVeja1 = Fixture
