@@ -54,7 +54,7 @@
 		</div>
 		
 		<div id="tabCota-8">
-			 <jsp:include page="../financeiro/index.jsp"></jsp:include> 
+			 <jsp:include page="../parametroCobrancaCota/index.jsp"></jsp:include> 
 		</div>
 		
 		<div id="tabCota-9">
@@ -64,9 +64,11 @@
 		</div>
 		
 		<div id="tabCota-10">
-			
+			<jsp:include page="socio.jsp"></jsp:include>
 		</div>
 	
+	</div>
+
 </div>
 
 

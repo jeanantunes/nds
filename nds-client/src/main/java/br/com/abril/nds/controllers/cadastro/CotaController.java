@@ -29,6 +29,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.SocioCota;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -42,8 +44,6 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.caelum.stella.validation.CNPJValidator;
-import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -396,13 +396,25 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
+	
 	@Post
 	@Path("/salvarDescontos")
-	public void salvarDescontos(List<Long> descontos,Long idCota){
+	public void salvarDescontos(List<Long> descontos, Long idCota){
 		
+		if(descontos == null){
+			
+			List<TipoDesconto> list = cotaService.obterDescontosCota(idCota);
+	
+			if(list!= null && !list.isEmpty()){
+				
+				cotaService.salvarDescontosCota(descontos, idCota);
+			}
+		}else {
+			
+			cotaService.salvarDescontosCota(descontos, idCota);
+		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
 	@Post
@@ -456,21 +468,31 @@ public class CotaController {
 	
 	@Post
 	@Path("/obterDescontos")
-	public void obterDescontos(){
+	public void obterDescontos(Long idCota){
 		
-		//TODO retorna todos os descontos cadastrados
+		List<TipoDesconto> descontos =   cotaService.obterDescontos(idCota);
 		
-		result.use(Results.json()).from(null, "result").recursive().serialize();
+		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
 	}
 	
+	private List<ItemDTO<Long, String>> getDescontos(List<TipoDesconto> descontos){
+		
+		List<ItemDTO<Long, String>> itensDesconto = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(TipoDesconto desconto : descontos){
+			
+			itensDesconto.add(new ItemDTO<Long, String>(desconto.getId(), desconto.getCodigo()+" - " +desconto.getDescricao()));
+		}
+		return itensDesconto;
+	}
 
 	@Post
 	@Path("/obterDescontosSelecionados")
 	public void obterDescontosSelecionados(Long idCota){
 		
-		//TODO implementar o retorno de desconto da cota informada
+		List<TipoDesconto> descontos =   cotaService.obterDescontosCota(idCota);
 		
-		result.use(Results.json()).from(null, "result").recursive().serialize();
+		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
 	}
 	
 	@Post

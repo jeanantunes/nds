@@ -14,7 +14,9 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -176,6 +178,16 @@ public interface CotaService {
 	CotaDTO obterDadosCadastraisCota(Long idCota);
 	
 	Integer gerarNumeroSugestaoCota();
+	
+	List<TipoDesconto> obterDescontos(Long idCota);
+	
+	List<TipoDesconto> obterDescontosCota(Long idCota);
+	
+	void salvarDescontosCota(List<Long> descontos, Long idCota);
+	
+	void salvarSociosCota(List<SocioCota> sociosCota, Long idCota );
+	
+	List<SocioCota> obterSociosCota(Long idCota);
 
 	
 	/**

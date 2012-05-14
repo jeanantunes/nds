@@ -38,9 +38,11 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -54,7 +56,9 @@ import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
+import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
@@ -122,6 +126,12 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ReferenciaCotaRepository referenciaCotaRepository;
+	
+	@Autowired
+	private TipoDescontoRepository tipoDescontoRepository;
+	
+	@Autowired
+	private SocioCotaRepository socioCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1074,5 +1084,86 @@ public class CotaServiceImpl implements CotaService {
 		return comboTiposCota;
 	}
 	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoDesconto> obterDescontos(Long idCota){
+		
+		return tipoDescontoRepository.obterTipoDescontoNaoReferenciadosComCota(idCota);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoDesconto> obterDescontosCota(Long idCota){
+		
+		return tipoDescontoRepository.obterTiposDescontoCota(idCota);
+	}
+	
+	@Transactional
+	@Override
+	public void salvarDescontosCota(List<Long> descontos, Long idCota){
+		
+		if(idCota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		Set<TipoDesconto> listaDescontos = new HashSet<TipoDesconto>();
+		
+		if(descontos != null && !descontos.isEmpty()){
+			
+			TipoDesconto tipoDesconto = null;
+			
+			for(Long  td :  descontos ){
+				
+				tipoDesconto = tipoDescontoRepository.buscarPorId(td) ;
+				
+				if(tipoDesconto != null){
+					listaDescontos.add( tipoDesconto );
+				}
 
+			}
+		}
+
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		cota.setTiposDescontoCota(listaDescontos);
+		
+		cotaRepository.alterar(cota);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<SocioCota> obterSociosCota(Long idCota){
+		
+		return socioCotaRepository.obterSocioCotaPorIdCota(idCota);
+		
+	}
+	
+	@Override
+	@Transactional
+	public void salvarSociosCota(List<SocioCota> sociosCota, Long idCota ){
+		
+		if(idCota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		Cota cota  = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		if( cota.getSociosCota() != null && !cota.getSociosCota().isEmpty()){
+	    	
+			for(SocioCota ref : cota.getSociosCota()){
+	    		socioCotaRepository.remover(ref);
+	    	}
+	    }
+		
+		if( sociosCota!= null && !sociosCota.isEmpty()){
+
+			for(SocioCota ref : sociosCota){
+	    		ref.setCota(cota);
+				socioCotaRepository.merge(ref);
+	    	}
+		}
+	}
 }
