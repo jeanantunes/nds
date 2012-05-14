@@ -42,7 +42,6 @@ NotaPromissoria.prototype.processPost = function(objectName, object) {
 };
 
 NotaPromissoria.prototype.get = function() {
-
 	var _this = this;
 	$.postJSON(this.path + 'getByCota.json', {
 		'idCota' : this.idCota
@@ -494,6 +493,23 @@ function Fiador(idCota){
 	this.bindEvents();
 	this.toggle();
 	this.initGrid();
+	this.$dialog = $('<div></div>')
+			.html('Fiador não encontrado. Deseja cadastrar um?')
+			.dialog({
+				autoOpen: false,
+				title: 'Fiador não encontrado',
+				resizable: false,
+				height:140,
+				modal: true,
+				buttons: {
+				"Ir para Cadastro Fiador": function() {
+					location.replace(contextPath + '/cadastro/fiador');
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+			});
 	
 }
 Fiador.prototype.path = contextPath + "/cadastro/garantia/";
@@ -522,7 +538,7 @@ Fiador.prototype.bindEvents = function() {
 		},
 		minLength : 3,
 		select : function(event, ui) {
-			_this.getFiador(ui.item.key);
+			_this.getFiador(ui.item.key,null);
 		},
 		open : function() {
 			$(this).removeClass("ui-corner-all").addClass("ui-corner-top");
@@ -531,21 +547,48 @@ Fiador.prototype.bindEvents = function() {
 			$(this).removeClass("ui-corner-top").addClass("ui-corner-all");
 		}
 	});
+	
+	 $("#cotaGarantiaFiadorSearchDoc").keypress(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {    
+        	$("#cotaGarantiaFiadorSearchName").val("");        
+            _this.getFiador(null,$("#cotaGarantiaFiadorSearchDoc").val());
+        } 
+    });
+	
 };
-Fiador.prototype.getFiador = function(idFiador){
-	var _this =  this;
-	$.postJSON(this.path + "getFiador.json", {
-				idFiador:idFiador
-			}, function(data) {
-				_this.fiador=data;
-				_this.bindData();
-				_this.toggleDados();
-			}, null, true);
+Fiador.prototype.getFiador = function(idFiador, documento){
+	var _this =  this;	
+	var param = {}
+	if(idFiador){
+		param.idFiador =idFiador;
+	}else if (documento) {
+		param.documento = documento;
+	};
+	
+	$.postJSON(this.path + "getFiador.json",param , function(data) {				
+		if(data === "NotFound"){
+			_this.$dialog.dialog('open');
+			_this.toggleDados(false);
+			_this.fiador=null;
+		}else if(data.tipoMensagem && data.listaMensagens) {
+			exibirMensagem(data.tipoMensagem, data.listaMensagens);
+			_this.toggleDados(false);
+			_this.fiador=null;
+		}else{
+			_this.fiador=data;
+			_this.bindData();
+			_this.toggleDados(true);
+		}
+	}, null, true);
+};
+
+Fiador.prototype.confirma = function(){
+	
 };
 
 
-Fiador.prototype.toggleDados = function() {
-	$('#cotaGarantiaFiadorDadosPanel').toggle();
+Fiador.prototype.toggleDados = function(showOrHide) {
+	$('#cotaGarantiaFiadorDadosPanel').toggle(showOrHide );
 };
 Fiador.prototype.bindData = function(){
 	
@@ -584,7 +627,6 @@ Fiador.prototype.bindData = function(){
 	
 	
 	$("#cotaGarantiaFiadorGarantiasGrid").flexAddData({rows:rows,page:1,total:1}  );	
-	//$("#cotaGarantiaFiadorGarantiasGrid").flexReload();
 };
 Fiador.prototype.initGrid =  function() {
 	$("#cotaGarantiaFiadorGarantiasGrid").flexigrid({
@@ -609,6 +651,16 @@ Fiador.prototype.initGrid =  function() {
 			height : 150
 		});
 };
+Fiador.prototype.salva = function(){
+	var _this =  this;
+	$.postJSON(this.path + "salvaFiador.json", {
+				idFiador:idFiador
+			}, function(data) {
+				_this.fiador=data;
+				_this.bindData();
+			}, null, true);
+};
+
 
 
 
