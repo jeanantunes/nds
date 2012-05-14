@@ -42,8 +42,12 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 		/**GARANTIA**/
 		case 4: 
-			T.funcaoSalvar = tipoCotaGarantia.controller.salva;
-			tipoCotaGarantia.onOpen();
+			T.funcaoSalvar = function(){tipoCotaGarantia.controller.salva();};
+			try{
+				tipoCotaGarantia.onOpen();
+			}catch (e) {
+				console.log(e);
+			}
 			break;
 		
 		/**FINANCEIRO**/

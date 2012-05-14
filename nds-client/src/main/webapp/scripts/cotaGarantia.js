@@ -560,7 +560,7 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 };
 
 TipoCotaGarantia.prototype.onOpen = function(){
-	
+	console.log('open');
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
