@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 /**
  * Interface que define os serviços referentes a Parciais
@@ -15,5 +14,5 @@ public interface ParciaisService {
 	 * 
 	 * @param produtoEdicao - ProdutoEdicao
 	 */
-	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos);
+	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos);
 }

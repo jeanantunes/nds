@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,19 +12,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PeriodoVO;
 
 /**
@@ -39,6 +55,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	
+	@Autowired
+	protected ChamadaEncalheRepository chamadaEncalheRepository;
+		
+	@Autowired
+	protected ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -59,6 +84,151 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
 		
 		return balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+		
+		if (matrizRecolhimento == null
+				|| matrizRecolhimento.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
+		}
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
+			
+			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
+			
+			if (listaProdutoRecolhimentoDTO == null
+					|| listaProdutoRecolhimentoDTO.isEmpty()) {
+			
+				continue;
+			}
+				
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
+			
+				atualizarLancamento(produtoRecolhimento);
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+		
+		if (matrizRecolhimento == null
+				|| matrizRecolhimento.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
+		}
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
+			
+			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
+			
+			if (listaProdutoRecolhimentoDTO == null
+					|| listaProdutoRecolhimentoDTO.isEmpty()) {
+			
+				continue;
+			}
+				
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
+			
+				atualizarLancamento(produtoRecolhimento);
+				
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
+					estoqueProdutoCotaRepository.buscarEstoqueProdutoCotaPorIdProdutEdicao(
+						produtoRecolhimento.getIdProdutoEdicao());
+				
+				if (listaEstoqueProdutoCota == null
+						|| listaEstoqueProdutoCota.isEmpty()) {
+
+//					TODO: trecho comentado para testes na tela
+					
+//					throw new ValidacaoException(TipoMensagem.WARNING,
+//						"Estoque produto cota não encontrado!");
+					
+					continue;
+				}
+				
+				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+					
+					gerarChamadaEncalhe(estoqueProdutoCota, produtoRecolhimento.getNovaData());
+				}
+			}
+			
+			//TODO: chamar componente de cadastro de lançamentos parciais
+		}
+	}
+	
+	private void atualizarLancamento(ProdutoRecolhimentoDTO produtoRecolhimento) {
+		
+		Lancamento lancamento =
+			lancamentoRepository.buscarPorId(produtoRecolhimento.getIdLancamento());
+		
+		if (lancamento == null) {
+		
+//			TODO: trecho comentado para testes na tela
+			
+//			throw new ValidacaoException(TipoMensagem.WARNING,
+//				"Lançamento não encontrado!");
+			
+			return;
+		}
+			
+		lancamento.setDataRecolhimentoDistribuidor(produtoRecolhimento.getNovaData());
+		lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
+		lancamento.setStatus(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		lancamento.setDataStatus(new Date());
+		
+		lancamentoRepository.merge(lancamento);
+	}
+	
+	private void gerarChamadaEncalhe(EstoqueProdutoCota estoqueProdutoCota, Date dataRecolhimento) {
+		
+		ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+		
+		Cota cota = estoqueProdutoCota.getCota();
+		
+		ChamadaEncalhe chamadaEncalhe =
+			chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
+				produtoEdicao, dataRecolhimento, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		if (chamadaEncalhe == null) {
+			
+			chamadaEncalhe = new ChamadaEncalhe();
+			
+			chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
+			chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+			chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+			
+			chamadaEncalhe = chamadaEncalheRepository.merge(chamadaEncalhe);
+		}
+		
+		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+		
+		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+		chamadaEncalheCota.setConferido(Boolean.FALSE);
+		chamadaEncalheCota.setCota(cota);
+		
+		BigDecimal qtdPrevista = BigDecimal.ZERO;
+		
+		if (estoqueProdutoCota != null) {
+			
+			qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
+				estoqueProdutoCota.getQtdeDevolvida());
+		}
+		
+		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		
+		chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 	}
 	
 	/*
