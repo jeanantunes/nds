@@ -16,17 +16,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		super(ChamadaEncalheCota.class);
 	}
 	
-	
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ChamadaEncalheCotaRepository#obterListaIdProdutoEdicaoChamaEncalheCota(java.lang.Integer, java.util.Date, boolean, boolean)
+	 */
+	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota (
 			Integer numeroCota, 
 			Date dataOperacao, 
-			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
 			boolean conferido) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamadaEncalheCota ");
+		hql.append(" select chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id ");
 		
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
 		
@@ -42,10 +44,6 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
 		
-		if(idProdutoEdicao!=null) {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
-		}
-		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", numeroCota);
@@ -53,11 +51,6 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		query.setParameter("conferido", conferido);
 		
 		query.setParameter("dataOperacao", dataOperacao);
-		
-		
-		if(idProdutoEdicao!=null) {
-			query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		}
 		
 		return  query.list();
 		

@@ -34,38 +34,7 @@ import br.com.abril.nds.util.TipoMensagem;
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
 	
-//TODO - Remover apos testes
-	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheMockada() {
-		
-		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = new ArrayList<ConferenciaEncalheDTO>();
-		
-		int contador = 0;
-		
-		ConferenciaEncalheDTO conferencia = null;
-		
-		while(contador++ < 10) {
-			
-			conferencia = new ConferenciaEncalheDTO();
-			
-			conferencia.setCodigo(""+contador);
-			conferencia.setCodigoDeBarras(""+contador);
-			conferencia.setCodigoSM(1L+contador);
-			conferencia.setDesconto(BigDecimal.ONE);
-			conferencia.setDia(1);
-			conferencia.setJuramentada(contador < 5 ? true : false);
-			conferencia.setNomeProduto("PRODUTONOME_"+contador);
-			conferencia.setNumeroEdicao(1L+contador);
-			conferencia.setPrecoCapa(BigDecimal.ONE);
-			conferencia.setQtdExemplar(BigDecimal.TEN);
-			conferencia.setValorTotal(BigDecimal.ONE);
-			
-			listaConferenciaEncalhe.add(conferencia);
-			
-		}
-		
-		return listaConferenciaEncalhe;
-		
-	}
+
 	
 	private List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCota(Integer numeroCota) {
 		
@@ -288,17 +257,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		List<Long> listaIdProdutoEdicao = null;
-		//TODO obter a lista de idProdutoEdicao 
-		//que constam na chamada de encalhe atual da cota em questão
-
+		List<Long> listaIdProdutoEdicao = 
+				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, false, false);
 		BigDecimal reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
 		
-		BigDecimal totalDebitoCreditoCota = null;//TODOcalcularTotalDebitoCreditoCota(numeroCota);
-		
-		BigDecimal valorPagar = null;//TODO calcularValorPagarCota(numeroCota);
-		
-		BigDecimal valorVendaDia = null;//TODO calcularVendaDiaCota(numeroCota);
+		BigDecimal totalDebitoCreditoCota = null;//TODO sumarizado no front end...
+		BigDecimal valorPagar = null;//TODO sumarizado no front end...
+		BigDecimal valorVendaDia = null;//TODO sumarizado no front end...
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = obterListaDebitoCreditoCota(numeroCota);
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
@@ -307,7 +272,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(totalDebitoCreditoCota);
 		infoConfereciaEncalheCota.setValorPagar(valorPagar);
 		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
-		infoConfereciaEncalheCota.setListaConferenciaEncalhe(this.obterListaConferenciaEncalheMockada());
 		
 		return infoConfereciaEncalheCota;
 		
