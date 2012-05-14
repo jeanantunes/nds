@@ -244,7 +244,14 @@
 					<td>&nbsp;</td>
 					<td><span class="bt_add"> <a href="javascript:;"
 							id="cotaGarantiaImovelIncluirNovo">Incluir Novo</a>
-					</span></td>
+					</span>
+					
+					<span class="bt_novos">
+			  			<a href="javascript:;" id="cotaGarantiaImovelSalvaEdicao" style="display:none;">
+			  			<img src="/nds-client/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+			  		</span>
+					
+					</td>
 
 				</tr>
 			</tbody>

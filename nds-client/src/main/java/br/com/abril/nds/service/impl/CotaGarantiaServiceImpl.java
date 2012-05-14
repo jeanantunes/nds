@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -162,16 +163,15 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 			cotaGarantiaImovel = new CotaGarantiaImovel();
 			cotaGarantiaImovel.setCota(getCota(idCota));
-		
-		} else {
 			
-			this.cotaGarantiaRepository.remover(cotaGarantiaImovel);
 		}
-
+		
+		cotaGarantiaImovel.setImoveis(new ArrayList<Imovel>());
+		cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.merge(cotaGarantiaImovel);		
 		cotaGarantiaImovel.setData(new Date());
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
-
+		
 		return (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
 	}

@@ -25,7 +25,7 @@ public class CotaGarantiaImovel extends CotaGarantia {
 	private static final long serialVersionUID = 8619127785856466565L;
 	
 	@OneToMany(cascade={CascadeType.ALL})
-	@JoinColumn(name="IMOVEL_ID")
+	@JoinColumn(name="GARANTIA_ID")
 	private List<Imovel> imoveis;
 
 
