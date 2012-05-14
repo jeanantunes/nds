@@ -245,7 +245,8 @@ function Imovel(idCota) {
 	this.get();
 	this.toggle();
 	this.initGrid();
-	this.rows =  new Array();
+	this.rows = new Array;
+	this.itemEdicao = null;
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
@@ -285,7 +286,6 @@ Imovel.prototype.toggle = function() {
 };
 
 Imovel.prototype.get = function() {
-	console.log("get");
 	var _this = this;
 	$.postJSON(this.path + 'getByCota.json', {
 		'idCota' : this.idCota
@@ -304,7 +304,6 @@ Imovel.prototype.get = function() {
 };
 
 Imovel.prototype.incluirImovel = function(callBack) {
-	console.log("inclui");
 	var _this = this;
 	this.dataUnBind();
 	var postData = this.processPost('imovel', this.imovel);
@@ -322,8 +321,13 @@ Imovel.prototype.incluirImovel = function(callBack) {
 					var novoImovel = data.imovel;
 					var rows = _this.rows;
 					
-					rows.push({"id": rows.length,"cell":novoImovel});
-															
+					if (_this.itemEdicao == null || _this.itemEdicao < 0) {
+						rows.push({"id": rows.length,"cell":novoImovel});
+					} else {
+						rows.slice(_this.itemEdicao, 1);
+						rows[_this.itemEdicao] = {"id":_this.itemEdicao,"cell":novoImovel};
+					}
+					
 					$(".cotaGarantiaImovelGrid").flexAddData({rows:rows,page:1,total:1}  );
 					
 					_this.limparForm();
@@ -337,8 +341,7 @@ Imovel.prototype.incluirImovel = function(callBack) {
 };
 
 Imovel.prototype.salva = function(callBack) {
-	console.log("salva");
-	var listaImoveis = new Array();
+	var listaImoveis = new Array;
 	
 	for (var index in this.rows) {
 		var imovel = this.rows[index].cell;
@@ -364,17 +367,18 @@ Imovel.prototype.salva = function(callBack) {
 };
 
 Imovel.prototype.limparForm = function() {
-	console.log("limparForm");
 	this.imovel.proprietario = "";
 	this.imovel.endereco = "";
 	this.imovel.numeroRegistro = "";
 	this.imovel.valor="";
 	this.imovel.observacao="";
+	this.itemEdicao = null;
 	this.dataBind();
+	$("#cotaGarantiaImovelSalvaEdicao").hide();
+	$("#cotaGarantiaImovelIncluirNovo").show();
 };
 
 Imovel.prototype.dataBind = function() {
-	console.log("dataBind");
 	$("#cotaGarantiaImovelProprietario").val(this.imovel.proprietario);
 	$("#cotaGarantiaImovelEndereco").val(this.imovel.endereco);
 	$("#cotaGarantiaImovelNumeroRegistro").val(this.imovel.numeroRegistro);
@@ -389,7 +393,6 @@ Imovel.prototype.dataBind = function() {
 };
 
 Imovel.prototype.dataUnBind = function() {
-	console.log("dataUnBind");
 	this.imovel.proprietario = $("#cotaGarantiaImovelProprietario").val();
 	this.imovel.endereco = $("#cotaGarantiaImovelEndereco").val();
 	this.imovel.numeroRegistro = $("#cotaGarantiaImovelNumeroRegistro").val();
@@ -399,10 +402,13 @@ Imovel.prototype.dataUnBind = function() {
 
 
 Imovel.prototype.bindEvents = function() {
-	console.log("bindEvents");
 	var _this = this;
 	
 	$("#cotaGarantiaImovelIncluirNovo").click(function(){
+		_this.incluirImovel();
+	});
+	
+	$("#cotaGarantiaImovelSalvaEdicao").click(function(){
 		_this.incluirImovel();
 	});
 	
@@ -414,15 +420,27 @@ Imovel.prototype.bindEvents = function() {
 };
 
 Imovel.prototype.edita = function(id) {
-	console.log("edita");
 	this.imovel = this.rows[id].cell;
+	this.itemEdicao = id;
 	this.dataBind();
+	$("#cotaGarantiaImovelSalvaEdicao").show();
+	$("#cotaGarantiaImovelIncluirNovo").hide();
 };
 
 Imovel.prototype.remove = function(id) {
-	console.log("remove");
+
 	if (confirm("Confirma a exclusão desse imóvel?")) {
+		
 		this.rows.splice(id, 1);
+		
+		var lista = new Array;
+		
+		for (var index in this.rows) {	
+			lista.push({"id":lista.length, "cell":this.rows[index].cell});
+		}
+		
+		this.rows = lista;
+		
 		$(".cotaGarantiaImovelGrid").flexAddData({rows:this.rows,page:1,total:1}  );
 	}
 };
@@ -432,11 +450,15 @@ Imovel.prototype.initGrid = function() {
 	$(".cotaGarantiaImovelGrid").flexigrid({
 		
 		preProcess : function(data) {
-			console.log("preProcess");
+			if( typeof data.mensagens == "object") {
+
+				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+
+			} else {
 			$.each(data.rows, function(index, value) {
 				
 				var idImovel = value.id;
-				console.log(idImovel);
+			
 				var acao  = '<a href="javascript:;" onclick="tipoCotaGarantia.controller.edita(' + idImovel + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
 				    acao += '<a href="javascript:;" onclick="tipoCotaGarantia.controller.remove(' + idImovel + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 
@@ -444,6 +466,7 @@ Imovel.prototype.initGrid = function() {
 			});
 			
 			return data;
+			}
 		},
 		
 		dataType : 'json',

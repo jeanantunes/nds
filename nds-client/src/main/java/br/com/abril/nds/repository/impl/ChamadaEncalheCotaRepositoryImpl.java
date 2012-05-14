@@ -19,7 +19,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 	
 	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
 			Integer numeroCota, 
-			Date dataRecolhimento, 
+			Date dataOperacao, 
 			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
 			boolean conferido) {
@@ -50,7 +50,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		
 		query.setParameter("numeroCota", numeroCota);
 
-		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("conferido", conferido);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
 		
 		if(idProdutoEdicao!=null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -62,7 +65,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 	
 	public Long obterQtdListaChamaEncalheCota(
 			Integer numeroCota, 
-			Date dataRecolhimento, 
+			Date dataOperacao, 
 			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
 			boolean conferido) {
@@ -94,13 +97,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		query.setParameter("numeroCota", numeroCota);
 		
 		query.setParameter("conferido", conferido);
-
-		//query.setParameter("dataRecolhimento", dataRecolhimento);
 		
-		query.setParameter("dataOperacao", dataRecolhimento);
+		query.setParameter("dataOperacao", dataOperacao);
 		
 		if(idProdutoEdicao!=null) {
-			
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
 		

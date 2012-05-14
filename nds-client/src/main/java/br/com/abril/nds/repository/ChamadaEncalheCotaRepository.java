@@ -17,14 +17,14 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * registros com dataRecolhimento igual data passada por parâmetro.
 	 * 
 	 * @param numeroCota
-	 * @param dataRecolhimento
+	 * @param dataOperacao
 	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
 	 * 
 	 * @return List - ChamadaEncalheCota
 	 */
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota, Date dataRecolhimento, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
+	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
 	
 	
 	/**
@@ -36,14 +36,14 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * registros com dataRecolhimento igual data passada por parâmetro.
 	 * 
 	 * @param numeroCota
-	 * @param dataRecolhimento
+	 * @param dataOperacao
 	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
 	 * 
 	 * @return Long
 	 */
-	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataRecolhimento, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
+	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
 
 	
 	
