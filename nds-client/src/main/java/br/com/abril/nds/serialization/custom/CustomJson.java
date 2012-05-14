@@ -1,7 +1,8 @@
 package br.com.abril.nds.serialization.custom;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
 import br.com.caelum.vraptor.View;
+import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.ioc.Component;
 
 import com.fasterxml.jackson.module.hibernate.HibernateModule;
@@ -22,7 +24,7 @@ public class CustomJson implements View {
 
 	private Object obj;
 
-	public CustomJson(HttpServletResponse response)
+	public CustomJson(HttpServletResponse response,Localization localization)
 			throws IOException {
 
 		this.response = response;
@@ -36,9 +38,17 @@ public class CustomJson implements View {
 		mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
 		mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES,
 				false);
-
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		mapper.setDateFormat(sdf);
+		
+		
+		Locale locale = localization.getLocale();
+		if (locale == null) {
+			locale = Locale.getDefault();
+		}
+		
+		DateFormat df = DateFormat
+				.getDateInstance(DateFormat.MEDIUM, locale);
+		df.setLenient(false);
+		mapper.setDateFormat(df);
 
 	}
 

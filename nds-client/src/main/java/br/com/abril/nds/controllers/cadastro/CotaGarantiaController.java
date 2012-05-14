@@ -205,9 +205,20 @@ public class CotaGarantiaController {
 	}
 		
 	@Post("/getFiador.json")
-	public void getFiador(Long idFiador, String doc) {
-		Fiador fiador = cotaGarantiaService.getFiador(idFiador, doc);	
-		result.use(CustomJson.class).from(fiador).serialize();
+	public void getFiador(Long idFiador, String documento) {
+		Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);	
+		if (fiador != null) {
+			result.use(CustomJson.class).from(fiador).serialize();
+		}else{
+			result.use(CustomJson.class).from("NotFound").serialize();
+		}
 	}
 	
+	@Post("/salvaFiador.json")
+	public void getFiador(Long idFiador) {
+		result.use(Results.json())
+		.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+				"Fiador salvo com Sucesso."), "result")
+		.recursive().serialize();
+	}
 }

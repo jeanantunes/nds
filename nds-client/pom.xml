@@ -136,11 +136,6 @@
         	<artifactId>jackson-module-hibernate</artifactId>
         	<version>1.9.1</version>
         </dependency>
-        <dependency>
-        	<groupId>com.github.francofabio</groupId>
-        	<artifactId>vraptor-jackson-serializer</artifactId>
-        	<version>1.0.6</version>
-        </dependency>
 	</dependencies>
 
 	<build>	
