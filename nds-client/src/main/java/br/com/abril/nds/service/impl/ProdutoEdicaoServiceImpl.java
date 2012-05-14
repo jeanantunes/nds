@@ -151,5 +151,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				codigoProduto, Long.parseLong(numeroEdicao));
 	}
+
+	@Override
+	@Transactional
+	public List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(
+			String codigoProduto) {
+		return produtoEdicaoRepository.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
+	}
 	
 }

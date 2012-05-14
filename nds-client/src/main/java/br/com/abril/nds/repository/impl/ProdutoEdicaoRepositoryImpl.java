@@ -3,10 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -124,6 +127,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setMaxResults(1);
 		
 		return (ProdutoEdicao) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto) {
+		
+		Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+				
+		return  criteria.list();
+				
 	}
 
 }
