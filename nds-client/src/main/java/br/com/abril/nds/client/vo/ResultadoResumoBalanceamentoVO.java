@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
-
 public class ResultadoResumoBalanceamentoVO implements Serializable {
 
 	/**
@@ -13,7 +11,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 2795532975752879190L;
 
-	private List<ResumoPeriodoBalanceamentoDTO> listaResumoPeriodoBalanceamento;
+	private List<ResumoPeriodoBalanceamentoVO> listaResumoPeriodoBalanceamento;
 	
 	private boolean matrizFechada;
 	
@@ -29,7 +27,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	/**
 	 * @return the listaResumoPeriodoBalanceamento
 	 */
-	public List<ResumoPeriodoBalanceamentoDTO> getListaResumoPeriodoBalanceamento() {
+	public List<ResumoPeriodoBalanceamentoVO> getListaResumoPeriodoBalanceamento() {
 		return listaResumoPeriodoBalanceamento;
 	}
 
@@ -37,7 +35,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	 * @param listaResumoPeriodoBalanceamento the listaResumoPeriodoBalanceamento to set
 	 */
 	public void setListaResumoPeriodoBalanceamento(
-			List<ResumoPeriodoBalanceamentoDTO> listaResumoPeriodoBalanceamento) {
+			List<ResumoPeriodoBalanceamentoVO> listaResumoPeriodoBalanceamento) {
 		this.listaResumoPeriodoBalanceamento = listaResumoPeriodoBalanceamento;
 	}
 

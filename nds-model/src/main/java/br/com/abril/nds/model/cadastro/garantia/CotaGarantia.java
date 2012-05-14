@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import br.com.abril.nds.model.cadastro.Cota;
 
 
@@ -46,7 +48,7 @@ public abstract class CotaGarantia implements Serializable{
 	@Column(name="ID")
 	private Long id;
 	
-	
+	@JsonIgnore
 	@OneToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;

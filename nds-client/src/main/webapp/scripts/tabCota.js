@@ -35,7 +35,10 @@ function TabCota(tabName) {
 		
 		/**GARANTIA**/
 		case 4: 
-			MANTER_COTA.carregarGarantias();
+
+			T.funcaoSalvar = tipoCotaGarantia.controller.salva;
+			tipoCotaGarantia.onOpen();
+
 			break;
 		
 		/**Fornecedor**/
