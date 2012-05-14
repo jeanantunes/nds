@@ -23,15 +23,26 @@
 	});
 
 	function pesquisar() {
-		if ($('#filtro_produto').attr("checked") == "checked") {
+		if ($('#filtro_distrib').attr("checked") == "checked") {
+			
+			var data = "dataDe=" + $("#datepickerDe").val() +
+			  		   "&dataAte=" + $("#datepickerAte").val();
+			$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
 			
 		} else if ($('#filtro_editor').attr("checked") == "checked") {
+			alert('Editor');
 			
 		} else if ($('#filtro_produto').attr("checked") == "checked") {
+			alert('Produto');
 			
 		} else if ($('#filtro_cota').attr("checked") == "checked") {
+			alert('Cota');
 			
 		}
+	}
+	
+	function exibirResultado(result) {
+		alert(result);
 	}
 	
 	function mostra_pesq_avancada() {
@@ -179,7 +190,7 @@
 						id="datepickerAte" style="width: 60px;" /></td>
 					<td width="104" rowspan="3" valign="top"><span
 						class="bt_pesquisar"><a href="javascript:;"
-							onclick="mostrar();">Pesquisar</a></span></td>
+							onclick="pesquisar();">Pesquisar</a></span></td>
 					<td width="20" rowspan="3" align="center" valign="top"><a
 						href="javascript:;" onclick="mostra_pesq_avancada();"><img
 							src="../images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada"
