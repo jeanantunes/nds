@@ -29,7 +29,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
-import br.com.abril.nds.service.FinanceiroService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.RotaRoteiroOperacaoService;
@@ -81,7 +81,7 @@ public class ImpressaoBoletosController {
 	private DistribuidorService distribuidorService;
 
 	@Autowired
-	private FinanceiroService financeiroService;
+	private ParametroCobrancaCotaService financeiroService;
 
 	@Autowired
 	private HttpSession session;

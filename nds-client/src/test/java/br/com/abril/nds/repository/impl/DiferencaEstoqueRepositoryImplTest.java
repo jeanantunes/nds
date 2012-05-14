@@ -139,7 +139,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 							   DateUtil.adicionarDias(new Date(), 1), DateUtil.adicionarDias(new Date(),
 							   produtoEdicao.getPeb()), new Date(),
 							   new Date(), BigDecimal.TEN,  StatusLancamento.CONFIRMADO,
-							   itemRecebimentoFisico);
+							   itemRecebimentoFisico, 1);
 		save(lancamentoVeja);
 		
 		for (int i = 0; i < this.qtdeMovimentosLancamento; i++) {

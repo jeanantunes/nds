@@ -22,6 +22,15 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota);
 	
 	/**
+	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.
+	 * 
+	 * @param idProdutoEdicao - identificador do produto edição
+	 * 
+	 * @return @return {@link List<EstoqueProdutoCota>}
+	 */
+	List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao);
+	
+	/**
 	 * Obtém o valor total de reparte para cota especifica
 	 * 
 	 * @param numeroCota

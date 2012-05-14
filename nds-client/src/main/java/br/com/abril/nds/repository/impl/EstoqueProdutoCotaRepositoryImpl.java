@@ -51,6 +51,23 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		return (EstoqueProdutoCota) query.uniqueResult();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select estoqueProdutoCota ")
+		   .append(" from EstoqueProdutoCota estoqueProdutoCota ")
+		   .append(" where estoqueProdutoCota.produtoEdicao.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return query.list();
+	}
+	
 	public BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder();

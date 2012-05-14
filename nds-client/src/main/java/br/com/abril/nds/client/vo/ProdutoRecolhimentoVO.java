@@ -1,5 +1,7 @@
 package br.com.abril.nds.client.vo;
 
+import java.math.BigDecimal;
+
 /**
  * Value Object para os produtos da matriz de recolhimento.
  * 
@@ -31,11 +33,11 @@ public class ProdutoRecolhimentoVO {
 	
 	private String dataRecolhimento;
 	
-	private String encalheSede;
+	private BigDecimal encalheSede;
 	
-	private String encalheAtendida;
+	private BigDecimal encalheAtendida;
 	
-	private String encalhe;
+	private BigDecimal encalhe;
 	
 	private String valorTotal;
 	
@@ -216,42 +218,42 @@ public class ProdutoRecolhimentoVO {
 	/**
 	 * @return the encalheSede
 	 */
-	public String getEncalheSede() {
+	public BigDecimal getEncalheSede() {
 		return encalheSede;
 	}
 
 	/**
 	 * @param encalheSede the encalheSede to set
 	 */
-	public void setEncalheSede(String encalheSede) {
+	public void setEncalheSede(BigDecimal encalheSede) {
 		this.encalheSede = encalheSede;
 	}
 
 	/**
 	 * @return the encalheAtendida
 	 */
-	public String getEncalheAtendida() {
+	public BigDecimal getEncalheAtendida() {
 		return encalheAtendida;
 	}
 
 	/**
 	 * @param encalheAtendida the encalheAtendida to set
 	 */
-	public void setEncalheAtendida(String encalheAtendida) {
+	public void setEncalheAtendida(BigDecimal encalheAtendida) {
 		this.encalheAtendida = encalheAtendida;
 	}
 
 	/**
 	 * @return the encalhe
 	 */
-	public String getEncalhe() {
+	public BigDecimal getEncalhe() {
 		return encalhe;
 	}
 
 	/**
 	 * @param encalhe the encalhe to set
 	 */
-	public void setEncalhe(String encalhe) {
+	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
 	}
 

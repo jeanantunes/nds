@@ -193,7 +193,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja);
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
