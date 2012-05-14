@@ -567,7 +567,7 @@ Fiador.prototype.getFiador = function(idFiador, documento){
 	
 	$.postJSON(this.path + "getFiador.json",param , function(data) {				
 		if(data === "NotFound"){
-			_this.$dialog.dialog('open');
+			_this.confirma();
 			_this.toggleDados(false);
 			_this.fiador=null;
 		}else if(data.tipoMensagem && data.listaMensagens) {
@@ -583,7 +583,7 @@ Fiador.prototype.getFiador = function(idFiador, documento){
 };
 
 Fiador.prototype.confirma = function(){
-	
+	this.$dialog.dialog('open');
 };
 
 
@@ -654,17 +654,31 @@ Fiador.prototype.initGrid =  function() {
 Fiador.prototype.salva = function(){
 	var _this =  this;
 	$.postJSON(this.path + "salvaFiador.json", {
-				idFiador:idFiador
+				idFiador:this.fiador.id,
+				idCota:this.idCota
 			}, function(data) {
-				_this.fiador=data;
-				_this.bindData();
+				if(data.tipoMensagem && data.listaMensagens) {
+					exibirMensagem(data.tipoMensagem, data.listaMensagens);		
+					_this.get();			
+				}
 			}, null, true);
 };
+Fiador.prototype.get = function() {
+	var _this = this;
+	$.postJSON(this.path + 'getByCota.json', {
+		'idCota' : this.idCota
+	}, function(data) {
+
+		var tipoMensagem = data.tipoMensagem;
+		var listaMensagens = data.listaMensagens;
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagem(tipoMensagem, listaMensagens);
+		} else if (data.cotaGarantia && data.cotaGarantia.fiador) {
+			_this.chequeCaucao = data.cotaGarantia.fiador;
+			_this.dataBind();
+		}
+
+	}, null, true);
 
 
-
-
-
-
-
-
+};

@@ -214,7 +214,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	}
 	@Transactional
 	@Override
-	public void salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
+	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
 		CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantiaRepository
 				.getByCota(idCota);
 		if (cotaGarantiaFiador == null) {
@@ -230,8 +230,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					"Fiador "+idFiador+ " não existe."));
 		}
 		cotaGarantiaFiador.setFiador(fiador);
+		cotaGarantiaFiador.setData(new Date());
 		
-		cotaGarantiaRepository.merge(cotaGarantiaFiador);
+		return (CotaGarantiaFiador)cotaGarantiaRepository.merge(cotaGarantiaFiador);
 
 	}
 
