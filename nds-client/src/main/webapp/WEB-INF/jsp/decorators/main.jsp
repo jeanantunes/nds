@@ -167,7 +167,7 @@ fieldset label {
 						<ul>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
-							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
+							<li><a href="Cadastro/cadastro_box.htm">Box</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>
 							</li>
@@ -233,7 +233,7 @@ fieldset label {
 					<li><span class="classEstoque">&nbsp;</span><a
 						href="javascript:;">Estoque</a>
 						<ul>
-							<li><a href="<c:url value="/estoque/consultaNotas"/>">Consulta
+							<li><a href="<c:url value="estoque/consultaNotas"/>">Consulta
 									de Notas</a>
 							</li>
 							<li><a href='<c:url value="/estoque/diferenca/consulta"/>'>Consulta
@@ -281,13 +281,13 @@ fieldset label {
 							</li>
 							<li><a href="Expedicao/geracao_nfe.htm">Geração de NF-e</a>
 							</li>
-							<li><a href='<c:url value="/cotaAusente/index"/>'>Cota
+							<li><a href="cotaAusente/index">Cota
 									Ausente</a>
 							</li>
 							<li><a href="Expedicao/painel_monitor_nfe.htm">Painel
 									Monitor NF-e</a>
 							</li>
-							<li><a href='<c:url value="/expedicao/resumo"/>'>Resumo
+							<li><a href="expedicao/resumo">Resumo
 									de Expedição</a>
 							</li>
 							<li><a href="Expedicao/tratamento_arquivo_retorno_nfe.htm">Integração
@@ -341,9 +341,7 @@ fieldset label {
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
-							<li>
-							
-							<a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
+							<li><a href="devolucao/digitacao/contagem/">Digitação
 									de Contagem para Devolução</a>
 							</li>
 							<li><a href="Devolucao/help_devolucao.htm">Help</a>
@@ -369,6 +367,11 @@ fieldset label {
 							<li>
 								<a href='<c:url value="/administracao/controleAprovacao"/>'>
 									Controle Aprovação
+								</a>
+							</li>
+							<li>
+								<a href='<c:url value="/administracao/tipoDescontoCota"/>'>
+									Tipo de Desconto Cota
 								</a>
 							</li>
 							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
