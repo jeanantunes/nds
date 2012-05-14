@@ -51,7 +51,7 @@ NotaPromissoria.prototype.get = function() {
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
-		} else if (data.cotaGarantia && data.cotaGarantia.notaPromissoria) {
+		} else if (data && data.notaPromissoria) {
 			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
 			_this.dataBind();
 		}
@@ -152,7 +152,7 @@ ChequeCaucao.prototype.get = function() {
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
-		} else if (data.cotaGarantia && data.cotaGarantia.chequeCaucao) {
+		} else if (data && data.chequeCaucao) {
 			_this.chequeCaucao = data.cotaGarantia.chequeCaucao;
 			_this.dataBind();
 		}
@@ -295,7 +295,7 @@ Imovel.prototype.get = function() {
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
-		} else if (data.cotaGarantia && data.cotaGarantia.imovel) {
+		} else if (data && data.imovel) {
 			_this.imovel = data.cotaGarantia.imovel;
 			_this.dataBind();
 		}
@@ -559,6 +559,10 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	// this.bindEvents();
 };
 
+TipoCotaGarantia.prototype.onOpen = function(){
+	
+};
+
 TipoCotaGarantia.prototype.bindEvents = function() {
 	var _this = this;
 	$("#tipoGarantiaSelect").change(function(eventObject) {
@@ -587,7 +591,7 @@ TipoCotaGarantia.prototype.getIdCota = function() {
 
 //**************** FIADOR PROTOTYPE ********************//
 function Fiador(idCota){
-	this.idCota = idCota;
+	this._idCota = idCota;
 	this.bindEvents();
 	this.toggle();
 	this.initGrid();
@@ -608,6 +612,8 @@ function Fiador(idCota){
 				}
 			}
 			});
+			
+	this.get();
 	
 }
 Fiador.prototype.path = contextPath + "/cadastro/garantia/";
@@ -665,7 +671,7 @@ Fiador.prototype.getFiador = function(idFiador, documento){
 	
 	$.postJSON(this.path + "getFiador.json",param , function(data) {				
 		if(data === "NotFound"){
-			_this.$dialog.dialog('open');
+			_this.confirma();
 			_this.toggleDados(false);
 			_this.fiador=null;
 		}else if(data.tipoMensagem && data.listaMensagens) {
@@ -681,7 +687,7 @@ Fiador.prototype.getFiador = function(idFiador, documento){
 };
 
 Fiador.prototype.confirma = function(){
-	
+	this.$dialog.dialog('open');
 };
 
 
@@ -752,17 +758,30 @@ Fiador.prototype.initGrid =  function() {
 Fiador.prototype.salva = function(){
 	var _this =  this;
 	$.postJSON(this.path + "salvaFiador.json", {
-				idFiador:idFiador
+				idFiador:this.fiador.id,
+				idCota:this._idCota
 			}, function(data) {
-				_this.fiador=data;
-				_this.bindData();
+				if(data.tipoMensagem && data.listaMensagens) {
+					exibirMensagem(data.tipoMensagem, data.listaMensagens);		
+					_this.get();			
+				}
 			}, null, true);
 };
+Fiador.prototype.get = function() {
+	var _this = this;
+	$.postJSON(this.path + 'getByCota.json', {
+		'idCota' : this._idCota
+	}, function(data) {
+
+		var tipoMensagem = data.tipoMensagem;
+		var listaMensagens = data.listaMensagens;
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagem(tipoMensagem, listaMensagens);
+		} else if (data && data.fiador) {
+			_this.getFiador(data.fiador.id,null);
+		}
+
+	}, null, true);
 
 
-
-
-
-
-
-
+};

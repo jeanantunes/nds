@@ -82,7 +82,7 @@ public class CotaGarantiaController {
 		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
 		if (cotaGarantia != null) {			
-			result.use(Results.json()).from(cotaGarantia, "cotaGarantia").exclude("cota").recursive().serialize();		
+			result.use(CustomJson.class).from(cotaGarantia).serialize();		
 		}else{			
 			result.use(CustomJson.class).from("OK").serialize();		
 		}	

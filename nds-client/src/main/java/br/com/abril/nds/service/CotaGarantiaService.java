@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 
@@ -92,8 +93,9 @@ public interface CotaGarantiaService {
 	 * Salva no repositorio de dados a garantia de um fiador.
 	 * @param idFiador
 	 * @param idCota
+	 * @return TODO
 	 * @throws ValidacaoException
 	 */
-	public abstract void salvaFiador(Long idFiador, Long idCota)
+	public abstract CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
 			throws ValidacaoException;
 }
