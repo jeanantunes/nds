@@ -64,6 +64,9 @@ public class Distribuidor {
 	@OneToMany
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+
+	@OneToMany(mappedBy="distribuidor")
+	private Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -189,6 +192,14 @@ public class Distribuidor {
 		this.formasCobranca = formasCobranca;
 	}
 	
+	public Set<PoliticaCobranca> getPoliticasCobranca() {
+		return politicasCobranca;
+	}
+
+	public void setPoliticasCobranca(Set<PoliticaCobranca> politicasCobranca) {
+		this.politicasCobranca = politicasCobranca;
+	}
+
 	public PoliticaSuspensao getPoliticaSuspensao() {
 		return politicaSuspensao;
 	}

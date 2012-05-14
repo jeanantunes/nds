@@ -130,7 +130,37 @@
 	
 	
 	
+	function montarTrRadioBox(result,name,nameItemIdent) {
+
+		var options = "";
+		
+		$.each(result, function(index, row) {
+
+			options += "<tr> <td width='23'>";
+			options += "<input id='" + nameItemIdent + row.key.$ +"' value='" + row.key.$ + "' name='"+name+"' type='checkbox' />";
+			options += "</td> <td width='138'>";	
+			options += "<label for='" + nameItemIdent + row.key.$ +"' >"+ row.value.$ +"</label>";
+		    options += "</td>";
+		    options += "</tr>";   
+
+		});
+		
+		return options;
+	}
 	
+	function carregarFornecedoresRelacionados(idCota){
+		var data = [{name: 'idCota', value: idCota}];
+		$.postJSON("<c:url value='/cota/parametroCobrancaCota/fornecedoresCota' />",
+				   data,
+				   sucessCallbackCarregarFornecedores,
+				   null,
+				   true);
+	}
+	
+	function sucessCallbackCarregarFornecedores(result) {
+	    var radioBoxes =  montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
+		$("#fornecedoresCota").html(radioBoxes);
+	}
 	
 	
     function novoParametro() {
@@ -263,6 +293,8 @@
 		$("#principal").val(resultado.principal);
 		document.formularioParametro.principal.checked = resultado.principal;
 		
+		carregarFornecedoresRelacionados(1);//!!!
+		
 		popup_alterar();
 	}
 	
@@ -308,13 +340,12 @@
 	function popup() {
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
-			height:390,
+			height:720,
 			width:890,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
 					
 				},
@@ -330,13 +361,12 @@
 	function popup_alterar(idParametro) {
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
-			height:390,
+			height:720,
 			width:890,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
 					$( "#abaPdv" ).show( );
 					
 				},
@@ -359,7 +389,6 @@
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -369,18 +398,6 @@
 	};
 	
 	
-	
-   //callback function to bring a hidden box back
-	function callback() {
-		setTimeout(function() {
-			$( "#effect:visible").removeAttr( "style" ).fadeOut();
-
-		}, 1000 );
-	};	
-
-	function mostrarCobranca(){
-		$(".linha_fornecedor").show();
-	}
 	
 	</script>
 
@@ -524,6 +541,143 @@
 		</table>
 		
     </form>		
+    
+    
+    
+    <legend>Unificar Cobranças</legend>
+    
+	<form name="formularioFormaCobranca" id="formularioFormaCobranca">		
+                         
+	    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
+		    
+		     <tr class="header_table">
+		         <td align="left">Fornecedores</td>
+		         <td align="left">&nbsp;</td>
+		         <td align="left">Concentração de Pagamentos</td>
+		     </tr>
+		     
+	         <tr>
+	             <td width="170" align="left" valign="top" style="border:1px solid #ccc;">
+
+	                 <table width="168" border="0" cellspacing="1" cellpadding="1">
+
+                              <div id="fornecedoresCota"/>
+
+		             </table>
+		             
+	                 <p><br clear="all" />
+		                 <br clear="all" />
+		                 <br clear="all" />
+		                 <br clear="all" />
+	                 </p>
+	                 
+                 </td>
+                 
+			     <td width="21" align="left" valign="top">&nbsp;</td>
+			     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
+
+			         <table width="100%" border="0" cellspacing="1" cellpadding="1">
+				         <tr>
+				             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="mostraMensal();" /></td>
+				             <td width="173">Mensal</td>
+				             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="mostraSemanal();" /></td>
+				             <td width="173">Semanal</td>
+				         </tr>
+				     </table>
+				    
+				     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
+				         <tr>
+				             <td width="68">Todo dia:</td>
+				             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
+				         </tr>
+				     </table>
+			     
+		        
+                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
+					        
+			             <tr>
+			                 <td>
+			                     <input type="checkbox" name="PS" id="PS" />
+			                 </td>    
+			                 <td>
+			                     <label for="PS">Segunda-feira</label>
+			                 </td>
+			             </tr>
+					            
+					     <tr>
+			                 <td>           
+					             <input type="checkbox" name="PT" id="PT" />
+					         </td>    
+			                 <td>    
+					             <label for="PT">Terça-feira</label>
+					         </td>
+			             </tr>
+			             
+			             <tr>
+			                 <td>            
+					             <input type="checkbox" name="PQ" id="PQ" />
+					         </td>    
+			                 <td>      
+					             <label for="PQ">Quarta-feira</label>
+					         </td>
+			              </tr>    
+					                          
+					      <tr>
+			                 <td>          
+					             <input type="checkbox" name="PQu" id="PQu" />
+					          </td>    
+			                  <td>  
+					             <label for="PQu">Quinta-feira</label>
+					          </td>
+			              </tr>
+					                  
+					      <tr>
+			                 <td>          
+					             <input type="checkbox" name="PSex" id="PSex" />
+					         </td>    
+			                 <td>      
+					             <label for="PSex">Sexta-feira</label>
+					         </td>
+			              </tr>    
+					               
+					      <tr>
+			                 <td>    
+					             <input type="checkbox" name="PSab" id="PSab" />
+					             </td>    
+			                 <td>  
+					             <label for="PSab">Sábado</label>
+					         </td>
+			              </tr>
+					                   
+					      <tr>
+			                  <td>
+					             <input type="checkbox" name="PDom" id="PDom" />
+					             </td>    
+			                 <td>  
+					             <label for="PDom">Domingo</label>
+					         </td>
+			              </tr>
+					
+					 </table>
+					 
+				 	
+					 
+			     </td>
+  
+             </tr>  
+
+			 <tr>
+			    <td valign="top">&nbsp;</td>
+			    <td valign="top">&nbsp;</td>
+			    <td valign="top">&nbsp;</td>
+			 </tr>
+
+		</table>
+		
+    </form>
+    
+    
+    
     
 </div>
 
