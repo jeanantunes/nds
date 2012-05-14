@@ -104,16 +104,16 @@
 
 					<td width="87"><strong>CPF/CNPJ:</strong></td>
 
-					<td width="214"><span id="cotaGarantiaFiadorDoc"></span</td>
+					<td width="214"><span id="cotaGarantiaFiadorDoc"></span></td>
 				</tr>
 				<tr>
 					<td><strong>Endere&ccedil;o:</strong></td>
-					<td colspan="3"><span id="cotaGarantiaFiadorEndereco"></span</td>
+					<td colspan="3"><span id="cotaGarantiaFiadorEndereco"></span></td>
 				</tr>
 				<tr>
 					<td><strong>Telefone:</strong></td>
 
-					<td><span id="cotaGarantiaFiadorTelefone"></span</td>
+					<td><span id="cotaGarantiaFiadorTelefone"></span></td>
 
 					<td>&nbsp;</td>
 

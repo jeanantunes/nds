@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -173,9 +175,13 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	@Test
 	public void buscarEstoqueProdutoCotaPorIdProdutEdicao() {
 		
+		Set<Long> idsProdutoEdicao = new TreeSet<Long>();
+		
+		idsProdutoEdicao.add(produtoEdicaoVeja1.getId());
+		
 		List<EstoqueProdutoCota> listaEstoqueProdutoCota = 
-			this.estoqueProdutoCotaRepository.buscarEstoqueProdutoCotaPorIdProdutEdicao(
-				produtoEdicaoVeja1.getId());
+			this.estoqueProdutoCotaRepository.buscarEstoquesProdutoCotaPorIdProdutEdicao(
+				idsProdutoEdicao);
 		
 		Assert.assertNotNull(listaEstoqueProdutoCota);
 		

@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 
@@ -20,15 +21,6 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	 * @return BigDecimal 
 	 */
 	BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota);
-	
-	/**
-	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.
-	 * 
-	 * @param idProdutoEdicao - identificador do produto edição
-	 * 
-	 * @return @return {@link List<EstoqueProdutoCota>}
-	 */
-	List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao);
 	
 	/**
 	 * Obtém o valor total de reparte para cota especifica 
@@ -51,4 +43,13 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 			List<Long> listaIdProdutoEdicao, 
 			Long idDistribuidor);
 	
+
+	/**
+	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.
+	 * 
+	 * @param idsProdutoEdicao - identificadores do produto edição
+	 * 
+	 * @return {@link List<EstoqueProdutoCota>}
+	 */
+	List<EstoqueProdutoCota> buscarEstoquesProdutoCotaPorIdProdutEdicao(Set<Long> idsProdutoEdicao);
 }
