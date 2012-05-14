@@ -28,6 +28,9 @@ public class ParametroUsuarioBox {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
+	
+	@Column(name = "PRINCIPAL")
+	private boolean principal;
 
 	/**
 	 * Obtém id
@@ -78,6 +81,14 @@ public class ParametroUsuarioBox {
 	 */
 	public void setBox(Box box) {
 		this.box = box;
+	}
+
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
 	}
 
 	

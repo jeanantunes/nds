@@ -220,7 +220,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.CONFIRMADO, itemRecebimentoFisico1Veja);
+				StatusLancamento.CONFIRMADO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda2,
@@ -229,7 +229,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(25),
-				StatusLancamento.CONFIRMADO, itemRecebimentoFisico4Rodas);
+				StatusLancamento.CONFIRMADO, itemRecebimentoFisico4Rodas, 1);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame3,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
@@ -237,7 +237,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(40),
-				StatusLancamento.CONFIRMADO, null);
+				StatusLancamento.CONFIRMADO, null, 1);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho1,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
@@ -245,7 +245,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
-				StatusLancamento.CONFIRMADO, null);
+				StatusLancamento.CONFIRMADO, null, 1);
 		
 		lancamentoCromoReiLeao = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoReiLeao1,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
@@ -253,7 +253,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(10000),
-				StatusLancamento.CONFIRMADO, null);
+				StatusLancamento.CONFIRMADO, null, 1);
 		
 		Estudo estudo = Fixture.estudo(new BigDecimal(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
