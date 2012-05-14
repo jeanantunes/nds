@@ -167,11 +167,11 @@
 		function habilitarLinks() {
 			
 			habilitarLink("linkConfirmar", confirmar);
-			habilitarLink("linkEditor", function( ){ verificarBalanceamentosAlterados(balancearPorEditor); });
-			habilitarLink("linkValor", balancearPorValor);
+			habilitarLink("linkEditor", function() { verificarBalanceamentosAlterados(balancearPorEditor); });
+			habilitarLink("linkValor", function() { verificarBalanceamentosAlterados(balancearPorValor); });
 			habilitarLink("linkSalvar", salvar);
 			habilitarLink("linkMatrizFornecedor", exibirMatrizFornecedor);
-			habilitarLink("linkConfiguracaoInicial", voltarConfiguracaoInicial);
+			habilitarLink("linkConfiguracaoInicial", function() { verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
 			habilitarLink("linkReprogramar", reprogramarSelecionados);
 		}
 		
@@ -592,9 +592,11 @@
 			
 			fecharGridBalanceamento();
 			
+			var numeroSemana = $("#numeroSemanaHidden").val();
+			
 			$.postJSON(
 				"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
-				null,
+				"numeroSemana=" + numeroSemana,
 				function(result) {
 					
 					$("#resumoPeriodo").hide();

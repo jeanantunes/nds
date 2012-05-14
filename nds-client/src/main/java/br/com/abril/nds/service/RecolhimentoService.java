@@ -40,6 +40,8 @@ public interface RecolhimentoService {
 	 * Confirma o balanceamento da matriz de recolhimento.
 	 * 
 	 * @param matrizRecolhimento - matriz de recolhimento
+	 * @param numeroSemana - número da semana
 	 */
-	void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento);
+	void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+											Integer numeroSemana);
 }
