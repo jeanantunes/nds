@@ -40,8 +40,8 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			for(PoliticaCobranca itemPolitica:politicasCobranca){
 				parametroCobranca = new ParametroCobrancaVO();
 			    
-				parametroCobranca.setAcumulaDivida((itemPolitica.isAcumulaDivida()?"Sim":"Não"));
-				parametroCobranca.setCobrancaUnificada((itemPolitica.isUnificaCobranca()?"Sim":"Não"));
+				parametroCobranca.setAcumulaDivida(itemPolitica.isAcumulaDivida());
+				parametroCobranca.setCobrancaUnificada(itemPolitica.isUnificaCobranca());
 				parametroCobranca.setFormaEmissao((itemPolitica.getFormaEmissao()!=null?itemPolitica.getFormaEmissao().getDescFormaEmissao():""));
 				
 				forma = itemPolitica.getFormaCobranca();
@@ -49,7 +49,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 					parametroCobranca.setFormaPagamento((forma.getTipoCobranca()!=null?forma.getTipoCobranca().getDescTipoCobranca():""));
 					parametroCobranca.setBanco((forma.getBanco()!=null?forma.getBanco().getNome():""));
 					parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao().toString());
-					parametroCobranca.setEvioPorEmail((forma.isRecebeCobrancaEmail()?"Sim":"Não"));
+					parametroCobranca.setEvioPorEmail(forma.isRecebeCobrancaEmail());
 				}
 				
 				parametrosCobranca.add(parametroCobranca);
@@ -64,6 +64,12 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	public int obterQuantidadePoliticasCobranca(
 			FiltroParametrosCobrancaDTO filtro) {
 		return this.politicaCobrancaRepository.obterQuantidadePoliticasCobranca(filtro);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public PoliticaCobranca obterPoliticaCobrancaPrincipal() {
+		return this.politicaCobrancaRepository.buscarPoliticaCobrancaPorDistribuidor();
 	}
 	
 }

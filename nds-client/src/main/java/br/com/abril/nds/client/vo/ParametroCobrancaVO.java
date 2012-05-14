@@ -7,12 +7,13 @@ public class ParametroCobrancaVO {
 	String formaPagamento;
 	String banco;
 	String valorMinimoEmissao;
-	String acumulaDivida;
-	String cobrancaUnificada;
 	String formaEmissao;
-	String evioPorEmail;
+
+	boolean vencimentoDiaUtil;
+	boolean acumulaDivida;
+	boolean cobrancaUnificada;
+	boolean evioPorEmail;
 	boolean principal;
-	
 	
 	public String getFormaPagamento() {
 		return formaPagamento;
@@ -38,36 +39,44 @@ public class ParametroCobrancaVO {
 		this.valorMinimoEmissao = valorMinimoEmissao;
 	}
 	
-	public String getAcumulaDivida() {
+	public boolean isVencimentoDiaUtil() {
+		return vencimentoDiaUtil;
+	}
+
+	public void setVencimentoDiaUtil(boolean vencimentoDiaUtil) {
+		this.vencimentoDiaUtil = vencimentoDiaUtil;
+	}
+
+	public boolean isAcumulaDivida() {
 		return acumulaDivida;
 	}
-	
-	public void setAcumulaDivida(String acumulaDivida) {
+
+	public void setAcumulaDivida(boolean acumulaDivida) {
 		this.acumulaDivida = acumulaDivida;
 	}
-	
-	public String getCobrancaUnificada() {
+
+	public boolean isCobrancaUnificada() {
 		return cobrancaUnificada;
 	}
-	
-	public void setCobrancaUnificada(String cobrancaUnificada) {
+
+	public void setCobrancaUnificada(boolean cobrancaUnificada) {
 		this.cobrancaUnificada = cobrancaUnificada;
 	}
-	
+
+	public boolean isEvioPorEmail() {
+		return evioPorEmail;
+	}
+
+	public void setEvioPorEmail(boolean evioPorEmail) {
+		this.evioPorEmail = evioPorEmail;
+	}
+
 	public String getFormaEmissao() {
 		return formaEmissao;
 	}
 	
 	public void setFormaEmissao(String formaEmissao) {
 		this.formaEmissao = formaEmissao;
-	}
-	
-	public String getEvioPorEmail() {
-		return evioPorEmail;
-	}
-	
-	public void setEvioPorEmail(String evioPorEmail) {
-		this.evioPorEmail = evioPorEmail;
 	}
 	
 	public Long getIdParametro() {
@@ -90,15 +99,10 @@ public class ParametroCobrancaVO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((acumulaDivida == null) ? 0 : acumulaDivida.hashCode());
+		result = prime * result + (acumulaDivida ? 1231 : 1237);
 		result = prime * result + ((banco == null) ? 0 : banco.hashCode());
-		result = prime
-				* result
-				+ ((cobrancaUnificada == null) ? 0 : cobrancaUnificada
-						.hashCode());
-		result = prime * result
-				+ ((evioPorEmail == null) ? 0 : evioPorEmail.hashCode());
+		result = prime * result + (cobrancaUnificada ? 1231 : 1237);
+		result = prime * result + (evioPorEmail ? 1231 : 1237);
 		result = prime * result
 				+ ((formaEmissao == null) ? 0 : formaEmissao.hashCode());
 		result = prime * result
@@ -110,6 +114,7 @@ public class ParametroCobrancaVO {
 				* result
 				+ ((valorMinimoEmissao == null) ? 0 : valorMinimoEmissao
 						.hashCode());
+		result = prime * result + (vencimentoDiaUtil ? 1231 : 1237);
 		return result;
 	}
 
@@ -122,25 +127,16 @@ public class ParametroCobrancaVO {
 		if (getClass() != obj.getClass())
 			return false;
 		ParametroCobrancaVO other = (ParametroCobrancaVO) obj;
-		if (acumulaDivida == null) {
-			if (other.acumulaDivida != null)
-				return false;
-		} else if (!acumulaDivida.equals(other.acumulaDivida))
+		if (acumulaDivida != other.acumulaDivida)
 			return false;
 		if (banco == null) {
 			if (other.banco != null)
 				return false;
 		} else if (!banco.equals(other.banco))
 			return false;
-		if (cobrancaUnificada == null) {
-			if (other.cobrancaUnificada != null)
-				return false;
-		} else if (!cobrancaUnificada.equals(other.cobrancaUnificada))
+		if (cobrancaUnificada != other.cobrancaUnificada)
 			return false;
-		if (evioPorEmail == null) {
-			if (other.evioPorEmail != null)
-				return false;
-		} else if (!evioPorEmail.equals(other.evioPorEmail))
+		if (evioPorEmail != other.evioPorEmail)
 			return false;
 		if (formaEmissao == null) {
 			if (other.formaEmissao != null)
@@ -163,6 +159,8 @@ public class ParametroCobrancaVO {
 			if (other.valorMinimoEmissao != null)
 				return false;
 		} else if (!valorMinimoEmissao.equals(other.valorMinimoEmissao))
+			return false;
+		if (vencimentoDiaUtil != other.vencimentoDiaUtil)
 			return false;
 		return true;
 	}

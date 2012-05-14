@@ -3,6 +3,7 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 
 
 /**
@@ -26,5 +27,12 @@ public interface PoliticaCobrancaService {
 	 * @return List<ParametroCobrancaVO>
 	 */
 	int obterQuantidadePoliticasCobranca(FiltroParametrosCobrancaDTO filtro);
+	
+	
+	/**
+	 * Obtém politica de cobrança principal do Distribuidor
+	 * @return {@link br.com.abril.nds.model.cadastro.PoliticaCobranca}
+	 */
+	PoliticaCobranca obterPoliticaCobrancaPrincipal();
 
 }

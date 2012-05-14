@@ -45,7 +45,7 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
 
 	@Override
 	public PoliticaCobranca buscarPoliticaCobrancaPorDistribuidor() {
-		Query query = this.getSession().createQuery("select c.politicaCobranca from Distribuidor c ");
+		Query query = this.getSession().createQuery("select c.politicaCobranca from Distribuidor c where c.politicaCobranca.principal=true ");
 		query.setMaxResults(1);
 		
 		return (PoliticaCobranca) query.uniqueResult();

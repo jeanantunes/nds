@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.service.BancoService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -51,6 +52,9 @@ public class ParametroCobrancaController {
 	private BancoService bancoService;
 	
 	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
 	
     private Result result;
@@ -62,6 +66,8 @@ public class ParametroCobrancaController {
     private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
     
     private static List<ItemDTO<FormaEmissao,String>> listaFormasEmissao =  new ArrayList<ItemDTO<FormaEmissao,String>>();
+    
+    private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
     
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaParametrosCobranca";
     
@@ -88,12 +94,17 @@ public class ParametroCobrancaController {
     	listaBancos.clear();
     	listaTiposCobranca.clear();
     	listaFormasEmissao.clear();
+    	listaFornecedores.clear();
+    	
     	listaBancos = this.bancoService.getComboBancos();
     	listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
     	listaFormasEmissao = this.financeiroService.getComboFormasEmissao();
+    	listaFornecedores = this.fornecedorService.buscarComboFornecedores();
+    	
 		result.include("listaBancos",listaBancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
 		result.include("listaFormasEmissao",listaFormasEmissao);
+		result.include("listaFornecedores",listaFornecedores);
 		
 	}
     

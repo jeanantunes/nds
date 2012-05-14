@@ -127,43 +127,116 @@
 	
 	
 	
-	
-	
-	
-	function montarTrRadioBox(result,name,nameItemIdent) {
-
-		var options = "";
+	//MODOS DE EXIBIÇÃO
+	function opcaoPagto(op){
 		
-		$.each(result, function(index, row) {
-
-			options += "<tr> <td width='23'>";
-			options += "<input id='" + nameItemIdent + row.key.$ +"' value='" + row.key.$ + "' name='"+name+"' type='checkbox' />";
-			options += "</td> <td width='138'>";	
-			options += "<label for='" + nameItemIdent + row.key.$ +"' >"+ row.value.$ +"</label>";
-		    options += "</td>";
-		    options += "</tr>";   
-
+		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
+			/*
+			$('#divComboBanco').show();
+			$('#divRecebeEmail').show();
+			$('#divDadosBancarios').hide();
+			*/
+	    }
+		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
+			/*
+			$('#divComboBanco').show();
+			$('#divDadosBancarios').show();
+			$('#divRecebeEmail').hide();
+			*/
+		}    
+		else if (op=='DEPOSITO'){
+			/*
+			$('#divDadosBancarios').hide();
+			$('#divRecebeEmail').hide();
+			$('#divComboBanco').show();
+			*/
+		}    
+		else{
+			/*
+			$('#divRecebeEmail').hide();
+			$('#divComboBanco').hide();
+			$('#divDadosBancarios').hide();
+			*/
+		}
+		
+	};
+	
+	function mostraSemanal(){
+		$("#tipoFormaCobranca").val('SEMANAL');
+		document.formularioFormaCobranca.mensal.checked = false;
+		$( ".semanal" ).show();
+		$( ".mensal" ).hide();
+	};
+		
+	function mostraMensal(){
+		$("#tipoFormaCobranca").val('MENSAL');
+		document.formularioFormaCobranca.semanal.checked = false;
+		$( ".semanal" ).hide();
+		$( ".mensal" ).show();
+	};
+	
+	function opcaoTipoFormaCobranca(op){
+		if (op=='SEMANAL'){
+			document.formularioFormaCobranca.semanal.checked = true;
+			document.formularioFormaCobranca.mensal.checked = false;
+			mostraSemanal();
+	    }
+		else if (op=='MENSAL'){
+			document.formularioFormaCobranca.semanal.checked = false;
+			document.formularioFormaCobranca.mensal.checked = true;
+			mostraMensal();
+		}    
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//OBTEM FORNECEDORES MARCADOS PELO USUARIO PARA UNIFICÁ-LOS
+	function obterFornecedoresMarcados() {
+		var fornecedorMarcado = "";
+		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
+			fornecedorMarcado += 'listaIdsFornecedores=' + $(this).val() + '&';
 		});
-		
-		return options;
+		return fornecedorMarcado;
 	}
 	
-	function carregarFornecedoresRelacionados(idCota){
-		var data = [{name: 'idCota', value: idCota}];
-		$.postJSON("<c:url value='/cota/parametroCobrancaCota/fornecedoresCota' />",
-				   data,
-				   sucessCallbackCarregarFornecedores,
-				   null,
-				   true);
-	}
-	
-	function sucessCallbackCarregarFornecedores(result) {
-	    var radioBoxes =  montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
-		$("#fornecedoresCota").html(radioBoxes);
+	//OBTEM FORNECEDORES UNIFICADOS
+	function obterFornecedoresUnificados(unificados) {
+		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
+			document.getElementById("fornecedor_"+$(this).val()).checked = false;
+		});
+		for(i=0;i<unificados.length;i++){
+			document.getElementById("fornecedor_"+unificados[i]).checked = true;
+		}
 	}
 	
 	
+	
+
+	
+	
+	
+
+	
+	
+	//INCLUSÃO DE NOVO PARAMETRO
     function novoParametro() {
+    	
+    	$("input[name='checkGroupFornecedores']:checked").each(function(i) {
+			document.getElementById("fornecedor_"+$(this).val()).checked = false;
+		});
+    	
+    	$( ".semanal" ).hide();
+		$( ".mensal" ).hide();
+		document.formularioFormaCobranca.mensal.checked = false;
+		document.formularioFormaCobranca.semanal.checked = false;
 		
     	var tipoCobranca = $("#tipoCobranca").val();
 		var banco = $("#banco").val();
@@ -213,6 +286,14 @@
 				   true);
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	//ALTERAÇÃO DE UM PARÂMETRO
 	function alteraParametro() {
 		
 		var idParametro = $("#idParametro").val();
@@ -265,7 +346,15 @@
 				   true);
 	}
 	
-	function editarParametro(idParametro){
+	
+	
+	
+	
+	
+	
+	
+	//OBTEM UM PARÂMETRO PARA ALTERAÇÃO
+	function obterParametro(idParametro){
 		var data = [{name: 'idParametro', value: idParametro}];
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/buscaParametroCobranca' />",
 				   data,
@@ -293,11 +382,22 @@
 		$("#principal").val(resultado.principal);
 		document.formularioParametro.principal.checked = resultado.principal;
 		
-		carregarFornecedoresRelacionados(1);//!!!
+		opcaoPagto(resultado.tipoCobranca);
+		opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+		obterFornecedoresUnificados(resultado.fornecedoresId);
 		
 		popup_alterar();
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	//EXCLUI (DESATIVA) UM PARÂMETRO
     function desativarParametro(idParametro) {
     	var data = [{name: 'idParametro', value: idParametro}];
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/desativaParametroCobranca'/>",
@@ -308,6 +408,14 @@
 				   null);
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	//LIMPA TODOS OS DADOS PARA INCLUSÃO DE NOVO REGISTRO
     function limparTelaCadastroParametro() {
     	$("#tipoCobranca").val("");
 		$("#banco").val("");
@@ -326,18 +434,16 @@
 	}
 	
 	
-	
-	
-	
+
 	
 	
 	
 
     
-    
-	
-	
 	function popup() {
+		
+		novoParametro();
+		
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:720,
@@ -355,8 +461,6 @@
 			}
 		});
 	};
-	
-	
 	
 	function popup_alterar(idParametro) {
 		$( "#dialog-novo" ).dialog({
@@ -377,8 +481,6 @@
 		});	
 		      
 	};
-	
-	
 	
 	function popup_excluir(idParametro) {
 		$( "#dialog-excluir" ).dialog({
@@ -447,8 +549,8 @@
 		     <td width="204">Acumula Dívida:</td>
 		     <td width="234">
 			     <select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
-			        <option>Sim</option>
-			        <option>Não</option>
+			        <option value="1">Sim</option>
+			        <option value="0">Não</option>
 			     </select>
 		     </td>
 		   </tr>
@@ -469,8 +571,8 @@
 			    <td>Vencimentos somente em dia útil:</td>
 			    <td>
 				    <select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
-				      <option>Sim</option>
-				      <option>Não</option>
+				      <option value="1">Sim</option>
+				      <option value="0">Não</option>
 				    </select>
 			    </td>
 		   </tr>
@@ -485,8 +587,8 @@
 			    <td>Cobrança Unificada:</td>
 			    <td>
 				    <select name="unificada" id="unificada" style="width:80px;">
-				      <option>Sim</option>
-				      <option>Não</option>
+				      <option value="1">Sim</option>
+				      <option value="0">Não</option>
 				    </select>
 			        <br clear="all" />
 			    </td>
@@ -508,8 +610,8 @@
 			    </table></td>
 			    <td width="204">Envio por E-mail:</td>
 			    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
-			      <option>Sim</option>
-			      <option>Não</option>
+			      <option value="1">Sim</option>
+			      <option value="0">Não</option>
 			    </select></td>
 		    </tr>
 		  
@@ -561,8 +663,17 @@
 
 	                 <table width="168" border="0" cellspacing="1" cellpadding="1">
 
-                              <div id="fornecedoresCota"/>
-
+	                      <c:forEach varStatus="counter" var="fornecedores" items="${listaFornecedores}">
+	                          <tr> 
+	                              <td width='23'>
+							          <input id= "fornecedor_${filtroTipoCobranca.key}" value="${fornecedores.key}" name="checkGroupFornecedores" type='checkbox' />
+							      </td> 
+							      <td width='138'>	
+									  <label for="fornecedor_${filtroTipoCobranca.key}" >${fornecedores.value}</label>
+								  </td>
+						      </tr>
+					      </c:forEach>
+					      
 		             </table>
 		             
 	                 <p><br clear="all" />
