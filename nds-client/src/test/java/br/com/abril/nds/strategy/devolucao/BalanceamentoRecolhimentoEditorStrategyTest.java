@@ -88,6 +88,8 @@ public class BalanceamentoRecolhimentoEditorStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
+		dadosRecolhimento.setBalancearMatriz(true);
+		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
 		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();

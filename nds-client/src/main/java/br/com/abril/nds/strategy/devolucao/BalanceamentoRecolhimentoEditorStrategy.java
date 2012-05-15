@@ -25,9 +25,9 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Map<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
+	protected TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		this.processarProdutosRecolhimentoNaoBalanceaveis(matrizRecolhimentoBalanceada, dadosRecolhimento);
@@ -60,7 +60,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 			
 			Date dataRecolhimentoPrevista = entryExpectativaEncalheTotalDiaria.getKey();
 			
-			super.balancearProdutosRecolhimentoComChamada(
+			super.processarProdutosRecolhimentoNaoBalanceaveis(
 				matrizRecolhimento, dadosRecolhimento, dataRecolhimentoPrevista);
 		}
 	}

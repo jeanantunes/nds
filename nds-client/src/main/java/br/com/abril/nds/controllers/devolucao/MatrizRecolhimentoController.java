@@ -386,10 +386,10 @@ public class MatrizRecolhimentoController {
 			(BalanceamentoRecolhimentoDTO)
 				httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
 			balanceamentoRecolhimentoSessao.getMatrizRecolhimento();
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
 			clonarMapaRecolhimento(matrizRecolhimentoSessao);
 		
 		//Monta listas para adicionar e remover do mapa
@@ -419,14 +419,14 @@ public class MatrizRecolhimentoController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<Date, List<ProdutoRecolhimentoDTO>> clonarMapaRecolhimento(
+	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> clonarMapaRecolhimento(
 								Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao) {
 		
 		byte[] mapSerialized =
 			SerializationUtils.serialize(matrizRecolhimentoSessao);
 
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
-			(Map<Date, List<ProdutoRecolhimentoDTO>>) SerializationUtils.deserialize(mapSerialized);
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+			(TreeMap<Date, List<ProdutoRecolhimentoDTO>>) SerializationUtils.deserialize(mapSerialized);
 		
 		return matrizRecolhimento;
 	}
@@ -861,7 +861,7 @@ public class MatrizRecolhimentoController {
 	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoMock(Date dataBalanceamento, 
 																	 		List<Long> listaIdsFornecedores) {
 
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		Date dataLancamento = DateUtil.parseDataPTBR("11/04/2012");

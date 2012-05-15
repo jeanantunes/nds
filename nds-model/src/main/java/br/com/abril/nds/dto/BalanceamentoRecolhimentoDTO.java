@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * DTO com dados do balanceamento de recolhimento.
@@ -19,7 +19,7 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4498486203318581867L;
 	
-	private Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
+	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
 
 	private BigDecimal capacidadeRecolhimentoDistribuidor;
 	
@@ -35,14 +35,14 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	/**
 	 * @return the matrizRecolhimento
 	 */
-	public Map<Date, List<ProdutoRecolhimentoDTO>> getMatrizRecolhimento() {
+	public TreeMap<Date, List<ProdutoRecolhimentoDTO>> getMatrizRecolhimento() {
 		return matrizRecolhimento;
 	}
 
 	/**
 	 * @param matrizRecolhimento the matrizRecolhimento to set
 	 */
-	public void setMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+	public void setMatrizRecolhimento(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		this.matrizRecolhimento = matrizRecolhimento;
 	}
 
