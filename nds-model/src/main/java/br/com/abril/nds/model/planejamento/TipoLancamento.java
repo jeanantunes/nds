@@ -9,7 +9,8 @@ public enum TipoLancamento {
 	
 	LANCAMENTO("Lançamento"),
 	SUPLEMENTAR("Suplementar"),
-	RELANCAMENTO("Relançamento");
+	RELANCAMENTO("Relançamento"),
+	PARCIAL("Parcial");
 	
 	private String descricao;
 	
