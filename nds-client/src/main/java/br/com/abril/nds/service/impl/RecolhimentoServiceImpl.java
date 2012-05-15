@@ -347,6 +347,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
+
+		//TODO: popular de acordo com o tipo de balanceamento
+		
+//		dadosRecolhimento.setProdutosRecolhimento();
+//		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria();
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
