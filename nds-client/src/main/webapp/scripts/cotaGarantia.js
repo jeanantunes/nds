@@ -433,21 +433,36 @@ Imovel.prototype.edita = function(id) {
 };
 
 Imovel.prototype.remove = function(id) {
-
-	if (confirm("Confirma a exclusão desse imóvel?")) {
-		
-		this.rows.splice(id, 1);
-		
-		var lista = new Array;
-		
-		for (var index in this.rows) {	
-			lista.push({"id":lista.length, "cell":this.rows[index].cell});
-		}
-		
-		this.rows = lista;
-		
-		$(".cotaGarantiaImovelGrid").flexAddData({rows:this.rows,page:1,total:1}  );
-	}
+	
+	var _this = this;
+	
+	$( "#dialog-excluir-imovel" ).dialog({
+		resizable: false,
+		height:'auto',
+		width:380,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				_this.rows.splice(id, 1);
+				
+				var lista = new Array;
+				
+				for (var index in _this.rows) {	
+					lista.push({"id":lista.length, "cell":_this.rows[index].cell});
+				}
+				
+				_this.rows = lista;
+				
+				$(".cotaGarantiaImovelGrid").flexAddData({rows:_this.rows,page:1,total:1}  );
+				$( this ).dialog( "close" );
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}			
+	});
+			
 };
 
 Imovel.prototype.initGrid = function() {
