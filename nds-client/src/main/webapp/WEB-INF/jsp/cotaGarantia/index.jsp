@@ -208,6 +208,7 @@
 </div>
 
 <div id="cotaGarantiaImovelPanel" style="display: none;">
+	
 	<fieldset>
 		<legend>Im&oacute;vel</legend>
 		<table width="755" border="0" cellpadding="2" cellspacing="2"
