@@ -108,7 +108,29 @@ function removeFromArray(array, item) {
     }			
     return newArray;			
 }
+
+function serializeObjectToPost(objectName, object) {
+	var obj = {};
+	for ( var propriedade in object) {
+		obj[objectName + '.' + propriedade] = object[propriedade];
+	}
+	return obj;
+};
+
+function serializeArrayToPost(listaName, lista) {	
+	var obj = {};
 	
+	for(var i = 0; i < lista.length;i++){
+		
+		var object = lista[i];
+		for ( var propriedade in object) {
+			obj[listaName +'['+i+'].'+propriedade] =object[propriedade];
+		}
+	}
+	
+	return obj;
+};
+
 //callback function to bring a hidden box back
 	
 $(document).ready(function(){	

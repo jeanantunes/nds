@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -90,4 +91,22 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * @return caso exista chamada: true, caso não exista: false.
 	  */
 	 boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(PeriodoVO periodo);
+
+	 /**
+	  * Obtém o último Lancamento de determinado ProdutoEdicao
+	  * 
+	  * @param idProdutoEdicao - Id do ProdutoEdicao
+	  * @return Lancamento
+	  */
+	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+	 
+	 /**
+	  * Obtém uma lista de lancamentos de acordo com o parâmetro informado
+	  * 
+	  * @param idsLancamento - identificadores de lancamento
+	  * 
+	  * @return {@link List<Lancamento>}
+	  */
+	 List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
+	 
 }

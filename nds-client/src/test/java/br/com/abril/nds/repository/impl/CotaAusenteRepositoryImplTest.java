@@ -83,14 +83,10 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				new PaginacaoVO(1, 15, "ASC"), 
 				ColunaOrdenacao.valueOf("data"));
 		
-		try{
 		List<CotaAusenteDTO> listaCotaAusenteDTO =cotaAusenteRepository.obterCotasAusentes(filtro);
 		
 		Assert.assertTrue(listaCotaAusenteDTO.size() == 1);
 		
-	} catch (Exception e) {
-		e.printStackTrace();
-	}	
 	}
 	
 	@Test
@@ -99,16 +95,11 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(),
 				new PaginacaoVO(0, 15, "ASC"), 
 				ColunaOrdenacao.valueOf("data"));		
-		
-		try {
-		
-			Long count = cotaAusenteRepository.obterCountCotasAusentes(filtro);
-		
-			Assert.assertTrue(count.equals(1L));
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+				
+		Long count = cotaAusenteRepository.obterCountCotasAusentes(filtro);
+	
+		Assert.assertTrue(count.equals(1L));
+				
 	}
 
 }

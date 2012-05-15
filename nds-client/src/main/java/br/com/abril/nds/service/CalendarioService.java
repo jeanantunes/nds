@@ -22,6 +22,17 @@ public interface CalendarioService {
 	Date adicionarDiasUteis(Date data, int numDias);
 	
 	/**
+	 * Adiciona dias a uma data e retorna a a data, caso a mesma seja válida,
+	 * caso contrário, retorna a próxima data válida.
+	 * 
+	 * @param data - data a ser adicionada
+	 * @param numDias - número de dias
+	 * 
+	 * @return nova data calculada
+ 	 */
+	Date adicionarDiasRetornarDiaUtil(Date data, int numDias);
+	
+	/**
 	 * Subtrai dias úteis a uma data.
 	 * 
 	 * @param data - data a ser subtraída

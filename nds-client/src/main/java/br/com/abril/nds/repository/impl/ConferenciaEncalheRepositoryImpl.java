@@ -21,29 +21,54 @@ public class ConferenciaEncalheRepositoryImpl extends
 	}
 	
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTO(java.lang.Long)
-	 */
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota) {
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
+		
+		String subQueryConsultaValorComissionamento = getSubQueryConsultaValorComissionamento();
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
 		
+		hql.append(" conferenciaEncalhe.id as idConferenciaEncalhe, ");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.qtde as qtdExemplar,  ");
+		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			 	");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.codigoDeBarras as codigoDeBarras, 	");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.codigoSM as codigoSM, 				");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.produto.codigo as codigo, 			");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.produto.nome as nomeProduto, 		");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao, 		");
 		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda as precoCapa, 			");
+
+		hql.append( subQueryConsultaValorComissionamento );
 		
-		hql.append(" sum( conferenciaEncalhe.movimentoEstoqueCota.qtde * 								");
-		hql.append(" ( conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda  				");
-		hql.append(" - conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.desconto) ) as valorTotal, ");
+		hql.append(" as desconto, ");
+		
+		hql.append(" ( ");
+		
+		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.qtde * ");
+		
+		hql.append(" 	( ");
+		
+		hql.append(" 		conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda -  ");
+
+		hql.append(" 		( ");
+
+		hql.append(" 			conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda * ");
+		
+		hql.append(" ( ");
+		
+		hql.append( subQueryConsultaValorComissionamento );
+
+		hql.append(" / 100 ) ");
+		
+		hql.append(" 		) ");
+		
+		hql.append(" 	) ");
+		
+		hql.append(" ) as valorTotal, ");
 		
 		hql.append(" conferenciaEncalhe.observacao as observacao, ");
+		
 		hql.append(" conferenciaEncalhe.juramentada as juramentada ");
 		
 		hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
@@ -52,53 +77,46 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
 		
-		hql.append(" group by ");
-
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.qtde,  						");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.codigoDeBarras, 	");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.codigoSM, 		");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.produto.codigo, 	");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.produto.nome, 	");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.numeroEdicao, 	");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda, 		");
-		hql.append(" conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.desconto, 		");
-		hql.append(" conferenciaEncalhe.observacao, ");
-		hql.append(" conferenciaEncalhe.juramentada ");
-		
 		Query query =  this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		query.setParameter("idDistribuidor", idDistribuidor);
 		
 		return query.list();
 		
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterValorTotalConferenciaEncalheCota(java.lang.Long)
+	/**
+	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
+	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 
+	 * 
+	 * @return String
 	 */
-	public BigDecimal obterValorTotalConferenciaEncalheCota(Long idControleConferenciaEncalheCota) {
+	private static String getSubQueryConsultaValorComissionamento() {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select ");
+		hql.append(" ( select case when ( pe.desconto is not null ) then pe.desconto else ");
 		
-		hql.append(" sum( conferenciaEncalhe.movimentoEstoqueCota.qtde * 				 ");
-		hql.append(" ( conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda  ");
-		hql.append(" - conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.desconto) ) ");
+		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
 		
-		hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
+		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end  ");
+		
+		hql.append(" ) end ");
+		
+		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
 		
 		hql.append(" where ");
 		
-		hql.append(" conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		hql.append(" ct.id = conferenciaEncalhe.movimentoEstoqueCota.cota.id and ");
+
+		hql.append(" pe.id = conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.id and ");
+
+		hql.append(" distribuidor.id = :idDistribuidor ) ");
 		
-		Query query =  this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
-		
-		return (BigDecimal) query.uniqueResult();
+		return hql.toString();
 		
 	}
 	
