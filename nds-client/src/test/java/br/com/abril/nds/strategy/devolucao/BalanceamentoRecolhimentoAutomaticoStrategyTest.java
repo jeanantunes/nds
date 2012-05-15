@@ -131,6 +131,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
+		dadosRecolhimento.setBalancearMatriz(true);
+		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
 		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();
@@ -223,6 +225,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 	private RecolhimentoDTO obterDadosRecolhimentoExcedemLimiteCapacidadeManuseio() {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
+		
+		dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		

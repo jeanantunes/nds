@@ -26,6 +26,8 @@ public class RecolhimentoDTO implements Serializable {
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
 	private TreeSet<Date> datasRecolhimentoDistribuidor;
+	
+	private boolean balancearMatriz;
 
 	/**
 	 * Construtor padrão.
@@ -107,6 +109,20 @@ public class RecolhimentoDTO implements Serializable {
 	public void setDatasRecolhimentoDistribuidor(
 			TreeSet<Date> datasRecolhimentoDistribuidor) {
 		this.datasRecolhimentoDistribuidor = datasRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @return the balancearMatriz
+	 */
+	public boolean getBalancearMatriz() {
+		return balancearMatriz;
+	}
+
+	/**
+	 * @param balancearMatriz the balancearMatriz to set
+	 */
+	public void setBalancearMatriz(boolean balancearMatriz) {
+		this.balancearMatriz = balancearMatriz;
 	}
 	
 }
