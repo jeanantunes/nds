@@ -31,7 +31,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	public ProdutoEdicaoRepositoryImpl() {
 		super(ProdutoEdicao.class);
 	}
-
+	
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {

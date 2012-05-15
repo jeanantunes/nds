@@ -22,6 +22,7 @@
 		<param-name>javax.servlet.jsp.jstl.fmt.locale</param-name>
 		<param-value>pt_BR</param-value>
 	</context-param>
+   
 	
 	<filter>
 		<filter-name>sitemesh</filter-name>

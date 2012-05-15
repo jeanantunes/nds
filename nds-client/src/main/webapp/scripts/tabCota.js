@@ -42,8 +42,8 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 		/**GARANTIA**/
 		case 4: 
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Garantia.');};
-			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Garantia.');
+			T.funcaoSalvar = tipoCotaGarantia.controller.salva;
+			tipoCotaGarantia.onOpen();
 			break;
 		
 		/**FINANCEIRO**/

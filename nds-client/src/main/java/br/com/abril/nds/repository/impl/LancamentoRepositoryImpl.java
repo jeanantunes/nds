@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -508,5 +509,25 @@ public class LancamentoRepositoryImpl extends
 		Object lancamento = criteria.uniqueResult();
 		
 		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.id in (:idsLancamento) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameterList("idsLancamento", idsLancamento);
+		
+		return query.list();
 	}
 }
