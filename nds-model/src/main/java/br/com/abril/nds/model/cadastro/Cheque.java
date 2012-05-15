@@ -44,30 +44,30 @@ public class Cheque implements Serializable {
 	@Column(name = "AGENCIA", nullable = false)
 	private Long agencia;
 	
-	@Column(name = "DV_AGENCIA")
+	@Column(name = "DV_AGENCIA", nullable=false)
 	private String dvAgencia;
 	
 	@Column(name = "CONTA", nullable = false)
 	private Long conta;
 	
-	@Column(name = "DV_CONTA")
+	@Column(name = "DV_CONTA", nullable=false)
 	private String dvConta;
 	
-	@Column(name="VALOR")
+	@Column(name="VALOR", nullable=false)
 	private Double valor;
 	
-	@Column(name="NUMERO_CHEQUE")
+	@Column(name="NUMERO_CHEQUE", nullable=false)
 	private String numeroCheque;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="DATA_EMISSAO")
+	@Column(name="DATA_EMISSAO", nullable=false)
 	private Date emissao;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="DATA_VALIDADE")
+	@Column(name="DATA_VALIDADE",nullable=false)
 	private Date validade;
 	
-	@Column(name="CORRENTISTA")
+	@Column(name="CORRENTISTA", nullable=false)
 	private String correntista;
 		
 	/**
