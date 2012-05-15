@@ -699,4 +699,13 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertFalse(existeChamadaEncalhe);
 	}
+	
+	@Test
+	public void obterUltimoLancamentoDaEdicao() {
+		
+		Lancamento lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(lancamentoVeja.getId());
+		
+		Assert.assertEquals(lancamento.getId(),lancamentoVeja.getId());
+		Assert.assertEquals(lancamento.getDataLancamentoDistribuidor(),Fixture.criarData(22, Calendar.FEBRUARY, 2012));
+	}
 }

@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -497,16 +494,22 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
 		
-		Criteria criteria = getSession().createCriteria(Lancamento.class);
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = ")
+		   .append(" (select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+		   .append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
+		   .append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ");
 		
-		criteria.createAlias("lancamento", "lancamento");
-		criteria.createAlias("lancamento.produtoEdicao", "produtoEdicao");
 		
-		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		Query query = getSession().createQuery(hql.toString());
 		
-		criteria.setProjection(Projections.max("lancamento.dataLancamentoDistribuidor"));  
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
-		Object lancamento = criteria.uniqueResult();
+		Object lancamento = query.uniqueResult();
 		
 		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
 	}

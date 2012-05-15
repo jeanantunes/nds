@@ -21,9 +21,6 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepository<Lancamen
 		
 		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
 		
-		criteria.createAlias("lancamentoParcial", "lancamentoParcial");		
-		criteria.createAlias("lancamentoParcial.produtoEdicao", "produtoEdicao");
-		
 		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		
 		Object lancamento = criteria.uniqueResult();
