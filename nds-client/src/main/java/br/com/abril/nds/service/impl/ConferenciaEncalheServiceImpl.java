@@ -278,19 +278,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
 		
-		if (numeroCota == null){
+		if (numeroCota == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
 		
-		if (idProdutoEdicao == null){
+		if (idProdutoEdicao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
 		}
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
-		if (produtoEdicao != null){
+		if (produtoEdicao != null) {
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
 		}
