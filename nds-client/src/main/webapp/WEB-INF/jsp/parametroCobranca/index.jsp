@@ -188,7 +188,10 @@
 		}    
 	};
 	
-	
+	function fecharDialogs() {
+		$( "#dialog-novo" ).dialog( "close" );
+	    $( "#dialog-excluir" ).dialog( "close" );
+	}
 	
 	
 	
@@ -442,7 +445,7 @@
     
 	function popup() {
 		
-		novoParametro();
+		obterParametro();
 		
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
@@ -451,6 +454,9 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					
+					novoParametro();
+					
 					$( this ).dialog( "close" );
 					$(".grids").show();
 					
