@@ -31,7 +31,7 @@ public class BalanceamentoRecolhimentoFactory {
 	public static BalanceamentoRecolhimentoStrategy getStrategy(TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento) {
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = null;
-		
+
 		switch (tipoBalanceamentoRecolhimento) {
 		
 			case AUTOMATICO:
