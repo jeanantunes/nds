@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
@@ -23,5 +25,20 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+	
+	/**
+	 * Obtém os débitos e crédito relativos a uma cota para determinada data de operação.
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @param tiposMovimentoFinanceiroIgnorados
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(
+			Integer numeroCota, 
+			Date dataOperacao, 
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+
 
 }
