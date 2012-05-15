@@ -46,7 +46,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		while(contador++ < 10) {
 			
 			conferencia = new ConferenciaEncalheDTO();
-			
+			conferencia.setIdConferenciaEncalhe(new Long(contador));
 			conferencia.setCodigo(""+contador);
 			conferencia.setCodigoDeBarras(""+contador);
 			conferencia.setCodigoSM(1L+contador);
@@ -70,31 +70,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCota(Integer numeroCota) {
 		
 		//TODO implementar logica
-		return null;
+		//return null;
 		
-//		String[] tipoOperacao = {"DEBITO", "CREDITO"};
-//		
-//		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = new ArrayList<DebitoCreditoCotaDTO>();
-//		
-//		int contador = 0;
-//		
-//		DebitoCreditoCotaDTO debitoCreditoCota = null;
-//		
-//		while(contador++ < 10) {
-//			
-//			debitoCreditoCota = new DebitoCreditoCotaDTO();
-//			
-//			debitoCreditoCota.setTipoLancamento(tipoOperacao[(contador%2)]);
-//			debitoCreditoCota.setValor(new BigDecimal(contador));
-//			debitoCreditoCota.setDataLancamento(new Date());
-//			debitoCreditoCota.setDataVencimento(new Date());
-//			debitoCreditoCota.setNumeroCota(123);
-//	
-//			listaDebitoCreditoCota.add(debitoCreditoCota);
-//			
-//		}
-//		
-//		return listaDebitoCreditoCota;
+		String[] tipoOperacao = {"DEBITO", "CREDITO"};
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = new ArrayList<DebitoCreditoCotaDTO>();
+		
+		int contador = 0;
+		
+		DebitoCreditoCotaDTO debitoCreditoCota = null;
+		
+		while(contador++ < 10) {
+			
+			debitoCreditoCota = new DebitoCreditoCotaDTO();
+			
+			debitoCreditoCota.setTipoLancamento(tipoOperacao[(contador%2)]);
+			debitoCreditoCota.setValor(new BigDecimal(contador));
+			debitoCreditoCota.setDataLancamento(new Date());
+			debitoCreditoCota.setDataVencimento(new Date());
+			debitoCreditoCota.setNumeroCota(123);
+	
+			listaDebitoCreditoCota.add(debitoCreditoCota);
+			
+		}
+		
+		return listaDebitoCreditoCota;
 		
 	}
 	
@@ -285,14 +285,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		} else {
 			
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
-			
+			infoConfereciaEncalheCota.setListaConferenciaEncalhe(new ArrayList<ConferenciaEncalheDTO>());
 		}
 		
 		List<Long> listaIdProdutoEdicao = null;
 		//TODO obter a lista de idProdutoEdicao 
 		//que constam na chamada de encalhe atual da cota em questão
 
-		BigDecimal reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
+		//BigDecimal reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
 		
 		BigDecimal totalDebitoCreditoCota = null;//TODOcalcularTotalDebitoCreditoCota(numeroCota);
 		
@@ -303,11 +303,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = obterListaDebitoCreditoCota(numeroCota);
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
 		
-		infoConfereciaEncalheCota.setReparte(reparte);
+		infoConfereciaEncalheCota.setReparte(BigDecimal.TEN);
 		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(totalDebitoCreditoCota);
 		infoConfereciaEncalheCota.setValorPagar(valorPagar);
 		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
-		infoConfereciaEncalheCota.setListaConferenciaEncalhe(this.obterListaConferenciaEncalheMockada());
 		
 		return infoConfereciaEncalheCota;
 		
@@ -434,5 +433,4 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private void gerarRecibo() {
 		//TODO
 	}
-	
 }
