@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -36,7 +37,7 @@ public interface CotaGarantiaService {
 	 * @param idCota Id da cota.
 	 * @return
 	 */
-	public abstract CotaGarantia getByCota(Long idCota);
+	public abstract CotaGarantiaDTO getByCota(Long idCota);
 	
 	/**
 	 * Salva no repositorio de dados a garantia de nota promissoria.
