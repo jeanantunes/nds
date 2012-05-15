@@ -14,12 +14,12 @@ import br.com.abril.nds.vo.PaginacaoVO;
  *
  */
 @Exportable
-public class FiltroConsultaParametrosCobrancaDTO implements Serializable {
+public class FiltroParametrosCobrancaDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Export(label = "Forma Pagamento")
-	private TipoCobranca forma;
+	private TipoCobranca tipoCobranca;
 
 	@Export(label = "Banco")
 	private Long idBanco;
@@ -32,30 +32,30 @@ public class FiltroConsultaParametrosCobrancaDTO implements Serializable {
 	/**
 	 * Construtor padrão.
 	 */
-	public FiltroConsultaParametrosCobrancaDTO(){
+	public FiltroParametrosCobrancaDTO(){
 
 	}
 	
 	/**
 	 * Construtor.
 	 */
-	public FiltroConsultaParametrosCobrancaDTO(Long idBanco){
+	public FiltroParametrosCobrancaDTO(Long idBanco){
 		this.idBanco=idBanco;
 	}
 	
 	/**
 	 * Construtor.
 	 */
-	public FiltroConsultaParametrosCobrancaDTO(TipoCobranca tipoCobranca){
-		this.forma=tipoCobranca;
+	public FiltroParametrosCobrancaDTO(TipoCobranca tipoCobranca){
+		this.tipoCobranca=tipoCobranca;
 	}
 	
 	/**
 	 * Construtor.
 	 */
-	public FiltroConsultaParametrosCobrancaDTO(Long idBanco, TipoCobranca tipoCobranca){
+	public FiltroParametrosCobrancaDTO(Long idBanco, TipoCobranca tipoCobranca){
 		this.idBanco=idBanco;
-		this.forma=tipoCobranca;
+		this.tipoCobranca=tipoCobranca;
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class FiltroConsultaParametrosCobrancaDTO implements Serializable {
 	 */
 	public enum OrdenacaoColunaParametrosCobranca{
 		
-		FORMA_COBRANCA("forma"),
+		TIPO_COBRANCA("forma"),
 		NOME_BANCO("banco"),
 		VALOR_MINIMO_EMISSAO("vlr_minimo_emissao"),
 		ACUMULA_DIVIDA("acumula_divida"),
@@ -87,12 +87,12 @@ public class FiltroConsultaParametrosCobrancaDTO implements Serializable {
 		
 	}
 	
-	public TipoCobranca getForma() {
-		return forma;
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
 	}
 
-	public void setForma(TipoCobranca forma) {
-		this.forma = forma;
+	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
 	}
 
 	public Long getIdBanco() {
@@ -127,7 +127,7 @@ public class FiltroConsultaParametrosCobrancaDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((forma == null) ? 0 : forma.hashCode());
+		result = prime * result + ((tipoCobranca == null) ? 0 : tipoCobranca.hashCode());
 		result = prime * result + ((idBanco == null) ? 0 : idBanco.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
@@ -144,8 +144,8 @@ public class FiltroConsultaParametrosCobrancaDTO implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FiltroConsultaParametrosCobrancaDTO other = (FiltroConsultaParametrosCobrancaDTO) obj;
-		if (forma != other.forma)
+		FiltroParametrosCobrancaDTO other = (FiltroParametrosCobrancaDTO) obj;
+		if (tipoCobranca != other.tipoCobranca)
 			return false;
 		if (idBanco == null) {
 			if (other.idBanco != null)

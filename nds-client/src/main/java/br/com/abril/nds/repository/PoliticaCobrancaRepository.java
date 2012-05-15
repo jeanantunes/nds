@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -21,6 +24,18 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	 */
 	PoliticaCobranca obterPorTipoCobranca(TipoCobranca tipoCobranca);
 	
-	PoliticaCobranca buscarPoliticaCobrancaPorDistribuidor();
+	PoliticaCobranca buscarPoliticaCobrancaPrincipal();
+	
+	/**
+	 * Obtém Lista de políticas de cobrança para os parametros
+	 * @return List<PoliticaCobranca>
+	 */
+	List<PoliticaCobranca> obterPoliticasCobranca(FiltroParametrosCobrancaDTO filtro);
+	
+	/**
+	 * Obtém Quantidade de políticas de cobrança para os parametros
+	 * @return int
+	 */
+	int obterQuantidadePoliticasCobranca(FiltroParametrosCobrancaDTO filtro);
 
 }

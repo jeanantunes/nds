@@ -758,7 +758,7 @@
 		     <td width="168">Fator Vencimento em D+:</td>
 		       
 		     <td width="123">
-			     <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
+			     <select id="fatorVencimento" name="fatorVencimento" size="1" style="width:50px; height:19px;" >
 			       <option value="1">1</option>
 			       <option value="2">2</option>
 			       <option value="3">3</option>
