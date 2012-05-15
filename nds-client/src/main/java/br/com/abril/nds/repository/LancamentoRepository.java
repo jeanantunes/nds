@@ -43,12 +43,13 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * 
 	  * @param listaIdsFornecedores 
 	  * 
+	  * @param grupoCromo
+	  * 
 	  * @return List<ProdutoRecolhimentoDTO>
 	  */
 	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
 					 											 List<Long> fornecedores,
 					 											 GrupoProduto grupoCromo);
-
 	 
 	 /**
 	  * Método que retorna o balanceamento do recolhimento referentes a um periodo 

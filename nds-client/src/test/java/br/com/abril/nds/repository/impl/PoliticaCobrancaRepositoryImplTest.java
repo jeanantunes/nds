@@ -11,7 +11,6 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -42,7 +41,7 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
 		
 		save(politicaCobranca);
 	}

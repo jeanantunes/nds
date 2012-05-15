@@ -12,16 +12,14 @@ import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
-import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
-import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
-import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.dto.filtro.FiltroConsultaParametrosCobrancaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.service.BancoService;
-import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.ParametroCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -46,13 +44,10 @@ import br.com.caelum.vraptor.view.Results;
 public class ParametroCobrancaController {
 	
 	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
+	private ParametroCobrancaService parametroCobrancaService;
 	
 	@Autowired
 	private BancoService bancoService;
-	
-	@Autowired
-	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
@@ -66,8 +61,6 @@ public class ParametroCobrancaController {
     private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
     
     private static List<ItemDTO<FormaEmissao,String>> listaFormasEmissao =  new ArrayList<ItemDTO<FormaEmissao,String>>();
-    
-    private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
     
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaParametrosCobranca";
     
@@ -94,17 +87,12 @@ public class ParametroCobrancaController {
     	listaBancos.clear();
     	listaTiposCobranca.clear();
     	listaFormasEmissao.clear();
-    	listaFornecedores.clear();
-    	
     	listaBancos = this.bancoService.getComboBancos();
     	listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
-    	listaFormasEmissao = this.financeiroService.getComboFormasEmissao();
-    	listaFornecedores = this.fornecedorService.buscarComboFornecedores();
-    	
+    	//listaFormasEmissao = this.financeiroService.getComboFormasEmissao();
 		result.include("listaBancos",listaBancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
 		result.include("listaFormasEmissao",listaFormasEmissao);
-		result.include("listaFornecedores",listaFornecedores);
 		
 	}
     
@@ -130,12 +118,12 @@ public class ParametroCobrancaController {
 			                               int rp){
 		
 		//CONFIGURAR PAGINA DE PESQUISA
-		FiltroParametrosCobrancaDTO filtroAtual = new FiltroParametrosCobrancaDTO(idBanco, tipoCobranca);
+		FiltroConsultaParametrosCobrancaDTO filtroAtual = new FiltroConsultaParametrosCobrancaDTO(idBanco, tipoCobranca);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaParametrosCobranca.values(), sortname));
 	
-		FiltroParametrosCobrancaDTO filtroSessao = (FiltroParametrosCobrancaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		FiltroConsultaParametrosCobrancaDTO filtroSessao = (FiltroConsultaParametrosCobrancaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		
 		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
 			filtroAtual.getPaginacao().setPaginaAtual(1);
@@ -144,13 +132,8 @@ public class ParametroCobrancaController {
 		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 
 		//BUSCA BANCOS
-		List<ParametroCobrancaVO> parametrosCobranca = this.politicaCobrancaService.obterDadosPoliticasCobranca(filtroAtual);	
-		
-		if ((parametrosCobranca==null)||(parametrosCobranca.size()<=0)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} 
-		
-		int qtdRegistros = this.politicaCobrancaService.obterQuantidadePoliticasCobranca(filtroAtual);
+		List<ParametroCobrancaVO> parametrosCobranca = this.parametroCobrancaService.obterParametrosCobranca(filtroAtual);	
+		int qtdRegistros = this.parametroCobrancaService.obterQuantidadeParametrosCobranca(filtroAtual);
 		
 		TableModel<CellModelKeyValue<ParametroCobrancaVO>> tableModel =
 				new TableModel<CellModelKeyValue<ParametroCobrancaVO>>();
@@ -165,13 +148,24 @@ public class ParametroCobrancaController {
 	
 	/**
 	 * Método responsável pela inclusão de novo parametro de cobrança
-	 * @param ParametroCobrancaDTO
+	 * @param tipoCobranca
+	 * @param idBanco
+	 * @param valorMinimoEmissao
+	 * @param taxamulta
+	 * @param vrMulta
+	 * @param taxaJuros
+	 * @param instrucoes
+	 * @param acumulaDivida
+	 * @param vencimentoDiaUtil
+	 * @param cobrancaUnificada
+	 * @param EnvioEmail
+	 * @param formaEmissao
 	 */
 	@Post
 	@Path("/novoParametroCobranca")
 	public void novoParametroCobranca(ParametroCobrancaDTO parametros){
 		
-		Banco banco = this.bancoService.obterBancoPorId(parametros.getIdBanco());
+		Banco banco = this.bancoService.obterBancoPorId(1l);//!!!
 
 	    //PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 	

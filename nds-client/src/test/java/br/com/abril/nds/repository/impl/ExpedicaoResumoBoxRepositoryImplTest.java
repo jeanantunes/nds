@@ -3,9 +3,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +22,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -95,16 +92,13 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
 				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 
-		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-		politicasCobranca.add(politicaCobranca);
-		
-		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
+		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		save(distribuidor);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
