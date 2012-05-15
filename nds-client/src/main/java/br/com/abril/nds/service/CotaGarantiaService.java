@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -11,6 +12,7 @@ import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 
@@ -35,7 +37,7 @@ public interface CotaGarantiaService {
 	 * @param idCota Id da cota.
 	 * @return
 	 */
-	public abstract CotaGarantia getByCota(Long idCota);
+	public abstract CotaGarantiaDTO getByCota(Long idCota);
 	
 	/**
 	 * Salva no repositorio de dados a garantia de nota promissoria.
@@ -92,8 +94,9 @@ public interface CotaGarantiaService {
 	 * Salva no repositorio de dados a garantia de um fiador.
 	 * @param idFiador
 	 * @param idCota
+	 * @return TODO
 	 * @throws ValidacaoException
 	 */
-	public abstract void salvaFiador(Long idFiador, Long idCota)
+	public abstract CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
 			throws ValidacaoException;
 }

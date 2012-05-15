@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -53,17 +54,17 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao) {
+	public List<EstoqueProdutoCota> buscarEstoquesProdutoCotaPorIdProdutEdicao(Set<Long> idsProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select estoqueProdutoCota ")
 		   .append(" from EstoqueProdutoCota estoqueProdutoCota ")
-		   .append(" where estoqueProdutoCota.produtoEdicao.id = :idProdutoEdicao ");
+		   .append(" where estoqueProdutoCota.produtoEdicao.id in (:idsProdutoEdicao)");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
 		
 		return query.list();
 	}
@@ -90,4 +91,83 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+	
+	public BigDecimal obterValorTotalReparteCota(
+			Integer numeroCota, 
+			List<Long> listaIdProdutoEdicao, 
+			Long idDistribuidor) {
+		
+		String subQueryConsultaValorComissionamento = getSubQueryConsultaValorComissionamento();
+		
+		StringBuilder hql = new StringBuilder();
+		
+			hql.append(" select ")
+			
+			.append(" sum( estoqueProdutoCota.qtdeRecebida * ")
+			
+			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  *  ( ")
+			
+			.append( subQueryConsultaValorComissionamento )
+			
+			.append(" / 100 ) ) ) ) ")
+			
+			.append(" from EstoqueProdutoCota estoqueProdutoCota ")
+			
+			.append(" join estoqueProdutoCota.cota cota ")
+			
+			.append(" join estoqueProdutoCota.produtoEdicao produtoEdicao ")
+			
+			.append(" where ")
+			
+			.append(" produtoEdicao.id in ( :listaIdProdutoEdicao ) ")
+
+			.append(" and cota.numeroCota = :numeroCota ");
+			
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
+		
+		query.setParameter("numeroCota", numeroCota);
+
+		query.setParameter("idDistribuidor", idDistribuidor);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	
+	/**
+	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
+	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 
+	 * 
+	 * @return String
+	 */
+	private static String getSubQueryConsultaValorComissionamento() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" ( select case when ( pe.desconto is not null ) then pe.desconto else ");
+		
+		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
+		
+		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end  ");
+		
+		hql.append(" ) end ");
+		
+		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
+		
+		hql.append(" where ");
+		
+		hql.append(" ct.id = cota.id and ");
+
+		hql.append(" pe.id = produtoEdicao.id and ");
+
+		hql.append(" distribuidor.id = :idDistribuidor ) ");
+		
+		return hql.toString();
+		
+	}
+	
+	
 }

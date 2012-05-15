@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -13,7 +14,6 @@ import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -79,13 +79,18 @@ public class CotaGarantiaController {
 
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
-		CotaGarantia cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
 		if (cotaGarantia != null) {			
-			result.use(Results.json()).from(cotaGarantia, "cotaGarantia").exclude("cota").recursive().serialize();		
+			result.use(CustomJson.class).from(cotaGarantia).serialize();		
 		}else{			
 			result.use(CustomJson.class).from("OK").serialize();		
 		}	
+	}
+	
+	@Post("/getTipoGarantiaCadastrada.json")
+	public void getTipoGarantiaCadastrada(Long idCota){
+		
 	}
 
 	@Get("/impriNotaPromissoria/{id}")

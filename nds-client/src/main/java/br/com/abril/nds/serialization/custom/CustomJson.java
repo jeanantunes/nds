@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
@@ -30,14 +31,8 @@ public class CustomJson implements View {
 		this.response = response;
 		mapper = new ObjectMapper();
 		mapper.registerModule(new HibernateModule());
-		mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-
-		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS,
-				false);
-		mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
-		mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES,
-				false);
+		
+		
 		
 		
 		Locale locale = localization.getLocale();
@@ -48,7 +43,21 @@ public class CustomJson implements View {
 		DateFormat df = DateFormat
 				.getDateInstance(DateFormat.MEDIUM, locale);
 		df.setLenient(false);
-		mapper.setDateFormat(df);
+		//mapper.setDateFormat(df);
+
+		
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		
+		mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+
+		mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES,
+				false);
+		
+		
+		
 
 	}
 
