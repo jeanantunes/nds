@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
+import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -101,14 +101,16 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/confirmar")
-	public void confirmar() {
+	public void confirmar(Integer numeroSemana) {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
 		recolhimentoService.confirmarBalanceamentoRecolhimento(
-			balanceamentoRecolhimento.getMatrizRecolhimento());
+			balanceamentoRecolhimento.getMatrizRecolhimento(), numeroSemana);
+		
+		removerAtributoAlteracaoSessao();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), Constantes.PARAM_MSGS)
@@ -161,6 +163,8 @@ public class MatrizRecolhimentoController {
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
 			balanceamentoRecolhimento.getMatrizRecolhimento());
+		
+		removerAtributoAlteracaoSessao();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de recolhimento salvo com sucesso!"), Constantes.PARAM_MSGS)
@@ -218,8 +222,6 @@ public class MatrizRecolhimentoController {
 			
 			this.result.use(Results.json()).from(Results.nothing()).serialize();
 		}
-		
-		removerAtributoAlteracaoSessao();
 	}
 	
 	@Post
@@ -772,6 +774,8 @@ public class MatrizRecolhimentoController {
 
 		Long idLancamento = 1L;
 		
+		Long idProdutoEdicao = 1L;
+		
 		for (int diaRecolhimento = 18; diaRecolhimento <= 24; diaRecolhimento++) {
 		
 			Date dataRecolhimento = DateUtil.parseDataPTBR(diaRecolhimento + "/04/2012");
@@ -810,7 +814,7 @@ public class MatrizRecolhimentoController {
 				produtoRecolhimento.setPossuiChamada(false);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
 				
-				produtoRecolhimento.setIdProdutoEdicao((long) i);
+				produtoRecolhimento.setIdProdutoEdicao(idProdutoEdicao++);
 				produtoRecolhimento.setCodigoProduto("" + i);
 				produtoRecolhimento.setNomeProduto("Produto " + i);
 				produtoRecolhimento.setNumeroEdicao(1L);
@@ -849,14 +853,14 @@ public class MatrizRecolhimentoController {
 			return null;
 		}
 		
-		List<ResumoPeriodoBalanceamentoDTO> resumoPeriodoBalanceamento =
-			new ArrayList<ResumoPeriodoBalanceamentoDTO>();
+		List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento =
+			new ArrayList<ResumoPeriodoBalanceamentoVO>();
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
 			
 			Date dataRecolhimento = entry.getKey();
 			
-			ResumoPeriodoBalanceamentoDTO itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoDTO();
+			ResumoPeriodoBalanceamentoVO itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoVO();
 			
 			itemResumoPeriodoBalanceamento.setData(dataRecolhimento);
 			

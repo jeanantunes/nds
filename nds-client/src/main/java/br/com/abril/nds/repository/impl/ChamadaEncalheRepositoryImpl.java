@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,28 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepository<ChamadaEnca
 		query.setMaxResults(1);
 		
 		return (ChamadaEncalhe) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ChamadaEncalhe> obterPorPeriodoTipoChamadaEncalhe(Date dataInicialRecolhimento,
+																  Date dataFinalRecolhimento,
+																  TipoChamadaEncalhe tipoChamadaEncalhe) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ")
+			.append(" where chamadaEncalhe.dataRecolhimento between ")
+			.append(" :dataInicialRecolhimento and :dataFinalRecolhimento ")
+			.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataInicialRecolhimento", dataInicialRecolhimento);
+		query.setParameter("dataFinalRecolhimento", dataFinalRecolhimento);
+		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
+		
+		return query.list();
 	}
 
 }

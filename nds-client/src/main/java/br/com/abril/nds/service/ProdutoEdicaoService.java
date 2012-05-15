@@ -46,5 +46,13 @@ public interface ProdutoEdicaoService {
 	 * @return {@link ProdutoEdicao}
 	 */
 	ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao);
+
+	/**
+	 * Obtém edições do produto 
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @return Lista de edições do produto
+	 */
+	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 	
 }

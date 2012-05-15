@@ -26,12 +26,43 @@ var produto = {
 			}
 		}
 	},
-
-	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, idEdicao, successCallBack) {
+	
+	//Pesquisa por código de produto
+	pesquisarPorCodigoProdutoAutoCompleteEdicao : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		var codigoProduto = $(idCodigo).val();
 		
-		$(idEdicao).removeAttr("disabled");
-		$(idProduto).val(result.nome);
-		$(idEdicao).focus();
+		codigoProduto = $.trim(codigoProduto);
+		
+		$(idCodigo).val(codigoProduto);
+		
+		$(idProduto).val("");
+		$(idEdicao).val("");
+		
+		if (codigoProduto && codigoProduto.length > 0) {
+			
+			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+					   "codigoProduto=" + codigoProduto,
+					   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack, idCodigo, isFromModal); },
+					   function() { produto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
+		
+		} else {
+		
+			if (errorCallBack) {
+				errorCallBack();
+			}
+		}
+	},
+
+	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, idEdicao, successCallBack,idCodigo, isFromModal) {
+		
+		if(idCodigo) {
+			produto.autoCompletarEdicaoPorProduto(idCodigo, idEdicao, isFromModal);
+		} else {
+		
+			$(idEdicao).removeAttr("disabled");
+			$(idProduto).val(result.nome);
+			$(idEdicao).focus();
+		}
 		
 		produto.pesquisaRealizada = true;
 		
@@ -47,6 +78,19 @@ var produto = {
 		if (errorCallBack) {
 			errorCallBack();
 		}
+	},
+	
+	//Mostrar auto complete por nome do produto
+	autoCompletarEdicaoPorProduto : function(idCodigoProduto, idEdicao, isFromModal) {
+		
+		produto.pesquisaRealizada = false;
+		
+		var codigoProduto = $(idCodigoProduto).val();
+		
+		$.postJSON(contextPath + "/produto/autoCompletarEdicaoPorProduto", "codigoProduto=" + codigoProduto,
+					   function(result) { produto.exibirAutoComplete(result, idEdicao); },
+					   null, isFromModal);
+		
 	},
 	
 	//Mostrar auto complete por nome do produto
