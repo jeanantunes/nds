@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
@@ -29,11 +30,15 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest  {
@@ -41,7 +46,14 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
 	private Cota cotaManoel;	
+	
+	private TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
+	private TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe;
+	private TipoMovimentoFinanceiro tipoMovimentoFinanceiroReparte;
 	
 	@Before
 	public void setup() {
@@ -71,9 +83,14 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		save(distribuidor);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito =
-			Fixture.tipoMovimentoFinanceiroCredito();
+		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		save(tipoMovimentoFinanceiroCredito);
+		
+		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
+		save(tipoMovimentoFinanceiroEnvioEncalhe);
+		
+		tipoMovimentoFinanceiroReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
+		save(tipoMovimentoFinanceiroReparte);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
@@ -129,6 +146,31 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
 	}
+	
+	@Test
+	public void obterDebitoCredioCotaDataOperacao() {
+		
+		Integer numeroCota = 123;
+		
+		Date dataOperacao = new Date();
+		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
+		tiposMovimentoFinanceiroIgnorados.add(
+				tipoMovimentoFinanceiroReparte
+		);
+
+		tiposMovimentoFinanceiroIgnorados.add( 
+				tipoMovimentoFinanceiroEnvioEncalhe
+		);
+
+		
+		@SuppressWarnings("unused")
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota =
+				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(numeroCota, dataOperacao, tiposMovimentoFinanceiroIgnorados);
+		
+	}
+	
 	
 	@Test
 	public void obterMovimentosFinanceiroCotaSucesso() {

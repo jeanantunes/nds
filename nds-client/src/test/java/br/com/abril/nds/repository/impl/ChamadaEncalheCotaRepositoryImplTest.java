@@ -313,18 +313,17 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		Integer numeroCota = 123;
 		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
-		Long idProdutoEdicao = veja1.getId(); 
 		boolean indPesquisaCEFutura = true; 
 		boolean conferido = false;
 		
-		List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.obterListaChamaEncalheCota(
-				numeroCota, 
-				dataOperacao, 
-				idProdutoEdicao, 
-				indPesquisaCEFutura, 
-				conferido);
+		List<Long> listaIdProdutoEdicaoChamadaEncalheCota = 
+				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(
+						numeroCota, 
+						dataOperacao, 
+						indPesquisaCEFutura, 
+						conferido);
 		
-		Assert.assertEquals(1, listaChamadaEncalheCota.size());
+		Assert.assertEquals(1, listaIdProdutoEdicaoChamadaEncalheCota.size());
 		
 	}
 	

@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
@@ -71,10 +72,25 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public CotaGarantia getByCota(Long idCota) {
+	public CotaGarantiaDTO getByCota(Long idCota) {
 		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
-		return cotaGarantia;
+		TipoGarantia tipo = null;
+		if(cotaGarantia instanceof CotaGarantiaFiador){
+			tipo = TipoGarantia.FIADOR;
+			initFiador(((CotaGarantiaFiador)cotaGarantia).getFiador());
+		}else if(cotaGarantia instanceof CotaGarantiaImovel){
+			tipo = TipoGarantia.IMOVEL;
+		}else if(cotaGarantia instanceof CotaGarantiaNotaPromissoria){
+			tipo = TipoGarantia.NOTA_PROMISSORIA;
+		}else if(cotaGarantia instanceof CotaGarantiaCaucaoLiquida){
+			tipo = TipoGarantia.CAUCAO_LIQUIDA;
+		}else if(cotaGarantia instanceof CotaGarantiaChequeCaucao){
+			tipo = TipoGarantia.CHEQUE_CAUCAO;
+		} 
+		
+		
+		return new CotaGarantiaDTO(tipo, cotaGarantia);
 	}
 
 	/*
@@ -163,11 +179,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 			cotaGarantiaImovel = new CotaGarantiaImovel();
 			cotaGarantiaImovel.setCota(getCota(idCota));
-			
-		}
 		
-		cotaGarantiaImovel.setImoveis(new ArrayList<Imovel>());
-		cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.merge(cotaGarantiaImovel);		
+		} else {
+		
+			if (cotaGarantiaImovel.getImoveis() != null || !cotaGarantiaImovel.getImoveis().isEmpty()) {
+				this.cotaGarantiaRepository.deleteListaImoveis(cotaGarantiaImovel.getId());
+			}
+		}
 		cotaGarantiaImovel.setData(new Date());
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
