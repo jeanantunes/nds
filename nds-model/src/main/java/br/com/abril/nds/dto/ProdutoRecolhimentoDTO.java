@@ -27,8 +27,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	
 	private StatusLancamento statusLancamento;
 
-	private StatusLancamento statusLancamento;
-
 	private boolean possuiBrinde;
 
 	private BigDecimal peso;
