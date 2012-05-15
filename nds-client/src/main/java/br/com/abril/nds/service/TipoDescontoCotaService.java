@@ -10,6 +10,8 @@ import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 public interface TipoDescontoCotaService {
 
 	void incluirDescontoGeral(TipoDescontoCota tipoDescontoCota);
+
+	void atualizarDistribuidos(Long desconto);
 	
 	
 }

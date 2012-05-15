@@ -35,7 +35,7 @@ public class TipoDescontoCota implements Serializable {
 	
 	@Column(name = "USUARIO")
 	private String usuario;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -67,7 +67,5 @@ public class TipoDescontoCota implements Serializable {
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	
-	
 
 }
