@@ -2,7 +2,6 @@ package br.com.abril.nds.strategy.devolucao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
@@ -20,9 +19,9 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Map<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
+	protected TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		

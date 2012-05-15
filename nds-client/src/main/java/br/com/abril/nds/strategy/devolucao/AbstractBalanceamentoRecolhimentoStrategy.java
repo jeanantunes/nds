@@ -35,7 +35,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			return balanceamentoRecolhimento; 
 		}
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
 			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
@@ -53,18 +53,19 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * 
 	 * @return Matriz de recohlimento balanceada
 	 */
-	protected abstract Map<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento);
+	protected abstract TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento);
 	
 	/*
 	 * Balanceia os produtos do recolhimento que possuem chamada (antecipada ou chamadão) na matriz.
 	 */
-	protected void balancearProdutosRecolhimentoComChamada(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-														   RecolhimentoDTO dadosRecolhimento,
-														   Date dataRecolhimentoPrevista) {
+	protected void processarProdutosRecolhimentoNaoBalanceaveis(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+														   		RecolhimentoDTO dadosRecolhimento,
+														   		Date dataRecolhimentoPrevista) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = 
 			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(
-				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
+				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista, 
+					dadosRecolhimento.getBalancearMatriz());
 		
 		if (!produtosRecolhimentoNaoBalanceaveis.isEmpty()) {
 			
@@ -76,27 +77,30 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Obtém os produtos de recolhimento não balanceáveis (possuem chamada antecipada ou chamadão) de uma determinada data.
 	 */
 	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
-																		  				   Date dataRecolhimentoDesejada) {
+																		  				   Date dataRecolhimentoDesejada,
+																		  				   boolean balancearMatriz) {
 		
-		List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = new ArrayList<ProdutoRecolhimentoDTO>();
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = new ArrayList<ProdutoRecolhimentoDTO>();
 		
 		if (produtosRecolhimento == null 
 				|| produtosRecolhimento.isEmpty()
 				|| dataRecolhimentoDesejada == null) {
 			
-			return produtosRecolhimentoFiltrados;
+			return produtosRecolhimentoNaoBalanceaveis;
 		}
 		
-		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
-
-			if (produtoRecolhimento.isPossuiChamada() 
+		for (int indice = 0; indice < produtosRecolhimento.size(); indice++) {
+			
+			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
+			
+			if ((!balancearMatriz || produtoRecolhimento.isPossuiChamada())
 					&& produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
-				produtosRecolhimentoFiltrados.add(produtoRecolhimento);
+				produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
 			}
 		}
 		
-		return produtosRecolhimentoFiltrados;
+		return produtosRecolhimentoNaoBalanceaveis;
 	}
 	
 	/*
