@@ -1,24 +1,49 @@
 <head>
 <script language="javascript" type="text/javascript">
-function popup_geral() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$(function() {
+		
+		inicializar();
+	});
 	
-		$( "#dialog-geral" ).dialog({
-			resizable: false,
-			height:230,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					novoDesconto();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+	function inicializar() {
+		
+		iniciarData();		
+		
+	}
+	
+	function iniciarData() {
+		
+		$("#textfield23").datepicker({
+			showOn : "button",
+			buttonImage : "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly : true
 		});
-	};
+		
+		$("#textfield23").mask("99/99/9999");
+	}
+
+	function popup_geral() {
+			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+			
+			 limparTelaCadastroBanco();
+		
+			$( "#dialog-geral" ).dialog({
+				resizable: false,
+				height:230,
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						novoDesconto();
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
 	
 	function novoDesconto() {
 		
@@ -30,10 +55,28 @@ function popup_geral() {
 				   "desconto="+descontoGeral+
 				   "&dataAlteracao="+ dataAlteracao +
 				   "&usuario="+ usuario,
-				   null,
+				   function(result) {
+			           fecharDialogs();
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+	                   mostrarGridConsulta();
+	               },
 				   null,
 				   true);
 		
+	}
+	
+	function fecharDialogs() {
+		$( "#dialog-geral" ).dialog( "close" );
+	}
+	
+	function limparTelaCadastroBanco() {
+		$("#descontoGeral").val("");
+		$("#textfield23").val("");
+		$("#textfield24").val("");		
 	}
 	
 	function popup_especifico() {
@@ -113,11 +156,11 @@ function popup_geral() {
               <td width="239"><input type="text" name="descontoGeral" id="descontoGeral" style="width:100px;"/></td>
             </tr>
             <tr>
-              <td>Data Alteração:</td>
+              <td>Data AlteraÃ§Ã£o:</td>
               <td><input type="text" name="textfield23" id="textfield23" style="width:100px;"/></td>
             </tr>
             <tr>
-              <td>Usuário:</td>
+              <td>UsuÃ¡rio:</td>
               <td><input type="text" name="textfield24" id="textfield24" style="width:230px;" /></td>
             </tr>
   </table>         
@@ -140,11 +183,11 @@ function popup_geral() {
               <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
             </tr>
             <tr>
-              <td>Data Alteração:</td>
+              <td>Data AlteraÃ§Ã£o:</td>
               <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
             </tr>
             <tr>
-              <td>Usuário:</td>
+              <td>UsuÃ¡rio:</td>
               <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
             </tr>
           </table>       
@@ -155,7 +198,7 @@ function popup_geral() {
 <div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">    
     <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="100">Código:</td>
+              <td width="100">CÃ³digo:</td>
               <td width="239"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
             </tr>
             <tr>
@@ -163,7 +206,7 @@ function popup_geral() {
               <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
             </tr>
             <tr>
-              <td>Edição:</td>
+              <td>EdiÃ§Ã£o:</td>
               <td><input type="text" name="textfield5" id="textfield5" style="width:100px;"/></td>
             </tr>
             <tr>
@@ -171,11 +214,11 @@ function popup_geral() {
               <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
             </tr>
             <tr>
-              <td>Data Alteração:</td>
+              <td>Data AlteraÃ§Ã£o:</td>
               <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
             </tr>
             <tr>
-              <td>Usuário:</td>
+              <td>UsuÃ¡rio:</td>
               <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
             </tr>
           </table>       
@@ -201,7 +244,7 @@ function popup_geral() {
               <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostra_geral();" /></td>
                 <td width="47">Geral</td>
                 <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="mostra_especifico();"  /></td>
-                <td width="65">Específico</td>
+                <td width="65">EspecÃ­fico</td>
                 <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="mostra_produto();"  /></td>
                 <td width="48">Produto</td>
                 <td width="585">
@@ -213,7 +256,7 @@ function popup_geral() {
                 </div>
                 
                 <div class="produto">
-                <label style="width:auto!important;">Código:</label>
+                <label style="width:auto!important;">CÃ³digo:</label>
                 <input name="" type="text" style="width:80px; float:left;" />
                 <label style="width:auto!important;">Produto:</label>
                 <input name="" type="text" style="width:160px; float:left;" />
@@ -239,7 +282,7 @@ function popup_geral() {
       
       
       <fieldset class="classFieldset" id="tpoEspecifico" style="display:none;">
-       	  <legend>Tipos de Desconto Específico</legend>
+       	  <legend>Tipos de Desconto EspecÃ­fico</legend>
         
         	<table class="tiposDescEspecificoGrid"></table>
        
@@ -272,7 +315,7 @@ function popup_geral() {
 <script>
 	$(".tiposDescGeralGrid").flexigrid({
 			url : '../xml/tipos-desconto-geral-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
 				display : '',
 				name : 'seq',
@@ -286,19 +329,19 @@ function popup_geral() {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Data Alteração',
+				display : 'Data AlteraÃ§Ã£o',
 				name : 'dtAtlteracao',
 				width : 150,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 502,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'usuario',
 				width : 30,
 				sortable : true,
@@ -337,18 +380,18 @@ function popup_geral() {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Data Alteração',
+				display : 'Data AlteraÃ§Ã£o',
 				name : 'dtAlteracao',
 				width : 120,
 				sortable : true,
 				align : 'center'			}, {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'usuario',
 				width : 30,
 				sortable : true,
@@ -368,7 +411,7 @@ function popup_geral() {
 			url : '../xml/tipos-desconto-produto-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigo',
 				width : 70,
 				sortable : true,
@@ -380,7 +423,7 @@ function popup_geral() {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'EdiÃ§Ã£o',
 				name : 'edicao',
 				width : 100,
 				sortable : true,
@@ -392,19 +435,19 @@ function popup_geral() {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Data Alteração',
+				display : 'Data AlteraÃ§Ã£o',
 				name : 'dtAlteracao',
 				width : 120,
 				sortable : true,
 				align : 'center'			
 			}, {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'usuario',
 				width : 30,
 				sortable : true,
