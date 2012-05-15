@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -383,8 +384,41 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" select ");
 
+<<<<<<< HEAD
 //		hql.append(" rownum as sequencia, ");//TODO: como faz essa porra??
 		hql.append(" estoqueProdutoCota.produtoEdicao as produtoEdicao, ");
+=======
+		return query.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(PeriodoVO periodoRecolhimento, 
+																					List<Long> fornecedores,
+																					GrupoProduto grupoCromo) {
+
+		String sql = getConsultaBalanceamentoRecolhimentoAnalitico() 
+				   + " order by idEditor, dataRecolhimentoDistribuidor ";
+
+		Query query = getQueryBalanceamentoRecolhimentoComParametros(periodoRecolhimento, fornecedores, grupoCromo, sql);
+
+		return query.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
+																 List<Long> fornecedores,
+																 GrupoProduto grupoCromo) {
+
+		String sql = getConsultaExpectativaEncalheData();
+>>>>>>> refs/remotes/DGBti/master
 		
 		hql.append(" fornecedor.juridica.id as idFornecedor, ");
 		hql.append(" fornecedor.juridica.razaoSocial as nomeFornecedor, ");
@@ -467,7 +501,22 @@ public class LancamentoRepositoryImpl extends
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 
+<<<<<<< HEAD
 		return query.list();
+=======
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheDia = new TreeMap<Date, BigDecimal>();
+
+		for (Object[] expectativa : expectativasEncalheDia) {
+
+			Date data = (Date) expectativa[0];
+
+			BigDecimal expectativaEncalhe = (BigDecimal) expectativa[1];
+
+			mapaExpectativaEncalheDia.put(data, expectativaEncalhe);
+		}
+
+		return mapaExpectativaEncalheDia;
+>>>>>>> refs/remotes/DGBti/master
 	}
 
 	/**
