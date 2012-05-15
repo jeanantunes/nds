@@ -55,4 +55,12 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * @return caso exista chamada: true, caso não exista: false.
 	  */
 	 boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(PeriodoVO periodo);
+
+	 /**
+	  * Obtém o último Lancamento de determinado ProdutoEdicao
+	  * 
+	  * @param idProdutoEdicao - Id do ProdutoEdicao
+	  * @return Lancamento
+	  */
+	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
 }

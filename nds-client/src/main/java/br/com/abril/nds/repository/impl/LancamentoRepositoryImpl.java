@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -488,5 +491,22 @@ public class LancamentoRepositoryImpl extends
 		Long quantidadeRegistrosEncontrados = (Long) query.uniqueResult();
 		
 		return quantidadeRegistrosEncontrados > 0;
+	}
+
+	@Override
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
+		
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		
+		criteria.createAlias("lancamento", "lancamento");
+		criteria.createAlias("lancamento.produtoEdicao", "produtoEdicao");
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		criteria.setProjection(Projections.max("lancamento.dataLancamentoDistribuidor"));  
+		
+		Object lancamento = criteria.uniqueResult();
+		
+		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
 	}
 }
