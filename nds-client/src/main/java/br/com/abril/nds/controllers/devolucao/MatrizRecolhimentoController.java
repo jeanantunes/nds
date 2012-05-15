@@ -761,6 +761,10 @@ public class MatrizRecolhimentoController {
 
 			//TODO: chamar o método para balanceamento automático do service
 			
+//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+//															  listaIdsFornecedores,
+//															  TipoBalanceamentoRecolhimento.AUTOMATICO);
+			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
 			
@@ -793,6 +797,10 @@ public class MatrizRecolhimentoController {
 
 			//TODO: chamar o método para balanceamento por editor do service
 			
+//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+//															  listaIdsFornecedores,
+//															  TipoBalanceamentoRecolhimento.EDITOR);
+			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
 			
@@ -821,6 +829,10 @@ public class MatrizRecolhimentoController {
 		if (dataBalanceamento != null && listaIdsFornecedores != null) {
 
 			//TODO: chamar o método para balanceamento por valor do service
+			
+//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+//															  listaIdsFornecedores,
+//															  TipoBalanceamentoRecolhimento.VALOR);
 			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
@@ -892,7 +904,7 @@ public class MatrizRecolhimentoController {
 				produtoRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
 				produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(i * 100));
 				produtoRecolhimento.setValorTotal(new BigDecimal(i));
-				produtoRecolhimento.setPossuiChamada(false);
+				produtoRecolhimento.setPossuiChamada(i % 2 == 0);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
 				
 				produtoRecolhimento.setIdProdutoEdicao(idProdutoEdicao++);
