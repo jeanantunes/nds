@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
@@ -41,11 +43,44 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * 
 	  * @param listaIdsFornecedores 
 	  * 
+	  * @param grupoCromo
+	  * 
 	  * @return List<ProdutoRecolhimentoDTO>
 	  */
 	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
 					 											 List<Long> fornecedores,
 					 											 GrupoProduto grupoCromo);
+	 
+	 /**
+	  * Método que retorna o balanceamento do recolhimento referentes a um periodo 
+	  * ordernados por editor e data de recolhimento do distribuidor.
+	  * 
+	  * @param periodoRecolhimento
+	  * 
+	  * @param listaIdsFornecedores 
+	  * 
+	  * @param grupoCromo
+	  * 
+	  * @return List<ProdutoRecolhimentoDTO>
+	  */
+	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(PeriodoVO periodoRecolhimento, 
+								 											  List<Long> fornecedores,
+								 											  GrupoProduto grupoCromo);
+
+	 /**
+	  * Método que retorna expectativas de encalhe baseadas nas datas do período informado. 
+	  * 
+	  * @param periodoRecolhimento
+	  * 
+	  * @param fornecedores
+	  * 
+	  * @param grupoCromo
+	  * 
+	  * @return Map<Date, BigDecimal>
+	  */
+	 Map<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
+														   List<Long> fornecedores,
+														   GrupoProduto grupoCromo);
 	 
 	 /**
 	  * Método que verifica a existência de uma chamada de encalhe do tipo Matriz Recolhimento
