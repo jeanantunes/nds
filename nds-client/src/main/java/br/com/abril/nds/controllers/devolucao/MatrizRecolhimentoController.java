@@ -89,7 +89,7 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimentoInicial(null, dataPesquisa, listaIdsFornecedores);
+			this.obterBalanceamentoRecolhimentoInicial(null, dataPesquisa, numeroSemana, listaIdsFornecedores);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -125,7 +125,7 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimentoEditor(dataPesquisa, listaIdsFornecedores);
+			this.obterBalanceamentoRecolhimentoEditor(dataPesquisa, numeroSemana, listaIdsFornecedores);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -143,7 +143,7 @@ public class MatrizRecolhimentoController {
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimentoValor(dataPesquisa, listaIdsFornecedores);
+			this.obterBalanceamentoRecolhimentoValor(dataPesquisa, numeroSemana, listaIdsFornecedores);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -233,7 +233,7 @@ public class MatrizRecolhimentoController {
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL);
 		
 		balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimentoInicial(balanceamentoRecolhimento, null, null);
+			this.obterBalanceamentoRecolhimentoInicial(balanceamentoRecolhimento, null, null, null);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -672,15 +672,20 @@ public class MatrizRecolhimentoController {
 	
 	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoInicial(
 												BalanceamentoRecolhimentoDTO balanceamentoRecolhimento,
-												Date dataBalanceamento, 
+												Date dataBalanceamento,
+												Integer numeroSemana,
 												List<Long> listaIdsFornecedores) {
 		
 		if ((balanceamentoRecolhimento == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null)
-					&& dataBalanceamento != null 
+					&& numeroSemana != null 
 					&& listaIdsFornecedores != null) {
 
 			//TODO: chamar o método para balanceamento automático do service
+			
+//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+//															  listaIdsFornecedores,
+//															  TipoBalanceamentoRecolhimento.AUTOMATICO);
 			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
@@ -705,14 +710,19 @@ public class MatrizRecolhimentoController {
 	
 	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoEditor(
 																	Date dataBalanceamento,
+																	Integer numeroSemana,
 																	List<Long> listaIdsFornecedores) {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
 			new BalanceamentoRecolhimentoDTO();
 		
-		if (dataBalanceamento != null && listaIdsFornecedores != null) {
+		if (numeroSemana != null && listaIdsFornecedores != null) {
 
 			//TODO: chamar o método para balanceamento por editor do service
+			
+//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+//															  listaIdsFornecedores,
+//															  TipoBalanceamentoRecolhimento.EDITOR);
 			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
@@ -733,15 +743,20 @@ public class MatrizRecolhimentoController {
 	}
 	
 	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimentoValor(
-																	Date dataBalanceamento, 
+																	Date dataBalanceamento,
+																	Integer numeroSemana,
 																	List<Long> listaIdsFornecedores) {
 	
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
 			new BalanceamentoRecolhimentoDTO();
 		
-		if (dataBalanceamento != null && listaIdsFornecedores != null) {
+		if (numeroSemana != null && listaIdsFornecedores != null) {
 
 			//TODO: chamar o método para balanceamento por valor do service
+			
+//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+//															  listaIdsFornecedores,
+//															  TipoBalanceamentoRecolhimento.VALOR);
 			
 			balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
@@ -811,7 +826,7 @@ public class MatrizRecolhimentoController {
 				produtoRecolhimento.setNomeFornecedor("Zé Fornecedor " + i);
 				produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(i * 100));
 				produtoRecolhimento.setValorTotal(new BigDecimal(i));
-				produtoRecolhimento.setPossuiChamada(false);
+				produtoRecolhimento.setPossuiChamada(i % 2 == 0);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
 				
 				produtoRecolhimento.setIdProdutoEdicao(idProdutoEdicao++);

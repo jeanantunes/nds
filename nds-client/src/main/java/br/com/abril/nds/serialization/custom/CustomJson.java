@@ -43,11 +43,12 @@ public class CustomJson implements View {
 		DateFormat df = DateFormat
 				.getDateInstance(DateFormat.MEDIUM, locale);
 		df.setLenient(false);
-		//mapper.setDateFormat(df);
+		mapper.setDateFormat(df);
 
 		
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
 		
 		mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);

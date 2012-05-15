@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -2590,12 +2591,44 @@ public class DataLoader {
 		save(session, formaBoleto,formaCheque,formaDeposito,formaDinheiro,formaTransferenciBancaria);
 
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
-
+			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
+		save(session, politicaCobranca);
+		
+		PoliticaCobranca politicaCobranca2 =
+				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+			save(session, politicaCobranca);
+			
+		PoliticaCobranca politicaCobranca3 =
+				Fixture.criarPoliticaCobranca(null, formaDinheiro, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+			save(session, politicaCobranca);
+			
+		PoliticaCobranca politicaCobranca4 =
+				Fixture.criarPoliticaCobranca(null, formaTransferenciBancaria, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+			save(session, politicaCobranca);
+			
+		PoliticaCobranca politicaCobranca5 =
+				Fixture.criarPoliticaCobranca(null, formaDeposito, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
+			save(session, politicaCobranca);
+			
+		PoliticaCobranca politicaCobranca6 =
+				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+			save(session, politicaCobranca);
+			
+		PoliticaCobranca politicaCobranca7 =
+				Fixture.criarPoliticaCobranca(null, formaDeposito, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+			save(session, politicaCobranca);
+			
+		PoliticaCobranca politicaCobranca8 =
+				Fixture.criarPoliticaCobranca(null, formaCheque, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+			save(session, politicaCobranca);
+	
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
 
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);;
+		
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
@@ -2619,7 +2652,15 @@ public class DataLoader {
 
 		save(session, distribuidor);
 		
-		
+		politicaCobranca.setDistribuidor(distribuidor);
+		politicaCobranca2.setDistribuidor(distribuidor);
+		politicaCobranca3.setDistribuidor(distribuidor);
+		politicaCobranca4.setDistribuidor(distribuidor);
+		politicaCobranca5.setDistribuidor(distribuidor);
+		politicaCobranca6.setDistribuidor(distribuidor);
+		politicaCobranca7.setDistribuidor(distribuidor);
+		politicaCobranca8.setDistribuidor(distribuidor);
+		save(session, politicaCobranca, politicaCobranca2, politicaCobranca3, politicaCobranca4, politicaCobranca5, politicaCobranca6, politicaCobranca7, politicaCobranca8);
 		
 		for(TipoGarantia tipo:TipoGarantia.values()){
 			save(session,Fixture.criarTipoGarantiaAceita(distribuidor, tipo));

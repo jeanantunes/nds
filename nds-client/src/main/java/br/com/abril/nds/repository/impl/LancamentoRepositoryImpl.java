@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -529,5 +531,21 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("idsLancamento", idsLancamento);
 		
 		return query.list();
+	}
+
+	@Override
+	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(
+			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			GrupoProduto grupoCromo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
+			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			GrupoProduto grupoCromo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
