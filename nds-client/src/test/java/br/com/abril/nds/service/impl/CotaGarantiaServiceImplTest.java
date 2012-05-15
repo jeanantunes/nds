@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
 		
 		notaPromissoria.setValor(10000D);
-		notaPromissoria.setVencimento(new Date());
+		notaPromissoria.setVencimento(Calendar.getInstance());
 		
 		notaPromissoria.setValorExtenso("Mil Conto");
 		
