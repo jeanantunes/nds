@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -412,7 +412,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
+	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
 																 List<Long> fornecedores,
 																 GrupoProduto grupoCromo) {
 
@@ -430,7 +430,7 @@ public class LancamentoRepositoryImpl extends
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
-		Map<Date, BigDecimal> mapaExpectativaEncalheDia = new TreeMap<Date, BigDecimal>();
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheDia = new TreeMap<Date, BigDecimal>();
 
 		for (Object[] expectativa : expectativasEncalheDia) {
 
