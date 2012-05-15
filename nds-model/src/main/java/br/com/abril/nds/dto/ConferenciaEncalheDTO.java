@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public class ConferenciaEncalheDTO {
 
+	private Long idConferenciaEncalhe;
+	private Long idProdutoEdicao;
 	private BigDecimal qtdExemplar;
 	private String codigoDeBarras;
 	private Long codigoSM;
@@ -90,7 +92,17 @@ public class ConferenciaEncalheDTO {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
-	
-	
+	public Long getIdConferenciaEncalhe() {
+		return idConferenciaEncalhe;
+	}
+	public void setIdConferenciaEncalhe(Long idConferenciaEncalhe) {
+		this.idConferenciaEncalhe = idConferenciaEncalhe;
+	}
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
 	
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 
@@ -22,11 +23,33 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	BigDecimal buscarQuantidadeEstoqueProdutoEdicao(Long numeroEdicao, String codigoProduto ,Integer numeroCota);
 	
 	/**
+	 * Obtém o valor total de reparte para cota especifica 
+	 * O valor do produto utilizado no calculo é o precoVenda subtraido
+	 * do desconto. 
+	 * 
+	 * Sendo que o valor de desconto utilizado pode ser o 
+	 * parametrizado na entidade ProdutoEdicao (campo desconto), Cota (campo fatorDesconto) ou 
+	 * Distribuidor (campo fatorDesconto), sendo utilizado o valor que for encontrado primeiro
+	 * nesta ordem.
+	 * 
+	 * @param numeroCota
+	 * @param listaIdProdutoEdicao
+	 * @param idDistribuidor
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterValorTotalReparteCota(
+			Integer numeroCota, 
+			List<Long> listaIdProdutoEdicao, 
+			Long idDistribuidor);
+	
+
+	/**
 	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.
 	 * 
-	 * @param idProdutoEdicao - identificador do produto edição
+	 * @param idsProdutoEdicao - identificadores do produto edição
 	 * 
-	 * @return @return {@link List<EstoqueProdutoCota>}
+	 * @return {@link List<EstoqueProdutoCota>}
 	 */
-	List<EstoqueProdutoCota> buscarEstoqueProdutoCotaPorIdProdutEdicao(Long idProdutoEdicao);
+	List<EstoqueProdutoCota> buscarEstoquesProdutoCotaPorIdProdutEdicao(Set<Long> idsProdutoEdicao);
 }

@@ -106,6 +106,10 @@ public class FiadorRepositoryImplTest extends AbstractRepositoryImplTest{
 		List<ItemDTO<Long, String>> dtos =  fiadorRepository.buscaFiador("", 12);
 		
 		Assert.assertEquals(2, dtos.size());
+		
+		Fiador fiador = fiadorRepository.obterPorCpfCnpj(CNPJ);
+		
+		Assert.assertNotNull(fiador);
 	}
 	
 	
