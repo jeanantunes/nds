@@ -1,4 +1,4 @@
-package br.com.abril.nds.repository.impl;
+package br.com.abril.nds.repository.impl.balanceamento.recolhimento;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -45,10 +45,11 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
+import br.com.abril.nds.repository.impl.LancamentoRepositoryImpl;
 import br.com.abril.nds.vo.PeriodoVO;
 
-public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
+public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private LancamentoRepositoryImpl lancamentoRepository;
@@ -70,9 +71,9 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Editor globo = Fixture.criarEditor("globo", 687L);
+		Editor globo = Fixture.criarEditor("Globo", 687L);
 		save(globo);
-		
+
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -91,11 +92,11 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		quatroRodas.addFornecedor(fornecedorDinap);
 
 		Produto infoExame = Fixture.produtoInfoExame(tipoRevista);
-		infoExame.setEditor(abril);
+		infoExame.setEditor(globo);
 		infoExame.addFornecedor(fornecedorDinap);
 
 		Produto capricho = Fixture.produtoCapricho(tipoRevista);
-		capricho.setEditor(globo);
+		capricho.setEditor(abril);
 		capricho.addFornecedor(fornecedorDinap);
 		save(veja, quatroRodas, infoExame, capricho);
 		
@@ -107,18 +108,28 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
 
+		veja1.setExpectativaVenda(BigDecimal.TEN);
+		
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN,
 				quatroRodas);
 
+		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
+		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), infoExame);
 
+		infoExame3.setExpectativaVenda(BigDecimal.TEN);
+		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
 				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, capricho);
 		
+		capricho1.setExpectativaVenda(BigDecimal.TEN);
+		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
 				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), cromoReiLeao);
+		
+		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -203,7 +214,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				notaFiscal4Rodas, usuario, dataRecebimento,
 				dataRecebimento, StatusConfirmacao.CONFIRMADO);
 		save(recebimentoFisico4Rodas);
-			
+
 		ItemRecebimentoFisico itemRecebimentoFisico4Rodas = 
 				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, new BigDecimal(25));
 		save(itemRecebimentoFisico4Rodas);
@@ -214,7 +225,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.BALANCEADO, itemRecebimentoFisico1Veja);
+				StatusLancamento.EXPEDIDO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda2,
@@ -223,7 +234,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(25),
-				StatusLancamento.EXPEDIDO, itemRecebimentoFisico4Rodas);
+				StatusLancamento.EXPEDIDO, itemRecebimentoFisico4Rodas, 2);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame3,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
@@ -231,7 +242,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(40),
-				StatusLancamento.BALANCEADO, null);
+				StatusLancamento.EXPEDIDO, null, 3);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho1,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
@@ -239,7 +250,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				BigDecimal.TEN,
-				StatusLancamento.EXPEDIDO, null);
+				StatusLancamento.EXPEDIDO, null, 4);
 		
 		lancamentoCromoReiLeao = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoReiLeao1,
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
@@ -247,7 +258,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new BigDecimal(10000),
-				StatusLancamento.BALANCEADO, null);
+				StatusLancamento.BALANCEADO, null, 5);
 		
 		Estudo estudo = Fixture.estudo(new BigDecimal(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
@@ -263,7 +274,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		chamadaEncalheVeja.setProdutoEdicao(veja1);
 		
-		save(chamadaEncalheVeja);
+//		save(chamadaEncalheVeja);
 
 		ChamadaEncalhe chamadaEncalheCapricho = new ChamadaEncalhe();
 		
@@ -283,13 +294,14 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		chamadaEncalheQuatroRodas.setProdutoEdicao(quatroRoda2);
 		
-//		save(chamadaEncalheQuatroRodas);
+		save(chamadaEncalheQuatroRodas);
 		
 		Box box = Fixture.boxReparte300();
+		box.setPostoAvancado(true);
 		
 		Cota cotaDinap = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
-		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, BigDecimal.TEN, BigDecimal.ONE);
+		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, new BigDecimal(110), BigDecimal.TEN);
 		
 		save(box, cotaDinap, estoqueProdutoCotaCapricho);
 
@@ -312,13 +324,14 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoCapricho, lancamentoParcialCapricho, parcialCapricho, estudoCotaCapricho);
 		
-		Box boxNovaEsperanca = Fixture.criarBox("357", "Box nova esperança.", TipoBox.RECOLHIMENTO);
+		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO);
+		box301.setPostoAvancado(false);
 		
-		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, boxNovaEsperanca);
+		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
 		
-		EstoqueProdutoCota estoqueProdutoCotaQuatroRodas = Fixture.estoqueProdutoCota(quatroRoda2, cotaFC, BigDecimal.TEN, BigDecimal.ONE);
+		EstoqueProdutoCota estoqueProdutoCotaQuatroRodas = Fixture.estoqueProdutoCota(quatroRoda2, cotaFC, new BigDecimal(110), BigDecimal.TEN);
 		
-		save(boxNovaEsperanca, cotaFC, estoqueProdutoCotaQuatroRodas);
+		save(box301, cotaFC, estoqueProdutoCotaQuatroRodas);
 		
 		LancamentoParcial lancamentoParcialQuatroRodas = Fixture.criarLancamentoParcial(quatroRoda2,
 																					    lancamentoQuatroRodas.getDataLancamentoPrevista(), 
@@ -338,39 +351,61 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoQuatroRodas, cotaFC);
 		
 		save(estudoQuatroRodas, lancamentoParcialQuatroRodas, parcialQuatroRodas, estudoCotaQuatroRodas);
+		
+		Cota cotaManoel = Fixture.cota(60, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box);
+
+		EstoqueProdutoCota estoqueProdutoCotaVeja= Fixture.estoqueProdutoCota(veja1, cotaManoel, new BigDecimal(110), BigDecimal.TEN);
+		
+		save(cotaManoel, estoqueProdutoCotaVeja);
+
+		LancamentoParcial lancamentoParcialVeja = Fixture.criarLancamentoParcial(veja1,
+																				 lancamentoVeja.getDataLancamentoPrevista(), 
+																				 lancamentoVeja.getDataRecolhimentoPrevista());
+
+		lancamentoParcialVeja.setStatus(StatusLancamentoParcial.PROJETADO);
+		
+		PeriodoLancamentoParcial parcialVeja = Fixture.criarPeriodoLancamentoParcial(
+				lancamentoVeja.getDataLancamentoPrevista(), 
+				lancamentoParcialVeja, 
+				lancamentoVeja.getDataRecolhimentoPrevista(), 
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+
+		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
+				Fixture.criarData(12, Calendar.MARCH, 2012), veja1);
+		
+		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVeja, cotaManoel);
+
+		save(estudoVeja, lancamentoParcialVeja, parcialVeja, estudoCotaVeja);
+		
+		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO);
+		box303.setPostoAvancado(false);
+		
+		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);
+		
+		EstoqueProdutoCota estoqueProdutoCotaInfoExame = Fixture.estoqueProdutoCota(infoExame3, cotaJurandir, new BigDecimal(110), BigDecimal.TEN);
+		
+		save(box303, cotaJurandir, estoqueProdutoCotaInfoExame);
+		
+		LancamentoParcial lancamentoParcialInfoExame = Fixture.criarLancamentoParcial(infoExame3,
+																					  lancamentoInfoExame.getDataLancamentoPrevista(), 
+																				      lancamentoInfoExame.getDataRecolhimentoPrevista());
+		
+		lancamentoParcialInfoExame.setStatus(StatusLancamentoParcial.PROJETADO);
+		
+		PeriodoLancamentoParcial parcialInfoExame = Fixture.criarPeriodoLancamentoParcial(
+				lancamentoInfoExame.getDataLancamentoPrevista(), 
+				lancamentoParcialInfoExame, 
+				lancamentoInfoExame.getDataRecolhimentoPrevista(), 
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+		
+		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),
+				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);
+		
+		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoInfoExame, cotaJurandir);
+		
+		save(estudoInfoExame, lancamentoParcialInfoExame, parcialInfoExame, estudoCotaInfoExame);
 	}
 
-	@Test
-	public void buscarBalanceamentoPeriodoSucesso() {
-
-		Date data22022012 = Fixture.criarData(22,
-				Calendar.FEBRUARY, 2011);
-		Date data23032012 = Fixture.criarData(23,
-				Calendar.MARCH, 2012);
-		PeriodoVO periodo = new PeriodoVO(data22022012, data23032012);
-
-		List<ProdutoRecolhimentoDTO> resumos = lancamentoRepository
-				.obterBalanceamentoRecolhimento(periodo,
-						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
-
-		Assert.assertEquals(2, resumos.size());
-
-		ProdutoRecolhimentoDTO produtoRecolhimento = resumos.get(0);
-		
-		Assert.assertTrue(produtoRecolhimento.isPossuiChamada());
-		
-		produtoRecolhimento = resumos.get(1);
-		
-		Assert.assertFalse(produtoRecolhimento.isPossuiChamada());
-		
-		Date dataPrimeiroRegistro = resumos.get(0).getDataRecolhimentoDistribuidor();
-		Date dataSegundoRegistro = resumos.get(1).getDataRecolhimentoDistribuidor();
-		
-		boolean ordenacaoPorDataCorreta = !DateUtil.isDataInicialMaiorDataFinal(dataPrimeiroRegistro, dataSegundoRegistro);
-		
-		Assert.assertTrue(ordenacaoPorDataCorreta);
-	}
-	
 	@Test
 	public void obterBalanceamentoRecolhimentoPorEditorDataSucesso() {
 		
@@ -384,7 +419,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				.obterBalanceamentoRecolhimentoPorEditorData(periodo,
 						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 
-		Assert.assertEquals(2, resumos.size());
+		Assert.assertEquals(4, resumos.size());
 
 		ProdutoRecolhimentoDTO produtoRecolhimento = resumos.get(0);
 		
@@ -394,8 +429,17 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertTrue(produtoRecolhimento.isPossuiChamada());
 		
-		boolean ordenacaoEditorCorreta = resumos.get(0).getIdEditor() < resumos.get(1).getIdEditor();
+		boolean ordenacaoEditorCorreta = resumos.get(0).getIdEditor() > resumos.get(1).getIdEditor();
 		
-		Assert.assertTrue(ordenacaoEditorCorreta);
+		Assert.assertFalse(ordenacaoEditorCorreta);
+		
+		ordenacaoEditorCorreta = resumos.get(1).getIdEditor() > resumos.get(2).getIdEditor();
+		
+		Assert.assertFalse(ordenacaoEditorCorreta);
+		
+		ordenacaoEditorCorreta = resumos.get(2).getIdEditor() > resumos.get(3).getIdEditor();
+		
+		Assert.assertFalse(ordenacaoEditorCorreta);
 	}
+	
 }

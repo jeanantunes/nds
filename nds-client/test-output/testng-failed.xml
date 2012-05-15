@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Default suite]">
+  <test name="Default test(failed)" preserve-order="true">
+    <classes>
+      <class name="br.com.abril.nds.repository.impl.BalanceamentoRecolhimentoTest">
+        <methods>
+          <include name="setUp"/>
+          <include name="springTestContextAfterTestClass"/>
+          <include name="springTestContextBeforeTestClass"/>
+          <include name="buscarBalanceamentoPeriodoSucesso"/>
+          <include name="obterExpectativaEncalheDataSucesso"/>
+          <include name="obterBalanceamentoRecolhimentoPorEditorDataSucesso"/>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="springTestContextPrepareTestInstance"/>
+          <include name="springTestContextAfterTestMethod"/>
+        </methods>
+      </class> <!-- br.com.abril.nds.repository.impl.BalanceamentoRecolhimentoTest -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->
