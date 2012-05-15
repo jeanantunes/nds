@@ -28,6 +28,8 @@ public class RecolhimentoDTO implements Serializable {
 	private TreeSet<Date> datasRecolhimentoDistribuidor;
 	
 	private boolean balancearMatriz;
+	
+	private boolean matrizFechada;
 
 	/**
 	 * Construtor padrão.
@@ -123,6 +125,20 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public void setBalancearMatriz(boolean balancearMatriz) {
 		this.balancearMatriz = balancearMatriz;
+	}
+
+	/**
+	 * @return the matrizFechada
+	 */
+	public boolean isMatrizFechada() {
+		return matrizFechada;
+	}
+
+	/**
+	 * @param matrizFechada the matrizFechada to set
+	 */
+	public void setMatrizFechada(boolean matrizFechada) {
+		this.matrizFechada = matrizFechada;
 	}
 	
 }
