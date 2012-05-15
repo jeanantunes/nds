@@ -67,5 +67,7 @@ public class TipoDescontoCotaController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 		
 	}
+	
+	
 
 }
