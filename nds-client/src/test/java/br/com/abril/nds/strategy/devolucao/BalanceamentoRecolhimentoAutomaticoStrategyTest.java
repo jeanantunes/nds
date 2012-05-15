@@ -9,7 +9,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
@@ -61,16 +60,22 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		Assert.assertTrue(matrizRecolhimento.containsKey(data10052012));
 		
 		int qtdeProdutosRecolhimentoEsperada08052012 = 100;
-		
-		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada08052012, matrizRecolhimento.get(data08052012).size());
-		
 		int qtdeProdutosRecolhimentoEsperada10052012 = 100;
 		
+		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada08052012, matrizRecolhimento.get(data08052012).size());
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada10052012, matrizRecolhimento.get(data10052012).size());
+		
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
+			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
+		
+		BigDecimal expectativaEncalheEsperada08052012 = new BigDecimal("100");
+		BigDecimal expectativaEncalheEsperada10052012 = new BigDecimal("100");
+		
+		Assert.assertEquals(expectativaEncalheEsperada08052012, mapaExpectativaEncalheTotalDiaria.get(data08052012));
+		Assert.assertEquals(expectativaEncalheEsperada10052012, mapaExpectativaEncalheTotalDiaria.get(data10052012));
 	}
 	
 	@Test
-	@Ignore
 	public void efetuarBalanceamentoExcedendoCapacidadeManuseio() {
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
@@ -79,7 +84,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		RecolhimentoDTO dadosRecolhimento = this.obterDadosRecolhimentoExcedemLimiteCapacidadeManuseio();
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(this.obterDadosRecolhimentoExcedemLimiteCapacidadeManuseio());
+			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
@@ -103,145 +108,30 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		Assert.assertTrue(matrizRecolhimento.containsKey(data08052012));
 		Assert.assertTrue(matrizRecolhimento.containsKey(data10052012));
 		
-		int qtdeProdutosRecolhimentoEsperada08052012 = 100;
+		int qtdeProdutosRecolhimentoEsperada08052012 = 85;
+		int qtdeProdutosRecolhimentoEsperada10052012 = 105;
 		
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada08052012, matrizRecolhimento.get(data08052012).size());
-		
-		int qtdeProdutosRecolhimentoEsperada10052012 = 100;
-		
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada10052012, matrizRecolhimento.get(data10052012).size());
+		
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
+			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
+		
+		BigDecimal expectativaEncalheEsperada08052012 = new BigDecimal("100");
+		BigDecimal expectativaEncalheEsperada10052012 = new BigDecimal("120");
+		
+		Assert.assertEquals(expectativaEncalheEsperada08052012, mapaExpectativaEncalheTotalDiaria.get(data08052012));
+		Assert.assertEquals(expectativaEncalheEsperada10052012, mapaExpectativaEncalheTotalDiaria.get(data10052012));
 	}
-	
-	@Test
-	public void validarDadosRecolhimentoInexistentes() {
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
-		
-		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		Assert.assertNotNull(balanceamentoRecolhimento);
-		
-		Assert.assertNull(balanceamentoRecolhimento.getMatrizRecolhimento());
-	}
-	
-	@Test
-	public void validarDadosRecolhimentoApenasComCapacidadeRecolhimento() {
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
-		
-		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		Assert.assertNotNull(balanceamentoRecolhimento);
-		
-		Assert.assertNull(balanceamentoRecolhimento.getMatrizRecolhimento());
-	}
-	
-	@Test
-	public void validarDadosRecolhimentoApenasComDatasRecolhimentoDistribuidor() {
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
-		
-		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();
-		
-		datasRecolhimentoDistribuidor.add(new Date());
-		
-		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		Assert.assertNotNull(balanceamentoRecolhimento);
-		
-		Assert.assertNull(balanceamentoRecolhimento.getMatrizRecolhimento());
-	}
-	
-	@Test
-	public void validarDadosRecolhimentoApenasComDatasRecolhimentoFornecedor() {
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
-		
-		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		TreeSet<Date> datasRecolhimentoFornecedor = new TreeSet<Date>();
-		
-		datasRecolhimentoFornecedor.add(new Date());
-		
-		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		Assert.assertNotNull(balanceamentoRecolhimento);
-		
-		Assert.assertNull(balanceamentoRecolhimento.getMatrizRecolhimento());
-	}
-	
-	@Test
-	public void validarDadosRecolhimentoApenasComMapaExpectativaEncalheTotalDiaria() {
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
-		
-		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
-		
-		mapaExpectativaEncalheTotalDiaria.put(new Date(), BigDecimal.TEN);
-		
-		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		Assert.assertNotNull(balanceamentoRecolhimento);
-		
-		Assert.assertNull(balanceamentoRecolhimento.getMatrizRecolhimento());
-	}
-	
-	@Test
-	public void validarDadosRecolhimentoApenasComProdutosRecolhimento() {
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.AUTOMATICO);
-		
-		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		List<ProdutoRecolhimentoDTO> produtosRecolhimento = new ArrayList<ProdutoRecolhimentoDTO>();
-		
-		ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
-		
-		produtosRecolhimento.add(produtoRecolhimento);
-		
-		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		Assert.assertNotNull(balanceamentoRecolhimento);
-		
-		Assert.assertNull(balanceamentoRecolhimento.getMatrizRecolhimento());
-	}
-	
+
 	/*
 	 * Obtém os dados de recolhimento no limite da capacidade de manuseio do distribuidor.
 	 */
 	private RecolhimentoDTO obterDadosRecolhimentoLimiteCapacidadeManuseio() {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
+		
+		dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
@@ -336,6 +226,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
+		dadosRecolhimento.setBalancearMatriz(true);
+		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
 		TreeSet<Date> datasRecolhimentoDistribuidor = new TreeSet<Date>();
@@ -367,8 +259,18 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimento = new ArrayList<ProdutoRecolhimentoDTO>();
 		
-		for (int i = 1; i <= 80; i++) {
+		for (int i = 1; i <= 20; i++) {
+			
+			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("07/05/2012"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(2));
+			
+			produtosRecolhimento.add(produtoRecolhimento);
+		}
 		
+		for (int i = 1; i <= 40; i++) {
+			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
 			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("07/05/2012"));
@@ -407,7 +309,17 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			produtosRecolhimento.add(produtoRecolhimento);
 		}
 		
-		for (int i = 1; i <= 30; i++) {
+		for (int i = 1; i <= 10; i++) {
+			
+			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("11/05/2012"));
+			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(2));
+			
+			produtosRecolhimento.add(produtoRecolhimento);
+		}
+		
+		for (int i = 1; i <= 10; i++) {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
@@ -420,6 +332,42 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		return dadosRecolhimento;
+	}
+	
+	/*
+	 * Gera o mapa de expectativa de encalhe total diária ordenado pela maior data
+	 * de acordo com a matriz de recolhimento.
+	 */
+	private Map<Date, BigDecimal> gerarMapaExpectativaEncalheTotalDiaria(
+														Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+		
+		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = new TreeMap<Date, BigDecimal>();
+
+		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
+			
+			return mapaExpectativaEncalheTotalDiaria;
+		}
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento : matrizRecolhimento.entrySet()) {
+			
+			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
+			
+			BigDecimal expectativaEncalheTotalDiaria = BigDecimal.ZERO;
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+				
+				if (produtoRecolhimento.getExpectativaEncalhe() != null) {
+				
+					expectativaEncalheTotalDiaria = 
+						expectativaEncalheTotalDiaria.add(produtoRecolhimento.getExpectativaEncalhe());
+				}
+			}
+			
+			mapaExpectativaEncalheTotalDiaria.put(dataRecolhimento, expectativaEncalheTotalDiaria);
+		}
+		
+		return mapaExpectativaEncalheTotalDiaria;
 	}
 	
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -36,6 +38,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
 import br.com.abril.nds.util.DateUtil;
@@ -69,6 +72,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ParciaisService parciaisService;
 	
 	/**
 	 * {@inheritDoc}
@@ -180,6 +186,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		gerarChamadaEncalhe(idsProdutoEdicao, mapaEdicaoDataRecolhimento, numeroSemana);
 		
 		//TODO: chamar componente de cadastro de lançamentos parciais
+//		parciaisService.gerarPeriodosParcias(produtoEdicao, qtdePeriodos, idUsuario);
 	}
 	
 	private void atualizarLancamento(Set<Long> idsLancamento,
@@ -333,6 +340,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento) {
 		
+		//TODO: informar se a matriz deve ser balanceada
+		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
@@ -347,8 +356,41 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
+
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
+
+		if (TipoBalanceamentoRecolhimento.EDITOR.equals(tipoBalanceamento)) {
+			
+			produtosRecolhimento =
+					lancamentoRepository.obterBalanceamentoRecolhimentoPorEditorData(periodoRecolhimento, 
+																					 listaIdsFornecedores, 
+																					 GrupoProduto.CROMO);
+
+		} else if (TipoBalanceamentoRecolhimento.AUTOMATICO.equals(tipoBalanceamento)
+					|| TipoBalanceamentoRecolhimento.VALOR.equals(tipoBalanceamento)) {
+			
+			produtosRecolhimento =
+					lancamentoRepository.obterBalanceamentoRecolhimento(periodoRecolhimento, 
+																		listaIdsFornecedores, 
+																		GrupoProduto.CROMO);
+		}
+
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
+				lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
+																	 listaIdsFornecedores, 
+																	 GrupoProduto.CROMO);
+
+		boolean matrizFechada = 
+			this.lancamentoRepository
+				.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodoRecolhimento);
+		
+		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
+		
+		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
+		
+		dadosRecolhimento.setMatrizFechada(matrizFechada);
 		
 		return dadosRecolhimento;
 	}

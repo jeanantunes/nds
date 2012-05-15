@@ -1,6 +1,10 @@
 package br.com.abril.nds.strategy.devolucao;
 
-import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
+
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 
 /**
@@ -9,15 +13,20 @@ import br.com.abril.nds.dto.RecolhimentoDTO;
  * @author Discover Technology
  *
  */
-public class BalanceamentoRecolhimentoValorStrategy implements BalanceamentoRecolhimentoStrategy {
+public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceamentoRecolhimentoStrategy {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BalanceamentoRecolhimentoDTO balancear(RecolhimentoDTO dadosRecolhimento) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	protected TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
+		
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
+			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+		
+		
+		
+		return matrizRecolhimentoBalanceada;
+	}	
 
 }

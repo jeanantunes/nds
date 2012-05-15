@@ -2,10 +2,13 @@
  * @param idCota
  * @returns {NotaPromissoria}
  */
-function NotaPromissoria(idCota) {
-	this.idCota = idCota;
+function NotaPromissoria(idCota,cotaGarantia) {
+	this.idCota = idCota;	
 	this.bindEvents();
-	this.get();
+	if(cotaGarantia && cotaGarantia.notaPromissoria){
+		this.notaPromissoria=cotaGarantia.notaPromissoria;
+		this.dataBind();
+	}
 	this.toggle();
 };
 NotaPromissoria.prototype.path = contextPath + "/cadastro/garantia/";
@@ -66,7 +69,7 @@ NotaPromissoria.prototype.toggle = function() {
 NotaPromissoria.prototype.dataBind = function() {
 	$("#cotaGarantiaNotaPromissoriaId").html(this.notaPromissoria.id);
 	$("#cotaGarantiaNotaPromissoriaVencimento").val(
-			this.notaPromissoria.vencimento.$);
+			this.notaPromissoria.vencimento);
 	$("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor);
 	$("#cotaGarantiaNotaPromissoriaValor").priceFormat({
 		allowNegative : true,
@@ -111,8 +114,9 @@ NotaPromissoria.prototype.imprimi = function() {
  * @param idCota
  * @returns {ChequeCaucao}
  */
-function ChequeCaucao(idCota) {
+function ChequeCaucao(idCota,cotaGarantia) {
 	this.idCota = idCota;
+	this.cotaGarantia=cotaGarantia;
 	this.bindEvents();
 	this.get();
 	this.toggle();
@@ -239,8 +243,9 @@ ChequeCaucao.prototype.bindEvents = function() {
  * @param idCota
  * @returns {Imovel}
  */
-function Imovel(idCota) {
+function Imovel(idCota,cotaGarantia) {
 	this.idCota = idCota;
+	this.cotaGarantia=cotaGarantia;
 	this.bindEvents();
 	this.get();
 	this.toggle();
@@ -428,21 +433,36 @@ Imovel.prototype.edita = function(id) {
 };
 
 Imovel.prototype.remove = function(id) {
-
-	if (confirm("Confirma a exclusão desse imóvel?")) {
-		
-		this.rows.splice(id, 1);
-		
-		var lista = new Array;
-		
-		for (var index in this.rows) {	
-			lista.push({"id":lista.length, "cell":this.rows[index].cell});
-		}
-		
-		this.rows = lista;
-		
-		$(".cotaGarantiaImovelGrid").flexAddData({rows:this.rows,page:1,total:1}  );
-	}
+	
+	var _this = this;
+	
+	$( "#dialog-excluir-imovel" ).dialog({
+		resizable: false,
+		height:'auto',
+		width:380,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				_this.rows.splice(id, 1);
+				
+				var lista = new Array;
+				
+				for (var index in _this.rows) {	
+					lista.push({"id":lista.length, "cell":_this.rows[index].cell});
+				}
+				
+				_this.rows = lista;
+				
+				$(".cotaGarantiaImovelGrid").flexAddData({rows:_this.rows,page:1,total:1}  );
+				$( this ).dialog( "close" );
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}			
+	});
+			
 };
 
 Imovel.prototype.initGrid = function() {
@@ -561,6 +581,25 @@ TipoCotaGarantia.prototype.get = function() {
 
 	}, null, true);
 };
+
+
+TipoCotaGarantia.prototype.getData = function(){
+	var _this = this;
+	$.postJSON(this.path + 'getByCota.json', {
+		'idCota' : this.getIdCota()
+	}, function(data) {
+		var tipoMensagem = data.tipoMensagem;
+		var listaMensagens = data.listaMensagens;
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagem(tipoMensagem, listaMensagens);
+		} else if (data && data.cotaGarantia) {
+			_this.cotaGarantia = data.cotaGarantia;
+			_this.changeController(data.tipo);
+			$("#tipoGarantiaSelect").val(data.tipo);
+		}
+
+	}, null, true);
+};
 TipoCotaGarantia.prototype.bindData = function(data) {
 	var select = document.getElementById("tipoGarantiaSelect");
 	for ( var index = select.options.length; index > 0; index--) {
@@ -583,7 +622,7 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 };
 
 TipoCotaGarantia.prototype.onOpen = function(){
-	
+	this.getData();
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
@@ -605,7 +644,7 @@ TipoCotaGarantia.prototype.changeController = function(tipo) {
 	}
 
 	var obj = this.tipo[tipo].controller;
-	this.controller = new obj(this.getIdCota());
+	this.controller = new obj(this.getIdCota(),this.cotaGarantia);
 };
 
 TipoCotaGarantia.prototype.getIdCota = function() {
@@ -613,7 +652,7 @@ TipoCotaGarantia.prototype.getIdCota = function() {
 };
 
 //**************** FIADOR PROTOTYPE ********************//
-function Fiador(idCota){
+function Fiador(idCota,cotaGarantia){
 	this._idCota = idCota;
 	this.bindEvents();
 	this.toggle();
@@ -636,9 +675,14 @@ function Fiador(idCota){
 			}
 			});
 			
-	this.get();
+	if(cotaGarantia && cotaGarantia.fiador){
+		this.fiador=cotaGarantia.fiador;
+		this.bindData();
+		this.toggleDados(true);
+	}
 	
-}
+	
+};
 Fiador.prototype.path = contextPath + "/cadastro/garantia/";
 Fiador.prototype.toggle = function() {
 	$('#cotaGarantiaFiadorPanel').toggle();

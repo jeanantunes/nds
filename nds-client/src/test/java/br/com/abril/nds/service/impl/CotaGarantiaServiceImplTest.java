@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -59,15 +61,15 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
 		
 		notaPromissoria.setValor(10000D);
-		notaPromissoria.setVencimento(new Date());
+		notaPromissoria.setVencimento(Calendar.getInstance());
 		
 		notaPromissoria.setValorExtenso("Mil Conto");
 		
 	
-			cotaGarantiaService.salvaNotaPromissoria(notaPromissoria,cota.getId());
+		cotaGarantiaService.salvaNotaPromissoria(notaPromissoria,cota.getId());
 		
 		
-		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
+		CotaGarantiaDTO cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
 		
 		assertNotNull(cotaGarantia);
 	}
@@ -125,22 +127,12 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		listaImoveis.remove(1);
 		listaImoveis.remove(2);
-		
-		Imovel imovel = cotaGarantia.getImoveis().get(3);
-		
-		imovel.setProprietario("proprietario");
-		
-		cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
-		
-		cotaGarantia = null;
-		
-		cotaGarantia = (CotaGarantiaImovel) cotaGarantiaService.getByCota(cota.getId());
-		
+						
+		cotaGarantia = cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
+			
 		int expectedSize = 4;
 		
 		Assert.assertEquals(expectedSize, cotaGarantia.getImoveis().size());
-		
-		Assert.assertEquals("proprietario", cotaGarantia.getImoveis().get(3).getProprietario());
-		
+						
 	}
 }
