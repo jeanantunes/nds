@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -36,6 +37,7 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TipoMensagem;
@@ -51,6 +53,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private EmailService emailService;
@@ -191,13 +196,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 */
 	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, Exception {
 
-		Distribuidor distribuidor = distribuidorService.obter();
+		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
-		String assunto=(distribuidor.getPoliticaCobranca()!=null
-						? distribuidor.getPoliticaCobranca().getAssuntoEmailCobranca():"");
+		String assunto=(politicaPrincipal!=null
+						? politicaPrincipal.getAssuntoEmailCobranca():"");
 		
-		String mensagem=(distribuidor.getPoliticaCobranca()!=null
-						? distribuidor.getPoliticaCobranca().getMensagemEmailCobranca():"");
+		String mensagem=(politicaPrincipal!=null
+						? politicaPrincipal.getMensagemEmailCobranca():"");
 		
 		String emailCota = cobranca.getCota().getPessoa().getEmail();
 		String[] destinatarios = new String[]{emailCota};

@@ -407,7 +407,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 	@Test
 	public void obterExpectativaEncalheDataSucesso() {
-		
+        	
 		Date data22022012 = Fixture.criarData(22,
 				Calendar.FEBRUARY, 2011);
 		Date data23032012 = Fixture.criarData(23,
@@ -428,5 +428,6 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 			
 			Assert.assertTrue(condition);
 		}
+		
 	}
 }

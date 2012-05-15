@@ -21,17 +21,13 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -40,15 +36,10 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -257,7 +248,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Estudo estudo = Fixture.estudo(new BigDecimal(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
-		
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
 				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
 		
@@ -271,17 +261,17 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		chamadaEncalhe.setProdutoEdicao(veja1);
 		
-		save(chamadaEncalhe);
+		save(veja, veja1, chamadaEncalhe);
 
 		chamadaEncalhe1 = new ChamadaEncalhe();
 		
 		chamadaEncalhe1.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
 		
 		calendar.add(Calendar.DAY_OF_MONTH, 5);
-		
+
 		chamadaEncalhe1.setDataRecolhimento(calendar.getTime());
 		
-		chamadaEncalhe1.setProdutoEdicao(capricho1);
+		chamadaEncalhe1.setProdutoEdicao(veja1);
 		
 		save(chamadaEncalhe1);
 
@@ -296,51 +286,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		chamadaEncalhe2.setProdutoEdicao(veja1);
 		
 		save(chamadaEncalhe2);
-		
-		Box box = Fixture.boxReparte300();
-		
-		Cota cota = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
-		
-		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(capricho1, BigDecimal.TEN, cota, null);
-		
-		save(box, cota, estudo, estoqueProdutoCota);
 
-		LancamentoParcial lancamentoParcial = Fixture.criarLancamentoParcial(capricho1,
-																			 lancamentoCapricho.getDataLancamentoPrevista(), 
-																			 lancamentoCapricho.getDataRecolhimentoPrevista());
-
-		PeriodoLancamentoParcial parcial = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoCapricho.getDataLancamentoPrevista(), 
-				lancamentoParcial, 
-				lancamentoCapricho.getDataRecolhimentoPrevista(), 
-				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
-
-		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudo, cota);
-
-		save(lancamentoParcial, parcial, estudoCota);
-		
-		Cota cota2 = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box);
-		
-		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(infoExame3, BigDecimal.TEN, cota2, null);
-		
-		save(cota2, estoqueProdutoCota2);
-		
-		LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(infoExame3,
-																			  lancamentoInfoExame.getDataLancamentoPrevista(), 
-																			  lancamentoInfoExame.getDataRecolhimentoPrevista());
-
-		PeriodoLancamentoParcial parcial2 = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoInfoExame.getDataLancamentoPrevista(), 
-				lancamentoParcial2, 
-				lancamentoInfoExame.getDataRecolhimentoPrevista(), 
-				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL);
-		
-		Estudo estudo2 = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);
-		
-		EstudoCota estudoCota2 = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudo2, cota2);
-		
-		save(estudo2, lancamentoParcial2, parcial2, estudoCota2);
 	}
 
 	@Test
@@ -678,6 +624,40 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
 	}
 
+	@Ignore//TODO:dar continuidade.
+	@Test
+	public void buscarBalanceamentoPeriodo() {
+
+		Date data22022012 = Fixture.criarData(22,
+				Calendar.FEBRUARY, 2012);
+		Date data23022012 = Fixture.criarData(23,
+				Calendar.FEBRUARY, 2012);
+		PeriodoVO periodo = new PeriodoVO(data22022012, data23022012);
+
+		List<ProdutoRecolhimentoDTO> resumos = lancamentoRepository
+				.obterBalanceamentoRecolhimento(periodo,
+						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
+		Assert.assertEquals(2, resumos.size());
+		
+//		RecolhimentoDTO resumo2202 = resumos.get(0);
+//		Assert.assertNotNull(resumo2202);
+//		Assert.assertEquals(data22022012, resumo2202.getData());
+//		Assert.assertEquals(Long.valueOf(3), resumo2202.getQtdeTitulos());
+//		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(165.00)),
+//				CurrencyUtil.formatarValor(resumo2202.getQtdeExemplares()));
+//		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(16.5)),
+//				CurrencyUtil.formatarValor(resumo2202.getPesoTotal()));
+//		
+//		ResumoPeriodoBalanceamentoDTO resumo2302 = resumos.get(1);
+//		Assert.assertNotNull(resumo2302);
+//		Assert.assertEquals(data23022012, resumo2302.getData());
+//		Assert.assertEquals(Long.valueOf(2), resumo2302.getQtdeTitulos());
+//		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(110.00)),
+//				CurrencyUtil.formatarValor(resumo2302.getQtdeExemplares()));
+//		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(101.20)),
+//				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
+	}
+	
 	@Test
 	public void verificarMatrizRecolhimentoComChamadaEncalhe() {
 		

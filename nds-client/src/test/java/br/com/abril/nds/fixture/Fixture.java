@@ -3,6 +3,7 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -530,14 +532,14 @@ public class Fixture {
 	}
 
 	public static Distribuidor distribuidor(Integer codigo, PessoaJuridica juridica,
-											Date dataOperacao, PoliticaCobranca politicaCobranca) {
+											Date dataOperacao, Set<PoliticaCobranca> politicasCobranca) {
 		
 		Distribuidor distribuidor = new Distribuidor();
 		
 		distribuidor.setCodigo(codigo);
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
-		distribuidor.setPoliticaCobranca(politicaCobranca);
+		distribuidor.setPoliticasCobranca(politicasCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
@@ -1673,7 +1675,8 @@ public class Fixture {
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
 			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao,
-			String assuntoEmailCobranca, String mensagemEmailCobranca) {
+			String assuntoEmailCobranca, String mensagemEmailCobranca, 
+			boolean principal,FormaEmissao formaEmissao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
@@ -1684,6 +1687,9 @@ public class Fixture {
 		politicaCobranca.setFormaCobranca(formaCobranca);
 		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
 		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
+		politicaCobranca.setPrincipal(principal);
+		politicaCobranca.setFormaEmissao(formaEmissao);
+		politicaCobranca.setAtivo(true);
 		return politicaCobranca;
 	}
 	

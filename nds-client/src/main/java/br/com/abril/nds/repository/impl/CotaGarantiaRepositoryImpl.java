@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -28,11 +27,6 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepository<CotaGarantia,
 		return (CotaGarantia) criteria.uniqueResult();
 	}
 
-	@Override
-	public void deleteListaImoveis(Long idGarantia) {
-		
-		Query query = getSession().createSQLQuery(" DELETE FROM IMOVEL WHERE GARANTIA_ID = :idGarantia ");
-		query.setParameter("idGarantia", idGarantia).executeUpdate();
-	}
+	
 
 }

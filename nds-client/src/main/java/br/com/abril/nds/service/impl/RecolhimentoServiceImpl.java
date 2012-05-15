@@ -350,6 +350,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
 
+
 		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
 
 		if (TipoBalanceamentoRecolhimento.EDITOR.equals(tipoBalanceamento)) {
@@ -376,6 +377,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
+
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		

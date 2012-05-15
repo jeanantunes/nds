@@ -159,6 +159,7 @@
 			bloquearLink("linkEditor");
 			bloquearLink("linkValor");
 			bloquearLink("linkSalvar");
+			bloquearLink("linkMatrizFornecedor");
 			bloquearLink("linkConfiguracaoInicial");
 			bloquearLink("linkReprogramar");
 		}
@@ -169,6 +170,7 @@
 			habilitarLink("linkEditor", function() { verificarBalanceamentosAlterados(balancearPorEditor); });
 			habilitarLink("linkValor", function() { verificarBalanceamentosAlterados(balancearPorValor); });
 			habilitarLink("linkSalvar", salvar);
+			habilitarLink("linkMatrizFornecedor", exibirMatrizFornecedor);
 			habilitarLink("linkConfiguracaoInicial", function() { verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
 			habilitarLink("linkReprogramar", reprogramarSelecionados);
 		}
@@ -987,7 +989,7 @@
 				
 				<td width="207">
 					<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
-						<a id="linkMatrizFornecedor" href="javascript:;" onclick="exibirMatrizFornecedor();">
+						<a id="linkMatrizFornecedor" href="javascript:;">
 							<img border="0" hspace="5" src="<c:url value='/images/ico_detalhes.png'/>">Matriz Fornecedor
 						</a>
 					</span>

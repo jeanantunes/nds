@@ -208,9 +208,6 @@
 </div>
 
 <div id="cotaGarantiaImovelPanel" style="display: none;">
-	<div id="dialog-excluir-imovel" title="Excluir Im&oacute;vel">
-		<p>Confirma a exclus&atilde;o desse im&oacute;vel?</p>
-	</div>
 	<fieldset>
 		<legend>Im&oacute;vel</legend>
 		<table width="755" border="0" cellpadding="2" cellspacing="2"

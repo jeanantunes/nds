@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -22,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -66,9 +69,12 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem");
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
 		
-		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
+		
+		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 		save(distribuidor);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito =

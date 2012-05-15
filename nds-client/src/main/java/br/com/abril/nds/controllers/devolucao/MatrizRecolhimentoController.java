@@ -6,14 +6,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
@@ -110,8 +107,6 @@ public class MatrizRecolhimentoController {
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
-		validarBloqueioMatrizFechada(balanceamentoRecolhimento);
-		
 		recolhimentoService.confirmarBalanceamentoRecolhimento(
 			balanceamentoRecolhimento.getMatrizRecolhimento(), numeroSemana);
 		
@@ -126,8 +121,6 @@ public class MatrizRecolhimentoController {
 	@Path("/balancearPorEditor")
 	public void balancearPorEditor(Integer numeroSemana, Date dataPesquisa,
 								   List<Long> listaIdsFornecedores) {
-		
-		this.validarBloqueioMatrizFechada(null);
 		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
@@ -146,8 +139,6 @@ public class MatrizRecolhimentoController {
 	@Path("/balancearPorValor")
 	public void balancearPorValor(Integer numeroSemana, Date dataPesquisa,
 			   					  List<Long> listaIdsFornecedores) {
-		
-		this.validarBloqueioMatrizFechada(null);
 		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
@@ -169,8 +160,6 @@ public class MatrizRecolhimentoController {
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		
-		this.validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
 			balanceamentoRecolhimento.getMatrizRecolhimento());
@@ -239,8 +228,6 @@ public class MatrizRecolhimentoController {
 	@Path("/voltarConfiguracaoOriginal")
 	public void voltarConfiguracaoOriginal() {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO_INICIAL);
@@ -262,21 +249,21 @@ public class MatrizRecolhimentoController {
 										String novaDataFormatada, String dataAntigaFormatada,
 										Integer numeroSemana) {
 		
-		this.validarBloqueioMatrizFechada(null);
+		//TODO: validar sequencia
 		
-		this.validarDadosReprogramar(novaDataFormatada, numeroSemana);
+		validarDadosReprogramar(novaDataFormatada, numeroSemana);
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		this.validarPeriodoReprogramacao(numeroSemana, novaData);
+		validarPeriodoReprogramacao(numeroSemana, novaData);
 		
-		this.validarListaParaReprogramacao(listaProdutoRecolhimento);
-		
+		validarListaParaReprogramacao(listaProdutoRecolhimento);
+
 		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
 		
-		this.atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
+		atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
 		
-		this.adicionarAtributoAlteracaoSessao();
+		adicionarAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
@@ -286,15 +273,15 @@ public class MatrizRecolhimentoController {
 	public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoVO produtoRecolhimento,
 										     String dataAntigaFormatada, Integer numeroSemana) {
 		
-		this.validarBloqueioMatrizFechada(null);
+		//TODO: validar sequencia
 		
 		String novaDataFormatada = produtoRecolhimento.getNovaData();
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		this.validarDadosReprogramar(novaDataFormatada, numeroSemana);
+		validarDadosReprogramar(novaDataFormatada, numeroSemana);
 		
-		this.validarPeriodoReprogramacao(numeroSemana, novaData);
+		validarPeriodoReprogramacao(numeroSemana, novaData);
 		
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimento = new ArrayList<ProdutoRecolhimentoVO>();
 		
@@ -303,13 +290,13 @@ public class MatrizRecolhimentoController {
 			listaProdutoRecolhimento.add(produtoRecolhimento);
 		}
 		
-		this.validarListaParaReprogramacao(listaProdutoRecolhimento);
+		validarListaParaReprogramacao(listaProdutoRecolhimento);
 		
 		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
 		
-		this.atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
+		atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
 		
-		this.adicionarAtributoAlteracaoSessao();
+		adicionarAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
@@ -351,24 +338,6 @@ public class MatrizRecolhimentoController {
 		this.result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
 	}
 	
-	private void validarBloqueioMatrizFechada(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento) {
-		
-		if (balanceamentoRecolhimento == null) {
-			
-			balanceamentoRecolhimento = 
-					(BalanceamentoRecolhimentoDTO)
-						this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		}
-		
-		if (balanceamentoRecolhimento == null
-				|| balanceamentoRecolhimento.isMatrizFechada()) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING,
-								"Ação não permitida! A matriz já se encontra fechada!"));
-		}
-	}
-	
 	private void adicionarAtributoAlteracaoSessao() {
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
@@ -389,9 +358,6 @@ public class MatrizRecolhimentoController {
 		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
 			balanceamentoRecolhimentoSessao.getMatrizRecolhimento();
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
-			clonarMapaRecolhimento(matrizRecolhimentoSessao);
-		
 		//Monta listas para adicionar e remover do mapa
 		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoRemover =
 			new ArrayList<ProdutoRecolhimentoDTO>();
@@ -400,37 +366,22 @@ public class MatrizRecolhimentoController {
 			new ArrayList<ProdutoRecolhimentoDTO>();
 		
 		montarListasParaManipulacaoMapa(listaProdutoRecolhimento,
-										matrizRecolhimento,
+										matrizRecolhimentoSessao,
 										listaProdutoRecolhimentoAdicionar,
 										listaProdutoRecolhimentoRemover,
 										dataAntiga);
 		
-		removerEAdicionarMapa(matrizRecolhimento,
+		removerEAdicionarMapa(matrizRecolhimentoSessao,
 							  listaProdutoRecolhimentoAdicionar,
 							  listaProdutoRecolhimentoRemover,
 							  novaData);
 		
-		this.validarSequencia(matrizRecolhimento);
-		
-		balanceamentoRecolhimentoSessao.setMatrizRecolhimento(matrizRecolhimento);
+		balanceamentoRecolhimentoSessao.setMatrizRecolhimento(matrizRecolhimentoSessao);
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 									  balanceamentoRecolhimentoSessao);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Map<Date, List<ProdutoRecolhimentoDTO>> clonarMapaRecolhimento(
-								Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao) {
-		
-		byte[] mapSerialized =
-			SerializationUtils.serialize(matrizRecolhimentoSessao);
-
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
-			(Map<Date, List<ProdutoRecolhimentoDTO>>) SerializationUtils.deserialize(mapSerialized);
-		
-		return matrizRecolhimento;
-	}
-
 	private void montarListasParaManipulacaoMapa(List<ProdutoRecolhimentoVO> listaProdutoRecolhimento,
 											     Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao,   									 
 											     List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoAdicionar,
@@ -685,36 +636,6 @@ public class MatrizRecolhimentoController {
 		}
 	}
 	
-	private void validarSequencia(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
-		
-		Set<Long> sequenciasValidas = new TreeSet<Long>();
-		
-		Set<Long> sequenciasInvalidas = new TreeSet<Long>();
-		
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
-			
-			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
-		
-			for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
-				
-				boolean adicionada = sequenciasValidas.add(produtoRecolhimentoDTO.getSequencia());
-				
-				if (!adicionada) {
-					
-					sequenciasInvalidas.add(produtoRecolhimentoDTO.getSequencia());
-				}
-			}
-		}
-		
-		if (!sequenciasInvalidas.isEmpty()) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING,
-					"O campo [SM] não pode ser duplicado! A(s) SM(s) duplicadas são: " + sequenciasInvalidas));
-		}
-		
-	}
-	
 	private void validarPeriodoReprogramacao(Integer numeroSemana, Date novaData) {
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
@@ -870,11 +791,9 @@ public class MatrizRecolhimentoController {
 		
 		Long idProdutoEdicao = 1L;
 		
-		Long sequencia = 1L;
+		for (int diaRecolhimento = 18; diaRecolhimento <= 24; diaRecolhimento++) {
 		
-		for (int diaRecolhimento = 9; diaRecolhimento <= 15; diaRecolhimento++) {
-		
-			Date dataRecolhimento = DateUtil.parseDataPTBR(diaRecolhimento + "/05/2012");
+			Date dataRecolhimento = DateUtil.parseDataPTBR(diaRecolhimento + "/04/2012");
 			
 			List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento = new ArrayList<ProdutoRecolhimentoDTO>();
 			
@@ -897,7 +816,7 @@ public class MatrizRecolhimentoController {
 				produtoEdicao.setProduto(produto);
 				
 				produtoRecolhimento.setIdLancamento(idLancamento++);
-				produtoRecolhimento.setSequencia(sequencia++);
+				produtoRecolhimento.setSequencia((long) i);
 				produtoRecolhimento.setExpectativaEncalheAtendida(BigDecimal.ZERO);
 				produtoRecolhimento.setExpectativaEncalheSede(BigDecimal.ZERO);
 				produtoRecolhimento.setDataLancamento(dataLancamento);

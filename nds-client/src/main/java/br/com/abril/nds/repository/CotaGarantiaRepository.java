@@ -16,10 +16,4 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @return
 	 */
 	public CotaGarantia getByCota(Long idCota);
-	
-	/**
-	 * Delete os imóveis da garantia.
-	 * @param idGarantia id da garantia
-	 */
-	public void deleteListaImoveis(Long idGarantia);
 }

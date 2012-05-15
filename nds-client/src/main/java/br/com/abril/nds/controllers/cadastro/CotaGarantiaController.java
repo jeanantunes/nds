@@ -81,7 +81,7 @@ public class CotaGarantiaController {
 	public void getByCota(Long idCota) {
 		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
-		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
+		if (cotaGarantia != null) {			
 			result.use(CustomJson.class).from(cotaGarantia).serialize();		
 		}else{			
 			result.use(CustomJson.class).from("OK").serialize();		
