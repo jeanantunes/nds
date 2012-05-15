@@ -2,9 +2,12 @@ package br.com.abril.nds.model.cadastro;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -25,10 +28,11 @@ public class PoliticaCobranca {
 	
 	@Column(name = "NUM_INADIMPLENCIA_SUSP", nullable = false)
 	private int inadimplenciasSuspencao;
-	
-	@OneToOne(mappedBy = "politicaCobranca")
+
+	@ManyToOne
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
-	
+
 	@Column(name = "ACUMULA_DIVIDA", nullable = false)
 	private boolean acumulaDivida;
 	
@@ -55,6 +59,16 @@ public class PoliticaCobranca {
 	
 	@Column(name = "PRINCIPAL", nullable = false)
 	private boolean principal;
+	
+	@Column(name = "ATIVO", nullable = false)
+	private boolean ativo;
+	
+	@Column(name = "UNIFICA_COBRANCA", nullable = false)
+	private boolean unificaCobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "FORMA_EMISSAO")
+	private FormaEmissao formaEmissao;
 	
 	public Long getId() {
 		return id;
@@ -158,6 +172,30 @@ public class PoliticaCobranca {
 
 	public void setPrincipal(boolean principal) {
 		this.principal = principal;
+	}
+	
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public boolean isUnificaCobranca() {
+		return unificaCobranca;
+	}
+
+	public void setUnificaCobranca(boolean unificaCobranca) {
+		this.unificaCobranca = unificaCobranca;
+	}
+
+	public FormaEmissao getFormaEmissao() {
+		return formaEmissao;
+	}
+
+	public void setFormaEmissao(FormaEmissao formaEmissao) {
+		this.formaEmissao = formaEmissao;
 	}
 	
 }

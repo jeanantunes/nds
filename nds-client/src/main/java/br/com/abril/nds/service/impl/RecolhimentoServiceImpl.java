@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -347,6 +349,35 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
+
+
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
+
+		if (TipoBalanceamentoRecolhimento.EDITOR.equals(tipoBalanceamento)) {
+			
+			produtosRecolhimento =
+					lancamentoRepository.obterBalanceamentoRecolhimentoPorEditorData(periodoRecolhimento, 
+																					 listaIdsFornecedores, 
+																					 GrupoProduto.CROMO);
+
+		} else if (TipoBalanceamentoRecolhimento.AUTOMATICO.equals(tipoBalanceamento)
+					|| TipoBalanceamentoRecolhimento.VALOR.equals(tipoBalanceamento)) {
+			
+			produtosRecolhimento =
+					lancamentoRepository.obterBalanceamentoRecolhimento(periodoRecolhimento, 
+																		listaIdsFornecedores, 
+																		GrupoProduto.CROMO);
+		}
+
+		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
+				lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
+																	 listaIdsFornecedores, 
+																	 GrupoProduto.CROMO);
+
+		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
+		
+		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
+
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -7,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -98,5 +101,20 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 		
 		return listaTelAssoc;
+	}
+
+	/**
+	 * Método responsável por obter fornecedores para preencher combo da camada view
+	 * @return comboFornecedores: fornecedores cadastrados
+	 */
+	@Transactional(readOnly=true)
+	@Override
+	public List<ItemDTO<Long, String>> buscarComboFornecedores() {
+		List<ItemDTO<Long,String>> comboFornecedores =  new ArrayList<ItemDTO<Long,String>>();
+		List<Fornecedor> fornecedores = fornecedorRepository.buscarTodos();
+		for (Fornecedor itemFornecedor : fornecedores){
+			comboFornecedores.add(new ItemDTO<Long,String>(itemFornecedor.getId(), itemFornecedor.getJuridica().getRazaoSocial()));
+		}
+		return comboFornecedores;
 	}
 }

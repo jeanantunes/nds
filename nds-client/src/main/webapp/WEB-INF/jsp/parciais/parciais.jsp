@@ -262,7 +262,7 @@ $(function() {
               <td colspan="3">
 <!-- Código -->
 <input id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', '#edicaoProduto', false);" />
+						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto', false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
