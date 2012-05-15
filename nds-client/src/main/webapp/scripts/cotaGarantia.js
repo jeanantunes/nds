@@ -69,7 +69,7 @@ NotaPromissoria.prototype.toggle = function() {
 NotaPromissoria.prototype.dataBind = function() {
 	$("#cotaGarantiaNotaPromissoriaId").html(this.notaPromissoria.id);
 	$("#cotaGarantiaNotaPromissoriaVencimento").val(
-			this.notaPromissoria.vencimento.$);
+			this.notaPromissoria.vencimento);
 	$("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor);
 	$("#cotaGarantiaNotaPromissoriaValor").priceFormat({
 		allowNegative : true,

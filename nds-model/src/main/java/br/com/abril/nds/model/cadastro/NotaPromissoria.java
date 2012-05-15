@@ -4,7 +4,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +36,7 @@ public class NotaPromissoria implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="VENCIMENTO")
-	private Date vencimento;
+	private Calendar vencimento;
 	
 	@Column(name="VALOR")
 	private Double valor;
@@ -61,14 +61,14 @@ public class NotaPromissoria implements Serializable {
 	/**
 	 * @return the vencimento
 	 */
-	public Date getVencimento() {
+	public Calendar getVencimento() {
 		return vencimento;
 	}
 
 	/**
 	 * @param vencimento the vencimento to set
 	 */
-	public void setVencimento(Date vencimento) {
+	public void setVencimento(Calendar vencimento) {
 		this.vencimento = vencimento;
 	}
 
