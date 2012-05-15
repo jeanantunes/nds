@@ -2,7 +2,10 @@ package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -49,6 +53,9 @@ public class ChamadaEncalhe implements Serializable {
 	@Column(name = "TIPO_CHAMADA_ENCALHE", nullable = false)
 	private TipoChamadaEncalhe tipoChamadaEncalhe;
 	
+	@OneToMany(mappedBy = "chamadaEncalhe", cascade = CascadeType.REMOVE)
+	private Set<ChamadaEncalheCota> chamadaEncalheCotas = new HashSet<ChamadaEncalheCota>();
+			
 	/**
 	 * @return the id
 	 */
@@ -97,6 +104,20 @@ public class ChamadaEncalhe implements Serializable {
 	 */
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	/**
+	 * @return the chamadaEncalheCotas
+	 */
+	public Set<ChamadaEncalheCota> getChamadaEncalheCotas() {
+		return chamadaEncalheCotas;
+	}
+
+	/**
+	 * @param chamadaEncalheCotas the chamadaEncalheCotas to set
+	 */
+	public void setChamadaEncalheCotas(Set<ChamadaEncalheCota> chamadaEncalheCotas) {
+		this.chamadaEncalheCotas = chamadaEncalheCotas;
 	}
 
 }
