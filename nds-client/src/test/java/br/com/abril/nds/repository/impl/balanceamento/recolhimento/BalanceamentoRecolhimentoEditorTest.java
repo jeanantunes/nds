@@ -440,7 +440,6 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		ordenacaoEditorCorreta = resumos.get(2).getIdEditor() > resumos.get(3).getIdEditor();
 		
 		Assert.assertFalse(ordenacaoEditorCorreta);
-		
 	}
 	
 }

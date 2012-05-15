@@ -52,7 +52,6 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TipoMensagem;
@@ -106,9 +105,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
-	
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
 
 	
 	@Override
@@ -134,17 +130,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
-		//Buscar politica de cobrança principal e forma de cobrança do distribuidor
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-		
-		if (politicaPrincipal == null){
+		//Buscar politica de cobrança e forma de cobrança do distribuidor
+		PoliticaCobranca politicaCobranca = distribuidor.getPoliticaCobranca();
+		if (politicaCobranca == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada.");
-		} else if (politicaPrincipal.getFormaCobranca() == null){
+		} else if (politicaCobranca.getFormaCobranca() == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada.");
 		}
 		
 		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
-		if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
+		if (TipoCobranca.BOLETO.equals(politicaCobranca.getFormaCobranca().getTipoCobranca())){
 			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
 			
 			if (controleBaixaBancaria == null || !StatusControle.CONCLUIDO_SUCESSO.equals(controleBaixaBancaria.getStatus())){
@@ -163,7 +158,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			//Varre todos os movimentos encontrados, agrupando por cota
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
 			
-			TipoCobranca tipoCobranca = politicaPrincipal.getFormaCobranca().getTipoCobranca();
+			TipoCobranca tipoCobranca = politicaCobranca.getFormaCobranca().getTipoCobranca();
 			
 			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 			
@@ -173,15 +168,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
 					
-					if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
+					if (TipoCobranca.BOLETO.equals(politicaCobranca.getFormaCobranca().getTipoCobranca())){
 						this.verificarCotaTemBanco(ultimaCota, msgs);
 					}
 					
 					//Decide se gera movimento consolidado ou postergado para a cota
 					this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
-							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
-							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-									politicaPrincipal.getNumeroDiasNovaCobranca(),
+							politicaCobranca.getFormaCobranca().getValorMinimoEmissao(), politicaCobranca.isAcumulaDivida(), idUsuario, 
+							tipoCobranca != null ? tipoCobranca : politicaCobranca.getFormaCobranca().getTipoCobranca(),
+							politicaCobranca.getNumeroDiasNovaCobranca(),
 							distribuidor, msgs);
 					
 					//Limpa dados para contabilizar próxima cota
@@ -198,10 +193,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
-			this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
-					politicaPrincipal.isAcumulaDivida(), idUsuario, 
-					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-				    politicaPrincipal.getNumeroDiasNovaCobranca(), distribuidor, msgs);
+			this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaCobranca.getFormaCobranca().getValorMinimoEmissao(),
+					politicaCobranca.isAcumulaDivida(), idUsuario, 
+					tipoCobranca != null ? tipoCobranca : politicaCobranca.getFormaCobranca().getTipoCobranca(),
+					politicaCobranca.getNumeroDiasNovaCobranca(), distribuidor, msgs);
 		}
 		
 		if (!msgs.isEmpty()){

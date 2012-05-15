@@ -56,12 +56,14 @@ public class Distribuidor {
 	@Column(name = "FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
 	
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@OneToOne(optional = false)
+	@JoinColumn(name = "POLITICA_COBRANCA_ID")
+	private PoliticaCobranca politicaCobranca;
+	
 	@OneToMany
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
-
-	@OneToMany(mappedBy="distribuidor")
-	private Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -171,6 +173,14 @@ public class Distribuidor {
 		this.fatorDesconto = fatorDesconto;
 	}
 	
+	public PoliticaCobranca getPoliticaCobranca() {
+		return politicaCobranca;
+	}
+	
+	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
+		this.politicaCobranca = politicaCobranca;
+	}
+	
 	public Set<FormaCobranca> getFormasCobranca() {
 		return formasCobranca;
 	}
@@ -179,14 +189,6 @@ public class Distribuidor {
 		this.formasCobranca = formasCobranca;
 	}
 	
-	public Set<PoliticaCobranca> getPoliticasCobranca() {
-		return politicasCobranca;
-	}
-
-	public void setPoliticasCobranca(Set<PoliticaCobranca> politicasCobranca) {
-		this.politicasCobranca = politicasCobranca;
-	}
-
 	public PoliticaSuspensao getPoliticaSuspensao() {
 		return politicaSuspensao;
 	}

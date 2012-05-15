@@ -1,4 +1,8 @@
 package br.com.abril.nds.service;
+import java.util.List;
+
+import br.com.abril.nds.client.vo.ParametroCobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaParametrosCobrancaDTO;
 
 
 /**
@@ -9,5 +13,8 @@ package br.com.abril.nds.service;
  */
 public interface ParametroCobrancaService {
 
+	List<ParametroCobrancaVO> obterParametrosCobranca(FiltroConsultaParametrosCobrancaDTO filtro);
+
+	int obterQuantidadeParametrosCobranca(FiltroConsultaParametrosCobrancaDTO filtro);
 	
 }

@@ -35,8 +35,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 			hql.append(" and mfc.cota.id = :idCota ");
 		}
 		
-		hql.append(" and mfc.cota.id not in ")
-		   .append(" (select distinct c.cota.id from ConsolidadoFinanceiroCota c where c.dataConsolidado <= :dataAtual) ");
+		hql.append(" and mfc.id not in ")
+		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= :dataAtual) ");
 		
 		hql.append(" order by mfc.cota.id ");
 		

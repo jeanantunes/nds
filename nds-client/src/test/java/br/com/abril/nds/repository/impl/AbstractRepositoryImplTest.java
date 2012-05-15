@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(defaultRollback = false)
 @Transactional
 public abstract class AbstractRepositoryImplTest {
 	

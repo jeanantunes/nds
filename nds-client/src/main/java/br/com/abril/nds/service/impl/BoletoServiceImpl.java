@@ -55,7 +55,6 @@ import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
@@ -94,9 +93,6 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected ControleBaixaBancariaService controleBaixaService;
-	
-	@Autowired
-	protected PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	protected MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -1006,9 +1002,9 @@ public class BoletoServiceImpl implements BoletoService {
 			byte[] anexo = this.gerarAnexoBoleto(boleto);
 			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
 	
-			PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-			String assunto=(politicaPrincipal!=null?politicaPrincipal.getAssuntoEmailCobranca():"");
-			String mensagem=(politicaPrincipal!=null?politicaPrincipal.getMensagemEmailCobranca():"");
+			Distribuidor distribuidor = distribuidorService.obter();
+			String assunto=(distribuidor.getPoliticaCobranca()!=null?distribuidor.getPoliticaCobranca().getAssuntoEmailCobranca():"");
+			String mensagem=(distribuidor.getPoliticaCobranca()!=null?distribuidor.getPoliticaCobranca().getMensagemEmailCobranca():"");
 			email.enviar(assunto, 
 					     mensagem, 
 					     destinatarios, 

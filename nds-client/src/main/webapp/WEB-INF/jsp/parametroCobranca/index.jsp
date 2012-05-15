@@ -127,119 +127,13 @@
 	
 	
 	
-	//MODOS DE EXIBIÇÃO
-	function opcaoPagto(op){
-		
-		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
-			/*
-			$('#divComboBanco').show();
-			$('#divRecebeEmail').show();
-			$('#divDadosBancarios').hide();
-			*/
-	    }
-		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
-			/*
-			$('#divComboBanco').show();
-			$('#divDadosBancarios').show();
-			$('#divRecebeEmail').hide();
-			*/
-		}    
-		else if (op=='DEPOSITO'){
-			/*
-			$('#divDadosBancarios').hide();
-			$('#divRecebeEmail').hide();
-			$('#divComboBanco').show();
-			*/
-		}    
-		else{
-			/*
-			$('#divRecebeEmail').hide();
-			$('#divComboBanco').hide();
-			$('#divDadosBancarios').hide();
-			*/
-		}
-		
-	};
-	
-	function mostraSemanal(){
-		$("#tipoFormaCobranca").val('SEMANAL');
-		document.formularioFormaCobranca.mensal.checked = false;
-		$( ".semanal" ).show();
-		$( ".mensal" ).hide();
-	};
-		
-	function mostraMensal(){
-		$("#tipoFormaCobranca").val('MENSAL');
-		document.formularioFormaCobranca.semanal.checked = false;
-		$( ".semanal" ).hide();
-		$( ".mensal" ).show();
-	};
-	
-	function opcaoTipoFormaCobranca(op){
-		if (op=='SEMANAL'){
-			document.formularioFormaCobranca.semanal.checked = true;
-			document.formularioFormaCobranca.mensal.checked = false;
-			mostraSemanal();
-	    }
-		else if (op=='MENSAL'){
-			document.formularioFormaCobranca.semanal.checked = false;
-			document.formularioFormaCobranca.mensal.checked = true;
-			mostraMensal();
-		}    
-	};
-	
-	function fecharDialogs() {
-		$( "#dialog-novo" ).dialog( "close" );
-	    $( "#dialog-excluir" ).dialog( "close" );
-	}
 	
 	
 	
 	
 	
 	
-	
-	
-	
-	//OBTEM FORNECEDORES MARCADOS PELO USUARIO PARA UNIFICÁ-LOS
-	function obterFornecedoresMarcados() {
-		var fornecedorMarcado = "";
-		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
-			fornecedorMarcado += 'listaIdsFornecedores=' + $(this).val() + '&';
-		});
-		return fornecedorMarcado;
-	}
-	
-	//OBTEM FORNECEDORES UNIFICADOS
-	function obterFornecedoresUnificados(unificados) {
-		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
-			document.getElementById("fornecedor_"+$(this).val()).checked = false;
-		});
-		for(i=0;i<unificados.length;i++){
-			document.getElementById("fornecedor_"+unificados[i]).checked = true;
-		}
-	}
-	
-	
-	
-
-	
-	
-	
-
-	
-	
-	//INCLUSÃO DE NOVO PARAMETRO
     function novoParametro() {
-    	
-    	$("input[name='checkGroupFornecedores']:checked").each(function(i) {
-			document.getElementById("fornecedor_"+$(this).val()).checked = false;
-		});
-    	
-    	$( ".semanal" ).hide();
-		$( ".mensal" ).hide();
-		document.formularioFormaCobranca.mensal.checked = false;
-		document.formularioFormaCobranca.semanal.checked = false;
 		
     	var tipoCobranca = $("#tipoCobranca").val();
 		var banco = $("#banco").val();
@@ -289,14 +183,6 @@
 				   true);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	//ALTERAÇÃO DE UM PARÂMETRO
 	function alteraParametro() {
 		
 		var idParametro = $("#idParametro").val();
@@ -349,15 +235,7 @@
 				   true);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	//OBTEM UM PARÂMETRO PARA ALTERAÇÃO
-	function obterParametro(idParametro){
+	function editarParametro(idParametro){
 		var data = [{name: 'idParametro', value: idParametro}];
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/buscaParametroCobranca' />",
 				   data,
@@ -385,22 +263,9 @@
 		$("#principal").val(resultado.principal);
 		document.formularioParametro.principal.checked = resultado.principal;
 		
-		opcaoPagto(resultado.tipoCobranca);
-		opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
-		obterFornecedoresUnificados(resultado.fornecedoresId);
-		
 		popup_alterar();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	//EXCLUI (DESATIVA) UM PARÂMETRO
     function desativarParametro(idParametro) {
     	var data = [{name: 'idParametro', value: idParametro}];
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/desativaParametroCobranca'/>",
@@ -411,14 +276,6 @@
 				   null);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	//LIMPA TODOS OS DADOS PARA INCLUSÃO DE NOVO REGISTRO
     function limparTelaCadastroParametro() {
     	$("#tipoCobranca").val("");
 		$("#banco").val("");
@@ -437,27 +294,27 @@
 	}
 	
 	
-
+	
+	
+	
 	
 	
 	
 
     
+    
+	
+	
 	function popup() {
-		
-		obterParametro();
-		
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
-			height:720,
+			height:390,
 			width:890,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					
-					novoParametro();
-					
 					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
 					
 				},
@@ -468,15 +325,18 @@
 		});
 	};
 	
+	
+	
 	function popup_alterar(idParametro) {
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
-			height:720,
+			height:390,
 			width:890,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
+					$("#effect").hide("highlight", {}, 1000, callback);
 					$( "#abaPdv" ).show( );
 					
 				},
@@ -488,6 +348,8 @@
 		      
 	};
 	
+	
+	
 	function popup_excluir(idParametro) {
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -497,6 +359,7 @@
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -506,6 +369,18 @@
 	};
 	
 	
+	
+   //callback function to bring a hidden box back
+	function callback() {
+		setTimeout(function() {
+			$( "#effect:visible").removeAttr( "style" ).fadeOut();
+
+		}, 1000 );
+	};	
+
+	function mostrarCobranca(){
+		$(".linha_fornecedor").show();
+	}
 	
 	</script>
 
@@ -555,8 +430,8 @@
 		     <td width="204">Acumula Dívida:</td>
 		     <td width="234">
 			     <select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
-			        <option value="1">Sim</option>
-			        <option value="0">Não</option>
+			        <option>Sim</option>
+			        <option>Não</option>
 			     </select>
 		     </td>
 		   </tr>
@@ -577,8 +452,8 @@
 			    <td>Vencimentos somente em dia útil:</td>
 			    <td>
 				    <select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
-				      <option value="1">Sim</option>
-				      <option value="0">Não</option>
+				      <option>Sim</option>
+				      <option>Não</option>
 				    </select>
 			    </td>
 		   </tr>
@@ -593,8 +468,8 @@
 			    <td>Cobrança Unificada:</td>
 			    <td>
 				    <select name="unificada" id="unificada" style="width:80px;">
-				      <option value="1">Sim</option>
-				      <option value="0">Não</option>
+				      <option>Sim</option>
+				      <option>Não</option>
 				    </select>
 			        <br clear="all" />
 			    </td>
@@ -616,8 +491,8 @@
 			    </table></td>
 			    <td width="204">Envio por E-mail:</td>
 			    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
-			      <option value="1">Sim</option>
-			      <option value="0">Não</option>
+			      <option>Sim</option>
+			      <option>Não</option>
 			    </select></td>
 		    </tr>
 		  
@@ -649,152 +524,6 @@
 		</table>
 		
     </form>		
-    
-    
-    
-    <legend>Unificar Cobranças</legend>
-    
-	<form name="formularioFormaCobranca" id="formularioFormaCobranca">		
-                         
-	    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
-		    
-		     <tr class="header_table">
-		         <td align="left">Fornecedores</td>
-		         <td align="left">&nbsp;</td>
-		         <td align="left">Concentração de Pagamentos</td>
-		     </tr>
-		     
-	         <tr>
-	             <td width="170" align="left" valign="top" style="border:1px solid #ccc;">
-
-	                 <table width="168" border="0" cellspacing="1" cellpadding="1">
-
-	                      <c:forEach varStatus="counter" var="fornecedores" items="${listaFornecedores}">
-	                          <tr> 
-	                              <td width='23'>
-							          <input id= "fornecedor_${filtroTipoCobranca.key}" value="${fornecedores.key}" name="checkGroupFornecedores" type='checkbox' />
-							      </td> 
-							      <td width='138'>	
-									  <label for="fornecedor_${filtroTipoCobranca.key}" >${fornecedores.value}</label>
-								  </td>
-						      </tr>
-					      </c:forEach>
-					      
-		             </table>
-		             
-	                 <p><br clear="all" />
-		                 <br clear="all" />
-		                 <br clear="all" />
-		                 <br clear="all" />
-	                 </p>
-	                 
-                 </td>
-                 
-			     <td width="21" align="left" valign="top">&nbsp;</td>
-			     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
-
-			         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-				         <tr>
-				             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="mostraMensal();" /></td>
-				             <td width="173">Mensal</td>
-				             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="mostraSemanal();" /></td>
-				             <td width="173">Semanal</td>
-				         </tr>
-				     </table>
-				    
-				     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
-				         <tr>
-				             <td width="68">Todo dia:</td>
-				             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
-				         </tr>
-				     </table>
-			     
-		        
-                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
-					        
-			             <tr>
-			                 <td>
-			                     <input type="checkbox" name="PS" id="PS" />
-			                 </td>    
-			                 <td>
-			                     <label for="PS">Segunda-feira</label>
-			                 </td>
-			             </tr>
-					            
-					     <tr>
-			                 <td>           
-					             <input type="checkbox" name="PT" id="PT" />
-					         </td>    
-			                 <td>    
-					             <label for="PT">Terça-feira</label>
-					         </td>
-			             </tr>
-			             
-			             <tr>
-			                 <td>            
-					             <input type="checkbox" name="PQ" id="PQ" />
-					         </td>    
-			                 <td>      
-					             <label for="PQ">Quarta-feira</label>
-					         </td>
-			              </tr>    
-					                          
-					      <tr>
-			                 <td>          
-					             <input type="checkbox" name="PQu" id="PQu" />
-					          </td>    
-			                  <td>  
-					             <label for="PQu">Quinta-feira</label>
-					          </td>
-			              </tr>
-					                  
-					      <tr>
-			                 <td>          
-					             <input type="checkbox" name="PSex" id="PSex" />
-					         </td>    
-			                 <td>      
-					             <label for="PSex">Sexta-feira</label>
-					         </td>
-			              </tr>    
-					               
-					      <tr>
-			                 <td>    
-					             <input type="checkbox" name="PSab" id="PSab" />
-					             </td>    
-			                 <td>  
-					             <label for="PSab">Sábado</label>
-					         </td>
-			              </tr>
-					                   
-					      <tr>
-			                  <td>
-					             <input type="checkbox" name="PDom" id="PDom" />
-					             </td>    
-			                 <td>  
-					             <label for="PDom">Domingo</label>
-					         </td>
-			              </tr>
-					
-					 </table>
-					 
-				 	
-					 
-			     </td>
-  
-             </tr>  
-
-			 <tr>
-			    <td valign="top">&nbsp;</td>
-			    <td valign="top">&nbsp;</td>
-			    <td valign="top">&nbsp;</td>
-			 </tr>
-
-		</table>
-		
-    </form>
-    
-    
-    
     
 </div>
 
