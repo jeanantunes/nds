@@ -7,10 +7,12 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 
 @Repository
@@ -48,6 +50,64 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		return query.list();
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+		
+		StringBuilder hql = new StringBuilder(" select ");
+		
+		hql.append(" mfc.tipoMovimento.operacaoFinaceira, ");
+		
+		hql.append(" mfc.valor, ");
+		
+		hql.append(" mfc.data ");
+		
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+		   
+		hql.append(" where ");
+		
+		hql.append(" mfc.data = :dataOperacao ");
+		
+		hql.append(" and mfc.status = :statusAprovado ");
+		
+		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
+		
+		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
+		}
+		
+		hql.append(" and mfc.id not in ");
+		
+		hql.append(" (   ");
+		
+		hql.append(" select distinct(movimentos.id) ");
+
+		hql.append(" from ConsolidadoFinanceiroCota c join c.movimentos movimentos ");
+		
+		hql.append(" where ");
+		
+		hql.append(" c.cota.numeroCota = :numeroCota  ");
+		
+		hql.append(" ) ");
+		
+		hql.append(" order by mfc.data ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
+		}
+		
+		return query.list();
+	}
+	
 	
 	@Override
 	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
