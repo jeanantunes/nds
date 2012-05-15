@@ -35,7 +35,11 @@ public class TipoDescontoCota implements Serializable {
 	
 	@Column(name = "USUARIO")
 	private String usuario;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
 	public Long getId() {
 		return id;
 	}
@@ -67,5 +71,10 @@ public class TipoDescontoCota implements Serializable {
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
+<<<<<<< HEAD
+=======
+	
+	
+>>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
 
 }
