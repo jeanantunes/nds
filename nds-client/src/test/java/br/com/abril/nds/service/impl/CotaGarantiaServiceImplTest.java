@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -67,7 +68,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			cotaGarantiaService.salvaNotaPromissoria(notaPromissoria,cota.getId());
 		
 		
-		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
+		CotaGarantiaDTO cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
 		
 		assertNotNull(cotaGarantia);
 	}
@@ -134,7 +135,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		cotaGarantia = null;
 		
-		cotaGarantia = (CotaGarantiaImovel) cotaGarantiaService.getByCota(cota.getId());
+		cotaGarantia = (CotaGarantiaImovel) cotaGarantiaService.getByCota(cota.getId()).getCotaGarantia();
 		
 		int expectedSize = 4;
 		
