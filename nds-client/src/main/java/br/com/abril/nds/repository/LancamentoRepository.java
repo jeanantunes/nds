@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -47,8 +48,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
 					 											 List<Long> fornecedores,
 					 											 GrupoProduto grupoCromo);
-<<<<<<< HEAD
-=======
+
 	 
 	 /**
 	  * Método que retorna o balanceamento do recolhimento referentes a um periodo 
@@ -80,7 +80,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
 															   List<Long> fornecedores,
 															   GrupoProduto grupoCromo);
->>>>>>> refs/remotes/DGBti/master
 	 
 	 /**
 	  * Método que verifica a existência de uma chamada de encalhe do tipo Matriz Recolhimento

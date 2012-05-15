@@ -349,8 +349,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setDatasRecolhimentoDistribuidor(datasRecolhimentoDistribuidor);
 		dadosRecolhimento.setDatasRecolhimentoFornecedor(datasRecolhimentoFornecedor);
-<<<<<<< HEAD
-=======
+
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimento = null;
 
@@ -378,7 +377,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
->>>>>>> refs/remotes/DGBti/master
+
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
