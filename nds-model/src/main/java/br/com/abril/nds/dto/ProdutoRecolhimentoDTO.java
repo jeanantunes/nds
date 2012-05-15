@@ -4,8 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.util.Util;
 
+/**
+ * @author Discover Technology
+ *
+ */
 public class ProdutoRecolhimentoDTO implements Serializable {
 
 	/**
@@ -18,6 +24,8 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private Long numeroEdicao;
 
 	private BigDecimal precoVenda;
+	
+	private StatusLancamento statusLancamento;
 
 	private boolean possuiBrinde;
 
@@ -108,6 +116,20 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+	}
+
+	/**
+	 * @return the statusLancamento
+	 */
+	public StatusLancamento getStatusLancamento() {
+		return statusLancamento;
+	}
+
+	/**
+	 * @param statusLancamento the statusLancamento to set
+	 */
+	public void setStatusLancamento(StatusLancamento statusLancamento) {
+		this.statusLancamento = statusLancamento;
 	}
 
 	/**
@@ -272,12 +294,13 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param parcial the parcial to set
+	 * @param parcial em formato de String para ser convertida.
 	 */
-	public void setParcial(TipoLancamentoParcial parcial) {
-		this.parcial = parcial;
+	public void setParcial(String parcial) {
+		
+		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
 	}
-
+	
 	/**
 	 * @return the possuiChamada
 	 */

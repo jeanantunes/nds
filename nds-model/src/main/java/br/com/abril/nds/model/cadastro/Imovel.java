@@ -32,19 +32,19 @@ public class Imovel implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@Column(name="PROPRIETARIO")
+	@Column(name="PROPRIETARIO", nullable=false)
 	private String proprietario;
 	
-	@Column(name="ENDERECO")
+	@Column(name="ENDERECO", nullable=false)
 	private String endereco;
 	
-	@Column(name="NUMERO_REGISTRO")
+	@Column(name="NUMERO_REGISTRO", nullable=false)
 	private String numeroRegistro;
 	
-	@Column(name="VALOR")
+	@Column(name="VALOR", nullable=false)
 	private Double valor;
 	
-	@Column(name="OBSERVACAO")
+	@Column(name="OBSERVACAO", nullable=false)
 	private String observacao;
 	
 	
