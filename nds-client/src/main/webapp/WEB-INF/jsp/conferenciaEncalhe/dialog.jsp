@@ -48,7 +48,7 @@
 </script>
 
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
-	<fieldset>
+	<fieldset style="width: 415px;">
         <legend>Salvar Conferência</legend>
         <p>Confima a Conferência de Encalhe?</p>
     </fieldset>
@@ -73,9 +73,9 @@
 			    	<table width="574" border="0" cellspacing="1" cellpadding="2">
 	      				<tr>
 					        <td width="108" style="border-bottom:1px solid #ccc;"><strong>Nome:</strong></td>
-					        <td width="174" style="border-bottom:1px solid #ccc;" id="nomeProduto"></td>
+					        <td width="174" style="border-bottom:1px solid #ccc;" id="nomeProdutoDetalhe"></td>
 					        <td width="120" style="border-bottom:1px solid #ccc;"><strong>Preço Capa:</strong></td>
-					        <td width="151" style="border-bottom:1px solid #ccc;" id="precoCapa"></td>
+					        <td width="151" style="border-bottom:1px solid #ccc;" id="precoCapaDetalhe"></td>
 						</tr>
 						<tr>
 					        <td style="border-bottom:1px solid #ccc;"><strong>Chamada Capa:</strong></td>
@@ -172,7 +172,7 @@
 		            <td>Data:</td>
 		            <td id="data"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotal"></td>
+		            <td id="valorTotalNotaFiscal"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>

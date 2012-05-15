@@ -51,11 +51,17 @@
 				
 				$(".conferenciaEncalheGrid").flexReload();
 				
-				ultimoCodeBar = $("#cod_barras").focus();
+				$("#cod_barras").focus();
 			},
 	
 			preProcessarConsultaConferenciaEncalhe : function(result) {
-	
+				
+				if (result.mensagens){
+					
+					exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+					return;
+				}
+				
 				var modeloConferenciaEncalhe = result[0];
 	
 				$.each(modeloConferenciaEncalhe.rows, 
@@ -79,11 +85,15 @@
 						}
 				);
 				
-				$("#totalReparte").text(result[1]);
-				$("#totalEncalhe").text(result[2]);
-				$("#valorVendaDia").text(result[3]);
-				$("#totalOutrosValores").text(result[4]);
-				$("#valorAPagar").text(result[5]);
+				$(".outrosVlrsGrid").flexAddData({
+					page: result[1].page, total: result[1].total, rows: result[1].rows
+				});
+				
+				$("#totalReparte").text(result[2]);
+				$("#totalEncalhe").text(result[3]);
+				$("#valorVendaDia").text(result[4]);
+				$("#totalOutrosValores").text(result[5]);
+				$("#valorAPagar").text(result[6]);
 	
 				return modeloConferenciaEncalhe;
 			},
@@ -266,13 +276,13 @@
 	
 			outrosVlrsGridModel : [ {
 				display : 'Data',
-				name : 'data',
+				name : 'dataLancamento',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Tipo de Lançamento',
-				name : 'tipoLancto',
+				name : 'tipoLancamento',
 				width : 140,
 				sortable : true,
 				align : 'left'
@@ -285,7 +295,11 @@
 			} ]
 	
 		};
-	
+		
+		var ultimoCodeBar = "";
+		var ultimoSM = "";
+		var ultimoCodigo = "";
+		
 		$(function() {
 	
 			$('#qtdeExemplar').focus();
@@ -330,7 +344,7 @@
 				height : 250
 			});
 	
-			$("#pesq_prod").autocomplete({source : ""});
+			//$("#pesq_prod").autocomplete({source : ""});
 			
 			$("#numeroCota").numeric();
 			
@@ -356,13 +370,9 @@
 				
 				if (e.keyCode == 13) {
 					
-					$("#qtdeExemplar").focus();
+					$("#cod_barras").focus();
 				}
 			});
-			
-			var ultimoCodeBar = "";
-			var ultimoSM = "";
-			var ultimoCodigo = "";
 			
 			$('#cod_barras').keypress(function(e) {
 				
@@ -375,23 +385,18 @@
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
 						
-						var data = [{name: "codigoBarra", value: $("#cod_barras").val()}, {name: "sm", value: ""}, {name: "codigo", value: ""}];
+						var data = [{name: "codigoBarra", value: $("#cod_barras").val()}, 
+						            {name: "sm", value: ""}, 
+						            {name: "codigo", value: ""},
+						            {name: "codigoAnterior", value: ultimoCodigo},
+						            {name: "quantidade", value: $("qtdeExemplar").val()}];
 						
 						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarProdutoEdicao'/>", data,
 							function(result){
 							
-								ultimoCodeBar = result.codigoDeBarras;
-								ultimoSM = result.codigoSM;
-								ultimoCodigo = result.id;
+								setarValoresPesquisados(result);
 								
-								$("#nomeProduto").text(result.produto.nome);
-								$("#edicaoProduto").text(result.numeroEdicao);
-								$("#precoCapa").text(result.precoVenda);
-								$("#desconto").text(result.desconto);
-								$("#valorTotal").text(parseDouble(result.precoVenda)  - parseDouble(result.desconto));
-								
-								$("#qtdeExemplar").val("1");
-								ultimoCodeBar = $("#cod_barras").val();
+								$("#cod_barras").focus();
 							},
 							function(){
 								
@@ -413,23 +418,18 @@
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
 						
-						var data = [{name: "codigoBarra", value: ""}, {name: "sm", value: $("#sm").val()}, {name: "codigo", value: ""}];
+						var data = [{name: "codigoBarra", value: ""}, 
+						            {name: "sm", value: $("#sm").val()}, 
+						            {name: "codigo", value: ""},
+						            {name: "codigoAnterior", value: ultimoCodigo},
+						            {name: "quantidade", value: $("qtdeExemplar").val()}];
 						
 						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarProdutoEdicao'/>", data,
 							function(result){
 							
-								ultimoCodeBar = result.codigoDeBarras;
-								ultimoSM = result.codigoSM;
-								ultimoCodigo = result.id;
+								setarValoresPesquisados(result);
 								
-								$("#nomeProduto").text(result.produto.nome);
-								$("#edicaoProduto").text(result.numeroEdicao);
-								$("#precoCapa").text(result.precoVenda);
-								$("#desconto").text(result.desconto);
-								$("#valorTotal").text(parseDouble(result.precoVenda)  - parseDouble(result.desconto));
-								
-								$("#qtdeExemplar").val("1");
-								ultimoSM = $("#sm").val();
+								$("#sm").focus();
 							},
 							function (){
 								
@@ -463,23 +463,18 @@
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
 						
-						var data = [{name: "codigoBarra", value: ""}, {name: "sm", value: ""}, {name: "codigo", value: $("#pesq_prod").val()}];
+						var data = [{name: "codigoBarra", value: ""}, 
+						            {name: "sm", value: ""}, 
+						            {name: "codigo", value: $("#pesq_prod").val()},
+						            {name: "codigoAnterior", value: ultimoCodigo},
+						            {name: "quantidade", value: $("qtdeExemplar").val()}];
 						
 						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/pesquisarProdutoEdicao'/>", data,
 							function(result){
-							
-								ultimoCodeBar = result.codigoDeBarras;
-								ultimoSM = result.codigoSM;
-								ultimoCodigo = result.id;
 								
-								$("#nomeProduto").text(result.produto.nome);
-								$("#edicaoProduto").text(result.numeroEdicao);
-								$("#precoCapa").text(result.precoVenda);
-								$("#desconto").text(result.desconto);
-								$("#valorTotal").text(parseDouble(result.precoVenda)  - parseDouble(result.desconto));
+								setarValoresPesquisados(result);
 								
-								$("#qtdeExemplar").val("1");
-								ultimoCodigo = $("#pesq_prod").val();
+								$("#pesq_prod").focus();
 							},
 							function (){
 								
@@ -492,6 +487,45 @@
 			
 			popup_logado();
 		});
+		
+		function setarValoresPesquisados(result){
+			
+			ultimoCodeBar = result.codigoDeBarras;
+			ultimoSM = result.codigoSM;
+			ultimoCodigo = result.id;
+			
+			$("#cod_barras").val(result.codigoDeBarras);
+			$("#sm").val(result.codigoSM);
+			$("#codProduto").val(result.id);
+			
+			$("#nomeProduto").text(result.produto.nome);
+			$("#edicaoProduto").text(result.numeroEdicao);
+			$("#precoCapa").text(result.precoVenda);
+			$("#desconto").text(result.desconto);
+			
+			var total = parseFloat(result.precoVenda)  - parseFloat(result.desconto);
+			
+			$("#valorTotal").text(total.toFixed(2));
+			
+			$("#qtdeExemplar").val("1");
+			
+			$(".conferenciaEncalheGrid").flexReload();
+		}
+		
+		function adicionarProdutoConferido(){
+			
+			var data = [{name: "quantidade", value: $("#qtdeExemplar").val()}, 
+			            {name: "idProdutoEdicao", value: $("#codProduto").val()}];
+			
+			$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/adicionarProdutoConferido'/>", data,
+				function(result){
+					
+					$(".conferenciaEncalheGrid").flexReload();
+					
+					$("#cod_barras").focus();
+				}
+			);
+		}
 	
 		function popup_alterar() {
 	
@@ -530,6 +564,7 @@
 					"Não" : function() {
 						
 						$(this).dialog("close");
+						ConferenciaEncalhe.carregarListaConferencia();
 						$("#vlrCE").focus();
 					}
 				}, open : function(){
@@ -653,10 +688,17 @@
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").hide("highlight", {}, 1000, callback);
+						
+						$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/salvarConferencia'/>", null,
+							function(result){
+								
+								exibirMensagem(result.tipoMensagem, result.listaMensagens);
+								$("#dialog-salvar").dialog("close");
+							}
+						);
 					},
 					"Cancelar" : function() {
+						
 						$(this).dialog("close");
 					}
 	
@@ -721,9 +763,8 @@
 		}
 		
 		shortcut.add("F2", function() {
-			$(".conferenciaEncalheGrid #row4").show();
-			$('#qtdeExemplar4').focus();
-	
+			
+			adicionarProdutoConferido();
 		});
 		
 		shortcut.add("F6", function() {

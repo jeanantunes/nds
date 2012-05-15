@@ -9,7 +9,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheCota,Long> {
 	
 	/**
-	 * Obtém lista de chamada encalhe cota a partir do 
+	 * Obtém lista de idProdutoEdicao referentes a chamada encalhe relacionadas a um 
 	 * numeroCota e dataRecolhimento.  
 	 * 
 	 * Se flag indPesquisaCEFutura for true sera pesquisado registro com 
@@ -18,13 +18,12 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
-	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
 	 * 
-	 * @return List - ChamadaEncalheCota
+	 * @return List - Long
 	 */
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
+	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura, boolean conferido);
 	
 	
 	/**

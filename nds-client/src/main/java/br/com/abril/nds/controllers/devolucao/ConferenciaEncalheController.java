@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,8 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.ConferenciaEncalheVO;
-import br.com.abril.nds.client.vo.DebitoCreditoCotaVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
@@ -20,16 +18,13 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -47,6 +42,8 @@ public class ConferenciaEncalheController {
 	private static final String ID_BOX_LOGADO = "idBoxLogado";
 	
 	private static final String NUMERO_COTA_CONFERENCIA = "numeroCotaConferencia";
+	
+	private static final String INFO_CONFERENCIA = "infoCoferencia";
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
@@ -80,11 +77,25 @@ public class ConferenciaEncalheController {
 	@Post
 	public void salvarIdBoxSessao(Long idBox){
 		
-		this.session.setAttribute(ID_BOX_LOGADO, idBox);
+		this.limparDadosSessao();
+		
+		if (idBox != null){
+		
+			this.session.setAttribute(ID_BOX_LOGADO, idBox);
+		}
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
+	private void limparDadosSessao() {
+		
+		this.session.removeAttribute(ID_BOX_LOGADO);
+		this.session.removeAttribute(INFO_CONFERENCIA);
+		this.session.removeAttribute(LISTA_CONFERENCIA_ENCALHE);
+		this.session.removeAttribute(NUMERO_COTA_CONFERENCIA);
+		this.session.removeAttribute(VALOR_ENCALHE_JORNALEIRO);
+	}
+
 	@Post
 	public void pesquisarCota(Integer numeroCota) {
 		
@@ -115,27 +126,68 @@ public class ConferenciaEncalheController {
 	@Post
 	public void carregarListaConferencia(){
 		
-		InfoConferenciaEncalheCota infoConfereciaEncalheCota = 
-				conferenciaEncalheService.obterInfoConferenciaEncalheCota(this.getIdCotaConferenciaSession());
+		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
-		Object[] dados = new Object[6];
+		if (infoConfereciaEncalheCota == null){
+			
+			infoConfereciaEncalheCota = 
+					conferenciaEncalheService.obterInfoConferenciaEncalheCota(this.getIdCotaConferenciaSession());
+			
+			this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
+			
+			this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+		}
 		
-		List<ConferenciaEncalheVO> listaConferenciaEncalhe = 
-				obterListaConferenciaEncalheVOFromDTO(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+		Object[] dados = new Object[7];
 		
-		dados[0] = obterTableModelConferenciaEncalhe(listaConferenciaEncalhe);
+		dados[0] = this.obterTableModelConferenciaEncalhe(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 		
-		dados[1] = infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte();
-		dados[2] = infoConfereciaEncalheCota.getEncalhe() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getEncalhe();
-		dados[3] = infoConfereciaEncalheCota.getValorVendaDia() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getValorVendaDia();
-		dados[4] = infoConfereciaEncalheCota.getTotalDebitoCreditoCota() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getTotalDebitoCreditoCota();
-		dados[5] = infoConfereciaEncalheCota.getValorPagar() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getValorPagar();
+		dados[1] = this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota());
+		
+		dados[2] = infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte();
+		
+		calcularValoresMonetarios(dados);
 		
 		result.use(Results.json()).withoutRoot().from(dados).recursive().serialize();
 	}
 	
+	private InfoConferenciaEncalheCota getInfoConferenciaSession() {
+		
+		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
+	}
+
+	private void calcularValoresMonetarios(Object[] dados){
+		
+		BigDecimal valorEncalhe = BigDecimal.ZERO;
+		BigDecimal valorVendaDia = BigDecimal.ZERO;
+		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
+		
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info != null){
+		
+			for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
+				
+				valorEncalhe = valorEncalhe.add(
+						conferenciaEncalheDTO.getPrecoCapa().multiply(conferenciaEncalheDTO.getQtdExemplar()).subtract(conferenciaEncalheDTO.getDesconto()));
+			}
+			
+			valorVendaDia = valorVendaDia.add(info.getReparte()).subtract(valorEncalhe);
+			
+			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO : info.getListaDebitoCreditoCota()){
+				
+				valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+			}
+		}
+		
+		dados[3] = valorEncalhe;
+		dados[4] = valorVendaDia;
+		dados[5] = valorDebitoCredito;
+		dados[6] = valorEncalhe.subtract(valorVendaDia).add(valorDebitoCredito);
+	}
+	
 	@Post
-	public void pesquisarProdutoEdicao(String codigoBarra, Long sm, Long codigo){
+	public void pesquisarProdutoEdicao(String codigoBarra, Long sm, Long codigo, Long codigoAnterior, Long quantidade){
 		
 		ProdutoEdicao produtoEdicao = null;
 		
@@ -165,9 +217,80 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		}
 		
-		this.result.use(Results.json()).from(produtoEdicao, "result").serialize();
+		if (codigoAnterior != null && quantidade != null){
+			
+			this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao);
+		}
+		
+		this.result.use(Results.json()).from(produtoEdicao, "result").include("produto").serialize();
 	}
 	
+	@Post
+	public void adicionarProdutoConferido(Long quantidade, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException{
+		
+		ProdutoEdicao produtoEdicao = 
+				this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
+						this.getIdCotaConferenciaSession(), 
+						idProdutoEdicao);
+		
+		this.atualizarQuantidadeConferida(null, quantidade, produtoEdicao);
+		
+		this.result.use(Results.json()).from("").serialize();
+	}
+	
+	@Post
+	public void salvarConferencia(){
+		
+		//TODO
+		
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+	}
+	
+	/*
+	 * Atualiza quantidade da conferencia ou cria um novo registro caso seja a primeira vez que se esta conferindo o produtoedicao
+	 */
+	private void atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicao produtoEdicao) {
+		
+		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
+		
+		if (codigoAnterior != null){
+		
+			//busca conferencia na sessão
+			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+			
+			for (ConferenciaEncalheDTO dto : lista){
+				
+				if (dto.getCodigo().equals(codigoAnterior)){
+					
+					conferenciaEncalheDTO = dto;
+					break;
+				}
+			}
+		}
+		
+		if (conferenciaEncalheDTO != null){
+			
+			conferenciaEncalheDTO.setQtdExemplar(new BigDecimal(quantidade));
+		} else {
+			
+			conferenciaEncalheDTO = new ConferenciaEncalheDTO();
+			
+			conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
+			conferenciaEncalheDTO.setCodigo(produtoEdicao.getProduto().getCodigo());
+			conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+			conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
+			conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
+			conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+			conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+			conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+			conferenciaEncalheDTO.setQtdExemplar(new BigDecimal(quantidade));
+			conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+			
+			this.getListaConferenciaEncalheFromSession().add(conferenciaEncalheDTO);
+		}
+	}
+
 	/**
 	 * Obtém tableModel para grid de conferencia encalhe.
 	 * 
@@ -175,12 +298,20 @@ public class ConferenciaEncalheController {
 	 * 
 	 * @return TableModel<CellModelKeyValue<ConferenciaEncalheVO>>
 	 */
-	private TableModel<CellModelKeyValue<ConferenciaEncalheVO>> obterTableModelConferenciaEncalhe(List<ConferenciaEncalheVO> listaConferenciaEncalhe) {
+	private TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> obterTableModelConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
 
-		TableModel<CellModelKeyValue<ConferenciaEncalheVO>> tableModelConferenciaEncalhe = 
-				new TableModel<CellModelKeyValue<ConferenciaEncalheVO>>();
+		TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> tableModelConferenciaEncalhe = 
+				new TableModel<CellModelKeyValue<ConferenciaEncalheDTO>>();
 		
-		tableModelConferenciaEncalhe.setRows(CellModelKeyValue.toCellModelKeyValue(listaConferenciaEncalhe));
+		List<CellModelKeyValue<ConferenciaEncalheDTO>> list =
+				new ArrayList<CellModelKeyValue<ConferenciaEncalheDTO>>();
+		
+		for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
+			
+			list.add(new CellModelKeyValue<ConferenciaEncalheDTO>(dto.getIdConferenciaEncalhe().intValue(), dto));
+		}
+		
+		tableModelConferenciaEncalhe.setRows(list);
 		tableModelConferenciaEncalhe.setTotal((listaConferenciaEncalhe!= null) ? listaConferenciaEncalhe.size() : 0);
 		tableModelConferenciaEncalhe.setPage(1);
 		
@@ -195,17 +326,17 @@ public class ConferenciaEncalheController {
 	 * 
 	 * @return TableModel<CellModelKeyValue<DebitoCreditoCotaVO>>
 	 */
-	private TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> obterTableModelDebitoCreditoCota(List<DebitoCreditoCotaVO> listaDebitoCreditoCota) {
+	private TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>> 
+		obterTableModelDebitoCreditoCota(List<DebitoCreditoCotaDTO> listaDebitoCreditoCota) {
 
-		TableModel<CellModelKeyValue<DebitoCreditoCotaVO>> tableModelDebitoCreditoCota = 
-				new TableModel<CellModelKeyValue<DebitoCreditoCotaVO>>();
+		TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>> tableModelDebitoCreditoCota = 
+				new TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>>();
 		
 		tableModelDebitoCreditoCota.setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCreditoCota));
 		tableModelDebitoCreditoCota.setTotal((listaDebitoCreditoCota!= null) ? listaDebitoCreditoCota.size() : 0);
 		tableModelDebitoCreditoCota.setPage(1);
 		
 		return tableModelDebitoCreditoCota;
-		
 	}
 	
 	public void carregarEmSessionValorCEJornaleiro() {
@@ -213,12 +344,12 @@ public class ConferenciaEncalheController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ConferenciaEncalheVO> getListaConferenciaEncalheFromSession() {
-		return (List<ConferenciaEncalheVO>) session.getAttribute(LISTA_CONFERENCIA_ENCALHE);
+	private List<ConferenciaEncalheDTO> getListaConferenciaEncalheFromSession() {
+		return (List<ConferenciaEncalheDTO>) session.getAttribute(LISTA_CONFERENCIA_ENCALHE);
 	}
 
-	private void setListaConferenciaEncalheToSession(List<ConferenciaEncalheVO> listaConferenciaEncalheVO) {
-		session.setAttribute(LISTA_CONFERENCIA_ENCALHE, listaConferenciaEncalheVO);
+	private void setListaConferenciaEncalheToSession(List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO) {
+		session.setAttribute(LISTA_CONFERENCIA_ENCALHE, listaConferenciaEncalheDTO);
 	}
 
 	private BigDecimal getValorEncalheJornaleiroFromSession() {
@@ -234,120 +365,10 @@ public class ConferenciaEncalheController {
 		
 		return (Integer) this.session.getAttribute(NUMERO_COTA_CONFERENCIA);
 	}
-
-	
-	/**
-	 * Obtém lista de objetos do tipo ConferenciaEncalheVO a partir de lista de
-	 * objetos do tipo ConferenciaEncalheDTO.
-	 * 
-	 * @param listaConferenciaEncalheDTO
-	 * 
-	 * @return List - ConferenciaEncalheVO
-	 */
-	private List<ConferenciaEncalheVO> obterListaConferenciaEncalheVOFromDTO(List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO) {
-		
-		List<ConferenciaEncalheVO> listaConferenciaEncalheVO = new LinkedList<ConferenciaEncalheVO>();
-		
-		String qtdExemplar 		= null;
-		String codigoDeBarras 	= null;
-		String codigoSM 		= null;
-		String codigo 			= null;
-		String nomeProduto 		= null;
-		String numeroEdicao 	= null;
-		String precoCapa 		= null;
-		String desconto 		= null;
-		String valorTotal 		= null;
-		String dia 				= null;
-		boolean juramentada 	= false;
-		
-		if (listaConferenciaEncalheDTO != null){
-		
-			for(ConferenciaEncalheDTO conferenciaDTO : listaConferenciaEncalheDTO) {
-				
-				qtdExemplar 	= ( conferenciaDTO.getQtdExemplar()     != null ) ? conferenciaDTO.getQtdExemplar().toString()  	: "";
-				codigoDeBarras 	= ( conferenciaDTO.getCodigoDeBarras()	!= null ) ? conferenciaDTO.getCodigoDeBarras()				: "";
-				codigoSM 		= ( conferenciaDTO.getCodigoSM()        != null ) ? conferenciaDTO.getCodigoSM().toString()  		: "";
-				codigo 			= ( conferenciaDTO.getCodigo()          != null ) ? conferenciaDTO.getCodigo()  					: "";
-				nomeProduto 	= ( conferenciaDTO.getNomeProduto()     != null ) ? conferenciaDTO.getNomeProduto()  				: "";
-				numeroEdicao 	= ( conferenciaDTO.getNumeroEdicao()    != null ) ? conferenciaDTO.getNumeroEdicao().toString()  	: "";
-				precoCapa 		= ( conferenciaDTO.getPrecoCapa()       != null ) ? conferenciaDTO.getPrecoCapa().toString()  		: "";
-				desconto 		= ( conferenciaDTO.getDesconto()        != null ) ? conferenciaDTO.getDesconto().toString()  		: "";
-				valorTotal 		= ( conferenciaDTO.getValorTotal()      != null ) ? conferenciaDTO.getValorTotal().toString()  		: "";
-				dia 			= ( conferenciaDTO.getDia()             != null ) ? conferenciaDTO.getDia().toString()  			: "";
-				
-				juramentada 	= conferenciaDTO.isJuramentada();
-				
-				ConferenciaEncalheVO conferenciaVO = new ConferenciaEncalheVO();
-				
-				conferenciaVO.setQtdExemplar(qtdExemplar);
-				conferenciaVO.setCodigoDeBarras(codigoDeBarras);
-				conferenciaVO.setCodigoSM(codigoSM);
-				conferenciaVO.setCodigo(codigo);
-				conferenciaVO.setNomeProduto(nomeProduto);
-				conferenciaVO.setNumeroEdicao(numeroEdicao);
-				conferenciaVO.setPrecoCapa(precoCapa);
-				conferenciaVO.setDesconto(desconto);
-				conferenciaVO.setValorTotal(valorTotal);
-				conferenciaVO.setDia(dia);
-				conferenciaVO.setJuramentada(juramentada);
-				
-				listaConferenciaEncalheVO.add(conferenciaVO);
-				
-			}
-		}
-		
-		return listaConferenciaEncalheVO;
-		
-		
-	}
-	
-	/**
-	 * Obtém lista de objetos do tipo DebitoCreditoCotaVO a partir de 
-	 * lista de objetos do tipo DebitoCreditoCotaDTO.
-	 * 
-	 * @param listaDebitoCreditoCotaDTO
-	 * 
-	 * @return List - DebitoCreditoCotaVO
-	 */
-	private List<DebitoCreditoCotaVO> obterListaDebitoCreditoCotaVOFromDTO(List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO) {
-		
-		List<DebitoCreditoCotaVO> listaDebitoCreditoCotaVO = new LinkedList<DebitoCreditoCotaVO>();
-
-		String tipoLancamento 	= null;
-		String valor 			= null;
-		String dataLancamento	= null;
-		String dataVencimento   = null;
-		String numeroCota		= null;
-	
-		for(DebitoCreditoCotaDTO debitoCreditoCotaDTO : listaDebitoCreditoCotaDTO) {
-			
-			tipoLancamento 	= (debitoCreditoCotaDTO.getTipoLancamento() != null ) ?  debitoCreditoCotaDTO.getTipoLancamento().toString() : ""; 
-			valor 			= (debitoCreditoCotaDTO.getValor() 			!= null ) ?  debitoCreditoCotaDTO.getValor().toString() 		 : "";
-			dataLancamento	= (debitoCreditoCotaDTO.getDataLancamento() != null ) ?  debitoCreditoCotaDTO.getDataLancamento().toString() : "";
-			dataVencimento  = (debitoCreditoCotaDTO.getDataVencimento() != null ) ?  debitoCreditoCotaDTO.getDataVencimento().toString() : "";
-			numeroCota		= (debitoCreditoCotaDTO.getNumeroCota() 	!= null ) ?  debitoCreditoCotaDTO.getNumeroCota().toString() 	 : "";
-			
-			DebitoCreditoCotaVO debitoCreditoCotaVO = new DebitoCreditoCotaVO();
-			
-			debitoCreditoCotaVO.setTipoLancamento(tipoLancamento);
-			debitoCreditoCotaVO.setValor(valor);
-			debitoCreditoCotaVO.setDataLancamento(dataLancamento);
-			debitoCreditoCotaVO.setDataVencimento(dataVencimento);
-			debitoCreditoCotaVO.setNumeroCota(numeroCota);			
-			
-			listaDebitoCreditoCotaVO.add(debitoCreditoCotaVO);
-			
-		}
-		
-		return listaDebitoCreditoCotaVO;
-		
-	}
 	
 	//TODO
 	private Long getIdUsuarioLogado(){
 		
 		return 1L;
 	}
-	
-	
 }
