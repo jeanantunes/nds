@@ -95,6 +95,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		PoliticaCobranca politicaCobranca =
 				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
+		save(politicaCobranca);
 		
 		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 		politicasCobranca.add(politicaCobranca);
@@ -103,6 +104,9 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		distribuidor.getFormasCobranca().add(formaBoleto);
 		
 		save(distribuidor);
+		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);

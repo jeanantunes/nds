@@ -24,7 +24,7 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	 */
 	PoliticaCobranca obterPorTipoCobranca(TipoCobranca tipoCobranca);
 	
-	PoliticaCobranca buscarPoliticaCobrancaPorDistribuidor();
+	PoliticaCobranca buscarPoliticaCobrancaPrincipal();
 	
 	/**
 	 * Obtém Lista de políticas de cobrança para os parametros

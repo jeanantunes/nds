@@ -60,7 +60,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Autowired
 	private CotaRepository cotaRepository;
 		
-	private static final Integer NUMERO_COTA = 1;
+	private static final Integer NUMERO_COTA = 123;
 	
 	private Cota cota;
 	private Boleto boleto1;
@@ -228,6 +228,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		save(distribuidor);
+		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);

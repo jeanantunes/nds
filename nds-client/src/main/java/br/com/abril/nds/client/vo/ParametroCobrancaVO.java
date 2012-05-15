@@ -4,23 +4,29 @@ package br.com.abril.nds.client.vo;
 public class ParametroCobrancaVO {
 	
 	Long idParametro;
-	String formaPagamento;
+	String forma;
 	String banco;
-	String valorMinimoEmissao;
+	String vlr_minimo_emissao;
 	String formaEmissao;
-
-	boolean vencimentoDiaUtil;
-	boolean acumulaDivida;
-	boolean cobrancaUnificada;
-	boolean evioPorEmail;
+	String acumula_divida;
+	String cobranca_unificada;
+	String envio_email;
 	boolean principal;
 	
-	public String getFormaPagamento() {
-		return formaPagamento;
+	public Long getIdParametro() {
+		return idParametro;
 	}
 	
-	public void setFormaPagamento(String formaPagamento) {
-		this.formaPagamento = formaPagamento;
+	public void setIdParametro(Long idParametro) {
+		this.idParametro = idParametro;
+	}
+	
+	public String getForma() {
+		return forma;
+	}
+	
+	public void setForma(String forma) {
+		this.forma = forma;
 	}
 	
 	public String getBanco() {
@@ -31,93 +37,79 @@ public class ParametroCobrancaVO {
 		this.banco = banco;
 	}
 	
-	public String getValorMinimoEmissao() {
-		return valorMinimoEmissao;
+	public String getVlr_minimo_emissao() {
+		return vlr_minimo_emissao;
 	}
 	
-	public void setValorMinimoEmissao(String valorMinimoEmissao) {
-		this.valorMinimoEmissao = valorMinimoEmissao;
+	public void setVlr_minimo_emissao(String vlr_minimo_emissao) {
+		this.vlr_minimo_emissao = vlr_minimo_emissao;
 	}
 	
-	public boolean isVencimentoDiaUtil() {
-		return vencimentoDiaUtil;
-	}
-
-	public void setVencimentoDiaUtil(boolean vencimentoDiaUtil) {
-		this.vencimentoDiaUtil = vencimentoDiaUtil;
-	}
-
-	public boolean isAcumulaDivida() {
-		return acumulaDivida;
-	}
-
-	public void setAcumulaDivida(boolean acumulaDivida) {
-		this.acumulaDivida = acumulaDivida;
-	}
-
-	public boolean isCobrancaUnificada() {
-		return cobrancaUnificada;
-	}
-
-	public void setCobrancaUnificada(boolean cobrancaUnificada) {
-		this.cobrancaUnificada = cobrancaUnificada;
-	}
-
-	public boolean isEvioPorEmail() {
-		return evioPorEmail;
-	}
-
-	public void setEvioPorEmail(boolean evioPorEmail) {
-		this.evioPorEmail = evioPorEmail;
-	}
-
 	public String getFormaEmissao() {
 		return formaEmissao;
 	}
-	
 	public void setFormaEmissao(String formaEmissao) {
 		this.formaEmissao = formaEmissao;
 	}
 	
-	public Long getIdParametro() {
-		return idParametro;
+	public String getAcumula_divida() {
+		return acumula_divida;
 	}
 	
-	public void setIdParametro(Long idParametro) {
-		this.idParametro = idParametro;
+	public void setAcumula_divida(String acumula_divida) {
+		this.acumula_divida = acumula_divida;
+	}
+	
+	public String getCobranca_unificada() {
+		return cobranca_unificada;
+	}
+	
+	public void setCobranca_unificada(String cobranca_unificada) {
+		this.cobranca_unificada = cobranca_unificada;
+	}
+	
+	public String getEnvio_email() {
+		return envio_email;
+	}
+	
+	public void setEnvio_email(String envio_email) {
+		this.envio_email = envio_email;
 	}
 	
 	public boolean isPrincipal() {
 		return principal;
 	}
-
+	
 	public void setPrincipal(boolean principal) {
 		this.principal = principal;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (acumulaDivida ? 1231 : 1237);
+		result = prime * result
+				+ ((acumula_divida == null) ? 0 : acumula_divida.hashCode());
 		result = prime * result + ((banco == null) ? 0 : banco.hashCode());
-		result = prime * result + (cobrancaUnificada ? 1231 : 1237);
-		result = prime * result + (evioPorEmail ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((cobranca_unificada == null) ? 0 : cobranca_unificada
+						.hashCode());
+		result = prime * result
+				+ ((envio_email == null) ? 0 : envio_email.hashCode());
+		result = prime * result + ((forma == null) ? 0 : forma.hashCode());
 		result = prime * result
 				+ ((formaEmissao == null) ? 0 : formaEmissao.hashCode());
-		result = prime * result
-				+ ((formaPagamento == null) ? 0 : formaPagamento.hashCode());
 		result = prime * result
 				+ ((idParametro == null) ? 0 : idParametro.hashCode());
 		result = prime * result + (principal ? 1231 : 1237);
 		result = prime
 				* result
-				+ ((valorMinimoEmissao == null) ? 0 : valorMinimoEmissao
+				+ ((vlr_minimo_emissao == null) ? 0 : vlr_minimo_emissao
 						.hashCode());
-		result = prime * result + (vencimentoDiaUtil ? 1231 : 1237);
 		return result;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -127,26 +119,35 @@ public class ParametroCobrancaVO {
 		if (getClass() != obj.getClass())
 			return false;
 		ParametroCobrancaVO other = (ParametroCobrancaVO) obj;
-		if (acumulaDivida != other.acumulaDivida)
+		if (acumula_divida == null) {
+			if (other.acumula_divida != null)
+				return false;
+		} else if (!acumula_divida.equals(other.acumula_divida))
 			return false;
 		if (banco == null) {
 			if (other.banco != null)
 				return false;
 		} else if (!banco.equals(other.banco))
 			return false;
-		if (cobrancaUnificada != other.cobrancaUnificada)
+		if (cobranca_unificada == null) {
+			if (other.cobranca_unificada != null)
+				return false;
+		} else if (!cobranca_unificada.equals(other.cobranca_unificada))
 			return false;
-		if (evioPorEmail != other.evioPorEmail)
+		if (envio_email == null) {
+			if (other.envio_email != null)
+				return false;
+		} else if (!envio_email.equals(other.envio_email))
+			return false;
+		if (forma == null) {
+			if (other.forma != null)
+				return false;
+		} else if (!forma.equals(other.forma))
 			return false;
 		if (formaEmissao == null) {
 			if (other.formaEmissao != null)
 				return false;
 		} else if (!formaEmissao.equals(other.formaEmissao))
-			return false;
-		if (formaPagamento == null) {
-			if (other.formaPagamento != null)
-				return false;
-		} else if (!formaPagamento.equals(other.formaPagamento))
 			return false;
 		if (idParametro == null) {
 			if (other.idParametro != null)
@@ -155,14 +156,13 @@ public class ParametroCobrancaVO {
 			return false;
 		if (principal != other.principal)
 			return false;
-		if (valorMinimoEmissao == null) {
-			if (other.valorMinimoEmissao != null)
+		if (vlr_minimo_emissao == null) {
+			if (other.vlr_minimo_emissao != null)
 				return false;
-		} else if (!valorMinimoEmissao.equals(other.valorMinimoEmissao))
-			return false;
-		if (vencimentoDiaUtil != other.vencimentoDiaUtil)
+		} else if (!vlr_minimo_emissao.equals(other.vlr_minimo_emissao))
 			return false;
 		return true;
 	}
+	
 
 }

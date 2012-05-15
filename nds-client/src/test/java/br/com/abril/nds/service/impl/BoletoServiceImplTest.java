@@ -101,6 +101,9 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicasCobranca);
 		save(distribuidor);
 		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
+		
 		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
@@ -277,7 +280,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento.setNumeroRegistro(1);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaRepository.buscarPoliticaCobrancaPorDistribuidor();
+		PoliticaCobranca politicaPrincipal = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
 									   null, politicaPrincipal, distribuidor,
 									   DateUtil.adicionarDias(new Date(), 1), null);

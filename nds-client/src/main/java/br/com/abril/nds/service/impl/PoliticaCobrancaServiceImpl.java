@@ -40,16 +40,16 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			for(PoliticaCobranca itemPolitica:politicasCobranca){
 				parametroCobranca = new ParametroCobrancaVO();
 			    
-				parametroCobranca.setAcumulaDivida(itemPolitica.isAcumulaDivida());
-				parametroCobranca.setCobrancaUnificada(itemPolitica.isUnificaCobranca());
-				parametroCobranca.setFormaEmissao((itemPolitica.getFormaEmissao()!=null?itemPolitica.getFormaEmissao().getDescFormaEmissao():""));
+				parametroCobranca.setAcumula_divida(itemPolitica.isAcumulaDivida()?"Sim":"Não");
+				parametroCobranca.setCobranca_unificada(itemPolitica.isUnificaCobranca()?"Sim":"Não");
+				parametroCobranca.setFormaEmissao(itemPolitica.getFormaEmissao()!=null?itemPolitica.getFormaEmissao().getDescFormaEmissao():"");
 				
 				forma = itemPolitica.getFormaCobranca();
 				if (forma!=null){
-					parametroCobranca.setFormaPagamento((forma.getTipoCobranca()!=null?forma.getTipoCobranca().getDescTipoCobranca():""));
-					parametroCobranca.setBanco((forma.getBanco()!=null?forma.getBanco().getNome():""));
-					parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao().toString());
-					parametroCobranca.setEvioPorEmail(forma.isRecebeCobrancaEmail());
+					parametroCobranca.setForma(forma.getTipoCobranca()!=null?forma.getTipoCobranca().getDescTipoCobranca():"");
+					parametroCobranca.setBanco(forma.getBanco()!=null?forma.getBanco().getNome():"");
+					parametroCobranca.setVlr_minimo_emissao(forma.getValorMinimoEmissao().toString());
+					parametroCobranca.setEnvio_email(forma.isRecebeCobrancaEmail()?"Sim":"Não");
 				}
 				
 				parametrosCobranca.add(parametroCobranca);
@@ -69,7 +69,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	@Override
 	@Transactional(readOnly=true)
 	public PoliticaCobranca obterPoliticaCobrancaPrincipal() {
-		return this.politicaCobrancaRepository.buscarPoliticaCobrancaPorDistribuidor();
+		return this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
 	}
 	
 }
