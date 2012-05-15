@@ -27,7 +27,6 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -60,7 +59,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Autowired
 	private CotaRepository cotaRepository;
 		
-	private static final Integer NUMERO_COTA = 123;
+	private static final Integer NUMERO_COTA = 1;
 	
 	private Cota cota;
 	private Boleto boleto1;
@@ -215,22 +214,16 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","",true,FormaEmissao.INDIVIDUAL_BOX);
+				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
 		save(politicaCobranca);
 				
-		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-		politicasCobranca.add(politicaCobranca);
-		
-		Distribuidor distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicasCobranca);
+		Distribuidor distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicaCobranca);
 		
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
 		
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		save(distribuidor);
-		
-		politicaCobranca.setDistribuidor(distribuidor);
-		save(politicaCobranca);
 		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);

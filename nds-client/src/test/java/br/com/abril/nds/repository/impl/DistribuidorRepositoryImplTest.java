@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -22,7 +20,6 @@ import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -77,12 +74,9 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","",true,FormaEmissao.INDIVIDUAL_BOX);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
 		
-		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-		politicasCobranca.add(politicaCobranca);
-		
-		distribuidor = Fixture.distribuidor(1, pj, new Date(), politicasCobranca);
+		distribuidor = Fixture.distribuidor(1, pj, new Date(), politicaCobranca);
 
 		save(pj);
 		save(distribuidor);
