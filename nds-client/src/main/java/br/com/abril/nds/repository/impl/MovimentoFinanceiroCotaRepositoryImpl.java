@@ -55,7 +55,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
-		
 		StringBuilder hql = new StringBuilder(" select ");
 		
 		hql.append(" mfc.tipoMovimento.operacaoFinaceira, ");
