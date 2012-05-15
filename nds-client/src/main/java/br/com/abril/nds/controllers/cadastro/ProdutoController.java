@@ -83,6 +83,31 @@ public class ProdutoController {
 	}
 	
 	@Post
+	public void autoCompletarEdicaoPorProduto(String codigoProduto) {
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+				
+		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()) {			
+		
+			ProdutoEdicao proEdicao = null;
+			
+			for (ProdutoEdicao produtoEd : listaProdutoEdicao) {
+				
+				proEdicao = new ProdutoEdicao();
+				proEdicao.setNumeroEdicao(produtoEd.getNumeroEdicao());
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(produtoEd.getNumeroEdicao().toString(), null, proEdicao);
+				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+		
+	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto) {
 		Produto produto = this.produtoService.obterProdutoPorNomeProduto(nomeProduto);
 		

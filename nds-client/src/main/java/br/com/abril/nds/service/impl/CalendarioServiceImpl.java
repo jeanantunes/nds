@@ -58,6 +58,33 @@ public class CalendarioServiceImpl implements CalendarioService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public Date adicionarDiasRetornarDiaUtil(Date data, int numDias) {
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		if (numDias == 0) {
+			
+			// Verifica se o dia informado é util.
+			// Caso não seja, incrementa até encontrar o primeiro dia útil.
+			while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
+				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
+			}
+			
+		} else {
+			
+			// Adiciona o número de dias úteis informado.
+			for (int i = 0; i < numDias; i++) {
+				
+				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));								
+			}
+		}
+		
+		return cal.getTime();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public Date subtrairDiasUteis(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();
