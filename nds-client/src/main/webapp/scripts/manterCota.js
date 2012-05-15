@@ -45,27 +45,8 @@ var MANTER_COTA = {
     
     carregarDescontos:function(){
     	
-    	TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDesconto;
-    	
-    	$.postJSON(contextPath + "/cadastro/cota/obterDescontos",
-				"idCota="+ MANTER_COTA.idCota, 
-				function(result){
-					
-					if(result){
-						MANTER_COTA.montarCombo(result,"#selectTipoDesconto");
-					}
-				},null,true
-		);
-		
-		$.postJSON(contextPath + "/cadastro/cota/obterDescontosSelecionados",
-				"idCota="+ MANTER_COTA.idCota, 
-				function(result){
-				
-					if(result){
-						MANTER_COTA.montarCombo(result,"#selectDesconto");
-					}
-				},null,true
-		);
+    	TAB_COTA.funcaoSalvar = COTA_DESCONTO.salvarDesconto;
+    	COTA_DESCONTO.carregarDescontoCota();
     },
     
     carregarDistribuicao:function(){
@@ -76,6 +57,8 @@ var MANTER_COTA = {
     
     carregarDadosSocio:function(){
     	
+    	TAB_COTA.funcaoSalvar = SOCIO_COTA.salvarSocios;
+    	SOCIO_COTA.carregarSociosCota();
     },
     
 	carregarPDV : function (){
@@ -86,28 +69,8 @@ var MANTER_COTA = {
 	
 	carregarFornecedores:function(){
 		
-		TAB_COTA.funcaoSalvar = MANTER_COTA.salvarFornecedores;
-		
-		$.postJSON(contextPath + "/cadastro/cota/obterFornecedores",
-				"idCota="+ MANTER_COTA.idCota, 
-				function(result){
-					
-					if(result){
-						MANTER_COTA.montarCombo(result,"#selectFornecedor_option_cnpj");
-					}
-				},null,true
-		);
-		
-		$.postJSON(contextPath + "/cadastro/cota/obterFornecedoresSelecionados",
-				"idCota="+ MANTER_COTA.idCota, 
-				function(result){
-				
-					if(result){
-						MANTER_COTA.montarCombo(result,"#selectFornecedorSelecionado_option_cnpj");
-					}
-				},null,true
-		);
-	
+		TAB_COTA.funcaoSalvar = COTA_FORNECEDOR.salvarFornecedores;
+		COTA_FORNECEDOR.carregarFornecedores();
 	},
 	
 	limparFormsTabs: function () {
@@ -222,25 +185,7 @@ var MANTER_COTA = {
 		$(idCombo).html(comboClassificacao);
 	},
 	
-	salvarFornecedores: function(callback){
 	
-		var fornecedores ="";
-		
-		 $("#selectFornecedorSelecionado_option_cnpj option").each(function (index) {
-			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
-		 });
-		
-		$.postJSON(
-				contextPath + "/cadastro/cota/salvarFornecedores",
-				fornecedores + 
-				"idCota="+ MANTER_COTA.idCota, 
-				callback,
-				null,
-				true
-		);
-		
-		return false;
-	},
 	
 	salvarDadosCadastrais:function(callback){
 		
@@ -281,25 +226,7 @@ var MANTER_COTA = {
 		return false;
 	},
 	
-	salvarDesconto:function(callback){
-		
-		var descontos = "";
-		
-		 $("#selectDesconto option").each(function (index) {
-			 descontos = descontos + "descontos["+index+"]="+ $(this).val() +"&";
-		 });
-		
-		$.postJSON(
-				contextPath + "/cadastro/cota/salvarDescontos",
-				descontos + 
-				"&idCota="+ MANTER_COTA.idCota, 
-				callback,
-				null,
-				true
-		);
-		
-		return false;
-	},
+	
 	
 	validarEmail : function (idInput)	{
 		er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
@@ -355,6 +282,99 @@ var MANTER_COTA = {
 			}
 		});
 	}
+};
+
+var COTA_DESCONTO = {
+		
+		salvarDesconto:function(callback){
+			
+			var descontos = "";
+			
+			 $("#selectDesconto option").each(function (index) {
+				 descontos = descontos + "descontos["+index+"]="+ $(this).val() +"&";
+			 });
+			
+			$.postJSON(
+					contextPath + "/cadastro/cota/salvarDescontos",
+					descontos + 
+					"&idCota="+ MANTER_COTA.idCota, 
+					callback,
+					null,
+					true
+			);
+			
+			return false;
+		},
+		
+		carregarDescontoCota:function(){
+			
+			$.postJSON(contextPath + "/cadastro/cota/obterDescontos",
+					"idCota="+ MANTER_COTA.idCota, 
+					function(result){
+						
+						if(result){
+							MANTER_COTA.montarCombo(result,"#selectTipoDesconto");
+						}
+					},null,true
+			);
+			
+			$.postJSON(contextPath + "/cadastro/cota/obterDescontosSelecionados",
+					"idCota="+ MANTER_COTA.idCota, 
+					function(result){
+					
+						if(result){
+							MANTER_COTA.montarCombo(result,"#selectDesconto");
+						}
+					},null,true
+			);
+		}
+		
+};
+
+var COTA_FORNECEDOR = {
+	
+		salvarFornecedores: function(callback){
+			
+			var fornecedores ="";
+			
+			 $("#selectFornecedorSelecionado_option_cnpj option").each(function (index) {
+				 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+			 });
+			
+			$.postJSON(
+					contextPath + "/cadastro/cota/salvarFornecedores",
+					fornecedores + 
+					"idCota="+ MANTER_COTA.idCota, 
+					callback,
+					null,
+					true
+			);
+			
+			return false;
+		},
+		
+		carregarFornecedores:function(){
+			
+			$.postJSON(contextPath + "/cadastro/cota/obterFornecedores",
+					"idCota="+ MANTER_COTA.idCota, 
+					function(result){
+						
+						if(result){
+							MANTER_COTA.montarCombo(result,"#selectFornecedor_option_cnpj");
+						}
+					},null,true
+			);
+			
+			$.postJSON(contextPath + "/cadastro/cota/obterFornecedoresSelecionados",
+					"idCota="+ MANTER_COTA.idCota, 
+					function(result){
+					
+						if(result){
+							MANTER_COTA.montarCombo(result,"#selectFornecedorSelecionado_option_cnpj");
+						}
+					},null,true
+			);
+		}
 };
 
 var COTA_CNPJ = {	
@@ -517,41 +537,51 @@ var COTA_CPF = {
 
 var SOCIO_COTA = {
 		
-		idSocioSelecionado:"",
+		itemEdicao:null,
+		rows:[],
 		
-		paraData:function(){
+		socio:function(){
 			
-			var param=[{name:"nome",value:$("#idNomeSocio").val()},
-			           {name:"cargo",value:$("#idCargoSocio").val()},
-			           {name:"principal",value:($("#idSocioPrincipal").attr("checked"))?true:false}];
+			var socio = {
+					nome:$("#idNomeSocio").val(),
+					cargo:$("#idCargoSocio").val(),
+					principal:($("#idSocioPrincipal").attr("checked"))?true:false,
+					id:null
+			};
 			
-			return param;
-		},
-
-		getActionGridSocio : function (idSocio) {
-
-			return '<a href="javascript:;" onclick="editarSocio(' + idSocio + ')" ' +
-					' style="cursor:pointer;border:0px;margin:5px" title="Editar Socio">' +
-					'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
-					'</a>' +
-					'<a href="javascript:;" onclick="confirmarExclusaoSocio(' + idSocio + ')" ' +
-					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Socio">' +
-					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
-					'</a>';
+			return socio;
 		},
 		
-		popularGridSocios: function() {
+		salvarSocios:function(callback){
 			
-			SOCIO_COTA.popularGrid(); 
+			var list =   serializeArrayToPost("sociosCota",SOCIO_COTA.obterListaSocios());			
+			var objPost = concatObjects({idCota:MANTER_COTA.idCota},list);
+			
+			$.postJSON(contextPath + "/cadastro/cota/salvarSocioCota",
+					objPost , 
+					callback,
+					null,
+					true
+			);
+		},
+		
+		carregarSociosCota: function() {
+			
+			SOCIO_COTA.rows = [];
 			
 			$.postJSON(
 				contextPath+'/cadastro/cota/carregarSociosCota',
 				"idCota=" + MANTER_COTA.idCota,
 				function(result) {
 					
-					$(".sociosPjGrid").flexAddData({
-						page: result.page, total: result.total, rows: result.rows
-					});	
+					$.each(result, function(index, value) {
+						
+						var socio = {nome:value.nome, cargo:value.cargo,principal:value.principal};
+						
+						SOCIO_COTA.rows.push({"id": SOCIO_COTA.rows.length,"cell":socio});
+					});
+					
+					$(".sociosPjGrid").flexAddData({rows:SOCIO_COTA.rows,page:1,total:1}  );
 					
 					SOCIO_COTA.limparFormSocios();
 				},
@@ -563,7 +593,7 @@ var SOCIO_COTA = {
 			);
 		},		
 		
-		processarResultadoConsultaSocios:function(result){
+		processarResultadoConsultaSocios:function(data){
 			
 			if (data.mensagens) {
 
@@ -575,47 +605,37 @@ var SOCIO_COTA = {
 				return;
 			}
 			
-			if (data.result){
-				data.rows = data.result.rows;
-			}
-			
-			var i;
-
-			for (i = 0 ; i < data.rows.length; i++) {
-
-				var lastIndex = data.rows[i].cell.length;
-
-				data.rows[i].cell[lastIndex] = SOCIO_COTA.getActionGridSocio(data.rows[i].id);
+			$.each(data.rows, function(index, value) {
 				
-				data.rows[i].cell[1] = 
-				data.rows[i].cell[1] == "true" ? '<img src="/nds-client/images/ico_check.gif" border="0px"/>'
-						                       : '&nbsp;';
-			}
-
-			$('.sociosPjGrid').show();
+				var idSocio = value.id;
 			
-			if (data.result){
-				return data.result;
-			}
+				var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.editarSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
+				    acao += '<a href="javascript:;" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+
+				value.cell.acao = acao;
+				
+				
+				value.cell.principalFlag =(value.cell.principal == true) 
+								?'<img src="' + contextPath + '/images/ico_check.gif" border="0" hspace="5" />'
+							  	:'&nbsp';
+			});
+			
 			return data;
 			
 		},
 		
 		editarSocio:function(idSocio){
 			
-			$.postJSON("<c:url value='/cadastro/cota/editarSocio' />", 
-					"idSocio=" + idSocio, 
-					function(result) {
-						
-						SOCIO_COTA.idSocioSelecionado = result.idSocio;
-				
-						$("#idNomeSocio").val(""),
-						$("#idCargoSocio").val(""),
-						$("#idSocioPrincipal").attr("checked",null);
-						
-						$("#btnAddEditarSocio").text("Editar");
-					}
-				);
+			var socios  = SOCIO_COTA.rows[idSocio].cell;
+			
+			SOCIO_COTA.itemEdicao = idSocio;
+			
+			$("#idNomeSocio").val(socios.nome),
+			$("#idCargoSocio").val(socios.cargo),
+			$("#idSocioPrincipal").attr("checked",(socios.principal == true)?"checked":null);
+			
+			$("#btnEditarSocio").show();
+			$("#btnAddSocio").hide();
 		},
 		
 		limparFormSocios:function(){
@@ -623,6 +643,10 @@ var SOCIO_COTA = {
 			$("#idNomeSocio").val(""),
 			$("#idCargoSocio").val(""),
 			$("#idSocioPrincipal").attr("checked",null);
+			SOCIO_COTA.itemEdicao = null;
+			
+			$("#btnEditarSocio").hide();
+			$("#btnAddSocio").show();
 		},
 		
 		removerSocio:function(idSocio){
@@ -634,20 +658,20 @@ var SOCIO_COTA = {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						$(this).dialog("close");
 						
-						$.postJSON("<c:url value='/cadastro/cota/removerSocio' />", 
-									"idSocio=" + idSocio, 
-									function(result) {
-										$(".sociosGrid").flexAddData({
-											page: 1, total: 1, rows: result.rows
-										});
-										
-										$("#btnAddEditarSocio").text("Incluir Novo");
-									},
-									null,
-									true
-						);
+						SOCIO_COTA.rows.splice(idSocio, 1);
+						
+						var lista = new Array;
+						
+						for (var index in SOCIO_COTA.rows) {	
+							lista.push({"id":lista.length, "cell":SOCIO_COTA.rows[index].cell});
+						}
+						
+						SOCIO_COTA.rows = lista;
+						
+						$(".sociosPjGrid").flexAddData({rows:lista,page:1,total:1}  );
+						
+						$(this).dialog("close");
 					},
 					"Cancelar": function() {
 						$(this).dialog("close");
@@ -658,58 +682,49 @@ var SOCIO_COTA = {
 			$("#dialog-excluir-socio").show();
 		},
 		
+		obterListaSocios:function(){
+			
+			var list = new Array();
+			
+			for (var index in SOCIO_COTA.rows) {
+				var socio = SOCIO_COTA.rows[index].cell;
+				socio.principalFlag=null;
+				socio.acao = null;
+				list.push(socio);
+			}
+			
+			return list;
+		},
+		
 		incluirSocio:function(){
 			
-			$.postJSON("<c:url value='/cadastro/cota/incluirSocio'/>", 
-						SOCIO_COTA.paraData(), 
+			var data  = serializeObjectToPost("socioCota",  SOCIO_COTA.socio());
+			var list =   serializeArrayToPost("sociosCota",SOCIO_COTA.obterListaSocios());			
+			var objPost = concatObjects(data,list);					
+			
+			$.postJSON(contextPath + "/cadastro/cota/incluirSocioCota", 
+						objPost , 
 						function(result){
-				
-							if (result != ""){
+
+							if (result){
 								
-								$(".sociosPjGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
+								var novoSocio = result;
+								var rows = SOCIO_COTA.rows;
 								
-								$("#btnAddEditarSocio").text("Incluir Novo");
+								if (SOCIO_COTA.itemEdicao == null || SOCIO_COTA.itemEdicao < 0) {
+									rows.push({"id": rows.length,"cell":novoSocio});
+								} else {
+									rows.slice(SOCIO_COTA.itemEdicao, 1);
+									rows[SOCIO_COTA.itemEdicao] = {"id":SOCIO_COTA.itemEdicao,"cell":novoSocio};
+								}
+								
+								$(".sociosPjGrid").flexAddData({rows:rows,page:1,total:1} );	
 							}
+							
+							SOCIO_COTA.limparFormSocios();
 					},
 					null,
 					true
 				);
-		},
-		
-		popularGridSocios:function(){
-			
-			$(".sociosPjGrid").flexigrid({
-				dataType : 'json',
-				preProcess: SOCIO_COTA.processarResultadoConsultaSocios,
-				colModel : [{
-					display : 'Nome',
-					name : 'nome',
-					width : 380,
-					sortable : true,
-					align : 'left'
-				},{
-					display : 'Cargo',
-					name : 'cargo',
-					width : 190,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Principal',
-					name : 'principal',
-					width : 70,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Ação',
-					name : 'acao',
-					width : 60,
-					sortable : false,
-					align : 'center'
-				}],
-				width : 770,
-				height : 180
-			});
 		}
-}
+};

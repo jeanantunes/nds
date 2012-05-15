@@ -18,7 +18,6 @@
                 <li><a href="#tabCota-10">Sócios</a></li>
           </ul>
         
-        
         <div id="tabCota-1">
       		<jsp:include page="dadosBasicoCNPJ.jsp"/>
       		
@@ -41,6 +40,7 @@
 		</div>
 		
 		<div id="tabCota-5">
+			
 		</div>
 		
 		<div id="tabCota-6">
@@ -64,9 +64,9 @@
 		</div>
 		
 		<div id="tabCota-10">
-			<jsp:include page="socio.jsp"></jsp:include>
+			<jsp:include page="socio.jsp"/>
 		</div>
-	
+		
 	</div>
 
 </div>

@@ -711,5 +711,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		
 		return (numeroCota == null ) ? 0 : numeroCota + 1;
 	}
+	
 
 }

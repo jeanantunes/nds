@@ -66,7 +66,7 @@ function TabCota(tabName) {
 		/**Socios**/
 		case 9:
 			MANTER_COTA.carregarDadosSocio();
-		break;
+			break;
 	}
 		
 	},

@@ -517,7 +517,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		dto.setNumCota(cota.getNumeroCota());
 		
-		dto.setBox(cota.getBox().getNome());
+		if(cota.getBox()!= null){
+			dto.setBox(cota.getBox().getNome());
+		}
 		
 		if(qtdePDVAutomatico) {	
 			dto.setQtdePDV( (cota.getPdvs()!=null) ? cota.getPdvs().size() : 0);
@@ -719,8 +721,6 @@ public class CotaServiceImpl implements CotaService {
 			cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
 		}
 				
-		//validarNumeroDocumentoPessoa(cota, cotaDto);
-		
 		boolean incluirPDV = false;
 		
 		if(cota == null){
@@ -1153,17 +1153,29 @@ public class CotaServiceImpl implements CotaService {
 		
 		if( cota.getSociosCota() != null && !cota.getSociosCota().isEmpty()){
 	    	
-			for(SocioCota ref : cota.getSociosCota()){
-	    		socioCotaRepository.remover(ref);
-	    	}
+			socioCotaRepository.removerSociosCota(idCota);
 	    }
 		
 		if( sociosCota!= null && !sociosCota.isEmpty()){
-
+			
+			if(!isSocioPrincipal(sociosCota)){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
+			}
+	
 			for(SocioCota ref : sociosCota){
 	    		ref.setCota(cota);
 				socioCotaRepository.merge(ref);
 	    	}
 		}
+	}
+
+	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
+		
+		for(SocioCota socio : sociosCota){
+			if(socio.getPrincipal())
+				return true;
+		}
+		
+		return false;
 	}
 }

@@ -8,4 +8,6 @@ public interface SocioCotaRepository extends Repository<SocioCota, Long> {
 	
 	List<SocioCota> obterSocioCotaPorIdCota(Long idCota);
 	
+	void removerSociosCota(Long idCota);
+	
 }

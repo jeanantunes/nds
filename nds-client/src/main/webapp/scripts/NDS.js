@@ -131,6 +131,15 @@ function serializeArrayToPost(listaName, lista) {
 	return obj;
 };
 
+
+function concatObjects(obj1, obj2){
+	var obj = obj1;
+	for ( var propriedade in obj2) {
+		obj[propriedade] = obj2[propriedade];
+	}
+	return obj;
+}
+
 //callback function to bring a hidden box back
 	
 $(document).ready(function(){	

@@ -2,10 +2,6 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +9,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -29,23 +24,17 @@ public class CotaSocioController {
 	private Result result;
 	
 	@Autowired
-	private HttpSession httpSession;
-	
-	@Autowired
 	private CotaService cotaService;
 	
-	public static final String LISTA_SOCIOS_SALVAR_SESSAO = "listaSociosSalvarSessao";
-	
-	
-	private void validarInclusaoSocio(String nome, String cargo){
+	private void validarInclusaoSocio(SocioCota socioCota){
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if(nome == null || nome.isEmpty()){
+		if(socioCota.getNome() == null || socioCota.getNome().isEmpty()){
 			listaMensagens.add("O preenchimento do campo [Nome] é obrigatório!");
 		}
 		
-		if(cargo == null || cargo.isEmpty() ){
+		if(socioCota.getCargo() == null || socioCota.getCargo().isEmpty() ){
 			listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
 		}
 		
@@ -53,15 +42,6 @@ public class CotaSocioController {
 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
-		
-	}
-	@Post
-	public void salvarSocioCota(List<SocioCota> sociosCota,Long idCota){
-		
-		cotaService.salvarSociosCota(sociosCota, idCota);
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
@@ -73,70 +53,49 @@ public class CotaSocioController {
 	}
 	
 	@Post
-	public void excluirSocioCota(Long idSocio){
+	public void incluirSocioCota(SocioCota socioCota, List<SocioCota> sociosCota){
 		
+		validarInclusaoSocio(socioCota);
+		
+		validarInclusaoSocioPrincipal(socioCota,sociosCota);
+		
+		result.use(Results.json()).from(socioCota,"result").recursive().serialize();
 	}
 	
 	@Post
-	public void incluirSocioCota(String nome,String cargo,boolean principal, Long idSocio){
+	public void salvarSocioCota(Long idCota, List<SocioCota> sociosCota){
 		
-		validarInclusaoSocio(nome,cargo);
+		cotaService.salvarSociosCota(sociosCota, idCota);
 		
-		SocioCota socioCota = new SocioCota();
-		socioCota.setNome(nome);
-		socioCota.setCargo(cargo);
-		socioCota.setPrincipal(principal);
+		result.use(Results.json()).from("","result").recursive().serialize();
+	}
+
+	/**
+	 * Verifica se o sócio informado é principal
+	 * @param socioCota
+	 * @param sociosCota
+	 */
+	private void validarInclusaoSocioPrincipal(SocioCota socioCota, List<SocioCota> sociosCota) {
 		
-		setSocioCota(socioCota, idSocio);
+		if(isSocioPrincipal(sociosCota) && socioCota.getPrincipal() ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado");
+		}
 	}
 	
-	private void rendereizarSociosCota(){
+	/**
+	 * Verifica se existe algum sócio cadastrado como principal
+	 * @param sociosCota
+	 * @return boolean 
+	 */
+	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
 		
-		
-	}
-	
-	private void removeSocioCota(SocioCota socioCota){
-		
-		Map<Long,SocioCota> socios =  getSociosCota();
-		
-		if(socios!=null && !socios.isEmpty()){
+		if(sociosCota != null && !sociosCota.isEmpty()){
 			
-			socios.remove(socioCota);
+			for(SocioCota socio : sociosCota){
+				if(socio.getPrincipal())
+					return true;
+			}
 		}
-		
-		httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO,socios);
+		return false;	
 	}
-	
-	private void setSocioCota(SocioCota socioCota, Long idSocio){
-		
-		Map<Long,SocioCota> socios =  getSociosCota();
-		
-		if(socios!=null && !socios.isEmpty()){
-			
-			socios.put(idSocio, socioCota);
-		}
-		
-		httpSession.setAttribute(LISTA_SOCIOS_SALVAR_SESSAO,socios);
-	}
-	
-	private SocioCota getSocioCota(Long idSocio){
-		
-		Map<Long,SocioCota> socios = getSociosCota();
-		
-		if(socios == null || socios.isEmpty()){
-			return null;
-		}
-		
-		if(socios.containsKey(idSocio)){
-			return socios.get(idSocio);
-		}
-		
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Map<Long,SocioCota> getSociosCota(){
-		return  (Map<Long, SocioCota>) httpSession.getAttribute(LISTA_SOCIOS_SALVAR_SESSAO);
-	}
-	
 }
