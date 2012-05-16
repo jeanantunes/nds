@@ -38,6 +38,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
 import br.com.abril.nds.util.DateUtil;
@@ -71,6 +72,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ParciaisService parciaisService;
 	
 	/**
 	 * {@inheritDoc}
@@ -182,6 +186,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		gerarChamadaEncalhe(idsProdutoEdicao, mapaEdicaoDataRecolhimento, numeroSemana);
 		
 		//TODO: chamar componente de cadastro de lançamentos parciais
+//		parciaisService.gerarPeriodosParcias(produtoEdicao, qtdePeriodos, idUsuario);
 	}
 	
 	private void atualizarLancamento(Set<Long> idsLancamento,
@@ -335,6 +340,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento) {
 		
+		//TODO: informar se a matriz deve ser balanceada
+		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
@@ -373,11 +380,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																	 listaIdsFornecedores, 
 																	 GrupoProduto.CROMO);
 
+		boolean matrizFechada = 
+			this.lancamentoRepository
+				.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodoRecolhimento);
+		
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
+		
+		dadosRecolhimento.setMatrizFechada(matrizFechada);
 		
 		return dadosRecolhimento;
 	}

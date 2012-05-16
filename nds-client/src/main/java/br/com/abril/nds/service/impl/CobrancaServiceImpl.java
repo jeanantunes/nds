@@ -12,8 +12,10 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 
@@ -23,6 +25,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
+	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
 
 
 	@Override
@@ -36,6 +41,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
         
+		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
 		if (banco != null && banco.getJuros() != null ) {
 			
 			taxaJurosMensal = banco.getJuros();
@@ -45,11 +52,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
 			
-		} else if (distribuidor.getPoliticaCobranca() != null
-					&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-					&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal() != null) {
+		} else if (politicaPrincipal != null
+					&& politicaPrincipal.getFormaCobranca() != null
+					&& politicaPrincipal.getFormaCobranca().getTaxaJurosMensal() != null) {
 
-			taxaJurosMensal = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaJurosMensal();
+			taxaJurosMensal = politicaPrincipal.getFormaCobranca().getTaxaJurosMensal();
 		}
 
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
@@ -72,6 +79,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		BigDecimal valorCalculadoMulta = null;
 
+		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
 		if (banco != null && banco.getVrMulta() != null) {
 		
 			valorCalculadoMulta = banco.getVrMulta();
@@ -87,11 +96,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 				taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
 	
-			} else if (distribuidor.getPoliticaCobranca() != null
-						&& distribuidor.getPoliticaCobranca().getFormaCobranca() != null
-						&& distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta() != null) {
+			} else if (politicaPrincipal != null
+						&& politicaPrincipal.getFormaCobranca() != null
+						&& politicaPrincipal.getFormaCobranca().getTaxaMulta() != null) {
 	
-				taxaMulta = distribuidor.getPoliticaCobranca().getFormaCobranca().getTaxaMulta();
+				taxaMulta = politicaPrincipal.getFormaCobranca().getTaxaMulta();
 			}
 	
 			valorCalculadoMulta = valor.multiply(MathUtil.divide(taxaMulta, new BigDecimal(100)));

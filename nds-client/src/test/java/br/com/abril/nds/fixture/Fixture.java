@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -50,6 +51,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -531,14 +533,14 @@ public class Fixture {
 	}
 
 	public static Distribuidor distribuidor(Integer codigo, PessoaJuridica juridica,
-											Date dataOperacao, PoliticaCobranca politicaCobranca) {
+											Date dataOperacao, Set<PoliticaCobranca> politicasCobranca) {
 		
 		Distribuidor distribuidor = new Distribuidor();
 		
 		distribuidor.setCodigo(codigo);
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
-		distribuidor.setPoliticaCobranca(politicaCobranca);
+		distribuidor.setPoliticasCobranca(politicasCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
@@ -1669,12 +1671,13 @@ public class Fixture {
 		contratoCota.setAvisoPrevioRescisao(aviso);
 		return contratoCota;
 	}
-	
+
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
 			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao,
-			String assuntoEmailCobranca, String mensagemEmailCobranca) {
+			String assuntoEmailCobranca, String mensagemEmailCobranca, 
+			boolean principal,FormaEmissao formaEmissao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
 		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
@@ -1685,6 +1688,9 @@ public class Fixture {
 		politicaCobranca.setFormaCobranca(formaCobranca);
 		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
 		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
+		politicaCobranca.setPrincipal(principal);
+		politicaCobranca.setFormaEmissao(formaEmissao);
+		politicaCobranca.setAtivo(true);
 		return politicaCobranca;
 	}
 	
@@ -2491,13 +2497,15 @@ public class Fixture {
 	
 	public static LancamentoParcial criarLancamentoParcial(ProdutoEdicao produtoEdicao, 
 														   Date lancamentoInicial, 
-														   Date recolhimentoFinal) {
+														   Date recolhimentoFinal,
+														   StatusLancamentoParcial status) {
 		
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
 		
 		lancamentoParcial.setProdutoEdicao(produtoEdicao);
 		lancamentoParcial.setLancamentoInicial(lancamentoInicial);
 		lancamentoParcial.setRecolhimentoFinal(recolhimentoFinal);
+		lancamentoParcial.setStatus(status);
 		
 		return lancamentoParcial;
 	}
@@ -2521,5 +2529,15 @@ public class Fixture {
 		parcial.setTipo(tipo);
 		
 		return parcial;
+	}
+	
+	public static TipoDesconto criarTipoDesconto(String codigo, String descricao, BigDecimal porcentagem){
+		
+		TipoDesconto tipoDesconto = new TipoDesconto();
+		tipoDesconto.setCodigo(codigo);
+		tipoDesconto.setDescricao(descricao);
+		tipoDesconto.setPorcentagem(porcentagem);
+		
+		return tipoDesconto;
 	}
 }

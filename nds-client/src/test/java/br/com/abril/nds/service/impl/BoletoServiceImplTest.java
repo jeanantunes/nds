@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -89,11 +92,17 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
 		save(politicaCobranca);
 		
-		distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicaCobranca);
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
+		
+		distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicasCobranca);
 		save(distribuidor);
+		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
 		save(box);
@@ -217,7 +226,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	public void testeBaixaAutomaticaPermiteDivergencia() {
 		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, null, true, true, true, 1, null, null);
+				Fixture.criarPoliticaCobranca(null, null, true, true, true, 1, null, null,true,FormaEmissao.INDIVIDUAL_BOX);
 		
 		Mockito.when(politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO))
 			.thenReturn(politicaCobranca);
@@ -240,7 +249,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	public void testeBaixaAutomaticaNaoPermiteDivergencia() {
 		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, null, false, false, false, 1, null, null);
+				Fixture.criarPoliticaCobranca(null, null, false, false, false, 1, null, null,true,FormaEmissao.INDIVIDUAL_BOX);
 		
 		Mockito.when(politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO))
 			.thenReturn(politicaCobranca);
@@ -271,8 +280,10 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento.setNumeroRegistro(1);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
+		PoliticaCobranca politicaPrincipal = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
+		
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
-									   null, distribuidor.getPoliticaCobranca(), distribuidor,
+									   null, politicaPrincipal, distribuidor,
 									   DateUtil.adicionarDias(new Date(), 1), null);
 	}
 	

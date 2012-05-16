@@ -14,7 +14,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -65,6 +64,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Lancamento lancamentoCapricho;
 	private Lancamento lancamentoCromoReiLeao;
 	
+	private ProdutoEdicao veja1;
+	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
@@ -110,7 +111,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
+		veja1 = Fixture.produtoEdicao(1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja);
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
@@ -307,7 +308,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		LancamentoParcial lancamentoParcial = Fixture.criarLancamentoParcial(capricho1,
 																			 lancamentoCapricho.getDataLancamentoPrevista(), 
-																			 lancamentoCapricho.getDataRecolhimentoPrevista());
+																			 lancamentoCapricho.getDataRecolhimentoPrevista(),
+																			 StatusLancamentoParcial.PROJETADO);
 
 		PeriodoLancamentoParcial parcial = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoCapricho.getDataLancamentoPrevista(), 
@@ -327,7 +329,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(infoExame3,
 																			  lancamentoInfoExame.getDataLancamentoPrevista(), 
-																			  lancamentoInfoExame.getDataRecolhimentoPrevista());
+																			  lancamentoInfoExame.getDataRecolhimentoPrevista(),
+																			  StatusLancamentoParcial.PROJETADO);
 
 		PeriodoLancamentoParcial parcial2 = Fixture.criarPeriodoLancamentoParcial(
 				lancamentoInfoExame.getDataLancamentoPrevista(), 
@@ -501,8 +504,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(lancamentos);
 		Assert.assertEquals(3, lancamentos.size());
 
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(1).getId());
+		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
+		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
 		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
 	}
 	
@@ -718,5 +721,14 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				this.lancamentoRepository.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodo);
 		
 		Assert.assertFalse(existeChamadaEncalhe);
+	}
+	
+	@Test
+	public void obterUltimoLancamentoDaEdicao() {
+	
+		Lancamento lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(veja1.getId());
+		
+		Assert.assertEquals(lancamento.getId(),lancamentoVeja.getId());
+		Assert.assertEquals(lancamento.getDataLancamentoDistribuidor(),lancamentoVeja.getDataLancamentoDistribuidor());
 	}
 }

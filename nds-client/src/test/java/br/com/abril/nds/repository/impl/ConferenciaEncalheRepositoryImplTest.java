@@ -3,7 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -21,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -352,13 +355,15 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		distribuidor = null;
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
+			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
 
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
+		
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
-
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
+		
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		
@@ -377,6 +382,9 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		distribuidor.setFatorDesconto(BigDecimal.TEN);
 		
 		save(distribuidor);
+		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 	}
 	

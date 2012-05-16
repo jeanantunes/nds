@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ConferenciaEncalheDTO implements Serializable {
 
@@ -14,6 +15,7 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private Long idProdutoEdicao;
 	private BigDecimal qtdExemplar;
 	private String codigoDeBarras;
+	private Date dataRecolhimento;
 	private Long codigoSM;
 	private String codigo;
 	private String nomeProduto;
@@ -110,5 +112,10 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
-	
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
 }

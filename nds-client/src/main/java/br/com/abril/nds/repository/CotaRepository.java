@@ -5,10 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 
@@ -132,4 +134,27 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return endereço principal da cota.
 	 */
 	public abstract EnderecoCota obterEnderecoPrincipal(long idCota);
+	
+	/**
+	 * Retorna uma lista de Cotas cadastradas para manutenção de edição e exclusão
+	 * 
+	 * @param filtro - opções de filtro para consulta
+	 * 
+	 * @return List<CotaDTO>
+	 */
+	List<CotaDTO> obterCotas(FiltroCotaDTO filtro);
+	
+	/**
+	 * Retorna a quantidade de Cotas cadastradas para manutenção de edição e exclusão
+	 * 
+	 * @param filtro - opções de filtro para consulta
+	 * 
+	 * @return Long
+	 */
+	Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro);
+	
+	Integer gerarSugestaoNumeroCota();
+	
+	
+	Cota obterPorNumerDaCotaAtiva(Integer numeroCota);
 }

@@ -9,10 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -507,12 +504,20 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" case  ");
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
-		sql.append(" and periodoLancamentoParcial.TIPO<> :tipoParcial then ");
+		sql.append(" and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" (estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
 		sql.append(" else estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
 		sql.append(" end as expectativaEncalhe, ");
 		
-		sql.append(" (estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)*produtoEdicao.PRECO_VENDA as valorTotal, ");
+		sql.append(" case  ");
+		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
+		sql.append(" and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
+		sql.append(" (estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
+		sql.append(" * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) ");
+		sql.append(" else estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
+		sql.append(" * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) ");
+		sql.append(" end as valorTotal, ");
+		
 		sql.append(" case  ");
 		sql.append(" when (chamadaEncalhe.ID is not null)  ");
 		sql.append(" and chamadaEncalhe.TIPO_CHAMADA_ENCALHE<> :tipoChamadaEncalhe then true ");
@@ -663,16 +668,22 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
 		
-		Criteria criteria = getSession().createCriteria(Lancamento.class);
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = ")
+		   .append(" (select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+		   .append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
+		   .append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ");
 		
-		criteria.createAlias("lancamento", "lancamento");
-		criteria.createAlias("lancamento.produtoEdicao", "produtoEdicao");
 		
-		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		Query query = getSession().createQuery(hql.toString());
 		
-		criteria.setProjection(Projections.max("lancamento.dataLancamentoDistribuidor"));  
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
-		Object lancamento = criteria.uniqueResult();
+		Object lancamento = query.uniqueResult();
 		
 		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
 	}

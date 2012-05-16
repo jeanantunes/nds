@@ -842,7 +842,7 @@ public class PdvServiceImpl implements PdvService {
 			}
 		}
 		
-		pdvDTO.setExpositor(pdv.isExpositor());
+		pdvDTO.setExpositor((pdv.isExpositor()==null)?false:pdv.isExpositor());
 		pdvDTO.setTipoExpositor(pdv.getTipoExpositor());
 	}
 	

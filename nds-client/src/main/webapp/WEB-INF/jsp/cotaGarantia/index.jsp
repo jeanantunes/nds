@@ -1,12 +1,12 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
-
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-
+<script language="text/javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript">
 	var tipoCotaGarantia;
 	$(function() {
@@ -18,13 +18,12 @@
 	<tr>
 		<td width="112">Tipo de Garantia:</td>
 		<td width="631"><select id="tipoGarantiaSelect"
-			onchange="tipoCotaGarantia.changeController($(this).val());"
+			onchange="tipoCotaGarantia.onChange($(this).val());"
 			style="width: 250px;">
 				<option value="" selected="selected">Selecione...</option>
 		</select></td>
 	</tr>
 </table>
-
 <div id="cotaGarantiaNotaPromissoriaPanel" style="display: none;">
 	<fieldset>
 		<legend>Nota Promiss&oacute;ria</legend>
@@ -251,7 +250,7 @@
 					
 					<span class="bt_novos">
 			  			<a href="javascript:;" id="cotaGarantiaImovelSalvaEdicao" style="display:none;">
-			  			<img src="/nds-client/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+			  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
 			  		</span>
 					
 					</td>
