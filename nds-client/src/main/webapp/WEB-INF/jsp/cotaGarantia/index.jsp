@@ -6,7 +6,8 @@
 
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-
+<script language="text/javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript">
 	var tipoCotaGarantia;
 	$(function() {
@@ -18,7 +19,7 @@
 	<tr>
 		<td width="112">Tipo de Garantia:</td>
 		<td width="631"><select id="tipoGarantiaSelect"
-			onchange="tipoCotaGarantia.changeController($(this).val());"
+			onchange="tipoCotaGarantia.onChange($(this).val());"
 			style="width: 250px;">
 				<option value="" selected="selected">Selecione...</option>
 		</select></td>

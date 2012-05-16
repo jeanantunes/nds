@@ -8,7 +8,8 @@
  * @param message
  *            Texto de mensagem.
  * @param onConfirm
- *            função a ser invocada quando cliando no botão de confirmar. Se a função retornar um <code>true</code> o dialog será fechado.
+ *            função a ser invocada quando cliando no botão de confirmar. Se a
+ *            função retornar um <code>true</code> o dialog será fechado.
  * @param onCancel
  *            função a ser invocada quando cliando no botão de cancelar ou
  *            fechado o dialog.
@@ -41,6 +42,7 @@ function ConfirmDialog(message, onConfirm, onCancel) {
 									".ui-dialog-titlebar-close").length) {
 						onCancel();
 					}
+					event.preventDefault();
 				}
 			});
 };

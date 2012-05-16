@@ -42,7 +42,7 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 		/**GARANTIA**/
 		case 4: 
-			T.funcaoSalvar = function(){tipoCotaGarantia.controller.salva();};
+			T.funcaoSalvar = function(){tipoCotaGarantia.controller.salva();return false;};
 			try{
 				tipoCotaGarantia.onOpen();
 			}catch (e) {
