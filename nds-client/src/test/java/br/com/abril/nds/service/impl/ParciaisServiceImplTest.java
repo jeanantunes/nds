@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -84,10 +87,15 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 											BigDecimal.ONE, BigDecimal.ONE, parametroCobranca);
 			save(formaBoleto);
 		
-		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
+			PoliticaCobranca politicaCobranca =
+					Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
 			
-		Distribuidor distribuidor = Fixture.distribuidor(1, pj, new Date(), politicaCobranca);
+		
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
+		
+		Distribuidor distribuidor = Fixture.distribuidor(1, pj, new Date(), politicasCobranca);
+		
 		distribuidor.setFatorRelancamentoParcial(fatorRelancamento);
 		save(distribuidor);
 		
