@@ -1,12 +1,16 @@
-====NDS
-==pre requisites
+NDS
+===
+
+pre requisites
+--------------
 
 	install git from http://git-scm.com/
 	install maven from http://maven.apache.org/download.html
 	install tomcat from http://linorg.usp.br/apache/tomcat/tomcat-7/v7.0.27/bin/apache-tomcat-7.0.27.zip
 	install mysql from http://dev.mysql.com/downloads/
 
-==config
+config
+------
 
 	create a nds-client database on mysql
 	add datasource config in tomcat
@@ -20,7 +24,8 @@
 	 global="jdbc/nds-client" 
 	/> 
 	
-==to build
+to build
+--------
 	
 	go to https://github.com/DGBti/NDS
 	Fork!	
@@ -28,7 +33,8 @@
 	cd NDS
 	mvn clean install
 	
-==to run 
+to run 
+------
 
 	cp /nds-client/target/*.war <TOMCAT_HOME>/webapp
 	localhost:8080/nds-client
