@@ -713,6 +713,8 @@ public class CotaServiceImpl implements CotaService {
 		
 		validarParametrosObrigatoriosCota(cotaDto);
 		
+		validarNovoNumeroCota(cotaDto.getNumeroCota());
+		
 		validarFormatoDados(cotaDto);
 		
 		Cota cota  = null;
@@ -851,35 +853,6 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	private void validarNumeroDocumentoPessoa(Cota cota, CotaDTO cotaDto) {
-		
-		if( TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
-			
-			if(cota == null){
-
-				validarCNPJExistente(cotaDto.getNumeroCnpj());
-			}
-			else {
-				
-				String numCNPJ = ((PessoaJuridica)cota.getPessoa()).getCnpj();
-				
-				if(!numCNPJ.equals(cotaDto.getNumeroCnpj())){
-					
-					validarCNPJExistente(cotaDto.getNumeroCnpj());
-				}
-			}
-		}
-	}
-	
-	private void validarCNPJExistente(String numeroCNPJ){
-		
-		PessoaJuridica pessoa = pessoaJuridicaRepository.buscarPorCnpj(numeroCNPJ);
-
-		if (pessoa != null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Operação não pode ser confirmada! CNPJ já está sendo usado por outra cota.");
-		}
-	}
-
 	private Pessoa getPessoaCota(Cota cota, CotaDTO cotaDto){
 		
 		Pessoa pessoa = cota.getPessoa();
@@ -948,10 +921,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(referenciasCota != null && !referenciasCota.isEmpty()){
 	    	
-			for(ReferenciaCota ref : referenciasCota){
-	    		referenciaCotaRepository.remover(ref);
-	    	}
-	    	
+			referenciaCotaRepository.excluirReferenciaCota(baseReferenciaCota.getId());
 	    }
 		
 		referenciasCota = getReferenciasCota(baseReferenciaCota, cotaDto);
@@ -1044,6 +1014,30 @@ public class CotaServiceImpl implements CotaService {
 
 	private boolean tratarValorReferenciaCota(Integer numeroCota, BigDecimal porcentagem){
 		return (numeroCota != null && porcentagem != null);
+	}
+	
+	/**
+	 * Verifica se o número da cota existente pode ser utilizado por uma nova cota
+	 * 
+	 * @param numeroCota - número da nova cota
+	 */
+	private void validarNovoNumeroCota(Integer numeroCota){
+		
+		Cota cota  = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		if(cota!= null){
+			
+			if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
+				
+				if(!isNumeroCotaValido(numeroCota)){
+
+					throw new ValidacaoException(TipoMensagem.WARNING,"Código da cota está inativo mas não pode ser usado.");
+				}
+			}
+			else{
+				throw new ValidacaoException(TipoMensagem.WARNING,"Código da cota não pode ser utilizado.");
+			}	
+		}
 	}
 	
 	/**
