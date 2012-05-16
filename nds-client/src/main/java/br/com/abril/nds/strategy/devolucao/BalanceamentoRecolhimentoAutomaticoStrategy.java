@@ -169,8 +169,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 	 * Gerencia os produtos do recolhimento que não foram balanceados por excederem a capacidade de manuseio.
 	 */
 	private void gerenciarProdutosRecolhimentoNaoBalanceados(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-															   List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
-															   RecolhimentoDTO dadosRecolhimento) {
+															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
+															 RecolhimentoDTO dadosRecolhimento) {
 
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = 
 			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento);
