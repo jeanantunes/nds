@@ -1,10 +1,16 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ConferenciaEncalheDTO {
+public class ConferenciaEncalheDTO implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6012294358522142934L;
+	
 	private Long idConferenciaEncalhe;
 	private Long idProdutoEdicao;
 	private BigDecimal qtdExemplar;

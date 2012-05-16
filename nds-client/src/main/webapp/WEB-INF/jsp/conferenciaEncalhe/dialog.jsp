@@ -48,7 +48,7 @@
 </script>
 
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
-	<fieldset>
+	<fieldset style="width: 415px;">
         <legend>Salvar Conferência</legend>
         <p>Confima a Conferência de Encalhe?</p>
     </fieldset>
@@ -73,9 +73,9 @@
 			    	<table width="574" border="0" cellspacing="1" cellpadding="2">
 	      				<tr>
 					        <td width="108" style="border-bottom:1px solid #ccc;"><strong>Nome:</strong></td>
-					        <td width="174" style="border-bottom:1px solid #ccc;" id="nomeProduto"></td>
+					        <td width="174" style="border-bottom:1px solid #ccc;" id="nomeProdutoDetalhe"></td>
 					        <td width="120" style="border-bottom:1px solid #ccc;"><strong>Preço Capa:</strong></td>
-					        <td width="151" style="border-bottom:1px solid #ccc;" id="precoCapa"></td>
+					        <td width="151" style="border-bottom:1px solid #ccc;" id="precoCapaDetalhe"></td>
 						</tr>
 						<tr>
 					        <td style="border-bottom:1px solid #ccc;"><strong>Chamada Capa:</strong></td>
@@ -148,7 +148,7 @@
 			<tr>
 				<td width="44%">Digite o Código / Nome do Produto:</td>
 				<td width="56%">
-            		<input name="pesq_prod" type="text" id="pesq_prod" style="width:200px; float:left; margin-right:5px;" onkeypress="mostrar_produtos();"/>
+            		<input name="pesq_prod" type="text" id="pesq_prod" style="width:200px; float:left; margin-right:5px;"/>
 	                <span class="classPesquisar">
 	                	<a href="javascript:;" onclick="mostrar_produtos();">&nbsp;</a>
 	                </span>
@@ -172,7 +172,7 @@
 		            <td>Data:</td>
 		            <td id="data"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotal"></td>
+		            <td id="valorTotalNotaFiscal"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>
@@ -300,4 +300,12 @@
 	        </td>
       	</tr>
 	</table>
+</div>
+
+<div id="dialog-reabertura" title="Reabertura" style="display: none;">
+	<fieldset style="width: 310px;">
+		<legend>Nota Fiscal</legend>
+	    <p>Já existe conferencia de encalhe para esta cota.<br/>
+	    Efetuar reabertura?</p>
+	</fieldset>
 </div>
