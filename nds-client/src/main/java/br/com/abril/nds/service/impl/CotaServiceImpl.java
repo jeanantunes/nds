@@ -1,8 +1,10 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,43 +12,65 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
+import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.ReferenciaCotaRepository;
+import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -90,7 +114,39 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private TipoEntregaRepository tipoEntregaRepository;
+	
+	@Autowired
+	private BaseReferenciaCotaRepository baseReferenciaCotaRepository;
+	
+	@Autowired
+	private PessoaJuridicaRepository pessoaJuridicaRepository;
+	
+	@Autowired
+	private PdvRepository pdvRepository;
+	
+	@Autowired
+	private ReferenciaCotaRepository referenciaCotaRepository;
+	
+	@Autowired
+	private TipoDescontoRepository tipoDescontoRepository;
+	
+	@Autowired
+	private SocioCotaRepository socioCotaRepository;
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
 
+		return cotaRepository.obterCotas(filtro);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro) {
+
+		return cotaRepository.obterQuantidadeCotasPesquisadas(filtro);
+	}
+	
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
 		
@@ -461,7 +517,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		dto.setNumCota(cota.getNumeroCota());
 		
-		dto.setBox(cota.getBox().getNome());
+		if(cota.getBox()!= null){
+			dto.setBox(cota.getBox().getNome());
+		}
 		
 		if(qtdePDVAutomatico) {	
 			dto.setQtdePDV( (cota.getPdvs()!=null) ? cota.getPdvs().size() : 0);
@@ -540,6 +598,472 @@ public class CotaServiceImpl implements CotaService {
 		cotaRepository.merge(cota);
 	}
 	
+
+	@Override
+	@Transactional(readOnly = true)
+	public CotaDTO obterDadosCadastraisCota(Long idCota){
+		
+		if (idCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
+		}
+		
+		Cota cota  = cotaRepository.buscarPorId(idCota);
+		
+		if (cota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
+		}
+		
+		CotaDTO cotaDTO = new CotaDTO();
+		cotaDTO.setIdCota(cota.getId());
+		cotaDTO.setNumeroCota(cota.getNumeroCota());
+		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
+		cotaDTO.setDataInclusao(cota.getInicioAtividade());
+		cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica());
+		cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica());
+		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		
+		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
+		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
+		
+		return cotaDTO;
+	}
+	
+	private void atribuirDadosPessoaCota(CotaDTO cotaDTO, Pessoa pessoa){
+		
+		if(pessoa == null){
+			return;
+		}
+		
+		if(pessoa instanceof PessoaJuridica){
+			
+			PessoaJuridica pessoaJ = (PessoaJuridica) pessoa;
+			cotaDTO.setInscricaoEstadual(pessoaJ.getInscricaoEstadual());
+			cotaDTO.setInscricaoMunicipal(pessoaJ.getInscricaoMunicipal());
+			cotaDTO.setEmail(pessoaJ.getEmail());
+			cotaDTO.setNumeroCnpj(pessoaJ.getCnpj());
+			cotaDTO.setNomeFantasia(pessoaJ.getNomeFantasia());
+			cotaDTO.setRazaoSocial(pessoaJ.getRazaoSocial());
+			cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
+		}
+	}
+	
+	private void atribuirDadosBaseReferencia(CotaDTO cotaDTO, BaseReferenciaCota baseReferenciaCota){
+		
+		if(baseReferenciaCota == null){
+			return;
+		}
+		
+		cotaDTO.setInicioPeriodo(baseReferenciaCota.getInicioPeriodo());
+		cotaDTO.setFimPeriodo(baseReferenciaCota.getFinalPeriodo());
+		
+		if(baseReferenciaCota.getReferenciasCota()!= null && !baseReferenciaCota.getReferenciasCota().isEmpty()){
+			
+			List<ReferenciaCota> referenicasCota = new ArrayList<ReferenciaCota>();
+			referenicasCota.addAll(baseReferenciaCota.getReferenciasCota());
+			
+			if(referenicasCota.size() > 0){
+				cotaDTO.setHistoricoPrimeiraCota(referenicasCota.get(0).getCota().getNumeroCota());
+				cotaDTO.setHistoricoPrimeiraPorcentagem(referenicasCota.get(0).getPercentual());
+			}
+			
+			if(referenicasCota.size() > 1){
+				cotaDTO.setHistoricoSegundaCota(referenicasCota.get(1).getCota().getNumeroCota());
+				cotaDTO.setHistoricoSegundaPorcentagem(referenicasCota.get(1).getPercentual());
+			}
+			
+			if(referenicasCota.size() > 2){
+				cotaDTO.setHistoricoTerceiraCota(referenicasCota.get(2).getCota().getNumeroCota());
+				cotaDTO.setHistoricoTerceiraPorcentagem(referenicasCota.get(2).getPercentual());
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void excluirCota(Long idCota){
+		
+		if(idCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão invalida!");
+		}
+		
+		Cota cota  = cotaRepository.buscarPorId(idCota);
+	
+		try{	
+			
+			cotaRepository.remover(cota);
+			
+		}catch (RuntimeException e) {
+			
+			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+				throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão não permitida, registro possui dependências!");
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Integer gerarNumeroSugestaoCota(){
+	
+		return cotaRepository.gerarSugestaoNumeroCota();
+	}
+	
+	@Override
+	@Transactional
+	public Long salvarCota(CotaDTO cotaDto){
+		
+		validarParametrosObrigatoriosCota(cotaDto);
+		
+		validarNovoNumeroCota(cotaDto.getNumeroCota());
+		
+		validarFormatoDados(cotaDto);
+		
+		Cota cota  = null;
+		
+		if(cotaDto.getIdCota()!= null){
+			cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
+		}
+				
+		boolean incluirPDV = false;
+		
+		if(cota == null){
+			cota = new Cota();
+			cota.setInicioAtividade(new Date());
+			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+			incluirPDV = true;
+		}
+		
+	    cota.setNumeroCota(cotaDto.getNumeroCota());
+	    
+	    cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
+	    
+	    cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
+	    
+	    cota.setPessoa(getPessoaCota(cota, cotaDto));
+	    
+	    cota  = cotaRepository.merge(cota);
+	    
+	    BaseReferenciaCota baseReferenciaCota = processarDadosBaseReferenciaCota(cota, cotaDto);
+	    
+	    processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
+	    
+	    if(incluirPDV){
+	    	processarDadosPDV(cota, cotaDto);
+	    }
+	
+	    return cota.getId();
+	}
+	
+	private void validarFormatoDados(CotaDTO cotaDto) {
+		
+		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
+			
+			CNPJValidator cnpjValidator = new CNPJValidator(true);
+			try{
+				cnpjValidator.assertValid(cotaDto.getNumeroCnpj());
+				
+			}catch(InvalidStateException e){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Número CNPJ inválido!");
+			}
+		}
+		
+		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
+			
+			CPFValidator cpfValidator = new CPFValidator();
+			try{
+				cpfValidator.assertValid(cotaDto.getNumeroCPF());
+				
+			}catch(InvalidStateException e){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF inválido!");
+			}
+		}
+		
+		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"E-mail inválido!");
+		}
+		
+		if( cotaDto.getEmailNF()!= null && !cotaDto.getEmailNF().isEmpty() && !Util.validarEmail(cotaDto.getEmailNF())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"E-mail NF-e inválido!");
+		}
+		
+	}
+
+	private void processarDadosPDV(Cota cota,CotaDTO cotaDTO) {
+		
+		if(cota.getPdvs() == null || cota.getPdvs().isEmpty()){
+			
+			PDV pdv = new PDV();
+			pdv.setCaracteristicas(new CaracteristicasPDV());
+			pdv.getCaracteristicas().setPontoPrincipal(Boolean.TRUE);
+			pdv.setDataInclusao(new Date());
+			pdv.setCota(cota);
+			
+			if( TipoPessoa.JURIDICA.equals(cotaDTO.getTipoPessoa())){
+				
+				pdv.setNome(cotaDTO.getRazaoSocial());
+			}
+			else {
+				
+				pdv.setNome(cotaDTO.getNomePessoa());
+			}
+			
+			pdvRepository.adicionar(pdv);
+		}
+
+	}
+
+	private ParametrosCotaNotaFiscalEletronica getParamNFE(Cota cota, CotaDTO cotaDto){
+		
+		ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica(); 
+	    
+	    if(paramNFE == null){
+	    	paramNFE = new ParametrosCotaNotaFiscalEletronica();
+	    }
+	    		
+	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
+	    paramNFE.setEmiteNotaFiscalEletronica(cotaDto.isEmiteNFE());
+	    
+	    return paramNFE;
+	}
+	
+	private void validarParametrosObrigatoriosCota(CotaDTO cotaDto) {
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
+		if(cotaDto.getNumeroCota() == null){
+			mensagensValidacao.add("O campo Cota é obrigatório.");
+		}
+	
+		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
+			
+			if(cotaDto.getRazaoSocial() == null || cotaDto.getRazaoSocial().isEmpty()){
+				mensagensValidacao.add("O campo Razão Social é obrigatório.");
+			}
+			
+			if(cotaDto.getNumeroCnpj() == null || cotaDto.getNumeroCnpj().trim().isEmpty()){
+				mensagensValidacao.add("O campo CNPJ é obrigatório.");
+	    	}
+			
+			if(cotaDto.getInscricaoEstadual() == null || cotaDto.getInscricaoEstadual().isEmpty() ){
+				mensagensValidacao.add("O campo Inscrição Estadual é obrigatório.");
+			}
+		}
+				
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
+	}
+	
+	private Pessoa getPessoaCota(Cota cota, CotaDTO cotaDto){
+		
+		Pessoa pessoa = cota.getPessoa();
+	    
+	    if(cota.getPessoa() == null){
+	    	
+	    	if( TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
+	    		
+	    		pessoa  = pessoaJuridicaRepository.buscarPorCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
+	    		
+	    		if(pessoa == null){
+	    			pessoa = new PessoaJuridica();
+	    		}
+	    	}
+	    }
+	    
+	    pessoa.setEmail(cotaDto.getEmail());
+	    
+    	if ( pessoa instanceof  PessoaJuridica  ){
+    		
+    		((PessoaJuridica) pessoa).setCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
+    		((PessoaJuridica) pessoa).setInscricaoEstadual(cotaDto.getInscricaoEstadual());
+    		((PessoaJuridica) pessoa).setInscricaoMunicipal(cotaDto.getInscricaoMunicipal());
+    		((PessoaJuridica) pessoa).setNomeFantasia(cotaDto.getNomeFantasia());
+    		((PessoaJuridica) pessoa).setRazaoSocial(cotaDto.getRazaoSocial());
+    		
+    		pessoa = pessoaJuridicaRepository.merge(((PessoaJuridica) pessoa));
+    	}
+	    
+    	return pessoa;
+	}
+	
+	private BaseReferenciaCota processarDadosBaseReferenciaCota(Cota cota , CotaDTO cotaDto){
+		
+		BaseReferenciaCota baseReferenciaCota  = cota.getBaseReferenciaCota();
+		
+		if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() == null ){
+			
+			if(baseReferenciaCota!= null){
+				baseReferenciaCotaRepository.remover(baseReferenciaCota);
+				return null;
+			}
+		}
+		
+		if (baseReferenciaCota == null ){
+			baseReferenciaCota = new BaseReferenciaCota();    
+		}
+		
+		baseReferenciaCota.setInicioPeriodo(cotaDto.getInicioPeriodo());
+	    baseReferenciaCota.setFinalPeriodo(cotaDto.getFimPeriodo());
+	    baseReferenciaCota.setCota(cota);
+	    
+	    return  baseReferenciaCotaRepository.merge(baseReferenciaCota); 
+		
+	}
+	
+	private void processarDadosReferenciaCota(BaseReferenciaCota baseReferenciaCota, CotaDTO cotaDto){
+		
+		if(baseReferenciaCota == null){
+			return;
+		}
+		
+		validarPorcentagemCotaBase(cotaDto);
+		
+		Set<ReferenciaCota> referenciasCota = baseReferenciaCota.getReferenciasCota();
+		
+		if(referenciasCota != null && !referenciasCota.isEmpty()){
+	    	
+			referenciaCotaRepository.excluirReferenciaCota(baseReferenciaCota.getId());
+	    }
+		
+		referenciasCota = getReferenciasCota(baseReferenciaCota, cotaDto);
+		
+		if(!referenciasCota.isEmpty()){
+
+			for(ReferenciaCota ref : referenciasCota){
+	    		referenciaCotaRepository.merge(ref);
+	    	}
+		}
+	}
+	
+	
+	private Set<ReferenciaCota> getReferenciasCota(BaseReferenciaCota baseReferenciaCota, CotaDTO cotaDto){
+		
+		Set<ReferenciaCota> referenciasCota = new HashSet<ReferenciaCota>();
+	    
+	    if(tratarValorReferenciaCota(cotaDto.getHistoricoPrimeiraCota(), cotaDto.getHistoricoPrimeiraPorcentagem())){
+			
+	    	referenciasCota.add( getReferencaiCota(cotaDto.getHistoricoPrimeiraCota(),
+					   							   cotaDto.getHistoricoPrimeiraPorcentagem(),
+					   							   baseReferenciaCota) );
+		}
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoSegundaCota(), cotaDto.getHistoricoSegundaPorcentagem())){
+			
+			referenciasCota.add( getReferencaiCota(cotaDto.getHistoricoSegundaCota(),
+					   							   cotaDto.getHistoricoSegundaPorcentagem(),
+					   							   baseReferenciaCota) );
+		}
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoTerceiraCota(), cotaDto.getHistoricoTerceiraPorcentagem())){
+			
+			referenciasCota.add( getReferencaiCota(cotaDto.getHistoricoTerceiraCota(),
+												   cotaDto.getHistoricoTerceiraPorcentagem(),
+												   baseReferenciaCota) );
+
+		}
+		
+		return referenciasCota;
+	}
+	
+	private ReferenciaCota getReferencaiCota(Integer numeroCota,BigDecimal porcentagem, BaseReferenciaCota baseReferenciaCota){
+		
+		Cota cota = null;
+		
+		if(numeroCota != null){
+			cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		}
+		
+		ReferenciaCota referenciaCota = new ReferenciaCota();
+		referenciaCota.setCota(cota);
+		referenciaCota.setPercentual(porcentagem);
+		referenciaCota.setBaseReferenciaCota(baseReferenciaCota);
+		
+		return referenciaCota;
+	}
+	
+	private void validarPorcentagemCotaBase(CotaDTO cotaDto) {
+		
+		boolean existeValor = false;
+		BigDecimal valor  = BigDecimal.ZERO;
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoPrimeiraCota(),
+				cotaDto.getHistoricoPrimeiraPorcentagem())){
+			
+			valor = valor.add(cotaDto.getHistoricoPrimeiraPorcentagem());
+			existeValor = true;
+		}
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoSegundaCota(),
+				cotaDto.getHistoricoSegundaPorcentagem())){
+			
+			valor = valor.add(cotaDto.getHistoricoSegundaPorcentagem());
+			existeValor = true;
+		}
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoTerceiraCota(),
+				cotaDto.getHistoricoTerceiraPorcentagem())){
+			
+			valor = valor.add(cotaDto.getHistoricoTerceiraPorcentagem());
+			existeValor = true;
+		}
+		
+		if(existeValor && (valor.intValue() != 100)){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórica cota base invalido! A porcentagem do histórico das cotas base deve ser 100%  ");
+		}
+		
+	}
+
+	private boolean tratarValorReferenciaCota(Integer numeroCota, BigDecimal porcentagem){
+		return (numeroCota != null && porcentagem != null);
+	}
+	
+	/**
+	 * Verifica se o número da cota existente pode ser utilizado por uma nova cota
+	 * 
+	 * @param numeroCota - número da nova cota
+	 */
+	private void validarNovoNumeroCota(Integer numeroCota){
+		
+		Cota cota  = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		if(cota!= null){
+			
+			if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
+				
+				if(!isNumeroCotaValido(numeroCota)){
+
+					throw new ValidacaoException(TipoMensagem.WARNING,"Código da cota está inativo mas não pode ser usado.");
+				}
+			}
+			else{
+				throw new ValidacaoException(TipoMensagem.WARNING,"Código da cota não pode ser utilizado.");
+			}	
+		}
+	}
+	
+	/**
+	 * Verifica se o numero da cota informado pode ser reaproveitado por outra cota em um novo cadastro
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	private boolean isNumeroCotaValido(Integer  numeroCota){
+		
+		HistoricoSituacaoCota histCota  = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+		
+		if(histCota == null){
+			return true;
+		}
+		
+	    Distribuidor distribuidor = distribuidorService.obter();
+	    
+	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
+	    
+	    Long qntDiasDistribuidor = distribuidor.getQntDiasReutilizacaoCodigoCota();
+	    
+		return (qntDiasInativo > qntDiasDistribuidor );
+	}
+
 	
 	/**
 	 * Método responsável por obter tipos de cota para preencher combo da camada view
@@ -554,4 +1078,98 @@ public class CotaServiceImpl implements CotaService {
 		return comboTiposCota;
 	}
 	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoDesconto> obterDescontos(Long idCota){
+		
+		return tipoDescontoRepository.obterTipoDescontoNaoReferenciadosComCota(idCota);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoDesconto> obterDescontosCota(Long idCota){
+		
+		return tipoDescontoRepository.obterTiposDescontoCota(idCota);
+	}
+	
+	@Transactional
+	@Override
+	public void salvarDescontosCota(List<Long> descontos, Long idCota){
+		
+		if(idCota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		Set<TipoDesconto> listaDescontos = new HashSet<TipoDesconto>();
+		
+		if(descontos != null && !descontos.isEmpty()){
+			
+			TipoDesconto tipoDesconto = null;
+			
+			for(Long  td :  descontos ){
+				
+				tipoDesconto = tipoDescontoRepository.buscarPorId(td) ;
+				
+				if(tipoDesconto != null){
+					listaDescontos.add( tipoDesconto );
+				}
+
+			}
+		}
+
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		cota.setTiposDescontoCota(listaDescontos);
+		
+		cotaRepository.alterar(cota);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<SocioCota> obterSociosCota(Long idCota){
+		
+		return socioCotaRepository.obterSocioCotaPorIdCota(idCota);
+		
+	}
+	
+	@Override
+	@Transactional
+	public void salvarSociosCota(List<SocioCota> sociosCota, Long idCota ){
+		
+		if(idCota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		Cota cota  = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		if( cota.getSociosCota() != null && !cota.getSociosCota().isEmpty()){
+	    	
+			socioCotaRepository.removerSociosCota(idCota);
+	    }
+		
+		if( sociosCota!= null && !sociosCota.isEmpty()){
+			
+			if(!isSocioPrincipal(sociosCota)){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
+			}
+	
+			for(SocioCota ref : sociosCota){
+	    		ref.setCota(cota);
+				socioCotaRepository.merge(ref);
+	    	}
+		}
+	}
+
+	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
+		
+		for(SocioCota socio : sociosCota){
+			if(socio.getPrincipal())
+				return true;
+		}
+		
+		return false;
+	}
 }
