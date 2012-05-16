@@ -64,6 +64,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Lancamento lancamentoCapricho;
 	private Lancamento lancamentoCromoReiLeao;
 	
+	private ProdutoEdicao veja1;
+	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
 	private TipoProduto tipoCromo;
@@ -109,7 +111,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
+		veja1 = Fixture.produtoEdicao(1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
@@ -722,10 +724,9 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore("Resolver falha ao rodar com outros testes")
 	public void obterUltimoLancamentoDaEdicao() {
 	
-		Lancamento lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(lancamentoVeja.getId());
+		Lancamento lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(veja1.getId());
 		
 		Assert.assertEquals(lancamento.getId(),lancamentoVeja.getId());
 		Assert.assertEquals(lancamento.getDataLancamentoDistribuidor(),lancamentoVeja.getDataLancamentoDistribuidor());
