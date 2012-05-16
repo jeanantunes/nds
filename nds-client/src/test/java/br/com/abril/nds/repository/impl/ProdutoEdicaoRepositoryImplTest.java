@@ -84,8 +84,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		distribuidor = null;
 
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
-		
-		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(null);
 		
@@ -139,7 +137,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produto);
+		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto);
 		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
 		//////
@@ -150,7 +148,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
-		produtoEdicaoComDesconto = Fixture.produtoEdicao(2L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), produtoComDesconto);
+		produtoEdicaoComDesconto = Fixture.produtoEdicao(2L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoComDesconto);
 		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
 		//////
