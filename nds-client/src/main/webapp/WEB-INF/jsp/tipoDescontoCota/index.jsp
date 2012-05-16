@@ -1,28 +1,75 @@
 <head>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script language="javascript" type="text/javascript">
 
 	$(function() {
 		
-		inicializar();
-	});
-	
-	function inicializar() {
-		
-		iniciarData();		
-		
-	}
-	
-	function iniciarData() {
-		
 		$("#textfield23").datepicker({
 			showOn : "button",
-			buttonImage : "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly : true
 		});
 		
 		$("#textfield23").mask("99/99/9999");
+		
+		$("#dataAlteracaoEspecifico").datepicker({
+			showOn : "button",
+			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true
+		});
+		
+		$("#dataAlteracaoEspecifico").mask("99/99/9999");
+		
+		$("#dataAlteracaoProduto").datepicker({
+			showOn : "button",
+			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true
+		});
+		
+		$("#dataAlteracaoProduto").mask("99/99/9999");
+		
+		$("#produto").autocomplete({source: ""});
+	});
+	
+	function buscarNomeProduto(){
+		if ($("#codigo").val().length > 0){
+			var data = "codigoProduto=" + $("#codigo").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/buscarNomeProduto'/>", data,
+				function(result){
+					if (result){
+						$("#produto").val(result);	
+						$("#descontoProduto").focus();
+					} else {
+						$("#produto").val("");
+						$("#produto").focus();
+					}
+				}
+			);
+		}
 	}
-
+	
+	function pesquisarPorNomeProduto(){
+		var produto = $("#produto").val();
+		
+		if (produto && produto.length > 0){
+			$.postJSON("<c:url value='/lancamento/furoProduto/pesquisarPorNomeProduto'/>", "nomeProduto=" + produto, exibirAutoComplete);
+		}
+	}
+	
+	function exibirAutoComplete(result){
+		$("#produto").autocomplete({
+			source: result,
+			select: function(event, ui){
+				completarPesquisa(ui.item.chave);
+			}
+		});
+	}
+	
+	function completarPesquisa(chave){
+		$("#codigo").val(chave.codigoProduto);	
+	}
+		
 	function popup_geral() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 			
@@ -35,8 +82,21 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+
+						var geral = $("#radioGeral").is(":checked");
+						var especifico = $("#radioEspecifico").is(":checked");
+						var produto = $("#radioProduto").is(":checked");
+						if(geral){
+							novoDescontoGeral();							
+						}else if(especifico){
+							
+						}else if(produto){
+							
+						}						
+
 						novoDesconto();
 						
+
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -45,7 +105,13 @@
 			});
 		};
 	
-	function novoDesconto() {
+
+	function novoDescontoEspecifico() {
+		
+	}
+
+	function novoDescontoGeral() {
+
 		
 		var descontoGeral = $("#descontoGeral").val();
 		var dataAlteracao = $("#textfield23").val();
@@ -69,6 +135,36 @@
 		
 	}
 	
+
+	function novoDescontoEspecifico() {
+		
+		var cotaEspecifica = $("#cotaEspecifica").val();
+		var nomeEspecifico = $("#nomeEspecifico").val();
+		var descontoEspecifico = $("#descontoEspecifico").val();
+		var dataAlteracaoEspecifico = $("#dataAlteracaoEspecifico").val();
+		var usuarioEspecifico = $("#usuarioEspecifico").val()
+		
+		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoEspecifico'/>",
+				   "cotaEspecifica="+cotaEspecifica+
+				   "&nomeEspecifico="+ nomeEspecifico +
+				   "&descontoEspecifico="+ descontoEspecifico +
+				   "&dataAlteracaoEspecifico="+ dataAlteracaoEspecifico +
+				   "&usuarioEspecifico="+ usuarioEspecifico,
+				   function(result) {
+			           fecharDialogs();
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+	                   mostrarGridConsulta();
+	               },
+				   null,
+				   true);
+		
+	}
+	
+
 	function fecharDialogs() {
 		$( "#dialog-geral" ).dialog( "close" );
 	}
@@ -149,83 +245,85 @@
 </head>
 
 <body>
-<div id="dialog-geral" title="Novo Tipo de Desconto Geral" style="display:none;">    
-    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Desconto %:</td>
-              <td width="239"><input type="text" name="descontoGeral" id="descontoGeral" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Data Alteração:</td>
-              <td><input type="text" name="textfield23" id="textfield23" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Usuário:</td>
-              <td><input type="text" name="textfield24" id="textfield24" style="width:230px;" /></td>
-            </tr>
-  </table>         
 
-</div>
-
-
-<div id="dialog-especifico" title="Novo Tipo de Desconto Especifico" style="display:none;">    
-    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Cota:</td>
-              <td width="239"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-            </tr>
-            <tr>
-              <td>Nome:</td>
-              <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
-            </tr>
-            <tr>
-              <td>Desconto %:</td>
-              <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Data Alteração:</td>
-              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Usuário:</td>
-              <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
-            </tr>
-          </table>       
-
-</div>
+	<div id="dialog-geral" title="Novo Tipo de Desconto Geral" style="display:none;">    
+	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	            <tr>
+	              <td width="100">Desconto %:</td>
+	              <td width="239"><input type="text" name="descontoGeral" id="descontoGeral" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Data Alteração:</td>
+	              <td><input type="text" name="textfield23" id="textfield23" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Usuário:</td>
+	              <td><input type="text" name="textfield24" id="textfield24" style="width:230px;" /></td>
+	            </tr>
+	  </table>         
+	
+	</div>
 
 
-<div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">    
-    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Código:</td>
-              <td width="239"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-            </tr>
-            <tr>
-              <td>Produto:</td>
-              <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
-            </tr>
-            <tr>
-              <td>Edição:</td>
-              <td><input type="text" name="textfield5" id="textfield5" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Desconto %:</td>
-              <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Data Alteração:</td>
-              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Usuário:</td>
-              <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
-            </tr>
-          </table>       
-
-    </div>
+	<div id="dialog-especifico" title="Novo Tipo de Desconto Especifico" style="display:none;">    
+	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	            <tr>
+	              <td width="100">Cota:</td>
+	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica" onchange="cota.pesquisarPorNumeroCota('#cotaEspecifica', '#nomeEspecifico');"  style="width:100px; float:left; margin-right:5px;" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+	            </tr>
+	            <tr>
+	              <td>Nome:</td>
+	              <td><input type="text" name="nomeEspecifico" id="nomeEspecifico" style="width:230px;" value="" disabled="disabled"/></td>
+	            </tr>
+	            <tr>
+	              <td>Desconto %:</td>
+	              <td><input type="text" name="descontoEspecifico" id="descontoEspecifico" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Data Alteração:</td>
+	              <td><input type="text" name="dataAlteracaoEspecifico" id="dataAlteracaoEspecifico" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Usuário:</td>
+	              <td><input type="text" name="usuarioEspecifico" id="usuarioEspecifico" style="width:230px;" value="Joana" disabled="disabled"/></td>
+	            </tr>
+	          </table>       
+	
+	</div>
 
 
+	<div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">    
+	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	            <tr>
+	              <td width="100">Código:</td>
+	              <td width="239"><input type="text" name="textfield22" id="codigo"  style="width:100px; float:left; margin-right:5px;" onblur="buscarNomeProduto();" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+	            </tr>
+	            <tr>
+	              <td>Produto:</td>
+	              <td><input type="text" name="textfield4" id="produto" style="width:230px;" onkeyup="pesquisarPorNomeProduto();" /></td>
+	            </tr>
+	            <tr>
+	              <td>Edição:</td>
+	              <td><input type="text" name="textfield5" id="textfield5" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Desconto %:</td>
+	              <td><input type="text" name="textfield2" id="descontoProduto" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Data Alteração:</td>
+	              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
+	            </tr>
+	            <tr>
+	              <td>Usuário:</td>
+	              <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
+	            </tr>
+	          </table>       
+	
+	</div>
+
+
+	
 <div class="corpo">   
     <br clear="all"/>
     <br />
@@ -312,6 +410,7 @@
     
     </div>
 </div> 
+
 <script>
 	$(".tiposDescGeralGrid").flexigrid({
 			url : '../xml/tipos-desconto-geral-xml.xml',
