@@ -8,10 +8,17 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.NotFound;
+
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 
 /**
  * Entidade que abstrai a sinalização do status da 
@@ -38,6 +45,7 @@ public class ControleConferenciaEncalhe {
 	@Column(name = "STATUS")
 	private StatusOperacao status;
 	
+	
 	public Long getId() {
 		return id;
 	}
@@ -61,6 +69,6 @@ public class ControleConferenciaEncalhe {
 	public void setStatus(StatusOperacao status) {
 		this.status = status;
 	}
-	
+
 
 }

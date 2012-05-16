@@ -6,6 +6,7 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 
@@ -92,8 +93,7 @@ public interface ConferenciaEncalheService {
 	public Object obterListaDadosProdutoEdicao(String codigoOuNome);
 	
 	
-	
-	public void salvarDadosConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
+	public void salvarDadosConferenciaEncalhe(ControleConferenciaEncalheCota controleConfEncalheCota, List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
 	
 	// (caso valor nota esteja diferente do encalhe requisitar correcao)
 	public void finalizarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
