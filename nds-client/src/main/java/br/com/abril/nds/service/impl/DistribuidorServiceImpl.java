@@ -29,5 +29,5 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		return distribuidorRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
 	}
-	
+
 }

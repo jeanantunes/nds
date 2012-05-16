@@ -50,9 +50,21 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 	}
 
 	public RegistroCurvaABCDistribuidorVO(Object numeroCota, Object nomeCota,
-			Object quantidadePdvs, Object municipio, Object vendaExemplares,
+			Object quantidadePdvs, Object vendaExemplares,
 			Object faturamentoCapa) {
 		System.out.println(numeroCota);
+		
+		try {
+			
+			this.numeroCota = (Long) numeroCota;
+			this.nomeCota = (String) nomeCota;
+			this.quantidadePdvs = (BigDecimal) quantidadePdvs;
+			this.vendaExemplares = (BigDecimal) vendaExemplares;
+			this.faturamentoCapa = (BigDecimal) faturamentoCapa;
+			
+		} catch(Exception e) {
+		}
+		
 		/*this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.quantidadePdvs = quantidadePdvs;
