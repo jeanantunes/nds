@@ -507,12 +507,14 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" case  ");
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
-		sql.append(" and periodoLancamentoParcial.TIPO<> :tipoParcial then ");
+		sql.append(" and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" (estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
 		sql.append(" else estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
 		sql.append(" end as expectativaEncalhe, ");
 		
-		sql.append(" (estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)*produtoEdicao.PRECO_VENDA as valorTotal, ");
+		sql.append(" (estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100) ");
+		sql.append(" * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) as valorTotal, ");
+		
 		sql.append(" case  ");
 		sql.append(" when (chamadaEncalhe.ID is not null)  ");
 		sql.append(" and chamadaEncalhe.TIPO_CHAMADA_ENCALHE<> :tipoChamadaEncalhe then true ");
