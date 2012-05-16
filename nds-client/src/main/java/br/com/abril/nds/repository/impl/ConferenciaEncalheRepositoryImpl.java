@@ -48,8 +48,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 		PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,                                                   ");
 		hql.append("                                                                                                     ");
 		hql.append(" 		PROD_EDICAO.PRECO_VENDA AS precoCapa,                                                        ");
-		hql.append("                                                                                                     ");
-		hql.append("         (                                                                                           ");
+		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  (                                                               ");
 		hql.append("         		                                                                                     ");
 		hql.append("         SELECT                                                                                      ");
 		hql.append("             CASE                                                                                    ");
@@ -73,7 +72,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("             AND PE.ID=MOV_EST_COTA.PRODUTO_EDICAO_ID                                                ");
 		hql.append("             AND DISTRIB.ID= :idDistribuidor                                                         ");
 		hql.append("             		                                                                                 ");
-		hql.append("         ) AS desconto,                                                                              ");
+		hql.append("         ) / 100 ) AS desconto,                                                                      ");
 		hql.append("                                                                                                     ");
 		hql.append("         MOV_EST_COTA.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *                 ");
 		hql.append("         (                                                                                           ");

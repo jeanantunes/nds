@@ -313,9 +313,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			BigDecimal precoComDesconto = precoVenda.subtract(fatorDesconto.divide(hundred).multiply(precoVenda));
+			BigDecimal valorDesconto = fatorDesconto.divide(hundred).multiply(precoVenda);
 			
-			produtoEdicao.setDesconto(precoComDesconto);
+			produtoEdicao.setDesconto(valorDesconto);
 			
 		}
 		
