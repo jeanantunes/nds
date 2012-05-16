@@ -127,6 +127,14 @@ public class FiltroCurvaABCDistribuidorDTO implements Serializable {
 		this.municipio = municipio;
 	}
 
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
+	}
+
 	public FiltroCurvaABCDistribuidorDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
 			String edicaoProduto, String codigoEditor, String codigoCota,
@@ -143,5 +151,5 @@ public class FiltroCurvaABCDistribuidorDTO implements Serializable {
 		this.nomeCota = nomeCota;
 		this.municipio = municipio;
 	}	
-	
+
 }
