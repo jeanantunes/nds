@@ -293,9 +293,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (produtoEdicao != null) {
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
+			
 		}
 		
 		return produtoEdicao;
+	}
+
+	private void carregarValorDesconto(ProdutoEdicao produtoEdicao, Integer numeroCota) {
+		
+		BigDecimal hundred = new BigDecimal(100.0);
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		BigDecimal fatorDesconto = produtoEdicaoRepository.obterFatorDesconto(produtoEdicao.getId(), numeroCota, distribuidor.getId());
+		
+		if( fatorDesconto!=null && produtoEdicao.getPrecoVenda()!=null ) {
+			
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+			
+			BigDecimal precoComDesconto = precoVenda.subtract(fatorDesconto.divide(hundred).multiply(precoVenda));
+			
+			produtoEdicao.setDesconto(precoComDesconto);
+			
+		}
+		
+		
 	}
 	
 	@Transactional(readOnly = true)
@@ -316,6 +340,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (produtoEdicao != null){
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
 		}
 		
 		return produtoEdicao;
@@ -339,6 +365,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (produtoEdicao != null){
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
 		}
 		
 		return produtoEdicao;

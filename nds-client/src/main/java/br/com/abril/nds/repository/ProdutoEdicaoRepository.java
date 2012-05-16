@@ -26,7 +26,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @return BigDecimal
 	 */
-	public BigDecimal obterPercentualComissionamento(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor);
+	public BigDecimal obterFatorDesconto(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor);
 	
 	/**
 	 * Obtém produtos edição de acordo com o nome do produto.

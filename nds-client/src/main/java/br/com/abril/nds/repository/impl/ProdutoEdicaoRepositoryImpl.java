@@ -37,7 +37,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterPercentualComissionamento(java.lang.Long, java.lang.Integer, java.lang.Long)
 	 */
-	public BigDecimal obterPercentualComissionamento(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor) {
+	public BigDecimal obterFatorDesconto(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -53,7 +53,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		
 		hql.append(" where ");
 		
-		hql.append(" ct.numeroCota = :numeroCota ");
+		hql.append(" ct.numeroCota = :numeroCota and ");
 
 		hql.append(" pe.id = :idProdutoEdicao and ");
 
