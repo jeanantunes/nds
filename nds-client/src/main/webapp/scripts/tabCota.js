@@ -35,14 +35,11 @@ function TabCota(tabName) {
 		
 		/**GARANTIA**/
 		case 4: 
-
-			T.funcaoSalvar = function(){tipoCotaGarantia.controller.salva();};
-			try{
-				tipoCotaGarantia.onOpen();
-			}catch (e) {
-				console.log(e);
-			}
-
+			T.funcaoSalvar = function(callBack){
+				console.log('SALVA GARANTIA');
+				return tipoCotaGarantia.controller.salva(callBack);
+			};
+			tipoCotaGarantia.onOpen();
 			break;
 		
 		/**Fornecedor**/
