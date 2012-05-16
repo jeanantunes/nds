@@ -19,5 +19,5 @@ public class FileOutputRouter implements ContentBasedRouter {
 		message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), route.getUserName());
 		
 		route.getMessageProcessor().processMessage(message);
-	}	
+	}
 }

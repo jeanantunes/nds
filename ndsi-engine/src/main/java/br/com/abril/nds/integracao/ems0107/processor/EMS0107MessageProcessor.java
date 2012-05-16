@@ -36,7 +36,7 @@ public class EMS0107MessageProcessor implements MessageProcessor {
 		
 		input.setId(++nextId);
 		
-		entityManager.persist(input);		
+		entityManager.persist(input);
 	}
 	
 	public void processMessageOld(Message message) {

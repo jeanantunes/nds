@@ -32,7 +32,7 @@ public class EMS0106Route extends FixedLengthRouteTemplate {
 			LOGGER.info(String.format("Iniciou carga da EMS0107 - %s", new Date()));
 		}
 		
-//		ems0107Route.execute(getUserName());
+		ems0107Route.execute(getUserName());
 		
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info(String.format("Terminou carga da EMS0107 - %s", new Date()));
