@@ -309,7 +309,6 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports-fonts-nds</artifactId>
-            <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
