@@ -28,7 +28,6 @@ import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
-import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;

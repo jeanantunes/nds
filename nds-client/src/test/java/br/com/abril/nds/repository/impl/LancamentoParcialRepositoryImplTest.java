@@ -52,7 +52,7 @@ public class LancamentoParcialRepositoryImplTest extends AbstractRepositoryImplT
 
 	@Test
 	public void obterLancamentoPorProdutoEdicao() {
-		LancamentoParcial lancamento = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(1L);
+		LancamentoParcial lancamento = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicaoVeja1.getId());
 		
 		Assert.assertTrue( lancamento!= null );
 	}
