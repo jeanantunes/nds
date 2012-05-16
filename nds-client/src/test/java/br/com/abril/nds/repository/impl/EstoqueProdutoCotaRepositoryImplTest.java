@@ -63,7 +63,51 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	@Before
 	public void setup() {
 		
-		criarDistribuidor();
+		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
+		
+		save(carteiraSemRegistro);
+		
+		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+		
+		save(bancoHSBC);
+		
+		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
+				"590033123647", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+		save(juridicaDistrib);
+		
+		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+												  BigDecimal.ONE, BigDecimal.ONE, null);
+
+		save(formaBoleto);
+
+		distribuidor = null;
+
+		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
+		politicaSuspensao.setValor(new BigDecimal(0));
+
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
+
+		distribuidor.getFormasCobranca().add(formaBoleto);
+
+		distribuidor.setPoliticaSuspensao(politicaSuspensao);
+		
+		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
+																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
+																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
+																					 "<br>"+"<b>(iii)</b>	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
+																					 "<br>"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
+																					 "<br><br>"+"<font color='blue'><b>1.	OBJETO DO CONTRATO</b><br></font>"+
+																					 "<br>"+"<b>1.1.</b>	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
+																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
+		save(parametroContrato);
+		
+		distribuidor.setParametroContratoCota(parametroContrato);
+
+		distribuidor.setFatorDesconto(BigDecimal.TEN);
+		
+		save(distribuidor);	
+		
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
 		save(tipoProdutoRevista);
@@ -120,63 +164,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 											BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		save(lancamentoCaras1);
 		
-		
-	}
-	
-	public void criarDistribuidor() {
-		
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		
-		save(carteiraSemRegistro);
-		
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
-		
-		save(bancoHSBC);
-		
-		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
-		save(juridicaDistrib);
-		
-		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
-												  BigDecimal.ONE, BigDecimal.ONE, null);
-
-		save(formaBoleto);
-
-		distribuidor = null;
-		
-		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
-
-		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-		politicasCobranca.add(politicaCobranca);
-		
-		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
-		politicaSuspensao.setValor(new BigDecimal(0));
-
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
-
-		distribuidor.setPoliticaSuspensao(politicaSuspensao);
-		
-		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
-																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
-																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
-																					 "<br>"+"<b>(iii)</b>	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
-																					 "<br>"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
-																					 "<br><br>"+"<font color='blue'><b>1.	OBJETO DO CONTRATO</b><br></font>"+
-																					 "<br>"+"<b>1.1.</b>	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
-																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
-		save(parametroContrato);
-		
-		distribuidor.setParametroContratoCota(parametroContrato);
-
-		distribuidor.setFatorDesconto(BigDecimal.TEN);
-		
-		save(distribuidor);
-		
-		politicaCobranca.setDistribuidor(distribuidor);
-		save(politicaCobranca);
 		
 	}
 	
