@@ -307,7 +307,8 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 
 		LancamentoParcial lancamentoParcialCapricho = Fixture.criarLancamentoParcial(capricho1,
 																			 lancamentoCapricho.getDataLancamentoPrevista(), 
-																			 lancamentoCapricho.getDataRecolhimentoPrevista());
+																			 lancamentoCapricho.getDataRecolhimentoPrevista(), 
+																			 StatusLancamentoParcial.PROJETADO);
 
 		lancamentoParcialCapricho.setStatus(StatusLancamentoParcial.PROJETADO);
 		
@@ -335,7 +336,8 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		
 		LancamentoParcial lancamentoParcialQuatroRodas = Fixture.criarLancamentoParcial(quatroRoda2,
 																					    lancamentoQuatroRodas.getDataLancamentoPrevista(), 
-																					    lancamentoQuatroRodas.getDataRecolhimentoPrevista());
+																					    lancamentoQuatroRodas.getDataRecolhimentoPrevista(),
+																					    StatusLancamentoParcial.PROJETADO);
 		
 		lancamentoParcialQuatroRodas.setStatus(StatusLancamentoParcial.PROJETADO);
 		
@@ -360,7 +362,8 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 
 		LancamentoParcial lancamentoParcialVeja = Fixture.criarLancamentoParcial(veja1,
 																				 lancamentoVeja.getDataLancamentoPrevista(), 
-																				 lancamentoVeja.getDataRecolhimentoPrevista());
+																				 lancamentoVeja.getDataRecolhimentoPrevista(),
+																				 StatusLancamentoParcial.PROJETADO);
 
 		lancamentoParcialVeja.setStatus(StatusLancamentoParcial.PROJETADO);
 		
@@ -388,7 +391,8 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		
 		LancamentoParcial lancamentoParcialInfoExame = Fixture.criarLancamentoParcial(infoExame3,
 																					  lancamentoInfoExame.getDataLancamentoPrevista(), 
-																				      lancamentoInfoExame.getDataRecolhimentoPrevista());
+																				      lancamentoInfoExame.getDataRecolhimentoPrevista(),
+																				      StatusLancamentoParcial.PROJETADO);
 		
 		lancamentoParcialInfoExame.setStatus(StatusLancamentoParcial.PROJETADO);
 		

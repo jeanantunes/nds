@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -37,9 +39,11 @@ public class LancamentoParcial {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
 	
+	@Temporal(value=TemporalType.DATE)
 	@Column(name = "LANCAMENTO_INICIAL", nullable = false)
 	private Date lancamentoInicial;
 	
+	@Temporal(value=TemporalType.DATE)
 	@Column(name = "RECOLHIMENTO_FINAL", nullable = false)
 	private Date recolhimentoFinal;
 	

@@ -2495,13 +2495,15 @@ public class Fixture {
 	
 	public static LancamentoParcial criarLancamentoParcial(ProdutoEdicao produtoEdicao, 
 														   Date lancamentoInicial, 
-														   Date recolhimentoFinal) {
+														   Date recolhimentoFinal,
+														   StatusLancamentoParcial status) {
 		
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
 		
 		lancamentoParcial.setProdutoEdicao(produtoEdicao);
 		lancamentoParcial.setLancamentoInicial(lancamentoInicial);
 		lancamentoParcial.setRecolhimentoFinal(recolhimentoFinal);
+		lancamentoParcial.setStatus(status);
 		
 		return lancamentoParcial;
 	}

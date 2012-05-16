@@ -96,6 +96,13 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PERMITE_VALE_DESCONTO")
 	protected boolean permiteValeDesconto;
 	
+	/**
+	 * Flag indicando se o produto permite recolhimentos parciais
+	 */
+	@Column(name = "PARCIAL")
+	private boolean parcial;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -253,6 +260,20 @@ public class ProdutoEdicao implements Serializable {
 	public String toString() {
 		return new StringBuilder(produto.toString()).append("-")
 				.append(numeroEdicao).toString();
+	}
+
+	/**
+	 * @return the parcial
+	 */
+	public boolean isParcial() {
+		return parcial;
+	}
+
+	/**
+	 * @param parcial the parcial to set
+	 */
+	public void setParcial(boolean parcial) {
+		this.parcial = parcial;
 	}
 
 }
