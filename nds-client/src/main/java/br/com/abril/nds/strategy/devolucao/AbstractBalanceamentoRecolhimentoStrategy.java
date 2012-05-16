@@ -38,6 +38,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
 			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
+		this.configurarSequenciaProdutosMatrizRecolhimento(matrizRecolhimento, dadosRecolhimento);
+		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
 		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
@@ -318,9 +320,35 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	}
 	
 	/*
+	 * Configura a sequência dos produtos da matriz de recolhimento.
+	 */
+	private void configurarSequenciaProdutosMatrizRecolhimento(
+												Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+												RecolhimentoDTO dadosRecolhimento) {
+		
+		if (dadosRecolhimento.isMatrizFechada() || !dadosRecolhimento.getBalancearMatriz()) {
+			
+			return;
+		}
+		
+		Long sequencia = 1L;
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
+				: matrizRecolhimento.entrySet()) {
+			
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+				
+				produtoRecolhimento.setSequencia(sequencia++);
+			}
+		}
+	}
+	
+	/*
 	 * Valida os dados de recolhimento.
 	 */
-	protected boolean validarDadosRecolhimento(RecolhimentoDTO dadosRecolhimento) {
+	private boolean validarDadosRecolhimento(RecolhimentoDTO dadosRecolhimento) {
 		
 		return !(dadosRecolhimento == null
 					|| dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor() == null
