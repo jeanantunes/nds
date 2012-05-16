@@ -24,8 +24,6 @@ import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
-import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -84,17 +82,12 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		save(formaBoleto);
 
 		distribuidor = null;
+
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
 		
-		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
-
-		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
-		politicaSuspensao.setValor(new BigDecimal(0));
-
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
 		distribuidor.getFormasCobranca().add(formaBoleto);
 
-		distribuidor.setPoliticaSuspensao(politicaSuspensao);
+		distribuidor.setPoliticaSuspensao(null);
 		
 		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
 																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+

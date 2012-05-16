@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -63,13 +64,18 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","",true,FormaEmissao.INDIVIDUAL_BOX);
 		
-		Distribuidor distribuidor = Fixture.distribuidor(1, pj, new Date(), politicaCobranca);
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
+		
+		Distribuidor distribuidor = Fixture.distribuidor(1, pj, new Date(), politicasCobranca);
 
 		save(pj);
 		save(distribuidor);
 		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 		Endereco enderecoDoDistruibuidor = Fixture.criarEndereco(
 				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
