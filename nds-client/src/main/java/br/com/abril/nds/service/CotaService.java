@@ -188,7 +188,8 @@ public interface CotaService {
 	void salvarSociosCota(List<SocioCota> sociosCota, Long idCota );
 	
 	List<SocioCota> obterSociosCota(Long idCota);
-
+	
+	Cota obterPorNumeroDaCotaAtiva(Integer numeroCota);
 	
 	/**
 	 * Método responsável por obter tipos de cota para preencher combo da camada view
