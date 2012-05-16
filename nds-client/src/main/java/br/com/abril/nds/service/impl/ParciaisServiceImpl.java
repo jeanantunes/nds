@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,13 +76,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 				dtLancamento = calendarioService.adicionarDiasRetornarDiaUtil(ultimoLancamento.getDataRecolhimentoDistribuidor(), fatorRelancamentoParcial) ;
 			}
 			
-			if(DateUtil.obterDiferencaDias(dtLancamento, lancamentoParcial.getRecolhimentoFinal()) > 0) {
+			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtLancamento) > 0) {
 				break;
 			}			
 			
 			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
 			
-			if(DateUtil.obterDiferencaDias(dtRecolhimento, lancamentoParcial.getRecolhimentoFinal()) > 0) {
+			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				i = qtdePeriodos;
 				dtRecolhimento = lancamentoParcial.getRecolhimentoFinal();
 			}
@@ -92,9 +93,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(dtLancamento, dtRecolhimento, lancamentoParcial);
 			
-			lancamentoRepository.merge(novoLancamento);
-			historicoLancamentoRepository.merge(novoHistorico);
-			periodoLancamentoParcialRepository.merge(novoPeriodo);
+			lancamentoRepository.adicionar(novoLancamento);
+			historicoLancamentoRepository.adicionar(novoHistorico);
+			periodoLancamentoParcialRepository.adicionar(novoPeriodo);
 			
 			ultimoLancamento = novoLancamento;
 		}
@@ -117,6 +118,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setLancamento(lancamento);
 		historico.setTipoEdicao(TipoEdicao.INCLUSAO);
+		historico.setStatus(lancamento.getStatus());
 		historico.setDataEdicao(new Date());
 		historico.setResponsavel(usuarioRepository.buscarPorId(idUsuario));
 		
@@ -130,6 +132,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataLancamentoPrevista(dtLancamento);
 		lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
+		lancamento.setDataLancamentoDistribuidor(dtLancamento);
+		lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
+		lancamento.setReparte(BigDecimal.ZERO);
+		lancamento.setSequenciaMatriz(0);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
@@ -142,14 +148,15 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(qtdePeriodos == null || qtdePeriodos<=0)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de periodos informada deve ser maior que zero.");
 		
+		if(produtoEdicao == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "ProdutoEdição não deve ser nulo.");
 		
-		
-		if(!produtoEdicao.getProduto().isParcial())
+		if(!produtoEdicao.isParcial())
 			throw new ValidacaoException(TipoMensagem.WARNING, "ProdutoEdicao não é parcial.");
 		
 		LancamentoParcial lancamentoParcial = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicao.getId());
 		
-		if(lancamentoParcial != null)
+		if(lancamentoParcial == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há LancamentoParcial para o ProdutoEdicao " + produtoEdicao.getId() +".");
 				
 		return lancamentoParcial;		
