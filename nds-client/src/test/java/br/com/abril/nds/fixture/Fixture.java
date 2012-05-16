@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -2527,5 +2528,15 @@ public class Fixture {
 		parcial.setTipo(tipo);
 		
 		return parcial;
+	}
+	
+	public static TipoDesconto criarTipoDesconto(String codigo, String descricao, BigDecimal porcentagem){
+		
+		TipoDesconto tipoDesconto = new TipoDesconto();
+		tipoDesconto.setCodigo(codigo);
+		tipoDesconto.setDescricao(descricao);
+		tipoDesconto.setPorcentagem(porcentagem);
+		
+		return tipoDesconto;
 	}
 }

@@ -1,20 +1,22 @@
 package br.com.abril.nds.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -27,6 +29,26 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 public interface CotaService {
 
+	/**
+	 * 
+	 * Retorna uma lista de Cotas em função dos filtros informado.
+	 * 
+	 * @param filtro - filtro com as opções de consulta
+	 * 
+	 * @return List<CotaDTO>
+	 */
+	List<CotaDTO> obterCotas(FiltroCotaDTO filtro);
+	
+	/**
+	 * 
+	 * Retorna a quantidade de Cotas em função dos filtros informado.
+	 * 
+	 * @param filtro - filtro com as opções de consulta
+	 * 
+	 * @return Long
+	 */
+	Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro);
+	
 	Cota obterPorNumeroDaCota(Integer numeroCota);
 
 	List<Cota> obterCotasPorNomePessoa(String nome);
@@ -143,11 +165,36 @@ public interface CotaService {
 	 */
 	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
 	
+
+	/**
+	 * Salva os dados básicos da cota 
+	 * 
+	 * @param cotaDto
+	 */
+	Long salvarCota(CotaDTO cotaDto);
+	
+	void excluirCota(Long idCota);
+	
+	CotaDTO obterDadosCadastraisCota(Long idCota);
+	
+	Integer gerarNumeroSugestaoCota();
+	
+	List<TipoDesconto> obterDescontos(Long idCota);
+	
+	List<TipoDesconto> obterDescontosCota(Long idCota);
+	
+	void salvarDescontosCota(List<Long> descontos, Long idCota);
+	
+	void salvarSociosCota(List<SocioCota> sociosCota, Long idCota );
+	
+	List<SocioCota> obterSociosCota(Long idCota);
+
 	
 	/**
 	 * Método responsável por obter tipos de cota para preencher combo da camada view
 	 * @return comboTiposCota: Tipos de cota padrão.
 	 */
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota();
+
 	
 }

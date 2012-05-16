@@ -59,6 +59,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -644,8 +645,33 @@ public class DataLoader {
 		
 		gerarTipoEntrega(session);
 		
+		gerarDescontos(session);
+		
 	}
 
+	private static void gerarDescontos(Session session){
+		
+		TipoDesconto tipoDesconto = Fixture.criarTipoDesconto("001", "Normal", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("002", "Produtos Tributados", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("003", "Video Print de 1/1/96 A", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("004", "Cromos - Normal Exc Ju", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("005", "Importadas - Eletrolibe", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("006", "Promoções", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("007", "Especial Globo", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("008", "Magazine Fome Zero", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("009", "Impratadas Mag", new BigDecimal(10));
+		save(session, tipoDesconto);
+		tipoDesconto = Fixture.criarTipoDesconto("010", "Importadas MagExpress", new BigDecimal(10));
+		save(session, tipoDesconto);
+	}
 	
 	private static void gerarTipoEntrega(Session session) {
 		

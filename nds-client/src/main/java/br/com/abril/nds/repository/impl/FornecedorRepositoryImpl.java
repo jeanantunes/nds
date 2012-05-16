@@ -2,11 +2,15 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 
@@ -27,7 +31,46 @@ public class FornecedorRepositoryImpl extends
 	public FornecedorRepositoryImpl() {
 		super(Fornecedor.class);
 	}
-
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedoresNaoReferenciadosComCota(Long idCota){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select fornecedor from Fornecedor fornecedor  ")
+			.append(" where fornecedor.id not in ( ")
+			
+						.append(" select fornecedorF.id from Cota cota JOIN cota.fornecedores fornecedorF ")
+						.append(" where cota.id = :idCota ")
+						.append(" and fornecedorF.situacaoCadastro = :situacaoCadastro )")
+						
+			.append(" and fornecedor.situacaoCadastro = :situacaoCadastro");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idCota",idCota);
+		query.setParameter("situacaoCadastro",SituacaoCadastro.ATIVO);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedoresCota(Long idCota){
+		
+		StringBuilder hql = new StringBuilder();
+	
+		hql.append(" select fornecedor from Cota cota JOIN cota.fornecedores fornecedor ")
+		.append(" where cota.id = :idCota ")
+		.append(" and fornecedor.situacaoCadastro = :situacaoCadastro");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idCota",idCota);
+		query.setParameter("situacaoCadastro",SituacaoCadastro.ATIVO);
+		
+		return query.list();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterFornecedoresAtivos() {

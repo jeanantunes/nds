@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.service.FornecedorService;
@@ -28,6 +31,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Autowired
 	private TelefoneFornecedorRepository telefoneFornecedorRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Transactional
 	public Fornecedor obterFornecedorUnico(String codigoProduto) {
@@ -102,7 +108,55 @@ public class FornecedorServiceImpl implements FornecedorService {
 		return listaTelAssoc;
 	}
 	
+	@Transactional(readOnly = true)
+	@Override
+	public List<Fornecedor> obterFornecedores(Long idCota){
+		
+		if(idCota == null){
+			return fornecedorRepository.buscarTodos();
+		}
+		
+		return fornecedorRepository.obterFornecedoresNaoReferenciadosComCota(idCota);
+	}
 	
+	@Transactional(readOnly = true)
+	@Override
+	public List<Fornecedor> obterFornecedoresCota(Long idCota){
+		
+		return fornecedorRepository.obterFornecedoresCota(idCota);
+	}
+	
+	@Transactional
+	@Override
+	public void salvarFornecedorCota(List<Long> fornecedores, Long idCota){
+		
+		if(idCota == null ){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+		}
+		
+		Set<Fornecedor> listaFonecedores = new HashSet<Fornecedor>();
+		
+		if(fornecedores != null && !fornecedores.isEmpty()){
+			
+			Fornecedor fornecedor = null;
+			
+			for(Long  fn :  fornecedores ){
+				
+				fornecedor = fornecedorRepository.buscarPorId(fn) ;
+				
+				if(fornecedor != null){
+					listaFonecedores.add( fornecedor );
+				}
+
+			}
+		}
+
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		cota.setFornecedores(listaFonecedores);
+		
+		cotaRepository.alterar(cota);
+
+	}
 	/**
 	 * Método responsável por obter fornecedores para preencher combo da camada view
 	 * @return comboFornecedores: fornecedores cadastrados
