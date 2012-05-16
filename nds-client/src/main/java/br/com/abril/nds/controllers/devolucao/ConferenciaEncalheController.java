@@ -21,8 +21,11 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
+import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -50,6 +53,9 @@ public class ConferenciaEncalheController {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
 	private Result result;
@@ -94,6 +100,24 @@ public class ConferenciaEncalheController {
 		this.session.removeAttribute(LISTA_CONFERENCIA_ENCALHE);
 		this.session.removeAttribute(NUMERO_COTA_CONFERENCIA);
 		this.session.removeAttribute(VALOR_ENCALHE_JORNALEIRO);
+	}
+	
+	@Post
+	public void verificarReabertura(Integer numeroCota){
+		
+		try {
+			
+			this.conferenciaEncalheService.verificarChamadaEncalheCota(numeroCota);
+		} catch (ConferenciaEncalheExistenteException e) {
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "REABERTURA"), "result").recursive().serialize();
+			return;
+		} catch (ChamadaEncalheCotaInexistenteException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 
 	@Post
@@ -169,7 +193,9 @@ public class ConferenciaEncalheController {
 			for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 				
 				valorEncalhe = valorEncalhe.add(
-						conferenciaEncalheDTO.getPrecoCapa().multiply(conferenciaEncalheDTO.getQtdExemplar()).subtract(conferenciaEncalheDTO.getDesconto()));
+						conferenciaEncalheDTO.getPrecoCapa()
+						.subtract(conferenciaEncalheDTO.getDesconto())
+						.multiply(conferenciaEncalheDTO.getQtdExemplar()));
 			}
 			
 			valorVendaDia = valorVendaDia.add(info.getReparte()).subtract(valorEncalhe);
@@ -187,22 +213,62 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void pesquisarProdutoEdicao(String codigoBarra, Long sm, Long codigo, Long codigoAnterior, Long quantidade){
+	public void pesquisarProdutoEdicao(String codigoBarra, Long sm, Long idProdutoEdicao, Long codigoAnterior, Long quantidade){
 		
 		ProdutoEdicao produtoEdicao = null;
 		
+		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
+		
 		Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA_CONFERENCIA);
+		
+		List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
 		
 		try {
 			if (codigoBarra != null && !codigoBarra.trim().isEmpty()){
 				
-				produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
+				for (ConferenciaEncalheDTO dto : listaConfSessao){
+					
+					if (codigoBarra.equals(dto.getCodigoDeBarras())){
+						
+						conferenciaEncalheDTO = dto;
+						break;
+					}
+				}
+				
+				if (conferenciaEncalheDTO == null){
+				
+					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
+				}
 			} else if (sm != null){
 				
-				produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
-			} else if (codigo != null){
+				for (ConferenciaEncalheDTO dto : listaConfSessao){
+					
+					if (sm.equals(dto.getCodigoSM())){
+						
+						conferenciaEncalheDTO = dto;
+						break;
+					}
+				}
 				
-				produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, codigo);
+				if (conferenciaEncalheDTO == null){
+				
+					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
+				}
+			} else if (idProdutoEdicao != null){
+				
+				for (ConferenciaEncalheDTO dto : listaConfSessao){
+					
+					if (idProdutoEdicao.equals(dto.getIdProdutoEdicao())){
+						
+						conferenciaEncalheDTO = dto;
+						break;
+					}
+				}
+				
+				if (conferenciaEncalheDTO == null){
+				
+					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
+				}
 			} else {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
@@ -212,17 +278,17 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
 		}
 		
-		if (produtoEdicao == null){
+		if (conferenciaEncalheDTO == null && produtoEdicao == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		}
 		
 		if (codigoAnterior != null && quantidade != null){
 			
-			this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao);
+			conferenciaEncalheDTO = this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao);
 		}
 		
-		this.result.use(Results.json()).from(produtoEdicao, "result").include("produto").serialize();
+		this.result.use(Results.json()).from(conferenciaEncalheDTO, "result").serialize();
 	}
 	
 	@Post
@@ -247,12 +313,37 @@ public class ConferenciaEncalheController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
+	@Post
+	public void pesquisarProdutoPorCodigoNome(String codigoNomeProduto){
+		
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto);
+		
+		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
+			
+			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+			
+			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao){
+				
+				listaProdutos.add(
+						new ItemAutoComplete(
+								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+								null,
+								new Object[]{produtoEdicao.getProduto().getCodigo(), produtoEdicao.getId()}));
+			}
+			
+			result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+		} else {
+		
+			result.use(Results.json()).from("", "result").serialize();
+		}
+	}
+	
 	/*
 	 * Atualiza quantidade da conferencia ou cria um novo registro caso seja a primeira vez que se esta conferindo o produtoedicao
 	 */
-	private void atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicao produtoEdicao) {
+	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicao produtoEdicao) {
 		
-		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
+		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = null;
 		
 		if (codigoAnterior != null){
 		
@@ -261,34 +352,36 @@ public class ConferenciaEncalheController {
 			
 			for (ConferenciaEncalheDTO dto : lista){
 				
-				if (dto.getCodigo().equals(codigoAnterior)){
+				if (dto.getIdProdutoEdicao().equals(codigoAnterior)){
 					
-					conferenciaEncalheDTO = dto;
+					conferenciaEncalheDTOSessao = dto;
 					break;
 				}
 			}
 		}
 		
-		if (conferenciaEncalheDTO != null){
+		if (conferenciaEncalheDTOSessao != null){
 			
-			conferenciaEncalheDTO.setQtdExemplar(new BigDecimal(quantidade));
+			conferenciaEncalheDTOSessao.setQtdExemplar(new BigDecimal(quantidade));
 		} else {
 			
-			conferenciaEncalheDTO = new ConferenciaEncalheDTO();
+			conferenciaEncalheDTOSessao = new ConferenciaEncalheDTO();
 			
-			conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
-			conferenciaEncalheDTO.setCodigo(produtoEdicao.getProduto().getCodigo());
-			conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-			conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
-			conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
-			conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
-			conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
-			conferenciaEncalheDTO.setQtdExemplar(new BigDecimal(quantidade));
-			conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+			conferenciaEncalheDTOSessao.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
+			conferenciaEncalheDTOSessao.setCodigo(produtoEdicao.getProduto().getCodigo());
+			conferenciaEncalheDTOSessao.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+			conferenciaEncalheDTOSessao.setCodigoSM(produtoEdicao.getCodigoSM());
+			conferenciaEncalheDTOSessao.setIdProdutoEdicao(produtoEdicao.getId());
+			conferenciaEncalheDTOSessao.setNomeProduto(produtoEdicao.getProduto().getNome());
+			conferenciaEncalheDTOSessao.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+			conferenciaEncalheDTOSessao.setPrecoCapa(produtoEdicao.getPrecoVenda());
+			conferenciaEncalheDTOSessao.setQtdExemplar(new BigDecimal(quantidade));
+			conferenciaEncalheDTOSessao.setDesconto(produtoEdicao.getDesconto());
 			
-			this.getListaConferenciaEncalheFromSession().add(conferenciaEncalheDTO);
+			this.getListaConferenciaEncalheFromSession().add(conferenciaEncalheDTOSessao);
 		}
+		
+		return conferenciaEncalheDTOSessao;
 	}
 
 	/**

@@ -148,7 +148,7 @@
 			<tr>
 				<td width="44%">Digite o Código / Nome do Produto:</td>
 				<td width="56%">
-            		<input name="pesq_prod" type="text" id="pesq_prod" style="width:200px; float:left; margin-right:5px;" onkeypress="mostrar_produtos();"/>
+            		<input name="pesq_prod" type="text" id="pesq_prod" style="width:200px; float:left; margin-right:5px;"/>
 	                <span class="classPesquisar">
 	                	<a href="javascript:;" onclick="mostrar_produtos();">&nbsp;</a>
 	                </span>
@@ -300,4 +300,12 @@
 	        </td>
       	</tr>
 	</table>
+</div>
+
+<div id="dialog-reabertura" title="Reabertura" style="display: none;">
+	<fieldset style="width: 310px;">
+		<legend>Nota Fiscal</legend>
+	    <p>Já existe conferencia de encalhe para esta cota.<br/>
+	    Efetuar reabertura?</p>
+	</fieldset>
 </div>
