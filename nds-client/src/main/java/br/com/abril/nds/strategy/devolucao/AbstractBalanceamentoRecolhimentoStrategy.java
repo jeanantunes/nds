@@ -43,6 +43,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
+		balanceamentoRecolhimento.setMatrizFechada(dadosRecolhimento.isMatrizFechada());
+		
 		return balanceamentoRecolhimento;
 	}
 	
@@ -65,7 +67,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = 
 			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(
 				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista, 
-					dadosRecolhimento.getBalancearMatriz());
+					dadosRecolhimento.getBalancearMatriz(), dadosRecolhimento.isMatrizFechada());
 		
 		if (!produtosRecolhimentoNaoBalanceaveis.isEmpty()) {
 			
@@ -78,7 +80,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 */
 	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
 																		  				   Date dataRecolhimentoDesejada,
-																		  				   boolean balancearMatriz) {
+																		  				   boolean balancearMatriz,
+																		  				   boolean matrizFechada) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = new ArrayList<ProdutoRecolhimentoDTO>();
 		
@@ -93,7 +96,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
 			
-			if ((!balancearMatriz || produtoRecolhimento.isPossuiChamada())
+			if ((!balancearMatriz || matrizFechada || produtoRecolhimento.isPossuiChamada())
 					&& produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
 				produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
