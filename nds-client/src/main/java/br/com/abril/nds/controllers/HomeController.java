@@ -11,7 +11,7 @@ public class HomeController {
 
 	@Get
 	@Path("/")
-	public index() {
+	public void index() {
 
 	}
 }
