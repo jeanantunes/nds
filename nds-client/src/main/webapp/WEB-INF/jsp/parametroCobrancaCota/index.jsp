@@ -17,7 +17,7 @@
 				sortable : true,
 				align : 'left'
 			},{
-				display : 'Concentra√ß√£o de Pagamento',
+				display : 'ConcentraÁ„o de Pagamento',
 				name : 'concentracaoPagto',
 				width : 220,
 				sortable : true,
@@ -35,7 +35,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'A√ß√£o',
+				display : 'AÁ„o',
 				name : 'acao',
 				width : 50,
 				sortable : false,
@@ -48,12 +48,6 @@
 			height : 150
 		});
 	});	
-
-
-
-
-
-
 
 	$(function() {			
 		$("#fatorVencimento").numeric();
@@ -71,21 +65,13 @@
 	    $("#diaDoMes").numeric();
 	});
 
-	
-
-	
-	
-	
-
 	//PR√â CARREGAMENTO DA PAGINA
-	function carregaFinanceiro(){
+	function carregaFinanceiro(idCota){
 		$("#_idParametroCobranca").val("");
 		$("#_idCota").val("");
 		$("#_numCota").val("");
-		var idCota = $("#_idCotaRef").val();
 		obterParametroCobranca(idCota);
-		mostrarGrid(idCota);
-	}
+		mostrarGrid(idCota);	}
 	
 	function montarTrRadioBox(result,name,nameItemIdent) {
 
@@ -164,12 +150,6 @@
 		
 		return resultado;
 	}
-   
-	
-	
-	
-	
-	
 	
     //MODOS DE EXIBI√á√ÉO 
 	function exibe_botao_contrato(contrato){
@@ -232,13 +212,7 @@
 			mostraMensal();
 		}    
 	};
-	
 
-	
-	
-	
-	
-	
 	//PARAMETROS DE COBRAN√áA
 	function obterParametroCobranca(idCota){
 		var data = [{name: 'idCota', value: idCota}];
@@ -321,13 +295,7 @@
 				   },
 				   true);
 	}
-	
-	
-	
-	
-	
-	
-	
+
 	//FORMAS DE COBRAN√áA
 	function preparaNovaFormaCobranca(){
 		
@@ -602,12 +570,6 @@
 				   null,
 				   true);
 	}
-	
-	
-	
-	
-	
-	
 
 	//POPUPS
 	function popup_nova_unificacao() {
@@ -683,35 +645,19 @@
 		    }
 		});
 	};
-	
-	
-	
-	
-	
-	
-	
+
 	//IMPRESS√ÉO DO CONTRATO
 	function imprimeContrato(){
 		var idCota = $("#_idCota").val();
 	    document.location.assign("${pageContext.request.contextPath}/cota/parametroCobrancaCota/imprimeContrato?idCota="+idCota);
 	}
-	
-	
-	
-	
-	
+
 	//INCLUS√ÉO DE NOVA UNIFICA√á√ÉO SEM SAIR DO POPUP
 	function incluirNovaUnificacao(){
 	    postarFormaCobranca(false,true);
 	}
-	
-	
-	
-	
 
 </script>
-
-
 <style>
 
 #divRecebeEmail,
@@ -758,7 +704,7 @@
 		     <td width="168">Fator Vencimento em D+:</td>
 		       
 		     <td width="123">
-			     <select id="fatorVencimento" name="fatorVencimento" size="1" multiple="multiple" style="width:50px; height:19px;" >
+			     <select id="fatorVencimento" name="fatorVencimento" size="1" style="width:50px; height:19px;" >
 			       <option value="1">1</option>
 			       <option value="2">2</option>
 			       <option value="3">3</option>
@@ -796,7 +742,7 @@
                </select> 
              </td>  
              
-             <td>Comiss√£o %:</td>
+             <td>Comiss„o %:</td>
 		     <td>
 		         <input maxlength="15" name="comissao" id="comissao" type="text" style="width:60px;" />
 		     </td>
@@ -805,7 +751,7 @@
 		   
 		   <tr>
 		   
-		     <td>Sugere Suspens√£o:</td>
+		     <td>Sugere Suspens„o:</td>
 		     <td><input id="sugereSuspensao" name="sugereSuspensao" type="checkbox" value="" />
 		     </td>
 		     
@@ -818,7 +764,7 @@
 
 		   <tr>
 		   
-		     <td height="23">Sugere Suspens√£o quando atingir:</td>
+		     <td height="23">Sugere Suspens„o quando atingir:</td>
 		     <td  colspan="3">
 			     <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			           
@@ -851,7 +797,7 @@
 	  
 	<br clear="all" />
 	  
-	<span class="bt_novos" title="Nova Unifica√ß√£o">
+	<span class="bt_novos" title="Nova UnificaÁ„o">
 	    <a href="javascript:;" onclick="popup_nova_unificacao();">
 	        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
 	        Nova Forma de Pagamento
@@ -861,7 +807,7 @@
 			
     <br clear="all" />
 
-    <div id="dialog-unificacao" title="Nova Unifica√ß√£o de Boletos">
+    <div id="dialog-unificacao" title="Nova UnificaÁ„o de Boletos">
 		
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="idModalUnificacao" name="messageDialog"/>
@@ -877,7 +823,7 @@
 				     <tr class="header_table">
 				         <td align="left">Fornecedores</td>
 				         <td align="left">&nbsp;</td>
-				         <td align="left">Concentra√ß√£o de Pagamentos</td>
+				         <td align="left">ConcentraÁ„o de Pagamentos</td>
 				     </tr>
 				     
 			         <tr>
@@ -933,7 +879,7 @@
 							             <input type="checkbox" name="PT" id="PT" />
 							         </td>    
 					                 <td>    
-							             <label for="PT">Ter√ßa-feira</label>
+							             <label for="PT">TerÁa-feira</label>
 							         </td>
 					             </tr>
 					             
@@ -969,7 +915,7 @@
 							             <input type="checkbox" name="PSab" id="PSab" />
 							             </td>    
 					                 <td>  
-							             <label for="PSab">S√°bado</label>
+							             <label for="PSab">S·bado</label>
 							         </td>
 					              </tr>
 							                   
@@ -1073,7 +1019,7 @@
 		      	 	<table width="558" border="0" cellspacing="2" cellpadding="2">
 						  
 						  <tr>
-						    <td colspan="4"><strong>Dados Banc√°rios - Cota:</strong></td>
+						    <td colspan="4"><strong>Dados Banc·rios - Cota:</strong></td>
 						  </tr>
 						  
 						  <tr>
@@ -1084,7 +1030,7 @@
 						  </tr>
 						  
 						  <tr>
-						    <td>Ag√™ncia:</td>
+						    <td>AgÍncia:</td>
 						    <td><input maxlength="17" type="text" id="agencia" name="agencia" style="width:60px;" />
 						      -
 						      <input maxlength="1" type="text" id="agenciaDigito" name="agenciaDigito" style="width:30px;" /></td>
@@ -1122,15 +1068,15 @@
 			
 	<div id="dialog-excluir-unificacao" title="Unifica√ß√£o de Boletos">
 	<fieldset>
-		<legend>Exclus√£o de Unifica√ß√£o de Boletos</legend>
-	    <p>Confirma a exclus√£o desta Unifica√ß√£o de Boleto</p>
+		<legend>Exclus√£o de UnificalÁ„o de Boletos</legend>
+	    <p>Confirma a exclus„o desta UnificaÁ„o de Boleto</p>
 	</fieldset>
 	</div>
 	
 	
 	<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
 	<fieldset>
-		<legend>Selecione um ou mais Fornecedores para unifica√ß√£o dos boletos</legend>
+		<legend>Selecione um ou mais Fornecedores para unificaÁ„o dos boletos</legend>
 	    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
 	      <option>Dinap</option>
 	      <option>FC</option>

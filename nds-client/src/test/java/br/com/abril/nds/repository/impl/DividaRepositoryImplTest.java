@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -93,12 +94,17 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Distribuidor distribuidor = null; 
 		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem");
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
 		
-		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicaCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
+		
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 		
 		save(distribuidor);
+		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);

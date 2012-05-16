@@ -91,4 +91,11 @@ public class PessoaServiceImpl implements PessoaService {
 		
 		return this.pessoaRepository.buscarPorCNPJ(cnpj);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<Pessoa> obterPessoasPorNome(String nomePessoa) {
+		
+		return pessoaRepository.buscarPorNome(nomePessoa);
+	}
 }

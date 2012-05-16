@@ -13,9 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -214,16 +217,22 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","");
+				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","",true,FormaEmissao.INDIVIDUAL_BOX);
 		save(politicaCobranca);
+		
+		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
+		politicasCobranca.add(politicaCobranca);
 				
-		Distribuidor distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicaCobranca);
+		Distribuidor distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicasCobranca);
 		
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		politicaSuspensao.setValor(new BigDecimal(0));
 		
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		save(distribuidor);
+		
+		politicaCobranca.setDistribuidor(distribuidor);
+		save(politicaCobranca);
 		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);
@@ -349,6 +358,20 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterDiasConcentracaoPagamentoCota(){
 		this.cotaRepository.obterDiasConcentracaoPagamentoCota(1L);
+	}
+	
+	@Test
+	public void obterCota(){
+
+		
+		FiltroCotaDTO filtro = new FiltroCotaDTO();
+		filtro.setNumeroCota(cota.getNumeroCota());
+		
+		List<CotaDTO> cotas = cotaRepository.obterCotas(filtro);
+		
+		Assert.assertNotNull(cotas);
+		
+		Assert.assertTrue(!cotas.isEmpty());
 	}
 
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 
 /**
@@ -243,6 +244,29 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepository<Hist
 				}
 			}
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#obterUltimoHistoricoInativo(Long)
+	 */
+	public HistoricoSituacaoCota obterUltimoHistoricoInativo(Integer numeroCota){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select h from  HistoricoSituacaoCota h JOIN h.cota cota ")
+		.append(" where cota.numeroCota =: numeroCota")
+		.append(" and cota.situacaoCadastro = h.novaSituacao ")
+		.append(" and cota.situacaoCadastro =:situacaoCadastro ")
+		.append(" order by cota.inicioAtividade, h.dataEdicao desc ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("situacaoCadastro", SituacaoCadastro.INATIVO);
+		query.setMaxResults(1);
+		
+		return (HistoricoSituacaoCota) query.uniqueResult();
+		
 	}
 
 }
