@@ -69,12 +69,6 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
 	
-	/**
-	 * Flag indicando se o produto permite recolhimentos parciais
-	 */
-	@Column(name = "PARCIAL")
-	private boolean parcial;
-	
 	@Column(name = "COD_CONTEXTO", nullable = true)
 	private Integer codigoContexto;
 
@@ -153,15 +147,7 @@ public class Produto implements Serializable {
 	public void setEditor(Editor editor) {
 		this.editor = editor;
 	}
-	
-	public boolean isParcial() {
-		return parcial;
-	}
-	
-	public void setParcial(boolean parcial) {
-		this.parcial = parcial;
-	}
-	
+		
 	public Integer getCodigoContexto() {
 		return codigoContexto;
 	}

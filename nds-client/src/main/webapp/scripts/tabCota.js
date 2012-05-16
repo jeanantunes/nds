@@ -1,12 +1,9 @@
-function TabCota(tabName , funcaoSalvarInicial) {
+function TabCota(tabName) {
 	
 	var T = this;
-	
-	/**
-	 * Função que será chamada ao realizar a mudança de abas
-	 */
-	this.funcaoSalvar = funcaoSalvarInicial;
-	
+
+	this.funcaoSalvar = null;
+
 	this.novaAba=null;
 		
 	/**
@@ -18,26 +15,22 @@ function TabCota(tabName , funcaoSalvarInicial) {
 		
 		/**DADOS CADASTRAIS**/
 		case 0: 
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js)(tabCota.js) - Salvar Dados Cadastrais.');};
-			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Dados Cadastrais.');
+			MANTER_COTA.carregarDadosCadastrais();
 			break;
 			
 		/**ENDERECOS**/
 		case 1:
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar enderecos.');};
-			ENDERECO_COTA.popularGridEnderecos();
+			MANTER_COTA.carregarEnderecos();
 			break;
 		
 		/**TELEFONES**/
 		case 2: 
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Telefones.');};
-			COTA.carregarTelefones();
+			MANTER_COTA.carregarTelefones();
 			break;
 
 		/**PDV**/
 		case 3: 
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados PDV.');};
-			carregarPDV();
+			MANTER_COTA.carregarPDV();
 			break;
 		
 		/**GARANTIA**/
@@ -48,32 +41,44 @@ function TabCota(tabName , funcaoSalvarInicial) {
 			}catch (e) {
 				console.log(e);
 			}
+
 			break;
 		
-		/**FINANCEIRO**/
+		/**Fornecedor**/
 		case 5:
-			T.funcaoSalvar = function(){postarParametroCobranca();};
-			carregaFinanceiro();
+
+			MANTER_COTA.carregarFornecedores();
+
 			break;
 
-		/**BANCOS**/		
+		/**Desconto**/		
 		case 6:
-			T.funcaoSalvar = function(){return confirm('Deseja sair da aba sem salvar? \n//TODO - Definir método(tabCota.js) - Salvar Dados Bancos.'); };
-			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Bancos.');
+			MANTER_COTA.carregarDescontos();
 			break;
 		
-		/**DISTRIBUICAO**/
+		/**Financeiro**/
 		case 7:
-			T.funcaoSalvar = DISTRIB_COTA_CPF.salvar;
-			DISTRIB_COTA_CPF.carregarDadosDistribuicaoCota( $('#_idCotaRef').val() );
+			MANTER_COTA.carregaFinanceiroCota();
 			break;
 		
-		/**FORNECEDOR**/
+		/**Distribuidor**/
 		case 8:
-			T.funcaoSalvar = function(){alert('//TODO - Definir método(tabCota.js) - Salvar Dados Fornecedor.');};
-			alert('//TODO - Definir método(tabCota.js) - Carregar dados da Aba Fornecedor.');
+			MANTER_COTA.carregarDistribuicao();
 			break;
-		}
+		
+		/**Socios**/
+		case 9:
+			MANTER_COTA.carregarDadosSocio();
+			break;
+	}
+		
+	},
+	
+	this.fecharDialog = function() {
+		
+		T.funcaoSalvar = null;
+		
+		$( "#dialog-cota" ).dialog( "close" );
 		
 	},
 	

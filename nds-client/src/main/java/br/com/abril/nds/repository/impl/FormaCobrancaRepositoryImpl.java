@@ -145,9 +145,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 		hql.append(" select f from FormaCobranca f");		
 		hql.append(" where f.parametroCobrancaCota.cota.id = :pIdCota ");
 		hql.append(" and f.tipoCobranca = :pTipoCobranca ");
+		hql.append(" and f.ativa = :pAtiva ");
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pIdCota", idCota);
         query.setParameter("pTipoCobranca", tipoCobranca);
+        query.setParameter("pAtiva", true);
         return query.list();
         
 	}

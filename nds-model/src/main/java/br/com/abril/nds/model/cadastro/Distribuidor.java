@@ -56,10 +56,8 @@ public class Distribuidor {
 	@Column(name = "FATOR_DESCONTO")
 	private BigDecimal fatorDesconto;
 	
-	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@OneToOne(optional = false)
-	@JoinColumn(name = "POLITICA_COBRANCA_ID")
-	private PoliticaCobranca politicaCobranca;
+	@OneToMany(mappedBy="distribuidor")
+	private Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 	
 	@OneToMany
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
@@ -132,7 +130,9 @@ public class Distribuidor {
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
-
+    
+	@Column(name="QNT_DIAS_REUTILIZACAO_CODIGO_COTA")
+	private Long qntDiasReutilizacaoCodigoCota;
 	
 	/**
 	 * Parâmetro relativo a quantidade de dias após a data de recolhimento 
@@ -173,22 +173,22 @@ public class Distribuidor {
 		this.fatorDesconto = fatorDesconto;
 	}
 	
-	public PoliticaCobranca getPoliticaCobranca() {
-		return politicaCobranca;
-	}
-	
-	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
-		this.politicaCobranca = politicaCobranca;
-	}
-	
 	public Set<FormaCobranca> getFormasCobranca() {
 		return formasCobranca;
 	}
-	
+
 	public void setFormasCobranca(Set<FormaCobranca> formasCobranca) {
 		this.formasCobranca = formasCobranca;
 	}
 	
+	public Set<PoliticaCobranca> getPoliticasCobranca() {
+		return politicasCobranca;
+	}
+
+	public void setPoliticasCobranca(Set<PoliticaCobranca> politicasCobranca) {
+		this.politicasCobranca = politicasCobranca;
+	}
+
 	public PoliticaSuspensao getPoliticaSuspensao() {
 		return politicaSuspensao;
 	}
@@ -329,13 +329,35 @@ public class Distribuidor {
 		this.preenchimentoAutomaticoPDV = preenchimentoAutomaticoPDV;
 	}
 
+	/**
+	 * @return the qntDiasReutilizacaoCodigoCota
+	 */
+	public Long getQntDiasReutilizacaoCodigoCota() {
+		return qntDiasReutilizacaoCodigoCota;
+	}
+
+	/**
+	 * @param qntDiasReutilizacaoCodigoCota the qntDiasReutilizacaoCodigoCota to set
+	 */
+	public void setQntDiasReutilizacaoCodigoCota(Long qntDiasReutilizacaoCodigoCota) {
+		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
+	}
+
+	/**
+	 * @return the qtdDiasEncalheAtrasadoAceitavel
+	 */
 	public int getQtdDiasEncalheAtrasadoAceitavel() {
 		return qtdDiasEncalheAtrasadoAceitavel;
 	}
 
+	/**
+	 * @param qtdDiasEncalheAtrasadoAceitavel the qtdDiasEncalheAtrasadoAceitavel to set
+	 */
 	public void setQtdDiasEncalheAtrasadoAceitavel(
 			int qtdDiasEncalheAtrasadoAceitavel) {
 		this.qtdDiasEncalheAtrasadoAceitavel = qtdDiasEncalheAtrasadoAceitavel;
 	}
+
+
 	
 }

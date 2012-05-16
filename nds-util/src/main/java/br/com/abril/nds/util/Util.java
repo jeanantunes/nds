@@ -1,10 +1,14 @@
 package br.com.abril.nds.util;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class Util {
+	
+	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	
 	public static boolean isNumeric(String valor){
 		try {
@@ -197,5 +201,14 @@ public abstract class Util {
 		formatado.append(cpf.substring(0, 3)).append(".").append(cpf.substring(3, 6)).append(".").append(cpf.substring(6, 9)).append("-").append(cpf.substring(9, 11));
 		
 		return formatado.toString();
+	}
+	
+	public static boolean validarEmail(final String email){
+		
+		Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+		
+		Matcher matcher = pattern.matcher(email);
+		
+		return matcher.matches();
 	}
 }
