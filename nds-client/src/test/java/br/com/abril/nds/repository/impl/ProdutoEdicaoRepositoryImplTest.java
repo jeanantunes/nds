@@ -84,8 +84,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		distribuidor = null;
 
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
-		
-		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(null);
 		

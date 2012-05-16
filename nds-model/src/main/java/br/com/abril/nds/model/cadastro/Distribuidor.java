@@ -22,8 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-
 import br.com.abril.nds.model.DiaSemana;
 
 /**
@@ -58,10 +56,6 @@ public class Distribuidor {
 	
 	@OneToMany(mappedBy="distribuidor")
 	private Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-	
-	@OneToMany
-	@JoinColumn(name = "DISTRIBUIDOR_ID")
-	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -171,14 +165,6 @@ public class Distribuidor {
 	
 	public void setFatorDesconto(BigDecimal fatorDesconto) {
 		this.fatorDesconto = fatorDesconto;
-	}
-	
-	public Set<FormaCobranca> getFormasCobranca() {
-		return formasCobranca;
-	}
-
-	public void setFormasCobranca(Set<FormaCobranca> formasCobranca) {
-		this.formasCobranca = formasCobranca;
 	}
 	
 	public Set<PoliticaCobranca> getPoliticasCobranca() {

@@ -2597,7 +2597,7 @@ public class DataLoader {
 				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
-		
+		//FORMAS DE COBRANÇA DA COTA
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 												  BigDecimal.ONE, BigDecimal.ONE, null);
 		
@@ -2616,36 +2616,58 @@ public class DataLoader {
 
 		save(session, formaBoleto,formaCheque,formaDeposito,formaDinheiro,formaTransferenciBancaria);
 
+		
+		//FORMAS DE COBRANCA DO DISTRIBUIDOR
+		FormaCobranca formaBoletoDistribuidor = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+				  															BigDecimal.ONE, BigDecimal.ONE, null);
+
+		FormaCobranca formaChequeDistribuidor = Fixture.formaCobrancaCheque(true, new BigDecimal(200), true, bancoITAU,
+						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaDepositoDistribuidor = Fixture.formaCobrancaDeposito(true, new BigDecimal(200), true, bancoBRADESCO,
+						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaDinheiroDistribuidor = Fixture.formaCobrancaDinheiro(true, new BigDecimal(200), true, bancoDOBRASIL,
+						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		FormaCobranca formaTransferenciBancariaDistribuidor = Fixture.formaCobrancaTransferencia(true, new BigDecimal(200), true, bancoHSBC,
+						  													BigDecimal.ONE, BigDecimal.ONE, null);
+		
+		
+		save(session, formaBoletoDistribuidor,formaChequeDistribuidor,formaDepositoDistribuidor,formaDinheiroDistribuidor,formaTransferenciBancariaDistribuidor);
+
+
+		
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca2 =
-				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca3 =
-				Fixture.criarPoliticaCobranca(null, formaDinheiro, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDinheiroDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca4 =
-				Fixture.criarPoliticaCobranca(null, formaTransferenciBancaria, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaTransferenciBancariaDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca5 =
-				Fixture.criarPoliticaCobranca(null, formaDeposito, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca6 =
-				Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca7 =
-				Fixture.criarPoliticaCobranca(null, formaDeposito, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 			
 		PoliticaCobranca politicaCobranca8 =
-				Fixture.criarPoliticaCobranca(null, formaCheque, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaChequeDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
@@ -2664,15 +2686,9 @@ public class DataLoader {
 		
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 
-		distribuidor.getFormasCobranca().add(formaCheque);
-		distribuidor.getFormasCobranca().add(formaDeposito);
-		distribuidor.getFormasCobranca().add(formaDinheiro);
-		distribuidor.getFormasCobranca().add(formaTransferenciBancaria);
-		
 		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
 																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
 																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
