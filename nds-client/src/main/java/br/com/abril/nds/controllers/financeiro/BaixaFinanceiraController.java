@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -32,6 +33,7 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -65,6 +67,9 @@ public class BaixaFinanceiraController {
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -393,9 +398,11 @@ public class BaixaFinanceiraController {
 		pagamento.setValorJuros(jurosConvertido);
 		pagamento.setValorMulta(multaConvertida);
 		pagamento.setValorDesconto(descontoConvertido);
+		
+		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, obterUsuario(),
-								   null,distribuidor.getPoliticaCobranca() , distribuidor,
+								   null,politicaPrincipal , distribuidor,
 								   dataNovoMovimento, null);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
