@@ -281,6 +281,24 @@ var MANTER_COTA = {
 				}
 			}
 		});
+	},
+	
+	validarCotaHistoricoBase:function(idCampoNumeroCota, idCampoPorcentagem){
+		
+		if($(idCampoNumeroCota).val().length > 0){
+			
+			$.postJSON(
+					contextPath + "/cadastro/cota/validarNumeroCotaHistoricoBase",
+					"&numeroCota="+ $(idCampoNumeroCota).val(), 
+					null,
+					function(){
+						$(idCampoNumeroCota).val("");
+						$(idCampoPorcentagem).val("");
+						$(idCampoNumeroCota).focus();
+					},	
+					true
+			);
+		}
 	}
 };
 

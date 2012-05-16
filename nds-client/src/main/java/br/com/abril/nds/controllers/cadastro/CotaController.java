@@ -29,7 +29,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.CotaService;
@@ -349,6 +348,10 @@ public class CotaController {
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
 		
+		if(cotaDTO.getDataInclusao() == null){
+			cotaDTO.setDataInclusao(new Date());
+		}
+		
 		Long idCota = cotaService.salvarCota(cotaDTO);
 		cotaDTO.setIdCota(idCota);
 		
@@ -493,6 +496,24 @@ public class CotaController {
 		List<TipoDesconto> descontos =   cotaService.obterDescontosCota(idCota);
 		
 		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/validarNumeroCotaHistoricoBase")
+	public void validarNumeroCotaHistoricoBase(Integer numeroCota){
+		
+		if(numeroCota != null) {
+			
+			Cota cota = this.cotaService.obterPorNumeroDaCotaAtiva(numeroCota);
+
+			if (cota == null) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
+				
+			} 
+		}
+					
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
 	@Post
