@@ -16,35 +16,6 @@
 		$("#btObs").fadeOut("slow");
 
 	}
-	
-	function popup_logado() {
-		
-		$("#dialog-logado").dialog({
-			resizable : false,
-			height : 180,
-			width : 460,
-			modal : true,
-			buttons : {
-				"Confirmar" : function() {
-					
-					$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/salvarIdBoxSessao'/>", "idBox=" + $("#boxLogado").val(), 
-						function(){
-							
-							$("#dialog-logado").dialog("close");
-							$('#numeroCota').focus();
-						}
-					);
-				},
-				"Cancelar" : function() {
-					$(this).dialog("close");
-					$('#pesq_cota').focus();
-				}
-			}, open : function(){
-				
-				$("#boxLogado").focus();
-			}
-		});
-	};
 </script>
 
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
@@ -254,52 +225,6 @@
 		<legend>Nota Fiscal</legend>
 	    <p>Existe Nota Fiscal para esta Cota?</p>
 	</fieldset>
-</div>
-
-<div id="dialog-novo" title="Conferência Encalhe Cota">
-    <table width="364" border="0" cellspacing="1" cellpadding="1">
-		<tr>
-	        <td width="116" align="left"><strong>Código de Barras:</strong></td>
-	        <td width="241"><input type="text" name="textfield" id="textfield" style="width:180px;" value="98898999889898989856" /></td>
-      	</tr>
-      	<tr class="">
-	        <td align="left"><strong>Código:</strong></td>
-	        <td>
-	        	<input type="text" name="textfield16" value="9999" id="textfield16" style="width:80px; float:left; margin-right:5px;" />
-	        		<span class="classPesquisar">
-	        			<a href="javascript:;">&nbsp;</a>
-	        		</span>
-	        </td>
-      	</tr>
-      	<tr>
-        	<td align="left"><strong>Produto:</strong></td>
-        	<td>
-        		<input type="text" name="textfield17" value="Veja" id="textfield17" style="width:180px;" />
-        	</td>
-      	</tr>
-      	<tr>
-        	<td align="left"><strong>Edição:</strong></td>
-        	<td>
-        		<input type="text" name="textfield18" value="1221" id="textfield18" style="width:80px;" />
-        	</td>
-      	</tr>
-      	<tr>
-	        <td align="left"><strong>Chamada Capa:</strong></td>
-	        <td>
-	        	<input type="text" name="textfield19" value="Chamada Capa" id="textfield19" style="width:180px;" />
-	        </td>
-		</tr>
-		<tr>
-	        <td align="left"><strong>Quantidade:</strong></td>
-	        <td><input type="text" name="textfield20" id="textfield20" style="width:80px; text-align:center;" value="200" /></td>
-		</tr>
-      	<tr>
-	        <td align="left"><strong>Valor R$:</strong></td>
-	        <td>
-	        	<input type="text" name="textfield21" id="textfield21" style="width:80px; text-align:right;" value="49,50" />
-	        </td>
-      	</tr>
-	</table>
 </div>
 
 <div id="dialog-reabertura" title="Reabertura" style="display: none;">
