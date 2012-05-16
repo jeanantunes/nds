@@ -71,7 +71,7 @@ NotaPromissoria.prototype.dataBind = function() {
 	$("#cotaGarantiaNotaPromissoriaId").html(this.notaPromissoria.id);
 	$("#cotaGarantiaNotaPromissoriaVencimento").val(
 			this.notaPromissoria.vencimento);
-	$("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor);
+	$("#cotaGarantiaNotaPromissoriaValor").val(this.notaPromissoria.valor*100);
 	$("#cotaGarantiaNotaPromissoriaValor").priceFormat({
 		allowNegative : true,
 		centsSeparator : ',',
@@ -701,7 +701,7 @@ TipoCotaGarantia.prototype.changeController = function(newControllerType) {
 };
 
 TipoCotaGarantia.prototype.getIdCota = function() {
-	return $('#_idCotaRef').val();
+	return MANTER_COTA.idCota;
 };
 
 // **************** FIADOR PROTOTYPE ********************//
@@ -881,7 +881,7 @@ Fiador.prototype.initGrid = function() {
 		height : 150
 	});
 };
-Fiador.prototype.salva = function() {
+Fiador.prototype.salva = function(callBack) {
 	var _this = this;
 	$.postJSON(this.path + "salvaFiador.json", {
 		idFiador : this.fiador.id,
@@ -890,6 +890,9 @@ Fiador.prototype.salva = function() {
 		if (data.tipoMensagem && data.listaMensagens) {
 			exibirMensagem(data.tipoMensagem, data.listaMensagens);
 			_this.get();
+		}
+		if(callBack){
+			callBack();
 		}
 	}, null, true);
 	return false;

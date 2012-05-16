@@ -42,7 +42,7 @@ function ConfirmDialog(message, onConfirm, onCancel) {
 									".ui-dialog-titlebar-close").length) {
 						onCancel();
 					}
-					event.preventDefault();
+					event.stopPropagation();
 				}
 			});
 };
