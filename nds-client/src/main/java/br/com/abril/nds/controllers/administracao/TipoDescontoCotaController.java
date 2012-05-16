@@ -44,10 +44,7 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){		
-<<<<<<< HEAD
-=======
-		
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
+
 		try {
 			TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
 			Long parseDesconto = Long.parseLong(desconto);
@@ -58,19 +55,19 @@ public class TipoDescontoCotaController {
 			tipoDescontoCota.setDataAlteracao(dataFormatada);
 			tipoDescontoCota.setUsuario(usuario);
 			
-<<<<<<< HEAD
+
 			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);
 			
 			atualizarDistribuidor(parseDesconto);
-=======
+
 			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);		
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
+
 			
 			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-<<<<<<< HEAD
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
@@ -82,16 +79,11 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, Long descontoEspecifico, Date dataAlteracaoEspecifico, String usuarioEspecifico){
-=======
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
 		
 		
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
-<<<<<<< HEAD
-=======
 		
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
 	}
 	
 	

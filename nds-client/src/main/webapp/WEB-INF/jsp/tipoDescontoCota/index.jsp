@@ -3,25 +3,37 @@
 
 	$(function() {
 		
-		inicializar();
-	});
-	
-	function inicializar() {
-		
-		iniciarData();		
-		
-	}
-	
-	function iniciarData() {
-		
 		$("#textfield23").datepicker({
 			showOn : "button",
-			buttonImage : "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly : true
 		});
 		
 		$("#textfield23").mask("99/99/9999");
-	}
+		
+		$("#dataAlteracaoEspecifico").datepicker({
+			showOn : "button",
+			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true
+		});
+		
+		$("#dataAlteracaoEspecifico").mask("99/99/9999");
+		
+		$("#dataAlteracaoProduto").datepicker({
+			showOn : "button",
+			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true
+		});
+		
+		$("#dataAlteracaoProduto").mask("99/99/9999");
+	});
+	
+	
+	
+	
+		
+		
+		
 
 	function popup_geral() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -35,7 +47,7 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-<<<<<<< HEAD
+
 						var geral = $("#radioGeral").is(":checked");
 						var especifico = $("#radioEspecifico").is(":checked");
 						var produto = $("#radioProduto").is(":checked");
@@ -46,10 +58,10 @@
 						}else if(produto){
 							
 						}						
-=======
+
 						novoDesconto();
 						
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
+
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -58,11 +70,13 @@
 			});
 		};
 	
-<<<<<<< HEAD
+
 	function novoDescontoGeral() {
-=======
+		
+	}
+
 	function novoDesconto() {
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
+
 		
 		var descontoGeral = $("#descontoGeral").val();
 		var dataAlteracao = $("#textfield23").val();
@@ -86,7 +100,7 @@
 		
 	}
 	
-<<<<<<< HEAD
+
 	function novoDescontoEspecifico() {
 		
 		var cotaEspecifica = $("#cotaEspecifica").val();
@@ -115,8 +129,7 @@
 		
 	}
 	
-=======
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
+
 	function fecharDialogs() {
 		$( "#dialog-geral" ).dialog( "close" );
 	}
@@ -197,7 +210,7 @@
 </head>
 
 <body>
-<<<<<<< HEAD
+
 	<div id="dialog-geral" title="Novo Tipo de Desconto Geral" style="display:none;">    
 	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>
@@ -275,171 +288,7 @@
 	</div>
 
 
-	<div class="corpo">   
-	    <br clear="all"/>
-	    <br />
-	   
-	    <div class="container">
-	    
-	     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-					<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-					<b>Tipo de Desconto < evento > com < status >.</b></p>
-		</div>
-			<form name="formularioFiltro" id="formularioFiltro">
-		      <fieldset class="classFieldset">
-		   	    <legend> Pesquisar Tipo de Desconto Cota</legend>
-		        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-		            <tr>
-		              <td width="20"><input type="radio" name="radio" id="radioGeral" value="radio" onclick="mostra_geral();" /></td>
-		                <td width="47">Geral</td>
-		                <td width="20"><input type="radio" name="radio" id="radioEspecifico" value="radio2" onclick="mostra_especifico();"  /></td>
-		                <td width="65">Específico</td>
-		                <td width="20"><input type="radio" name="radio" id="radioProduto" value="radio3" onclick="mostra_produto();"  /></td>
-		                <td width="48">Produto</td>
-		                <td width="585">
-		                <div class="especifico">
-		                <label style="width:auto!important;">Cota:</label>
-		                <input name="cotaEspeficico" id="cotaEspeficico" type="text" style="width:80px; float:left;" />
-		                <label style="width:auto!important;">Nome:</label>
-		                <input name="nomeEspecifico" id="nomeEspecifico" type="text" style="width:160px; float:left;" />
-		                </div>
-		                
-		                <div class="produto">
-		                <label style="width:auto!important;">Código:</label>
-		                <input name="codigoProduto" id="codigoProduto" type="text" style="width:80px; float:left;" />
-		                <label style="width:auto!important;">Produto:</label>
-		                <input name="produtoProduto" id="produtoProduto" type="text" style="width:160px; float:left;" />
-		                </div>
-		                </td>
-		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
-		            </tr>
-		          </table>
-		
-		      </fieldset>
-		     </form>
-	      <div class="linha_separa_fields">&nbsp;</div>
-	      <div class="grids" style="display:none;">
-	      <fieldset class="classFieldset" id="tpoGeral" style="display:none;">
-	       	  <legend>Tipos de Desconto Geral</legend>
-	        
-	        	<table class="tiposDescGeralGrid"></table>
-	            
-	       		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-	           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
-	   
-	      </fieldset>
-	      
-	      
-	      <fieldset class="classFieldset" id="tpoEspecifico" style="display:none;">
-	       	  <legend>Tipos de Desconto Específico</legend>
-	        
-	        	<table class="tiposDescEspecificoGrid"></table>
-	       
-				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-	           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_especifico();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
-	   
-	      </fieldset>
-	      
-	      
-	      <fieldset class="classFieldset" id="tpoProduto" style="display:none;">
-	       	  <legend>Tipos de Desconto Produto</legend>
-	        
-	       	<table class="tiposDescProdutoGrid"></table>
-	       
-				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-	           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_produto();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
-	   
-	      </fieldset>
-	    </div>
-	      <div class="linha_separa_fields">&nbsp;</div>
-	       
 	
-	        
-	
-	    
-	    </div>
-	</div> 
-=======
-<div id="dialog-geral" title="Novo Tipo de Desconto Geral" style="display:none;">    
-    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Desconto %:</td>
-              <td width="239"><input type="text" name="descontoGeral" id="descontoGeral" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Data Alteração:</td>
-              <td><input type="text" name="textfield23" id="textfield23" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Usuário:</td>
-              <td><input type="text" name="textfield24" id="textfield24" style="width:230px;" /></td>
-            </tr>
-  </table>         
-
-</div>
-
-
-<div id="dialog-especifico" title="Novo Tipo de Desconto Especifico" style="display:none;">    
-    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Cota:</td>
-              <td width="239"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-            </tr>
-            <tr>
-              <td>Nome:</td>
-              <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
-            </tr>
-            <tr>
-              <td>Desconto %:</td>
-              <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Data Alteração:</td>
-              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Usuário:</td>
-              <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
-            </tr>
-          </table>       
-
-</div>
-
-
-<div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">    
-    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Código:</td>
-              <td width="239"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-            </tr>
-            <tr>
-              <td>Produto:</td>
-              <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
-            </tr>
-            <tr>
-              <td>Edição:</td>
-              <td><input type="text" name="textfield5" id="textfield5" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Desconto %:</td>
-              <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Data Alteração:</td>
-              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Usuário:</td>
-              <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
-            </tr>
-          </table>       
-
-    </div>
-
-
 <div class="corpo">   
     <br clear="all"/>
     <br />
@@ -526,7 +375,7 @@
     
     </div>
 </div> 
->>>>>>> 34176c9cc07d4b88a054b67ade2ed7dabdf236af
+
 <script>
 	$(".tiposDescGeralGrid").flexigrid({
 			url : '../xml/tipos-desconto-geral-xml.xml',
