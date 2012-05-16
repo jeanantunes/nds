@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class ParametroCobrancaDTO {
 
@@ -19,6 +20,7 @@ public class ParametroCobrancaDTO {
 	
 	TipoCobranca tipoCobranca;
 	FormaEmissao formaEmissao;
+	TipoFormaCobranca tipoFormaCobranca;
 	
 	boolean vencimentoDiaUtil;
 	boolean acumulaDivida;
@@ -50,11 +52,12 @@ public class ParametroCobrancaDTO {
 			BigDecimal valorMinimo, BigDecimal taxaMulta,
 			BigDecimal valorMulta, BigDecimal taxaJuros,
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
-			boolean vencimentoDiaUtil, boolean acumulaDivida,
-			boolean unificada, boolean evioEmail, boolean principal,
-			String instrucoes, Integer diaDoMes, boolean domingo,
-			boolean segunda, boolean terca, boolean quarta, boolean quinta,
-			boolean sexta, boolean sabado, List<Long> fornecedoresId) {
+			TipoFormaCobranca tipoFormaCobranca, boolean vencimentoDiaUtil,
+			boolean acumulaDivida, boolean unificada, boolean evioEmail,
+			boolean principal, String instrucoes, Integer diaDoMes,
+			boolean domingo, boolean segunda, boolean terca, boolean quarta,
+			boolean quinta, boolean sexta, boolean sabado,
+			List<Long> fornecedoresId) {
 		super();
 		this.idParametro = idParametro;
 		this.idBanco = idBanco;
@@ -221,6 +224,7 @@ public class ParametroCobrancaDTO {
 		this.instrucoes = instrucoes;
 	}
 
+
 	public Integer getDiaDoMes() {
 		return diaDoMes;
 	}
@@ -311,131 +315,13 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (acumulaDivida ? 1231 : 1237);
-		result = prime * result
-				+ ((diaDoMes == null) ? 0 : diaDoMes.hashCode());
-		result = prime * result + (domingo ? 1231 : 1237);
-		result = prime * result + (evioEmail ? 1231 : 1237);
-		result = prime * result
-				+ ((formaEmissao == null) ? 0 : formaEmissao.hashCode());
-		result = prime * result
-				+ ((fornecedoresId == null) ? 0 : fornecedoresId.hashCode());
-		result = prime * result + ((idBanco == null) ? 0 : idBanco.hashCode());
-		result = prime * result
-				+ ((idParametro == null) ? 0 : idParametro.hashCode());
-		result = prime * result
-				+ ((instrucoes == null) ? 0 : instrucoes.hashCode());
-		result = prime * result + (principal ? 1231 : 1237);
-		result = prime * result + (quarta ? 1231 : 1237);
-		result = prime * result + (quinta ? 1231 : 1237);
-		result = prime * result + (sabado ? 1231 : 1237);
-		result = prime * result + (segunda ? 1231 : 1237);
-		result = prime * result + (sexta ? 1231 : 1237);
-		result = prime * result
-				+ ((taxaJuros == null) ? 0 : taxaJuros.hashCode());
-		result = prime * result
-				+ ((taxaMulta == null) ? 0 : taxaMulta.hashCode());
-		result = prime * result + (terca ? 1231 : 1237);
-		result = prime * result
-				+ ((tipoCobranca == null) ? 0 : tipoCobranca.hashCode());
-		result = prime * result + (unificada ? 1231 : 1237);
-		result = prime * result
-				+ ((valorMinimo == null) ? 0 : valorMinimo.hashCode());
-		result = prime * result
-				+ ((valorMulta == null) ? 0 : valorMulta.hashCode());
-		result = prime * result + (vencimentoDiaUtil ? 1231 : 1237);
-		return result;
+	public TipoFormaCobranca getTipoFormaCobranca() {
+		return tipoFormaCobranca;
 	}
 
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ParametroCobrancaDTO other = (ParametroCobrancaDTO) obj;
-		if (acumulaDivida != other.acumulaDivida)
-			return false;
-		if (diaDoMes == null) {
-			if (other.diaDoMes != null)
-				return false;
-		} else if (!diaDoMes.equals(other.diaDoMes))
-			return false;
-		if (domingo != other.domingo)
-			return false;
-		if (evioEmail != other.evioEmail)
-			return false;
-		if (formaEmissao != other.formaEmissao)
-			return false;
-		if (fornecedoresId == null) {
-			if (other.fornecedoresId != null)
-				return false;
-		} else if (!fornecedoresId.equals(other.fornecedoresId))
-			return false;
-		if (idBanco == null) {
-			if (other.idBanco != null)
-				return false;
-		} else if (!idBanco.equals(other.idBanco))
-			return false;
-		if (idParametro == null) {
-			if (other.idParametro != null)
-				return false;
-		} else if (!idParametro.equals(other.idParametro))
-			return false;
-		if (instrucoes == null) {
-			if (other.instrucoes != null)
-				return false;
-		} else if (!instrucoes.equals(other.instrucoes))
-			return false;
-		if (principal != other.principal)
-			return false;
-		if (quarta != other.quarta)
-			return false;
-		if (quinta != other.quinta)
-			return false;
-		if (sabado != other.sabado)
-			return false;
-		if (segunda != other.segunda)
-			return false;
-		if (sexta != other.sexta)
-			return false;
-		if (taxaJuros == null) {
-			if (other.taxaJuros != null)
-				return false;
-		} else if (!taxaJuros.equals(other.taxaJuros))
-			return false;
-		if (taxaMulta == null) {
-			if (other.taxaMulta != null)
-				return false;
-		} else if (!taxaMulta.equals(other.taxaMulta))
-			return false;
-		if (terca != other.terca)
-			return false;
-		if (tipoCobranca != other.tipoCobranca)
-			return false;
-		if (unificada != other.unificada)
-			return false;
-		if (valorMinimo == null) {
-			if (other.valorMinimo != null)
-				return false;
-		} else if (!valorMinimo.equals(other.valorMinimo))
-			return false;
-		if (valorMulta == null) {
-			if (other.valorMulta != null)
-				return false;
-		} else if (!valorMulta.equals(other.valorMulta))
-			return false;
-		if (vencimentoDiaUtil != other.vencimentoDiaUtil)
-			return false;
-		return true;
+	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
+		this.tipoFormaCobranca = tipoFormaCobranca;
 	}
-
 
 }

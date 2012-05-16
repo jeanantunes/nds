@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,18 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @author Discover Technology
  */
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
+	
+	/**
+	 * Obtem o percentual de comissionamento (fatorDesconto) de acordo com os parâmetros
+	 * de idProdutoEdicao, numerCota e idDistribuidor;
+	 * 
+	 * @param idProdutoEdicao
+	 * @param numeroCota
+	 * @param idDistribuidor
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterFatorDesconto(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor);
 	
 	/**
 	 * Obtém produtos edição de acordo com o nome do produto.
