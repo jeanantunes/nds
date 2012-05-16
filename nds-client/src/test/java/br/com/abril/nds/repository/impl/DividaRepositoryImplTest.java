@@ -100,7 +100,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		politicasCobranca.add(politicaCobranca);
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
 		
 		save(distribuidor);
 		

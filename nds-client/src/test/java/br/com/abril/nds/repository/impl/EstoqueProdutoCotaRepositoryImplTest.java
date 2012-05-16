@@ -155,7 +155,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		politicaSuspensao.setValor(new BigDecimal(0));
 
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		
