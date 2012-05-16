@@ -240,6 +240,7 @@
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports-fonts-nds</artifactId>
                 <version>4.5.1</version>
+                <scope>provided</scope>
             </dependency>
      	    <dependency>
                 <groupId>com.lowagie</groupId>
@@ -307,6 +308,7 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports-fonts-nds</artifactId>
+            <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
