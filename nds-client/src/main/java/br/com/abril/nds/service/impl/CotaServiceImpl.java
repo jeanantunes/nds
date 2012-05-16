@@ -152,6 +152,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
 	}
+	
+	@Transactional(readOnly = true)
+	public Cota obterPorNumeroDaCotaAtiva(Integer numeroCota) {
+		
+		return this.cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
+	}
 
 	@Transactional(readOnly = true)
 	public List<Cota> obterCotasPorNomePessoa(String nome) {
@@ -713,9 +719,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		validarParametrosObrigatoriosCota(cotaDto);
 		
-		validarNovoNumeroCota(cotaDto.getNumeroCota());
+		//validarNovoNumeroCota(cotaDto.getNumeroCota());
 		
 		validarFormatoDados(cotaDto);
+		
+		validarHistoricoCotaBase(cotaDto);
 		
 		Cota cota  = null;
 		
@@ -753,6 +761,33 @@ public class CotaServiceImpl implements CotaService {
 	    return cota.getId();
 	}
 	
+	private void validarHistoricoCotaBase(CotaDTO cotaDto) {
+		
+		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
+			
+			if(DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(cotaDto.getDataInclusao()))!=0){
+
+				throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Período] referente à cota base deve ser igual ao campo [Início de Atividade]!");
+			}
+		}
+		
+		if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() == null ){
+			return;
+		}
+		
+		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Até] referente à  cota base deve ser informado!");
+		}
+		
+		if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() != null ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Período] referente à  cota base deve ser informado!");
+		}
+		
+		if(DateUtil.isDataInicialMaiorDataFinal(cotaDto.getInicioPeriodo(), cotaDto.getFimPeriodo())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Período  cota base invalido!");
+		}
+	}
+
 	private void validarFormatoDados(CotaDTO cotaDto) {
 		
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){

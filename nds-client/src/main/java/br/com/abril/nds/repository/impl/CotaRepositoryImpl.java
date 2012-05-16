@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
@@ -27,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -64,6 +66,18 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 
 		criteria.add(Restrictions.eq("numeroCota", numeroCota));
+
+		criteria.setMaxResults(1);
+
+		return (Cota) criteria.uniqueResult();
+	}
+	
+	public Cota obterPorNumerDaCotaAtiva(Integer numeroCota) {
+
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+
+		criteria.add(Restrictions.eq("numeroCota", numeroCota));
+		criteria.add(Restrictions.eq("situacaoCadastro", SituacaoCadastro.ATIVO));
 
 		criteria.setMaxResults(1);
 

@@ -362,6 +362,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterCota(){
+
 		
 		FiltroCotaDTO filtro = new FiltroCotaDTO();
 		filtro.setNumeroCota(cota.getNumeroCota());
@@ -370,7 +371,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(cotas);
 		
-		Assert.assertTrue(cotas.isEmpty());
+		Assert.assertTrue(!cotas.isEmpty());
 	}
 
 }
