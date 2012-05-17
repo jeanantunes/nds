@@ -10,13 +10,7 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Ambiente de Desenvolvimento -->
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
-		<property name="username" value="root" />
-		<property name="password" value="root" />
-    </bean>
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-client"/>
 
      <!-- Ambiente de Testes
 	<bean id="dataSource"

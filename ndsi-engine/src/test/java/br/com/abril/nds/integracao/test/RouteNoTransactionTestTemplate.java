@@ -7,9 +7,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.integracao.spring.NdsiRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:spring/applicationContext.xml"})
+@ContextConfiguration(locations={NdsiRunner.SPRING_FILE_LOCATION})
 public abstract class RouteNoTransactionTestTemplate extends AbstractJUnit4SpringContextTests {
 	/**
 	 * Obtem a Rota a ser testada

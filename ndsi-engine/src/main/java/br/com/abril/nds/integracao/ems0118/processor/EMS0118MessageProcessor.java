@@ -8,15 +8,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.eclipse.jdt.internal.core.CommitWorkingCopyOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionCallback;
-
 import br.com.abril.nds.integracao.ems0118.inbound.EMS0118Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -40,8 +38,6 @@ public class EMS0118MessageProcessor implements MessageProcessor{
 				
 		Query query = entityManager.createQuery(sql.toString());		
 		Distribuidor distribuidor = (Distribuidor) query.getSingleResult();
-		
-		System.out.println("Resultado da Query:"+distribuidor.getId());
 				
 		//Obter Produto/Edição	
 		StringBuilder cmd = new StringBuilder();
@@ -59,8 +55,6 @@ public class EMS0118MessageProcessor implements MessageProcessor{
 			
 			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.getSingleResult();
 			
-			System.out.println("Resultado da Query:"+produtoEdicao.getProduto().getCodigo());
-			
 			//Atualiza valor de venda (PREÇO CAPA)
 			produtoEdicao.setPrecoVenda(input.getPreco());
 			
@@ -76,14 +70,13 @@ public class EMS0118MessageProcessor implements MessageProcessor{
 
 		    } catch (NoResultException e) {
 			//NAO ENCONTROU ProdutoEdicao OU Lancamento, DEVE LOGAR
-		    ndsiLoggerFactory.getLogger().logError(message," Nenhum resultado encontrado para Produto: "+input.getCodigoPublicacao()+" ou Edição: "+input.getEdicao()+" na tabela produto_edicao");
-			e.printStackTrace();
+		    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO,"Nenhum resultado encontrado para Produto: "+input.getCodigoPublicacao()+" e Edição: "+input.getEdicao()+" na tabela produto_edicao");
+					
+		    e.printStackTrace();
 		
 		}
 		
-		
-		
-		
+
 	}
 
 }

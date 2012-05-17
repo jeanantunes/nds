@@ -253,11 +253,13 @@ function Imovel(idCota, cotaGarantia) {
 	this.idCota = idCota;
 	this.cotaGarantia = cotaGarantia;
 	this.bindEvents();
-	this.get();
+	//this.get();
 	this.toggle();
 	this.initGrid();
 	this.rows = new Array;
 	this.itemEdicao = null;
+	this.imovel = data.cotaGarantia.imovel;
+	this.dataBind();
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
@@ -318,7 +320,6 @@ Imovel.prototype.incluirImovel = function(callBack) {
 	var _this = this;
 	this.dataUnBind();
 	var postData = this.processPost('imovel', this.imovel);
-	postData['idCota'] = this.idCota;
 
 	$.postJSON(this.path + 'incluirImovel.json', postData, function(data) {
 		var tipoMensagem = data.tipoMensagem;
@@ -609,7 +610,7 @@ TipoCotaGarantia.prototype.tipo = {
 	},
 	'CAUCAO_LIQUIDA' : {
 		label : 'Caução Liquida',
-		controller : null
+		controller : CaucaoLiquida
 	}
 };
 TipoCotaGarantia.prototype.get = function() {
@@ -914,3 +915,208 @@ Fiador.prototype.get = function() {
 	}, null, true);
 
 };
+
+//**************** CAUCAO LIQUIDA PROTOTYPE ********************//
+function CaucaoLiquida(idCota, cotaGarantia) {
+	
+	this.idCota = idCota;
+	this.bindEvents();
+	this.toggle();
+	this.initGrid();
+	this.rows = new Array;
+}
+
+CaucaoLiquida.prototype.path = contextPath + "/cadastro/garantia/";
+CaucaoLiquida.prototype.caucaoLiquida = {
+	id:null,
+	valor:null,
+	atualizacao:null,
+	indiceReajuste:null
+};
+
+CaucaoLiquida.prototype.toggle = function(showOrHide) {
+	$('#cotaGarantiaCaucaoLiquida').toggle(showOrHide);
+};
+
+CaucaoLiquida.prototype.formatDate = function(data) {
+	var dia = data.getDate();
+	var mes = data.getMonth()+1;
+	var ano = data.getFullYear();
+	
+	return dia+"/"+mes+"/"+ano;
+};
+
+CaucaoLiquida.prototype.dataUnBind = function() {
+	this.caucaoLiquida.valor = $("#cotaGarantiaCaucaoLiquidaValor").unmask() / 100;
+	this.caucaoLiquida.indiceReajuste = 0.0;
+};
+
+CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
+	
+	this.dataUnBind();
+	
+	var postData = this.processPost('caucaoLiquida', this.caucaoLiquida);
+	
+	var _this = this;
+	
+	$.postJSON(this.path + 'incluirCaucaoLiquida.json', postData,
+			
+			function(data) {
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				} else {
+					
+					var rows = _this.rows;
+					data.atualizacao = _this.formatDate(new Date());
+					rows.unshift({"id": rows.length,"cell":data});
+									
+					$("#cotaGarantiaCaucaoLiquidaGrid").flexAddData({rows:rows,page:1,total:1});
+					
+					_this.limparForm();
+				}
+				
+				if(callBack){
+					callBack();
+				}
+				
+			}, null, true);
+};
+
+CaucaoLiquida.prototype.addItemGrid = function(data) {
+	
+};
+
+CaucaoLiquida.prototype.salva = function(callBack) {
+	
+	var listaCaucaoLiquida = new Array;
+	
+	for (var index in this.rows) {
+		var caucaoLiquida = this.rows[index].cell;
+		listaCaucaoLiquida.push(caucaoLiquida);
+	}
+	
+	var postData = this.processListPost('listaCaucaoLiquida', listaCaucaoLiquida);
+	postData['idCota'] = this.idCota;
+
+	$.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
+			function(data) {
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+				if(callBack){
+					callBack();
+				}
+
+			}, null, true);
+};
+
+
+CaucaoLiquida.prototype.processPost = function(objectName, object) {
+	var obj = {};
+	for ( var propriedade in object) {
+		obj[objectName + '.' + propriedade] = object[propriedade];
+	}
+	return obj;
+};
+
+CaucaoLiquida.prototype.processListPost = function(listaName, lista) {	
+	var obj = {};
+	
+	for(var i = 0; i < lista.length;i++){
+		
+		var object = lista[i];
+		for ( var propriedade in object) {
+			obj[listaName +'['+i+'].'+propriedade] =object[propriedade];
+		}
+	}
+	return obj;
+};
+
+CaucaoLiquida.prototype.resgatarValorCaucao = function() {
+	
+	var rows = this.rows;
+	
+	var data = {
+			id:null,
+			atualizacao : this.formatDate(new Date()),
+			indiceReajuste: 0,
+			valor:0
+	};
+
+	this.rows.unshift({"id": rows.length,"cell":data});
+	
+	$("#cotaGarantiaCaucaoLiquidaGrid").flexAddData({rows:this.rows,page:1,total:1});
+};
+
+CaucaoLiquida.prototype.limparForm = function() {
+	
+	this.caucaoLiquida.id = null;
+	this.caucaoLiquida.atualizacao = null;
+	this.caucaoLiquida.indiceReajuste = null;
+	this.caucaoLiquida.valor= null;
+	$("#cotaGarantiaCaucaoLiquidaValor").val(null);
+};
+
+CaucaoLiquida.prototype.bindEvents = function() {
+	
+	var _this = this;
+	
+	$("#cotaGarantiaCaucaoLiquidaIncluir").click(function(){
+		
+		_this.incluirCaucao();
+	});
+	
+	$("#cotaGarantiaCaucaoLiquidaResgatar").click(function(){
+		if (_this.rows[0].cell.valor > 0) {
+			_this.resgatarValorCaucao();
+		}
+	});
+	
+	$("#cotaGarantiaCaucaoLiquidaValor").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+};
+
+CaucaoLiquida.prototype.initGrid = function() {
+	
+	$("#cotaGarantiaCaucaoLiquidaGrid").flexigrid({
+		
+		dataType : 'json',
+		colModel : [ {
+			display : 'Data',
+			name : 'atualizacao',
+			width : 270,
+			sortable : false,
+			align : 'center'
+
+		},{
+			display : 'Índice de Reajuste',
+			name : 'indiceReajuste',
+			width : 270,
+			sortable : false,
+			align : 'center'
+
+		},{
+
+			display : 'Valor R$',
+			name : 'valor',
+			width : 140,
+			sortable : false,
+			align : 'right'
+
+		}],
+		width : 740,
+		height : 150
+	});
+	
+};
+
+
