@@ -13,9 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -115,7 +117,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
 				produto);
 		
 		save(produtoEdicaoVeja1);
@@ -254,7 +256,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L,
 				produtoVeja);
 		save(produtoEdicaoVeja1);
 		
@@ -356,6 +358,20 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterDiasConcentracaoPagamentoCota(){
 		this.cotaRepository.obterDiasConcentracaoPagamentoCota(1L);
+	}
+	
+	@Test
+	public void obterCota(){
+
+		
+		FiltroCotaDTO filtro = new FiltroCotaDTO();
+		filtro.setNumeroCota(cota.getNumeroCota());
+		
+		List<CotaDTO> cotas = cotaRepository.obterCotas(filtro);
+		
+		Assert.assertNotNull(cotas);
+		
+		Assert.assertTrue(!cotas.isEmpty());
 	}
 
 }

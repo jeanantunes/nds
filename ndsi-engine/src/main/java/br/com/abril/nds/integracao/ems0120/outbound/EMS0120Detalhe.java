@@ -10,8 +10,8 @@ import com.ancientprogramming.fixedformat4j.annotation.Record;
 @Record
 public class EMS0120Detalhe {
 	private String tipoRegistro;
-	private String contextoProduto;
-	private String codigoFornecedorProduto;
+	private Integer contextoProduto;
+	private Integer codigoFornecedorProduto;
 	private String codPublicacao;
 	private Long edicao;
 	private Integer codigoCota;
@@ -30,20 +30,20 @@ public class EMS0120Detalhe {
 	}
 	
 	@Field(offset=2, length=1)
-	public String getContextoProduto() {
+	public Integer getContextoProduto() {
 		return contextoProduto;
 	}
 
-	public void setContextoProduto(String contextoProduto) {
+	public void setContextoProduto(Integer contextoProduto) {
 		this.contextoProduto = contextoProduto;
 	}
 	
 	@Field(offset=3, length=7)
-	public String getCodigoFornecedorProduto() {
+	public Integer getCodigoFornecedorProduto() {
 		return codigoFornecedorProduto;
 	}
 
-	public void setCodigoFornecedorProduto(String codigoFornecedorProduto) {
+	public void setCodigoFornecedorProduto(Integer codigoFornecedorProduto) {
 		this.codigoFornecedorProduto = codigoFornecedorProduto;
 	}
 

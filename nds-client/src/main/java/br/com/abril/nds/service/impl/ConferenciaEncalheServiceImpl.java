@@ -132,6 +132,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#verificarChamadaEncalheCota(java.lang.Integer)
 	 */
+	@Transactional(readOnly = true)
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -143,7 +144,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
 		
-		if(controleConferenciaEncalheCota!=null) {
+		if(controleConferenciaEncalheCota == null) {
 			throw new ConferenciaEncalheExistenteException();
 		}
 		
@@ -167,6 +168,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#validarExistenciaChamadaEncalheParaCotaProdutoEdicao(java.lang.Integer, java.lang.Long)
 	 */
+	@Transactional(readOnly = true)
 	public void validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
 		
 		boolean encalheConferido = false;
@@ -278,24 +280,48 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
 		
-		if (numeroCota == null){
+		if (numeroCota == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
 		
-		if (idProdutoEdicao == null){
+		if (idProdutoEdicao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
 		}
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
-		if (produtoEdicao != null){
+		if (produtoEdicao != null) {
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
+			
 		}
 		
 		return produtoEdicao;
+	}
+
+	private void carregarValorDesconto(ProdutoEdicao produtoEdicao, Integer numeroCota) {
+		
+		BigDecimal hundred = new BigDecimal(100.0);
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		BigDecimal fatorDesconto = produtoEdicaoRepository.obterFatorDesconto(produtoEdicao.getId(), numeroCota, distribuidor.getId());
+		
+		if( fatorDesconto!=null && produtoEdicao.getPrecoVenda()!=null ) {
+			
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+			
+			BigDecimal valorDesconto = fatorDesconto.divide(hundred).multiply(precoVenda);
+			
+			produtoEdicao.setDesconto(valorDesconto);
+			
+		}
+		
+		
 	}
 	
 	@Transactional(readOnly = true)
@@ -316,6 +342,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (produtoEdicao != null){
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
 		}
 		
 		return produtoEdicao;
@@ -339,6 +367,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (produtoEdicao != null){
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
 		}
 		
 		return produtoEdicao;

@@ -9,6 +9,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -43,7 +44,7 @@ public class CotaGarantiaController {
 	@Post
 	@Path("/salvaNotaPromissoria.json")
 	public void salvaNotaPromissoria(NotaPromissoria notaPromissoria,
-			Long idCota) {
+			Long idCota) throws Exception {
 
 		cotaGarantiaService.salvaNotaPromissoria(notaPromissoria, idCota);
 
@@ -54,7 +55,7 @@ public class CotaGarantiaController {
 	}
 
 	@Post("/salvaChequeCaucao.json")
-	public void salvaChequeCaucao(Cheque chequeCaucao, Long idCota) {
+	public void salvaChequeCaucao(Cheque chequeCaucao, Long idCota) throws Exception  {
 
 		validaChequeCaucao(chequeCaucao);
 
@@ -67,7 +68,7 @@ public class CotaGarantiaController {
 	}
 
 	@Post("/salvaImovel.json")
-	public void salvaImovel(List<Imovel> listaImoveis, Long idCota) {
+	public void salvaImovel(List<Imovel> listaImoveis, Long idCota) throws Exception  {
 
 		cotaGarantiaService.salvaImovel(listaImoveis, idCota);
 
@@ -77,6 +78,16 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
+	@Post("/salvaCaucaoLiquida.json")
+	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) {
+		
+		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+				"Imóveis salvos com Sucesso."), "result").recursive()
+		.serialize();
+	}
+	
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
 		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
@@ -121,6 +132,31 @@ public class CotaGarantiaController {
 		validaImovel(imovel);
 						
 		result.use(Results.json()).from(imovel, "imovel").serialize();
+	}
+	
+	@Post("/incluirCaucaoLiquida.json")
+	public void incluirCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
+		
+		validaCaucaoLiquida(caucaoLiquida);
+		
+		result.use(CustomJson.class).from(caucaoLiquida).serialize();
+	}
+	
+	/**
+	 * @param caucaoLiquida para ser validado
+	 */
+	private void validaCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (caucaoLiquida.getValor() == null || caucaoLiquida.getValor() <= 0) {
+			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					listaMensagens));
+		}
 	}
 
 	/**
@@ -231,7 +267,7 @@ public class CotaGarantiaController {
 	}
 
 	@Post("/salvaFiador.json")
-	public void getFiador(Long idFiador, Long idCota) {
+	public void getFiador(Long idFiador, Long idCota)throws Exception  {
 		cotaGarantiaService.salvaFiador(idFiador, idCota);
 		result.use(Results.json())
 				.from(new ValidacaoVO(TipoMensagem.SUCCESS,

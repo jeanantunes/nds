@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.Cota;
+
 public class InfoConferenciaEncalheCota implements Serializable {
 	
 	/**
@@ -11,6 +13,8 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Cota cota;
+	
 	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
 	
 	private List<DebitoCreditoCotaDTO> listaDebitoCreditoCota;
@@ -26,6 +30,14 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	private BigDecimal valorPagar;
 	
 	
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+
 	public BigDecimal getValorVendaDia() {
 		return valorVendaDia;
 	}

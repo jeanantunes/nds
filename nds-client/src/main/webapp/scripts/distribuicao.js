@@ -7,11 +7,11 @@ function Distribuicao(tela) {
 	 * 
 	 * @return false - define que a não sairá da tela, responsabilidade deixada para o método de callback
 	 */
-	this.salvar = function(funcaoIrParaNovaAba) {
-		
+	this.salvar = function(callback) {
+				
 		$.postJSON(contextPath + "/cadastro/cota/salvarDistribuicaoCota",
 				D.getDados(),
-				funcaoIrParaNovaAba,
+				callback,
 				null, true);
 		
 		return false;		

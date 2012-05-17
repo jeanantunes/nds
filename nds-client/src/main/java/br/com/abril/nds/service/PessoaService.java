@@ -20,4 +20,6 @@ public interface PessoaService {
 	PessoaFisica buscarPessoaPorCPF(String cpf, boolean isFiador, String cpfConjuge);
 
 	PessoaJuridica buscarPessoaPorCNPJ(String cnpj);
+	
+	List<Pessoa> obterPessoasPorNome(String nomePessoa);
 }

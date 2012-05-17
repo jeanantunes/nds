@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -386,7 +387,7 @@ public class Fixture {
 
 	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, Produto produto) {
+			BigDecimal precoVenda, String codigoDeBarras, Long codigoSM, Produto produto) {
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
@@ -395,7 +396,8 @@ public class Fixture {
 		produtoEdicao.setPrecoCusto(precoCusto);
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
-		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setCodigoSM(codigoSM);
 		return produtoEdicao;
 	}
 
@@ -2527,5 +2529,15 @@ public class Fixture {
 		parcial.setTipo(tipo);
 		
 		return parcial;
+	}
+	
+	public static TipoDesconto criarTipoDesconto(String codigo, String descricao, BigDecimal porcentagem){
+		
+		TipoDesconto tipoDesconto = new TipoDesconto();
+		tipoDesconto.setCodigo(codigo);
+		tipoDesconto.setDescricao(descricao);
+		tipoDesconto.setPorcentagem(porcentagem);
+		
+		return tipoDesconto;
 	}
 }

@@ -30,7 +30,7 @@ public abstract class FileContentBasedRouter implements ContentBasedRouter {
 		}
 	}
 	
-	private String normalizeFileName(String filename) {
+	public static String normalizeFileName(String filename) {
 		if (! OSUtil.isWindows() && filename.contains(":")) {
 			return WINDOWS_PATH_NORMALIZER.matcher(filename).replaceFirst("");
 		}

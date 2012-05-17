@@ -22,8 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-
 import br.com.abril.nds.model.DiaSemana;
 
 /**
@@ -58,10 +56,6 @@ public class Distribuidor {
 	
 	@OneToMany(mappedBy="distribuidor")
 	private Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
-	
-	@OneToMany
-	@JoinColumn(name = "DISTRIBUIDOR_ID")
-	private Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -130,7 +124,9 @@ public class Distribuidor {
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
-
+    
+	@Column(name="QNT_DIAS_REUTILIZACAO_CODIGO_COTA")
+	private Long qntDiasReutilizacaoCodigoCota;
 	
 	/**
 	 * Parâmetro relativo a quantidade de dias após a data de recolhimento 
@@ -169,14 +165,6 @@ public class Distribuidor {
 	
 	public void setFatorDesconto(BigDecimal fatorDesconto) {
 		this.fatorDesconto = fatorDesconto;
-	}
-	
-	public Set<FormaCobranca> getFormasCobranca() {
-		return formasCobranca;
-	}
-
-	public void setFormasCobranca(Set<FormaCobranca> formasCobranca) {
-		this.formasCobranca = formasCobranca;
 	}
 	
 	public Set<PoliticaCobranca> getPoliticasCobranca() {
@@ -327,13 +315,35 @@ public class Distribuidor {
 		this.preenchimentoAutomaticoPDV = preenchimentoAutomaticoPDV;
 	}
 
+	/**
+	 * @return the qntDiasReutilizacaoCodigoCota
+	 */
+	public Long getQntDiasReutilizacaoCodigoCota() {
+		return qntDiasReutilizacaoCodigoCota;
+	}
+
+	/**
+	 * @param qntDiasReutilizacaoCodigoCota the qntDiasReutilizacaoCodigoCota to set
+	 */
+	public void setQntDiasReutilizacaoCodigoCota(Long qntDiasReutilizacaoCodigoCota) {
+		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
+	}
+
+	/**
+	 * @return the qtdDiasEncalheAtrasadoAceitavel
+	 */
 	public int getQtdDiasEncalheAtrasadoAceitavel() {
 		return qtdDiasEncalheAtrasadoAceitavel;
 	}
 
+	/**
+	 * @param qtdDiasEncalheAtrasadoAceitavel the qtdDiasEncalheAtrasadoAceitavel to set
+	 */
 	public void setQtdDiasEncalheAtrasadoAceitavel(
 			int qtdDiasEncalheAtrasadoAceitavel) {
 		this.qtdDiasEncalheAtrasadoAceitavel = qtdDiasEncalheAtrasadoAceitavel;
 	}
+
+
 	
 }

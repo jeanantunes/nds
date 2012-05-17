@@ -43,6 +43,12 @@ public interface FornecedorService {
 	Fornecedor obterFornecedorPorId(Long id);
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesFornecedor(Long idFornecedor, Set<Long> idsIgnorar);
-
+	
+	List<Fornecedor> obterFornecedoresCota(Long idCota);
+	
+	List<Fornecedor> obterFornecedores(Long idCota);
+	
+	void salvarFornecedorCota(List<Long> fornecedores, Long idCota);
+	
 	List<ItemDTO<Long,String>> buscarComboFornecedores();
 }

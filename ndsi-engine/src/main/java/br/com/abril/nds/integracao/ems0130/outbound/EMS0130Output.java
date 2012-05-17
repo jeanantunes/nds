@@ -24,26 +24,6 @@ public class EMS0130Output implements Serializable{
 	private Long tipoPontoVenda;
 	private String pontoDeReferencia;
 	
-	//TODO
-	private Long idEnd; 
-	
-	@Field(offset=133, length=20)
-	public Long getIdEnd(){
-		return idEnd;
-	}
-	public void setIdEnd (Long idEnd){
-		this.idEnd = idEnd;
-	}
-	
-	private Long idTel; 
-	
-	@Field(offset=154, length=7)
-	public Long getIdTel(){
-		return idTel;
-	}
-	public void setIdTel (Long idTel){
-		this.idTel = idTel;
-	}
 	
 	@Field(offset=1, length=4)
 	public Integer getCodigoDaCota() {
@@ -109,7 +89,7 @@ public class EMS0130Output implements Serializable{
 		this.telefone = telefone;
 	}
 	
-	@Field(offset=84, length=7)
+	@Field(offset=91, length=2)
 	public Long getTipoPontoVenda() {
 		return tipoPontoVenda;
 	}
@@ -117,7 +97,7 @@ public class EMS0130Output implements Serializable{
 		this.tipoPontoVenda = tipoPontoVenda;
 	}
 	
-	@Field(offset=91, length=2)
+	@Field(offset=93, length=40)
 	public String getPontoDeReferencia() {
 		return pontoDeReferencia;
 	}
@@ -212,8 +192,6 @@ public class EMS0130Output implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
 	
 	
 	
