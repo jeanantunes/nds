@@ -193,11 +193,10 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select lancamento ");
 		
 		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
-						
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
-					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortOrder()),
+					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortColumn()),
 					paginacaoVO.getOrdenacao()));
 		}
 		

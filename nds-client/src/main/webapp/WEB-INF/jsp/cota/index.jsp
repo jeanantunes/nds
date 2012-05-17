@@ -99,7 +99,7 @@
 	
 	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
 	
-	#tabpj-5 fieldset, #tabpf-5 fieldset {width:755px!important;}
+	#tabCota-5 fieldset {width:755px!important;}
 
 </style>
 

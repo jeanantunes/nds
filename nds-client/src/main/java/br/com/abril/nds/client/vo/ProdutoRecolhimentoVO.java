@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Value Object para os produtos da matriz de recolhimento.
@@ -11,15 +12,17 @@ public class ProdutoRecolhimentoVO {
 
 	private String idLancamento;
 	
-	private String sequencia;
+	private Integer sequencia;
 	
 	private String codigoProduto;
 	
 	private String nomeProduto;
 	
-	private String numeroEdicao;
+	private Long numeroEdicao;
 	
-	private String precoVenda;
+	private BigDecimal precoVenda;
+	
+	private BigDecimal precoDesconto;
 	
 	private String nomeFornecedor;
 	
@@ -29,9 +32,9 @@ public class ProdutoRecolhimentoVO {
 	
 	private String brinde;
 	
-	private String dataLancamento;
+	private Date dataLancamento;
 	
-	private String dataRecolhimento;
+	private Date dataRecolhimento;
 	
 	private BigDecimal encalheSede;
 	
@@ -39,9 +42,9 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal encalhe;
 	
-	private String valorTotal;
+	private BigDecimal valorTotal;
 	
-	private String novaData;
+	private Date novaData;
 	
 	private boolean bloqueioDataRecolhimento;
 	
@@ -64,14 +67,14 @@ public class ProdutoRecolhimentoVO {
 	/**
 	 * @return the sequencia
 	 */
-	public String getSequencia() {
+	public Integer getSequencia() {
 		return sequencia;
 	}
 
 	/**
 	 * @param sequencia the sequencia to set
 	 */
-	public void setSequencia(String sequencia) {
+	public void setSequencia(Integer sequencia) {
 		this.sequencia = sequencia;
 	}
 
@@ -106,29 +109,43 @@ public class ProdutoRecolhimentoVO {
 	/**
 	 * @return the numeroEdicao
 	 */
-	public String getNumeroEdicao() {
+	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(String numeroEdicao) {
+	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
 
 	/**
 	 * @return the precoVenda
 	 */
-	public String getPrecoVenda() {
+	public BigDecimal getPrecoVenda() {
 		return precoVenda;
 	}
 
 	/**
 	 * @param precoVenda the precoVenda to set
 	 */
-	public void setPrecoVenda(String precoVenda) {
+	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+	}
+
+	/**
+	 * @return the precoDesconto
+	 */
+	public BigDecimal getPrecoDesconto() {
+		return precoDesconto;
+	}
+
+	/**
+	 * @param precoDesconto the precoDesconto to set
+	 */
+	public void setPrecoDesconto(BigDecimal precoDesconto) {
+		this.precoDesconto = precoDesconto;
 	}
 
 	/**
@@ -190,28 +207,28 @@ public class ProdutoRecolhimentoVO {
 	/**
 	 * @return the dataLancamento
 	 */
-	public String getDataLancamento() {
+	public Date getDataLancamento() {
 		return dataLancamento;
 	}
 
 	/**
 	 * @param dataLancamento the dataLancamento to set
 	 */
-	public void setDataLancamento(String dataLancamento) {
+	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
 
 	/**
 	 * @return the dataRecolhimento
 	 */
-	public String getDataRecolhimento() {
+	public Date getDataRecolhimento() {
 		return dataRecolhimento;
 	}
 
 	/**
 	 * @param dataRecolhimento the dataRecolhimento to set
 	 */
-	public void setDataRecolhimento(String dataRecolhimento) {
+	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 
@@ -260,28 +277,28 @@ public class ProdutoRecolhimentoVO {
 	/**
 	 * @return the valorTotal
 	 */
-	public String getValorTotal() {
+	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
 
 	/**
 	 * @param valorTotal the valorTotal to set
 	 */
-	public void setValorTotal(String valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
 
 	/**
 	 * @return the novaData
 	 */
-	public String getNovaData() {
+	public Date getNovaData() {
 		return novaData;
 	}
 
 	/**
 	 * @param novaData the novaData to set
 	 */
-	public void setNovaData(String novaData) {
+	public void setNovaData(Date novaData) {
 		this.novaData = novaData;
 	}
 

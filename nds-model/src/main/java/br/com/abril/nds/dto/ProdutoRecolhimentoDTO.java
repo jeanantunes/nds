@@ -39,7 +39,7 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	
 	private Long idLancamento;
 	
-	private Long sequencia;
+	private Integer sequencia;
 
 	private Long idFornecedor;
 	
@@ -219,14 +219,14 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	/**
 	 * @return the sequencia
 	 */
-	public Long getSequencia() {
+	public Integer getSequencia() {
 		return sequencia;
 	}
 
 	/**
 	 * @param sequencia the sequencia to set
 	 */
-	public void setSequencia(Long sequencia) {
+	public void setSequencia(Integer sequencia) {
 		this.sequencia = sequencia;
 	}
 

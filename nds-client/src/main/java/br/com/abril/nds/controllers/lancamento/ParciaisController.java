@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.lancamento;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -8,22 +10,28 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.util.PessoaUtil;
-import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -48,6 +56,15 @@ public class ParciaisController {
 	@Autowired
 	private ProdutoService produtoService;
 	
+	@Autowired
+	private LancamentoParcialService lancamentoParcialService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
+		
 	public ParciaisController(Result result){
 		this.result = result;
 	}
@@ -104,16 +121,34 @@ public class ParciaisController {
 	 * Pesquisa de parciais
 	 */
 	@Post
-	public void pesquisarParciais(FiltroParciaisDTO filtro) {
-			
+	public void pesquisarParciais(FiltroParciaisDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
 		validarEntrada(filtro);
 		
-		TableModel<CellModelKeyValue<ParcialDTO>> grid = null;
+		tratarFiltro(filtro);
 		
-		grid = efetuarConsulta(null);
+		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = efetuarConsulta(filtro);
 		
-		result.use(Results.json()).withoutRoot().from(grid).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	/**
+	 * Pesquisa de parciais
+	 */
+	@Post
+	public void pesquisarPeriodosParciais(FiltroParciaisDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		validarEntrada(filtro);
+		
+		tratarFiltro(filtro);
+		
+		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = efetuarConsulta(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	private void validarEntrada(FiltroParciaisDTO filtro) {
@@ -126,32 +161,41 @@ public class ParciaisController {
 		
 		
 	}
+	
+
+	/**
+	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
+	 * 
+	 * @param filtroResumoExpedicao
+	 */
+	private void tratarFiltro(FiltroParciaisDTO filtroAtual) {
+
+		FiltroParciaisDTO filtroSession = (FiltroParciaisDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+	}
 
 	/**
 	 * Efetua a consulta e monta a estrutura do grid de parciais.
 	 * @param filtro
-	 */
+	 * @return 
+	 */	
 	private TableModel<CellModelKeyValue<ParcialDTO>> efetuarConsulta(FiltroParciaisDTO filtro) {
 		
-		List<ParcialDTO> listaParciais = null;
 		
-		//TODO - listaParciais = obterListaReal();
-		
-		listaParciais = new ArrayList<ParcialDTO>();
-		listaParciais.add(new ParcialDTO("a1", "a2", "a3", "a4", 5, "a6", "a7"));
-		listaParciais.add(new ParcialDTO("b1", "b2", "b3", "b4", 5, "b6", "b7"));
-		listaParciais.add(new ParcialDTO("c1", "c2", "c3", "c4", 5, "c6", "c7"));
-		listaParciais.add(new ParcialDTO("d1", "d2", "d3", "d4", 5, "d6", "d7"));
-		
-		
+		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 		
 		if (listaParciais == null || listaParciais.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não retornou resultados");
 		}
-		
-		
-		//TODO - Integer totalRegistros  = getRealTotal();
-		Integer totalRegistros = 5;
+				
+		Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
 		
 		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialDTO>>();
 
@@ -159,10 +203,9 @@ public class ParciaisController {
 		
 		tableModel.setPage(1);
 		
-		tableModel.setTotal( (totalRegistros == null)?0:totalRegistros.intValue());
+		tableModel.setTotal(totalRegistros);
 		
 		return tableModel;
-		
 	}
 	
 	@Post
@@ -180,9 +223,74 @@ public class ParciaisController {
 			
 		} else {
 			
-			String nomeProduto = produto.getNome();
+			//String nomeProduto = produto.getNome();
 			
 			result.use(Results.json()).withoutRoot().from(produto).recursive().serialize();
 		}		
 	}
+	
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+				
+		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
+		
+		if(listaParciais.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+		if(filtro.getStatus()!=null && !filtro.getStatus().trim().isEmpty()) {
+			filtro.setStatus(StatusLancamentoParcial.valueOf(filtro.getStatus()).toString());
+		}
+		FileExporter.to("lancamentos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaParciais, ParcialDTO.class, this.httpResponse);
+		
+		result.nothing();
+	}
+	
+
+	/**
+	 * Método que obtém o usuário logado
+	 * 
+	 * @return usuário logado
+	 */
+	public Usuario getUsuario() {
+		//TODO getUsuario
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
+	}
+	
 }

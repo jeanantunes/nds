@@ -24,6 +24,13 @@ public class EMS0107Route extends FixedLengthRouteTemplate implements AbstractRo
 	
 	@Override
 	public void onStart() {
+		try {
+			entityManager.createNativeQuery("ALTER TABLE ndsi_ems0107_tmp DROP FOREIGN KEY fk_ndsi_ems0107_tmp_cota").executeUpdate();
+			entityManager.flush();
+		} catch (Exception e) {
+			// FK NAO EXISTE, IGNORA O Statement
+		}
+		
 		entityManager.createQuery("DELETE EMS0107Input").executeUpdate();
 	}
 	
