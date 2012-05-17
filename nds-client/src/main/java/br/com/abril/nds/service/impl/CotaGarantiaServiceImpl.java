@@ -11,6 +11,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
@@ -270,5 +271,26 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 
 		return cotaGarantia;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#salvarCaucaoLiquida(br.com.abril.nds.model.cadastro.CaucaoLiquida, java.lang.Long)
+	 */
+	@Transactional
+	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws ValidacaoException {
+		
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida =  (CotaGarantiaCaucaoLiquida) cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantiaCaucaoLiquida == null) {
+		
+			cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
+			cotaGarantiaCaucaoLiquida.setCota(getCota(idCota));
+		}
+		
+		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());
+		
+		cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(listaCaucaoLiquida);
+		
+		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
 	}
 }
