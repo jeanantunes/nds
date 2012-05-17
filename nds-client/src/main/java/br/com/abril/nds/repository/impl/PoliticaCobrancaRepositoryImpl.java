@@ -160,6 +160,19 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
         quantidade = (Long) query.uniqueResult();
 		return (int) quantidade;
 	}
+	
+	
+	@Override
+	public void desativarPoliticaCobranca(long idPolitica) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" update PoliticaCobranca p ");		
+		hql.append(" set p.ativo = :pAtivo ");
+		hql.append(" where p.id = :idPolitica ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("pAtivo", false);
+        query.setParameter("idPolitica", idPolitica);
+		query.executeUpdate();
+	}
 
 }
 

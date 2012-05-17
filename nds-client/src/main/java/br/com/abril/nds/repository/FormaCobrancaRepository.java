@@ -32,4 +32,6 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 
 	List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca);
 	
+	List<FormaCobranca> obterPorDistribuidorETipoCobranca(Long idDistribuidor,TipoCobranca tipoCobranca);
+	
 }
