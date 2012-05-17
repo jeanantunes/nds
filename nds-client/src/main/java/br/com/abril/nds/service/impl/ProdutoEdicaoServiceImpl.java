@@ -158,5 +158,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			String codigoProduto) {
 		return produtoEdicaoRepository.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
 	}
-	
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto) {
+		
+		if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
+		}
+		
+		return this.produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto);
+	}
 }

@@ -27,7 +27,7 @@ import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 public class BalanceamentoRecolhimentoEditorStrategyTest {
 	
 	@Test
-	public void efetuarBalanceamentoSemExcederCapacidadeManuseio() {
+	public void efetuarBalanceamento() {
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(TipoBalanceamentoRecolhimento.EDITOR);

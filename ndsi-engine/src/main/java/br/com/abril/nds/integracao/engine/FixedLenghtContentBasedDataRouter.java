@@ -22,6 +22,7 @@ import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthTypeMapping;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
@@ -134,7 +135,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 								});
 							}
 							catch (Exception e) {
-								ndsiLoggerFactory.getLogger().logError(message, e.getMessage());
+								ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 								e.printStackTrace();
 							}
 						}

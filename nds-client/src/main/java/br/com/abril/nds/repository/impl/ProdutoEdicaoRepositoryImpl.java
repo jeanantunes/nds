@@ -10,7 +10,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -203,5 +202,20 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return  criteria.list();
 				
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto) {
+		
+		StringBuilder hql = new StringBuilder("select pe ");
+		hql.append(" from ProdutoEdicao pe ")
+		   .append(" where pe.produto.nome like :nomeProduto ")
+		   .append(" or pe.produto.codigo = :codigoProduto ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeProduto", "%" + codigoNomeProduto + "%");
+		query.setParameter("codigoProduto", codigoNomeProduto);
+		
+		return query.list();
+	}
 }

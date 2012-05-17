@@ -15,6 +15,7 @@ import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -37,6 +38,9 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 		
+	private static final String INDICE_PESSOA_JURIDICA = "J";
+	private static final String INDICE_PESSOA_FISICA = "F";
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void processMessage(Message message) {
@@ -50,29 +54,33 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 		sql.append("WHERE ");
 		sql.append("     b.codigo = :codigo ");
 		Query query = entityManager.createQuery(sql.toString());
-		query = entityManager.createQuery(sql.toString());
 		query.setParameter("codigo", input.getCodBox().toString());		
 		Box box = null;
 		
 		try {
 			box = (Box) query.getSingleResult();
 		} catch(NoResultException e) {
-			// FIXME Não encontrou a Box. Realizar Log
+			// Não encontrou a Box. Realizar Log
 			// Passar para a próxima linha
-			ndsiLoggerFactory.getLogger().logError(message, "Codigo BOX " +  input.getCodBox() + " nao encontrado para a Cota " + input.getCodCota());
+			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA,"Codigo BOX " +  input.getCodBox() + " nao encontrado para a Cota " + input.getCodCota());
 			e.printStackTrace();
 			return;
 		}
-		
-		// Obter Pessoa
+				
+		Pessoa pessoa = null;
+		Cota cota = null;
 		sql = new StringBuilder();
-	
-		if ("F".equals(input.getTipoPessoa())){
+	    
+		// Obter Pessoa
+		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())){
+			
 			sql.append("SELECT pe ");
 			sql.append("FROM PessoaFisica pe ");
 			sql.append("WHERE ");
 			sql.append("	pe.cpf = :cpf ");
-		} else if ("J".equals(input.getTipoPessoa())){
+			
+		} else if (INDICE_PESSOA_JURIDICA.equals(input.getTipoPessoa())){
+			
 			sql.append("SELECT pe ");
 			sql.append("FROM PessoaJuridica pe ");
 			sql.append("WHERE ");
@@ -81,83 +89,121 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 		
 		query = entityManager.createQuery(sql.toString());
 
-		if ("F".equals(input.getTipoPessoa())){
+		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())){
+			
 			query.setParameter("cpf", input.getCpfCNPJ());
-		} else if ("J".equals(input.getTipoPessoa())){
+			
+		} else if (INDICE_PESSOA_JURIDICA.equals(input.getTipoPessoa())){
+			
 			query.setParameter("cnpj", input.getCpfCNPJ());
 		}
-		
-		try {
+				
+		//Definir Pessoa
+		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())){
 			
-			Pessoa pessoa = null;
-			Telefone telefone = new Telefone();
-			Endereco endereco = new Endereco();
+			List<PessoaFisica> pessoas = (List<PessoaFisica>) query.getResultList();
+			PessoaFisica pessoaFis = null;
+				
+				if (pessoas.isEmpty()) {
 					
-				//Definir Pessoa
-				if ("F".equals(input.getTipoPessoa())){
+					pessoaFis = new PessoaFisica();
+					pessoaFis.setNome(input.getNomeJornaleiro());
+					pessoaFis.setCpf(input.getCpfCNPJ());
+					entityManager.persist(pessoaFis);
 					
-					List<PessoaFisica> pessoas = (List<PessoaFisica>) query.getResultList();
+					pessoa = pessoaFis;
 					
-						if (pessoas.isEmpty()) {
-							
-							PessoaFisica pessoaFis = new PessoaFisica();
-							
-							pessoaFis.setNome(input.getNomeJornaleiro());
-							pessoaFis.setCpf(input.getCpfCNPJ());
-							entityManager.persist(pessoaFis);
-							
-							pessoa = pessoaFis;
-							
-						} else {
-							
-							pessoas.get(0).setCpf(input.getCpfCNPJ());
-							pessoas.get(0).setNome(input.getNomeJornaleiro());
-							
-							pessoa = pessoas.get(0);
-						}
-	
-				} else if ("J".equals(input.getTipoPessoa())){
+				} else {
 					
-					List<PessoaJuridica> pessoas = (List<PessoaJuridica>) query.getResultList();
-					
-						if (pessoas.isEmpty()) {
+					for (PessoaFisica pessoaFis2 : pessoas) {
+						
+						if (pessoaFis2.getCpf().equals(input.getCpfCNPJ())) {
 							
-							PessoaJuridica pessoaJur = new PessoaJuridica();
-							
-							pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
-							pessoaJur.setCnpj(input.getCpfCNPJ());
-							pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
-							pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
-							entityManager.persist(pessoaJur);
-							
-							pessoa = pessoaJur;
-							
-						} else {
-							
-							pessoas.get(0).setRazaoSocial(input.getNomeJornaleiro());
-							pessoas.get(0).setCnpj(input.getCpfCNPJ());
-							pessoas.get(0).setInscricaoEstadual(input.getInscrEstadual());
-							pessoas.get(0).setInscricaoMunicipal(input.getInscrMunicipal());
-							
-							pessoa = pessoas.get(0);
-						}					
+							pessoaFis = pessoaFis2;
+						}				
+					}
+						
+					pessoaFis.setCpf(input.getCpfCNPJ());
+					pessoaFis.setNome(input.getNomeJornaleiro());
+					pessoa = pessoaFis;						
 				}
+
+		} else if (INDICE_PESSOA_JURIDICA.equals(input.getTipoPessoa())){
 			
-			if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
-				
-				//Definir Endereco
-				sql = new StringBuilder();
-				sql.append("SELECT e  ");
-				sql.append("FROM Endereco e ");
-				sql.append("WHERE ");
-				sql.append("     e.cep = :cep ");
-				query = entityManager.createQuery(sql.toString());
-				query.setParameter("cep", input.getCep());	
-				
-				List<Endereco> enderecos = (List<Endereco>) query.getResultList();
+			List<PessoaJuridica> pessoas = (List<PessoaJuridica>) query.getResultList();
+			PessoaJuridica pessoaJur = null;
+			
+				if (pessoas.isEmpty()) {
 					
-					if (enderecos.isEmpty()) {
+					pessoaJur = new PessoaJuridica();
+					pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
+					pessoaJur.setCnpj(input.getCpfCNPJ());
+					pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
+					pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
+					entityManager.persist(pessoaJur);
+					
+					pessoa = pessoaJur;
+					
+				} else {
+					
+					for (PessoaJuridica pessoaJur2 : pessoas) {
+						
+						if (pessoaJur2.getCnpj().equals(input.getCpfCNPJ())) {
+							
+							pessoaJur = pessoaJur2;
+						}				
+					}
 												
+					pessoaJur.setRazaoSocial(input.getNomeJornaleiro());
+					pessoaJur.setCnpj(input.getCpfCNPJ());
+					pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
+					pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
+					pessoa = pessoaJur;						
+
+				}					
+		}
+	
+		// Verifica cota
+		sql = new StringBuilder();
+		sql.append("SELECT co  ");
+		sql.append("FROM Cota co ");
+		sql.append("WHERE ");
+		sql.append("     co.numeroCota = :numeroCota ");
+		
+		query = entityManager.createQuery(sql.toString());
+		query.setParameter("numeroCota", input.getCodCota());
+		
+		List<Cota> cotas = (List<Cota>) query.getResultList();
+	
+			if (cotas.isEmpty()) {
+				
+				cota = new Cota();
+								
+				cota.setInicioAtividade(new Date());
+				cota.setNumeroCota(input.getCodCota());
+				cota.setPossuiContrato(false);
+				
+					if ("1".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+						
+					} else if ("2".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
+						
+					} else if ("3".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
+						
+					} else if ("4".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
+					}
+				
+				cota.setSugereSuspensao(true);
+				cota.setBox(box);
+				cota.setPessoa(pessoa);
+				entityManager.persist(cota);
+					
+					if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
+						
+						Endereco endereco = new Endereco();
 						endereco.setCodigoBairro(input.getCodBairro());
 						endereco.setCep(input.getCep());
 						endereco.setCidade(input.getMunicipio());
@@ -167,201 +213,247 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 						endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
 						entityManager.persist(endereco);
 						
+						EnderecoCota enderecoCota = new EnderecoCota();
+						enderecoCota.setPrincipal(true);
+						enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+						enderecoCota.setEndereco(endereco);
+						enderecoCota.setCota(cota);
+						entityManager.persist(enderecoCota);
+						
 					} else {
 						
-						enderecos.get(0).setCodigoBairro(input.getCodBairro());
-						enderecos.get(0).setCep(input.getCep());
-						enderecos.get(0).setCidade(input.getMunicipio());
-						enderecos.get(0).setLogradouro(input.getEndereco());
-						enderecos.get(0).setNumero(input.getNumLogradouro());
-						enderecos.get(0).setUf(input.getSiglaUF());	
-						enderecos.get(0).setCodigoCidadeIBGE(input.getCodCidadeIbge());
-						endereco = enderecos.get(0);
+						ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,"O arquivo nao contem dados de endereco para a cota " + cota.getNumeroCota());
 					}
-			}
-			
-			if (!input.getTelefone().isEmpty()){
-			
-				//Definir Telefone
-				sql = new StringBuilder();
-				sql.append("SELECT tel ");
-				sql.append("FROM Telefone tel ");
-				sql.append("WHERE ");
-				sql.append("     tel.numero = :numero ");
-				query = entityManager.createQuery(sql.toString());
-				query.setParameter("numero", input.getTelefone());	
-				
-				List<Telefone> telefones = (List<Telefone>) query.getResultList();
-				
-					if (telefones.isEmpty()) {
-												
+					
+					if (!input.getTelefone().isEmpty()){
+						
+						Telefone telefone = new Telefone();
 						telefone.setDdd(input.getDdd());
 						telefone.setNumero(input.getTelefone());
 						entityManager.persist(telefone);
 						
-					} else {
-								
-						telefones.get(0).setDdd(input.getDdd());
-						telefones.get(0).setNumero(input.getTelefone());
-						telefone = telefones.get(0);
-					}
-			}
-			
-			// Verifica cota
-			sql = new StringBuilder();
-			sql.append("SELECT co  ");
-			sql.append("FROM Cota co ");
-			sql.append("WHERE ");
-			sql.append("     co.numeroCota = :numeroCota ");
-			
-			query = entityManager.createQuery(sql.toString());
-			query.setParameter("numeroCota", input.getCodCota());
-			
-			List<Cota> cotas = (List<Cota>) query.getResultList();
-
-				if (cotas.isEmpty()) {
-					
-					Cota cota = new Cota();
-									
-					cota.setInicioAtividade(new Date());
-					cota.setNumeroCota(input.getCodCota());
-					cota.setPossuiContrato(false);
-					
-						if ("1".equals(input.getSituacaoCota())){
-							cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-							
-						} else if ("2".equals(input.getSituacaoCota())){
-							cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
-							
-						} else if ("3".equals(input.getSituacaoCota())){
-							cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
-							
-						} else if ("4".equals(input.getSituacaoCota())){
-							cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
-						}
-					
-					cota.setSugereSuspensao(true);
-					cota.setBox(box);
-					cota.setPessoa(pessoa);
-					cota.setQtdePDV(input.getQtdeCotas());
-					entityManager.persist(cota);
+						TelefoneCota telefoneCota = new TelefoneCota();
+						telefoneCota.setPrincipal(true);
+						telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
+						telefoneCota.setTelefone(telefone);
+						telefoneCota.setCota(cota);
+						entityManager.persist(telefoneCota);
 						
-						if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
+					} else {
+						
+						ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,"O arquivo nao contem dados de telefone para a cota " + cota.getNumeroCota());
+					}		
+					
+			} else {
+				
+				Endereco endereco = null;
+				EnderecoCota enderecoCota = null;
+				Telefone telefone = null;
+				TelefoneCota telefoneCota = null;
+				
+				for (Cota cota2 : cotas) {
+					
+					if (cota2.getNumeroCota().equals(input.getCodCota())) {
+						
+						cota = cota2;
+					}				
+				}
+				
+				ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cota " + cota.getNumeroCota());
+										
+				cota.setInicioAtividade(new Date());
+				cota.setNumeroCota(input.getCodCota());
+				cota.setPossuiContrato(false);
+				
+					if ("1".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+						
+					} else if ("2".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
+						
+					} else if ("3".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
+						
+					} else if ("4".equals(input.getSituacaoCota())){
+						cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
+					}
+				
+				cota.setSugereSuspensao(true);
+				cota.setBox(box);
+				cota.setPessoa(pessoa);
+				
+				if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
+					
+					// Verifica EnderecoCota
+					sql = new StringBuilder();
+					sql.append("SELECT ec  ");
+					sql.append("FROM EnderecoCota ec ");
+					sql.append("JOIN FETCH ec.endereco ed  ");
+					sql.append("WHERE ");
+					sql.append("     ec.cota = :numeroCota ");
+					sql.append(" AND    ed.logradouro = :logradouro ");
+					query = entityManager.createQuery(sql.toString());
+					query.setParameter("numeroCota", cota);
+					query.setParameter("logradouro", input.getEndereco());
+					
+					List<EnderecoCota> enderecosCota = (List<EnderecoCota>) query.getResultList();
+					
+						if (enderecosCota.isEmpty()) {
 							
-							EnderecoCota enderecoCota = new EnderecoCota();
+							endereco = new Endereco();
+							endereco.setCodigoBairro(input.getCodBairro());
+							endereco.setCep(input.getCep());
+							endereco.setCidade(input.getMunicipio());
+							endereco.setLogradouro(input.getEndereco());
+							endereco.setNumero(input.getNumLogradouro());
+							endereco.setUf(input.getSiglaUF());	
+							endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+							entityManager.persist(endereco);
+							
+							enderecoCota = new EnderecoCota();
 							enderecoCota.setPrincipal(true);
 							enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
 							enderecoCota.setEndereco(endereco);
 							enderecoCota.setCota(cota);
 							entityManager.persist(enderecoCota);
-						}
-						
-						if (!input.getTelefone().isEmpty()){
 							
-							TelefoneCota telefoneCota = new TelefoneCota();
+						} else {
+							
+							for (EnderecoCota enderecoCota2 : enderecosCota) {
+								
+								if (enderecoCota2.getCota().equals(cota)) {
+									
+									enderecoCota = enderecoCota2;
+									
+									//Definir Endereco
+									sql = new StringBuilder();
+									sql.append("SELECT e  ");
+									sql.append("FROM Endereco e ");
+									sql.append("WHERE ");
+									sql.append("     e.logradouro = :logradouro ");
+									query = entityManager.createQuery(sql.toString());
+									query.setParameter("logradouro", input.getEndereco());	
+									
+									List<Endereco> enderecos = (List<Endereco>) query.getResultList();
+										
+										if (enderecos.isEmpty()) {
+											
+											endereco = new Endereco();
+											endereco.setCodigoBairro(input.getCodBairro());
+											endereco.setCep(input.getCep());
+											endereco.setCidade(input.getMunicipio());
+											endereco.setLogradouro(input.getEndereco());
+											endereco.setNumero(input.getNumLogradouro());
+											endereco.setUf(input.getSiglaUF());	
+											endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+											entityManager.persist(endereco);
+											
+										} else {
+											
+											for (Endereco endereco2 : enderecos) {
+												
+												if (endereco2.getLogradouro().equals(input.getEndereco())) {
+													
+													endereco = endereco2;
+												}				
+											}
+										}
+								}							
+							}
+							
+							ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do  Endereco Cota " + enderecoCota.getId());
+							
+							enderecoCota.setPrincipal(true);
+							enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+							enderecoCota.setEndereco(endereco);
+							enderecoCota.setCota(cota);
+						}
+				} else {
+					
+					ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,"O arquivo nao contem dados de endereco para a cota " + cota.getNumeroCota());
+				}
+				
+					
+				if (!input.getTelefone().isEmpty()){
+					
+					// Verifica TelefoneCota
+					sql = new StringBuilder();
+					sql.append("SELECT tc  ");
+					sql.append("FROM TelefoneCota tc ");
+					sql.append("JOIN FETCH tc.telefone t  ");
+					sql.append("WHERE ");
+					sql.append("     tc.cota = :numeroCota ");
+					sql.append(" AND    t.numero = :numeroTelefone ");
+					query = entityManager.createQuery(sql.toString());
+					query.setParameter("numeroCota", cota);
+					query.setParameter("numeroTelefone", input.getTelefone());
+					
+					List<TelefoneCota> telefonesCota = (List<TelefoneCota>) query.getResultList();
+					
+						if (telefonesCota.isEmpty()) {
+							
+							telefone = new Telefone();
+							telefone.setDdd(input.getDdd());
+							telefone.setNumero(input.getTelefone());
+							entityManager.persist(telefone);
+							
+							telefoneCota = new TelefoneCota();
 							telefoneCota.setPrincipal(true);
 							telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 							telefoneCota.setTelefone(telefone);
 							telefoneCota.setCota(cota);
 							entityManager.persist(telefoneCota);
-						}		
-						
+							
+						} else {
+							
+							for (TelefoneCota telefoneCota2 : telefonesCota) {
+								
+								if (telefoneCota2.getCota().equals(cota)) {
+									
+									telefoneCota = telefoneCota2;
+									
+									//Definir Telefone
+									sql = new StringBuilder();
+									sql.append("SELECT tel ");
+									sql.append("FROM Telefone tel ");
+									sql.append("WHERE ");
+									sql.append("     tel.numero = :numero ");
+									query = entityManager.createQuery(sql.toString());
+									query.setParameter("numero", input.getTelefone());	
+									
+									List<Telefone> telefones = (List<Telefone>) query.getResultList();
+									
+										if (telefones.isEmpty()) {
+											
+											telefone = new Telefone();						
+											telefone.setDdd(input.getDdd());
+											telefone.setNumero(input.getTelefone());
+											entityManager.persist(telefone);
+											
+										} else {
+													
+											for (Telefone telefones2 : telefones) {
+												
+												if (telefones2.getNumero().equals(input.getTelefone())) {
+													
+													telefone = telefones2;
+												}				
+											}
+										}
+								}				
+							}
+							
+							ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Telefone Cota " + telefoneCota.getId());
+							
+							telefoneCota.setPrincipal(true);
+							telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
+							telefoneCota.setTelefone(telefone);
+							telefoneCota.setCota(cota);
+						}
 				} else {
 					
-					cotas.get(0).setInicioAtividade(new Date());
-					cotas.get(0).setNumeroCota(input.getCodCota());
-					cotas.get(0).setPossuiContrato(false);
-					
-						if ("1".equals(input.getSituacaoCota())){
-							cotas.get(0).setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-							
-						} else if ("2".equals(input.getSituacaoCota())){
-							cotas.get(0).setSituacaoCadastro(SituacaoCadastro.ATIVO);
-							
-						} else if ("3".equals(input.getSituacaoCota())){
-							cotas.get(0).setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
-							
-						} else if ("4".equals(input.getSituacaoCota())){
-							cotas.get(0).setSituacaoCadastro(SituacaoCadastro.INATIVO);
-						}
-					
-					cotas.get(0).setSugereSuspensao(true);
-					cotas.get(0).setBox(box);
-					cotas.get(0).setPessoa(pessoa);
-					cotas.get(0).setQtdePDV(input.getQtdeCotas());
-					
-					if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
-						
-						// Verifica EnderecoCota
-						sql = new StringBuilder();
-						sql.append("SELECT ec  ");
-						sql.append("FROM EnderecoCota ec ");
-						sql.append("WHERE ");
-						sql.append("     ec.cota = :numeroCota ");
-						
-						query = entityManager.createQuery(sql.toString());
-						query.setParameter("numeroCota", cotas.get(0));
-						
-						List<EnderecoCota> enderecosCota = (List<EnderecoCota>) query.getResultList();
-						
-							if (enderecosCota.isEmpty()) {
-								
-								EnderecoCota enderecoCota = new EnderecoCota();
-								
-								enderecoCota.setPrincipal(true);
-								enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
-								enderecoCota.setEndereco(endereco);
-								enderecoCota.setCota(cotas.get(0));
-								entityManager.persist(enderecoCota);
-								
-							} else {
-													
-								enderecosCota.get(0).setPrincipal(true);
-								enderecosCota.get(0).setTipoEndereco(TipoEndereco.COMERCIAL);
-								enderecosCota.get(0).setEndereco(endereco);
-								enderecosCota.get(0).setCota(cotas.get(0));
-							}
-					}
-					
-						
-					if (!input.getTelefone().isEmpty()){
-						
-						// Verifica TelefoneCota
-						sql = new StringBuilder();
-						sql.append("SELECT tc  ");
-						sql.append("FROM TelefoneCota tc ");
-						sql.append("WHERE ");
-						sql.append("     tc.cota = :numeroCota ");
-						
-						query = entityManager.createQuery(sql.toString());
-						query.setParameter("numeroCota", cotas.get(0));
-						
-						List<TelefoneCota> telefonesCota = (List<TelefoneCota>) query.getResultList();
-						
-							if (telefonesCota.isEmpty()) {
-								
-								TelefoneCota telefoneCota = new TelefoneCota();
-								
-								telefoneCota.setPrincipal(true);
-								telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
-								telefoneCota.setTelefone(telefone);
-								telefoneCota.setCota(cotas.get(0));
-								entityManager.persist(telefoneCota);
-								
-							} else {
-								
-								telefonesCota.get(0).setPrincipal(true);
-								telefonesCota.get(0).setTipoTelefone(TipoTelefone.COMERCIAL);
-								telefonesCota.get(0).setTelefone(telefone);
-								telefonesCota.get(0).setCota(cotas.get(0));
-							}
-					}				
-				}				
-		
-		} catch (NoResultException e) {
-			// Logar erro e passar para a próxima linha
-			ndsiLoggerFactory.getLogger().logError(message, "Erro na execucao da interface de insercao de COTA - EMS0117");
-			e.printStackTrace();
-		}
+					ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,"O arquivo nao contem dados de telefone para a cota " + cota.getNumeroCota());
+				}			
+			}
 	}
 }

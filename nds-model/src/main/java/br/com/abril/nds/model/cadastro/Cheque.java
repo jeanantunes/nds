@@ -4,7 +4,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,11 +61,11 @@ public class Cheque implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="DATA_EMISSAO", nullable=false)
-	private Date emissao;
+	private Calendar emissao;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="DATA_VALIDADE",nullable=false)
-	private Date validade;
+	private Calendar validade;
 	
 	@Column(name="CORRENTISTA", nullable=false)
 	private String correntista;
@@ -196,31 +196,32 @@ public class Cheque implements Serializable {
 		this.numeroCheque = numeroCheque;
 	}
 
+	
 	/**
 	 * @return the emissao
 	 */
-	public Date getEmissao() {
+	public Calendar getEmissao() {
 		return emissao;
 	}
 
 	/**
 	 * @param emissao the emissao to set
 	 */
-	public void setEmissao(Date emissao) {
+	public void setEmissao(Calendar emissao) {
 		this.emissao = emissao;
 	}
 
 	/**
 	 * @return the validade
 	 */
-	public Date getValidade() {
+	public Calendar getValidade() {
 		return validade;
 	}
 
 	/**
 	 * @param validade the validade to set
 	 */
-	public void setValidade(Date validade) {
+	public void setValidade(Calendar validade) {
 		this.validade = validade;
 	}
 

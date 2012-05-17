@@ -27,12 +27,31 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepository<CotaGarantia,
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		return (CotaGarantia) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends CotaGarantia> T  getByCota(Long idCota, Class<T> type) {
+		Criteria criteria = getSession().createCriteria(CotaGarantia.class);
+		
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("class", type));
+		return (T) criteria.uniqueResult();
+	}
+	
+	
 
 	@Override
 	public void deleteListaImoveis(Long idGarantia) {
 		
 		Query query = getSession().createSQLQuery(" DELETE FROM IMOVEL WHERE GARANTIA_ID = :idGarantia ");
 		query.setParameter("idGarantia", idGarantia).executeUpdate();
+	}
+
+	@Override
+	public void deleteByCota(Long idCota) {
+		Query query = getSession().createQuery("DELETE FROM CotaGarantia this_  WHERE this_.cota.id = :idCota");
+		query.setParameter("idCota", idCota).executeUpdate();
+		
 	}
 
 }

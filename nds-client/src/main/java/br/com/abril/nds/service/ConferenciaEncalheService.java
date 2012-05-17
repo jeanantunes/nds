@@ -97,5 +97,4 @@ public interface ConferenciaEncalheService {
 	
 	// (caso valor nota esteja diferente do encalhe requisitar correcao)
 	public void finalizarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
-	
 }
