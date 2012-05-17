@@ -1,7 +1,7 @@
 package br.com.abril.nds.model.cadastro.garantia;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -56,7 +56,7 @@ public abstract class CotaGarantia implements Serializable{
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA")
-	private Date data;
+	private Calendar data;
 	
 
 
@@ -76,11 +76,11 @@ public abstract class CotaGarantia implements Serializable{
 		this.cota = cota;
 	}
 
-	public Date getData() {
+	public Calendar getData() {
 		return data;
 	}
 
-	public void setData(Date data) {
+	public void setData(Calendar data) {
 		this.data = data;
 	}
 }

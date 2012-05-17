@@ -10,7 +10,6 @@ import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
@@ -26,13 +25,6 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 public interface CotaGarantiaService {
 	
 	/**
-	 * Salva no repositorio de dados a garantia da cota.
-	 * @param entity garantia da cota.
-	 * @return
-	 */
-	public abstract CotaGarantia salva(CotaGarantia entity);
-	
-	/**
 	 * Recupera a garantia da cota.
 	 * @param idCota Id da cota.
 	 * @return
@@ -46,7 +38,7 @@ public interface CotaGarantiaService {
 	 * @return
 	 * @throws ValidacaoException Caso ocorra uma violação de relacionamento na entidade.
 	 */
-	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws ValidacaoException;
+	public abstract CotaGarantiaNotaPromissoria salvaNotaPromissoria(NotaPromissoria notaPromissoria, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException;
 	
 	/**
 	 * @return
@@ -62,7 +54,7 @@ public interface CotaGarantiaService {
 	 * @return
 	 * @throws ValidacaoException Caso ocorra uma violação de relacionamento na entidade.
 	 */
-	public abstract CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota) throws ValidacaoException;
+	public abstract CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException;
 	
 	/**
 	 * Salva no repositorio de dados a garantia de um cheque caução.
@@ -71,7 +63,7 @@ public interface CotaGarantiaService {
 	 * @return cotaGarantiaChequeCaucao salva no respositório.
 	 * @throws ValidacaoException Caso ocorra uma violação de relacionamento na entidade.
 	 */
-	public abstract CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota) throws ValidacaoException;
+	public abstract CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException;
 
 	/**
 	 * @param nome
@@ -94,9 +86,10 @@ public interface CotaGarantiaService {
 	 * Salva no repositorio de dados a garantia de um fiador.
 	 * @param idFiador
 	 * @param idCota
-	 * @return TODO
+	 * @return
 	 * @throws ValidacaoException
 	 */
 	public abstract CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
-			throws ValidacaoException;
+			throws ValidacaoException, InstantiationException, IllegalAccessException;
+
 }

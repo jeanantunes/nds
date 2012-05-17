@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,42 +54,29 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see br.com.abril.nds.service.CotaGarantiaService#salva(CotaGarantia)
-	 */
-	@Override
-	@Transactional
-	public CotaGarantia salva(CotaGarantia entity) {
-
-		// TODO: validações para substituição da cota.
-		return cotaGarantiaRepository.merge(entity);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * br.com.abril.nds.service.CotaGarantiaService#getByCota(java.lang.Long)
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public CotaGarantiaDTO getByCota(Long idCota) {
-		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
 		TipoGarantia tipo = null;
-		if(cotaGarantia instanceof CotaGarantiaFiador){
+		if (cotaGarantia instanceof CotaGarantiaFiador) {
 			tipo = TipoGarantia.FIADOR;
-			initFiador(((CotaGarantiaFiador)cotaGarantia).getFiador());
-		}else if(cotaGarantia instanceof CotaGarantiaImovel){
-			tipo = TipoGarantia.IMOVEL;
-		}else if(cotaGarantia instanceof CotaGarantiaNotaPromissoria){
+			initFiador(((CotaGarantiaFiador) cotaGarantia).getFiador());
+		} else if (cotaGarantia instanceof CotaGarantiaImovel) {
+			tipo = TipoGarantia.IMOVEL;			
+			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
+			cotaGarantiaImovel.getImoveis().size();			
+		} else if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
-		}else if(cotaGarantia instanceof CotaGarantiaCaucaoLiquida){
+		} else if (cotaGarantia instanceof CotaGarantiaCaucaoLiquida) {
 			tipo = TipoGarantia.CAUCAO_LIQUIDA;
-		}else if(cotaGarantia instanceof CotaGarantiaChequeCaucao){
+		} else if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {
 			tipo = TipoGarantia.CHEQUE_CAUCAO;
-		} 
-		
-		
+		}
+
 		return new CotaGarantiaDTO(tipo, cotaGarantia);
 	}
 
@@ -104,18 +91,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaNotaPromissoria salvaNotaPromissoria(
 			NotaPromissoria notaPromissoria, Long idCota)
-			throws ValidacaoException {
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-		CotaGarantiaNotaPromissoria cotaGarantiaNota = (CotaGarantiaNotaPromissoria) cotaGarantiaRepository
-				.getByCota(idCota);
+		CotaGarantiaNotaPromissoria cotaGarantiaNota = prepareCotaGarantia(
+				idCota, CotaGarantiaNotaPromissoria.class);
 
-		if (cotaGarantiaNota == null) {
+		
 
-			cotaGarantiaNota = new CotaGarantiaNotaPromissoria();
-			cotaGarantiaNota.setCota(getCota(idCota));
-		}
-
-		cotaGarantiaNota.setData(new Date());
+		cotaGarantiaNota.setData(Calendar.getInstance());
 
 		cotaGarantiaNota.setNotaPromissoria(notaPromissoria);
 
@@ -132,19 +115,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional
 	public CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota)
-			throws ValidacaoException {
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-		CotaGarantiaChequeCaucao cotaGarantiaCheque = (CotaGarantiaChequeCaucao) cotaGarantiaRepository
-				.getByCota(idCota);
+		CotaGarantiaChequeCaucao cotaGarantiaCheque = prepareCotaGarantia(
+				idCota, CotaGarantiaChequeCaucao.class);
 
-		if (cotaGarantiaCheque == null) {
+		
 
-			cotaGarantiaCheque = new CotaGarantiaChequeCaucao();
-
-			cotaGarantiaCheque.setCota(getCota(idCota));
-		}
-
-		cotaGarantiaCheque.setData(new Date());
+		cotaGarantiaCheque.setData(Calendar.getInstance());
 
 		cotaGarantiaCheque.setCheque(cheque);
 
@@ -171,25 +149,23 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional
 	public CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota)
-			throws ValidacaoException {
-		
-		CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.getByCota(idCota);
-				
-		if (cotaGarantiaImovel == null) {
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-			cotaGarantiaImovel = new CotaGarantiaImovel();
-			cotaGarantiaImovel.setCota(getCota(idCota));
-		
-		} else {
-		
-			if (cotaGarantiaImovel.getImoveis() != null || !cotaGarantiaImovel.getImoveis().isEmpty()) {
-				this.cotaGarantiaRepository.deleteListaImoveis(cotaGarantiaImovel.getId());
-			}
+		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota,
+				CotaGarantiaImovel.class);
+
+	
+
+		if (cotaGarantiaImovel.getImoveis() != null
+				&& !cotaGarantiaImovel.getImoveis().isEmpty()) {
+			this.cotaGarantiaRepository
+					.deleteListaImoveis(cotaGarantiaImovel.getId());
 		}
-		cotaGarantiaImovel.setData(new Date());
+		
+		cotaGarantiaImovel.setData(Calendar.getInstance());
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
-		
+
 		return (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
 	}
@@ -242,27 +218,26 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		fiador.getGarantias().size();
 		fiador.getPessoa().getEnderecos().size();
 	}
+
 	@Transactional
 	@Override
-	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
-		CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantiaRepository
-				.getByCota(idCota);
-		if (cotaGarantiaFiador == null) {
-			cotaGarantiaFiador = new CotaGarantiaFiador();
+	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
+		CotaGarantiaFiador cotaGarantiaFiador = prepareCotaGarantia(idCota,
+				CotaGarantiaFiador.class);
+	
 
-			cotaGarantiaFiador.setCota(getCota(idCota));
-		}
-		
 		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
-		
-		if(fiador == null){
+
+		if (fiador == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Fiador "+idFiador+ " não existe."));
+					"Fiador " + idFiador + " não existe."));
 		}
 		cotaGarantiaFiador.setFiador(fiador);
-		cotaGarantiaFiador.setData(new Date());
-		
-		return (CotaGarantiaFiador)cotaGarantiaRepository.merge(cotaGarantiaFiador);
+		cotaGarantiaFiador.setData(Calendar.getInstance());
+
+		return (CotaGarantiaFiador) cotaGarantiaRepository
+				.merge(cotaGarantiaFiador);
 
 	}
 
@@ -275,9 +250,25 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 
 		if (cota == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Cota " + idCota
-					+ " não encontrada."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Cota " + idCota + " não encontrada."));
 		}
 		return cota;
+	}
+	
+	private <T extends CotaGarantia> T prepareCotaGarantia(Long idCota,
+			Class<T> type) throws InstantiationException,
+			IllegalAccessException {
+
+		T cotaGarantia = cotaGarantiaRepository.getByCota(idCota, type);
+
+		if (cotaGarantia == null) {			
+			cotaGarantiaRepository.deleteByCota(idCota);
+			
+			cotaGarantia = type.newInstance();
+			cotaGarantia.setCota(getCota(idCota));
+		}
+
+		return cotaGarantia;
 	}
 }

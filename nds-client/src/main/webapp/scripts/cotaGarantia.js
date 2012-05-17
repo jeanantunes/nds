@@ -253,11 +253,13 @@ function Imovel(idCota, cotaGarantia) {
 	this.idCota = idCota;
 	this.cotaGarantia = cotaGarantia;
 	this.bindEvents();
-	this.get();
+	//this.get();
 	this.toggle();
 	this.initGrid();
 	this.rows = new Array;
 	this.itemEdicao = null;
+	this.imovel = data.cotaGarantia.imovel;
+	this.dataBind();
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
