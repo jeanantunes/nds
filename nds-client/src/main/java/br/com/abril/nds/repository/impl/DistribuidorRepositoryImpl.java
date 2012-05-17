@@ -10,6 +10,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ControleAprovacaoVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -20,6 +21,9 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
+import br.com.caelum.vraptor.view.Results;
 
 @Repository
 public class DistribuidorRepositoryImpl extends
@@ -109,14 +113,15 @@ public class DistribuidorRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
-		.append(" ( estoqueProdutoCota.cota.numeroCota as numeroCota , ")
+		.append(" ( estoqueProdutoCota.cota.numeroCota , ")
 		.append("   case when (pessoa.nome is not null) then ( pessoa.nome ) ")
 		.append("     when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ")
-		.append("     else null end as nome , ")
+		.append("     else null end , ")
 		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida) - sum(estoqueProdutoCota.qtdeDevolvida)) , ")
-		.append("   ( (sum(estoqueProdutoCota.qtdeRecebida) - sum(estoqueProdutoCota.qtdeDevolvida)) * estoqueProdutoCota.produtoEdicao.precoVenda ) ) ");
-			
+		.append("   endereco.cidade, " )
+		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -138,56 +143,66 @@ public class DistribuidorRepositoryImpl extends
 			}
 		}
 		
-		return query.list();
+		return complementarCurvaABCDistribuidor(query.list());
 
 	}
 
+	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
+		return null;
+	}
+	
 	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from EstoqueProdutoCota as estoqueProdutoCota ")
-		.append(" join estoqueProdutoCota.movimentos as movimentos ")
-		.append(" join estoqueProdutoCota.produtoEdicao.produto.fornecedores as fornecedores ")
-		.append(" join estoqueProdutoCota.cota.pdvs as pdv ")
-		.append(" join estoqueProdutoCota.cota.pessoa as pessoa ");
+		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
+		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
+		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos as enderecos ")
+		.append(" LEFT JOIN enderecos.endereco AS endereco ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
 		
-		hql.append("where movimentos.data between :dataDe and :dataAte ");
+		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
+		hql.append(" AND enderecos.principal IS TRUE ");
 
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty()) {
-			hql.append("and fornecedores.id = :codigoFornecedor ");
+			hql.append("AND fornecedores.id = :codigoFornecedor ");
 			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
 		}
 
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.produto.codigo = :codigoProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.codigo = :codigoProduto ");
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
+			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
 		}
 
 		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			hql.append("and estoqueProdutoCota.cota.numeroCota = :codigoCota ");
+			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			hql.append("and pessoa.nome = :nomeCota ");
+			hql.append("AND pessoa.nome = :nomeCota ");
 		}
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
-			hql.append("and endereco.cidade = :municipio ");
+			hql.append("AND endereco.cidade = :municipio ");
 		}
 		
-		hql.append(" group by numeroCota, nome ");
+		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
+			.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
+			.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
+			.append("     ELSE null END ");
 		
 		return hql.toString();
 		
