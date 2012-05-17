@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 /**
  * 
- * Classe responsável por armazenar os valores referente aos registros da
+ * Classe responsÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡vel por armazenar os valores referente aos registros da
  * pesquisa de registra de curva ABC do distribuidor.
  * 
  * @author InfoA2
@@ -18,11 +18,11 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
 
-	private Long numeroCota;
+	private Integer numeroCota;
 
 	private String nomeCota;
 
-	private BigDecimal quantidadePdvs;
+	private Integer quantidadePdvs;
 
 	// Baseado no Pdv principal
 	private String municipio;
@@ -38,9 +38,8 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 	public RegistroCurvaABCDistribuidorVO() {
 	}
 
-	public RegistroCurvaABCDistribuidorVO(Long numeroCota, String nomeCota,
-			BigDecimal quantidadePdvs, String municipio, BigDecimal vendaExemplares,
-			BigDecimal faturamentoCapa) {
+	public RegistroCurvaABCDistribuidorVO(Integer numeroCota, String nomeCota,
+			Integer quantidadePdvs, String municipio, BigDecimal vendaExemplares, BigDecimal faturamentoCapa) {
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.quantidadePdvs = quantidadePdvs;
@@ -49,35 +48,11 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 		this.faturamentoCapa = faturamentoCapa;
 	}
 
-	public RegistroCurvaABCDistribuidorVO(Object numeroCota, Object nomeCota,
-			Object quantidadePdvs, Object vendaExemplares,
-			Object faturamentoCapa) {
-		System.out.println(numeroCota);
-		
-		try {
-			
-			this.numeroCota = (Long) numeroCota;
-			this.nomeCota = (String) nomeCota;
-			this.quantidadePdvs = (BigDecimal) quantidadePdvs;
-			this.vendaExemplares = (BigDecimal) vendaExemplares;
-			this.faturamentoCapa = (BigDecimal) faturamentoCapa;
-			
-		} catch(Exception e) {
-		}
-		
-		/*this.numeroCota = numeroCota;
-		this.nomeCota = nomeCota;
-		this.quantidadePdvs = quantidadePdvs;
-		this.municipio = municipio;
-		this.vendaExemplares = vendaExemplares;
-		this.faturamentoCapa = faturamentoCapa;*/
-	}
-	
-	public Long getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
-	public void setNumeroCota(Long numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
@@ -89,11 +64,11 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 		this.nomeCota = nomeCota;
 	}
 
-	public BigDecimal getQuantidadePdvs() {
+	public Integer getQuantidadePdvs() {
 		return quantidadePdvs;
 	}
 
-	public void setQuantidadePdvs(BigDecimal quantidadePdvs) {
+	public void setQuantidadePdvs(Integer quantidadePdvs) {
 		this.quantidadePdvs = quantidadePdvs;
 	}
 

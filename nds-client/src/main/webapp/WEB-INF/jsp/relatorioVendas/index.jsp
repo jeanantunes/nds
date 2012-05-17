@@ -25,9 +25,25 @@
 	function pesquisar() {
 		if ($('#filtro_distrib').attr("checked") == "checked") {
 			
-			var data = "dataDe=" + $("#datepickerDe").val() +
-			  		   "&dataAte=" + $("#datepickerAte").val();
-			$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
+			var dataDe = $("#datepickerDe").val();
+			var dataAte = $("#datepickerAte").val();
+			
+			alert(dataDe);
+			alert(dataAte);
+			
+			$(".abcDistribuidorGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcDistribuidorGrid").flexReload();
+			mostra_distrib();
+			
+			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
 			
 		} else if ($('#filtro_editor').attr("checked") == "checked") {
 			alert('Editor');
@@ -163,7 +179,7 @@
 		</div>
 
 		<fieldset class="classFieldset">
-			<legend> Relatório de Vendas</legend>
+			<legend> Relatï¿½rio de Vendas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">
 				<tr>
@@ -182,10 +198,10 @@
 					<td width="21" align="right"><input type="radio" name="filtro"
 						id="filtro_cota" value="radio" onclick="mostra_cota();" /></td>
 					<td width="90"><label for="filtro_cota">Curva ABC Cota</label></td>
-					<td width="47">Período:</td>
+					<td width="47">Perï¿½odo:</td>
 					<td width="86"><input type="text" name="datepickerDe"
 						id="datepickerDe" style="width: 60px;" /></td>
-					<td width="24">Até:</td>
+					<td width="24">Atï¿½:</td>
 					<td width="87"><input type="text" name="datepickerAte"
 						id="datepickerAte" style="width: 60px;" /></td>
 					<td width="104" rowspan="3" valign="top"><span
@@ -193,7 +209,7 @@
 							onclick="pesquisar();">Pesquisar</a></span></td>
 					<td width="20" rowspan="3" align="center" valign="top"><a
 						href="javascript:;" onclick="mostra_pesq_avancada();"><img
-							src="../images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada"
+							src="../images/ico_pesq_avancada.jpg" alt="Pesquisa Avanï¿½ada"
 							width="20" height="20" vspace="10" border="0" /></a></td>
 				</tr>
 				<tr class="linhaCota">
@@ -213,7 +229,7 @@
 					<td colspan="3">&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<td colspan="8"><label>Código:</label> <input type="text"
+					<td colspan="8"><label>Cï¿½digo:</label> <input type="text"
 						style="width: 80px; float: left; margin: 5px;" /> <label>Produto:</label>
 						<input type="text" style="width: 200px; float: left; margin: 5px;" />
 					</td>
@@ -225,7 +241,7 @@
 
 		<fieldset class="classFieldset" id="pesquisaAvancada"
 			style="display: none;">
-			<legend>Busca Avançada</legend>
+			<legend>Busca Avanï¿½ada</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">
 				<tr>
@@ -236,11 +252,11 @@
 							<option>Dinap</option>
 							<option>FC</option>
 					</select></td>
-					<td width="47" colspan="-1">Código:</td>
+					<td width="47" colspan="-1">Cï¿½digo:</td>
 					<td width="108"><input type="text" style="width: 80px;" /></td>
 					<td width="52">Produto:</td>
 					<td width="213"><input type="text" style="width: 200px;" /></td>
-					<td width="41">Edição:</td>
+					<td width="41">Ediï¿½ï¿½o:</td>
 					<td><input type="text" style="width: 100px;" id="edicoesCamp" /></td>
 					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img
 							src="../images/ico_excluir.gif" alt="Fechar" width="15"
@@ -342,7 +358,7 @@
 
 			<fieldset class="classFieldset" id="relatorioCota"
 				style="display: none;">
-				<legend>Curva ABC Cota: 4444 - José da Silva</legend>
+				<legend>Curva ABC Cota: 4444 - Josï¿½ da Silva</legend>
 
 				<table class="abcCotaGrid"></table>
 
@@ -372,7 +388,7 @@
 			url : '../xml/pop-editor-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'Cï¿½digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -384,7 +400,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'Ediï¿½ï¿½o',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
@@ -417,7 +433,7 @@
 			url : '../xml/abc-editor-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'Cï¿½digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -482,8 +498,8 @@
 		});
 
 		$(".abcDistribuidorGrid").flexigrid({
-			url : '../xml/abc-distribuidor-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -497,13 +513,13 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Município',
+				display : 'Municï¿½pio',
 				name : 'municipio',
 				width : 160,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Qtde PDV´s',
+				display : 'Qtde PDVï¿½s',
 				name : 'qtdePdv',
 				width : 60,
 				sortable : true,
@@ -559,13 +575,13 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Município',
+				display : 'Municï¿½pio',
 				name : 'municipio',
 				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Qtde PDV´s',
+				display : 'Qtde PDVï¿½s',
 				name : 'qtdePdv',
 				width : 60,
 				sortable : true,
@@ -609,7 +625,7 @@
 			url : '../xml/abc-cotas-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -621,7 +637,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'EdiÃ§Ã£o',
 				name : 'edicao',
 				width : 70,
 				sortable : true,
@@ -672,6 +688,26 @@
 			width : 960,
 			height : 255
 		});
+		
+		function executarPreProcessamento(resultado) {
+			
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return resultado;
+			}
+			
+			$(".grids").show();
+			
+			return resultado;
+		}
+		
 	</script>
 </body>
 </html>
