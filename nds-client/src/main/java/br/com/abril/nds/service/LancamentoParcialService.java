@@ -1,14 +1,11 @@
-package br.com.abril.nds.repository;
+package br.com.abril.nds.service;
 
 import java.util.List;
 
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
 
-public interface LancamentoParcialRepository extends Repository<LancamentoParcial, Long>{
-
-	LancamentoParcial obterLancamentoPorProdutoEdicao(Long idProdutoEdicao);
+public interface LancamentoParcialService {
 
 	/**
 	 * Obter Lancamentos parciais filtrados
@@ -24,6 +21,7 @@ public interface LancamentoParcialRepository extends Repository<LancamentoParcia
 	 * @param filtro 
 	 * @return Quantidade de registros
 	 */
-	Integer totalbuscaLancamentosParciais(FiltroParciaisDTO filtro);
+	Integer totalBuscaLancamentosParciais(FiltroParciaisDTO filtro);
 
+	
 }
