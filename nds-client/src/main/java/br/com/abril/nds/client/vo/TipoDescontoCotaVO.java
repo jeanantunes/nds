@@ -2,14 +2,19 @@ package br.com.abril.nds.client.vo;
 
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+
 public class TipoDescontoCotaVO {
 	
 	private String id;
 	
-	private Date dataAlteracao;
+	@Export(label = "Data Alteração")
+	private String dtAlteracao;
 	
-	private Long desconto;
+	@Export(label = "Desconto")
+	private String desconto;
 	
+	@Export(label = "Usuário")
 	private String usuario;
 
 	public String getId() {
@@ -20,19 +25,19 @@ public class TipoDescontoCotaVO {
 		this.id = id;
 	}
 
-	public Date getDataAlteracao() {
-		return dataAlteracao;
+	public String getDtAlteracao() {
+		return dtAlteracao;
 	}
 
-	public void setDataAlteracao(Date dataAlteracao) {
-		this.dataAlteracao = dataAlteracao;
+	public void setDataAlteracao(String dtAlteracao) {
+		this.dtAlteracao = dtAlteracao;
 	}
 
-	public Long getDesconto() {
+	public String getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(Long desconto) {
+	public void setDesconto(String desconto) {
 		this.desconto = desconto;
 	}
 

@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 import br.com.abril.nds.service.TipoDescontoCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -55,23 +58,22 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoGeral")
-	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){		
+	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){
 		try {
 			TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
 			Long parseDesconto = Long.parseLong(desconto);
-			tipoDescontoCota.setDesconto(parseDesconto);
+			tipoDescontoCota.setDesconto(new BigDecimal(parseDesconto));
 			SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 			Date dataFormatada;
 			dataFormatada = sdf.parse(dataAlteracao);
 			tipoDescontoCota.setDataAlteracao(dataFormatada);
 			tipoDescontoCota.setUsuario(usuario);
-			
+			tipoDescontoCota.setEspecificacaoDesconto(EspecificacaoDesconto.GERAL);
 			
 			atualizarDistribuidor(parseDesconto);
 
 			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);		
 
-			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -82,21 +84,28 @@ public class TipoDescontoCotaController {
 	}
 	
 	private void atualizarDistribuidor(Long desconto) {
-		this.tipoDescontoCotaService.atualizarDistribuidos(desconto);
+		this.tipoDescontoCotaService.atualizarDistribuidores(desconto);
 	}
 	
 	@Post
 	@Path("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, Long descontoEspecifico, Date dataAlteracaoEspecifico, String usuarioEspecifico){
+		
+		Cota cotaParaAtualizar = this.tipoDescontoCotaService.obterCota(Integer.parseInt(cotaEspecifica));
+		
+		atualizarCota(descontoEspecifico);
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
 	
+	private void atualizarCota(Long descontoEspecifico) {
+		
+	}
+
 	@Path("/pesquisarDescontoGeral")
 	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		System.out.println("ENTROU NA PESQUISA");
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;
 		
 		try {			

@@ -3,20 +3,17 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiltroTipoDescontoCotaDTO implements Serializable {
 	
 	private static final long serialVersionUID = 2281254940257591061L;
 	
-	@Export(label = "Desconto")
+	
 	private Long desconto;
 	
-	@Export(label = "Data Alteração")
 	private Date dataAlteracao;
 	
-	@Export(label = "Usuário")
 	private String usuario;
 	
 	private PaginacaoVO paginacao;

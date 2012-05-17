@@ -454,7 +454,7 @@
 				align : 'center'
 			}, {
 				display : 'Data Alteração',
-				name : 'dtAtlteracao',
+				name : 'dtAlteracao',
 				width : 150,
 				sortable : true,
 				align : 'center'

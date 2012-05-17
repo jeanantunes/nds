@@ -1,10 +1,13 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
@@ -27,7 +30,7 @@ public class TipoDescontoCota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "DESCONTO")
-	private Long desconto;
+	private BigDecimal desconto;
 	
 	@Column(name="DATA_ALTERACAO")
 	@Temporal(TemporalType.DATE)
@@ -35,6 +38,10 @@ public class TipoDescontoCota implements Serializable {
 	
 	@Column(name = "USUARIO")
 	private String usuario;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ESPECIFICAO_DESCONTO", nullable = false)
+	private EspecificacaoDesconto especificacaoDesconto;
 	
 	public Long getId() {
 		return id;
@@ -44,11 +51,11 @@ public class TipoDescontoCota implements Serializable {
 		this.id = id;
 	}
 
-	public Long getDesconto() {
+	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(Long desconto) {
+	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
@@ -67,6 +74,12 @@ public class TipoDescontoCota implements Serializable {
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	
-	
+
+	public EspecificacaoDesconto getEspecificacaoDesconto() {
+		return especificacaoDesconto;
+	}
+
+	public void setEspecificacaoDesconto(EspecificacaoDesconto especificacaoDesconto) {
+		this.especificacaoDesconto = especificacaoDesconto;
+	}
 }
