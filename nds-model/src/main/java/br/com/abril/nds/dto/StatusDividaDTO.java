@@ -156,7 +156,7 @@ public class StatusDividaDTO implements Serializable {
 		return diasAtraso;
 	}
 
-	public void setDiasAtraso(Integer diasAtraso) {
+	public void setDiasAtraso(BigInteger diasAtraso) {
 		this.diasAtraso = diasAtraso.longValue();
 	}
 

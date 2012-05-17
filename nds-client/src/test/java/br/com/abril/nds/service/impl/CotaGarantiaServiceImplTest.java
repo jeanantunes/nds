@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaGarantiaService;
@@ -86,8 +87,8 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		cheque.setDvConta("0");
 		cheque.setValor(2500000D);
 		cheque.setNumeroCheque("123456");
-		cheque.setEmissao(new Date());
-		cheque.setValidade(new Date());
+		cheque.setEmissao(Calendar.getInstance());
+		cheque.setValidade(Calendar.getInstance());
 		cheque.setCorrentista("Senor Abravanel");
 		
 		
@@ -134,8 +135,28 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 						
 	}
-	
-	
-	
-	
+
+	@Test
+	public void testSalvaCaucaoLiquida() {
+		
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = null;
+		
+		List<CaucaoLiquida> listaCaucaoLiquida = new ArrayList<CaucaoLiquida>();
+		
+		for (int i = 0 ; i <= 5; i++) {
+			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
+			
+			caucaoLiquida.setValor(5000D);
+			caucaoLiquida.setIndiceReajuste(10D);
+			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			
+			listaCaucaoLiquida.add(caucaoLiquida);
+		}
+		
+		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, cota.getId());
+		
+		assertNotNull(cotaGarantiaCaucaoLiquida);
+		
+	}
+
 }

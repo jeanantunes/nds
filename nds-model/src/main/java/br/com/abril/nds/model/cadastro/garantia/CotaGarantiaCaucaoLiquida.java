@@ -5,7 +5,9 @@ package br.com.abril.nds.model.cadastro.garantia;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
@@ -23,7 +25,8 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	private static final long serialVersionUID = 2374130596840933128L;
 	
 	
-	@OneToMany(mappedBy="cotaGarantiaCaucaoLiquida")
+	@OneToMany(cascade={CascadeType.ALL})
+	@JoinColumn(name="COTA_GARANTIA_CAUCAO_LIQUIDA_ID")
 	private List<CaucaoLiquida> caucaoLiquidas;
 
 

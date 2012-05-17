@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.model;
 public enum StatusExecucaoEnum {
 
 	SUCESSO("S"),
+	AVISO("A"),
 	FALHA("F");
 	
 	private String descricao;
@@ -19,6 +20,9 @@ public enum StatusExecucaoEnum {
 	public static StatusExecucaoEnum fromString(String status) {
 		if ("S".equals(status)) {
 			return SUCESSO;
+		}
+		else if ("A".equals(status)) {
+			return AVISO;
 		}
 		else if ("F".equals(status)) {
 			return FALHA;
