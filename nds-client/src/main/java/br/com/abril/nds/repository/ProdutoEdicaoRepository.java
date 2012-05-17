@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -86,5 +87,14 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 
 	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto);
+	
+	/**
+	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
+	 * 
+	 * @param idsProdutoEdicao - identificadores de produto edição
+	 * 
+	 * @return {@link List<ProdutoEdicao>}
+	 */
+	List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 }

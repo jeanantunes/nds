@@ -1,28 +1,26 @@
 package br.com.abril.nds.client.vo;
 
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
- * Value Object para os produtos da matriz de recolhimento.
+ * Value Object para os produtos da matriz de recolhimento, formatados para exibir na tela.
  * 
  * @author Discover Technology
  */
-public class ProdutoRecolhimentoVO {
+public class ProdutoRecolhimentoFormatadoVO {
 
 	private String idLancamento;
 	
-	private Integer sequencia;
+	private String sequencia;
 	
 	private String codigoProduto;
 	
 	private String nomeProduto;
 	
-	private Long numeroEdicao;
+	private String numeroEdicao;
 	
-	private BigDecimal precoVenda;
+	private String precoVenda;
 	
-	private BigDecimal precoDesconto;
+	private String precoDesconto;
 	
 	private String nomeFornecedor;
 	
@@ -32,19 +30,19 @@ public class ProdutoRecolhimentoVO {
 	
 	private String brinde;
 	
-	private Date dataLancamento;
+	private String dataLancamento;
 	
-	private Date dataRecolhimento;
+	private String dataRecolhimento;
 	
-	private BigDecimal encalheSede;
+	private String encalheSede;
 	
-	private BigDecimal encalheAtendida;
+	private String encalheAtendida;
 	
-	private BigDecimal encalhe;
+	private String encalhe;
 	
-	private BigDecimal valorTotal;
+	private String valorTotal;
 	
-	private Date novaData;
+	private String novaData;
 	
 	private boolean bloqueioDataRecolhimento;
 	
@@ -61,21 +59,21 @@ public class ProdutoRecolhimentoVO {
 	 * @param idLancamento the idLancamento to set
 	 */
 	public void setIdLancamento(String idLancamento) {
-		this.idLancamento = idLancamento;
+		this.idLancamento = (idLancamento != null) ? idLancamento : "";
 	}
 
 	/**
 	 * @return the sequencia
 	 */
-	public Integer getSequencia() {
+	public String getSequencia() {
 		return sequencia;
 	}
 
 	/**
 	 * @param sequencia the sequencia to set
 	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
+	public void setSequencia(String sequencia) {
+		this.sequencia = (sequencia != null) ? sequencia : "";
 	}
 
 	/**
@@ -89,7 +87,7 @@ public class ProdutoRecolhimentoVO {
 	 * @param codigoProduto the codigoProduto to set
 	 */
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = (codigoProduto != null) ? codigoProduto : "";
 	}
 
 	/**
@@ -103,49 +101,49 @@ public class ProdutoRecolhimentoVO {
 	 * @param nomeProduto the nomeProduto to set
 	 */
 	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
+		this.nomeProduto = (nomeProduto != null) ? nomeProduto : "";
 	}
 
 	/**
 	 * @return the numeroEdicao
 	 */
-	public Long getNumeroEdicao() {
+	public String getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
+	public void setNumeroEdicao(String numeroEdicao) {
+		this.numeroEdicao = (numeroEdicao != null) ? numeroEdicao : "";
 	}
 
 	/**
 	 * @return the precoVenda
 	 */
-	public BigDecimal getPrecoVenda() {
+	public String getPrecoVenda() {
 		return precoVenda;
 	}
 
 	/**
 	 * @param precoVenda the precoVenda to set
 	 */
-	public void setPrecoVenda(BigDecimal precoVenda) {
-		this.precoVenda = precoVenda;
+	public void setPrecoVenda(String precoVenda) {
+		this.precoVenda = (precoVenda != null) ? precoVenda : "";
 	}
 
 	/**
 	 * @return the precoDesconto
 	 */
-	public BigDecimal getPrecoDesconto() {
+	public String getPrecoDesconto() {
 		return precoDesconto;
 	}
 
 	/**
 	 * @param precoDesconto the precoDesconto to set
 	 */
-	public void setPrecoDesconto(BigDecimal precoDesconto) {
-		this.precoDesconto = precoDesconto;
+	public void setPrecoDesconto(String precoDesconto) {
+		this.precoDesconto = (precoDesconto != null) ? precoDesconto : "";
 	}
 
 	/**
@@ -159,7 +157,7 @@ public class ProdutoRecolhimentoVO {
 	 * @param nomeFornecedor the nomeFornecedor to set
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
+		this.nomeFornecedor = (nomeFornecedor != null) ? nomeFornecedor : "";
 	}
 
 	/**
@@ -173,7 +171,7 @@ public class ProdutoRecolhimentoVO {
 	 * @param nomeEditor the nomeEditor to set
 	 */
 	public void setNomeEditor(String nomeEditor) {
-		this.nomeEditor = nomeEditor;
+		this.nomeEditor = (nomeEditor != null) ? nomeEditor : "";
 	}
 
 	/**
@@ -187,7 +185,7 @@ public class ProdutoRecolhimentoVO {
 	 * @param parcial the parcial to set
 	 */
 	public void setParcial(String parcial) {
-		this.parcial = parcial;
+		this.parcial = (parcial != null) ? parcial : "";
 	}
 
 	/**
@@ -201,105 +199,105 @@ public class ProdutoRecolhimentoVO {
 	 * @param brinde the brinde to set
 	 */
 	public void setBrinde(String brinde) {
-		this.brinde = brinde;
+		this.brinde = (brinde != null) ? brinde : "";
 	}
 
 	/**
 	 * @return the dataLancamento
 	 */
-	public Date getDataLancamento() {
+	public String getDataLancamento() {
 		return dataLancamento;
 	}
 
 	/**
 	 * @param dataLancamento the dataLancamento to set
 	 */
-	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = dataLancamento;
+	public void setDataLancamento(String dataLancamento) {
+		this.dataLancamento = (dataLancamento != null) ? dataLancamento : "";
 	}
 
 	/**
 	 * @return the dataRecolhimento
 	 */
-	public Date getDataRecolhimento() {
+	public String getDataRecolhimento() {
 		return dataRecolhimento;
 	}
 
 	/**
 	 * @param dataRecolhimento the dataRecolhimento to set
 	 */
-	public void setDataRecolhimento(Date dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+	public void setDataRecolhimento(String dataRecolhimento) {
+		this.dataRecolhimento = (dataRecolhimento != null) ? dataRecolhimento : "";
 	}
 
 	/**
 	 * @return the encalheSede
 	 */
-	public BigDecimal getEncalheSede() {
+	public String getEncalheSede() {
 		return encalheSede;
 	}
 
 	/**
 	 * @param encalheSede the encalheSede to set
 	 */
-	public void setEncalheSede(BigDecimal encalheSede) {
-		this.encalheSede = encalheSede;
+	public void setEncalheSede(String encalheSede) {
+		this.encalheSede = (encalheSede != null) ? encalheSede : "";
 	}
 
 	/**
 	 * @return the encalheAtendida
 	 */
-	public BigDecimal getEncalheAtendida() {
+	public String getEncalheAtendida() {
 		return encalheAtendida;
 	}
 
 	/**
 	 * @param encalheAtendida the encalheAtendida to set
 	 */
-	public void setEncalheAtendida(BigDecimal encalheAtendida) {
-		this.encalheAtendida = encalheAtendida;
+	public void setEncalheAtendida(String encalheAtendida) {
+		this.encalheAtendida = (encalheAtendida != null) ? encalheAtendida : "";
 	}
 
 	/**
 	 * @return the encalhe
 	 */
-	public BigDecimal getEncalhe() {
+	public String getEncalhe() {
 		return encalhe;
 	}
 
 	/**
 	 * @param encalhe the encalhe to set
 	 */
-	public void setEncalhe(BigDecimal encalhe) {
-		this.encalhe = encalhe;
+	public void setEncalhe(String encalhe) {
+		this.encalhe = (encalhe != null) ? encalhe : "";
 	}
 
 	/**
 	 * @return the valorTotal
 	 */
-	public BigDecimal getValorTotal() {
+	public String getValorTotal() {
 		return valorTotal;
 	}
 
 	/**
 	 * @param valorTotal the valorTotal to set
 	 */
-	public void setValorTotal(BigDecimal valorTotal) {
-		this.valorTotal = valorTotal;
+	public void setValorTotal(String valorTotal) {
+		this.valorTotal = (valorTotal != null) ? valorTotal : "";
 	}
 
 	/**
 	 * @return the novaData
 	 */
-	public Date getNovaData() {
+	public String getNovaData() {
 		return novaData;
 	}
 
 	/**
 	 * @param novaData the novaData to set
 	 */
-	public void setNovaData(Date novaData) {
-		this.novaData = novaData;
+	public void setNovaData(String novaData) {
+		this.novaData = (novaData != null) ? novaData : "";
 	}
 
 	/**

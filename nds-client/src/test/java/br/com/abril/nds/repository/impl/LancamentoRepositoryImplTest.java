@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -731,4 +733,22 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(lancamento.getId(),lancamentoVeja.getId());
 		Assert.assertEquals(lancamento.getDataLancamentoDistribuidor(),lancamentoVeja.getDataLancamentoDistribuidor());
 	}
+	
+	@Test
+	public void obterLancamentosPorId() {
+		
+		Set<Long> idsLancamento = new TreeSet<Long>();
+		
+		idsLancamento.add(lancamentoVeja.getId());
+		idsLancamento.add(lancamentoInfoExame.getId());
+		idsLancamento.add(lancamentoQuatroRodas.getId());
+		
+		List<Lancamento> listaLancamento =
+			lancamentoRepository.obterLancamentosPorId(idsLancamento);
+		
+		Assert.assertNotNull(listaLancamento);
+		
+		Assert.assertTrue(listaLancamento.size() == idsLancamento.size());
+	}
+	
 }
