@@ -240,6 +240,16 @@ public class LancamentoRepositoryImpl extends
 			return "";
 		}
 		
+		if ("".equals(order)) {
+			
+			return "";
+		}
+		
+		if (ascOrDesc == null) {
+			
+			ascOrDesc = Ordenacao.ASC;
+		}
+		
 		return " order by " + order + " " + ascOrDesc + " " ;
 		
 	}
