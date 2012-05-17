@@ -7,31 +7,11 @@
 
 	$(function() {
 		
-		$("#textfield23").datepicker({
-			showOn : "button",
-			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-			buttonImageOnly : true
-		});
+		$("#produto").autocomplete({source: ""});		
+		$("#descontoGeral").mask("99,99");
+		$("#descontoEspecifico").mask("99,99");
+		$("#descontoProduto").mask("99,99");
 		
-		$("#textfield23").mask("99/99/9999");
-		
-		$("#dataAlteracaoEspecifico").datepicker({
-			showOn : "button",
-			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-			buttonImageOnly : true
-		});
-		
-		$("#dataAlteracaoEspecifico").mask("99/99/9999");
-		
-		$("#dataAlteracaoProduto").datepicker({
-			showOn : "button",
-			buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-			buttonImageOnly : true
-		});
-		
-		$("#dataAlteracaoProduto").mask("99/99/9999");
-		
-		$("#produto").autocomplete({source: ""});
 	});
 	
 	function buscarNomeProduto(){
@@ -109,16 +89,10 @@
 		};
 	
 
-	function novoDescontoEspecifico() {
-		
-	}
-
-
 	function novoDescontoGeral() {
 
-		
 		var descontoGeral = $("#descontoGeral").val();
-		var dataAlteracao = $("#textfield23").val();
+		var dataAlteracao = $("#dataAlteracaoGeral").val();
 		var usuario = $("#textfield24").val();		
 		
 		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoGeral'/>",
@@ -174,9 +148,7 @@
 	}
 	
 	function limparTelaCadastroBanco() {
-		$("#descontoGeral").val("");
-		$("#textfield23").val("");
-		$("#textfield24").val("");		
+		$("#descontoGeral").val("");				
 	}
 	
 	function popup_especifico() {
@@ -240,6 +212,57 @@
 		$( '#tpoProduto' ).show();
 		$( '.produto' ).show();
 		}
+	
+	
+	function pesquisar() {
+		
+		//var idTipoMovimento = $("#tipoMovimento").val();
+		//var dataMovimento = $("#dataMovimento").val();
+		
+		var descontoGeral = $("#descontoGeral").val();
+		var dataAlteracao = $("#dataAlteracaoGeral").val();
+		var usuario = $("#textfield24").val();		
+		
+		$(".tiposDescGeralGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
+			params: [],
+		    newp: 1,
+		});
+		
+		$(".tiposDescGeralGrid").flexReload();
+	}
+	
+	function executarPreProcessamento(resultado) {
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids").hide();
+
+			return resultado;
+		}
+		/*
+		$.each(resultado.rows, function(index, row) {
+			
+			var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
+					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
+					  		  '</a>';
+			
+			var linkRejeitar = '<a href="javascript:;" onclick="rejeitarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
+							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+							   '</a>';
+			
+			row.cell.acao = linkAprovar + linkRejeitar;
+		});
+		*/
+		$(".grids").show();
+		
+		return resultado;
+	}
 
 </script>
 <style type="text/css">
@@ -258,11 +281,11 @@
 	            </tr>
 	            <tr>
 	              <td>Data Alteração:</td>
-	              <td><input type="text" name="textfield23" id="textfield23" style="width:100px;"/></td>
+	              <td><input type="text" name="dataAlteracaoGeral" id="dataAlteracaoGeral" style="width:100px;" disabled="disabled" value="${dataAtual}" /></td>
 	            </tr>
 	            <tr>
 	              <td>Usuário:</td>
-	              <td><input type="text" name="textfield24" id="textfield24" style="width:230px;" /></td>
+	              <td><input type="text" name="textfield24" id="textfield24" style="width:230px;" disabled="disabled" value="Junior Fonseca" /></td>
 	            </tr>
 	  </table>         
 	
@@ -277,19 +300,19 @@
 	            </tr>
 	            <tr>
 	              <td>Nome:</td>
-	              <td><input type="text" name="nomeEspecifico" id="nomeEspecifico" style="width:230px;" value="" disabled="disabled"/></td>
+	              <td><input type="text" name="nomeEspecifico" id="nomeEspecifico" style="width:230px;" /></td>
 	            </tr>
 	            <tr>
 	              <td>Desconto %:</td>
-	              <td><input type="text" name="descontoEspecifico" id="descontoEspecifico" style="width:100px;"/></td>
+	              <td><input type="text" name="descontoEspecifico" id="descontoEspecifico" style="width:100px;" /></td>
 	            </tr>
 	            <tr>
 	              <td>Data Alteração:</td>
-	              <td><input type="text" name="dataAlteracaoEspecifico" id="dataAlteracaoEspecifico" style="width:100px;"/></td>
+	              <td><input type="text" name="dataAlteracaoEspecifico" id="dataAlteracaoEspecifico" style="width:100px;" disabled="disabled" value="${dataAtual}"/></td>
 	            </tr>
 	            <tr>
 	              <td>Usuário:</td>
-	              <td><input type="text" name="usuarioEspecifico" id="usuarioEspecifico" style="width:230px;" value="Joana" disabled="disabled"/></td>
+	              <td><input type="text" name="usuarioEspecifico" id="usuarioEspecifico" style="width:230px;" disabled="disabled" value="Junior Fonseca"/></td>
 	            </tr>
 	          </table>       
 	
@@ -316,18 +339,16 @@
 	            </tr>
 	            <tr>
 	              <td>Data Alteração:</td>
-	              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;"/></td>
+	              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;" disabled="disabled" value="${dataAtual}"/></td>
 	            </tr>
 	            <tr>
 	              <td>Usuário:</td>
-	              <td><input type="text" name="textfield" id="textfield" style="width:230px;" value="Joana" disabled="disabled"/></td>
+	              <td><input type="text" name="textfield" id="textfield" style="width:230px;" disabled="disabled" value="Junior Fonseca"/></td>
 	            </tr>
 	          </table>       
 	
 	</div>
 
-
-	
 <div class="corpo">   
     <br clear="all"/>
     <br />
@@ -364,7 +385,7 @@
                 <input name="" type="text" style="width:160px; float:left;" />
                 </div>
                 </td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
             </tr>
           </table>
 
@@ -417,7 +438,7 @@
 
 <script>
 	$(".tiposDescGeralGrid").flexigrid({
-			url : '../xml/tipos-desconto-geral-xml.xml',
+		preProcess: executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
 				display : '',
