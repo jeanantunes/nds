@@ -207,7 +207,7 @@
 </div>
 
 <div id="cotaGarantiaImovelPanel" style="display: none;">
-	<div id="dialog-excluir-imovel" title="Excluir Im&oacute;vel">
+	<div id="dialog-excluir-imovel" title="Excluir Im&oacute;vel" style="display:none;">
 		<p>Confirma a exclus&atilde;o desse im&oacute;vel?</p>
 	</div>
 	<fieldset>
