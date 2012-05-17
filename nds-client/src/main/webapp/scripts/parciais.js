@@ -8,8 +8,12 @@ function Parciais(pathTela) {
 	this.cliquePesquisar = function() {
 		
 		if(T.get('codigoProduto').length!=0 && T.get('edicaoProduto').length!=0) {
+			$('#painelLancamentos').hide();
+			$('#painelPeriodos').show();			
 			T.pesquisarLancamentosParciais();
 		} else {
+			$('#painelPeriodos').hide();
+			$('#painelLancamentos').show();
 			T.pesquisarPeriodosParciais();
 		}		
 	},
