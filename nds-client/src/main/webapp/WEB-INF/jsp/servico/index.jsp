@@ -9,47 +9,48 @@
 		
 		function iniciarGrid() {
 			$(".serviceGrid").flexigrid({
+				preProcess: executarPreProcessamento,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
 					name : 'codigo',
-					width : 20,
+					width : 70,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Descrição',
 					name : 'descricao',
-					width : 100,
+					width : 200,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Taxa R$',
 					name : 'taxa',
-					width : 20,
+					width : 70,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Isenção',
-					name : 'isencao',
-					width : 70,
+					name : 'isento',
+					width : 115,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Base de Cálculo',
 					name : 'baseCalculo',
-					width : 100,
+					width : 220,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : '% Calculo sobre Base',
-					name : 'calculoSobreBase',
-					width : 100,
+					name : 'percentualCalculoBase',
+					width : 120,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Ação',
-					name : 'cpfRemetente',
-					width : 100,
+					name : 'acao',
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}],
@@ -60,7 +61,7 @@
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180,
+				height : 255,
 				singleSelect : true
 			});
 		}
@@ -87,8 +88,27 @@
 			$(".serviceGrid").flexReload();
 		}
 		
+		function executarPreProcessamento(resultado) {
+						
+			$.each(resultado.rows, function(index, row) {
+				
+				var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
+						     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
+						  		  '</a>';
+				
+				var linkRejeitar = '<a href="javascript:;" onclick="rejeitarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
+								   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+								   '</a>';
+				
+				row.cell.acao = linkAprovar + linkRejeitar;
+			});
+				
+			$(".grids").show();
+			
+			return resultado;
+		}
+		
 	</script>
-	
 	
 	<style>
 		label{ vertical-align:super;}
