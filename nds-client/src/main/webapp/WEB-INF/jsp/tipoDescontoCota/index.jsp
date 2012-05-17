@@ -1,6 +1,8 @@
 <head>
 
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+
 <script language="javascript" type="text/javascript">
 
 	$(function() {
@@ -28,6 +30,7 @@
 		});
 		
 		$("#dataAlteracaoProduto").mask("99/99/9999");
+<<<<<<< HEAD
 		
 		$("#produto").autocomplete({source: ""});
 	});
@@ -70,6 +73,17 @@
 		$("#codigo").val(chave.codigoProduto);	
 	}
 		
+=======
+	});
+	
+	
+	
+	
+		
+		
+		
+
+>>>>>>> 918ffec76f549de453538908654f91ae30bcbb60
 	function popup_geral() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 			
@@ -106,11 +120,19 @@
 		};
 	
 
+<<<<<<< HEAD
 	function novoDescontoEspecifico() {
 		
 	}
 
 	function novoDescontoGeral() {
+=======
+	function novoDescontoGeral() {
+		
+	}
+
+	function novoDesconto() {
+>>>>>>> 918ffec76f549de453538908654f91ae30bcbb60
 
 		
 		var descontoGeral = $("#descontoGeral").val();
@@ -269,7 +291,11 @@
 	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>
 	              <td width="100">Cota:</td>
+<<<<<<< HEAD
 	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica" onchange="cota.pesquisarPorNumeroCota('#cotaEspecifica', '#nomeEspecifico');"  style="width:100px; float:left; margin-right:5px;" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+=======
+	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+>>>>>>> 918ffec76f549de453538908654f91ae30bcbb60
 	            </tr>
 	            <tr>
 	              <td>Nome:</td>
@@ -296,11 +322,19 @@
 	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>
 	              <td width="100">Código:</td>
+<<<<<<< HEAD
 	              <td width="239"><input type="text" name="textfield22" id="codigo"  style="width:100px; float:left; margin-right:5px;" onblur="buscarNomeProduto();" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
 	            </tr>
 	            <tr>
 	              <td>Produto:</td>
 	              <td><input type="text" name="textfield4" id="produto" style="width:230px;" onkeyup="pesquisarPorNomeProduto();" /></td>
+=======
+	              <td width="239"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+	            </tr>
+	            <tr>
+	              <td>Produto:</td>
+	              <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
+>>>>>>> 918ffec76f549de453538908654f91ae30bcbb60
 	            </tr>
 	            <tr>
 	              <td>Edição:</td>
@@ -308,7 +342,11 @@
 	            </tr>
 	            <tr>
 	              <td>Desconto %:</td>
+<<<<<<< HEAD
 	              <td><input type="text" name="textfield2" id="descontoProduto" style="width:100px;"/></td>
+=======
+	              <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
+>>>>>>> 918ffec76f549de453538908654f91ae30bcbb60
 	            </tr>
 	            <tr>
 	              <td>Data Alteração:</td>

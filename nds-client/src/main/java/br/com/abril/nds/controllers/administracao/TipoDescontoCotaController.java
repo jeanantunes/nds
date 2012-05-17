@@ -44,7 +44,6 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){		
-		
 		try {
 			TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
 			Long parseDesconto = Long.parseLong(desconto);
@@ -55,9 +54,11 @@ public class TipoDescontoCotaController {
 			tipoDescontoCota.setDataAlteracao(dataFormatada);
 			tipoDescontoCota.setUsuario(usuario);
 			
-			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);
 			
 			atualizarDistribuidor(parseDesconto);
+
+			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);		
+
 			
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -65,11 +66,11 @@ public class TipoDescontoCotaController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 		
+
 	}
 	
 	private void atualizarDistribuidor(Long desconto) {
 		this.tipoDescontoCotaService.atualizarDistribuidos(desconto);
-
 	}
 	
 	@Post
@@ -80,8 +81,7 @@ public class TipoDescontoCotaController {
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 
+		
 	}
-	
-	
 
 }

@@ -30,7 +30,6 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 	@Override
 	public void incluirDescontoGeral(TipoDescontoCota tipoDescontoCota) {
 		 this.tipoDescontoCotaRepository.adicionar(tipoDescontoCota);
-
 	}
 	
 	@Transactional
@@ -42,7 +41,6 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 			dist.setFatorDesconto(descontoBig);
 			this.distribuidorRepository.alterar(dist);
 		}
-
 	}
 
 }

@@ -163,6 +163,8 @@
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
 					<sourceDirectory>src/main/resources/reports</sourceDirectory>
+					<server>mytomcat</server>
+					<url>http://localhost:8080/manager/text</url>
 				</configuration>
 				<executions>
 					<execution>

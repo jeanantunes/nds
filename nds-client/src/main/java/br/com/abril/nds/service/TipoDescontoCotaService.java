@@ -12,7 +12,5 @@ public interface TipoDescontoCotaService {
 	void incluirDescontoGeral(TipoDescontoCota tipoDescontoCota);
 	
 	void atualizarDistribuidos(Long desconto);
-	
-	
 }
 	
