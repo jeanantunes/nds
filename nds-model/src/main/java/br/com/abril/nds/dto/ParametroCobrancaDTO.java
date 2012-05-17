@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 public class ParametroCobrancaDTO {
 
 	
-	Long idParametro;
+	Long idPolitica;
 	Long idBanco;
 	
 	BigDecimal valorMinimo;
@@ -48,7 +48,7 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public ParametroCobrancaDTO(Long idParametro, Long idBanco,
+	public ParametroCobrancaDTO(Long idPolitica, Long idBanco,
 			BigDecimal valorMinimo, BigDecimal taxaMulta,
 			BigDecimal valorMulta, BigDecimal taxaJuros,
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
@@ -59,7 +59,7 @@ public class ParametroCobrancaDTO {
 			boolean quinta, boolean sexta, boolean sabado,
 			List<Long> fornecedoresId) {
 		super();
-		this.idParametro = idParametro;
+		this.idPolitica = idPolitica;
 		this.idBanco = idBanco;
 		this.valorMinimo = valorMinimo;
 		this.taxaMulta = taxaMulta;
@@ -85,13 +85,13 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public Long getIdParametro() {
-		return idParametro;
+	public Long getIdPolitica() {
+		return idPolitica;
 	}
 
 
-	public void setIdParametro(Long idParametro) {
-		this.idParametro = idParametro;
+	public void setIdPolitica(Long idPolitica) {
+		this.idPolitica = idPolitica;
 	}
 
 

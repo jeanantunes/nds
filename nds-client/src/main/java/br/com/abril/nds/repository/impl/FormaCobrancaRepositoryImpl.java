@@ -153,5 +153,27 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
         return query.list();
         
 	}
+	
+	/**
+	 * Obtem lista de Formas de Cobrança por Tipo de Cobrança
+	 * @param tipoCobranca
+	 * @return List<formaCobranca>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterPorDistribuidorETipoCobranca(Long idDistribuidor,TipoCobranca tipoCobranca) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select p.formaCobranca from PoliticaCobranca p");		
+		hql.append(" where p.formaCobranca.tipoCobranca = :pTipoCobranca ");
+		hql.append(" and p.formaCobranca.ativa = :pAtiva ");
+		hql.append(" and p.distribuidor.id = :pIdDistribuidor ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("pTipoCobranca", tipoCobranca);
+        query.setParameter("pAtiva", true);
+        query.setParameter("pIdDistribuidor", idDistribuidor);
+        return query.list();
+        
+	}
 
 }

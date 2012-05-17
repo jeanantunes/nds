@@ -140,21 +140,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		return comboFornecedores;
 	}
-	
-	
-	
-	/**
-	  * Método responsável por obter combo de Formas de Emissão
-	  * @return comboFormasEmissao: Formas de emissão
-	  */
-	@Override
-	public List<ItemDTO<FormaEmissao, String>> getComboFormasEmissao() {
-		List<ItemDTO<FormaEmissao,String>> comboFormasEmissao =  new ArrayList<ItemDTO<FormaEmissao,String>>();
-		for (FormaEmissao itemFormaEmissao: FormaEmissao.values()){
-			comboFormasEmissao.add(new ItemDTO<FormaEmissao,String>(itemFormaEmissao, itemFormaEmissao.getDescFormaEmissao()));
-		}
-		return comboFormasEmissao;
-	}
 
 
 	
@@ -184,21 +169,29 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobranca = cota.getParametroCobranca();
 			
-			if (parametroCobranca!=null){
-
-				parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
-				parametroCobrancaDTO.setFatorVencimento(parametroCobranca.getFatorVencimento());
-				parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
-				parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
-				
-				politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
-				
-				if (politicaSuspensao!=null){
-					parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
-					parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
-				}
-					
+			if (parametroCobranca==null){
+				parametroCobranca = new ParametroCobrancaCota();
+				parametroCobranca.setCota(cota);
+				parametroCobranca.setFatorVencimento(1);
+				parametroCobranca.setFormasCobrancaCota(null);
+				parametroCobranca.setValorMininoCobranca(BigDecimal.ZERO);
+				parametroCobranca.setTipoCota(null);
+				parametroCobranca.setPoliticaSuspensao(null);
+				this.parametroCobrancaCotaRepository.adicionar(parametroCobranca);
 			}
+
+			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
+			parametroCobrancaDTO.setFatorVencimento(parametroCobranca.getFatorVencimento());
+			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
+			parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
+			
+			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+			
+			if (politicaSuspensao!=null){
+				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
+				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
+			}
+					
 		}
 
 		return parametroCobrancaDTO;
