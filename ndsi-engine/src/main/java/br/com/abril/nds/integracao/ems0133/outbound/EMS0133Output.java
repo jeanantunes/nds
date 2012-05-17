@@ -15,20 +15,20 @@ public class EMS0133Output implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String codigoDistribuidor;
+	private Integer codigoDistribuidor;
 	private Date dataGeracaoArquivo;
 	private Date horaGeracaoArquivo;
-	private final String mnemonicoTabela = "RCPR";
-	private String contextoProduto;
-	private String codigoFornecedorProduto;
+	private String mnemonicoTabela;
+	private Integer contextoProduto;
+	private Integer codigoFornecedorProduto;
 	private String codigoProduto;
 	private Date dataRecolhimento;
 	
 	@Field(offset = 1, length = 7)
-	public String getCodigoDistribuidor() {
+	public Integer getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
-	public void setCodigoDistribuidor(String codigoDistribuidor) {
+	public void setCodigoDistribuidor(Integer codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
@@ -52,23 +52,27 @@ public class EMS0133Output implements Serializable{
 	
 	@Field(offset = 22, length = 4)
 	public String getMnemonicoTabela() {
-		return mnemonicoTabela;
+		return "RCPR";
+	}
+	
+	public void setMnemonicoTabela(String mnemonicoTabela){
+		this.mnemonicoTabela = mnemonicoTabela;
 	}
 	
 	
 	@Field(offset = 26, length = 1)
-	public String getContextoProduto() {
+	public Integer getContextoProduto() {
 		return contextoProduto;
 	}
-	public void setContextoProduto(String contextoProduto) {
+	public void setContextoProduto(Integer contextoProduto) {
 		this.contextoProduto = contextoProduto;
 	}
 	
 	@Field(offset = 27, length = 7)
-	public String getCodigoFornecedorProduto() {
+	public Integer getCodigoFornecedorProduto() {
 		return codigoFornecedorProduto;
 	}
-	public void setCodigoFornecedorProduto(String codigoFornecedorProduto) {
+	public void setCodigoFornecedorProduto(Integer codigoFornecedorProduto) {
 		this.codigoFornecedorProduto = codigoFornecedorProduto;
 	}
 	

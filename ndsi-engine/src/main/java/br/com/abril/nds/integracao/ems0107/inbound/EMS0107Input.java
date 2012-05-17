@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+
 import br.com.abril.nds.model.cadastro.Cota;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
@@ -46,6 +48,7 @@ public class EMS0107Input implements Serializable {
 	@Column
 	private String repartePDV;
 
+	@ForeignKey(name="fk_ndsi_ems0107_tmp_cota")
 	@ManyToOne(optional=true)
 	@JoinColumn(name = "NUMERO_COTA", insertable=false, updatable=false, nullable=true)
 	private Cota cota;
