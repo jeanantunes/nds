@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -424,7 +425,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public void salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			List<Long> listaIdConferenciaEncalheParaExclusao,
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario) {
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();

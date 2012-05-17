@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
@@ -98,7 +99,7 @@ public interface ConferenciaEncalheService {
 	public void salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			List<Long> listaIdConferenciaEncalheParaExclusao,
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario);
 	
 	
