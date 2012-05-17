@@ -258,8 +258,8 @@ function Imovel(idCota, cotaGarantia) {
 	this.initGrid();
 	this.rows = new Array;
 	this.itemEdicao = null;
-	this.imovel = data.cotaGarantia.imovel;
-	this.dataBind();
+	//TODO: Processar lista de imoveis data.cotaGarantia.imoveis;
+	
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
