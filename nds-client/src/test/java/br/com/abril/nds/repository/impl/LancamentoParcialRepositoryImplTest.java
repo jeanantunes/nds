@@ -69,7 +69,8 @@ public class LancamentoParcialRepositoryImplTest extends AbstractRepositoryImplT
 		LancamentoParcial lancamento = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicaoVeja1.getId());
 		
 		Assert.assertTrue( lancamento!= null );
-		Assert.assertEquals(lancamento, lancamentoParcial);
+		Assert.assertEquals(lancamento.getLancamentoInicial(), lancamentoParcial.getLancamentoInicial());
+		Assert.assertEquals(lancamento.getRecolhimentoFinal(), lancamentoParcial.getRecolhimentoFinal());
 	}
 	
 	@Test
