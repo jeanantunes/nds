@@ -312,9 +312,8 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		lancamentoParcialCapricho.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialCapricho = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoCapricho.getDataLancamentoPrevista(), 
+				lancamentoCapricho, 
 				lancamentoParcialCapricho, 
-				lancamentoCapricho.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		Estudo estudoCapricho = Fixture.estudo(new BigDecimal(180),
@@ -341,9 +340,8 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		lancamentoParcialQuatroRodas.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialQuatroRodas = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoQuatroRodas.getDataLancamentoPrevista(), 
+				lancamentoQuatroRodas, 
 				lancamentoParcialQuatroRodas, 
-				lancamentoQuatroRodas.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		Estudo estudoQuatroRodas = Fixture.estudo(new BigDecimal(180),
@@ -367,9 +365,8 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		lancamentoParcialVeja.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialVeja = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoVeja.getDataLancamentoPrevista(), 
+				lancamentoVeja, 
 				lancamentoParcialVeja, 
-				lancamentoVeja.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
@@ -396,9 +393,8 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		lancamentoParcialInfoExame.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialInfoExame = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoInfoExame.getDataLancamentoPrevista(), 
+				lancamentoInfoExame, 
 				lancamentoParcialInfoExame, 
-				lancamentoInfoExame.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),

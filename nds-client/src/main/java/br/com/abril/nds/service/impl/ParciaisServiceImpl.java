@@ -91,7 +91,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			HistoricoLancamento novoHistorico = gerarHistoricoLancamento(novoLancamento, idUsuario);
 			
-			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(dtLancamento, dtRecolhimento, lancamentoParcial);
+			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(novoLancamento, lancamentoParcial);
 			
 			lancamentoRepository.adicionar(novoLancamento);
 			historicoLancamentoRepository.adicionar(novoHistorico);
@@ -101,11 +101,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 
-	private PeriodoLancamentoParcial gerarPeriodoParcial(Date dtLancamento, Date dtRecolhimento, LancamentoParcial lancamentoParcial) {
+	private PeriodoLancamentoParcial gerarPeriodoParcial(Lancamento lancamento, LancamentoParcial lancamentoParcial) {
 		
 		PeriodoLancamentoParcial periodo = new PeriodoLancamentoParcial();
-		periodo.setLancamento(dtLancamento);
-		periodo.setRecolhimento(dtRecolhimento);
+		periodo.setLancamento(lancamento);
 		periodo.setLancamentoParcial(lancamentoParcial);
 		periodo.setTipo(TipoLancamentoParcial.PARCIAL);
 		periodo.setStatus(StatusLancamentoParcial.PROJETADO);
