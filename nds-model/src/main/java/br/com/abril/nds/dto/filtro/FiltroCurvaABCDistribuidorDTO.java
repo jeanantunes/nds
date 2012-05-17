@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -15,34 +14,24 @@ public class FiltroCurvaABCDistribuidorDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -8369999015893950135L;
 
-	@Export(label = "Período de")
 	private Date dataDe;
 	
-	@Export(label = "Período Até")
 	private Date dataAte;
 	
-	@Export(label = "Fornecedor")
 	private String codigoFornecedor;
 	
-	@Export(label = "Código")
 	private String codigoProduto;
 	
-	@Export(label = "Produto")
 	private String nomeProduto;
 	
-	@Export(label = "Edição")
 	private String edicaoProduto;
 	
-	@Export(label = "Editor")
 	private String codigoEditor;
 	
-	@Export(label = "Cota")
 	private String codigoCota;
 	
-	@Export(label = "Nome")
 	private String nomeCota;
 	
-	@Export(label = "Municipio")
 	private String municipio;
 
 	private PaginacaoVO paginacao;

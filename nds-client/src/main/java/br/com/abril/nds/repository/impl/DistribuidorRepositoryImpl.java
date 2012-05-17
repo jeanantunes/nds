@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ControleAprovacaoVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -21,9 +21,6 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.TableModel;
-import br.com.caelum.vraptor.view.Results;
 
 @Repository
 public class DistribuidorRepositoryImpl extends
@@ -148,7 +145,39 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
-		return null;
+		
+		BigDecimal participacaoTotal = new BigDecimal(0);
+		
+		// Soma todos os valores de participacao
+		for (RegistroCurvaABCDistribuidorVO registro : lista) {
+			participacaoTotal.add(registro.getFaturamentoCapa());
+		}
+
+		BigDecimal participacaoRegistro = new BigDecimal(0);
+		BigDecimal participacaoAcumulada = new BigDecimal(0);
+		
+		RegistroCurvaABCDistribuidorVO registro = null;
+		
+		// Verifica o percentual dos valores em relacao ao total de participacao
+		for (int i=0; i<lista.size(); i++) {
+			
+			registro = (RegistroCurvaABCDistribuidorVO) lista.get(i);
+			
+			// Partipacao do registro em relacao a participacao total no periodo
+			if ( participacaoTotal.doubleValue() != 0 ) {
+				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
+			}
+			registro.setParticipacao(participacaoRegistro);
+			
+			participacaoAcumulada.add(participacaoRegistro);
+			registro.setParticipacaoAcumulada(participacaoAcumulada);
+			
+			// Substitui o registro pelo registro atualizado (com participacao total)
+			lista.set(i, registro);
+			
+		}
+		
+		return lista;
 	}
 	
 	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {

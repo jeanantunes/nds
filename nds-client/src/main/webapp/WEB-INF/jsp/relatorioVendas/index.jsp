@@ -179,7 +179,7 @@
 		</div>
 
 		<fieldset class="classFieldset">
-			<legend> Relat�rio de Vendas</legend>
+			<legend> Relatório de Vendas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">
 				<tr>
@@ -198,10 +198,10 @@
 					<td width="21" align="right"><input type="radio" name="filtro"
 						id="filtro_cota" value="radio" onclick="mostra_cota();" /></td>
 					<td width="90"><label for="filtro_cota">Curva ABC Cota</label></td>
-					<td width="47">Per�odo:</td>
+					<td width="47">Período:</td>
 					<td width="86"><input type="text" name="datepickerDe"
 						id="datepickerDe" style="width: 60px;" /></td>
-					<td width="24">At�:</td>
+					<td width="24">Até:</td>
 					<td width="87"><input type="text" name="datepickerAte"
 						id="datepickerAte" style="width: 60px;" /></td>
 					<td width="104" rowspan="3" valign="top"><span
@@ -229,7 +229,7 @@
 					<td colspan="3">&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<td colspan="8"><label>C�digo:</label> <input type="text"
+					<td colspan="8"><label>Código:</label> <input type="text"
 						style="width: 80px; float: left; margin: 5px;" /> <label>Produto:</label>
 						<input type="text" style="width: 200px; float: left; margin: 5px;" />
 					</td>
@@ -241,7 +241,7 @@
 
 		<fieldset class="classFieldset" id="pesquisaAvancada"
 			style="display: none;">
-			<legend>Busca Avan�ada</legend>
+			<legend>Busca Avançada</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">
 				<tr>
@@ -252,11 +252,11 @@
 							<option>Dinap</option>
 							<option>FC</option>
 					</select></td>
-					<td width="47" colspan="-1">C�digo:</td>
+					<td width="47" colspan="-1">Código:</td>
 					<td width="108"><input type="text" style="width: 80px;" /></td>
 					<td width="52">Produto:</td>
 					<td width="213"><input type="text" style="width: 200px;" /></td>
-					<td width="41">Edi��o:</td>
+					<td width="41">Edição:</td>
 					<td><input type="text" style="width: 100px;" id="edicoesCamp" /></td>
 					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img
 							src="../images/ico_excluir.gif" alt="Fechar" width="15"
@@ -358,7 +358,7 @@
 
 			<fieldset class="classFieldset" id="relatorioCota"
 				style="display: none;">
-				<legend>Curva ABC Cota: 4444 - Jos� da Silva</legend>
+				<legend>Curva ABC Cota: 4444 - José da Silva</legend>
 
 				<table class="abcCotaGrid"></table>
 
@@ -388,7 +388,7 @@
 			url : '../xml/pop-editor-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'C�digo',
+				display : 'Código',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -400,7 +400,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edi��o',
+				display : 'Edição',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
@@ -502,31 +502,31 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Munic�pio',
+				display : 'Município',
 				name : 'municipio',
 				width : 160,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Qtde PDV�s',
-				name : 'qtdePdv',
+				display : 'Qtde PDVs',
+				name : 'quantidadePdvs',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vdaExempl',
+				name : 'vendaExemplares',
 				width : 90,
 				sortable : true,
 				align : 'center'
@@ -544,7 +544,7 @@
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'partAcumulada',
+				name : 'participacaoAcumulada',
 				width : 90,
 				sortable : true,
 				align : 'right'

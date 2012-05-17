@@ -3,9 +3,11 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.export.Export;
+
 /**
  * 
- * Classe responsÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡vel por armazenar os valores referente aos registros da
+ * Classe responsÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel por armazenar os valores referente aos registros da
  * pesquisa de registra de curva ABC do distribuidor.
  * 
  * @author InfoA2
@@ -18,22 +20,29 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
 
+	@Export(label = "Número")
 	private Integer numeroCota;
 
+	@Export(label = "Cota")
 	private String nomeCota;
 
+	@Export(label = "Quantidade de Pdvs")
 	private Integer quantidadePdvs;
 
-	// Baseado no Pdv principal
+	@Export(label = "Municipio")
 	private String municipio;
 
+	@Export(label = "Venda de Exemplares")
 	private BigDecimal vendaExemplares;
 
+	@Export(label = "Faturamento da Capa")
 	private BigDecimal faturamentoCapa;
 
-	private Double participacao;
+	@Export(label = "Participação")
+	private BigDecimal participacao;
 
-	private Double participacaoAcumulada;
+	@Export(label = "Participação Acumulada")
+	private BigDecimal participacaoAcumulada;
 
 	public RegistroCurvaABCDistribuidorVO() {
 	}
@@ -80,19 +89,19 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 		this.municipio = municipio;
 	}
 
-	public Double getParticipacao() {
+	public BigDecimal getParticipacao() {
 		return participacao;
 	}
 
-	public void setParticipacao(Double participacao) {
-		this.participacao = participacao;
+	public void setParticipacao(BigDecimal participacaoRegistro) {
+		this.participacao = participacaoRegistro;
 	}
 
-	public Double getParticipacaoAcumulada() {
+	public BigDecimal getParticipacaoAcumulada() {
 		return participacaoAcumulada;
 	}
 
-	public void setParticipacaoAcumulada(Double participacaoAcumulada) {
+	public void setParticipacaoAcumulada(BigDecimal participacaoAcumulada) {
 		this.participacaoAcumulada = participacaoAcumulada;
 	}
 
