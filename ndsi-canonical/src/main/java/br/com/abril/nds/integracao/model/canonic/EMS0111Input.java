@@ -1,0 +1,202 @@
+package br.com.abril.nds.integracao.model.canonic;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.Record;
+
+@Record
+public class EMS0111Input extends IntegracaoDocument implements Serializable {
+
+	private static final long serialVersionUID = -6653473316882827815L;
+
+	private Long codigoDistribuidor;
+	private String contextoProduto;
+	private Long codigoFornecedorProduto;
+	private Long codigoProduto;
+	private Long edicaoProduto;	
+	private Long numeroLancamento;	
+	private Long numeroFase;	
+	private Date dataLancamento;	
+	private String tipoLancamento;	
+	private String tipoProduto;	
+	private Long repartePrevisto;	
+	private BigDecimal pctAbrangencia;	
+	private BigDecimal pctEntregaAntecipada;	
+	private String condCotasAtuais;	
+	private String tipoBaseRegiaa;	
+	private String tipoHistorico;	
+	private String condBasePacotePadrao;	
+	private BigDecimal precoPrevisto;	
+	private Long repartePromocional;	
+	private String condDistribuicaoFases;
+	
+	@Field(offset = 1, length = 7)
+	public Long getCodigoDistribuidor() {
+		return codigoDistribuidor;
+	}
+	
+	public void setCodigoDistribuidor(Long codigoDistribuidor) {
+		this.codigoDistribuidor = codigoDistribuidor;
+	}
+	
+	public String getContextoProduto() {
+		return contextoProduto;
+	}
+	
+	public void setContextoProduto(String contextoProduto) {
+		this.contextoProduto = contextoProduto;
+	}
+	
+	public Long getCodigoFornecedorProduto() {
+		return codigoFornecedorProduto;
+	}
+	
+	public void setCodigoFornecedorProduto(Long codigoFornecedorProduto) {
+		this.codigoFornecedorProduto = codigoFornecedorProduto;
+	}
+	
+	@Field(offset = 34, length = 9)
+	public Long getCodigoProduto() {
+		return codigoProduto;
+	}
+	
+	public void setCodigoProduto(Long codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+	
+	@Field(offset = 43, length = 3)
+	public Long getEdicaoProduto() {
+		return edicaoProduto;
+	}
+	
+	public void setEdicaoProduto(Long edicaoProduto) {
+		this.edicaoProduto = edicaoProduto;
+	}
+	
+	public Long getNumeroLancamento() {
+		return numeroLancamento;
+	}
+	
+	public void setNumeroLancamento(Long numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
+	}
+	
+	public Long getNumeroFase() {
+		return numeroFase;
+	}
+	
+	public void setNumeroFase(Long numeroFase) {
+		this.numeroFase = numeroFase;
+	}
+	
+	@Field(offset = 50, length = 8)
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+	
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+	
+	@Field(offset = 58, length = 3)
+	public String getTipoLancamento() {
+		return tipoLancamento;
+	}
+	
+	public void setTipoLancamento(String tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+	
+	public String getTipoProduto() {
+		return tipoProduto;
+	}
+	
+	public void setTipoProduto(String tipoProduto) {
+		this.tipoProduto = tipoProduto;
+	}
+	
+	@Field(offset = 62, length = 8)
+	public Long getRepartePrevisto() {
+		return repartePrevisto;
+	}
+	
+	public void setRepartePrevisto(Long repartePrevisto) {
+		this.repartePrevisto = repartePrevisto;
+	}
+	
+	public BigDecimal getPctAbrangencia() {
+		return pctAbrangencia;
+	}
+	
+	public void setPctAbrangencia(BigDecimal pctAbrangencia) {
+		this.pctAbrangencia = pctAbrangencia;
+	}
+	
+	public BigDecimal getPctEntregaAntecipada() {
+		return pctEntregaAntecipada;
+	}
+	
+	public void setPctEntregaAntecipada(BigDecimal pctEntregaAntecipada) {
+		this.pctEntregaAntecipada = pctEntregaAntecipada;
+	}
+	
+	public String getCondCotasAtuais() {
+		return condCotasAtuais;
+	}
+	
+	public void setCondCotasAtuais(String condCotasAtuais) {
+		this.condCotasAtuais = condCotasAtuais;
+	}
+	
+	public String getTipoBaseRegiaa() {
+		return tipoBaseRegiaa;
+	}
+	
+	public void setTipoBaseRegiaa(String tipoBaseRegiaa) {
+		this.tipoBaseRegiaa = tipoBaseRegiaa;
+	}
+	
+	public String getTipoHistorico() {
+		return tipoHistorico;
+	}
+	
+	public void setTipoHistorico(String tipoHistorico) {
+		this.tipoHistorico = tipoHistorico;
+	}
+	
+	public String getCondBasePacotePadrao() {
+		return condBasePacotePadrao;
+	}
+	
+	public void setCondBasePacotePadrao(String condBasePacotePadrao) {
+		this.condBasePacotePadrao = condBasePacotePadrao;
+	}
+	
+	public BigDecimal getPrecoPrevisto() {
+		return precoPrevisto;
+	}
+	
+	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
+		this.precoPrevisto = precoPrevisto;
+	}
+	
+	@Field(offset = 92, length = 8)
+	public Long getRepartePromocional() {
+		return repartePromocional;
+	}
+	
+	public void setRepartePromocional(Long repartePromocional) {
+		this.repartePromocional = repartePromocional;
+	}
+	
+	public String getCondDistribuicaoFases() {
+		return condDistribuicaoFases;
+	}
+	
+	public void setCondDistribuicaoFases(String condDistribuicaoFases) {
+		this.condDistribuicaoFases = condDistribuicaoFases;
+	}
+}
