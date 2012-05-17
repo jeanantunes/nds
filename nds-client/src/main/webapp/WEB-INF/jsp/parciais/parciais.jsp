@@ -262,7 +262,7 @@ $(function() {
               <td colspan="3">
 <!-- Código -->
 <input id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto', false);" />
+						   onchange="produto.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', null , false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
@@ -270,7 +270,7 @@ $(function() {
 <!-- Nome Produto -->                
 <input id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#nomeProduto', false);"
-					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', '#edicaoProduto', false);"/>
+					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
 					    	   
 				</td>
                 <td width="56">Edição:</td>
@@ -310,7 +310,7 @@ $(function() {
               
 <!-- Status -->              
 <select id="status" name="select2" style="width:140px;">
-  <option selected="selected">Todos</option>
+  <option selected="selected" value="">Todos</option>
    <c:forEach items="${listaStatus}" var="status">
       		<option value="${status.key}">${status.value}</option>	
     </c:forEach>
@@ -329,20 +329,67 @@ $(function() {
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
+
+<!-- PESQUISA DE LANCAMENTOS PARCIAIS -->
+<fieldset id="painelLancamentos" class="classFieldset" style="display:none">
        	  <legend>Parciais Cadastradas</legend>
-        <div class="grids" style="display:none;">
+       
         	
         	<table class="parciaisGrid"></table>
-            <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>-->
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+            
+<div id="exportacao">
+            
+            <span class="bt_novos" title="Gerar Arquivo">
+            
+<!-- ARQUIVO EXCEL -->
+<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS">
+		
+		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+		</span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-        </div>
+		<span class="bt_novos" title="Imprimir">
 
+	
+<!-- IMPRIMIR PDF -->	
+<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF">
+
+		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+		</span>
+        
+</div>           
            
+</fieldset>
+
+
+<!-- PESQUISA DE PERIODOS PARCIAIS -->
+<fieldset id="painelPeriodos" class="classFieldset" style="display:block">
+       	  <legend>Períodos Cadastrados</legend>
+               	
+        	<table align="center" class="periodosGrid"></table>
+            
+<div id="exportacaoPeriodos">
+            
+            <span class="bt_novos" title="Gerar Arquivo">
+            
+<!-- ARQUIVO EXCEL -->
+<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+		
+		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+		</span>
+
+		<span class="bt_novos" title="Imprimir">
+
+	
+<!-- IMPRIMIR PDF -->	
+<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+
+		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+		</span>
+        
+</div>           
            
-      </fieldset>
+</fieldset>
+
       <div class="linha_separa_fields">&nbsp;</div>
        
 
@@ -405,7 +452,7 @@ $(function() {
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "cd",
+		sortname : "codigoProduto",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
@@ -416,6 +463,73 @@ $(function() {
 })); 	
 
 $(".grids").show();	
+
+
+$(".periodosGrid").flexigrid($.extend({},{
+	colModel : [ {
+			display : 'Período',
+			name : 'periodo',
+			width : 40,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Data Lançamento',
+			name : 'dtLancamento',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Data Recolhimento',
+			name : 'dtRecolhimento',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte',
+			name : 'reparte',
+			width : 45,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Encalhe',
+			name : 'encalhe',
+			width : 45,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Vendas',
+			name : 'venda',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda Acumulada',
+			name : 'vendaAcumulada',
+			width : 120,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : '% Venda',
+			name : 'percVenda',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 65,
+			sortable : false,
+			align : 'center'
+		}],
+		sortname : "periodo",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	})); 
 
 $(".parciaispopGrid").flexigrid($.extend({},{
 	colModel : [ {
