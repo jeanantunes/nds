@@ -9,6 +9,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -67,7 +68,8 @@ public class CotaSocioController {
 		
 		cotaService.salvarSociosCota(sociosCota, idCota);
 		
-		result.use(Results.json()).from("","result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class CotaSocioController {
 	private void validarInclusaoSocioPrincipal(SocioCota socioCota, List<SocioCota> sociosCota) {
 		
 		if(isSocioPrincipal(sociosCota) && socioCota.getPrincipal() ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado!");
 		}
 	}
 	
