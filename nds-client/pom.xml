@@ -237,7 +237,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>desenvolvimento-abril</id>>
+			<id>desenvolvimento-abril</id>
 			<properties>
 				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test</testDataSourceURL>
 				<testDataSourceUsername>admin</testDataSourceUsername>
