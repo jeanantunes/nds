@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.ControleAprovacaoVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
@@ -72,11 +70,11 @@ public class RelatorioVendasController {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
 		if (dataDe == null || dataDe.isEmpty()){
-			listaMensagemValidacao.add("");
+			listaMensagemValidacao.add("Erro");
 		}
 
 		if (dataAte == null || dataAte.isEmpty()){
-			listaMensagemValidacao.add("");
+			listaMensagemValidacao.add("Erro");
 		}
 
 		if (!listaMensagemValidacao.isEmpty()){
