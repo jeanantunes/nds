@@ -13,18 +13,23 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
@@ -32,8 +37,10 @@ import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -71,6 +78,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	@Autowired
@@ -78,6 +88,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	/*
 	 * (non-Javadoc)
@@ -152,16 +165,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
-		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
-		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
 		
-		if(controleConferenciaEncalheCota == null) {
+		if(controleConferenciaEncalheCota != null) {
 			throw new ConferenciaEncalheExistenteException();
 		}
 		
-		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+		Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 		
 		boolean encalheConferido = false;
 		
@@ -188,10 +199,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean indPesquisaCEFutura = true;
 
-		Distribuidor distribuidor = distribuidorService.obter();
-		Date dataOperacao = distribuidor.getDataOperacao();
-		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
-		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+		Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 		
 		Long qtdeRegistroChamadaEncalhe = 
 				chamadaEncalheCotaRepository.
@@ -224,8 +232,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
-		
-		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
@@ -394,9 +400,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return null;
 	}
 	
-	
-	
-	public void salvarDadosConferenciaEncalhe(ControleConferenciaEncalheCota controleConfEncalheCota, List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	/**
+	 * Retorna a dataRecolhimento referencia sendo esta igual a 
+	 * dataOperacao - qtdDiasEncalheAtrasadoAceitavel(parâmetro do distribuidor). 
+	 * 
+	 * @return dataRecolhimentoReferencia.
+	 */
+	private Date obterDataRecolhimentoReferencia() {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -406,52 +416,128 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
 		
-		Integer numeroCota = null;//TODO 
-		
-		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota.getId());
-		
-		Lancamento lancamento = null;
-		ChamadaEncalheCota chamadaEncalheCota = null;
-		MovimentoEstoqueCota movimentoEstoqueCota = null;
-		String observacao = null;
-		boolean juramentada = false;
-		
-		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
-			
-			if(conferencia.getIdConferenciaEncalhe()!=null) {
-				
-				//TODO obter registro e atualiza-lo
-				
-			} else {
-				
-				//TODO criar novo registro
-				chamadaEncalheCota 		= obterChamadaEncalheCotaParaConfEncalhe(numeroCota, dataRecolhimentoReferencia, conferencia.getIdProdutoEdicao());
-				lancamento 				= obterLancamentoParaConfEncalhe(chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), conferencia.getIdProdutoEdicao());
-				movimentoEstoqueCota 	= obterMovimentoEstoqueCotaParaConfEncalhe(conferencia);
-				
-				observacao 				= conferencia.getObservacao();
-				juramentada 			= conferencia.isJuramentada();
-				
-				ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
-				
-				conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
-				conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
-				conferenciaEncalhe.setJuramentada(juramentada);
-				conferenciaEncalhe.setLancamento(lancamento);
-				conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
-				conferenciaEncalhe.setObservacao(observacao);
-
-				
-			}
-			
-			
-		}
-		
+		return dataRecolhimentoReferencia;
 		
 	}
 	
 	
+	public void salvarDadosConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConfEncalheCota, 
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			List<Long> listaIdConferenciaEncalheParaExclusao,
+			Usuario usuario) {
+		
+	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
+		
+		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota.getId());
+		
+		Date dataCriacao = new Date();
+		
+		TipoMovimentoEstoque tipoMovimentoEstoqueEnvioEncalhe = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		//TODO - Quando utilizar estoque complementar?
+		TipoMovimentoEstoque tipoMovimentoEstoqueSuplementar = null;//TODO: tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.);
+		
+		
+		for(ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
+			
+			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
+				
+				atualizarRegistroConferenciaEncalhe(conferenciaEncalheDTO);
+				
+			} else {
+				
+				criarNovoRegistroConferenciaEncalhe(
+						controleConferenciaEncalheCota, 
+						conferenciaEncalheDTO, 
+						numeroCota, 
+						dataRecolhimentoReferencia, 
+						dataCriacao, 
+						tipoMovimentoEstoqueEnvioEncalhe, 
+						usuario);
+				
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * Atualiza um registro existente de ConferenciaEncalhe.
+	 * 
+	 * @param conferenciaEncalheDTO
+	 */
+	private void atualizarRegistroConferenciaEncalhe(ConferenciaEncalheDTO conferenciaEncalheDTO){
+		
+		ConferenciaEncalhe conferenciaEncalheFromDB = conferenciaEncalheRepository.buscarPorId(conferenciaEncalheDTO.getIdConferenciaEncalhe());
+		conferenciaEncalheFromDB.setObservacao(conferenciaEncalheDTO.getObservacao());
+		conferenciaEncalheFromDB.setJuramentada(conferenciaEncalheDTO.isJuramentada());
+		
+		atualizarMovimentoEstoqueCota(conferenciaEncalheFromDB.getMovimentoEstoqueCota(), conferenciaEncalheDTO.getQtdExemplar());
+
+		
+	}
+	
+	/**
+	 * Cria um novo registro de ConferenciaEncalhe.
+	 * 
+	 * @param controleConferenciaEncalheCota
+	 * @param conferenciaEncalheDTO
+	 * @param numeroCota
+	 * @param dataRecolhimentoReferencia
+	 * @param dataCriacao
+	 * @param tipoMovimentoEstoque
+	 * @param usuario
+	 */
+	private void criarNovoRegistroConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			ConferenciaEncalheDTO conferenciaEncalheDTO,
+			Integer numeroCota, 
+			Date dataRecolhimentoReferencia,
+			Date dataCriacao,
+			TipoMovimentoEstoque tipoMovimentoEstoque,
+			Usuario usuario) {
+	
+		ChamadaEncalheCota chamadaEncalheCota = 
+				obterChamadaEncalheCotaParaConfEncalhe(
+						numeroCota, 
+						dataRecolhimentoReferencia, 
+						conferenciaEncalheDTO.getIdProdutoEdicao());
+		
+		Cota cota = chamadaEncalheCota.getCota();
+		Lancamento lancamento = obterLancamentoParaConfEncalhe(chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), conferenciaEncalheDTO.getIdProdutoEdicao());
+		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = obterMovimentoEstoqueCotaParaConfEncalhe(
+				cota, 
+				produtoEdicao, 
+				dataCriacao, 
+				tipoMovimentoEstoque,
+				conferenciaEncalheDTO.getQtdExemplar(),
+				usuario);
+		
+		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
+		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
+		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		conferenciaEncalhe.setLancamento(lancamento);
+		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
+		conferenciaEncalhe.setJuramentada(conferenciaEncalheDTO.isJuramentada());
+		conferenciaEncalhe.setObservacao(conferenciaEncalheDTO.getObservacao());
+		
+	}
+	
+	
+	/**
+	 * Obtém o lancamento referente a dataRecolhimento e idProdutoEdicao
+	 * 
+	 * @param dataRecolhimento
+	 * @param idProdutoEdicao
+	 * 
+	 * @return Lancamento
+	 */
 	private Lancamento obterLancamentoParaConfEncalhe(Date dataRecolhimento, Long idProdutoEdicao) {
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosPorDataRecolhimentoProdutoEdicao(dataRecolhimento, idProdutoEdicao);
@@ -483,6 +569,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return lancamentos.get(0);
 	}
 	
+	/**
+	 * Obtém a ChamadaEncalheCota de acordo com a cota e idProdutoEdicao 
+	 * cuja dataRecolhimento da chamada de encalhe seja maior ou igual ao 
+	 * parâmetro dataRecolhimentoReferencia, sendo que este parâmetro é igual
+	 * a dataOperação - qtdDiasEncalheAtrasadoAceitavel(parâmetro do distribuidor).  
+	 * 
+	 * @param numeroCota
+	 * @param dataRecolhimentoReferencia
+	 * @param idProdutoEdicao
+	 * 
+	 * @return ChamadaEncalheCota
+	 */
 	private ChamadaEncalheCota obterChamadaEncalheCotaParaConfEncalhe(
 			Integer numeroCota,
 			Date dataRecolhimentoReferencia,
@@ -528,8 +626,78 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return null;
 	}
 	
-	private MovimentoEstoqueCota obterMovimentoEstoqueCotaParaConfEncalhe(ConferenciaEncalheDTO conferenciaEncalhe){
-		return null;
+	/**
+	 * Atualiza o registro de MovimentoEstoqueCota assim como o 
+	 * EstoqueProdutoCota relativo ao mesmo.
+	 * 
+	 * @param movimentoEstoqueCota
+	 * @param qtdeExemplar
+	 */
+	private void atualizarMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota, BigDecimal qtdeExemplar) {
+		
+		movimentoEstoqueCota.setQtde(qtdeExemplar);
+		
+		movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
+		
+		EstoqueProdutoCota estoqueProdutoCota =  movimentoEstoqueCota.getEstoqueProdutoCota();
+		
+		BigDecimal qtdDevolvida = 
+				estoqueProdutoCota.getQtdeDevolvida() != null ? 
+					estoqueProdutoCota.getQtdeDevolvida() : BigDecimal.ZERO;
+		
+		estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida.add(qtdeExemplar));
+		
+		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+		
+	}
+	
+	private MovimentoEstoqueCota obterMovimentoEstoqueCotaParaConfEncalhe(
+			Cota cota, 
+			ProdutoEdicao produtoEdicao, 
+			Date dataCriacao, 
+			TipoMovimentoEstoque tipoMovimentoEstoque,
+			BigDecimal qtdeExemplar,
+			Usuario usuario) {
+		
+		EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
+				produtoEdicao.getId(), cota.getId());
+		
+		if(estoqueProdutoCota == null) {
+			throw new IllegalStateException("Não há registro de EstoqueProdutoCota para o produtoEdicao de id:" + produtoEdicao.getId());
+		}
+		
+		BigDecimal qtdDevolvida = 
+				estoqueProdutoCota.getQtdeDevolvida() != null ? 
+					estoqueProdutoCota.getQtdeDevolvida() : BigDecimal.ZERO;
+		
+		estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida.add(qtdeExemplar));
+		
+		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
+		
+		movimentoEstoqueCota.setAprovadoAutomaticamente(true);
+		movimentoEstoqueCota.setDataAprovacao(dataCriacao);
+		movimentoEstoqueCota.setAprovador(null);
+		movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
+		
+		movimentoEstoqueCota.setCota(cota);
+		movimentoEstoqueCota.setData(dataCriacao);
+		movimentoEstoqueCota.setDataCriacao(dataCriacao);
+		
+		movimentoEstoqueCota.setEstoqueProdutoCota(estoqueProdutoCota);
+		
+		movimentoEstoqueCota.setEstudoCota(null);
+		movimentoEstoqueCota.setMotivo(null);
+		movimentoEstoqueCota.setProdutoEdicao(produtoEdicao);
+		movimentoEstoqueCota.setQtde(qtdeExemplar);
+		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
+		movimentoEstoqueCota.setUsuario(usuario);
+		
+		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
+		
+		return movimentoEstoqueCota;
+		
 	}
 	
 	
