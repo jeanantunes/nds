@@ -1,18 +1,35 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
+
+@Exportable
 public class ParcialDTO implements Serializable{
 	
 	private static final long serialVersionUID = 5323481858856643957L;
 	
 	private Long idProdutoEdicao;
+	
+	@Export(label = "Data Lancto", alignment=Alignment.CENTER)
 	private String dataLancamento;
+	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER)
 	private String dataRecolhimento;
+	@Export(label = "Código", alignment=Alignment.LEFT)
 	private String codigoProduto;
+	@Export(label = "Produto", alignment=Alignment.LEFT)
 	private String nomeProduto;
+	@Export(label = "Edição", alignment=Alignment.LEFT)
 	private Integer numEdicao;
+	@Export(label = "Fornecedor", alignment=Alignment.LEFT)
 	private String nomeFornecedor;
+	@Export(label = "Status", alignment=Alignment.LEFT)
 	private String statusParcial;
 	
 	public ParcialDTO() {}
@@ -34,14 +51,14 @@ public class ParcialDTO implements Serializable{
 	public String getDataLancamento() {
 		return dataLancamento;
 	}
-	public void setDataLancamento(String dataLancamento) {
-		this.dataLancamento = dataLancamento;
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);
 	}
 	public String getDataRecolhimento() {
 		return dataRecolhimento;
 	}
-	public void setDataRecolhimento(String dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);
 	}
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -58,8 +75,8 @@ public class ParcialDTO implements Serializable{
 	public Integer getNumEdicao() {
 		return numEdicao;
 	}
-	public void setNumEdicao(Integer numEdicao) {
-		this.numEdicao = numEdicao;
+	public void setNumEdicao(Long numEdicao) {
+		this.numEdicao = numEdicao.intValue();
 	}
 	public String getNomeFornecedor() {
 		return nomeFornecedor;
@@ -70,8 +87,8 @@ public class ParcialDTO implements Serializable{
 	public String getStatusParcial() {
 		return statusParcial;
 	}
-	public void setStatusParcial(String statusParcial) {
-		this.statusParcial = statusParcial;
+	public void setStatusParcial(StatusLancamentoParcial statusParcial) {
+		this.statusParcial = statusParcial.toString();
 	}
 
 

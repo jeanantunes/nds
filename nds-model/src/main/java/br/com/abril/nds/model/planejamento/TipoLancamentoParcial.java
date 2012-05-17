@@ -8,7 +8,20 @@ package br.com.abril.nds.model.planejamento;
  */
 public enum TipoLancamentoParcial {
 	
-	PARCIAL, 
-	FINAL;
+	PARCIAL("Parcial"),
+	FINAL("Final");
 
+	private String descricao;
+	
+	private TipoLancamentoParcial(String descricao) {
+		this.descricao = descricao;
+	}
+	
+	/**
+	 * @return the descricao
+	 */
+	public String getDescricao() {
+		return descricao;
+	}
+	
 }

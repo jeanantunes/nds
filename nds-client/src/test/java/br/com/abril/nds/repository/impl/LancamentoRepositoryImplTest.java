@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -112,20 +114,20 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(cromoReiLeao);
 
 		veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja);
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN,
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
 				quatroRodas);
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), infoExame);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, capricho);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), cromoReiLeao);
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -504,8 +506,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(lancamentos);
 		Assert.assertEquals(3, lancamentos.size());
 
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(1).getId());
+		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
+		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
 		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
 	}
 	
@@ -731,4 +733,22 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(lancamento.getId(),lancamentoVeja.getId());
 		Assert.assertEquals(lancamento.getDataLancamentoDistribuidor(),lancamentoVeja.getDataLancamentoDistribuidor());
 	}
+	
+	@Test
+	public void obterLancamentosPorId() {
+		
+		Set<Long> idsLancamento = new TreeSet<Long>();
+		
+		idsLancamento.add(lancamentoVeja.getId());
+		idsLancamento.add(lancamentoInfoExame.getId());
+		idsLancamento.add(lancamentoQuatroRodas.getId());
+		
+		List<Lancamento> listaLancamento =
+			lancamentoRepository.obterLancamentosPorId(idsLancamento);
+		
+		Assert.assertNotNull(listaLancamento);
+		
+		Assert.assertTrue(listaLancamento.size() == idsLancamento.size());
+	}
+	
 }

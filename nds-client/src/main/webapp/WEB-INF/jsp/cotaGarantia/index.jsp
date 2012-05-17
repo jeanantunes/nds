@@ -1,12 +1,12 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
-
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-
+<script language="text/javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript">
 	var tipoCotaGarantia;
 	$(function() {
@@ -18,13 +18,12 @@
 	<tr>
 		<td width="112">Tipo de Garantia:</td>
 		<td width="631"><select id="tipoGarantiaSelect"
-			onchange="tipoCotaGarantia.changeController($(this).val());"
+			onchange="tipoCotaGarantia.onChange($(this).val());"
 			style="width: 250px;">
 				<option value="" selected="selected">Selecione...</option>
 		</select></td>
 	</tr>
 </table>
-
 <div id="cotaGarantiaNotaPromissoriaPanel" style="display: none;">
 	<fieldset>
 		<legend>Nota Promiss&oacute;ria</legend>
@@ -208,7 +207,7 @@
 </div>
 
 <div id="cotaGarantiaImovelPanel" style="display: none;">
-	<div id="dialog-excluir-imovel" title="Excluir Im&oacute;vel">
+	<div id="dialog-excluir-imovel" title="Excluir Im&oacute;vel" style="display:none;" >
 		<p>Confirma a exclus&atilde;o desse im&oacute;vel?</p>
 	</div>
 	<fieldset>
@@ -251,7 +250,7 @@
 					
 					<span class="bt_novos">
 			  			<a href="javascript:;" id="cotaGarantiaImovelSalvaEdicao" style="display:none;">
-			  			<img src="/nds-client/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+			  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
 			  		</span>
 					
 					</td>
@@ -268,6 +267,49 @@
 			<table class="cotaGarantiaImovelGrid"></table>
 		</div>
 	</fieldset>
+</div>
+
+<div id="cotaGarantiaCaucaoLiquida" style="display: none;">
+
+	<fieldset>
+	   	<legend>Cau&ccedil;&atilde; L&iacute;quida</legend>
+        <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">
+        <tbody>
+        	<tr>
+               <td width="110">Valor Inicial R$:</td>
+            
+               <td width="150">
+                	<input type="text" name="cotaGarantiaCaucaoLiquidaValor" id="cotaGarantiaCaucaoLiquidaValor" style="width:150px; text-align:right;">
+                </td>
+               
+                <td width="270">
+                	<a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
+                </td>
+                
+                <td width="197">
+                	<span class="bt_confirmar_novo" title="Confirmar">
+                		<a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
+                			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
+                		</a>
+                	</span>
+                </td>
+              </tr>
+        </tbody>
+        </table>
+	</fieldset>
+	
+    <br clear="all">
+    
+    <br>
+    
+    <fieldset>
+    	<legend>Cau&ccedil;&atilde; L&iacute;quida</legend>
+    	
+    	<div class="flexigrid" style="width: 740px; ">
+    		<table id="cotaGarantiaCaucaoLiquidaGrid"></table>
+        </div>
+	</fieldset>
+
 </div>
 
 <br clear="all" />

@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 
@@ -34,5 +35,11 @@ public interface PoliticaCobrancaService {
 	 * @return {@link br.com.abril.nds.model.cadastro.PoliticaCobranca}
 	 */
 	PoliticaCobranca obterPoliticaCobrancaPrincipal();
+	
+	/**
+	 * Método responsável por postar o parametro de cobranca no banco
+	 * @param parametroCobranca
+	 */
+	void postarPoliticaCobranca(ParametroCobrancaDTO parametroCobrancaDTO);
 
 }

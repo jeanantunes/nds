@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -14,6 +16,18 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @author Discover Technology
  */
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
+	
+	/**
+	 * Obtem o percentual de comissionamento (fatorDesconto) de acordo com os parâmetros
+	 * de idProdutoEdicao, numerCota e idDistribuidor;
+	 * 
+	 * @param idProdutoEdicao
+	 * @param numeroCota
+	 * @param idDistribuidor
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterFatorDesconto(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor);
 	
 	/**
 	 * Obtém produtos edição de acordo com o nome do produto.
@@ -71,5 +85,16 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	ProdutoEdicao obterProdutoEdicaoPorCodigoBarra(String codigoBarra);
 
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
+
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto);
+	
+	/**
+	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
+	 * 
+	 * @param idsProdutoEdicao - identificadores de produto edição
+	 * 
+	 * @return {@link List<ProdutoEdicao>}
+	 */
+	List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 }

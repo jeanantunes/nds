@@ -2,18 +2,11 @@ package br.com.abril.nds.integracao.engine.test;
 
 import java.util.Date;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
-import org.junit.Test;
 
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
-
-import flexjson.JSONSerializer;
 
 public class TestJSON {
 	private PDV pdv;
@@ -48,16 +41,23 @@ public class TestJSON {
 		
 		pdv.getEnderecos().add(enderecoPDV);
 	}
-	
+	/*
 	@Test
-	public void testXStream() {		
-		XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
+	public void testXStream() {
+		
+		XStream xstream = new XStream(new JettisonMappedXmlDriver());
 		
 		System.out.println("\n\nXStream:\n\n");
-		System.out.println(xstream.toXML(pdv));
+		String xml = xstream.toXML(pdv);
+		
+		System.out.println(xml);
+		
+		PDV pdv_new = (PDV) xstream.fromXML(xml);
+		
+		System.out.println(pdv_new);
 	}
 	
-	@Test
+//	@Test
 	public void testJackson() throws Exception {		
 		ObjectMapper objectMapper = new ObjectMapper();
 		
@@ -65,11 +65,12 @@ public class TestJSON {
 		System.out.println(objectMapper.writeValueAsString(pdv));
 	}
 	
-	@Test
+//	@Test
 	public void testFlexJson() throws Exception {		
 		JSONSerializer jsonSerializer = new JSONSerializer();
 		
 		System.out.println("\n\nFlexJSON:\n\n");
 		System.out.println(jsonSerializer.serialize(pdv));
 	}
+	*/
 }

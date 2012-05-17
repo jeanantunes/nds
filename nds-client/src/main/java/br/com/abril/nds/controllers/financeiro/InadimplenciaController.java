@@ -115,7 +115,7 @@ public class InadimplenciaController {
 		try {
 			
 			FiltroCotaInadimplenteDTO filtroAtual = new FiltroCotaInadimplenteDTO();
-			filtroAtual.setPaginacao(new PaginacaoVO(page,rp,sortname,sortorder));
+			filtroAtual.setPaginacao(new PaginacaoVO(page,rp,sortorder,sortname));
 			filtroAtual.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
 			filtroAtual.setNumCota(numCota);
 			filtroAtual.setNomeCota(nomeCota);
@@ -190,7 +190,7 @@ public class InadimplenciaController {
 	/**
 	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
 	 * 
-	 * @param filtroResumoExpedicao
+	 * @param filtro
 	 */
 	private void tratarFiltro(FiltroCotaInadimplenteDTO filtroAtual) {
 

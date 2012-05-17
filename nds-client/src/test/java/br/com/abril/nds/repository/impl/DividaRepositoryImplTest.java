@@ -100,7 +100,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		politicasCobranca.add(politicaCobranca);
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
 		
 		save(distribuidor);
 		
@@ -151,7 +150,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
 				produtoVeja);
 		save(produtoEdicaoVeja1);
 		
@@ -290,7 +289,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 			filtro.setSituacaoPaga(true);
 			filtro.setSituacaoNegociada(false);
 			filtro.setStatusCota("Ativo");
-			filtro.setPaginacao(new PaginacaoVO(1, 5, ColunaOrdenacao.NOME.toString(), "ASC"));
+			filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 			
 			List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
 			Assert.assertEquals(lista.size(),1);	
@@ -300,7 +299,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 			Assert.assertEquals(divida.getDataVencimento(), "01/02/2010");
 			Assert.assertEquals(divida.getDividaAcumulada(), "210,00");
 			Assert.assertEquals(divida.getNome(), "Manoel da Silva");
-			Assert.assertEquals(divida.getSituacao(),"Paga");
+			Assert.assertEquals(divida.getSituacao(),"Quitada");
 			Assert.assertTrue(divida.getDiasAtraso() == 29);
 			Assert.assertTrue(divida.getNumCota() == 123);
 			Assert.assertEquals(divida.getStatus(),"Ativo");
