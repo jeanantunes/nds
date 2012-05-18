@@ -563,6 +563,12 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" LANCAMENTO lancamento  ");
 		sql.append(" on lancamento.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		sql.append(" inner join ");
+		sql.append(" ESTUDO estudo ");
+		sql.append(" on (estudo.ID = estudoCota.ESTUDO_ID ");
+		sql.append(" 	 and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");
+		sql.append(" 	 and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR) ");
+		
+		sql.append(" inner join ");
 		sql.append(" PRODUTO produto  ");
 		sql.append(" on produtoEdicao.PRODUTO_ID=produto.ID  ");
 		sql.append(" inner join ");
