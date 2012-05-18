@@ -196,6 +196,8 @@ public interface CotaService {
 	 * @return comboTiposCota: Tipos de cota padrão.
 	 */
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota();
+	
+	void alterarCota(Cota cota);
 
 	
 }

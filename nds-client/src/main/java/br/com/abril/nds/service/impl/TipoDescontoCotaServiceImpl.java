@@ -33,7 +33,7 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 	 */
 	@Transactional
 	@Override
-	public void incluirDescontoGeral(TipoDescontoCota tipoDescontoCota) {
+	public void incluirDesconto(TipoDescontoCota tipoDescontoCota) {
 		 this.tipoDescontoCotaRepository.adicionar(tipoDescontoCota);
 	}
 	
@@ -61,12 +61,6 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 			listaVO.add(vo);
 		}		
 		return listaVO;
-	}
-
-	@Override
-	public Cota obterCota(int numeroCota) {
-		 
-		return null;
 	}
 
 }

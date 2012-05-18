@@ -50,61 +50,41 @@ public class TipoDescontoCotaController {
 	}
 	
 	@Path("/")
-	public void index() {
-		
-		inserirDataAtual();
-		
-	}
-	
-	private void inserirDataAtual() {		
-		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
+	public void index() {		
+		inserirDataAtual();		
 	}
 	
 	@Post
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){
 		try {
-			TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
 			BigDecimal descontoFormatado = new BigDecimal(Double.parseDouble(desconto));
-			tipoDescontoCota.setDesconto(new BigDecimal(Double.parseDouble(desconto)));
-			SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-			Date dataFormatada;
-			dataFormatada = sdf.parse(dataAlteracao);
-			tipoDescontoCota.setDataAlteracao(dataFormatada);
-			tipoDescontoCota.setUsuario(usuario);
-			tipoDescontoCota.setEspecificacaoDesconto(EspecificacaoDesconto.GERAL);
-			
+			TipoDescontoCota tipoDescontoCota = popularDescontoParaCadastrar(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
 			atualizarDistribuidor(descontoFormatado);
-
-			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);		
-
+			salvarDesconto(tipoDescontoCota);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
+
 	
-	private void atualizarDistribuidor(BigDecimal desconto) {
-		this.tipoDescontoCotaService.atualizarDistribuidores(desconto);
-	}
 	
 	@Post
 	@Path("/novoDescontoEspecifico")
-	public void novoDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, Long descontoEspecifico, Date dataAlteracaoEspecifico, String usuarioEspecifico){
-		
-		Cota cotaParaAtualizar = this.tipoDescontoCotaService.obterCota(Integer.parseInt(cotaEspecifica));
-		
-		atualizarCota(descontoEspecifico, cotaParaAtualizar);
-
+	public void novoDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, String descontoEspecifico, String dataAlteracaoEspecifico, String usuarioEspecifico){
+		try {
+			Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
+			atualizarCota(new BigDecimal(descontoEspecifico), cotaParaAtualizar);
+			TipoDescontoCota especifico = popularDescontoParaCadastrar(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, EspecificacaoDesconto.ESPECIFICO);
+			salvarDesconto(especifico);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
-	
-	private void atualizarCota(Long descontoEspecifico, Cota cotaParaAtualizar) {
-		
-	}
-
 	@Path("/pesquisarDescontoGeral")
 	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {
 		
@@ -137,5 +117,36 @@ public class TipoDescontoCotaController {
 
 		}
 	}
+	
+	private void inserirDataAtual() {		
+		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
+	}
+	
+	private TipoDescontoCota popularDescontoParaCadastrar(String desconto,	String dataAlteracao, String usuario, EspecificacaoDesconto especificacaoDesconto) throws ParseException {
+		TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
+		tipoDescontoCota.setDesconto(new BigDecimal(Double.parseDouble(desconto)));
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		Date dataFormatada;
+		dataFormatada = sdf.parse(dataAlteracao);
+		tipoDescontoCota.setDataAlteracao(dataFormatada);
+		tipoDescontoCota.setUsuario(usuario);
+		tipoDescontoCota.setEspecificacaoDesconto(especificacaoDesconto);
+		return tipoDescontoCota;
+	}
+	
+	private void salvarDesconto(TipoDescontoCota tipoDescontoCota) {
+		this.tipoDescontoCotaService.incluirDesconto(tipoDescontoCota);
+	}
+
+	private void atualizarDistribuidor(BigDecimal desconto) {
+		this.tipoDescontoCotaService.atualizarDistribuidores(desconto);
+	}
+	
+	private void atualizarCota(BigDecimal descontoEspecifico, Cota cotaParaAtualizar) {
+		cotaParaAtualizar.setFatorDesconto(descontoEspecifico);
+		this.cotaService.alterarCota(cotaParaAtualizar);
+	}
+
+	
 
 }

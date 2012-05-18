@@ -1,7 +1,5 @@
 package br.com.abril.nds.client.vo;
 
-import java.util.Date;
-
 import br.com.abril.nds.util.export.Export;
 
 public class TipoDescontoCotaVO {

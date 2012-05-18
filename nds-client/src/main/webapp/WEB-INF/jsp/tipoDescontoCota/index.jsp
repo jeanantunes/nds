@@ -1,6 +1,5 @@
 <head>
 
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 
 <script language="javascript" type="text/javascript">
@@ -54,7 +53,7 @@
 	function popup_geral() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 			
-			 limparTelaCadastroBanco();
+			 limparTelaCadastro();
 		
 			$( "#dialog-geral" ).dialog({
 				resizable: false,
@@ -62,18 +61,8 @@
 				width:400,
 				modal: true,
 				buttons: {
-					"Confirmar": function() {
-						var geral = $("#radioGeral").is(":checked");
-						var especifico = $("#radioEspecifico").is(":checked");
-						var produto = $("#radioProduto").is(":checked");
-						if(geral){
-							novoDescontoGeral();							
-						}else if(especifico){
-							
-						}else if(produto){
-							
-						}	
-
+					"Confirmar": function() {								
+						novoDescontoGeral();
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -135,20 +124,15 @@
 	               },
 				   null,
 				   true);
+		$(".tiposDescEspecificoGrid").flexReload();
 		
 	}
 	
 
-	function fecharDialogs() {
-		$( "#dialog-geral" ).dialog( "close" );
-	}
-	
-	function limparTelaCadastroBanco() {
-		$("#descontoGeral").val("");				
-	}
-	
 	function popup_especifico() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		limparTelaCadastro();
 	
 		$( "#dialog-especifico" ).dialog({
 			resizable: false,
@@ -157,8 +141,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
+					novoDescontoEspecifico();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -169,6 +152,8 @@
 	};
 	function popup_produto() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		limparTelaCadastro();
 	
 		$( "#dialog-produto" ).dialog({
 			resizable: false,
@@ -211,9 +196,6 @@
 	
 	
 	function pesquisar() {
-		
-		//var idTipoMovimento = $("#tipoMovimento").val();
-		//var dataMovimento = $("#dataMovimento").val();
 		
 		var descontoGeral = $("#descontoGeral").val();
 		var dataAlteracao = $("#dataAlteracaoGeral").val();
@@ -258,6 +240,19 @@
 		$(".grids").show();
 		
 		return resultado;
+	}
+	
+	function limparTelaCadastro() {
+		$("#descontoGeral").val("");
+		$("#cotaEspecifica").val("");
+		$("#nomeEspecifico").val("");
+		$("#descontoEspecifico").val("");
+	}
+	
+	function fecharDialogs() {
+		$( "#dialog-geral" ).dialog( "close" );
+		$( "#dialog-especifico" ).dialog( "close" );
+		$( "#dialog-produto" ).dialog( "close" );
 	}
 
 </script>
