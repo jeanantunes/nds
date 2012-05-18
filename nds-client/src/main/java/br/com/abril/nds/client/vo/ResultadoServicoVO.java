@@ -18,6 +18,8 @@ public class ResultadoServicoVO implements Serializable {
 	
 	private String percentualCalculoBase;
 	
+	private String periodicidade;
+	
 	public ResultadoServicoVO() {
 		
 	}
@@ -104,6 +106,20 @@ public class ResultadoServicoVO implements Serializable {
 	 */
 	public void setPercentualCalculoBase(String percentualCalculoBase) {
 		this.percentualCalculoBase = percentualCalculoBase;
+	}
+
+	/**
+	 * @return the periodicidade
+	 */
+	public String getPeriodicidade() {
+		return periodicidade;
+	}
+
+	/**
+	 * @param periodicidade the periodicidade to set
+	 */
+	public void setPeriodicidade(String periodicidade) {
+		this.periodicidade = periodicidade;
 	}
 	
 }
