@@ -296,7 +296,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 
 		Assert.assertEquals(divida.getDataPagamento(), "02/03/2010" );
 		Assert.assertEquals(divida.getDataVencimento(), "01/02/2010");
-		Assert.assertEquals(divida.getDividaAcumulada(), "210,00");
 		Assert.assertEquals(divida.getNome(), "Manoel da Silva");
 		Assert.assertEquals(divida.getSituacao(),"Quitada");
 		Assert.assertTrue(divida.getDiasAtraso() == 29);
