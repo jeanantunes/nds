@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import antlr.collections.impl.LList;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -88,6 +89,11 @@ public class CotaGarantiaController {
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) {
 		
+		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
+			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			//TODO: validar;
+		}
+		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
@@ -141,13 +147,7 @@ public class CotaGarantiaController {
 		result.use(Results.json()).from(imovel, "imovel").serialize();
 	}
 	
-	@Post("/incluirCaucaoLiquida.json")
-	public void incluirCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
-		
-		validaCaucaoLiquida(caucaoLiquida);
-		
-		result.use(CustomJson.class).from(caucaoLiquida).serialize();
-	}
+	
 	
 	/**
 	 * @param caucaoLiquida para ser validado
