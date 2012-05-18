@@ -195,7 +195,7 @@ public class ParametroCobrancaController {
 		
 		this.politicaCobrancaService.postarPoliticaCobranca(parametros);	
         
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança cadastrada com sucesso."),"result").recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança cadastrado com sucesso."),"result").recursive().serialize();
 	}
 	
 	
