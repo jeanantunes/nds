@@ -43,6 +43,9 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -104,7 +107,7 @@ public class CotaController {
 		this.pdvController.preCarregamento();
 	}
 	
-	private void carregarDadosEndereETelefone(Long idCota) { 
+	private void carregarDadosEnderecoETelefone(Long idCota) { 
 
 		if (idCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
@@ -330,9 +333,12 @@ public class CotaController {
 		}
 		
 		Long idCota = cotaService.salvarCota(cotaDTO);
-		cotaDTO.setIdCota(idCota);
 		
-		carregarDadosEndereETelefone(idCota);
+		cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
+		
+		cotaDTO.setNumeroCnpj(Util.adicionarMascaraCNPJ(cotaDTO.getNumeroCnpj()));
+		
+		carregarDadosEnderecoETelefone(idCota);
 		
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
@@ -341,7 +347,7 @@ public class CotaController {
 	@Path("/editar")
 	public void editar(Long idCota){
 		
-		carregarDadosEndereETelefone(idCota);
+		carregarDadosEnderecoETelefone(idCota);
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
@@ -506,6 +512,8 @@ public class CotaController {
 	public void pesquisarCotas(Integer numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
 			 				   String sortname, int page, int rp){
 		
+		numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
+		
 		validarParametrosPesquisa(numCota,nomeCota,numeroCpfCnpj);
 		
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
@@ -560,7 +568,7 @@ public class CotaController {
 			cotaVO.setNome(dto.getNomePessoa());
 			cotaVO.setContato( tratarValor( dto.getContato() ));
 			cotaVO.setEmail(tratarValor( dto.getEmail()));
-			cotaVO.setNumeroCpfCnpj( ( dto.getNumeroCpfCnpj()));
+			cotaVO.setNumeroCpfCnpj( formatarNumeroCPFCNPJ(dto.getNumeroCpfCnpj()));
 			cotaVO.setStatus( tratarValor(dto.getStatus()));
 			cotaVO.setTelefone( tratarValor( dto.getTelefone()));
 			
@@ -569,6 +577,22 @@ public class CotaController {
 		
 		return listaRetorno;
 	}
+	
+	private String formatarNumeroCPFCNPJ(String numeroCpfCnpj){
+		
+		if(numeroCpfCnpj!= null && !numeroCpfCnpj.isEmpty()){
+			
+			if(numeroCpfCnpj.length() > 11){
+
+				return Util.adicionarMascaraCNPJ(numeroCpfCnpj);
+			}
+			else{
+				
+				return Util.adicionarMascaraCPF(numeroCpfCnpj);
+			}
+		}
+		return "";
+	} 
 	
 	private String tratarValor(Object valor){
 		
@@ -582,6 +606,32 @@ public class CotaController {
 				&& (numeroCpfCnpj == null || numeroCpfCnpj.isEmpty())){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um dos filtros deve ser informado!");
+		}
+		
+		if(numeroCpfCnpj!= null && !numeroCpfCnpj.isEmpty()){
+			
+			if(numeroCpfCnpj.length() > 11){
+
+				CNPJValidator cnpjValidator = new CNPJValidator(false);
+				
+				try{
+					cnpjValidator.assertValid(numeroCpfCnpj);
+				}catch(InvalidStateException e){
+					throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF / CNPJ inválido!");
+				}
+			}
+			else{
+				
+				CPFValidator cpfValidator = new CPFValidator(false);
+				
+				try{
+					cpfValidator.assertValid(numeroCpfCnpj);
+				}catch(InvalidStateException e){
+					throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF / CNPJ inválido!");
+				}
+				
+			}
+			
 		}
 		
 	}

@@ -719,7 +719,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 	
 	public Integer gerarSugestaoNumeroCota(){
 		
-		String hql = "select max(cota.numeroCota) from Cota cota";
+		String hql = "select max(cota.numeroCota) from Cota cota where cota.id not in ( select h.pk.idCota from HistoricoNumeroCota h )";
 		
 		Integer numeroCota =  (Integer) getSession().createQuery(hql).uniqueResult();
 		
