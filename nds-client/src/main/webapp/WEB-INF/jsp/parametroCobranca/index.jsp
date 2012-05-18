@@ -11,7 +11,7 @@
 		$("#taxaJuros").numeric();
 		$("#diaDoMes").numeric();
 	    carregarFornecedores();
-	    carregarFormasEmissao(null);
+	    carregarFormasEmissao(null,"");
 	});
 
 	$(function() {
@@ -136,7 +136,7 @@
     function popup() {
 		
 		preparaCadastroParametro();
-		
+
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:720,
@@ -153,7 +153,7 @@
 				}
 			},
 			beforeClose: function() {
-				clearMessageDialogTimeout();
+				clearMessageDialogTimeout("idModal");
 		    }
 		});
 	};
@@ -180,7 +180,7 @@
 				}
 			},
 			beforeClose: function() {
-				clearMessageDialogTimeout();
+				clearMessageDialogTimeout("idModal");
 		    }
 		});	
 		      
@@ -205,7 +205,7 @@
 				}
 			},
 			beforeClose: function() {
-				clearMessageDialogTimeout();
+				clearMessageDialogTimeout("idModal");
 		    }
 		});
 	};
@@ -281,7 +281,6 @@
 	};
 	
 	
-	
 	function mostraSemanal(){
 		$("#tipoFormaCobranca").val('SEMANAL');
 		document.formularioFormaCobranca.mensal.checked = false;
@@ -290,14 +289,12 @@
 	};
 		
 	
-	
 	function mostraMensal(){
 		$("#tipoFormaCobranca").val('MENSAL');
 		document.formularioFormaCobranca.semanal.checked = false;
 		$( ".semanal" ).hide();
 		$( ".mensal" ).show();
 	};
-	
 	
 	
 	function opcaoTipoFormaCobranca(op){
@@ -314,23 +311,10 @@
 	};
 	
 	
-	
 	function fecharDialogs() {
 		$( "#dialog-novo" ).dialog( "close" );
 	    $( "#dialog-excluir" ).dialog( "close" );
 	}
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
 	
 	
 	
@@ -346,13 +330,12 @@
 	
 	function sucessCallbackObterParametro(resultado) {
 		
+		var formaEmissao = resultado.formaEmissao;
+		
 		$("#_idPolitica").val(resultado.idPolitica);
 		
 		$("#tipoCobranca").val(resultado.tipoCobranca);
 		
-		//carregarFormasEmissao(resultado.tipoCobranca);
-		
-		$("#formaEmissao").val(resultado.formaEmissao);
 		$("#formaCobranca").val(resultado.formaCobranca);
 		$("#banco").val(resultado.idBanco);
 		
@@ -363,10 +346,25 @@
 		
 		$("#instrucoes").val(resultado.instrucoes);
 
-		$("#acumulaDivida").val(resultado.acumulaDivida);
-		$("#vencimentoDiaUtil").val(resultado.vencimentoDiaUtil);
-		$("#unificada").val(resultado.unificada);
-		$("#envioEmail").val(resultado.envioEmail);
+		$("#acumulaDivida").val(0);
+		$("#vencimentoDiaUtil").val(0);
+		$("#unificada").val(0);
+		$("#envioEmail").val(0);
+		
+		if (resultado.acumulaDivida){
+		    $("#acumulaDivida").val(1);
+		}
+		if (resultado.vencimentoDiaUtil){
+		    $("#vencimentoDiaUtil").val(1);
+		}
+		if (resultado.unificada){
+		    $("#unificada").val(1);
+		}    
+		if (resultado.envioEmail){
+		    $("#envioEmail").val(1);
+		}
+		
+		$("#diaDoMes").val(resultado.diaDoMes);
 		
 		$("#principal").val(resultado.principal);
 		document.formularioParametro.principal.checked = resultado.principal;
@@ -395,6 +393,8 @@
 		opcaoPagto(resultado.tipoCobranca);
 		opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
 		obterFornecedoresUnificados(resultado.fornecedoresId);
+		
+		carregarFormasEmissao(resultado.tipoCobranca,formaEmissao);
 	}
 	
 	//OBTEM FORNECEDORES UNIFICADOS
@@ -406,10 +406,7 @@
 			document.getElementById("fornecedor_"+unificados[i]).checked = true;
 		}
 	}
-	
-	
-	
-	
+
 	
 	
 	//OBTEM FORNECEDORES MARCADOS PELO USUARIO PARA UNIFICÁ-LOS
@@ -423,6 +420,8 @@
 	
 	//INCLUSÃO DE NOVO PARAMETRO
     function postarParametro(novo) {
+		
+    	var telaMensagem="idModal";
 
 		var idPolitica = $("#_idPolitica").val();
 		
@@ -519,17 +518,21 @@
 					   "&parametros.diaDoMes="+diaDoMes+
 					   "&tipoFormaCobranca="+tipoFormaCobranca+
 					   "&"+obterFornecedoresMarcados(),
-					   function(result) {
-				           fecharDialogs();
-						   var tipoMensagem = result.tipoMensagem;
-						   var listaMensagens = result.listaMensagens;
-						   if (tipoMensagem && listaMensagens) {
-						       exibirMensagem(tipoMensagem, listaMensagens);
-					       }
-			               mostrarGridConsulta();
-			           },
-					   null,
-					   true);
+					   function(mensagens) {
+						   fecharDialogs();
+			        	   telaMensagem=null;
+			        	   if (mensagens){
+							   var tipoMensagem = mensagens.tipoMensagem;
+							   var listaMensagens = mensagens.listaMensagens;
+							   if (tipoMensagem && listaMensagens) {
+							       exibirMensagem(tipoMensagem, listaMensagens);
+						       }
+			        	   }
+				           mostrarGridConsulta();
+			            },
+			   			null,
+			   			true,
+			   			telaMensagem);
 		}
 		else{
 			$.postJSON("<c:url value='/distribuidor/parametroCobranca/postarParametroCobranca'/>",
@@ -558,25 +561,24 @@
 					   "&parametros.diaDoMes="+diaDoMes+
 					   "&tipoFormaCobranca="+tipoFormaCobranca+
 					   "&"+obterFornecedoresMarcados(),
-					   function(result) {
-				           fecharDialogs();
-						   var tipoMensagem = result.tipoMensagem;
-						   var listaMensagens = result.listaMensagens;
-						   if (tipoMensagem && listaMensagens) {
-						       exibirMensagem(tipoMensagem, listaMensagens);
-					       }
-			               mostrarGridConsulta();
-			           },
-					   null,
-					   true);
+					   function(mensagens) {
+						   fecharDialogs();
+			        	   telaMensagem=null;
+			        	   if (mensagens){
+							   var tipoMensagem = mensagens.tipoMensagem;
+							   var listaMensagens = mensagens.listaMensagens;
+							   if (tipoMensagem && listaMensagens) {
+							       exibirMensagem(tipoMensagem, listaMensagens);
+						       }
+			        	   }
+				           mostrarGridConsulta();
+			            },
+			   			null,
+			   			true,
+			   			telaMensagem);
 		}
 	}
-	
-	
-	
-	
-	
-	
+
 	
 	
 	//EXCLUI (DESATIVA) UM PARÂMETRO
@@ -586,24 +588,24 @@
 				   data,
 				   function(result) {
 			           fecharDialogs();
-			           mostrarGridConsulta();
-			       },
-			       function(){
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+		               mostrarGridConsulta();
+		           },
+				   function(result) {
 			           fecharDialogs();
-				       mostrarGridConsulta();
-				   },
-				   true
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+		               mostrarGridConsulta();
+		           }
 			       );
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -623,8 +625,6 @@
 		
 		$("#tipoCobranca").val("");
 		
-		carregarFormasEmissao("");
-		
 		$("#formaEmissao").val("");
 		$("#formaCobranca").val("");
 		$("#banco").val("");
@@ -636,11 +636,12 @@
 		
 		$("#instrucoes").val("");
 
-		$("#acumulaDivida").val("");
-		$("#vencimentoDiaUtil").val("");
-		$("#unificada").val("");
-		$("#envioEmail").val("");
+		$("#acumulaDivida").val(0);
+		$("#vencimentoDiaUtil").val(0);
+		$("#unificada").val(0);
+		$("#envioEmail").val(0);
 		
+		$("#diaDoMes").val("");
 		document.formularioParametro.principal.checked = false;
 		document.formularioFormaCobranca.PS.checked = false;
 		document.formularioFormaCobranca.PT.checked = false;
@@ -649,17 +650,11 @@
 		document.formularioFormaCobranca.PSex.checked = false;
 		document.formularioFormaCobranca.PSab.checked = false;
 		document.formularioFormaCobranca.PDom.checked = false;
+		
+		carregarFormasEmissao(null,"");
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
     function montarTrRadioBox(result,name,nameItemIdent) {
@@ -692,52 +687,45 @@
 	    var radioBoxes =  montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
 		$("#fornecedores").html(radioBoxes);
 	}
+
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	function montarComboBox(result,name,onChange) {
+	function montarComboBox(result,name,onChange,selected) {
 
 		var options = "";
 		
 		options += "<select name='"+name+"' id='"+name+"' style='width:150px;' onchange='"+onChange+"'>";
 		options += "<option value=''>Selecione</option>";
 		$.each(result, function(index, row) {
-			options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+			if (selected == row.key.$){
+			    options += "<option selected='true' value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+			}
+			else{
+				options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+			}
 		});
 		options += "</select>";
 		
 		return options;
 	}
 	
-	function carregarFormasEmissao(tipoCobranca){
+	function carregarFormasEmissao(tipoCobranca,selected){
 		var data = [{name: 'tipoCobranca', value: tipoCobranca}];
 		$.postJSON("<c:url value='/distribuidor/parametroCobranca/obterFormasEmissao' />",
 				   data,
-				   sucessCallbackCarregarFormasEmissao,
+				   function(resultado){
+			           criaComponenteFormasEmissao(resultado,selected)
+		           }
+				   ,
 				   null,
 				   true);
 	}
 	
-	function sucessCallbackCarregarFormasEmissao(result) {
-	    var comboFormasEmissao =  montarComboBox(result,"formaEmissao","");
+	function criaComponenteFormasEmissao(result,selected) {
+	    var comboFormasEmissao =  montarComboBox(result,"formaEmissao","",selected);
 		$("#formasEmissao").html(comboFormasEmissao);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	function obterDadosBancarios(idBanco){
@@ -753,13 +741,8 @@
 		$("#taxaMulta").val(result.multa);
 		$("#valorMulta").val(result.vrMulta);
 		$("#taxaJuros").val(result.juros);
-		$("#instrucoes").val(result.intrucoes);
+		$("#instrucoes").val(result.instrucoes);
 	}
-	
-	
-	
-	
-	
 	
 
 	
@@ -786,6 +769,10 @@
 
 <div id="dialog-novo" title="Incluir Forma de Recebimento">
 
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModal" name="messageDialog"/>
+	</jsp:include>
+
     <form id="formularioParametro" name="formularioParametro">
 
 		<table width="809" border="0" cellspacing="2" cellpadding="2">
@@ -804,7 +791,7 @@
 		     <td width="144">Forma de Pagamento:</td>
 		     <td>
 		     
-			      <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);carregarFormasEmissao(this.value);">
+			      <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);carregarFormasEmissao(this.value,'');">
 	                   <option value="">Selecione</option>
 	                   <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
 				          <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
@@ -816,8 +803,8 @@
 		     <td width="204">Acumula Dívida:</td>
 		     <td width="234">
 			     <select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
-			        <option value="true">Sim</option>
-			        <option value="false">Não</option>
+			        <option value="1">Sim</option>
+			        <option value="0">Não</option>
 			     </select>
 		     </td>
 		   </tr>
@@ -839,8 +826,8 @@
 			    <td>Vencimentos somente em dia útil:</td>
 			    <td>
 				    <select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
-				      <option value="true">Sim</option>
-				      <option value="false">Não</option>
+				      <option value="1">Sim</option>
+				      <option value="0">Não</option>
 				    </select>
 			    </td>
 		   </tr>
@@ -855,8 +842,8 @@
 			    <td>Cobrança Unificada:</td>
 			    <td>
 				    <select name="unificada" id="unificada" style="width:80px;">
-				      <option value="true">Sim</option>
-				      <option value="false">Não</option>
+				      <option value="1">Sim</option>
+				      <option value="0">Não</option>
 				    </select>
 			        <br clear="all" />
 			    </td>
@@ -878,8 +865,8 @@
 			    </table></td>
 			    <td width="204">Envio por E-mail:</td>
 			    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
-			      <option value="true">Sim</option>
-			      <option value="false">Não</option>
+			      <option value="1">Sim</option>
+			      <option value="0">Não</option>
 			    </select></td>
 		    </tr>
 		  
@@ -1062,6 +1049,7 @@
               <td colspan="3">
              
               <select name="filtroTipoCobranca" id="filtroTipoCobranca" style="width:150px;">
+                   <option></option>
                    <c:forEach varStatus="counter" var="filtroTipoCobranca" items="${listaTiposCobranca}">
 			          <option value="${filtroTipoCobranca.key}">${filtroTipoCobranca.value}</option>
 			       </c:forEach>
@@ -1073,6 +1061,7 @@
           <td width="450">
           
               <select name="filtroBanco" id="filtroBanco" style="width:150px;">
+                   <option></option>
                    <c:forEach varStatus="counter" var="filtroBanco" items="${listaBancos}">
 			          <option value="${filtroBanco.key}">${filtroBanco.value}</option>
 			       </c:forEach>

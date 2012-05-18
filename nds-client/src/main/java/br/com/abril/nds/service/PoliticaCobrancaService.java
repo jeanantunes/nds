@@ -80,7 +80,7 @@ public interface PoliticaCobrancaService {
 	 * @param diaDoMes
 	 * @return Boolean
 	 */
-	boolean validarFormaCobrancaMensal(Distribuidor distribuidor,TipoCobranca tipoCobranca,
+	boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Integer diaDoMes);
 	
 
@@ -97,7 +97,7 @@ public interface PoliticaCobrancaService {
 	 * @param sabado
 	 * @return Boolean
 	 */
-	boolean validarFormaCobrancaSemanal(Distribuidor distribuidor,TipoCobranca tipoCobranca,
+	boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Boolean domingo, Boolean segunda,
 			Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta,
 			Boolean sabado);
