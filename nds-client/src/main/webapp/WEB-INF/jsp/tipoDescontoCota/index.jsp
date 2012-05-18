@@ -11,12 +11,10 @@
 		$("#descontoProduto").mask("99.99");		
 	});
 	
-	function pesquisar() {
-		
+	function pesquisar() {		
 		var geral = $("#radioGeral").is(":checked");
 		var especifico = $("#radioEspecifico").is(":checked");
-		var produto = $("#radioProduto").is(":checked");
-		
+		var produto = $("#radioProduto").is(":checked");		
 		if(geral){
 			pesquisarDescontoGeral();						
 		}else if(especifico){
@@ -79,28 +77,6 @@
 	}	
 	
 	
-	function popup_geral() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-			
-			 limparTelaCadastro();
-		
-			$( "#dialog-geral" ).dialog({
-				resizable: false,
-				height:230,
-				width:400,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {								
-						novoDescontoGeral();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-	
-
 	function novoDescontoGeral() {
 
 		var descontoGeral = $("#descontoGeral").val();
@@ -149,7 +125,7 @@
 					   if (tipoMensagem && listaMensagens) {
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
-	                   mostrarGridConsulta();
+	                   pesquisar();
 	               },
 				   null,
 				   true);
@@ -157,6 +133,56 @@
 		
 	}
 	
+	function novoDescontoProduto() {
+		
+		var codigo = $("#codigo").val();
+		var produto = $("#produto").val();
+		var edicaoProduto = $("#edicaoProduto").val();
+		var descontoProduto = $("#descontoProduto").val();
+		var dataAlteracaoProduto = $("#dataAlteracaoProduto").val();
+		var usuarioProduto = $("#usuarioProduto").val()
+		
+		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoProduto'/>",
+				   "codigo="+codigo+
+				   "&produto="+ produto +
+				   "&edicaoProduto="+ edicaoProduto +
+				   "&descontoProduto="+ descontoProduto +
+				   "&dataAlteracaoProduto="+ dataAlteracaoProduto +
+				   "&usuarioProduto="+ usuarioProduto,
+				   function(result) {
+			           fecharDialogs();
+					   var tipoMensagem = result.tipoMensagem;
+					   var listaMensagens = result.listaMensagens;
+					   if (tipoMensagem && listaMensagens) {
+					       exibirMensagem(tipoMensagem, listaMensagens);
+				       }
+	                   pesquisar();
+	               },
+				   null,
+				   true);
+		$(".tiposDescEspecificoGrid").flexReload();		
+	}
+	
+	function popup_geral() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		 limparTelaCadastro();
+	
+		$( "#dialog-geral" ).dialog({
+			resizable: false,
+			height:230,
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {								
+					novoDescontoGeral();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
 
 	function popup_especifico() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -191,8 +217,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
+					novoDescontoProduto();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -257,10 +282,18 @@
 	}
 	
 	function limparTelaCadastro() {
+		//Tela Geral
 		$("#descontoGeral").val("");
+		//Tela Especifico
 		$("#cotaEspecifica").val("");
 		$("#nomeEspecifico").val("");
 		$("#descontoEspecifico").val("");
+		//Tela Produto
+		$("#codigo").val("");
+		$("#produto").val("");
+		$("#edicaoProduto").val("");
+		$("#descontoProduto").val("");
+		
 	}
 	
 	function fecharDialogs() {
@@ -336,7 +369,7 @@
 	            </tr>	            
 	            <tr>
 	              <td>Edição:</td>
-	              <td><input type="text" name="textfield5" id="textfield5" style="width:100px;"/></td>
+	              <td><input type="text" name="textfield5" id="edicaoProduto" style="width:100px;"/></td>
 	            </tr>
 	            <tr>
 	              <td>Desconto %:</td>
@@ -344,11 +377,11 @@
 	            </tr>
 	            <tr>
 	              <td>Data Alteração:</td>
-	              <td><input type="text" name="textfield3" id="textfield3" style="width:100px;" disabled="disabled" value="${dataAtual}"/></td>
+	              <td><input type="text" name="textfield3" id="dataAlteracaoProduto" style="width:100px;" disabled="disabled" value="${dataAtual}"/></td>
 	            </tr>
 	            <tr>
 	              <td>Usuário:</td>
-	              <td><input type="text" name="textfield" id="textfield" style="width:230px;" disabled="disabled" value="Junior Fonseca"/></td>
+	              <td><input type="text" name="textfield" id="usuarioProduto" style="width:230px;" disabled="disabled" value="Junior Fonseca"/></td>
 	            </tr>
 	          </table>       
 	

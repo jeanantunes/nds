@@ -158,5 +158,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			String codigoProduto) {
 		return produtoEdicaoRepository.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
 	}
+
+	@Override
+	@Transactional
+	public void alterarProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicaoRepository.alterar(produtoEdicao);		
+	}
 	
 }

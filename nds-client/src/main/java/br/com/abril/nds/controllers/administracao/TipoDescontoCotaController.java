@@ -15,8 +15,11 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.TipoDescontoCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -40,6 +43,9 @@ public class TipoDescontoCotaController {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@SuppressWarnings("unused")
 	private HttpSession httpSession;
@@ -79,6 +85,22 @@ public class TipoDescontoCotaController {
 			atualizarCota(new BigDecimal(descontoEspecifico), cotaParaAtualizar);
 			TipoDescontoCota especifico = popularDescontoParaCadastrar(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, EspecificacaoDesconto.ESPECIFICO);
 			salvarDesconto(especifico);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/novoDescontoProduto")
+	public void novoDescontoProduto(String codigo, String produto, String edicaoProduto, String descontoProduto, String dataAlteracaoProduto, String usuarioProduto){
+		try {
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicaoProduto);
+			produtoEdicao.setDesconto(new BigDecimal(descontoProduto));
+			this.produtoEdicaoService.alterarProdutoEdicao(produtoEdicao);
+			TipoDescontoCota produtoParaSalvar;
+			produtoParaSalvar = popularDescontoParaCadastrar(descontoProduto, dataAlteracaoProduto, usuarioProduto, EspecificacaoDesconto.PRODUTO);
+			salvarDesconto(produtoParaSalvar);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
