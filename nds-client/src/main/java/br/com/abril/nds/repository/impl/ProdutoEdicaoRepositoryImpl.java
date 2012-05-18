@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 
@@ -224,7 +223,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		
 		return query.list();
 	}
-
 	
 	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz) {
 		
@@ -241,5 +239,36 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return (ProdutoEdicao) query.uniqueResult();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long)
+	 */
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento.sequenciaMatriz from Lancamento lancamento ");
+		
+		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+
+		hql.append(" and lancamento.dataLancamentoDistribuidor = ");
+
+		hql.append(" ( ");
+		
+		hql.append(" select max(lancamento.dataRecolhimentoDistribuidor) from Lancamento lancamento  ");
+		
+		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao   ");
+		
+		hql.append(" ) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (Integer) query.uniqueResult();
+	}
+
+	
+	
 	
 }
