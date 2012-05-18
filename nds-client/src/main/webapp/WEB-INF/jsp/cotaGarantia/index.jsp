@@ -191,19 +191,23 @@
 
 			<tr>
 				<td>Imagem Cheque:</td>
-				<td colspan="3"><input name="fileField" type="file"
-					id="fileField" size="58" /></td>
+				<td colspan="3">
+					<form id="cotaGarantiaChequeCaucaoFormUpload" enctype="multipart/form-data">
+						<input name="image" type="file" id="cotaGarantiaChequeCaucaoUpload" size="58" />
+						<input type="submit" value="Enviar"/> 
+					</form>
+				</td>
 			</tr>
 		</table>
 	</fieldset>
 	<br clear="all" /> <br />
-	<fieldset>
-		<legend>Foto Cheque</legend>
-		<br />
-		<div align="center">
-			<img src="" />
-		</div>
-	</fieldset>
+	<div id="cotaGarantiaChequeCaucaoImagemPanel" style="display: none;">
+		<fieldset>
+			<legend>Foto Cheque</legend>
+			<br />
+			<div align="center" id="cotaGarantiaChequeCaucaoImagem"></div>
+		</fieldset>
+	</div>
 </div>
 
 <div id="cotaGarantiaImovelPanel" style="display: none;">
