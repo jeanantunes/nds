@@ -18,13 +18,41 @@
 		if(geral){
 			pesquisarDescontoGeral();						
 		}else if(especifico){
-
+			pesquisarDescontoEspecifico();
 		}else if(produto){
-
+			pesquisarDescontoProduto();
 		}	
 	}
 	
 	function pesquisarDescontoGeral(){
+		var descontoGeral = $("#descontoGeral").val();
+		var dataAlteracao = $("#dataAlteracaoGeral").val();
+		var usuario = $("#textfield24").val();		
+		
+		$(".tiposDescGeralGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
+			params: [],
+		    newp: 1,
+		});
+		
+		$(".tiposDescGeralGrid").flexReload();
+	}
+	
+	function pesquisarDescontoEspecifico(){
+		var descontoGeral = $("#descontoGeral").val();
+		var dataAlteracao = $("#dataAlteracaoGeral").val();
+		var usuario = $("#textfield24").val();		
+		
+		$(".tiposDescGeralGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
+			params: [],
+		    newp: 1,
+		});
+		
+		$(".tiposDescGeralGrid").flexReload();
+	}
+	
+	function pesquisarDescontoProduto(){
 		var descontoGeral = $("#descontoGeral").val();
 		var dataAlteracao = $("#dataAlteracaoGeral").val();
 		var usuario = $("#textfield24").val();		
@@ -411,9 +439,9 @@
                 <td width="585">
                 <div class="especifico">
                 <label style="width:auto!important;">Cota:</label>
-                <input name="" type="text" style="width:80px; float:left;" />
+                <input name="cotaDaPesquisa" id="cotaDaPesquisa" type="text" style="width:80px; float:left;" onchange="cota.pesquisarPorNumeroCota('#cotaDaPesquisa', '#nomeDaCotaDaPesquisa');" />
                 <label style="width:auto!important;">Nome:</label>
-                <input name="" type="text" style="width:160px; float:left;" />
+                <input name="nomeDaCotaDaPesquisa" id="nomeDaCotaDaPesquisa" type="text" style="width:160px; float:left;" />
                 </div>
                 
                 <div class="produto">
