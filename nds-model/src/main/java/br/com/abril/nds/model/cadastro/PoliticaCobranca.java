@@ -197,5 +197,6 @@ public class PoliticaCobranca {
 	public void setFormaEmissao(FormaEmissao formaEmissao) {
 		this.formaEmissao = formaEmissao;
 	}
+
 	
 }
