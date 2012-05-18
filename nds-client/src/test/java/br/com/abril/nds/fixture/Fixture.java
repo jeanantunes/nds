@@ -363,7 +363,6 @@ public class Fixture {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
-		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
