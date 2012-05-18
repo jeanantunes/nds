@@ -7,13 +7,13 @@ import br.com.abril.nds.util.export.Export;
 
 /**
  * 
- * Classe responsÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel por armazenar os valores referente aos registros da
+ * Classe responsável por armazenar os valores referente aos registros da
  * pesquisa de registra de curva ABC do distribuidor.
  * 
  * @author InfoA2
  * 
  */
-public class RegistroCurvaABCDistribuidorVO implements Serializable {
+public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {
 
 	/**
 	 * Serial Version UID
@@ -37,12 +37,6 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 
 	@Export(label = "Faturamento da Capa")
 	private BigDecimal faturamentoCapa;
-
-	@Export(label = "Participação")
-	private BigDecimal participacao;
-
-	@Export(label = "Participação Acumulada")
-	private BigDecimal participacaoAcumulada;
 
 	public RegistroCurvaABCDistribuidorVO() {
 	}
@@ -87,22 +81,6 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 
 	public void setMunicipio(String municipio) {
 		this.municipio = municipio;
-	}
-
-	public BigDecimal getParticipacao() {
-		return participacao;
-	}
-
-	public void setParticipacao(BigDecimal participacaoRegistro) {
-		this.participacao = participacaoRegistro;
-	}
-
-	public BigDecimal getParticipacaoAcumulada() {
-		return participacaoAcumulada;
-	}
-
-	public void setParticipacaoAcumulada(BigDecimal participacaoAcumulada) {
-		this.participacaoAcumulada = participacaoAcumulada;
 	}
 
 	public BigDecimal getVendaExemplares() {

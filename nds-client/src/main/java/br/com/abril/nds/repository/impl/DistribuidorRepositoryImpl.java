@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
+import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -120,7 +123,9 @@ public class DistribuidorRepositoryImpl extends
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 		
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
-		
+
+		hql.append(getOrderQueryObterCurvaABCDistribuidor(filtro));
+
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		HashMap<String, Object> param = getParametrosObterCurvaABCDistribuidor(filtro);
@@ -140,46 +145,10 @@ public class DistribuidorRepositoryImpl extends
 			}
 		}
 		
-		return complementarCurvaABCDistribuidor(query.list());
+		return complementarCurvaABCDistribuidor(getOrderObterCurvaABCDistribuidor(query.list(), filtro));
 
 	}
 
-	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
-		
-		BigDecimal participacaoTotal = new BigDecimal(0);
-		
-		// Soma todos os valores de participacao
-		for (RegistroCurvaABCDistribuidorVO registro : lista) {
-			participacaoTotal.add(registro.getFaturamentoCapa());
-		}
-
-		BigDecimal participacaoRegistro = new BigDecimal(0);
-		BigDecimal participacaoAcumulada = new BigDecimal(0);
-		
-		RegistroCurvaABCDistribuidorVO registro = null;
-		
-		// Verifica o percentual dos valores em relacao ao total de participacao
-		for (int i=0; i<lista.size(); i++) {
-			
-			registro = (RegistroCurvaABCDistribuidorVO) lista.get(i);
-			
-			// Partipacao do registro em relacao a participacao total no periodo
-			if ( participacaoTotal.doubleValue() != 0 ) {
-				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
-			}
-			registro.setParticipacao(participacaoRegistro);
-			
-			participacaoAcumulada.add(participacaoRegistro);
-			registro.setParticipacaoAcumulada(participacaoAcumulada);
-			
-			// Substitui o registro pelo registro atualizado (com participacao total)
-			lista.set(i, registro);
-			
-		}
-		
-		return lista;
-	}
-	
 	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -187,7 +156,7 @@ public class DistribuidorRepositoryImpl extends
 		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
 		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
 		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos as enderecos ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
 		.append(" LEFT JOIN enderecos.endereco AS endereco ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
@@ -227,7 +196,7 @@ public class DistribuidorRepositoryImpl extends
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
 			hql.append("AND endereco.cidade = :municipio ");
 		}
-		
+
 		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
 			.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
 			.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
@@ -237,6 +206,44 @@ public class DistribuidorRepositoryImpl extends
 		
 	}
 
+	private String getOrderQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		if (filtro.getOrdenacaoColuna() != null) {
+			switch (filtro.getOrdenacaoColuna()) {
+				case COTA:
+					hql.append(" order by estoqueProdutoCota.cota.numeroCota ");
+					break;
+				case NOME:
+					hql.append(" order by case when (pessoa.nome is not null) then ( pessoa.nome ) ")
+					.append("     when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ")
+					.append("     else null end ");
+					break;
+				case MUNICIPIO:
+					hql.append(" order by endereco.cidade ");
+					break;
+				case QTDEPDV:
+					hql.append(" order by case when sum(pdv) is null then 0 else sum(pdv) end ");
+					break;
+				case VENDA_EXEMPLARES:
+					hql.append(" order by (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
+					break;
+				case FATURAMENTO:
+					hql.append(" order by ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ");
+					break;
+				default:
+					hql.append(" by estoqueProdutoCota.cota.numeroCota ");
+					break;
+			}
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+			}	
+		}		
+		
+		return hql.toString();
+	}
+	
 	/**
 	 * Retorna os parametros da consulta de dividas.
 	 * @param filtro
@@ -283,5 +290,56 @@ public class DistribuidorRepositoryImpl extends
 
 		return param;
 	}
+
+	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
+		
+		BigDecimal participacaoTotal = new BigDecimal(0);
+		
+		// Soma todos os valores de participacao
+		for (RegistroCurvaABCDistribuidorVO registro : lista) {
+			participacaoTotal.add(registro.getFaturamentoCapa());
+		}
+
+		BigDecimal participacaoRegistro = new BigDecimal(0);
+		BigDecimal participacaoAcumulada = new BigDecimal(0);
+		
+		RegistroCurvaABCDistribuidorVO registro = null;
+		
+		// Verifica o percentual dos valores em relação ao total de participacao
+		for (int i=0; i<lista.size(); i++) {
+			
+			registro = (RegistroCurvaABCDistribuidorVO) lista.get(i);
+			
+			// Partipacao do registro em relacao a participacao total no periodo
+			if ( participacaoTotal.doubleValue() != 0 ) {
+				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
+			}
+			registro.setParticipacao(participacaoRegistro);
+			
+			participacaoAcumulada.add(participacaoRegistro);
+			registro.setParticipacaoAcumulada(participacaoAcumulada);
+			
+			// Substitui o registro pelo registro atualizado (com participacao total)
+			lista.set(i, registro);
+			
+		}
+		
+		return lista;
+	}
 	
+	private List<RegistroCurvaABCDistribuidorVO> getOrderObterCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista, FiltroCurvaABCDistribuidorDTO filtro) {
+		
+		if (filtro.getOrdenacaoColuna() != null) {
+			switch (filtro.getOrdenacaoColuna()) {
+				case PARTICIPACAO:
+					Collections.sort(lista, new CurvaABCParticipacaoComparator());
+				case PARTICIPACAO_ACUMULADA:
+					Collections.sort(lista, new CurvaABCParticipacaoAcumuladaComparator());
+				default:
+					break;
+			}
+		}
+		return lista;
+	}
+
 }

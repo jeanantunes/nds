@@ -1,25 +1,32 @@
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>NDS - Novo Distrib</title>
-
+<title>Relatório de Vendas</title>
+<style type="text/css">
+.linhaCota, .linhaProduto{display:none;}
+.filtro label{width:auto!important; margin-bottom: 0px!important;  margin-top: 4px!important; margin-left: 0px!important; margin-right: 0px;!important}
+</style>
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
-
 <script language="javascript" type="text/javascript">
+
 	$(function() {
-		$("#datepickerDe")
-				.datepicker(
-						{
-							showOn : "button",
-							buttonImage : "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-							buttonImageOnly : true
-						});
-		$("#datepickerAte")
-				.datepicker(
-						{
-							showOn : "button",
-							buttonImage : "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-							buttonImageOnly : true
-						});
+		$("#datepickerDe").datepicker({
+			showOn : "button",
+			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat: 'dd/mm/yy',
+			defaultDate: new Date()
+		});
+		
+		$("#datepickerDe").mask("99/99/9999");
+	
+		$("#datepickerAte").datepicker({
+			showOn : "button",
+			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat: 'dd/mm/yy',
+			defaultDate: new Date()
+		});
+		
+		$("#datepickerAte").mask("99/99/9999");
 	});
 
 	function pesquisar() {
@@ -180,21 +187,17 @@
 
 		<fieldset class="classFieldset">
 			<legend> Relatório de Vendas</legend>
-			<table width="950" border="0" cellpadding="2" cellspacing="1"
-				class="filtro">
+			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="20"><input type="radio" name="filtro"
 						id="filtro_distrib" onclick="mostra_distrib();" value="radio" /></td>
-					<td colspan="3"><label for="filtro_distrib">Curva ABC
-							Distribuidor</label></td>
+					<td colspan="3"><label for="filtro_distrib">Curva ABC Distribuidor</label></td>
 					<td width="20"><input type="radio" name="filtro"
 						id="filtro_editor" value="radio" onclick="mostra_editor();" /></td>
-					<td width="94"><label for="filtro_editor">Curva ABC
-							Editor</label></td>
+					<td width="94"><label for="filtro_editor">Curva ABC Editor</label></td>
 					<td width="20"><input type="radio" name="filtro"
 						id="filtro_produto" onclick="mostra_produto();" value="radio" /></td>
-					<td width="114"><label for="filtro_produto">Curva ABC
-							Produto</label></td>
+					<td width="114"><label for="filtro_produto">Curva ABC Produto</label></td>
 					<td width="21" align="right"><input type="radio" name="filtro"
 						id="filtro_cota" value="radio" onclick="mostra_cota();" /></td>
 					<td width="90"><label for="filtro_cota">Curva ABC Cota</label></td>
@@ -549,7 +552,7 @@
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -690,21 +693,15 @@
 		});
 		
 		function executarPreProcessamento(resultado) {
-			
 			if (resultado.mensagens) {
-
 				exibirMensagem(
 					resultado.mensagens.tipoMensagem, 
 					resultado.mensagens.listaMensagens
 				);
-				
 				$(".grids").hide();
-
 				return resultado;
 			}
-			
 			$(".grids").show();
-			
 			return resultado;
 		}
 		
