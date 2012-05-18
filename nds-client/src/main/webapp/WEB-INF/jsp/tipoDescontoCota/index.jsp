@@ -5,13 +5,11 @@
 
 <script language="javascript" type="text/javascript">
 
-	$(function() {
-		
+	$(function() {		
 		$("#produto").autocomplete({source: ""});		
-		$("#descontoGeral").mask("99,99");
-		$("#descontoEspecifico").mask("99,99");
-		$("#descontoProduto").mask("99,99");
-		
+		$("#descontoGeral").mask("99.99");
+		$("#descontoEspecifico").mask("99.99");
+		$("#descontoProduto").mask("99.99");		
 	});
 	
 	function buscarNomeProduto(){
@@ -65,7 +63,6 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-
 						var geral = $("#radioGeral").is(":checked");
 						var especifico = $("#radioEspecifico").is(":checked");
 						var produto = $("#radioProduto").is(":checked");
@@ -75,10 +72,7 @@
 							
 						}else if(produto){
 							
-						}						
-
-						novoDesconto();
-						
+						}	
 
 					},
 					"Cancelar": function() {
@@ -106,10 +100,12 @@
 					   if (tipoMensagem && listaMensagens) {
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
-	                   mostrarGridConsulta();
+					   pesquisar();
 	               },
 				   null,
 				   true);
+
+		$(".tiposDescGeralGrid").flexReload();
 		
 	}
 	
@@ -245,7 +241,7 @@
 
 			return resultado;
 		}
-		/*
+		
 		$.each(resultado.rows, function(index, row) {
 			
 			var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
@@ -258,7 +254,7 @@
 			
 			row.cell.acao = linkAprovar + linkRejeitar;
 		});
-		*/
+		
 		$(".grids").show();
 		
 		return resultado;
@@ -364,11 +360,11 @@
    	    <legend> Pesquisar Tipo de Desconto Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostra_geral();" /></td>
+              <td width="20"><input type="radio" name="radio" id="radioGeral" value="radio" onclick="mostra_geral();" /></td>
                 <td width="47">Geral</td>
-                <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="mostra_especifico();"  /></td>
+                <td width="20"><input type="radio" name="radio" id="radioEspecifico" value="radio" onclick="mostra_especifico();"  /></td>
                 <td width="65">Específico</td>
-                <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="mostra_produto();"  /></td>
+                <td width="20"><input type="radio" name="radio" id="radioProduto" value="radio" onclick="mostra_produto();"  /></td>
                 <td width="48">Produto</td>
                 <td width="585">
                 <div class="especifico">

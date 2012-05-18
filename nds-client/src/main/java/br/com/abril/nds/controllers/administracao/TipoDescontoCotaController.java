@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.TipoDescontoCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -36,6 +37,9 @@ public class TipoDescontoCotaController {
 	
 	@Autowired
 	private TipoDescontoCotaService tipoDescontoCotaService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@SuppressWarnings("unused")
 	private HttpSession httpSession;
@@ -61,8 +65,8 @@ public class TipoDescontoCotaController {
 	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){
 		try {
 			TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
-			Long parseDesconto = Long.parseLong(desconto);
-			tipoDescontoCota.setDesconto(new BigDecimal(parseDesconto));
+			BigDecimal descontoFormatado = new BigDecimal(Double.parseDouble(desconto));
+			tipoDescontoCota.setDesconto(new BigDecimal(Double.parseDouble(desconto)));
 			SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 			Date dataFormatada;
 			dataFormatada = sdf.parse(dataAlteracao);
@@ -70,7 +74,7 @@ public class TipoDescontoCotaController {
 			tipoDescontoCota.setUsuario(usuario);
 			tipoDescontoCota.setEspecificacaoDesconto(EspecificacaoDesconto.GERAL);
 			
-			atualizarDistribuidor(parseDesconto);
+			atualizarDistribuidor(descontoFormatado);
 
 			this.tipoDescontoCotaService.incluirDescontoGeral(tipoDescontoCota);		
 
@@ -79,11 +83,9 @@ public class TipoDescontoCotaController {
 		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
-		
-
 	}
 	
-	private void atualizarDistribuidor(Long desconto) {
+	private void atualizarDistribuidor(BigDecimal desconto) {
 		this.tipoDescontoCotaService.atualizarDistribuidores(desconto);
 	}
 	
@@ -93,13 +95,13 @@ public class TipoDescontoCotaController {
 		
 		Cota cotaParaAtualizar = this.tipoDescontoCotaService.obterCota(Integer.parseInt(cotaEspecifica));
 		
-		atualizarCota(descontoEspecifico);
+		atualizarCota(descontoEspecifico, cotaParaAtualizar);
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
 	
-	private void atualizarCota(Long descontoEspecifico) {
+	private void atualizarCota(Long descontoEspecifico, Cota cotaParaAtualizar) {
 		
 	}
 

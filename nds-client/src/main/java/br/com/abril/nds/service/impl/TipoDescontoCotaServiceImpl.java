@@ -39,10 +39,10 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 	
 	@Transactional
 	@Override
-	public void atualizarDistribuidores(Long desconto) {
+	public void atualizarDistribuidores(BigDecimal desconto) {
 		List<Distribuidor> listaDeDistribuidores = this.distribuidorRepository.buscarTodos();
 		for(Distribuidor dist: listaDeDistribuidores){
-			dist.setFatorDesconto(new BigDecimal(desconto));
+			dist.setFatorDesconto(desconto);
 			this.distribuidorRepository.alterar(dist);
 		}
 	}

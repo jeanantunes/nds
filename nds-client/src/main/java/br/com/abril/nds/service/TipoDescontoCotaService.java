@@ -1,4 +1,5 @@
 package br.com.abril.nds.service;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
@@ -15,7 +16,7 @@ public interface TipoDescontoCotaService {
 
 	void incluirDescontoGeral(TipoDescontoCota tipoDescontoCota);
 	
-	void atualizarDistribuidores(Long desconto);
+	void atualizarDistribuidores(BigDecimal desconto);
 	
 	List<TipoDescontoCotaVO> obterTipoDescontoGeral();
 
