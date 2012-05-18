@@ -193,7 +193,6 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select lancamento ");
 		
 		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
-						
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -239,6 +238,16 @@ public class LancamentoRepositoryImpl extends
 			order =  "lancamento.dataRecolhimentoPrevista";
 		} else {
 			return "";
+		}
+		
+		if ("".equals(order)) {
+			
+			return "";
+		}
+		
+		if (ascOrDesc == null) {
+			
+			ascOrDesc = Ordenacao.ASC;
 		}
 		
 		return " order by " + order + " " + ascOrDesc + " " ;

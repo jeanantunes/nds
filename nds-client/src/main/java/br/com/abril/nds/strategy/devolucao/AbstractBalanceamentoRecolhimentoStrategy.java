@@ -331,7 +331,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			return;
 		}
 		
-		Long sequencia = 1L;
+		Integer sequencia = 1;
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {

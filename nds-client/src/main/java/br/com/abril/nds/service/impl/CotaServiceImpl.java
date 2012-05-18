@@ -29,6 +29,8 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
+import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
@@ -52,6 +54,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
@@ -132,6 +135,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private SocioCotaRepository socioCotaRepository;
+	
+	@Autowired
+	private HistoricoNumeroCotaRepository historicoNumeroCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -484,8 +490,7 @@ public class CotaServiceImpl implements CotaService {
 		return null;
 	}
 
-	
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Cota> obterCotaAssociadaFiador(Long idFiador){
@@ -719,8 +724,6 @@ public class CotaServiceImpl implements CotaService {
 		
 		validarParametrosObrigatoriosCota(cotaDto);
 		
-		//validarNovoNumeroCota(cotaDto.getNumeroCota());
-		
 		validarFormatoDados(cotaDto);
 		
 		validarHistoricoCotaBase(cotaDto);
@@ -739,6 +742,8 @@ public class CotaServiceImpl implements CotaService {
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 			incluirPDV = true;
 		}
+		
+		processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
 		
 	    cota.setNumeroCota(cotaDto.getNumeroCota());
 	    
@@ -932,15 +937,20 @@ public class CotaServiceImpl implements CotaService {
 			}
 		}
 		
-		if (baseReferenciaCota == null ){
-			baseReferenciaCota = new BaseReferenciaCota();    
+		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
+			
+			if (baseReferenciaCota == null ){
+				baseReferenciaCota = new BaseReferenciaCota();    
+			}
+			
+			baseReferenciaCota.setInicioPeriodo(cotaDto.getInicioPeriodo());
+		    baseReferenciaCota.setFinalPeriodo(cotaDto.getFimPeriodo());
+		    baseReferenciaCota.setCota(cota);
+		    
+		    baseReferenciaCota = baseReferenciaCotaRepository.merge(baseReferenciaCota);
 		}
 		
-		baseReferenciaCota.setInicioPeriodo(cotaDto.getInicioPeriodo());
-	    baseReferenciaCota.setFinalPeriodo(cotaDto.getFimPeriodo());
-	    baseReferenciaCota.setCota(cota);
-	    
-	    return  baseReferenciaCotaRepository.merge(baseReferenciaCota); 
+	    return  baseReferenciaCota;
 		
 	}
 	
@@ -1056,7 +1066,7 @@ public class CotaServiceImpl implements CotaService {
 	 * 
 	 * @param numeroCota - número da nova cota
 	 */
-	private void validarNovoNumeroCota(Integer numeroCota){
+	private void processarNovoNumeroCota(Integer numeroCota, Long idCota){
 		
 		Cota cota  = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
@@ -1064,15 +1074,56 @@ public class CotaServiceImpl implements CotaService {
 			
 			if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
 				
-				if(!isNumeroCotaValido(numeroCota)){
+				if(!isParametroDistribuidoNumeroCotaValido(numeroCota)){
 
-					throw new ValidacaoException(TipoMensagem.WARNING,"Código da cota está inativo mas não pode ser usado.");
+					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser usado.");
+				}
+				else{
+				   //Alterar Numero Cota e registra histoico
+					alteraNumeroCota(cota);
 				}
 			}
 			else{
-				throw new ValidacaoException(TipoMensagem.WARNING,"Código da cota não pode ser utilizado.");
+				//Verifica se é edicao da cota
+				if(!cota.getId().equals(idCota)){
+					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
+				}
 			}	
 		}
+	}
+	
+	private void alteraNumeroCota(Cota cota){
+		
+		Integer novoNumeroCota = getNovoNumeroCota(cota.getNumeroCota(), null,1);
+		
+		Integer numeroCotaAntigo = cota.getNumeroCota();
+		
+		cota.setNumeroCota(novoNumeroCota);
+		cotaRepository.merge(cota);
+		
+		HistoricoNumeroCotaPK pk = new HistoricoNumeroCotaPK();
+		pk.setDataAlteracao(new Date());
+		pk.setIdCota(cota.getId());
+		
+
+		HistoricoNumeroCota historicoNumeroCota = new HistoricoNumeroCota();
+		historicoNumeroCota.setNumeroCota(numeroCotaAntigo);
+		historicoNumeroCota.setPk(pk);
+		
+		historicoNumeroCotaRepository.merge(historicoNumeroCota);
+		
+	}
+	
+	private Integer getNovoNumeroCota(Integer numeroCota, Integer novoNumeroCota ,Integer numero){
+		
+		Cota cota  = cotaRepository.obterPorNumerDaCota( (novoNumeroCota == null) ?numeroCota :novoNumeroCota);
+		
+		if(cota != null){
+			novoNumeroCota = numero * 10000 + numeroCota;
+			return getNovoNumeroCota(numeroCota,novoNumeroCota, ++numero);
+		}
+		
+		return novoNumeroCota;
 	}
 	
 	/**
@@ -1082,7 +1133,7 @@ public class CotaServiceImpl implements CotaService {
 	 * 
 	 * @return boolean
 	 */
-	private boolean isNumeroCotaValido(Integer  numeroCota){
+	private boolean isParametroDistribuidoNumeroCotaValido(Integer  numeroCota){
 		
 		HistoricoSituacaoCota histCota  = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
 		
@@ -1094,7 +1145,7 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
 	    
-	    Long qntDiasDistribuidor = distribuidor.getQntDiasReutilizacaoCodigoCota();
+	    Long qntDiasDistribuidor =  (distribuidor.getQntDiasReutilizacaoCodigoCota() == null)?0:distribuidor.getQntDiasReutilizacaoCodigoCota();
 	    
 		return (qntDiasInativo > qntDiasDistribuidor );
 	}

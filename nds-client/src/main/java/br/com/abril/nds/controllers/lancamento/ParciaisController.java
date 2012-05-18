@@ -10,11 +10,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.financeiro.InadimplenciaController.RodapeDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
-import br.com.abril.nds.dto.StatusDividaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -27,13 +24,12 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;

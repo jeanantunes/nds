@@ -103,17 +103,8 @@ public class CotaController {
 		this.financeiroController.preCarregamento();
 		this.pdvController.preCarregamento();
 	}
-
-	@Post
-	public void novaCota() { 
-
-		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
-
-		this.result.nothing();
-	}
 	
-	@Post
-	public void editarCota(Long idCota) { 
+	private void carregarDadosEndereETelefone(Long idCota) { 
 
 		if (idCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
@@ -136,22 +127,8 @@ public class CotaController {
 		}
 		
 		this.session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
-		
-		this.result.nothing();
 	}
-	
 
-	@Post
-	public void salvarCota(Long idCota) {
-
-		processarEnderecosCota(idCota);
-		
-		processarTelefonesCota(idCota);
-		
-		this.result.nothing();
-	}
-	
-	
 	@SuppressWarnings("unchecked")
 	private void processarEnderecosCota(Long idCota) {
 
@@ -165,9 +142,7 @@ public class CotaController {
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 	}
-	
-	
-	
+
 	private void processarTelefonesCota(Long idCota){
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
@@ -282,8 +257,8 @@ public class CotaController {
 	
 	@Post
 	public void cancelar(){
-		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
-		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		limparDadosSession();
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
@@ -320,6 +295,8 @@ public class CotaController {
 	@Path("/incluirNovoCNPJ")
 	public void prepararDadosInclusaoCota(){
 		
+		limparDadosSession();
+		
 		DadosCotaVO dadosCotaVO = new DadosCotaVO();
 	
 		dadosCotaVO.setNumeroSugestaoCota(cotaService.gerarNumeroSugestaoCota());	
@@ -355,12 +332,16 @@ public class CotaController {
 		Long idCota = cotaService.salvarCota(cotaDTO);
 		cotaDTO.setIdCota(idCota);
 		
-		result.use(Results.json()).from(cotaDTO, "result").serialize();
+		carregarDadosEndereETelefone(idCota);
+		
+		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 
 	@Post
 	@Path("/editar")
 	public void editar(Long idCota){
+		
+		carregarDadosEndereETelefone(idCota);
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
@@ -396,7 +377,8 @@ public class CotaController {
 			fornecedorService.salvarFornecedorCota(fornecedores, idCota);
 		}
 		
-		this.result.use(Results.json()).from("", "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	
@@ -417,7 +399,8 @@ public class CotaController {
 			cotaService.salvarDescontosCota(descontos, idCota);
 		}
 		
-		this.result.use(Results.json()).from("", "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
@@ -426,7 +409,8 @@ public class CotaController {
 		
 		processarEnderecosCota(idCota);
 		
-		this.result.use(Results.json()).from("", "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
@@ -435,7 +419,8 @@ public class CotaController {
 		
 		processarTelefonesCota(idCota);
 		
-		this.result.use(Results.json()).from("", "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
@@ -662,7 +647,8 @@ public class CotaController {
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
-		this.result.use(Results.json()).from("", "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
 	/**
@@ -679,6 +665,16 @@ public class CotaController {
 		}
 		
 		return itens;
+	}
+	
+	private void limparDadosSession(){
+		
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_EXIBICAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 	}
 }
 

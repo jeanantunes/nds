@@ -331,63 +331,63 @@ $(function() {
       <div class="linha_separa_fields">&nbsp;</div>
 
 <!-- PESQUISA DE LANCAMENTOS PARCIAIS -->
-<fieldset id="painelLancamentos" class="classFieldset" style="display:none">
-       	  <legend>Parciais Cadastradas</legend>
-       
-        	
-        	<table class="parciaisGrid"></table>
-            
-<div id="exportacao">
-            
-            <span class="bt_novos" title="Gerar Arquivo">
-            
-<!-- ARQUIVO EXCEL -->
-<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS">
-		
-		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-		</span>
-
-		<span class="bt_novos" title="Imprimir">
-
+<fieldset id="painelLancamentos" class="classFieldset" style="display:block">
+	       	  <legend>Parciais Cadastradas</legend>
+	       
+	        	
+	        	<table class="parciaisGrid"></table>
+	            
+	<div id="exportacao">
+	            
+	            <span class="bt_novos" title="Gerar Arquivo">
+	            
+	<!-- ARQUIVO EXCEL -->
+	<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS">
+			
+			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			</span>
 	
-<!-- IMPRIMIR PDF -->	
-<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF">
-
-		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-		</span>
-        
-</div>           
+			<span class="bt_novos" title="Imprimir">
+	
+		
+	<!-- IMPRIMIR PDF -->	
+	<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF">
+	
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+			</span>
+	        
+	</div>           
            
 </fieldset>
 
 
 <!-- PESQUISA DE PERIODOS PARCIAIS -->
-<fieldset id="painelPeriodos" class="classFieldset" style="display:block">
-       	  <legend>Períodos Cadastrados</legend>
-               	
-        	<table align="center" class="periodosGrid"></table>
-            
-<div id="exportacaoPeriodos">
-            
-            <span class="bt_novos" title="Gerar Arquivo">
-            
-<!-- ARQUIVO EXCEL -->
-<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
-		
-		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-		</span>
-
-		<span class="bt_novos" title="Imprimir">
-
+<fieldset id="painelPeriodos" class="classFieldset" style="display:none">
+	       	  <legend>Períodos Cadastrados</legend>
+	               	
+	        	<table align="center" class="periodosGrid"></table>
+	            
+	<div id="exportacaoPeriodos">
+	            
+	            <span class="bt_novos" title="Gerar Arquivo">
+	            
+	<!-- ARQUIVO EXCEL -->
+	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+			
+			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			</span>
 	
-<!-- IMPRIMIR PDF -->	
-<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
-
-		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-		</span>
-        
-</div>           
-           
+			<span class="bt_novos" title="Imprimir">
+	
+		
+	<!-- IMPRIMIR PDF -->	
+	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+	
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+			</span>
+	        
+	</div>           
+	           
 </fieldset>
 
       <div class="linha_separa_fields">&nbsp;</div>
@@ -469,37 +469,37 @@ $(".periodosGrid").flexigrid($.extend({},{
 	colModel : [ {
 			display : 'Período',
 			name : 'periodo',
-			width : 40,
+			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Data Lançamento',
-			name : 'dtLancamento',
-			width : 90,
+			name : 'dataLancamento',
+			width : 130,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Data Recolhimento',
-			name : 'dtRecolhimento',
-			width : 100,
+			name : 'dataRecolhimento',
+			width : 130,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 45,
+			width : 50,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Encalhe',
 			name : 'encalhe',
-			width : 45,
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Vendas',
-			name : 'venda',
-			width : 60,
+			name : 'vendas',
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -511,13 +511,13 @@ $(".periodosGrid").flexigrid($.extend({},{
 		}, {
 			display : '% Venda',
 			name : 'percVenda',
-			width : 50,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 65,
+			width : 75,
 			sortable : false,
 			align : 'center'
 		}],
