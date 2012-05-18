@@ -18,6 +18,8 @@ public interface TipoDescontoCotaService {
 	void atualizarDistribuidores(BigDecimal desconto);
 	
 	List<TipoDescontoCotaVO> obterTipoDescontoGeral();
+
+	int obterUltimoSequencial();
 	
 }
 	

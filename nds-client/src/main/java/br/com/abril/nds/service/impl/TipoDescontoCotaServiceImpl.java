@@ -57,9 +57,16 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 					  Constantes.DATE_PATTERN_PT_BR));
 			vo.setDesconto(desconto.getDesconto().toString());
 			vo.setUsuario(desconto.getUsuario());
+			vo.setSeq(desconto.getSequencial().toString());
 			listaVO.add(vo);
 		}		
 		return listaVO;
+	}
+
+	@Override
+	@Transactional
+	public int obterUltimoSequencial() {		
+		return this.tipoDescontoCotaRepository.obterSequencial();
 	}
 
 }

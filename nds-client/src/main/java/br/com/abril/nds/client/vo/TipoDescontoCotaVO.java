@@ -14,6 +14,9 @@ public class TipoDescontoCotaVO {
 	
 	@Export(label = "Usuário")
 	private String usuario;
+	
+	@Export(label = "")
+	private String seq;
 
 	public String getId() {
 		return id;
@@ -46,5 +49,14 @@ public class TipoDescontoCotaVO {
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
+
+	public String getSeq() {
+		return seq;
+	}
+
+	public void setSeq(String seq) {
+		this.seq = seq;
+	}
+	
 
 }

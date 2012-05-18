@@ -73,10 +73,23 @@
 				function(result){
 					if (result){
 						$("#produto").val(result);	
-						$("#descontoProduto").focus();
+						$("#edicaoProduto").focus();
 					} else {
 						$("#produto").val("");
 						$("#produto").focus();
+					}
+				}
+			);
+		}else if ($("#codigoPesquisa").val().length > 0){
+			var data = "codigoProduto=" + $("#codigoPesquisa").val();
+			$.postJSON("<c:url value='/lancamento/furoProduto/buscarNomeProduto'/>", data,
+				function(result){
+					if (result){
+						$("#produtoPesquisa").val(result);	
+						$("#produtoPesquisa").focus();
+					} else {
+						$("#produtoPesquisa").val("");
+						$("#produtoPesquisa").focus();
 					}
 				}
 			);
@@ -446,9 +459,9 @@
                 
                 <div class="produto">
                 <label style="width:auto!important;">Código:</label>
-                <input name="" type="text" style="width:80px; float:left;" />
+                <input name="codigoPesquisa" id="codigoPesquisa" type="text" style="width:80px; float:left;" onblur="buscarNomeProduto();" />
                 <label style="width:auto!important;">Produto:</label>
-                <input name="" type="text" style="width:160px; float:left;" />
+                <input name="produtoPesquisa" id="produtoPesquisa" type="text" style="width:160px; float:left;" />
                 </div>
                 </td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>

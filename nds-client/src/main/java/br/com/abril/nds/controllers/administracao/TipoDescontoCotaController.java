@@ -17,7 +17,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.TipoDescontoCotaService;
@@ -153,6 +152,12 @@ public class TipoDescontoCotaController {
 	}
 	
 	private void salvarDesconto(TipoDescontoCota tipoDescontoCota) {
+		if(tipoDescontoCota.getEspecificacaoDesconto().equals(EspecificacaoDesconto.GERAL)){
+			int sequencial = this.tipoDescontoCotaService.obterUltimoSequencial();
+			tipoDescontoCota.setSequencial(sequencial + 1);
+		}else{
+			tipoDescontoCota.setSequencial(0);
+		}
 		this.tipoDescontoCotaService.incluirDesconto(tipoDescontoCota);
 	}
 

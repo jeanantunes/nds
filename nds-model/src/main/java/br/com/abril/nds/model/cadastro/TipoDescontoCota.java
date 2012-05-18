@@ -43,6 +43,9 @@ public class TipoDescontoCota implements Serializable {
 	@Column(name = "ESPECIFICAO_DESCONTO", nullable = false)
 	private EspecificacaoDesconto especificacaoDesconto;
 	
+	@Column(name="SEQUENCIAL")
+	private Integer sequencial;
+	
 	public Long getId() {
 		return id;
 	}
@@ -82,4 +85,13 @@ public class TipoDescontoCota implements Serializable {
 	public void setEspecificacaoDesconto(EspecificacaoDesconto especificacaoDesconto) {
 		this.especificacaoDesconto = especificacaoDesconto;
 	}
+
+	public Integer getSequencial() {
+		return sequencial;
+	}
+
+	public void setSequencial(Integer sequencial) {
+		this.sequencial = sequencial;
+	}
+
 }

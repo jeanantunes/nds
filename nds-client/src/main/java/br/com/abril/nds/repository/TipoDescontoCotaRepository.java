@@ -10,6 +10,6 @@ import br.com.abril.nds.model.cadastro.TipoDescontoCota;
  */
 public interface TipoDescontoCotaRepository extends Repository<TipoDescontoCota,Long>{
 
-	
+	int obterSequencial();	
 	
 }
