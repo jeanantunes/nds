@@ -577,7 +577,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" left join ");
 		sql.append(" CHAMADA_ENCALHE chamadaEncalhe  ");
 		sql.append(" on chamadaEncalhe.PRODUTO_EDICAO_ID=produtoEdicao.ID  ");
-		sql.append(" inner join ");
+		sql.append(" left join ");
 		sql.append(" LANCAMENTO_PARCIAL lancamentoParcial  ");
 		sql.append(" on lancamentoParcial.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		sql.append(" inner join ");
