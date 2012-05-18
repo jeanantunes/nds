@@ -312,14 +312,29 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
-	
+	/**
+	 * Retona a quantidade de dias que a dataOperacao é maior que a dataRecolhimentoDistribuidor mais 1.
+	 * Caso a dataOperacao seja menor que a dataRecolhimentoDistribuidor retornará null. 
+	 * 
+	 * @param dataRecolhimentoDistribuidor
+	 * 
+	 * @return Integer
+	 */
 	private Integer obterQtdeDiaAposDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
-		return null;
+		if(dataOperacao.compareTo(dataRecolhimentoDistribuidor) < 0 ) {
+			return null;
+		}
+		
+		Long qtde = DateUtil.obterDiferencaDias(dataRecolhimentoDistribuidor, dataOperacao);
+		
+		Integer posicaoDia = (qtde.intValue() + 1);
+		
+		return posicaoDia;
 		
 	}
 	
@@ -366,6 +381,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
 			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
 			produtoEdicaoDTO.setDia(dia);
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
+			
 			
 			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
@@ -418,6 +435,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
 			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
 			produtoEdicaoDTO.setDia(dia);
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 			
 			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
@@ -471,6 +489,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
 			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
 			produtoEdicaoDTO.setDia(dia);
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 			
 			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
