@@ -144,7 +144,16 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		if (idsEndereco != null && !idsEndereco.isEmpty()){
 			
-			this.enderecoRepository.removerEnderecos(idsEndereco);
+			try{
+				
+				this.enderecoRepository.removerEnderecos(idsEndereco);
+				
+			}catch (RuntimeException e) {
+				
+				if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+					throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão de endereço não permitida, registro possui dependências!");
+				}
+			}
 		}
 	}
 

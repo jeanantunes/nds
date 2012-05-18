@@ -558,12 +558,12 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj());
+			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj() + "%");
 		}
 
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
-			query.setParameter("nomeCota",  "%" + filtro.getNomeCota() + "%" );
+			query.setParameter("nomeCota", filtro.getNomeCota() + "%" );
 		}
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
@@ -599,12 +599,12 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj());
+			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj() +  "%");
 		}
 
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
-			query.setParameter("nomeCota", "%" + filtro.getNomeCota() + "%");
+			query.setParameter("nomeCota", filtro.getNomeCota() + "%");
 		}
 
 		return (Long) query.uniqueResult();
@@ -648,7 +648,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			hql.append(" AND ( pessoa.cpf =:numeroCpfCnpj OR  pessoa.cnpj=:numeroCpfCnpj ) ");
+			hql.append(" AND ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
 		}
 
 		if (filtro.getNomeCota() != null

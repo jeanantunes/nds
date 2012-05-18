@@ -73,7 +73,7 @@ public class PdvController {
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
 			
-	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
+	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluída  com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
 	
@@ -492,7 +492,7 @@ public class PdvController {
 	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
 		
 		if(novoPeriodo.getTipoPeriodoFuncionamentoPDV() == null) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve selecionado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve ser selecionado.");
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -508,12 +508,12 @@ public class PdvController {
  		
 			if(novoPeriodo.getInicio() == null || novoPeriodo.getInicio().trim().isEmpty()) {
 				throw new ValidacaoException(
-						TipoMensagem.WARNING,"Horário de início não não foi preenchido corretamente.");
+						TipoMensagem.WARNING,"Horário de início não foi preenchido corretamente.");
 			}
 	
 			if(novoPeriodo.getFim() == null || novoPeriodo.getFim().trim().isEmpty()) {
 				throw new ValidacaoException(
-						TipoMensagem.WARNING,"Horário de términio não não foi preenchido corretamente.");
+						TipoMensagem.WARNING,"Horário de términio não foi preenchido corretamente.");
 			}
 			
 			validarHorario(novoPeriodo);

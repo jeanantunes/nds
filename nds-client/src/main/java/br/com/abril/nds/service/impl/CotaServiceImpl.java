@@ -66,6 +66,7 @@ import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
@@ -138,6 +139,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private HistoricoNumeroCotaRepository historicoNumeroCotaRepository;
+	
+	@Autowired
+	private EnderecoService enderecoService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -246,7 +250,9 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
-
+		
+		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, cota.getPessoa());
+		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
@@ -276,17 +282,26 @@ public class CotaServiceImpl implements CotaService {
 		List<Long> idsEndereco = new ArrayList<Long>();
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-
-			listaEndereco.add(enderecoAssociacao.getEndereco());
-
-			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 			
-			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+			if(enderecoAssociacao!= null){
+				
+				listaEndereco.add(enderecoAssociacao.getEndereco());
 
-			this.enderecoCotaRepository.remover(enderecoCota);
+				EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
+				
+				if(enderecoCota!= null){
+	
+					idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+	
+					this.enderecoCotaRepository.remover(enderecoCota);
+				}
+			}
 		}
 		
-		this.enderecoRepository.removerEnderecos(idsEndereco);
+		if(!idsEndereco.isEmpty()){
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
 	}
 	
 	@Transactional(readOnly = true)

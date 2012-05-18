@@ -102,13 +102,14 @@ public class CotaController {
 	@Path("/")
 	public void index() {
 		
-		//Pré carregamento da aba "financeiro" 
 		this.financeiroController.preCarregamento();
 		this.pdvController.preCarregamento();
 	}
 	
 	private void carregarDadosEnderecoETelefone(Long idCota) { 
-
+		
+		limparDadosSession();
+		
 		if (idCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
 		}
@@ -144,6 +145,16 @@ public class CotaController {
 						LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
+		
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
+				this.cotaService.obterEnderecosPorIdCota(idCota);
+		
+		this.session.setAttribute(
+			LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao
+		);
 	}
 
 	private void processarTelefonesCota(Long idCota){
@@ -414,7 +425,7 @@ public class CotaController {
 	public void salvarEnderecos(Long idCota){
 		
 		processarEnderecosCota(idCota);
-		
+	
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -607,33 +618,6 @@ public class CotaController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um dos filtros deve ser informado!");
 		}
-		
-		if(numeroCpfCnpj!= null && !numeroCpfCnpj.isEmpty()){
-			
-			if(numeroCpfCnpj.length() > 11){
-
-				CNPJValidator cnpjValidator = new CNPJValidator(false);
-				
-				try{
-					cnpjValidator.assertValid(numeroCpfCnpj);
-				}catch(InvalidStateException e){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF / CNPJ inválido!");
-				}
-			}
-			else{
-				
-				CPFValidator cpfValidator = new CPFValidator(false);
-				
-				try{
-					cpfValidator.assertValid(numeroCpfCnpj);
-				}catch(InvalidStateException e){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF / CNPJ inválido!");
-				}
-				
-			}
-			
-		}
-		
 	}
 	/**
 	 * Configura paginação do grid de pesquisa.
