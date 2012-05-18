@@ -189,13 +189,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#validarExistenciaChamadaEncalheParaCotaProdutoEdicao(java.lang.Integer, java.lang.Long)
-	 */
 	@Transactional(readOnly = true)
-	public void validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
+	public Date validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
 		
 		boolean encalheConferido = false;
 		
@@ -203,14 +198,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 		
-		Long qtdeRegistroChamadaEncalhe = 
-				chamadaEncalheCotaRepository.
-				obterQtdListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido);
+		List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
+				obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido);
 		
-		
-		if(qtdeRegistroChamadaEncalhe == 0) {
+		if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 			throw new ChamadaEncalheCotaInexistenteException();
 		}
+		
+		return listaChamadaEncalheCota.get(0).getChamadaEncalhe().getDataRecolhimento();
 		
 		
 	}
@@ -318,6 +313,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 
 	
+	private Integer obterQtdeDiaAposDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		return null;
+		
+	}
+	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
 		
@@ -337,7 +342,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (produtoEdicao != null) {
 		
-			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+			Date dataRecolhimentoDistribuidor = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+			
+			Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 			
 			carregarValorDesconto(produtoEdicao, numeroCota);
 			
@@ -357,8 +364,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
 			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
-			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());			
+			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
+			produtoEdicaoDTO.setDia(dia);
 			
+			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 			
 		}
 		
@@ -384,7 +394,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (produtoEdicao != null){
 		
-			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			Date dataRecolhimentoDistribuidor = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+
+			Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 			
 			carregarValorDesconto(produtoEdicao, numeroCota);
 			
@@ -404,7 +416,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
 			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
-			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());	
+			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
+			produtoEdicaoDTO.setDia(dia);
+			
+			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+
 			
 		}
 		
@@ -430,7 +447,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (produtoEdicao != null){
 		
-			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			Date dataRecolhimentoDistribuidor = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+
+			Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 			
 			carregarValorDesconto(produtoEdicao, numeroCota);
 			
@@ -450,7 +469,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
 			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
 			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
-			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());				
+			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
+			produtoEdicaoDTO.setDia(dia);
+			
+			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+			
 		}
 		
 		return produtoEdicaoDTO;
@@ -506,7 +530,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		//TODO - Quando utilizar estoque complementar?
 		TipoMovimentoEstoque tipoMovimentoEstoqueSuplementar = null;//TODO: tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.);
-		
 		
 		for(ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
 			
@@ -678,6 +701,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe(Long idControleConfEncalheCota) {
+		
 		return null;
 	}
 	

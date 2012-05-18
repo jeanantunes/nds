@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -51,18 +52,22 @@ public interface ConferenciaEncalheService {
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
-
+	
 	/**
 	 * Valida a existência de chamada de encalhe de acordo com a
 	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
-	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual). 
+	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual).
 	 * 
+	 * Se encontrada, será retornada a dataRecolhimentoDistribuidor para o produtoEdicao em questão.
+	 *  
 	 * @param numeroCota
-	 * @param idProdutoEdicao
+	 * @param idProdutoEdicao]
+	 * 
+	 * @return Date
 	 * 
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 */
-	public void validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException;
+	public Date validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException;
 
 	
    /*
