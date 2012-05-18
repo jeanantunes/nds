@@ -22,7 +22,7 @@ public class CotaGarantiaChequeCaucao extends CotaGarantia {
 	 */
 	private static final long serialVersionUID = -1237737954973314146L;
 		
-	@OneToOne(cascade={CascadeType.ALL})
+	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
 	@JoinColumn(name="CHEQUE_CAUCAO_ID")
 	private Cheque cheque;
 

@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.cadastro;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -16,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -24,6 +26,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -274,4 +279,37 @@ public class CotaGarantiaController {
 						"Fiador salvo com Sucesso."), "result").recursive()
 				.serialize();
 	}
+
+	
+	public Download getImageCheque(long idCheque) {		
+		
+		byte[] buff = cotaGarantiaService.getImageCheque(idCheque);
+		
+		if (buff == null) {
+			buff = new byte[0];
+		}
+		
+		return new ByteArrayDownload(buff, "image/jpeg", "cheque.jpg");
+	}
+	
+	public void uploadCheque(Long idCheque, UploadedFile image) throws Exception{		
+		
+		if(idCheque != null){
+			byte[] bytes = IOUtils.toByteArray(image.getFile());
+			cotaGarantiaService.salvaChequeImage(idCheque, bytes);
+			
+			result.use(PlainJSONSerialization.class)
+			.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+					"Upload feito com Sucesso."), "result").recursive()
+			.serialize();
+		}else{
+			result.use(PlainJSONSerialization.class)
+			.from(new ValidacaoVO(TipoMensagem.ERROR,
+					"Cheque deve estar salvo."), "result").recursive()
+			.serialize();
+		}
+		
+	}
+	
+	
 }
