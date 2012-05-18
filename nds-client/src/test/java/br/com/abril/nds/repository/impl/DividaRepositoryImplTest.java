@@ -293,7 +293,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
 		Assert.assertEquals(lista.size(),1);	
 		StatusDividaDTO divida = lista.get(0);
-		Assert.assertEquals(divida.getConsignado(), "100,00" );
+
 		Assert.assertEquals(divida.getDataPagamento(), "02/03/2010" );
 		Assert.assertEquals(divida.getDataVencimento(), "01/02/2010");
 		Assert.assertEquals(divida.getDividaAcumulada(), "210,00");
