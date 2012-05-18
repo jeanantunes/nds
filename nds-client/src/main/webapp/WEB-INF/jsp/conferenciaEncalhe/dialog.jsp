@@ -1,23 +1,3 @@
-<script type="text/javascript">
-	function gravaObs() {
-		$('#observacao').keypress(function(e) {
-			if (e.keyCode == 13) {
-				$("#observacao").fadeOut();
-				$(".obs").fadeIn("slow");
-				$(".tit").fadeOut("slow");
-				$("#btObs").fadeOut("slow");
-			}
-		});
-	}
-	
-	function incluirObs() {
-		$(".obs").fadeIn("slow");
-		$(".tit").fadeOut("slow");
-		$("#btObs").fadeOut("slow");
-
-	}
-</script>
-
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
 	<fieldset style="width: 415px;">
         <legend>Salvar Conferência</legend>
@@ -38,7 +18,9 @@
 		<legend>Detalhes do Produto</legend>
 		<table width="703" border="0" cellspacing="0" cellpadding="2" >
 	  		<tr>
-			    <td width="117"><img src="" id="imagemProduto" width="117" height="145" alt="" /></td>
+			    <td width="117">
+			    	<img src="" id="imagemProduto" width="117" height="145" alt="" />
+			    </td>
 			    <td width="1">&nbsp;</td>
 			    <td width="573" valign="top">
 			    	<table width="574" border="0" cellspacing="1" cellpadding="2">
@@ -82,7 +64,7 @@
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
 			    <td>
-			    	<textarea class="tit" name="observacao" id="observacao" cols="90" rows="5" onkeypress="gravaObs();"></textarea>
+			    	<textarea class="tit" name="observacao" id="observacao" cols="90" rows="5"></textarea>
 			    </td>
 	  		</tr>
 	  		<tr>
@@ -90,7 +72,7 @@
 			    <td>&nbsp;</td>
 			    <td>
 			    	<span class="bt_novos" id="btObs" title="Incluir Observação">
-			    		<a href="javascript:;" onclick="incluirObs();">
+			    		<a href="javascript:;" onclick="ConferenciaEncalhe.gravaObs();">
 			    			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir Observação
 			    		</a>
 			    	</span>
