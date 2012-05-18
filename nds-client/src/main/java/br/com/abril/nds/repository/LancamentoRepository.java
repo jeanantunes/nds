@@ -110,16 +110,14 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
 	
 	/**
-	 * Obtém lancamentos para determinada dataRecolhimentoDistribuidor e idProdutoEdicao.
-	 * Apesar do retorno da pesquisa ser uma List de Lancamento, se houver mais de um registro 
-	 * no retorno da pesquisa temos uma inconsistência na base de dados.
+	 * Obtém o lancamento para determinada dataRecolhimentoDistribuidor e idProdutoEdicao.
 	 * 
 	 * @param dataRecolhimentoDistribuidor
 	 * @param idProdutoEdicao
 	 * 
-	 * @return List - Lancamento
+	 * @return Lancamento
 	 */
-	List<Lancamento> obterLancamentosPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao);
+	Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao);
 
 	 
 }

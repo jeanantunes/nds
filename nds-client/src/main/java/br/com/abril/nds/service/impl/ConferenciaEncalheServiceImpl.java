@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -295,33 +296,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	@Transactional(readOnly = true)
-	public ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
-		
-		if (numeroCota == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
-		}
-		
-		if (idProdutoEdicao == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
-		}
-		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		
-		if (produtoEdicao != null) {
-		
-			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
-			
-			carregarValorDesconto(produtoEdicao, numeroCota);
-			
-		}
-		
-		return produtoEdicao;
-	}
-
 	private void carregarValorDesconto(ProdutoEdicao produtoEdicao, Integer numeroCota) {
 		
 		BigDecimal hundred = new BigDecimal(100.0);
@@ -342,9 +316,103 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 	}
+
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException {
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (idProdutoEdicao == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		ProdutoEdicaoDTO produtoEdicaoDTO = null;
+		
+		if (produtoEdicao != null) {
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, idProdutoEdicao);
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
+			
+			produtoEdicaoDTO = new ProdutoEdicaoDTO();
+			
+			produtoEdicaoDTO.setId(produtoEdicao.getId());
+			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+			produtoEdicaoDTO.setPrecoVenda(produtoEdicao.getPrecoVenda());
+			produtoEdicaoDTO.setDesconto(produtoEdicao.getDesconto());
+			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
+			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
+			produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
+			produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+			produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
+			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
+			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
+			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());			
+			
+			
+		}
+		
+		return produtoEdicaoDTO;
+	}
+	
+	@Transactional(readOnly = true)
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
+		if (sm == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sm);
+		
+		ProdutoEdicaoDTO produtoEdicaoDTO = null;
+		
+		if (produtoEdicao != null){
+		
+			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
+			
+			carregarValorDesconto(produtoEdicao, numeroCota);
+			
+			produtoEdicaoDTO = new ProdutoEdicaoDTO();
+			
+			produtoEdicaoDTO.setId(produtoEdicao.getId());
+			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+			produtoEdicaoDTO.setPrecoVenda(produtoEdicao.getPrecoVenda());
+			produtoEdicaoDTO.setDesconto(produtoEdicao.getDesconto());
+			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
+			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
+			produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
+			produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+			produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
+			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
+			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
+			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());	
+			
+		}
+		
+		return produtoEdicaoDTO;
+	}	
+	
+	@Transactional(readOnly = true)
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException {
 		
 		if (numeroCota == null){
 			
@@ -358,40 +426,37 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
 		
+		ProdutoEdicaoDTO produtoEdicaoDTO = null;
+		
 		if (produtoEdicao != null){
 		
 			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
 			
 			carregarValorDesconto(produtoEdicao, numeroCota);
+			
+			produtoEdicaoDTO = new ProdutoEdicaoDTO();
+			
+			produtoEdicaoDTO.setId(produtoEdicao.getId());
+			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+			produtoEdicaoDTO.setPrecoVenda(produtoEdicao.getPrecoVenda());
+			produtoEdicaoDTO.setDesconto(produtoEdicao.getDesconto());
+			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
+			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
+			produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
+			produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+			produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
+			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
+			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
+			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());				
 		}
 		
-		return produtoEdicao;
+		return produtoEdicaoDTO;
 	}
 	
-	@Transactional(readOnly = true)
-	public ProdutoEdicao pesquisarProdutoEdicaoPorSM(Integer numeroCota, Long sm) throws ChamadaEncalheCotaInexistenteException {
-		
-		if (numeroCota == null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
-		}
-		
-		if (sm == null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
-		}
-		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSM(sm);
-		
-		if (produtoEdicao != null){
-		
-			this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao.getId());
-			
-			carregarValorDesconto(produtoEdicao, numeroCota);
-		}
-		
-		return produtoEdicao;
-	}
+	
 	
 	/*
 	 * Traz uma lista de codigoProduto - nomeProduto -  numeroEdicao
@@ -541,11 +606,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Lancamento obterLancamentoParaConfEncalhe(Date dataRecolhimento, Long idProdutoEdicao) {
 		
-		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosPorDataRecolhimentoProdutoEdicao(dataRecolhimento, idProdutoEdicao);
+		Lancamento lancamento =  lancamentoRepository.obterLancamentoPorDataRecolhimentoProdutoEdicao(dataRecolhimento, idProdutoEdicao);
 		
 		StringBuffer errorMsg = new StringBuffer();
 		
-		if(lancamentos==null || lancamentos.isEmpty()) {
+		if(lancamento==null) {
 
 			errorMsg.append(" Nenhum registro de Lancamento encontrado para o produto edição com id:  ");
 			errorMsg.append(idProdutoEdicao);
@@ -556,18 +621,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		if(lancamentos.size()>1) {
-
-			errorMsg.append(" Mais de um registro de Lancamento para o produto edição com id:  ");
-			errorMsg.append(idProdutoEdicao);
-			errorMsg.append(" com data de recolhimento: ");
-			errorMsg.append(dataRecolhimento.toString());				
-			
-			throw new IllegalStateException(errorMsg.toString());
-			
-		}
-		
-		return lancamentos.get(0);
+		return lancamento;
 	}
 	
 	/**

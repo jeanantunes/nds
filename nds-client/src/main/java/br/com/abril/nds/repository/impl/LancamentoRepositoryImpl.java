@@ -707,11 +707,7 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.LancamentoRepository#obterLancamentosPorDataRecolhimentoProdutoEdicao(java.util.Date, java.lang.Long)
-	 */
-	public List<Lancamento> obterLancamentosPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao) {
+	public Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -727,7 +723,7 @@ public class LancamentoRepositoryImpl extends
 		
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
 		
-		return query.list();
+		return (Lancamento) query.uniqueResult();
 	}
 	
 }
