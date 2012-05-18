@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ProdutoEdicaoDTO implements Serializable {
 
@@ -27,6 +28,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private boolean permiteValeDesconto;
 	private boolean parcial;
 	private Integer dia;
+	private Date dataRecolhimentoDistribuidor;
 	
 	public Long getId() {
 		return id;
@@ -129,6 +131,12 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setDia(Integer dia) {
 		this.dia = dia;
+	}
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
 	
 }
