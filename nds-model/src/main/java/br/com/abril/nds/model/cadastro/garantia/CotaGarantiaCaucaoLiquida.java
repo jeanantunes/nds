@@ -25,6 +25,7 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	private static final long serialVersionUID = 2374130596840933128L;
 	
 	
+
 	@OneToMany(cascade={CascadeType.ALL},orphanRemoval=true)
 	@JoinColumn(name="COTA_GARANTIA_CAUCAO_LIQUIDA_ID")
 	private List<CaucaoLiquida> caucaoLiquidas;

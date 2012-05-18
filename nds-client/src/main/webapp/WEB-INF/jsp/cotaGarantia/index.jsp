@@ -290,7 +290,7 @@
                 	<a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
                 </td>
                 
-                <td width="197">
+                <td width="203">
                 	<span class="bt_confirmar_novo" title="Confirmar">
                 		<a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
                 			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
