@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -218,4 +219,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		
 		return query.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao) {
+		
+		String hql = "from ProdutoEdicao produtoEdicao " 
+				   + " where produtoEdicao.id in (:idsProdutoEdicao)";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		
+		return query.list();
+	}
+
 }

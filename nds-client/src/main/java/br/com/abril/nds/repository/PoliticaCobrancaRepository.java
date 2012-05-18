@@ -38,4 +38,9 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	 */
 	int obterQuantidadePoliticasCobranca(FiltroParametrosCobrancaDTO filtro);
 
+	/**
+	 * Desativa uma politica de cobrança
+	 * @param idPolitica
+	 */
+	void desativarPoliticaCobranca(long idPolitica);
 }

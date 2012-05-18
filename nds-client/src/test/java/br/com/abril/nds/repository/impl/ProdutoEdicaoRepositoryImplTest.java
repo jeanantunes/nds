@@ -3,6 +3,8 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -237,6 +239,22 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		List<ProdutoEdicao> listaProdutoEdicao = 
 				produtoEdicaoRepository.obterListaProdutoEdicao(produto, produtoEdicao);
 		
+	}
+	
+	@Test
+	public void obterProdutosEdicaoPorId() {
+		
+		Set<Long> idsProdutoEdicao = new TreeSet<Long>();
+		
+		idsProdutoEdicao.add(produtoEdicaoVeja.getId());
+		idsProdutoEdicao.add(produtoEdicaoComDesconto.getId());
+		
+		List<ProdutoEdicao> listaProdutoEdicao =
+			produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
+		
+		Assert.assertNotNull(listaProdutoEdicao);
+		
+		Assert.assertTrue(listaProdutoEdicao.size() == idsProdutoEdicao.size());
 	}
 	
 }

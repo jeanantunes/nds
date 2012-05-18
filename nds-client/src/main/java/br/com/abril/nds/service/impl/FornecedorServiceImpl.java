@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -134,6 +135,8 @@ public class FornecedorServiceImpl implements FornecedorService {
 			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
 		}
 		
+		validarIntegridadeFornecedor(fornecedores,idCota);
+		
 		Set<Fornecedor> listaFonecedores = new HashSet<Fornecedor>();
 		
 		if(fornecedores != null && !fornecedores.isEmpty()){
@@ -157,6 +160,24 @@ public class FornecedorServiceImpl implements FornecedorService {
 		cotaRepository.alterar(cota);
 
 	}
+	private void validarIntegridadeFornecedor(List<Long> fornecedores,Long idCota) {
+		
+		//TODO Implementar validação de integridade
+		
+		/*Cota cota  = cotaRepository.buscarPorId(idCota);
+		
+		if(cota.getParametroCobranca()!= null){
+			
+			Set<FormaCobranca> formasCobranca = cota.getParametroCobranca().getFormasCobrancaCota();
+			
+			if(formasCobranca!= null && !formasCobranca.isEmpty()){
+				
+				for(FormaCobranca forCob : formasCobranca){
+				}
+			}
+		}*/
+	}
+
 	/**
 	 * Método responsável por obter fornecedores para preencher combo da camada view
 	 * @return comboFornecedores: fornecedores cadastrados
