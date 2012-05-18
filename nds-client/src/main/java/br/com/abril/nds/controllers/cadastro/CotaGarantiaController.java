@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.poi.util.IOUtils;
@@ -51,6 +52,7 @@ public class CotaGarantiaController {
 	public void salvaNotaPromissoria(NotaPromissoria notaPromissoria,
 			Long idCota) throws Exception {
 
+		validaNotaPromissoria(notaPromissoria);
 		cotaGarantiaService.salvaNotaPromissoria(notaPromissoria, idCota);
 
 		result.use(Results.json())
@@ -156,6 +158,35 @@ public class CotaGarantiaController {
 		
 		if (caucaoLiquida.getValor() == null || caucaoLiquida.getValor() <= 0) {
 			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					listaMensagens));
+		}
+	}
+	/**
+	 * @param notaPromissoria para ser validado
+	 */
+	private void validaNotaPromissoria(NotaPromissoria notaPromissoria) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (notaPromissoria.getValor() == null || notaPromissoria.getValor() <= 0) {
+			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(notaPromissoria.getValorExtenso())) {
+			listaMensagens
+					.add("O preenchimento do campo [Valor Extenso] é obrigatório");
+		}
+		
+		if (notaPromissoria.getVencimento() == null) {
+			listaMensagens
+					.add("O preenchimento do campo [Vencimento] é obrigatório");
+		}else if(notaPromissoria.getVencimento().compareTo(Calendar.getInstance()) <= 0  ) {
+			listaMensagens
+			.add("O campo [Vencimento] deve ser uma data no futuro.");
 		}
 		
 		if (!listaMensagens.isEmpty()) {

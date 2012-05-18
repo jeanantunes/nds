@@ -35,13 +35,13 @@ public class NotaPromissoria implements Serializable {
 	private Long id;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="VENCIMENTO")
+	@Column(name="VENCIMENTO", nullable=false)
 	private Calendar vencimento;
 	
-	@Column(name="VALOR")
+	@Column(name="VALOR", nullable=false)
 	private Double valor;
 	
-	@Column(name="VALOR_EXTENSO")
+	@Column(name="VALOR_EXTENSO", nullable=false)
 	private String valorExtenso;
 
 	/**
