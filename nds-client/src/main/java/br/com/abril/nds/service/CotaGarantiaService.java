@@ -104,4 +104,18 @@ public interface CotaGarantiaService {
 	 */
 	public abstract CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) 
 			throws ValidacaoException;
+	
+	/**
+	 * @param idCheque
+	 * @return
+	 * @see br.com.abril.nds.repository.CotaGarantiaRepository#getCheque(long)
+	 */
+	public abstract byte[] getImageCheque(long idCheque);
+	
+	/**
+	 * Salva a imagem do cheque
+	 * @param idCheque
+	 * @param image
+	 */
+	public abstract void salvaChequeImage(long idCheque, byte[] image);
 }

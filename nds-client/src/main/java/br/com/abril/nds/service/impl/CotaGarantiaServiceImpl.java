@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -51,6 +53,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 	@Autowired
 	private FiadorRepository fiadorRepository;
+	@Autowired
+	private ChequeImageRepository chequeImageRepository;
 
 	/*
 	 * (non-Javadoc)
@@ -124,7 +128,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 
 		cotaGarantiaCheque.setData(Calendar.getInstance());
-
+		
 		cotaGarantiaCheque.setCheque(cheque);
 
 		return (CotaGarantiaChequeCaucao) cotaGarantiaRepository
@@ -257,20 +261,23 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		return cota;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private <T extends CotaGarantia> T prepareCotaGarantia(Long idCota,
 			Class<T> type) throws InstantiationException,
 			IllegalAccessException {
 
-		T cotaGarantia = cotaGarantiaRepository.getByCota(idCota, type);
-
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if(cotaGarantia != null && cotaGarantia.getClass() != type){
+			cotaGarantiaRepository.remover(cotaGarantia);
+			cotaGarantia = null;
+		}
 		if (cotaGarantia == null) {			
-			cotaGarantiaRepository.deleteByCota(idCota);
-			
 			cotaGarantia = type.newInstance();
-			cotaGarantia.setCota(getCota(idCota));
+			cotaGarantia.setCota(getCota(idCota));			
 		}
 
-		return cotaGarantia;
+		return (T) cotaGarantia;
 	}
 	
 	/* (non-Javadoc)
@@ -293,4 +300,31 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
 	}
+
+	/**
+	 * @param idCheque
+	 * @return
+	 * @see br.com.abril.nds.repository.CotaGarantiaRepository#getCheque(long)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public byte[] getImageCheque(long idCheque) {
+		return chequeImageRepository.getImageCheque(idCheque);
+	}
+	@Override
+	@Transactional
+	public void salvaChequeImage(long idCheque, byte[] image){
+		ChequeImage chequeImage  = chequeImageRepository.get(idCheque);
+		
+		if(chequeImage == null){
+			chequeImage = new  ChequeImage();
+			chequeImage.setId(idCheque);
+		}
+		chequeImage.setImagem(image);
+		
+		chequeImageRepository.merge(chequeImage);
+		
+	}
+	
+	
 }
