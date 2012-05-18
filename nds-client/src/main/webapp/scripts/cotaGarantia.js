@@ -29,9 +29,12 @@ NotaPromissoria.prototype.salva = function(callBack) {
 				var listaMensagens = data.listaMensagens;
 
 				if (tipoMensagem && listaMensagens) {
-					exibirMensagem(tipoMensagem, listaMensagens);
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 				}
-				callBack();
+				if(callBack){
+					callBack();
+				}
+				
 
 			}, null, true);
 	return false;
@@ -54,7 +57,7 @@ NotaPromissoria.prototype.get = function() {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		} else if (data && data.notaPromissoria) {
 			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
 			_this.dataBind();
@@ -118,8 +121,12 @@ function ChequeCaucao(idCota, cotaGarantia) {
 	this.idCota = idCota;
 	this.cotaGarantia = cotaGarantia;
 	this.bindEvents();
-	this.get();
+	if(cotaGarantia && cotaGarantia.cheque){
+		this.chequeCaucao = cotaGarantia.cheque;
+	}	
+	this.dataBind();
 	this.toggle();
+	this.initUploadForm();
 };
 ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
 ChequeCaucao.prototype.chequeCaucao = {
@@ -155,9 +162,9 @@ ChequeCaucao.prototype.get = function() {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
-		} else if (data && data.chequeCaucao) {
-			_this.chequeCaucao = data.cotaGarantia.chequeCaucao;
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+		} else if (data && data.cotaGarantia) {
+			_this.chequeCaucao = data.cotaGarantia.cheque;
 			_this.dataBind();
 		}
 
@@ -166,6 +173,7 @@ ChequeCaucao.prototype.get = function() {
 
 ChequeCaucao.prototype.salva = function(callBack) {
 	this.dataUnBind();
+	var _this = this;
 	var postData = this.processPost('chequeCaucao', this.chequeCaucao);
 	postData['idCota'] = this.idCota;
 
@@ -174,11 +182,12 @@ ChequeCaucao.prototype.salva = function(callBack) {
 		var listaMensagens = data.listaMensagens;
 
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		}
 		if (callBack) {
 			callBack();
 		}
+		_this.get();
 
 	}, null, true);
 	return false;
@@ -186,6 +195,46 @@ ChequeCaucao.prototype.salva = function(callBack) {
 
 ChequeCaucao.prototype.toggle = function() {
 	$('#cotaGarantiaChequeCaucaoPanel').toggle();
+};
+
+
+ChequeCaucao.prototype.initUploadForm = function() {
+	   	 var _this = this;
+	    $('#cotaGarantiaChequeCaucaoFormUpload').bind('submit', function(e) {
+            e.preventDefault(); // <-- important
+            $(this).ajaxSubmit({   
+            	beforeSubmit: function(arr, formData, options) {
+            	  if(_this.chequeCaucao.id){
+        		        if (!$('#cotaGarantiaChequeCaucaoUpload').val()) { 
+        		        	exibirMensagemDialog('WARNING', ['Escolha um arquivo para ser enviado.'], "");
+        		            return false; 
+        		        } 
+            		  
+            		  return true;
+            	  }else{
+            		  exibirMensagemDialog('WARNING', ['Cheque deve estar salvo antes do envio.'], "");
+            		  return false;
+            	  }  
+            	},
+    	        success:function(responseText, statusText, xhr, $form)  { 
+    	        	var mensagens = (responseText.mensagens)?responseText.mensagens:responseText.result;   
+    	        	var tipoMensagem = mensagens.tipoMensagem;
+    	    		var listaMensagens = mensagens.listaMensagens;
+
+    	    		if (tipoMensagem && listaMensagens) {
+    	    			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+    	    		}    	    	    
+    	    	    _this.loadImage();
+    	    	} ,
+    	        url:  _this.path + 'uploadCheque',         
+    	        type: 'POST',
+    	        dataType:  'json',
+    	        data: {idCheque:_this.chequeCaucao.id}
+    	    });
+        });
+	   
+	
+	
 };
 
 ChequeCaucao.prototype.dataBind = function() {
@@ -209,7 +258,25 @@ ChequeCaucao.prototype.dataBind = function() {
 	$("#cotaGarantiaChequeCaucaoValidade").val(this.chequeCaucao.validade);
 	$("#cotaGarantiaChequeCaucaoCorrentista")
 			.val(this.chequeCaucao.correntista);
+	
+	if(this.chequeCaucao.id){
+		this.loadImage();
+	}
 
+};
+
+ChequeCaucao.prototype.loadImage = function(){
+	 $("#cotaGarantiaChequeCaucaoImagem").empty();
+	 $("#cotaGarantiaChequeCaucaoImagemPanel").toggle(false);
+	var imgPath = this.path + 'getImageCheque?idCheque='+this.chequeCaucao.id;
+	var img = null;
+	img = $("<img />").attr('src', imgPath)
+    .load(function() {
+       if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
+    	   $("#cotaGarantiaChequeCaucaoImagemPanel").toggle(true);
+           $("#cotaGarantiaChequeCaucaoImagem").append(img);
+       }
+    });
 };
 
 ChequeCaucao.prototype.dataUnBind = function() {
@@ -258,8 +325,8 @@ function Imovel(idCota, cotaGarantia) {
 	this.initGrid();
 	this.rows = new Array;
 	this.itemEdicao = null;
-	this.imovel = data.cotaGarantia.imovel;
-	this.dataBind();
+	//TODO: Processar lista de imoveis data.cotaGarantia.imoveis;
+	
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
@@ -307,7 +374,7 @@ Imovel.prototype.get = function() {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		} else if (data && data.imovel) {
 			_this.imovel = data.cotaGarantia.imovel;
 			_this.dataBind();
@@ -326,7 +393,7 @@ Imovel.prototype.incluirImovel = function(callBack) {
 		var listaMensagens = data.listaMensagens;
 
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		} else {
 
 			var novoImovel = data.imovel;
@@ -377,7 +444,7 @@ Imovel.prototype.salva = function(callBack) {
 		var listaMensagens = data.listaMensagens;
 
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		}
 		if (callBack) {
 			callBack();
@@ -496,8 +563,8 @@ Imovel.prototype.initGrid = function() {
 						preProcess : function(data) {
 							if (typeof data.mensagens == "object") {
 
-								exibirMensagem(data.mensagens.tipoMensagem,
-										data.mensagens.listaMensagens);
+								exibirMensagemDialog(data.mensagens.tipoMensagem,
+										data.mensagens.listaMensagens,"");
 
 							} else {
 								$
@@ -620,7 +687,7 @@ TipoCotaGarantia.prototype.get = function() {
 		var listaMensagens = data.listaMensagens;
 
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		} else {
 			_this.bindData(data);
 		}
@@ -636,7 +703,7 @@ TipoCotaGarantia.prototype.getData = function() {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		} else if (data && data.cotaGarantia) {
 			_this.cotaGarantia = data.cotaGarantia;
 			_this.cotaGarantia.controllerType = data.tipo;
@@ -795,7 +862,7 @@ Fiador.prototype.getFiador = function(idFiador, documento) {
 			_this.toggleDados(false);
 			_this.fiador = null;
 		} else if (data.tipoMensagem && data.listaMensagens) {
-			exibirMensagem(data.tipoMensagem, data.listaMensagens);
+			exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
 			_this.toggleDados(false);
 			_this.fiador = null;
 		} else {
@@ -889,7 +956,7 @@ Fiador.prototype.salva = function(callBack) {
 		idCota : this._idCota
 	}, function(data) {
 		if (data.tipoMensagem && data.listaMensagens) {
-			exibirMensagem(data.tipoMensagem, data.listaMensagens);
+			exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
 			_this.get();
 		}
 		if(callBack){
@@ -907,7 +974,7 @@ Fiador.prototype.get = function() {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens);
+			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 		} else if (data && data.fiador) {
 			_this.getFiador(data.fiador.id, null);
 		}
@@ -966,7 +1033,7 @@ CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
 				var listaMensagens = data.listaMensagens;
 
 				if (tipoMensagem && listaMensagens) {
-					exibirMensagem(tipoMensagem, listaMensagens);
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 				} else {
 					
 					var rows = _this.rows;
@@ -1007,7 +1074,7 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 				var listaMensagens = data.listaMensagens;
 
 				if (tipoMensagem && listaMensagens) {
-					exibirMensagem(tipoMensagem, listaMensagens);
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
 				}
 				if(callBack){
 					callBack();

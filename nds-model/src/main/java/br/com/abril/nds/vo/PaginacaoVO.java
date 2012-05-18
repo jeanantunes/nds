@@ -27,6 +27,8 @@ public class PaginacaoVO implements Serializable {
 	
 	private String sortOrder;
 	
+	private String sortColumn;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -57,22 +59,23 @@ public class PaginacaoVO implements Serializable {
 		}
 	}
 	
-	public PaginacaoVO(Integer page, Integer rp, String ordenacao, String sortorder) {
-		
-		this.paginaAtual = page;
-		
-		this.qtdResultadosPorPagina = rp;
-		
-		if (DESC.equals(ordenacao.toLowerCase())) {
+	public PaginacaoVO(Integer page, Integer rp, String sortOrder, String sortColumn) {
 			
-			this.ordenacao = Ordenacao.DESC;
+			this.paginaAtual = page;
 			
-		} else {
+			this.qtdResultadosPorPagina = rp;
 			
-			this.ordenacao = Ordenacao.ASC;
+			if (Ordenacao.ASC.getOrdenacao().equalsIgnoreCase(sortOrder)) {
+				
+				this.ordenacao = Ordenacao.ASC;
+				
+			} else if (Ordenacao.DESC.getOrdenacao().equalsIgnoreCase(sortOrder)) {
+				
+				this.ordenacao = Ordenacao.DESC;
+			}
+			
+			this.sortColumn = sortColumn;
 		}
-		this.setSortOrder(sortorder);
-	}
 	
 	
 	public enum Ordenacao {
@@ -200,6 +203,20 @@ public class PaginacaoVO implements Serializable {
 
 	public void setSortOrder(String sortOrder) {
 		this.sortOrder = sortOrder;
+	}
+
+	/**
+	 * @return the sortColumn
+	 */
+	public String getSortColumn() {
+		return sortColumn;
+	}
+
+	/**
+	 * @param sortColumn the sortColumn to set
+	 */
+	public void setSortColumn(String sortColumn) {
+		this.sortColumn = sortColumn;
 	}
 	
 }

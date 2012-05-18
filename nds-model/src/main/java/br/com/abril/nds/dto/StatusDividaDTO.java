@@ -31,7 +31,7 @@ public class StatusDividaDTO implements Serializable {
 	@Export(label = "Status", alignment=Alignment.LEFT)
 	private String status;
 		
-	@Export(label = "Consifnado até Data", alignment=Alignment.CENTER)
+	@Export(label = "Consignado até Data", alignment=Alignment.CENTER)
 	private String consignado;
 	
 	@Export(label = "Data Vencimento", alignment=Alignment.CENTER)
@@ -156,7 +156,7 @@ public class StatusDividaDTO implements Serializable {
 		return diasAtraso;
 	}
 
-	public void setDiasAtraso(Integer diasAtraso) {
+	public void setDiasAtraso(BigInteger diasAtraso) {
 		this.diasAtraso = diasAtraso.longValue();
 	}
 

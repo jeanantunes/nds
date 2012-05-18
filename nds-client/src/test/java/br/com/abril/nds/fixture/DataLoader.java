@@ -129,7 +129,9 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -645,6 +647,8 @@ public class DataLoader {
 		
 		gerarTipoEntrega(session);
 		
+		gerarLancamentos(session);
+		
 		gerarDescontos(session);
 		
 	}
@@ -673,6 +677,37 @@ public class DataLoader {
 		save(session, tipoDesconto);
 	}
 	
+	private static void gerarLancamentos(Session session) {
+		
+		LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
+				produtoEdicaoBoaForma1, Fixture.criarData(1, 1, 2009), Fixture.criarData(1, 1, 2010), StatusLancamentoParcial.RECOLHIDO);
+		
+		LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
+				produtoEdicaoBravo1, Fixture.criarData(1, 2, 2011), Fixture.criarData(1, 2, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
+				produtoEdicaoCaras1, Fixture.criarData(1, 3, 2011), Fixture.criarData(1, 3, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial4 = Fixture.criarLancamentoParcial(
+				produtoEdicaoClaudia1, Fixture.criarData(1, 4, 2011), Fixture.criarData(1, 4, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial5 = Fixture.criarLancamentoParcial(
+				produtoEdicaoContigo1, Fixture.criarData(1, 5, 2011), Fixture.criarData(1, 5, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial6 = Fixture.criarLancamentoParcial(
+				produtoEdicaoManequim1, Fixture.criarData(1, 6, 2011), Fixture.criarData(1, 6, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial7 = Fixture.criarLancamentoParcial(
+				produtoEdicaoNatGeo1, Fixture.criarData(1, 7, 2011), Fixture.criarData(1, 7, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial8 = Fixture.criarLancamentoParcial(
+				produtoEdicaoVeja1, Fixture.criarData(1, 8, 2011), Fixture.criarData(1, 8, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3,
+				lancamentoParcial4,lancamentoParcial5,lancamentoParcial6,lancamentoParcial7,
+				lancamentoParcial8);
+	}
+
 	private static void gerarTipoEntrega(Session session) {
 		
 		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira");
@@ -3648,16 +3683,16 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-							  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+							  123456L, "1", "1", "Instrucoes HSBC.", Moeda.REAL, "HSBC", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  12345L, "1", "1", "Instrucoes.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.ZERO, BigDecimal.ZERO);
+				  12345L, "1", "1", "Instrucoes ITAU.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.TEN, BigDecimal.ONE);
 
 		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes DOBRASIL.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
 		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes BRADESCO.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);
 	}

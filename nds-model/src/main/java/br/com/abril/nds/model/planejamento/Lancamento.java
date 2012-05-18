@@ -96,7 +96,7 @@ public class Lancamento implements Serializable {
 	@Column(name = "NUMERO_REPROGRAMACOES")
 	private Integer numeroReprogramacoes;
 	
-	@Column(name = "SEQUENCIA_MATRIZ", nullable = false)
+	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
