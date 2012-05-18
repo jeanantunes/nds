@@ -28,6 +28,7 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService{
 	 * 
 	 * @return Lista dos parâmetros do sistema que são considerados gerais. 
 	 */
+	@Transactional
 	public ParametroSistemaGeralDTO buscarParametroSistemaGeral() {
 		
 		List<ParametroSistema> lst = parametroSistemaRepository.buscarParametroSistemaGeral();
