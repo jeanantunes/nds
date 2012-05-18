@@ -145,7 +145,7 @@ public class DistribuidorRepositoryImpl extends
 			}
 		}
 		
-		return complementarCurvaABCDistribuidor(getOrderObterCurvaABCDistribuidor(query.list(), filtro));
+		return getOrderObterCurvaABCDistribuidor(complementarCurvaABCDistribuidor(query.list()), filtro);
 
 	}
 
@@ -233,7 +233,7 @@ public class DistribuidorRepositoryImpl extends
 					hql.append(" order by ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ");
 					break;
 				default:
-					hql.append(" by estoqueProdutoCota.cota.numeroCota ");
+					hql.append(" order by estoqueProdutoCota.cota.numeroCota ");
 					break;
 			}
 			if (filtro.getPaginacao().getOrdenacao() != null) {
