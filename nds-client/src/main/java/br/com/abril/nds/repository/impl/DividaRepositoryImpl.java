@@ -10,7 +10,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -350,7 +349,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 				.addScalar("numCota")
 				.addScalar("nome")
 				.addScalar("status")
-				.addScalar("consignado", StandardBasicTypes.STRING)
+				.addScalar("consignado")
 				.addScalar("dataVencimento")
 				.addScalar("dataPagamento")
 				.addScalar("situacao")

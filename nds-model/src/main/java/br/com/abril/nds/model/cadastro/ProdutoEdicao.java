@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,6 +21,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -81,6 +85,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "POSSUI_BRINDE", nullable = false)
 	protected boolean possuiBrinde;
 	
+	@Embedded
+	protected Brinde brinde;
+	
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
@@ -98,7 +105,22 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	@Column(name = "PARCIAL")
 	private boolean parcial;
+
+	@Column(name = "CHAMADA_CAPA", nullable = true)
+	private String chamadaCapa;
 	
+	@Column(name = "ATIVO", nullable = false)
+	private boolean ativo = true;
+	
+	@Column(name = "DATA_DESATIVACAO", nullable = true)
+	@Temporal(TemporalType.DATE)
+	private Date dataDesativacao;
+	
+	/**
+	 * Dimensões do produto (largura, etc)
+	 */
+	@Embedded
+	private Dimensao dimensao;
 	
 	public Long getId() {
 		return id;
@@ -263,6 +285,76 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
+	}
+
+	/**
+	 * @return the brinde
+	 */
+	public Brinde getBrinde() {
+		return brinde;
+	}
+
+	/**
+	 * @param brinde the brinde to set
+	 */
+	public void setBrinde(Brinde brinde) {
+		this.brinde = brinde;
+	}
+
+	/**
+	 * @return the chamadaCapa
+	 */
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+
+	/**
+	 * @param chamadaCapa the chamadaCapa to set
+	 */
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+
+	/**
+	 * @return the dimensao
+	 */
+	public Dimensao getDimensao() {
+		return dimensao;
+	}
+
+	/**
+	 * @param dimensao the dimensao to set
+	 */
+	public void setDimensao(Dimensao dimensao) {
+		this.dimensao = dimensao;
+	}
+
+	/**
+	 * @return the ativo
+	 */
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	/**
+	 * @param ativo the ativo to set
+	 */
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	/**
+	 * @return the dataDesativacao
+	 */
+	public Date getDataDesativacao() {
+		return dataDesativacao;
+	}
+
+	/**
+	 * @param dataDesativacao the dataDesativacao to set
+	 */
+	public void setDataDesativacao(Date dataDesativacao) {
+		this.dataDesativacao = dataDesativacao;
 	}
 
 }
