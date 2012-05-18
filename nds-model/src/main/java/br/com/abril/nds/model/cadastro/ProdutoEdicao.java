@@ -49,9 +49,6 @@ public class ProdutoEdicao implements Serializable {
 
 	@Column(name  = "CODIGO_DE_BARRAS")
 	protected String codigoDeBarras;
-
-	@Column(name  = "codigoSM")
-	protected Long codigoSM;
 	
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
@@ -214,14 +211,6 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
-	}
-
-	public Long getCodigoSM() {
-		return codigoSM;
-	}
-
-	public void setCodigoSM(Long codigoSM) {
-		this.codigoSM = codigoSM;
 	}
 
 	@Override
