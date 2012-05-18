@@ -25,7 +25,7 @@ public class ParametroCobrancaDTO {
 	boolean vencimentoDiaUtil;
 	boolean acumulaDivida;
 	boolean unificada;
-	boolean evioEmail;
+	boolean envioEmail;
 	boolean principal;
 	
 	String instrucoes;
@@ -53,7 +53,7 @@ public class ParametroCobrancaDTO {
 			BigDecimal valorMulta, BigDecimal taxaJuros,
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
 			TipoFormaCobranca tipoFormaCobranca, boolean vencimentoDiaUtil,
-			boolean acumulaDivida, boolean unificada, boolean evioEmail,
+			boolean acumulaDivida, boolean unificada, boolean envioEmail,
 			boolean principal, String instrucoes, Integer diaDoMes,
 			boolean domingo, boolean segunda, boolean terca, boolean quarta,
 			boolean quinta, boolean sexta, boolean sabado,
@@ -70,7 +70,7 @@ public class ParametroCobrancaDTO {
 		this.vencimentoDiaUtil = vencimentoDiaUtil;
 		this.acumulaDivida = acumulaDivida;
 		this.unificada = unificada;
-		this.evioEmail = evioEmail;
+		this.envioEmail = envioEmail;
 		this.principal = principal;
 		this.instrucoes = instrucoes;
 		this.diaDoMes = diaDoMes;
@@ -195,13 +195,13 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public boolean isEvioEmail() {
-		return evioEmail;
+	public boolean isEnvioEmail() {
+		return envioEmail;
 	}
 
 
-	public void setEvioEmail(boolean evioEmail) {
-		this.evioEmail = evioEmail;
+	public void setEnvioEmail(boolean envioEmail) {
+		this.envioEmail = envioEmail;
 	}
 
 

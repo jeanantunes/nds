@@ -135,7 +135,7 @@ public interface ParametroCobrancaCotaService {
 	 * @param diaDoMes
 	 * @return Boolean
 	 */
-	 boolean validarFormaCobrancaMensal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Integer diaDoMes);
+	 boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Integer diaDoMes);
 		 
 	 
 	 /**
@@ -151,7 +151,7 @@ public interface ParametroCobrancaCotaService {
 	 * @param sabado
 	 * @return Boolean
 	 */
-	 boolean validarFormaCobrancaSemanal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
+	 boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
 		 	 
 	 
 }

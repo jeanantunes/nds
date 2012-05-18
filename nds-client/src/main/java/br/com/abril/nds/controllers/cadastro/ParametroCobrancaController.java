@@ -185,7 +185,9 @@ public class ParametroCobrancaController {
 			parametros.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
 		}
         
-		parametros.setFornecedoresId(listaIdsFornecedores);
+		if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
+		    parametros.setFornecedoresId(listaIdsFornecedores);
+		}
 		
 		parametros = formatarParametros(parametros);
 		
@@ -327,7 +329,9 @@ public class ParametroCobrancaController {
 	 */
 	public void validarParametros(ParametroCobrancaDTO parametros){
 		
+		
 		validar();
+		
 		
 		if(parametros.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
@@ -336,6 +340,21 @@ public class ParametroCobrancaController {
 		if (parametros.getTipoFormaCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
 		}
+		
+		if (parametros.getFormaEmissao()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo Impressão.");
+		}
+		
+		
+		if (parametros.getIdBanco()==null){
+		    if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO)||
+		    	(parametros.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
+		    	(parametros.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
+		    	(parametros.getTipoCobranca()==TipoCobranca.DEPOSITO)){
+		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
+		    }
+		}
+		
 		
 		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
 			if (parametros.getDiaDoMes()==null){
@@ -349,6 +368,7 @@ public class ParametroCobrancaController {
 			
 		}
 		
+		
 		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			if((!parametros.isDomingo())&&
 			   (!parametros.isSegunda())&&
@@ -361,45 +381,41 @@ public class ParametroCobrancaController {
 			}
 		}
 		
-		if (parametros.getIdBanco()==null){
-		    if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO)||
-		    	(parametros.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
-		    	(parametros.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
-		    	(parametros.getTipoCobranca()==TipoCobranca.DEPOSITO)){
-		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
-		    }
-		}
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
-		if (parametros.isEvioEmail()){
+		if (parametros.isEnvioEmail()){
 			if (distribuidor.getJuridica().getEmail()==null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para o distribuidor ou desmarque a opção de envio de email.");
 			}
 		}
 		
-		//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
-		if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-			if (!this.politicaCobrancaService.validarFormaCobrancaMensal(distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiaDoMes())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
-			}
-		}
+		if ((parametros.getFornecedoresId()!=null)&&(parametros.getFornecedoresId().size()>0)){
 		
-		//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
-		if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-			if (!this.politicaCobrancaService.validarFormaCobrancaSemanal(distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), 
-																	parametros.isDomingo(),
-																	parametros.isSegunda(),
-																	parametros.isTerca(),
-																	parametros.isQuarta(),
-																	parametros.isQuinta(),
-																	parametros.isSexta(),
-																	parametros.isSabado())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
+			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiaDoMes())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
+				}
 			}
 			
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
+			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+				if (!this.politicaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), 
+																		parametros.isDomingo(),
+																		parametros.isSegunda(),
+																		parametros.isTerca(),
+																		parametros.isQuarta(),
+																		parametros.isQuinta(),
+																		parametros.isSexta(),
+																		parametros.isSabado())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
+				}
+				
+			}	
+			
 		}	
-		
+
 	}
 	
 	

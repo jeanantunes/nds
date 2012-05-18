@@ -86,7 +86,7 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
 					hql.append(" order by p.acumulaDivida ");
 					break;
 				case COBRANCA_UNIFICADA:
-					hql.append(" order by p.unificaConbranca ");
+					hql.append(" order by p.unificaCobranca ");
 					break;
 				case FORMA_EMISSAO:
 					hql.append(" order by p.formaEmissao ");

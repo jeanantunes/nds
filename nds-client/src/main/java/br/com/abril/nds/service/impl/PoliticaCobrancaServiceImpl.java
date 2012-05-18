@@ -121,7 +121,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				if (forma!=null){
 					parametroCobranca.setForma(forma.getTipoCobranca()!=null?forma.getTipoCobranca().getDescTipoCobranca():"");
 					parametroCobranca.setBanco(forma.getBanco()!=null?forma.getBanco().getNome():"");
-					parametroCobranca.setVlr_minimo_emissao(forma.getValorMinimoEmissao().toString());
+					parametroCobranca.setVlr_minimo_emissao(forma.getValorMinimoEmissao()!=null?forma.getValorMinimoEmissao().toString():"");
 					parametroCobranca.setEnvio_email(forma.isRecebeCobrancaEmail()?"Sim":"Não");
 				}
 				
@@ -171,15 +171,10 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			parametroCobrancaDTO = new ParametroCobrancaDTO();
 			
 			parametroCobrancaDTO.setIdPolitica(politica.getId());
-			parametroCobrancaDTO.setPrincipal(politica.isPrincipal());
-			parametroCobrancaDTO.setAcumulaDivida(politica.isAcumulaDivida());
+			parametroCobrancaDTO.setPrincipal(politica.isPrincipal()?true:false);
+			parametroCobrancaDTO.setAcumulaDivida(politica.isAcumulaDivida()?true:false);
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
-			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca());
-			parametroCobrancaDTO.setValorMinimo(politica.getFormaCobranca().getValorMinimoEmissao());
-			parametroCobrancaDTO.setTaxaMulta(politica.getFormaCobranca().getBanco().getMulta());
-			parametroCobrancaDTO.setValorMulta(politica.getFormaCobranca().getBanco().getVrMulta());
-			parametroCobrancaDTO.setTaxaJuros(politica.getFormaCobranca().getBanco().getJuros());
-			parametroCobrancaDTO.setInstrucoes(politica.getFormaCobranca().getBanco().getInstrucoes());
+			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
 			
 			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
 			Integer diaDoMes=null;
@@ -194,8 +189,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				}
 
 				parametroCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
-				parametroCobrancaDTO.setEvioEmail(formaCobranca.isRecebeCobrancaEmail());
-				
+				parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail()?true:false);
+				parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil()?true:false);
+				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao());
 				
 				if  (diaDoMes!=null){
 					parametroCobrancaDTO.setDiaDoMes(diaDoMes);
@@ -243,6 +239,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			Banco banco = formaCobranca.getBanco();
 			if (banco!=null){
 				parametroCobrancaDTO.setIdBanco(banco.getId());
+				parametroCobrancaDTO.setTaxaMulta(banco.getMulta());
+				parametroCobrancaDTO.setValorMulta(banco.getVrMulta());
+				parametroCobrancaDTO.setTaxaJuros(banco.getJuros());
+				parametroCobrancaDTO.setInstrucoes(banco.getInstrucoes());
+				
 			}
 			parametroCobrancaDTO.setTipoCobranca(formaCobranca.getTipoCobranca());
 			
@@ -316,10 +317,10 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		
 		PoliticaCobranca parametroCobrancaPrincipal = this.obterPoliticaCobrancaPrincipal();
-		politica.setPrincipal(parametroCobrancaPrincipal==null);
-		politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
+		politica.setPrincipal((parametroCobrancaDTO.isPrincipal())&&((parametroCobrancaPrincipal==null)||(!parametroCobrancaPrincipal.isAtivo())));
+		politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida()?true:false);
 		politica.setFormaEmissao(parametroCobrancaDTO.getFormaEmissao());
-		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
+		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada()?true:false);
 		politica.setAtivo(true);
 		politica.setDistribuidor(distribuidorRepository.obter());
 		
@@ -328,12 +329,12 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(parametroCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
-		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEvioEmail());
+		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail()?true:false);
 		formaCobranca.setAtiva(true);
-		formaCobranca.setTaxaJurosMensal((formaCobranca.getTaxaJurosMensal()==null?BigDecimal.ZERO:formaCobranca.getTaxaJurosMensal()));
-	    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta()==null?BigDecimal.ZERO:formaCobranca.getTaxaMulta()));
-	    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao()==null?BigDecimal.ZERO:formaCobranca.getValorMinimoEmissao()));
-	    formaCobranca.setVencimentoDiaUtil(parametroCobrancaDTO.isVencimentoDiaUtil());
+		formaCobranca.setTaxaJurosMensal(parametroCobrancaDTO.getTaxaJuros());
+	    formaCobranca.setTaxaMulta(parametroCobrancaDTO.getTaxaMulta());
+	    formaCobranca.setValorMinimoEmissao(parametroCobrancaDTO.getValorMinimo());
+	    formaCobranca.setVencimentoDiaUtil(parametroCobrancaDTO.isVencimentoDiaUtil()?true:false);
 		
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
@@ -407,7 +408,8 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		    formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
 		}
 		
-
+        
+		formaCobranca.setFornecedores(null);
 		if ((parametroCobrancaDTO.getFornecedoresId()!=null)&&(parametroCobrancaDTO.getFornecedoresId().size()>0)){
 			Fornecedor fornecedor;
 		    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
@@ -457,10 +459,18 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaMensal(Distribuidor distribuidor,TipoCobranca tipoCobranca,
+	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Integer diaDoMes) {
+		
 		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca);
+		Long idFormaCobrancaExcept = null;
+		
+		if (idPoliticaCobranca!=null){
+		    PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPorId(idPoliticaCobranca);
+		    idFormaCobrancaExcept = politica.getFormaCobranca().getId();
+		}    
+		
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
@@ -478,11 +488,18 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaSemanal(Distribuidor distribuidor, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
+	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Distribuidor distribuidor, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
 			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
 		
 		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca);
+        Long idFormaCobrancaExcept = null;
+		
+		if (idPoliticaCobranca!=null){
+			PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPorId(idPoliticaCobranca);
+			idFormaCobrancaExcept = politica.getFormaCobranca().getId();
+		}	
+		
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
