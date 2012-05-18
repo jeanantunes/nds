@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -492,24 +494,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterLancamentosBalanceamentoMatrizOrderByLancamento() {
-		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
-		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
-		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorDinap.getId()), paginacao,
-				ColunaOrdenacao.LANCAMENTO.getNomeColuna());
-
-		List<Lancamento> lancamentos = lancamentoRepository
-				.obterBalanceamentoMatrizLancamentos(filtro);
-		Assert.assertNotNull(lancamentos);
-		Assert.assertEquals(3, lancamentos.size());
-
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
-		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
-	}
-	
-	@Test
 	public void obterLancamentosBalanceamentoMatrizOrderByRecolhimento() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -731,4 +715,22 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(lancamento.getId(),lancamentoVeja.getId());
 		Assert.assertEquals(lancamento.getDataLancamentoDistribuidor(),lancamentoVeja.getDataLancamentoDistribuidor());
 	}
+	
+	@Test
+	public void obterLancamentosPorId() {
+		
+		Set<Long> idsLancamento = new TreeSet<Long>();
+		
+		idsLancamento.add(lancamentoVeja.getId());
+		idsLancamento.add(lancamentoInfoExame.getId());
+		idsLancamento.add(lancamentoQuatroRodas.getId());
+		
+		List<Lancamento> listaLancamento =
+			lancamentoRepository.obterLancamentosPorId(idsLancamento);
+		
+		Assert.assertNotNull(listaLancamento);
+		
+		Assert.assertTrue(listaLancamento.size() == idsLancamento.size());
+	}
+	
 }

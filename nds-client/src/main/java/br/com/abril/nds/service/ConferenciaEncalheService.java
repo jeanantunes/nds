@@ -1,11 +1,15 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 
@@ -80,11 +84,11 @@ public interface ConferenciaEncalheService {
 	 */
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota);
 
-	ProdutoEdicao pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws ChamadaEncalheCotaInexistenteException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws ChamadaEncalheCotaInexistenteException;
 	
-	ProdutoEdicao pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException;
 	
-	ProdutoEdicao pesquisarProdutoEdicaoPorSM(Integer numeroCota, Long sm) throws ChamadaEncalheCotaInexistenteException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException;
 	
 	/*
 	 * Traz uma lista de codigoProduto - nomeProduto -  numeroEdicao
@@ -93,8 +97,12 @@ public interface ConferenciaEncalheService {
 	
 	
 	
-	public void salvarDadosConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
+	public void salvarDadosConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConfEncalheCota, 
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
+			Usuario usuario);
 	
-	// (caso valor nota esteja diferente do encalhe requisitar correcao)
+	
 	public void finalizarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
 }

@@ -140,21 +140,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		return comboFornecedores;
 	}
-	
-	
-	
-	/**
-	  * Método responsável por obter combo de Formas de Emissão
-	  * @return comboFormasEmissao: Formas de emissão
-	  */
-	@Override
-	public List<ItemDTO<FormaEmissao, String>> getComboFormasEmissao() {
-		List<ItemDTO<FormaEmissao,String>> comboFormasEmissao =  new ArrayList<ItemDTO<FormaEmissao,String>>();
-		for (FormaEmissao itemFormaEmissao: FormaEmissao.values()){
-			comboFormasEmissao.add(new ItemDTO<FormaEmissao,String>(itemFormaEmissao, itemFormaEmissao.getDescFormaEmissao()));
-		}
-		return comboFormasEmissao;
-	}
 
 
 	
@@ -164,7 +149,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	 * @return Data Transfer Object com os parametros de cobranca da cota
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public ParametroCobrancaCotaDTO obterDadosParametroCobrancaPorCota(Long idCota) {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
@@ -184,21 +169,29 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobranca = cota.getParametroCobranca();
 			
-			if (parametroCobranca!=null){
-
-				parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
-				parametroCobrancaDTO.setFatorVencimento(parametroCobranca.getFatorVencimento());
-				parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
-				parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
-				
-				politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
-				
-				if (politicaSuspensao!=null){
-					parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
-					parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
-				}
-					
+			if (parametroCobranca==null){
+				parametroCobranca = new ParametroCobrancaCota();
+				parametroCobranca.setCota(cota);
+				parametroCobranca.setFatorVencimento(1);
+				parametroCobranca.setFormasCobrancaCota(null);
+				parametroCobranca.setValorMininoCobranca(BigDecimal.ZERO);
+				parametroCobranca.setTipoCota(null);
+				parametroCobranca.setPoliticaSuspensao(null);
+				this.parametroCobrancaCotaRepository.adicionar(parametroCobranca);
 			}
+
+			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
+			parametroCobrancaDTO.setFatorVencimento(parametroCobranca.getFatorVencimento());
+			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
+			parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
+			
+			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+			
+			if (politicaSuspensao!=null){
+				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
+				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
+			}
+					
 		}
 
 		return parametroCobrancaDTO;
@@ -528,6 +521,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		formaCobranca.setAtiva(true);
 		
+		formaCobranca.setFornecedores(null);
 		if ((formaCobrancaDTO.getFornecedoresId()!=null)&&(formaCobrancaDTO.getFornecedoresId().size()>0)){
 			Fornecedor fornecedor;
 		    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
@@ -816,10 +810,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idCota, TipoCobranca tipoCobranca,
+	public boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Integer diaDoMes) {
 		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca, idFormaCobranca);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
@@ -837,11 +831,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
+	public boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
 			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
 		
 		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca,idFormaCobranca);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));

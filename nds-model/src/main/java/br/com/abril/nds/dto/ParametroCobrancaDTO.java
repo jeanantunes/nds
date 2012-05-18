@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 public class ParametroCobrancaDTO {
 
 	
-	Long idParametro;
+	Long idPolitica;
 	Long idBanco;
 	
 	BigDecimal valorMinimo;
@@ -25,7 +25,7 @@ public class ParametroCobrancaDTO {
 	boolean vencimentoDiaUtil;
 	boolean acumulaDivida;
 	boolean unificada;
-	boolean evioEmail;
+	boolean envioEmail;
 	boolean principal;
 	
 	String instrucoes;
@@ -48,18 +48,18 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public ParametroCobrancaDTO(Long idParametro, Long idBanco,
+	public ParametroCobrancaDTO(Long idPolitica, Long idBanco,
 			BigDecimal valorMinimo, BigDecimal taxaMulta,
 			BigDecimal valorMulta, BigDecimal taxaJuros,
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
 			TipoFormaCobranca tipoFormaCobranca, boolean vencimentoDiaUtil,
-			boolean acumulaDivida, boolean unificada, boolean evioEmail,
+			boolean acumulaDivida, boolean unificada, boolean envioEmail,
 			boolean principal, String instrucoes, Integer diaDoMes,
 			boolean domingo, boolean segunda, boolean terca, boolean quarta,
 			boolean quinta, boolean sexta, boolean sabado,
 			List<Long> fornecedoresId) {
 		super();
-		this.idParametro = idParametro;
+		this.idPolitica = idPolitica;
 		this.idBanco = idBanco;
 		this.valorMinimo = valorMinimo;
 		this.taxaMulta = taxaMulta;
@@ -70,7 +70,7 @@ public class ParametroCobrancaDTO {
 		this.vencimentoDiaUtil = vencimentoDiaUtil;
 		this.acumulaDivida = acumulaDivida;
 		this.unificada = unificada;
-		this.evioEmail = evioEmail;
+		this.envioEmail = envioEmail;
 		this.principal = principal;
 		this.instrucoes = instrucoes;
 		this.diaDoMes = diaDoMes;
@@ -85,13 +85,13 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public Long getIdParametro() {
-		return idParametro;
+	public Long getIdPolitica() {
+		return idPolitica;
 	}
 
 
-	public void setIdParametro(Long idParametro) {
-		this.idParametro = idParametro;
+	public void setIdPolitica(Long idPolitica) {
+		this.idPolitica = idPolitica;
 	}
 
 
@@ -195,13 +195,13 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public boolean isEvioEmail() {
-		return evioEmail;
+	public boolean isEnvioEmail() {
+		return envioEmail;
 	}
 
 
-	public void setEvioEmail(boolean evioEmail) {
-		this.evioEmail = evioEmail;
+	public void setEnvioEmail(boolean envioEmail) {
+		this.envioEmail = envioEmail;
 	}
 
 

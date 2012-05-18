@@ -66,7 +66,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 		
-		for(Integer i=1000;i<1050; i++) {
+		for(Integer i=1000;i<1010; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
 					"0"+ i, "000.000.000.000", "acme@mail.com", "99.999-9");
@@ -162,7 +162,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 				null, true);
 			
-		Assert.assertTrue(lancamentos.size()==50);
+		Assert.assertTrue(lancamentos.size()==10);
 	}
 	
 	@Test
@@ -172,7 +172,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 				Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 				null, true);
 					
-		Assert.assertTrue(nLancamentos.equals(50L));
+		Assert.assertTrue(nLancamentos.equals(10L));
 	}	
 
 }

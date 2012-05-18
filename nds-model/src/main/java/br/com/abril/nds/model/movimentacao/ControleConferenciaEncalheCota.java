@@ -10,12 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 
 /**
  * Entidade que abstrai a sinalização do status da 
@@ -56,6 +58,10 @@ public class ControleConferenciaEncalheCota {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
+	
+	@OneToOne
+	@JoinColumn(name="NOTA_FISCAL_ENTRADA_COTA_ID")
+	private NotaFiscalEntradaCota notaFiscalEntradaCota;
 
 	/**
 	 * Obtém id
@@ -177,6 +183,12 @@ public class ControleConferenciaEncalheCota {
 		this.controleConferenciaEncalhe = controleConferenciaEncalhe;
 	}
 
-	
+	public NotaFiscalEntradaCota getNotaFiscalEntradaCota() {
+		return notaFiscalEntradaCota;
+	}
+
+	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
+		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
+	}
 	
 }

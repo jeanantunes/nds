@@ -277,46 +277,38 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 
 	@Test
 	public void obterInadimplencias(){
-		try {
-			
-			FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
-			filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.NOME);
-			filtro.setNomeCota("Manoel da Silva");
-			filtro.setNumCota(123);
-			filtro.setPeriodoDe("02/03/2009");
-			filtro.setPeriodoAte("02/03/2012");
-			filtro.setSituacaoEmAberto(true);
-			filtro.setSituacaoPaga(true);
-			filtro.setSituacaoNegociada(false);
-			filtro.setStatusCota("Ativo");
-			filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
-			
-			List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
-			Assert.assertEquals(lista.size(),1);	
-			StatusDividaDTO divida = lista.get(0);
-			Assert.assertEquals(divida.getConsignado(), "100,00" );
-			Assert.assertEquals(divida.getDataPagamento(), "02/03/2010" );
-			Assert.assertEquals(divida.getDataVencimento(), "01/02/2010");
-			Assert.assertEquals(divida.getDividaAcumulada(), "210,00");
-			Assert.assertEquals(divida.getNome(), "Manoel da Silva");
-			Assert.assertEquals(divida.getSituacao(),"Quitada");
-			Assert.assertTrue(divida.getDiasAtraso() == 29);
-			Assert.assertTrue(divida.getNumCota() == 123);
-			Assert.assertEquals(divida.getStatus(),"Ativo");
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-			
-		}
-			
+		
+		FiltroCotaInadimplenteDTO filtro = new FiltroCotaInadimplenteDTO();
+		filtro.setColunaOrdenacao(FiltroCotaInadimplenteDTO.ColunaOrdenacao.NOME);
+		filtro.setNomeCota("Manoel da Silva");
+		filtro.setNumCota(123);
+		filtro.setPeriodoDe("02/03/2009");
+		filtro.setPeriodoAte("02/03/2012");
+		filtro.setSituacaoEmAberto(true);
+		filtro.setSituacaoPaga(true);
+		filtro.setSituacaoNegociada(false);
+		filtro.setStatusCota("Ativo");
+		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
+		
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
+		Assert.assertEquals(lista.size(),1);	
+		StatusDividaDTO divida = lista.get(0);
+
+		Assert.assertEquals(divida.getDataPagamento(), "02/03/2010" );
+		Assert.assertEquals(divida.getDataVencimento(), "01/02/2010");
+		Assert.assertEquals(divida.getNome(), "Manoel da Silva");
+		Assert.assertEquals(divida.getSituacao(),"Quitada");
+		Assert.assertTrue(divida.getDiasAtraso() == 29);
+		Assert.assertTrue(divida.getNumCota() == 123);
+		Assert.assertEquals(divida.getStatus(),"Ativo");
 	}
 	
 	@Test
 	public void obterTotalInadimplencias() {
 		
-		Long lista = dividaRepository.obterTotalInadimplenciasCota(new FiltroCotaInadimplenteDTO());
+		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(new FiltroCotaInadimplenteDTO());
 		
-		Assert.assertTrue(lista==1L);					
+		Assert.assertTrue(lista.size()==1L);					
 	}
 	
 	@Test

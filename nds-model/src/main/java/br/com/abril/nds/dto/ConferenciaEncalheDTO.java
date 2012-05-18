@@ -16,7 +16,7 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private BigDecimal qtdExemplar;
 	private String codigoDeBarras;
 	private Date dataRecolhimento;
-	private Long codigoSM;
+	private Integer codigoSM;
 	private String codigo;
 	private String nomeProduto;
 	private Long numeroEdicao;
@@ -40,10 +40,10 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
 	}
-	public Long getCodigoSM() {
+	public Integer getCodigoSM() {
 		return codigoSM;
 	}
-	public void setCodigoSM(Long codigoSM) {
+	public void setCodigoSM(Integer codigoSM) {
 		this.codigoSM = codigoSM;
 	}
 	public String getCodigo() {

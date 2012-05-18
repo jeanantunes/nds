@@ -48,7 +48,7 @@ public class Cota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "NUMERO_COTA", nullable = false, unique=true)
+	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
 	@ManyToOne(optional = false)
@@ -143,8 +143,19 @@ public class Cota implements Serializable {
 	private Set<TipoDesconto> tiposDescontoCota;
 	
 	@OneToMany(mappedBy = "cota",cascade={CascadeType.REMOVE})
-	private Set<SocioCota> sociosCota = new HashSet<SocioCota>();;
+	private Set<SocioCota> sociosCota = new HashSet<SocioCota>();
 	
+	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
+	private Set<HistoricoNumeroCota> historicoNumeroCota;
+
+	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
+		return historicoNumeroCota;
+	}
+
+	public void setHistoricoNumeroCota(Set<HistoricoNumeroCota> historicoNumeroCota) {
+		this.historicoNumeroCota = historicoNumeroCota;
+	}
+
 	public Long getId() {
 		return id;
 	}

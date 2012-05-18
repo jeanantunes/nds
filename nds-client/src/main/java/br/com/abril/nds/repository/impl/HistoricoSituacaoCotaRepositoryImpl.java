@@ -255,7 +255,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepository<Hist
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select h from  HistoricoSituacaoCota h JOIN h.cota cota ")
-		.append(" where cota.numeroCota =: numeroCota")
+		.append(" where cota.numeroCota =:numeroCota")
 		.append(" and cota.situacaoCadastro = h.novaSituacao ")
 		.append(" and cota.situacaoCadastro =:situacaoCadastro ")
 		.append(" order by cota.inicioAtividade, h.dataEdicao desc ");

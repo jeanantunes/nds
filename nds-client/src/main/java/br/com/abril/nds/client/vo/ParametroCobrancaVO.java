@@ -3,7 +3,7 @@ package br.com.abril.nds.client.vo;
 
 public class ParametroCobrancaVO {
 	
-	Long idParametro;
+	Long idPolitica;
 	String forma;
 	String banco;
 	String vlr_minimo_emissao;
@@ -13,12 +13,12 @@ public class ParametroCobrancaVO {
 	String envio_email;
 	boolean principal;
 	
-	public Long getIdParametro() {
-		return idParametro;
+	public Long getIdPolitica() {
+		return idPolitica;
 	}
 	
-	public void setIdParametro(Long idParametro) {
-		this.idParametro = idParametro;
+	public void setIdPolitica(Long idPolitica) {
+		this.idPolitica = idPolitica;
 	}
 	
 	public String getForma() {
@@ -101,7 +101,7 @@ public class ParametroCobrancaVO {
 		result = prime * result
 				+ ((formaEmissao == null) ? 0 : formaEmissao.hashCode());
 		result = prime * result
-				+ ((idParametro == null) ? 0 : idParametro.hashCode());
+				+ ((idPolitica == null) ? 0 : idPolitica.hashCode());
 		result = prime * result + (principal ? 1231 : 1237);
 		result = prime
 				* result
@@ -149,10 +149,10 @@ public class ParametroCobrancaVO {
 				return false;
 		} else if (!formaEmissao.equals(other.formaEmissao))
 			return false;
-		if (idParametro == null) {
-			if (other.idParametro != null)
+		if (idPolitica == null) {
+			if (other.idPolitica != null)
 				return false;
-		} else if (!idParametro.equals(other.idParametro))
+		} else if (!idPolitica.equals(other.idPolitica))
 			return false;
 		if (principal != other.principal)
 			return false;
