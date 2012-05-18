@@ -237,7 +237,7 @@ public class ConferenciaEncalheController {
 				
 				if (conferenciaEncalheDTO == null){
 				
-					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
+//FIXME					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
 				}
 			} else if (sm != null){
 				
@@ -252,7 +252,7 @@ public class ConferenciaEncalheController {
 				
 				if (conferenciaEncalheDTO == null){
 				
-					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
+					produtoEdicao = null;//FIXME	this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
 				}
 			} else if (idProdutoEdicao != null){
 				
@@ -267,13 +267,14 @@ public class ConferenciaEncalheController {
 				
 				if (conferenciaEncalheDTO == null){
 				
-					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
+					produtoEdicao = null;//FIXME	 this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
 				}
 			} else {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
 			}
-		} catch (ChamadaEncalheCotaInexistenteException e) {
+			
+		} catch(Exception e){//FIXME	catch (ChamadaEncalheCotaInexistenteException e) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
 		}
@@ -294,10 +295,7 @@ public class ConferenciaEncalheController {
 	@Post
 	public void adicionarProdutoConferido(Long quantidade, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException{
 		
-		ProdutoEdicao produtoEdicao = 
-				this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
-						this.getIdCotaConferenciaSession(), 
-						idProdutoEdicao);
+		ProdutoEdicao produtoEdicao = null;//FIXME	 this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(this.getIdCotaConferenciaSession(), idProdutoEdicao);
 		
 		this.atualizarQuantidadeConferida(null, quantidade, produtoEdicao);
 		
@@ -370,7 +368,9 @@ public class ConferenciaEncalheController {
 			conferenciaEncalheDTOSessao.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
 			conferenciaEncalheDTOSessao.setCodigo(produtoEdicao.getProduto().getCodigo());
 			conferenciaEncalheDTOSessao.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-			conferenciaEncalheDTOSessao.setCodigoSM(produtoEdicao.getCodigoSM());
+			
+			//TODO: conferenciaEncalheDTOSessao.setCodigoSM(produtoEdicao.getCodigoSM());
+			
 			conferenciaEncalheDTOSessao.setIdProdutoEdicao(produtoEdicao.getId());
 			conferenciaEncalheDTOSessao.setNomeProduto(produtoEdicao.getProduto().getNome());
 			conferenciaEncalheDTOSessao.setNumeroEdicao(produtoEdicao.getNumeroEdicao());

@@ -3,6 +3,8 @@ package br.com.abril.nds.client.vo;
 public class CobrancaVO {
     
 	//BOLETO
+	private String codigo;
+	private String nome;
 	private String cota;
 	private String banco;
 	private String nossoNumero;
@@ -114,6 +116,22 @@ public class CobrancaVO {
 
 	public void setMulta(String multa) {
 		this.multa = multa;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	@Override

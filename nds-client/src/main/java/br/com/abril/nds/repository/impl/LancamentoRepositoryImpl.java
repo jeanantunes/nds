@@ -716,4 +716,24 @@ public class LancamentoRepositoryImpl extends
 		
 		return query.list();
 	}
+	
+	public Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Lancamento lancamento ");
+		
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		
+		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setDate("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
+		
+		query.setLong("idProdutoEdicao", idProdutoEdicao);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
 }

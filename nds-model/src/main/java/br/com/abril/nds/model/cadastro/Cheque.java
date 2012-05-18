@@ -10,10 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * @author Diego Fernandes
@@ -69,7 +72,19 @@ public class Cheque implements Serializable {
 	
 	@Column(name="CORRENTISTA", nullable=false)
 	private String correntista;
-		
+	
+	@JsonIgnore
+	@OneToOne(mappedBy="cheque", orphanRemoval=true)
+	private ChequeImage chequeImage;
+	
+	public Cheque(long idCheque) {
+		this.id = idCheque;
+	}
+	
+	
+	public Cheque() {
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -239,4 +254,19 @@ public class Cheque implements Serializable {
 		this.correntista = correntista;
 	}
 
+
+	/**
+	 * @return the chequeImage
+	 */
+	public ChequeImage getChequeImage() {
+		return chequeImage;
+	}
+
+
+	/**
+	 * @param chequeImage the chequeImage to set
+	 */
+	public void setChequeImage(ChequeImage chequeImage) {
+		this.chequeImage = chequeImage;
+	}
 }

@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository;
 
-import org.apache.poi.ss.formula.functions.T;
-
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 
 /**
@@ -37,6 +36,12 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @param type tipo da garantia
 	 * @return
 	 */
-	@SuppressWarnings("hiding")
 	public abstract <T extends CotaGarantia> T getByCota(Long idCota, Class<T> type);
+	
+	/**
+	 * Recupera o cheque
+	 * @param idCheque
+	 * @return 
+	 */
+	public abstract Cheque getCheque(long idCheque);
 }

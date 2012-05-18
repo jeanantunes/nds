@@ -363,7 +363,6 @@ public class Fixture {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
-		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
@@ -387,7 +386,8 @@ public class Fixture {
 
 	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, String codigoDeBarras, Long codigoSM, Produto produto) {
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto) {
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
@@ -397,7 +397,23 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
-		produtoEdicao.setCodigoSM(codigoSM);
+		return produtoEdicao;
+	}
+	
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda) {
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		return produtoEdicao;
 	}
 
@@ -542,7 +558,7 @@ public class Fixture {
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		
 		return distribuidor;

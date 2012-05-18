@@ -2,10 +2,14 @@ package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.financeiro.Cobranca;
 
 public interface CobrancaService {
     
@@ -40,5 +44,29 @@ public interface CobrancaService {
 	 */
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
 									Distribuidor distribuidor, BigDecimal valor);
+
+	
+	/**
+	 * Método responsável por obter cobranças por numero da cota e vencimento
+	 * @param filtro
+	 * @return Lista de cobrancas encontrados
+	 */
+	List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
+
+	
+	/**
+	 * Método responsável por obter quantidade cobranças por numero da cota e vencimento
+	 * @param filtro
+	 * @return int
+	 */
+	int obterQuantidadeCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
+
+	
+	/**
+	 * Método responsável por obter dados de cobranças por numero da cota e vencimento
+	 * @param filtro
+	 * @return Lista de value objects com dados de cobrancas encontradas
+	 */
+	List<CobrancaVO> obterDadosCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
 	
 }
