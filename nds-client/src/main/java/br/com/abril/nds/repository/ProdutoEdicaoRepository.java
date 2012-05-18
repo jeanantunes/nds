@@ -18,6 +18,15 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
 	
 	/**
+	 * Obtém o codigoSM a partir do idProdutoEdicao
+	 * 
+	 * @param sequenciaMatriz
+	 * 
+	 * @return Integer
+	 */
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao);
+	
+	/**
 	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.
 	 * 
 	 * @param sequenciaMatriz
