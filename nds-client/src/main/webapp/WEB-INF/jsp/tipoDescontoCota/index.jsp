@@ -11,6 +11,35 @@
 		$("#descontoProduto").mask("99.99");		
 	});
 	
+	function pesquisar() {
+		
+		var geral = $("#radioGeral").is(":checked");
+		var especifico = $("#radioEspecifico").is(":checked");
+		var produto = $("#radioProduto").is(":checked");
+		
+		if(geral){
+			pesquisarDescontoGeral();						
+		}else if(especifico){
+
+		}else if(produto){
+
+		}	
+	}
+	
+	function pesquisarDescontoGeral(){
+		var descontoGeral = $("#descontoGeral").val();
+		var dataAlteracao = $("#dataAlteracaoGeral").val();
+		var usuario = $("#textfield24").val();		
+		
+		$(".tiposDescGeralGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
+			params: [],
+		    newp: 1,
+		});
+		
+		$(".tiposDescGeralGrid").flexReload();
+	}
+	
 	function buscarNomeProduto(){
 		if ($("#codigo").val().length > 0){
 			var data = "codigoProduto=" + $("#codigo").val();
@@ -194,21 +223,6 @@
 		$( '.produto' ).show();
 		}
 	
-	
-	function pesquisar() {
-		
-		var descontoGeral = $("#descontoGeral").val();
-		var dataAlteracao = $("#dataAlteracaoGeral").val();
-		var usuario = $("#textfield24").val();		
-		
-		$(".tiposDescGeralGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
-			params: [],
-		    newp: 1,
-		});
-		
-		$(".tiposDescGeralGrid").flexReload();
-	}
 	
 	function executarPreProcessamento(resultado) {
 		

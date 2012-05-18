@@ -86,10 +86,8 @@ public class TipoDescontoCotaController {
 	}
 	
 	@Path("/pesquisarDescontoGeral")
-	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {
-		
-		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;
-		
+	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {		
+		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;		
 		try {			
 			listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoGeral();
 			} catch (Exception e) {
@@ -99,8 +97,7 @@ public class TipoDescontoCotaController {
 			} else {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
 			}
-		}
-		
+		}		
 		if (listaDescontoCotaVO == null || listaDescontoCotaVO.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
@@ -114,7 +111,6 @@ public class TipoDescontoCotaController {
 			tableModel.setTotal(qtdeTotalRegistros);
 	
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-
 		}
 	}
 	
