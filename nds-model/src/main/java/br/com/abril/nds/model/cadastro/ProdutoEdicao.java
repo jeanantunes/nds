@@ -57,7 +57,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
-	@Column(name = "PRECO_VENDA", nullable = false)
+	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
 	
 	@Column(name = "DESCONTO")
