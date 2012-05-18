@@ -38,7 +38,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
 			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
-		this.configurarSequenciaProdutosMatrizRecolhimento(matrizRecolhimento, dadosRecolhimento);
+		this.configurarMatrizRecolhimento(matrizRecolhimento, dadosRecolhimento);
 		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
@@ -320,11 +320,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	}
 	
 	/*
-	 * Configura a sequência dos produtos da matriz de recolhimento.
+	 * Configura a sequência, a data de recolhimento e a nova data dos produtos da matriz.
 	 */
-	private void configurarSequenciaProdutosMatrizRecolhimento(
-												Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												RecolhimentoDTO dadosRecolhimento) {
+	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+											  RecolhimentoDTO dadosRecolhimento) {
 		
 		if (dadosRecolhimento.isMatrizFechada() || !dadosRecolhimento.getBalancearMatriz()) {
 			
@@ -336,10 +335,14 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {
 			
+			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
+			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
+				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+				produtoRecolhimento.setNovaData(dataRecolhimento);
 				produtoRecolhimento.setSequencia(sequencia++);
 			}
 		}
