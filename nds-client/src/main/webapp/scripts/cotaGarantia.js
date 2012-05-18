@@ -20,7 +20,7 @@ NotaPromissoria.prototype.notaPromissoria = {
 };
 NotaPromissoria.prototype.salva = function(callBack) {
 	this.dataUnBind();
-	var postData = this.processPost('notaPromissoria', this.notaPromissoria);
+	var postData = serializeObjectToPost('notaPromissoria', this.notaPromissoria);
 	postData['idCota'] = this.idCota;
 
 	$.postJSON(this.path + 'salvaNotaPromissoria.json', postData,
@@ -38,14 +38,6 @@ NotaPromissoria.prototype.salva = function(callBack) {
 
 			}, null, true);
 	return false;
-};
-
-NotaPromissoria.prototype.processPost = function(objectName, object) {
-	var obj = {};
-	for ( var propriedade in object) {
-		obj[objectName + '.' + propriedade] = object[propriedade];
-	}
-	return obj;
 };
 
 NotaPromissoria.prototype.get = function() {
@@ -144,13 +136,6 @@ ChequeCaucao.prototype.chequeCaucao = {
 	correntista : null
 };
 
-ChequeCaucao.prototype.processPost = function(objectName, object) {
-	var obj = {};
-	for ( var propriedade in object) {
-		obj[objectName + '.' + propriedade] = object[propriedade];
-	}
-	return obj;
-};
 
 ChequeCaucao.prototype.get = function() {
 
@@ -174,7 +159,7 @@ ChequeCaucao.prototype.get = function() {
 ChequeCaucao.prototype.salva = function(callBack) {
 	this.dataUnBind();
 	var _this = this;
-	var postData = this.processPost('chequeCaucao', this.chequeCaucao);
+	var postData = serializeObjectToPost('chequeCaucao', this.chequeCaucao);
 	postData['idCota'] = this.idCota;
 
 	$.postJSON(this.path + 'salvaChequeCaucao.json', postData, function(data) {
@@ -339,13 +324,6 @@ Imovel.prototype.imovel = {
 	observacao : null
 };
 
-Imovel.prototype.processPost = function(objectName, object) {
-	var obj = {};
-	for ( var propriedade in object) {
-		obj[objectName + '.' + propriedade] = object[propriedade];
-	}
-	return obj;
-};
 
 Imovel.prototype.processListPost = function(listaName, lista) {
 	var obj = {};
@@ -386,7 +364,7 @@ Imovel.prototype.get = function() {
 Imovel.prototype.incluirImovel = function(callBack) {
 	var _this = this;
 	this.dataUnBind();
-	var postData = this.processPost('imovel', this.imovel);
+	var postData = serializeObjectToPost('imovel', this.imovel);
 
 	$.postJSON(this.path + 'incluirImovel.json', postData, function(data) {
 		var tipoMensagem = data.tipoMensagem;
@@ -436,7 +414,7 @@ Imovel.prototype.salva = function(callBack) {
 		listaImoveis.push(imovel);
 	}
 
-	var postData = this.processListPost('listaImoveis', listaImoveis);
+	var postData = serializeArrayToPost('listaImoveis', listaImoveis);
 	postData['idCota'] = this.idCota;
 
 	$.postJSON(this.path + 'salvaImovel.json', postData, function(data) {
@@ -1022,7 +1000,7 @@ CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
 	
 	this.dataUnBind();
 	
-	var postData = this.processPost('caucaoLiquida', this.caucaoLiquida);
+	var postData = serializeObjectToPost('caucaoLiquida', this.caucaoLiquida);
 	
 	var _this = this;
 	
@@ -1065,7 +1043,7 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 		listaCaucaoLiquida.push(caucaoLiquida);
 	}
 	
-	var postData = this.processListPost('listaCaucaoLiquida', listaCaucaoLiquida);
+	var postData = serializeArrayToPost('listaCaucaoLiquida', listaCaucaoLiquida);
 	postData['idCota'] = this.idCota;
 
 	$.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
@@ -1083,14 +1061,6 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 			}, null, true);
 };
 
-
-CaucaoLiquida.prototype.processPost = function(objectName, object) {
-	var obj = {};
-	for ( var propriedade in object) {
-		obj[objectName + '.' + propriedade] = object[propriedade];
-	}
-	return obj;
-};
 
 CaucaoLiquida.prototype.processListPost = function(listaName, lista) {	
 	var obj = {};
