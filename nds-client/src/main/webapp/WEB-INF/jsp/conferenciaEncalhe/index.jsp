@@ -199,8 +199,8 @@
 						$("#editor").text("");
 						$("#pacotePadrao").text("");
 						
-						$("#observacaoReadOnly").text(result.observacao);
-						$("#observacao").text(result.observacao);
+						$("#observacaoReadOnly").text(result.observacao ? result.observacao : "");
+						$("#observacao").val(result.observacao ? result.observacao : "");
 						$("#observacaoReadOnly").show();
 						$("#observacao").show();
 						$("#btObs").show();
@@ -1027,7 +1027,7 @@
 					
 					if (e.keyCode != 38 && e.keyCode != 40){
 						
-						mostrar_produtos();
+						ConferenciaEncalhe.mostrar_produtos();
 					}
 				}
 			});

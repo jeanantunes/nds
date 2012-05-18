@@ -15,6 +15,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -23,7 +24,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
@@ -179,9 +179,9 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void pesquisarProdutoEdicao(String codigoBarra, Long sm, Long idProdutoEdicao, Long codigoAnterior, Long quantidade){
+	public void pesquisarProdutoEdicao(String codigoBarra, Integer sm, Long idProdutoEdicao, Long codigoAnterior, Long quantidade){
 		
-		ProdutoEdicao produtoEdicao = null;
+		ProdutoEdicaoDTO produtoEdicao = null;
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
 		
@@ -246,7 +246,8 @@ public class ConferenciaEncalheController {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
 			}
-		} catch (ChamadaEncalheCotaInexistenteException e) {
+			
+		} catch(ChamadaEncalheCotaInexistenteException e){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
 		}
@@ -277,7 +278,7 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
 		}
 		
-		ProdutoEdicao produtoEdicao = 
+		ProdutoEdicaoDTO produtoEdicao = 
 				this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
 						info.getCota().getNumeroCota(), 
 						idProdutoEdicao);
@@ -446,7 +447,7 @@ public class ConferenciaEncalheController {
 	/*
 	 * Atualiza quantidade da conferencia ou cria um novo registro caso seja a primeira vez que se esta conferindo o produtoedicao
 	 */
-	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicao produtoEdicao) {
+	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicaoDTO produtoEdicao) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = null;
 		
@@ -476,16 +477,16 @@ public class ConferenciaEncalheController {
 		return conferenciaEncalheDTOSessao;
 	}
 
-	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicao produtoEdicao, Long quantidade, boolean adicionarGrid) {
+	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, Long quantidade, boolean adicionarGrid) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
-		conferenciaEncalheDTO.setCodigo(produtoEdicao.getProduto().getCodigo());
+		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
+		//conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
-		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
 		
