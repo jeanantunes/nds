@@ -87,11 +87,11 @@ public class CotaGarantiaController {
 	}
 
 	@Post("/salvaCaucaoLiquida.json")
-	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) {
+	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws Exception {
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
-			//TODO: validar;
+			validaCaucaoLiquida(caucaoLiquida);
 		}
 		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
@@ -154,17 +154,21 @@ public class CotaGarantiaController {
 	 * @param caucaoLiquida para ser validado
 	 */
 	private void validaCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		if (caucaoLiquida.getValor() == null || caucaoLiquida.getValor() <= 0) {
-			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
-		}
-		
-		if (!listaMensagens.isEmpty()) {
+				
+		if (caucaoLiquida.getValor() == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					listaMensagens));
+					"Parametros inválidos"));
 		}
+		
+		if (caucaoLiquida.getAtualizacao() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}
+		
+		if (caucaoLiquida.getIndiceReajuste() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}	
 	}
 	/**
 	 * @param notaPromissoria para ser validado

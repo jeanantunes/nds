@@ -121,14 +121,16 @@ function serializeObjectToPost(objectName, object) {
 };
 
 function serializeArrayToPost(listaName, lista) {	
+	
 	var obj = {};
 	var i;
+	console.log(lista);
 	for(i = 0; i < lista.length;i++){
 		
 		var object = lista[i];
 		for ( var propriedade in object) {
-			if(object[propriedade]){
-				obj[listaName +'['+i+'].'+propriedade] =object[propriedade];
+			if(object[propriedade] || object[propriedade] == 0){
+				obj[listaName +'['+i+'].'+propriedade] = object[propriedade];
 			}
 		}
 	}

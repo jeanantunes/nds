@@ -7,17 +7,19 @@ function NotaPromissoria(idCota, cotaGarantia) {
 	this.bindEvents();
 	if (cotaGarantia && cotaGarantia.notaPromissoria) {
 		this.notaPromissoria = cotaGarantia.notaPromissoria;
-		this.dataBind();
+		
+	}else{
+		this.notaPromissoria = {
+			id : null,
+			vencimento : null,
+			valor : null,
+			valorExtenso : null
+		};
 	}
+	this.dataBind();
 	this.toggle();
 };
 NotaPromissoria.prototype.path = contextPath + "/cadastro/garantia/";
-NotaPromissoria.prototype.notaPromissoria = {
-	id : null,
-	vencimento : null,
-	valor : null,
-	valorExtenso : null
-};
 NotaPromissoria.prototype.salva = function(callBack) {
 	this.dataUnBind();
 	var postData = serializeObjectToPost('notaPromissoria', this.notaPromissoria);
@@ -94,11 +96,18 @@ NotaPromissoria.prototype.bindEvents = function() {
 		thousandsSeparator : '.'
 	});
 	$("#cotaGarantiaNotaPromissoriaImprimir").bind('click', function() {
-		_this.salva(function() {
+		if(_this.notaPromissoria.id){
 			_this.imprimi();
-		});
+		}else{
+			exibirMensagemDialog('WARNING', ['Salve a Nota antes de imprimir.'], "");
+		}
 	});
 };
+
+NotaPromissoria.prototype.destroy = function() {
+	$("#cotaGarantiaNotaPromissoriaImprimir").unbind('click');
+};
+
 
 NotaPromissoria.prototype.imprimi = function() {
 	window.open(this.path + 'impriNotaPromissoria/' + this.idCota);
@@ -115,26 +124,27 @@ function ChequeCaucao(idCota, cotaGarantia) {
 	this.bindEvents();
 	if(cotaGarantia && cotaGarantia.cheque){
 		this.chequeCaucao = cotaGarantia.cheque;
-	}	
+	}else{
+		this.chequeCaucao ={
+				id : null,
+				numeroBanco : null,
+				nomeBanco : null,
+				agencia : null,
+				dvAgencia : null,
+				conta : null,
+				dvConta : null,
+				valor : null,
+				numeroCheque : null,
+				emissao : null,
+				validade : null,
+				correntista : null
+			};
+	}
 	this.dataBind();
 	this.toggle();
 	this.initUploadForm();
 };
 ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
-ChequeCaucao.prototype.chequeCaucao = {
-	id : null,
-	numeroBanco : null,
-	nomeBanco : null,
-	agencia : null,
-	dvAgencia : null,
-	conta : null,
-	dvConta : null,
-	valor : null,
-	numeroCheque : null,
-	emissao : null,
-	validade : null,
-	correntista : null
-};
 
 
 ChequeCaucao.prototype.get = function() {
@@ -302,117 +312,61 @@ ChequeCaucao.prototype.bindEvents = function() {
  * @returns {Imovel}
  */
 function Imovel(idCota, cotaGarantia) {
-	
-	console.log("novo");
-	
 	this.idCota = idCota;
+	
+	if(!cotaGarantia){
+		cotaGarantia = new Object();
+	}
 	this.cotaGarantia = cotaGarantia;
 	this.bindEvents();
-	//this.get();
 	this.toggle();
-	
 	this.initGrid();
-	this.rows = new Array();
 	this.itemEdicao = null;
 	this.popularGrid();
-	
-	//TODO: Processar lista de imoveis data.cotaGarantia.imoveis;
-	
+	this.imovel = {
+			id : null,
+			proprietario : null,
+			endereco : null,
+			numeroRegistro : null,
+			valor : null,
+			observacao : null
+		};
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
-Imovel.prototype.imovel = {
-	id : null,
-	proprietario : null,
-	endereco : null,
-	numeroRegistro : null,
-	valor : null,
-	observacao : null
-};
-
-
-Imovel.prototype.processListPost = function(listaName, lista) {
-	var obj = {};
-
-	for ( var i = 0; i < lista.length; i++) {
-
-		var object = lista[i];
-		for ( var propriedade in object) {
-			obj[listaName + '[' + i + '].' + propriedade] = object[propriedade];
-		}
-	}
-
-	return obj;
-};
 
 Imovel.prototype.toggle = function() {
 	$('#cotaGarantiaImovelPanel').toggle();
 };
 
-Imovel.prototype.get = function() {
-	var _this = this;
-	$.postJSON(this.path + 'getByCota.json', {
-		'idCota' : this.idCota
-	}, function(data) {
-
-		var tipoMensagem = data.tipoMensagem;
-		var listaMensagens = data.listaMensagens;
-		if (tipoMensagem && listaMensagens) {
-			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-		} else if (data && data.imovel) {
-			_this.imovel = data.cotaGarantia.imovel;
-			_this.dataBind();
-		}
-
-	}, null, true);
-};
-
 Imovel.prototype.incluirImovel = function(callBack) {
-	var _this = this;
+	
 	this.dataUnBind();
 	var postData = serializeObjectToPost('imovel', this.imovel);
-
+	var _this = this;
+	
 	$.postJSON(this.path + 'incluirImovel.json', postData, function(data) {
+		
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+		
 		} else {
 
 			var novoImovel = data.imovel;
-			var rows = new Array();
-			
-			for (var index in _this.rows) {
-				rows.push(_this.rows[index]);
-			}
-		
+				
 			if (_this.itemEdicao == null || _this.itemEdicao < 0) {
-				rows.push({
-					"id" : rows.length,
-					"cell" : novoImovel
-				});
+				_this.cotaGarantia.imoveis.push(novoImovel);
+				
 			} else {
-				rows.slice(_this.itemEdicao, 1);
-				rows[_this.itemEdicao] = {
-					"id" : _this.itemEdicao,
-					"cell" : novoImovel
-				};
+				_this.cotaGarantia.imoveis.slice(_this.itemEdicao, 1);
+				_this.cotaGarantia.imoveis[_this.itemEdicao] = novoImovel;
 			}
-
-			$(".cotaGarantiaImovelGrid").flexAddData({
-				rows : rows,
-				page : 1,
-				total : 1
-			});
-			
-			_this.rows.push({
-				"id" : rows.length,
-				"cell" : novoImovel
-			});
 			
 			_this.limparForm();
-				
+			_this.popularGrid();
 		}
 
 		if (callBack) {
@@ -423,14 +377,8 @@ Imovel.prototype.incluirImovel = function(callBack) {
 };
 
 Imovel.prototype.salva = function(callBack) {
-	var listaImoveis = new Array;
 
-	for ( var index in this.rows) {
-		var imovel = this.rows[index].cell;
-		listaImoveis.push(imovel);
-	}
-
-	var postData = serializeArrayToPost('listaImoveis', listaImoveis);
+	var postData = serializeArrayToPost('listaImoveis', this.cotaGarantia.imoveis);
 	postData['idCota'] = this.idCota;
 
 	$.postJSON(this.path + 'salvaImovel.json', postData, function(data) {
@@ -474,28 +422,20 @@ Imovel.prototype.dataBind = function() {
 
 };
 
-Imovel.prototype.popularGrid = function() {
+Imovel.prototype.popularGrid = function() {	
+	if (!(this.cotaGarantia && this.cotaGarantia.imoveis)) {
+		this.cotaGarantia.imoveis =  new Array();
+	} 
 	
-	var rows = this.rows;
-	$(".cotaGarantiaImovelGrid").flexAddData({rows:[]});
-	if (this.cotaGarantia) {
-		var imoveis = this.cotaGarantia.imoveis;
-
-		for (var index in imoveis) {
-			var novoImovel = imoveis[index];
-			novoImovel.id = null;
-			rows.push({"id" : rows.length,	"cell" : novoImovel});
-		}
-	}
-	
-	$(".cotaGarantiaImovelGrid").flexAddData({
-		rows : rows,
+	this.grid.flexAddData({
+		rows : toFlexiGridObject(this.cotaGarantia.imoveis),
 		page : 1,
 		total : 1
 	});
 };
 
 Imovel.prototype.dataUnBind = function() {
+	this.imovel = new Object();
 	this.imovel.proprietario = $("#cotaGarantiaImovelProprietario").val();
 	this.imovel.endereco = $("#cotaGarantiaImovelEndereco").val();
 	this.imovel.numeroRegistro = $("#cotaGarantiaImovelNumeroRegistro").val();
@@ -527,7 +467,7 @@ Imovel.prototype.destroy = function() {
 };
 
 Imovel.prototype.edita = function(id) {
-	this.imovel = this.rows[id].cell;
+	this.imovel = this.cotaGarantia.imoveis[id];
 	this.itemEdicao = id;
 	this.dataBind();
 	$("#cotaGarantiaImovelSalvaEdicao").show();
@@ -546,24 +486,10 @@ Imovel.prototype.remove = function(id) {
 		buttons : {
 			"Confirmar" : function() {
 
-				_this.rows.splice(id, 1);
+				_this.cotaGarantia.imoveis.splice(id, 1);
 
-				var lista = new Array;
-
-				for ( var index in _this.rows) {
-					lista.push({
-						"id" : lista.length,
-						"cell" : _this.rows[index].cell
-					});
-				}
-
-				_this.rows = lista;
-
-				$(".cotaGarantiaImovelGrid").flexAddData({
-					rows : _this.rows,
-					page : 1,
-					total : 1
-				});
+				_this.popularGrid();
+				
 				$(this).dialog("close");
 			},
 			"Cancelar" : function() {
@@ -593,8 +519,7 @@ Imovel.prototype.initGrid = function() {
 										.each(
 												data.rows,
 												function(index, value) {
-													console.log("Data:"); 
-													console.log(data);
+													
 													var idImovel = value.id;
 
 													var acao = '<a href="javascript:;" onclick="tipoCotaGarantia.controller.edita('
@@ -772,7 +697,6 @@ TipoCotaGarantia.prototype.bindEvents = function() {
 TipoCotaGarantia.prototype.onChange = function(newControllerType) {
 	if (this.cotaGarantia && this.cotaGarantia.id && this.cotaGarantia.controllerType == this.controllerType) {
 		this.newControllerType = newControllerType;
-		// TODO: validar no servidor.
 		this.confirmDialog.open();
 	} else {
 		this.newControllerType = null;
@@ -796,6 +720,21 @@ TipoCotaGarantia.prototype.changeController = function(newControllerType) {
 
 TipoCotaGarantia.prototype.getIdCota = function() {
 	return MANTER_COTA.idCota;
+};
+
+TipoCotaGarantia.prototype.salva = function(callBack) {
+	var retorno = false;
+	var _this = this;
+	if(this.controller){
+		retorno = this.controller.salva(function(){
+			_this.getData();
+			if(callBack){
+				callBack();
+			}
+		});
+	}
+	
+	return retorno;
 };
 
 // **************** FIADOR PROTOTYPE ********************//
@@ -1043,6 +982,7 @@ CaucaoLiquida.prototype.formatDate = function(data) {
 
 CaucaoLiquida.prototype.dataUnBind = function() {	
 	this.caucaoLiquida = new Object();
+	this.caucaoLiquida.id = null;
 	this.caucaoLiquida.valor = $("#cotaGarantiaCaucaoLiquidaValor").unmask() / 100;
 	$("#cotaGarantiaCaucaoLiquidaValor").val(null);
 	this.caucaoLiquida.indiceReajuste = 0.0;
@@ -1057,20 +997,19 @@ CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
 	}else{		
 		this.listNovosCalcao.unshift(this.caucaoLiquida);		
 		this.popularGrid();
-		
 	}
-	
 };
 
 CaucaoLiquida.prototype.popularGrid = function() {
 	
 	var salvas;
-	if (this.cotaGarantia) {		
+	if (this.cotaGarantia && this.cotaGarantia.caucaoLiquidas) {
 		salvas = this.cotaGarantia.caucaoLiquidas;
 	}else{
 		salvas = new Array();
-	}		
-	this.rows  = salvas.concat(this.listNovosCalcao);
+	}	
+	
+	this.rows  = this.listNovosCalcao.concat(salvas);
 	
 	this.grid.flexAddData({
 		rows : toFlexiGridObject(this.rows),
@@ -1078,20 +1017,16 @@ CaucaoLiquida.prototype.popularGrid = function() {
 		total : 1
 	});
 	
+	
 };
 
 CaucaoLiquida.prototype.salva = function(callBack) {
 	
-	var listaCaucaoLiquida = new Array;
-	
-	for (var index in this.rows) {
-		var caucaoLiquida = this.rows[index].cell;
-		listaCaucaoLiquida.push(caucaoLiquida);
-	}
-	
-	var postData = serializeArrayToPost('listaCaucaoLiquida', listaCaucaoLiquida);
+	console.log(this.listNovosCalcao);
+	var postData = serializeArrayToPost('listaCaucaoLiquida', this.listNovosCalcao);
+		
 	postData['idCota'] = this.idCota;
-
+	
 	$.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
 			function(data) {
 				var tipoMensagem = data.tipoMensagem;
@@ -1106,22 +1041,6 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 
 			}, null, true);
 };
-
-
-CaucaoLiquida.prototype.processListPost = function(listaName, lista) {	
-	var obj = {};
-	
-	for(var i = 0; i < lista.length;i++){
-		
-		var object = lista[i];
-		for ( var propriedade in object) {
-			obj[listaName +'['+i+'].'+propriedade] =object[propriedade];
-		}
-	}
-	return obj;
-};
-
-
 
 CaucaoLiquida.prototype.resgatarValorCaucao = function() {
 	var caucaoLiquida = {
