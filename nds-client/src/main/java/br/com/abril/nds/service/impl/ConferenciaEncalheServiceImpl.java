@@ -136,16 +136,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterBoxPadraoUsuario(java.lang.Long)
 	 */
-	public String obterBoxPadraoUsuario(Long idUsuario) {
-		
-		/*List<Box> listaBoxEncalhe = boxRepository.obterBoxUsuario(idUsuario, TipoBox.RECOLHIMENTO);
-		
-		if(listaBoxEncalhe != null && !listaBoxEncalhe.isEmpty()) {
-			
-			Box boxRecolhimentoUsuario = listaBoxEncalhe.get(0);
-			
-			return boxRecolhimentoUsuario.getCodigo();
-		}*/
+	private String obterBoxPadraoUsuario(Long idUsuario) {
 		
 		if (idUsuario == null){
 			
@@ -529,7 +520,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
+	@Transactional
 	public void salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 

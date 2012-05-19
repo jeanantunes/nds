@@ -234,9 +234,14 @@
 					buttons : {
 						"Confirmar" : function() {
 							
-							
-							
-							$("#dialog-dadosNotaFiscal").dialog("close");
+							$.postJSON('<c:url value="/devolucao/conferenciaEncalhe/finalizarConferencia"/>', null,
+								function(result){
+									
+									exibirMensagem(result.tipoMensagem, result.listaMensagens);
+									
+									$("#dialog-dadosNotaFiscal").dialog("close");
+								}, null, true, "idModalDadosNotaFiscal"
+							);
 						},
 						"Cancelar" : function() {
 							
@@ -271,7 +276,7 @@
 				});
 				
 				$(".conferenciaEncalheGrid").flexOptions({			
-					url : "<c:url value='/devolucao/conferenciaEncalhe/finalizarConferencia'/>",
+					url : "<c:url value='/devolucao/conferenciaEncalhe/recalcularConferencia'/>",
 					dataType : 'json',
 					preProcess: ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe,
 					params: data
@@ -300,7 +305,7 @@
 				});
 				
 				$(".pesqProdutosNotaGrid").flexOptions({			
-					url : "<c:url value='/devolucao/conferenciaEncalhe/finalizarConferencia'/>",
+					url : "<c:url value='/devolucao/conferenciaEncalhe/recalcularConferencia'/>",
 					dataType : 'json',
 					preProcess: ConferenciaEncalhe.finaliazarConferenciaPreProcess,
 					params: data
@@ -996,15 +1001,7 @@
 							
 								ConferenciaEncalhe.setarValoresPesquisados(result);
 								$("#cod_barras").focus();
-							},
-							function(){
-								
-								ConferenciaEncalhe.limparDadosProduto();
-								
-								$("#cod_barras").val(_codeBar);
-								
-								$("#cod_barras").focus();
-							}
+							}, null, true, "idModalPesquisarProdutos"
 						);
 					}
 				}
@@ -1034,15 +1031,7 @@
 							
 								ConferenciaEncalhe.setarValoresPesquisados(result);
 								$("#sm").focus();
-							},
-							function (){
-								
-								ConferenciaEncalhe.limparDadosProduto();
-								
-								$("#sm").val(_sm);
-								
-								$("#sm").focus();
-							}
+							}, null, true, "idModalPesquisarProdutos"
 						);
 					}
 				}
@@ -1076,15 +1065,7 @@
 								ConferenciaEncalhe.setarValoresPesquisados(result);
 								$("#dialog-pesquisar").dialog("destroy");
 								$('#cod_barras').focus();
-							},
-							function (){
-								
-								ConferenciaEncalhe.limparDadosProduto();
-								
-								$("#codProduto").val(_codProduto);
-								
-								$("#codProduto").focus();
-							}
+							}, null, true, "idModalPesquisarProdutos"
 						);
 					}
 				} else {

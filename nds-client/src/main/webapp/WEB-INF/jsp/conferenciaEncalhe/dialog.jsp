@@ -95,6 +95,11 @@
 </div>
 
 <div id="dialog-pesquisar" title="Pesquisa de Produtos" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalPesquisarProdutos" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width: 510px">
 		<legend>Pesquisar Produto</legend>
 		<table width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -112,6 +117,11 @@
 </div>
 
 <div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalDadosNotaFiscal" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset>
     	<legend>Nota Fiscal</legend>
         	<table width="810" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
